@@ -7,7 +7,7 @@ from typing import Any
 
 
 class FakeChat:
-    """Stands in for an ellmer ``Chat`` (the R tests mock ``ellmer::chat()``)."""
+    """Stands in for the model (the R tests mock ``ellmer::chat()``)."""
 
     def __init__(
         self,
@@ -27,8 +27,17 @@ class FakeChat:
             raise RuntimeError("attempt to apply non-function")
         return self._chat(text)
 
-    def last_turn(self) -> None:
-        return None
+    def complete(
+        self,
+        model: str,
+        system: str,
+        user: str,
+        type: Any = None,
+        params: Any = None,
+        api_args: Any = None,
+    ) -> Any:
+        """The seam :func:`metacheck.llm._backend.complete`: the reply, as the model's JSON."""
+        return self.chat(user) if type is None else self.chat_structured(user, type)
 
 
 def structured_lookup(lookup: Mapping[str, Any]) -> FakeChat:

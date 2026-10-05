@@ -16,10 +16,8 @@ from typing import Any
 import metacheck.llm as L
 from metacheck.llm import cache as C
 from metacheck.llm import core as K
-from metacheck.llm import providers as P
 from metacheck.llm import types as T
-from metacheck.llm._rds import RInt
-from metacheck.llm.providers import LLMError
+from metacheck.llm._backend import LLMError, _body_detail
 
 __all__ = [
     "LLM_ON",
@@ -27,13 +25,8 @@ __all__ = [
     "K",
     "L",
     "LLMError",
-    "P",
-    "RInt",
     "T",
     "identity",
-    "ollama_no_content",
-    "ollama_reply",
-    "resp",
     "scoped",
 ]
 
@@ -101,17 +94,6 @@ def cache_files(d: str) -> list[str]:
     return r_sorted(os.listdir(d))  # type: ignore[no-any-return]
 
 
-def resp(status: int, json: Any = None, text: str | None = None) -> Any:
-    """An httr2-like response for error-message cases."""
-    import httpx
-
-    if json is not None:
-        return httpx.Response(status, json=json)
-    return httpx.Response(
-        status, content=(text or "").encode(), headers={"content-type": "text/plain"}
-    )
-
-
 def cond(
     message: str,
     status: int | None = None,
@@ -120,46 +102,22 @@ def cond(
     wrap: str | None = None,
     timeout: bool = False,
 ) -> LLMError:
-    """An R condition as metacheck sees it: message, ``$resp``, ``$parent``, timeout class."""
-    r = resp(status, json, text) if status is not None else None
-    e = LLMError(message, resp=r, timeout=timeout)
-    if wrap is not None:
-        return LLMError(wrap, parent=e)
-    return e
+    """An error as the SDK layer reports it: message, status, the provider's reason, timeout.
 
-
-def ollama_reply(body: Any, fn: Callable[[], Any]) -> Any:
-    """``fn()`` with every Ollama ``/api/chat`` request answered by *body*.
-
-    R: ``httr2::with_mocked_responses(function(req) httr2::response_json(body = body), ...)``.
-    An R value such as ``character(0)`` comes back in its Python form (``[]``).
+    The reason is read from the body *json* (or *text*) as a failed request's body is read.
+    *wrap* is the message of an error that wraps the failed request's.
     """
-    import httpx
-    import respx
+    import json as _json
 
-    from metacheck.llm._rds import RVec, to_python
-
-    with respx.mock(assert_all_called=False) as router:
-        router.post(url__regex=r"/api/chat$").mock(return_value=httpx.Response(200, json=body))
-        value = fn()
-    return to_python(value) if isinstance(value, RVec) else value
-
-
-def ollama_no_content(fn: Callable[[], Any], empty: tuple[str, ...] = ("B", "C")) -> Any:
-    """``fn()`` with ``.llm_ollama_native()`` replying without ``message.content``
-    for the texts in *empty* and ``"ok"`` otherwise.
-
-    R: ``testthat::with_mocked_bindings(..., .llm_ollama_native = function(text, ...)
-    if (text %in% c('B', 'C')) trimws(NULL) else 'ok', .package = 'metacheck')``.
-    metacheck's function returns ``character(0)`` for such a reply; pytacheck's
-    raises (U19), which ``llm()`` records as that text's error.
-    """
-    from unittest import mock
-
-    def stub(text: str | None, *args: Any, **kwargs: Any) -> Any:
-        if text in empty:
-            raise RuntimeError("The Ollama reply has no message content.")
-        return "ok"
-
-    with mock.patch.object(K, "_llm_ollama_native", stub):
-        return fn()
+    detail = None
+    if status is not None:
+        detail = _body_detail(
+            _json.dumps(json, separators=(",", ":")) if json is not None else (text or "")
+        )[0]
+    return LLMError(
+        message if wrap is None else wrap,
+        status=status,
+        detail=detail,
+        timeout=timeout,
+        transport=timeout,
+    )

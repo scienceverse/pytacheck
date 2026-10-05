@@ -254,7 +254,7 @@ main() {
 
   # The app.
   ref="${METACHECK_REF:-$REF}"
-  spec="${METACHECK_SPEC:-${TOOL}[app] @ https://github.com/scienceverse/pytacheck/archive/$ref.tar.gz}"
+  spec="${METACHECK_SPEC:-${TOOL}[app,llm] @ https://github.com/scienceverse/pytacheck/archive/$ref.tar.gz}"
   constraints="${METACHECK_CONSTRAINTS:-}"
   if [ -z "$constraints" ]; then
     constraints="$tmp/constraints-app.txt"

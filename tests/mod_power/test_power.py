@@ -1,7 +1,7 @@
 """Port of metacheck's tests/testthat/test-module-power.R (plus R-checked edge cases).
 
-The R tests mock ``ellmer::chat()``; here ``metacheck.llm.providers.chat`` is
-replaced by a :class:`FakeChat`. Expected values not in the R tests were
+The R tests mock ``ellmer::chat()``; here ``metacheck.llm._backend.complete`` is
+replaced by a :class:`FakeChat`, which answers with the JSON a provider would send. Expected values not in the R tests were
 produced by running the same mocks through metacheck (R 4.5.3, pinned commit).
 """
 
@@ -449,15 +449,16 @@ def test_power_falls_back_to_prompt_fenced_extraction(
 def test_power_fallback_prompt_includes_schema(
     llm_on: None, monkeypatch: pytest.MonkeyPatch, schema_served: Any
 ) -> None:
-    from metacheck.llm import providers
+    from metacheck.llm import _backend
 
     prompts: list[str] = []
+    fake = FakeChat(chat_structured=rejects_structured, chat=lambda text: FENCED)
 
-    def chat(*args: Any, **kwargs: Any) -> FakeChat:
-        prompts.append(kwargs.get("system_prompt", ""))
-        return FakeChat(chat_structured=rejects_structured, chat=lambda text: FENCED)
+    def complete(model: str, system: str, user: str, *args: Any, **kwargs: Any) -> Any:
+        prompts.append(system)
+        return fake.complete(model, system, user, *args, **kwargs)
 
-    monkeypatch.setattr(providers, "chat", chat)
+    monkeypatch.setattr(_backend, "complete", complete)
     with pytest.warns(UserWarning):
         module_run(pc.test_paper([SIMPLE]), "power")
     assert prompts[0] == _power._STRUCTURED_PROMPT
@@ -638,34 +639,30 @@ def test_power_empty_result_across_all_paragraphs(llm_on: None, mock_chat: MockC
     assert mo.traffic_light == "na"
     assert len(mo.table) == 0
     assert mo.summary_table["power_n"].tolist() == [0]
-    # R: every llm_cols column is added to the empty table
-    assert list(mo.table.columns)[-9:] == [*_power.LLM_COLS, "complete"]
+    # R: every llm_cols column is in the empty table (the schema's columns, in its order)
+    columns = [c for c in mo.table.columns if c in (*_power.LLM_COLS, "complete")]
+    assert columns == [*_power.LLM_COLS, "complete"]
 
 
 def test_power_structured_tibble_shape(llm_on: None, mock_chat: MockChat) -> None:
-    tibble_result = {
-        "power_analyses": pd.DataFrame(
+    # the provider's JSON; llm() converts it to the tibble ellmer gives (enums as factors)
+    reply = {
+        "power_analyses": [
             {
-                "power_type": pd.Categorical(
-                    ["apriori"], categories=["apriori", "sensitivity", "posthoc", "unknown"]
-                ),
-                "statistical_test": pd.Categorical(
-                    ["unpaired t-test"], categories=["paired t-test", "unpaired t-test"]
-                ),
-                "statistical_test_other": pd.array([None], dtype="string"),
-                "sample_size": [64.0],
-                "alpha_level": [0.05],
-                "power": [0.8],
-                "effect_size": [0.5],
-                "effect_size_metric": pd.Categorical(
-                    ["Cohen's d"], categories=["Cohen's d", "other"]
-                ),
-                "effect_size_metric_other": pd.array([None], dtype="string"),
-                "software": pd.Categorical(["G*Power"], categories=["G*Power", "pwr"]),
+                "power_type": "apriori",
+                "statistical_test": "unpaired t-test",
+                "statistical_test_other": None,
+                "sample_size": 64,
+                "alpha_level": 0.05,
+                "power": 0.8,
+                "effect_size": 0.5,
+                "effect_size_metric": "Cohen's d",
+                "effect_size_metric_other": None,
+                "software": "G*Power",
             }
-        )
+        ]
     }
-    mock_chat(FakeChat(chat_structured=lambda text, type: tibble_result))
+    mock_chat(FakeChat(chat_structured=lambda text, type: reply))
     paper = pc.test_paper(
         [
             "An a priori power analysis using G*Power indicated 64 participants per group were "
@@ -708,7 +705,8 @@ def test_power_structured_omitted_key(llm_on: None, mock_chat: MockChat) -> None
 
 
 def test_power_structured_only_some_keys(llm_on: None, mock_chat: MockChat) -> None:
-    # R: missing llm_cols are appended in llm_cols order; the report lists them in that order
+    # the reply names two fields; the table has every field of the schema (a missing one is NA),
+    # in the schema's order, and the report lists the missing llm_cols in llm_cols order
     mock_chat(
         FakeChat(
             chat_structured=lambda text, type: {
@@ -719,12 +717,14 @@ def test_power_structured_only_some_keys(llm_on: None, mock_chat: MockChat) -> N
     mo = module_run(pc.test_paper([SIMPLE]), "power")
     assert list(mo.table.columns)[8:] == [
         "power_type",
-        "sample_size",
         "statistical_test",
+        "statistical_test_other",
+        "sample_size",
         "alpha_level",
         "power",
         "effect_size",
         "effect_size_metric",
+        "effect_size_metric_other",
         "software",
         "complete",
         "power_id",
@@ -774,8 +774,6 @@ def test_power_structured_partial_failure(llm_on: None, mock_chat: MockChat) -> 
 
 
 def test_power_with_ollama_structured(llm_on: None, mock_chat: MockChat) -> None:
-    from tests.httpmock import replay
-
     power_text = [
         "An a priori power analysis for an independent samples t-test, conducted using the "
         "pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, "
@@ -818,8 +816,7 @@ def test_power_with_ollama_structured(llm_on: None, mock_chat: MockChat) -> None
     )
     from metacheck.utils import local_options
 
-    # the "apis" fixtures answer llm()'s ollama_up / model-exists pre-checks
-    with replay("apis"), local_options({"metacheck.llm.model": "ollama/qwen2.5:3b"}):
+    with local_options({"metacheck.llm.model": "ollama/qwen2.5:3b"}):
         mo = module_run(papers, "power")
     assert mo.traffic_light == "red"
     assert len(mo.table) == 2
@@ -837,17 +834,25 @@ def test_power_with_ollama_structured(llm_on: None, mock_chat: MockChat) -> None
 
 
 def test_power_seed_is_sent(llm_on: None, monkeypatch: pytest.MonkeyPatch) -> None:
-    from metacheck.llm import providers
+    from metacheck.llm import _backend
 
     seen: list[Any] = []
+    fake = FakeChat(chat_structured=lambda text, type: {"power_analyses": []})
 
-    def chat(*args: Any, **kwargs: Any) -> FakeChat:
-        seen.append(kwargs.get("params"))
-        return FakeChat(chat_structured=lambda text, type: {"power_analyses": []})
+    def complete(
+        model: str,
+        system: str,
+        user: str,
+        type: Any = None,
+        params: Any = None,
+        api_args: Any = None,
+    ) -> Any:
+        seen.append(params)
+        return fake.complete(model, system, user, type, params, api_args)
 
-    monkeypatch.setattr(providers, "chat", chat)
+    monkeypatch.setattr(_backend, "complete", complete)
     module_run(pc.test_paper([SIMPLE]), "power", seed=42)
-    assert "42" in repr(seen[0])
+    assert seen[0]["seed"] == 42
 
 
 def test_power_does_not_mutate_input(llm_off: None) -> None:

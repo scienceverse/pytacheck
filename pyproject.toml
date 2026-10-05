@@ -81,7 +81,10 @@ charset = ["chardet>=7"]
 # data_check's local column-concept classifier (an int8 ONNX model, ~540 MB,
 # downloaded once from the Hugging Face Hub; see metacheck.datacheck.concepts).
 concepts = ["onnxruntime>=1.20", "tokenizers>=0.21", "huggingface-hub>=0.30"]
-all = ["metacheck[bibr,data,api,charset,concepts]"]
+# llm(): the official provider SDKs, imported only when a model is called. The
+# caps are major versions; these SDKs release several times a week.
+llm = ["openai>=3.3,<4", "anthropic>=1.11,<2", "google-genai>=2.28,<3"]
+all = ["metacheck[bibr,data,api,charset,concepts,llm]"]
 
 [project.urls]
 Homepage = "https://github.com/scienceverse/pytacheck"

@@ -28,6 +28,7 @@ import contextlib
 import errno
 import hashlib
 import ipaddress
+import json
 import os
 import re
 import socket
@@ -35,10 +36,13 @@ import struct
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
+from unittest import mock
 from urllib.parse import urlsplit
 
 import httpx
 import respx
+
+from tests import llmreplies
 
 UPSTREAM_TESTS = (
     Path(__file__).resolve().parent.parent / "upstream" / "metacheck" / "tests" / "testthat"
@@ -149,16 +153,91 @@ def _r_unescape(s: str) -> str:
     return re.sub(r"\\(u\{?[0-9a-fA-F]{4}\}?|U\{?[0-9a-fA-F]{8}\}?|.)", repl, s)
 
 
-def fixture_response(root: Path, path: str) -> httpx.Response | None:
-    """The recorded response for *path* under *root*, if there is one."""
+def fixture_file(root: Path, path: str) -> Path | None:
+    """The recorded file for *path* under *root* (``path`` without its extension)."""
     r_file = root / f"{path}.R"
     if r_file.exists():
-        return _parse_r_response(r_file.read_text(encoding="utf-8"))
-    for ext, ctype in _EXTENSIONS.items():
+        return r_file
+    for ext in _EXTENSIONS:
         f = root / f"{path}{ext}"
         if f.exists():
-            return httpx.Response(200, headers={"content-type": ctype}, content=f.read_bytes())
+            return f
     return None
+
+
+def file_response(f: Path) -> httpx.Response:
+    """The response a recorded file holds."""
+    if f.suffix == ".R":
+        return _parse_r_response(f.read_text(encoding="utf-8"))
+    return httpx.Response(
+        200, headers={"content-type": _EXTENSIONS[f.suffix]}, content=f.read_bytes()
+    )
+
+
+def fixture_response(root: Path, path: str) -> httpx.Response | None:
+    """The recorded response for *path* under *root*, if there is one."""
+    f = fixture_file(root, path)
+    return None if f is None else file_response(f)
+
+
+def _llm_reply(root: Path, request: httpx.Request, asked: dict[str, Any]) -> httpx.Response | None:
+    """The reply to an LLM request, by what it asks (see :mod:`tests.llmreplies`).
+
+    A directory without an ``index.json`` holds no LLM replies; a request whose
+    key the index lacks gets no reply (the caller answers 404).
+    """
+    index = llmreplies.load_index(root)
+    if index is None:
+        return None
+    name = index.get(llmreplies.llm_key(asked))
+    return None if name is None else file_response(root / name)
+
+
+def _log_llm_reply(root: Path, path: str, asked: dict[str, Any], log: str) -> None:
+    """Record which file answered an LLM request (``PYTACHECK_LLM_INDEX_LOG``)."""
+    f = fixture_file(root, path)
+    if f is None:
+        return
+    entry = {
+        "root": str(root),
+        "key": llmreplies.llm_key(asked),
+        "file": f.relative_to(root).as_posix(),
+        "request": asked,
+    }
+    with open(log, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+
+@contextlib.contextmanager
+def _httpx2_bridge() -> Iterator[None]:
+    """Send the requests of ``httpx2`` through ``httpx``, where respx serves them.
+
+    The ``openai`` and ``anthropic`` SDKs run on ``httpx2`` (Pydantic's fork of
+    httpx), which respx does not see. Their default transport is replaced for
+    the block by one that hands each request to ``httpx`` and converts the
+    answer back, so one router serves every library.
+    """
+    try:
+        import httpx2
+    except ImportError:  # the `llm` extra is not installed: no SDK traffic to serve
+        yield
+        return
+
+    def handle_request(self: Any, request: Any) -> Any:
+        sent = httpx.Request(
+            request.method, str(request.url), headers=list(request.headers.items()),
+            content=request.read(),
+        )  # fmt: skip
+        with httpx.Client() as client:
+            resp = client.send(sent)
+        skip = {"content-encoding", "content-length", "transfer-encoding"}
+        headers = [(k, v) for k, v in resp.headers.items() if k.lower() not in skip]
+        return httpx2.Response(
+            resp.status_code, headers=headers, content=resp.content, request=request
+        )
+
+    with mock.patch.object(httpx2.HTTPTransport, "handle_request", handle_request):
+        yield
 
 
 @contextlib.contextmanager
@@ -168,16 +247,29 @@ def replay(*mock_dirs: str | Path, assert_all_called: bool = False) -> Iterator[
         Path(d) if Path(d).is_absolute() else UPSTREAM_TESTS / d for d in mock_dirs or ("apis",)
     ]
 
+    log = os.environ.get("PYTACHECK_LLM_INDEX_LOG")
+
     def handler(request: httpx.Request) -> httpx.Response:
         path = mock_path(request)
+        asked = llmreplies.llm_request(request.method, str(request.url), request.read())
         for root in roots:
+            if asked is not None and log:
+                _log_llm_reply(root, path, asked, log)  # recording: R's file names
+            elif asked is not None and llmreplies.load_index(root) is not None:
+                resp = _llm_reply(root, request, asked)
+                if resp is not None:
+                    return resp
+                continue
             resp = fixture_response(root, path)
             if resp is not None:
                 return resp
         host = urlsplit(str(request.url)).hostname
+        if asked is not None:  # say what was asked, so a missing reply can be recorded
+            what = f"{llmreplies.llm_key(asked)}: {json.dumps(asked, ensure_ascii=False)}"
+            return httpx.Response(404, json={"error": f"no recorded reply for {what}"})
         return httpx.Response(404, json={"error": f"no recorded fixture for {path} ({host})"})
 
-    with respx.mock(assert_all_called=assert_all_called) as router:
+    with respx.mock(assert_all_called=assert_all_called) as router, _httpx2_bridge():
         router.route().mock(side_effect=handler)
         yield router
 

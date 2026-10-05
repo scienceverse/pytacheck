@@ -202,29 +202,6 @@ add(
 )
 
 
-# .data_group_seed is 8675309L: the llm() cache key must see an R integer
-add(
-    "review.data_group_llm.seed_cache_key",
-    r="identity",
-    py=f"{HELP}.data_group_cache_key",
-    args={
-        "x": {
-            "$expr": {
-                "r": (
-                    "local({key <- NULL; testthat::with_mocked_bindings(metacheck::data_group_llm("
-                    'data.frame(file_name = c("first_raw.csv", "second_raw.csv"), data_type = "data"), '
-                    'model = "m"), llm = function(..., params) {key <<- metacheck:::.llm_cache_key('
-                    '"t", "s", NULL, "m", do.call(ellmer::params, c(params, list(temperature = 0, '
-                    'max_tokens = 4096)))); stop("no llm")}, .package = "metacheck"); key})'
-                ),
-                "py": "None",
-            }
-        }
-    },
-    py_drop=["x"],
-)
-
-
 # file names that are not valid UTF-8 (UPSTREAM_ISSUES U76): tools::file_ext()'s
 # substring() and tolower() raise in R; names are written with R's \xff escapes
 def _r_chr(xs: list[str | None]) -> str:

@@ -68,11 +68,34 @@
 ".wait_out_known_rate_limit" = "Waits out, or under skip_on_api_limit gives up on, a host's known rate limit before a request. metacheck.http.request() does it before every try (and raises RateLimited when asked to)."
 
 # ellmer providers metacheck can reach through ellmer::chat("provider/model")
-"ellmer::chat_aws_bedrock" = "Needs AWS SigV4 credentials (an SDK). metacheck.llm.providers raises a clear error (_UNSUPPORTED)."
+"ellmer::chat_aws_bedrock" = "Needs AWS SigV4 credentials (a cloud SDK). metacheck.llm._backend raises a clear error (_UNSUPPORTED)."
 "ellmer::chat_google_vertex" = "Needs Google Cloud ADC/project auth. pytacheck raises a clear error; google_gemini works with AI Studio keys (the API default)."
 "ellmer::chat_databricks" = "Needs Databricks workspace OAuth. pytacheck raises a clear error."
 "ellmer::chat_snowflake" = "Needs Snowflake key-pair/OAuth auth. pytacheck raises a clear error."
 "ellmer::chat_posit" = "Posit AI (subscription service) needs its own OAuth. pytacheck raises a clear error."
+
+# ellmer internals and extras. LLM changes upstream are ported by behaviour
+# (prompts, schemas, parameters, result columns), never by ellmer's internals:
+# pytacheck sends requests through the provider SDKs (D73).
+"ellmer::chat" = "ellmer's chat object and its provider constructors. pytacheck builds one request per call with the provider SDKs (metacheck.llm._backend.complete)."
+"ellmer::params" = "ellmer's argument checks for model parameters. pytacheck passes the standard parameters to the SDK of the provider and drops, with a warning, the ones a provider does not take."
+"ellmer:::extract_data" = "ellmer's reading of a structured reply from a chat turn. The back end reads the JSON from the SDK's response."
+"ellmer:::match_prices" = "ellmer's bundled price table. pytacheck shows no prices."
+"ellmer:::list_to_atomic" = "ellmer's simplification of parsed JSON; metacheck.llm.types converts a reply to columns directly."
+"ellmer::models_ollama" = "Model listing. pytacheck has no llm_model_list(); name the model as provider/model."
+"ellmer::models_openai" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_anthropic" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_google_gemini" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_mistral" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_deepseek" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_portkey" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_lmstudio" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_vllm" = "Model listing (see ellmer::models_ollama)."
+"llm_model_list" = "Lists the models of each provider through ellmer's models_*() functions. Removed with them (D73): name a model as provider/model."
+".llm_model_list_groq" = "Groq's model listing, part of llm_model_list() (D73)."
+".LLM_ALLOWED_PLATFORMS" = "The provider allowlist of llm_model_list() (D73)."
+".llm_ollama_native" = "Ollama's native /api/chat path, used to switch thinking off. Ollama is reached through its OpenAI-compatible /v1 endpoint like every other provider (D73)."
+".llm_extract_thinking" = "The reasoning text of an ellmer chat turn, for llm(capture_reasoning = TRUE). Reasoning capture was removed (D73); reasoning effort settings stay."
 
 # statcheck parts metacheck never uses
 "statcheck::checkHTML" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."

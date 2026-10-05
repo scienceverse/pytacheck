@@ -212,7 +212,7 @@ function Install-Metacheck {
 
         # The app.
         $ref = if ($env:METACHECK_REF) { $env:METACHECK_REF } else { $Ref }
-        $spec = if ($env:METACHECK_SPEC) { $env:METACHECK_SPEC } else { "${Tool}[app] @ https://github.com/scienceverse/pytacheck/archive/$ref.tar.gz" }
+        $spec = if ($env:METACHECK_SPEC) { $env:METACHECK_SPEC } else { "${Tool}[app,llm] @ https://github.com/scienceverse/pytacheck/archive/$ref.tar.gz" }
         $constraints = $env:METACHECK_CONSTRAINTS
         if (-not $constraints) {
             $constraints = Join-Path $tmp 'constraints-app.txt'

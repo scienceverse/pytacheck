@@ -13,7 +13,7 @@ import pytest
 
 
 def test_llm_option_defaults_exist_before_llm_is_imported() -> None:
-    # R: library(metacheck) sets metacheck.llm_max_calls = 30L and
+    # R: library(metacheck) sets metacheck.llm_max_calls = 30 and
     # metacheck.llm.use = FALSE, so getOption() sees them before any LLM code runs
     from metacheck.llm import core
 
@@ -36,7 +36,7 @@ def test_llm_option_defaults_exist_before_llm_is_imported() -> None:
         [sys.executable, "-c", code], capture_output=True, text=True, check=True, env=env
     ).stdout
     n, cls, use, loaded, same = json.loads(out.strip().splitlines()[-1])
-    assert (n, cls, use) == (30, "RInt", False)  # 30L: an R integer
+    assert (n, cls, use) == (30, "int", False)
     assert not loaded
     assert same  # the module memo key does not change when metacheck.llm loads
 
@@ -145,21 +145,3 @@ def test_github_pat_is_not_a_default_model(monkeypatch: pytest.MonkeyPatch) -> N
     assert core._default_model_from_env() is None
     monkeypatch.setenv("GROQ_API_KEY", "k")
     assert core._default_model_from_env() == "groq"
-
-
-def test_llm_timeout_bounds_hosted_providers() -> None:
-    # U20: ellmer's providers waited 300 s whatever llm_timeout() said
-    from metacheck import utils
-    from metacheck.llm import core, providers
-
-    old_timeout = core.llm_timeout()
-    old_opt = utils.get_option("ellmer_timeout_s")
-    try:
-        core.llm_timeout(42)
-        utils.options({"ellmer_timeout_s": None})
-        assert providers._timeout_default() == 42.0
-        utils.options({"ellmer_timeout_s": 7})
-        assert providers._timeout_default() == 7.0
-    finally:
-        core.llm_timeout(old_timeout)
-        utils.options({"ellmer_timeout_s": old_opt})

@@ -53,12 +53,6 @@
   "ported": true,
   "python": "metacheck.statout.stat_tables:_JMV_F"
  },
- ".LLM_ALLOWED_PLATFORMS": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "metacheck.llm.core:_LLM_ALLOWED_PLATFORMS"
- },
  ".MC_STAT_LABELS": {
   "file": "",
   "line": 0,
@@ -1797,7 +1791,6 @@
  ".llm_extract_thinking": {
   "file": "R/llm.R",
   "line": 575,
-  "ported": true,
   "python": "metacheck.llm.core:_llm_extract_thinking"
  },
  ".llm_is_systemic_error": {
@@ -1815,13 +1808,11 @@
  ".llm_model_list_groq": {
   "file": "R/llm.R",
   "line": 737,
-  "ported": true,
   "python": "metacheck.llm.core:_llm_model_list_groq"
  },
  ".llm_ollama_native": {
   "file": "R/llm.R",
   "line": 402,
-  "ported": true,
   "python": "metacheck.llm.core:_llm_ollama_native"
  },
  ".llm_sanitise_text": {
@@ -5494,7 +5485,6 @@
  "llm_model_list": {
   "file": "R/llm.R",
   "line": 667,
-  "ported": true,
   "python": "metacheck.llm.core:llm_model_list"
  },
  "llm_reasoning": {

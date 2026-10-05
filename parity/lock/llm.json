@@ -1,5 +1,6 @@
 {
 "llm.groq.data_frame": {"r": "baf82f4cfdf5c5d5", "py": "8bdb1203fa697b8b", "diff": ["answer[]"]},
+"llm.groq.malformed": {"r": "f47a8754c53644be", "py": "27a87aec0454be44", "diff": ["error_msg[]"]},
 "llm.groq.mixed_error": {"r": "ac5146cf65ca52a8", "py": "ee4bc2da7943cfa7", "diff": ["<R error, Python value>"]},
 "llm.groq.numeric_text": {"r": "ac5146cf65ca52a8", "py": "233c0faf07f4d882", "diff": ["<R error, Python value>"]},
 "llm.groq.sanitised_key": {"r": "297664cdd6475395", "py": "13e59dd6609a1e04", "diff": ["answer[]"]}

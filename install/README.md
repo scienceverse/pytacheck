@@ -8,7 +8,7 @@ the app. [docs/TRY.md](../docs/TRY.md) is the page for users.
 
 | File | What it is |
 |---|---|
-| `constraints-app.txt` | The exact version of every dependency of `metacheck[app]`. Generated from `uv.lock`; never edited by hand. |
+| `constraints-app.txt` | The exact version of every dependency of `metacheck[app,llm]`. Generated from `uv.lock`; never edited by hand. |
 | `smoke.py` | Starts an installed `metacheck-app` and checks the self-test, `/healthz` and the token gate. Used by CI. |
 | `ui_smoke.py` | Starts an installed `metacheck-app` and clicks through the pages in Chromium (Playwright): the demo paper, then an uploaded file, then a data package. Fails on a console error or a request to any host but 127.0.0.1, and saves a screenshot. The one console error it accepts is the pair that Gradio logs when the script's own navigation cuts an open event stream. Used by CI; `--browser-path` uses a Chromium you already have. |
 
@@ -18,10 +18,10 @@ the app. [docs/TRY.md](../docs/TRY.md) is the page for users.
 instead, so a user gets the versions we tested.
 
 One command makes the file. Run it from the repository root whenever
-`uv.lock` or the `app` extra changes:
+`uv.lock` or the `app` or `llm` extra changes:
 
 ```sh
-uv export --locked --no-hashes --no-dev --extra app --no-emit-project --no-annotate --output-file install/constraints-app.txt
+uv export --locked --no-hashes --no-dev --extra app --extra llm --no-emit-project --no-annotate --output-file install/constraints-app.txt
 ```
 
 The `installer` workflow runs the same command and fails when the result
@@ -43,7 +43,7 @@ a steward install of such a commit opens the app on the paper page, and says so.
 
 The page reads folders only inside the home folder (`METACHECK_APP_ROOTS` adds more), and
 its classifier box is ticked, as the classifier is the default of `metacheck package`. The
-installer installs `metacheck[app]` without the `concepts` extra, so the page falls back to
+installer installs `metacheck[app,llm]` without the `concepts` extra, so the page falls back to
 rules and says that the classifier is not installed; nothing is downloaded.
 
 `ui_smoke.py` also runs the data package page: a folder outside home is refused (the page is

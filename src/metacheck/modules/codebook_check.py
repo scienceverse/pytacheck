@@ -97,7 +97,7 @@ _INTRO = (
         "an upfront gate: if a tier would need more calls than this, the whole tier is "
         "skipped (not truncated) with a message naming `codebook_max_calls` and the number "
         "needed.",
-        "model": "the LLM model name (see `llm_model_list()`) used only when `llm_use(TRUE)`",
+        "model": "the LLM model name (`provider/model`, for example `groq/openai/gpt-oss-20b`) used only when `llm_use(TRUE)`",
         "params": "a named list passed to `llm()`, used only when `llm_use(TRUE)`",
     },
 )

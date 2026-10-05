@@ -371,16 +371,6 @@ def _read_rscript(ctx: Ctx) -> Any:
     return _rparse.rscript()
 
 
-def _read_r_serialize_version(ctx: Ctx) -> Any:
-    from metacheck.llm._rds import _r_version_int
-
-    return _r_version_int()
-
-
-def _r_version(major: int, minor: int, patch: int) -> int:
-    return major * 65536 + minor * 256 + patch
-
-
 def _read_cache_root(ctx: Ctx) -> Any:
     from metacheck.archives.cache import _metacheck_cache_root
 
@@ -637,13 +627,6 @@ SITES: dict[str, Site] = {
         read=_read_rscript,
         expect=lambda ctx, name: str(ctx.tmp_path / "bin" / "Rscript"),
         spaces=lambda ctx: None,
-    ),
-    "R_SERIALIZE_VERSION": Site(
-        value="4.4.1",
-        other="4.3.0",
-        read=_read_r_serialize_version,
-        expect=lambda ctx, name: _r_version(4, 4, 1),
-        spaces=lambda ctx: _r_version(4, 5, 3),  # the default, which is part of the cache key
     ),
     "APP_AUTH": Site(
         value=" Proxy ",

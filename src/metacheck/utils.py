@@ -22,7 +22,6 @@ from collections.abc import Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r import as_character, gsub, is_na, strsplit, sub, trimws
-from metacheck.llm._rds import RInt  # stdlib-only: keeps the import light
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -47,7 +46,7 @@ __all__ = [
 #: ``metacheck.llm.model`` depends on the API keys set and is an option set by
 #: :func:`_init_default_model` when this module loads, as ``.onLoad()`` sets it.
 _DEFAULTS: dict[str, Any] = {
-    "metacheck.llm_max_calls": RInt(30),
+    "metacheck.llm_max_calls": 30,
     "metacheck.llm.use": False,
     "metacheck.osf.delay": 0,
     "metacheck.osf.api": "https://api.osf.io/v2",
@@ -61,7 +60,6 @@ _MISSING = object()
 #: old spellings of the Python-only options (read and set as the new name)
 _OPTION_ALIASES = {
     "pytacheck.careless": "metacheck.careless",
-    "pytacheck.r_serialize_version": "metacheck.r_serialize_version",
     "pytacheck.llm.workers": "metacheck.llm.workers",
 }
 

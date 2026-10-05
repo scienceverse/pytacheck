@@ -418,7 +418,7 @@ def _data_check_outputs(
         "local_path": "optional path to a local directory, passed through to\n"
         "`data_check` / `repo_check` when their output is not already available",
         "local_only": "if TRUE, skip online repository lookups (see `repo_check`)",
-        "model": "the LLM model name (see `llm_model_list()`) used only when\n`llm_use(TRUE)`",
+        "model": "the LLM model name (`provider/model`, for example `groq/openai/gpt-oss-20b`) used only when\n`llm_use(TRUE)`",
         "params": "a named list passed to `llm()`, used only when `llm_use(TRUE)`",
     },
 )

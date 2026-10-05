@@ -563,7 +563,6 @@ def test_a_handler_on_metacheck_receives_the_pytacheck_records() -> None:
 
 OPTION_PAIRS = [
     ("pytacheck.careless", "metacheck.careless"),
-    ("pytacheck.r_serialize_version", "metacheck.r_serialize_version"),
     ("pytacheck.llm.workers", "metacheck.llm.workers"),
 ]
 OPTION_IDS = [new for _, new in OPTION_PAIRS]
@@ -584,7 +583,7 @@ def clean_options():
         utils._options.update(saved)
 
 
-def test_the_option_aliases_are_exactly_the_three_python_only_options() -> None:
+def test_the_option_aliases_are_exactly_the_two_python_only_options() -> None:
     assert dict(OPTION_PAIRS) == utils._OPTION_ALIASES
     assert utils._canon("metacheck.osf.api") == "metacheck.osf.api"
 
@@ -668,10 +667,8 @@ def test_local_options_restores_when_the_body_raises(clean_options) -> None:
     assert utils.get_option("pytacheck.careless") is True
 
 
-def test_the_readers_see_an_option_set_under_the_old_spelling(clean_options, monkeypatch) -> None:
-    """The three readers ask for the new names; the old spelling reaches them."""
-    from metacheck._env import env_names
-    from metacheck.llm import _rds
+def test_the_readers_see_an_option_set_under_the_old_spelling(clean_options) -> None:
+    """The two readers ask for the new names; the old spelling reaches them."""
     from metacheck.llm.core import _llm_workers
     from metacheck.modules._data_check import _careless_available
 
@@ -685,15 +682,6 @@ def test_the_readers_see_an_option_set_under_the_old_spelling(clean_options, mon
         assert _llm_workers() == 4
     with utils.local_options({"metacheck.llm.workers": 3}):
         assert _llm_workers() == 3
-
-    for name in env_names("R_SERIALIZE_VERSION"):
-        monkeypatch.delenv(name, raising=False)
-    v430 = 4 * 65536 + 3 * 256
-    assert _rds._r_version_int() != v430
-    with utils.local_options({"pytacheck.r_serialize_version": "4.3.0"}):
-        assert _rds._r_version_int() == v430
-    with utils.local_options({"metacheck.r_serialize_version": "4.3.0"}):
-        assert _rds._r_version_int() == v430
 
 
 # --- the project file -------------------------------------------------------------

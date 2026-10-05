@@ -239,8 +239,8 @@ why = "User-Agent product token; changing it is a separate decision (the URL sta
 [[rule]]
 action = "keep"
 files = "*.py"
-match = 'pytacheck\.(careless|r_serialize_version|llm\.workers)\b'
-count = 14
+match = 'pytacheck\.(careless|llm\.workers)\b'
+count = 12
 why = "old option names, still accepted as aliases; removed with the alias"
 
 # --- logger names (records keep the old names until the alias sunset)

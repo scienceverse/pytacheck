@@ -162,7 +162,7 @@ _NAMING_OK = "File names are broadly machine-parseable."
         "(Dryad, confirmed live 2026-09-08) has its quota re-spent on every restart "
         "re-listing repositories nothing new needs fetching for, rather than on the actual "
         "(usually much smaller) download workload.",
-        "model": "the LLM model name (see `llm_model_list()`), used only when `llm_use(TRUE)` "
+        "model": "the LLM model name (`provider/model`, for example `groq/openai/gpt-oss-20b`), used only when `llm_use(TRUE)` "
         "for study grouping the deterministic passes cannot place",
         "params": "a named list passed to `llm()`, used only when `llm_use(TRUE)`",
         "skip_on_api_limit": "if TRUE, a confirmed exhausted rate-limit bucket hit while "

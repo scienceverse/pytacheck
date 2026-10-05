@@ -1,123 +1,31 @@
-"""ellmer type specs: printing (cache keys), request schemas, reply conversion."""
+"""Structured-output types: the builders, the request schema per provider, reply conversion."""
 
 from __future__ import annotations
 
 import pytest
 
 from metacheck.llm import types as T
-from metacheck.llm._rds import RList, RVec
-from tests.llm.support import load_json
 
-POWER = T.type_object(
-    power_analyses=T.type_array(
-        description="Power analyses found in the text. Empty array if none.",
-        items=T.type_object(
-            power_type=T.type_enum(
-                ["apriori", "sensitivity", "posthoc", "unknown"],
-                description=(
-                    "The type of power analysis. 'apriori' calculates the required sample size to "
-                    "achieve a desired power given an effect size, statistical test, and alpha level. "
-                    "'sensitivity' estimates, given a sample size, which effect sizes a design has "
-                    "sufficient power to detect. 'posthoc' (observed/retrospective power) computes "
-                    "achieved power for an empirically observed effect size. Use 'unknown' if a power "
-                    "analysis is present but its type cannot be determined."
-                ),
-            ),
-            statistical_test=T.type_enum(
-                ["paired t-test", "unpaired t-test", "one-sample t-test", "1-way ANOVA",
-                 "2-way ANOVA", "3-way ANOVA", "MANOVA", "regression", "chi-square",
-                 "correlation", "other", None],
-                description="The statistical test used.",
-                required=False,
-            ),
-            statistical_test_other=T.type_string(
-                "Free-text description if statistical_test is 'other'.", required=False
-            ),
-            sample_size=T.type_number(
-                "The sample size determined by or used in the power analysis. Give the total "
-                "number if this is expressed as number per group.",
-                required=False,
-            ),
-            alpha_level=T.type_number(
-                "The alpha threshold used to determine significance.", required=False
-            ),
-            power=T.type_number(
-                "The statistical power, expressed as a number between 0 and 1.", required=False
-            ),
-            effect_size=T.type_number(
-                "The numeric effect size used in or determined from the power analysis.",
-                required=False,
-            ),
-            effect_size_metric=T.type_enum(
-                ["Cohen's d", "Hedges' g", "Cohen's f", "partial eta squared", "eta squared",
-                 "unstandardised", "other", None],
-                description=(
-                    "The effect size metric. Use 'unstandardised' for raw/non-standardized effects."
-                ),
-                required=False,
-            ),
-            effect_size_metric_other=T.type_string(
-                "Free-text description if effect_size_metric is 'other'.", required=False
-            ),
-            software=T.type_enum(
-                ["G*Power", "Superpower", "Pangea", "Morepower", "PASS", "pwr", "simr",
-                 "PowerUpR", "simulation", "InteractionPoweR", "pwrss", "other", None],
-                description="The software used to conduct the power analysis.",
-                required=False,
-            ),
-        ),
+
+def test_builders_make_plain_json_schema() -> None:
+    t = T.type_object(
+        {"name": T.type_string("The name")},
+        tags=T.type_array(T.type_enum(["x", "y"]), "Some tags", required=False),
+        n=T.type_integer(),
+        description="A thing",
     )
-)  # fmt: skip
-
-TYPES = {
-    "power": POWER,
-    "basic": T.type_object(
-        construct=T.type_string("The construct"),
-        confidence=T.type_string("high, medium, or low."),
-        n=T.type_number(),
-        b=T.type_boolean("x", required=False),
-        e=T.type_enum(["a", "b"]),
-    ),
-    "array": T.type_array(T.type_string()),
-    "enum10": T.type_enum(list("abcdefghij")),
-    "enum30": T.type_enum([f"value_{i}" for i in range(1, 31)], "desc"),
-    "schema": T.type_from_schema(
-        '{"type":"object","properties":{"a":{"type":"string","x":1,"y":2.5,"z":true,"w":null,'
-        '"v":[1,2]}},"required":[]}'
-    ),
-    "empty": T.type_object(),
-    "quoted": T.type_object(description='desc "q"\nnew\tline é中', a=T.type_enum(["x", None])),
-    "long": T.type_object(
-        a=T.type_string("abcdefghij" * 13), b=T.type_string("x" * 126), c=T.type_string("y" * 127)
-    ),
-    "nested": T.type_object(
-        scales=T.type_array(
-            T.type_object(
-                scale=T.type_string("s"),
-                columns=T.type_array(
-                    T.type_string("An exact item column name belonging to this scale.")
-                ),
-                meta=T.type_object(x=T.type_integer()),
-            )
-        )
-    ),
-}
-
-
-@pytest.mark.parametrize("name", sorted(TYPES))
-def test_print_matches_r(name: str) -> None:
-    """capture.output(print(type)) -- the text metacheck hashes into cache keys."""
-    expected = load_json("type_prints.json")[name]
-    assert T.type_print_lines(TYPES[name]) == expected
-
-
-def test_repr_is_the_r_print() -> None:
-    assert repr(T.type_string("x")).startswith("<ellmer::TypeBasic>")
+    assert t["type"] == "object"
+    assert t["description"] == "A thing"
+    assert t["required"] == ["name", "n"]  # `tags` is optional
+    assert t["additionalProperties"] is False
+    assert t["properties"]["name"] == {"type": "string", "description": "The name"}
+    assert t["properties"]["tags"]["items"] == {"type": "string", "enum": ["x", "y"]}
+    assert T.type_boolean()["type"] == "boolean"
+    assert T.type_number()["type"] == "number"
+    assert T.type_enum(["a", None])["enum"] == ["a", None]  # NA is a value
 
 
 def test_constructors_validate() -> None:
-    with pytest.raises(ValueError, match="unknown basic type"):
-        T.TypeBasic("date")
     with pytest.raises(ValueError, match="Exactly one"):
         T.type_from_schema()
     with pytest.raises(TypeError):
@@ -144,35 +52,35 @@ def test_as_type_from_json_schema() -> None:
         "required": ["results"],
     }
     t = T.as_type(schema)
-    expected = T.type_object(
-        results=T.type_array(
-            T.type_object(
-                index=T.type_integer("The number"),
-                value=T.type_string("The value", required=False),
-                kind=T.type_enum(["a", "b"]),
-            )
-        )
-    )
-    assert t == expected
-    # a schema with no ellmer equivalent is kept as a raw JSON schema
+    assert not t.raw  # converted to columns like the builders' output
+    wire = T.type_as_json(t, "openai")
+    item = wire["properties"]["results"]["items"]
+    assert item["required"] == ["index", "value", "kind"]  # strict: all, optional ones nullable
+    assert item["properties"]["value"]["type"] == ["string", "null"]
+    # a schema with no builder equivalent is sent as written, and its reply is not converted
     odd = T.as_type({"anyOf": [{"type": "string"}, {"type": "integer"}]})
-    assert isinstance(odd, T.TypeJsonSchema)
-    assert isinstance(T.as_type('{"type": "string"}'), T.TypeJsonSchema)
+    assert odd.raw
+    assert T.type_as_json(odd, "openai") == {"anyOf": [{"type": "string"}, {"type": "integer"}]}
+    assert T.as_type('{"type": "string"}').raw
+    assert T.convert_from_type({"a": 1}, odd) == {"a": 1}
 
 
-def test_schema_openai_strict() -> None:
+def test_schema_dialects() -> None:
     t = T.type_object(a=T.type_string("A"), b=T.type_number(required=False))
-    js = T.type_as_json(t, "openai")
-    assert js["required"] == ["a", "b"]
-    assert js["additionalProperties"] is False
-    assert list(js["properties"]["b"]["type"]) == ["number", "null"]
-    assert T.type_as_json(t, "generic")["required"] == ["a"]
-    gem = T.type_as_json(t, "gemini")
-    assert "description" not in gem
-    assert gem["required"] == ["a"]
-    assert T.type_as_json(T.type_object(), "gemini") == []
-    with pytest.raises(ValueError, match="not supported for OpenAI"):
+    strict = T.type_as_json(t, "openai")
+    assert strict["required"] == ["a", "b"]
+    assert strict["additionalProperties"] is False
+    assert strict["properties"]["b"]["type"] == ["number", "null"]
+    generic = T.type_as_json(t, "generic")  # Anthropic, Ollama
+    assert generic["required"] == ["a"]
+    assert generic["properties"]["b"]["type"] == "number"
+    gemini = T.type_as_json(t, "gemini")
+    assert gemini["required"] == ["a"]
+    assert "additionalProperties" not in gemini
+    with pytest.raises(ValueError, match="not supported for openai"):
         T.type_as_json(T.type_object(additional_properties=True), "openai")
+    assert T.type_has_additional_properties(T.type_object(additional_properties=True))
+    assert not T.type_has_additional_properties(t)
 
 
 def test_convert_from_type() -> None:
@@ -187,21 +95,22 @@ def test_convert_from_type() -> None:
     )
     assert out["name"] == "p"
     assert out["n"] is None  # optional and missing stays NULL
-    tags = out["tags"]
-    assert isinstance(tags, RVec)
-    assert tags.values == [2, None, None]
-    assert tags.attrs["levels"].values == ["x", "y"]
-    rows = out["rows"]
-    assert isinstance(rows, RList)
-    assert rows.names == ["a", "b"]
-    assert rows.values[0] == RVec("dbl", [1.0, 2.5])
-    assert rows.values[1] == RVec("lgl", [True, None])
+    assert out["tags"].tolist()[0] == "y"
+    assert out["tags"].isna().tolist() == [False, True, True]  # a value outside the enum is NA
+    rows = out["rows"]  # an array of objects is a data frame
+    assert list(rows.columns) == ["a", "b"]
+    assert rows["a"].tolist() == [1.0, 2.5]
+    assert bool(rows["b"].iloc[0]) is True
+    assert rows["b"].isna().tolist() == [False, True]
     # a missing required scalar is a typed NA
-    assert T.convert_from_type(None, T.type_string()) == RVec("chr", [None])
-    assert T.convert_from_type(None, T.type_enum(["a"])) == RVec("chr", [None])
+    assert T.convert_from_type(None, T.type_string()).isna().tolist() == [True]
+    assert T.convert_from_type(None, T.type_enum(["a"])).isna().tolist() == [True]
 
 
-def test_list_to_atomic() -> None:
-    assert T.list_to_atomic([1, 2.9, "a", None], "integer") == RVec("int", [1, 2, None, None])
-    assert T.list_to_atomic([1, 2.5, True], "number") == RVec("dbl", [1.0, 2.5, None])
-    assert T.list_to_atomic([], "string") == RVec("chr", [])
+def test_scalar_arrays_are_typed_columns() -> None:
+    ints = T.convert_from_type([1, 2.9, "a", None], T.type_array(T.type_integer()))
+    assert ints.isna().tolist() == [False, False, True, True]  # a string is NA
+    assert ints.dropna().tolist() == [1, 2]  # a float truncates
+    nums = T.convert_from_type([1, 2.5, True], T.type_array(T.type_number()))
+    assert nums.isna().tolist() == [False, False, True]
+    assert T.convert_from_type([], T.type_array(T.type_string())).tolist() == []

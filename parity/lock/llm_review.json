@@ -1,20 +1,10 @@
 {
-"llm.input.logical": {"r": "ac5146cf65ca52a8", "py": "8477a4e3f8a8576d", "diff": ["<R error, Python value>"]},
+"llm.input.logical": {"r": "ac5146cf65ca52a8", "py": "bc5199e7352dad12", "diff": ["<R error, Python value>"]},
 "llm.input.mixed_order_1": {"r": "ac5146cf65ca52a8", "py": "7bfb1be0bd9efea1", "diff": ["<R error, Python value>"]},
 "llm.input.mixed_order_2": {"r": "ac5146cf65ca52a8", "py": "3289c9cbea5eb20f", "diff": ["<R error, Python value>"]},
 "llm.input.mixed_order_3": {"r": "ac5146cf65ca52a8", "py": "7cd9920a52591bce", "diff": ["<R error, Python value>"]},
 "llm.input.na_only": {"r": "bf22b492428bda8e", "py": "966d019877e6b98e", "diff": ["answer[]"]},
 "llm.input.sanitised_duplicates": {"r": "9513d86bb433d763", "py": "4e07774612c1e45b", "diff": ["<root>"]},
 "llm.input.text_col_answer": {"r": "067de7c5301a098b", "py": "b60e5f2707c90921", "diff": ["<root>"]},
-"llm.ollama.no_content.all_empty": {"r": "ac5146cf65ca52a8", "py": "92e3eb1bb8636454", "diff": ["<R error, Python value>"]},
-"llm.ollama.no_content.frame": {"r": "ac5146cf65ca52a8", "py": "9d776eb31b79a29d", "diff": ["<R error, Python value>"]},
-"llm.ollama.no_content.mixed": {"r": "ac5146cf65ca52a8", "py": "1e5b3c71c69aa79f", "diff": ["<R error, Python value>"]},
-"llm.ollama.no_content.mixed_first": {"r": "ac5146cf65ca52a8", "py": "a55e69a95dac2e5c", "diff": ["<R error, Python value>"]},
-"llm.ollama.no_content.repeated": {"r": "103d681e55d580d9", "py": "d01e7837821d12a3", "diff": ["<root>"]},
-"llm.ollama.no_content.single": {"r": "c23f812efae74546", "py": "2fbe7e5c36065bc5", "diff": ["<root>"]},
-"llm.ollama.no_content.two_of_four": {"r": "ac5146cf65ca52a8", "py": "6df0689d8e990d84", "diff": ["<R error, Python value>"]},
-"ollama_native.reply.no_content": {"r": "907a48e0ac2a769e", "py": "raises:RuntimeError", "diff": ["<R value, Python error>"]},
-"ollama_native.reply.no_message": {"r": "907a48e0ac2a769e", "py": "raises:RuntimeError", "diff": ["<R value, Python error>"]},
-"reply.gemini_plain": {"r": "ac5146cf65ca52a8", "py": "460071ddc6fb0ce6", "diff": ["<R error, Python value>"]},
-"reply.groq_plain": {"r": "ac5146cf65ca52a8", "py": "45e09004825f8aec", "diff": ["<R error, Python value>"]}
+"structured.probe_truncated": {"r": "a5c3c9bdd66d166d", "py": "64d7f088b59014bc", "diff": ["error_msg[]"]}
 }
