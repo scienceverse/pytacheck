@@ -191,6 +191,18 @@ class TestTable:
         df = _read(tmp_path, 'a,b\n"x"y,"z,w"\n1,2\n', ",", True)
         assert df.shape == (2, 2) and df.iloc[0].tolist() == ['"x"y', "z,w"]
 
+    def test_text_after_a_multiline_quoted_field_does_not_end_the_table(
+        self, tmp_path: Path
+    ) -> None:
+        # read as plain text the field would break the row in two; read as pandas does, it is one
+        df = _read(tmp_path, 'a,b\n"x\ny"z,1\n"p",2\n"q",3\n', ",", True)
+        assert df.shape == (3, 2) and df["a"].tolist() == ["x\nyz", "p", "q"]
+
+    def test_text_after_a_quote_keeps_the_width_of_the_table(self, tmp_path: Path) -> None:
+        # reading "tab<TAB>here" as one field would make a one-column table of three lines
+        df = _read(tmp_path, 'F,1\nG,2\n"tab\there",3\n', "\t", False)
+        assert df.shape == (1, 2) and df.iloc[0, 0] == '"tab'
+
     def test_empty_and_blank_files(self, tmp_path: Path) -> None:
         assert _read(tmp_path, "", ",", True).shape == (0, 0)
         assert _read(tmp_path, "  \n \n", ",", True).shape == (0, 0)

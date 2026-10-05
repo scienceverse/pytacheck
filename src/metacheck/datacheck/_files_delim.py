@@ -10,7 +10,9 @@ first line with another number of fields (a footer, a ragged line, a blank line)
 blanks around an unquoted field are dropped, ``NA`` is missing (text when quoted, in a
 text column), and every quote is read where it stands: one opens a field only at the start
 of one and closes it at the first quote that a separator or a line end follows, any other
-(``"a"b``, or one that never closes) is an ordinary character.
+(``"a"b``, or one that never closes) is an ordinary character. Where such a quote ends the
+table, the file is also read as pandas reads it (the field closes there and the text after it
+joins it), and that reading is kept if it has more rows at the same width.
 """
 
 from __future__ import annotations
@@ -78,14 +80,15 @@ class _Quotes(NamedTuple):
     unclosed: int  # where the first of them has no quote to close it (``len(buf)``: none)
 
 
-def _quotes(buf: np.ndarray, sep: int, escape: bool) -> _Quotes:
+def _quotes(buf: np.ndarray, sep: int, escape: bool, loose: bool) -> _Quotes:
     """Which bytes of *buf* lie outside a quoted field and which quotes are ordinary characters.
 
     A quote opens a field only at the start of one (blanks apart).  The field closes at the
     first quote that is not half of a doubled one (``""``), and only if a separator or a line
     end follows it; otherwise (``"a"b``, or no such quote at all) the opening quote is an
     ordinary character, and so is every quote inside a field.  With *escape* a quote after an
-    odd number of backslashes is an ordinary character too.
+    odd number of backslashes is an ordinary character too.  With *loose* the field closes at
+    that quote whatever follows it, as pandas reads it, and the text after it joins the field.
     """
     quote = np.flatnonzero(buf == 34)
     plain: list[int] = []
@@ -132,7 +135,7 @@ def _quotes(buf: np.ndarray, sep: int, escape: bool) -> _Quotes:
         j = i + 1
         while j + 1 < len(pos) and pos[j + 1] == pos[j] + 1:  # a doubled quote
             j += 2
-        if j < len(pos) and closes[j]:
+        if j < len(pos) and (loose or closes[j]):
             marks += (pos[i], pos[j])
             i = j + 1
         else:
@@ -150,12 +153,12 @@ def _quotes(buf: np.ndarray, sep: int, escape: bool) -> _Quotes:
 
 
 def _lines(
-    buf: np.ndarray, sep: int, escape: bool
+    buf: np.ndarray, sep: int, escape: bool, loose: bool
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, _Quotes]:
     """Where each line of *buf* starts, how many fields it has, whether it is blank, and its
     quotes.  A separator or a line end inside a quoted field does not count.
     """
-    quotes = _quotes(buf, sep, escape)
+    quotes = _quotes(buf, sep, escape, loose)
     outside = quotes.outside
     after = np.append(buf[1:], 0)
     eol = ((buf == 10) | ((buf == 13) & (after != 10))) & outside
@@ -205,7 +208,7 @@ class _Plan(NamedTuple):
     ncol: int
     single: bool  # one column: the separator is part of the value, a blank line a row
     rows: int  # lines that hold a row
-    bad: int  # odd quotes in the table, or the line that ends it (``"a"b``)
+    bad: int  # odd quotes up to the end of the table, and in the line that ends it (``"a"b``)
     complete: bool  # the lines beyond the scanned ones cannot change this plan
 
 
@@ -217,8 +220,9 @@ def _plan(
     jump: int,
     fill: bool,
     escape: bool = False,
+    loose: bool = False,
 ) -> _Plan | None:
-    starts, counts, blank, quotes = _lines(buf, sep, escape)
+    starts, counts, blank, quotes = _lines(buf, sep, escape, loose)
     if blank.all():
         return None
     n = len(starts)
@@ -245,7 +249,7 @@ def _plan(
         ncol = int(counts[first + rows].max()) if len(rows) else 1
     top = starts[last + 1] if last + 1 < n else len(buf)  # the line that ends the table too
     complete = (truncated or ended) and first + jump < n - 1 and quotes.unclosed >= top
-    n_bad = int(np.count_nonzero((quotes.odd >= starts[first]) & (quotes.odd < top)))
+    n_bad = int(np.count_nonzero(quotes.odd < top))
     return _Plan(
         starts, quotes.outside, quotes.plain, first, last, ncol, single, len(rows), n_bad, complete
     )
@@ -332,9 +336,13 @@ def _split(
     if plan is None:
         return None
     plans = [plan]
-    if plan.bad and ((buf[:-1] == 92) & (buf[1:] == 34)).any():  # a backslash escapes a quote
-        escaped = _plan(buf, ord(sep), *args, escape=True)
-        plans += [escaped] if escaped is not None else []
+    if plan.bad:  # a quote that is not CSV quoting: read the file other ways too
+        if ((buf[:-1] == 92) & (buf[1:] == 34)).any():  # a backslash escapes a quote
+            escaped = _plan(buf, ord(sep), *args, escape=True)
+            plans += [escaped] if escaped is not None else []
+        closed = _plan(buf, ord(sep), *args, loose=True)  # a quoted field with text after it
+        if closed is not None and closed.ncol == plan.ncol:  # the same table, read further
+            plans.append(closed._replace(bad=plan.bad))  # a tie keeps the quotes ordinary
     for each in sorted(plans, key=lambda p: (-p.rows, p.bad)):  # most rows, then fewest odd quotes
         found = _read_plan(buf, each, sep, fill, latin1)
         if found is not None:
