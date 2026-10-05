@@ -8,7 +8,7 @@ each extracted field agrees, and every difference (``--max-diffs`` of them). A m
 differently from one call to the next shows up here too, so compare two runs of the *same* code
 first: a difference between before and after matters only when it is larger than that.
 
-Rows are matched by the paragraph they came from (``text_id``) and their order within it. A
+Rows are matched by the paragraph they came from (``text_id``, or the start of its text when the table has no ``text_id``) and their order within it. A
 number agrees when it is within ``--tolerance`` of the other, a string when it is equal, a missing
 value (``null``) only with another one. ``--strict`` makes the exit status 1 when anything
 differs, which is for comparing a run with itself or with a recorded one.
@@ -59,6 +59,12 @@ def same(a: Any, b: Any, tolerance: float) -> bool:
     return bool(a == b)
 
 
+def _where(row: dict[str, Any]) -> Any:
+    """The paragraph a row came from: its ``text_id``, or its first words when it has none."""
+    tid = row.get("text_id")
+    return tid if tid is not None else row.get("text_head")
+
+
 def match_rows(
     before: list[dict[str, Any]], after: list[dict[str, Any]]
 ) -> tuple[list[tuple[dict[str, Any], dict[str, Any]]], list[dict[str, Any]], list[dict[str, Any]]]:
@@ -68,7 +74,7 @@ def match_rows(
         seen: Counter[Any] = Counter()
         out = {}
         for row in rows:
-            tid = row.get("text_id")
+            tid = _where(row)
             out[(tid, seen[tid])] = row
             seen[tid] += 1
         return out
@@ -109,7 +115,7 @@ def compare(
                     out["diffs"].append(
                         {
                             "paper_id": pid,
-                            "text_id": rb.get("text_id"),
+                            "text_id": _where(rb),
                             "field": col,
                             "before": x,
                             "after": y,
@@ -121,7 +127,7 @@ def compare(
                 out["diffs"].append(
                     {
                         "paper_id": pid,
-                        "text_id": row.get("text_id"),
+                        "text_id": _where(row),
                         "field": "(row)",
                         "before": "present" if side == "before" else None,
                         "after": "present" if side == "after" else None,

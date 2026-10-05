@@ -236,6 +236,27 @@ def test_compare_of_identical_runs_finds_nothing(
     assert "No paper differs" in shown
 
 
+def test_compare_pairs_rows_without_text_id_by_their_text(
+    compare: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # `text_id` is empty in papers read from some formats: the paragraph's own words pair the rows
+    def row(head: str, **values: Any) -> dict[str, Any]:
+        return {**_row(0, **values), "text_id": None, "text_head": head}
+
+    before = _run_file(
+        tmp_path / "before.jsonl", "before", [_paper("a", [row("one"), row("two", power=0.8)])]
+    )
+    after = _run_file(
+        tmp_path / "after.jsonl",
+        "after",
+        [_paper("a", [row("two", power=0.8), row("one"), row("three")])],
+    )
+    assert compare.main([str(before), str(after), "--strict"]) == 1
+    shown = capsys.readouterr().out
+    assert "2 matched by paragraph, 2 of them with every value equal" in shown
+    assert "| a | three | (row) |" in shown
+
+
 def test_compare_lists_every_kind_of_difference(
     compare: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
