@@ -153,6 +153,13 @@ These change the results of validated checks (`all_p_values`, `stat_p_exact`, `s
 
 - `ref_consistency` counts the citations of an older bibr JSON export (bibr 0.3.0 and the v10 format), which marks them `bib` instead of Grobid's `bibr`. Before, such a paper had no citations: every reference was reported as not cited and the light was red. On 120 platform papers 4,973 of 4,973 references were reported, now 922, and 20 papers are green instead of none (86 older bibr papers: 3,700 to 375, 11 green). A 12.x export and Grobid TEI are unchanged. What the module still reports is mostly bibr's own noise (citations it did not link, author-year styles). metacheck has the same bug (docs/UPSTREAM_ISSUES.md U207).
 
+### Changed: the data checks use libraries where they used reproductions of R's
+
+- **RTF codebooks are read with `striprtf`** (U215; the `data` extra). Before, four regular expressions stripped the control words, so an RTF codebook reached the LLM as one line that began with the font table's text, with no paragraph breaks and without the characters written as `\'e9`, `\u233` or `\{`. Now paragraphs and tabs stay, the font table and other destination groups are skipped, and the escapes are decoded. Text that is not valid UTF-8 is still an error, as in R. Without the package the codebook is read as raw lines, as any file whose text cannot be extracted is. Only `parse_codebook()` of `.rtf` files changes; no data_check, codebook_check or psychds_check result on the parity cases or fixtures differs.
+- **`python-calamine` is no longer a core dependency.** Nothing imported it (the spreadsheet readers use their own `.xlsx` walker and xlrd). `uv.lock` and `install/constraints-app.txt` are regenerated.
+- The manifest writer of `manifest_merge()` and the value-label and missing-code writers use `json.dumps`, and the manifest is read with `json.loads` (a UTF-8 byte-order mark in an existing manifest is skipped instead of discarding the manifest). The bytes written are the same as before. The one-line vector writer (`RVector`), which only a test used, is gone.
+- `median()` in the data check helpers is `statistics.median`.
+
 ### Documentation
 
 - docs/CODEMAP.md maps every metacheck check, exported R function and R package dependency to its Python location, with the parity areas, status labels and register entries (docs/UPSTREAM_ISSUES.md) that apply. `scripts/codemap.py` generates its tables, and `scripts/codemap.py --check` (run by the test suite) fails when they are out of date.

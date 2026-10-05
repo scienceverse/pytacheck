@@ -1,5 +1,7 @@
 {
+".extract_rich_text.codebook.rtf.rtf": {"r": "3548748dd78339e4", "py": "a97533a5514c11c1", "diff": ["[]"]},
 ".looks_like_freetext_labels.na": {"r": "f2af3994fe184ddc", "py": "e6e5bcc9388d34ec", "diff": ["[]"]},
+".strip_rtf.basic": {"r": "99028666a88d3999", "py": "8e9b1ef092fa356e", "diff": ["[]"]},
 "match_column_labels.empty_columns": {"r": "ac5146cf65ca52a8", "py": "d6042a036047724a", "diff": ["<R error, Python value>"]},
 "match_column_labels.na_colname_qsf": {"r": "ac5146cf65ca52a8", "py": "51093867a8505314", "diff": ["<R error, Python value>"]},
 "match_column_labels.na_group": {"r": "2bd7ea417d437b3d", "py": "ba934c85e44278fe", "diff": ["codebook_variable[]", "label[]", "label_method[]", "label_source[]", "label_status[]"]},
@@ -11,5 +13,6 @@
 "match_column_labels.qsf_no_source": {"r": "ac5146cf65ca52a8", "py": "d154e9ab8314d415", "diff": ["<R error, Python value>"]},
 "match_column_labels.range_and_items": {"r": "b7cc6df1cdc69e30", "py": "38e37ca3285d6e2e", "diff": ["label[]", "label_method[]", "label_status[]"]},
 "match_column_labels.ranges": {"r": "f453a16735834de9", "py": "275652245842ed38", "diff": ["codebook_variable[]", "label[]", "label_method[]", "label_source[]", "label_status[]"]},
+"parse_codebook.codebook.rtf": {"r": "3548748dd78339e4", "py": "eb20dd7c0861e7ee", "diff": ["<root>"]},
 "parse_codebook.utf8_na.csv": {"r": "5bfc8096f74e2624", "py": "b3f629ae15320397", "diff": ["label[]"]}
 }
