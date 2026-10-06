@@ -21,15 +21,17 @@ pc.module_run(paper, "all_p_values")
 
 or on the command line: `pytacheck run paper.pdf -m marginal -m all_p_values`.
 
-bibr 0.5.1, the release on PyPI, writes export schema 11.0, which pytacheck does not
-read (see section 2). Until a bibr release writes schema 12.x, `pc.read("paper.pdf")`
-stops with an error that names the schema. bibr's main branch writes 12.1.
+The extra installs bibr 0.6.0 or later. bibr 0.6.0 is the first release on PyPI that
+writes export schema 12.x (it writes 12.1); bibr 0.5.1 writes 11.0, which pytacheck does
+not read (see section 2). If `pc.read("paper.pdf")` stops with an error that names
+schema 11.0, upgrade bibr: `pip install -U "bibr>=0.6.0"`.
 
 bibr's result is read straight into a `Paper` (`pc.from_bibr(result)`), with no
 JSON written to disk: a native bibr export schema 12.x paper, the same object
 `pc.read()` returns for bibr's JSON export. To skip extraction next time, save the
-paper (see below for what `pc.paper_write()` does with each schema version) or write
-the result's `data` to a JSON file yourself, which holds every key bibr wrote.
+paper (see below for what `pc.paper_write()` does with each schema version; a paper
+from bibr 0.6.0 is 12.1, which it does not save as 12.0) or write the result's `data`
+to a JSON file yourself, which holds every key bibr wrote.
 
 ## 2. From bibr JSON
 

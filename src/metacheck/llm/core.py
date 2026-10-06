@@ -938,13 +938,15 @@ def _text_frame(text: Any, text_col: str) -> pd.DataFrame:
         s = pd.Series(vals, dtype="boolean")
     else:
         # bytes are text in an unknown encoding (R: a string that may not be
-        # valid UTF-8); .llm_sanitise_text() reinterprets them as R does
+        # valid UTF-8); .llm_sanitise_text() reinterprets them as R does. Their
+        # surrogates need Python-backed strings: Arrow's (pandas' default with
+        # pyarrow installed) cannot hold them
         s = pd.Series(
             [
                 v.decode("utf-8", "surrogateescape") if isinstance(v, bytes) else as_character(v)
                 for v in vals
             ],
-            dtype="string",
+            dtype=pd.StringDtype("python"),
         )
     return pd.DataFrame({text_col: s})
 

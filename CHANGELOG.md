@@ -7,6 +7,11 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: the bibr extra requires bibr 0.6.0
+
+- **Changed:** `metacheck[bibr]` (and so `metacheck[all]`) requires bibr 0.6.0 or later, the first bibr release on PyPI that writes export schema 12.x (it writes 12.1). It allowed bibr 0.5.1, which writes 11.0, so `pc.read("paper.pdf")` stopped with the error that names the schema.
+- **Comes with it:** bibr 0.6.0 depends on pyarrow, so the extra now installs it, and with pyarrow pandas keeps text in Arrow by default. Arrow cannot hold the lone surrogates that stand for the bytes of a file name that is not valid UTF-8, so `check_file_naming()`, `file_category()` (and `data_classify_files()` through it), the file listing of the data package checks and `llm()` given bytes raised `UnicodeEncodeError` on such names when pyarrow was installed. Those columns are now Python-backed strings, as data_check's raw text already was. Without pyarrow nothing changes.
+
 ### Changed: LLM calls go through the official provider SDKs
 
 - **Changed:** `llm()` sends its requests with the official SDKs of the providers (`openai`, `anthropic` and `google-genai`), not with a hand-written port of ellmer (D73). The SDKs are the optional extra `metacheck[llm]` (also in `metacheck[all]`; the one-command installer installs it) and are imported when a model is first called, so `import metacheck` loads none of them. Without them a call gives an error row that says how to install them. OpenAI-compatible providers (Groq, DeepSeek, Mistral, OpenRouter, Hugging Face, Perplexity, Portkey, Cloudflare, Azure OpenAI, Ollama, LM Studio, vLLM) go through the `openai` SDK's chat completions, `openai/...` models through its Responses API.
