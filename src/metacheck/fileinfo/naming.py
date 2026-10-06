@@ -139,8 +139,11 @@ def _valid_yyyymmdd(d: str) -> bool:
 
 
 def _frame(rows: Sequence[tuple[Any, ...]], columns: Sequence[str]) -> pd.DataFrame:
+    # Python-backed strings: a name that is not valid UTF-8 keeps its surrogates,
+    # which Arrow's (pandas' default with pyarrow installed) cannot hold
+    raw = pd.StringDtype("python")
     return pd.DataFrame(
-        {col: pd.Series([r[i] for r in rows], dtype="string") for i, col in enumerate(columns)}
+        {col: pd.Series([r[i] for r in rows], dtype=raw) for i, col in enumerate(columns)}
     )
 
 

@@ -125,15 +125,18 @@ def list_files(root: str | os.PathLike[str], base: str = "") -> Any:
     rels = [_readable(r) for r in rows["rel"]]
     rows["data_type"] = data_classify_files(names, rels) if names else []
     rows["doc_role"] = _data_doc_role(names) if names else []
-    dtypes = {
-        "path": "string",
-        "name": "string",
-        "folder": "string",
-        "rel": "string",
+    # names keep their surrogates, which Arrow-backed strings (pandas' default
+    # with pyarrow installed) cannot hold
+    raw = pd.StringDtype("python")
+    dtypes: dict[str, Any] = {
+        "path": raw,
+        "name": raw,
+        "folder": raw,
+        "rel": raw,
         "in_base": "boolean",
-        "top": "string",
+        "top": raw,
         "depth": "Int64",
-        "ext": "string",
+        "ext": raw,
         "size": "Int64",
         "hidden": "boolean",
         "link": "boolean",

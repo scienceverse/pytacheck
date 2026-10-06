@@ -182,7 +182,9 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
     if isinstance(contents, pd.DataFrame):
         df = contents.copy()
     else:
-        df = pd.DataFrame({"name": pd.Series(_chr_list(contents), dtype="string")})
+        # Python-backed strings: a name that is not valid UTF-8 keeps its
+        # surrogates, which Arrow's (pandas' default with pyarrow) cannot hold
+        df = pd.DataFrame({"name": pd.Series(_chr_list(contents), dtype=pd.StringDtype("python"))})
 
     nrow = len(df)
     name_col = _dollar(df, "name")
