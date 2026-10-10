@@ -60,3 +60,43 @@ docker compose up
 Compose also publishes bibr's port on `127.0.0.1` only, since bibr has no key.
 
 With `docker run`, pass the variable with `-e PYTACHECK_API_KEY`.
+
+## Deprecated Python names
+
+This page is about the REST API; the Python API is the top level of `import metacheck`.
+38 of its names exist only because the R package exports them, and nothing in metacheck
+uses them: no module, check, pack, CLI command, API route or app page. They are
+deprecated and go in the next minor release (decided by the maintainer, 2026-10-10).
+Reading one from `metacheck` gives one `DeprecationWarning` per process; importing it
+from its own submodule does not warn. The list is `_DEPRECATED` in
+`src/metacheck/__init__.py`, and `tests/foundation/test_deprecations.py` fails if code
+in the package starts to use one of them. The [changelog](../CHANGELOG.md) says what was
+kept, and why.
+
+| Name | Evidence (callers in `src/`) | Instead |
+|---|---|---|
+| `dataverse_file_download` | none; `repo_check` lists Dataverse with `dataverse_info()` and `download_repo_files()` fetches the files | `repo_check`, then `download_repo_files()` |
+| `dryad_file_download` | none; `repo_check` lists Dryad with `dryad_info()` | as above |
+| `dspace7_file_download` | none; `repo_check` lists DSpace 7 items with the private `_dspace7_file_lists()` | as above |
+| `figshare_file_download` | only `researchdata4tu_file_download()`, itself deprecated; `repo_check` uses `figshare_info()` | as above |
+| `psycharchives_file_download` | none; `repo_check` uses the private `_psycharchives_file_lists()` | as above |
+| `researchdata4tu_file_download` | none; `repo_check` uses `researchdata4tu_info()` | as above |
+| `reshare_file_download` | none; `repo_check` uses `reshare_info()` | as above |
+| `zenodo_file_download` | none; `repo_check` uses `zenodo_info()` | as above |
+| `fsd_info`, `fsd_links` | none; no check looks for Finnish Social Science Data Archive links | – |
+| `github_info` | none; `repo_check` lists GitHub with `github_files()` and `github_tree_files()` | – |
+| `github_languages`, `github_readme` | only `github_info()` | – |
+| `osf_api_check` | none; the OSF checks call `osf_info()` and `osf_get_all_pages()` directly | – |
+| `osf_preprint_list` | none; no check lists OSF preprints | – |
+| `psycharchives_info` | none; `repo_check` uses `_psycharchives_file_lists()` | – |
+| `psycharchives_links` | none; `repo_check` finds PsychArchives links with `dspace_links()` | `dspace_links()` |
+| `rbox_info` | none; `repo_check` lists ResearchBox with `rbox_file_download()` | – |
+| `zenodo_upload` | none; it uploads a user's folders to Zenodo, outside any check (ROADMAP R-ONLY-FEATURES) | – |
+| `check_orcid`, `get_orcid`, `orcid_person` | none; no check looks up ORCIDs | – |
+| `credit_roles` | none; it returns the CRediT role table (the paper readers fill the schema field of that name themselves) | – |
+| `datacite_doi`, `openalex_doi`, `openalex_query` | none; the reference checks query Crossref through `add_bib_match()` | – |
+| `doi_lookup`, `doi_resolves` | none; no check asks doi.org | – |
+| `rw` | none; an alias of `retractionwatch()`, and `ref_retraction` reads the database with `rw_rows()` | `retractionwatch()` |
+| `papers_available` | only `papers_metadata()`, itself deprecated | – |
+| `papers_load`, `papers_metadata`, `papers_remove` | none; they download, describe and delete the scienceverse/papers corpora in a session | – |
+| `export_jasp_html`, `export_mplus_html`, `export_omv_html`, `export_spv_html`, `export_stata_smcl_html` | none; the checks read statistics output with the `import_*()` functions (`reproducibility_check`, the data file readers), which stay (ROADMAP D19) | – |
