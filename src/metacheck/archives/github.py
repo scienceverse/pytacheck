@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 
 from metacheck._r import slashed
-from metacheck._values import as_int, is_missing
+from metacheck._values import as_int, field, is_missing
 
 if TYPE_CHECKING:
     import httpx
@@ -62,23 +62,6 @@ def _perform(method: str, url: str, **kwargs: Any) -> httpx.Response:
     if resp is None:
         raise ConnectionError(f"Failed to perform HTTP request: {method} {url}")
     return resp
-
-
-def _dollar(x: Any, name: str) -> Any:
-    """R ``x$name`` on parsed JSON (``simplifyVector = FALSE``).
-
-    ``NULL`` for ``NULL`` or an unnamed list (a JSON array), the exact or
-    unique partial match on a named list, and R's error on an atomic value.
-    """
-    from collections.abc import Mapping
-
-    from metacheck.db._utils import r_dollar
-
-    if x is None or isinstance(x, list | tuple):
-        return None
-    if isinstance(x, Mapping):
-        return r_dollar(x, name)
-    raise TypeError("$ operator is invalid for atomic vectors")
 
 
 def _body_json(resp: httpx.Response) -> Any:
@@ -492,7 +475,7 @@ def _github_readme(clean_repo: str) -> str:
     if resp.status_code != 200:
         return ""
     content = _body_json(resp)
-    raw = base64.b64decode(str(_dollar(content, "content") or ""))
+    raw = base64.b64decode(str(field(content, "content") or ""))
     if b"\x00" in raw:
         # R: rawToChar() refuses a NUL byte
         raise ValueError("embedded nul in string")
@@ -625,7 +608,7 @@ def _github_files(repo: Any, clean_repo: str, dir: str, recursive: bool) -> pd.D
             )
             _message("Rate limit exceeded, resetting at ", reset)
         else:
-            _message(dir, ": ", _dollar(contents, "message") or "")
+            _message(dir, ": ", field(contents, "message") or "")
         # NULL rather than an error, so a rate limit at the end of a file
         # list still returns the files up to that point
         return None
@@ -726,10 +709,10 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         return fallback("main", None)
 
     meta = _body_json(meta_resp)
-    default_branch = _dollar(meta, "default_branch")
+    default_branch = field(meta, "default_branch")
     if default_branch is None:
         default_branch = "main"
-    license_id = _empty_or(_dollar(_dollar(meta, "license"), "spdx_id"))
+    license_id = _empty_or(field(field(meta, "license"), "spdx_id"))
 
     # 2. the Git tree (recursive, one request)
     try:
@@ -744,7 +727,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         return fallback(default_branch, license_id)
 
     tree = _body_json(tree_resp)
-    if _dollar(tree, "truncated") is True:
+    if field(tree, "truncated") is True:
         return {
             "gated": True,
             "reason": "GitHub repo tree truncated (>100 000 items); too large to list",
@@ -753,8 +736,8 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
             "license": license_id,
         }
 
-    blobs = _filter_blobs(_dollar(tree, "tree") or [])
-    paths = [_empty_or(_dollar(x, "path"), "") for x in blobs]
+    blobs = _filter_blobs(field(tree, "tree") or [])
+    paths = [_empty_or(field(x, "path"), "") for x in blobs]
     if not blobs:
         files_df = _empty_tree_files()
     else:
@@ -768,9 +751,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
                 "name": pd.Series(names, dtype="string"),
                 "path": pd.Series(paths, dtype="string"),
                 "download_url": pd.Series([raw_base + p for p in paths], dtype="string"),
-                "size": pd.Series(
-                    [_vapply_num(_dollar(x, "size")) for x in blobs], dtype="float64"
-                ),
+                "size": pd.Series([_vapply_num(field(x, "size")) for x in blobs], dtype="float64"),
                 "ft": pd.Series(["file"] * len(blobs), dtype="string"),
             }
         )
@@ -795,7 +776,7 @@ def _filter_blobs(entries: Any) -> list[Any]:
     """
     if isinstance(entries, dict):
         entries = list(entries.values())
-    flags = [t == "blob" for t in (_dollar(x, "type") for x in entries) if t is not None]
+    flags = [t == "blob" for t in (field(x, "type") for x in entries) if t is not None]
     return [entries[i] for i, keep in enumerate(flags) if keep is True]
 
 

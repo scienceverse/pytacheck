@@ -11,6 +11,7 @@
 "expand.zip_skip_code": {"r": "26325af701e34dab", "py": "ced8c5dded57147f", "diff": ["file_type[]"]},
 "expand.zip_stimuli": {"r": "ff4f88d73b40db37", "py": "d65c76d6e469d810", "diff": ["file_type[]"]},
 "expand.zip_unicode": {"r": "6310e50b58e4788b", "py": "c4c734aaa985e60b", "diff": ["file_type[]"]},
+"file_category.partial_match": {"r": "9a5edaa5f428a541", "py": "raises:ValueError", "diff": ["<R value, Python error>"]},
 "zip_fetch_members.all": {"r": "19596620302999a2", "py": "27a197da628247e2", "diff": ["error[]", "ok[]", "path[]"]},
 "zip_fetch_members.deflated": {"r": "4773fbab08884444", "py": "38c9eb1d44ab4d7e", "diff": ["error[]", "ok[]", "path[]"]},
 "zip_fetch_members.subset": {"r": "c85e4674de1b34f0", "py": "607f53ed79b2011e", "diff": ["error[]", "ok[]", "path[]"]},

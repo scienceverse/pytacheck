@@ -22,10 +22,10 @@ from pathlib import Path
 from typing import Any
 
 from metacheck._r import gregexpr_all, grepl, gsub, r_sort_key, trimws
+from metacheck._values import field
 from metacheck.statout.jasp import (
     _check_field_names,
     _column_attrs,
-    _dollar,
     _export_archive_html,
     _field_list,
     _frame_from_columns,
@@ -85,9 +85,9 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
             )
         meta = _read_json(files[base.index("metadata.json")])
         xdat = _read_json(files[base.index("xdata.json")]) if "xdata.json" in base else {}
-        ds = _dollar(meta, "dataSet")
-        fields = _field_list(_dollar(ds, "fields"))
-        nrow = _dollar(ds, "rowCount")
+        ds = field(meta, "dataSet")
+        fields = _field_list(field(ds, "fields"))
+        nrow = field(ds, "rowCount")
         if nrow is None:
             nrow = 0
 
@@ -102,13 +102,13 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
         col_attrs: list[dict[str, Any]] = []
         with open(files[base.index("data.bin")], "rb") as fh:
             for f in fields:
-                dt = _dollar(f, "dataType")
+                dt = field(f, "dataType")
                 if dt is None:
                     dt = "Integer"
-                mt = _dollar(f, "measureType")
+                mt = field(f, "measureType")
                 if mt is None:
                     mt = "Nominal"
-                name = _dollar(f, "name")
+                name = field(f, "name")
                 labs = None
                 if dt == "Decimal":
                     cols.append(np.asarray(_read_doubles(fh, int(nrow)), dtype="float64"))
@@ -127,9 +127,9 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
                     else:
                         cols.append(pd.array(idx, dtype="Int64"))
                         labs = _omv_labels(f, xdat)
-                ttl = _dollar(f, "description")
+                ttl = field(f, "description")
                 if ttl is None:
-                    ttl = _dollar(f, "title")
+                    ttl = field(f, "title")
                 if ttl is None:
                     ttl = ""
                 label = _r_chr(ttl) if ttl != "" and ttl != name else None
@@ -155,12 +155,11 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
     }
 
 
-def _omv_labels(field: Any, xdat: Any) -> list[tuple[str | None, float]]:
+def _omv_labels(spec: Any, xdat: Any) -> list[tuple[str | None, float]]:
     """Port of R/omv.R::.omv_labels(): ``(label, code)`` pairs for one field."""
-    lst = _dollar(field, "labels")
+    lst = field(spec, "labels")
     if not lst:
-        x = _xdat_entry(xdat, _dollar(field, "name"))
-        lst = _dollar(x, "labels") if x is not None else None
+        lst = field(_xdat_entry(xdat, field(spec, "name")), "labels")
     return _labels_from_list(lst)
 
 

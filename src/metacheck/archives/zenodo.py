@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 from metacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
@@ -360,7 +360,6 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
     from metacheck import http
     from metacheck.archives import _spinner, _tick
     from metacheck.archives.github import _body_json, _empty_or
-    from metacheck.archives.github import _dollar as r_dollar
 
     with _spinner(pb) as bar:
         zid = _zenodo_id(zenodo_id)
@@ -391,34 +390,34 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
         if not ids:  # R: obj$title <- ... on data.frame(zenodo_id = character(0))
             raise ValueError("replacement has 1 row, data has 0")
 
-        metadata = r_dollar(rec, "metadata")
-        lic = r_dollar(metadata, "license")
+        metadata = field(rec, "metadata")
+        lic = field(metadata, "license")
         if lic is not None and not isinstance(lic, dict | list):
             # older records give the licence as a plain string ("cc-by"), which
             # metacheck's `metadata$license$id` cannot read (U34)
             license_value = lic
         else:
             license_value = _empty_or(
-                r_dollar(lic, "id"), _empty_or(r_dollar(lic, "title"), _empty_or(lic))
+                field(lic, "id"), _empty_or(field(lic, "title"), _empty_or(lic))
             )
-        stats = r_dollar(rec, "stats")
+        stats = field(rec, "stats")
         row = {
             "zenodo_id": zid,
-            "title": _scalar_field(r_dollar(metadata, "title")),
-            "doi": _scalar_field(r_dollar(rec, "doi")),
-            "description": _scalar_field(r_dollar(metadata, "description")),
-            "publication_date": _scalar_field(r_dollar(metadata, "publication_date")),
-            "updated_date": _scalar_field(r_dollar(rec, "updated")),
-            "creators": r_dollar(metadata, "creators"),
-            "keywords": r_dollar(metadata, "keywords"),
-            "resource_type": _scalar_field(r_dollar(r_dollar(metadata, "resource_type"), "type")),
-            "journal": r_dollar(metadata, "journal"),
-            "owners": r_dollar(rec, "owners"),
+            "title": _scalar_field(field(metadata, "title")),
+            "doi": _scalar_field(field(rec, "doi")),
+            "description": _scalar_field(field(metadata, "description")),
+            "publication_date": _scalar_field(field(metadata, "publication_date")),
+            "updated_date": _scalar_field(field(rec, "updated")),
+            "creators": field(metadata, "creators"),
+            "keywords": field(metadata, "keywords"),
+            "resource_type": _scalar_field(field(field(metadata, "resource_type"), "type")),
+            "journal": field(metadata, "journal"),
+            "owners": field(rec, "owners"),
             "license": _scalar_field(license_value),
-            "downloads": _scalar_field(r_dollar(stats, "downloads")),
-            "unique_downloads": _scalar_field(r_dollar(stats, "unique_downloads")),
-            "views": _scalar_field(r_dollar(stats, "views")),
-            "files": r_dollar(rec, "files"),
+            "downloads": _scalar_field(field(stats, "downloads")),
+            "unique_downloads": _scalar_field(field(stats, "unique_downloads")),
+            "views": _scalar_field(field(stats, "views")),
+            "files": field(rec, "files"),
         }
         out = _info_frame(row)
         if len(ids) > 1:  # R recycles the one record's fields over the IDs
@@ -454,17 +453,16 @@ def _is_zip(name: list[Any]) -> list[bool]:
 
 def _file_rows(files_list: list[Any]) -> pd.DataFrame:
     """The flat ``id``/``key``/``size``/``checksum``/``self`` table of a record's files."""
-    from metacheck.archives.github import _dollar as r_dollar
 
     ids, keys, sizes, checksums, selfs = [], [], [], [], []
     for x in files_list:
         if not isinstance(x, dict | list):
             raise TypeError("$ operator is invalid for atomic vectors")
-        ids.append(r_dollar(x, "id"))
-        keys.append(r_dollar(x, "key"))
-        sizes.append(_as_double(r_dollar(x, "size")))
-        checksums.append(r_dollar(x, "checksum"))
-        selfs.append(r_dollar(r_dollar(x, "links"), "self"))
+        ids.append(field(x, "id"))
+        keys.append(field(x, "key"))
+        sizes.append(_as_double(field(x, "size")))
+        checksums.append(field(x, "checksum"))
+        selfs.append(field(field(x, "links"), "self"))
 
     def chr_col(values: list[Any]) -> pd.Series:
         return pd.Series([None if is_missing(v) else str(v) for v in values], dtype="string")

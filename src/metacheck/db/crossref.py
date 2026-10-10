@@ -6,7 +6,7 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r.base import as_character
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 from metacheck.db import _utils
 from metacheck.db._utils import (
     NA_character,
@@ -14,7 +14,6 @@ from metacheck.db._utils import (
     as_vector,
     default_email,
     paste_unlist,
-    r_dollar,
     records_frame,
     resp_body_json,
     resp_content_type,
@@ -218,23 +217,17 @@ def _deparse_chr_vector(values: Sequence[Any]) -> str:
     return parts[0] if len(parts) == 1 else "c(" + ", ".join(parts) + ")"
 
 
-def _df_dollar_name(df: pd.DataFrame, name: str) -> str | None:
-    """The column ``df$name`` finds (exact, else unique partial match), or ``None``."""
+def _df_column(df: pd.DataFrame, name: str) -> list[Any] | None:
+    """The column called *name* (exactly) as a list, missing cells ``None``; ``None`` if absent.
+
+    The first of duplicate names wins, as in R.
+    """
     cols = [str(c) for c in df.columns]
-    if name in cols:
-        return name
-    hits = [c for c in cols if c.startswith(name)]
-    return hits[0] if len(hits) == 1 else None
-
-
-def _df_dollar(df: pd.DataFrame, name: str) -> Any:
-    """``df$name`` on a data frame (exact, else unique partial match), as a list."""
-    col = _df_dollar_name(df, name)
-    if col is None:
+    if name not in cols:
         return None
     return [
         None if (not isinstance(v, list | tuple | Mapping) and is_missing(v)) else v
-        for v in df[col].tolist()
+        for v in df.iloc[:, cols.index(name)].tolist()
     ]
 
 
@@ -283,26 +276,26 @@ def _datacite_title(x: Any) -> Any:
 
 
 def _datacite_row(bd: Any) -> dict[str, Any]:
-    att = r_dollar(r_dollar(bd, "data"), "attributes")
+    att = field(field(bd, "data"), "attributes")
     authors: list[dict[str, Any]] = []
-    creators = r_dollar(att, "creators")
+    creators = field(att, "creators")
     for a in creators.values() if isinstance(creators, Mapping) else creators or []:
         if a is None or _r_length(a) == 0:
             continue
-        authors.append({"given": r_dollar(a, "givenName"), "family": r_dollar(a, "familyName")})
+        authors.append({"given": field(a, "givenName"), "family": field(a, "familyName")})
 
     info = {
         "service": "datacite",
-        "service_id": r_dollar(r_dollar(bd, "data"), "id"),
+        "service_id": field(field(bd, "data"), "id"),
         "score": None,
-        "doi": r_dollar(att, "doi"),
-        "bib_type": r_dollar(r_dollar(att, "types"), "bibtex"),
-        "title": _datacite_title(r_dollar(att, "titles")),
+        "doi": field(att, "doi"),
+        "bib_type": field(field(att, "types"), "bibtex"),
+        "title": _datacite_title(field(att, "titles")),
         "authors": None,
-        "container": _datacite_title(r_dollar(att, "container")),
+        "container": _datacite_title(field(att, "container")),
         "publisher": att.get("publisher") if isinstance(att, Mapping) else None,
-        "year": r_dollar(att, "publicationYear"),
-        "date": _unlist_first(r_dollar(att, "dates")),
+        "year": field(att, "publicationYear"),
+        "date": _unlist_first(field(att, "dates")),
         "url": att.get("url") if isinstance(att, Mapping) else None,
         "version": att.get("version") if isinstance(att, Mapping) else None,
     }
@@ -551,7 +544,7 @@ def _parse_item(item: Mapping[str, Any], select: Sequence[str]) -> _Frame:
 
     # item$title <- item$title[[1]]  (NULL removes it)
     for key in ("title", "container-title"):
-        value = r_dollar(item, key)
+        value = field(item, key)
         first = _first(value) if _r_length(value) else None
         if first is None:
             item.pop(key, None)
@@ -559,10 +552,10 @@ def _parse_item(item: Mapping[str, Any], select: Sequence[str]) -> _Frame:
             item[key] = first
 
     ok, year = _date_year(
-        r_dollar(r_dollar(r_dollar(item, "journal-issue"), "published-print"), "date-parts")
+        field(field(field(item, "journal-issue"), "published-print"), "date-parts")
     )
     if not ok:
-        ok, year = _date_year(r_dollar(r_dollar(item, "published"), "date-parts"))
+        ok, year = _date_year(field(field(item, "published"), "date-parts"))
     if ok:
         if year is None:
             item.pop("year", None)  # `item$year <- NULL`
@@ -570,7 +563,7 @@ def _parse_item(item: Mapping[str, Any], select: Sequence[str]) -> _Frame:
             item["year"] = year
     item.pop("published", None)
 
-    authors = _author_records(r_dollar(item, "author"))
+    authors = _author_records(field(item, "author"))
     item.pop("author", None)
 
     # a JSON null is a missing value, not a field (metacheck's data.frame()
@@ -662,13 +655,12 @@ def _crossref_doi_one(
         if resp.status_code >= 400:
             return {"DOI": doi, "error": f"HTTP {resp.status_code}"}
         item = resp_body_json(resp)
-        status = r_dollar(item, "status")
-        if status is None or isinstance(status, list | Mapping):
-            raise ValueError("argument is of length zero")
-        if status != "ok":
-            err = r_dollar(r_dollar(item, "body"), "message-type")
+        # a reply without a "status" is not a work: its message-type is the
+        # error, as for any other status (D81)
+        if field(item, "status") != "ok":
+            err = field(field(item, "body"), "message-type")
             return {"DOI": doi, "error": "unknown" if err is None else err}
-        message = r_dollar(item, "message")
+        message = field(item, "message")
         return _frame_record(_parse_item(message if isinstance(message, Mapping) else {}, select))
     except Exception as exc:  # tryCatch(error = ) catches every error
         return {"DOI": doi, "error": str(exc)}
@@ -805,19 +797,19 @@ def crossref_query(
     if isinstance(ref, pd.DataFrame):
         if ref.shape[1] == 0:
             return pd.DataFrame()
-        title = _df_dollar(ref, "title")
-        author = _df_dollar(ref, "authors")
+        title = _df_column(ref, "title")
+        author = _df_column(ref, "authors")
         if author is None:
-            author = _df_dollar(ref, "author")
-        container = _df_dollar(ref, "container")
+            author = _df_column(ref, "author")
+        container = _df_column(ref, "container")
         if container is None:
-            container = _df_dollar(ref, "journal")
+            container = _df_column(ref, "journal")
         if container is None:
-            container = _df_dollar(ref, "booktitle")
+            container = _df_column(ref, "booktitle")
         # a table without author or container columns is searched by what it
         # has (metacheck's data.frame(title =, author = NULL) failed; U13)
-        cols = {"title": title, "author": author, "container": container}
-        cols = {k: v for k, v in cols.items() if v is not None}
+        found = {"title": title, "author": author, "container": container}
+        cols: dict[str, list[Any]] = {k: v for k, v in found.items() if v is not None}
         if "title" not in cols or len(ref) == 0:
             return pd.DataFrame()
         refs = [{k: v[i] for k, v in cols.items()} for i in range(len(ref))]
@@ -858,17 +850,17 @@ def crossref_query(
                 records.append({**base, "DOI": NA_character, "error": "request failed"})
                 continue
             j = resp_body_json(resp)
-            status = r_dollar(j, "status")
+            status = field(j, "status")
             if status is None or isinstance(status, list | Mapping):
                 raise ValueError("argument is of length zero")
             if status != "ok":
-                msg = r_dollar(r_dollar(j, "body"), "message")
+                msg = field(field(j, "body"), "message")
                 records.append(
                     {**base, "DOI": NA_character, "error": "unknown" if msg is None else msg}
                 )
                 continue
             parsed = _query_parse_records(
-                r_dollar(r_dollar(j, "message"), "items"), min_score, list(select)
+                field(field(j, "message"), "items"), min_score, list(select)
             )
             if not parsed:  # `x$ref <- r$ref` on a 0-row table
                 raise ValueError("replacement has 1 row, data has 0")
@@ -1053,7 +1045,7 @@ def _str_list(values: Sequence[Any]) -> list[str | None]:
 
 def _openalex_add_abstract(info: Any) -> Any:
     """Add ``abstract`` from ``abstract_inverted_index`` (port of ``.openalex_add_abstract()``)."""
-    aii = r_dollar(info, "abstract_inverted_index")
+    aii = field(info, "abstract_inverted_index")
     if aii is None:
         return info
     values = list(aii.values()) if isinstance(aii, Mapping) else aii
@@ -1225,7 +1217,7 @@ def openalex_query(
     if isinstance(j, str):
         return None
 
-    results = r_dollar(j, "results")
+    results = field(j, "results")
     if results is None or len(results) == 0:
         if ":" in title:
             maintitle = title.split(":", 1)[0]
@@ -1235,12 +1227,12 @@ def openalex_query(
     rows: list[dict[str, str | None]] = []
     for res in results:
         res = dict(res)
-        display = r_dollar(r_dollar(r_dollar(res, "primary_location"), "source"), "display_name")
+        display = field(field(field(res, "primary_location"), "source"), "display_name")
         if display is not None:
             res["source"] = display
         res.pop("primary_location", None)
-        authorships = r_dollar(res, "authorships")
-        names = [r_dollar(a, "raw_author_name") for a in (authorships or [])]
+        authorships = field(res, "authorships")
+        names = [field(a, "raw_author_name") for a in (authorships or [])]
         if all(isinstance(nm, str | int | float | bool) for nm in names):
             res["authors"] = "; ".join(as_character(nm) or "NA" for nm in names)
         else:  # sapply() gave a list: paste() deparses NULLs as "NULL"

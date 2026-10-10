@@ -26,10 +26,9 @@ import pandas as pd
 
 from metacheck._r.base import as_character, plural, trimws
 from metacheck._r.regex import compile_r, grepl, gsub, regexec, sub
-from metacheck._values import as_float, is_missing, is_true
+from metacheck._values import as_float, field, is_missing, is_true
 from metacheck.statout.r_output import (
-    _r_dollar,
-    _r_dollar_found,
+    _field_found,
     _r_names,
     _r_values,
     _RError,
@@ -144,25 +143,6 @@ def _num_or_na(x: Any) -> bool:
     return not is_missing(x)
 
 
-def _tb_field(tb: Any, key: str) -> tuple[bool, Any]:
-    """``tb[["key"]]`` of one table: ``(found, value)`` (a ``NULL`` table is empty).
-
-    Names are matched exactly. R's ``tb$key`` also matches a unique prefix,
-    so a table with ``line_seq`` but no ``line`` took ``line_seq`` as its
-    source line (UPSTREAM_ISSUES U141).
-    """
-    if tb is None:
-        return False, None
-    if isinstance(tb, _RNamedList):
-        for nm, v in tb.pairs:
-            if str(nm) == key:
-                return True, v
-        return False, None
-    if isinstance(tb, Mapping):
-        return (True, tb[key]) if key in tb else (False, None)
-    return _r_dollar_found(tb, key)
-
-
 def _tables_list(tables: Any) -> list[Any]:
     """The elements of a list of tables (a named list's values)."""
     return _r_values(tables)
@@ -190,11 +170,11 @@ def _stat_result_ids(tables: Sequence[Mapping[str, Any]], source_file: Any = pd.
     src = _source_prefix(source_file)
     locators = []
     for tb in tables:
-        has_line, line = _tb_field(tb, "line")
-        has_ti, ti = _tb_field(tb, "table_index")
-        has_an, analysis = _tb_field(tb, "analysis")
+        has_line, line = _field_found(tb, "line")
+        has_ti, ti = _field_found(tb, "table_index")
+        has_an, analysis = _field_found(tb, "analysis")
         if has_line and _num_or_na(line):
-            has_seq, seq = _tb_field(tb, "line_seq")
+            has_seq, seq = _field_found(tb, "line_seq")
             seq_n = seq if has_seq else 1
             locators.append(f"l{_paste_chr(line)}_{_paste_chr(seq_n)}")
         elif has_ti and _num_or_na(ti):
@@ -215,14 +195,14 @@ def _stat_test_id(
     analysis id, else the source line (+ ``line_seq``), else the table's
     base id; the row label is appended.
     """
-    aid = _tb_field(tb, "analysis_id")[1]
+    aid = _field_found(tb, "analysis_id")[1]
     if isinstance(aid, list | tuple):
         aid = aid[0] if len(aid) == 1 else None
-    has_line, line = _tb_field(tb, "line")
+    has_line, line = _field_found(tb, "line")
     if aid is not None and not is_missing(aid) and _paste_chr(aid) != "":
         anchor = "a" + _paste_chr(aid)
     elif has_line and _num_or_na(line):
-        has_seq, seq = _tb_field(tb, "line_seq")
+        has_seq, seq = _field_found(tb, "line_seq")
         anchor = f"l{_paste_chr(line)}_{_paste_chr(seq if has_seq else 1)}"
     else:
         # the table's base id without its source prefix, which is added below
@@ -267,8 +247,8 @@ def _stat_is_label_col(header: Any, values: Any, role: Mapping[str, Any] | None 
     if role is not None:
         # as.character(role$x %||% ""): a present None is NA, and nzchar(NA)
         # is TRUE, so an NA format declares a statistic.
-        ty_found, ty_v = _r_dollar_found(role, "type")
-        fm_found, fm_v = _r_dollar_found(role, "format")
+        ty_found, ty_v = _field_found(role, "type")
+        fm_found, fm_v = _field_found(role, "format")
         ty = (trimws(_paste_chr(ty_v)) or "").lower() if ty_found else ""
         fm = (trimws(_paste_chr(fm_v)) or "").lower() if fm_found else ""
         if fm:
@@ -400,10 +380,10 @@ def _long_rows(
     source_file: Any,
     rows: dict[str, list[Any]],
 ) -> None:
-    df = _tb_field(tb, "data")[1]
+    df = _field_found(tb, "data")[1]
     if df is None or not isinstance(df, pd.DataFrame) or len(df) == 0 or df.shape[1] == 0:
         return
-    if is_true(_tb_field(tb, "is_chart")[1]):
+    if is_true(_field_found(tb, "is_chart")[1]):
         return
     headers = [str(c) for c in df.columns]
     columns = _frame_columns(df)
@@ -413,7 +393,7 @@ def _long_rows(
     if not stat_cols:
         return
 
-    is_spv = _tb_field(tb, "syntax")[0]  # !is.null(tb$syntax): NA counts
+    is_spv = _field_found(tb, "syntax")[0]  # !is.null(tb$syntax): NA counts
     stats_col: int | None = None
     if is_spv:
         exact = [c for c in label_cols if (trimws(headers[c]) or "").lower() == "statistics"]
@@ -424,10 +404,10 @@ def _long_rows(
         else label_cols
     )
 
-    analysis = _tb_field(tb, "analysis")[1]
-    title = _tb_field(tb, "title")[1]
-    model_ref = _tb_field(tb, "model_ref")[1]
-    call_fn = _tb_field(tb, "call_fn")[1]
+    analysis = _field_found(tb, "analysis")[1]
+    title = _field_found(tb, "title")[1]
+    model_ref = _field_found(tb, "model_ref")[1]
+    call_fn = _field_found(tb, "call_fn")[1]
     stat_slugs = _ave_unique([_paste_chr(_stat_sanitize_id(headers[c])) for c in stat_cols])
 
     typ_cache: dict[str, Any] = {}
@@ -562,10 +542,10 @@ def stat_output_json(
 
     analyses: list[dict[str, Any]] = []
     for ti, tb in enumerate(tables):
-        df = _tb_field(tb, "data")[1]
+        df = _field_found(tb, "data")[1]
         if df is None or not isinstance(df, pd.DataFrame) or len(df) == 0 or df.shape[1] == 0:
             continue
-        if is_true(_tb_field(tb, "is_chart")[1]):
+        if is_true(_field_found(tb, "is_chart")[1]):
             continue
         headers = [str(c) for c in df.columns]
         columns = _frame_columns(df)
@@ -574,7 +554,7 @@ def stat_output_json(
         label_cols = [i for i, lab in enumerate(is_label) if lab]
         if not stat_cols:
             continue
-        call_fn = _tb_field(tb, "call_fn")[1]
+        call_fn = _field_found(tb, "call_fn")[1]
         typ_cache: dict[str, Any] = {}
 
         results: list[dict[str, Any]] = []
@@ -614,7 +594,7 @@ def stat_output_json(
             )
         if not results:
             continue
-        analyses.append({"analysis": _tb_field(tb, "analysis")[1], "results": results})
+        analyses.append({"analysis": _field_found(tb, "analysis")[1], "results": results})
     if not analyses:
         return None
     return {
@@ -653,7 +633,7 @@ def _elt(x: Any, key: str) -> tuple[bool, Any]:
     (e.g. by :func:`stat_output_json`) it stands for ``NA``, which is not
     ``NULL`` (R's ``list(analysis = NA_character_)``).
     """
-    found, val = _r_dollar_found(x, key)
+    found, val = _field_found(x, key)
     if not found:
         return True, None
     if val is None:
@@ -700,8 +680,8 @@ def stat_output_validate(doc: Any) -> dict[str, Any]:
     Port of ``R/stat-output.R::stat_output_validate()``. *doc* is a document
     (as from :func:`stat_output_json`), a JSON string or a path to a JSON
     file (a file holding JSON ``null`` is reported as invalid JSON).
-    Element access follows R's ``$`` (partial name matching, first of
-    duplicated names). Returns
+    Members are matched by their exact name (the first of duplicated names);
+    a scalar where an object belongs raises, as in metacheck. Returns
     ``{"valid", "issues", "summary": {"n_errors", "n_analyses", "n_results"}}``.
     """
     if isinstance(doc, str | os.PathLike):
@@ -873,9 +853,9 @@ def stat_output_write(
     longs = [
         s
         for s in stat_output
-        if isinstance(_r_dollar(s, "long"), pd.DataFrame) and len(_r_dollar(s, "long")) > 0
+        if isinstance(field(s, "long"), pd.DataFrame) and len(field(s, "long")) > 0
     ]
-    jsons = [s for s in stat_output if _r_dollar(s, "json") is not None]
+    jsons = [s for s in stat_output if field(s, "json") is not None]
     if not longs and not jsons:
         return None
 
@@ -883,11 +863,11 @@ def stat_output_write(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     if longs:
-        combined = bind_rows([_r_dollar(s, "long") for s in longs])
+        combined = bind_rows([field(s, "long") for s in longs])
         _write_csv(combined, out_dir / "results_long.csv")
 
     for s in jsons:
-        file = _r_dollar(s, "file")  # None: NULL -> "result"; NA -> "NA"
+        file = field(s, "file")  # None: NULL -> "result"; NA -> "NA"
         base = (
             "NA"
             if is_missing(file) and file is not None
@@ -895,6 +875,6 @@ def stat_output_write(
         )
         fn = sub("[.][^.]+$", "", base)
         json_path = out_dir / f"{fn}.statistical_output.json"
-        json_path.write_text(_to_json_pretty(_r_dollar(s, "json")) + "\n", encoding="utf-8")
+        json_path.write_text(_to_json_pretty(field(s, "json")) + "\n", encoding="utf-8")
 
     return str(out_dir)

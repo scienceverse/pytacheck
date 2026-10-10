@@ -1,4 +1,5 @@
 {
+"r_merge_captures.partial_line": {"r": "2ec988cd8e8ad3f3", "py": "41748b61a63ed890", "diff": ["<root>"]},
 "read_r_output.adversarial.code_lines": {"r": "97444a0d4f484b0d", "py": "6d40c69284ecdc84", "diff": ["[].analysis[]", "[].data"]},
 "read_r_output.adversarial.no_code_lines": {"r": "102cd1588aad168a", "py": "fec309bc429c2507", "diff": ["[].data"]},
 "read_r_output.adversarial.single_string": {"r": "97444a0d4f484b0d", "py": "3ea87b4fbd60e3c1", "diff": ["[].data"]},
@@ -15,6 +16,7 @@
 "stat_output_json.source_na": {"r": "e22f628b138ff2f3", "py": "53ccb745a748aa06", "diff": ["analyses[].results[].result_id[]", "analyses[].results[].test_id[]"]},
 "stat_output_json.source_null": {"r": "d8b0a3be141735d7", "py": "53ccb745a748aa06", "diff": ["analyses[].results[].test_id[]"]},
 "stat_output_json.unicode_ids": {"r": "328bbbf2f05ff644", "py": "4e73eeaef98ea80c", "diff": ["analyses[].results[].test_id[]"]},
+"stat_output_validate.partial_names": {"r": "afbf03cde09906ed", "py": "6724daa28b6b261f", "diff": ["issues", "summary.n_analyses[]", "summary.n_errors[]", "summary.n_results[]"]},
 "stat_output_write.file_null_na": {"r": "04f8973fd4b60f65", "py": "087638c0e29856d8", "diff": ["[][]"]},
 "stat_output_write.tricky": {"r": "40a2089ffa8cb45b", "py": "35930c22f21d9a78", "diff": ["[][]"]},
 "stat_results_long.named_list": {"r": "4bcc5b016e05fb22", "py": "1050c089122ded61", "diff": ["test_id[]"]},

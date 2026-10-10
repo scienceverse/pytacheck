@@ -10,6 +10,7 @@
 "import_spv.attrs.charts": {"r": "954280fd26a9a8f0", "py": "158780c6441032a6", "diff": ["<root>"]},
 "import_spv.charts": {"r": "05288489f55140d5", "py": "2077021c48a83a3d", "diff": ["<root>"]},
 "import_spv.modern": {"r": "682775a24a7d0787", "py": "a9ea01a9a4122d7f", "diff": ["[].data.value[]"]},
+"jasp_analyses_summary.flat": {"r": "b9b9388785087ffb", "py": "d988b1c4eae19734", "diff": ["[]"]},
 "mplus_output_tables.model_modification_indices": {"r": "aac5028bfbcb8d7d", "py": "bb86394861eaa5bb", "diff": ["consumed"]},
 "mplus_sections.adjacent": {"r": "91506db6e7e3750b", "py": "d5c40fd3433a3eb2", "diff": ["[].lines"]},
 "mplus_sections.twolevel": {"r": "45aac28c7f30d5c1", "py": "9e8a99059551ab0e", "diff": ["[].lines"]},

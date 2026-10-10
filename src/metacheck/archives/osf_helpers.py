@@ -93,20 +93,12 @@ def _records(data: Any) -> list[dict[str, Any]]:
     return [r for r in data if isinstance(r, dict)]
 
 
-def _dollar_key(keys: Sequence[str], name: str) -> str | None:
-    """The field ``x$name`` reads: the exact name only.
-
-    R's ``$`` also takes a unique prefix, so metacheck reads
-    ``relationships$root`` from ``root_folder`` when there is no ``root`` (U52).
-    """
-    return name if name in keys else None
-
-
 class _Cols:
     """Column extraction with ``%||%`` evaluated as R sees the data.
 
-    Names are matched exactly (R's ``$`` would also take a unique prefix,
-    see :func:`_dollar_key`). A single
+    Names are matched exactly (R's ``$`` also takes a unique prefix, so
+    metacheck reads ``relationships$root`` from ``root_folder`` when there is
+    no ``root``: U52). A single
     resource is a named list: ``x$a$b`` is ``NULL`` when any step is missing
     or JSON ``null``. A listing is a jsonlite data frame: a column exists
     when *any* record has the key (even with a ``null`` value, which becomes
@@ -134,11 +126,10 @@ class _Cols:
                     return None
                 if not isinstance(cur, dict):
                     raise TypeError("$ operator is invalid for atomic vectors")
-                key = _dollar_key(list(cur), name)
-                if key is None:
+                if name not in cur:
                     return None
-                keys.append(key)
-                cur = cur[key]
+                keys.append(name)
+                cur = cur[name]
             return None if cur is None else tuple(keys)
         level: list[Any] = list(self.context)
         for depth, name in enumerate(path):
@@ -148,12 +139,10 @@ class _Cols:
                     raise TypeError("$ operator is invalid for atomic vectors")
                 return None  # a list column: `$` gives NULL
             parents = [v for v in level if isinstance(v, dict)]
-            union = list(dict.fromkeys(k for v in parents for k in v))
-            key = _dollar_key(union, name)
-            if key is None:
+            if not any(name in v for v in parents):
                 return None
-            keys.append(key)
-            level = [v.get(key) for v in parents]
+            keys.append(name)
+            level = [v.get(name) for v in parents]
         return tuple(keys)
 
     def present(self, path: Sequence[str]) -> bool:
