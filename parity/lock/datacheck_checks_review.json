@@ -1,3 +1,6 @@
 {
+"data_check_constant.review.all_nan_strings": {"r": "ac5146cf65ca52a8", "py": "e69f4dc830a71c6c", "diff": ["<R error, Python value>"]},
+"data_check_constant.review.battery": {"r": "03f810cb4db60369", "py": "463c8d6b9d52cf4e", "diff": ["message[]", "problem[]", "values[]"]},
+"data_check_constant.review.nan_string": {"r": "8fcce733ae49574f", "py": "13a019b618ba2887", "diff": ["message[]", "problem[]", "values"]},
 "data_check_scale_values.review.dbl_1e5": {"r": "71489f23866a0e0a", "py": "804589afe577fad3", "diff": ["classes[]", "message[]"]}
 }

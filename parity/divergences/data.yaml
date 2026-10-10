@@ -341,3 +341,17 @@
   ref: D72
   reason: the file is comma-separated text with a .tsv name, and its only tab sits inside a quoted field; R reads it with a tab (one field per line, and the one line with the quoted tab split at it, so 0 data rows), here its 31 lines are read with the comma as 2 columns
 "datacheck_files_review/review.read_head_typed.tab_in_quotes.tsv.n5": *d73
+
+# D77: column kinds from pandas dtypes instead of a model of R's vector types
+"datacheck_checks_review/data_check_constant.review.nan_string":
+  kind: deliberate
+  ref: D77
+  reason: the text "NaN" is counted like any other value (a, a, NaN is not constant); R's table() drops it from a character vector and reports "a" as the only value
+"datacheck_checks_review/data_check_constant.review.all_nan_strings":
+  kind: deliberate
+  ref: D77
+  reason: a column whose every value is the text "NaN" is constant ("NaN"); R's table() drops them all and fails with "subscript out of bounds"
+"datacheck_checks_review/data_check_constant.review.battery":
+  kind: deliberate
+  ref: D77
+  reason: three of the generated columns hold the text "NaN" among other values, which is now counted (not constant); R's table() drops it and reports the remaining value as constant
