@@ -368,3 +368,63 @@
   kind: r_bug_fixed
   ref: U143
   reason: "a table's own caption column is used whatever the paper's schema version (R reads it only for 12.x papers)"
+# D80 (code_extract_r() reads chunks statically instead of running knitr::purl())
+"codecheck/code_extract_r.my_qmd_first_chunk_python_qmd.doc0": &d80_expr
+  kind: deliberate
+  ref: D80
+  reason: an option that is an R expression is not evaluated and counts as not given (eval=False, a call or a symbol as engine/comment, is_latex_output()); knitr evaluates purl/eval (an error drops the chunk) and uses engine/comment as written
+"codecheck/code_extract_r.my_qmd_first_chunk_python_qmd.doc1": *d80_expr
+"codecheck/code_extract_r.my_qmd_first_chunk_python_qmd.doc2": *d80_expr
+"codecheck_review/code_extract_r.review.engine_symbol.doc0": *d80_expr
+"codecheck_review/code_extract_r.review.engine_symbol.doc1": *d80_expr
+"codecheck_review/code_extract_r.review.engine_call.doc0": *d80_expr
+"codecheck_review/code_extract_r.review.engine_call.doc1": *d80_expr
+"codecheck_review/code_extract_r.review.comment_symbol.doc0": *d80_expr
+"codecheck_review/code_extract_r.review.comment_symbol.doc1": *d80_expr
+"codecheck_review/code_extract_r.review.comment_call.doc0": *d80_expr
+"codecheck_review/code_extract_r.review.comment_call.doc1": *d80_expr
+"codecheck_review/code_extract_r.review.eval_is_html_output_excludes.doc0": *d80_expr
+"codecheck_review/code_extract_r.review.eval_is_html_output_excludes.doc1": *d80_expr
+"codecheck_review/code_extract_r.review.eval_is_latex_output.doc0": *d80_expr
+"codecheck_review/code_extract_r.review.eval_is_latex_output.doc1": *d80_expr
+"codecheck_review/code_extract_r.review.rnw_is_latex_output.doc0": *d80_expr
+"codecheck_review/code_extract_r.review.rnw_is_latex_output.doc1": *d80_expr
+"codecheck_review/code_extract_r.review.engine_NA.doc0": &d80_engine
+  kind: deliberate
+  ref: D80
+  reason: a literal NA or NULL engine is an engine that is not R, so the chunk is commented out; knitr stops on params$engine != 'R'
+"codecheck_review/code_extract_r.review.engine_NA.doc1": *d80_engine
+"codecheck_review/code_extract_r.review.engine_NULL.doc0": *d80_engine
+"codecheck_review/code_extract_r.review.engine_NULL.doc1": *d80_engine
+"codecheck_review/code_extract_r.review.duplicate_error.doc0": &d80_dup
+  kind: deliberate
+  ref: D80
+  reason: a later duplicate chunk option wins for every option; knitr's purl reads the first error option
+"codecheck_review/code_extract_r.review.duplicate_error.doc1": *d80_dup
+"codecheck_review/code_extract_r.review.na_first_code_line.doc0": &d80_na
+  kind: deliberate
+  ref: D80
+  reason: an NA line is the text NA wherever it is; knitr stops when it is the first code line of a chunk (xfun::divide_chunk() tests if (!NA))
+"codecheck_review/code_extract_r.review.na_first_code_line.doc1": *d80_na
+"codecheck_review/code_extract_r.review.na_rnw_chunk.doc0": *d80_na
+"codecheck_review/code_extract_r.review.na_rnw_chunk.doc1": *d80_na
+"codecheck_review/code_extract_r.review.na_indented_chunk.doc0": *d80_na
+"codecheck_review/code_extract_r.review.na_indented_chunk.doc1": *d80_na
+"codecheck/code_extract_r.text.bad_options.doc0": &d80_bad
+  kind: deliberate
+  ref: D80
+  reason: chunk options that are not valid R are read as far as they go and the chunk is extracted; knitr stops ("Invalid syntax for chunk options")
+"codecheck/code_extract_r.text.bad_options.doc1": *d80_bad
+"codecheck/code_extract_r.text.bad_options.doc2": *d80_bad
+"codecheck/code_extract_r.text.unbalanced.doc0": &d80_fence
+  kind: deliberate
+  ref: D80
+  reason: a chunk on the first line closes at its own fence (a fence of another length is code when the matching one follows); knitr sets no fence for a first-line chunk, so any fence ends it
+"codecheck/code_extract_r.text.unbalanced.doc1": *d80_fence
+"codecheck/code_extract_r.text.unbalanced.doc2": *d80_fence
+"codecheck/code_extract_r.text.params.doc0": &d80_params
+  kind: deliberate
+  ref: D80
+  reason: YAML params are written as one list(...) line with c() for vectors; knitr writes dput()'s wrapped lines (1:2 for consecutive integers)
+"codecheck/code_extract_r.text.params.doc1": *d80_params
+"codecheck/code_extract_r.text.params.doc2": *d80_params
