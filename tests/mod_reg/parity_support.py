@@ -42,7 +42,8 @@ from unittest import mock as umock
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
-_R_CHUNK = re.compile(r"\n```\{r\}.*?\n```\n", re.S)
+# a table: an R chunk in R, a raw HTML block in pytacheck (D75)
+_R_CHUNK = re.compile(r'\n```(?:\{r\}|\{=html\}\n<div class="datatables).*?\n```\n', re.S)
 
 #: the table ``regcheck_compare()`` returns in metacheck's testthat tests
 MOCK_TABLE: dict[str, list[Any]] = {

@@ -5,9 +5,9 @@ metacheck writes a Quarto document whose tables are R code chunks
 Quarto to render it. pytacheck keeps tables as data (:class:`ReportTable`)
 and renders the whole report itself:
 
-* :func:`deparse` / :func:`table_chunk` reproduce the R chunk
-  ``scroll_table()`` writes, so a ``.qmd`` report is the same document
-  metacheck writes (and renders identically with Quarto + R);
+* :func:`table_chunk` writes a table into a ``.qmd`` as a raw HTML block (the
+  table metacheck's R chunk renders to), so Quarto renders the document
+  without R;
 * :func:`report_table` is the DT table: a self-contained, paginated HTML
   table honouring ``maxrows``, ``colwidths`` and ``escape``;
 * :func:`markdown_to_html` renders the Quarto-flavoured markdown modules
@@ -24,12 +24,10 @@ from __future__ import annotations
 import html as _html
 import math
 import re
-import unicodedata
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from functools import cache
 from importlib import resources
-from itertools import pairwise
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r.base import as_character
@@ -42,7 +40,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "DataTable",
-    "deparse",
     "html_page",
     "markdown_to_gfm",
     "markdown_to_html",
@@ -53,435 +50,17 @@ __all__ = [
 ]
 
 # ---------------------------------------------------------------------------
-# R deparse() (for the table data in scroll_table()'s R chunk)
+# tables in the .qmd: raw HTML blocks
 # ---------------------------------------------------------------------------
-
-_RESERVED = frozenset(
-    {
-        "if",
-        "else",
-        "repeat",
-        "while",
-        "function",
-        "for",
-        "next",
-        "break",
-        "TRUE",
-        "FALSE",
-        "NULL",
-        "Inf",
-        "NaN",
-        "NA",
-        "NA_integer_",
-        "NA_real_",
-        "NA_character_",
-        "NA_complex_",
-        "in",
-    }
-)
-_ESCAPES = {
-    "\\": "\\\\",
-    '"': '\\"',
-    "\n": "\\n",
-    "\t": "\\t",
-    "\r": "\\r",
-    "\a": "\\a",
-    "\b": "\\b",
-    "\f": "\\f",
-    "\v": "\\v",
-}
-_NEEDS_ESCAPE = re.compile(r'[\\"\x00-\x1f\x7f-\x9f]')
-#: Assigned in Unicode 15.1 (R 4.5's character tables) but not in Unicode 15.0
-#: (Python 3.12's ``unicodedata``): R prints them as they are.
-_UNICODE_15_1 = ((0x2EBF0, 0x2EE5D), (0x2FFC, 0x2FFF), (0x31EF, 0x31EF))
-
-
-def _r_printable(ch: str) -> bool:
-    """R's ``iswprint()`` for a non-ASCII character (UTF-8 locale).
-
-    R escapes control characters, line/paragraph separators and code points
-    unassigned in its Unicode tables (15.1); format characters, private-use
-    characters and everything else assigned print as they are.
-    """
-    cat = unicodedata.category(ch)
-    if cat in ("Cc", "Zl", "Zp", "Cs"):
-        return False
-    if cat == "Cn":
-        code = ord(ch)
-        return any(lo <= code <= hi for lo, hi in _UNICODE_15_1)
-    return True
-
-
-def _encode_string(s: str) -> str:
-    """R ``EncodeString(s, quote = '"')`` in a UTF-8 locale."""
-    if _NEEDS_ESCAPE.search(s) is None and (s.isascii() or all(map(_r_printable, s))):
-        return f'"{s}"'
-    out = []
-    for ch in s:
-        esc = _ESCAPES.get(ch)
-        if esc is not None:
-            out.append(esc)
-            continue
-        code = ord(ch)
-        if code < 0x20 or code == 0x7F:
-            out.append(f"\\{code:03o}")
-        elif code < 0x80 or _r_printable(ch):
-            out.append(ch)
-        elif code > 0xFFFF:
-            out.append(f"\\U{{{code:06x}}}")
-        else:
-            out.append(f"\\u{code:04x}")
-    return '"' + "".join(out) + '"'
-
-
-def _is_valid_name(name: str) -> bool:
-    """R ``isValidName()`` (a syntactic name that needs no quoting)."""
-    if not name:
-        return False
-    if name == "...":
-        return True
-    first = name[0]
-    if first != "." and not first.isalpha():
-        return False
-    if first == "." and len(name) > 1 and name[1] in "0123456789":
-        return False
-    if any(not (c.isalnum() or c in "._") for c in name):
-        return False
-    return name not in _RESERVED
-
-
-class _Deparser:
-    """R's deparse buffer (``src/main/deparse.c``): 60-byte cutoff, 4-space tabs."""
-
-    def __init__(self, cutoff: int = 60) -> None:
-        self.cutoff = cutoff
-        self.lines: list[str] = []
-        self.buf: list[str] = []
-        self.len = 0
-        self.indent = 0
-        self.startline = True
-
-    def put(self, s: str) -> None:
-        if self.startline:
-            self.startline = False
-            for i in range(1, self.indent + 1):
-                tab = "    " if i <= 4 else "  "
-                self.buf.append(tab)
-                self.len += len(tab)
-        self.buf.append(s)
-        self.len += len(s.encode("utf-8"))
-
-    def writeline(self) -> None:
-        self.lines.append("".join(self.buf))
-        self.buf = []
-        self.len = 0
-        self.startline = True
-
-    def linebreak(self, state: list[bool]) -> None:
-        if self.len > self.cutoff:
-            if not state[0]:
-                state[0] = True
-                self.indent += 1
-            self.writeline()
-
-    # -- values ------------------------------------------------------------------
-
-    def value(self, x: Any) -> None:
-        import numpy as np
-        import pandas as pd
-
-        if isinstance(x, _Vec):
-            self.vector_or_list(x.kind, x.values)
-        elif isinstance(x, _Factor):
-            self.factor(x)
-        elif x is None:
-            self.put("NULL")
-        elif isinstance(x, pd.DataFrame):
-            self.frame(x)
-        elif isinstance(x, pd.Series):
-            self.value(_column_value(x))
-        elif isinstance(x, Mapping):
-            self.put("list(")
-            self.elements([(str(k), v) for k, v in x.items()], do_names=True)
-            self.put(")")
-        elif isinstance(x, list | tuple | np.ndarray):
-            items = list(x)
-            kind = _infer_kind(items)
-            self.vector_or_list(kind, items)
-        else:
-            kind = _infer_kind([x])
-            self.vector_or_list(kind, [x])
-
-    def vector_or_list(self, kind: str, values: list[Any]) -> None:
-        if kind == "list":
-            self.put("list(")
-            self.elements([(None, v) for v in values], do_names=False)
-            self.put(")")
-        else:
-            self.vector(kind, values)
-
-    def elements(self, items: list[tuple[str | None, Any]], do_names: bool) -> None:
-        """``vec2buff()``: list elements, breaking lines between them."""
-        state = [False]
-        for i, (name, v) in enumerate(items):
-            if i > 0:
-                self.put(", ")
-            self.linebreak(state)
-            if do_names and name:
-                self.put(name if _is_valid_name(name) else _encode_string(name))
-                self.put(" = ")
-            self.value(v)
-        if state[0]:
-            self.indent -= 1
-
-    def vector(self, kind: str, values: list[Any]) -> None:
-        """``vector2buff()``: an atomic vector (``c(...)``, ``a:b``, typed NAs)."""
-        n = len(values)
-        if n == 0:
-            self.put(
-                {"chr": "character(0)", "int": "integer(0)", "dbl": "numeric(0)"}.get(
-                    kind, "logical(0)"
-                )
-            )
-            return
-        missing = [is_missing(v) for v in values]
-        if kind == "int" and n > 1 and not any(missing):
-            ints = [int(v) for v in values]
-            step = ints[1] - ints[0]
-            if abs(step) == 1 and all(b - a == step for a, b in pairwise(ints)):
-                self.put(f"{ints[0]}:{ints[-1]}")
-                return
-        all_na = all(missing)
-        if n > 1:
-            self.put("c(")
-        for i, v in enumerate(values):
-            self.put(_encode_element(kind, v, missing[i], all_na))
-            if i < n - 1:
-                self.put(", ")
-            if n > 1 and self.len > self.cutoff:
-                self.writeline()
-        if n > 1:
-            self.put(")")
-
-    def factor(self, f: _Factor) -> None:
-        """A factor: ``structure(<codes>, levels = <levels>, class = "factor")``."""
-        self.put("structure(")
-        self.vector("int", f.codes)
-        self.put(", levels = ")
-        self.vector("chr", f.levels)
-        self.put(', class = c("ordered", "factor"))' if f.ordered else ', class = "factor")')
-
-    def frame(self, df: pd.DataFrame, row_names_first: bool = False) -> None:
-        names = [str(c) for c in df.columns]
-        all_blank = bool(names) and all(n == "" for n in names)
-        self.put("structure(list(")
-        cols: list[tuple[str | None, Any]] = [
-            (name, _column_value(df.iloc[:, i])) for i, name in enumerate(names)
-        ]
-        self.elements(cols, do_names=not all_blank)
-        self.put(")")
-        if all_blank:
-            self.put(", names = ")
-            self.vector("chr", names)
-        if row_names_first:
-            self.put(", row.names = ")
-            self._row_names(len(df))
-            self.put(', class = "data.frame")')
-        else:
-            self.put(', class = "data.frame", row.names = ')
-            self._row_names(len(df))
-            self.put(")")
-
-    def _row_names(self, nrow: int) -> None:
-        if nrow == 0:
-            self.put("integer(0)")
-        else:
-            self.vector("int", [None, -nrow])
-
-
-@dataclass
-class _Vec:
-    kind: str
-    values: list[Any]
-
-
-@dataclass
-class _Factor:
-    """An R factor: 1-based codes (``None`` for NA), levels, ``ordered``."""
-
-    codes: list[int | None]
-    levels: list[str]
-    ordered: bool = False
-
-
-def _column_value(s: pd.Series) -> _Vec | _Factor:
-    """A pandas column as the R vector it stands for (categoricals are factors)."""
-    import pandas as pd
-
-    if isinstance(s.dtype, pd.CategoricalDtype):
-        codes = [None if c < 0 else int(c) + 1 for c in s.cat.codes.tolist()]
-        levels = [str(v) for v in s.cat.categories.tolist()]
-        return _Factor(codes, levels, bool(s.cat.ordered))
-    kind, values = _series_vector(s)
-    return _Vec(kind, values)
-
-
-def _encode_element(kind: str, v: Any, missing: bool, all_na: bool) -> str:
-    if kind == "lgl":
-        return "NA" if missing else ("TRUE" if bool(v) else "FALSE")
-    if kind == "int":
-        if missing:
-            return "NA_integer_" if all_na else "NA"
-        return f"{int(v)}L"
-    if kind == "dbl":
-        if missing:
-            return "NA_real_" if all_na else "NA"
-        f = float(v)
-        if math.isinf(f):
-            return "Inf" if f > 0 else "-Inf"
-        return str(as_character(f))
-    if missing:
-        return "NA_character_" if all_na else "NA"
-    return _encode_string(str(v))
-
-
-def _infer_kind(values: Sequence[Any]) -> str:
-    """The R vector type a list of Python scalars becomes (``c(...)``)."""
-    import numpy as np
-
-    kinds = set()
-    for v in values:
-        if is_missing(v):
-            continue
-        if isinstance(v, bool | np.bool_):
-            kinds.add("lgl")
-        elif isinstance(v, int | np.integer):
-            kinds.add("int")
-        elif isinstance(v, float | np.floating):
-            kinds.add("dbl")
-        elif isinstance(v, str):
-            kinds.add("chr")
-        else:
-            return "list"
-    if not kinds:
-        return "lgl"
-    if kinds == {"lgl"}:
-        return "lgl"
-    if kinds <= {"int", "lgl"}:
-        return "int"
-    if kinds <= {"int", "dbl", "lgl"}:
-        return "dbl"
-    return "chr"
-
-
-def _series_vector(s: pd.Series) -> tuple[str, list[Any]]:
-    """An R vector (type, values) for a pandas column."""
-    import pandas as pd
-
-    dtype = s.dtype
-    if isinstance(dtype, pd.CategoricalDtype):
-        return "chr", [None if is_missing(v) else str(v) for v in s.tolist()]
-    if pd.api.types.is_bool_dtype(dtype):
-        return "lgl", s.tolist()
-    if pd.api.types.is_integer_dtype(dtype):
-        return "int", s.tolist()
-    if pd.api.types.is_float_dtype(dtype):
-        return "dbl", s.tolist()
-    if pd.api.types.is_datetime64_any_dtype(dtype):
-        return "chr", [None if is_missing(v) else str(v) for v in s.tolist()]
-    values = s.tolist()
-    if pd.api.types.is_string_dtype(dtype) and not pd.api.types.is_object_dtype(dtype):
-        return "chr", values
-    kind = _infer_kind(values)
-    if kind == "list":
-        return "list", values
-    return kind, values
-
-
-def _is_character(s: pd.Series) -> bool:
-    """R ``is.character()`` of a column (factors are not character)."""
-    import pandas as pd
-
-    if isinstance(s.dtype, pd.CategoricalDtype):
-        return False
-    return _series_vector(s)[0] == "chr"
-
-
-def _deparse_table(df: pd.DataFrame) -> list[str]:
-    """``deparse(table)`` inside ``scroll_table()``.
-
-    Replacing line breaks in a character column (``table[[col]] <- gsub(...)``)
-    makes R re-set the data frame's class after its row names, so tables with
-    a named character column deparse with ``row.names`` before ``class``.
-    """
-    has_chr = any(
-        str(name) != "" and _is_character(df.iloc[:, i]) for i, name in enumerate(df.columns)
-    )
-    p = _Deparser(60)
-    p.frame(df, row_names_first=has_chr)
-    p.writeline()
-    return p.lines
-
-
-def deparse(expr: Any, width_cutoff: int = 60) -> list[str]:
-    """R ``deparse(x)`` for data: data frames, vectors, lists and scalars.
-
-    Returns the lines R would return. Data frames are written as R's
-    ``data.frame()`` builds them (``names``, ``class``, automatic
-    ``row.names``): pandas has no row names or attribute order to carry, so
-    tables R subset with base R (keeping row names) or built with dplyr
-    (``tbl_df``) deparse slightly differently in R.
-    """
-    p = _Deparser(width_cutoff)
-    p.value(expr)
-    p.writeline()
-    return p.lines
-
-
-# ---------------------------------------------------------------------------
-# scroll_table()'s R chunk
-# ---------------------------------------------------------------------------
-
-
-def _colwidths_value(colwidths: Any) -> Any:
-    """``colwidths`` as the R value a module author writes (numbers are doubles)."""
-    if isinstance(colwidths, str) or colwidths is None:
-        return colwidths
-    if isinstance(colwidths, int | float) and not isinstance(colwidths, bool):
-        return _Vec("dbl", [float(colwidths)])
-    values = list(colwidths)
-    if any(isinstance(v, str) for v in values):
-        return _Vec(
-            "chr",
-            [
-                None if is_missing(v) else (v if isinstance(v, str) else as_character(v))
-                for v in values
-            ],
-        )
-    if all(is_missing(v) for v in values):
-        return _Vec("lgl", [None] * len(values))
-    return _Vec("dbl", [None if is_missing(v) else float(v) for v in values])
 
 
 def table_chunk(block: ReportTable) -> str:
-    """The R chunk ``scroll_table()`` returns for a table block."""
-    column_loc = "" if block.column == "body" else f"#| column: {block.column}"
-    tbl_code = "\n".join(_deparse_table(block.data))
-    colwidths_code = "\n".join(deparse(_colwidths_value(block.colwidths)))
-    maxrows = block.maxrows
-    # sprintf("%s", maxrows): module authors write R doubles (1e5 prints "1e+05")
-    maxrows_txt = str(
-        as_character(float(maxrows))
-        if isinstance(maxrows, int) and not isinstance(maxrows, bool)
-        else as_character(maxrows)
-    )
-    escape = "TRUE" if block.escape is True else "FALSE"
-    return (
-        f"\n```{{r}}\n#| echo: false\n{column_loc}\n\n"
-        f"# table data --------------------------------------\ntable <- {tbl_code}\n\n"
-        f"# display table -----------------------------------\n"
-        f"metacheck::report_table(table, {colwidths_code}, {maxrows_txt}, {escape})\n```\n"
-    )
+    """A table block as it goes into a ``.qmd``: a raw HTML block (D75).
+
+    metacheck writes an R chunk that calls ``report_table()``; the HTML is the
+    table that chunk renders to, so Quarto needs no R to render the document.
+    """
+    return f"\n```{{=html}}\n{_table_html(block)}\n```\n"
 
 
 def scroll_table_qmd(
@@ -491,11 +70,12 @@ def scroll_table_qmd(
     escape: bool = False,
     column: str = "body",
 ) -> str:
-    """Port of ``scroll_table()``'s return value: the markdown R chunk for a table.
+    """``scroll_table()``'s return value: the ``.qmd`` text for a table.
 
     :func:`metacheck.report.scroll_table` returns the table as data (a
-    :class:`ReportTable` block); this gives the text metacheck puts in the
-    ``.qmd`` for it (``""`` for an empty table).
+    :class:`ReportTable` block); this gives the text pytacheck puts in the
+    ``.qmd`` for it, a raw HTML block (:func:`table_chunk`; metacheck writes
+    an R chunk), or ``""`` for an empty table.
     """
     from metacheck.report.blocks import ReportTable, scroll_table
 
