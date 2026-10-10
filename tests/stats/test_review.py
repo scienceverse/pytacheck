@@ -1,24 +1,21 @@
-"""Edge cases found in the review of the stats port; expected values come from R 4.5.3.
+"""Edge cases found in the review of the stats port; R's values come from R 4.5.3.
 
-Covers R's numeric corner cases (infinite degrees of freedom, "NaNs produced",
-overflowing powers of ten, round() with many digits), statcheck's `== TRUE`
-flag semantics and stats()'s R argument matching of `...`.
+Covers numeric corner cases (infinite degrees of freedom, overflowing powers of
+ten, round() with many digits), statcheck's flags and stats()'s arguments. The
+statcheck port computes with plain Python values and scipy (D78).
 """
 
 from __future__ import annotations
 
 import math
-import warnings
 
 import pandas as pd
 import pytest
 
-from metacheck.stats import _rmath
-from metacheck.stats._rmath import pchisq, pf, pt, r_pow, r_round
+from metacheck._r import r_round
 from metacheck.stats.core import stats
 from metacheck.stats.statcheck import (
-    RError,
-    StatcheckWarning,
+    compute_p,
     decision_error_test,
     error_test,
     process_stats,
@@ -32,38 +29,46 @@ def sc(texts, **kwargs):
     return statcheck(texts, messages=False, **kwargs)
 
 
-# -- numeric primitives ---------------------------------------------------------
+# -- p-values -------------------------------------------------------------------------
 
 
-def test_pchisq_infinite_df() -> None:
-    seen: list[str] = []
-    # R: pchisq(c(0, 0.2, 2, 1e300, Inf), Inf, lower.tail = FALSE) -> 1 NaN 1 1 0 (+ warning)
-    values = [pchisq(x, math.inf, False, seen.append) for x in (0, 0.2, 2, 1e300, math.inf)]
-    assert values[0] == 1.0
-    assert math.isnan(values[1])
-    assert values[2:] == [1.0, 1.0, 0.0]
-    assert seen == ["NaNs produced"]
+def test_compute_p_infinite_df() -> None:
+    # D78: t is the normal distribution, chi-square and Q get their limit 1, and
+    # F (scipy's fdtrc has no value; R: the chi-square limit) cannot be computed
+    assert compute_p("t", 2.0, None, math.inf, True) == pytest.approx(0.04550026, rel=1e-6)
+    assert compute_p("r", 0.3, None, math.inf, True) == 0.0
+    for x in (0.2, 2.0, 1e300):
+        assert compute_p("Chi2", x, math.inf, None, True) == 1.0
+        assert compute_p("Q", x, math.inf, None, True) == 1.0
+    assert compute_p("F", 2.0, math.inf, 3.0, True) is None
+    assert compute_p("F", 2.0, 3.0, math.inf, True) is None
 
 
-def test_pf_and_pt_infinite_df() -> None:
-    assert pf(2, math.inf, 3, False) == pytest.approx(0.3177297, rel=1e-6)
-    assert pf(2, 3, math.inf, False) == pytest.approx(0.1116102, rel=1e-6)
-    assert pf(2, math.inf, math.inf, False) == 0.0
-    assert pt(-2, math.inf) == pytest.approx(0.02275013, rel=1e-6)
-    # both df infinite: a point mass at 1, no NaN
-    seen: list[str] = []
-    assert math.isnan(pf(0.5, math.inf, math.inf, False, seen.append)) is False
-    assert seen == []
+def test_compute_p_without_a_value() -> None:
+    assert compute_p("t", 2.0, None, 0.0, True) is None
+    assert compute_p("r", 0.3, None, 0.0, True) is None
+    assert compute_p("F", 2.0, 0.0, 20.0, True) is None
+    assert compute_p("t", None, None, 28.0, True) is None
+    assert compute_p("F", 2.0, None, 20.0, True) is None
+    # as in R: chi-square with 0 df is a point mass at 0, and a statistic below
+    # the support has p = 1
+    assert compute_p("Chi2", 3.84, 0.0, None, True) == 0.0
+    assert compute_p("F", -1.0, 1.0, 20.0, True) == 1.0
+    assert compute_p("Chi2", -1.0, 2.0, None, True) == 1.0
+    with pytest.raises(ValueError, match="test_type"):
+        compute_p("W", 1.0, 1.0, 1.0, True)
 
 
-def test_nans_produced_only_for_non_nan_arguments() -> None:
-    seen: list[str] = []
-    assert math.isnan(pt(math.nan, 5, warn=seen.append))
-    assert math.isnan(pchisq(1.0, math.nan, warn=seen.append))
-    assert seen == []
-    assert math.isnan(pt(1.0, 0.0, warn=seen.append))
-    assert math.isnan(pf(1.0, -1.0, 20.0, warn=seen.append))
-    assert seen == ["NaNs produced", "NaNs produced"]
+def test_compute_p_matches_r() -> None:
+    # R 4.5: print(c(2 * pt(-2.2, 28), pf(2.2, 2, 28, lower.tail = FALSE),
+    #   pchisq(22.2, 28, lower.tail = FALSE), 2 * pnorm(-1.96)), digits = 15)
+    assert compute_p("t", 2.2, None, 28.0, True) == pytest.approx(0.0362254847788378, rel=1e-14)
+    assert compute_p("F", 2.2, 2.0, 28.0, True) == pytest.approx(0.129593224474093, rel=1e-14)
+    assert compute_p("Chi2", 22.2, 28.0, None, True) == pytest.approx(0.771948704032936, rel=1e-14)
+    assert compute_p("Z", 1.96, None, None, True) == pytest.approx(0.0499957902964409, rel=1e-14)
+    # far tails, where the reduction R uses keeps its precision
+    assert compute_p("t", 40.0, None, 5000.0, False) == pytest.approx(4.20742523596789e-304)
+    assert compute_p("t", 1e-8, None, 10.0, True) == pytest.approx(0.99999999220, rel=1e-9)
 
 
 @pytest.mark.parametrize(
@@ -82,13 +87,6 @@ def test_r_round_matches_r(x: float, digits: int, expected: float) -> None:
     assert r_round(x, digits) == expected
 
 
-def test_r_round_nan_digits_and_r_pow() -> None:
-    assert math.isnan(r_round(0.5, math.nan))
-    assert r_pow(10.0, 400.0) == math.inf
-    assert r_pow(10.0, 2.0) == 100.0
-    assert 0.5 / r_pow(10.0, 400.0) == 0.0
-
-
 # -- statcheck: overflow and infinite df ----------------------------------------
 
 
@@ -99,62 +97,65 @@ def test_test_value_with_hundreds_of_decimals() -> None:
     assert error_test(0.04, "t", 2.0, math.nan, 28.0, "=", "=", 2.0, 400.0, True, 0.05, True)
 
 
-def test_chi2_with_infinite_df() -> None:
-    # U5: R fails the whole call on if (NA); the unverifiable result is dropped
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        assert sc(f"χ2({BIG}) = 1.5, p = .05") is None
-        both = sc(f"χ2({BIG}) = 1.5, p = .05 and t(28) = 2.20, p = .03")
-    assert both["raw"].tolist() == ["t(28) = 2.20, p = .03"]
-    res = sc(f"χ2({BIG}) = 3.5, p = .05")
-    assert res["computed_p"].tolist() == [1.0]
-    assert res["error"].tolist() == [True]
-    d = pd.DataFrame({"text": [f"A, χ2({BIG}) = 1.5, p = .05.", "B, t(28) = 2.20, p = .03."]})
+def test_results_with_infinite_df() -> None:
+    # D78 (R fails the whole call on if (NA) for a small chi-square statistic)
+    res = sc(f"χ2({BIG}) = 1.5, p = .05 and t(28) = 2.20, p = .03")
+    assert res["raw"].tolist() == [f"χ2({BIG}) = 1.5, p = .05", "t(28) = 2.20, p = .03"]
+    assert res["computed_p"].tolist()[0] == 1.0
+    assert res["error"].tolist() == [True, True]
+    assert sc(f"t({BIG}) = 2.1, p = .04")["computed_p"].tolist() == [
+        pytest.approx(0.03572884, rel=1e-6)
+    ]
+    # F with an infinite degree of freedom cannot be checked and is dropped
+    assert sc(f"F(2, {BIG}) = 0.5, p = .61") is None
+    d = pd.DataFrame({"text": [f"A, F(2, {BIG}) = 0.5, p = .61.", "B, t(28) = 2.20, p = .03."]})
     assert stats(d)["raw"].tolist() == ["t(28) = 2.20, p = .03"]
 
 
-# -- statcheck: `== TRUE` flags --------------------------------------------------
+# -- statcheck: flags ---------------------------------------------------------------
 
 
-def test_flags_that_are_neither_true_nor_false() -> None:
-    # decision_error_test() itself still falls through both branches (NULL)
-    assert decision_error_test(0.13, 0.036, "=", "=", 0.05, 2) is None
-    # U149: statcheck() rejects such a pEqualAlphaSig up front (R failed only
-    # for inconsistent results: "arguments imply differing number of rows")
-    for texts in ("t(28) = 2.20, p = .13", "t(28) = 2.20, p = .04"):
-        with pytest.raises(ValueError, match="pEqualAlphaSig"):
-            sc(texts, pEqualAlphaSig=2)
-    assert sc("t(28) = 2.20, p = .13", pEqualAlphaSig=1)["error"].tolist() == [True]
-    # OneTailedTests = 2 is not TRUE: two-tailed p-values
-    two = sc("t(28) = 2.20, p = .03", OneTailedTests=2)["computed_p"].iloc[0]
-    assert two == pytest.approx(0.03622548, rel=1e-6)
-    # pZeroError = 2 is not TRUE: p = 0.000 is judged by rounding
-    assert sc("t(28) = 2.20, p = 0.000", pZeroError=2)["error"].tolist() == [True]
-    assert sc("t(28) = 5.20, p = 0.000", pZeroError=2)["error"].tolist() == [False]
-
-
-def test_na_flags_are_rejected_up_front() -> None:
-    # U149: R fails on if (NA) only where a flag is tested (some texts only)
+def test_flags_must_be_true_or_false() -> None:
+    # D78: R compares flags with == TRUE (2 means FALSE); here they raise
     for flag in ("OneTailedTests", "AllPValues", "pEqualAlphaSig", "pZeroError", "OneTailedTxt"):
-        for texts in ("t(28) = 2.20, p = .03", "t(28) = 2.20, p = .04", "no stats"):
-            with pytest.raises(ValueError, match=flag):
-                sc(texts, **{flag: None})
+        for value in (2, None, math.nan, pd.NA, "TRUE"):
+            for texts in ("t(28) = 2.20, p = .03", "no stats"):
+                with pytest.raises(ValueError, match=flag):
+                    sc(texts, **{flag: value})
+    with pytest.raises(ValueError, match="pEqualAlphaSig"):
+        decision_error_test(0.13, 0.036, "=", "=", 0.05, 2)
     with pytest.raises(ValueError, match="messages"):
         statcheck("t(28) = 2.20, p = .03", messages=None)
-    with pytest.raises(ValueError, match="alpha"):
-        sc("t(28) = 2.20, p = .03", alpha=math.nan)
-    with pytest.raises(RError):
-        process_stats("t", 2.2, math.nan, 28.0, 0.13, "=", "=", 2.0, 2.0, False, True,
+    for alpha in (math.nan, None, True, "0.05"):
+        with pytest.raises(ValueError, match="alpha"):
+            sc("t(28) = 2.20, p = .03", alpha=alpha)
+    with pytest.raises(ValueError, match="pEqualAlphaSig"):
+        process_stats("t", 2.2, None, 28.0, 0.13, "=", "=", 2.0, 2.0, False, True,
                       0.05, True, 2, False, False)  # fmt: skip
+    # 1 and 0 are TRUE and FALSE
+    assert sc("t(28) = 2.20, p = .13", pEqualAlphaSig=1)["error"].tolist() == [True]
+    assert sc("t(28) = 2.20, p = 0.000", pZeroError=0)["error"].tolist() == [True]
+    assert sc("t(28) = 5.20, p = 0.000", pZeroError=0)["error"].tolist() == [False]
 
 
-def test_empty_texts_warn_like_r() -> None:
-    with pytest.warns(StatcheckWarning) as record:
-        assert sc([]) is None
-    assert [str(w.message) for w in record] == [
-        "no non-missing arguments to max; returning -Inf",
-        "NaNs produced",
-    ]
+def test_undecidable_tests_give_none() -> None:
+    args = ("t", 2.2, None, 28.0, "=", "=", 2.0, 2.0, True, 0.05, True)
+    assert error_test(None, *args) is None
+    assert error_test(0.04, "t", 2.2, None, 0.0, "=", "=", 2.0, 2.0, True, 0.05, True) is None
+    # p = 0 is an error whatever the statistic (pZeroError)
+    assert error_test(0.0, "t", 2.2, None, 0.0, "=", "=", 3.0, 2.0, True, 0.05, True) is True
+    assert decision_error_test(None, 0.04, "=", "=", 0.05, True) is None
+    assert decision_error_test(0.04, None, "=", "=", 0.05, True) is None
+    # a "<" statistic with a "> p" (or the reverse) is never an error, as in R
+    assert decision_error_test(0.04, None, "<", ">", 0.05, True) is False
+    out = process_stats("t", 2.2, None, 0.0, 0.03, "=", "=", 2.0, 2.0, False, True,
+                        0.05, True, True, False, False)  # fmt: skip
+    assert out.isna().all(axis=None)
+
+
+def test_empty_texts(capsys) -> None:
+    assert sc([]) is None
+    assert "did not find any results" in capsys.readouterr().out
 
 
 def test_named_series_keeps_duplicate_names() -> None:
@@ -193,7 +194,7 @@ def test_case_insensitive_patterns_fold_unicode_case() -> None:
     assert res["error"].tolist() == [False]
 
 
-# -- stats(): R's matching of `...` -----------------------------------------------
+# -- stats(): statcheck's settings ----------------------------------------------------
 
 TEXTS = pd.DataFrame(
     {
@@ -209,32 +210,29 @@ TEXTS = pd.DataFrame(
 @pytest.mark.parametrize(
     ("args", "kwargs", "nrow"),
     [
-        ((), {"alp": 0.6}, 2),  # partial name -> alpha
-        ((), {"AllP": True}, 3),
-        ((), {"OneTailedTe": True}, 2),
-        ((), {"s": "t"}, 1),
-        (("F",), {}, 1),  # positional -> stat
+        ((), {"alpha": 0.6}, 2),
+        ((), {"AllPValues": True}, 3),
+        ((), {"OneTailedTests": True}, 2),
+        ((), {"stat": "t"}, 1),
+        (("F",), {}, 1),  # positional, in statcheck's order -> stat
         (("F", True, 0.6), {}, 1),
-        ((), {"texts": "t(2) = 5, p = .9"}, 0),  # the sentence becomes `stat`
-        ((), {"texts": "p = .01", "AllPValues": True}, 3),
-        ((), {"AllPValues": 2}, 3),
     ],
 )
-def test_stats_argument_matching(args, kwargs, nrow) -> None:
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        assert len(stats(TEXTS, *args, **kwargs)) == nrow
+def test_stats_arguments(args, kwargs, nrow) -> None:
+    assert len(stats(TEXTS, *args, **kwargs)) == nrow
 
 
 @pytest.mark.parametrize(
     ("kwargs", "error"),
     [
-        ({"One": True}, TypeError),  # ambiguous prefix
-        ({"mess": True}, TypeError),  # matches `messages`, which stats() already sets
-        ({"alpha": 0.1, "alp": 0.2}, TypeError),
-        ({"pZ": False, "pZero": False}, TypeError),
+        # D78: no R argument matching (R: partial names, `texts =` replaces the text)
+        ({"alp": 0.6}, TypeError),
+        ({"One": True}, TypeError),
+        ({"texts": "p = .01"}, TypeError),
+        ({"messages": False}, TypeError),
         ({"typo": 1}, TypeError),
         ({"AllPValues": None}, ValueError),
+        ({"AllPValues": 2}, ValueError),
         ({"pEqualAlphaSig": 2}, ValueError),
     ],
 )
@@ -242,7 +240,3 @@ def test_stats_rejects_invalid_arguments(kwargs, error) -> None:
     # U4: R's every statcheck() call errors and stats() silently returns an empty table
     with pytest.raises(error):
         stats(TEXTS, **kwargs)
-
-
-def test_rmath_module_exports() -> None:
-    assert set(_rmath.__all__) >= {"pt", "pf", "pchisq", "pnorm", "r_round", "as_numeric"}

@@ -15,10 +15,9 @@ from __future__ import annotations
 import math
 from typing import Any
 
-from metacheck._r.base import as_character
+from metacheck._r.base import as_character, r_round
 from metacheck._r.regex import grepl, gsub, sub
-from metacheck._values import is_missing
-from metacheck.stats._rmath import as_numeric, r_round
+from metacheck._values import as_float, is_missing
 
 __all__ = [
     "_r_stat_pattern",
@@ -54,8 +53,8 @@ def _stat_display_value(x: Any) -> str:
             return ""
     text = x if isinstance(x, str) else as_character(x)
     assert text is not None
-    num = as_numeric(text)[0]
-    if math.isnan(num) or not math.isfinite(num) or not grepl(_NUMBER_TEXT, text):
+    num = as_float(text)
+    if num is None or not math.isfinite(num) or not grepl(_NUMBER_TEXT, text):
         return text
     if num == r_round(num):
         return _format_whole(r_round(num))

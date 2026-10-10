@@ -119,12 +119,13 @@ def _content_length(resp: Any) -> float:
 
     ``None`` stands for R's ``numeric(0)`` (no such header).
     """
-    from metacheck.stats._rmath import as_numeric
+    from metacheck._values import as_float
 
     value = resp.headers.get("content-length")
     if value is None:
         return None  # type: ignore[return-value]
-    return as_numeric(value)[0]
+    num = as_float(value)
+    return math.nan if num is None else num
 
 
 class _RangeBody(bytes):
