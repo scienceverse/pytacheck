@@ -7,6 +7,13 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: code files are decoded with chardet, not a port of readr's ICU and vroom pipeline
+
+- **Changed:** `code_read()` (and so `code_check()`, `reproducibility_check()` and the other readers of code files) decodes a file's bytes in `codecheck/_decode.py`: a byte order mark picks UTF-8, UTF-16 or UTF-32; valid UTF-8 is read as UTF-8; anything else is read in the encoding chardet names when it is fairly sure (confidence 0.2), else as Windows-1252, and bytes that fit neither show as `<xx>`. Lines end at LF, CRLF or CR (D74).
+- **Removed:** the ports of ICU's charset detector, vroom's line indexer, glibc's iconv tables and base `readLines()` (3,864 lines), with the R-fidelity corpus that pinned them.
+- **Result changes to watch:** UTF-8 and ASCII scripts read exactly as before. Hebrew (ISO-8859-8, Windows-1255) and UTF-32 files are now read as their text where R showed `<xx>` bytes; files mixing CR with CRLF line ends keep every line; a binary file gives lines of text instead of an error.
+- **Dependency:** chardet (0BSD, pure Python) is a core dependency. The `charset` extra stays as an empty alias so `metacheck[charset]` still installs.
+
 ### Internal: one `as.character()`, `as.numeric()`, `as.integer()` and `trimws()`
 
 - **Changed:** private copies of R's coercions whose rules matched the shared helpers are gone: 9 `as.character()` copies (`_chr`, `_chr1`, `_cell_chr`) use `metacheck._values.as_str`; 7 `as.numeric()` copies (`_r_as_numeric` in `datacheck.files` and `statout.r_output`, `_as_numeric` in `statout.spv` and `repro.core`, `_num` in `archives.github`, the bodies of `datacheck`'s `as_numeric_str` and `archives.download`'s `_num`) use `as_float`; 3 `as.integer()` copies (`_as_int`, `_int`) use `as_int`; 3 `trimws()` copies (`_trim`, `_trimws`) and 2 `paste(collapse =)` copies use `metacheck._r.trimws` and `paste`. The copies left are the ones whose rules differ: R's 32-bit integer range, `NA` as NaN or as `"NA"`, a warning on coercion, list unwrapping, `str()` instead of R's number formatting, dates and times, other whitespace sets.
