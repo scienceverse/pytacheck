@@ -6,7 +6,8 @@ import warnings
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r.base import as_character, trimws
-from metacheck._r.regex import gsub, is_na
+from metacheck._r.regex import gsub
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -77,13 +78,13 @@ def check_orcid(orcid: Any) -> str | bool:
 
     def invalid() -> bool:
         if verbose():
-            shown = "NA" if is_na(orcid) else orcid
+            shown = "NA" if is_missing(orcid) else orcid
             warnings.warn(f"The ORCiD {shown} is not valid.", stacklevel=3)
         return False
 
     # a missing ORCiD, or an X before the check digit, is not valid (metacheck
     # fails on `if (NA ...)` for both; U14)
-    if is_na(orcid):
+    if is_missing(orcid):
         return invalid()
     base = str(gsub("[^0-9X]", "", as_character(orcid)))
     if len(base) != 16 or not base[:15].isdigit():
@@ -207,7 +208,7 @@ def orcid_person(orcid: Any) -> pd.DataFrame:
     rows = []
     for x in as_vector(orcid):
         # file.path() pastes a missing ORCiD as "NA"
-        path = f"https://pub.orcid.org/v3.0/{'NA' if is_na(x) else as_character(x)}/person"
+        path = f"https://pub.orcid.org/v3.0/{'NA' if is_missing(x) else as_character(x)}/person"
         try:
             root = _read_xml(path)
         except Exception as exc:

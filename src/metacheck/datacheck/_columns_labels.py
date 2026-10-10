@@ -26,8 +26,9 @@ from typing import Any, cast, overload
 
 import pandas as pd
 
-from metacheck._r.base import as_character, is_na, trimws
+from metacheck._r.base import as_character, trimws
 from metacheck._r.regex import grepl, gsub, regexec, regextract_all, strsplit
+from metacheck._values import is_missing
 
 # -----------------------------------------------------------------------------
 # R-vector utilities
@@ -44,7 +45,7 @@ def _na(x: Any) -> bool:
     if tx is float:
         return bool(x != x)
     try:
-        return bool(is_na(x)) or (isinstance(x, float) and math.isnan(x))
+        return bool(is_missing(x)) or (isinstance(x, float) and math.isnan(x))
     except (TypeError, ValueError):
         return False
 

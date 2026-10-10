@@ -54,6 +54,7 @@ from metacheck._r.regex import (
     strsplit,
     sub,
 )
+from metacheck._values import is_missing
 
 __all__ = [
     "MaterialisedRoot",
@@ -80,25 +81,19 @@ _QUOTED = r"""(['"])((?:[^'"\\]|\\.)*)\1"""
 _EXT_END = r"\.[A-Za-z0-9]{1,8}$"
 
 
-def _is_na(x: Any) -> bool:
-    if x is None or x is pd.NA:
-        return True
-    return isinstance(x, float) and x != x
-
-
 def _is_true(x: Any) -> bool:
     """R ``isTRUE()`` of one logical value."""
-    return not _is_na(x) and x is not None and bool(x) is True
+    return not is_missing(x) and x is not None and bool(x) is True
 
 
 def _is_false(x: Any) -> bool:
     """R ``isFALSE()`` of one logical value."""
-    return not _is_na(x) and x is not None and bool(x) is False
+    return not is_missing(x) and x is not None and bool(x) is False
 
 
 def _chr(x: Any) -> str | None:
     """One value as R character (``None`` for ``NA``)."""
-    if _is_na(x):
+    if is_missing(x):
         return None
     return x if isinstance(x, str) else as_character(x)
 
@@ -118,7 +113,7 @@ def _chr_list(x: Any) -> list[str | None]:
 
 def _col(df: pd.DataFrame, name: str) -> list[Any]:
     """A data-frame column as a plain list (``NA`` -> ``None``)."""
-    return [None if _is_na(v) else v for v in df[name].tolist()]
+    return [None if is_missing(v) else v for v in df[name].tolist()]
 
 
 def _na_str(x: str | None) -> str:
@@ -1047,7 +1042,7 @@ def repro_run_order(
         # a file without code text (NA, not read) has no reads/writes/sources
         parts = [
             _frame({"file_name": ("string", [])})
-            if _is_na(texts[i])
+            if is_missing(texts[i])
             else repro_file_io({f"row{i}": texts[i]})
             for i in range(n)
         ]
@@ -1356,7 +1351,7 @@ def _adist(a: str, b: str) -> int:
 
 def _as_numeric(x: Any) -> float | None:
     """``as.numeric()`` of one value (``None`` for NA / unparseable)."""
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, bool):
         return float(x)
@@ -2131,7 +2126,7 @@ def _repro_classify_install_message(msg: str | None) -> str:
     ``"transitive_dependency_missing"``, ``"cran_unavailable"`` or
     ``"other"``.
     """
-    if msg is None or _is_na(msg) or msg == "":
+    if msg is None or is_missing(msg) or msg == "":
         return "other"
     if grepl(_COMPILE_PAT, msg, ignore_case=True, perl=True):
         return "compile_failure"

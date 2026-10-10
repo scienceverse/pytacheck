@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from metacheck._r.regex import grepl, sub
+from metacheck._values import is_missing
 
 __all__ = ["_html_export_r_source", "_html_sniff_kind"]
 
@@ -61,10 +62,6 @@ def _paste(lines: list[str | None]) -> str | None:
     return "\n".join(lines)  # type: ignore[arg-type]
 
 
-def _is_na(x: Any) -> bool:
-    return x is None or (isinstance(x, float) and x != x)
-
-
 def _html_sniff_kind(path: str | os.PathLike[str] | None) -> str | None:
     """Port of ``.html_sniff_kind()``: which tool rendered a local HTML file.
 
@@ -73,7 +70,7 @@ def _html_sniff_kind(path: str | os.PathLike[str] | None) -> str | None:
     is found or the file cannot be read. As in R, text that is not valid
     UTF-8 never matches a fingerprint.
     """
-    if _is_na(path):
+    if is_missing(path):
         return None
     path = os.fspath(path)  # type: ignore[arg-type]
     if not path or not os.path.exists(path):

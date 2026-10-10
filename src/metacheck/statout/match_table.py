@@ -28,18 +28,11 @@ import numpy as np
 import pandas as pd
 
 from metacheck._r import grepl, regextract, strsplit, sub, trimws
+from metacheck._values import is_missing
 
 __all__: list[str] = []
 
 _INT_MAX = 2**31 - 1
-
-
-def _is_na(x: Any) -> bool:
-    if x is None or x is pd.NA or x is pd.NaT:
-        return True
-    if isinstance(x, float | np.floating):
-        return bool(np.isnan(x))
-    return False
 
 
 def _tolower(s: str) -> str:
@@ -54,7 +47,7 @@ def _tolower(s: str) -> str:
 
 def _chr(x: Any) -> str | None:
     """``as.character()`` of a scalar cell; ``None`` for NA."""
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, str):
         return x
@@ -64,7 +57,7 @@ def _chr(x: Any) -> str | None:
 
 
 def _scalar(x: Any) -> Any:
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, np.generic):
         return x.item()
@@ -122,7 +115,7 @@ def _table_caption(paper: Any, section_id: Any) -> str | None:
     table's ``section_id`` (Grobid's figDesc), pasted with spaces; ``None``
     (R ``NA``) when there is none.
     """
-    if _is_na(section_id):
+    if is_missing(section_id):
         return None
     txt = paper.get("text") if hasattr(paper, "get") else None
     if not isinstance(txt, pd.DataFrame) or len(txt) == 0:
@@ -136,7 +129,7 @@ def _table_caption(paper: Any, section_id: Any) -> str | None:
     if "text" not in txt.columns:
         return ""  # paste(NULL, collapse = " ")
     texts = txt["text"][hit].tolist()
-    return " ".join("NA" if _is_na(t) else str(t) for t in texts)
+    return " ".join("NA" if is_missing(t) else str(t) for t in texts)
 
 
 def _table_header_ambiguous(header: Any) -> bool:

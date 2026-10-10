@@ -47,6 +47,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.regex import compile_r, gsub, strsplit
+from metacheck._values import is_missing
 from metacheck.stats._rmath import as_numeric, pchisq, pf, pnorm, pt, r_pow, r_round
 from metacheck.stats._rmath import sqrt as r_sqrt
 
@@ -179,24 +180,20 @@ def _r_warning(msg: str) -> None:
 Lgl = bool | None
 
 
-def _isna(x: Any) -> bool:
-    return x is None or (isinstance(x, float) and math.isnan(x))
-
-
 def _gt(a: float, b: float) -> Lgl:
-    return None if _isna(a) or _isna(b) else a > b
+    return None if is_missing(a) or is_missing(b) else a > b
 
 
 def _ge(a: float, b: float) -> Lgl:
-    return None if _isna(a) or _isna(b) else a >= b
+    return None if is_missing(a) or is_missing(b) else a >= b
 
 
 def _lt(a: float, b: float) -> Lgl:
-    return None if _isna(a) or _isna(b) else a < b
+    return None if is_missing(a) or is_missing(b) else a < b
 
 
 def _le(a: float, b: float) -> Lgl:
-    return None if _isna(a) or _isna(b) else a <= b
+    return None if is_missing(a) or is_missing(b) else a <= b
 
 
 def _and(a: Lgl, b: Lgl) -> Lgl:
@@ -217,12 +214,12 @@ def _or(a: Lgl, b: Lgl) -> Lgl:
 
 def _eq_true(x: Any) -> Lgl:
     """R ``x == TRUE`` for a logical/numeric flag (``None`` is NA)."""
-    return None if _isna(x) else bool(x == 1)
+    return None if is_missing(x) else bool(x == 1)
 
 
 def _eq_false(x: Any) -> Lgl:
     """R ``x == FALSE`` for a logical/numeric flag (``None`` is NA)."""
-    return None if _isna(x) else bool(x == 0)
+    return None if is_missing(x) else bool(x == 0)
 
 
 class _RNull:
@@ -585,9 +582,9 @@ def _extract_stats_rows(txt: str | None, stat: Sequence[str]) -> list[_Row] | No
         )
     out = []
     for r in rows:
-        if not (_isna(r.p_value) or r.p_value <= 1):
+        if not (is_missing(r.p_value) or r.p_value <= 1):
             continue
-        if _isna(r.value):
+        if is_missing(r.value):
             continue
         if r.statistic == "r" and (r.value > 1 or r.value < -1):
             continue
@@ -636,14 +633,14 @@ def extract_stats(txt: str | None, stat: str | Iterable[str] = _ALL_STATS) -> pd
 def r2t(r: float, df: float) -> float:
     """Port of ``statcheck:::r2t()``: a correlation as a t statistic."""
     q = 1 - r**2
-    if _isna(q) or _isna(df):
+    if is_missing(q) or is_missing(df):
         denom = math.nan
     elif df == 0:
         denom = math.nan if q == 0 else math.copysign(math.inf, q)
     else:
         denom = q / df
     s = r_sqrt(denom, _r_warning)
-    if _isna(s) or _isna(r):
+    if is_missing(s) or is_missing(r):
         return math.nan
     if s == 0:
         return math.nan if r == 0 else math.copysign(math.inf, r)
@@ -665,7 +662,7 @@ def compute_p(test_type: str, test_stat: float, df1: float, df2: float, two_tail
         computed = pt(-1 * abs(t), df2, True, _r_warning)
     else:
         computed = pchisq(test_stat, df1, False, _r_warning)
-    if not _isna(computed) and test_type in ("t", "Z", "r") and two_tailed:
+    if not is_missing(computed) and test_type in ("t", "Z", "r") and two_tailed:
         computed = computed * 2
     return computed
 
@@ -1083,7 +1080,7 @@ def _source_names(texts: Any) -> tuple[list[str], list[str | None]]:
     else:
         values = list(texts)
         names = None
-    values = [None if _isna(v) else str(v) for v in values]
+    values = [None if is_missing(v) else str(v) for v in values]
     if names is None:
         if not values:
             # max(integer(0)) and log10(-Inf)
@@ -1122,11 +1119,11 @@ def _check_args(
         "messages": messages,
     }
     for name, value in flags.items():
-        if _isna(value) or value is pd.NA:
+        if is_missing(value) or value is pd.NA:
             raise ValueError(f"`{name}` must be TRUE or FALSE, not NA")
     if not (_eq_true(pEqualAlphaSig) or _eq_false(pEqualAlphaSig)):
         raise ValueError(f"`pEqualAlphaSig` must be TRUE or FALSE, not {pEqualAlphaSig!r}")
-    if alpha is None or alpha is pd.NA or isinstance(alpha, bool) or _isna(float(alpha)):
+    if alpha is None or alpha is pd.NA or isinstance(alpha, bool) or is_missing(float(alpha)):
         raise ValueError("`alpha` must be a number")
 
 

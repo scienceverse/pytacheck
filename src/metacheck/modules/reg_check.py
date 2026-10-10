@@ -14,7 +14,8 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import as_character, bind_rows, gsub, is_na, plural, trimws
+from metacheck._r import as_character, bind_rows, gsub, plural, trimws
+from metacheck._values import is_missing
 from metacheck.module import module
 from metacheck.report import collapse_section, format_ref, scroll_table
 
@@ -66,7 +67,7 @@ def _col(df: pd.DataFrame, name: str) -> list[Any]:
     """``df$name`` as a list of cells (R: ``NULL`` for a missing column -> ``[]``)."""
     if name not in df.columns:
         return []
-    return [None if is_na(v) else v for v in df[name].tolist()]
+    return [None if is_missing(v) else v for v in df[name].tolist()]
 
 
 def _strip_refs(values: Sequence[Any]) -> list[str | None]:
@@ -189,7 +190,7 @@ def _full_text(paper: Any) -> str:
     text = paper.get("text")  # R: p$text is NULL when absent
     if text is None or "text" not in text.columns:
         return ""
-    return " ".join("NA" if is_na(t) else str(t) for t in text["text"].tolist())
+    return " ".join("NA" if is_missing(t) else str(t) for t in text["text"].tolist())
 
 
 def _count(j: Sequence[str | None], value: str) -> int:

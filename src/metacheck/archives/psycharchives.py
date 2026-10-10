@@ -26,7 +26,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from metacheck._r import is_na, regextract, sub
+from metacheck._r import regextract, sub
+from metacheck._values import is_missing
 
 __all__ = [
     "DSPACE_LEGACY_HOSTS",
@@ -67,7 +68,7 @@ def _chr_list(x: Any) -> list[str | None]:
     if x is None:
         return []
     vals = [x] if isinstance(x, str) or not isinstance(x, Sequence | pd.Series) else list(x)
-    return [None if is_na(v) else (v if isinstance(v, str) else as_character(v)) for v in vals]
+    return [None if is_missing(v) else (v if isinstance(v, str) else as_character(v)) for v in vals]
 
 
 def _dspace_legacy_parse(url: Any) -> pd.DataFrame:
@@ -112,7 +113,7 @@ def _psycharchives_handle(url: Any) -> str | None:
     if len(parsed) == 0:
         raise IndexError("subscript out of bounds")
     v = parsed["handle"].iloc[0]
-    return None if is_na(v) else str(v)
+    return None if is_missing(v) else str(v)
 
 
 def dspace_links(paper: Any) -> pd.DataFrame:
@@ -209,10 +210,14 @@ def _info_loop(
         else:
             id_col_name = url_col
             vals, _ = _as_values(x)
-            raw = [v for v in dict.fromkeys(None if is_na(v) else v for v in vals) if v is not None]
+            raw = [
+                v
+                for v in dict.fromkeys(None if is_missing(v) else v for v in vals)
+                if v is not None
+            ]
             table = pd.DataFrame({url_col: _vector(raw)})
 
-        present = [v for v in raw if not is_na(v)]
+        present = [v for v in raw if not is_missing(v)]
         ids = pd.DataFrame({url_col: _vector(present)}).drop_duplicates().reset_index(drop=True)
         valid = list(dict.fromkeys(present))
 
@@ -332,9 +337,9 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
         # a handle on no known host is looked up on PsychArchives, the intent of
         # metacheck's `%||%`, which never falls back from NA (it requests
         # https://NA/rest/...: U42)
-        host = "www.psycharchives.org" if is_na(host_v) else str(host_v)
+        host = "www.psycharchives.org" if is_missing(host_v) else str(host_v)
         handle_v = parsed["handle"].iloc[0]
-        if is_na(handle_v):
+        if is_missing(handle_v):
             warnings.warn(f"{_paste(pa_url)} is not a valid PsychArchives handle", stacklevel=2)
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
@@ -536,7 +541,7 @@ def _file_ext(names: Sequence[Any]) -> list[str]:
     """``tolower(sapply(strsplit(name, "\\\\."), last piece or ""))``."""
     from metacheck._r import strsplit
 
-    pieces = strsplit([None if is_na(v) else str(v) for v in names], r"\.")
+    pieces = strsplit([None if is_missing(v) else str(v) for v in names], r"\.")
     out = []
     for p in pieces:
         if p is None or len(p) < 2:
@@ -641,7 +646,7 @@ def _psycharchives_file_lists(
 
         def attr(col: str) -> dict[str, Any]:
             v = info[col].iloc[0] if col in info.columns and len(info) else None
-            return {_paste(url): None if is_na(v) else v}
+            return {_paste(url): None if is_missing(v) else v}
 
         rights, doi = attr("PA_license"), attr("PA_doi")
         file_list = info["files"].iloc[0] if "files" in info.columns and len(info) else None

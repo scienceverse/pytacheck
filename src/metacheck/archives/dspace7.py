@@ -16,7 +16,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from metacheck._r import is_na, regextract, sub
+from metacheck._r import regextract, sub
+from metacheck._values import is_missing
 
 __all__ = ["DSPACE7_HOSTS", "dspace7_file_download", "dspace7_links"]
 
@@ -246,8 +247,8 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
     )
     from metacheck.archives.psycharchives import _chr1, _obj_cell, _url_piece
 
-    uuid = None if is_na(uuid) else uuid
-    handle = None if is_na(handle) else handle
+    uuid = None if is_missing(uuid) else uuid
+    handle = None if is_missing(handle) else handle
     with _spinner(pb) as bar:
         # the item is named by its uuid, else its handle (metacheck's
         # `uuid %||% handle` never falls back from NA and prints "(NA)": U42)
@@ -417,7 +418,7 @@ def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame 
         if len(parsed) == 0:
             raise IndexError("subscript out of bounds")
         host = parsed["host"].iloc[0]
-        if is_na(host):
+        if is_missing(host):
             return None, unlisted
 
         info = _dspace7_info(
@@ -428,7 +429,7 @@ def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame 
 
         def attr(col: str) -> dict[str, Any]:
             v = info[col].iloc[0] if col in info.columns and len(info) else None
-            return {_paste(url): None if is_na(v) else v}
+            return {_paste(url): None if is_missing(v) else v}
 
         license_, doi = attr("license"), attr("doi")
         file_list = info["files"].iloc[0]

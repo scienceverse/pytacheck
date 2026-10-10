@@ -17,7 +17,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from metacheck._r import is_na, plural
+from metacheck._r import plural
+from metacheck._values import is_missing
 from metacheck.archives._atomic import atomic_write
 
 #: R/archive-osf-metadata.R::.osf_meta_dir
@@ -163,7 +164,7 @@ def _typed(values: list[Any]) -> pd.Series:
 
 def _csv_value(v: Any) -> str:
     """One cell as ``readr::write_csv()`` writes it."""
-    if v is None or (not isinstance(v, str) and is_na(v)):
+    if v is None or (not isinstance(v, str) and is_missing(v)):
         return "NA"
     if isinstance(v, bool):
         return "TRUE" if v else "FALSE"
@@ -183,7 +184,7 @@ def _write_csv(df: pd.DataFrame, path: str) -> None:
         writer.writerow(list(df.columns))
         for row in df.itertuples(index=False, name=None):
             writer.writerow(
-                [_csv_value(None if (not isinstance(v, str) and is_na(v)) else v) for v in row]
+                [_csv_value(None if (not isinstance(v, str) and is_missing(v)) else v) for v in row]
             )
 
 
@@ -280,7 +281,7 @@ def _osf_node_metadata(osf_id: str) -> dict[str, Any]:
 def _said(x: Any, fallback: str) -> str:
     if isinstance(x, list | tuple):
         x = x[0] if x else None
-    if x is None or (not isinstance(x, str) and is_na(x)) or x == "":
+    if x is None or (not isinstance(x, str) and is_missing(x)) or x == "":
         return fallback
     from metacheck._r import as_character
 
@@ -323,10 +324,12 @@ def _osf_write_readme(
         for c in contributors:
             orcid = c.get("orcid")
             name = c.get("name")
-            name = "NA" if name is None or (not isinstance(name, str) and is_na(name)) else name
+            name = (
+                "NA" if name is None or (not isinstance(name, str) and is_missing(name)) else name
+            )
             if (
                 orcid is not None
-                and not (not isinstance(orcid, str) and is_na(orcid))
+                and not (not isinstance(orcid, str) and is_missing(orcid))
                 and orcid != ""
             ):
                 who.append(f"- {name} (ORCID {orcid})")
@@ -340,7 +343,7 @@ def _osf_write_readme(
     else:
         contents = ["- Wiki pages: none (this project has no wiki)"]
     if logs is not None and len(logs) > 0:
-        dates = [d for d in logs["date"].tolist() if not is_na(d)]
+        dates = [d for d in logs["date"].tolist() if not is_missing(d)]
         first = str(min(dates))[:10] if dates else "Inf"
         last = str(max(dates))[:10] if dates else "-Inf"
         n = len(logs)
@@ -597,7 +600,7 @@ def _jl_frame(df: pd.DataFrame | None) -> _JNode:
     for rec in df.to_dict(orient="records"):
         fields: dict[str, _JNode] = {}
         for k, v in rec.items():
-            if v is None or (not isinstance(v, str) and is_na(v)):
+            if v is None or (not isinstance(v, str) and is_missing(v)):
                 continue
             if hasattr(v, "item"):
                 v = v.item()
@@ -673,7 +676,7 @@ def _osf_metadata_download(osf_id: str, download_to: str, pb: Any = None) -> str
     meta = _osf_node_metadata(ident)
 
     meta["wikis"] = [] if wikis is None else wikis
-    log_dates = [] if logs is None else [d for d in logs["date"].tolist() if not is_na(d)]
+    log_dates = [] if logs is None else [d for d in logs["date"].tolist() if not is_missing(d)]
     meta["files_written"] = {
         "wiki_pages": [] if wikis is None else [f for f in wikis["file"].tolist() if f],
         "logs": None

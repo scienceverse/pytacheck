@@ -9,7 +9,8 @@ import numpy as np
 import pandas as pd
 
 from metacheck._r.base import plural
-from metacheck._r.regex import grep, gsub, is_na
+from metacheck._r.regex import grep, gsub
+from metacheck._values import is_missing
 from metacheck.module import module
 
 __all__ = ["ref_summary"]
@@ -194,7 +195,7 @@ def _join_doi(x: pd.DataFrame, y: pd.DataFrame, y_doi: str = "doi") -> pd.DataFr
 
 def _is_false(v: Any) -> bool:
     """``v %in% FALSE`` (``FALSE`` matches ``0`` and ``"FALSE"`` too; ``NA`` does not)."""
-    if is_na(v):
+    if is_missing(v):
         return False
     if isinstance(v, bool | np.bool_):
         return not bool(v)
@@ -205,7 +206,7 @@ def _is_false(v: Any) -> bool:
 
 def _is_true(v: Any) -> bool:
     """``v %in% TRUE``."""
-    if is_na(v):
+    if is_missing(v):
         return False
     if isinstance(v, bool | np.bool_):
         return bool(v)
@@ -233,7 +234,7 @@ def _vec_kind(s: pd.Series) -> str:
         if pd.api.types.is_string_dtype(dt):
             return "character"
         return "other"
-    vals = [v for v in s.tolist() if not is_na(v)]
+    vals = [v for v in s.tolist() if not is_missing(v)]
     if not vals:
         return "unspecified"
     if all(isinstance(v, bool | np.bool_) for v in vals):
@@ -374,7 +375,7 @@ def _one_per_reference(tbl: pd.DataFrame) -> pd.DataFrame:
         values = tbl[col].tolist()
         merged: list[Any] = []
         for rows in groups.values():
-            distinct = list(dict.fromkeys(values[i] for i in rows if not is_na(values[i])))
+            distinct = list(dict.fromkeys(values[i] for i in rows if not is_missing(values[i])))
             if not distinct:
                 merged.append(None)
             elif len(distinct) == 1 or not all(isinstance(v, str) for v in distinct):

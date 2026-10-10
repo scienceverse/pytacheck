@@ -8,6 +8,7 @@ import pandas as pd
 
 from metacheck._r.base import plural
 from metacheck._r.frames import bind_rows, count
+from metacheck._values import is_missing
 from metacheck.module import module
 
 _COLS = ["paper_id", "bib_id", "doi", "citation", "reftext", "warning"]
@@ -23,19 +24,15 @@ class _NA:
 _NA_KEY = _NA()
 
 
-def _is_na(x: Any) -> bool:
-    return x is None or x is pd.NA or (isinstance(x, float) and x != x)
-
-
 def _key(x: Any) -> Any:
-    return _NA_KEY if _is_na(x) else x
+    return _NA_KEY if is_missing(x) else x
 
 
 def _chr(x: Any) -> str:
     """``sprintf("%s", x)`` / ``paste()`` of a value (``NA`` prints as ``"NA"``)."""
     from metacheck._r.base import as_character
 
-    if _is_na(x):
+    if is_missing(x):
         return "NA"
     return x if isinstance(x, str) else str(as_character(x))
 
@@ -75,12 +72,12 @@ def _pivot_wider(counts: pd.DataFrame) -> pd.DataFrame:
         i = id_pos.get(pk)
         if i is None:
             i = id_pos[pk] = len(id_vals)
-            id_vals.append(None if _is_na(pid) else pid)
+            id_vals.append(None if is_missing(pid) else pid)
         j = doi_pos.get(dk)
         if j is None:
             j = doi_pos[dk] = len(doi_vals)
             doi_vals.append(doi)
-        cells.setdefault((i, j), None if _is_na(bid) else bid)
+        cells.setdefault((i, j), None if is_missing(bid) else bid)
 
     n = len(id_vals)
     values: list[list[Any]] = [[None] * n for _ in doi_vals]
@@ -240,7 +237,7 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
         cited_by_doi: dict[Any, list[Any]] = {}
         for d, c in zip(xrefs["doi"].tolist(), xrefs["citation"].tolist(), strict=True):
             quotes_of = cited_by_doi.setdefault(_key(d), [])
-            if not _is_na(c):
+            if not is_missing(c):
                 quotes_of.append(c)
 
         report = []

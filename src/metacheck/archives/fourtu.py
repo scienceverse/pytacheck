@@ -14,7 +14,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import is_na
+from metacheck._values import is_missing
 
 __all__ = [
     "researchdata4tu_file_download",
@@ -116,7 +116,7 @@ def _resolve_if_uuid(x: Any) -> Any:
     """An id as it is, a uuid resolved by :func:`_researchdata4tu_resolve_uuid`."""
     from metacheck._r import grepl
 
-    if is_na(x) or not grepl(_UUID, str(x), ignore_case=True):
+    if is_missing(x) or not grepl(_UUID, str(x), ignore_case=True):
         return x
     return _researchdata4tu_resolve_uuid(str(x))
 
@@ -156,7 +156,7 @@ def researchdata4tu_info(
     # the other *_info() functions (metacheck keeps only the id column of a
     # table, and a vector with an NA fails: U33)
     table = _info_table(researchdata4tu_url, id_col, "researchdata4tu_url", ("researchdata4tu_id",))
-    raw = [None if is_na(v) else v for v in table["researchdata4tu_url"].tolist()]
+    raw = [None if is_missing(v) else v for v in table["researchdata4tu_url"].tolist()]
 
     if not online(_HOST):
         raise ConnectionError("data.4tu.nl seems to be offline")
@@ -175,7 +175,9 @@ def researchdata4tu_info(
         ids["researchdata4tu_id"] = _string_series(
             [_resolve_if_uuid(v) for v in ids["researchdata4tu_id"].tolist()]
         )
-        valid = list(dict.fromkeys(v for v in ids["researchdata4tu_id"].tolist() if not is_na(v)))
+        valid = list(
+            dict.fromkeys(v for v in ids["researchdata4tu_id"].tolist() if not is_missing(v))
+        )
 
         if not valid:
             _tick(bar, "No valid 4TU.ResearchData links")

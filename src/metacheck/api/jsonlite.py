@@ -23,6 +23,8 @@ from typing import Any
 
 import orjson
 
+from metacheck._values import is_missing
+
 __all__ = ["format_number", "to_json"]
 
 _POW10 = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000]
@@ -92,19 +94,6 @@ def _num(value: Any, digits: int) -> Any:
     return _Raw(format_number(f, digits))
 
 
-def _is_missing(v: Any) -> bool:
-    if v is None:
-        return True
-    try:
-        import pandas as pd
-
-        if v is pd.NA or v is pd.NaT:
-            return True
-    except ImportError:  # pragma: no cover
-        pass
-    return isinstance(v, float) and math.isnan(v)
-
-
 def _scalar(v: Any, digits: int) -> Any:
     import numpy as np
 
@@ -118,7 +107,7 @@ def _scalar(v: Any, digits: int) -> Any:
         return v.strftime("%Y-%m-%d %H:%M:%S")
     if isinstance(v, dt.date):
         return v.isoformat()
-    if _is_missing(v):
+    if is_missing(v):
         return None
     return str(v)
 
@@ -128,7 +117,7 @@ def _series(values: list[Any], kind: str, digits: int) -> list[Any]:
     for v in values:
         if isinstance(v, float) and math.isnan(v) and kind == "list":
             out.append(_Raw('"NaN"'))
-        elif _is_missing(v):
+        elif is_missing(v):
             out.append(_Raw('"NA"') if kind == "num" else None)
         else:
             out.append(_scalar(v, digits))
@@ -159,7 +148,7 @@ def _convert(x: Any, digits: int, unboxed: bool) -> Any:
     if isinstance(x, Mapping):
         return {str(k): _convert(v, digits, unboxed) for k, v in x.items()}
     if isinstance(x, list | tuple):
-        if all(_is_missing(v) or isinstance(v, str | bool | int | float | np.generic) for v in x):
+        if all(is_missing(v) or isinstance(v, str | bool | int | float | np.generic) for v in x):
             numeric = any(
                 isinstance(v, int | float | np.number) and not isinstance(v, bool) for v in x
             )
@@ -168,7 +157,7 @@ def _convert(x: Any, digits: int, unboxed: bool) -> Any:
                     _Raw('"NaN"')
                     if isinstance(v, float) and math.isnan(v)
                     else _num(v, digits)
-                    if not _is_missing(v)
+                    if not is_missing(v)
                     else _Raw('"NA"')
                     for v in x
                 ]
@@ -199,7 +188,7 @@ def _frame(df: Any, digits: int) -> list[dict[str, Any]]:
             if isinstance(v, list | tuple | dict):
                 row[name] = _convert(list(v) if isinstance(v, tuple) else v, digits, False)
                 continue
-            if _is_missing(v):
+            if is_missing(v):
                 continue
             row[name] = _num(v, digits) if numeric[col] else _scalar(v, digits)
         rows.append(row)

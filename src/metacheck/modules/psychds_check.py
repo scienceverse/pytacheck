@@ -16,7 +16,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from metacheck._r import gsub, is_na, plural, r_sort_key, regextract, slashed, sub
+from metacheck._r import gsub, plural, r_sort_key, regextract, slashed, sub
+from metacheck._values import is_missing
 from metacheck.module import module
 from metacheck.report import scroll_table
 
@@ -85,7 +86,7 @@ _RECOMMENDED = (
 
 
 def _na(x: Any) -> bool:
-    return x is None or is_na(x)
+    return x is None or is_missing(x)
 
 
 def _chr(x: Any) -> str | None:

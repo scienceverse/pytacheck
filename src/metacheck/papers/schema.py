@@ -44,7 +44,7 @@ import orjson
 import pandas as pd
 
 from metacheck._r.base import as_character
-from metacheck._r.regex import is_na
+from metacheck._values import is_missing
 
 __all__ = [
     "SCHEMA_DTYPES",
@@ -185,7 +185,7 @@ _FALSE = {"FALSE", "false", "F", "False"}
 
 
 def _r_as_double(v: Any) -> float:
-    if is_na(v):
+    if is_missing(v):
         return math.nan
     if isinstance(v, bool | np.bool_):
         return 1.0 if v else 0.0
@@ -211,7 +211,7 @@ def _r_as_integer(v: Any) -> Any:
 
 
 def _r_as_logical(v: Any) -> Any:
-    if is_na(v):
+    if is_missing(v):
         return pd.NA
     if isinstance(v, bool | np.bool_):
         return bool(v)
@@ -230,7 +230,7 @@ def _as_list_cell(v: Any) -> Any:
         return v
     if isinstance(v, tuple | np.ndarray):
         return list(v)
-    if is_na(v):
+    if is_missing(v):
         return [None]
     return [v]
 

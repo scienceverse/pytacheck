@@ -22,7 +22,8 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from metacheck._r import is_na, slashed
+from metacheck._r import slashed
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     import httpx
@@ -97,9 +98,9 @@ def _as_list(x: Any) -> list[Any]:
     if x is None:
         return []
     if isinstance(x, pd.Series | pd.Index):
-        return [None if is_na(v) else v for v in x.tolist()]
+        return [None if is_missing(v) else v for v in x.tolist()]
     if _is_vector(x):
-        return [None if is_na(v) else v for v in x]
+        return [None if is_missing(v) else v for v in x]
     return [x]
 
 
@@ -393,7 +394,7 @@ def github_repo(repo: Any) -> Any:
         if len(items) > 1:
             return [github_repo(r) for r in items]
         repo = items[0]
-    if is_na(repo):
+    if is_missing(repo):
         return None
 
     from metacheck._r import as_character, regexec, sub

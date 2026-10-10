@@ -17,7 +17,8 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from metacheck._r import bind_rows, grepl, is_na
+from metacheck._r import bind_rows, grepl
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     import httpx
@@ -186,7 +187,7 @@ def _frame(columns: dict[str, Any], n: int) -> pd.DataFrame:
             values = [values] * n
         dtype = _DTYPES.get(name, object)
         vals = [
-            None if (v is not None and not isinstance(v, list | dict) and is_na(v)) else v
+            None if (v is not None and not isinstance(v, list | dict) and is_missing(v)) else v
             for v in values
         ]
         if dtype == "string":
@@ -884,10 +885,14 @@ def osf_user_projects(user_id: Any, pb: Any = None) -> pd.DataFrame:
 
     osf_ids = info["osf_id"].tolist()
     project = info["project"].tolist() if "project" in info else [None] * len(info)
-    root = [o if is_na(p) else p for p, o in zip(project, osf_ids, strict=True)]
-    root = [None if is_na(r) else r for r in root]
+    root = [o if is_missing(p) else p for p, o in zip(project, osf_ids, strict=True)]
+    root = [None if is_missing(r) else r for r in root]
 
-    own = [i for i, (o, r) in enumerate(zip(osf_ids, root, strict=True)) if not is_na(o) and o == r]
+    own = [
+        i
+        for i, (o, r) in enumerate(zip(osf_ids, root, strict=True))
+        if not is_missing(o) and o == r
+    ]
     own_ids = [osf_ids[i] for i in own]
     missing_root = [r for r in dict.fromkeys(r for r in root if r is not None) if r not in own_ids]
 
@@ -895,7 +900,7 @@ def osf_user_projects(user_id: Any, pb: Any = None) -> pd.DataFrame:
         if name not in info:
             return [None] * len(own)
         values = info[name].tolist()
-        return [None if is_na(values[i]) else values[i] for i in own]
+        return [None if is_missing(values[i]) else values[i] for i in own]
 
     out_ids = own_ids + missing_root
     names = col("name") + [None] * len(missing_root)
@@ -905,7 +910,7 @@ def osf_user_projects(user_id: Any, pb: Any = None) -> pd.DataFrame:
     keep: list[int] = []
     seen: set[str] = set()
     for i, o in enumerate(out_ids):
-        if is_na(o) or o in seen:
+        if is_missing(o) or o in seen:
             continue
         seen.add(o)
         keep.append(i)
@@ -1014,7 +1019,7 @@ def _osf_verify_downloads(
         return ret
 
     paths = ret["path"].tolist()
-    has_path = [not is_na(p) for p in paths]
+    has_path = [not is_missing(p) for p in paths]
     # R file.path(): a plain "/" join (a path starting with "/" is not absolute here)
     full = [f"{download_to}/{p}" if h else None for p, h in zip(paths, has_path, strict=True)]
     on_disk = [f is not None and os.path.exists(f) and not os.path.isdir(f) for f in full]
@@ -1027,7 +1032,7 @@ def _osf_verify_downloads(
 
     checks = check_size if isinstance(check_size, list | tuple) else [check_size]
     checks = [checks[i % len(checks)] for i in range(n)] if checks else [None] * n
-    check = [c is True or (c is not None and not is_na(c) and bool(c)) for c in checks]
+    check = [c is True or (c is not None and not is_missing(c) and bool(c)) for c in checks]
     if any(check):
         if "size" in ret.columns:
             expected = pd.to_numeric(ret["size"], errors="coerce").astype("float64").tolist()
@@ -1062,8 +1067,8 @@ def _osf_parent_project(osf_id: str) -> str | None:
     if obj["osf_type"].iloc[0] == "error":
         logger(".osf_parent_project", {"error": "osf error"})
         return None
-    if "project" in obj.columns and not is_na(obj["project"].iloc[0]):
+    if "project" in obj.columns and not is_missing(obj["project"].iloc[0]):
         return str(obj["project"].iloc[0])
-    if "parent" not in obj.columns or is_na(obj["parent"].iloc[0]):
+    if "parent" not in obj.columns or is_missing(obj["parent"].iloc[0]):
         return osf_id
     return _osf_parent_project(str(obj["parent"].iloc[0]))

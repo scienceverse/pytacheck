@@ -46,13 +46,6 @@ def _first_col(df: pd.DataFrame, name: str) -> pd.Series:
     return df.iloc[:, pos[0]]
 
 
-def _is_true(x: Any) -> bool:
-    """R ``isTRUE()``: a single ``TRUE`` (Python or numpy bool)."""
-    import numpy as np
-
-    return isinstance(x, bool | np.bool_) and bool(x)
-
-
 def _is_false(x: Any) -> bool:
     """R ``isFALSE()``: a single ``FALSE`` (Python or numpy bool)."""
     import numpy as np

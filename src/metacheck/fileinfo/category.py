@@ -14,6 +14,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r import grepl
+from metacheck._values import is_missing
 
 __all__ = ["file_category", "filetype"]
 
@@ -37,20 +38,11 @@ _ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrst
 # -- helpers -------------------------------------------------------------------
 
 
-def _is_na(x: Any) -> bool:
-    if x is None or x is pd.NA or x is pd.NaT:
-        return True
-    try:
-        return bool(x != x)  # NaN
-    except (TypeError, ValueError):
-        return False
-
-
 def _chr(x: Any) -> str | None:
     """One element as R character (``NA`` -> ``None``)."""
     if isinstance(x, list | tuple) and len(x) == 1:  # a length-1 list-column cell
         x = x[0]
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, str):
         return x

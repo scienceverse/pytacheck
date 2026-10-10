@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
-from metacheck._r import is_na
+from metacheck._values import is_missing
 from metacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
@@ -86,7 +86,7 @@ def zenodo_links(paper: Any) -> pd.DataFrame:
 def _zenodo_id_one(zenodo_url: Any) -> str | None:
     from metacheck._r import as_character, grepl, regexec, trimws
 
-    if is_na(zenodo_url):
+    if is_missing(zenodo_url):
         return None
     text = trimws(zenodo_url if isinstance(zenodo_url, str) else as_character(zenodo_url))
     if text is None or text == "":
@@ -199,7 +199,7 @@ def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool)
     )
     ids = ids.drop_duplicates().reset_index(drop=True)
     ids = ids[ids["zenodo_url"].notna().to_numpy()].reset_index(drop=True)
-    valid_ids = list(dict.fromkeys(i for i in ids["zenodo_id"].tolist() if not is_na(i)))
+    valid_ids = list(dict.fromkeys(i for i in ids["zenodo_id"].tolist() if not is_missing(i)))
 
     if not valid_ids:
         _tick(pb, "No valid Zenodo links")
@@ -240,7 +240,7 @@ def _is_character(col: pd.Series) -> bool:
     """Would R hold this column as a character vector?"""
     if pd.api.types.is_string_dtype(col.dtype) and not pd.api.types.is_object_dtype(col.dtype):
         return True
-    values = [v for v in col.tolist() if not is_na(v)]
+    values = [v for v in col.tolist() if not is_missing(v)]
     return bool(values) and all(isinstance(v, str) for v in values)
 
 
@@ -333,7 +333,7 @@ def _zenodo_unread(zenodo_id: Any, error: str) -> pd.DataFrame:
     from metacheck._r import as_character
 
     row: dict[str, Any] = dict.fromkeys(_INFO_COLUMNS)
-    row["zenodo_id"] = None if is_na(zenodo_id) else as_character(zenodo_id)
+    row["zenodo_id"] = None if is_missing(zenodo_id) else as_character(zenodo_id)
     row["error"] = error
     return _info_frame(row)
 
@@ -467,7 +467,7 @@ def _file_rows(files_list: list[Any]) -> pd.DataFrame:
         selfs.append(r_dollar(r_dollar(x, "links"), "self"))
 
     def chr_col(values: list[Any]) -> pd.Series:
-        return pd.Series([None if is_na(v) else str(v) for v in values], dtype="string")
+        return pd.Series([None if is_missing(v) else str(v) for v in values], dtype="string")
 
     return pd.DataFrame(
         {
@@ -549,7 +549,7 @@ def zenodo_file_download(
 
 def _limit(x: float | None) -> bool:
     """R ``!is.null(x) && is.finite(x) && x > 0``."""
-    return x is not None and not is_na(x) and math.isfinite(x) and x > 0
+    return x is not None and not is_missing(x) and math.isfinite(x) and x > 0
 
 
 def _zenodo_download_one(
@@ -588,7 +588,7 @@ def _zenodo_download_one(
     if unzip_types is not None and len(_unzip_list(unzip_types)) > 0:
         zips = _is_zip(keys)
         unzippable = [
-            z and s is not None and not is_na(s) and s != ""
+            z and s is not None and not is_missing(s) and s != ""
             for z, s in zip(zips, selfs, strict=True)
         ]
 
@@ -600,14 +600,14 @@ def _zenodo_download_one(
     def omitting(i: int) -> None:
         key = files["key"].iloc[i]
         size = files["size"].iloc[i]
-        _tick(pb, f"- omitting {'NA' if is_na(key) else key} ({_r_num_str(size / _MB)}MB)")
+        _tick(pb, f"- omitting {'NA' if is_missing(key) else key} ({_r_num_str(size / _MB)}MB)")
         omitted[i] = True
 
     # --- size filters (MB) ----
     if _limit(max_file_size):
         assert max_file_size is not None
         for i, (s, u) in enumerate(zip(files["size"].tolist(), unzippable, strict=True)):
-            if not is_na(s) and s > max_file_size * _MB and not u:
+            if not is_missing(s) and s > max_file_size * _MB and not u:
                 omitting(i)
 
     # remove the largest files until the total fits (only whole transfers count)
@@ -618,10 +618,10 @@ def _zenodo_download_one(
             capped = [i for i, u in enumerate(unzippable) if not u and not omitted[i]]
             if not capped:
                 break
-            total = sum(size_list[i] for i in capped if not is_na(size_list[i]))
+            total = sum(size_list[i] for i in capped if not is_missing(size_list[i]))
             if not total > max_download_size * _MB:
                 break
-            present = [i for i in capped if not is_na(size_list[i])]
+            present = [i for i in capped if not is_missing(size_list[i])]
             max_file = max(present, key=lambda i: (size_list[i], -i))
             omitting(max_file)
 
@@ -700,7 +700,7 @@ def _zenodo_download_one(
                         from metacheck.archives.dataverse import _failed_members
 
                         bad = _failed_members(got)
-                        key_i = None if is_na(keys[i]) else str(keys[i])
+                        key_i = None if is_missing(keys[i]) else str(keys[i])
                         failed_rows.extend((key_i, name, why) for name, why in bad)
                         for name, why in bad:
                             _tick(pb, f"  - failed to extract {_na(name)}: {_na(why)}")
@@ -711,7 +711,7 @@ def _zenodo_download_one(
                         "fetching the whole archive",
                     )
                 ok = False
-                if selfs[i] is not None and not is_na(selfs[i]) and selfs[i] != "":
+                if selfs[i] is not None and not is_missing(selfs[i]) and selfs[i] != "":
                     ok = _download_file(selfs[i], os.path.join(temppath, _na(ids[i])))
                 downloaded[i] = ok
                 _tick(pb, f"Downloading file {k} of {n_wanted}")
@@ -723,7 +723,9 @@ def _zenodo_download_one(
             if downloaded[i]:
                 src = os.path.join(temppath, _na(ids[i]))
                 key = keys[i]
-                fname = key if key is not None and not is_na(key) and key != "" else _na(ids[i])
+                fname = (
+                    key if key is not None and not is_missing(key) and key != "" else _na(ids[i])
+                )
                 dest = os.path.join(target, fname)
                 with contextlib.suppress(OSError):
                     os.makedirs(_r_dirname(dest), exist_ok=True)
@@ -786,7 +788,7 @@ def _zenodo_download_one(
 
 def _na(x: Any) -> str:
     """``paste0()`` of a possibly missing string."""
-    return "NA" if x is None or is_na(x) else str(x)
+    return "NA" if x is None or is_missing(x) else str(x)
 
 
 def _unzip_list(x: Any) -> list[Any]:
@@ -886,7 +888,7 @@ def _zenodo_zip_members(
         assert max_file_size is not None
         sizes = listing["size"].tolist()
         keep = [
-            k and not is_na(s) and s <= max_file_size * _MB
+            k and not is_missing(s) and s <= max_file_size * _MB
             for k, s in zip(keep, sizes, strict=True)
         ]
     if not any(keep):
@@ -924,7 +926,7 @@ def _zenodo_verify_downloads(files: pd.DataFrame | None, download_to: str) -> pd
     files = files.copy()
     n = len(files)
     unzipped = (
-        [not is_na(v) for v in files["extracted"].tolist()]
+        [not is_missing(v) for v in files["extracted"].tolist()]
         if "extracted" in files.columns
         else [False] * n
     )
@@ -937,7 +939,7 @@ def _zenodo_verify_downloads(files: pd.DataFrame | None, download_to: str) -> pd
         return files
 
     paths = files["path"].tolist()
-    full = [None if is_na(p) else os.path.join(download_to, str(p)) for p in paths]
+    full = [None if is_missing(p) else os.path.join(download_to, str(p)) for p in paths]
     on_disk = [f is not None and os.path.exists(f) and not os.path.isdir(f) for f in full]
     for i, f in enumerate(full):
         if on_disk[i] and f is not None:
@@ -946,7 +948,7 @@ def _zenodo_verify_downloads(files: pd.DataFrame | None, download_to: str) -> pd
 
     # size: a file present at the wrong length looks complete downstream
     expected = (
-        [_as_double(v) if not is_na(v) else None for v in files["size"].tolist()]
+        [_as_double(v) if not is_missing(v) else None for v in files["size"].tolist()]
         if "size" in files.columns
         else [None] * n
     )
@@ -957,7 +959,7 @@ def _zenodo_verify_downloads(files: pd.DataFrame | None, download_to: str) -> pd
 
     # checksum, only for files that passed so far
     checksums = files["checksum"].tolist() if "checksum" in files.columns else [None] * n
-    md5 = [None if is_na(c) else sub("^md5:", "", str(c)) for c in checksums]
+    md5 = [None if is_missing(c) else sub("^md5:", "", str(c)) for c in checksums]
     is_hex = grepl("^[0-9a-f]{32}$", md5, ignore_case=True)
     for i in range(n):
         if ok[i] and md5[i] is not None and is_hex[i]:

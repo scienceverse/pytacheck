@@ -14,7 +14,8 @@ from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
-from metacheck._r import gsub, is_na, strsplit, trimws
+from metacheck._r import gsub, strsplit, trimws
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     from lxml import html as lxml_html
@@ -70,14 +71,16 @@ def aspredicted_info(ap_url: Any, id_col: int | str = 1, wait: float = 1) -> pd.
         raw_urls = table[id_col_name].tolist()
     else:
         vals = [ap_url] if isinstance(ap_url, str) or ap_url is None else list(ap_url)
-        uniq = list(dict.fromkeys(None if is_na(v) else v for v in vals))
+        uniq = list(dict.fromkeys(None if is_missing(v) else v for v in vals))
         raw_urls = [v for v in uniq if v is not None]
         id_col_name = "ap_url"
         table = pd.DataFrame(
             {"ap_url": pd.Series([as_character(v) for v in raw_urls], dtype="string")}
         )
 
-    valid_ids = list(dict.fromkeys(cast("str", as_character(u)) for u in raw_urls if not is_na(u)))
+    valid_ids = list(
+        dict.fromkeys(cast("str", as_character(u)) for u in raw_urls if not is_missing(u))
+    )
     if not valid_ids:
         _message("No valid AsPredicted links")
         return table
@@ -91,7 +94,7 @@ def aspredicted_info(ap_url: Any, id_col: int | str = 1, wait: float = 1) -> pd.
         http.sleep(wait)
         if (
             "error" in ap.columns
-            and not is_na(ap["error"].iloc[0])
+            and not is_missing(ap["error"].iloc[0])
             and ap["error"].iloc[0] == "captcha"
         ):
             break

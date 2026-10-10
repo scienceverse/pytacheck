@@ -20,6 +20,7 @@ from typing import Any, cast
 
 import pandas as pd
 
+from metacheck._values import is_missing
 from metacheck.papers.model import Paper
 
 __all__ = ["extract_tests"]
@@ -137,12 +138,6 @@ _COMPONENT_COLS = (("name", "lhs"), ("comp", "comp"), ("value", "rhs"), ("df", "
 _R_WS = " \t\r\n"
 
 
-def _is_na(x: Any) -> bool:
-    if x is None or x is pd.NA:
-        return True
-    return isinstance(x, float) and x != x
-
-
 def _tolower(s: str) -> str:
     """R ``tolower()``: one-to-one lower-casing (``towlower``)."""
     if s.isascii():
@@ -163,7 +158,7 @@ def _norm_stat_name(x: Any) -> str | None:
     """
     if x is None:
         x = ""
-    if _is_na(x):
+    if is_missing(x):
         return None
     s = _tolower(str(x).strip(_R_WS))
     for greek, ascii_ in _FOLDS:
@@ -279,7 +274,7 @@ def _split_into_tests(comps: Sequence[Mapping[str, Any]]) -> list[list[Mapping[s
 
 def _fmt(x: Any) -> str:
     """``sprintf("%s", x)`` of one value."""
-    if _is_na(x):
+    if is_missing(x):
         return "NA"
     from metacheck._r.base import as_character
 
@@ -293,7 +288,7 @@ def _render_test(g: Sequence[Mapping[str, Any]]) -> str:
         if "name" not in c or "value" not in c:  # sprintf() with a NULL gives character(0)
             raise ValueError(f"values must be length 1,\n but FUN(X[[{k}]]) result is length 0")
         df = c.get("df")
-        dfp = "" if _is_na(df) or _fmt(df) == "" else _fmt(df)
+        dfp = "" if is_missing(df) or _fmt(df) == "" else _fmt(df)
         comp = c.get("comp", "=")  # an absent key is R's NULL
         parts.append(f"{_fmt(c.get('name'))}{dfp} {_fmt(comp)} {_fmt(c.get('value'))}")
     return ", ".join(parts)
@@ -319,7 +314,7 @@ def _empty_tests() -> pd.DataFrame:
 
 def _scalar(v: Any) -> Any:
     """A table cell as a plain Python value (``None`` for missing)."""
-    if _is_na(v):
+    if is_missing(v):
         return None
     if hasattr(v, "item") and not isinstance(v, str):
         try:
@@ -339,7 +334,7 @@ class _FirstRows:
         if txt is None or "text_id" not in txt.columns:
             return
         for i, tid in enumerate(txt["text_id"].tolist()):
-            if _is_na(tid):
+            if is_missing(tid):
                 if self.first_na is None:
                     self.first_na = i
             elif tid not in self.first:
