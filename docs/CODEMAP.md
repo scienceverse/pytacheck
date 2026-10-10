@@ -477,7 +477,7 @@ Python: [datacheck/checks.py](../src/metacheck/datacheck/checks.py), [datacheck/
 | `match_column_labels()` | [`metacheck.datacheck.columns:match_column_labels`](../src/metacheck/datacheck/columns.py) | yes | U58 |  |
 | `data_check_scale_values()` | [`metacheck.datacheck.checks:data_check_scale_values`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55, U59 |  |
 | `data_check_outliers()` | [`metacheck.datacheck.checks:data_check_outliers`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55 |  |
-| `data_check_constant()` | [`metacheck.datacheck.checks:data_check_constant`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
+| `data_check_constant()` | [`metacheck.datacheck.checks:data_check_constant`](../src/metacheck/datacheck/_checks_quality.py) | yes | D77 |  |
 | `data_check_empty()` | [`metacheck.datacheck.checks:data_check_empty`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
 | `data_check_design_name()` | [`metacheck.datacheck.checks:data_check_design_name`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
 | `data_check_spss_filter()` | [`metacheck.datacheck.checks:data_check_spss_filter`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
