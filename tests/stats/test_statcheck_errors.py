@@ -10,8 +10,8 @@ from __future__ import annotations
 import math
 
 import pytest
+from scipy import stats as st
 
-from metacheck.stats._rmath import pchisq, pf, pnorm, pt
 from metacheck.stats.statcheck import (
     VAR_COMPUTED_P,
     VAR_DEC_ERROR,
@@ -22,6 +22,7 @@ from metacheck.stats.statcheck import (
     VAR_NR_PVALUES,
     VAR_RAW,
     VAR_SOURCE,
+    compute_p,
     r2t,
     statcheck,
     summary_statcheck,
@@ -46,27 +47,27 @@ def dec_error(txt: str, **kwargs) -> bool:
 
 
 def test_p_values_for_t_tests() -> None:
-    computed = pt(-1 * abs(2.20), 28) * 2
+    computed = st.t.cdf(-1 * abs(2.20), 28) * 2
     assert sc("t(28) = 2.20, p = .03")[VAR_COMPUTED_P].iloc[0] == pytest.approx(computed)
 
 
 def test_p_values_for_f_tests() -> None:
-    computed = pf(2.20, 2, 28, lower_tail=False)
+    computed = st.f.sf(2.20, 2, 28)
     assert sc("F(2, 28) = 2.20, p = .15")[VAR_COMPUTED_P].iloc[0] == pytest.approx(computed)
 
 
 def test_p_values_for_correlations() -> None:
-    computed = min(pt(-1 * abs(r2t(0.22, 28)), 28) * 2, 1)
+    computed = min(st.t.cdf(-1 * abs(r2t(0.22, 28)), 28) * 2, 1)
     assert sc("r(28) = .22, p = .26")[VAR_COMPUTED_P].iloc[0] == pytest.approx(computed)
 
 
 def test_p_values_for_z_tests() -> None:
-    computed = pnorm(abs(2.20), lower_tail=False) * 2
+    computed = st.norm.sf(abs(2.20)) * 2
     assert sc(" z = 2.20, p = .04")[VAR_COMPUTED_P].iloc[0] == pytest.approx(computed)
 
 
 def test_p_values_for_chi2_and_q_tests() -> None:
-    computed = pchisq(22.20, 28, lower_tail=False)
+    computed = st.chi2.sf(22.20, 28)
     assert sc("chi2(28) = 22.20, p = .79")[VAR_COMPUTED_P].iloc[0] == pytest.approx(computed)
     assert sc("Q(28) = 22.20, p = .79")[VAR_COMPUTED_P].iloc[0] == pytest.approx(computed)
 
@@ -76,11 +77,12 @@ def test_p_values_match_r() -> None:
     assert sc("t(28) = 2.20, p = .03")[VAR_COMPUTED_P].iloc[0] == pytest.approx(
         0.0362254847788378, rel=1e-13
     )
-    assert pf(2.2, 2, 28, lower_tail=False) == pytest.approx(0.129593224474093, rel=1e-13)
-    assert pchisq(22.2, 28, lower_tail=False) == pytest.approx(0.771948704032936, rel=1e-13)
-    assert pnorm(2.2, lower_tail=False) * 2 == pytest.approx(0.0278068950269972, rel=1e-13)
-    assert pt(-40, 5000) * 2 == pytest.approx(8.41485047193754e-304, rel=1e-10)
-    assert pt(-1e60, 3) == pytest.approx(1.10265779084355e-180, rel=1e-10)  # the nx > 1e100 branch
+    assert compute_p("F", 2.2, 2, 28, True) == pytest.approx(0.129593224474093, rel=1e-13)
+    assert compute_p("Chi2", 22.2, 28, None, True) == pytest.approx(0.771948704032936, rel=1e-13)
+    assert compute_p("Z", 2.2, None, None, True) == pytest.approx(0.0278068950269972, rel=1e-13)
+    assert compute_p("t", 40, None, 5000, True) == pytest.approx(8.41485047193754e-304, rel=1e-10)
+    # R's pt() switches to an asymptotic formula here (nx > 1e100); betainc agrees
+    assert compute_p("t", 1e60, None, 3, False) == pytest.approx(1.10265779084355e-180, rel=1e-10)
 
 
 # -- test-S3-methods.R --------------------------------------------------------------
@@ -185,7 +187,7 @@ def test_automated_one_tailed_detection() -> None:
     assert error(txt3, OneTailedTxt=True) == [False]
     assert error(txt4, OneTailedTxt=True) == [False]
     assert error(txt5, OneTailedTxt=True) == [False]
-    p_1tail = pt(2.20, 28, lower_tail=False)
+    p_1tail = compute_p("t", 2.20, None, 28, False)
     computed = sc([txt3, txt4, txt5], OneTailedTxt=True)[VAR_COMPUTED_P].tolist()
     assert computed == pytest.approx([p_1tail] * 3)
 
@@ -203,9 +205,9 @@ def test_p_zero_error_option() -> None:
 UPP = "0.0403381832647296"
 LOWP = "0.0324934361512091"
 # "p < LOWP" is an error only if LOWP is below the lowest p that t = 2.2 allows, which
-# LOWP (15 digits) misses by 1-2 ulps; scipy's pbeta is not R's toms708 to the last ulp
+# LOWP (15 digits) misses by 1-2 ulps; scipy's betainc is not R's toms708 to the last ulp
 # on every platform, so this row uses the value just below that bound instead
-BELOW_LOWP = repr(math.nextafter(pt(-2.25, 28) * 2, 0))
+BELOW_LOWP = repr(math.nextafter(compute_p("t", 2.25, None, 28, True), 0))
 
 
 @pytest.mark.parametrize(

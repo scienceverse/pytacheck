@@ -10,9 +10,9 @@
 # R/stat_helpers.R must be applied to the files listed below.
 #
 # The statcheck R package (1.5.0, a pinned dependency of metacheck, not part of
-# the upstream submodule) is ported in src/metacheck/stats/statcheck.py (R's
-# nmath/round primitives it relies on in src/metacheck/stats/_rmath.py); its
-# functions are listed with a "statcheck::" prefix. Not ported (porting/skip.toml):
+# the upstream submodule) is ported in src/metacheck/stats/statcheck.py (its
+# p-values from scipy.special, D78); its functions are listed with a
+# "statcheck::" prefix. Not ported (porting/skip.toml):
 # its PDF/HTML file front ends, plot.statcheck(), identify.statcheck() and
 # statcheckReport(), none of which metacheck calls.
 

@@ -6,28 +6,30 @@ recomputes the p-value from the test statistic and degrees of freedom, and
 flags inconsistencies (``error``) and inconsistencies that change the
 significance decision (``decision_error``).
 
-Everything here mirrors the *installed* statcheck 1.5.0 function by function
-(``statcheck:::extract_stats``, ``extract_df``, ``extract_test_stats``,
-``extract_p_value``, ``compute_p``, ``error_test``, ``decision_error_test``,
-``process_stats``, ``calc_APA_factor`` ...):
+The functions mirror statcheck's (``extract_stats``, ``extract_df``,
+``extract_test_stats``, ``extract_p_value``, ``compute_p``, ``error_test``,
+``decision_error_test``, ``process_stats``, ``calc_APA_factor`` ...), and every
+regular expression runs on the engine R runs it on (PCRE for
+``extract_pattern()`` and the ``perl = TRUE`` substitutions, TRE for the
+``grepl``/``gsub``/``strsplit``/``regexpr`` calls). The arithmetic is plain
+Python: a missing value is ``None``, p-values come from :mod:`scipy.special`,
+and R's warnings are not reproduced.
 
-* every regular expression runs on the engine R runs it on (PCRE for
-  ``extract_pattern()`` and the ``perl = TRUE`` substitutions, TRE for the
-  ``grepl``/``gsub``/``strsplit``/``regexpr`` calls), with the same
-  case-sensitivity;
-* R's three-valued logic: an ``NA`` reaching an ``if ()`` is an error
-  (:class:`RError`), exactly where R stops;
-* R warnings (``NAs introduced by coercion``, ``NaNs produced``) are
-  reported with :func:`warnings.warn` by :func:`statcheck` (and computation
-  goes on, as in R); ``stats()`` ignores them (:func:`_statcheck_quiet`).
+**Not checkable is not consistent** (docs/UPSTREAM_ISSUES.md D78). A result
+whose p-value cannot be computed (zero degrees of freedom in a t, r or F
+test, an infinite F degree of freedom) or whose consistency cannot be
+decided (an unparseable p-value such as ``p = .05-.10``) is dropped;
+statcheck failed the whole call on such results, or reported some of them
+as consistent. Infinite degrees of freedom follow scipy: a t test (and a
+correlation) uses the normal distribution, and a chi-square or Q test's
+p-value is its limit, 1; scipy's F distribution has no value there, so an F
+test with an infinite degree of freedom is not checkable.
 
-Where statcheck 1.5.0 is wrong, pytacheck fixes it (docs/UPSTREAM_ISSUES.md
-U5, U149): a result that cannot be parsed or checked (no test name, zero or
-infinite degrees of freedom, an unparseable p-value) is dropped instead of
-failing the whole call with an R error; each result keeps its own p-value
-(statcheck could give one result another's); a correlation's rounding
-interval stops at +-1 (``r = 1.00``); the Q-test subtype is read from the
-``Q`` token (``Q-Between`` is ``Qb``); ``ns`` is recognised by the engine
+Where statcheck 1.5.0 is wrong, pytacheck also fixes it (U5, U149): a result
+without a test name is skipped instead of failing the call; each result keeps
+its own p-value (statcheck could give one result another's); a correlation's
+rounding interval stops at +-1 (``r = 1.00``); the Q-test subtype is read from
+the ``Q`` token (``Q-Between`` is ``Qb``); ``ns`` is recognised by the engine
 that found it; and invalid flag values are rejected up front.
 
 The file-reading front ends (``checkPDF``, ``checkHTML``, ``checkdir`` ...),
@@ -37,23 +39,19 @@ never calls them.
 
 from __future__ import annotations
 
-import contextvars
 import math
-import warnings
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections import Counter
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
 import pandas as pd
 
+from metacheck._r import r_round
 from metacheck._r.regex import compile_r, gsub, strsplit
-from metacheck._values import is_missing
-from metacheck.stats._rmath import as_numeric, pchisq, pf, pnorm, pt, r_pow, r_round
-from metacheck.stats._rmath import sqrt as r_sqrt
+from metacheck._values import as_float
 
 __all__ = [
-    "RError",
-    "StatcheckWarning",
     "calc_APA_factor",
     "compute_p",
     "decision_error_test",
@@ -100,8 +98,6 @@ VAR_NR_DEC_ERRORS = "nr_decision_errors"
 RGX_T = r"t"
 RGX_R = r"r"
 RGX_Q = r"Q\s?-?\s?(w|W|(w|W)ithin|b|B|(b|B)etween)?"
-RGX_QW = r"w"
-RGX_QB = r"b"
 RGX_F = r"F"
 RGX_CHI2 = r"((\s[^trFzZQWnD ]\s?)|([^trFzZQWnD ]2\s?))2?"
 RGX_Z = r"([^a-z](z|Z))"
@@ -143,6 +139,7 @@ _TRE_DEC = compile_r(RGX_DEC)
 
 _PCRE_NS_ICASE = compile_r(RGX_NS, True, True)
 _TRE_1TAIL = compile_r("one.?sided|one.?tailed|directional", True, posix=False)
+_NHST = compile_r(RGX_NHST, False, True)
 
 
 def _pcre(pattern: str, ignore_case: bool) -> Any:
@@ -150,114 +147,19 @@ def _pcre(pattern: str, ignore_case: bool) -> Any:
     return compile_r(pattern, ignore_case, True)
 
 
-class RError(RuntimeError):
-    """An error R itself would raise while running statcheck (e.g. ``if (NA)``)."""
+def _missing(x: Any) -> bool:
+    return x is None or x is pd.NA or (isinstance(x, float) and math.isnan(x))
 
 
-class StatcheckWarning(RuntimeWarning):
-    """A warning R would emit while running statcheck."""
+def _float(x: Any) -> float:
+    """A number for scipy: a missing value is NaN."""
+    return math.nan if _missing(x) else float(x)
 
 
-# How R warnings are handled: None -> warnings.warn (statcheck() called
-# directly); a callable -> called with the message (stats() ignores them).
-_ON_WARNING: contextvars.ContextVar[Callable[[str], None] | None] = contextvars.ContextVar(
-    "pytacheck_statcheck_on_warning", default=None
-)
-
-
-def _r_warning(msg: str) -> None:
-    handler = _ON_WARNING.get()
-    if handler is None:
-        warnings.warn(msg, StatcheckWarning, stacklevel=3)
-    else:
-        handler(msg)
-
-
-# ---------------------------------------------------------------------------
-# R three-valued logic (None is NA)
-# ---------------------------------------------------------------------------
-
-Lgl = bool | None
-
-
-def _gt(a: float, b: float) -> Lgl:
-    return None if is_missing(a) or is_missing(b) else a > b
-
-
-def _ge(a: float, b: float) -> Lgl:
-    return None if is_missing(a) or is_missing(b) else a >= b
-
-
-def _lt(a: float, b: float) -> Lgl:
-    return None if is_missing(a) or is_missing(b) else a < b
-
-
-def _le(a: float, b: float) -> Lgl:
-    return None if is_missing(a) or is_missing(b) else a <= b
-
-
-def _and(a: Lgl, b: Lgl) -> Lgl:
-    if a is False or b is False:
-        return False
-    if a is None or b is None:
-        return None
-    return True
-
-
-def _or(a: Lgl, b: Lgl) -> Lgl:
-    if a is True or b is True:
-        return True
-    if a is None or b is None:
-        return None
-    return False
-
-
-def _eq_true(x: Any) -> Lgl:
-    """R ``x == TRUE`` for a logical/numeric flag (``None`` is NA)."""
-    return None if is_missing(x) else bool(x == 1)
-
-
-def _eq_false(x: Any) -> Lgl:
-    """R ``x == FALSE`` for a logical/numeric flag (``None`` is NA)."""
-    return None if is_missing(x) else bool(x == 0)
-
-
-class _RNull:
-    """R ``NULL`` returned by ``decision_error_test()`` for a flag that is neither TRUE nor FALSE."""
-
-    def __repr__(self) -> str:  # pragma: no cover
-        return "NULL"
-
-
-_NULL = _RNull()
-
-
-def _if(cond: Lgl) -> bool:
-    """R ``if (cond)``: an ``NA`` condition is an error."""
-    if cond is None:
-        raise RError("missing value where TRUE/FALSE needed")
-    return cond
-
-
-def _as_num(s: str | None) -> float:
-    """``as.numeric()`` of one string, warning like R."""
-    value, warned = as_numeric(s)
-    if warned:
-        _r_warning("NAs introduced by coercion")
-    return value
-
-
-def _as_num_quiet(s: str | None) -> float:
-    """``suppressWarnings(as.numeric())``."""
-    return as_numeric(s)[0]
-
-
-def _tre_match_length(rx: Any, s: str | None) -> int:
-    """``attr(regexpr(p, s), "match.length")``: -1 when there is no match."""
-    if s is None:
-        return -1
-    m = rx.search(s)
-    return -1 if m is None else m.end() - m.start()
+def _decimals(s: str) -> float:
+    """The number of decimals of a number as written (``.05`` has 2)."""
+    m = _TRE_DEC.search(s)
+    return float(len(m.group(0)) - 1) if m else 0.0
 
 
 # ---------------------------------------------------------------------------
@@ -278,18 +180,15 @@ def extract_pattern(
     """
     texts: list[str | None] = [txt] if isinstance(txt, str) or txt is None else list(txt)
     if not texts:
-        # gregexpr(pattern, character(0))[[1]]
-        raise RError("subscript out of bounds")
+        raise ValueError("extract_pattern(): `txt` is empty")
     first = texts[0]
     if first is None:
         return None
-    rx = _pcre(pattern, ignore_case)
-    spans = [(m.start(), m.end()) for m in _finditer(rx, first)]
+    spans = [(m.start(), m.end()) for m in _finditer(_pcre(pattern, ignore_case), first)]
     if not spans:
         return None
-    n = max(len(texts), len(spans))
     out: list[str | None] = []
-    for i in range(n):
+    for i in range(max(len(texts), len(spans))):
         s = texts[i % len(texts)]
         start, end = spans[i % len(spans)]
         out.append(None if s is None else s[start:end])
@@ -300,8 +199,7 @@ def _extract(txt: str | None, pattern: str, ignore_case: bool = True) -> list[st
     """``extract_pattern()`` for a single string (``None`` is R's ``NULL``)."""
     if txt is None:
         return None
-    rx = _pcre(pattern, ignore_case)
-    found = [m.group(0) for m in _finditer(rx, txt)]
+    found = [m.group(0) for m in _finditer(_pcre(pattern, ignore_case), txt)]
     return found or None
 
 
@@ -327,102 +225,77 @@ def recover_minus_sign(raw: Any) -> Any:
     return gsub(RGX_WEIRD_MINUS, " -", raw, perl=True)
 
 
-def extract_1tail(txt: str | None) -> bool:
+def extract_1tail(txt: str | None) -> bool | None:
     """Port of ``statcheck:::extract_1tail()``: is a one-sided test mentioned?"""
-    if txt is None:
-        raise RError("missing value where TRUE/FALSE needed")
-    return _TRE_1TAIL.search(txt) is not None
+    return None if txt is None else _TRE_1TAIL.search(txt) is not None
 
 
-def _extract_df(raw: str, test_type: str | None) -> tuple[float, float]:
-    if test_type is None:
-        raise RError("missing value where TRUE/FALSE needed")
+def _extract_df(raw: str, test_type: str) -> tuple[float | None, float | None] | None:
+    """``(df1, df2)`` of one result; ``None`` when it has no degrees of freedom."""
     if test_type == "Z":
-        return math.nan, math.nan
+        return None, None
     found = _extract(raw, RGX_DF)
     if found is None:
-        raise RError("subscript out of bounds")
-    df_str = gsub(r"\(|\)", "", found[0])
-    df = [s.strip(_WS) if s is not None else None for s in strsplit(df_str, ",")]
-    df1: list[str | None]
-    df2: list[str | None]
+        return None
+    df = [s.strip(_WS) for s in strsplit(gsub(r"\(|\)", "", found[0]), ",")]
+    if test_type == "F" and df and _TRE_DF1_I_L.search(df[0]):
+        df[0] = "1"  # F(I, 20): an OCR'd 1
     if test_type in ("t", "r"):
-        df1, df2 = [None], df
+        df1, df2 = None, df[0] if len(df) == 1 else None
     elif test_type == "F":
-        first = df[0] if df else None
-        if first is not None and _TRE_DF1_I_L.search(first):
-            df = ["1", *df[1:]]
-        df1 = [df[0] if len(df) > 0 else None]
-        df2 = [df[1] if len(df) > 1 else None]
-    elif test_type in ("Chi2", "Q", "Qw", "Qb"):
-        df1, df2 = [df[0] if df else None], [None]
+        df1, df2 = df[0] if df else None, df[1] if len(df) > 1 else None
     else:
-        df1, df2 = [None], [None]
-    if len(df1) != 1 or len(df2) != 1:
-        raise RError("more than one set of degrees of freedom")  # pragma: no cover
-    return _as_num(df1[0]), _as_num(df2[0])
+        df1, df2 = df[0] if df else None, None
+    return (None if df1 is None else as_float(df1)), (None if df2 is None else as_float(df2))
 
 
 def extract_df(raw: str, test_type: str) -> pd.DataFrame:
     """Port of ``statcheck:::extract_df()``: degrees of freedom of one raw result."""
-    df1, df2 = _extract_df(raw, test_type)
-    return pd.DataFrame({"df1": [df1], "df2": [df2]}, dtype="float64")
+    found = _extract_df(raw, test_type)
+    if found is None:
+        raise ValueError(f"no degrees of freedom in {raw!r}")
+    return pd.DataFrame({"df1": [found[0]], "df2": [found[1]]}, dtype="float64")
 
 
 @dataclass(slots=True)
 class _Test:
-    comp: str | None
-    value: float
+    comp: str
+    value: float | None
     dec: float
 
 
-def _recycled_rows(*lengths: int) -> int:
-    """``data.frame()`` row count with R's recycling rule (or R's error)."""
-    n = max(lengths)
-    for k in lengths:
-        if k == 0 or n % k != 0:
-            raise RError(
-                "arguments imply differing number of rows: " + ", ".join(str(x) for x in lengths)
-            )
-    return n
+def _test_stats(raw: str) -> list[_Test]:
+    """The test values of one raw result: comparison, value and decimals.
 
-
-def _test_stats(raw: str) -> tuple[list[str], list[float], list[float], int]:
-    """The vectors ``extract_test_stats()`` builds its data frame from, and its row count."""
-    raw_non = gsub(RGX_DF_CHI2, "", raw)
-    test_raw = _extract(raw_non, RGX_TEST_VALUE)
+    Empty when there is none, or when R's ``data.frame()`` could not recycle
+    the comparisons and values into rows.
+    """
+    test_raw = _extract(gsub(RGX_DF_CHI2, "", raw), RGX_TEST_VALUE)
     if test_raw is None:
-        # extract_pattern(NULL, RGX_COMP): gregexpr(p, NULL)[[1]]
-        raise RError("subscript out of bounds")
-    comps = extract_pattern(test_raw, RGX_COMP)
-    if comps is None:  # pragma: no cover - RGX_TEST_VALUE starts with a comparator
-        raise RError("numbers of columns of arguments do not match")
-    test_comp = [c for c in comps if c is not None]
-    values = gsub(RGX_COMP, "", test_raw)
-    values = recover_minus_sign(remove_1000_sep(values))
+        return []
+    # as in R, the comparisons' positions come from the first value
+    comps = [c for c in extract_pattern(test_raw, RGX_COMP) or [] if c is not None]
+    values = recover_minus_sign(remove_1000_sep(gsub(RGX_COMP, "", test_raw)))
     values = gsub(",$", "", [v.strip(_WS) for v in values])
-    decs = [float(max(_tre_match_length(_TRE_DEC, v) - 1, 0)) for v in values]
-    nums = [_as_num_quiet(v) for v in values]
-    nrow = _recycled_rows(len(test_comp), len(nums), len(decs))
-    return test_comp, nums, decs, nrow
-
-
-def _extract_test_stats(raw: str) -> tuple[int, _Test]:
-    """(number of rows R's data frame has, its first row)."""
-    test_comp, nums, decs, nrow = _test_stats(raw)
-    return nrow, _Test(test_comp[0], nums[0], decs[0])
+    n = max(len(comps), len(values))
+    if not comps or n % len(comps) or n % len(values):
+        return []
+    return [
+        _Test(comps[i % len(comps)], as_float(v), _decimals(v))
+        for i, v in ((i, values[i % len(values)]) for i in range(n))
+    ]
 
 
 def extract_test_stats(raw: str) -> pd.DataFrame:
     """Port of ``statcheck:::extract_test_stats()``: comparison, value and decimals."""
-    test_comp, nums, decs, n = _test_stats(raw)
+    tests = _test_stats(raw)
+    if not tests:
+        raise ValueError(f"no test statistic in {raw!r}")
     return pd.DataFrame(
         {
-            "test_comp": pd.Series(
-                [test_comp[i % len(test_comp)] for i in range(n)], dtype="string"
-            ),
-            "test_value": pd.Series([nums[i % len(nums)] for i in range(n)], dtype="float64"),
-            "test_dec": pd.Series([decs[i % len(decs)] for i in range(n)], dtype="float64"),
+            "test_comp": pd.Series([t.comp for t in tests], dtype="string"),
+            "test_value": pd.Series([t.value for t in tests], dtype="float64"),
+            "test_dec": pd.Series([t.dec for t in tests], dtype="float64"),
         }
     )
 
@@ -430,47 +303,23 @@ def extract_test_stats(raw: str) -> pd.DataFrame:
 @dataclass(slots=True)
 class _P:
     comp: str | None
-    value: float
-    dec: float
+    value: float | None
+    dec: float | None
 
 
 def _extract_p_value(raw: str | None) -> list[_P]:
-    p_raw = _extract(raw, RGX_P_NS)
-    if p_raw is None:
-        return []
-    comps: list[str | None] = []
-    strs: list[str | None] = []
-    decs: list[float] = []
-    for pr in p_raw:
-        # statcheck tests for "ns" with TRE, which disagrees with the PCRE match
-        # above on case folding (a long s, "nſ", made R fail with "replacement
-        # has length zero"; U149): use the engine that found it
+    out = []
+    for pr in _extract(raw, RGX_P_NS) or []:
+        # "ns" is tested with the engine that found it: statcheck's TRE test
+        # disagreed with PCRE on case folding (a long s, "nſ"; U149)
         if _PCRE_NS_ICASE.search(pr):
-            comps.append("ns")
-            strs.append(None)
-            decs.append(math.nan)
-        else:
-            comp = _extract(pr, RGX_COMP)
-            if comp is None or len(comp) != 1:  # pragma: no cover - RGX_P has one comparator
-                raise RError("replacement has length zero")
-            comps.append(comp[0])
-            parts = strsplit(pr, RGX_COMP)
-            value = parts[1] if len(parts) > 1 else None
-            value = None if value is None else value.strip(_WS)
-            strs.append(value)
-            if value is None:  # pragma: no cover - RGX_P always has a value
-                decs.append(math.nan)
-            else:
-                decs.append(float(max(_tre_match_length(_TRE_DEC, value) - 1, 0)))
-    # as.numeric(p_value) on the whole vector, with its warning
-    values, warned = [], False
-    for s in strs:
-        v, w = as_numeric(s)
-        values.append(v)
-        warned = warned or w
-    if warned:
-        _r_warning("NAs introduced by coercion")
-    return [_P(c, v, d) for c, v, d in zip(comps, values, decs, strict=True)]
+            out.append(_P("ns", None, None))
+            continue
+        comp = _extract(pr, RGX_COMP)
+        parts = strsplit(pr, RGX_COMP)
+        value = parts[1].strip(_WS) if len(parts) > 1 else ""
+        out.append(_P(comp[0] if comp else None, as_float(value), _decimals(value)))
+    return out
 
 
 def extract_p_value(raw: str | None) -> pd.DataFrame:
@@ -488,15 +337,15 @@ def extract_p_value(raw: str | None) -> pd.DataFrame:
 @dataclass(slots=True)
 class _Row:
     raw: str
-    statistic: str | None
-    df1: float
-    df2: float
-    test_comp: str | None
+    statistic: str
+    df1: float | None
+    df2: float | None
+    test_comp: str
     value: float
-    testdec: float
-    p_comp: str | None
-    p_value: float
-    dec: float
+    testdec: float | None
+    p_comp: str
+    p_value: float | None
+    dec: float | None
 
 
 def _test_type(test_raw: list[str] | None) -> str | None:
@@ -530,23 +379,21 @@ def _test_type(test_raw: list[str] | None) -> str | None:
     return None
 
 
-def _stat_family(statistic: str | None) -> str | None:
-    return {"r": "cor", "Chi2": "chisq", "Qw": "Q", "Qb": "Q"}.get(statistic or "", statistic)
-
-
-_NHST = compile_r(RGX_NHST, False, True)
+def _stat_family(statistic: str) -> str:
+    return {"r": "cor", "Chi2": "chisq", "Qw": "Q", "Qb": "Q"}.get(statistic, statistic)
 
 
 def _extract_stats_rows(txt: str | None, stat: Sequence[str]) -> list[_Row] | None:
-    """``extract_stats()`` as a list of rows; ``None`` is R's ``data.frame(NULL)``.
+    """``extract_stats()`` as a list of rows; ``None`` when *txt* has no NHST result.
 
     Differs from statcheck 1.5.0 (U5): a result that cannot be parsed (no or
-    several test names, no degrees of freedom, no test value) is skipped
-    instead of failing the whole text, and every result keeps its own
-    p-value. statcheck collects the p-values of all results in one vector
-    and ``data.frame()`` recycles it when a result has none (its
-    case-insensitive ``RGX_P_NS`` misses ``Nns`` that the case-sensitive
-    NHST pattern accepted), which gave results each other's p-values.
+    several test names, no degrees of freedom, no or several test values,
+    no or several p-values) is skipped instead of failing the whole text,
+    and every result keeps its own p-value. statcheck collects the p-values
+    of all results in one vector and ``data.frame()`` recycles it when a
+    result has none (its case-insensitive ``RGX_P_NS`` misses ``Nns`` that
+    the case-sensitive NHST pattern accepted), which gave results each
+    other's p-values.
     """
     nhst_raw = _extract(txt, RGX_NHST, ignore_case=False)
     if nhst_raw is None:
@@ -554,49 +401,41 @@ def _extract_stats_rows(txt: str | None, stat: Sequence[str]) -> list[_Row] | No
     rows: list[_Row] = []
     for raw in nhst_raw:
         test_type = _test_type(_extract(raw, RGX_TEST_TYPE))
-        if test_type is None:
+        if test_type is None or _stat_family(test_type) not in stat:
             continue
-        try:
-            df1, df2 = _extract_df(raw, test_type)
-            n_test, test = _extract_test_stats(raw)
-        except RError:
-            continue
-        if n_test > 1:
-            test = _Test(None, math.nan, math.nan)
+        df = _extract_df(raw, test_type)
+        tests = _test_stats(raw)
         ps = _extract_p_value(raw)
-        # one p-value per result; none or several give an NA row (dropped below)
-        p = ps[0] if len(ps) == 1 else _P(None, math.nan, math.nan)
-        rows.append(
-            _Row(
-                raw=raw.strip(_WS),
-                statistic=test_type,
-                df1=df1,
-                df2=df2,
-                test_comp=test.comp,
-                value=test.value,
-                testdec=test.dec,
-                p_comp=p.comp,
-                p_value=p.value,
-                dec=p.dec,
-            )
+        if df is None or len(tests) != 1 or len(ps) != 1:
+            continue
+        (test,), (p,) = tests, ps
+        if test.value is None or test.comp is None or p.comp is None:
+            continue
+        if p.value is not None and p.value > 1:
+            continue
+        if test_type == "r" and not -1 <= test.value <= 1:
+            continue
+        row = _Row(
+            raw.strip(_WS),
+            test_type,
+            df[0],
+            df[1],
+            test.comp,
+            test.value,
+            test.dec,
+            p.comp,
+            p.value,
+            p.dec,
         )
-    out = []
-    for r in rows:
-        if not (is_missing(r.p_value) or r.p_value <= 1):
-            continue
-        if is_missing(r.value):
-            continue
-        if r.statistic == "r" and (r.value > 1 or r.value < -1):
-            continue
-        if r.test_comp is None or r.p_comp is None:
-            continue
-        if _stat_family(r.statistic) not in stat:
-            continue
-        out.append(r)
-    return out
+        rows.append(row)
+    return rows
 
 
-def _rows_frame(rows: list[_Row]) -> pd.DataFrame:
+def extract_stats(txt: str | None, stat: str | Iterable[str] = _ALL_STATS) -> pd.DataFrame:
+    """Port of ``statcheck:::extract_stats()``: parse every APA result in *txt*."""
+    rows = _extract_stats_rows(txt, _stat_arg(stat))
+    if rows is None:
+        return pd.DataFrame()
     return pd.DataFrame(
         {
             "Raw": pd.Series([r.raw for r in rows], dtype="string"),
@@ -617,282 +456,258 @@ def _stat_arg(stat: str | Iterable[str]) -> tuple[str, ...]:
     return (stat,) if isinstance(stat, str) else tuple(stat)
 
 
-def extract_stats(txt: str | None, stat: str | Iterable[str] = _ALL_STATS) -> pd.DataFrame:
-    """Port of ``statcheck:::extract_stats()``: parse every APA result in *txt*."""
-    rows = _extract_stats_rows(txt, _stat_arg(stat))
-    if rows is None:
-        return pd.DataFrame()
-    return _rows_frame(rows)
-
-
 # ---------------------------------------------------------------------------
 # p-value computation and error tests
 # ---------------------------------------------------------------------------
 
 
-def r2t(r: float, df: float) -> float:
-    """Port of ``statcheck:::r2t()``: a correlation as a t statistic."""
-    q = 1 - r**2
-    if is_missing(q) or is_missing(df):
-        denom = math.nan
-    elif df == 0:
-        denom = math.nan if q == 0 else math.copysign(math.inf, q)
-    else:
-        denom = q / df
-    s = r_sqrt(denom, _r_warning)
-    if is_missing(s) or is_missing(r):
+def r2t(r: float | None, df: float | None) -> float:
+    """Port of ``statcheck:::r2t()``: a correlation as a t statistic (IEEE arithmetic)."""
+    import numpy as np
+
+    with np.errstate(all="ignore"):
+        return float(np.float64(_float(r)) / np.sqrt((1 - np.float64(_float(r)) ** 2) / _float(df)))
+
+
+def _t_two_sided(x: Any, n: Any) -> Any:
+    """``P(|T| >= |x|)`` for Student's t with *n* degrees of freedom (numpy floats).
+
+    The reductions to the regularized incomplete beta function that R's
+    ``pt()`` uses: on the realistic corpus they are closer to the exact value
+    than ``scipy.special.stdtr`` (whose last digits differ). With infinite
+    *n* the t distribution is the normal distribution (scipy's ``stdtr``
+    gives the same limit).
+    """
+    from scipy import special
+
+    x = abs(x)
+    if not n > 0:
         return math.nan
-    if s == 0:
-        return math.nan if r == 0 else math.copysign(math.inf, r)
-    return r / s
+    if math.isinf(n):
+        return 2 * special.ndtr(-x)
+    if n > x * x:
+        return special.betaincc(0.5, n / 2, x * x / (n + x * x))
+    return special.betainc(n / 2, 0.5, 1 / (1 + (x / n) * x))
 
 
-def compute_p(test_type: str, test_stat: float, df1: float, df2: float, two_tailed: bool) -> float:
-    """Port of ``statcheck:::compute_p()``: the p-value implied by a test statistic."""
+def _f_upper(x: Any, df1: Any, df2: Any) -> Any:
+    """``P(F >= x)`` (numpy floats), as R's ``pf(lower.tail = FALSE)`` reduces it.
+
+    NaN, as ``scipy.special.fdtrc`` gives, for zero or infinite degrees of
+    freedom; 1 for a statistic below the distribution's support (``x <= 0``).
+    """
+    from scipy import special
+
+    if not (0 < df1 < math.inf and 0 < df2 < math.inf):
+        return math.nan
+    if x <= 0:
+        return 1.0
+    if df1 * x > df2:
+        return special.betainc(df2 / 2, df1 / 2, df2 / (df2 + df1 * x))
+    return special.betaincc(df1 / 2, df2 / 2, df1 * x / (df2 + df1 * x))
+
+
+def compute_p(
+    test_type: str,
+    test_stat: float | None,
+    df1: float | None,
+    df2: float | None,
+    two_tailed: bool,
+) -> float | None:
+    """Port of ``statcheck:::compute_p()``: the p-value implied by a test statistic.
+
+    ``None`` when the p-value cannot be computed: a missing value, zero
+    degrees of freedom (except for chi-square, whose p is then 0) or an
+    infinite F degree of freedom.
+    A t test (or correlation) with infinite degrees of freedom uses the
+    normal distribution, and a chi-square or Q test gets its limit, 1 (D78).
+    """
+    import numpy as np
+    from scipy import special
+
     if test_type not in _TEST_TYPES:
-        raise RError('test_type %in% c("t", "F", "Z", "r", "Chi2", "Q", "Qb", "Qw") is not TRUE')
-    if test_type == "t":
-        computed = pt(-1 * abs(test_stat), df2, True, _r_warning)
-    elif test_type == "F":
-        computed = pf(test_stat, df1, df2, False, _r_warning)
-    elif test_type == "Z":
-        computed = pnorm(abs(test_stat), False)
-    elif test_type == "r":
-        t = r2t(test_stat, df2)
-        computed = pt(-1 * abs(t), df2, True, _r_warning)
-    else:
-        computed = pchisq(test_stat, df1, False, _r_warning)
-    if not is_missing(computed) and test_type in ("t", "Z", "r") and two_tailed:
-        computed = computed * 2
-    return computed
+        raise ValueError(f"`test_type` must be one of {', '.join(_TEST_TYPES)}, not {test_type!r}")
+    x, d1, d2 = (np.float64(_float(v)) for v in (test_stat, df1, df2))
+    with np.errstate(all="ignore"):
+        if test_type in ("t", "r"):
+            t = x if test_type == "t" else np.float64(r2t(x, d2))
+            p = _t_two_sided(t, d2) / 2
+        elif test_type == "F":
+            p = _f_upper(x, d1, d2)
+        elif test_type == "Z":
+            p = special.ndtr(-abs(x))
+        else:
+            p = special.chdtrc(d1, np.maximum(x, 0.0))  # P(X >= x) = 1 below zero
+    p = float(p)
+    if math.isnan(p):
+        return None
+    return p * 2 if two_tailed and test_type in ("t", "Z", "r") else p
 
 
-def _ns(reported_p: float, p_comparison: str, alpha: float) -> tuple[float, str]:
-    if p_comparison == "ns":
-        return alpha, ">"
-    return reported_p, p_comparison
+def _ns(reported_p: float | None, p_comparison: str, alpha: float) -> tuple[float | None, str]:
+    """``ns`` is ``p > alpha``."""
+    return (alpha, ">") if p_comparison == "ns" else (reported_p, p_comparison)
 
 
 def error_test(
-    reported_p: float,
+    reported_p: float | None,
     test_type: str,
-    test_stat: float,
-    df1: float,
-    df2: float,
+    test_stat: float | None,
+    df1: float | None,
+    df2: float | None,
     p_comparison: str,
     test_comparison: str,
-    p_dec: float,
-    test_dec: float,
+    p_dec: float | None,
+    test_dec: float | None,
     two_tailed: bool,
     alpha: float,
     pZeroError: bool,
-) -> Lgl:
-    """Port of ``statcheck:::error_test()``: is the reported p inconsistent? (``None`` = NA)."""
-    reported_p, p_comparison = _ns(reported_p, p_comparison, alpha)
-    half = 0.5 / r_pow(10.0, test_dec)
-    if _if(_ge(test_stat, 0)):
-        low_stat, up_stat = test_stat - half, test_stat + half
-    elif _if(_lt(test_stat, 0)):
-        low_stat, up_stat = test_stat + half, test_stat - half
-    else:  # pragma: no cover
-        raise RError("object 'low_stat' not found")
+) -> bool | None:
+    """Port of ``statcheck:::error_test()``: is the reported p inconsistent?
+
+    ``None`` when that cannot be decided: a value is missing or the p-value
+    cannot be computed (D78).
+    """
+    rp, pc = _ns(reported_p, p_comparison, alpha)
+    if rp is None or _missing(rp):
+        return None
+    if pZeroError and rp <= 0:
+        return True
+    if test_stat is None or test_dec is None or _missing(test_stat) or _missing(test_dec):
+        return None
+    # the statistic's rounding interval; low_stat is the end nearer zero
+    half = 0.5 * 10.0 ** -float(test_dec)
+    low_stat, up_stat = test_stat - half, test_stat + half
+    if test_stat < 0:
+        low_stat, up_stat = up_stat, low_stat
     if test_type == "r":
-        # a correlation cannot pass +-1: r = 1.00 is anything in [.995, 1]
-        # (statcheck took r = 1.005, whose p is NaN, and failed; U5)
+        # a correlation cannot pass +-1: r = 1.00 is anything in [.995, 1] (U5)
         low_stat, up_stat = (max(-1.0, min(1.0, x)) for x in (low_stat, up_stat))
     up_p = compute_p(test_type, low_stat, df1, df2, two_tailed)
     low_p = compute_p(test_type, up_stat, df1, df2, two_tailed)
-    if _if(_and(_eq_true(pZeroError), _le(reported_p, 0))):
-        return True
-    if test_comparison == "=":
-        if p_comparison == "=":
-            return _or(
-                _gt(reported_p, r_round(up_p, p_dec)), _lt(reported_p, r_round(low_p, p_dec))
-            )
-        if p_comparison == "<":
-            return _lt(reported_p, low_p)
-        if p_comparison == ">":
-            return _gt(reported_p, up_p)
-    elif test_comparison == "<":
-        if p_comparison == "=":
-            return _lt(reported_p, r_round(up_p, p_dec))
-        if p_comparison == "<":
-            return _lt(reported_p, up_p)
-        if p_comparison == ">":
-            return False
-    elif test_comparison == ">":
-        if p_comparison == "=":
-            return _gt(reported_p, r_round(low_p, p_dec))
-        if p_comparison == "<":
-            return False
-        if p_comparison == ">":
-            return _gt(reported_p, low_p)
-    return None
+    if up_p is None or low_p is None:
+        return None
+    if (test_comparison, pc) in (("<", ">"), (">", "<")):
+        return False
+    if pc == "=":
+        if p_dec is None or _missing(p_dec):
+            return None
+        up_p, low_p = r_round(up_p, p_dec), r_round(low_p, p_dec)
+    checks = {
+        ("=", "="): lambda: rp > up_p or rp < low_p,
+        ("=", "<"): lambda: rp < low_p,
+        ("=", ">"): lambda: rp > up_p,
+        ("<", "="): lambda: rp < up_p,
+        ("<", "<"): lambda: rp < up_p,
+        (">", "="): lambda: rp > low_p,
+        (">", ">"): lambda: rp > low_p,
+    }
+    check = checks.get((test_comparison, pc))
+    return None if check is None else bool(check())
+
+
+# statcheck's decision-error rules, by (pEqualAlphaSig, test comparison, p
+# comparison): f(reported p, computed p, alpha) is True for a decision error.
+_DECISION = {
+    (True, "=", "="): lambda rp, cp, a: (rp <= a < cp) or (cp <= a < rp),
+    (True, "=", "<"): lambda rp, cp, a: rp <= a < cp,
+    (True, "=", ">"): lambda rp, cp, a: rp >= a >= cp,
+    (True, "<", "="): lambda rp, cp, a: rp <= a <= cp,
+    (True, "<", "<"): lambda rp, cp, a: rp <= a <= cp,
+    (True, ">", "="): lambda rp, cp, a: rp > a >= cp,
+    (True, ">", ">"): lambda rp, cp, a: rp >= a >= cp,
+    (False, "=", "="): lambda rp, cp, a: (rp < a <= cp) or (cp < a <= rp),
+    (False, "=", "<"): lambda rp, cp, a: rp <= a <= cp,
+    (False, "=", ">"): lambda rp, cp, a: rp >= a > cp,
+    (False, "<", "="): lambda rp, cp, a: rp < a <= cp,
+    (False, "<", "<"): lambda rp, cp, a: rp <= a <= cp,
+    (False, ">", "="): lambda rp, cp, a: rp >= a >= cp,
+    (False, ">", ">"): lambda rp, cp, a: rp >= a >= cp,
+}
 
 
 def decision_error_test(
-    reported_p: float,
-    computed_p: float,
+    reported_p: float | None,
+    computed_p: float | None,
     test_comparison: str,
     p_comparison: str,
     alpha: float,
     pEqualAlphaSig: bool,
-) -> Lgl:
-    """Port of ``statcheck:::decision_error_test()`` (``None`` = NA).
+) -> bool | None:
+    """Port of ``statcheck:::decision_error_test()``: does the inconsistency change significance?
 
-    As in R, a *pEqualAlphaSig* that is neither ``TRUE`` nor ``FALSE`` (e.g.
-    ``2``) gives ``NULL`` (``None``) and ``NA`` is an error.
+    ``None`` when that cannot be decided (a missing value). A *pEqualAlphaSig*
+    other than ``TRUE``/``FALSE`` raises :class:`ValueError`.
     """
-    out = _decision_error_test(
-        reported_p, computed_p, test_comparison, p_comparison, alpha, pEqualAlphaSig
-    )
-    return None if out is _NULL else out  # type: ignore[return-value]
-
-
-def _decision_error_test(
-    reported_p: float,
-    computed_p: float,
-    test_comparison: str,
-    p_comparison: str,
-    alpha: float,
-    pEqualAlphaSig: Any,
-) -> Lgl | _RNull:
+    _check_flags(pEqualAlphaSig=pEqualAlphaSig)
     rp, pc = _ns(reported_p, p_comparison, alpha)
-    cp, a = computed_p, alpha
-    if _if(_eq_true(pEqualAlphaSig)):
-        if test_comparison == "=":
-            if pc == "=":
-                return _or(_and(_le(rp, a), _gt(cp, a)), _and(_gt(rp, a), _le(cp, a)))
-            if pc == "<":
-                return _and(_le(rp, a), _gt(cp, a))
-            if pc == ">":
-                return _and(_ge(rp, a), _le(cp, a))
-        elif test_comparison == "<":
-            if pc in ("=", "<"):
-                return _and(_le(rp, a), _ge(cp, a))
-            if pc == ">":
-                return False
-        elif test_comparison == ">":
-            if pc == "=":
-                return _and(_gt(rp, a), _le(cp, a))
-            if pc == "<":
-                return False
-            if pc == ">":
-                return _and(_ge(rp, a), _le(cp, a))
+    if (test_comparison, pc) in (("<", ">"), (">", "<")):
+        return False
+    if _missing(rp) or _missing(computed_p) or _missing(alpha):
         return None
-    if not _if(_eq_false(pEqualAlphaSig)):
-        return _NULL
-    if test_comparison == "=":
-        if pc == "=":
-            return _or(_and(_lt(rp, a), _ge(cp, a)), _and(_ge(rp, a), _lt(cp, a)))
-        if pc == "<":
-            return _and(_le(rp, a), _ge(cp, a))
-        if pc == ">":
-            return _and(_ge(rp, a), _lt(cp, a))
-    elif test_comparison == "<":
-        if pc == "=":
-            return _and(_lt(rp, a), _ge(cp, a))
-        if pc == "<":
-            return _and(_le(rp, a), _ge(cp, a))
-        if pc == ">":
-            return False
-    elif test_comparison == ">":
-        if pc == "=":
-            return _and(_ge(rp, a), _le(cp, a))
-        if pc == "<":
-            return False
-        if pc == ">":
-            return _and(_ge(rp, a), _le(cp, a))
-    return None
+    rule = _DECISION.get((bool(pEqualAlphaSig), test_comparison, pc))
+    return None if rule is None else bool(rule(rp, computed_p, alpha))
+
+
+@dataclass(slots=True)
+class _Flags:
+    """statcheck()'s settings that decide a result."""
+
+    alpha: float
+    pZeroError: bool
+    pEqualAlphaSig: bool
+    OneTailedTxt: bool = False
+    OneTailedTests: bool = False
+
+
+def _decide(r: _Row, two_tailed: bool, f: _Flags) -> tuple[float | None, bool | None, bool | None]:
+    """``(computed_p, error, decision_error)`` for one tail setting."""
+    computed_p = compute_p(r.statistic, r.value, r.df1, r.df2, two_tailed)
+    error = error_test(
+        r.p_value,
+        r.statistic,
+        r.value,
+        r.df1,
+        r.df2,
+        r.p_comp,
+        r.test_comp,
+        r.dec,
+        r.testdec,
+        two_tailed,
+        f.alpha,
+        f.pZeroError,
+    )
+    if not error:
+        return computed_p, error, error
+    decision = decision_error_test(
+        r.p_value, computed_p, r.test_comp, r.p_comp, f.alpha, f.pEqualAlphaSig
+    )
+    return computed_p, error, decision
 
 
 def _process_stats(
-    test_type: str,
-    test_stat: float,
-    df1: float,
-    df2: float,
-    reported_p: float,
-    p_comparison: str,
-    test_comparison: str,
-    p_dec: float,
-    test_dec: float,
-    OneTailedInTxt: bool,
-    two_tailed: bool,
-    alpha: float,
-    pZeroError: bool,
-    pEqualAlphaSig: bool,
-    OneTailedTxt: bool,
-    OneTailedTests: bool,
-) -> tuple[float, bool, Lgl]:
+    r: _Row, one_tailed_in_txt: bool, two_tailed: bool, f: _Flags
+) -> tuple[float | None, bool | None, bool | None]:
     """``process_stats()`` as a tuple ``(computed_p, error, decision_error)``."""
-    computed_p = compute_p(test_type, test_stat, df1, df2, two_tailed)
-    error = error_test(
-        reported_p,
-        test_type,
-        test_stat,
-        df1,
-        df2,
-        p_comparison,
-        test_comparison,
-        p_dec,
-        test_dec,
-        two_tailed,
-        alpha,
-        pZeroError,
-    )
-    decision_error: Lgl | _RNull
-    if _if(None if error is None else not error):
-        decision_error = False
-    else:
-        decision_error = _decision_error_test(
-            reported_p, computed_p, test_comparison, p_comparison, alpha, pEqualAlphaSig
-        )
-    if _if(_and(_eq_true(OneTailedTxt), _eq_false(OneTailedTests))) and _if(
-        _and(error, OneTailedInTxt)
-    ):
-        computed_p_1tail = compute_p(test_type, test_stat, df1, df2, False)
-        error_1tail = error_test(
-            reported_p,
-            test_type,
-            test_stat,
-            df1,
-            df2,
-            p_comparison,
-            test_comparison,
-            p_dec,
-            test_dec,
-            False,
-            alpha,
-            pZeroError,
-        )
-        decision_error_1tail: Lgl | _RNull
-        if _if(None if error_1tail is None else not error_1tail):
-            decision_error_1tail = False
-        else:
-            decision_error_1tail = _decision_error_test(
-                reported_p, computed_p_1tail, test_comparison, p_comparison, alpha, pEqualAlphaSig
-            )
-        if _if(None if error is None or error_1tail is None else error != error_1tail):
-            computed_p = computed_p_1tail
-            error = error_1tail
-            decision_error = decision_error_1tail
-    assert error is not None
-    if decision_error is _NULL:
-        # data.frame(computed_p = ., error = ., decision_error = NULL)
-        raise RError("arguments imply differing number of rows: 1, 0")
-    return computed_p, error, decision_error  # type: ignore[return-value]
+    out = _decide(r, two_tailed, f)
+    if f.OneTailedTxt and not f.OneTailedTests and out[1] and one_tailed_in_txt:
+        # an error in a text that mentions one-sided testing: is it one-tailed?
+        one_tailed = _decide(r, False, f)
+        if one_tailed[1] is not None and one_tailed[1] != out[1]:
+            return one_tailed
+    return out
 
 
 def process_stats(
     test_type: str,
     test_stat: float,
-    df1: float,
-    df2: float,
-    reported_p: float,
+    df1: float | None,
+    df2: float | None,
+    reported_p: float | None,
     p_comparison: str,
     test_comparison: str,
-    p_dec: float,
-    test_dec: float,
+    p_dec: float | None,
+    test_dec: float | None,
     OneTailedInTxt: bool,
     two_tailed: bool,
     alpha: float,
@@ -904,27 +719,32 @@ def process_stats(
     """Port of ``statcheck:::process_stats()``: recompute p, test for (decision) errors.
 
     Returns a one-row DataFrame with ``computed_p``, ``error`` and
-    ``decision_error``; with ``OneTailedTxt=True`` an error in a text that
-    mentions one-sided testing is re-evaluated as a one-tailed test.
+    ``decision_error`` (missing when they cannot be computed); with
+    ``OneTailedTxt=True`` an error in a text that mentions one-sided testing
+    is re-evaluated as a one-tailed test.
     """
-    computed_p, error, decision_error = _process_stats(
+    _check_flags(
+        pZeroError=pZeroError,
+        pEqualAlphaSig=pEqualAlphaSig,
+        OneTailedTxt=OneTailedTxt,
+        OneTailedTests=OneTailedTests,
+    )
+    row = _Row(
+        "",
         test_type,
-        test_stat,
         df1,
         df2,
-        reported_p,
-        p_comparison,
         test_comparison,
-        p_dec,
+        test_stat,
         test_dec,
-        OneTailedInTxt,
-        two_tailed,
-        alpha,
-        pZeroError,
-        pEqualAlphaSig,
-        OneTailedTxt,
-        OneTailedTests,
+        p_comparison,
+        reported_p,
+        p_dec,
     )
+    flags = _Flags(
+        alpha, bool(pZeroError), bool(pEqualAlphaSig), bool(OneTailedTxt), bool(OneTailedTests)
+    )
+    computed_p, error, decision_error = _process_stats(row, OneTailedInTxt, two_tailed, flags)
     return pd.DataFrame(
         {
             "computed_p": pd.Series([computed_p], dtype="float64"),
@@ -941,18 +761,8 @@ def process_stats(
 
 def _apa_factors(sources: list[str], p_sources: list[str]) -> list[float]:
     """``calc_APA_factor()`` for result sources vs p-value sources."""
-    n_res: dict[str, int] = {}
-    n_p: dict[str, int] = {}
-    for s in sources:
-        n_res[s] = n_res.get(s, 0) + 1
-    for s in p_sources:
-        n_p[s] = n_p.get(s, 0) + 1
-    out = []
-    for s in sources:
-        if s not in n_p:  # pragma: no cover - every result has its own p-value
-            raise RError("(list) object cannot be coerced to type 'double'")
-        out.append(r_round(n_res[s] / n_p[s], 2))
-    return out
+    n_res, n_p = Counter(sources), Counter(p_sources)
+    return [float(r_round(n_res[s] / n_p[s], 2)) for s in sources]
 
 
 def calc_APA_factor(pRes: pd.DataFrame, Res: pd.DataFrame) -> list[float]:
@@ -971,68 +781,39 @@ class _Result:
     source: Any
     row: _Row
     one_tailed: bool
-    computed: float = math.nan
-    error: Lgl = None
-    decision_error: Lgl = None
+    computed: float
+    error: bool
+    decision_error: bool
     apa: float = math.nan
 
 
 def _check_texts(
-    items: Iterable[tuple[Any, str | None]],
-    stat: Sequence[str],
-    OneTailedTests: bool,
-    alpha: float,
-    pEqualAlphaSig: bool,
-    pZeroError: bool,
-    OneTailedTxt: bool,
+    items: Iterable[tuple[Any, str | None]], stat: Sequence[str], flags: _Flags
 ) -> tuple[list[_Result], list[tuple[Any, _P]]]:
     """The body of ``statcheck()`` for (source, text) pairs.
 
-    Differs from statcheck 1.5.0 (U5): a result whose consistency cannot be
-    decided (an unparseable p-value such as ``p = .05-.10``, zero degrees of
-    freedom: statcheck fails on ``if (NA)``) is dropped, and the other
-    results of the text are kept.
+    A result whose p-value cannot be computed, or whose consistency cannot be
+    decided, is dropped (D78; statcheck failed on ``if (NA)`` or reported it
+    as consistent), and the other results of the text are kept.
     """
-    candidates: list[_Result] = []
+    results: list[_Result] = []
     pres: list[tuple[Any, _P]] = []
     for source, txt in items:
         pres.extend((source, p) for p in _extract_p_value(txt))
         rows = _extract_stats_rows(txt, stat)
-        if rows:
-            one_tailed = extract_1tail(txt)
-            candidates.extend(_Result(source, r, one_tailed) for r in rows)
-    results: list[_Result] = []
-    if candidates:
-        two_tailed = not _if(_eq_true(OneTailedTests))
-        for res in candidates:
-            r = res.row
-            assert r.statistic is not None and r.test_comp is not None and r.p_comp is not None
-            try:
-                res.computed, res.error, res.decision_error = _process_stats(
-                    test_type=r.statistic,
-                    test_stat=r.value,
-                    df1=r.df1,
-                    df2=r.df2,
-                    reported_p=r.p_value,
-                    p_comparison=r.p_comp,
-                    test_comparison=r.test_comp,
-                    p_dec=r.dec,
-                    test_dec=r.testdec,
-                    OneTailedInTxt=res.one_tailed,
-                    two_tailed=two_tailed,
-                    alpha=alpha,
-                    pZeroError=pZeroError,
-                    pEqualAlphaSig=pEqualAlphaSig,
-                    OneTailedTxt=OneTailedTxt,
-                    OneTailedTests=OneTailedTests,
-                )
-            except RError:
+        if not rows:
+            continue
+        one_tailed = bool(extract_1tail(txt))
+        for r in rows:
+            computed, error, decision = _process_stats(
+                r, one_tailed, not flags.OneTailedTests, flags
+            )
+            if computed is None or error is None or decision is None:
                 continue
-            results.append(res)
-    if results:
-        apa = _apa_factors([str(r.source) for r in results], [str(s) for s, _ in pres])
-        for res, a in zip(results, apa, strict=True):
-            res.apa = a
+            results.append(_Result(source, r, one_tailed, computed, error, decision))
+    apa = _apa_factors([str(r.source) for r in results], [str(s) for s, _ in pres])
+    for res, a in zip(results, apa, strict=True):
+        res.apa = a
     return results, pres
 
 
@@ -1066,31 +847,37 @@ def _pvalue_columns(pres: list[tuple[Any, _P]]) -> dict[str, pd.Series]:
 
 
 def _source_names(texts: Any) -> tuple[list[str], list[str | None]]:
+    names: list[str] | None = None
     if isinstance(texts, str) or texts is None:
         values: list[Any] = [texts]
-        names = None
     elif isinstance(texts, Mapping):
-        names = [str(k) for k in texts]
-        values = list(texts.values())
+        names, values = [str(k) for k in texts], list(texts.values())
     elif isinstance(texts, pd.Series):
         # a named character vector: string labels are names, a numeric index is not
         values = texts.tolist()
-        named = texts.index.inferred_type in ("string", "unicode")
-        names = [str(k) for k in texts.index] if named else None
+        if texts.index.inferred_type in ("string", "unicode"):
+            names = [str(k) for k in texts.index]
     else:
         values = list(texts)
-        names = None
-    values = [None if is_missing(v) else str(v) for v in values]
+    values = [None if _missing(v) else str(v) for v in values]
     if names is None:
-        if not values:
-            # max(integer(0)) and log10(-Inf)
-            _r_warning("no non-missing arguments to max; returning -Inf")
-            _r_warning("NaNs produced")
-        width = math.ceil(math.log10(max(len(values), 1)))
-        # formatC(width = 0L, flag = "0") pads to two characters ("01")
-        width = width or 2
+        # formatC(seq_along(texts), width = ceiling(log10(n)), flag = "0"): at least 2 wide
+        width = math.ceil(math.log10(max(len(values), 1))) or 2
         names = [f"{i:0{width}d}" for i in range(1, len(values) + 1)]
     return names, values
+
+
+def _is_flag(value: Any) -> bool:
+    try:
+        return value in (True, False)
+    except TypeError:  # pd.NA
+        return False
+
+
+def _check_flags(**flags: Any) -> None:
+    for name, value in flags.items():
+        if not _is_flag(value):
+            raise ValueError(f"`{name}` must be TRUE or FALSE, not {value!r}")
 
 
 def _check_args(
@@ -1101,30 +888,30 @@ def _check_args(
     OneTailedTxt: Any,
     AllPValues: Any,
     messages: Any = False,
-) -> None:
-    """Reject the argument values statcheck 1.5.0 fails on half-way (U149).
+) -> _Flags:
+    """Reject invalid arguments up front (U149, D78), and return the settings.
 
-    An ``NA`` flag or ``alpha`` makes an ``if ()`` fail on some texts only,
-    and a *pEqualAlphaSig* other than ``TRUE``/``FALSE`` (e.g. ``2``) made
-    ``decision_error_test()`` return ``NULL`` and ``process_stats()`` fail
-    for every inconsistent result. Other values keep R's ``x == TRUE``
-    semantics.
+    statcheck 1.5.0 failed half-way on an ``NA`` flag or ``alpha`` (on some
+    texts only) and compared other flag values with ``== TRUE``; here every
+    flag must be ``True``/``False`` (or 1/0) and ``alpha`` a number.
     """
-    flags = {
-        "OneTailedTests": OneTailedTests,
-        "pEqualAlphaSig": pEqualAlphaSig,
-        "pZeroError": pZeroError,
-        "OneTailedTxt": OneTailedTxt,
-        "AllPValues": AllPValues,
-        "messages": messages,
-    }
-    for name, value in flags.items():
-        if is_missing(value) or value is pd.NA:
-            raise ValueError(f"`{name}` must be TRUE or FALSE, not NA")
-    if not (_eq_true(pEqualAlphaSig) or _eq_false(pEqualAlphaSig)):
-        raise ValueError(f"`pEqualAlphaSig` must be TRUE or FALSE, not {pEqualAlphaSig!r}")
-    if alpha is None or alpha is pd.NA or isinstance(alpha, bool) or is_missing(float(alpha)):
-        raise ValueError("`alpha` must be a number")
+    _check_flags(
+        OneTailedTests=OneTailedTests,
+        pEqualAlphaSig=pEqualAlphaSig,
+        pZeroError=pZeroError,
+        OneTailedTxt=OneTailedTxt,
+        AllPValues=AllPValues,
+        messages=messages,
+    )
+    try:
+        a = math.nan if isinstance(alpha, bool | str) else float(alpha)
+    except (TypeError, ValueError):
+        a = math.nan
+    if math.isnan(a):
+        raise ValueError(f"`alpha` must be a number, not {alpha!r}")
+    return _Flags(
+        a, bool(pZeroError), bool(pEqualAlphaSig), bool(OneTailedTxt), bool(OneTailedTests)
+    )
 
 
 def statcheck(
@@ -1150,24 +937,15 @@ def statcheck(
     ``computed_p``, ``raw``, ``error``, ``decision_error``,
     ``one_tailed_in_txt`` and ``apa_factor``; with ``AllPValues=True``, every
     p-value (``source``, ``p_comp``, ``reported_p``, ``p_decimals``). Like R,
-    returns ``None`` (and prints a message when *messages* is true) when
-    nothing is found.
+    returns ``None`` (and prints a message) when nothing is found. Results
+    that cannot be checked are left out (D78).
     """
     names, values = _source_names(texts)
-    _check_args(
+    flags = _check_args(
         OneTailedTests, alpha, pEqualAlphaSig, pZeroError, OneTailedTxt, AllPValues, messages
     )
-    stats_ = _stat_arg(stat)
-    results, pres = _check_texts(
-        zip(names, values, strict=True),
-        stats_,
-        OneTailedTests,
-        alpha,
-        pEqualAlphaSig,
-        pZeroError,
-        OneTailedTxt,
-    )
-    if _if(_eq_false(AllPValues)):
+    results, pres = _check_texts(zip(names, values, strict=True), _stat_arg(stat), flags)
+    if not AllPValues:
         if results:
             cols = {VAR_SOURCE: pd.Series([r.source for r in results], dtype="string")}
             cols.update(_results_columns(results))
@@ -1205,51 +983,29 @@ def _statcheck_quiet(
     metacheck runs each text inside ``tryCatch(error = , warning = )``, so an
     error or the first R warning (``NAs introduced by coercion`` for an
     unrelated ``p = .05-.10``) discarded every result of the sentence (U4).
-    Here warnings are ignored and a result that cannot be checked is dropped
-    on its own (see :func:`_check_texts`).
+    Here a result that cannot be checked is dropped on its own (see
+    :func:`_check_texts`).
     """
+    flags = _check_args(OneTailedTests, alpha, pEqualAlphaSig, pZeroError, OneTailedTxt, AllPValues)
     stats_ = _stat_arg(stat)
-    _check_args(OneTailedTests, alpha, pEqualAlphaSig, pZeroError, OneTailedTxt, AllPValues)
-    AllPValues = not _eq_false(AllPValues)
     probe = _pcre(RGX_P_NS, True) if AllPValues else _NHST
     sources: list[int] = []
     results: list[_Result] = []
     pvals: list[tuple[Any, _P]] = []
-
-    def ignore(_msg: str) -> None:
-        return None
-
-    token = _ON_WARNING.set(ignore)
-    try:
-        for i, txt in enumerate(texts):
-            if txt is None:
-                continue
-            # every NHST result contains a comparator: checking for one first
-            # skips most sentences without running the (slow) regex
-            if not AllPValues and not _has_comparator(txt):
-                continue
-            if probe.search(txt) is None:
-                continue
-            try:
-                res, pres = _check_texts(
-                    [("1", txt)],
-                    stats_,
-                    OneTailedTests,
-                    alpha,
-                    pEqualAlphaSig,
-                    pZeroError,
-                    OneTailedTxt,
-                )
-            except RError:  # pragma: no cover - results are checked one by one
-                continue
-            if AllPValues:
-                pvals.extend(pres)
-                sources.extend([i] * len(pres))
-            else:
-                results.extend(res)
-                sources.extend([i] * len(res))
-    finally:
-        _ON_WARNING.reset(token)
+    for i, txt in enumerate(texts):
+        # every NHST result contains a comparator: checking for one first
+        # skips most sentences without running the (slow) regex
+        if txt is None or (not AllPValues and not _has_comparator(txt)):
+            continue
+        if probe.search(txt) is None:
+            continue
+        res, pres = _check_texts([("1", txt)], stats_, flags)
+        found = pres if AllPValues else res
+        sources.extend([i] * len(found))
+        if AllPValues:
+            pvals.extend(pres)
+        else:
+            results.extend(res)
     cols = _pvalue_columns(pvals) if AllPValues else _results_columns(results)
     return sources, cols
 
@@ -1265,10 +1021,8 @@ def summary_statcheck(x: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for s in sources:
         sub = x.loc[x[VAR_SOURCE].astype(str) == s]
-        rows.append(
-            (s, len(sub), int(sub[VAR_ERROR].sum(skipna=True)), int(sub[VAR_DEC_ERROR].sum()))
-        )
-    rows.append(("Total", len(x), int(x[VAR_ERROR].sum(skipna=True)), int(x[VAR_DEC_ERROR].sum())))
+        rows.append((s, len(sub), int(sub[VAR_ERROR].sum()), int(sub[VAR_DEC_ERROR].sum())))
+    rows.append(("Total", len(x), int(x[VAR_ERROR].sum()), int(x[VAR_DEC_ERROR].sum())))
     return pd.DataFrame(
         {
             VAR_SOURCE: pd.Series([r[0] for r in rows], dtype="string"),
