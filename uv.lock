@@ -2521,6 +2521,7 @@ name = "metacheck"
 version = "0.4.0a2.dev0"
 source = { editable = "." }
 dependencies = [
+    { name = "chardet" },
     { name = "h2" },
     { name = "httpx", extra = ["http2"] },
     { name = "lxml" },
@@ -2542,7 +2543,6 @@ dependencies = [
 all = [
     { name = "anthropic" },
     { name = "bibr" },
-    { name = "chardet" },
     { name = "fastapi" },
     { name = "google-genai" },
     { name = "huggingface-hub" },
@@ -2568,9 +2568,6 @@ app = [
 ]
 bibr = [
     { name = "bibr" },
-]
-charset = [
-    { name = "chardet" },
 ]
 concepts = [
     { name = "huggingface-hub" },
@@ -2613,7 +2610,7 @@ dev = [
 requires-dist = [
     { name = "anthropic", marker = "extra == 'llm'", specifier = ">=1.11,<2" },
     { name = "bibr", marker = "extra == 'bibr'", specifier = ">=0.6.0" },
-    { name = "chardet", marker = "extra == 'charset'", specifier = ">=7" },
+    { name = "chardet", specifier = ">=7" },
     { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.115" },
     { name = "google-genai", marker = "extra == 'llm'", specifier = ">=2.28,<3" },
     { name = "gradio", marker = "extra == 'app'", specifier = ">=6.28,<7" },

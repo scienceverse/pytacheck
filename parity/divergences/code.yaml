@@ -14,6 +14,23 @@
   ref: U153
   reason: a numeric YAML chunk label is a name, not a position; knitr fails with "subscript out of bounds"
 "codecheck_review/code_extract_r.review.yaml_label_number.doc1": *u153
+# D74 (code_read() decodes with chardet and Python's line splitting, not readr/vroom/ICU)
+"codecheck/code_read.my_encodings_cr_cr_lf_R": &d74_cr
+  kind: deliberate
+  ref: D74
+  reason: "a CR before a CRLF ends a line of its own and the next line is kept (vroom's single-threaded indexer drops the last line)"
+"codecheck/code_remove_comments.my_encodings_cr_cr_lf_R": *d74_cr
+"codecheck/code_line_stats.my_encodings_cr_cr_lf_R": *d74_cr
+"codecheck/code_read.my_encodings_mixed_eol_R": &d74_mixed
+  kind: deliberate
+  ref: D74
+  reason: "a lone CR ends a line in a file that also uses CRLF (vroom keeps it inside the line once it has seen a CRLF)"
+"codecheck/code_remove_comments.my_encodings_mixed_eol_R": *d74_mixed
+"codecheck/code_line_stats.my_encodings_mixed_eol_R": *d74_mixed
+"codecheck/code_read.problems_203020_pdf":
+  kind: deliberate
+  ref: D74
+  reason: "a binary file is read as Windows-1252 text (ICU recognises no charset in it, so R fails with 'subscript out of bounds')"
 # Notebooks and lock files are read as standard JSON (metacheck._json.loads); jsonlite's
 # yajl parser also accepts what no JSON writer produces. The maintainer decided
 # (2026-10-04) not to reproduce that.
