@@ -29,7 +29,12 @@ def rp_stem(x: str) -> str:
 
 
 def rp_mask(x: str) -> str:
+    # tables are masked: R writes each as an R chunk, pytacheck as a raw HTML
+    # block, with the tables' styles and script at the end of a .qmd (D75);
+    # the scroll_table cases compare tables
     x = re.sub(r"\n```\{r\}.*?\n```\n", "\n<R-CHUNK>\n", x, flags=re.S)
+    x = re.sub(r'\n```\{=html\}\n<div class="datatables.*?\n```\n', "\n<R-CHUNK>\n", x, flags=re.S)
+    x = re.sub(r"\n```\{=html\}\n<style>\n.*?\n</script>\n```\n\Z", "", x, flags=re.S)
     return re.sub(r"(?m)^(\s*(?:version|report-created): ).*$", r"\1<masked>", x)
 
 

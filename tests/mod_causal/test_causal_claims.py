@@ -419,12 +419,13 @@ def test_one_search_equals_rs_two_searches(which: str) -> None:
 
 
 def test_report_tables_render_like_r() -> None:
-    """Report tables render to the R chunks scroll_table() returns (parity: report.*)."""
+    """Report tables render to raw HTML blocks in the .qmd (D75; R writes R chunks)."""
     from tests.mod_causal.parity_support import report_qmd
 
     paper = mk(["X causes Y."], ["Participants were randomly assigned."], title="A causes B")
     report = report_qmd(_run(paper))
-    chunks = [s for s in report if "```{r}" in s]
+    chunks = [s for s in report if "```{=html}" in s]
     assert len(chunks) == 3
-    assert "metacheck::report_table(table, 1, 2, FALSE)" in chunks[1]
-    assert 'metacheck::report_table(table, "auto", 2, FALSE)' in chunks[0]
+    assert '<colgroup><col style="width:100%"><col><col></colgroup>' in chunks[1]
+    assert "<colgroup>" not in chunks[0]
+    assert "<td>Participants were randomly assigned.</td>" in chunks[0]

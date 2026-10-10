@@ -80,7 +80,8 @@ pinned by commit and file hash, and recorded in every run. See
 
 Reports are lists of blocks: markdown strings (with Quarto-style callouts) and
 `ReportTable` objects. metacheck emits R code chunks for tables and needs Quarto; here
-the renderer turns blocks into self-contained HTML (or `.qmd`/Markdown) directly.
+the renderer turns blocks into self-contained HTML (or `.qmd`/Markdown) directly, and a
+`.qmd` holds each table as a raw HTML block, so Quarto renders it without R (D75).
 
 ## Parity harness
 

@@ -21,14 +21,15 @@ letters = [c.lower() for c in LETTERS]
 
 
 def test_scroll_table():
+    # the .qmd text is a raw HTML block (metacheck writes an R chunk; D75)
     table = pd.DataFrame({"uc": LETTERS, "lc": letters})
     assert isinstance(scroll_table(table), ReportTable)
     obs = scroll_table_qmd(table)
-    assert "```{r}" in obs
-    assert 'metacheck::report_table(table, "auto", 2, FALSE)' in obs
+    assert obs.startswith("\n```{=html}\n") and "```{r}" not in obs
+    assert "<td>A</td><td>a</td>" in obs and obs.count("<tr class=") == 26
 
-    obs = scroll_table_qmd(table, escape=True)
-    assert 'metacheck::report_table(table, "auto", 2, TRUE)' in obs
+    obs = scroll_table_qmd(pd.DataFrame({"t": ["<b>"]}), escape=True)
+    assert "<td>&lt;b&gt;</td>" in obs
 
     # vector vs unnamed table version
     obs_table = scroll_table_qmd(pd.DataFrame({"": LETTERS}))
@@ -38,18 +39,18 @@ def test_scroll_table():
     # paginate after maxrows
     obs_2 = scroll_table_qmd(list(range(1, 11)))
     obs_10 = scroll_table_qmd(list(range(1, 11)), maxrows=10)
-    assert 'metacheck::report_table(table, "auto", 2, FALSE)' in obs_2
-    assert 'metacheck::report_table(table, "auto", 10, FALSE)' in obs_10
+    assert 'data-page-length="2"' in obs_2
+    assert "data-page-length" not in obs_10 and obs_10.count("<tr class=") == 10
 
     # colwidths
     obs = scroll_table_qmd(pd.DataFrame({"a": [1.0], "b": [2.0]}), [0.3, 0.7])
-    assert "metacheck::report_table(table, c(0.3, 0.7), 2, FALSE)" in obs
+    assert '<colgroup><col style="width:30%"><col style="width:70%"></colgroup>' in obs
     obs = scroll_table_qmd(pd.DataFrame({"a": [1], "b": [2], "c": [3], "d": [4]}), [0.1, 0.4])
-    assert "metacheck::report_table(table, c(0.1, 0.4), 2, FALSE)" in obs
+    assert '<col style="width:10%"><col style="width:40%"><col><col>' in obs
     obs = scroll_table_qmd(
         pd.DataFrame({"a": [1], "b": [2], "c": [3], "d": [4]}), [None, 200, None, None]
     )
-    assert "metacheck::report_table(table, c(NA, 200, NA, NA), 2, FALSE)" in obs
+    assert '<col><col style="width:200px"><col><col>' in obs
 
     # empty tables give ""
     assert scroll_table(pd.DataFrame({"a": []})) == ""
@@ -59,7 +60,9 @@ def test_scroll_table():
 def test_scroll_table_line_breaks():
     rt = scroll_table(pd.DataFrame({"t": ["a\nb"]}))
     assert rt.data["t"].tolist() == ["a<br>b"]
-    assert "#| column: page" in scroll_table_qmd(pd.DataFrame({"t": ["x"]}), column="page")
+    assert 'class="datatables column-page"' in scroll_table_qmd(
+        pd.DataFrame({"t": ["x"]}), column="page"
+    )
 
 
 def test_report_table():
