@@ -1,8 +1,6 @@
-"""R/stat_helpers.R (metacheck.stats.helpers) and statcheck's R-condition semantics."""
+"""R/stat_helpers.R (metacheck.stats.helpers) and results statcheck cannot check (D78)."""
 
 from __future__ import annotations
-
-import warnings
 
 import pytest
 
@@ -13,13 +11,7 @@ from metacheck.stats.helpers import (
     _stat_html_escape,
     _stato_strip_variant,
 )
-from metacheck.stats.statcheck import (
-    RError,
-    StatcheckWarning,
-    _statcheck_quiet,
-    extract_pattern,
-    statcheck,
-)
+from metacheck.stats.statcheck import _statcheck_quiet, extract_pattern, statcheck
 
 
 @pytest.mark.parametrize(
@@ -75,13 +67,13 @@ def test_r_stat_pattern() -> None:
     assert m == ["t(28) = -2.20", "t", "(28)", "=", "-2.20"]
 
 
-# -- R conditions in statcheck -------------------------------------------------------
+# -- results statcheck cannot check (U5, D78) ------------------------------------------
 
 
-def test_direct_statcheck_warns_and_continues() -> None:
-    with pytest.warns(StatcheckWarning, match="NAs introduced by coercion"):
-        result = statcheck("t(28) = 2.20, p = .036 and p = .05-.10", messages=False)
+def test_direct_statcheck_keeps_valid_results_without_warnings(recwarn) -> None:
+    result = statcheck("t(28) = 2.20, p = .036 and p = .05-.10", messages=False)
     assert result["raw"].tolist() == ["t(28) = 2.20, p = .036"]
+    assert not recwarn.list  # R's "NAs introduced by coercion" is not reproduced
 
 
 @pytest.mark.parametrize(
@@ -104,10 +96,8 @@ def test_direct_statcheck_warns_and_continues() -> None:
 def test_statcheck_skips_results_it_cannot_check(txt: str, raw: str | None, error) -> None:
     # U5: R stops the whole call; pytacheck checks what it can and keeps the rest
     fine = "t(28) = 2.20, p = .036"
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", StatcheckWarning)
-        result = statcheck([txt, fine], messages=False)
-        sources, columns = _statcheck_quiet([txt, fine])
+    result = statcheck([txt, fine], messages=False)
+    sources, columns = _statcheck_quiet([txt, fine])
     expected = ([raw] if raw else []) + [fine]
     assert result["raw"].tolist() == expected
     assert columns["raw"].tolist() == expected
@@ -116,10 +106,43 @@ def test_statcheck_skips_results_it_cannot_check(txt: str, raw: str | None, erro
         assert result["error"].tolist()[0] is error
 
 
-def test_quiet_mode_restores_warning_handler() -> None:
-    _statcheck_quiet(["t(0) = 2.1, p = .03"])
-    with pytest.warns(StatcheckWarning):
-        statcheck("t(28) = 2.2, p = .03 and p = .05-.10", messages=False)
+@pytest.mark.parametrize(
+    "txt",
+    [
+        # R reports these as consistent (computed_p NaN, error FALSE): a false green
+        "t(0) < 2.1, p > .05",
+        "F(0, 20) > 2.1, p < .05",
+        "r(0) < .30, p > .05",
+        # p = 0.000 is an error, but its p-value cannot be computed either
+        "t(0) = 2.20, p = 0.000",
+    ],
+)
+def test_no_computable_p_value_is_never_green(txt: str, capsys) -> None:
+    # D78: a result that cannot be checked is dropped, never reported as consistent
+    assert statcheck(txt, messages=False) is None
+    assert "did not find any results" in capsys.readouterr().out
+    sources, columns = _statcheck_quiet([txt])
+    assert sources == []
+    assert columns["computed_p"].isna().sum() == 0
+
+
+def test_statcheck_results_are_always_decided() -> None:
+    texts = [
+        "t(0) < 2.1, p > .05 but t(28) = 2.20, p = .03",
+        "F(2, 20) = -4.2, p = .03",  # below the support: p = 1, as in R
+        "χ2(2) = -3.1, p = .05",
+        "F(1, 20) = 3.1, p = .05-.10 and z = 1.96, p = .05",
+    ]
+    result = statcheck(texts, messages=False)
+    assert result["raw"].tolist() == [
+        "t(28) = 2.20, p = .03",
+        "F(2, 20) = -4.2, p = .03",
+        "χ2(2) = -3.1, p = .05",
+        "z = 1.96, p = .05",
+    ]
+    for col in ("computed_p", "error", "decision_error"):
+        assert not result[col].isna().any()
+    assert result["computed_p"].tolist()[1:3] == [1.0, 1.0]
 
 
 def test_extract_pattern_recycles_like_substring() -> None:
@@ -127,5 +150,5 @@ def test_extract_pattern_recycles_like_substring() -> None:
     assert extract_pattern(["= 2.1, ", "< 3, "], "[<>=]") == ["=", "<"]
     assert extract_pattern("no match", "x") is None
     assert extract_pattern(None, "x") is None
-    with pytest.raises(RError):
+    with pytest.raises(ValueError):
         extract_pattern([], "x")

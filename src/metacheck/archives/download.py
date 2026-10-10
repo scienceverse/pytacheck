@@ -779,7 +779,7 @@ def _rate_limit_wait(resp: Any) -> float:
     is confirmed exhausted (remaining exactly 0) with a numeric reset time; a
     reset already in the past gives 0.
     """
-    from metacheck.stats._rmath import as_numeric
+    from metacheck._values import as_float
 
     headers = resp.headers
     remaining = headers.get("ratelimit-remaining")
@@ -790,10 +790,10 @@ def _rate_limit_wait(resp: Any) -> float:
         reset = headers.get("x-ratelimit-reset")
     if remaining is None or reset is None:
         return math.nan
-    if as_numeric(remaining)[0] != 0:
+    if as_float(remaining) != 0:
         return math.nan
-    reset_time = as_numeric(reset)[0]
-    if is_missing(reset_time):
+    reset_time = as_float(reset)
+    if reset_time is None or is_missing(reset_time):
         return math.nan
     wait = reset_time - time.time()
     return 0.0 if is_missing(wait) or wait < 0 else float(wait)
