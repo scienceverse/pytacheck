@@ -7,6 +7,12 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Internal: data_check helpers read column kinds from pandas dtypes
+
+- **Changed:** `datacheck/_checks_rvec.py`, a 621-line model of R's atomic vectors (`RVec`, `rvec()`, `chr()`, `num()`, `quantile7()`, `tolower()`, ...), is gone. The data_check and codebook helpers read a column's kind (numeric, logical, text, categorical, date-time) from its pandas dtype through the small `datacheck/_kinds.py` and use plain pandas, numpy and Python string operations (D77). `as.character()` keeps R's number formatting where users see it (messages, sample values).
+- **Unchanged:** every traffic light, count and reported number on real data files; the parity cases of the data areas and the accuracy gate give the same results.
+- **Edge cases (D77):** a list mixing `True` with numbers is text, `as.numeric()` of a date-time is `NA`, a whole number beyond 2^31 is written in full in a message, lower- and upper-casing are Python's, and `data_check_constant()` counts the text `"NaN"` like any other value (R's `table()` drops it, and fails on a column of only `"NaN"`).
+
 ### Changed: json_expand reads plain JSON
 
 - **Changed:** `json_expand()` parses each reply with `metacheck._json.loads()` and flattens it, instead of reproducing jsonlite's R value model, R's deparser and `utils::type.convert()` (D76). A JSON null stays missing, also in text columns (metacheck gives `""` there). A nested array or object is the text of its values joined by `";"` (`["E", "F"]` is still `"E;F"`; `{"b": [1, 3]}` is `"1;3"`, not `c(1, 3)`). Column types are still guessed from the values: `true`, `"TRUE"` and `"F"` make a logical column, `"1"` an integer, `"2.5"` a number; anything else is text.

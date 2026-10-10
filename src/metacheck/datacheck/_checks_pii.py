@@ -7,24 +7,14 @@ pattern, never the matching value, so the report does not leak the PII.
 
 from __future__ import annotations
 
+import math
+import statistics
 from typing import Any
 
 from metacheck._r.base import plural
 from metacheck._r.regex import grepl, gsub, strsplit
-from metacheck.datacheck._checks_rvec import (
-    as_numeric_str,
-    chr,
-    fmt_pct0,
-    is_whole,
-    median,
-    rvec,
-    scalar_chr,
-    tolower,
-    trim,
-    trimmed_counts,
-    unique,
-    weighted_median,
-)
+from metacheck._values import as_float
+from metacheck.datacheck._kinds import NUMERIC, WS, as_text, column, kind, trimmed_counts
 
 __all__ = [
     "_DEMOGRAPHIC_NAME_REGEX",
@@ -211,7 +201,7 @@ def data_check_pii_values(x: Any, broad_min_frac: float = 0.30) -> dict[str, Any
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
     counts = trimmed_counts(x)  # each distinct value is matched once
-    n_total = sum(counts.values())
+    n_total = counts.total()
     if n_total < 3:
         return none
     uniq = list(counts)
@@ -234,7 +224,7 @@ def data_check_pii_values(x: Any, broad_min_frac: float = 0.30) -> dict[str, Any
         frac = n_valid / n_total
         flag = n_valid >= 1 if spec["kind"] == "specific" else frac >= broad_min_frac
         if flag:
-            hits.append(f"{nm} ({n_valid} value{plural(n_valid)}, {fmt_pct0(100 * frac)}%)")
+            hits.append(f"{nm} ({n_valid} value{plural(n_valid)}, {100 * frac:.0f}%)")
             names.append(nm)
     if not hits:
         return none
@@ -268,16 +258,18 @@ def _pii_split_name(x: Any) -> list[str | None]:
     ``strsplit(x)[[1]]`` does); ``NA`` gives ``[None]`` and a zero-length
     vector is an error (``[[1]]`` of an empty list).
     """
-    if x is not None and not isinstance(x, str) and not chr(x):
-        raise IndexError("subscript out of bounds")
-    x = scalar_chr(x)
+    if x is not None and not isinstance(x, str):
+        texts = as_text(x)
+        if not texts:
+            raise IndexError("subscript out of bounds")
+        x = texts[0]
     if x is None:
         return [None]
     a = gsub(r"(?<=[a-z0-9])(?=[A-Z])", " ", x, perl=True)
     s1 = gsub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", a, perl=True)
     s2 = gsub(r"(?<=[A-Z])(?=[a-z])", " ", a, perl=True)
-    p = [*strsplit([tolower(s1)], "[^a-z0-9]+")[0], *strsplit([tolower(s2)], "[^a-z0-9]+")[0]]
-    return unique(t for t in p if t is None or t != "")
+    p = [*strsplit([s1.lower()], "[^a-z0-9]+")[0], *strsplit([s2.lower()], "[^a-z0-9]+")[0]]
+    return list(dict.fromkeys(t for t in p if t is None or t != ""))
 
 
 def data_check_pii_name(col_name: Any) -> dict[str, Any]:
@@ -290,7 +282,7 @@ def data_check_pii_name(col_name: Any) -> dict[str, Any]:
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
     if col_name is None:
         return none
-    names = chr(col_name)
+    names = as_text(col_name)
     if not names:  # `FALSE || logical(0)` is NA inside `if`
         raise ValueError("missing value where TRUE/FALSE needed")
     if len(names) > 1:
@@ -299,7 +291,7 @@ def data_check_pii_name(col_name: Any) -> dict[str, Any]:
     if nm is None or nm == "":
         return none
     words = _pii_split_name(nm)
-    low = tolower(nm) or ""
+    low = nm.lower()
     norm = "".join(c for c in low if "a" <= c <= "z" or "0" <= c <= "9")
     if not words and not norm:
         return none
@@ -310,7 +302,7 @@ def data_check_pii_name(col_name: Any) -> dict[str, Any]:
         cand += [f"{words[i]}{words[i + 1]}{words[i + 2]}" for i in range(len(words) - 2)]
     if norm:
         cand.append(norm)
-    matched = unique(c for c in cand if c in _PII_NAME_TOKENS)
+    matched = list(dict.fromkeys(c for c in cand if c in _PII_NAME_TOKENS))
     if not matched:
         return none
     return {
@@ -346,8 +338,8 @@ def data_check_pii_geo(col_name: Any, x: Any, sibling_names: Any = None) -> dict
         return none
     vals = [
         f
-        for s in chr(x)
-        if (f := as_numeric_str(None if s is None else s.replace(",", "."))) is not None and f == f
+        for s in as_text(x)
+        if s is not None and (f := as_float(s.replace(",", "."))) is not None and f == f
     ]
     if len(vals) >= 3:
         lim = 90 if (is_lat and not is_lon) else 180
@@ -355,10 +347,10 @@ def data_check_pii_geo(col_name: Any, x: Any, sibling_names: Any = None) -> dict
             return none
     if not is_solo and sibling_names is not None:
         sib: list[str | None] = []
-        for s in chr(sibling_names):
+        for s in as_text(sibling_names):
             sib.extend(_pii_split_name(s))
         want = _LON_WORDS if is_lat else _LAT_WORDS
-        if not any(w in want for w in unique(sib)):
+        if not any(w in want for w in sib):
             return none
     return {
         "problem": True,
@@ -380,14 +372,14 @@ def data_check_pii_freetext(
     varied, multi-word, predominantly alphabetic values.
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
-    v = rvec(x)
-    if v.is_numeric:
+    col = column(x)
+    if kind(col) == NUMERIC:
         return none
-    counts = trimmed_counts(v)
-    n_total = sum(counts.values())
+    counts = trimmed_counts(col)
+    n_total = counts.total()
     if n_total < 5:
         return none
-    med = weighted_median((len(s), c) for s, c in counts.items())
+    med = statistics.median(len(s) for s in counts.elements())
     uniq_frac = len(counts) / n_total
     if med < min_median_chars or uniq_frac < min_unique_frac:
         return none
@@ -407,8 +399,8 @@ def data_check_pii_freetext(
     return {
         "problem": True,
         "message": (
-            f"Free-text column (median {fmt_pct0(med)} characters, "
-            f"{fmt_pct0(100 * uniq_frac)}% distinct) may contain names or other personal "
+            f"Free-text column (median {med:.0f} characters, "
+            f"{100 * uniq_frac:.0f}% distinct) may contain names or other personal "
             "detail. Review before sharing."
         ),
         "values": None,
@@ -423,11 +415,11 @@ def _demographic_values_ok(kind: str, x: Any) -> bool:
     """
     from metacheck.datacheck._checks_quality import _DATA_MISSING_SENTINELS
 
-    x_chr = [t for s in chr(x) if s is not None and (t := trim(s)) != ""]  # type: ignore[misc]
+    x_chr = [t for s in as_text(x) if s is not None and (t := s.strip(WS)) != ""]
     if len(x_chr) < 3:
         return True
     if kind == "age":
-        nums = [as_numeric_str(s.replace(",", ".")) for s in x_chr]
+        nums = [as_float(s.replace(",", ".")) for s in x_chr]
         ok = [f for f in nums if f is not None and f == f]
         if len(ok) / len(nums) < 0.8:
             return False
@@ -437,26 +429,31 @@ def _demographic_values_ok(kind: str, x: Any) -> bool:
             return False
         return sum(1 for f in vals if 0 <= f <= 120) / len(vals) >= 0.9
     if kind == "gender":
-        u = unique(tolower(s) for s in x_chr)
+        u = {s.lower() for s in x_chr}
         hit_frac = sum(1 for s in u if s in _GENDER_WORDS) / len(u)
-        nums2 = [as_numeric_str(s) for s in x_chr]
+        nums2 = [as_float(s) for s in x_chr]
         is_lowcard_numeric = (
             all(f is not None and f == f for f in nums2)
-            and len(unique(nums2)) <= 4
-            and all(is_whole(f) for f in nums2)  # type: ignore[arg-type]
+            and len(set(nums2)) <= 4
+            and all(_is_whole(f) for f in nums2)  # type: ignore[arg-type]
             and all(0 <= f <= 9 for f in nums2)  # type: ignore[operator]
         )
         return hit_frac >= 0.6 or is_lowcard_numeric
     if kind == "race":
         if len(set(x_chr)) > 30:
             return False
-        if median([len(s) for s in x_chr]) > 60:
+        if statistics.median(len(s) for s in x_chr) > 60:
             return False
-        nums3 = [as_numeric_str(s) for s in x_chr]
+        nums3 = [as_float(s) for s in x_chr]
         if all(f is not None and f == f for f in nums3):
-            return len(unique(nums3)) <= 25 and all(is_whole(f) for f in nums3)  # type: ignore[arg-type]
+            return len(set(nums3)) <= 25 and all(_is_whole(f) for f in nums3)  # type: ignore[arg-type]
         return True
     return False
+
+
+def _is_whole(f: float) -> bool:
+    """``f == round(f)`` (an infinity counts as whole, as in R)."""
+    return math.isinf(f) or f.is_integer()
 
 
 def _utf8_name(name: str) -> str:
@@ -481,11 +478,11 @@ def data_check_demographic(col_name: Any, x: Any) -> str | None:
     """
     if col_name is None:
         return None
-    names = chr(col_name)
+    names = as_text(col_name)
     if len(names) != 1 or names[0] is None or names[0] == "":
         return None
     nm = _utf8_name(names[0])
-    for kind, rx in _DEMOGRAPHIC_NAME_REGEX.items():
-        if grepl(rx, nm, perl=True) and _demographic_values_ok(kind, x):
-            return kind
+    for demo, rx in _DEMOGRAPHIC_NAME_REGEX.items():
+        if grepl(rx, nm, perl=True) and _demographic_values_ok(demo, x):
+            return demo
     return None

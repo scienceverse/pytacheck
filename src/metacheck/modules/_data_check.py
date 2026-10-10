@@ -17,6 +17,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r import grepl, plural, r_round, r_sort_key, strsplit, sub
+from metacheck._values import as_float
 
 # -----------------------------------------------------------------------------
 # small R idioms
@@ -93,9 +94,9 @@ def _dquote_free(x: Any) -> str:
 
 def _chr(x: Any) -> list[str | None]:
     """R ``as.character()`` of a column."""
-    from metacheck.datacheck._checks_rvec import chr as r_chr
+    from metacheck.datacheck._kinds import as_text
 
-    return r_chr(x)
+    return as_text(x)
 
 
 def _is_integer64(df: pd.DataFrame, j: int) -> bool:
@@ -651,11 +652,9 @@ def _careless_available() -> bool:
 
 def _as_num_chr(x: Any) -> list[float | None]:
     """``suppressWarnings(as.numeric(as.character(x)))``."""
-    from metacheck.datacheck._checks_rvec import as_numeric_str
-
     out: list[float | None] = []
     for s in _chr(x):
-        f = None if s is None else as_numeric_str(s)
+        f = as_float(s)
         out.append(None if f is None or f != f else f)
     return out
 
@@ -1370,7 +1369,7 @@ def dv_spreadsheet_offset_header(path: Any, ext: str | None = None) -> dict[str,
     already the first row.
     """
     from metacheck.datacheck import _files_readers as readers
-    from metacheck.datacheck._checks_rvec import row_as_character, rvec
+    from metacheck.datacheck._kinds import row_texts
     from metacheck.datacheck.checks import (
         _detect_header_row,
         _is_placeholder_name,
@@ -1391,13 +1390,7 @@ def dv_spreadsheet_offset_header(path: Any, ext: str | None = None) -> dict[str,
         raw = None
     if raw is None or len(raw) < 2 or raw.shape[1] < 2:
         return None
-    cols = [raw.iloc[:, j] for j in range(raw.shape[1])]
-    kinds = [rvec(c).kind for c in cols]
-    values = [rvec(c).values for c in cols]
-    rows = [
-        row_as_character([values[j][i] for j in range(len(cols))], kinds) for i in range(len(raw))
-    ]
-    det = _detect_header_row(rows)
+    det = _detect_header_row(row_texts(raw))
     stripped = det.get("stripped") or []
     if det["header_row"] <= 0 or len(stripped) == 0:
         return None
@@ -1448,9 +1441,7 @@ def _as_integer(s: str | None) -> int | None:
     """``suppressWarnings(as.integer(s))`` of an attribute value."""
     if s is None:
         return None
-    from metacheck.datacheck._checks_rvec import as_numeric_str
-
-    f = as_numeric_str(s)
+    f = as_float(s)
     if f is None or f != f or math.isinf(f) or abs(f) >= 2**31:
         return None
     return int(f)

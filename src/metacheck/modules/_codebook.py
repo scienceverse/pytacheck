@@ -20,6 +20,7 @@ from __future__ import annotations
 import functools
 import math
 import re
+import statistics
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Any, cast, overload
 
@@ -27,8 +28,8 @@ import pandas as pd
 
 from metacheck._r import grepl, gsub, r_sort_key, strsplit, sub, trimws
 from metacheck._r.base import as_character, plural
-from metacheck._values import is_true
-from metacheck.datacheck._checks_rvec import as_numeric_str, chr, median, tolower, toupper
+from metacheck._values import as_float, is_true
+from metacheck.datacheck._kinds import as_text
 
 __all__ = [
     "OsdDefinition",
@@ -136,14 +137,14 @@ def _esc(x: str) -> str:
 
 def _num_via_chr(x: Any) -> list[float | None]:
     """``suppressWarnings(as.numeric(as.character(x)))``."""
-    return [as_numeric_str(s) for s in chr(x)]
+    return [as_float(s) for s in as_text(x)]
 
 
 def _as_integer_str(s: Any) -> int | None:
     """``as.integer()`` of one string (truncation; NA when not a number / too big)."""
     if _na(s):
         return None
-    v = as_numeric_str(str(s))
+    v = as_float(str(s))
     if v is None or math.isnan(v) or math.isinf(v) or abs(v) >= 2**31:
         return None
     return int(v)
@@ -615,15 +616,15 @@ def _scale_name_in_text(scale: str, sentences: Sequence[str]) -> bool:
     """
     if scale == "" or len(sentences) == 0:
         return False
-    hay = tolower(" \n ".join(_pstr(s) for s in sentences)) or ""
-    needles = _unique([tolower(scale), tolower(sub("\\s*\\(.*\\)\\s*$", "", scale))])
+    hay = " \n ".join(_pstr(s) for s in sentences).lower()
+    needles = _unique([scale.lower(), sub("\\s*\\(.*\\)\\s*$", "", scale).lower()])
     needles = [n for n in needles if n is not None and len(n) >= 3]
     if any(n in hay for n in needles):
         return True
     from metacheck._r import regextract_all
 
     acr = regextract_all("\\(([A-Z][A-Za-z0-9-]{1,})\\)", scale)
-    acr_l = _unique(tolower(gsub("[()]", "", a)) for a in acr)
+    acr_l = _unique(None if a is None else gsub("[()]", "", a).lower() for a in acr)
     acr_l = [a for a in acr_l if a is not None and len(a) >= 2]
     if not acr_l:
         return False
@@ -648,7 +649,7 @@ def _scale_paper_context(
         terms += [f"\\b{_esc(p)}\\b" for p in pfx]
     lab_txt = [lb for lb in labels if _ok(lb)]
     if lab_txt:
-        words = list(strsplit([tolower(" ".join(lab_txt)) or ""], "[^a-z]+")[0])
+        words = list(strsplit([" ".join(lab_txt).lower()], "[^a-z]+")[0])
         words = [w for w in words if len(w) >= 5]
         counts: dict[str, int] = {}
         for w in words:
@@ -750,7 +751,7 @@ def _norm_pref(x: Any) -> str | None:
     """``tolower(gsub("[^a-z0-9]", "", tolower(x)))``."""
     if _na(x):
         return None
-    return tolower(gsub("[^a-z0-9]", "", tolower(str(x)) or ""))
+    return str(gsub("[^a-z0-9]", "", str(x).lower()))
 
 
 def _empty_scale_frame(n_detected: int | None = 0) -> pd.DataFrame:
@@ -942,7 +943,7 @@ _TASK_NAME_STOP = frozenset(["the", "a", "an", "of", "task", "test"])
 
 
 def _first_tok(nm: Any) -> str:
-    toks = strsplit([tolower(_pstr(nm)) or ""], "[^a-z0-9]+")[0]
+    toks = strsplit([_pstr(nm).lower()], "[^a-z0-9]+")[0]
     toks = [t for t in toks if t != "" and t not in _TASK_NAME_STOP]
     return toks[0] if toks else ""
 
@@ -1076,7 +1077,7 @@ def _scale_alpha_prefix(nm: str) -> str:
             cut = i
             break
     p = nm[:cut].rstrip("._ -")
-    return tolower(p) or ""
+    return p.lower()
 
 
 def _scale_loop_base(stem: str) -> str:
@@ -1084,7 +1085,7 @@ def _scale_loop_base(stem: str) -> str:
 
     Port of ``.scale_loop_base()`` (``POWER.PP170`` -> ``power``).
     """
-    s = tolower(stem) or ""
+    s = (stem or "").lower()
     base = sub("[._ -]?[a-z]*[0-9]+$", "", s, perl=True)
     base = sub("[._ -]+$", "", base)
     n_letters = sum(1 for ch in base if "a" <= ch <= "z")
@@ -1145,8 +1146,8 @@ def _scale_split_items(
     suffix = sub("^.*?[._ -]", "", cols)
     ends_num = grepl("[0-9]$", cols)
     is_word = grepl("[A-Za-z]$", cols)
-    agg_a = grepl(_AGG_TOKEN_RE, [tolower(s) for s in suffix])
-    agg_b = grepl(_AGG_TOKEN_RE, [tolower(c) for c in cols])
+    agg_a = grepl(_AGG_TOKEN_RE, [None if s is None else s.lower() for s in suffix])
+    agg_b = grepl(_AGG_TOKEN_RE, [None if c is None else c.lower() for c in cols])
     agg_token = [a or b for a, b in zip(agg_a, agg_b, strict=True)]
     numbered_block = sum(ends_num) / len(cols) >= 0.5
     name_flag = [
@@ -1169,7 +1170,7 @@ def _scale_split_items(
         if len(item_idx) >= 2:
             item_rngs = [stats[i]["rng"] for i in item_idx if stats[i] is not None]  # type: ignore[index]
             item_int = [stats[i]["int"] for i in item_idx if stats[i] is not None]  # type: ignore[index]
-            med_rng = median(item_rngs) if item_rngs else math.nan
+            med_rng = statistics.median(item_rngs) if item_rngs else math.nan
             items_are_integer = bool(item_int) and sum(item_int) / len(item_int) >= 0.5
             for j in range(n):
                 st = stats[j]
@@ -1308,7 +1309,7 @@ _PARADATA_PSYCHOPY_META_COLS = frozenset(
 
 def _paradata_name(nm: Sequence[Any]) -> list[bool]:
     """Is each column name a paradata channel (from the name alone)? Port of ``.paradata_name()``."""
-    x = [tolower(_pstr(n)) or "" for n in nm]
+    x = [_pstr(n).lower() for n in nm]
     a = grepl(_PARADATA_CHANNEL_RE, x, perl=True)
     b = grepl(_QUALTRICS_TIMER_RE, x, perl=True)
     return [(aa or bb) and "response_numeric" not in xx for aa, bb, xx in zip(a, b, x, strict=True)]
@@ -1320,8 +1321,8 @@ def _paradata_platform_col(col_names: Sequence[Any], format: str | None) -> list
     if n == 0 or format is None or _na(format) or format == "":
         return [False] * n
     deny = _PARADATA_PLATFORM_COLS.get(format)
-    low = [tolower(trimws(_pstr(c))) or "" for c in col_names]
-    deny_l = {tolower(d) for d in deny} if deny is not None else set()
+    low = [trimws(_pstr(c)).lower() for c in col_names]
+    deny_l = {d.lower() for d in deny} if deny is not None else set()
     out = [lo in deny_l for lo in low] if deny is not None else [False] * n
     if format == "inquisit":
         stim = grepl(_PARADATA_INQUISIT_STIM_RE, low, perl=True)
@@ -1578,10 +1579,10 @@ def _scale_prefix_groups(
         collapsed: list[dict[str, Any]] = []
         for b in _unique(bases):
             grp = [m for m, bb in zip(merged, bases, strict=True) if bb == b]
-            shortened = any(len(b) < len(tolower(m["stem"]) or "") for m in grp)
+            shortened = any(len(b) < len(m["stem"] or "") for m in grp)
             if len(grp) >= 2 and shortened:
                 cols = [c for m in grp for c in m["cols"]]
-                disp = toupper(grp[0]["cols"][0][: len(b)]) or ""
+                disp = grp[0]["cols"][0][: len(b)].upper()
                 collapsed.append({"cols": cols, "stem": disp, "ap": _scale_alpha_prefix(disp)})
             else:
                 collapsed.extend(grp)
@@ -1611,7 +1612,7 @@ def _scale_prefix_groups(
             max_item: Any = max(present) if present else -math.inf
         else:
             max_item = None
-        key = tolower(stem) or ""
+        key = (stem or "").lower()
         base = key
         i = 2
         while key in out:
@@ -1630,7 +1631,7 @@ def _scale_prefix_groups(
     for m in merged:
         ap = m["ap"]
         if ap != "" and len(ap) >= 2 and all("a" <= ch <= "z" or "A" <= ch <= "Z" for ch in ap):
-            stem = toupper(m["cols"][0][: len(ap)]) or ""
+            stem = m["cols"][0][: len(ap)].upper()
             emit(m["cols"], stem, min_stem=2)
         else:
             emit(m["cols"], m["stem"])
@@ -1774,7 +1775,7 @@ def _identify_scales_text_llm(
     seen: set[Any] = set()
     first: list[int] = []
     for i, n in enumerate(resp["scale_name"].tolist()):
-        k = None if _na(n) else tolower(n)
+        k = None if _na(n) else n.lower()
         if k not in seen:
             seen.add(k)
             first.append(i)
@@ -1810,14 +1811,14 @@ def _scale_text_report(text_scales: pd.DataFrame | None, matched: Sequence[Any] 
         return None if v is None or trimws(_pstr(v)) == "" else trimws(_pstr(v))
 
     if len(matched):
-        m = [cast(str, tolower(_pstr(x))) for x in matched if not _na(x)]
+        m = [_pstr(x).lower() for x in matched if not _na(x)]
         m_set = set(m)
         hit_rows = []
         for i in range(len(ts)):
-            name_hit = tolower(_pstr(_cell(ts, "scale_name", i))) in m_set
+            name_hit = _pstr(_cell(ts, "scale_name", i)).lower() in m_set
             a = present(_cell(ts, "acronym", i))
             acr_hit = a is not None and any(
-                re.search(r"(?<!\w)" + re.escape(cast(str, tolower(a))) + r"(?!\w)", x) for x in m
+                re.search(r"(?<!\w)" + re.escape(a.lower()) + r"(?!\w)", x) for x in m
             )
             hit_rows.append(name_hit or acr_hit)
         ts = ts.iloc[[i for i, h in enumerate(hit_rows) if not h]].reset_index(drop=True)
@@ -1833,7 +1834,7 @@ def _scale_text_report(text_scales: pd.DataFrame | None, matched: Sequence[Any] 
         if nit is not None:
             bits.append(f"{nit} items")
         adm = _cell(ts, "administered", i)
-        if adm is not None and tolower(trimws(_pstr(adm))) == "unclear":
+        if adm is not None and trimws(_pstr(adm)).lower() == "unclear":
             bits.append("possibly not administered here")
         extra = f" ({'; '.join(bits)})" if bits else ""
         lines.append(f"- **{_pstr(_cell(ts, 'scale_name', i))}**{extra}")
@@ -1981,8 +1982,7 @@ def _identify_scales_prefix_llm(
         conf: dict[str, Any] = dict.fromkeys(groups)
         if isinstance(resp, pd.DataFrame) and len(resp) and "prefix" in resp.columns:
             rk = [
-                None if _na(v) else tolower(trimws(as_character(v)))
-                for v in resp["prefix"].tolist()
+                None if _na(v) else trimws(as_character(v)).lower() for v in resp["prefix"].tolist()
             ]
             sn_col = _vals(resp, "scale_name")
             cf_col = _vals(resp, "confidence")
@@ -1992,10 +1992,10 @@ def _identify_scales_prefix_llm(
                     continue
                 sn = "" if sn_col is None else sn_col[j[0]]
                 sn = None if _na(sn) else trimws(as_character(sn))
-                if sn is not None and sn != "" and tolower(sn) not in _NOT_A_NAME:
+                if sn is not None and sn != "" and sn.lower() not in _NOT_A_NAME:
                     named[k] = sn
                     cf = "medium" if cf_col is None else cf_col[j[0]]
-                    cf = None if _na(cf) else tolower(trimws(as_character(cf)))
+                    cf = None if _na(cf) else trimws(as_character(cf)).lower()
                     conf[k] = cf if cf in ("high", "medium", "low") else "medium"
 
         for k, gg in groups.items():
@@ -2051,11 +2051,11 @@ def _prefix_llm_text(
     d = _scale_dictionary()
     acr = _vals(d, "acronym") or []
     dnames = _vals(d, "name") or []
-    up_pfx = {toupper(p) for p in prefixes}
+    up_pfx = {None if p is None else p.upper() for p in prefixes}
     hints_rows = [
         (a, n)
         for a, n in zip(acr, dnames, strict=True)
-        if _ok(a) and toupper(gsub("[^A-Za-z0-9]", "", a)) in up_pfx
+        if _ok(a) and gsub("[^A-Za-z0-9]", "", a).upper() in up_pfx
     ]
     hints = "; ".join(f"{_pstr(a)} = {_pstr(n)}" for a, n in hints_rows)
     grp_txt = []
@@ -2187,8 +2187,8 @@ class _LikertLookup:
             if idx:
                 mn_v = [float(self.mins[i]) for i in idx if not _na(self.mins[i])]
                 mx_v = [float(self.maxs[i]) for i in idx if not _na(self.maxs[i])]
-                mn = median(mn_v) if mn_v else math.nan
-                mx = median(mx_v) if mx_v else math.nan
+                mn = statistics.median(mn_v) if mn_v else math.nan
+                mx = statistics.median(mx_v) if mx_v else math.nan
                 if (
                     math.isfinite(mn)
                     and math.isfinite(mx)
@@ -2295,7 +2295,7 @@ def _scales_to_osd(
         [bool(t) if t is not None else False for t in g_tot] if g_tot is not None else [False] * n
     )
     has_items_for = set(
-        _unique(tolower(s) for s, t in zip(g_scale, tot_col, strict=True) if _ok(s) and not t)
+        _unique(s.lower() for s, t in zip(g_scale, tot_col, strict=True) if _ok(s) and not t)
     )
     g_file = _vals(scale_groups, "source_file") or [None] * n
     g_prefix = _vals(scale_groups, "prefix") or [None] * n
@@ -2312,7 +2312,7 @@ def _scales_to_osd(
         scale = g_scale[i]
         named = _ok(scale)
         totals_only = g_tot is not None and bool(g_tot[i])
-        redundant_total = totals_only and named and tolower(scale) in has_items_for
+        redundant_total = totals_only and named and scale.lower() in has_items_for
         rating_like = (not named) and bool(_scale_block_is_ratinglike(cols, file, columns_df))
         eff_source = g_source[i] if named else ("unnamed_block" if rating_like else g_source[i])
         cp = _osd_code_and_provenance(scale, g_prefix[i], eff_source, dict_df)
@@ -2354,7 +2354,7 @@ def _scales_to_osd(
                     coding[cn] = -1 if bool(rev) else 1
         if coding:
             dim_id = _osd_safe_code(scale if named else g_prefix[i])
-            dim_id = tolower(_pstr(dim_id).replace("-", "_"))
+            dim_id = _pstr(dim_id).replace("-", "_").lower()
             n_rev = sum(1 for v in coding.values() if v == -1)
             definition["dimensions"] = [
                 {
@@ -2410,7 +2410,7 @@ def _scales_to_osd(
         osd.attrs["orphan_total"] = orphan_total
         osd.attrs["scale"] = scale if named else None
         osd.attrs["dedup_key"] = (
-            _pstr(None if _na(cp["code"]) else tolower(cp["code"]))
+            _pstr(None if _na(cp["code"]) else cp["code"].lower())
             + "\x02"
             + "\x01".join(sorted((_pstr(c) for c in cols), key=r_sort_key))
         )
@@ -2592,7 +2592,7 @@ def _identify_scales_selfgen(
                 if _has_text(pff(file))
                 else []
             )
-            tokens = _unique(t for n in nms for t in strsplit([tolower(n) or ""], "[^a-z]+")[0])
+            tokens = _unique(t for n in nms for t in strsplit([(n or "").lower()], "[^a-z]+")[0])
             tokens = [t for t in tokens if len(t) >= 3]
             if not wd and not ctx and not tokens:
                 continue
@@ -2631,10 +2631,10 @@ def _identify_scales_selfgen(
             construct = _first(resp["construct"].tolist())
             construct = "" if construct is None else construct
             construct = None if _na(construct) else trimws(as_character(construct))
-            if construct is None or construct == "" or tolower(construct) in _NOT_A_NAME:
+            if construct is None or construct == "" or construct.lower() in _NOT_A_NAME:
                 continue
             conf = _first(resp["confidence"].tolist()) if "confidence" in resp.columns else "medium"
-            conf = None if _na(conf) else tolower(trimws(as_character(conf)))
+            conf = None if _na(conf) else trimws(as_character(conf)).lower()
             if conf not in ("high", "medium", "low"):
                 conf = "medium"
             if tokens_only:
@@ -2685,7 +2685,7 @@ def _synonym_tokens(s: Any) -> list[str]:
     spaces -- "Emotion Recognition" -> "motion ecognition" -- and capitalised
     labels never merge with lower-case ones.)
     """
-    x = gsub("[^a-z ]+", " ", tolower(_pstr(s)) or "") or ""
+    x = gsub("[^a-z ]+", " ", _pstr(s).lower()) or ""
     t = _unique(strsplit([x], "\\s+")[0])
     return [w for w in t if w is not None and len(w) > 0 and w not in _SYNONYM_STOP]
 
