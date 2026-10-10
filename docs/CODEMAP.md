@@ -1090,7 +1090,7 @@ optional ones are in extras (for example `metacheck[data]`).
 | `DT` | interactive tables in reports | self-contained HTML tables in [`report/render.py`](../src/metacheck/report/render.py) |
 | `bibtex` | `format_ref()` of BibTeX text | not needed: modules pass the reference text R produced (U3) |
 | `ellmer` | LLM chats and structured output | the official provider SDKs (`openai`, `anthropic`, `google-genai`; the `metacheck[llm]` extra, D69), one request per call in [`llm/_backend.py`](../src/metacheck/llm/_backend.py); the `type_*()` builders in [`llm/types.py`](../src/metacheck/llm/types.py); five providers that need their own cloud sign-in are not supported ([`porting/skip.toml`](../porting/skip.toml)) |
-| `jsonlite` | reading and writing JSON | orjson through [`_json.py`](../src/metacheck/_json.py); jsonlite's output format in [`api/jsonlite.py`](../src/metacheck/api/jsonlite.py) |
+| `jsonlite` | reading and writing JSON | orjson through [`_json.py`](../src/metacheck/_json.py); the REST API writes plain JSON with orjson, not jsonlite's format (D79) |
 | `xml2` | XML and HTML (Grobid TEI, archive pages, SPSS output) | lxml; helpers in [`io/xml.py`](../src/metacheck/io/xml.py) |
 | `curl`, `httr2` | HTTP requests | httpx through [`http.py`](../src/metacheck/http.py) |
 | `rvest` | HTML text and tables (AsPredicted) | lxml |

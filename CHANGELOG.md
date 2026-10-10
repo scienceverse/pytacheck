@@ -7,6 +7,17 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed (breaking for API clients): the REST API returns plain JSON
+
+- **Breaking:** the REST API (`pytacheck serve`) no longer copies the JSON encoding of metacheck's plumber API (jsonlite's defaults). Responses are plain JSON (D79):
+  - scalars are not wrapped in arrays: `"status": "ok"`, `"count": 47`, `"traffic_light": "red"`, `"report_html": "<!DOCTYPE html>…"` (were `["ok"]`, `[47]`, `["red"]`, `["<!DOCTYPE html>…"]`);
+  - a table is an array of row objects that holds every column, with `null` for a missing cell (missing cells were left out);
+  - numbers keep full precision (were rounded to 4 decimal places), and `NaN` and infinities are `null` (were the strings `"NA"`, `"NaN"`, `"Inf"`);
+  - a missing value is `null` (`"summary_text": null`, was `{}`), and an absent paper table is `[]` (was `{}`).
+- **Unchanged:** routes, parameters, status codes, and error bodies (`{"error": "…"}`, already unboxed).
+- **Migrating a client:** drop the `[0]` that unwrapped scalars, read a missing table cell as `null` rather than an absent key, and stop parsing `"NA"`/`"NaN"`/`"Inf"` strings. [docs/API.md](docs/API.md#responses) shows the shapes.
+- **Removed:** `metacheck.api.jsonlite` (`to_json`, `format_number`).
+
 ### Changed: statcheck runs on plain Python values and scipy
 
 - **Changed:** the statcheck port behind `stats()` and stat_check computes with plain Python values (`None` is missing) and `scipy.special`, not with a port of R's runtime (three-valued `NA` logic, R's warnings and errors) and of R's nmath library (`metacheck.stats._rmath` is removed) (D78). The t and F p-values use the same reductions to the incomplete beta function as R's `pt()` and `pf()`, so on the 21 papers of the accuracy report every result of `stats()` and stat_check is unchanged, to the last digit of each p-value.
