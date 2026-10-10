@@ -164,7 +164,7 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     comparators ``= < > ~ ≈ ≠ ≤ ≥ ≪ ≫`` are. Strings are searched as a text
     table (metacheck fails on a character vector; U150).
     """
-    from metacheck.text.json_expand import as_numeric
+    from metacheck._values import as_float
 
     p = text_search(
         _strings_table(paper), _P_PATTERN, return_="match", perl=True, ignore_case=False
@@ -185,7 +185,7 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     values = gsub(r"[x*×]10\^?", "e", values)
     p = p.copy()
     p["p_comp"] = pd.Series(comps, index=p.index, dtype="string")
-    p["p_value"] = pd.Series([as_numeric(v) for v in values], index=p.index, dtype="float64")
+    p["p_value"] = pd.Series([as_float(v) for v in values], index=p.index, dtype="float64")
     return p
 
 

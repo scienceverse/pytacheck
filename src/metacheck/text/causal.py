@@ -23,6 +23,9 @@ from typing import Any
 
 import pandas as pd
 
+from metacheck._json import loads
+from metacheck._values import as_str
+
 __all__ = ["causal_relations"]
 
 _BASE = "https://lakens-causal-sentences.hf.space"
@@ -51,41 +54,30 @@ def _is_json_text(s: Any) -> bool:
     return isinstance(s, str) and s[:1] in ("[", "{")
 
 
-def _dollar(x: Any, name: str) -> Any:
-    """R ``x$name`` on a parsed JSON value: exact name, else a unique partial match."""
-    from metacheck.text.json_expand import _List, _Vec
-
-    if x is None:
-        return None
-    if isinstance(x, _Vec):
-        raise TypeError("$ operator is invalid for atomic vectors")
-    if not isinstance(x, _List) or x.names is None:
-        return None
-    if name in x.names:
-        return x.items[x.names.index(name)]
-    hits = [k for k, nm in enumerate(x.names) if nm.startswith(name)]
-    return x.items[hits[0]] if len(hits) == 1 else None
+def _get(x: Any, name: str) -> Any:
+    """R ``x$name`` on parsed JSON: the value of key *name* of an object, else ``None``."""
+    return x.get(name) if isinstance(x, dict) else None
 
 
-def _is_true(x: Any) -> bool:
-    """R ``isTRUE()``."""
-    from metacheck.text.json_expand import _Vec
-
-    return isinstance(x, _Vec) and x.type == "logical" and x.values == [True]
+def _chars(x: Any) -> list[str | None]:
+    """R ``as.character()`` of a parsed JSON value: one string per element."""
+    items = list(x.values()) if isinstance(x, dict) else x if isinstance(x, list) else [x]
+    return [
+        json.dumps(v, ensure_ascii=False) if isinstance(v, list | dict) else as_str(v)
+        for v in items
+    ]
 
 
 def _unwrap_final_json(payload: str) -> str:
     """Unwrap Gradio's ``["<final JSON>"]`` completion payload."""
-    from metacheck.text.json_expand import _as_character, _JSONError, _parse_json, _simplify, _Vec
-
     try:
-        decoded = _simplify(_parse_json(payload))
-    except _JSONError:
+        decoded = loads(payload)
+    except ValueError:
         decoded = None
-    if isinstance(decoded, _Vec) and decoded.type == "character" and decoded.values:
-        first = _as_character(decoded)[0]
-        if _is_json_text(first):
-            return str(first)
+    if isinstance(decoded, list) and decoded and all(isinstance(v, str | None) for v in decoded):
+        decoded = decoded[0]
+    if _is_json_text(decoded):
+        return str(decoded)
     if _is_json_text(payload):
         return payload
     raise ValueError("Unexpected SSE payload format; cannot unwrap to final JSON.")
@@ -102,36 +94,28 @@ def _recycle(cols: dict[str, list[Any]]) -> list[dict[str, Any]]:
 
 def _parse_relations(final_json: str, sentence: str | None) -> list[dict[str, Any]]:
     """One row per relation (or one row with missing cause/effect) for *sentence*."""
-    from metacheck.text.json_expand import _as_character, _JSONError, _List, _parse_json, _Vec
-
-    try:
-        x = _parse_json(final_json)
-    except _JSONError as exc:
-        raise ValueError(str(exc)) from exc
-    if not isinstance(x, _List):
+    x = loads(final_json)
+    if not isinstance(x, list | dict):
         raise ValueError("Final payload is not a JSON array.")
     rows: list[dict[str, Any]] = []
-    for item in x.items:
-        causal = _is_true(_dollar(item, "causal"))
-        rels = _dollar(item, "relations")
-        n_rels = 0 if rels is None else len(rels.items if isinstance(rels, _List) else rels.values)
-        if n_rels == 0:
+    for item in x.values() if isinstance(x, dict) else x:
+        causal = _get(item, "causal") is True
+        rels = _get(item, "relations")
+        if rels is None or rels == [] or rels == {}:
             rows.append({"sentence": sentence, "causal": causal, "cause": None, "effect": None})
             continue
-        if isinstance(rels, _List):
-            rel_items = rels.items
-        else:
-            rel_items = [_Vec(rels.type, [v]) for v in rels.values]
-        for r in rel_items:
-            cause = _dollar(r, "cause")
-            effect = _dollar(r, "effect")
+        for r in (
+            rels.values() if isinstance(rels, dict) else rels if isinstance(rels, list) else [rels]
+        ):
+            cause = _get(r, "cause")
+            effect = _get(r, "effect")
             rows.extend(
                 _recycle(
                     {
                         "sentence": [sentence],
                         "causal": [causal],
-                        "cause": [None] if cause is None else _as_character(cause),
-                        "effect": [None] if effect is None else _as_character(effect),
+                        "cause": [None] if cause is None else _chars(cause),
+                        "effect": [None] if effect is None else _chars(effect),
                     }
                 )
             )
@@ -213,26 +197,20 @@ def _post_enqueue(
             f"POST failed (HTTP {resp.status_code}). Check base URL or parameters.\n"
             f"URL: {url}\nBody: {resp.text}"
         )
-    from metacheck.text.json_expand import _as_character, _JSONError, _parse_json, _simplify
-
-    try:
-        j = _simplify(_parse_json(resp.text))
-    except _JSONError as exc:
-        raise ValueError(str(exc)) from exc
+    j = loads(resp.text)
     event_id = None
     for key in ("event_id", "EVENT_ID", "id"):
-        event_id = _dollar(j, key)
+        event_id = _get(j, key)
         if event_id is not None:
             break
     if event_id is None:
-        event = _dollar(j, "event")
-        if event is not None:
-            event_id = _dollar(event, "id")
+        event_id = _get(_get(j, "event"), "id")
     if event_id is None:
         raise RuntimeError(
             f"No `event_id` found in POST response.\nURL: {url}\nResponse: {resp.text}"
         )
-    return "".join("NA" if v is None else v for v in _as_character(event_id)[:1])
+    first = _chars(event_id)[:1]
+    return "".join("NA" if v is None else v for v in first)
 
 
 def _get_until_complete(event_id: str, timeout: float, verbose: bool) -> str:

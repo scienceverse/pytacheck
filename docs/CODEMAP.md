@@ -951,7 +951,7 @@ Python: [text/json_expand.py](../src/metacheck/text/json_expand.py). Tests: [tes
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `json_expand()` | [`metacheck.text.json_expand:json_expand`](../src/metacheck/text/json_expand.py) | yes | U9, U151 |  |
+| `json_expand()` | [`metacheck.text.json_expand:json_expand`](../src/metacheck/text/json_expand.py) | yes | D76, U9, U151 |  |
 
 ### `R/text_expand.R`
 
