@@ -20,7 +20,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._values import as_float, is_missing
+from metacheck._values import as_float, field, is_missing
 
 __all__ = ["gitlab_links", "gitlab_pat", "gitlab_repo", "gitlab_tree_files"]
 
@@ -168,7 +168,6 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
         _r_basename,
         _url_encode,
     )
-    from metacheck.archives.github import _dollar as r_dollar
 
     clean_repo = gitlab_repo(repo)
     if clean_repo is None:
@@ -195,10 +194,10 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
         return _unset()
 
     meta = _body_json(meta_resp)
-    default_branch = r_dollar(meta, "default_branch")
+    default_branch = field(meta, "default_branch")
     if default_branch is None:
         default_branch = "main"
-    license_key = _empty_or(r_dollar(r_dollar(meta, "license"), "key"))
+    license_key = _empty_or(field(field(meta, "license"), "key"))
 
     # 2. the file tree, 100 entries a page
     entries: list[Any] = []
@@ -243,7 +242,7 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
     if not blobs:
         files_df = _empty_tree_files()
     else:
-        paths = [_empty_or(r_dollar(x, "path"), "") for x in blobs]
+        paths = [_empty_or(field(x, "path"), "") for x in blobs]
         repo_str = _as_list(repo)[0] if _is_vector(repo) else repo
         raw_base = f"https://gitlab.com/{clean_repo}/-/raw/{_url_encode(default_branch)}/"
         names = [_r_basename(p) for p in paths]
@@ -300,7 +299,6 @@ def _gitlab_blob_sizes(clean_repo: str, paths: list[str]) -> pd.Series:
     query-complexity budget). Returns sizes indexed by path (R: a named
     numeric vector); failed batches contribute nothing.
     """
-    from metacheck.archives.github import _dollar as r_dollar
     from metacheck.archives.github import _empty_or
 
     if not paths:
@@ -310,8 +308,8 @@ def _gitlab_blob_sizes(clean_repo: str, paths: list[str]) -> pd.Series:
     for start in range(0, len(paths), _BLOB_BATCH):
         nodes = _blob_batch(clean_repo, paths[start : start + _BLOB_BATCH])
         for n in nodes:
-            values.append(as_float(_empty_or(r_dollar(n, "size"))))
-            keys.append(_empty_or(r_dollar(n, "path")))
+            values.append(as_float(_empty_or(field(n, "size"))))
+            keys.append(_empty_or(field(n, "path")))
     return pd.Series(values, index=keys, dtype="float64")
 
 
@@ -322,7 +320,6 @@ def _blob_batch(clean_repo: str, batch: list[str]) -> list[Any]:
     ``errors`` and no data, which also gives no nodes.
     """
     from metacheck.archives.github import _body_json, _perform
-    from metacheck.archives.github import _dollar as r_dollar
 
     try:
         resp = _perform(
@@ -336,9 +333,7 @@ def _blob_batch(clean_repo: str, batch: list[str]) -> list[Any]:
         res = _body_json(resp)
     except Exception:
         return []
-    nodes = res
-    for key in ("data", "project", "repository", "blobs", "nodes"):
-        nodes = r_dollar(nodes, key)
+    nodes = field(res, "data", "project", "repository", "blobs", "nodes")
     if isinstance(nodes, dict):
         return list(nodes.values())
     return list(nodes) if isinstance(nodes, list) else []

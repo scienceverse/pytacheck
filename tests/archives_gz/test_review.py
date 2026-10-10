@@ -235,8 +235,7 @@ def test_meta_from_folder_odd_shapes(tmp_path: Path) -> None:
     # lapply() over a JSON object keeps its names
     assert meta["creators"] == {"x": {"name": "N"}, "y": {"name": "F, G"}}
     (meta_dir / "metadata.json").write_text('"just a string"', encoding="utf-8")
-    with pytest.raises(TypeError):
-        _zenodo_meta_from_folder(str(tmp_path))
+    assert _zenodo_meta_from_folder(str(tmp_path)) is None  # no osf_id (R stops: D81)
 
 
 def test_zenodo_upload_sends_jsonlite_numbers(review: object, upload_dir: Path) -> None:

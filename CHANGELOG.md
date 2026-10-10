@@ -7,6 +7,13 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: JSON fields and table columns are read by their exact name
+
+- **Changed:** fields of API replies (Crossref, DataCite, doi.org, PubPeer, RegCheck, OSF, Zenodo, GitHub, GitLab, Dataverse, Dryad, Figshare, ReShare and the other repositories), of JASP, jamovi, Qualtrics `.qsf` and bibr files, notebooks, `renv.lock` and stat_output documents, of LLM parameters, the `view_only` key of an OSF link and the columns `file_category()` and `crossref_query()` read are matched by their exact name. metacheck reads them with R's `$`, which falls back to a unique prefix (a ReShare file with `hash_type` but no `hash` got the checksum `"SHA1"`, a Qualtrics choice with only `DisplayLogic` got its label from the display logic) (D81).
+- **Changed:** a string or number where a JSON object belongs has no fields, so a bibr export, notebook, `.qsf` file or OSF metadata file of that shape is read instead of stopping with "$ operator is invalid for atomic vectors" (`stat_output_validate()` still fails on such an entry, as metacheck does).
+- **Unchanged:** results on real data: no API or file format relies on a prefix match. The parity cases that change were built to show the prefix match or the scalar error. A Crossref reply without a `status` reports its message-type as the error instead of stopping.
+- **Internal:** the private `_dollar`, `_dollars`, `_dollar_key`, `_dollar_atomic`, `r_dollar` and `_r_dollar` copies are gone; their callers use `metacheck._values.field` or plain key and column lookups. Two small exact lookups stay where `field` does not fit: `_member` for `.qsf` objects (pairs that keep duplicate names) and statout's `_field_found`, which tells a `null` member from an absent one.
+
 ### Changed: R code is read from R Markdown and Quarto chunks without R
 
 - **Changed:** `code_extract_r()` (and `code_parse_r()`, code_check and reproducibility_check on `.Rmd`/`.qmd` files) reads the chunks statically instead of reproducing `knitr::purl()` and evaluating chunk options with a small R evaluator (D80). Chunk delimiters, `#|` options and `<<label>>` references work as before.

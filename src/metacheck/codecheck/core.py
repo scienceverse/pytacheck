@@ -39,7 +39,7 @@ from metacheck._r.regex import (
     strsplit,
     sub,
 )
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 from metacheck.codecheck._rcoerce import r_as_character, r_unlist_chr
 
 __all__ = [
@@ -138,23 +138,6 @@ def _json_load(text: str) -> Any:
         return None
 
 
-def _dollar(x: Any, name: str) -> Any:
-    """R ``x$name`` on a list: exact, then unique partial matching.
-
-    ``$`` on an atomic vector (a JSON string, number or boolean) is an error.
-    """
-    if x is None:
-        return None
-    if isinstance(x, dict):
-        if name in x:
-            return x[name]
-        hits = [v for k, v in x.items() if isinstance(k, str) and k.startswith(name)]
-        return hits[0] if len(hits) == 1 else None
-    if isinstance(x, list):
-        return None  # an unnamed list
-    raise TypeError("$ operator is invalid for atomic vectors")  # scalars and tuples
-
-
 def _r_as_character1(x: Any) -> str | None:
     """``as.character(x)[[1]]`` for a parsed JSON/YAML value (``NULL`` gives ``None``)."""
     if x is None:
@@ -246,19 +229,12 @@ def _ipynb_lang(file_name: Any) -> str:
         return "Python"
     # a notebook that is not a JSON object (or whose metadata is malformed)
     # falls back to the default; R's `$` errors escape (UPSTREAM_ISSUES U68)
-    meta = _get(nb, "metadata")
-    lang = _get(_get(meta, "kernelspec"), "language")
+    meta = field(nb, "metadata")
+    lang = field(meta, "kernelspec", "language")
     if lang is None:
-        lang = _get(_get(meta, "language_info"), "name")
+        lang = field(meta, "language_info", "name")
     lang_s = (_first_chr(lang) or "").lower()
     return "R" if lang_s in ("r", "ir") else "Python"
-
-
-def _get(x: Any, name: str) -> Any:
-    """``x$name`` of a parsed JSON/YAML object; ``None`` for any other value."""
-    if not isinstance(x, dict):
-        return None
-    return _dollar(x, name)
 
 
 def _first_chr(x: Any) -> str | None:
@@ -380,12 +356,12 @@ def _qmd_lang(file_name: Any) -> str:
             # scalar or array front matter has no `jupyter` key (R's `$`
             # errors escape code_lang(); UPSTREAM_ISSUES U68)
             doc = _yaml_load("\n".join(txt[1:end]))
-            jupyter = _get(doc, "jupyter")
+            jupyter = field(doc, "jupyter")
             value: Any = None
             if isinstance(jupyter, dict | list):  # is.list()
-                value = _get(_get(jupyter, "kernelspec"), "language")
+                value = field(jupyter, "kernelspec", "language")
                 if value is None:
-                    value = _get(jupyter, "language")
+                    value = field(jupyter, "language")
             elif isinstance(jupyter, str) or (
                 isinstance(jupyter, tuple) and all(isinstance(v, str) for v in jupyter)
             ):
@@ -952,13 +928,13 @@ def code_extract_py(
     """
     lines = _text_arg(file_path, text)
     nb = _json_load("\n".join("NA" if t is None else t for t in lines))
-    cells = _dollar(nb, "cells")
+    cells = field(nb, "cells")
     out: list[str] = []
     if cells is not None and _r_length(cells) > 0:
         for cl in _r_elements(cells):
-            if _dollar(cl, "cell_type") != "code" or not isinstance(_dollar(cl, "cell_type"), str):
+            if field(cl, "cell_type") != "code":
                 continue
-            src = _dollar(cl, "source")
+            src = field(cl, "source")
             if src is None or _r_length(src) == 0:
                 continue
             joined = "".join(r_unlist_chr(src))
@@ -1843,17 +1819,17 @@ def _version_pin_scan(
             if lock is None:
                 continue
             out["renv_files"].append(fname)
-            rv = _dollar(_dollar(lock, "R"), "Version")
+            rv = field(lock, "R", "Version")
             if rv is not None:
                 out["r_versions"].extend(r_as_character(rv))
-            pkgs = _dollar(lock, "Packages")
+            pkgs = field(lock, "Packages")
             if pkgs is not None and _r_length(pkgs) > 0:
                 recs = [
                     {
                         "file_name": fname,
-                        "package": _json_scalar(_dollar(p, "Package")),
-                        "version": _json_scalar(_dollar(p, "Version")),
-                        "source": _json_scalar(_dollar(p, "Source")),
+                        "package": _json_scalar(field(p, "Package")),
+                        "version": _json_scalar(field(p, "Version")),
+                        "source": _json_scalar(field(p, "Source")),
                     }
                     for p in _r_elements(pkgs)
                 ]

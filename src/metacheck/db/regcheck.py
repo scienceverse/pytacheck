@@ -16,7 +16,8 @@ import time
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
 
-from metacheck.db._utils import message, paste_unlist, r_dollar
+from metacheck._values import field
+from metacheck.db._utils import message, paste_unlist
 
 if TYPE_CHECKING:
     import httpx
@@ -315,17 +316,17 @@ def _regcheck_poll(
         if resp.status_code >= 400:
             raise _http_error(resp)
         status = resp_body_json(resp)
-        state = _or_default(r_dollar(status, "state"), "unknown")
+        state = _or_default(field(status, "state"), "unknown")
         if state == "success":
             message("RegCheck comparison complete.")
-            return r_dollar(status, "result")
+            return field(status, "result")
         if state == "failure":
-            msg = _or_default(r_dollar(status, "status"), "unknown error")
+            msg = _or_default(field(status, "status"), "unknown error")
             raise RegCheckError(f"RegCheck comparison failed: {msg}")
         if time.monotonic() > deadline:
             raise RegCheckError(f"Timed out waiting for RegCheck task {task_id}")
-        done = _or_default(r_dollar(status, "processed_dimensions"), 0)
-        total = _or_default(r_dollar(status, "total_dimensions"), 0)
+        done = _or_default(field(status, "processed_dimensions"), 0)
+        total = _or_default(field(status, "total_dimensions"), 0)
         message(f"RegCheck running ({done}/{total} dimensions)")
 
 
@@ -344,13 +345,13 @@ def regcheck_tidy(result: Any) -> pd.DataFrame:
     """
     import pandas as pd
 
-    items = r_dollar(result, "items") or []
+    items = field(result, "items") or []
     if isinstance(items, dict):
         items = list(items.values())
     data: dict[str, list[Any]] = {col: [] for col, _ in _TIDY_COLUMNS}
     for item in items:
         for col, key in _TIDY_COLUMNS:
-            value = r_dollar(item, key)
+            value = field(item, key)
             if isinstance(value, list | dict):
                 value = paste_unlist(value, collapse="; ")
             data[col].append(value)
@@ -429,7 +430,7 @@ def regcheck_compare(
         dimensions=dimensions,
         reasoning_effort=reasoning_effort,
     )
-    task_id = r_dollar(created, "task_id")
+    task_id = field(created, "task_id")
     message(f"RegCheck task {task_id} queued on {url}")
 
     result = _regcheck_poll(

@@ -25,6 +25,7 @@ Running R is optional: :func:`_rscript` finds ``Rscript`` from
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import os
 import shutil
@@ -32,13 +33,13 @@ import subprocess
 import tempfile
 import time
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from metacheck._env import env_get
 from metacheck._r.regex import grepl
-from metacheck._values import as_float, as_int
+from metacheck._values import as_float, as_int, field
 
 __all__: list[str] = []
 
@@ -573,7 +574,7 @@ class RCaptureResult:
     captures: list[dict[str, Any]] | None = None
     error: RSubprocessError | None = None
     elapsed: float = 0.0
-    extra: dict[str, Any] = field(default_factory=dict)
+    extra: dict[str, Any] = dataclasses.field(default_factory=dict)
 
 
 def _r_capture_run(
@@ -738,9 +739,8 @@ def _r_captures_to_tables(
     """
     from metacheck.statout.r_output import (
         _chr_frame,
+        _field_found,
         _r_call_object_ref,
-        _r_dollar,
-        _r_dollar_found,
         _r_root_ref_map,
     )
     from metacheck.statout.stat_tables import _stat_num_to_chr
@@ -758,22 +758,22 @@ def _r_captures_to_tables(
 
     out: list[dict[str, Any]] = []
     for rec in caps:
-        rows = _r_dollar(rec, "rows")
+        rows = field(rec, "rows")
         if not rows:
             continue
         keys: list[str] = []
         for r in rows:
-            for k in _r_dollar(r, "stats") or {}:
+            for k in field(r, "stats") or {}:
                 if k not in keys:
                     keys.append(k)
         if not keys:
             continue
         names = ["label"]
-        cols: list[list[Any]] = [[_label_chr(*_r_dollar_found(r, "label")) for r in rows]]
+        cols: list[list[Any]] = [[_label_chr(*_field_found(r, "label")) for r in rows]]
         for k in keys:
             col = []
             for r in rows:
-                v = (_r_dollar(r, "stats") or {}).get(k)
+                v = (field(r, "stats") or {}).get(k)
                 col.append("" if v is None else _stat_num_to_chr(_as_numeric_value(v)))
             if k in names:
                 cols[names.index(k)] = col
@@ -781,8 +781,8 @@ def _r_captures_to_tables(
                 names.append(k)
                 cols.append(col)
         df = _chr_frame(names, cols)
-        analysis = _r_dollar(rec, "analysis")
-        line = _r_dollar(rec, "line")
+        analysis = field(rec, "analysis")
+        line = field(rec, "line")
         out.append(
             {
                 "analysis": analysis,
@@ -790,8 +790,8 @@ def _r_captures_to_tables(
                 "data": df,
                 "line": as_int(line),
                 "line_seq": 1,
-                "call_fn": _r_method_to_fn(_r_dollar(rec, "method")),
-                "model_ref": resolve_ref(_r_call_object_ref(_r_dollar(rec, "call_text") or "")),
+                "call_fn": _r_method_to_fn(field(rec, "method")),
+                "model_ref": resolve_ref(_r_call_object_ref(field(rec, "call_text") or "")),
                 "captured": True,
             }
         )
@@ -844,15 +844,13 @@ def _r_merge_captures(
         return txt
     if not txt:
         return cap
-    from metacheck.statout.r_output import _r_dollar
-
-    cap_lines = {ln for ln in (as_int(_r_dollar(x, "line")) for x in cap) if ln is not None}
+    cap_lines = {ln for ln in (as_int(field(x, "line")) for x in cap) if ln is not None}
     keep = []
     for x in txt:
-        ln = as_int(_r_dollar(x, "line"))
+        ln = as_int(field(x, "line"))
         keep.append(ln is not None and ln not in cap_lines)
     out = [dict(x) for x in cap] + [dict(x) for x, k in zip(txt, keep, strict=True) if k]
-    lines = [as_int(_r_dollar(x, "line")) for x in out]
+    lines = [as_int(field(x, "line")) for x in out]
     for i, x in enumerate(out):
         same = [j for j, ln in enumerate(lines) if ln is not None and ln == lines[i]]
         x["line_seq"] = same.index(i) + 1 if same else 1

@@ -19,7 +19,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 
 __all__ = ["reshare_file_download", "reshare_info", "reshare_links"]
 
@@ -194,7 +194,6 @@ def _reshare_info(reshare_id: Any, pb: Any = None) -> pd.DataFrame:
     from metacheck.archives import _spinner, _tick
     from metacheck.archives.dataverse import (
         _cell,
-        _dollar,
         _elements,
         _empty_or,
         _field_cell,
@@ -219,21 +218,21 @@ def _reshare_info(reshare_id: Any, pb: Any = None) -> pd.DataFrame:
             obj["error"] = _cell("parse_error")
             return pd.DataFrame(obj)
 
-        creators = _dollar(rec, "creators")
+        creators = field(rec, "creators")
         authors = (
             [_creator(a) for a in _elements(creators)] if isinstance(creators, list | dict) else []
         )
 
-        docs = _dollar(rec, "documents")
+        docs = field(rec, "documents")
         files_flat: list[Any] = []
         for d in _elements(docs):
-            content = _dollar(d, "content")
-            files_flat.extend(_set_content(f, content) for f in _elements(_dollar(d, "files")))
+            content = field(d, "content")
+            files_flat.extend(_set_content(f, content) for f in _elements(field(d, "files")))
 
-        obj["title"] = _field_cell(_empty_or(_dollar(rec, "title"), None))
-        obj["doi"] = _field_cell(_empty_or(_dollar(rec, "doi"), None))
-        obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "datestamp"), None))
-        obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "lastmod"), None))
+        obj["title"] = _field_cell(_empty_or(field(rec, "title"), None))
+        obj["doi"] = _field_cell(_empty_or(field(rec, "doi"), None))
+        obj["publication_date"] = _field_cell(_empty_or(field(rec, "datestamp"), None))
+        obj["updated_date"] = _field_cell(_empty_or(field(rec, "lastmod"), None))
         obj["authors"] = _obj_cell(authors)
         obj["license"] = _cell(None)
         obj["files"] = _obj_cell(files_flat)
@@ -243,14 +242,14 @@ def _reshare_info(reshare_id: Any, pb: Any = None) -> pd.DataFrame:
 def _creator(a: Any) -> str | None:
     """One EPrints creator: ``trimws(paste(given, family))``, ``NA`` when blank."""
     from metacheck._r import trimws
-    from metacheck.archives.dataverse import _dollar, _empty_or
+    from metacheck.archives.dataverse import _empty_or
     from metacheck.archives.psycharchives import _paste_json
 
-    nm = _dollar(a, "name")
+    nm = field(a, "name")
     if nm is None:
         nm = {}
-    given = _paste_json(_empty_or(_dollar(nm, "given"), ""))
-    family = _paste_json(_empty_or(_dollar(nm, "family"), ""))
+    given = _paste_json(_empty_or(field(nm, "given"), ""))
+    family = _paste_json(_empty_or(field(nm, "family"), ""))
     full = trimws(f"{given} {family}")
     return str(full) if full else None
 
@@ -327,7 +326,6 @@ def reshare_file_download(
     from metacheck.archives import _spinner, _tick
     from metacheck.archives.dataverse import (
         _as_numeric,
-        _dollar,
         _download_file_table,
         _download_many,
         _elements,
@@ -373,18 +371,18 @@ def reshare_file_download(
 
         rows = []
         for x in _elements(files_list):
-            self_url = _empty_or(_dollar(x, "uri"), None)
+            self_url = _empty_or(field(x, "uri"), None)
             if self_url is not None:
                 from metacheck._r import sub
 
                 self_url = sub("^http://", "https://", self_url)
             rows.append(
                 {
-                    "id": _json_chr(_empty_or(_dollar(x, "fileid"), None)),
-                    "key": _empty_or(_dollar(x, "filename"), None),
-                    "size": _as_numeric(_empty_or(_dollar(x, "filesize"), None)),
-                    "checksum": _empty_or(_dollar(x, "hash"), None),
-                    "checksum_type": _lower(_empty_or(_dollar(x, "hash_type"), None)),
+                    "id": _json_chr(_empty_or(field(x, "fileid"), None)),
+                    "key": _empty_or(field(x, "filename"), None),
+                    "size": _as_numeric(_empty_or(field(x, "filesize"), None)),
+                    "checksum": _empty_or(field(x, "hash"), None),
+                    "checksum_type": _lower(_empty_or(field(x, "hash_type"), None)),
                     "self": self_url,
                 }
             )

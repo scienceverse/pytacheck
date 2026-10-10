@@ -121,39 +121,25 @@ def _r_values(x: Any) -> list[Any]:
     return [x]
 
 
-def _r_dollar_found(x: Any, key: str) -> tuple[bool, Any]:
-    """R ``x$key`` on a list: ``(found, value)``.
+def _field_found(x: Any, key: str) -> tuple[bool, Any]:
+    """``(found, value)`` of member *key* of a parsed JSON object, matched exactly.
 
-    The first *exact* name wins; otherwise a *unique* partial (prefix) match
-    is used, as R's ``$`` does for lists (``list(line_seq = 2)$line`` is 2).
-    ``NULL`` and unnamed lists give ``(False, None)``; an atomic value raises
-    R's error.
+    R's ``$`` also takes a unique prefix, so a table with ``line_seq`` but no
+    ``line`` took ``line_seq`` as its source line (UPSTREAM_ISSUES U141).
+
+    :func:`metacheck._values.field` gives ``None`` both for a member that is
+    absent and for one that is JSON ``null``; the stat_output readers and
+    validator tell them apart (an absent ``label`` is ``""``, a ``null`` one
+    is ``NA``). A duplicated name gives its first value (:class:`_RNamedList`).
+    ``None`` and arrays have no members; a scalar raises, as metacheck's
+    ``$`` does, so :func:`~metacheck.statout.stat_output.stat_output_validate`
+    fails on the documents metacheck fails on.
     """
+    if isinstance(x, Mapping):
+        return (True, x[key]) if key in x else (False, None)
     if x is None or isinstance(x, list | tuple):
         return False, None
-    if not isinstance(x, Mapping):
-        raise _RError("$ operator is invalid for atomic vectors")
-    if isinstance(x, _RNamedList):
-        items = x.pairs
-    else:
-        if key in x:
-            return True, x[key]
-        items = list(x.items())
-    partial: list[int] = []
-    for i, (nm, _) in enumerate(items):
-        nm = str(nm)
-        if nm == key:
-            return True, items[i][1]
-        if nm.startswith(key):
-            partial.append(i)
-    if len(partial) == 1:
-        return True, items[partial[0]][1]
-    return False, None
-
-
-def _r_dollar(x: Any, key: str) -> Any:
-    """R ``x$key`` (with partial matching); ``None`` for ``NULL``."""
-    return _r_dollar_found(x, key)[1]
+    raise _RError("$ operator is invalid for atomic vectors")
 
 
 def _as_lines(x: Any) -> list[str | None]:

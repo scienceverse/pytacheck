@@ -84,7 +84,7 @@ def test_jasp_omv_labels_use_the_datacheck_col_attrs_convention() -> None:
     # repeated codes are kept (R's named vector c(label = code))
     assert col_attrs["n"]["labels"] == [("one", 1.0), ("uno", 1.0), ("two", 2.0)]
     assert col_attrs["n"]["label"] == "5"
-    assert col_attrs["a"]["label"] == "partial match"  # f$description partial match
+    assert "label" not in col_attrs["a"]  # "descriptionLong" is not "description" (D81)
     assert "t" not in col_attrs  # description "" wins over title
     assert "d" not in col_attrs  # title equal to the name
 

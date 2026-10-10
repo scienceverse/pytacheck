@@ -1,11 +1,14 @@
 {
 ".extract_rich_text.escapes.rtf": {"r": "c49cd411f9226b38", "py": "6ef772b0f9e85121", "diff": ["[]"]},
 ".looks_like_freetext_labels.na_long": {"r": "f2af3994fe184ddc", "py": "e6e5bcc9388d34ec", "diff": ["[]"]},
+".qsf_option_display.displaylogic": {"r": "75391717aeaad0a7", "py": "d33e6a78120356d0", "diff": ["<root>"]},
 ".scale_typo_of.dbl_1e5": {"r": "a49e2f024c826b88", "py": "d33e6a78120356d0", "diff": ["<root>"]},
 "match_column_labels.na_group_scoped": {"r": "c49af13a9ac58188", "py": "f6a95ff81e26c3f4", "diff": ["codebook_variable[]", "label[]", "label_method[]", "label_source[]", "label_status[]"]},
 "match_column_labels.qsf_chr_na_colname": {"r": "ac5146cf65ca52a8", "py": "61587fad55816af0", "diff": ["<R error, Python value>"]},
 "match_column_labels.qsf_na_after_match": {"r": "ac5146cf65ca52a8", "py": "c818d32fc6467ce8", "diff": ["<R error, Python value>"]},
 "match_column_labels.qsf_no_value_labels_col": {"r": "ac5146cf65ca52a8", "py": "6d8cc5e52a95a2ff", "diff": ["<R error, Python value>"]},
 "match_column_labels.qsf_numeric_colname": {"r": "ac5146cf65ca52a8", "py": "3cd836408adf5f74", "diff": ["<R error, Python value>"]},
-"parse_codebook.escapes.rtf": {"r": "c49cd411f9226b38", "py": "bae5ea186fd4ff40", "diff": ["<root>"]}
+"parse_codebook.edge.qsf": {"r": "4800d3c0d810e981", "py": "278158fb554ffc06", "diff": ["label[]"]},
+"parse_codebook.escapes.rtf": {"r": "c49cd411f9226b38", "py": "bae5ea186fd4ff40", "diff": ["<root>"]},
+"parse_qsf.edge.qsf": {"r": "4800d3c0d810e981", "py": "278158fb554ffc06", "diff": ["label[]"]}
 }

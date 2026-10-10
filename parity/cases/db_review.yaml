@@ -288,7 +288,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.9999/html\", NA, \"10.9999/org\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.doi.doi_lookup', ['10.9999/html', None, '10.9999/org'])"
 - "id": "doi_lookup.mock.all"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "each DOI gets its own row (NA when its lookup fails), organisations are named, fields are text and the year a number (R: NULL, shifted rows, character(0) authors, bind_rows() type errors); `page` is matched exactly (R also reads a longer name: D81)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
