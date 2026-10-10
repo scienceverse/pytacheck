@@ -7,6 +7,18 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Deprecated: top-level names that only mirror metacheck's R exports
+
+- **Deprecated:** 38 top-level names that exist only because the R package exports them, and that no module, check, pack, CLI command, API route or app page uses (decided by the maintainer, 2026-10-10). They go in the next minor release. Together with the helpers only they use, they are about 5,000 lines.
+  - Repository downloads: `dataverse_file_download()`, `dryad_file_download()`, `dspace7_file_download()`, `figshare_file_download()`, `psycharchives_file_download()`, `researchdata4tu_file_download()`, `reshare_file_download()`, `zenodo_file_download()`. Use the `repo_check` module, then `download_repo_files()` on its file table.
+  - Repository listings: `fsd_info()`, `fsd_links()`, `github_info()`, `github_languages()`, `github_readme()`, `osf_api_check()`, `osf_preprint_list()`, `psycharchives_info()`, `psycharchives_links()` (use `dspace_links()`), `rbox_info()`.
+  - Zenodo upload: `zenodo_upload()`.
+  - Database queries: `check_orcid()`, `credit_roles()`, `datacite_doi()`, `doi_lookup()`, `doi_resolves()`, `get_orcid()`, `openalex_doi()`, `openalex_query()`, `orcid_person()`, `rw()` (use `retractionwatch()`).
+  - Paper corpora: `papers_available()`, `papers_load()`, `papers_metadata()`, `papers_remove()`.
+  - HTML exports: `export_jasp_html()`, `export_mplus_html()`, `export_omv_html()`, `export_spv_html()`, `export_stata_smcl_html()`.
+- **How it warns:** the first read of one of these names from `metacheck` (or `pytacheck`), as `pc.name` or `from metacheck import name`, gives one `DeprecationWarning` that names the release it goes in and the replacement, if there is one. The name keeps working. Importing it from the submodule that defines it (`from metacheck.archives.zenodo_upload import zenodo_upload`) does not warn. The names stay in `__all__` until they are removed, so `from metacheck import *` warns for each of them.
+- **Not deprecated:** the token and credential settings (`*_pat()`, `dryad_auth()`), which the checks read; the cache controls (`repo_cache_*()`, `repo_info_cache*()`, `osf_cache_clear()`, `zip_peek_cache_clear()`, `llm_cache_clear()`, `metacheck_cache_info()`), which manage what the checks write and which module help and messages point to; `retractionwatch()`, `rw_update()`, `rw_date()`, `FLoRA_update()` and `FLoRA_date()`, the databases that `ref_retraction` and `ref_replication` read and whose help points to them; the local RegCheck server (`regcheck_*_local()`), which `reg_check`'s error message points to; `llm_reasoning()`, an LLM setting; and functions of the checks themselves that no module happens to call (`data_col_stats()`, `data_check_constant()`, `data_check_design_name()`, `data_check_outliers()`, `data_promote_header_row()`, `code_parse_r()`, `import_spv()` and the other statout importers, `stat_output_validate()`, `rep_if()`, `format_bib_authors()`). The evidence for each deprecated name is in [docs/API.md](docs/API.md#deprecated-python-names).
+
 ### Changed: the bibr extra requires bibr 0.6.0
 
 - **Changed:** `metacheck[bibr]` (and so `metacheck[all]`) requires bibr 0.6.0 or later, the first bibr release on PyPI that writes export schema 12.x (it writes 12.1). It allowed bibr 0.5.1, which writes 11.0, so `pc.read("paper.pdf")` stopped with the error that names the schema.

@@ -446,3 +446,12 @@ match = '''(?x)
   | match="pytacheck/demo'''
 count = 81
 why = "store id in pins, records, config and store indexes; RENAME-2"
+
+# --- the deprecation test reads deprecated names through the alias too
+
+[[rule]]
+action = "keep"
+files = "tests/foundation/test_deprecations.py"
+match = 'pytacheck'
+count = 4
+why = "deprecated names must also warn when read through the pytacheck import alias; removed with the alias"

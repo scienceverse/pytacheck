@@ -352,6 +352,58 @@ _EXPORTS: dict[str, str] = {
     # --- end of generated metacheck API ---
 }
 
+_REPO_FILES = "the repo_check module, then download_repo_files() on its file table"
+
+#: Top-level names that exist only because metacheck (R) exports them and that nothing
+#: in this package uses (decided by the maintainer, 2026-10-10). Reading one from
+#: ``metacheck`` warns once per process and they go in the next minor release; importing
+#: it from the submodule that defines it does not warn. name -> what to use instead
+#: ("" when there is nothing). The evidence for each name is in docs/API.md.
+_DEPRECATED: dict[str, str] = {
+    # repository downloads and listings (repo_check lists and fetches files without them)
+    "dataverse_file_download": _REPO_FILES,
+    "dryad_file_download": _REPO_FILES,
+    "dspace7_file_download": _REPO_FILES,
+    "figshare_file_download": _REPO_FILES,
+    "psycharchives_file_download": _REPO_FILES,
+    "researchdata4tu_file_download": _REPO_FILES,
+    "reshare_file_download": _REPO_FILES,
+    "zenodo_file_download": _REPO_FILES,
+    "fsd_info": "",
+    "fsd_links": "",
+    "github_info": "",
+    "github_languages": "",
+    "github_readme": "",
+    "osf_api_check": "",
+    "osf_preprint_list": "",
+    "psycharchives_info": "",
+    "psycharchives_links": "dspace_links(), which also finds PsychArchives links",
+    "rbox_info": "",
+    "zenodo_upload": "",
+    # bibliographic database queries
+    "check_orcid": "",
+    "credit_roles": "",
+    "datacite_doi": "",
+    "doi_lookup": "",
+    "doi_resolves": "",
+    "get_orcid": "",
+    "openalex_doi": "",
+    "openalex_query": "",
+    "orcid_person": "",
+    "rw": "retractionwatch()",
+    # paper corpora from scienceverse/papers
+    "papers_available": "",
+    "papers_load": "",
+    "papers_metadata": "",
+    "papers_remove": "",
+    # HTML exports of statistical software output
+    "export_jasp_html": "",
+    "export_mplus_html": "",
+    "export_omv_html": "",
+    "export_spv_html": "",
+    "export_stata_smcl_html": "",
+}
+
 __all__ = ["UPSTREAM", "__version__", *sorted(_EXPORTS)]
 
 
@@ -360,8 +412,29 @@ def __getattr__(name: str) -> Any:
     if target is None:
         raise AttributeError(f"module 'metacheck' has no attribute {name!r}")
     value = getattr(importlib.import_module(target), name)
-    globals()[name] = value
+    if name in _DEPRECATED:
+        _warn_deprecated(name)
+    globals()[name] = value  # cached: later reads do not come here, so it warns once
     return value
+
+
+def _warn_deprecated(name: str) -> None:
+    import sys
+    import warnings
+
+    # point at the code that read the name: past __getattr__, and past the
+    # ``pytacheck`` alias module when the name was read through it
+    alias = __file__[: -len("__init__.py")] + "_alias.py"
+    level, frame = 3, sys._getframe(2)
+    while frame.f_back is not None and frame.f_code.co_filename == alias:
+        level, frame = level + 1, frame.f_back
+    instead = _DEPRECATED[name]
+    warnings.warn(
+        f"metacheck.{name} is deprecated and will be removed in the next minor release; "
+        + (f"use {instead} instead." if instead else "nothing in metacheck uses it."),
+        DeprecationWarning,
+        stacklevel=level,
+    )
 
 
 def __dir__() -> list[str]:
