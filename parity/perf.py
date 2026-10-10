@@ -124,7 +124,7 @@ TARGETS: tuple[Target, ...] = (
     ),
     Target("workbook_parses", "metacheck.datacheck._files_readers:_ods_strings", per_file="path"),
     Target("workbook_parses", "metacheck.datacheck._columns_codebook:_ods_root", per_file="path"),
-    Target("code_decodes", "metacheck.codecheck._encoding:code_read_bytes", per_file="name"),
+    Target("code_decodes", "metacheck.codecheck.core:code_read", per_file="file_path"),
 )
 
 #: the entry point that is timed
