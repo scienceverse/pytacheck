@@ -1254,9 +1254,11 @@ def openalex_query(
     if "relevance_score" in info.columns:
         # highest relevance first, as numbers (metacheck sorted the character
         # column unlist() made, so "9.5" came before "10.2"; U13); NA last
-        from metacheck.text.json_expand import as_numeric
+        from metacheck._values import as_float
 
-        scores = [as_numeric(v) if isinstance(v, str) else v for v in info["relevance_score"]]
+        scores: list[Any] = [
+            as_float(v) if isinstance(v, str) else v for v in info["relevance_score"]
+        ]
         present = [i for i in range(len(info)) if not is_missing(scores[i])]
         missing = [i for i in range(len(info)) if is_missing(scores[i])]
         present = sorted(present, key=lambda i: -float(scores[i]))
