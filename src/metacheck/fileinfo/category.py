@@ -64,15 +64,10 @@ def _chr_list(x: Any) -> list[str | None]:
     return [_chr(x)]
 
 
-def _dollar(df: pd.DataFrame, name: str) -> pd.Series | None:
-    """``df$name`` for a base-R data frame: exact match, else a unique partial match."""
+def _column(df: pd.DataFrame, name: str) -> pd.Series | None:
+    """The first column called *name* (exactly), or ``None``."""
     cols = [str(c) for c in df.columns]
-    if name in cols:
-        return df.iloc[:, cols.index(name)]
-    partial = [i for i, c in enumerate(cols) if c.startswith(name)]
-    if len(partial) == 1:
-        return df.iloc[:, partial[0]]
-    return None
+    return df.iloc[:, cols.index(name)] if name in cols else None
 
 
 def _tolower(s: str) -> str:
@@ -164,8 +159,8 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
     (``sample.fasta.gz``) is data. A readme name wins over everything, then a
     codebook name (or a ``category`` of ``"codebook"``).
 
-    As in R, columns are looked up like ``df$name`` (a unique partial match is
-    accepted), and ``None`` (R ``NULL``) gives
+    Columns are matched by their exact name (R's ``df$name`` also takes a
+    unique prefix: D81), and ``None`` (R ``NULL``) gives
     ``{"filetype": [], "file_category": []}``.
     """
     if contents is None:
@@ -179,10 +174,10 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
         df = pd.DataFrame({"name": pd.Series(_chr_list(contents), dtype=pd.StringDtype("python"))})
 
     nrow = len(df)
-    name_col = _dollar(df, "name")
+    name_col = _column(df, "name")
     nm = [] if name_col is None else _chr_list(name_col)
 
-    ft_col = _dollar(df, "filetype")
+    ft_col = _column(df, "filetype")
     ft: list[str | None]
     if ft_col is None:
         ft = [_name_filetype(x) for x in nm]
@@ -192,7 +187,7 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
     else:
         ft = _chr_list(ft_col)
 
-    cat_col = _dollar(df, "category")
+    cat_col = _column(df, "category")
     cat = [None] if cat_col is None else _chr_list(cat_col)  # `%||% NA`
 
     n = len(nm)

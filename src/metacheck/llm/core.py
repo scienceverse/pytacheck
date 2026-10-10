@@ -241,17 +241,17 @@ def _llm_apply_reasoning(
     is_qwen3 = "qwen3" in m
     is_mistral = bool(grepl("^mistral", [m])[0])
     is_ollama = bool(grepl("^ollama", [m])[0])
-    if is_mistral and _r_dollar(args_out, "reasoning_effort") is None:
+    if is_mistral and args_out.get("reasoning_effort") is None:
         args_out["reasoning_effort"] = "high" if effort == "high" else "none"
         return out
     if is_ollama and (is_qwen3 or "deepseek-r1" in m):
-        if effort in ("low", "none") and _r_dollar(params_out, "think") is None:
+        if effort in ("low", "none") and params_out.get("think") is None:
             params_out["think"] = False
         return out
-    if is_qwen3 and _r_dollar(args_out, "reasoning_effort") is None:
+    if is_qwen3 and args_out.get("reasoning_effort") is None:
         args_out["reasoning_effort"] = "none" if effort in ("low", "none") else "default"
         return out
-    if is_gpt_oss and _r_dollar(args_out, "reasoning_effort") is None:
+    if is_gpt_oss and args_out.get("reasoning_effort") is None:
         args_out["reasoning_effort"] = "low" if effort == "none" else effort
         return out
     return out
@@ -295,18 +295,6 @@ def _llm_sanitise_text(x: Any) -> list[str | None] | None:
                     s = raw.decode("latin-1")
         out.append(s)
     return gsub("[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F]", "", out, perl=True)  # type: ignore[no-any-return]
-
-
-def _r_dollar(x: Any, name: str) -> Any:
-    """R ``x$name`` on parsed JSON: exact, else unique partial match; ``NULL`` if none."""
-    if x is None or isinstance(x, list):  # NULL$x, unnamed list$x: NULL
-        return None
-    if not isinstance(x, dict):
-        raise TypeError("$ operator is invalid for atomic vectors")
-    if name in x:
-        return x[name]
-    hits = [k for k in x if k.startswith(name)]
-    return x[hits[0]] if len(hits) == 1 else None
 
 
 def _llm_error_message(e: BaseException) -> str:
@@ -1048,10 +1036,9 @@ def llm(
         )
     assert unique_text is not None
 
-    # `params_list$x` partially matches a longer name, as R's `$` does
-    if _r_dollar(params_list, "temperature") is None:
+    if params_list.get("temperature") is None:
         params_list["temperature"] = 0.0
-    if _r_dollar(params_list, "max_tokens") is None:
+    if params_list.get("max_tokens") is None:
         params_list["max_tokens"] = llm_max_tokens() or 4096
 
     reasoning = _llm_apply_reasoning(params_list, model, api_args={})

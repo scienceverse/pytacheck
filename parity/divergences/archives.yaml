@@ -185,15 +185,15 @@
 "archives_d2/reshare_file_download.mock.one":
   kind: r_bug_fixed
   ref: U36
-  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download; a file without `hash` has no checksum (R reads its `hash_type`: D81)"
 "archives_d2/reshare_file_download.mock.total_cap":
   kind: r_bug_fixed
   ref: U36
-  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download; a file without `hash` has no checksum (R reads its `hash_type`: D81)"
 "archives_d2/reshare_file_download.mock.multi":
   kind: r_bug_fixed
   ref: U36
-  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download"
+  reason: "files omitted by the size caps stay in the table with downloaded = FALSE, as documented; a zero-byte file is downloaded instead of aborting the download; a file without `hash` has no checksum (R reads its `hash_type`: D81)"
 "archives_gz/zenodo_file_download.mixed":
   kind: r_bug_fixed
   ref: U36

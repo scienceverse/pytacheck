@@ -7,13 +7,12 @@ from typing import TYPE_CHECKING, Any
 
 from metacheck._r.base import as_character, trimws
 from metacheck._r.regex import compile_r, sub
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 from metacheck.db._utils import (
     NA_character,
     NA_real,
     as_vector,
     paste_unlist,
-    r_dollar,
     records_frame,
     resp_body_json,
     unlist,
@@ -135,7 +134,7 @@ def _resolves(resp: Any) -> bool | None:
         body = resp_body_json(resp)
     except Exception:  # tryCatch(error = ) catches every error
         body = None
-    code = r_dollar(body, "responseCode")
+    code = field(body, "responseCode")
     if code is None or (isinstance(code, list | dict) and len(code) != 1):
         return None
     if isinstance(code, list | dict):  # a length-1 list compares as its element
@@ -211,7 +210,7 @@ def _paste_author(a: Any) -> list[str]:
     """
     parts = []
     for key in ("family", "given"):
-        v = r_dollar(a, key)
+        v = field(a, key)
         vals = [] if v is None else (unlist(v) if isinstance(v, list | dict) else [v])
         parts.append(vals)
     n = max(len(p) for p in parts)
@@ -229,7 +228,7 @@ def _paste_author(a: Any) -> list[str]:
 def _lookup_row(bd: Any) -> dict[str, Any]:
     first_page: Any = None
     last_page: Any = None
-    page = r_dollar(bd, "page")
+    page = field(bd, "page")
     if page is not None:
         from metacheck._r.regex import strsplit
 
@@ -241,7 +240,7 @@ def _lookup_row(bd: Any) -> dict[str, Any]:
             if len(pages) > 1:
                 last_page = pages[1]
 
-    author_list = r_dollar(bd, "author")
+    author_list = field(bd, "author")
     if author_list is None:
         authors = ""
     else:
@@ -264,7 +263,7 @@ def _lookup_row(bd: Any) -> dict[str, Any]:
 
     published = get("published")
     year: Any = None
-    date_parts = r_dollar(published, "date-parts")
+    date_parts = field(published, "date-parts")
     if date_parts is not None:
         first = date_parts[0] if isinstance(date_parts, list) and date_parts else None
         if isinstance(first, list):

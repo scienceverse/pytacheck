@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 
 if TYPE_CHECKING:
     import httpx
@@ -188,7 +188,6 @@ def _zenodo_check_resp(resp: httpx.Response, what: str) -> Any:
     """
     from metacheck._r import as_character
     from metacheck.archives.github import _body_json
-    from metacheck.archives.github import _dollar as r_dollar
 
     status = resp.status_code
     try:
@@ -198,20 +197,20 @@ def _zenodo_check_resp(resp: httpx.Response, what: str) -> Any:
     if status < 400:
         return body
 
-    message = r_dollar(body, "message")
+    message = field(body, "message")
     detail = _resp_status_desc(resp) if message is None else as_character(message)
     fields = ""
-    errors = r_dollar(body, "errors")
+    errors = field(body, "errors")
     if errors:
         parts = []
         # vapply() runs over a JSON object's values
         for e in errors.values() if isinstance(errors, Mapping) else errors:
             if not isinstance(e, Mapping):
                 raise TypeError("$ operator is invalid for atomic vectors")
-            field = r_dollar(e, "field")
-            msg = r_dollar(e, "message")
+            fld = field(e, "field")
+            msg = field(e, "message")
             parts.append(
-                f"{'?' if field is None else as_character(field)}: "
+                f"{'?' if fld is None else as_character(fld)}: "
                 f"{'invalid' if msg is None else as_character(msg)}"
             )
         fields = f" ({'; '.join(parts)})"
@@ -307,16 +306,6 @@ def _osf_zenodo_metadata(osf_id: Any, pb: Any = None) -> dict[str, dict[str, Any
     return out
 
 
-def _dig(x: Any, *path: str) -> Any:
-    from metacheck.archives.github import _dollar as r_dollar
-
-    for key in path:
-        x = r_dollar(x, key)
-        if x is None:
-            return None
-    return x
-
-
 def _osf_node_for_zenodo(osf_id: str, resp: httpx.Response) -> dict[str, Any] | None:
     """One project's metadata from its (embedded) node response."""
     from metacheck.archives.github import _body_json
@@ -327,15 +316,15 @@ def _osf_node_for_zenodo(osf_id: str, resp: httpx.Response) -> dict[str, Any] | 
         return None
     if content is None:
         return None
-    att = _dig(content, "data", "attributes") or {}
-    contributors = _dig(content, "data", "embeds", "bibliographic_contributors", "data")
+    att = field(content, "data", "attributes") or {}
+    contributors = field(content, "data", "embeds", "bibliographic_contributors", "data")
     creators: list[dict[str, Any]] = []
     if isinstance(contributors, list) and contributors:
         # R reads this with simplifyVector = TRUE: the users become a data
         # frame, one row per contributor. A field no user has is NULL (so
         # `%||% ""` applies); a field only some users have is NA for the rest
         # (and nzchar(NA) is TRUE).
-        users = [_dig(c, "embeds", "users", "data", "attributes") for c in contributors]
+        users = [field(c, "embeds", "users", "data", "attributes") for c in contributors]
         users = [u if isinstance(u, Mapping) else {} for u in users]
 
         def column(*path: str) -> list[Any] | None:
@@ -343,7 +332,7 @@ def _osf_node_for_zenodo(osf_id: str, resp: httpx.Response) -> dict[str, Any] | 
             if not any(present):
                 return None
             return [
-                _na_chr(_dig(u, *path)) if p else None for u, p in zip(users, present, strict=True)
+                _na_chr(field(u, *path)) if p else None for u, p in zip(users, present, strict=True)
             ]
 
         full = column("full_name")
@@ -366,14 +355,14 @@ def _osf_node_for_zenodo(osf_id: str, resp: httpx.Response) -> dict[str, Any] | 
     tags = att.get("tags") if isinstance(att, Mapping) else None
     return {
         "osf_id": osf_id,
-        "title": _na_chr(_dig(att, "title")),
-        "description": _na_chr(_dig(att, "description")),
+        "title": _na_chr(field(att, "title")),
+        "description": _na_chr(field(att, "description")),
         "tags": list(tags) if isinstance(tags, list) else [],
         "license": _na_chr(
-            _dig(content, "data", "embeds", "license", "data", "attributes", "name")
+            field(content, "data", "embeds", "license", "data", "attributes", "name")
         ),
         "creators": creators,
-        "date_created": _na_chr(_dig(att, "date_created")),
+        "date_created": _na_chr(field(att, "date_created")),
     }
 
 
@@ -483,13 +472,12 @@ def _zenodo_meta_from_folder(folder: str) -> dict[str, Any] | None:
             m = json.load(fh)
     except (OSError, ValueError):
         return None
-    from metacheck.archives.github import _dollar as r_dollar
 
-    # R: `m$osf_id` (a scalar JSON file is R's "$ operator is invalid" error)
-    if m is None or r_dollar(m, "osf_id") is None:
+    # a scalar JSON file has no osf_id (R stops: "$ operator is invalid"; D81)
+    if m is None or field(m, "osf_id") is None:
         return None
 
-    contributors = r_dollar(m, "contributors") or []
+    contributors = field(m, "contributors") or []
     # lapply() keeps a JSON object's names, so its creators stay keyed
     items = (
         list(contributors.items())
@@ -498,17 +486,17 @@ def _zenodo_meta_from_folder(folder: str) -> dict[str, Any] | None:
     )
     kept: list[tuple[Any, dict[str, Any]]] = []
     for key, c in items:
-        family = r_dollar(c, "family_name")
-        given = r_dollar(c, "given_name")
+        family = field(c, "family_name")
+        given = field(c, "given_name")
         family = "" if family is None else family
         given = "" if given is None else given
         if family != "" and given != "":
             nm = f"{family}, {given}"
         else:
-            nm = r_dollar(c, "name")
+            nm = field(c, "name")
             nm = "" if nm is None else nm
         entry: dict[str, Any] = {"name": nm}
-        orcid = r_dollar(c, "orcid")
+        orcid = field(c, "orcid")
         if orcid is not None and not is_missing(orcid) and orcid != "":
             entry["orcid"] = orcid
         if entry["name"] != "":
@@ -519,15 +507,15 @@ def _zenodo_meta_from_folder(folder: str) -> dict[str, Any] | None:
 
     # unlist(m$tags %||% list(), use.names = FALSE): flattened, NULLs dropped,
     # coerced to one type
-    tags_raw = r_dollar(m, "tags")
+    tags_raw = field(m, "tags")
     tags_raw = list(tags_raw.values()) if isinstance(tags_raw, Mapping) else _as_list(tags_raw)
     tags = _r_unlist(tags_raw).tolist() if tags_raw else []
     return {
-        "osf_id": r_dollar(m, "osf_id"),
-        "title": r_dollar(m, "title"),
-        "description": r_dollar(m, "description"),
+        "osf_id": field(m, "osf_id"),
+        "title": field(m, "title"),
+        "description": field(m, "description"),
         "tags": tags,
-        "license": r_dollar(m, "license"),
+        "license": field(m, "license"),
         "creators": creators,
     }
 
@@ -548,14 +536,13 @@ def _zenodo_build_metadata(
     """
     from metacheck._r import as_character
     from metacheck.archives.github import _as_list, _r_basename
-    from metacheck.archives.github import _dollar as r_dollar
 
-    title = r_dollar(meta, "title")
+    title = field(meta, "title")
     if title is None or is_missing(title) or title == "":
         title = _r_basename(folder)
 
-    osf_id = r_dollar(meta, "osf_id")
-    description = r_dollar(meta, "description")
+    osf_id = field(meta, "osf_id")
+    description = field(meta, "description")
     if description is None or is_missing(description) or description == "":
         if osf_id is not None:
             description = (
@@ -564,11 +551,11 @@ def _zenodo_build_metadata(
         else:
             description = f"Files archived from {_r_basename(folder)}"
 
-    creators = r_dollar(meta, "creators")
+    creators = field(meta, "creators")
     if creators is None or (isinstance(creators, list | tuple | Mapping) and len(creators) == 0):
         creators = [{"name": "Unknown"}]
 
-    osf_license = _zenodo_license_id(r_dollar(meta, "license"))
+    osf_license = _zenodo_license_id(field(meta, "license"))
     md = ZenodoMetadata(
         title=title,
         upload_type=upload_type,
@@ -577,7 +564,7 @@ def _zenodo_build_metadata(
         license=license if osf_license is None else osf_license,
     )
     # as.list(meta$tags): NA tags are kept (sent as null)
-    tags = _as_list(r_dollar(meta, "tags"))
+    tags = _as_list(field(meta, "tags"))
     if tags:
         md["keywords"] = tags
     if osf_id is not None:
@@ -1019,10 +1006,8 @@ def zenodo_upload(
                 )
                 continue
 
-            from metacheck.archives.github import _dollar as r_dollar
-
-            dep_id = r_dollar(dep, "id")
-            bucket = _dig(dep, "links", "bucket")
+            dep_id = field(dep, "id")
+            bucket = field(dep, "links", "bucket")
 
             if as_zip is True:
                 stem = path_sanitize(_r_basename(folder), keep_sep=False)
@@ -1136,7 +1121,7 @@ def zenodo_upload(
                 meta_ok = False
 
             # publish, only when asked ----
-            doi = _dig(dep, "metadata", "prereserve_doi", "doi")
+            doi = field(dep, "metadata", "prereserve_doi", "doi")
             published = False
             if publish is True and meta_ok:
                 try:
@@ -1149,7 +1134,7 @@ def zenodo_upload(
                     )
                     pub = _zenodo_check_resp(resp, f"Publishing {_r_basename(folder)}")
                     published = True
-                    new_doi = r_dollar(pub, "doi")
+                    new_doi = field(pub, "doi")
                     if new_doi is not None:
                         doi = new_doi
                 except Exception as e:
@@ -1161,7 +1146,7 @@ def zenodo_upload(
                     osf_id,
                     as_character(dep_id) if dep_id is not None else None,
                     doi,
-                    _dig(dep, "links", "html"),
+                    field(dep, "links", "html"),
                     uploaded,
                     skipped[i],
                     published,

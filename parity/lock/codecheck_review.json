@@ -8,6 +8,7 @@
 "code_extract_py.review.high_then_other_escape": {"r": "a82a14a83777262a", "py": "f1eaabf5c7e0c66c", "diff": ["[]"]},
 "code_extract_py.review.lone_high_surrogate": {"r": "13a95e5c88766daf", "py": "3b8e8f7845151c13", "diff": ["[]"]},
 "code_extract_py.review.nul_escape": {"r": "bd21ea85dcbfc168", "py": "059c398d779e5c8b", "diff": ["<root>"]},
+"code_extract_py.review.nul_in_key": {"r": "f7ae62527ca9c83c", "py": "1e9539ad96a1e611", "diff": ["<root>"]},
 "code_extract_py.review.unterminated_block_comment": {"r": "2675f3db37148daf", "py": "1e9539ad96a1e611", "diff": ["<root>"]},
 "code_extract_py.review.vertical_tab_whitespace": {"r": "bc4440993c5f827b", "py": "1e9539ad96a1e611", "diff": ["<root>"]},
 "code_extract_r.review.comment_call.doc0": {"r": "ac5146cf65ca52a8", "py": "82c39fcbd078447f", "diff": ["<R error, Python value>"]},

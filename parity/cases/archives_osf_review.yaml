@@ -3856,7 +3856,7 @@
     "ignore":
     - "file_type"
 - "id": "osf_check_id.fuzz"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U51", "reason": "a route name after the project ID (osf.io/j3gcx/files/) is not an ID, and a URL naming two osf.io IDs gives the first"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U51", "reason": "a route name after the project ID (osf.io/j3gcx/files/) is not an ID, and a URL naming two osf.io IDs gives the first; the view_only query key is matched exactly (R also reads view_onlyx: D81)"}
   "r": "osf_check_id"
   "py": "metacheck.archives.osf.osf_check_id"
   "args":

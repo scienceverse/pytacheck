@@ -56,3 +56,45 @@
 "stats_review/stats.review.partial.s": *d78_args
 "stats_review/stats.review.texts_rebound": *d78_args
 "stats_review/stats.review.texts_rebound.none": *d78_args
+# fields and columns are read by their exact name, and a scalar has no fields (D81): R's `$`
+# also takes a unique prefix of a name, and stops on a scalar
+"archives_d2/reshare_file_download.mock.no_caps":
+  kind: deliberate
+  ref: D81
+  reason: a file without `hash` has no checksum; R's `x$hash` reads its `hash_type` ("SHA1") as the checksum
+"datacheck_columns/parse_qsf.survey.qsf": &d81_qsf
+  kind: deliberate
+  ref: D81
+  reason: a choice without `Display` has no label and a question without `QuestionText` no text; R's `$` reads them from `DisplayLogic` and `QuestionText_Unsafe`
+"datacheck_columns/parse_codebook.survey.qsf": *d81_qsf
+"datacheck_columns/parse_codebook.group_qsf": *d81_qsf
+"datacheck_columns/.qsf_option_display.partial": *d81_qsf
+"datacheck_columns_review/.qsf_option_display.displaylogic": *d81_qsf
+"datacheck_columns_review/parse_qsf.edge.qsf": *d81_qsf
+"datacheck_columns_review/parse_codebook.edge.qsf": *d81_qsf
+"db_review/doi_lookup.mock.partialpage": &d81_prefix
+  kind: deliberate
+  ref: D81
+  reason: names are matched exactly; R's `$` reads a field whose name only starts with the one asked for (a unique prefix)
+"db_review/doi_resolves.mock.codes": *d81_prefix
+"llm_review/apply_reasoning.partial_think": *d81_prefix
+"codecheck_review/code_extract_py.review.nul_in_key": *d81_prefix
+"statout_core_review/stat_output_validate.partial_names": *d81_prefix
+"statout_core_review/r_merge_captures.partial_line": *d81_prefix
+"statout_readers/jasp_analyses_summary.flat": *d81_prefix
+"statout_readers_review/import_omv.labels.review": *d81_prefix
+"repo_download/file_category.partial_match":
+  kind: deliberate
+  ref: D81
+  reason: a table without a `name` column fails as R fails on one; R's `contents$name` reads its `names` column
+"bibr12_review/malformed.read.source_scalar": &d81_scalar
+  kind: deliberate
+  ref: D81
+  reason: a scalar where a JSON object is expected has no fields, so the file is read; R stops ($ operator is invalid for atomic vectors)
+"bibr12_review/malformed.write.source_scalar": *d81_scalar
+"bibr12_review/malformed.read.extraction_scalar": *d81_scalar
+"bibr12_review/malformed.write.extraction_scalar": *d81_scalar
+"bibr12_review/malformed.read.producer_scalar": *d81_scalar
+"bibr12_review/malformed.write.producer_scalar": *d81_scalar
+"codecheck/code_extract_py.text.scalar": *d81_scalar
+"datacheck_columns/parse_qsf.scalar_json": *d81_scalar

@@ -6,8 +6,8 @@ import json
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r.base import as_character, trimws
-from metacheck._values import is_missing
-from metacheck.db._utils import as_vector, r_dollar, records_frame, resp_body_json, unlist
+from metacheck._values import field, is_missing
+from metacheck.db._utils import as_vector, records_frame, resp_body_json, unlist
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -24,15 +24,15 @@ def _request_body(dois: list[str]) -> str:
 
 
 def _feedback_record(fb: Any) -> dict[str, Any]:
-    users = r_dollar(fb, "users")
+    users = field(fb, "users")
     user_list = (
         unlist(users) if isinstance(users, list | dict) else ([] if users is None else [users])
     )
     trimmed = trimws([u if isinstance(u, str) else str(u) for u in user_list])
     rec = {
-        "doi": r_dollar(fb, "id"),
-        "total_comments": r_dollar(fb, "total_comments"),
-        "url": r_dollar(fb, "url"),
+        "doi": field(fb, "id"),
+        "total_comments": field(fb, "total_comments"),
+        "url": field(fb, "url"),
         "users": ", ".join(trimmed),
     }
     return {k: v for k, v in rec.items() if v is not None}
@@ -79,7 +79,7 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
         return None  # Request failed
 
     data = resp_body_json(resp)
-    feedbacks = r_dollar(data, "feedbacks") or []
+    feedbacks = field(data, "feedbacks") or []
     if isinstance(feedbacks, dict):
         feedbacks = list(feedbacks.values())
     pp_fb = [_feedback_record(fb) for fb in feedbacks]

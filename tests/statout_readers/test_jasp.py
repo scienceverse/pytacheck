@@ -13,7 +13,6 @@ import pandas as pd
 import pytest
 
 from metacheck.statout.jasp import (
-    _dollar,
     _html_inline_images,
     _jasp_analyses_summary,
     _jasp_binary_labels,
@@ -154,22 +153,13 @@ def test_jasp_analyses_summary_shapes() -> None:
         "2. anova",
         "3. analysis",
     ]
-    # `$` partial matching, and scalars
+    # names match exactly ("titles" is not "title": D81), and scalars
     assert _jasp_analyses_summary([{"titles": "x"}, "plain", 2.5, True]) == [
-        "1. x",
+        "1. analysis",
         "2. plain",
         "3. 2.5",
         "4. TRUE",
     ]
-
-
-def test_dollar_partial_matching() -> None:
-    assert _dollar({"title": 1, "titles": 2}, "title") == 1
-    assert _dollar({"titles": 2}, "title") == 2
-    assert _dollar({"titles": 2, "titlex": 3}, "title") is None
-    assert _dollar([1, 2], "x") is None
-    with pytest.raises(TypeError):
-        _dollar("atomic", "x")
 
 
 def test_export_jasp_html_inlines_images(tmp_path: Path) -> None:

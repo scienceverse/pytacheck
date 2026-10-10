@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, Any, cast
 import pandas as pd
 
 from metacheck._r import as_character, compile_r, grepl, gsub, plural, r_round, sub
-from metacheck._values import as_float, is_missing
+from metacheck._values import as_float, field, is_missing
 from metacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
@@ -294,30 +294,6 @@ DATAVERSE_DOI_PREFIX_HOSTS: dict[str, tuple[str, ...]] = {
 
 _MB = 1024 * 1024
 _INT32_MAX = 2**31 - 1
-
-
-def _dollar(x: Any, name: str) -> Any:
-    """R ``x$name`` on JSON parsed by ``httr2::resp_body_json()`` (no simplification).
-
-    An object is a named list: an exact name, else a unique prefix (R's partial
-    matching); an array is an unnamed list (``NULL``); ``NULL`` gives ``NULL``.
-    A scalar has no fields either (``None``): R raises "$ operator is invalid
-    for atomic vectors" there, so one API record with a plain string where an
-    object is expected aborted the whole call (U34).
-    """
-    if isinstance(x, dict):
-        if name in x:
-            return x[name]
-        hits = [k for k in x if isinstance(k, str) and k.startswith(name)]
-        return x[hits[0]] if len(hits) == 1 else None
-    return None
-
-
-def _dollars(x: Any, *names: str) -> Any:
-    """``x$a$b$c``."""
-    for name in names:
-        x = _dollar(x, name)
-    return x
 
 
 def _is_empty(x: Any) -> bool:
@@ -1551,52 +1527,52 @@ def _dataverse_info(host: Any, doi: Any, pb: Any = None) -> pd.DataFrame:
             return pd.DataFrame(obj)
 
         rec = _resp_json(resp)
-        if rec is None or _dollar(rec, "data") is None:
+        if rec is None or field(rec, "data") is None:
             obj["error"] = _cell("parse_error")
             return pd.DataFrame(obj)
 
-        data = _dollar(rec, "data")
+        data = field(rec, "data")
         if not isinstance(data, dict):
             obj["error"] = _cell("parse_error")
             return pd.DataFrame(obj)
-        version = _dollar(data, "latestVersion")
+        version = field(data, "latestVersion")
         if not isinstance(version, dict):
             version = {}
-        fields = _dollars(version, "metadataBlocks", "citation", "fields")
+        fields = field(version, "metadataBlocks", "citation", "fields")
         if fields is None:
             fields = []
 
         def field_val(type_name: str) -> Any:
             for f in _elements(fields):
-                tn = _dollar(f, "typeName")
+                tn = field(f, "typeName")
                 if isinstance(tn, str) and tn == type_name:
-                    return _dollar(f, "value")
+                    return field(f, "value")
             return None
 
         title = field_val("title")
         authors_field = field_val("author")
         authors = (
             [
-                _chr_elt(_empty_or(_dollars(a, "authorName", "value"), None))
+                _chr_elt(_empty_or(field(a, "authorName", "value"), None))
                 for a in _elements(authors_field)
             ]
             if isinstance(authors_field, list | dict)
             else []
         )
         pub = _empty_or(
-            _empty_or(_dollar(version, "releaseTime"), _dollar(data, "publicationDate")), None
+            _empty_or(field(version, "releaseTime"), field(data, "publicationDate")), None
         )
-        files = _dollar(version, "files")
+        files = field(version, "files")
         obj["title"] = _field_cell(_empty_or(title, None))
-        obj["doi"] = _field_cell(_empty_or(_dollar(data, "persistentUrl"), None))
+        obj["doi"] = _field_cell(_empty_or(field(data, "persistentUrl"), None))
         obj["publication_date"] = _field_cell(pub)
-        obj["updated_date"] = _field_cell(_empty_or(_dollar(version, "lastUpdateTime"), None))
+        obj["updated_date"] = _field_cell(_empty_or(field(version, "lastUpdateTime"), None))
         obj["authors"] = _list_cell(authors)
         # older installations give the licence as a plain string ("CC0"), which
         # metacheck's `license$name` cannot read (U34)
-        licence = _dollar(version, "license")
+        licence = field(version, "license")
         if not isinstance(licence, str):
-            licence = _dollar(licence, "name") if isinstance(licence, dict) else None
+            licence = field(licence, "name") if isinstance(licence, dict) else None
         obj["license"] = _field_cell(_empty_or(licence, None))
         obj["files"] = _list_cell(files if files is not None else [])
         return pd.DataFrame(obj)
@@ -1745,17 +1721,17 @@ def dataverse_file_download(
 
         rows = []
         for x in _elements(files_list):
-            df = _dollar(x, "dataFile")
+            df = field(x, "dataFile")
             if df is None:
                 df = {}
-            file_id = _dollar(df, "id")
+            file_id = field(df, "id")
             rows.append(
                 {
                     "id": _json_chr(_empty_or(file_id, None)),
-                    "key": _empty_or(_empty_or(_dollar(x, "label"), _dollar(df, "filename")), None),
-                    "size": _as_numeric(_empty_or(_dollar(df, "filesize"), None)),
-                    "checksum": _empty_or(_dollars(df, "checksum", "value"), None),
-                    "checksum_type": _lower(_empty_or(_dollars(df, "checksum", "type"), None)),
+                    "key": _empty_or(_empty_or(field(x, "label"), field(df, "filename")), None),
+                    "size": _as_numeric(_empty_or(field(df, "filesize"), None)),
+                    "checksum": _empty_or(field(df, "checksum", "value"), None),
+                    "checksum_type": _lower(_empty_or(field(df, "checksum", "type"), None)),
                     "self": (
                         f"https://{h}/api/access/datafile/{_json_chr(file_id)}"
                         if not _is_empty(file_id)

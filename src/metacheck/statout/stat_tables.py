@@ -31,11 +31,10 @@ import pandas as pd
 
 from metacheck._r.base import as_character, format_num, trimws
 from metacheck._r.regex import compile_r, grepl, gsub, regexec, regextract_all, strsplit, sub
-from metacheck._values import as_float, as_str
+from metacheck._values import as_float, as_str, field
 from metacheck.statout.r_output import (
     _chr_frame,
     _make_unique,
-    _r_dollar,
     _r_output_oneline,
     _r_output_tables,
     _r_values,
@@ -252,15 +251,15 @@ def _jasp_structured_tables(analyses_json: str | os.PathLike[str]) -> list[dict[
     Port of ``R/stat-tables.R::.jasp_structured_tables()``.
     """
     j = _read_json(analyses_json)
-    analyses = _r_dollar(j, "analyses")
+    analyses = field(j, "analyses")
     if not analyses:
         return []
     out: list[dict[str, Any]] = []
     for an in _r_iter(analyses):
-        an_title = trimws(_chr1(_r_dollar(an, "title"), "")) or ""
-        an_name = trimws(_chr1(_r_dollar(an, "name"), "")) or ""
+        an_title = trimws(_chr1(field(an, "title"), "")) or ""
+        an_name = trimws(_chr1(field(an, "name"), "")) or ""
         label = an_title if an_title else (an_name if an_name else None)
-        an_id: Any = _r_dollar(an, "id")
+        an_id: Any = field(an, "id")
         if isinstance(an_id, list | dict):
             # as.character(list(x)) of a length-1 list (JSON [x] / {"k": x})
             ids = _r_values(an_id)
@@ -276,7 +275,7 @@ def _jasp_structured_tables(analyses_json: str | os.PathLike[str]) -> list[dict[
             if fields is not None and data is not None:
                 df = _jasp_table_to_df(fields, data)
                 if df is not None and len(df) and df.shape[1]:
-                    ttl = trimws(_chr1(_r_dollar(node, "title"), "")) or ""
+                    ttl = trimws(_chr1(field(node, "title"), "")) or ""
                     out.append(
                         {
                             "analysis": label,
@@ -289,7 +288,7 @@ def _jasp_structured_tables(analyses_json: str | os.PathLike[str]) -> list[dict[
             for child in _r_iter(node):
                 collect(child)
 
-        collect(_r_dollar(an, "results"))
+        collect(field(an, "results"))
     for i, tb in enumerate(out, start=1):
         tb["table_index"] = i
     return out
@@ -303,7 +302,7 @@ def _jasp_table_to_df(fields: Any, data_rows: Any) -> pd.DataFrame | None:
     missing cell becomes ``""``.
     """
     fields_l = _r_iter(fields)
-    raw_nms = [_chr1(_r_dollar(f, "name"), "") for f in fields_l]
+    raw_nms = [_chr1(field(f, "name"), "") for f in fields_l]
     raw_nms = [n for n in raw_nms if n]
     if not raw_nms or not _r_len(data_rows):
         return None
@@ -1182,19 +1181,19 @@ def _ipynb_read_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
         nb = _read_json(path)
     except (OSError, ValueError, UnicodeDecodeError):
         nb = None
-    cells = _r_dollar(nb, "cells")
+    cells = field(nb, "cells")
     if not _r_len(cells):
         return []
 
     out: list[dict[str, Any]] = []
     ti = 0
     for ci, cl in enumerate(_r_iter(cells), start=1):
-        if _r_dollar(cl, "cell_type") != "code":
+        if field(cl, "cell_type") != "code":
             continue
-        outs = _r_dollar(cl, "outputs")
+        outs = field(cl, "outputs")
         if not _r_len(outs):
             continue
-        ec = _r_dollar(cl, "execution_count")
+        ec = field(cl, "execution_count")
         ec1 = ec[0] if isinstance(ec, list) and ec else (None if isinstance(ec, list) else ec)
         if isinstance(ec, dict):
             vals = list(ec.values())
@@ -1241,22 +1240,22 @@ def _ipynb_read_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
             )
 
         for o in _r_iter(outs):
-            otype = _r_dollar(o, "output_type")
+            otype = field(o, "output_type")
             otype = "" if otype is None else otype
 
             if otype == "stream":
-                lines = _split_lines(_ipynb_text(_r_dollar(o, "text")))
+                lines = _split_lines(_ipynb_text(field(o, "text")))
                 lines = [s for s in lines if trimws(s)]
                 if not lines or _ipynb_is_noise(lines):
                     continue
-                name = _r_dollar(o, "name")
+                name = field(o, "name")
                 name_s = "stdout" if name is None else _chr1(name, "stdout")
                 add_text_block(lines, f"{name_s} (cell {ci})")
                 continue
 
             if otype not in ("execute_result", "display_data"):
                 continue
-            d = _r_dollar(o, "data")
+            d = field(o, "data")
             if not _r_len(d):
                 continue
 

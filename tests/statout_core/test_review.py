@@ -12,8 +12,7 @@ import pytest
 
 from metacheck._values import as_float
 from metacheck.statout.r_output import (
-    _r_dollar,
-    _r_dollar_found,
+    _field_found,
     _r_echo_chunks,
     _r_values,
     _RError,
@@ -44,17 +43,16 @@ DATA = Path(__file__).resolve().parent / "data"
 # -- R list semantics ------------------------------------------------------------
 
 
-def test_dollar_partial_matching() -> None:
+def test_field_found_matches_names_exactly() -> None:
     x = {"line_seq": 2, "analysis_id": "a"}
-    assert _r_dollar(x, "line") == 2  # unique partial match
-    assert _r_dollar(x, "analysis") == "a"
-    assert _r_dollar({"line": 1, "line_seq": 2}, "line") == 1  # exact wins
-    assert _r_dollar({"ab": 1, "abc": 2}, "a") is None  # ambiguous partial
-    assert _r_dollar_found({"a": None}, "a") == (True, None)
-    assert _r_dollar_found(None, "a") == (False, None)
-    assert _r_dollar_found([1, 2], "a") == (False, None)
+    assert _field_found(x, "line") == (False, None)  # no prefix match (R's `$`: U141)
+    assert _field_found({"line": 1, "line_seq": 2}, "line") == (True, 1)
+    assert _field_found({"a": None}, "a") == (True, None)  # present but null
+    assert _field_found(_RNamedList([("a", 1), ("a", 2)]), "a") == (True, 1)
+    assert _field_found(None, "a") == (False, None)
+    assert _field_found([1, 2], "a") == (False, None)
     with pytest.raises(_RError, match="atomic"):
-        _r_dollar("x", "a")
+        _field_found("x", "a")
 
 
 def test_json_keeps_duplicate_names_and_bom() -> None:
@@ -191,11 +189,9 @@ def test_validate_json_quirks() -> None:
         bom = stat_output_validate(str(DATA / "review_validate_bom.json"))
     assert bom["valid"] and bom["summary"]["n_results"] == 1
     partial = stat_output_validate(str(DATA / "review_validate_partial.json"))
-    # "analysesX", "resultsZ", "valuesQ", {"values": 1} all match through `$`
-    assert partial["issues"] == [
-        "Document missing top-level field: analyses.",
-        'Result "r1": value "p" is missing `value`.',
-    ]
+    # names match exactly: "analysesX" is not "analyses" (R's `$` takes the prefix: D81)
+    assert partial["issues"] == ["Document missing top-level field: analyses."]
+    assert partial["summary"]["n_analyses"] == 0
     dup = stat_output_validate(str(DATA / "review_validate_dupkeys.json"))
     assert dup["issues"] == ['Result "r1": value "t" is missing `value`.'] * 2
 

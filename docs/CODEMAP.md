@@ -442,7 +442,7 @@ Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_dec
 | `code_read()` | [`metacheck.codecheck.core:code_read`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
 | `code_lang()` | [`metacheck.codecheck.core:code_lang`](../src/metacheck/codecheck/core.py) | yes | U68 |  |
 | `code_extract_r()` | [`metacheck.codecheck.core:code_extract_r`](../src/metacheck/codecheck/core.py) | yes | D80, U153 |  |
-| `code_extract_py()` | [`metacheck.codecheck.core:code_extract_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_extract_py()` | [`metacheck.codecheck.core:code_extract_py`](../src/metacheck/codecheck/core.py) | yes | D81 |  |
 | `code_extract_qmd_py()` | [`metacheck.codecheck.core:code_extract_qmd_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_parse_r()` | [`metacheck.codecheck.core:code_parse_r`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_abs_path()` | [`metacheck.codecheck.core:code_abs_path`](../src/metacheck/codecheck/core.py) | yes | — |  |
@@ -472,8 +472,8 @@ Python: [datacheck/checks.py](../src/metacheck/datacheck/checks.py), [datacheck/
 | `data_read_head()` | [`metacheck.datacheck.files:data_read_head`](../src/metacheck/datacheck/files.py) | yes | D10, D70, U216, U217 |  |
 | `data_col_type()` | [`metacheck.datacheck.columns:data_col_type`](../src/metacheck/datacheck/columns.py) | yes | — |  |
 | `data_col_stats()` | [`metacheck.datacheck.columns:data_col_stats`](../src/metacheck/datacheck/columns.py) | yes | — |  |
-| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | U64, U215 |  |
-| `parse_qsf()` | [`metacheck.datacheck.columns:parse_qsf`](../src/metacheck/datacheck/_columns_qsf.py) | yes | — |  |
+| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | D81, U64, U215 |  |
+| `parse_qsf()` | [`metacheck.datacheck.columns:parse_qsf`](../src/metacheck/datacheck/_columns_qsf.py) | yes | D81 |  |
 | `match_column_labels()` | [`metacheck.datacheck.columns:match_column_labels`](../src/metacheck/datacheck/columns.py) | yes | U58 |  |
 | `data_check_scale_values()` | [`metacheck.datacheck.checks:data_check_scale_values`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55, U59 |  |
 | `data_check_outliers()` | [`metacheck.datacheck.checks:data_check_outliers`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55 |  |
@@ -589,7 +589,7 @@ Python: [fileinfo/category.py](../src/metacheck/fileinfo/category.py), [fileinfo
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `file_category()` | [`metacheck.fileinfo.category:file_category`](../src/metacheck/fileinfo/category.py) | yes | — |  |
+| `file_category()` | [`metacheck.fileinfo.category:file_category`](../src/metacheck/fileinfo/category.py) | yes | D81 |  |
 | `filetype()` | [`metacheck.fileinfo.category:filetype`](../src/metacheck/fileinfo/category.py) | yes | — |  |
 
 ### `R/import-bibr.R`
@@ -850,7 +850,7 @@ Python: [statout/stat_output.py](../src/metacheck/statout/stat_output.py). Tests
 |---|---|---|---|---|
 | `stat_results_long()` | [`metacheck.statout.stat_output:stat_results_long`](../src/metacheck/statout/stat_output.py) | yes | U138, U141, U144 |  |
 | `stat_output_json()` | [`metacheck.statout.stat_output:stat_output_json`](../src/metacheck/statout/stat_output.py) | yes | U138, U141, U144 |  |
-| `stat_output_validate()` | [`metacheck.statout.stat_output:stat_output_validate`](../src/metacheck/statout/stat_output.py) | yes | U136 |  |
+| `stat_output_validate()` | [`metacheck.statout.stat_output:stat_output_validate`](../src/metacheck/statout/stat_output.py) | yes | D81, U136 |  |
 | `stat_output_write()` | [`metacheck.statout.stat_output:stat_output_write`](../src/metacheck/statout/stat_output.py) | yes | — |  |
 
 ### `R/stat-tables.R`

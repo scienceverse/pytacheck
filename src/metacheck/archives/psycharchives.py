@@ -27,7 +27,7 @@ from typing import Any, cast
 import pandas as pd
 
 from metacheck._r import regextract, sub
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 
 __all__ = [
     "DSPACE_LEGACY_HOSTS",
@@ -324,7 +324,7 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
     public bitstreams).
     """
     from metacheck.archives import _spinner, _tick
-    from metacheck.archives.dataverse import _cell, _dollar, _empty_or, _field_cell, _paste
+    from metacheck.archives.dataverse import _cell, _empty_or, _field_cell, _paste
 
     with _spinner(pb) as bar:
         _tick(bar, f"* Retrieving info from {_paste(pa_url)}...")
@@ -346,7 +346,7 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
         handle = str(handle_v)
 
         item = _psycharchives_rest(f"/handle/{handle}", host=_paste(host))
-        uuid = _dollar(item, "uuid")
+        uuid = field(item, "uuid")
         if item is None or uuid is None:
             warnings.warn(f"{_paste(pa_url)} could not be found", stacklevel=2)
             obj["error"] = _cell("unfound")
@@ -360,7 +360,7 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
             if upath is None
             else _psycharchives_rest(f"/items/{upath}?expand=metadata", host=_paste(host))
         )
-        md = _dollar(meta, "metadata")
+        md = field(meta, "metadata")
         if md is None:
             md = []
 
@@ -369,15 +369,15 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
 
             vals = []
             for m in _elements(md):
-                k = _dollar(m, "key")
+                k = field(m, "key")
                 if isinstance(k, str) and k == key:
-                    vals.append(_chr1(_empty_or(_dollar(m, "value"), None)))
+                    vals.append(_chr1(_empty_or(field(m, "value"), None)))
                 else:
                     vals.append(None)
             vals = [v for v in vals if v is not None]
             return "; ".join(cast("list[str]", vals)) if vals else None
 
-        title = _empty_or(_dollar(item, "name"), None)
+        title = _empty_or(field(item, "name"), None)
         obj["PA_title"] = _field_cell(title if title is not None else md_val("dc.title"))
         obj["PA_authors"] = _cell(md_val("dc.contributor.author"))
         obj["PA_doi"] = _cell(md_val("dc.identifier.doi"))
@@ -398,7 +398,6 @@ def _bitstream_table(bitstreams: Any, host: str) -> pd.DataFrame:
     """The ``file_list`` of ``.psycharchives_info()``: ``name``, ``size``, ``retrieve``."""
     from metacheck.archives.dataverse import (
         _as_numeric,
-        _dollar,
         _elements,
         _empty_or,
         _is_empty,
@@ -406,11 +405,11 @@ def _bitstream_table(bitstreams: Any, host: str) -> pd.DataFrame:
 
     # R: length(bitstreams) == 0 -> an empty table; a JSON scalar has length 1
     items = [] if _is_empty(bitstreams) else _elements(bitstreams)
-    names = [_chr1(_empty_or(_dollar(b, "name"), None)) for b in items]
-    sizes = [_as_numeric(_empty_or(_dollar(b, "sizeBytes"), None)) for b in items]
+    names = [_chr1(_empty_or(field(b, "name"), None)) for b in items]
+    sizes = [_as_numeric(_empty_or(field(b, "sizeBytes"), None)) for b in items]
     retrieve = []
     for b in items:
-        link = _dollar(b, "retrieveLink")
+        link = field(b, "retrieveLink")
         retrieve.append(None if link is None else f"https://{host}{_paste_json(link)}")
     return pd.DataFrame(
         {

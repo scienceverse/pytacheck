@@ -53,10 +53,9 @@ def test_check_id_view_only_value_stops_at_second_equals() -> None:
     assert osf_check_id("https://osf.io/abcde/?view_only==5") == "abcde?view_only="
 
 
-def test_check_id_view_only_partial_matching() -> None:
-    # `parsed$query$view_only` partially matches a unique longer name ...
-    assert osf_check_id("https://osf.io/abcde/?view_onlyx=123") == "abcde?view_only=123"
-    # ... but not an ambiguous one
+def test_check_id_view_only_matches_exactly() -> None:
+    # R's `parsed$query$view_only` also takes a unique longer name (D81)
+    assert osf_check_id("https://osf.io/abcde/?view_onlyx=123") == "abcde"
     assert osf_check_id("https://osf.io/abcde/?view_onlyx=1&view_onlyy=2") == "abcde"
 
 

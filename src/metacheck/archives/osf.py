@@ -225,15 +225,6 @@ def _url_parse(url: str) -> tuple[str, list[tuple[str, str]]]:
     return unquote(path or "/"), params
 
 
-def _dollar(params: list[tuple[str, str]], name: str) -> str | None:
-    """R ``as.list(params)$name``: the first exact match, else a unique partial match."""
-    for key, value in params:
-        if key == name:
-            return value
-    partial = [value for key, value in params if key.startswith(name)]
-    return partial[0] if len(partial) == 1 else None
-
-
 #: 5-letter OSF page names that follow a project ID in a URL (osf.io/<id>/files/).
 _OSF_ROUTES = frozenset({"files", "forks"})
 
@@ -269,7 +260,7 @@ def _osf_check_one(osf_id: Any) -> str | None:
         # the one after register/ is a registration schema, not a file
         # (metacheck returns "files", or any 24-character segment: U51)
         if grepl(r"^[a-z0-9]{5}(_v\d+)?$", tail) and tail not in _OSF_ROUTES:
-            view_only = _dollar(query, "view_only")
+            view_only = next((v for k, v in query if k == "view_only"), None)
             if view_only is not None:
                 tail = f"{tail}?view_only={view_only}"
             return tail
