@@ -29,20 +29,22 @@ def upload(data: bytes, name: str = "paper.json") -> dict:
 def test_health(client: TestClient) -> None:
     r = client.get("/health")
     assert r.status_code == 200
-    assert r.json()["status"] == ["ok"]  # jsonlite boxes scalars
+    assert r.json()["status"] == "ok"  # plain JSON: scalars are not boxed (D79)
 
 
 def test_modules(client: TestClient) -> None:
     body = client.get("/paper/modules").json()
     assert "marginal" in body["modules"]
-    assert body["count"] == [len(body["modules"])]
+    assert body["count"] == len(body["modules"])
 
 
 def test_info_default_fields(client: TestClient, demo_json: bytes) -> None:
     rows = client.post("/paper/info", files=upload(demo_json)).json()
     assert rows[0]["title"] == "To Err is Human: An Empirical Investigation"
     assert rows[0]["paper_id"] == "to_err_is_human"
-    assert "description" not in rows[0]  # NA cells are omitted, like jsonlite
+    # D79: every column is present, missing cells are null
+    assert list(rows[0]) == ["paper_id", "title", "keywords", "doi", "description"]
+    assert rows[0]["description"] is None
 
 
 def test_authors_and_references(client: TestClient, demo_json: bytes) -> None:
@@ -87,15 +89,16 @@ def test_module_and_check(client: TestClient, demo_json: bytes) -> None:
     r = client.post("/paper/module", files=upload(demo_json), data={"name": "marginal"})
     assert r.status_code == 200
     expected = pc.module_run(pc.demopaper(), "marginal").traffic_light
-    assert r.json()["traffic_light"] == [expected]
+    assert r.json()["traffic_light"] == expected
     bad = client.post("/paper/module", files=upload(demo_json), data={"name": "nope"})
     assert bad.status_code == 400
     check = client.post(
         "/paper/check", files=upload(demo_json), data={"modules": "marginal", "report": "false"}
     ).json()
     assert check["modules_run"] == ["marginal"]
-    assert check["results"]["marginal"]["traffic_light"] == [expected]
-    assert check["report_html"] == [""]
+    assert check["results"]["marginal"]["traffic_light"] == expected
+    assert check["report_html"] == ""
+    assert isinstance(check["metacheck_version"], str)
 
 
 def test_upload_validation(client: TestClient, demo_json: bytes) -> None:
@@ -115,7 +118,30 @@ def test_parse_bool() -> None:
     assert parse_bool(None) is True
 
 
-def test_numbers_follow_jsonlite(demo_json: bytes) -> None:
-    from metacheck.api.jsonlite import to_json
+def test_plain_json_values() -> None:
+    """D79: full-precision numbers, null for missing and non-finite values, every column."""
+    import numpy as np
+    import pandas as pd
 
-    assert orjson.loads(to_json([0.123456])) == [0.1235]
+    from metacheck.api.app import _json
+
+    frame = pd.DataFrame(
+        {
+            "x": [0.123456789012, np.nan, np.inf],
+            "n": pd.array([1, None, 3], dtype="Int64"),
+            "s": pd.array(["a", None, "c"], dtype="string"),
+            "b": pd.array([True, None, False], dtype="boolean"),
+            "l": [[1, 2], [], None],
+        }
+    )
+    body = {"table": frame, "none": None, "scalar": np.float64(2.5), "big": 1e300}
+    assert orjson.loads(_json(body).body) == {
+        "table": [
+            {"x": 0.123456789012, "n": 1, "s": "a", "b": True, "l": [1, 2]},
+            {"x": None, "n": None, "s": None, "b": None, "l": []},
+            {"x": None, "n": 3, "s": "c", "b": False, "l": None},
+        ],
+        "none": None,
+        "scalar": 2.5,
+        "big": 1e300,
+    }
