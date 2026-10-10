@@ -14,8 +14,6 @@ import pandas as pd
 import pytest
 
 from metacheck.codecheck import core
-from metacheck.codecheck._reval import NA, EvalError, RVersion, r_eval
-from metacheck.codecheck._rparse import parse_exprs
 
 ROOT = Path(__file__).resolve().parents[2]
 EXPAND = Path(__file__).parent / "fixtures" / "expand"  # copies of statout fixtures
@@ -291,32 +289,3 @@ def test_code_extract_py_notebook_magics() -> None:
         "",
         "",
     ]
-
-
-# ---------------------------------------------------------------------------
-# chunk-option evaluator
-# ---------------------------------------------------------------------------
-
-
-def _ev(src: str) -> object:
-    return r_eval(parse_exprs([src])[0])
-
-
-def test_r_eval() -> None:
-    assert _ev("FALSE") is False
-    assert _ev("F") is False
-    assert _ev("!T") is False
-    assert _ev("TRUE && NA") is NA
-    assert _ev("FALSE && NA") is False
-    assert _ev("c(1, 3)") == [1.0, 3.0]
-    assert _ev("getRversion() >= '4.1.0'") is True
-    assert isinstance(_ev("getRversion()"), RVersion)
-    assert _ev("identical(Sys.getenv('PYTACHECK_SURELY_UNSET_VAR'), '')") is True
-    assert _ev("exists('penguins')") is True
-    assert _ev("require('emo')") is False
-    assert _ev("if (1 > 2) 'a' else 'b'") == "b"
-    assert _ev(".Platform$OS.type %in% c('unix', 'windows')") is True
-    with pytest.raises(EvalError):
-        _ev("params$run")
-    with pytest.raises(EvalError):
-        _ev("undefined_fun()")

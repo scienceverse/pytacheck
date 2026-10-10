@@ -1,8 +1,7 @@
-"""Byte-for-byte fidelity of R's parser and knitr::purl().
+"""Byte-for-byte fidelity of R's parser.
 
-The corpora in ``fixtures/`` hold inputs and the output R 4.5.3 (knitr 1.52)
-produced for them; they were generated once with R and are compared here
-without R.
+The corpus in ``fixtures/`` holds inputs and the messages R 4.5.3 produced for
+them; it was generated once with R and is compared here without R.
 """
 
 from __future__ import annotations
@@ -13,7 +12,6 @@ from typing import Any
 
 import pytest
 
-from metacheck.codecheck._purl import purl
 from metacheck.codecheck._rparse import (
     Lang,
     RParseError,
@@ -78,28 +76,3 @@ def test_parse_exprs_trees() -> None:
     assert p.args[0][1] is Sym("x")
     with pytest.raises(RParseError):
         parse_exprs(["x <- )"])
-
-
-# ---------------------------------------------------------------------------
-# knitr::purl()
-# ---------------------------------------------------------------------------
-
-_PURL = _load("purl_corpus.json")
-
-
-@pytest.mark.parametrize("documentation", [0, 1, 2])
-def test_purl_corpus(documentation: int) -> None:
-    bad = []
-    for lines, outs in _PURL:
-        r = outs[documentation]
-        try:
-            py = purl(lines, documentation)
-        except Exception as exc:
-            py = f"ERROR: {exc}"
-        if r == "<<NOFILE>>":
-            r = ""
-        if r.startswith("ERROR") and py.startswith("ERROR"):
-            continue
-        if r != py:
-            bad.append((lines[:4], r[:200], py[:200]))
-    assert not bad, bad[:3]

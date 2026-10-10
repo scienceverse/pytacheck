@@ -18,8 +18,8 @@ module's port of R 4.5.3's parser is used, which reproduces R's messages:
 * messages are formatted as ``parseError()`` (``src/main/source.c``) and the
   lexer's ``raiseLexError()`` do.
 
-The syntax trees (:class:`Sym`, :class:`Lang`, constants) are also what
-``knitr``'s chunk-option parser needs (:mod:`._purl`).
+The parser builds syntax trees (:class:`Sym`, :class:`Lang`, constants) because
+the pipe and placeholder checks need them.
 
 Not reproduced: the ``"invalid \\u{xxxx} sequence (line %d)"`` message, whose
 line number R prints from an uninitialised argument, and the ``=>`` operator

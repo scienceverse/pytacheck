@@ -435,13 +435,13 @@ Python: [text/causal.py](../src/metacheck/text/causal.py). Tests: [tests/text_ex
 
 ### `R/code_check.R`
 
-Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_decode.py](../src/metacheck/codecheck/_decode.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_purl.py](../src/metacheck/codecheck/_purl.py), [codecheck/_reval.py](../src/metacheck/codecheck/_reval.py), [codecheck/_rcoerce.py](../src/metacheck/codecheck/_rcoerce.py). Tests: [tests/codecheck](../tests/codecheck).
+Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_decode.py](../src/metacheck/codecheck/_decode.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_chunks.py](../src/metacheck/codecheck/_chunks.py), [codecheck/_rcoerce.py](../src/metacheck/codecheck/_rcoerce.py). Tests: [tests/codecheck](../tests/codecheck).
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
 | `code_read()` | [`metacheck.codecheck.core:code_read`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
 | `code_lang()` | [`metacheck.codecheck.core:code_lang`](../src/metacheck/codecheck/core.py) | yes | U68 |  |
-| `code_extract_r()` | [`metacheck.codecheck.core:code_extract_r`](../src/metacheck/codecheck/core.py) | yes | U153 |  |
+| `code_extract_r()` | [`metacheck.codecheck.core:code_extract_r`](../src/metacheck/codecheck/core.py) | yes | D80, U153 |  |
 | `code_extract_py()` | [`metacheck.codecheck.core:code_extract_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_extract_qmd_py()` | [`metacheck.codecheck.core:code_extract_qmd_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_parse_r()` | [`metacheck.codecheck.core:code_parse_r`](../src/metacheck/codecheck/core.py) | yes | — |  |
@@ -1085,7 +1085,7 @@ optional ones are in extras (for example `metacheck[data]`).
 | `dplyr` | data-frame verbs throughout | pandas; [`_r/frames.py`](../src/metacheck/_r/frames.py) for `bind_rows()` and `count()` |
 | `tidyr` | pivots, `fill()`, `separate()` | pandas |
 | `readr` | `guess_encoding()` and `read_lines()` in `code_read()`, CSV files | not ported: chardet and Python's line splitting in [`codecheck/_decode.py`](../src/metacheck/codecheck/_decode.py) (D74); pandas for CSV |
-| `knitr` | `purl()`: code from R Markdown and Quarto files | port of knitr's tangling in [`codecheck/_purl.py`](../src/metacheck/codecheck/_purl.py) |
+| `knitr` | `purl()`: code from R Markdown and Quarto files | not ported: a static chunk extractor that never evaluates R, [`codecheck/_chunks.py`](../src/metacheck/codecheck/_chunks.py) (D80) |
 | `quarto` | rendering reports | the `quarto` command, when `report(renderer="quarto")`; the default renderer writes HTML in Python ([`report/report.py`](../src/metacheck/report/report.py)) |
 | `DT` | interactive tables in reports | self-contained HTML tables in [`report/render.py`](../src/metacheck/report/render.py) |
 | `bibtex` | `format_ref()` of BibTeX text | not needed: modules pass the reference text R produced (U3) |

@@ -336,8 +336,6 @@ def _r_yaml(x: Any) -> Any:
     Mappings stay dicts (named lists); a sequence of scalars of one type is an
     atomic vector (a tuple here), any other sequence a list.
     """
-    if type(x).__name__ == "_RExpr":
-        return x
     if isinstance(x, dict):
         return {str(k): _r_yaml(v) for k, v in x.items()}
     if isinstance(x, _RTaggedSeq):
@@ -922,26 +920,21 @@ def code_extract_r(
     documentation: int = 0,
     text: str | Sequence[str | None] | None = None,
 ) -> Any:
-    """Extract the R code of an R Markdown/Quarto document (``knitr::purl()``).
+    """Extract the R code of an R Markdown, Quarto or Sweave document.
 
-    Port of ``R/code_check.R::code_extract_r()``. *documentation* is purl's
+    Port of ``R/code_check.R::code_extract_r()``, which runs
+    ``knitr::purl()``; the chunks are read without R
+    (:mod:`metacheck.codecheck._chunks`, D80). *documentation* is purl's
     level: 0 (code only), 1 (chunk headers as comments) or 2 (text chunks as
     roxygen comments too). Returns the code lines, or *save_path* after
     writing them there.
     """
-    from metacheck.codecheck._purl import NA_LINE, purl
+    from metacheck.codecheck._chunks import extract_r
 
-    lines = [NA_LINE if t is None else t for t in _text_arg(file_path, text)]
-    out = purl(lines, documentation=documentation)
-    from metacheck.codecheck._decode import decode_lines
-
-    data = out.encode("utf-8", "surrogateescape")
+    out = extract_r(_text_arg(file_path, text), documentation=int(documentation))
     if save_path is None:
-        if not data:
-            return []
-        return decode_lines(data)
-    with open(save_path, "wb") as fh:
-        fh.write(data)
+        return out
+    _write_lines(out, save_path)
     return os.fspath(save_path)
 
 
