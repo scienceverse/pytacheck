@@ -169,7 +169,7 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     comparators ``= < > ~ ≈ ≠ ≤ ≥ ≪ ≫`` are. Strings are searched as a text
     table (metacheck fails on a character vector; U150).
     """
-    from metacheck.text.json_expand import as_numeric
+    from metacheck._values import as_float as as_numeric  # json_expand.as_numeric is gone (D76)
 
     p = text_search(
         _strings_table(paper), _P_PATTERN, return_="match", perl=True, ignore_case=False

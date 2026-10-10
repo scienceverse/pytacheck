@@ -117,3 +117,40 @@
   kind: r_bug_fixed
   ref: U158
   reason: "\"et al.Premotor\" (et al. glued to the next word) is not a URL"
+# D76: json_expand() reads JSON with metacheck._json.loads and flattens it (no jsonlite value model)
+"text_extract/json_expand.complex":
+  kind: deliberate
+  ref: D76
+  reason: '"1+2i" stays text (R type.convert() makes a complex column)'
+"text_extract/json_expand.nested":
+  kind: deliberate
+  ref: D76
+  reason: nested arrays and objects are their leaves joined by ";" in order (R deparses them, 1:2, c("a", "b"), a matrix by column)
+"text_extract/json_expand.records.mismatch":
+  kind: deliberate
+  ref: D76
+  reason: an array of objects is one row per object whatever their values (jsonlite's simplification failed and R gave "parsing error")
+"text_extract/json_expand.parser":
+  kind: deliberate
+  ref: D76
+  reason: comments are parsing errors (yajl allows them); a NUL or lone surrogate in a string is kept or U+FFFD (R truncates or writes "?")
+"text_extract/json_expand.error.unnamed":
+  kind: deliberate
+  ref: D76
+  reason: an array of scalars and arrays is "not a list" (R's bind_rows() fails)
+"text_extract/json_expand.error.duplicate":
+  kind: deliberate
+  ref: D76
+  reason: a repeated key keeps its last value (R's bind_rows() fails on the duplicated name)
+"text_extract/json_expand.error.empty_name":
+  kind: deliberate
+  ref: D76
+  reason: an empty key is a column named "" (R's bind_rows() fails)
+"text_extract_review/json_expand.review.type_convert":
+  kind: deliberate
+  ref: D76
+  reason: null stays missing in text columns (R pastes it to ""); "NAN"/"nan" read as numbers and hexadecimal by R's own grammar, not type.convert()'s passes
+"text_extract_review/json_expand.review.dates":
+  kind: deliberate
+  ref: D76
+  reason: '{"$date": ...} is an ordinary object, flattened to its value (jsonlite makes it a POSIXct)'

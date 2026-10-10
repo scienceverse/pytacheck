@@ -7,8 +7,15 @@
 "extract_p_values.psychsci": {"r": "8f422f29d81cdd79", "py": "08863f9ddd96cc3c", "diff": ["<root>"]},
 "extract_tests.psychsci": {"r": "5e21de178b7c35c8", "py": "8d7c6a7a80ccbd99", "diff": ["<root>"]},
 "extract_urls.psychsci": {"r": "f591b17ed5171906", "py": "ececf958026cba9a", "diff": ["<root>"]},
+"json_expand.complex": {"r": "c6eecae7ee3697aa", "py": "55e1ea64ecc48573", "diff": ["z"]},
+"json_expand.error.duplicate": {"r": "ac5146cf65ca52a8", "py": "ffba04cbd29f0113", "diff": ["<R error, Python value>"]},
+"json_expand.error.empty_name": {"r": "ac5146cf65ca52a8", "py": "bcd05bd77e7aea78", "diff": ["<R error, Python value>"]},
+"json_expand.error.unnamed": {"r": "ac5146cf65ca52a8", "py": "28396c3b5fa58578", "diff": ["<R error, Python value>"]},
 "json_expand.error.zero_rows": {"r": "ac5146cf65ca52a8", "py": "c9b7f015836ddb5f", "diff": ["<R error, Python value>"]},
-"json_expand.records": {"r": "fff95e5f49a1bc90", "py": "4a777f8f68d6c024", "diff": ["<root>"]},
-"json_expand.row_names": {"r": "73f8e1ddec305946", "py": "0af056de09b8cc1c", "diff": ["<root>"]},
+"json_expand.nested": {"r": "6a53d163984e944d", "py": "8656c25a9733070f", "diff": ["a[]", "d[]"]},
+"json_expand.parser": {"r": "b78d06bb39d3794d", "py": "00b9c5f33461a6b1", "diff": ["<root>", "a[]", "error[]"]},
+"json_expand.records": {"r": "fff95e5f49a1bc90", "py": "0e5f49db21935e17", "diff": ["<root>", "a[]"]},
+"json_expand.records.mismatch": {"r": "1ac0788ccab69dee", "py": "70e705445b4047af", "diff": ["<root>"]},
+"json_expand.row_names": {"r": "73f8e1ddec305946", "py": "51a7884f2c867356", "diff": ["<root>"]},
 "json_expand.temp_id_key": {"r": "bd8646c59058bc94", "py": "8306280307d7aa3c", "diff": ["<root>"]}
 }
