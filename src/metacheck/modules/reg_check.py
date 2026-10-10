@@ -122,9 +122,9 @@ def _cell_text(value: Any) -> str | None:
         elif len(value) == 0:
             return "NULL"
         else:
-            from metacheck.report.render import deparse
+            from metacheck._r.base import r_literal
 
-            return " ".join(line.strip() for line in deparse(list(value)))
+            return r_literal(list(value))
     return as_character(value)
 
 

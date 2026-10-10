@@ -786,7 +786,7 @@ Python: [report/blocks.py](../src/metacheck/report/blocks.py), [report/render.py
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `scroll_table()` | [`metacheck.report.blocks:scroll_table`](../src/metacheck/report/blocks.py) | yes | U131 |  |
+| `scroll_table()` | [`metacheck.report.blocks:scroll_table`](../src/metacheck/report/blocks.py) | yes | D75, U131 |  |
 | `report_table()` | [`metacheck.report.blocks:report_table`](../src/metacheck/report/blocks.py) | — | — |  |
 | `collapse_section()` | [`metacheck.report.blocks:collapse_section`](../src/metacheck/report/blocks.py) | — | — |  |
 | `plural()` | [`metacheck._r.base:plural`](../src/metacheck/_r/base.py) | — | — |  |

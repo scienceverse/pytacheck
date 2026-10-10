@@ -9,7 +9,8 @@ neither R nor Quarto:
   out like the Quarto report (``renderer="quarto"`` renders the ``.qmd``
   with Quarto instead, when it is installed);
 * ``output_format="qmd"``: the Quarto document metacheck writes, with each
-  table as the R chunk ``scroll_table()`` writes;
+  table as a raw HTML block instead of metacheck's R chunk, so Quarto renders
+  it without R;
 * ``output_format="md"``: plain (GitHub-flavoured) Markdown.
 """
 
@@ -41,6 +42,7 @@ from metacheck.report.blocks import ReportTable, collapse_section
 from metacheck.report.emojis import emojis
 from metacheck.report.render import (
     TableSlots,
+    _asset,
     html_page,
     markdown_to_gfm,
     render_blocks,
@@ -199,10 +201,10 @@ def _flatten(report: Any) -> list[Any]:
     return [str(report)]
 
 
-def _block_text(block: Any) -> str:
-    """A block as it appears in the ``.qmd`` (tables as R chunks)."""
+def _block_text(block: Any) -> Any:
+    """A block for comparing with the summary text (a table equals only itself)."""
     if isinstance(block, ReportTable):
-        return table_chunk(block)
+        return ("table", id(block))
     return "NA" if block is None else str(block)
 
 
@@ -358,7 +360,12 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
     elif blocks is None or _all_equal(summary, blocks, False):
         pre = post = None
         blocks = None
-    elif len("\n\n".join(_block_text(b) for b in blocks)) < 300:
+    elif not any(isinstance(b, ReportTable) for b in blocks) and (
+        len("\n\n".join(_block_text(b) for b in blocks)) < 300
+    ):
+        # a short report is shown open; a report with a table always folds
+        # (metacheck measures the R chunk, whose code is long but for the
+        # smallest tables; D75)
         pre = post = None
 
     out: list[Any] = [*head, *summary]
@@ -378,7 +385,7 @@ def module_report(module_output: ModuleOutput, header: Any = 3) -> str:
 
     ``header`` is the heading level (1-6), ``0`` for an unmarked title,
     ``None`` for no heading, or a string to use as the heading. Tables are
-    written as the R chunks ``scroll_table()`` produces, as in metacheck.
+    written as raw HTML blocks (metacheck writes R chunks; D75).
     """
     return render_blocks(_module_report_blocks(module_output, header), table_chunk)
 
@@ -603,27 +610,22 @@ def _report_parts(module_output: Any, paper: Any = None) -> _ReportParts:
     )
 
 
-def _html_table_chunk(block: ReportTable) -> str:
-    from metacheck.report.render import _table_html
-
-    return f"\n```{{=html}}\n{_table_html(block)}\n```\n"
-
-
-def report_qmd(module_output: Any, paper: Any = None, tables: str = "r") -> str:
+def report_qmd(module_output: Any, paper: Any = None, tables: str = "html") -> str:
     """Port of ``report_qmd()``: the Quarto report for module output.
 
-    ``tables="r"`` (default) writes each table as the R chunk metacheck
-    writes (rendering then needs R and metacheck); ``tables="html"`` writes
-    them as raw HTML blocks, so Quarto alone can render the document.
+    Each table is a raw HTML block, and a report with tables ends with their
+    styles and pagination script, so Quarto alone renders the document.
+    metacheck writes R chunks, which need R and metacheck to render (D75);
+    ``tables`` takes only ``"html"``.
     """
-    if tables not in ("r", "html"):
-        raise ValueError("'tables' should be one of 'r', 'html'")
+    if tables != "html":
+        raise ValueError(
+            "'tables' should be 'html': the R table chunks of metacheck's .qmd are not written"
+        )
     parts = _report_parts(module_output, paper)
-    if tables == "r":
-        return parts.text(table_chunk)
-    text = parts.text(_html_table_chunk)
-    from metacheck.report.render import _asset
-
+    text = parts.text(table_chunk)
+    if not any(isinstance(b, ReportTable) for b in parts.body):
+        return text
     return (
         text
         + "\n```{=html}\n<style>\n"
@@ -858,7 +860,7 @@ def report(
     else:
         try:
             if renderer == "quarto":
-                _render_quarto(report_qmd(module_output, paper, tables="html"), output_file)
+                _render_quarto(report_qmd(module_output, paper), output_file)
             else:
                 _write(report_html(module_output, paper), output_file)
             save_path = output_file

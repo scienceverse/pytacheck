@@ -4,7 +4,11 @@
 "causal_claims.review.fake.dup_same_paper": {"r": "cbabd8935fa1f14c", "py": "7848a049241a4a75", "diff": ["summary_table.causal[]"]},
 "causal_claims.review.fake.paperlist_empty_member_random": {"r": "5e5e035d7cc712e7", "py": "a53d31e9ed845c3d", "diff": ["report[]", "summary_text[]"]},
 "causal_claims.review.fake.paperlist_single": {"r": "5b512f8336e329a8", "py": "589a0acd5f04d271", "diff": ["report[]", "summary_text[]", "traffic_light[]"]},
-"causal_claims.review.fake.report.full": {"r": "d13f2828180ec220", "py": "0d506a3ea3e7a7dc", "diff": ["[]"]},
+"causal_claims.review.fake.report.demo": {"r": "4384d16073687596", "py": "a35d730f1cc6213d", "diff": ["[]"]},
+"causal_claims.review.fake.report.full": {"r": "d13f2828180ec220", "py": "1a5b91cc5f24d7f3", "diff": ["[]"]},
+"causal_claims.review.fake.report.psychsci_list": {"r": "ab57cf96546de62f", "py": "ac33db243b739912", "diff": ["[]"]},
+"causal_claims.review.fake.report.title_only": {"r": "b5745c2321d8b66b", "py": "85a10a43579b5fd6", "diff": ["[]"]},
+"causal_claims.review.fake.report.yellow": {"r": "4fd477f985751500", "py": "f8f5e595698716fc", "diff": ["[]"]},
 "causal_claims.review.paperlist_empty_member_untitled": {"r": "5e5e035d7cc712e7", "py": "a53d31e9ed845c3d", "diff": ["report[]", "summary_text[]"]},
 "causal_claims.review.pattern_quirks": {"r": "da89b8bec8fb7cc7", "py": "978402424b1c22db", "diff": ["report[]", "summary_text[]"]}
 }

@@ -16,3 +16,12 @@
   reason: a paragraph repeated word for word counts once, so its p-values are listed once; metacheck lists them again for each copy (4 rows here, 2 in pytacheck)
 "mod_p_values/stat_p_exact.duplicate_paragraph": *d60
 "mod_p_values/stat_p_nonsig.duplicate_paragraph": *d60
+# tables in a .qmd are raw HTML blocks, not R chunks (D75): report_qmd() of these
+# causal_claims reports (parity_support.report_qmd) writes each table as pytacheck's .qmd does
+"mod_causal_review/causal_claims.review.fake.report.yellow": &d74
+  kind: deliberate
+  ref: D75
+  reason: the report's tables are raw HTML blocks of their cells (R writes R chunks that rebuild the tables as code); the cells and the rest of the report are the same
+"mod_causal_review/causal_claims.review.fake.report.title_only": *d74
+"mod_causal_review/causal_claims.review.fake.report.demo": *d74
+"mod_causal_review/causal_claims.review.fake.report.psychsci_list": *d74

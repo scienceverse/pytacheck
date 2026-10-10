@@ -7,114 +7,49 @@
   "args":
     "x": {"$expr": {"r": "metacheck::emojis", "py": "dict(__import__('metacheck.report.emojis', fromlist=['emojis']).emojis)"}}
 
-# --- deparse (the table data in scroll_table()'s R chunk) ---------------------
-- "id": "deparse.df_basic"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(a = 1:3, b = c('x', 'y', NA))", "py": "pd.DataFrame({'a': pd.Series([1, 2, 3], dtype='Int64'), 'b': pd.Series(['x', 'y', None], dtype='string')})"}}
-- "id": "deparse.df_types"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(a = c(1.5, 2, NA, 1e-20, 123456789012), b = c(TRUE, NA, FALSE, TRUE, TRUE), `c d` = c('\\u00e9', 'a\"b', 'back\\\\slash', 'tab\\there', 'nl\\nx'), check.names = FALSE)", "py": "pd.DataFrame({'a': [1.5, 2.0, None, 1e-20, 123456789012.0], 'b': pd.Series([True, None, False, True, True], dtype='boolean'), 'c d': pd.Series(['\\u00e9', 'a\"b', 'back\\\\slash', 'tab\\there', 'nl\\nx'], dtype='string')})"}}
-- "id": "deparse.df_letters"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(LETTERS)", "py": "pd.DataFrame({'LETTERS': [chr(65 + i) for i in range(26)]})"}}
-- "id": "deparse.df_blank_name"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "{x <- data.frame(LETTERS); names(x) <- ''; x}", "py": "pd.DataFrame({'': [chr(65 + i) for i in range(26)]})"}}
-- "id": "deparse.df_wide"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "as.data.frame(setNames(as.list(as.double(1:22)), paste0(letters[1:22], letters[1:22], letters[1:22], letters[1:22])))", "py": "pd.DataFrame({c * 4: [float(i + 1)] for i, c in enumerate('abcdefghijklmnopqrstuv')})"}}
-- "id": "deparse.df_long_strings"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(a = c(1, 2), b = c('A very long string that is certainly longer than sixty characters in total', 'z'), c = c('q', 'r'), d = c('s', 't'))", "py": "pd.DataFrame({'a': [1.0, 2.0], 'b': ['A very long string that is certainly longer than sixty characters in total', 'z'], 'c': ['q', 'r'], 'd': ['s', 't']})"}}
-- "id": "deparse.df_multibyte"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(a = c(strrep('\\u00e9', 21), strrep('\\u00e9', 21), strrep('\\u00e9', 21)), b = c(strrep('a', 21), strrep('a', 21), strrep('a', 21)))", "py": "pd.DataFrame({'a': ['\\u00e9' * 21] * 3, 'b': ['a' * 21] * 3})"}}
-- "id": "deparse.df_names"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(`...` = 1, `..1` = 2, `.a` = 3, `.2a` = 4, a_b = 5, `NA` = 6, `if` = 7, `TRUE` = 8, `a b` = 9, a.b = 10, check.names = FALSE)", "py": "pd.DataFrame({k: [float(i + 1)] for i, k in enumerate(['...', '..1', '.a', '.2a', 'a_b', 'NA', 'if', 'TRUE', 'a b', 'a.b'])})"}}
-- "id": "deparse.df_na_types"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(i = c(NA_integer_, NA_integer_), l = c(NA, NA), s = c(NA_character_, NA_character_), d = c(NA_real_, NA_real_), j = c(NA, 3L), e = c(Inf, -Inf))", "py": "pd.DataFrame({'i': pd.Series([None, None], dtype='Int64'), 'l': pd.Series([None, None], dtype='boolean'), 's': pd.Series([None, None], dtype='string'), 'd': [float('nan')] * 2, 'j': pd.Series([None, 3], dtype='Int64'), 'e': [float('inf'), float('-inf')]})"}}
-- "id": "deparse.df_int_runs"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(a = c(1L, 3L, 4L), b = 5:3, c = -1:1, d = c(7L, 7L, 7L))", "py": "pd.DataFrame({'a': [1, 3, 4], 'b': [5, 4, 3], 'c': [-1, 0, 1], 'd': [7, 7, 7]})"}}
-- "id": "deparse.df_one_row"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(a = 3L, b = 'x', c = 0.1 + 0.2, d = 1e5, e = 1e15)", "py": "pd.DataFrame({'a': [3], 'b': ['x'], 'c': [0.1 + 0.2], 'd': [1e5], 'e': [1e15]})"}}
-- "id": "deparse.df_zero_rows"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(a = integer(0), b = character(0))", "py": "pd.DataFrame({'a': pd.Series([], dtype='Int64'), 'b': pd.Series([], dtype='string')})"}}
-- "id": "deparse.df_control_chars"
-  "r": "deparse"
-  "py": "metacheck.report.render.deparse"
-  "args":
-    "expr": {"$expr": {"r": "data.frame(a = c('\\u00a0x', 'bell\\a', '\\001', 'a\\rb', 'form\\ffeed', 'del\\177', 'uni\\u2028'))", "py": "pd.DataFrame({'a': ['\\u00a0x', 'bell\\a', '\\x01', 'a\\rb', 'form\\ffeed', 'del\\x7f', 'uni\\u2028']})"}}
-- "id": "deparse.vectors"
-  "r": "identity"
-  "py": "tests.report.parity_helpers.identity"
-  "args":
-    "x": {"$expr": {"r": "list(deparse(c(0.1, 0.9)), deparse('auto'), deparse(c(NA, 200, NA, NA)), deparse(c(NA, '4em')), deparse(200), deparse(c('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'yyyyyyyyyyyyyyyyyyyyyyyyyyyyy')), deparse(1:10), deparse(character(0)), deparse(c(TRUE, NA)))", "py": "(lambda d: [d([0.1, 0.9]), d('auto'), d([None, 200.0, None, None]), d([None, '4em']), d(200.0), d(['xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'yyyyyyyyyyyyyyyyyyyyyyyyyyyyy']), d(list(range(1, 11))), d(pd.Series([], dtype='string')), d([True, None])])(__import__('metacheck.report.render', fromlist=['deparse']).deparse)"}}
-
-# --- scroll_table()'s R chunk ----------------------------------------------------
+# --- scroll_table()'s .qmd text (an R chunk in R, raw HTML in pytacheck: D75) ----
 - "id": "scroll_table.letters_df"
+  "known_divergence": {"kind": "deliberate", "ref": "D75", "reason": "the table is a raw HTML block of its cells (R: an R chunk that rebuilds the table as code); the cells are the same"}
   "r": "scroll_table"
   "py": "metacheck.report.render.scroll_table_qmd"
   "args":
     "table": {"$expr": {"r": "data.frame(uc = LETTERS, lc = letters)", "py": "pd.DataFrame({'uc': [chr(65 + i) for i in range(26)], 'lc': [chr(97 + i) for i in range(26)]})"}}
 - "id": "scroll_table.escape"
+  "known_divergence": {"kind": "deliberate", "ref": "D75", "reason": "the table is a raw HTML block of its cells (R: an R chunk that rebuilds the table as code); the cells are the same"}
   "r": "scroll_table"
   "py": "metacheck.report.render.scroll_table_qmd"
   "args":
     "table": {"$expr": {"r": "data.frame(uc = LETTERS, lc = letters)", "py": "pd.DataFrame({'uc': [chr(65 + i) for i in range(26)], 'lc': [chr(97 + i) for i in range(26)]})"}}
     "escape": true
 - "id": "scroll_table.vector"
+  "known_divergence": {"kind": "deliberate", "ref": "D75", "reason": "the table is a raw HTML block of its cells (R: an R chunk that rebuilds the table as code); the cells are the same"}
   "r": "scroll_table"
   "py": "metacheck.report.render.scroll_table_qmd"
   "args":
     "table": {"$chr": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]}
 - "id": "scroll_table.int_vector_maxrows"
+  "known_divergence": {"kind": "deliberate", "ref": "D75", "reason": "the table is a raw HTML block of its cells (R: an R chunk that rebuilds the table as code); the cells are the same"}
   "r": "scroll_table"
   "py": "metacheck.report.render.scroll_table_qmd"
   "args":
     "table": {"$int": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
     "maxrows": 10
 - "id": "scroll_table.colwidths_frac"
+  "known_divergence": {"kind": "deliberate", "ref": "D75", "reason": "the table is a raw HTML block of its cells (R: an R chunk that rebuilds the table as code); the cells are the same"}
   "r": "scroll_table"
   "py": "metacheck.report.render.scroll_table_qmd"
   "args":
     "table": {"$expr": {"r": "data.frame(a = 1, b = 2)", "py": "pd.DataFrame({'a': [1.0], 'b': [2.0]})"}}
     "colwidths": {"$dbl": [0.3, 0.7]}
 - "id": "scroll_table.colwidths_na"
+  "known_divergence": {"kind": "deliberate", "ref": "D75", "reason": "the table is a raw HTML block of its cells (R: an R chunk that rebuilds the table as code); the cells are the same"}
   "r": "scroll_table"
   "py": "metacheck.report.render.scroll_table_qmd"
   "args":
     "table": {"$expr": {"r": "data.frame(a = 1, b = 2, c = 3, d = 4)", "py": "pd.DataFrame({'a': [1.0], 'b': [2.0], 'c': [3.0], 'd': [4.0]})"}}
     "colwidths": {"$expr": {"r": "c(NA, 200, NA, NA)", "py": "[None, 200, None, None]"}}
 - "id": "scroll_table.colwidths_chr"
+  "known_divergence": {"kind": "deliberate", "ref": "D75", "reason": "the table is a raw HTML block of its cells (R: an R chunk that rebuilds the table as code); the cells are the same"}
   "r": "scroll_table"
   "py": "metacheck.report.render.scroll_table_qmd"
   "args":
@@ -122,6 +57,7 @@
     "colwidths": {"$expr": {"r": "c(NA, '4em')", "py": "[None, '4em']"}}
     "column": "page"
 - "id": "scroll_table.linebreaks"
+  "known_divergence": {"kind": "deliberate", "ref": "D75", "reason": "the table is a raw HTML block of its cells (R: an R chunk that rebuilds the table as code); the cells are the same"}
   "r": "scroll_table"
   "py": "metacheck.report.render.scroll_table_qmd"
   "args":

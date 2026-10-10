@@ -382,10 +382,11 @@ def test_module_report_details_wrapper(demo, test_module):
     assert "<details>" not in null
 
 
-def test_module_report_tables_are_r_chunks(demo):
+def test_module_report_tables_are_html_blocks(demo):
+    # D75: metacheck writes R chunks
     rep = module_report(module_run(demo, "marginal"))
-    assert "```{r}" in rep
-    assert 'metacheck::report_table(table, "auto", 2, FALSE)' in rep
+    assert "```{r}" not in rep
+    assert '```{=html}\n<div class="datatables">' in rep and "<th>Section Header</th>" in rep
 
 
 def test_report_module_run(demo, test_module):
@@ -431,9 +432,11 @@ def test_report_qmd(demo, test_module):
     assert "font-size: 150%;" in report_text
     # U128: without a paper there is no subtitle or DOI (R always errors)
     assert report_qmd(mo).startswith('---\ntitle: MetaCheck Report\nsubtitle: ""\n')
-    # tables as HTML for Quarto without R
-    html_tables = report_qmd(mo, demo, tables="html")
-    assert "```{=html}" in html_tables and "```{r}" not in html_tables
+    # tables as HTML for Quarto without R (D75)
+    assert "```{=html}" in report_text and "```{r}" not in report_text
+    assert report_qmd(mo, demo, tables="html") == report_text
+    with pytest.raises(ValueError, match="'tables' should be 'html'"):
+        report_qmd(mo, demo, tables="r")
 
 
 def test_report_qmd_fail_and_na(test_module):
