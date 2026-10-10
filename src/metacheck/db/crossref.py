@@ -6,7 +6,7 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r.base import as_character
-from metacheck._r.regex import is_na
+from metacheck._values import is_missing
 from metacheck.db import _utils
 from metacheck.db._utils import (
     NA_character,
@@ -151,7 +151,7 @@ def _paper_dois(papers: Any) -> list[Any]:
     info = paper_table(papers, "info", ["doi"])
     if "doi" not in info.columns:
         return []
-    return [None if is_na(v) else v for v in info["doi"].tolist()]
+    return [None if is_missing(v) else v for v in info["doi"].tolist()]
 
 
 _INT_MAX = 2147483647
@@ -214,7 +214,7 @@ def _deparse_chr_vector(values: Sequence[Any]) -> str:
     """``deparse()`` of a character vector held in a list cell (``c("a", "b")``)."""
     if len(values) == 0:
         return "character(0)"
-    parts = ["NA" if is_na(v) else _deparse_str(str(v)) for v in values]
+    parts = ["NA" if is_missing(v) else _deparse_str(str(v)) for v in values]
     return parts[0] if len(parts) == 1 else "c(" + ", ".join(parts) + ")"
 
 
@@ -233,7 +233,7 @@ def _df_dollar(df: pd.DataFrame, name: str) -> Any:
     if col is None:
         return None
     return [
-        None if (not isinstance(v, list | tuple | Mapping) and is_na(v)) else v
+        None if (not isinstance(v, list | tuple | Mapping) and is_missing(v)) else v
         for v in df[col].tolist()
     ]
 
@@ -246,9 +246,9 @@ def _encode_query(value: Any) -> str:
     list, ``c("A", "B")``, and ``"NA"``; U13).
     """
     if isinstance(value, list | tuple):
-        vals = [_paste_chr(e) for e in unlist(value) if not is_na(e) and e != ""]
+        vals = [_paste_chr(e) for e in unlist(value) if not is_missing(e) and e != ""]
         value = ", ".join(vals) if vals else None
-    if value is None or is_na(value):
+    if value is None or is_missing(value):
         # a missing field is left out of the query (metacheck searched "NA")
         return ""
     return url_encode(value, reserved=True).replace("%28", "(").replace("%29", ")")
@@ -349,7 +349,7 @@ def datacite_doi(doi: Any) -> pd.DataFrame | None:
     from metacheck.db.doi import doi_clean
 
     cleaned = doi_clean(list(values))
-    is_valid = [not is_na(v) for v in values]
+    is_valid = [not is_missing(v) for v in values]
     valid_idx = [i for i, ok in enumerate(is_valid) if ok]
     urls = ["https://api.datacite.org/dois/" + str(cleaned[i]) for i in valid_idx]
     resps = http.batch_query(urls, msg="Querying DataCite") if urls else []
@@ -400,13 +400,13 @@ def _bibtype_convert(type: Any) -> Any:
 
         if isinstance(type, pd.Series):
             return pd.Series(
-                [None if is_na(t) else _BIBTYPES.get(t, t) for t in type.tolist()],
+                [None if is_missing(t) else _BIBTYPES.get(t, t) for t in type.tolist()],
                 index=type.index,
                 dtype="string",
             )
     except ImportError:  # pragma: no cover
         pass
-    return [None if is_na(t) else _BIBTYPES.get(t, t) for t in type]
+    return [None if is_missing(t) else _BIBTYPES.get(t, t) for t in type]
 
 
 # ---------------------------------------------------------------------------
@@ -695,7 +695,7 @@ def crossref_doi(doi: Any, select: Sequence[str] = CROSSREF_DOI_SELECT) -> pd.Da
         values = as_vector(doi)
         if len(values) == 0:
             return pd.DataFrame()
-        if all(is_na(v) for v in values):
+        if all(is_missing(v) for v in values):
             return records_frame([{"DOI": None} for _ in values])
 
     select = list(select)
@@ -725,7 +725,7 @@ def crossref_doi(doi: Any, select: Sequence[str] = CROSSREF_DOI_SELECT) -> pd.Da
         for j, i in enumerate(valid_idx):
             results[i] = _crossref_doi_one(values[i], resps[j], select)
     for i, v in enumerate(values):
-        if is_na(v):
+        if is_missing(v):
             results[i] = {"DOI": NA_character}
     return records_frame([r for r in results if r is not None])
 
@@ -744,17 +744,17 @@ def _ref_text(row: Mapping[str, Any]) -> str:
     parts = []
     for v in row.values():
         if _is_cell_list(v):
-            vals = [_paste_chr(e) for e in v if not is_na(e) and e != ""]
+            vals = [_paste_chr(e) for e in v if not is_missing(e) and e != ""]
             if vals:
                 parts.append(", ".join(vals))
-        elif not (is_na(v) or v == ""):
+        elif not (is_missing(v) or v == ""):
             parts.append(_paste_chr(v))
     return "; ".join(parts)
 
 
 def _paste_chr(v: Any) -> str:
     """``paste()`` of one value: ``as.character()``, with ``NA`` as ``"NA"``."""
-    s = None if is_na(v) else as_character(v)
+    s = None if is_missing(v) else as_character(v)
     return "NA" if s is None else s
 
 
@@ -834,7 +834,7 @@ def crossref_query(
 
     email = default_email()
     # a reference without text is not searched (metacheck searched "NA")
-    asked = [i for i, t in enumerate(texts) if not (is_na(t) or t == "")]
+    asked = [i for i, t in enumerate(texts) if not (is_missing(t) or t == "")]
     urls = [_query_url(refs[i], rows, email) for i in asked]
     # api.crossref.org list/search (query.*) endpoint: polite pool allows only 3 req/s
     got = (
@@ -849,7 +849,7 @@ def crossref_query(
 
     records: list[dict[str, Any]] = []
     for k, (text, resp) in enumerate(zip(texts, resps, strict=True)):
-        base = {"ref": NA_character if is_na(text) else as_character(text)}
+        base = {"ref": NA_character if is_missing(text) else as_character(text)}
         if k in skipped:
             records.append({**base, "DOI": NA_character})
             continue
@@ -885,7 +885,7 @@ def crossref_query(
 
 def _separate_page(page: Any) -> tuple[Any, Any]:
     """``tidyr::separate(page, c("first_page", "last_page"), sep = "-", extra = "merge")``."""
-    if page is None or is_na(page):
+    if page is None or is_missing(page):
         return None, None
     s = as_character(page) or ""
     first, sep, rest = s.partition("-")
@@ -915,7 +915,7 @@ def add_bib_match(paper: Any, min_score: float = 50) -> Any:
         if name not in bib.columns:
             return [None] * len(bib)
         return [
-            None if (not isinstance(v, list | tuple) and is_na(v)) else v
+            None if (not isinstance(v, list | tuple) and is_missing(v)) else v
             for v in bib[name].tolist()
         ]
 
@@ -948,7 +948,7 @@ def add_bib_match(paper: Any, min_score: float = 50) -> Any:
         if name not in cr_data.columns:
             return [None] * n
         return [
-            None if (not isinstance(v, list | tuple) and is_na(v)) else v
+            None if (not isinstance(v, list | tuple) and is_missing(v)) else v
             for v in cr_data[name].tolist()
         ]
 
@@ -1102,7 +1102,7 @@ def openalex_doi(doi: Any, select: Sequence[str] | None = None) -> Any:
         values = as_vector(doi)
         if len(values) == 0:
             return []
-        if all(is_na(v) for v in values):
+        if all(is_missing(v) for v in values):
             return {"DOI": values if len(values) != 1 else values[0]}
 
     if not _utils.online("api.openalex.org"):
@@ -1112,7 +1112,7 @@ def openalex_doi(doi: Any, select: Sequence[str] | None = None) -> Any:
 
     cleaned = doi_clean(list(values))
     fmt = doi_valid_format(cleaned)
-    valid = [not is_na(v) and ok for v, ok in zip(values, fmt, strict=True)]
+    valid = [not is_missing(v) and ok for v, ok in zip(values, fmt, strict=True)]
     valid_idx = [i for i, ok in enumerate(valid) if ok]
     resps: list[Any] = []
     if valid_idx:
@@ -1126,7 +1126,7 @@ def openalex_doi(doi: Any, select: Sequence[str] | None = None) -> Any:
 
     oa: list[Any] = [None] * len(values)
     for i, v in enumerate(values):
-        if is_na(v):
+        if is_missing(v):
             oa[i] = {"DOI": None}
         elif not valid[i]:
             oa[i] = {"DOI": v, "error": "malformed"}
@@ -1257,8 +1257,8 @@ def openalex_query(
         from metacheck.text.json_expand import as_numeric
 
         scores = [as_numeric(v) if isinstance(v, str) else v for v in info["relevance_score"]]
-        present = [i for i in range(len(info)) if not is_na(scores[i])]
-        missing = [i for i in range(len(info)) if is_na(scores[i])]
+        present = [i for i in range(len(info)) if not is_missing(scores[i])]
+        missing = [i for i in range(len(info)) if is_missing(scores[i])]
         present = sorted(present, key=lambda i: -float(scores[i]))
         info = info.iloc[present + missing].reset_index(drop=True)
 
@@ -1267,10 +1267,10 @@ def openalex_query(
             info[rq] = pd.array([""] * len(info), dtype="string")
 
     def lower(values: Sequence[Any]) -> list[str | None]:
-        return [None if is_na(v) else str(v).lower() for v in values]
+        return [None if is_missing(v) else str(v).lower() for v in values]
 
     t = title.lower()
-    s = None if source is None or is_na(source) else str(source).lower()
+    s = None if source is None or is_missing(source) else str(source).lower()
     title_match = [None if v is None else v == t for v in lower(info["display_name"].tolist())]
     source_match = [
         None if (v is None or s is None) else v == s for v in lower(info["source"].tolist())

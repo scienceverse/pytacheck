@@ -10,8 +10,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from metacheck._values import as_float
 from metacheck.statout.r_output import (
-    _r_as_numeric,
     _r_dollar,
     _r_dollar_found,
     _r_echo_chunks,
@@ -83,8 +83,9 @@ def test_unlist_coercion_of_notebook_text() -> None:
 
 
 def test_as_numeric_hex_forms() -> None:
-    got = [_r_as_numeric(x) for x in ["0x.8", "0x.", "0xp1", "0x", "0x1p", "-0x10", " 0X1A "]]
-    assert got == [0.5, 0.0, 0.0, None, None, -16.0, 26.0]
+    got = [as_float(x) for x in ["0x.8", "0x.", "0xp1", "0x", "0x1p", "-0x10", " 0X1A "]]
+    # R reads "0x." and "0xp1" as 0; as_float() needs a hexadecimal digit
+    assert got == [0.5, None, None, None, None, -16.0, 26.0]
 
 
 def test_pb_str_follows_rawtochar() -> None:

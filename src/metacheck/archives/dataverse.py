@@ -28,7 +28,8 @@ from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
-from metacheck._r import as_character, compile_r, grepl, gsub, is_na, plural, r_round, sub
+from metacheck._r import as_character, compile_r, grepl, gsub, plural, r_round, sub
+from metacheck._values import as_float, is_missing
 from metacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
@@ -380,15 +381,7 @@ def _as_numeric(x: Any) -> float:
     if isinstance(x, list | tuple) and len(x) == 1:
         return _as_numeric(x[0])
     if isinstance(x, str):
-        try:
-            from metacheck.datacheck.files import _r_as_numeric
-
-            v = _r_as_numeric(x)
-        except ImportError:  # pragma: no cover - datacheck is part of the package
-            try:
-                v = float(x.strip())
-            except ValueError:
-                v = None
+        v = as_float(x)
         if v is None:
             warnings.warn("NAs introduced by coercion", stacklevel=3)
             return math.nan
@@ -407,7 +400,7 @@ def _is_true(x: Any) -> bool:
 
     import numpy as np
 
-    if isinstance(x, list | tuple | dict) or is_na(x):
+    if isinstance(x, list | tuple | dict) or is_missing(x):
         return False
     if isinstance(x, bool | np.bool_):
         return bool(x)
@@ -506,7 +499,7 @@ def _as_values(x: Any) -> tuple[list[Any], bool]:
 def _chr_values(x: Any) -> tuple[list[str | None], bool]:
     """``as.character(x)`` as a list, and whether *x* was a scalar."""
     vals, scalar = _as_values(x)
-    return [None if is_na(v) else as_character(v) for v in vals], scalar
+    return [None if is_missing(v) else as_character(v) for v in vals], scalar
 
 
 def _string_series(values: Sequence[Any]) -> pd.Series:
@@ -621,7 +614,7 @@ def _info_table(x: Any, id_col: int | str, url_col: str, drop: Sequence[str]) ->
     uniq: list[Any] = []
     seen: set[Any] = set()
     for v in vals:
-        if is_na(v) or v in seen:
+        if is_missing(v) or v in seen:
             continue
         seen.add(v)
         uniq.append(v)
@@ -715,7 +708,7 @@ def _url_rows(paper: Any, pattern: str, ignore_case: bool = True) -> pd.DataFram
 
 def _cap_on(cap: float | None) -> bool:
     """``!is.null(cap) && is.finite(cap) && cap > 0`` (``is.finite()`` of a string is FALSE)."""
-    if not isinstance(cap, numbers.Real) or is_na(cap):
+    if not isinstance(cap, numbers.Real) or is_missing(cap):
         return False
     return math.isfinite(cap) and cap > 0
 
@@ -744,7 +737,7 @@ def _zip_members(
         listing = None
     if listing is None or len(listing) == 0:
         return None
-    names = [None if is_na(v) else str(v) for v in listing["name"].tolist()]
+    names = [None if is_missing(v) else str(v) for v in listing["name"].tolist()]
     types = data_classify_files(
         [None if v is None else v.rstrip("/").rpartition("/")[2] for v in names]
     )
@@ -754,7 +747,7 @@ def _zip_members(
         assert max_file_size is not None
         cap = max_file_size * _MB
         keep = [
-            k and not is_na(s) and s <= cap
+            k and not is_missing(s) and s <= cap
             for k, s in zip(keep, listing["size"].tolist(), strict=True)
         ]
     if not any(keep):
@@ -789,7 +782,9 @@ def _verify_file_table(files: pd.DataFrame | None, download_to: str, typed: bool
     files = files.copy()
     n = len(files)
     unzipped = (
-        [not is_na(v) for v in files["extracted"].tolist()] if "extracted" in files else [False] * n
+        [not is_missing(v) for v in files["extracted"].tolist()]
+        if "extracted" in files
+        else [False] * n
     )
     files["size_on_disk"] = pd.Series([math.nan] * n, dtype="float64", index=files.index)
     files["checksum_ok"] = pd.Series([None] * n, dtype="boolean", index=files.index)
@@ -797,7 +792,7 @@ def _verify_file_table(files: pd.DataFrame | None, download_to: str, typed: bool
         files["downloaded"] = pd.Series([False] * n, dtype="boolean", index=files.index)
         return files
 
-    paths = [None if is_na(p) else str(p) for p in files["path"].tolist()]
+    paths = [None if is_missing(p) else str(p) for p in files["path"].tolist()]
     full = [None if p is None else f"{download_to}/{p}" for p in paths]
     on_disk = [f is not None and os.path.exists(f) and not os.path.isdir(f) for f in full]
     size_on_disk = [
@@ -808,7 +803,7 @@ def _verify_file_table(files: pd.DataFrame | None, download_to: str, typed: bool
     with warnings.catch_warnings():  # R: suppressWarnings(as.numeric(files$size))
         warnings.simplefilter("ignore")
         expected = (
-            [_as_numeric(None if is_na(v) else v) for v in files["size"].tolist()]
+            [_as_numeric(None if is_missing(v) else v) for v in files["size"].tolist()]
             if "size" in files
             else [math.nan] * n
         )
@@ -818,13 +813,13 @@ def _verify_file_table(files: pd.DataFrame | None, download_to: str, typed: bool
     ]
 
     checksums = (
-        [None if is_na(v) else str(v) for v in files["checksum"].tolist()]
+        [None if is_missing(v) else str(v) for v in files["checksum"].tolist()]
         if "checksum" in files
         else [None] * n
     )
     if typed:
         types = (
-            [None if is_na(v) else str(v) for v in files["checksum_type"].tolist()]
+            [None if is_missing(v) else str(v) for v in files["checksum_type"].tolist()]
             if "checksum_type" in files
             else None
         )
@@ -945,13 +940,13 @@ def _download_file_table(
     n = len(files)
     unzippable = [False] * n
     if _has_values(unzip_types):
-        selfs = [None if is_na(v) else str(v) for v in files["self"].tolist()]
+        selfs = [None if is_missing(v) else str(v) for v in files["self"].tolist()]
         unzippable = [
             z and s is not None and s != ""
             for z, s in zip(_is_zip(files["key"].tolist()), selfs, strict=True)
         ]
 
-    sizes = [math.nan if is_na(v) else float(v) for v in files["size"].tolist()]
+    sizes = [math.nan if is_missing(v) else float(v) for v in files["size"].tolist()]
     omitted = [False] * n
     if _cap_on(max_file_size):
         assert max_file_size is not None
@@ -1003,9 +998,9 @@ def _download_file_table(
     try:
         downloaded = [False] * n
         extracted: list[int | None] = [None] * n
-        keys = [None if is_na(v) else str(v) for v in files["key"].tolist()]
-        ids = [None if is_na(v) else str(v) for v in files["id"].tolist()]
-        selfs = [None if is_na(v) else str(v) for v in files["self"].tolist()]
+        keys = [None if is_missing(v) else str(v) for v in files["key"].tolist()]
+        ids = [None if is_missing(v) else str(v) for v in files["id"].tolist()]
+        selfs = [None if is_missing(v) else str(v) for v in files["self"].tolist()]
         n_wanted = n - sum(omitted)
         failed_rows: list[tuple[str | None, str | None, str | None]] = []
         k = 0
@@ -1115,7 +1110,7 @@ def _failed_members(got: pd.DataFrame) -> list[tuple[str | None, str | None]]:
     names = got["name"].tolist() if "name" in got else [None] * n
     errors = got["error"].tolist() if "error" in got else ["unknown failure"] * n
     return [
-        (None if is_na(nm) else str(nm), None if is_na(e) else str(e))
+        (None if is_missing(nm) else str(nm), None if is_missing(e) else str(e))
         for nm, ok, e in zip(names, oks, errors, strict=True)
         if not _is_true(ok)
     ]
@@ -1487,7 +1482,7 @@ def dataverse_info(
             }
         ).astype({"dataverse_host": "string", "dataverse_doi": "string"})
         if ids["dataverse_url"].dtype == object and all(
-            isinstance(v, str) or is_na(v) for v in ids["dataverse_url"]
+            isinstance(v, str) or is_missing(v) for v in ids["dataverse_url"]
         ):
             ids["dataverse_url"] = ids["dataverse_url"].astype("string")
         ids = ids.drop_duplicates()
@@ -1650,7 +1645,7 @@ def _dataverse_pat(host: str | None, pat: Any = None) -> str:
     """Port of R/archive-dataverse.R::.dataverse_pat()."""
     from metacheck.utils import get_option, options
 
-    raw = "" if host is None else ("NA" if is_na(host) else str(host))
+    raw = "" if host is None else ("NA" if is_missing(host) else str(host))
     key = gsub("[^A-Za-z0-9]+", "_", raw).upper()
     opt = f"metacheck.dataverse.pat.{key}"
     env = f"DATAVERSE_PAT_{key}"
@@ -1735,7 +1730,7 @@ def dataverse_file_download(
             )
 
         h, d = hosts[0], dois[0]
-        if is_na(h) or str(h) == "" or is_na(d) or str(d) == "":
+        if is_missing(h) or str(h) == "" or is_missing(d) or str(d) == "":
             return None
         h, d = str(h), str(d)
 

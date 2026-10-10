@@ -39,7 +39,6 @@ from metacheck.statout.stata import (
     _one_row_frame,
     _split_block,
     _string_columns_frame,
-    _trim,
 )
 
 if TYPE_CHECKING:
@@ -190,7 +189,7 @@ def _r_seq(a: int, b: int) -> list[int]:
 
 def _mplus_is_section_header(line: str | None) -> bool:
     """Port of R/mplus.R::.mplus_is_section_header()."""
-    tl = _trim(line)
+    tl = trimws(line)
     return _nz(tl) and _gl(_MPLUS_SECTION_HEADER_REGEXPR, tl, ignore_case=True, perl=True)
 
 
@@ -208,7 +207,7 @@ def _mplus_sections(lines: Sequence[str | None]) -> list[dict[str, Any]]:
         return []
     ends = [h - 1 for h in header_idx[1:]] + [len(lines)]
     return [
-        {"title": _trim(lines[h - 1]), "lines": lines[h:e]}
+        {"title": trimws(lines[h - 1]), "lines": lines[h:e]}
         for h, e in zip(header_idx, ends, strict=True)
     ]
 
@@ -230,7 +229,7 @@ def _mplus_split_block(block: Sequence[str | None]) -> list[list[str]] | None:
 
 def _mplus_looks_header(ln: str | None) -> bool:
     """Port of R/mplus.R::.mplus_looks_header()."""
-    tl = _trim(ln)
+    tl = trimws(ln)
     if not _nz(tl) or _gl(r"^_+(\s+_+)*$", tl):
         return False
     grps = [None] if tl is None else strsplit(tl, r"\s+")
@@ -243,13 +242,13 @@ def _mplus_looks_header(ln: str | None) -> bool:
 
 def _mplus_is_group_label(ln: str | None) -> bool:
     """Port of R/mplus.R::.mplus_is_group_label()."""
-    tl = _trim(ln)
+    tl = trimws(ln)
     return _nz(tl) and not _gl("[0-9]", tl)
 
 
 def _mplus_is_stat_header_line(ln: str | None) -> bool:
     """Port of R/mplus.R::.mplus_is_stat_header_line(): a MODEL RESULTS header."""
-    tl = _trim(ln)
+    tl = trimws(ln)
     if not _nz(tl) or _gl("[0-9]", tl):
         return False
     return _gl("|".join(_MPLUS_HEADER_WORDS), tl, ignore_case=True) or (
@@ -270,7 +269,7 @@ def _mplus_find_header(lines: Sequence[str | None], start: int) -> dict[str, Any
 
 def _mplus_is_level_label(ln: str | None) -> bool:
     """Port of R/mplus.R::.mplus_is_level_label(): Within/Between/Class/Group labels."""
-    tl = _trim(ln)
+    tl = trimws(ln)
     return _gl(r"^(within|between)(\s+level)?$", tl, ignore_case=True) or _gl(
         r"^(latent class|class|group)\s+\S+", tl, ignore_case=True
     )
@@ -294,12 +293,12 @@ def _mplus_read_grouped_table(lines: Sequence[str | None], start: int) -> dict[s
     level: str | None = None
     while j <= n:
         dl = lines[j - 1]
-        dtl = _trim(dl)
+        dtl = trimws(dl)
         if not _nz(dtl):
             k = j + 1
             if k <= n and _mplus_find_header(lines, k) is not None:
                 break
-            if k <= n and _nz(_trim(lines[k - 1])):
+            if k <= n and _nz(trimws(lines[k - 1])):
                 j += 1
                 continue
             break
@@ -346,7 +345,7 @@ def _read_simple_table(
     data_lines: list[str | None] = []
     while j <= n:
         dl = lines[j - 1]
-        dtl = _trim(dl)
+        dtl = trimws(dl)
         if not _nz(dtl) or not _gl("[0-9]", dtl):
             break
         data_lines.append(dl)
@@ -369,17 +368,17 @@ def _mplus_read_matrix_table(lines: Sequence[str | None], start: int) -> dict[st
         return None
     header_lines = [lines[start - 1]]
     j = start + 1
-    if j <= n and _mplus_looks_header(lines[j - 1]) and (j + 1 > n or _gl("^_+", _trim(lines[j]))):
+    if j <= n and _mplus_looks_header(lines[j - 1]) and (j + 1 > n or _gl("^_+", trimws(lines[j]))):
         header_lines.append(lines[j - 1])
         j += 1
-    if not (j <= n and _gl(r"^_+(\s+_+)*$", _trim(lines[j - 1]))):
+    if not (j <= n and _gl(r"^_+(\s+_+)*$", trimws(lines[j - 1]))):
         return None
     return _read_simple_table(lines, start, header_lines, j + 1)
 
 
 def _mplus_is_stats_header_line(ln: str | None) -> bool:
     """Port of R/mplus.R::.mplus_is_stats_header_line()."""
-    tl = _trim(ln)
+    tl = trimws(ln)
     return (
         _nz(tl)
         and not _gl("[0-9]", tl)
@@ -397,7 +396,7 @@ def _mplus_read_stats_table(lines: Sequence[str | None], start: int) -> dict[str
     if j <= n and _mplus_looks_header(lines[j - 1]):
         header_lines.append(lines[j - 1])
         j += 1
-    if j <= n and not _nz(_trim(lines[j - 1])):
+    if j <= n and not _nz(trimws(lines[j - 1])):
         j += 1
     return _read_simple_table(lines, start, header_lines, j)
 
@@ -526,7 +525,7 @@ def import_mplus_output(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
 def _mplus_syntax_lines(lines: Sequence[str | None]) -> str | None:
     """Port of R/mplus.R::.mplus_syntax_lines(): the ``INPUT INSTRUCTIONS`` block."""
     lines = list(lines)
-    starts = [i for i, ln in enumerate(lines, 1) if _gl(r"^INPUT INSTRUCTIONS\s*$", _trim(ln))]
+    starts = [i for i, ln in enumerate(lines, 1) if _gl(r"^INPUT INSTRUCTIONS\s*$", trimws(ln))]
     if not starts:
         return None
     # the lines after the header (none when it is the last line; R's
@@ -535,13 +534,13 @@ def _mplus_syntax_lines(lines: Sequence[str | None]) -> str | None:
     end_rel = [
         k
         for k, ln in enumerate(rest, 1)
-        if _mplus_is_section_header(ln) or _gl(r"^\*\*\*\s*(WARNING|ERROR)", _trim(ln))
+        if _mplus_is_section_header(ln) or _gl(r"^\*\*\*\s*(WARNING|ERROR)", trimws(ln))
     ]
     body = rest[: end_rel[0] - 1] if end_rel else rest
-    body = [b for b in body if _nz(_trim(b))]
+    body = [b for b in body if _nz(trimws(b))]
     if not body:
         return None
-    return "\n".join("NA" if b is None else str(_trim(b)) for b in body)
+    return "\n".join("NA" if b is None else str(trimws(b)) for b in body)
 
 
 def _mplus_export_syntax(

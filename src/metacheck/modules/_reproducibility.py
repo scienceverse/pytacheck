@@ -29,6 +29,7 @@ import numpy as np
 import pandas as pd
 
 from metacheck._r import as_character, grepl, plural, slashed, sub
+from metacheck._values import as_str
 from metacheck.report import scroll_table
 
 # -- small R helpers ---------------------------------------------------------------
@@ -40,15 +41,6 @@ def _na(x: Any) -> bool:
     if isinstance(x, float | np.floating):
         return math.isnan(x)
     return False
-
-
-def _chr(x: Any) -> str | None:
-    """One element of a character vector (``None`` for ``NA``)."""
-    if _na(x):
-        return None
-    if isinstance(x, str):
-        return x
-    return str(as_character(x))
 
 
 def _is_true(x: Any) -> bool:
@@ -80,7 +72,7 @@ def _col(df: Any, name: str) -> list[Any]:
 
 
 def _chr_col(df: Any, name: str) -> list[str | None]:
-    return [_chr(v) for v in _col(df, name)]
+    return [as_str(v) for v in _col(df, name)]
 
 
 def _nzchar(x: str | None) -> bool:
@@ -178,8 +170,8 @@ def _pid(paper: Any, *dfs: Any) -> str | None:
         if len(ids) > 0:
             break
         if _has_cols(df, "paper_id"):
-            ids = list(dict.fromkeys(_chr(v) for v in df["paper_id"].tolist()))
-    return None if len(ids) == 0 else _chr(ids[0])
+            ids = list(dict.fromkeys(as_str(v) for v in df["paper_id"].tolist()))
+    return None if len(ids) == 0 else as_str(ids[0])
 
 
 class SavedTables:

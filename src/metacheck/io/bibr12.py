@@ -43,7 +43,8 @@ import orjson
 import pandas as pd
 
 from metacheck._r.base import as_character, trimws
-from metacheck._r.regex import grepl, is_na, sub
+from metacheck._r.regex import grepl, sub
+from metacheck._values import as_str, is_missing
 from metacheck.log import logger
 from metacheck.papers.io import _field
 from metacheck.papers.model import Paper
@@ -483,7 +484,7 @@ def _flatten(e: Any, out: list[Any]) -> None:
             _flatten(v, out)
     elif isinstance(e, pd.Series):
         for v in e.tolist():
-            _flatten(None if is_na(v) else v, out)
+            _flatten(None if is_missing(v) else v, out)
     else:
         out.append(_jnum(e))
 
@@ -497,7 +498,7 @@ def _unlist_as(e: Any, schema_type: str) -> list[Any]:
     if schema_type == "integer" and all(type(v) is int for v in vals):
         return vals
     series = coerce_column(infer_column(vals), schema_type)
-    return [None if is_na(v) else v for v in series.tolist()]
+    return [None if is_missing(v) else v for v in series.tolist()]
 
 
 def _cell(e: Any, typ: str) -> Any:
@@ -709,7 +710,7 @@ def _array_cells(v: Any, n: int, typ: str) -> list[Any]:
     out = []
     for e in values:
         if not isinstance(e, list | tuple | dict | np.ndarray | pd.DataFrame | pd.Series) and (
-            (atomic and is_na(e)) or (e is not None and is_na(e))
+            (atomic and is_missing(e)) or (e is not None and is_missing(e))
         ):
             out.append([[None]] if typ == "chr[][]" else [None])
         else:
@@ -741,7 +742,7 @@ def _unlist_na(e: Any, schema_type: str) -> list[Any]:
     if schema_type == "integer" and all(type(v) is int for v in vals):
         return vals
     series = coerce_column(infer_column(vals), schema_type)
-    return [None if is_na(v) else v for v in series.tolist()]
+    return [None if is_missing(v) else v for v in series.tolist()]
 
 
 def _cell_na(e: Any, typ: str) -> Any:
@@ -759,7 +760,7 @@ def _cell_na(e: Any, typ: str) -> Any:
 
 
 def _scalar_na(e: Any) -> bool:
-    return not isinstance(e, list | tuple | dict | np.ndarray | pd.DataFrame) and is_na(e)
+    return not isinstance(e, list | tuple | dict | np.ndarray | pd.DataFrame) and is_missing(e)
 
 
 def _first_any(e: Any) -> Any:
@@ -776,7 +777,7 @@ def _to_json_value(e: Any) -> Any:
     if isinstance(e, tuple | np.ndarray):
         return [_to_json_value(v) for v in list(e)]
     if isinstance(e, pd.Series):
-        return [None if is_na(v) else v for v in e.tolist()]
+        return [None if is_missing(v) else v for v in e.tolist()]
     if isinstance(e, pd.DataFrame):
         return [
             {k: (None if _scalar_na(v) else v) for k, v in r.items()} for r in e.to_dict("records")
@@ -903,12 +904,6 @@ def _bibr12_info(metadata: Any, source: Any, schema_version: str, extraction: An
     return frame
 
 
-def _chr1(v: Any) -> str | None:
-    if isinstance(v, list | dict):
-        return None
-    return as_character(v)
-
-
 def _names_records(persons: Any) -> Any:
     """The given/family names of a list of person objects (``names_df()``).
 
@@ -974,7 +969,7 @@ def _bibr12_paper(
     if isinstance(pid, list | dict):
         ids = _as_character_list(pid)
         pid = ids[0] if ids else None  # R keeps a character(0) or longer vector
-    p = Paper(None if pid is None else _chr1(_jnum(pid)))
+    p = Paper(None if pid is None else as_str(_jnum(pid)))
     p.info = info
     # the older given/family columns metacheck's modules read (ref_accuracy),
     # made in R's order: bib_match, then info_match; authors, then editors
@@ -1273,7 +1268,7 @@ def paper_to_bibr12(paper: Paper) -> dict[str, Any]:
     Returns the JSON structure :func:`bibr12_json` writes (arrays of scalars are
     ``_Array`` tuples).
     """
-    pid = _chr1(paper.paper_id)
+    pid = as_str(paper.paper_id)
     if not is_bibr12(paper):
         raise ValueError(
             'paper_write(schema_version = "12.0") writes papers read from a bibr 12.x '
@@ -1398,7 +1393,7 @@ def _info_first(info: pd.DataFrame, col: str, na_if_missing: bool = False) -> An
     """``as.character(info$col[[1]])`` (``character(0)`` for a missing column)."""
     if col not in info.columns or not len(info):
         return None if na_if_missing else _Array()
-    return _chr1(_json_scalar(info[col].iloc[0]))
+    return as_str(_json_scalar(info[col].iloc[0]))
 
 
 def _json_scalar(v: Any) -> Any:

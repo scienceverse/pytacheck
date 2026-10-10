@@ -6,7 +6,8 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r.base import as_character, trimws
-from metacheck._r.regex import compile_r, is_na, sub
+from metacheck._r.regex import compile_r, sub
+from metacheck._values import is_missing
 from metacheck.db._utils import (
     NA_character,
     NA_real,
@@ -79,7 +80,7 @@ def _chr_values(x: Any) -> list[str | None]:
             for e in v.values():
                 walk(e)
         else:
-            out.append(None if is_na(v) else as_character(v))
+            out.append(None if is_missing(v) else as_character(v))
 
     walk(list(x))
     return out
@@ -109,7 +110,7 @@ def _valid_values(values: list[Any]) -> list[bool]:
     rx = compile_r(_VALID_DOI, False, True, False)
     out = []
     for v in values:
-        s = None if is_na(v) else (v if isinstance(v, str) else as_character(v))
+        s = None if is_missing(v) else (v if isinstance(v, str) else as_character(v))
         out.append(s is not None and rx.search(s) is not None)
     return out
 
@@ -338,7 +339,7 @@ def doi_lookup(doi: Any) -> pd.DataFrame | None:
         return pd.DataFrame({"doi": pd.Series([], dtype="string")})
 
     cleaned = _clean(_chr_values(values))
-    is_valid = [not is_na(v) for v in values]
+    is_valid = [not is_missing(v) for v in values]
     valid_idx = [i for i, ok in enumerate(is_valid) if ok]
     urls = ["https://doi.org/" + url_encode(cleaned[i], reserved=True) for i in valid_idx]
     # small batch size because most lookups use crossref and email isn't supplied

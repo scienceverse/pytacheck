@@ -14,7 +14,8 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import as_character, bind_rows, gsub, is_na, plural, trimws
+from metacheck._r import as_character, bind_rows, gsub, plural, trimws
+from metacheck._values import as_str, is_missing
 from metacheck.module import module
 from metacheck.report import collapse_section, format_ref, scroll_table
 
@@ -57,21 +58,16 @@ _REFS = r"\s*\[[A-Z_0-9,; ]+\]"
 _SKIP = ("paper_id", "link", "ia_url")
 
 
-def _chr(values: Sequence[Any]) -> list[str | None]:
-    """``as.character()`` of a column (``None`` for ``NA``)."""
-    return [as_character(v) for v in values]
-
-
 def _col(df: pd.DataFrame, name: str) -> list[Any]:
     """``df$name`` as a list of cells (R: ``NULL`` for a missing column -> ``[]``)."""
     if name not in df.columns:
         return []
-    return [None if is_na(v) else v for v in df[name].tolist()]
+    return [None if is_missing(v) else v for v in df[name].tolist()]
 
 
 def _strip_refs(values: Sequence[Any]) -> list[str | None]:
     """``strip_refs()``: drop RegCheck's bracketed quote references."""
-    return list(gsub(_REFS, "", _chr(values)))
+    return list(gsub(_REFS, "", [as_str(v) for v in values]))
 
 
 def _tolower(x: str) -> str:
@@ -88,7 +84,7 @@ def _tolower(x: str) -> str:
 
 def _judgements(values: Sequence[Any]) -> list[str | None]:
     """``tolower(trimws(x))`` of a judgement column (``None`` for ``NA``)."""
-    return [None if v is None else _tolower(trimws(v)) for v in _chr(values)]
+    return [None if v is None else _tolower(trimws(v)) for v in map(as_str, values)]
 
 
 def _take(values: list[Any], rows: Sequence[int | None]) -> list[Any]:
@@ -189,7 +185,7 @@ def _full_text(paper: Any) -> str:
     text = paper.get("text")  # R: p$text is NULL when absent
     if text is None or "text" not in text.columns:
         return ""
-    return " ".join("NA" if is_na(t) else str(t) for t in text["text"].tolist())
+    return " ".join("NA" if is_missing(t) else str(t) for t in text["text"].tolist())
 
 
 def _count(j: Sequence[str | None], value: str) -> int:
@@ -372,8 +368,8 @@ def reg_check(
     # summary counts ----
     raw_judgements = _col(regcheck_table, "deviation_judgement")
     j = _judgements(raw_judgements)
-    paper_col = _chr(_col(regcheck_table, "paper_id"))
-    prereg_col = _chr(_col(regcheck_table, "prereg_id"))
+    paper_col = [as_str(v) for v in _col(regcheck_table, "paper_id")]
+    prereg_col = [as_str(v) for v in _col(regcheck_table, "prereg_id")]
     if len(j) != len(paper_col):
         # data.frame(paper_id = ..., j = NULL-derived character(0))
         raise ValueError(f"arguments imply differing number of rows: {len(paper_col)}, {len(j)}")
@@ -445,7 +441,7 @@ def reg_check(
             _JUDGEMENT_LABEL.get(v, as_character(orig)) if v is not None else None
             for v, orig in zip(_judgements(raw), raw, strict=True)
         ]
-        dimension = _chr(_take(report_cols["dimension"], rows))
+        dimension = [as_str(v) for v in _take(report_cols["dimension"], rows)]
         judgement_table = _data_frame(
             {
                 "dimension": dimension,

@@ -14,6 +14,7 @@ from typing import Any
 
 import pandas as pd
 
+from metacheck._values import is_missing
 from metacheck.module import get_prev_outputs, module
 from metacheck.modules._code_check import (
     CHECKED_LANGS,
@@ -21,7 +22,6 @@ from metacheck.modules._code_check import (
     analyse_files,
     col,
     collected_frame,
-    is_na,
     location_series,
     merge_manifests,
     seed_analysis_cols,
@@ -662,7 +662,7 @@ def file_languages(df: pd.DataFrame) -> list[str | None]:
 
 def code_langs_of(df: pd.DataFrame, i: int) -> Any:
     v = df["language"].iloc[i] if "language" in df.columns else None
-    return None if is_na(v) else v
+    return None if is_missing(v) else v
 
 
 def _any_name(df: pd.DataFrame, pattern: str) -> bool:
@@ -716,7 +716,7 @@ def _set_file_location(
     for i, m in enumerate(mask):
         if m:
             v = new[k % len(new)]
-            locs[i] = None if is_na(v) else v
+            locs[i] = None if is_missing(v) else v
             k += 1
     out["file_location"] = location_series(locs, out.index, files["file_location"])
     return out
@@ -736,9 +736,9 @@ def _splice_locations(all_files: pd.DataFrame, locations: dict[int, Any]) -> pd.
     like = out["file_location"] if "file_location" in out.columns else None
     locs = like.astype(object).tolist() if like is not None else [None] * len(out)
     for pos, loc in locations.items():
-        if not is_na(loc) and str(loc) == "":
+        if not is_missing(loc) and str(loc) == "":
             continue
-        locs[pos] = None if is_na(loc) else loc
+        locs[pos] = None if is_missing(loc) else loc
     out["file_location"] = location_series(locs, out.index, like)
     return out
 

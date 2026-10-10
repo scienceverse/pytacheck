@@ -18,8 +18,9 @@ from typing import Any, cast
 
 import pandas as pd
 
-from metacheck._r.base import as_character, plural, slashed
+from metacheck._r.base import as_character, paste, plural, slashed
 from metacheck._r.regex import grepl
+from metacheck._values import is_missing
 
 # R: listed_langs / checked_langs
 LISTED_LANGS = ("R", "Python", "SAS", "SPSS", "Stata", "Mplus", "MATLAB", "JASP")
@@ -79,14 +80,10 @@ _DTYPES = {
 # ---------------------------------------------------------------------------
 
 
-def is_na(x: Any) -> bool:
-    return x is None or x is pd.NA or (isinstance(x, float) and math.isnan(x))
-
-
 def col(df: pd.DataFrame, name: str, default: Any = None) -> list[Any]:
     """``df$name`` as a list (*default* recycled when the column is absent)."""
     if name in df.columns:
-        return [None if is_na(v) else v for v in df[name].tolist()]
+        return [None if is_missing(v) else v for v in df[name].tolist()]
     return [default] * len(df)
 
 
@@ -107,7 +104,7 @@ def _r_basename(x: str) -> str:
 
 def _base_names(x: Sequence[Any]) -> list[str | None]:
     """``gsub("\\\\", "/", x) |> basename()`` (``NA`` stays ``NA``)."""
-    return [None if is_na(v) else _r_basename(str(v).replace("\\", "/")) for v in x]
+    return [None if is_missing(v) else _r_basename(str(v).replace("\\", "/")) for v in x]
 
 
 def location_series(values: list[Any], index: Any, like: pd.Series | None) -> pd.Series:
@@ -117,11 +114,6 @@ def location_series(values: list[Any], index: Any, like: pd.Series | None) -> pd
         dtype = like.dtype
     out: pd.Series = pd.Series(values, index=index, dtype=dtype)
     return out
-
-
-def _paste_collapse(values: Sequence[Any], sep: str) -> str:
-    """``paste(x, collapse = sep)`` of a character vector (``NA`` is ``"NA"``)."""
-    return sep.join("NA" if is_na(v) else str(as_character(v)) for v in values)
 
 
 def _msg(exc: BaseException) -> str:
@@ -146,7 +138,7 @@ def _read_lines(path: Any, file_name: Any, language: Any) -> list[str | None]:
         code_read,
     )
 
-    name = None if is_na(file_name) else str(file_name)
+    name = None if is_missing(file_name) else str(file_name)
     is_rmd = name is not None and grepl(r"\.rmd$", name, ignore_case=True)
     is_qmd = name is not None and grepl(r"\.qmd$", name, ignore_case=True)
     is_qmd_py = is_qmd and language == "Python"
@@ -299,21 +291,21 @@ def analyse_files(
 
             absolute_paths = code_abs_path(file_nc)
             row["code_abs_path"] = len(absolute_paths)
-            row["absolute_paths"] = _paste_collapse(absolute_paths["abs_path"].tolist(), " | ")
+            row["absolute_paths"] = paste(absolute_paths["abs_path"].tolist(), collapse=" | ")
 
             if lang == "R":
                 setwd_calls = code_setwd(file_nc)["setwd_call"].tolist()
             else:
                 setwd_calls = []
             row["code_setwd"] = len(setwd_calls)
-            row["setwd_calls"] = _paste_collapse(setwd_calls, " | ")
+            row["setwd_calls"] = paste(setwd_calls, collapse=" | ")
 
             if lang == "R":
                 install_calls = code_install_packages(file_nc)["install_packages_call"].tolist()
             else:
                 install_calls = []
             row["code_install_packages"] = len(install_calls)
-            row["install_packages_calls"] = _paste_collapse(install_calls, " | ")
+            row["install_packages_calls"] = paste(install_calls, collapse=" | ")
 
             library_lines = [int(v) for v in code_library_lines(file_nc, lang)["line"].tolist()]
             row["library_lines"] = len(library_lines)
@@ -325,7 +317,7 @@ def analyse_files(
             from metacheck._r.base import r_sorted
 
             found = code_library_names(file_nc, lang)["package"].tolist()
-            pkgs = r_sorted([p for p in dict.fromkeys(found) if not is_na(p)])
+            pkgs = r_sorted([p for p in dict.fromkeys(found) if not is_missing(p)])
             row["packages_n"] = len(pkgs)
             row["packages"] = ", ".join(pkgs)
 
@@ -388,7 +380,7 @@ def seed_analysis_cols(code_files: pd.DataFrame) -> pd.DataFrame:
 
 
 def _num(values: list[Any]) -> list[float | None]:
-    return [None if is_na(v) else float(v) for v in values]
+    return [None if is_missing(v) else float(v) for v in values]
 
 
 def summary_table(
@@ -417,7 +409,7 @@ def summary_table(
     groups: dict[Any, list[int]] = {}
     keys: list[Any] = []
     for i, v in enumerate(pid_values):
-        key = None if is_na(v) else v
+        key = None if is_missing(v) else v
         if key not in groups:
             groups[key] = []
             keys.append(key)
@@ -483,7 +475,7 @@ def summary_table(
         af = all_files.reset_index(drop=True)
         by_paper: dict[str | None, list[int]] = {}
         for i, v in enumerate(af["paper_id"].tolist()):
-            by_paper.setdefault(None if is_na(v) else str(as_character(v)), []).append(i)
+            by_paper.setdefault(None if is_missing(v) else str(as_character(v)), []).append(i)
         pinned: dict[str | None, bool] = {}
         for pid, rows in by_paper.items():
             # the module's download caps and cache apply here too (R's
@@ -499,7 +491,7 @@ def summary_table(
             )
             pinned[pid] = bool(res.get("pinned") is True)
         out["code_version_pinned"] = [
-            pinned.get(None if is_na(p) else str(p), False) for p in out["paper_id"].tolist()
+            pinned.get(None if is_missing(p) else str(p), False) for p in out["paper_id"].tolist()
         ]
     else:
         out["code_version_pinned"] = bool(version_pin.get("pinned") is True)
@@ -610,7 +602,7 @@ def merge_manifests(
     failed = _failed_rows(failed)
     has_pid = "paper_id" in code_files.columns and len(code_files) > 0
     if has_pid:
-        pids = list(dict.fromkeys(None if is_na(v) else v for v in code_files["paper_id"]))
+        pids = list(dict.fromkeys(None if is_missing(v) else v for v in code_files["paper_id"]))
     else:
         from metacheck.papers.tables import paper_id
 
@@ -669,4 +661,4 @@ def _failed_cell(df: pd.DataFrame, name: str, i: int) -> Any:
 
         return R_NULL
     v = df[name].iloc[i]
-    return None if is_na(v) else v
+    return None if is_missing(v) else v

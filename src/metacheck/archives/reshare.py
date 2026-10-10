@@ -19,7 +19,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import is_na
+from metacheck._values import is_missing
 
 __all__ = ["reshare_file_download", "reshare_info", "reshare_links"]
 
@@ -129,11 +129,11 @@ def _info_by_id(
         ids = pd.DataFrame(
             {url_col: table[url_col].to_numpy(), id_name: _string_series([to_id(u) for u in urls])}
         )
-        if all(isinstance(v, str) or is_na(v) for v in urls):
+        if all(isinstance(v, str) or is_missing(v) for v in urls):
             ids[url_col] = ids[url_col].astype("string")
         ids = ids.drop_duplicates()
         ids = ids[ids[url_col].notna().to_numpy()].reset_index(drop=True)
-        valid = list(dict.fromkeys(v for v in ids[id_name].tolist() if not is_na(v)))
+        valid = list(dict.fromkeys(v for v in ids[id_name].tolist() if not is_missing(v)))
 
         if not valid:
             _tick(bar, f"No valid {label} links")
@@ -206,7 +206,7 @@ def _reshare_info(reshare_id: Any, pb: Any = None) -> pd.DataFrame:
     with _spinner(pb) as bar:
         rid = _paste(reshare_id)
         _tick(bar, f"* Retrieving info from ReShare eprint {rid}...")
-        obj: dict[str, pd.Series] = {"reshare_id": _cell(None if is_na(reshare_id) else rid)}
+        obj: dict[str, pd.Series] = {"reshare_id": _cell(None if is_missing(reshare_id) else rid)}
 
         resp = _query(f"https://reshare.ukdataservice.ac.uk/id/eprint/{rid}", _reshare_headers)
         if resp is None or resp.status_code != 200:

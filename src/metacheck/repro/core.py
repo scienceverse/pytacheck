@@ -42,7 +42,7 @@ from typing import Any, cast
 import pandas as pd
 
 from metacheck._env import env_get
-from metacheck._r.base import as_character, r_sort_key, slashed, trimws
+from metacheck._r.base import as_character, paste, r_sort_key, slashed, trimws
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import (
     gregexpr_all,
@@ -54,6 +54,7 @@ from metacheck._r.regex import (
     strsplit,
     sub,
 )
+from metacheck._values import as_float, as_str, is_missing
 
 __all__ = [
     "MaterialisedRoot",
@@ -80,27 +81,14 @@ _QUOTED = r"""(['"])((?:[^'"\\]|\\.)*)\1"""
 _EXT_END = r"\.[A-Za-z0-9]{1,8}$"
 
 
-def _is_na(x: Any) -> bool:
-    if x is None or x is pd.NA:
-        return True
-    return isinstance(x, float) and x != x
-
-
 def _is_true(x: Any) -> bool:
     """R ``isTRUE()`` of one logical value."""
-    return not _is_na(x) and x is not None and bool(x) is True
+    return not is_missing(x) and x is not None and bool(x) is True
 
 
 def _is_false(x: Any) -> bool:
     """R ``isFALSE()`` of one logical value."""
-    return not _is_na(x) and x is not None and bool(x) is False
-
-
-def _chr(x: Any) -> str | None:
-    """One value as R character (``None`` for ``NA``)."""
-    if _is_na(x):
-        return None
-    return x if isinstance(x, str) else as_character(x)
+    return not is_missing(x) and x is not None and bool(x) is False
 
 
 def _chr_list(x: Any) -> list[str | None]:
@@ -110,15 +98,15 @@ def _chr_list(x: Any) -> list[str | None]:
     if isinstance(x, str):
         return [x]
     if isinstance(x, pd.Series | pd.Index):
-        return [_chr(v) for v in x.tolist()]
+        return [as_str(v) for v in x.tolist()]
     if isinstance(x, Iterable):
-        return [_chr(v) for v in x]
-    return [_chr(x)]
+        return [as_str(v) for v in x]
+    return [as_str(x)]
 
 
 def _col(df: pd.DataFrame, name: str) -> list[Any]:
     """A data-frame column as a plain list (``NA`` -> ``None``)."""
-    return [None if _is_na(v) else v for v in df[name].tolist()]
+    return [None if is_missing(v) else v for v in df[name].tolist()]
 
 
 def _na_str(x: str | None) -> str:
@@ -128,7 +116,7 @@ def _na_str(x: str | None) -> str:
 
 def _paste_lines(lines: Sequence[str | None]) -> str:
     """``paste(lines, collapse = "\\n")`` (``NA`` pastes as ``"NA"``)."""
-    return "\n".join("NA" if s is None else s for s in lines)
+    return cast(str, paste(lines, collapse="\n"))
 
 
 def _bs2fs(x: str | None) -> str | None:
@@ -1047,7 +1035,7 @@ def repro_run_order(
         # a file without code text (NA, not read) has no reads/writes/sources
         parts = [
             _frame({"file_name": ("string", [])})
-            if _is_na(texts[i])
+            if is_missing(texts[i])
             else repro_file_io({f"row{i}": texts[i]})
             for i in range(n)
         ]
@@ -1354,23 +1342,6 @@ def _adist(a: str, b: str) -> int:
     return prev[-1]
 
 
-def _as_numeric(x: Any) -> float | None:
-    """``as.numeric()`` of one value (``None`` for NA / unparseable)."""
-    if _is_na(x):
-        return None
-    if isinstance(x, bool):
-        return float(x)
-    if isinstance(x, int | float):
-        return float(x)
-    s = str(x).strip()
-    try:
-        if len(s) > 2 and s.lstrip("+-")[:2].lower() == "0x":
-            return float(int(s, 16))
-        return float(s)
-    except ValueError:
-        return None
-
-
 def repro_missing_inputs(
     refs: Any,
     plan: pd.DataFrame | None,
@@ -1447,7 +1418,7 @@ def repro_missing_inputs(
             sz = (
                 None
                 if b is None or not has_size
-                else _as_numeric(skipped["file_size"].iloc[skip_base.index(b)])  # type: ignore[index]
+                else as_float(skipped["file_size"].iloc[skip_base.index(b)])  # type: ignore[index]
             )
             mb = f" ({sz / (1024 * 1024):.0f} MB)" if sz is not None and math.isfinite(sz) else ""
             rows.append(
@@ -1463,7 +1434,7 @@ def repro_missing_inputs(
         if b in struct_base:
             # which(struct_base == b)[1] is NA for an NA basename: location NA
             loc = (
-                _chr(structure_df["file_location"].iloc[struct_base.index(b)])  # type: ignore[index]
+                as_str(structure_df["file_location"].iloc[struct_base.index(b)])  # type: ignore[index]
                 if b is not None and "file_location" in structure_df.columns  # type: ignore[union-attr]
                 else None
             )
@@ -1799,7 +1770,7 @@ def repro_write_scripts(
 
         injected: str | None = None
         if inject_libs is not None and fn in inject_libs:
-            injected = _chr(inject_libs[fn])
+            injected = as_str(inject_libs[fn])
         if injected is not None and injected != "":
             txt = [f"library({injected})  # [reproducibility_check injected]", *txt]
 
@@ -1968,7 +1939,7 @@ def _install_r(
         if isinstance(val, bool):
             header.append(f"{key} <- {'TRUE' if val else 'FALSE'}")
         else:
-            header.append(f"{key} <- {_r_string(_chr(val))}")
+            header.append(f"{key} <- {_r_string(as_str(val))}")
     code = "\n".join(header) + "\n" + _INSTALL_ONE_R
     try:
         res = _run_r(code, timeout=timeout)
@@ -2131,7 +2102,7 @@ def _repro_classify_install_message(msg: str | None) -> str:
     ``"transitive_dependency_missing"``, ``"cran_unavailable"`` or
     ``"other"``.
     """
-    if msg is None or _is_na(msg) or msg == "":
+    if msg is None or is_missing(msg) or msg == "":
         return "other"
     if grepl(_COMPILE_PAT, msg, ignore_case=True, perl=True):
         return "compile_failure"

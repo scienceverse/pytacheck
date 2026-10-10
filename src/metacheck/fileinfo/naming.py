@@ -20,6 +20,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r import grepl, regexec, regextract_all, slashed, sub
+from metacheck._values import is_missing
 
 __all__ = ["check_file_naming"]
 
@@ -61,15 +62,6 @@ Row = tuple[str | None, str, str]  # (file_name, rule, detail)
 # -- R helpers -----------------------------------------------------------------
 
 
-def _is_na(x: Any) -> bool:
-    if x is None or x is pd.NA:
-        return True
-    try:
-        return bool(x != x)  # NaN
-    except (TypeError, ValueError):
-        return False
-
-
 def _chr_list(x: Any) -> list[str | None]:
     """An R character-vector argument as a list of optional strings."""
     if x is None:
@@ -79,8 +71,8 @@ def _chr_list(x: Any) -> list[str | None]:
     if isinstance(x, pd.Series | pd.Index):
         x = x.tolist()
     if isinstance(x, Iterable) and not isinstance(x, Mapping):
-        return [None if _is_na(v) else str(v) for v in x]
-    return [None if _is_na(x) else str(x)]
+        return [None if is_missing(v) else str(v) for v in x]
+    return [None if is_missing(x) else str(x)]
 
 
 def _expand(path: str) -> str:

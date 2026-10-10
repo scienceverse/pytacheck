@@ -14,7 +14,8 @@ import orjson
 import pandas as pd
 
 from metacheck._r.base import as_character
-from metacheck._r.regex import gsub, is_na
+from metacheck._r.regex import gsub
+from metacheck._values import is_missing
 from metacheck.papers.model import Paper, PaperList
 from metacheck.papers.schema import coerce_table, records_to_frame
 
@@ -235,7 +236,7 @@ def test_paper(text: Sequence[str] | None = None, url: Sequence[str] = ()) -> Pa
     p = Paper()
     n = len(text)
     # as.character(): NA stays NA, numbers use R's formatting
-    chars = [None if is_na(t) else t if isinstance(t, str) else as_character(t) for t in text]
+    chars = [None if is_missing(t) else t if isinstance(t, str) else as_character(t) for t in text]
     p.text = pd.DataFrame(
         {
             "text_id": pd.Series(range(1, n + 1), dtype="Int64"),

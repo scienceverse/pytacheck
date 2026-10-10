@@ -19,7 +19,8 @@ import os
 from pathlib import Path
 from typing import Any
 
-from metacheck._r import as_character, gsub, is_na
+from metacheck._r import as_character, gsub
+from metacheck._values import is_missing
 
 __all__ = ["repo_info_cache", "repo_info_cache_clear"]
 
@@ -73,7 +74,7 @@ def _repo_info_cache_dir() -> str:
 
 def _repo_info_cache_key(host: str, id: Any) -> str:
     """Port of R/repo-info-cache.R::.repo_info_cache_key(): filesystem-safe key."""
-    ident = "unknown" if id is None else ("NA" if is_na(id) else as_character(id))
+    ident = "unknown" if id is None else ("NA" if is_missing(id) else as_character(id))
     key = f"{host}_{ident}"
     key = gsub("[^A-Za-z0-9._-]+", "_", key)
     key = gsub("^_+|_+$", "", key)
@@ -149,7 +150,7 @@ def _repo_info_list_ok(value: Any) -> bool:
         if "gated" not in value.columns or len(value) != 1:
             return True
         return value["gated"].iloc[0] is not True and not (
-            not is_na(value["gated"].iloc[0]) and bool(value["gated"].iloc[0]) is True
+            not is_missing(value["gated"].iloc[0]) and bool(value["gated"].iloc[0]) is True
         )
     if isinstance(value, dict):
         gated = value.get("gated")

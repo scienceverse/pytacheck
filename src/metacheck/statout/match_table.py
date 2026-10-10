@@ -28,18 +28,11 @@ import numpy as np
 import pandas as pd
 
 from metacheck._r import grepl, regextract, strsplit, sub, trimws
+from metacheck._values import as_str, is_missing
 
 __all__: list[str] = []
 
 _INT_MAX = 2**31 - 1
-
-
-def _is_na(x: Any) -> bool:
-    if x is None or x is pd.NA or x is pd.NaT:
-        return True
-    if isinstance(x, float | np.floating):
-        return bool(np.isnan(x))
-    return False
 
 
 def _tolower(s: str) -> str:
@@ -52,19 +45,8 @@ def _tolower(s: str) -> str:
     return "".join(out)
 
 
-def _chr(x: Any) -> str | None:
-    """``as.character()`` of a scalar cell; ``None`` for NA."""
-    if _is_na(x):
-        return None
-    if isinstance(x, str):
-        return x
-    from metacheck._r import as_character
-
-    return as_character(x)
-
-
 def _scalar(x: Any) -> Any:
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, np.generic):
         return x.item()
@@ -98,7 +80,7 @@ def _table_caption_family(caption: Any) -> str | None:
     """
     if caption is None:
         caption = ""
-    cap_s = _chr(caption)
+    cap_s = as_str(caption)
     if cap_s is None:
         return None
     cap = _tolower(cap_s)
@@ -122,7 +104,7 @@ def _table_caption(paper: Any, section_id: Any) -> str | None:
     table's ``section_id`` (Grobid's figDesc), pasted with spaces; ``None``
     (R ``NA``) when there is none.
     """
-    if _is_na(section_id):
+    if is_missing(section_id):
         return None
     txt = paper.get("text") if hasattr(paper, "get") else None
     if not isinstance(txt, pd.DataFrame) or len(txt) == 0:
@@ -136,7 +118,7 @@ def _table_caption(paper: Any, section_id: Any) -> str | None:
     if "text" not in txt.columns:
         return ""  # paste(NULL, collapse = " ")
     texts = txt["text"][hit].tolist()
-    return " ".join("NA" if _is_na(t) else str(t) for t in texts)
+    return " ".join("NA" if is_missing(t) else str(t) for t in texts)
 
 
 def _table_header_ambiguous(header: Any) -> bool:
@@ -146,7 +128,7 @@ def _table_header_ambiguous(header: Any) -> bool:
     """
     if header is None:
         header = ""
-    h_s = _chr(header)
+    h_s = as_str(header)
     if h_s is None:
         return False  # nzchar(NA) is TRUE and grepl(NA) FALSE
     h = trimws(h_s)
@@ -155,7 +137,7 @@ def _table_header_ambiguous(header: Any) -> bool:
 
 def _last_segment(h: Any, trim: bool = False) -> str | None:
     """The last ``" / "``-joined segment (``strsplit(..., fixed = TRUE)``)."""
-    s = _chr(h)
+    s = as_str(h)
     if s is None:
         return None
     if trim:
@@ -197,7 +179,7 @@ def _table_typed_cells(content: Any, caption: Any) -> list[list[dict[str, Any]]]
         out: list[dict[str, Any]] = []
         for i in range(n):
             ci = i + 1
-            raw = _chr(cells[i])
+            raw = as_str(cells[i])
             val = None if raw is None else trimws(raw)
             if val == "":
                 continue

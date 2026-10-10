@@ -19,14 +19,13 @@ coercions (``as.character()``, ``as.numeric()``, ``tolower()``, ``median()``,
 from __future__ import annotations
 
 import datetime as dt
-import functools
 import math
 import statistics
 from collections.abc import Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any, overload
 
 from metacheck._r.base import as_character as _as_character_scalar
-from metacheck._r.regex import compile_r
+from metacheck._values import as_float
 
 if TYPE_CHECKING:
     import numpy as np
@@ -383,48 +382,9 @@ def dbl_chr(f: float) -> str:
     return "NaN" if s is None else s
 
 
-_C_SPACE = " \t\n\v\f\r"
-_DECIMAL = compile_r(r"[+-]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][+-]?[0-9]+)?", perl=True)
-_HEX = compile_r(
-    r"([+-]?)0[xX]((?:[0-9a-fA-F]+\.?[0-9a-fA-F]*|\.[0-9a-fA-F]+)(?:[pP][+-]?[0-9]+)?)", perl=True
-)
-_SPECIAL = {"nan": math.nan, "inf": math.inf, "infinity": math.inf}
-#: what a parseable number can start with (sign, digit, point, NA / NaN / Inf)
-_NUM_START = frozenset("+-.0123456789nNiI")
-
-
-@functools.lru_cache(maxsize=65536)
 def as_numeric_str(s: str | None) -> float | None:
-    """``as.numeric(s)`` for one string: ``None`` is ``NA``; ``"NaN"`` gives NaN.
-
-    Mirrors ``String2Real()``/``R_strtod()``: surrounding C blanks are ignored,
-    ``"NA"`` is ``NA``, decimal and hexadecimal (``0x1A``, ``0x1p3``) numbers,
-    and ``NaN``/``Inf``/``Infinity`` in any case with an optional sign.
-    """
-    if s is None:
-        return None
-    body = s.strip(_C_SPACE)
-    if not body or body == "NA" or body[0] not in _NUM_START:
-        return None
-    if _DECIMAL.fullmatch(body):
-        return float(body)
-    m = _HEX.fullmatch(body)
-    if m:
-        mant = m.group(2)
-        try:
-            v = float.fromhex("0x" + mant if "p" in mant.lower() else "0x" + mant + "p0")
-        except (ValueError, OverflowError):
-            return None
-        return -v if m.group(1) == "-" else v
-    sign = 1.0
-    rest = body
-    if rest[:1] in "+-":
-        sign = -1.0 if rest[0] == "-" else 1.0
-        rest = rest[1:]
-    special = _SPECIAL.get(rest.lower())
-    if special is None:
-        return None
-    return special if special != special else sign * special
+    """``as.numeric(s)`` for one string: ``None`` is ``NA``; ``"NaN"`` gives NaN."""
+    return as_float(s)
 
 
 def num(x: Any) -> list[float | None]:

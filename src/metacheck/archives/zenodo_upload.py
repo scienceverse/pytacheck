@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from metacheck._r import is_na
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     import httpx
@@ -259,7 +259,7 @@ def _zenodo_license_id(osf_license: Any) -> str | None:
     """
     from metacheck._r import gsub
 
-    if osf_license is None or (not isinstance(osf_license, str) and is_na(osf_license)):
+    if osf_license is None or (not isinstance(osf_license, str) and is_missing(osf_license)):
         return None
     if not isinstance(osf_license, str):
         values = list(osf_license)
@@ -269,7 +269,7 @@ def _zenodo_license_id(osf_license: Any) -> str | None:
             # R: `is.na(osf_license) || ...` on a longer vector
             raise ValueError(f"'length = {len(values)}' in coercion to 'logical(1)'")
         osf_license = values[0]
-    if is_na(osf_license) or osf_license == "":
+    if is_missing(osf_license) or osf_license == "":
         return None
     key = gsub("[^a-z0-9]", "", str(osf_license).lower())
     return _LICENSE_MAP.get(key)
@@ -386,11 +386,11 @@ def _has_path(x: Any, path: tuple[str, ...]) -> bool:
 
 
 def _na_chr(x: Any) -> Any:
-    return None if x is None or is_na(x) else x
+    return None if x is None or is_missing(x) else x
 
 
 def _na(x: Any) -> str:
-    return "NA" if x is None or is_na(x) else str(x)
+    return "NA" if x is None or is_missing(x) else str(x)
 
 
 def _zenodo_classify(files: list[str]) -> list[str]:
@@ -509,7 +509,7 @@ def _zenodo_meta_from_folder(folder: str) -> dict[str, Any] | None:
             nm = "" if nm is None else nm
         entry: dict[str, Any] = {"name": nm}
         orcid = r_dollar(c, "orcid")
-        if orcid is not None and not is_na(orcid) and orcid != "":
+        if orcid is not None and not is_missing(orcid) and orcid != "":
             entry["orcid"] = orcid
         if entry["name"] != "":
             kept.append((key, entry))
@@ -551,12 +551,12 @@ def _zenodo_build_metadata(
     from metacheck.archives.github import _dollar as r_dollar
 
     title = r_dollar(meta, "title")
-    if title is None or is_na(title) or title == "":
+    if title is None or is_missing(title) or title == "":
         title = _r_basename(folder)
 
     osf_id = r_dollar(meta, "osf_id")
     description = r_dollar(meta, "description")
-    if description is None or is_na(description) or description == "":
+    if description is None or is_missing(description) or description == "":
         if osf_id is not None:
             description = (
                 f"Files archived from the OSF project https://osf.io/{_na(as_character(osf_id))}/"
@@ -705,7 +705,7 @@ def _jsonlite(x: Any) -> str:
     if isinstance(x, numbers.Real) and not isinstance(x, numbers.Integral) and math.isnan(x):
         # a missing double (pytacheck's NaN is R's NA_real_) is the string "NA"
         return '"NA"'
-    if x is None or (not isinstance(x, list | tuple | Mapping | str) and is_na(x)):
+    if x is None or (not isinstance(x, list | tuple | Mapping | str) and is_missing(x)):
         return "null"
     if isinstance(x, numbers.Integral):
         return str(int(x))
@@ -764,7 +764,7 @@ def _result_row(
     error: Any,
 ) -> pd.DataFrame:
     def chr1(v: Any) -> pd.Series:
-        return pd.Series([None if v is None or is_na(v) else str(v)], dtype="string")
+        return pd.Series([None if v is None or is_missing(v) else str(v)], dtype="string")
 
     return pd.DataFrame(
         {
@@ -837,13 +837,13 @@ def zenodo_upload(
                 "Pass the result of osf_file_download(), or a vector of folder paths."
             )
         dl_paths = folders["download_path"].tolist()
-        found = [str(p) for p in dict.fromkeys(p for p in dl_paths if not is_na(p))]
+        found = [str(p) for p in dict.fromkeys(p for p in dl_paths if not is_missing(p))]
         given: list[str | None] = list(found)
         if "osf_project" in folders.columns:
             first: dict[str, Any] = {}
             for p, o in zip(dl_paths, folders["osf_project"].tolist(), strict=True):
-                if not is_na(p) and str(p) not in first:
-                    first[str(p)] = None if is_na(o) else o
+                if not is_missing(p) and str(p) not in first:
+                    first[str(p)] = None if is_missing(o) else o
             osf_ids = [first.get(p) for p in found]
     else:
         given = [as_character(p) for p in _as_list(folders)]
@@ -893,7 +893,7 @@ def zenodo_upload(
         sizes = [[float(os.path.getsize(x)) for x in f] for f in file_lists]
 
         skipped = [0] * len(paths)
-        if max_file_size is not None and not is_na(max_file_size) and max_file_size > 0:
+        if max_file_size is not None and not is_missing(max_file_size) and max_file_size > 0:
             import math
 
             if math.isfinite(max_file_size):
@@ -1195,7 +1195,7 @@ def zenodo_upload(
             )
 
         dep_ids = out["deposition_id"].tolist()
-        n_ok = sum(1 for d in dep_ids if not is_na(d))
+        n_ok = sum(1 for d in dep_ids if not is_missing(d))
         n_uploaded = int(sum(int(v) for v in out["files_uploaded"].tolist()))
         _message(
             f"\nCreated {n_ok} deposition{plural(n_ok)} on "
@@ -1205,7 +1205,7 @@ def zenodo_upload(
         urls = [
             (u, f)
             for u, f in zip(out["url"].tolist(), out["folder"].tolist(), strict=True)
-            if not is_na(u)
+            if not is_missing(u)
         ]
         if urls:
             if publish is True:

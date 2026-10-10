@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
-from metacheck._r import is_na
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     from lxml import etree
@@ -43,7 +43,7 @@ def _fsd_study_id(url: Any) -> Any:
         return None
     scalar = isinstance(url, str) or not isinstance(url, list | tuple | pd.Series)
     vals = [url] if scalar else list(url)
-    strs = [None if is_na(v) else (v if isinstance(v, str) else as_character(v)) for v in vals]
+    strs = [None if is_missing(v) else (v if isinstance(v, str) else as_character(v)) for v in vals]
     out: list[str | None] = []
     for m in regextract(_STUDY_RX, strs, perl=True):
         if m is None or m == "":

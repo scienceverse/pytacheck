@@ -41,8 +41,8 @@ import pandas as pd
 from metacheck._r.base import as_character, trimws
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import grepl, gsub
+from metacheck._values import as_str
 from metacheck.repro.core import (
-    _chr,
     _chr_list,
     _classify_error,
     _col,
@@ -249,7 +249,7 @@ def _repro_docker_resource_args() -> list[str]:
         if v is None:
             return []
         vals = list(v) if isinstance(v, list | tuple) else [v]
-        return [_chr(x) or "NA" for x in vals]
+        return [as_str(x) or "NA" for x in vals]
 
     memory = get("memory_gb")
     # paste0(limits$memory_gb, "g"): NULL pastes as "g"
@@ -403,7 +403,7 @@ def _read_install_results(path: str) -> pd.DataFrame | None:
             "package": pd.Series(_chr_list(df.get("package", [])), dtype="string"),
             "source": pd.Series(_chr_list(df.get("source", [])), dtype="string"),
             "installed": pd.Series(
-                [None if _chr(v) is None else bool(v) for v in df.get("installed", [])],
+                [None if as_str(v) is None else bool(v) for v in df.get("installed", [])],
                 dtype="boolean",
             ),
             "message": pd.Series(_chr_list(df.get("message", [])), dtype="string"),

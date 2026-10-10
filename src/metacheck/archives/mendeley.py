@@ -13,7 +13,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import is_na
+from metacheck._values import is_missing
 
 __all__ = ["mendeley_info", "mendeley_links"]
 
@@ -129,7 +129,7 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
     with _spinner(pb) as bar:
         mid = _paste(mendeley_id)
         _tick(bar, f"* Retrieving info from Mendeley Data {mid}...")
-        obj: dict[str, pd.Series] = {"mendeley_id": _cell(None if is_na(mendeley_id) else mid)}
+        obj: dict[str, pd.Series] = {"mendeley_id": _cell(None if is_missing(mendeley_id) else mid)}
 
         resp = _query(f"https://data.mendeley.com/public-api/datasets/{mid}", lambda spec: spec)
         if resp is None or resp.status_code != 200:

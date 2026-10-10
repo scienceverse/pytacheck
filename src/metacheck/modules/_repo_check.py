@@ -19,7 +19,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from metacheck._r import as_character, grepl, gsub, is_na, slashed, sub
+from metacheck._r import as_character, grepl, gsub, slashed, sub
+from metacheck._values import is_missing
 
 # ---------------------------------------------------------------------------
 # R idioms
@@ -31,7 +32,7 @@ class RError(RuntimeError):
 
 
 def _na(x: Any) -> bool:
-    return x is None or is_na(x)
+    return x is None or is_missing(x)
 
 
 def _chr(values: Iterable[Any]) -> pd.Series:

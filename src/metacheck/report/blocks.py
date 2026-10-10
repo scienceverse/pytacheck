@@ -18,6 +18,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.base import plural
+from metacheck._values import is_missing
 
 __all__ = [
     "ReportTable",
@@ -165,7 +166,7 @@ def link(url: Any, text: Any = None, new_window: bool = True, type: str = "") ->
         # a missing DOI stays missing (metacheck's sprintf() linked it to
         # "https://doi.org/NA"; U8)
         urls = [
-            None if _is_na(u) else "https://doi.org/" + gsub(r"https?://doi.org/", "", u)
+            None if is_missing(u) else "https://doi.org/" + gsub(r"https?://doi.org/", "", u)
             for u in urls
         ]
     # R's default `text = url` is only evaluated now, after the doi rewrite
@@ -176,10 +177,10 @@ def link(url: Any, text: Any = None, new_window: bool = True, type: str = "") ->
     for i in range(n):
         u = urls[i % len(urls)]
         t = texts[i % len(texts)]
-        if _is_na(u):
+        if is_missing(u):
             out.append(None)
             continue
-        shown = gsub(r"^https?://", "", "NA" if _is_na(t) else str(t))
+        shown = gsub(r"^https?://", "", "NA" if is_missing(t) else str(t))
         out.append(f"<a href='{u}'{nw}>{shown}</a>")
     return out[0] if scalar and len(out) == 1 else out
 
@@ -201,13 +202,9 @@ def format_ref(bib: str | Sequence[str]) -> str | list[str]:
     return [tidy(b) for b in bib]
 
 
-def _is_na(x: Any) -> bool:
-    return x is None or x is pd.NA or (isinstance(x, float) and math.isnan(x))
-
-
 def _cap_num(x: float | None) -> str:
     """Port of ``.cap_num()``: a number for a cap message (never scientific)."""
-    if _is_na(x):
+    if is_missing(x):
         return "unknown"
     v = float(x)  # type: ignore[arg-type]
     if math.isinf(v):

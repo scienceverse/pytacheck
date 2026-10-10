@@ -257,14 +257,9 @@ _WS = " \t\r\n"  # trimws()'s default whitespace
 _BLANK = {" "}
 
 
-def _trim(x: str | None) -> str | None:
-    """R ``trimws()`` of one value (``NA`` stays ``NA``)."""
-    return None if x is None else x.strip(_WS)
-
-
 def _stata_is_rule_line(line: str | None) -> bool:
     """Port of R/stata.R::.stata_is_rule_line(): an ``{hline}``-drawn rule."""
-    tl = _trim(line)
+    tl = trimws(line)
     if tl is None:  # nzchar(NA) is TRUE; grepl(NA) is FALSE
         return False
     return tl != "" and _rule_re().search(tl) is not None
@@ -315,7 +310,7 @@ def _stata_output_tables(lines: Sequence[str]) -> list[dict[str, Any]]:
             header_start = i - 1
             while (
                 header_start >= 1
-                and _trim(lines[header_start - 1]) != ""
+                and trimws(lines[header_start - 1]) != ""
                 and not _stata_is_rule_line(lines[header_start - 1])
             ):
                 header_start -= 1
@@ -326,7 +321,7 @@ def _stata_output_tables(lines: Sequence[str]) -> list[dict[str, Any]]:
             header_lines = lines[header_start - 1 : i - 1]
             j = i + 1
             data_lines: list[str] = []
-            while j <= n and not _stata_is_rule_line(lines[j - 1]) and _trim(lines[j - 1]) != "":
+            while j <= n and not _stata_is_rule_line(lines[j - 1]) and trimws(lines[j - 1]) != "":
                 data_lines.append(lines[j - 1])
                 j += 1
             if j <= n and _stata_is_rule_line(lines[j - 1]):

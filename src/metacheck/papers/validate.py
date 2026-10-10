@@ -14,7 +14,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from metacheck._r.regex import is_na
+from metacheck._values import is_missing
 from metacheck.papers.model import Paper
 from metacheck.papers.schema import load_schema_bibr12, table_columns
 
@@ -44,7 +44,7 @@ def _r_typeof(s: pd.Series) -> str:
     values: list[Any] = s.tolist()
     if any(isinstance(v, _LIST_CELL) for v in values):
         return "list"
-    present = [v for v in values if not is_na(v)]
+    present = [v for v in values if not is_missing(v)]
     if not present:
         return "list"  # an object column of NULLs (or no rows) is a list column
     if all(isinstance(v, bool | np.bool_) for v in present):

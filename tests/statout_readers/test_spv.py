@@ -16,11 +16,11 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from metacheck._values import as_float
 from metacheck.statout import spv
 from metacheck.statout.spv import (
     SpvBinaryEOF,
     _as_integer,
-    _as_numeric,
     _make_unique,
     _spv_decode_legacy_data,
     _spv_decode_light_table,
@@ -143,7 +143,7 @@ def test_as_numeric_and_integer_match_r() -> None:
         "1d5",
         "  ",
     ]
-    got = [_as_numeric(v) for v in vals]
+    got = [as_float(v) for v in vals]
     assert got[0] == 1.0 and got[1] is None and got[2] == 2.0 and got[3] == 1e5 and got[4] == 26.0
     assert got[5] == float("inf") and got[6] == float("-inf") and got[7] != got[7]
     assert got[8:] == [None, None, float("inf"), None, None]

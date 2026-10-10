@@ -15,6 +15,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r import grepl, plural, r_round
+from metacheck._values import is_true
 from metacheck.module import module
 from metacheck.modules import _data_check as h
 
@@ -849,7 +850,7 @@ def _classify(
             llm_model_used = grp.attrs.get("model")
         roster_check = grp.attrs.get("roster_check")
         group_unresolved = list(grp.attrs.get("unresolved") or [])
-        group_no_evidence = h._is_true(grp.attrs.get("no_evidence"))
+        group_no_evidence = is_true(grp.attrs.get("no_evidence"))
     return {
         "all_files": all_files,
         "llm_file_updates": llm_file_updates,
@@ -916,7 +917,7 @@ def _download(
 
     file_url = h._col(all_files, "file_url")
     zip_peek_reason: list[Any] = [None] * n
-    if h._is_true(peek_zips) and download != "none" and file_url is not None:
+    if is_true(peek_zips) and download != "none" and file_url is not None:
         from metacheck.archives.zip_peek import zip_decision
 
         is_zip = [
@@ -1013,7 +1014,7 @@ def _download(
             zips = _is_zip(names)
             tars = _is_tar_archive(names)
             gzs = _is_single_compress(names)
-            da_zip = [i for i in range(n) if h._is_true(peek_zips) and on_disk[i] and zips[i]]
+            da_zip = [i for i in range(n) if is_true(peek_zips) and on_disk[i] and zips[i]]
             da_tar = [i for i in range(n) if on_disk[i] and tars[i]]
             da_gz = [i for i in range(n) if on_disk[i] and gzs[i]]
             da = da_zip + da_tar + da_gz
@@ -1144,7 +1145,7 @@ def _file_columns(
     def getf(field: str) -> list[Any]:
         return [None if h._na(c.get(field)) else c.get(field) for c in cls]
 
-    is_numeric = [h._is_true(c.get("is_numeric")) for c in cls]
+    is_numeric = [is_true(c.get("is_numeric")) for c in cls]
     concept = getf("concept")
     file_is_qualtrics = bool(data_check_is_qualtrics(df))
     if file_is_qualtrics:
@@ -1158,11 +1159,7 @@ def _file_columns(
     for j in range(p):
         c = cls[j]
         x_for_stats = c.get("numeric_values")
-        if (
-            x_for_stats is None
-            and h._is_true(c.get("ambiguous"))
-            and h._is_true(c.get("is_numeric"))
-        ):
+        if x_for_stats is None and is_true(c.get("ambiguous")) and is_true(c.get("is_numeric")):
             x_for_stats = df.iloc[:, j]
         stats.append(_col_stats(x_for_stats, df.iloc[:, j]))
     stats_mat = _stats_frame(stats)
@@ -1183,7 +1180,7 @@ def _file_columns(
     data["concept"] = _str_series(concept)
     for field in ("role", "unit", "quality", "parse_note"):
         data[field] = _str_series(getf(field))
-    data["ambiguous"] = pd.Series([h._is_true(c.get("ambiguous")) for c in cls], dtype="boolean")
+    data["ambiguous"] = pd.Series([is_true(c.get("ambiguous")) for c in cls], dtype="boolean")
     data["is_numeric"] = pd.Series(is_numeric, dtype="boolean")
     data["is_qualtrics"] = pd.Series([file_is_qualtrics] * p, dtype="boolean")
     data["qualtrics_display_order"] = pd.Series(qdo, dtype="boolean")
@@ -1223,7 +1220,7 @@ def _extract(
 
         def trial(p: Any) -> bool:
             try:
-                return h._is_true(_bh_is_trial_level_file(p))
+                return is_true(_bh_is_trial_level_file(p))
             except Exception:
                 return False
 
@@ -1280,7 +1277,7 @@ def _extract(
                 df = data_strip_qualtrics_header(df)
             cls, _ = _facets(df)
             usable = _tabular_usable(cls, df)
-            if not h._is_true(usable.get("usable")) and h._file_ext(fname) in ("xlsx", "xls"):
+            if not is_true(usable.get("usable")) and h._file_ext(fname) in ("xlsx", "xls"):
                 sheets = _excel_sheets(loc)
                 sheets = h._setdiff(sheets, sheets[:1])  # sheet 1 already tried
                 for sh in sheets:
@@ -1294,10 +1291,10 @@ def _extract(
                         continue
                     cls2, _ = _facets(df2)
                     usable2 = _tabular_usable(cls2, df2)
-                    if h._is_true(usable2.get("usable")):
+                    if is_true(usable2.get("usable")):
                         df, cls, usable = df2, cls2, usable2
                         break
-            if not h._is_true(usable.get("usable")):
+            if not is_true(usable.get("usable")):
                 non_tabular[fname] = usable.get("reason")
                 continue
             previews[fname] = df
@@ -1355,7 +1352,7 @@ def _extract(
 
         if len(columns_df) > 0:
             rep = [None if h._na(v) else v for v in columns_df["representation"].tolist()]
-            isnum = [h._is_true(v) for v in columns_df["is_numeric"].tolist()]
+            isnum = [is_true(v) for v in columns_df["is_numeric"].tolist()]
             rep = [
                 ("numeric" if nm else "text") if r is None else r
                 for r, nm in zip(rep, isnum, strict=True)
@@ -1408,7 +1405,7 @@ def _concept_gaps(
     else:
         rep_file = [True] * len(src)
     concept = [None if h._na(v) else v for v in columns_df["concept"].tolist()]
-    ambiguous = [h._is_true(v) for v in columns_df["ambiguous"].tolist()]
+    ambiguous = [is_true(v) for v in columns_df["ambiguous"].tolist()]
     gap_idx = [i for i in range(len(src)) if (concept[i] is None or ambiguous[i]) and rep_file[i]]
     return rep_file, gap_idx
 
@@ -1441,7 +1438,7 @@ def _llm_concepts(
     texts = [
         f"column_name: {h._dquote_free(None if h._na(cname[i]) else cname[i])}\n"
         f"sample_values: {h._dquote_free(None if h._na(samples[i]) else samples[i])}\n"
-        f"is_numeric: {'TRUE' if h._is_true(isnum[i]) else 'FALSE'}"
+        f"is_numeric: {'TRUE' if is_true(isnum[i]) else 'FALSE'}"
         for i in gap_idx
     ]
     pred = _llm_classify_batched(
@@ -1573,7 +1570,7 @@ def _concept_texts(
         r = None if h._na(rep[i]) else rep[i]
         # the representation data_check reports (blank ones become numeric/text afterwards)
         stats["representation"] = (
-            r if r is not None else ("numeric" if h._is_true(isnum[i]) else "text")
+            r if r is not None else ("numeric" if is_true(isnum[i]) else "text")
         )
         texts.append(
             concept_text(
@@ -1870,7 +1867,7 @@ def _validate(
         )
     if len(careless_df) > 0:
         n_car = len(careless_df)
-        n_short = sum(1 for v in careless_df["short_scale_only"].tolist() if h._is_true(v))
+        n_short = sum(1 for v in careless_df["short_scale_only"].tolist() if is_true(v))
         dv_text += (
             f" {n_car:d} survey respondent{plural(n_car)} {'was' if n_car == 1 else 'were'} "
             "flagged for possible careless responding"
@@ -2322,7 +2319,7 @@ def _careless(
         from metacheck.report import scroll_table
 
         n_car = len(careless_df)
-        short = [h._is_true(v) for v in careless_df["short_scale_only"].tolist()]
+        short = [is_true(v) for v in careless_df["short_scale_only"].tolist()]
         n_short = sum(short)
         car_tbl = pd.DataFrame(
             {

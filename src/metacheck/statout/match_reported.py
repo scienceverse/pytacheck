@@ -32,7 +32,6 @@ import numpy as np
 import pandas as pd
 
 from metacheck._r import (
-    as_character,
     bind_rows,
     format_num,
     grepl,
@@ -44,6 +43,7 @@ from metacheck._r import (
     sub,
     trimws,
 )
+from metacheck._values import as_str, is_missing
 
 __all__ = ["match_reported_output"]
 
@@ -51,15 +51,6 @@ __all__ = ["match_reported_output"]
 # ---------------------------------------------------------------------------
 # small R helpers
 # ---------------------------------------------------------------------------
-
-
-def _is_na(x: Any) -> bool:
-    """Scalar R ``is.na()`` (``None`` counts as NA here)."""
-    if x is None or x is pd.NA or x is pd.NaT:
-        return True
-    if isinstance(x, float | np.floating):
-        return bool(np.isnan(x))
-    return False
 
 
 def _tolower(s: str) -> str:
@@ -73,26 +64,15 @@ def _tolower(s: str) -> str:
     return "".join(out)
 
 
-def _chr(x: Any) -> str | None:
-    """``as.character()`` of a scalar; ``None`` for NA."""
-    if _is_na(x):
-        return None
-    if isinstance(x, str):
-        return x
-    if isinstance(x, bool | np.bool_):
-        return "TRUE" if x else "FALSE"
-    return as_character(x)
-
-
 def _paste_chr(x: Any) -> str:
     """``paste()``/``sprintf("%s")`` of a scalar: NA becomes ``"NA"``."""
-    s = _chr(x)
+    s = as_str(x)
     return "NA" if s is None else s
 
 
 def _scalar(x: Any) -> Any:
     """Plain Python scalar (numpy scalars unwrapped, NA -> None)."""
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, np.generic):
         return x.item()
@@ -165,7 +145,7 @@ def _norm_value(x: Any) -> dict[str, Any]:
     ``num`` is ``None`` (R ``NA``) when unparseable, ``dec`` the number of
     decimals as written.
     """
-    s = "" if x is None else _chr(x)
+    s = "" if x is None else as_str(x)
     if s is None:  # NA
         return {"num": None, "dec": 0, "censored": ""}
     num, dec, cens = _norm_value_str(s)
@@ -181,7 +161,7 @@ def _norm_interval(x: Any) -> dict[str, Any] | None:
     are separated by a comma, a semicolon, or (with neither present) an
     en/em dash or hyphen between two numbers.
     """
-    s = "" if x is None else _chr(x)
+    s = "" if x is None else as_str(x)
     if s is None:
         return None
     s = trimws(s)
@@ -209,7 +189,7 @@ def _norm_df(x: Any) -> dict[str, Any] | None:
     ``{"df1": <norm_value>}``; ``"(2, 57)"`` -> ``{"df1": ..., "df2": ...}``;
     ``None`` for NA, a non-parenthesised string, or any other shape.
     """
-    if x is None or _is_na(x):
+    if x is None or is_missing(x):
         return None
     s = trimws(_paste_chr(x))
     if s == "":
@@ -305,7 +285,7 @@ def _stat_family_str(name: str) -> str | None:
 def _stat_family_one(name: Any) -> str | None:
     if name is None:
         name = ""
-    s = _chr(name)
+    s = as_str(name)
     if s is None:
         return None
     return _stat_family_str(s)
@@ -422,7 +402,7 @@ def _recompose_eq(eq: Any) -> list[dict[str, Any]]:
         for i in rows:
             cc = None
             if comp_col is not None:
-                c = _chr(comp_col[i])
+                c = as_str(comp_col[i])
                 cc = None if c is None else trimws(c)
             got = _expand_component(
                 lhs[i], rhs[i], cc, None if df_col is None else df_col[i], {}, legacy=True
@@ -456,7 +436,7 @@ def _tests_from_extract(tt: Any) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     for i in range(n):
         g = components[i]
-        if g is None or (not isinstance(g, list | tuple) and _is_na(g)):
+        if g is None or (not isinstance(g, list | tuple) and is_missing(g)):
             g = []
         comps: list[dict[str, Any]] = []
         for gi, c in enumerate(g, start=1):
@@ -471,7 +451,7 @@ def _tests_from_extract(tt: Any) -> list[dict[str, Any]]:
             name = _scalar(c.get("name"))
             is_anch = bool(_is_anchor(name))
             cc_raw = c.get("comp")
-            cc_s = "" if cc_raw is None else _chr(cc_raw)
+            cc_s = "" if cc_raw is None else as_str(cc_raw)
             cc = None if cc_s is None else trimws(cc_s)
             got = _expand_component(
                 name,
@@ -676,7 +656,7 @@ def _sites_share_variable(rl_a: Any, rl_b: Any) -> bool | None:
     ``row_label`` values. ``None`` (R ``NA``) when either label is missing or
     empty or has no long token.
     """
-    if _is_na(rl_a) or _is_na(rl_b):
+    if is_missing(rl_a) or is_missing(rl_b):
         return None
     a = _paste_chr(rl_a)
     b = _paste_chr(rl_b)
@@ -731,7 +711,7 @@ def _regroup_by_evidence(
         return len(comps) > 0 and all(c.get("is_anchor") is not None for c in comps)
 
     def sentence_of(t: Mapping[str, Any]) -> str | None:
-        return None if _is_null_id(t.get("text_id")) else _chr(t.get("text_id"))
+        return None if _is_null_id(t.get("text_id")) else as_str(t.get("text_id"))
 
     has_tags = [tagged(t) and sentence_of(t) is not None for t in tests]
     if not any(has_tags):
@@ -906,7 +886,7 @@ def _num_series(values: list[Any]) -> pd.Series:
     if all(v is None or (isinstance(v, int) and not isinstance(v, bool)) for v in vals):
         return pd.Series(vals, dtype="Int64")
     if any(isinstance(v, str) for v in vals):  # a character id column stays character
-        return pd.Series([_chr(v) for v in vals], dtype="string")
+        return pd.Series([as_str(v) for v in vals], dtype="string")
     return pd.Series([np.nan if v is None else float(v) for v in vals], dtype="float64")
 
 
@@ -954,7 +934,7 @@ def _build_sites(out_long: pd.DataFrame) -> _Sites:
 
     tid = _col_values(out_long, "test_id")
     if tid is not None:
-        tid_keep = [_chr(tid[i]) for i in keep]
+        tid_keep = [as_str(tid[i]) for i in keep]
         site_keys: list[str | None] = list(tid_keep)
     else:
         tid_keep = None
@@ -968,7 +948,7 @@ def _build_sites(out_long: pd.DataFrame) -> _Sites:
     # ADDITIONAL, BROADER sites: every row sharing a (model_ref, source_file)
     # -- several R statements describing the SAME fitted model.
     if "model_ref" in out_long.columns:
-        mref = [_chr(v) for v in _col_values(out_long, "model_ref") or []]
+        mref = [as_str(v) for v in _col_values(out_long, "model_ref") or []]
         mref_k = [mref[i] for i in keep]
         model_keys: list[str | None] = [
             (f"\x02model\x02{m}\x02{_paste_chr(k_sf[j])}" if m is not None and m != "" else None)
@@ -1145,8 +1125,8 @@ def match_reported_output(
             res["n_matched"] = best_n
             if best_n > 0 and best_n >= min(2, nc):
                 res["found"] = True
-                res["source_file"] = _chr(sites.first(best, "sf"))
-                res["analysis"] = _chr(sites.first(best, "an"))
+                res["source_file"] = as_str(sites.first(best, "sf"))
+                res["analysis"] = as_str(sites.first(best, "an"))
                 res["confidence"] = "full" if best_n == nc else "partial"
                 matched = [bool(m[best]) for m in matches]
                 hit = [c for c, ok in zip(comps, matched, strict=True) if ok]
