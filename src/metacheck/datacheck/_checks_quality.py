@@ -8,30 +8,25 @@ from __future__ import annotations
 
 import itertools
 import math
-from collections import Counter
-from collections.abc import Callable
 from typing import Any
+
+import numpy as np
 
 from metacheck._r.base import plural, r_sort_key, signif
 from metacheck._r.regex import grepl, gsub, regextract_all
-from metacheck.datacheck._checks_rvec import (
-    RVec,
-    as_numeric_str,
-    chr,
-    chr_counts,
-    dbl_chr,
-    fmt_d,
-    fmt_g,
-    fmt_pct0,
-    num,
-    numeric_array,
-    quantile7,
-    r_colon,
-    rvec,
-    tolower,
-    trim,
+from metacheck._values import as_float, as_str
+from metacheck.datacheck._kinds import (
+    CATEGORICAL,
+    LOGICAL,
+    NUMERIC,
+    TEXT,
+    WS,
+    as_numbers,
+    as_text,
+    column,
+    is_integer,
+    kind,
     trimmed_counts,
-    unique,
 )
 
 __all__ = [
@@ -67,8 +62,15 @@ _DATA_MISSING_SENTINELS: tuple[float, ...] = (
 )  # fmt: skip
 
 
-def _finite(v: Any) -> bool:
-    return v is not None and v == v and not math.isinf(v)
+def _num(v: float) -> str:
+    """``as.character()`` of one number."""
+    return as_str(v) or "NaN"
+
+
+def _finite_numbers(x: Any) -> list[float]:
+    """``as.numeric(x)`` without NA, NaN and infinities."""
+    a = as_numbers(x)
+    return a[np.isfinite(a)].tolist()  # type: ignore[no-any-return]
 
 
 def _mean(flags: list[bool]) -> float:
@@ -107,20 +109,21 @@ def data_check_scale_values(
         "upper": math.nan,
         "classes": [],
     }
-    v = rvec(x)
-    if not v.is_numeric:
+    col = column(x)
+    if kind(col) != NUMERIC:
         return none
-    xv = [e for e in v.values if _finite(e)]
+    xv: list[Any] = _finite_numbers(col)
     if not xv:
         return none
+    if is_integer(col):
+        xv = [int(e) for e in xv]
 
     valid_set: list[Any] | None
     lo: Any = None
     hi: Any = None
     interval = False  # a continuous [lo, hi] range rather than a set of levels
-    if valid_values is not None and len(rvec(valid_values)) > 0:
-        vv = sorted({f for f in num(valid_values) if f is not None and f == f})
-        vv = [f for f in vv if not math.isinf(f)]
+    if valid_values is not None and len(column(valid_values)) > 0:
+        vv = sorted(set(_finite_numbers(valid_values)))
         if not vv:
             return none
         vv_int = all(f == round(f) for f in vv)
@@ -145,7 +148,7 @@ def data_check_scale_values(
                 lo = natural_floor
                 valid_set = _seq_int(lo, hi)
     elif valid_range is not None and _finite_pair(valid_range):
-        vr = [float(f) for f in num(valid_range)]  # type: ignore[arg-type]
+        vr = as_numbers(valid_range).tolist()
         lo = min(vr)
         hi = max(vr)
         # A range with whole-number bounds is a rating scale (its integer
@@ -153,7 +156,7 @@ def data_check_scale_values(
         # lo:hi either way -- 1.5:3.5 is {1.5, 2.5, 3.5}, so 2.0 would be "out"
         # -- and then fails formatting the bounds with %d.)
         interval = lo != round(lo) or hi != round(hi)
-        valid_set = None if interval else r_colon(lo, hi)
+        valid_set = None if interval else _seq_int(lo, hi)
     else:
         valid_set = None
 
@@ -169,10 +172,10 @@ def data_check_scale_values(
             return none
         lo = sc["lo"]
         hi = sc["hi"]
-        valid_set = r_colon(lo, hi)
+        valid_set = _seq_int(lo, hi)
 
     inside = _inside(xv, valid_set, lo, hi)
-    out = sorted(unique(e for e, ok in zip(xv, inside, strict=True) if not ok))
+    out = sorted({e for e, ok in zip(xv, inside, strict=True) if not ok})
     if not out:
         return {
             "problem": False,
@@ -183,8 +186,8 @@ def data_check_scale_values(
             "classes": [],
         }
 
-    declared_num = {f for f in num(declared) if f is not None} if declared is not None else set()
-    sentinel_set = {f for f in num(sentinels) if f is not None} if sentinels is not None else set()
+    declared_num = set(_finite_numbers(declared)) if declared is not None else set()
+    sentinel_set = set(_finite_numbers(sentinels)) if sentinels is not None else set()
 
     # .scale_typo_of(): an int e (integer column) takes R's integer path there
     from metacheck.datacheck.columns import _scale_typo_of
@@ -196,13 +199,13 @@ def data_check_scale_values(
             return "missing"
         typo = _scale_typo_of(e, lo, hi)
         if typo is not None and typo == typo:
-            return "typo:" + (str(typo) if isinstance(typo, int) else dbl_chr(typo))
+            return "typo:" + _num(typo)
         return "unexplained"
 
     classes = [classify(e) for e in out]
 
     def describe(e: Any, cls: str) -> str:
-        s = str(e) if isinstance(e, int) else dbl_chr(e)
+        s = _num(e)
         if cls == "missing":
             return f"{s} (looks like a missing-data code -> recode to NA)"
         if cls.startswith("typo:"):
@@ -239,8 +242,8 @@ def _bound(v: Any) -> str:
     """A scale bound in a message: ``%d`` for a whole number, else its decimal
     form (R's ``sprintf("%d")`` fails on a fractional ground-truth bound)."""
     if isinstance(v, int) or (v == v and not math.isinf(v) and v == round(v)):
-        return fmt_d(v)
-    return dbl_chr(v)
+        return str(int(v))
+    return _num(v)
 
 
 def _likert_scale(xv: list[Any]) -> Any:
@@ -263,10 +266,10 @@ def _likert_scale(xv: list[Any]) -> Any:
 
 def _finite_pair(valid_range: Any) -> bool:
     """``length(valid_range) == 2 && all(is.finite(valid_range))``."""
-    v = rvec(valid_range)
-    if len(v) != 2 or v.kind not in ("double", "integer", "logical"):
+    col = column(valid_range)
+    if len(col) != 2 or kind(col) not in (NUMERIC, LOGICAL):
         return False
-    return all(_finite(f) for f in num(v))
+    return bool(np.isfinite(as_numbers(col)).all())
 
 
 def data_check_outliers(x: Any, k: float = 1.5, n_max: int = 10) -> dict[str, Any]:
@@ -282,15 +285,15 @@ def data_check_outliers(x: Any, k: float = 1.5, n_max: int = 10) -> dict[str, An
         "lower": math.nan,
         "upper": math.nan,
     }
-    import numpy as np
-
-    got = numeric_array(x)
-    if got is None:
+    col = column(x)
+    if kind(col) != NUMERIC:
         return none
-    a = got[0][~np.isnan(got[0])]
+    a = as_numbers(col)
+    a = a[~np.isnan(a)]
     if a.size < 4:
         return none
-    q1, q3 = quantile7(np.sort(a), (0.25, 0.75), is_sorted=True)
+    srt = np.sort(a)
+    q1, q3 = _quantile7(srt, 0.25), _quantile7(srt, 0.75)
     iqr = q3 - q1
     # Both quartiles the same infinity (c(1, Inf, Inf, Inf)): Inf - Inf is NaN,
     # which is "no spread" just like iqr == 0 (R fails on it in `if`).
@@ -299,7 +302,7 @@ def data_check_outliers(x: Any, k: float = 1.5, n_max: int = 10) -> dict[str, An
     lower = q1 - k * iqr
     upper = q3 + k * iqr
     out: list[Any] = list(dict.fromkeys(a[(a < lower) | (a > upper)].tolist()))  # unique()
-    if got[1]:
+    if is_integer(col):
         out = [int(e) for e in out]
     if not out:
         return {"problem": False, "message": "", "values": None, "lower": lower, "upper": upper}
@@ -307,74 +310,42 @@ def data_check_outliers(x: Any, k: float = 1.5, n_max: int = 10) -> dict[str, An
     shown_txt = ", ".join(_signif4(e) for e in shown)
     msg = (
         f"{len(out)} outlier value{plural(len(out))} outside "
-        f"[{fmt_g(lower, 3)}, {fmt_g(upper, 3)}]: {shown_txt}"
-        + (", ..." if len(out) > n_max else "")
+        f"[{lower:.3g}, {upper:.3g}]: {shown_txt}" + (", ..." if len(out) > n_max else "")
     )
     return {"problem": True, "message": msg, "values": out, "lower": lower, "upper": upper}
 
 
+def _quantile7(a: np.ndarray, p: float) -> float:
+    """``quantile(a, p, type = 7)`` of sorted *a*, with R's arithmetic.
+
+    (numpy's ``method="linear"`` interpolates differently, which moves a
+    reported bound in its last digit, and gives NaN next to an infinity.)
+    """
+    h = (a.size - 1) * p
+    lo = int(h)
+    q = float(a[lo])
+    if h > lo and a[lo + 1] != q:
+        q = (1 - (h - lo)) * q + (h - lo) * float(a[lo + 1])
+    return q
+
+
 def _signif4(e: float) -> str:
     f = float(e)
-    if not math.isfinite(f):
-        return dbl_chr(f)
-    return dbl_chr(float(signif(f, 4)))
+    return _num(float(signif(f, 4)) if math.isfinite(f) else f)
 
 
-def _table(v: Any) -> tuple[dict[Any, int], Callable[[Any], Any], Callable[[Any], str]]:
-    """``table(x)`` of a vector without NA, unsorted.
-
-    Returns the counts per level, a sort key giving each level's position in
-    ``levels(factor(x))`` and a function giving a level's label (its
-    ``as.character()``). Sorting is left to the caller, which only ever needs
-    the first of a few tied levels. ``table()``'s default ``exclude = c(NA,
-    NaN)`` is coerced to the type of a non-factor *x*, so for a character
-    vector it drops the string ``"NaN"`` (a factor keeps a ``"NaN"`` level).
-    Distinct doubles that print alike (``as.character()`` keeps 15 significant
-    digits) share one level.
-    """
-    if v.kind == "factor":
-        levels = list(v.levels or [])
-        counts: dict[Any, int] = dict.fromkeys(levels, 0)
-        counts.update(Counter(v.values))
-        pos = {lab: i for i, lab in enumerate(levels)}
-        return counts, pos.__getitem__, str
-    raw = Counter(v.values)
-    if v.kind == "character":
-        raw.pop("NaN", None)
-        return dict(raw), r_sort_key, str
-    if v.kind == "double" and _doubles_may_collide(list(raw)):
-        labels = chr(RVec("double", list(raw)))
-        counts = {}
-        first: dict[Any, Any] = {}
-        for val, lab in zip(raw, labels, strict=True):
-            counts[lab] = counts.get(lab, 0) + raw[val]
-            first[lab] = val if lab not in first else min(first[lab], val)
-        return counts, first.__getitem__, str
-    # as.character() is one-to-one here: count raw values, label them on demand
-    kind = v.kind
-    return dict(raw), lambda val: val, lambda val: _label(kind, val)
-
-
-def _label(kind: str, val: Any) -> str:
-    """``as.character()`` of one value of an R vector of type *kind*."""
-    return chr(RVec(kind, [val]))[0]  # type: ignore[return-value]
-
-
-def _doubles_may_collide(values: list[float]) -> bool:
+def _doubles_may_collide(values: Any) -> bool:
     """Could two of these distinct doubles print alike under ``as.character()``?
 
     Only values within a relative 1e-14 of each other can share 15 significant
     digits, so the (vectorised) check is exact in the "no" direction.
     """
-    import numpy as np
-
     u = np.sort(np.asarray(values, dtype="float64"))
     u = u[np.isfinite(u)]
     if u.size < 2:
         return False
-    d = np.diff(u)
     scale = np.maximum(np.abs(u[:-1]), np.abs(u[1:]))
-    return bool(np.any(d <= 1e-14 * scale))
+    return bool(np.any(np.diff(u) <= 1e-14 * scale))
 
 
 def data_check_constant(x: Any, threshold: float = 0.99) -> dict[str, Any]:
@@ -383,29 +354,42 @@ def data_check_constant(x: Any, threshold: float = 0.99) -> dict[str, Any]:
     Port of ``R/data_check_helpers.R::data_check_constant()``: the column is
     constant when it has one distinct non-missing value, near-constant
     (``near = True``) when the most common value covers at least *threshold*.
+    Values are counted like ``table(x)``: a categorical's levels include the
+    unused ones, doubles that print alike are one level, and of tied levels
+    the first in sort order is reported.
     """
-    v = rvec(x).drop_na()
-    if len(v) == 0:
+    col = column(x).dropna()
+    n = len(col)
+    if n == 0:
         return {"problem": False, "message": "", "values": None, "near": False}
-    counts, key, label_of = _table(v)
-    if not counts:  # every value was the string "NaN": `tab[[1]]` on an empty table
-        raise IndexError("subscript out of bounds")
-    top_count = max(counts.values())
-    top_frac = top_count / len(v)
+    k = kind(col)
+    counts = col.value_counts(sort=False)
+    if k == CATEGORICAL:
+        counts = counts.reindex(col.cat.categories, fill_value=0)
+    elif k == NUMERIC and not is_integer(col) and _doubles_may_collide(counts.index):
+        counts = counts.sort_index()
+        counts = counts.groupby(as_text(counts.index), sort=False).sum()
+        k = CATEGORICAL  # the levels are now labels, in numeric order
+    top_count = int(counts.max())
+    tied: list[Any] = [v for v, c in counts.items() if c == top_count]
+    if k == CATEGORICAL:
+        first = tied[0]
+    elif k == TEXT:
+        first = min(tied, key=lambda v: r_sort_key(as_text([v])[0]))
+    else:
+        first = min(tied)
+    label = as_text([first])[0]
     if len(counts) == 1:
-        label = label_of(next(iter(counts)))
         return {
             "problem": True,
             "message": f'Column is constant: every value is "{label}".',
             "values": label,
             "near": False,
         }
-    if top_frac >= threshold:
-        # sort(table(x), decreasing = TRUE) is stable: the first tied level wins
-        label = label_of(min((lv for lv, c in counts.items() if c == top_count), key=key))
+    if top_count / n >= threshold:
         return {
             "problem": True,
-            "message": f'Near-constant: {fmt_pct0(100 * top_frac)}% of values are "{label}".',
+            "message": f'Near-constant: {100 * top_count / n:.0f}% of values are "{label}".',
             "values": label,
             "near": True,
         }
@@ -418,14 +402,14 @@ def data_check_empty(x: Any) -> dict[str, Any]:
     Port of ``R/data_check_helpers.R::data_check_empty()``.
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
-    v = rvec(x)
-    n = len(v)
+    col = column(x)
+    n = len(col)
     if n == 0:
         return none
-    if v.is_numeric:
-        filled = any(e is not None for e in v.values)
+    if kind(col) == NUMERIC:
+        filled = bool(col.notna().any())
     else:
-        filled = any(s is not None and trim(s) != "" for s in chr_counts(v))
+        filled = any(s is not None and s.strip(WS) for s in as_text(col))
     if filled:
         return none
     return {
@@ -466,17 +450,18 @@ def data_check_spss_filter(col: Any, x: Any) -> dict[str, Any]:
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
     if col is None:  # grepl(p, NA) is FALSE
         return none
-    cols = chr(col)
+    cols = as_text(col)
     if not cols:
         raise ValueError("argument is of length zero")
     if len(cols) > 1:
         raise ValueError("the condition has length > 1")
     if not grepl(r"(?i)^filter_[$._]?$", cols[0], perl=True):
         return none
-    v = [f for f in num(x) if f is not None and f == f]
-    if not v:
+    a = as_numbers(x)
+    v = a[~np.isnan(a)]
+    if not v.size:
         return none
-    n_sel = sum(1 for f in v if f == 1)
+    n_sel = int((v == 1).sum())
     if n_sel == len(v):
         msg = _SPSS_ALL
     else:
@@ -494,13 +479,13 @@ def data_check_case_issues(x: Any) -> dict[str, Any]:
     Port of ``R/data_check_helpers.R::data_check_case_issues()``.
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
-    v = rvec(x)
-    if v.is_numeric:
+    col = column(x)
+    if kind(col) == NUMERIC:
         return none
-    xs = [s for s in chr_counts(v) if s is not None and trim(s) != ""]  # unique(), data order
+    xs = list(dict.fromkeys(s for s in as_text(col) if s is not None and s.strip(WS)))
     if not xs:
         return none
-    lower = [tolower(s) for s in xs]
+    lower = [s.lower() for s in xs]
     seen: set[str | None] = set()
     dup: list[str | None] = []
     for low in lower:
@@ -511,7 +496,8 @@ def data_check_case_issues(x: Any) -> dict[str, Any]:
     if not dup:
         return none
     groups = [
-        "/".join(s for s, low in zip(xs, lower, strict=True) if low == d) for d in unique(dup)
+        "/".join(s for s, low in zip(xs, lower, strict=True) if low == d)
+        for d in dict.fromkeys(dup)
     ]
     return {
         "problem": True,
@@ -526,10 +512,12 @@ def data_check_whitespace(x: Any) -> dict[str, Any]:
     Port of ``R/data_check_helpers.R::data_check_whitespace()``.
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
-    v = rvec(x)
-    if v.is_numeric:
+    col = column(x)
+    if kind(col) == NUMERIC:
         return none
-    padded = [s for s in chr_counts(v) if s is not None and (t := trim(s)) != s and t != ""]
+    padded = list(
+        dict.fromkeys(s for s in as_text(col) if s is not None and (t := s.strip(WS)) != s and t)
+    )
     if not padded:
         return none
     shown = ", ".join(f'"{s}"' for s in padded[:10])
@@ -548,14 +536,14 @@ def data_check_numeric_in_text(x: Any, threshold: float = 0.8, n_max: int = 10) 
     comma decimals accepted.
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
-    v = rvec(x)
-    if v.is_numeric:
+    col = column(x)
+    if kind(col) == NUMERIC:
         return none
-    counts = trimmed_counts(v)
-    n_total = sum(counts.values())
+    counts = trimmed_counts(col)
+    n_total = counts.total()
     if n_total < 5:
         return none
-    bad = [s for s in counts if (f := as_numeric_str(s.replace(",", "."))) is None or f != f]
+    bad = [s for s in counts if (f := as_float(s.replace(",", "."))) is None or f != f]
     frac_num = (n_total - sum(counts[s] for s in bad)) / n_total
     if frac_num < threshold or frac_num >= 1:
         return none
@@ -563,7 +551,7 @@ def data_check_numeric_in_text(x: Any, threshold: float = 0.8, n_max: int = 10) 
     return {
         "problem": True,
         "message": (
-            f"Column is {fmt_pct0(100 * frac_num)}% numeric but {len(bad)} "
+            f"Column is {100 * frac_num:.0f}% numeric but {len(bad)} "
             f"value{plural(len(bad))} cannot be parsed: {shown}"
         ),
         "values": bad,
@@ -579,7 +567,7 @@ def data_check_colname(col_name: Any, max_chars: int = 64) -> dict[str, Any]:
     Port of ``R/data_check_helpers.R::data_check_colname()``.
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
-    nms = chr(col_name)
+    nms = as_text(col_name)
     if len(nms) != 1 or nms[0] is None:
         return none
     nm = nms[0]
@@ -587,11 +575,11 @@ def data_check_colname(col_name: Any, max_chars: int = 64) -> dict[str, Any]:
     ctrl = regextract_all("[[:cntrl:]]", nm)
     issues: list[str] = []
     if illegal:
-        quoted = ", ".join(unique(f'"{c}"' for c in illegal))
+        quoted = ", ".join(dict.fromkeys(f'"{c}"' for c in illegal))
         issues.append(f"characters not allowed in file names ({quoted})")
     if ctrl:
         issues.append(f"{len(ctrl)} control character{plural(len(ctrl))} (tab/newline)")
-    if nm != trim(nm):
+    if nm != nm.strip(WS):
         issues.append("leading/trailing whitespace")
     if len(nm) > max_chars:
         issues.append(
@@ -600,7 +588,7 @@ def data_check_colname(col_name: Any, max_chars: int = 64) -> dict[str, Any]:
         )
     if not issues:
         return none
-    bad_chars = unique([*illegal, *ctrl])
+    bad_chars = list(dict.fromkeys([*illegal, *ctrl]))
     return {
         "problem": True,
         "message": (
@@ -627,7 +615,7 @@ def data_check_colname_collisions(col_names: Any) -> dict[str, str]:
     ``out[[""]] <- msg`` appends unnamed elements that no lookup by name can
     retrieve, so there a blank column's collision is never reported).
     """
-    nms = chr(col_names)
+    nms = as_text(col_names)
     keys = gsub(r"[^\p{L}\p{N}]", "_", nms, perl=True)
     seen: set[str | None] = set()
     dups: list[str | None] = []
@@ -637,14 +625,14 @@ def data_check_colname_collisions(col_names: Any) -> dict[str, str]:
         else:
             seen.add(k)
     out: dict[str, str] = {}
-    for k in unique(dups):
+    for k in dict.fromkeys(dups):
         if k is None:
             continue
         idx = [i for i, kk in enumerate(keys) if kk == k]
         members = [nms[i] for i in idx]
         for i in idx:
             me = nms[i]
-            others = unique(m for m in members if m != me)
+            others = list(dict.fromkeys(m for m in members if m != me))
             if not others:
                 n_same = sum(1 for m in members if m == me) - 1
                 desc = f"{n_same} other identically named column{plural(n_same)}"

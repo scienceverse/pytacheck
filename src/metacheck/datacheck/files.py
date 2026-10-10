@@ -1944,15 +1944,9 @@ def _raw_rows(raw: pd.DataFrame) -> list[list[str | None]]:
     ``as.character()`` keeps a character ``NA`` but turns any other ``NA``
     into ``"NA"`` (a date is its day number, a date-time its seconds).
     """
-    from metacheck.datacheck._checks_rvec import chr as r_chr
-    from metacheck.datacheck._checks_rvec import row_as_character, rvec
+    from metacheck.datacheck._kinds import row_texts
 
-    if raw.shape[1] == 1:
-        return [[v] for v in r_chr(raw.iloc[:, 0])]
-    cols = [rvec(raw.iloc[:, j]) for j in range(raw.shape[1])]
-    kinds = [c.kind for c in cols]
-    levels = [c.levels for c in cols]
-    return [row_as_character([c.values[i] for c in cols], kinds, levels) for i in range(len(raw))]
+    return row_texts(raw)
 
 
 def data_read_head(
