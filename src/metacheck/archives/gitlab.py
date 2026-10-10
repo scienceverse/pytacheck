@@ -20,7 +20,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._values import is_missing
+from metacheck._values import as_float, is_missing
 
 __all__ = ["gitlab_links", "gitlab_pat", "gitlab_repo", "gitlab_tree_files"]
 
@@ -301,7 +301,7 @@ def _gitlab_blob_sizes(clean_repo: str, paths: list[str]) -> pd.Series:
     numeric vector); failed batches contribute nothing.
     """
     from metacheck.archives.github import _dollar as r_dollar
-    from metacheck.archives.github import _empty_or, _num
+    from metacheck.archives.github import _empty_or
 
     if not paths:
         return pd.Series([], dtype="float64")
@@ -310,7 +310,7 @@ def _gitlab_blob_sizes(clean_repo: str, paths: list[str]) -> pd.Series:
     for start in range(0, len(paths), _BLOB_BATCH):
         nodes = _blob_batch(clean_repo, paths[start : start + _BLOB_BATCH])
         for n in nodes:
-            values.append(_num(_empty_or(r_dollar(n, "size"))))
+            values.append(as_float(_empty_or(r_dollar(n, "size"))))
             keys.append(_empty_or(r_dollar(n, "path")))
     return pd.Series(values, index=keys, dtype="float64")
 

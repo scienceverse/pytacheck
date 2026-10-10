@@ -44,7 +44,7 @@ import pandas as pd
 
 from metacheck._r.base import as_character, trimws
 from metacheck._r.regex import grepl, sub
-from metacheck._values import is_missing
+from metacheck._values import as_str, is_missing
 from metacheck.log import logger
 from metacheck.papers.io import _field
 from metacheck.papers.model import Paper
@@ -904,12 +904,6 @@ def _bibr12_info(metadata: Any, source: Any, schema_version: str, extraction: An
     return frame
 
 
-def _chr1(v: Any) -> str | None:
-    if isinstance(v, list | dict):
-        return None
-    return as_character(v)
-
-
 def _names_records(persons: Any) -> Any:
     """The given/family names of a list of person objects (``names_df()``).
 
@@ -975,7 +969,7 @@ def _bibr12_paper(
     if isinstance(pid, list | dict):
         ids = _as_character_list(pid)
         pid = ids[0] if ids else None  # R keeps a character(0) or longer vector
-    p = Paper(None if pid is None else _chr1(_jnum(pid)))
+    p = Paper(None if pid is None else as_str(_jnum(pid)))
     p.info = info
     # the older given/family columns metacheck's modules read (ref_accuracy),
     # made in R's order: bib_match, then info_match; authors, then editors
@@ -1274,7 +1268,7 @@ def paper_to_bibr12(paper: Paper) -> dict[str, Any]:
     Returns the JSON structure :func:`bibr12_json` writes (arrays of scalars are
     ``_Array`` tuples).
     """
-    pid = _chr1(paper.paper_id)
+    pid = as_str(paper.paper_id)
     if not is_bibr12(paper):
         raise ValueError(
             'paper_write(schema_version = "12.0") writes papers read from a bibr 12.x '
@@ -1399,7 +1393,7 @@ def _info_first(info: pd.DataFrame, col: str, na_if_missing: bool = False) -> An
     """``as.character(info$col[[1]])`` (``character(0)`` for a missing column)."""
     if col not in info.columns or not len(info):
         return None if na_if_missing else _Array()
-    return _chr1(_json_scalar(info[col].iloc[0]))
+    return as_str(_json_scalar(info[col].iloc[0]))
 
 
 def _json_scalar(v: Any) -> Any:

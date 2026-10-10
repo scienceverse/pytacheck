@@ -46,7 +46,6 @@ from metacheck.datacheck._columns_labels import (
     _missing_from_value_labels,
     _na,
     _tolower,
-    _trim,
     _unlist_scalars,
     _valid_utf8,
     _vl_split_pairs,
@@ -347,7 +346,7 @@ def _extract_spreadsheet_codebook(
                 hdrless = None
             if hdrless is not None and len(hdrless) > 1:
                 for k in _seq_len(min(len(hdrless) - 1, header_lookahead)):
-                    hdr = [_trim(v) for v in _unlist_row(hdrless, k)]
+                    hdr = [trimws(v) for v in _unlist_row(hdrless, k)]
                     if _find_codebook_cols(hdr) is None:
                         continue
                     sub_df = hdrless.iloc[k + 1 :].reset_index(drop=True)
@@ -926,13 +925,13 @@ def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookah
         raw = _transpose_wide(raw)
     header_row = None
     for k in _seq_len(min(len(raw), header_lookahead)):
-        hdr = [_trim(v) for v in _row_as_character(raw, k)]
+        hdr = [trimws(v) for v in _row_as_character(raw, k)]
         if _find_codebook_cols(hdr) is not None:
             header_row = k
             break
     if header_row is None:
         return None
-    names = [_trim(v) for v in _row_as_character(raw, header_row)]
+    names = [trimws(v) for v in _row_as_character(raw, header_row)]
     nrow = len(raw)
     if header_row + 1 < nrow:
         df = raw.iloc[header_row + 1 :]

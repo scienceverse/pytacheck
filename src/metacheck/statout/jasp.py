@@ -38,7 +38,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r import grepl, regextract_all, sub
-from metacheck.statout.spv import _as_numeric, _unzip, _write_lines
+from metacheck._values import as_float
+from metacheck.statout.spv import _unzip, _write_lines
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -113,7 +114,7 @@ def _labels_from_list(lst: Any) -> list[tuple[str | None, float]]:
         if entry[0] is None or entry[1] is None:
             # as.character(NULL) is character(0): vapply(..., character(1)) fails
             raise ValueError("values must be length 1")
-        codes.append(_as_numeric(_r_chr(entry[0])))
+        codes.append(as_float(_r_chr(entry[0])))
         labs.append(_r_chr(entry[1]))
     return [
         (lab, code)
@@ -508,7 +509,7 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
                 # as.numeric() of a non-numeric value is a kept NA code
                 if value is None or lab == "":
                     continue
-                code = _as_numeric(value)
+                code = as_float(value)
                 out.append(
                     (None if lab is None else _r_chr(lab), math.nan if code is None else code)
                 )
@@ -531,7 +532,7 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
             if not is_scale:
                 if v.dtype == object:  # an RSQLite blob column is a list
                     raise TypeError("(list) object cannot be coerced to type 'double'")
-                nums = [None if pd.isna(x) else _as_numeric(x) for x in v]
+                nums = [None if pd.isna(x) else as_float(x) for x in v]
                 v = pd.array(
                     [None if x is None or x == _JASP_INT_MIN else x for x in nums], dtype="Float64"
                 ).astype("float64")

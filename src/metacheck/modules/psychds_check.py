@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 from metacheck._r import gsub, plural, r_sort_key, regextract, slashed, sub
-from metacheck._values import is_missing
+from metacheck._values import as_str
 from metacheck.module import module
 from metacheck.report import scroll_table
 
@@ -85,21 +85,6 @@ _RECOMMENDED = (
 # -- small R helpers ---------------------------------------------------------------
 
 
-def _na(x: Any) -> bool:
-    return x is None or is_missing(x)
-
-
-def _chr(x: Any) -> str | None:
-    """One value of a character vector (``None`` for ``NA``)."""
-    if _na(x):
-        return None
-    if isinstance(x, str):
-        return x
-    from metacheck._r import as_character
-
-    return str(as_character(x))
-
-
 def _paste(x: str | None) -> str:
     """How ``paste0()`` prints one value (``NA`` becomes ``"NA"``)."""
     return "NA" if x is None else x
@@ -109,7 +94,7 @@ def _col(df: pd.DataFrame, name: str) -> list[str | None] | None:
     """``df$name`` as a list of strings (``None`` when the column is absent)."""
     if name not in df.columns:
         return None
-    return [_chr(v) for v in df[name].tolist()]
+    return [as_str(v) for v in df[name].tolist()]
 
 
 def _is_true(x: Any) -> bool:
@@ -203,10 +188,12 @@ def psychds_tree_html(nodes: pd.DataFrame | None) -> str:
     """
     if nodes is None or len(nodes) == 0:
         return ""
-    paths = [_chr(v) for v in nodes["path"].tolist()]
-    statuses = [_chr(v) for v in nodes["status"].tolist()]
+    paths = [as_str(v) for v in nodes["path"].tolist()]
+    statuses = [as_str(v) for v in nodes["status"].tolist()]
     notes = (
-        [_chr(v) for v in nodes["note"].tolist()] if "note" in nodes.columns else [""] * len(paths)
+        [as_str(v) for v in nodes["note"].tolist()]
+        if "note" in nodes.columns
+        else [""] * len(paths)
     )
     # nodes[!duplicated(nodes$path), ]
     seen: set[Any] = set()
@@ -284,8 +271,8 @@ def _pid(paper: Any, *dfs: pd.DataFrame | None) -> str | None:
         if len(ids) > 0:
             break
         if isinstance(df, pd.DataFrame) and "paper_id" in df.columns:
-            ids = list(dict.fromkeys(_chr(v) for v in df["paper_id"].tolist()))
-    return None if len(ids) == 0 else _chr(ids[0])
+            ids = list(dict.fromkeys(as_str(v) for v in df["paper_id"].tolist()))
+    return None if len(ids) == 0 else as_str(ids[0])
 
 
 _COUNT_NAMES = (
@@ -309,7 +296,7 @@ def _subset(df: Any, pid: str) -> Any:
     """The rows of *df* that belong to paper *pid* (``df`` itself without a ``paper_id``)."""
     if not isinstance(df, pd.DataFrame) or "paper_id" not in df.columns:
         return df
-    keep = [_chr(v) == pid for v in df["paper_id"].tolist()]
+    keep = [as_str(v) == pid for v in df["paper_id"].tolist()]
     return df.loc[keep].reset_index(drop=True)
 
 
@@ -600,7 +587,7 @@ def psychds_check(
     # one row per paper, each assessed on its own files (R reports the pooled
     # counts once, for the first paper only)
     pids = (
-        list(dict.fromkeys(v for v in (_chr(x) for x in structure_df["paper_id"]) if v))
+        list(dict.fromkeys(v for v in (as_str(x) for x in structure_df["paper_id"]) if v))
         if "paper_id" in structure_df.columns
         else []
     )
@@ -752,7 +739,7 @@ def _assess(structure_df: pd.DataFrame, columns_df: Any, labels_df: Any) -> dict
     describable = n_columns > 0
     if isinstance(labels_df, pd.DataFrame) and "label_status" in labels_df.columns:
         n_documented = sum(
-            _chr(s) in ("labelled", "llm") for s in labels_df["label_status"].tolist()
+            as_str(s) in ("labelled", "llm") for s in labels_df["label_status"].tolist()
         )
     else:
         n_documented = 0

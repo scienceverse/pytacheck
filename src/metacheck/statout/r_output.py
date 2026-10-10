@@ -14,12 +14,12 @@ R's ``NA``).
 
 from __future__ import annotations
 
-import math
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
 import pandas as pd
 
+from metacheck._r.base import trimws
 from metacheck._r.regex import compile_r, grepl, gsub, regexec, regextract_all, strsplit, sub
 
 __all__ = ["read_r_output"]
@@ -29,13 +29,6 @@ __all__ = ["read_r_output"]
 # ---------------------------------------------------------------------------
 
 _WS = "[ \t\r\n]"
-
-
-def _trimws(x: str | None) -> str | None:
-    """R ``trimws()`` of one value (``[ \\t\\r\\n]`` on both ends)."""
-    if x is None:
-        return None
-    return x.strip(" \t\r\n")
 
 
 def _nzchar(x: str | None) -> bool:
@@ -82,49 +75,6 @@ def _chr_frame(names: Sequence[str], columns: Sequence[Sequence[Any]]) -> pd.Dat
 def _one_row_frame(pairs: Sequence[tuple[str, str]]) -> pd.DataFrame:
     """``data.frame(as.list(setNames(values, names)), check.names = FALSE)``."""
     return _chr_frame([k for k, _ in pairs], [[v] for _, v in pairs])
-
-
-_R_NUMBER = (
-    "^[ \t\n\x0b\x0c\r]*([+-]?(?:(?:[0-9]+\\.?[0-9]*|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?"
-    "|0[xX](?:[0-9a-fA-F]+\\.?[0-9a-fA-F]*|\\.[0-9a-fA-F]*|(?=[pP]))(?:[pP][+-]?[0-9]+)?"
-    "|(?i:infinity|inf|nan)))[ \t\n\x0b\x0c\r]*$"
-)
-
-
-def _r_as_numeric(x: Any) -> float | None:
-    """R ``as.numeric()`` of one value (``None`` for ``NA``).
-
-    Strings follow R's ``String -> double`` coercion: surrounding white
-    space, decimal/scientific/hexadecimal notation, ``Inf``/``infinity``/
-    ``NaN`` in any case; anything else (``"1e"``, ``"."``, ``"NA"``) is ``NA``.
-    """
-    if x is None:
-        return None
-    if isinstance(x, bool):
-        return 1.0 if x else 0.0
-    if isinstance(x, int | float):
-        return float(x)
-    if not isinstance(x, str):
-        return None
-    m = compile_r(_R_NUMBER, perl=True).search(x)
-    if m is None:
-        return None
-    body = m.group(1)
-    low = body.lower()
-    sign = -1.0 if low.startswith("-") else 1.0
-    low = low.lstrip("+-")
-    if not low.startswith("0x"):
-        return float(body)
-    # R_strtod's hexadecimal branch: the mantissa may be empty ("0x.", "0xp1").
-    mant, _, exp = low[2:].partition("p")
-    whole, _, frac = mant.partition(".")
-    val = float(int(whole or "0", 16))
-    if frac:
-        val += int(frac, 16) / 16.0 ** len(frac)
-    try:
-        return sign * val * 2.0 ** int(exp or "0")
-    except OverflowError:
-        return sign * math.inf
 
 
 class _RError(ValueError, TypeError):
@@ -360,7 +310,7 @@ def _r_echo_chunks(
     ends = [s - 1 for s in starts[1:]] + [len(lines) - 1]
 
     code_list = _as_lines(code_lines)
-    code_stripped = gsub("[[:space:]]+", "", [_trimws(c) for c in code_list])
+    code_stripped = gsub("[[:space:]]+", "", [trimws(c) for c in code_list])
     # which(code_stripped == x)[1], as one lookup table
     first_line: dict[str, int] = {}
     for i, c in enumerate(code_stripped):
@@ -378,7 +328,7 @@ def _r_echo_chunks(
             if not v:
                 break
             prompt_n += 1
-        stmt = [_trimws(s) for s in sub("^(>|\\+) ?", "", seg[:prompt_n])]
+        stmt = [trimws(s) for s in sub("^(>|\\+) ?", "", seg[:prompt_n])]
         output = seg[prompt_n:]
         nonempty = [s for s in stmt if _nzchar(s)]
         first_stmt_line = nonempty[0] if nonempty else None
@@ -483,7 +433,7 @@ _CHAIN = "^(\\$[A-Za-z._][A-Za-z0-9._]*|\\[[^][]*\\]|\\[\\[[^][]*\\]\\])+$"
 
 
 def _leading_ident(x: str) -> str | None:
-    x = _trimws(x) or ""
+    x = trimws(x) or ""
     m = compile_r(_IDENT, perl=True).search(x)
     if m is None or m.group(0) == "":
         return None
@@ -501,7 +451,7 @@ def _r_call_object_ref(call_text: str | None) -> str | None:
     """
     if call_text is None or call_text == "":
         return None
-    ct = _trimws(call_text) or ""
+    ct = trimws(call_text) or ""
     if compile_r("<-|=(?!=)", perl=True).search(ct) and compile_r(
         "^[A-Za-z._][A-Za-z0-9._]*\\s*(<-|=(?!=))", perl=True
     ).search(ct):
@@ -543,7 +493,7 @@ def _r_call_object_ref(call_text: str | None) -> str | None:
     args_text = ct[open_paren + 1 : end]
     for arg in _repro_split_args(args_text):
         val = sub(
-            "^[.a-zA-Z][.a-zA-Z0-9_]*\\s*=\\s*(?!=)", "", _trimws(arg["text"]) or "", perl=True
+            "^[.a-zA-Z][.a-zA-Z0-9_]*\\s*=\\s*(?!=)", "", trimws(arg["text"]) or "", perl=True
         )
         r = _leading_ident(val)
         if r is not None:
@@ -598,7 +548,7 @@ def _r_root_ref_map(code_lines: Sequence[str | None] | None) -> dict[str, str]:
     Port of ``R/r-output.R::.r_root_ref_map()``: ``{"r2": "m"}`` for
     ``r2 <- f(m)``; empty when no chain is found.
     """
-    lines = [_trimws(v) for v in _as_lines(code_lines)]
+    lines = [trimws(v) for v in _as_lines(code_lines)]
     direct: dict[str, str] = {}
     for h in regexec(_ASSIGN_RE, lines, perl=True):
         if len(h) < 3:
@@ -661,7 +611,7 @@ def _r_output_oneline(
     for ln in lines:
         if ln is None:
             continue
-        tl = _trimws(ln) or ""
+        tl = trimws(ln) or ""
         if title_rx.search(tl) and not rx.search(tl):
             flush()
             cur = []
@@ -718,8 +668,8 @@ def _r_output_cohend(lines: Sequence[str | None]) -> list[dict[str, Any]]:
         if i + 2 < n and nxt is not None and ci_rx.search(nxt):
             hdr = lines[i + 2] or ""
             dat = (lines[i + 3] or "") if i + 3 < n else ""
-            hdr_toks = strsplit(_trimws(hdr), "\\s+")
-            dat_toks = strsplit(_trimws(dat), "\\s+")
+            hdr_toks = strsplit(trimws(hdr), "\\s+")
+            dat_toks = strsplit(trimws(dat), "\\s+")
             if (
                 len(hdr_toks) == 2
                 and len(dat_toks) == 2
@@ -767,7 +717,7 @@ def _r_output_effectsize_d(lines: Sequence[str | None]) -> list[dict[str, Any]]:
         if dm is None:
             i += 1
             continue
-        label = _trimws(m.group(1)) or ""
+        label = trimws(m.group(1)) or ""
         df = _one_row_frame(
             [("d", dm.group(1)), ("ci_lower", dm.group(2)), ("ci_upper", dm.group(3))]
         )
@@ -794,7 +744,7 @@ def _is_numlike(x: Iterable[str | None]) -> list[bool]:
         if v is None:
             out.append(False)
             continue
-        t = _trimws(v) or ""
+        t = trimws(v) or ""
         out.append(bool(r1.search(t) or r2.search(t) or r3.search(t)))
     return out
 
@@ -803,20 +753,20 @@ _QUANTILE_HDR = {"min", "1q", "median", "3q", "max", "mean"}
 
 
 def _is_quantile_hdr(h: Sequence[str | None]) -> bool:
-    toks = [(_trimws(v) or "").lower() for v in h if v is not None]
+    toks = [(trimws(v) or "").lower() for v in h if v is not None]
     toks = [t for t in toks if t]
     return len(toks) > 0 and all(t in _QUANTILE_HDR for t in toks)
 
 
 def _is_tibble_title(ln: str) -> bool:
-    return bool(grepl("^#\\s*A tibble", _trimws(ln)))
+    return bool(grepl("^#\\s*A tibble", trimws(ln)))
 
 
 _TYPE_TAG = "^<(chr|int|dbl|lgl|fct|ord|date|dttm|list|cplx|raw)>$"
 
 
 def _is_tibble_type_row(ln: str | None) -> bool:
-    tl = _trimws(ln) if ln is not None else None
+    tl = trimws(ln) if ln is not None else None
     if not tl:
         return False
     toks = [t for t in strsplit(tl, "\\s+") if t]
@@ -834,7 +784,7 @@ _NOT_HEADER_RE = (
 def _looks_header(ln: str | None) -> bool:
     if ln is None:
         return False
-    tl = _trimws(ln) or ""
+    tl = trimws(ln) or ""
     if not tl:
         return False
     if _is_tibble_title(tl):
@@ -888,7 +838,7 @@ def _split_block(block: Sequence[str]) -> list[list[str]] | None:
         else:
             j += 1
     nbsp_run = compile_r(_NBSP + "+")
-    return [[nbsp_run.sub(" ", _trimws(line[a:b]) or "") for line in padded] for a, b in runs]
+    return [[nbsp_run.sub(" ", trimws(line[a:b]) or "") for line in padded] for a, b in runs]
 
 
 _SECTION_RE = "^[A-Za-z][A-Za-z0-9 .()|>-]*:$"
@@ -912,21 +862,21 @@ def _r_output_tables(lines: Sequence[str | None]) -> list[dict[str, Any]]:
     i = 0
     while i < n:
         cur = lines[i]
-        tl = _trimws(cur) or ""
+        tl = trimws(cur) or ""
         if cur is not None and section_rx.search(tl):
             section = sub(":$", "", tl)
         if _looks_header(cur) and not _is_quantile_hdr(strsplit(tl, "\\s+")):
             j = i + 1
             if j < n and _is_tibble_type_row(lines[j]):
                 j += 1
-            if j < n and dash_rx.search(_trimws(lines[j]) or ""):
+            if j < n and dash_rx.search(trimws(lines[j]) or ""):
                 j += 1
             data_lines: list[str] = []
             while j < n:
                 dl = lines[j]
                 if dl is None:
                     break
-                dtl = _trimws(dl) or ""
+                dtl = trimws(dl) or ""
                 if not dtl:
                     break
                 if stop_rx.search(dtl):
@@ -941,7 +891,7 @@ def _r_output_tables(lines: Sequence[str | None]) -> list[dict[str, Any]]:
                     header = [c[0] for c in cols]
                     body = [c[1:] for c in cols]
                     header, body = _repair_columns(header, body)
-                    nm = [_trimws(h) or "" for h in header]
+                    nm = [trimws(h) or "" for h in header]
                     nm = [v if v else f"V{k + 1}" for k, v in enumerate(nm)]
                     df = _chr_frame(_make_unique(nm), body)
                     if any(any(_is_numlike(col)) for col in body):
@@ -954,15 +904,15 @@ def _r_output_tables(lines: Sequence[str | None]) -> list[dict[str, Any]]:
 
 def _repair_columns(header: list[str], body: list[list[str]]) -> tuple[list[str], list[list[str]]]:
     def empty(col: list[str]) -> bool:
-        return all(not (_trimws(v) or "") for v in col)
+        return all(not (trimws(v) or "") for v in col)
 
     k = 0
     while k < len(body) - 1:
         if (
-            not (_trimws(header[k]) or "")
+            not (trimws(header[k]) or "")
             and not empty(body[k])
             and empty(body[k + 1])
-            and (_trimws(header[k + 1]) or "")
+            and (trimws(header[k + 1]) or "")
         ):
             header[k] = header[k + 1]
             del header[k + 1]
@@ -971,8 +921,8 @@ def _repair_columns(header: list[str], body: list[list[str]]) -> tuple[list[str]
             k += 1
     k = 0
     while k < len(body) - 1:
-        if empty(body[k]) and (_trimws(header[k]) or "") and (_trimws(header[k + 1]) or ""):
-            header[k + 1] = f"{_trimws(header[k])} {_trimws(header[k + 1])}"
+        if empty(body[k]) and (trimws(header[k]) or "") and (trimws(header[k + 1]) or ""):
+            header[k + 1] = f"{trimws(header[k])} {trimws(header[k + 1])}"
             del header[k]
             del body[k]
         else:

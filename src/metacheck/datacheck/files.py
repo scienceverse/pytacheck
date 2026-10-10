@@ -61,8 +61,8 @@ import pandas as pd
 
 from metacheck._env import env_get
 from metacheck._r.base import plural, slashed, trimws
-from metacheck._r.regex import compile_r, gregexpr_all, grepl, gsub, regexec, strsplit, sub
-from metacheck._values import is_missing
+from metacheck._r.regex import gregexpr_all, grepl, gsub, regexec, strsplit, sub
+from metacheck._values import as_float, is_missing
 from metacheck.datacheck._files_registry import EXT_REGISTRY
 from metacheck.datacheck._strings import RAW_STRING, file_ext, tolower_checked
 from metacheck.fileinfo._strings import invalid_utf8
@@ -279,48 +279,6 @@ def _as_logical(x: Any) -> bool | None:
         if x in ("FALSE", "false", "F", "False"):
             return False
     return None
-
-
-def _r_as_numeric(s: Any) -> float | None:
-    """R ``as.numeric()`` of one string (``None`` for NA; NaN stays NaN)."""
-    if is_missing(s):
-        return None
-    if isinstance(s, bool):
-        return float(s)
-    if isinstance(s, int | float):
-        return float(s)
-    txt = str(s).strip(" \t\n\r\f\v")
-    if not txt or txt == "NA":
-        return None
-    m = _NUMERIC_RX().fullmatch(txt)
-    if m is None:
-        return None
-    body = txt.lstrip("+-")
-    neg = txt.startswith("-")
-    low = body.lower()
-    if low in ("inf", "infinity"):
-        return -math.inf if neg else math.inf
-    if low == "nan":
-        return math.nan
-    if low.startswith("0x"):
-        v = _hex_float(low[2:])
-        if v is None:
-            return None
-        return -v if neg else v
-    try:
-        v = float(body)
-    except ValueError:
-        return None
-    return -v if neg else v
-
-
-@functools.cache
-def _NUMERIC_RX() -> Any:
-    return compile_r(
-        r"[+-]?(?:(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][+-]?[0-9]+)?|[iI][nN][fF](?:[iI][nN][iI][tT][yY])?"
-        r"|[nN][aA][nN]|0[xX](?:[0-9a-fA-F]+\.?[0-9a-fA-F]*|\.[0-9a-fA-F]+)(?:[pP][+-]?[0-9]+)?)",
-        perl=True,
-    )
 
 
 def _hex_float(h: str) -> float | None:
@@ -793,7 +751,7 @@ def _data_check_write_manifest(
         on_disk = os.path.getsize(str(loc[i])) if downloaded[i] else None
         v = sizes[i]
         file_size.append(
-            float(on_disk) if on_disk is not None else _r_as_numeric(v)  # as.numeric()
+            float(on_disk) if on_disk is not None else as_float(v)  # as.numeric()
         )
     urls = _col(files, "file_url") or [None] * n
     for i in range(n):
@@ -991,7 +949,7 @@ def _as_integer(x: Any) -> int | None:
         return int(x)
     if isinstance(x, int):
         return x
-    v = _r_as_numeric(x)
+    v = as_float(x)
     if v is None or not math.isfinite(v) or abs(v) >= 2**31:
         return None
     return int(v)
@@ -1776,7 +1734,7 @@ def _detect_header(path: str | os.PathLike[str], sep: str) -> bool:
             return True
         if _toupper(x) in _NUMLIKE:
             return True
-        v = _r_as_numeric(x)
+        v = as_float(x)
         return v is not None and not math.isnan(v)
 
     def all_num(toks: list[str]) -> bool:

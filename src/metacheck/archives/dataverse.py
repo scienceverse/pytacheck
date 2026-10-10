@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, Any, cast
 import pandas as pd
 
 from metacheck._r import as_character, compile_r, grepl, gsub, plural, r_round, sub
-from metacheck._values import is_missing
+from metacheck._values import as_float, is_missing
 from metacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
@@ -381,15 +381,7 @@ def _as_numeric(x: Any) -> float:
     if isinstance(x, list | tuple) and len(x) == 1:
         return _as_numeric(x[0])
     if isinstance(x, str):
-        try:
-            from metacheck.datacheck.files import _r_as_numeric
-
-            v = _r_as_numeric(x)
-        except ImportError:  # pragma: no cover - datacheck is part of the package
-            try:
-                v = float(x.strip())
-            except ValueError:
-                v = None
+        v = as_float(x)
         if v is None:
             warnings.warn("NAs introduced by coercion", stacklevel=3)
             return math.nan

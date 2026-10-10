@@ -97,11 +97,6 @@ def _nzchar(s: str | None) -> bool:
     return s is None or s != ""
 
 
-def _trim(s: str | None) -> str | None:
-    """R ``trimws()`` of one value."""
-    return None if s is None else trimws(s)
-
-
 def _mean(xs: Sequence[bool]) -> float:
     return sum(xs) / len(xs) if xs else math.nan
 
@@ -483,7 +478,7 @@ def _encode_value_labels(codes: Any, labels: Any) -> str | None:
     for i in range(n):
         lab = lv[i % ll]
         lab_s = _chr(lab)
-        keep.append(not _na(cv[i % lc]) and not _na(lab) and _trim(lab_s) != "")
+        keep.append(not _na(cv[i % lc]) and not _na(lab) and trimws(lab_s) != "")
     if not any(keep):
         return None
     idx = [i for i in range(n) if keep[i]]
@@ -572,7 +567,7 @@ def _looks_like_freetext_labels(labs: Any) -> bool:
     Missing (``NA``) labels are left out like empty ones (in R they make the
     answer ``NA``, and the caller's ``&&`` then fails).
     """
-    txt = [t for t in (_trim(v) for v in _chr_vec(labs)) if t is not None and t != ""]
+    txt = [t for t in (trimws(v) for v in _chr_vec(labs)) if t is not None and t != ""]
     if len(txt) < 5:
         return False
     return _mean([len(t) > 40 for t in txt]) > 0.2
@@ -728,7 +723,7 @@ def _parse_value_label_text(s: Any, observed: Any = None) -> str | None:
     elif r_num >= 0.8 and l_num < 0.8:
         codes, labels = pr["rhs"], pr["lhs"]
     elif observed is not None and len(_vec(observed)):
-        ov_all = [_trim(v) for v in _chr_vec(observed)]
+        ov_all = [trimws(v) for v in _chr_vec(observed)]
         ov = {v for v in dict.fromkeys(ov_all) if v is not None and v != ""}
         hit_l = _mean([trimws(v) in ov for v in pr["lhs"]])
         hit_r = _mean([trimws(v) in ov for v in pr["rhs"]])
@@ -770,7 +765,7 @@ _RX_VARNAME = "^[A-Za-z][A-Za-z0-9_.]{0,30}$"
 
 
 def _clean_values(x: Any) -> list[str]:
-    vals = [_trim(v) for v in _chr_vec(x)]
+    vals = [trimws(v) for v in _chr_vec(x)]
     return [v for v in vals if v is not None and v != ""]
 
 
@@ -827,7 +822,7 @@ def _extract_codebook_positional(df: pd.DataFrame | None, src: str) -> pd.DataFr
     value_labels: list[str | None] = [None] * nrow
     if anchor_js:
         for i in range(nrow):
-            cells = [_trim(rows[j][i]) for j in anchor_js]
+            cells = [trimws(rows[j][i]) for j in anchor_js]
             cells = [c for c in cells if c is not None and c != ""]
             m = regexec(_RX_ANCHOR_PAIR, cells)
             codes = [z[1] if len(z) == 3 else None for z in m]
@@ -840,8 +835,8 @@ def _extract_codebook_positional(df: pd.DataFrame | None, src: str) -> pd.DataFr
                 )
     return chr_frame(
         {
-            "codebook_variable": [_trim(v) for v in rows[var_j]],
-            "label": [_trim(v) for v in rows[lab_j]],
+            "codebook_variable": [trimws(v) for v in rows[var_j]],
+            "label": [trimws(v) for v in rows[lab_j]],
             "codebook_source": src,
             "group": None,
             "value_labels": value_labels,
@@ -894,7 +889,7 @@ def _declared_missing(x: str | None) -> str | None:
 def _na_str(x: list[str | None]) -> list[str | None]:
     out = []
     for v in x:
-        t = _trim(v)
+        t = trimws(v)
         out.append(t if t is None or t != "" else None)
     return out
 
@@ -918,11 +913,11 @@ def _extract_structured_codebook(
         return None
     var_all = _chr_vec(_col(df, cols["var_col"]))
     lab_all = _chr_vec(_col(df, cols["lab_col"]))
-    sel = [i for i, v in enumerate(var_all) if _nzchar(_trim(v))]
+    sel = [i for i, v in enumerate(var_all) if _nzchar(trimws(v))]
     if not sel:
         return None
-    name_key = [_trim(var_all[i]) for i in sel]
-    lab_blank = [not _nzchar(_trim(lab_all[i])) for i in sel]
+    name_key = [trimws(var_all[i]) for i in sel]
+    lab_blank = [not _nzchar(trimws(lab_all[i])) for i in sel]
     dup = _duplicated(name_key)
     sel = [i for i, d, b in zip(sel, dup, lab_blank, strict=True) if not (d and b)]
     if not sel:
@@ -934,7 +929,7 @@ def _extract_structured_codebook(
     if val_col is not None:
         vals = _chr_vec(_col(df, val_col))
         value_labels = [
-            _parse_value_label_text(vals[i], _observed_for(observed, _trim(var_all[i])))
+            _parse_value_label_text(vals[i], _observed_for(observed, trimws(var_all[i])))
             for i in sel
         ]
     else:
@@ -1015,7 +1010,7 @@ def _extract_haven_labels(
         a = _col_attrs(df, first_j[nm])
         lbl = _attr(a, "label")
         lv = [p[1] for p in _label_pairs(lbl)] if _is_value_labels(lbl) else _vec(lbl)
-        labels.append(None if lbl is None or not lv else _trim(_chr(lv[0])))
+        labels.append(None if lbl is None or not lv else trimws(_chr(lv[0])))
         res = _haven_value_labels(None, a)
         vls.append(res["value_labels"])
         mvs.append(res["missing_values"])

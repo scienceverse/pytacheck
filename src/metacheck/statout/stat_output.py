@@ -24,18 +24,16 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r.base import as_character, plural
+from metacheck._r.base import as_character, plural, trimws
 from metacheck._r.regex import compile_r, grepl, gsub, regexec, sub
-from metacheck._values import is_missing, is_true
+from metacheck._values import as_float, is_missing, is_true
 from metacheck.statout.r_output import (
-    _r_as_numeric,
     _r_dollar,
     _r_dollar_found,
     _r_names,
     _r_values,
     _RError,
     _RNamedList,
-    _trimws,
 )
 
 __all__ = [
@@ -127,7 +125,7 @@ def _stat_sanitize_id(x: Any) -> str | None:
     s = _cell(x)
     if s is None:
         return None
-    s = _r_tolower(_trimws(s) or "")
+    s = _r_tolower(trimws(s) or "")
     s = gsub("[^a-z0-9]+", "_", s)
     return str(gsub("^_|_$", "", s))
 
@@ -251,7 +249,7 @@ def _stat_is_placeholder(x: Any) -> bool:
     s = _cell(x)
     if s is None:  # NA is not a placeholder (``!nzchar(NA)`` is FALSE)
         return False
-    s = _trimws(s) or ""
+    s = trimws(s) or ""
     return s == "" or s.lower() in _STAT_PLACEHOLDERS
 
 
@@ -271,20 +269,20 @@ def _stat_is_label_col(header: Any, values: Any, role: Mapping[str, Any] | None 
         # is TRUE, so an NA format declares a statistic.
         ty_found, ty_v = _r_dollar_found(role, "type")
         fm_found, fm_v = _r_dollar_found(role, "format")
-        ty = (_trimws(_paste_chr(ty_v)) or "").lower() if ty_found else ""
-        fm = (_trimws(_paste_chr(fm_v)) or "").lower() if fm_found else ""
+        ty = (trimws(_paste_chr(ty_v)) or "").lower() if ty_found else ""
+        fm = (trimws(_paste_chr(fm_v)) or "").lower() if fm_found else ""
         if fm:
             return False
         if ty in ("number", "integer"):
             return False
         if ty == "text":
             return True
-    h = (_trimws("" if header is None else _paste_chr(header)) or "").lower()
+    h = (trimws("" if header is None else _paste_chr(header)) or "").lower()
     if values is None:
         vals: list[str | None] = []
     else:
         seq = values.tolist() if isinstance(values, pd.Series) else list(values)
-        vals = [None if (c := _cell(v)) is None else _trimws(c) for v in seq]
+        vals = [None if (c := _cell(v)) is None else trimws(c) for v in seq]
     vals = [v for v in vals if not _stat_is_placeholder(v)]
     if h and _typ_get(_stato_type_column(h), "termSource") != "":
         return False
@@ -310,7 +308,7 @@ def _split_combined_df(val: Any, typ: Any) -> list[dict[str, Any]] | None:
     m = regexec("^([0-9.]+)\\s*,\\s*([0-9.]+)$", val)
     if len(m) != 3:
         return None
-    if _r_as_numeric(m[1]) is None or _r_as_numeric(m[2]) is None:
+    if as_float(m[1]) is None or as_float(m[2]) is None:
         return None
     return [
         {"name": "df1", "value": m[1], "typ": _stato_type_column("df1")},
@@ -418,7 +416,7 @@ def _long_rows(
     is_spv = _tb_field(tb, "syntax")[0]  # !is.null(tb$syntax): NA counts
     stats_col: int | None = None
     if is_spv:
-        exact = [c for c in label_cols if (_trimws(headers[c]) or "").lower() == "statistics"]
+        exact = [c for c in label_cols if (trimws(headers[c]) or "").lower() == "statistics"]
         stats_col = exact[0] if exact else None
     row_label_cols = (
         [c for c in label_cols if c != stats_col]
@@ -457,19 +455,19 @@ def _long_rows(
 
     ws = compile_r("\\s+")
     for ri in range(len(df)):
-        parts = [_paste_chr(_trimws(_cell(columns[c][ri]))) for c in row_label_cols]
-        row_label = _trimws(ws.sub(" ", " ".join(parts))) or ""
+        parts = [_paste_chr(trimws(_cell(columns[c][ri]))) for c in row_label_cols]
+        row_label = trimws(ws.sub(" ", " ".join(parts))) or ""
         row_id = f"{base_id}_r{ri + 1}"
         test_id: Any = None
         test_id_done = False
         for si, ci in enumerate(stat_cols):
             c = _cell(columns[ci][ri])
-            val = None if c is None else _trimws(c)
+            val = None if c is None else trimws(c)
             if _stat_is_placeholder(val):
                 continue
             if is_spv:
                 stat_name: Any = (
-                    _trimws(_cell(columns[stats_col][ri])) if stats_col is not None else headers[ci]
+                    trimws(_cell(columns[stats_col][ri])) if stats_col is not None else headers[ci]
                 )
                 if stats_col is not None:
                     from metacheck.statout.stato_map import (  # type: ignore[import-not-found]
@@ -584,14 +582,14 @@ def stat_output_json(
             values: dict[str, Any] = {}
             for ci in stat_cols:
                 c = _cell(columns[ci][ri])
-                val = None if c is None else _trimws(c)
+                val = None if c is None else trimws(c)
                 if _stat_is_placeholder(val):
                     continue
                 h = headers[ci]
                 if h not in typ_cache:
                     typ_cache[h] = _stato_type_column(h, call_fn)
                 typ = typ_cache[h]
-                num = _r_as_numeric(val)
+                num = as_float(val)
                 entry: dict[str, Any] = {
                     "value": val if num is None or not math.isfinite(num) else num
                 }
@@ -605,7 +603,7 @@ def stat_output_json(
             if not values:
                 continue
             parts = [_paste_chr(_cell(columns[c][ri])) for c in label_cols]
-            row_label = _trimws(ws.sub(" ", " ".join(parts))) or ""
+            row_label = trimws(ws.sub(" ", " ".join(parts))) or ""
             results.append(
                 {
                     "result_id": _stat_sanitize_id(f"{base_ids[ti]}_r{ri + 1}"),
