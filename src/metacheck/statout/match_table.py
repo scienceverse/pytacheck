@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 
 from metacheck._r import grepl, regextract, strsplit, sub, trimws
-from metacheck._values import is_missing
+from metacheck._values import as_str, is_missing
 
 __all__: list[str] = []
 
@@ -43,17 +43,6 @@ def _tolower(s: str) -> str:
         low = c.lower()
         out.append(low if len(low) == 1 else low[0])
     return "".join(out)
-
-
-def _chr(x: Any) -> str | None:
-    """``as.character()`` of a scalar cell; ``None`` for NA."""
-    if is_missing(x):
-        return None
-    if isinstance(x, str):
-        return x
-    from metacheck._r import as_character
-
-    return as_character(x)
 
 
 def _scalar(x: Any) -> Any:
@@ -91,7 +80,7 @@ def _table_caption_family(caption: Any) -> str | None:
     """
     if caption is None:
         caption = ""
-    cap_s = _chr(caption)
+    cap_s = as_str(caption)
     if cap_s is None:
         return None
     cap = _tolower(cap_s)
@@ -139,7 +128,7 @@ def _table_header_ambiguous(header: Any) -> bool:
     """
     if header is None:
         header = ""
-    h_s = _chr(header)
+    h_s = as_str(header)
     if h_s is None:
         return False  # nzchar(NA) is TRUE and grepl(NA) FALSE
     h = trimws(h_s)
@@ -148,7 +137,7 @@ def _table_header_ambiguous(header: Any) -> bool:
 
 def _last_segment(h: Any, trim: bool = False) -> str | None:
     """The last ``" / "``-joined segment (``strsplit(..., fixed = TRUE)``)."""
-    s = _chr(h)
+    s = as_str(h)
     if s is None:
         return None
     if trim:
@@ -190,7 +179,7 @@ def _table_typed_cells(content: Any, caption: Any) -> list[list[dict[str, Any]]]
         out: list[dict[str, Any]] = []
         for i in range(n):
             ci = i + 1
-            raw = _chr(cells[i])
+            raw = as_str(cells[i])
             val = None if raw is None else trimws(raw)
             if val == "":
                 continue

@@ -23,7 +23,7 @@ from typing import Any, cast
 import pandas as pd
 
 from metacheck._r import compile_r, gsub, sub, trimws
-from metacheck._values import is_missing
+from metacheck._values import as_float, is_missing
 from metacheck.archives.dataverse import (
     RequestAbort,
     _as_numeric,
@@ -365,8 +365,6 @@ def _parse_error(url: str) -> OAuthError:
 
 def _token_from_body(body: Any, url: str) -> tuple[str, float | None]:
     """httr2 ``oauth_flow_parse()`` + ``oauth_token()``: the access token and its expiry time."""
-    from metacheck.datacheck.files import _r_as_numeric
-
     if not isinstance(body, dict):  # rlang::has_name() on an unnamed value
         raise _parse_error(url)
     expires_in: float | None = None
@@ -375,7 +373,7 @@ def _token_from_body(body: Any, url: str) -> tuple[str, float | None]:
         if isinstance(value, list | dict) and len(value) == 1:  # as.numeric(list(x))
             value = next(iter(value.values())) if isinstance(value, dict) else value[0]
         # null or a longer array/object: not one number (numeric(0), a vector or an error)
-        num = None if value is None or isinstance(value, list | dict) else _r_as_numeric(value)
+        num = None if value is None or isinstance(value, list | dict) else as_float(value)
         # oauth_token(): check_number_whole(expires_in, allow_null = TRUE)
         if num is None or math.isnan(num) or not math.isfinite(num) or not num.is_integer():
             raise OAuthError("`expires_in` must be a whole number.")

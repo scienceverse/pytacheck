@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from metacheck._values import as_float
 from metacheck.statout.r_output import (
     _make_unique,
-    _r_as_numeric,
     _r_call_fn,
     _r_call_object_ref,
     _r_echo_chunks,
@@ -193,8 +193,8 @@ def test_r_helpers() -> None:
         "a.1.1",
     ]
     assert _make_unique(["", "", "V1"]) == ["", ".1", "V1"]
-    assert _r_as_numeric(" 5 ") == 5.0
-    assert _r_as_numeric("0x1A") == 26.0
-    assert _r_as_numeric("1e") is None
-    assert _r_as_numeric("NA") is None
-    assert _r_as_numeric("Infinity") == float("inf")
+    assert as_float(" 5 ") == 5.0
+    assert as_float("0x1A") == 26.0
+    assert as_float("1e") is None
+    assert as_float("NA") is None
+    assert as_float("Infinity") == float("inf")

@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 
 from metacheck._r import slashed
-from metacheck._values import is_missing
+from metacheck._values import as_int, is_missing
 
 if TYPE_CHECKING:
     import httpx
@@ -616,8 +616,8 @@ def _github_files(repo: Any, clean_repo: str, dir: str, recursive: bool) -> pd.D
 
     if resp.status_code != 200:
         rl = resp.headers.get("x-ratelimit-remaining")
-        if rl is not None and _as_int(rl) == 0:
-            reset_at = _as_int(resp.headers.get("x-ratelimit-reset"))
+        if rl is not None and as_int(rl) == 0:
+            reset_at = as_int(resp.headers.get("x-ratelimit-reset"))
             reset = (
                 "NA"
                 if reset_at is None
@@ -673,16 +673,6 @@ def _github_files(repo: Any, clean_repo: str, dir: str, recursive: bool) -> pd.D
             ]
             files = bind_rows([files, *dir_contents])
     return files
-
-
-def _as_int(x: Any) -> int | None:
-    """R ``as.integer()`` of a header value (``None`` for NA)."""
-    if x is None:
-        return None
-    try:
-        return int(float(str(x).strip()))
-    except ValueError:
-        return None
 
 
 def github_tree_files(repo: Any) -> dict[str, Any]:
@@ -840,15 +830,6 @@ def _vapply_num(x: Any) -> float | None:
     if isinstance(x, str):
         raise TypeError("values must be type 'double', but FUN(X[[1]]) result is type 'character'")
     return float(x)
-
-
-def _num(x: Any) -> float | None:
-    if x is None or isinstance(x, bool):
-        return None if x is None else float(x)
-    try:
-        return float(x)
-    except (TypeError, ValueError):
-        return None
 
 
 def github_info(repo: Any, recursive: bool = False) -> dict[str, Any] | None:

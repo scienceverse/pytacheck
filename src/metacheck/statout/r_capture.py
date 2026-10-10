@@ -26,7 +26,6 @@ Running R is optional: :func:`_rscript` finds ``Rscript`` from
 from __future__ import annotations
 
 import json
-import math
 import os
 import shutil
 import subprocess
@@ -39,6 +38,7 @@ from typing import Any
 
 from metacheck._env import env_get
 from metacheck._r.regex import grepl
+from metacheck._values import as_float, as_int
 
 __all__: list[str] = []
 
@@ -727,19 +727,6 @@ def _r_capture_value(
 # ---------------------------------------------------------------------------
 
 
-def _is_na_scalar(x: Any) -> bool:
-    return x is None or (isinstance(x, float) and math.isnan(x))
-
-
-def _as_int(x: Any) -> int | None:
-    if _is_na_scalar(x):
-        return None
-    try:
-        return int(x)
-    except (TypeError, ValueError):
-        return None
-
-
 def _r_captures_to_tables(
     caps: Sequence[Mapping[str, Any]] | None,
     source_label: str | None = None,  # noqa: ARG001 - R signature; unused in R too
@@ -801,14 +788,14 @@ def _r_captures_to_tables(
                 "analysis": analysis,
                 "title": analysis,
                 "data": df,
-                "line": _as_int(line),
+                "line": as_int(line),
                 "line_seq": 1,
                 "call_fn": _r_method_to_fn(_r_dollar(rec, "method")),
                 "model_ref": resolve_ref(_r_call_object_ref(_r_dollar(rec, "call_text") or "")),
                 "captured": True,
             }
         )
-    lines = [_as_int(x["line"]) for x in out]
+    lines = [as_int(x["line"]) for x in out]
     for i, x in enumerate(out):
         same = [j for j, ln in enumerate(lines) if ln is not None and ln == lines[i]]
         # a capture without a source line is the first (and only) of its
@@ -831,14 +818,12 @@ def _label_chr(found: bool, x: Any) -> str | None:
 
 def _as_numeric_value(v: Any) -> float | None:
     """R ``as.numeric()`` of one captured value."""
-    from metacheck.statout.r_output import _r_as_numeric
-
     if isinstance(v, bool):
         return 1.0 if v else 0.0
     if isinstance(v, int | float):
         return float(v)
     if isinstance(v, str):
-        return _r_as_numeric(v)
+        return as_float(v)
     if isinstance(v, list) and len(v) == 1:
         return _as_numeric_value(v[0])
     return None
@@ -861,13 +846,13 @@ def _r_merge_captures(
         return cap
     from metacheck.statout.r_output import _r_dollar
 
-    cap_lines = {ln for ln in (_as_int(_r_dollar(x, "line")) for x in cap) if ln is not None}
+    cap_lines = {ln for ln in (as_int(_r_dollar(x, "line")) for x in cap) if ln is not None}
     keep = []
     for x in txt:
-        ln = _as_int(_r_dollar(x, "line"))
+        ln = as_int(_r_dollar(x, "line"))
         keep.append(ln is not None and ln not in cap_lines)
     out = [dict(x) for x in cap] + [dict(x) for x, k in zip(txt, keep, strict=True) if k]
-    lines = [_as_int(_r_dollar(x, "line")) for x in out]
+    lines = [as_int(_r_dollar(x, "line")) for x in out]
     for i, x in enumerate(out):
         same = [j for j, ln in enumerate(lines) if ln is not None and ln == lines[i]]
         x["line_seq"] = same.index(i) + 1 if same else 1

@@ -44,6 +44,7 @@ import pandas as pd
 
 from metacheck._r.base import trimws
 from metacheck._r.regex import grepl, gsub, regextract, strsplit, sub
+from metacheck._values import as_int
 from metacheck.io.bibr12 import (
     BIBR12_COLS,
     _bibr12_bib_type,
@@ -172,10 +173,6 @@ def _tolower(s: str) -> str:
 def _file_path_sans_ext(x: str) -> str:
     """``tools::file_path_sans_ext()``."""
     return str(sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", x))
-
-
-def _int(v: Any) -> int | None:
-    return None if _na(v) or (isinstance(v, float) and math.isinf(v)) else int(v)
 
 
 def _xml_remove(node: Any) -> None:
@@ -624,7 +621,7 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
         return [None] * n_bib if vals is None else [None if _na(v) else v for v in vals]
 
     bib_doi = _na_if_empty(bib_col("doi"))
-    year = [_int(v) for v in bib_col("year")]
+    year = [as_int(v) for v in bib_col("year")]
     bib_tbl: dict[str, Sequence[Any]] = {
         "bib_id": list(range(1, n_bib + 1)),
         "text_id": ref_text_id,
@@ -814,7 +811,7 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
         {
             "text": text,
             "text_id": text_id,
-            "paragraph_id": [_int(v) for v in paragraph_id],
+            "paragraph_id": [as_int(v) for v in paragraph_id],
             "section_id": text_section,
         },
         "text",

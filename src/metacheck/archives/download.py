@@ -41,7 +41,7 @@ from urllib.parse import urlsplit
 
 from metacheck._env import env_get
 from metacheck._r import grepl, gsub, plural, sub
-from metacheck._values import is_missing
+from metacheck._values import as_float, as_str, is_missing
 from metacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
@@ -67,31 +67,13 @@ def _message(*parts: Any) -> None:
 
 def _num(x: Any) -> float:
     """One value as R double (``NA``/unparseable -> ``nan``)."""
-    if is_missing(x):
-        return math.nan
-    if isinstance(x, str):
-        from metacheck.stats._rmath import as_numeric
-
-        return as_numeric(x)[0]
-    try:
-        return float(x)
-    except (TypeError, ValueError):
-        return math.nan
+    v = as_float(x)
+    return math.nan if v is None else v
 
 
 def _nums(values: Iterable[Any]) -> list[float]:
     """``as.numeric()`` of a vector (``NA`` -> ``nan``)."""
     return [_num(v) for v in values]
-
-
-def _chr(x: Any) -> str | None:
-    if is_missing(x):
-        return None
-    if isinstance(x, str):
-        return x
-    from metacheck._r import as_character
-
-    return as_character(x)
 
 
 def _fmt_int(x: float) -> str:
@@ -188,7 +170,7 @@ def _repo_key(repo_url: Any) -> str:
     elif is_missing(repo_url):
         return "NA"  # R: gsub() keeps NA, and nzchar(NA) is TRUE
     else:
-        key = repo_url if isinstance(repo_url, str) else (_chr(repo_url) or "NA")
+        key = repo_url if isinstance(repo_url, str) else (as_str(repo_url) or "NA")
     key = gsub("^https?://", "", key)  # scheme is noise
     key = gsub("[^A-Za-z0-9._-]+", "_", key)  # filesystem-safe
     key = gsub("^_+|_+$", "", key)
@@ -215,7 +197,7 @@ def _rel_one(key: str, file_path: Any) -> str:
     if is_missing(file_path):
         rel = "NA"
     else:
-        rel = file_path if isinstance(file_path, str) else (_chr(file_path) or "NA")
+        rel = file_path if isinstance(file_path, str) else (as_str(file_path) or "NA")
         rel = gsub(r"\\", "/", rel)
         rel = gsub("^/+", "", rel)
     return _file_path(key, rel)
@@ -1403,7 +1385,7 @@ def download_repo_files(
             if not all(keep) and math.isfinite(cap_bytes):
                 n_out = keep.count(False)
                 msg = (
-                    f"An archive in repository {_chr(repo_urls[idx[0]]) or 'NA'} exceeds the "
+                    f"An archive in repository {as_str(repo_urls[idx[0]]) or 'NA'} exceeds the "
                     f"{_cap_num(max_download_size)} MB per-repository budget: fetched the "
                     f"smallest members up to the cap, {n_out} member{plural(n_out)} omitted. "
                     "Raise `max_download_size` to include more."
@@ -1452,7 +1434,7 @@ def download_repo_files(
                 if j is None:
                     continue
                 if f_ok[j] is not True or is_missing(f_path[j]):
-                    why = "unknown failure" if f_error is None else _chr(f_error[j])
+                    why = "unknown failure" if f_error is None else as_str(f_error[j])
                     failed_rows.append((repo_urls[k], file_names[k], arc, paper_id(k), why))
                     continue
                 df.iat[k, loc_col] = f_path[j]
@@ -1546,10 +1528,10 @@ def download_repo_files(
             k = len(rows)
             largest = sorted(rows, key=lambda r: -r[2])[0]
             _message(
-                f"{k} file{plural(k)} in {_chr(repo) or 'NA'} exceeded the "
+                f"{k} file{plural(k)} in {as_str(repo) or 'NA'} exceeded the "
                 f"{_cap_num(max_file_size)} MB per-file limit and {'was' if k == 1 else 'were'} "
                 "skipped (the rest of the repository was downloaded). Largest: "
-                f"{_chr(largest[1]) or 'NA'} "
+                f"{as_str(largest[1]) or 'NA'} "
                 f"({_cap_num(float(r_round(max(r[2] for r in rows) / _MB)))} MB). "
                 "Raise max_file_size to include them."
             )
@@ -1583,7 +1565,7 @@ def download_repo_files(
 
         def in_remaining(pattern: str) -> list[Any]:
             rows = remaining_rows()
-            hits = grepl(pattern, [_chr(repo_list[i]) for i in rows], ignore_case=True)
+            hits = grepl(pattern, [as_str(repo_list[i]) for i in rows], ignore_case=True)
             return list(dict.fromkeys(repo_list[i] for i, h in zip(rows, hits, strict=True) if h))
 
         def is_osfstorage(i: int) -> bool:
@@ -1738,7 +1720,7 @@ def download_repo_files(
             try:
                 cache_now = df[".cache_path"].tolist()
                 zen = grepl(
-                    r"zenodo\.org", [_chr(file_urls[i]) for i in remaining], ignore_case=True
+                    r"zenodo\.org", [as_str(file_urls[i]) for i in remaining], ignore_case=True
                 )
                 parallel_safe = [
                     is_osfstorage(i) or bool(z) for i, z in zip(remaining, zen, strict=True)
@@ -1794,8 +1776,8 @@ def download_repo_files(
             k = len(frows)
             first_err = sub("\n.*", "", frows[0][4])
             _message(
-                f"{k} download{plural(k)} from {_chr(repo) or 'NA'} failed after retries "
-                f"(e.g. {_chr(frows[0][1]) or 'NA'}: {first_err}). Re-run to retry: cached "
+                f"{k} download{plural(k)} from {as_str(repo) or 'NA'} failed after retries "
+                f"(e.g. {as_str(frows[0][1]) or 'NA'}: {first_err}). Re-run to retry: cached "
                 "files are reused, only the missing files are fetched."
             )
 
@@ -1814,23 +1796,23 @@ def download_repo_files(
     out.index = index
     out.attrs["gated"] = _frame(
         {
-            "repo_url": ([_chr(r[0]) for r in gated_rows], "string"),
+            "repo_url": ([as_str(r[0]) for r in gated_rows], "string"),
             "message": ([r[1] for r in gated_rows], "string"),
         }
     )
     out.attrs["oversize_skipped"] = _frame(
         {
-            "repo_url": ([_chr(r[0]) for r in oversize_rows], "string"),
-            "file_name": ([_chr(r[1]) for r in oversize_rows], "string"),
+            "repo_url": ([as_str(r[0]) for r in oversize_rows], "string"),
+            "file_name": ([as_str(r[1]) for r in oversize_rows], "string"),
             "file_size": ([r[2] for r in oversize_rows], "float64"),
         }
     )
     out.attrs["failed"] = _frame(
         {
-            "repo_url": ([_chr(r[0]) for r in failed_rows], "string"),
-            "file_name": ([_chr(r[1]) for r in failed_rows], "string"),
-            "file_url": ([_chr(r[2]) for r in failed_rows], "string"),
-            "paper_id": ([_chr(r[3]) for r in failed_rows], "string"),
+            "repo_url": ([as_str(r[0]) for r in failed_rows], "string"),
+            "file_name": ([as_str(r[1]) for r in failed_rows], "string"),
+            "file_url": ([as_str(r[2]) for r in failed_rows], "string"),
+            "paper_id": ([as_str(r[3]) for r in failed_rows], "string"),
             "error": ([r[4] for r in failed_rows], "string"),
         }
     )

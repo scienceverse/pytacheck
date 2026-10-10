@@ -7,6 +7,11 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Internal: one `as.character()`, `as.numeric()`, `as.integer()` and `trimws()`
+
+- **Changed:** private copies of R's coercions whose rules matched the shared helpers are gone: 9 `as.character()` copies (`_chr`, `_chr1`, `_cell_chr`) use `metacheck._values.as_str`; 7 `as.numeric()` copies (`_r_as_numeric` in `datacheck.files` and `statout.r_output`, `_as_numeric` in `statout.spv` and `repro.core`, `_num` in `archives.github`, the bodies of `datacheck`'s `as_numeric_str` and `archives.download`'s `_num`) use `as_float`; 3 `as.integer()` copies (`_as_int`, `_int`) use `as_int`; 3 `trimws()` copies (`_trim`, `_trimws`) and 2 `paste(collapse =)` copies use `metacheck._r.trimws` and `paste`. The copies left are the ones whose rules differ: R's 32-bit integer range, `NA` as NaN or as `"NA"`, a warning on coercion, list unwrapping, `str()` instead of R's number formatting, dates and times, other whitespace sets.
+- **Unchanged:** results on real inputs. The shared helpers read a few malformed values differently: a hexadecimal number without digits (`"0x."`) is `NA`, an infinite GitHub rate-limit header or R-output line number, and a Grobid year that is not a number, are `NA` instead of an error, a decimal string is truncated as `as.integer()` does, and a container is `NA` rather than its Python text.
+
 ### Internal: one missing-value test and one `isTRUE()`
 
 - **Changed:** the 25 private copies of `_is_na`/`_is_missing`/`_isna` and the 4 copies of `_is_true` that matched the shared helpers are gone; their callers use `metacheck._values.is_missing` and `is_true`. Code that imported `is_na` from `metacheck._r` uses `is_missing` from `metacheck._values` under its own name (`metacheck._r.is_na` stays as an alias). The copies left are the ones whose rules differ (R's `%in% TRUE`, `x$name` partial matching, a `None` that is `NULL` and not `NA`).

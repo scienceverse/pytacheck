@@ -40,7 +40,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, NoReturn
 
 from metacheck._r import as_character, format_num, grepl, gsub, r_sort_key, strsplit, sub, trimws
-from metacheck._values import is_missing
+from metacheck._values import as_float, is_missing
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -54,41 +54,10 @@ _DBL_MAX = sys.float_info.max
 # Small R-semantics helpers shared by the statout readers
 # ===========================================================================
 
-_NUM_RE = re.compile(r"[-+]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][-+]?[0-9]+)?")
-_HEX_RE = re.compile(
-    r"([-+]?)0[xX]((?=\.?[0-9a-fA-F])[0-9a-fA-F]*(?:\.[0-9a-fA-F]*)?)(?:[pP]([-+]?[0-9]+))?"
-)
-_INF_RE = re.compile(r"([-+]?)(?:inf|infinity)", re.IGNORECASE)
-
-
-def _as_numeric(x: Any) -> float | None:
-    """R ``as.numeric()`` of one value (``None`` for ``NA``)."""
-    if x is None:
-        return None
-    if isinstance(x, bool):
-        return float(x)
-    if isinstance(x, int | float):
-        return float(x)
-    s = str(x).strip(" \t\n\r\f\v")
-    if not s or s == "NA":
-        return None
-    if _NUM_RE.fullmatch(s):
-        return float(s)
-    m = _HEX_RE.fullmatch(s)
-    if m:
-        v = float.fromhex("0x" + m.group(2) + ("p" + m.group(3) if m.group(3) else ""))
-        return -v if m.group(1) == "-" else v
-    m = _INF_RE.fullmatch(s)
-    if m:
-        return -math.inf if m.group(1) == "-" else math.inf
-    if s.lower() == "nan":
-        return math.nan
-    return None
-
 
 def _as_integer(x: Any) -> int | None:
     """R ``as.integer()`` of one value (truncates; ``None`` for ``NA``)."""
-    v = _as_numeric(x)
+    v = as_float(x)
     if v is None or math.isnan(v) or math.isinf(v):
         return None
     iv = int(v)
@@ -1118,7 +1087,7 @@ def _spvviz_decode_boxplot_source(root: Any, source_id: str | None) -> pd.DataFr
     raw_cat = [c[ci] for c in cells]
     category = [code_to_label.get(c) for c in raw_cat]
     category = [c if c is not None else raw_cat[i] for i, c in enumerate(category)]
-    value = [_as_numeric(c[vi].replace(",", ".")) for c in cells]
+    value = [as_float(c[vi].replace(",", ".")) for c in cells]
     return pd.DataFrame(
         {
             "category": pd.array(category, dtype="string"),
@@ -2402,7 +2371,7 @@ def _spv_display_value(x: Any) -> str:
     if is_missing(x):
         return ""
     s = x if isinstance(x, str) else _na_str(as_character(x))
-    num = _as_numeric(s)
+    num = as_float(s)
     if num is None or not math.isfinite(num) or not grepl(r"^[-+]?[0-9.]+([eE][-+]?[0-9]+)?$", s):
         return s
     if num == round(num):

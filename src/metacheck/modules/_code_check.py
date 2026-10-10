@@ -18,7 +18,7 @@ from typing import Any, cast
 
 import pandas as pd
 
-from metacheck._r.base import as_character, plural, slashed
+from metacheck._r.base import as_character, paste, plural, slashed
 from metacheck._r.regex import grepl
 from metacheck._values import is_missing
 
@@ -114,11 +114,6 @@ def location_series(values: list[Any], index: Any, like: pd.Series | None) -> pd
         dtype = like.dtype
     out: pd.Series = pd.Series(values, index=index, dtype=dtype)
     return out
-
-
-def _paste_collapse(values: Sequence[Any], sep: str) -> str:
-    """``paste(x, collapse = sep)`` of a character vector (``NA`` is ``"NA"``)."""
-    return sep.join("NA" if is_missing(v) else str(as_character(v)) for v in values)
 
 
 def _msg(exc: BaseException) -> str:
@@ -296,21 +291,21 @@ def analyse_files(
 
             absolute_paths = code_abs_path(file_nc)
             row["code_abs_path"] = len(absolute_paths)
-            row["absolute_paths"] = _paste_collapse(absolute_paths["abs_path"].tolist(), " | ")
+            row["absolute_paths"] = paste(absolute_paths["abs_path"].tolist(), collapse=" | ")
 
             if lang == "R":
                 setwd_calls = code_setwd(file_nc)["setwd_call"].tolist()
             else:
                 setwd_calls = []
             row["code_setwd"] = len(setwd_calls)
-            row["setwd_calls"] = _paste_collapse(setwd_calls, " | ")
+            row["setwd_calls"] = paste(setwd_calls, collapse=" | ")
 
             if lang == "R":
                 install_calls = code_install_packages(file_nc)["install_packages_call"].tolist()
             else:
                 install_calls = []
             row["code_install_packages"] = len(install_calls)
-            row["install_packages_calls"] = _paste_collapse(install_calls, " | ")
+            row["install_packages_calls"] = paste(install_calls, collapse=" | ")
 
             library_lines = [int(v) for v in code_library_lines(file_nc, lang)["line"].tolist()]
             row["library_lines"] = len(library_lines)
