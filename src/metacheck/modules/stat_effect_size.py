@@ -25,6 +25,7 @@ from typing import Any, NamedTuple, cast
 
 import pandas as pd
 
+from metacheck._values import is_missing
 from metacheck.module import module
 
 # ---------------------------------------------------------------------------
@@ -131,12 +132,6 @@ _REPORT_COLS = {
 # ---------------------------------------------------------------------------
 # R scalar semantics
 # ---------------------------------------------------------------------------
-
-
-def _is_na(x: Any) -> bool:
-    if x is None or x is pd.NA:
-        return True
-    return isinstance(x, float) and math.isnan(x)
 
 
 def _tolower(s: str | None) -> str | None:
@@ -490,7 +485,7 @@ def _hits(pattern: str, text: str | None) -> list[list[str]]:
     """
     from metacheck._r.regex import compile_r
 
-    if _is_na(text) or text == "":
+    if is_missing(text) or text == "":
         return []
     rx = compile_r(pattern, perl=True)
     out = []
@@ -581,7 +576,7 @@ def _parse_eta_stats(es_text: str | None, sentence: str | None = None) -> list[_
     from metacheck._r.base import trimws
     from metacheck._r.regex import gsub, regexec, strsplit
 
-    if _is_na(es_text) or es_text == "":
+    if is_missing(es_text) or es_text == "":
         return []
     parts = trimws(strsplit(es_text, _ETA_SPLIT, perl=True))
     out = []
@@ -639,7 +634,7 @@ def _classify_d_coherence(
 
     out: dict[str, str | None] = dict.fromkeys(_D_COLUMNS)
 
-    if _is_na(test) or test != "t-test":
+    if is_missing(test) or test != "t-test":
         return out
 
     t_stats = _parse_t_stats(test_text)
@@ -787,7 +782,7 @@ def _classify_f_coherence(
     """
     out: dict[str, str | None] = dict.fromkeys(_F_COLUMNS)
 
-    if _is_na(test) or test != "F-test":
+    if is_missing(test) or test != "F-test":
         return out
 
     f_stats = _parse_f_stats(test_text)
@@ -960,8 +955,8 @@ def _label_lhs(lhs: Sequence[str | None], df: Sequence[str | None]) -> list[str 
     """
     from metacheck._r.regex import grepl
 
-    lhs = [None if _is_na(x) else str(x) for x in lhs]
-    df = [None if _is_na(d) else str(d) for d in df]
+    lhs = [None if is_missing(x) else str(x) for x in lhs]
+    df = [None if is_missing(d) else str(d) for d in df]
     uniq = list(dict.fromkeys(lhs))
     kind_of = dict(zip(uniq, _lhs_kind(uniq), strict=True))
     kinds = [kind_of[x] for x in lhs]
@@ -991,11 +986,11 @@ def _build_rows(eq: pd.DataFrame, kinds: list[str | None]) -> pd.DataFrame | Non
     rhs = eq["rhs"].tolist()
 
     def s(x: Any) -> str:
-        return "NA" if _is_na(x) else str(x)
+        return "NA" if is_missing(x) else str(x)
 
     groups: dict[tuple[Any, Any], tuple[list[int], list[int]]] = {}
     for i, kind in enumerate(kinds):
-        if kind is None or _is_na(paper_ids[i]) or _is_na(text_ids[i]):
+        if kind is None or is_missing(paper_ids[i]) or is_missing(text_ids[i]):
             # split() drops NA groups; rows that are neither test nor effect size
             # play no part in build_rows()
             continue
@@ -1019,7 +1014,7 @@ def _build_rows(eq: pd.DataFrame, kinds: list[str | None]) -> pd.DataFrame | Non
         else:
             es_col = ["; ".join(es_text)] * len(tests)
         for j in tests:
-            df_part = "" if _is_na(dfs[j]) else str(dfs[j])
+            df_part = "" if is_missing(dfs[j]) else str(dfs[j])
             out_text.append(f"{s(lhs[j])}{df_part} {s(comps[j])} {s(rhs[j])}")
             out_test.append(kinds[j])
         out_pid.extend([pid] * len(tests))
@@ -1043,7 +1038,7 @@ def _count_coh(col: Iterable[Any], value: str) -> int:
     """Port of ``stat_effect_size.R::count_coh()``: ``;``-separated occurrences of *value*."""
     n = 0
     for x in col:
-        if _is_na(x):
+        if is_missing(x):
             continue
         # trimws(): R's default whitespace "[ \t\r\n]" at both ends
         n += sum(1 for part in str(x).split(";") if part.strip(" \t\r\n") == value)
@@ -1155,7 +1150,7 @@ def stat_effect_size(paper: Any) -> dict[str, Any]:
             pids = table["paper_id"].tolist()
             pos = np.array([paper_order.get(pid, np.inf) for pid in pids], dtype="float64")
             tid = np.array(
-                [np.inf if _is_na(t) else float(t) for t in table["text_id"].tolist()],
+                [np.inf if is_missing(t) else float(t) for t in table["text_id"].tolist()],
                 dtype="float64",
             )
             keys: tuple[Any, ...] = (tid, pos)
@@ -1180,9 +1175,9 @@ def stat_effect_size(paper: Any) -> dict[str, Any]:
 
     # Coherence checks for effect sizes in t-tests and F-tests ----
     tests = table["test"].tolist()
-    test_texts = [None if _is_na(x) else x for x in table["test_text"].tolist()]
-    es_list = [None if _is_na(x) else x for x in table["es"].tolist()]
-    sentences = [None if _is_na(x) else x for x in table["text"].tolist()]
+    test_texts = [None if is_missing(x) else x for x in table["test_text"].tolist()]
+    es_list = [None if is_missing(x) else x for x in table["es"].tolist()]
+    sentences = [None if is_missing(x) else x for x in table["text"].tolist()]
     rows = list(zip(tests, test_texts, es_list, sentences, strict=True))
     coherence = [_classify_d_coherence(t, tt, e) for t, tt, e, _ in rows]
     f_coherence = [_classify_f_coherence(t, tt, e, sentence=x) for t, tt, e, x in rows]

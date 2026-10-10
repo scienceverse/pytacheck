@@ -20,7 +20,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import is_na
+from metacheck._values import is_missing
 
 __all__ = ["gitlab_links", "gitlab_pat", "gitlab_repo", "gitlab_tree_files"]
 
@@ -63,7 +63,7 @@ def gitlab_repo(repo: Any) -> Any:
         if len(items) > 1:
             return [gitlab_repo(r) for r in items]
         repo = items[0]
-    if is_na(repo):
+    if is_missing(repo):
         return None
 
     path = repo if isinstance(repo, str) else as_character(repo)

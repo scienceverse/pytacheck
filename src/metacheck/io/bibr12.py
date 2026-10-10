@@ -43,7 +43,8 @@ import orjson
 import pandas as pd
 
 from metacheck._r.base import as_character, trimws
-from metacheck._r.regex import grepl, is_na, sub
+from metacheck._r.regex import grepl, sub
+from metacheck._values import is_missing
 from metacheck.log import logger
 from metacheck.papers.io import _field
 from metacheck.papers.model import Paper
@@ -483,7 +484,7 @@ def _flatten(e: Any, out: list[Any]) -> None:
             _flatten(v, out)
     elif isinstance(e, pd.Series):
         for v in e.tolist():
-            _flatten(None if is_na(v) else v, out)
+            _flatten(None if is_missing(v) else v, out)
     else:
         out.append(_jnum(e))
 
@@ -497,7 +498,7 @@ def _unlist_as(e: Any, schema_type: str) -> list[Any]:
     if schema_type == "integer" and all(type(v) is int for v in vals):
         return vals
     series = coerce_column(infer_column(vals), schema_type)
-    return [None if is_na(v) else v for v in series.tolist()]
+    return [None if is_missing(v) else v for v in series.tolist()]
 
 
 def _cell(e: Any, typ: str) -> Any:
@@ -709,7 +710,7 @@ def _array_cells(v: Any, n: int, typ: str) -> list[Any]:
     out = []
     for e in values:
         if not isinstance(e, list | tuple | dict | np.ndarray | pd.DataFrame | pd.Series) and (
-            (atomic and is_na(e)) or (e is not None and is_na(e))
+            (atomic and is_missing(e)) or (e is not None and is_missing(e))
         ):
             out.append([[None]] if typ == "chr[][]" else [None])
         else:
@@ -741,7 +742,7 @@ def _unlist_na(e: Any, schema_type: str) -> list[Any]:
     if schema_type == "integer" and all(type(v) is int for v in vals):
         return vals
     series = coerce_column(infer_column(vals), schema_type)
-    return [None if is_na(v) else v for v in series.tolist()]
+    return [None if is_missing(v) else v for v in series.tolist()]
 
 
 def _cell_na(e: Any, typ: str) -> Any:
@@ -759,7 +760,7 @@ def _cell_na(e: Any, typ: str) -> Any:
 
 
 def _scalar_na(e: Any) -> bool:
-    return not isinstance(e, list | tuple | dict | np.ndarray | pd.DataFrame) and is_na(e)
+    return not isinstance(e, list | tuple | dict | np.ndarray | pd.DataFrame) and is_missing(e)
 
 
 def _first_any(e: Any) -> Any:
@@ -776,7 +777,7 @@ def _to_json_value(e: Any) -> Any:
     if isinstance(e, tuple | np.ndarray):
         return [_to_json_value(v) for v in list(e)]
     if isinstance(e, pd.Series):
-        return [None if is_na(v) else v for v in e.tolist()]
+        return [None if is_missing(v) else v for v in e.tolist()]
     if isinstance(e, pd.DataFrame):
         return [
             {k: (None if _scalar_na(v) else v) for k, v in r.items()} for r in e.to_dict("records")

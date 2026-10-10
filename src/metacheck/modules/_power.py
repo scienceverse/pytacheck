@@ -11,6 +11,8 @@ from typing import Any
 
 import pandas as pd
 
+from metacheck._values import is_missing, is_true
+
 #: the columns the LLM is asked to fill (``llm_cols``)
 LLM_COLS = (
     "power_type",
@@ -289,27 +291,8 @@ def _power_type_spec() -> Any:
 # ---------------------------------------------------------------------------
 
 
-def _isna(v: Any) -> bool:
-    """R ``is.na()`` of one cell (a list cell is never NA unless it is NULL/NA)."""
-    if v is None or v is pd.NA:
-        return True
-    if isinstance(v, float):
-        return v != v
-    try:
-        return bool(pd.isna(v)) if not isinstance(v, list | tuple | dict) else False
-    except (TypeError, ValueError):
-        return False
-
-
-def _is_true(v: Any) -> bool:
-    """R ``isTRUE()`` of one cell."""
-    import numpy as np
-
-    return isinstance(v, bool | np.bool_) and bool(v)
-
-
 def _col_isna(s: pd.Series) -> list[bool]:
-    return [_isna(v) for v in s.tolist()]
+    return [is_missing(v) for v in s.tolist()]
 
 
 def _complete(table: pd.DataFrame, cols: list[str]) -> pd.Series:
@@ -326,7 +309,7 @@ def _as_character(s: pd.Series) -> pd.Series:
     """R ``as.character()`` of a factor/enum column."""
     if isinstance(s.dtype, pd.StringDtype):
         return s
-    vals = [None if _isna(v) else str(v) for v in s.tolist()]
+    vals = [None if is_missing(v) else str(v) for v in s.tolist()]
     return pd.Series(vals, index=s.index, dtype="string")
 
 
@@ -384,7 +367,7 @@ def _power_llm_extract(potential_power: pd.DataFrame, seed: Any) -> dict[str, An
     # a systemic rejection: every row failed (R: all(vapply(.error, isTRUE, logical(1))))
     all_failed = structured_result is None or (
         ".error" in structured_result.columns
-        and all(_is_true(v) for v in structured_result[".error"].tolist())
+        and all(is_true(v) for v in structured_result[".error"].tolist())
     )
 
     if not all_failed:

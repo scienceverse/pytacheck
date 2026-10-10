@@ -40,6 +40,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, NoReturn
 
 from metacheck._r import as_character, format_num, grepl, gsub, r_sort_key, strsplit, sub, trimws
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -242,15 +243,6 @@ def _chr_dbl(d: float | None) -> str | None:
     if math.isnan(d):
         return "NaN"
     return as_character(float(d))
-
-
-def _is_missing(x: Any) -> bool:
-    """R ``is.na()`` for one value (``None``, ``pd.NA`` or ``NaN``)."""
-    if x is None:
-        return True
-    if isinstance(x, float):
-        return math.isnan(x)
-    return type(x).__name__ == "NAType"
 
 
 def _na_str(x: str | None) -> str:
@@ -2407,7 +2399,7 @@ def _spv_chart_html(df: pd.DataFrame | None) -> str:
 
 def _spv_display_value(x: Any) -> str:
     """Port of R/spv.R::.spv_display_value(): a cell rounded to 3 decimals for display."""
-    if _is_missing(x):
+    if is_missing(x):
         return ""
     s = x if isinstance(x, str) else _na_str(as_character(x))
     num = _as_numeric(s)
@@ -2452,7 +2444,7 @@ def _spv_table_html(df: pd.DataFrame | None) -> str:
 
 def _column_values(df: pd.DataFrame, j: int) -> list[Any]:
     return [
-        None if _is_missing(v) and not isinstance(v, float) else v for v in df.iloc[:, j].tolist()
+        None if is_missing(v) and not isinstance(v, float) else v for v in df.iloc[:, j].tolist()
     ]
 
 
@@ -2464,7 +2456,7 @@ def _paste_str(v: Any) -> str:
     """One value as ``paste()`` renders it (``NA`` as ``"NA"``, numbers as ``as.character()``)."""
     if isinstance(v, str):
         return v
-    if _is_missing(v):
+    if is_missing(v):
         return "NA"
     return _na_str(as_character(v))
 

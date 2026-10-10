@@ -21,7 +21,8 @@ import warnings
 from collections.abc import Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
-from metacheck._r import as_character, gsub, is_na, strsplit, sub, trimws
+from metacheck._r import as_character, gsub, strsplit, sub, trimws
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -269,7 +270,7 @@ def _safe_write_path(path: str | None) -> str | None:
     hash of the original so the result stays unique; the leaf keeps its
     extension. Warns when a path was shortened (or is still too long).
     """
-    if path is None or is_na(path) or not isinstance(path, str) or path == "":
+    if path is None or is_missing(path) or not isinstance(path, str) or path == "":
         return path
 
     parts: list[str] = [p if p is not None else "NA" for p in strsplit(path, r"[/\\]")]
@@ -332,10 +333,10 @@ def _safe_write_path(path: str | None) -> str | None:
 def _r_in(value: Any, table: Sequence[Any]) -> bool:
     """R ``value %in% table`` for a single value (NA matches NA; str vs number
     compares as character, as ``match()`` coerces)."""
-    if is_na(value):
-        return any(is_na(t) for t in table)
+    if is_missing(value):
+        return any(is_missing(t) for t in table)
     for t in table:
-        if is_na(t):
+        if is_missing(t):
             continue
         if isinstance(value, str) != isinstance(t, str):
             if as_character(value) == as_character(t):
@@ -423,7 +424,7 @@ def left_join(
     ykeys = [b for _, b in pairs]
 
     def key_tuple(row: Sequence[Any]) -> tuple[Any, ...]:
-        return tuple("\x00NA" if is_na(v) else _norm_key(v) for v in row)
+        return tuple("\x00NA" if is_missing(v) else _norm_key(v) for v in row)
 
     y_index: dict[tuple[Any, ...], list[int]] = {}
     ykey_rows = zip(*(y[k].tolist() for k in ykeys), strict=True) if len(y) else iter(())

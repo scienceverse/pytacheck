@@ -33,6 +33,7 @@ from itertools import pairwise
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r.base import as_character
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -149,19 +150,6 @@ def _is_valid_name(name: str) -> bool:
     return name not in _RESERVED
 
 
-def _is_missing(x: Any) -> bool:
-    if x is None:
-        return True
-    try:
-        import pandas as pd
-
-        if x is pd.NA or x is pd.NaT:
-            return True
-    except ImportError:  # pragma: no cover
-        pass
-    return isinstance(x, float) and math.isnan(x)
-
-
 class _Deparser:
     """R's deparse buffer (``src/main/deparse.c``): 60-byte cutoff, 4-space tabs."""
 
@@ -256,7 +244,7 @@ class _Deparser:
                 )
             )
             return
-        missing = [_is_missing(v) for v in values]
+        missing = [is_missing(v) for v in values]
         if kind == "int" and n > 1 and not any(missing):
             ints = [int(v) for v in values]
             step = ints[1] - ints[0]
@@ -363,7 +351,7 @@ def _infer_kind(values: Sequence[Any]) -> str:
 
     kinds = set()
     for v in values:
-        if _is_missing(v):
+        if is_missing(v):
             continue
         if isinstance(v, bool | np.bool_):
             kinds.add("lgl")
@@ -392,7 +380,7 @@ def _series_vector(s: pd.Series) -> tuple[str, list[Any]]:
 
     dtype = s.dtype
     if isinstance(dtype, pd.CategoricalDtype):
-        return "chr", [None if _is_missing(v) else str(v) for v in s.tolist()]
+        return "chr", [None if is_missing(v) else str(v) for v in s.tolist()]
     if pd.api.types.is_bool_dtype(dtype):
         return "lgl", s.tolist()
     if pd.api.types.is_integer_dtype(dtype):
@@ -400,7 +388,7 @@ def _series_vector(s: pd.Series) -> tuple[str, list[Any]]:
     if pd.api.types.is_float_dtype(dtype):
         return "dbl", s.tolist()
     if pd.api.types.is_datetime64_any_dtype(dtype):
-        return "chr", [None if _is_missing(v) else str(v) for v in s.tolist()]
+        return "chr", [None if is_missing(v) else str(v) for v in s.tolist()]
     values = s.tolist()
     if pd.api.types.is_string_dtype(dtype) and not pd.api.types.is_object_dtype(dtype):
         return "chr", values
@@ -466,13 +454,13 @@ def _colwidths_value(colwidths: Any) -> Any:
         return _Vec(
             "chr",
             [
-                None if _is_missing(v) else (v if isinstance(v, str) else as_character(v))
+                None if is_missing(v) else (v if isinstance(v, str) else as_character(v))
                 for v in values
             ],
         )
-    if all(_is_missing(v) for v in values):
+    if all(is_missing(v) for v in values):
         return _Vec("lgl", [None] * len(values))
-    return _Vec("dbl", [None if _is_missing(v) else float(v) for v in values])
+    return _Vec("dbl", [None if is_missing(v) else float(v) for v in values])
 
 
 def table_chunk(block: ReportTable) -> str:
@@ -523,7 +511,7 @@ def scroll_table_qmd(
 
 
 def _width(x: Any) -> str | None:
-    if _is_missing(x):
+    if is_missing(x):
         return None
     if isinstance(x, int | float) and not isinstance(x, bool):
         if x > 1:
@@ -573,7 +561,7 @@ def _cell_text(v: Any) -> str:
     """How DT shows a value (JSON -> JavaScript ``toString``)."""
     import numpy as np
 
-    if _is_missing(v):
+    if is_missing(v):
         return ""
     if isinstance(v, bool | np.bool_):
         return "true" if v else "false"

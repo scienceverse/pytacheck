@@ -39,7 +39,8 @@ from collections.abc import Iterable, Sequence
 from contextvars import ContextVar
 from typing import TYPE_CHECKING, Any
 
-from metacheck._r import grepl, gsub, is_na, strsplit, sub
+from metacheck._r import grepl, gsub, strsplit, sub
+from metacheck._values import is_missing
 from metacheck.archives._atomic import atomic_write, staged_dir
 
 if TYPE_CHECKING:
@@ -58,13 +59,9 @@ _ZIP64 = 0xFFFFFFFF  # the Zip64 sentinel in a 4-byte field
 # -- helpers -------------------------------------------------------------------
 
 
-def _is_missing(x: Any) -> bool:
-    return x is None or is_na(x)
-
-
 def _num(x: Any) -> float:
     """A number as R double (``NA`` -> ``nan``)."""
-    if _is_missing(x):
+    if is_missing(x):
         return float("nan")
     return float(x)
 
@@ -75,8 +72,8 @@ def _chr_list(x: Any) -> list[str | None]:
     if isinstance(x, str):
         return [x]
     if isinstance(x, Iterable):
-        return [None if _is_missing(v) else str(v) for v in x]
-    return [None if _is_missing(x) else str(x)]
+        return [None if is_missing(v) else str(v) for v in x]
+    return [None if is_missing(x) else str(x)]
 
 
 def _grepl(pattern: str, x: Sequence[str | None], ignore_case: bool = False) -> list[bool]:
@@ -215,7 +212,7 @@ def _head_size(url: str, skip_on_api_limit: bool = False) -> float:
                 _note_transient(status)
             return math.nan
         cl = _content_length(resp)
-        if cl is None or is_na(cl) or cl <= 0:
+        if cl is None or is_missing(cl) or cl <= 0:
             return math.nan
         return float(cl)
     except Exception:
@@ -289,7 +286,7 @@ def _http_range_tail(
     try:
         if total is None:
             total = _head_size(url, skip_on_api_limit)
-        if is_na(total):
+        if is_missing(total):
             return _http_range_suffix(url, n, skip_on_api_limit)
         total = float(total)
         if total <= 0:
@@ -376,7 +373,7 @@ def _http_range_bytes(
     from metacheck.archives.download import _RateLimitSkipped, _storage_request
 
     try:
-        if from_ is None or to is None or is_na(from_) or is_na(to):
+        if from_ is None or to is None or is_missing(from_) or is_missing(to):
             _set_reason(reason, "invalid byte range")
             return None
         f, t = float(from_), float(to)
@@ -440,7 +437,9 @@ class _RangeFile(io.RawIOBase):
     def __init__(self, url: str, tail: bytes, size: float, skip_on_api_limit: bool = False) -> None:
         super().__init__()
         self.url = url
-        self.size = len(tail) if is_na(size) else int(size)  # no size: the tail is all there is
+        self.size = (
+            len(tail) if is_missing(size) else int(size)
+        )  # no size: the tail is all there is
         self._skip = skip_on_api_limit
         self._tail = bytes(tail)
         self._tail_start = max(0, self.size - len(tail))
@@ -528,7 +527,7 @@ def _open_zip(
         raw = _http_range_tail(url, nb, total=total, skip_on_api_limit=skip_on_api_limit)
         if raw is None:
             return None
-        if is_na(total):
+        if is_missing(total):
             total = raw.total
         try:
             opened = _wrap_zip(url, bytes(raw), total, skip_on_api_limit)
@@ -541,7 +540,7 @@ def _open_zip(
             with _CACHE_LOCK:
                 _ZIP_PEEK_CACHE[memo] = (opened[1].held_tail(), total)
             return opened
-        if not is_na(total) and nb >= total:
+        if not is_missing(total) and nb >= total:
             break  # the whole file was in hand
     return None
 
@@ -746,7 +745,7 @@ def _zip_fetch_members(
         for i in range(n):
             row = want.iloc[i]
             offset, csize = _num(row.get("offset")), _num(row.get("csize"))
-            if is_na(offset) or is_na(csize):
+            if is_missing(offset) or is_missing(csize):
                 error[i] = "Zip64 entry (size/offset not stored in 32 bits)"
                 continue
             rel = _safe_member_path(member_names[i])
@@ -975,7 +974,7 @@ def _ext_type(names: Sequence[str]) -> list[str | None]:
 
 
 def _missing_path(path: Any) -> bool:
-    return path is None or is_na(path) or not os.path.exists(str(path))
+    return path is None or is_missing(path) or not os.path.exists(str(path))
 
 
 def _zip_raw_name(info: Any) -> bytes:

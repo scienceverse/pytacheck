@@ -22,7 +22,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from metacheck._r import compile_r, gsub, is_na, sub, trimws
+from metacheck._r import compile_r, gsub, sub, trimws
+from metacheck._values import is_missing
 from metacheck.archives.dataverse import (
     RequestAbort,
     _as_numeric,
@@ -205,11 +206,11 @@ def dryad_info(
                 "dryad_doi": _string_series(_dryad_doi(urls)),
             }
         )
-        if all(isinstance(v, str) or is_na(v) for v in urls):
+        if all(isinstance(v, str) or is_missing(v) for v in urls):
             ids["dryad_url"] = ids["dryad_url"].astype("string")
         ids = ids.drop_duplicates()
         ids = ids[ids["dryad_url"].notna().to_numpy()].reset_index(drop=True)
-        valid_dois = list(dict.fromkeys(v for v in ids["dryad_doi"].tolist() if not is_na(v)))
+        valid_dois = list(dict.fromkeys(v for v in ids["dryad_doi"].tolist() if not is_missing(v)))
 
         if not valid_dois:
             _tick(bar, "No valid Dryad links")

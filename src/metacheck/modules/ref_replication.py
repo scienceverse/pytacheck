@@ -8,6 +8,7 @@ import pandas as pd
 
 from metacheck._r.base import plural, trimws
 from metacheck._r.regex import grepl, gsub
+from metacheck._values import is_missing
 from metacheck.module import module
 from metacheck.report import link, scroll_table
 
@@ -24,13 +25,9 @@ _FLORA_COLS = {
 }
 
 
-def _is_na(x: Any) -> bool:
-    return x is None or x is pd.NA or (isinstance(x, float) and x != x)
-
-
 def _chr(x: Any) -> str:
     """``sprintf("%s", x)`` for a character value (``NA`` prints as ``"NA"``)."""
-    return "NA" if _is_na(x) else str(x)
+    return "NA" if is_missing(x) else str(x)
 
 
 def _refs_with_doi(paper: Any) -> pd.DataFrame:
@@ -82,7 +79,7 @@ def _split_string(x: str) -> list[str]:
 
 
 def _title_case1(x: Any) -> Any:
-    if _is_na(x):
+    if is_missing(x):
         return None
     xx = _split_string(str(x))
     n = len(xx)
@@ -199,7 +196,9 @@ def ref_replication(paper: Any, show_outcomes: bool = False) -> dict[str, Any]:
 
     # Remove trailing URLs from reference text to avoid duplication with link
     refs = trimws(gsub(r"https?://[^[:space:]]+$", "", table["replication_ref"], ignore_case=True))
-    table["replication_ref"] = pd.array([None if _is_na(v) else v for v in refs], dtype="string")
+    table["replication_ref"] = pd.array(
+        [None if is_missing(v) else v for v in refs], dtype="string"
+    )
 
     # traffic_light ----
     tl = "info" if len(table) else "na"

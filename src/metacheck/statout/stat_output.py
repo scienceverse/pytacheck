@@ -26,6 +26,7 @@ import pandas as pd
 
 from metacheck._r.base import as_character, plural
 from metacheck._r.regex import compile_r, grepl, gsub, regexec, sub
+from metacheck._values import is_missing, is_true
 from metacheck.statout.r_output import (
     _r_as_numeric,
     _r_dollar,
@@ -75,13 +76,9 @@ def _paste_chr(x: Any) -> str:
     return "NA" if s is None else s
 
 
-def _is_na(x: Any) -> bool:
-    return x is None or x is pd.NA or (isinstance(x, float) and math.isnan(x))
-
-
 def _cell(x: Any) -> str | None:
     """``as.character()`` of one data-frame cell (``None`` for ``NA``)."""
-    if _is_na(x):
+    if is_missing(x):
         return None
     return as_character(x)
 
@@ -146,7 +143,7 @@ def _r_tolower(s: str) -> str:
 
 
 def _num_or_na(x: Any) -> bool:
-    return not _is_na(x)
+    return not is_missing(x)
 
 
 def _tb_field(tb: Any, key: str) -> tuple[bool, Any]:
@@ -168,13 +165,6 @@ def _tb_field(tb: Any, key: str) -> tuple[bool, Any]:
     return _r_dollar_found(tb, key)
 
 
-def _is_true(x: Any) -> bool:
-    """R ``isTRUE()``."""
-    import numpy as np
-
-    return isinstance(x, bool | np.bool_) and bool(x)
-
-
 def _tables_list(tables: Any) -> list[Any]:
     """The elements of a list of tables (a named list's values)."""
     return _r_values(tables)
@@ -187,7 +177,7 @@ def _source_prefix(source_file: Any) -> str:
     ``"result"`` prefix. R's ``%||%`` replaces only ``NULL``, so with its
     default ``NA_character_`` every id started ``na_`` (UPSTREAM_ISSUES U138).
     """
-    missing = source_file is None or _is_na(source_file)
+    missing = source_file is None or is_missing(source_file)
     return _paste_chr(_stat_sanitize_id("result" if missing else source_file))
 
 
@@ -211,7 +201,7 @@ def _stat_result_ids(tables: Sequence[Mapping[str, Any]], source_file: Any = pd.
             locators.append(f"l{_paste_chr(line)}_{_paste_chr(seq_n)}")
         elif has_ti and _num_or_na(ti):
             locators.append(f"t{_paste_chr(ti)}")
-        elif has_an and not _is_na(analysis) and _paste_chr(analysis) != "":
+        elif has_an and not is_missing(analysis) and _paste_chr(analysis) != "":
             locators.append(_paste_chr(analysis))
         else:
             locators.append("result")
@@ -231,7 +221,7 @@ def _stat_test_id(
     if isinstance(aid, list | tuple):
         aid = aid[0] if len(aid) == 1 else None
     has_line, line = _tb_field(tb, "line")
-    if aid is not None and not _is_na(aid) and _paste_chr(aid) != "":
+    if aid is not None and not is_missing(aid) and _paste_chr(aid) != "":
         anchor = "a" + _paste_chr(aid)
     elif has_line and _num_or_na(line):
         has_seq, seq = _tb_field(tb, "line_seq")
@@ -415,7 +405,7 @@ def _long_rows(
     df = _tb_field(tb, "data")[1]
     if df is None or not isinstance(df, pd.DataFrame) or len(df) == 0 or df.shape[1] == 0:
         return
-    if _is_true(_tb_field(tb, "is_chart")[1]):
+    if is_true(_tb_field(tb, "is_chart")[1]):
         return
     headers = [str(c) for c in df.columns]
     columns = _frame_columns(df)
@@ -453,7 +443,7 @@ def _long_rows(
         test_id: Any, result_id: Any, row_label: str, statistic: Any, typ: Any, value: Any
     ) -> None:
         rows["paper_id"].append(paper_id)
-        rows["source_file"].append(None if _is_na(source_file) else source_file)
+        rows["source_file"].append(None if is_missing(source_file) else source_file)
         rows["test_id"].append(test_id)
         rows["result_id"].append(result_id)
         rows["analysis"].append(analysis)
@@ -533,7 +523,7 @@ def _long_rows(
 
 def _source_format(source_file: Any) -> str:
     # grepl(pattern, source_file %||% ""): FALSE for NA, "" for NULL
-    if _is_na(source_file):
+    if is_missing(source_file):
         return "unknown"
     sf = source_file
     for pat, fmt in (
@@ -577,7 +567,7 @@ def stat_output_json(
         df = _tb_field(tb, "data")[1]
         if df is None or not isinstance(df, pd.DataFrame) or len(df) == 0 or df.shape[1] == 0:
             continue
-        if _is_true(_tb_field(tb, "is_chart")[1]):
+        if is_true(_tb_field(tb, "is_chart")[1]):
             continue
         headers = [str(c) for c in df.columns]
         columns = _frame_columns(df)
@@ -633,7 +623,7 @@ def stat_output_json(
         "schema": "metacheck-statistical-output",
         "schema_version": "1.0",
         "paper_id": paper_id,
-        "source_file": None if _is_na(source_file) else source_file,
+        "source_file": None if is_missing(source_file) else source_file,
         "source_format": source_format,
         "analyses": analyses,
     }
@@ -838,7 +828,7 @@ def _to_json_pretty(x: Any, indent: int = 0) -> str:
 
 
 def _csv_field(x: Any, quote: bool) -> str:
-    if _is_na(x):
+    if is_missing(x):
         return ""
     if isinstance(x, bool):
         return "TRUE" if x else "FALSE"
@@ -902,7 +892,7 @@ def stat_output_write(
         file = _r_dollar(s, "file")  # None: NULL -> "result"; NA -> "NA"
         base = (
             "NA"
-            if _is_na(file) and file is not None
+            if is_missing(file) and file is not None
             else os.path.basename("result" if file is None else str(file))
         )
         fn = sub("[.][^.]+$", "", base)

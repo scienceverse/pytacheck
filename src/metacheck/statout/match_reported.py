@@ -44,6 +44,7 @@ from metacheck._r import (
     sub,
     trimws,
 )
+from metacheck._values import is_missing
 
 __all__ = ["match_reported_output"]
 
@@ -51,15 +52,6 @@ __all__ = ["match_reported_output"]
 # ---------------------------------------------------------------------------
 # small R helpers
 # ---------------------------------------------------------------------------
-
-
-def _is_na(x: Any) -> bool:
-    """Scalar R ``is.na()`` (``None`` counts as NA here)."""
-    if x is None or x is pd.NA or x is pd.NaT:
-        return True
-    if isinstance(x, float | np.floating):
-        return bool(np.isnan(x))
-    return False
 
 
 def _tolower(s: str) -> str:
@@ -75,7 +67,7 @@ def _tolower(s: str) -> str:
 
 def _chr(x: Any) -> str | None:
     """``as.character()`` of a scalar; ``None`` for NA."""
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, str):
         return x
@@ -92,7 +84,7 @@ def _paste_chr(x: Any) -> str:
 
 def _scalar(x: Any) -> Any:
     """Plain Python scalar (numpy scalars unwrapped, NA -> None)."""
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, np.generic):
         return x.item()
@@ -209,7 +201,7 @@ def _norm_df(x: Any) -> dict[str, Any] | None:
     ``{"df1": <norm_value>}``; ``"(2, 57)"`` -> ``{"df1": ..., "df2": ...}``;
     ``None`` for NA, a non-parenthesised string, or any other shape.
     """
-    if x is None or _is_na(x):
+    if x is None or is_missing(x):
         return None
     s = trimws(_paste_chr(x))
     if s == "":
@@ -456,7 +448,7 @@ def _tests_from_extract(tt: Any) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     for i in range(n):
         g = components[i]
-        if g is None or (not isinstance(g, list | tuple) and _is_na(g)):
+        if g is None or (not isinstance(g, list | tuple) and is_missing(g)):
             g = []
         comps: list[dict[str, Any]] = []
         for gi, c in enumerate(g, start=1):
@@ -676,7 +668,7 @@ def _sites_share_variable(rl_a: Any, rl_b: Any) -> bool | None:
     ``row_label`` values. ``None`` (R ``NA``) when either label is missing or
     empty or has no long token.
     """
-    if _is_na(rl_a) or _is_na(rl_b):
+    if is_missing(rl_a) or is_missing(rl_b):
         return None
     a = _paste_chr(rl_a)
     b = _paste_chr(rl_b)

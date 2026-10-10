@@ -20,7 +20,8 @@ from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
-from metacheck._r import is_na, regexec, sub, trimws
+from metacheck._r import regexec, sub, trimws
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     from lxml import etree
@@ -150,7 +151,7 @@ def _clean_one(x: Any) -> str | None:
     """``trimws(as.character(x))``, ``None`` for ``NA`` or ``""``."""
     from metacheck._r import as_character
 
-    if is_na(x):
+    if is_missing(x):
         return None
     s = trimws(x if isinstance(x, str) else as_character(x))
     return None if s is None or s == "" else s
@@ -269,7 +270,7 @@ def dataone_info(
                 "dataone_pid": _string_series([_pid_one(u) for u in urls]),
             }
         )
-        if all(isinstance(v, str) or is_na(v) for v in urls):
+        if all(isinstance(v, str) or is_missing(v) for v in urls):
             ids["dataone_url"] = ids["dataone_url"].astype("string")
         ids = ids.drop_duplicates()
         ids = ids[ids["dataone_url"].notna().to_numpy()].reset_index(drop=True)

@@ -7,6 +7,11 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Internal: one missing-value test and one `isTRUE()`
+
+- **Changed:** the 25 private copies of `_is_na`/`_is_missing`/`_isna` and the 4 copies of `_is_true` that matched the shared helpers are gone; their callers use `metacheck._values.is_missing` and `is_true`. Code that imported `is_na` from `metacheck._r` uses `is_missing` from `metacheck._values` under its own name (`metacheck._r.is_na` stays as an alias). The copies left are the ones whose rules differ (R's `%in% TRUE`, `x$name` partial matching, a `None` that is `NULL` and not `NA`).
+- **Unchanged:** results. The only values the shared test reads differently are a numpy NaN of a narrower float type, `NaT` and `pd.NA` in the few copies that missed them, which now count as missing as they do everywhere else.
+
 ### Changed: the bibr extra requires bibr 0.6.0
 
 - **Changed:** `metacheck[bibr]` (and so `metacheck[all]`) requires bibr 0.6.0 or later, the first bibr release on PyPI that writes export schema 12.x (it writes 12.1). It allowed bibr 0.5.1, which writes 11.0, so `pc.read("paper.pdf")` stopped with the error that names the schema.
