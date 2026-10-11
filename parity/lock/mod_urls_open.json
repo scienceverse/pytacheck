@@ -6,7 +6,7 @@
 "all_urls.paperlist": {"r": "239ed195585a1f43", "py": "67375d7583585ffa", "diff": ["table"]},
 "all_urls.problem_203020": {"r": "d055ec5691d595b3", "py": "504b022a2adfbebd", "diff": ["table"]},
 "all_urls.psychsci": {"r": "7bc3dc10218d76dc", "py": "43d2b0b099420447", "diff": ["summary_table.urls[]", "table"]},
-"all_urls.synthetic": {"r": "1f24b03564db10c1", "py": "0b1bd9d9ed852598", "diff": ["summary_table.urls[]", "table"]},
+"all_urls.synthetic": {"r": "1f24b03564db10c1", "py": "96cef010c7eca898", "diff": ["summary_table.urls[]", "table"]},
 "open_practices.debruine": {"r": "cda5a8ece143f66f", "py": "eb0488ffa804ac1f", "diff": ["report[]", "summary_text[]", "traffic_light[]"]},
 "open_practices.duplicate_ids": {"r": "ac5146cf65ca52a8", "py": "df78510dddde37d3", "diff": ["<R error, Python value>"]},
 "open_practices.on_request_multiple": {"r": "422193b45b811803", "py": "b7c47428ddf2d999", "diff": ["report[]", "table.on_request[]"]},

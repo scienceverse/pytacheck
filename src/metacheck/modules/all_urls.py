@@ -101,8 +101,8 @@ def _repair(text: str, sentence: str) -> str | None:
     not open. A match with a scheme, ``doi:``, ``www.`` or a path is kept. A bare
     host name (``osf.io``, ``pwr.t.test``, ``is.na``) is kept only when it ends in a
     top-level domain, is not called as a function (``is.na(x)``) and is not the
-    end of a path or DOI (``xyz.abc`` of ``doi:10.5555/xyz.abc``); an IPv4 address
-    only when each part is at most 255.
+    end of a path or DOI (``xyz.abc`` of ``doi:10.5555/xyz.abc``). A bare IPv4
+    address is left out: in papers it is a version number (``1.9.12.31``).
     """
     at = sentence.find(text)
     before = sentence[:at] if at > 0 else ""
@@ -122,7 +122,7 @@ def _repair(text: str, sentence: str) -> str | None:
         return text
     host = text.rstrip("/").split(":", 1)[0]
     if re.fullmatch(r"\d{1,3}(?:\.\d{1,3}){3}", host):
-        return text if all(int(n) <= 255 for n in host.split(".")) else None
+        return None
     if host.rsplit(".", 1)[-1].lower() not in _tlds() or after == "(" or before.endswith("/"):
         return None
     return text

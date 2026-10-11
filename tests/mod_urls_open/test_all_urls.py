@@ -161,12 +161,12 @@ def test_all_urls_drops_dotted_names(demo: pc.Paper) -> None:
     paper = pc.test_paper(
         [
             "We used is.na(x), pwr.t.test, data.csv and Soc.Lond in the code.",
-            "See osf.io and 999.999.999.999 but 10.0.0.1 and doi:10.5555/xyz.abc.",
+            "See osf.io, version 1.9.12.31, http://10.0.0.1/x and doi:10.5555/xyz.abc.",
         ]
     )
     table = pc.module_run(paper, MODULE).table
-    assert table["text"].tolist() == ["osf.io", "10.0.0.1"]
-    assert table["url"].tolist() == ["https://osf.io", "https://10.0.0.1"]
+    assert table["text"].tolist() == ["osf.io", "http://10.0.0.1/x"]
+    assert table["url"].tolist() == ["https://osf.io", "http://10.0.0.1/x"]
     assert table["source"].tolist() == ["text", "text"]
 
 
