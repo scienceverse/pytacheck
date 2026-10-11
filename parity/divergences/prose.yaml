@@ -12,6 +12,8 @@
   ref: U83
   reason: "the no-code report says 'not recognized' (metacheck: 'not reconized')"
   r_text: [["reconized", "recognized"]]
+  # the summary table also has D83's no_data column
+  xfail: true
 "grobid12/module.open_practices.0956797615569889": *u83_recognized
 "bibr12/module.ref_accuracy.preprint": &u83_such_an_incoherence
   kind: r_bug_fixed

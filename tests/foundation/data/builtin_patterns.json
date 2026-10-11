@@ -356,6 +356,11 @@ true,
 false
 ],
 [
+"\\bcode\\b|\\bsoftware\\b|\\bscript|\\banaly|\\bR\\b|\\bpython\\b|\\bmaterials?\\b|\\bquestionnaires?\\b|\\binstruments?\\b|\\bfigures?\\b|\\bplots?\\b",
+true,
+false
+],
+[
 "\\bcode\\b|\\bsoftware\\b|\\bscript|\\banaly|\\bpython\\b",
 true,
 false
@@ -427,6 +432,11 @@ false
 ],
 [
 "\\bmturk\\b",
+true,
+false
+],
+[
+"\\bnot applicable\\b|\\bno (new |original |primary |research )?(data|datasets?)\\b[^.]{0,40}\\b(generated|collected|used|analy[sz]ed|created|produced|associated)\\b|\\b(data|datasets?)\\b[^.]{0,60}\\b(were|was|are|is) not (generated|collected|used|analy[sz]ed|created|produced|associated)\\b|\\bdid not (generate|collect|use|create|produce|analy[sz]e) (any )?(new )?(data|datasets?)\\b",
 true,
 false
 ],

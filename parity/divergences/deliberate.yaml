@@ -121,3 +121,41 @@
 "bibr12_review/module.all_urls.edge_types": *d82
 "grobid12/module.all_urls.0956797615569889": *d82
 "grobid12/module.all_urls.debruine": *d82
+# open_practices reads bibr's data availability statement (its sentences need no data
+# word; one kept outside the text is searched) and adds the no_data column (D83)
+"bibr12/module.open_practices.preprint": &d83
+  kind: deliberate
+  ref: D83
+  reason: open_practices adds the summary_table column no_data (the data availability statement says there are no data) and reads bibr's data availability statement, also when it is not in the text
+"bibr12/module.open_practices.full": *d83
+"grobid12/module.open_practices.demo": *d83
+"mod_urls_open/open_practices.demo": *d83
+"mod_urls_open/open_practices.psychsci_single_2": *d83
+"mod_urls_open/open_practices.psychsci_single_3": *d83
+"mod_urls_open/open_practices.problem_203020": *d83
+"mod_urls_open/open_practices.code_only": *d83
+"mod_urls_open/open_practices.data_and_code": *d83
+"mod_urls_open/open_practices.data_and_code_separate": *d83
+"mod_urls_open/open_practices.code_on_request": *d83
+"mod_urls_open/open_practices.materials_prereg_only": *d83
+"mod_urls_open/open_practices.no_repo": *d83
+"mod_urls_open/open_practices.none": *d83
+"mod_urls_open/open_practices.empty_paper": *d83
+"mod_urls_open/open_practices.whitespace": *d83
+"mod_urls_open/open_practices.case_words": *d83
+"mod_urls_open/open_practices.paperlist": *d83
+"mod_urls_open/open_practices.cleaning": *d83
+"mod_urls_open_review/open_practices.review.na_text": *d83
+"mod_urls_open_review/open_practices.review.prereg_variants": *d83
+"mod_urls_open_review/open_practices.review.green_on_request": *d83
+"mod_urls_open_review/open_practices.review.code_open_data_on_request": *d83
+"mod_urls_open_review/open_practices.review.special_chars": *d83
+"mod_urls_open_review/open_practices.review.marker_repo": *d83
+"mod_urls_open_review/open_practices.review.sections": *d83
+"mod_urls_open_review/open_practices.review.dup_sections": *d83
+"mod_urls_open_review/open_practices.review.single_apa": *d83
+"mod_urls_open_review/open_practices.review.single_preprint_cermine": *d83
+"mod_urls_open_review/open_practices.review.single_published_cermine": *d83
+"mod_urls_open_review/open_practices.review.list_counts": *d83
+"mod_urls_open_review/open_practices.review.demo_copy": *d83
+"mod_urls_open_review/open_practices.review.tricky_urls": *d83
