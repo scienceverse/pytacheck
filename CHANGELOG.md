@@ -7,6 +7,10 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: the COI, funding and ethics checks fall back to bibr's statements
+
+- **Changed:** coi_check, coi_check_oi, funding_check, funding_check_oi and ethics_check still search the text with their regular expressions first; a paper they find nothing in now gets the statement bibr extracted from the document's structure (`info.coi_statement`, `info.funding_statement`, `info.ethics_statement`), so a statement kept in a back-matter note is no longer missed (D84).
+
 ### Changed: open_practices reads bibr's data availability statement
 
 - **Changed:** open_practices reads the data availability statement bibr extracts. A sentence of the statement that names neither code nor materials is a data statement without the word "data" (`They can be found at https://osf.io/abc.`), and a statement bibr kept outside the text (`info.data_availability`, from a JATS back-matter note) is searched too, as rows without a `text_id` (D83).

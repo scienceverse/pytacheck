@@ -340,6 +340,8 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     table["ethics"] = pd.Series([True] * len(table), index=table.index, dtype="boolean")
     if "text" not in table.columns:
         table["text"] = pd.Series([], dtype="string")
+    # D84: a paper the expressions found no statement in gets bibr's statement
+    table = _with_bibr_ethics(table, paper)
 
     live_table = _detect_live_data(doc).copy()
     live_table["live_data"] = pd.Series(
@@ -421,6 +423,26 @@ def ethics_check(paper: Any) -> dict[str, Any]:
         "summary_text": summary_text,
         "report": report,
     }
+
+
+def _with_bibr_ethics(table: pd.DataFrame, paper: Any) -> pd.DataFrame:
+    """*table* with a row (no ``text_id``) for each paper it lacks whose bibr
+    ``info.ethics_statement`` exists (D84)."""
+    from metacheck.modules._statements import bibr_statements
+
+    found = bibr_statements(paper, "ethics_statement")
+    have = set(table["paper_id"].dropna().astype(str)) if "paper_id" in table.columns else set()
+    extra = {pid: text for pid, text in found.items() if pid not in have}
+    if not extra:
+        return table
+    rows = pd.DataFrame(
+        {
+            "text": pd.Series(list(extra.values()), dtype="string"),
+            "paper_id": pd.Series(list(extra), dtype="string"),
+            "ethics": pd.Series([True] * len(extra), dtype="boolean"),
+        }
+    )
+    return bind_rows([table, rows]).reset_index(drop=True)
 
 
 def _as_text(x: Any) -> str:

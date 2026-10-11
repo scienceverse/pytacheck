@@ -253,6 +253,16 @@ differences:
     reason: >-
       the paper's data availability statement ('Data are available on OSF.') is only in
       bibr's info table, not in the text: pytacheck reads it and finds shared data
+  # the COI, funding and ethics checks fall back to bibr's statements (D84) -------
+  - module: [coi_check, coi_check_oi, funding_check, funding_check_oi, ethics_check]
+    input: bibr12/full.json
+    field: [traffic_light, summary_text, report, summary_table.*, table]
+    match: values
+    kind: deliberate
+    ref: D84
+    reason: >-
+      the paper's COI, funding and ethics statements are only in bibr's info table, not in
+      the text: the expressions find nothing, so pytacheck uses bibr's statements
 
 floors:
   - module: stat_p_exact
