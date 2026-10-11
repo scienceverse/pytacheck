@@ -39,6 +39,10 @@ def test_module_does_not_mutate_paper(name: str, demo: pc.Paper) -> None:
 
 
 def test_every_module_has_parity_cases() -> None:
+    from metacheck.packs.registry import builtin_pack
+
+    # pytacheck's own modules have no metacheck counterpart to compare with
+    own = set(builtin_pack().manifest.get("pytacheck_modules", ()))
     covered = {c.spec.get("module") for c in load_cases()}
-    missing = sorted(set(BUILTINS) - covered)
+    missing = sorted(set(BUILTINS) - covered - own)
     assert not missing, f"modules without parity cases: {missing}"
