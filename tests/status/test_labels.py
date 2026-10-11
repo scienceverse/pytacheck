@@ -292,8 +292,8 @@ def test_status_table_lists_the_builtins() -> None:
         "note",
     ]
     builtin = table["module"].str.startswith("metacheck::")
-    # the 30 metacheck modules and pytacheck's author_check and figure_table_refs
-    assert int(builtin.sum()) == len(snapshot().modules) == 32
+    # the 30 metacheck modules and pytacheck's author_check, figure_table_refs and license_check
+    assert int(builtin.sum()) == len(snapshot().modules) == 33
     # the other rows are the datapackage pack metacheck registers itself, which the
     # metacheck team's registry does not cover
     assert set(table.loc[~builtin, "module"].str.split("::").str[0]) == {"datapackage"}
@@ -308,7 +308,7 @@ def test_status_table_lists_the_builtins() -> None:
     assert power["fields"] == "psychology"
     assert power["note"] == PROVISIONAL_NOTE
     assert table.loc[builtin, "label"].value_counts().to_dict() == {
-        "experimental": 27,
+        "experimental": 28,
         "validated": 5,
     }
 
