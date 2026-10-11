@@ -7,6 +7,10 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: ethics_check and open_practices skip papers bibr classifies as not applicable
+
+- **Changed:** ethics_check no longer asks a review, meta-analysis, commentary, correction or retraction for an ethics approval statement, and open_practices no longer flags a commentary, correction or retraction for not sharing data or code, when bibr classifies the paper so (`info.paper_type`, with a confidence of at least 0.7 when one is given). Such a paper is `na` with a sentence that says why (D85).
+
 ### Added: license_check, the license the paper is published under
 
 - **Added:** the module `license_check` (pytacheck's own; metacheck has none). It reads the license bibr extracted (its SPDX identifier, link or statement) and, when there is none, looks for a Creative Commons license named in the text ("CC BY 4.0", a creativecommons.org link, "Creative Commons Attribution License"). CC BY, CC BY-SA and CC0 are green; a license that forbids commercial reuse or derivatives, or "all rights reserved", is yellow; no license found is `na`.

@@ -18,8 +18,9 @@ from metacheck._r.frames import bind_rows
 from metacheck.core.doc import Doc
 from metacheck.core.errors import PytacheckWarning
 from metacheck.module import module
+from metacheck.modules._paper_type import NO_LIVE_DATA, skipped_type, type_name
 from metacheck.papers.ids import resolve
-from metacheck.papers.model import Paper, is_paper_list
+from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.text.search import search_doc, text_search
 
 __all__ = ["ethics_check"]
@@ -358,6 +359,12 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     na: tuple[bool, None] = (False, None)
     ethics_rows = [ethics_summary.get(p, na) for p in paper_ids]
     live_rows = [live_summary.get(p, na) for p in paper_ids]
+    # D85: a paper bibr classifies as a review, commentary, erratum, ... collects no
+    # data from participants, whatever its sentences about participants say
+    skipped = _skipped_types(paper)
+    live_rows = [
+        (False, r[1]) if p in skipped else r for p, r in zip(paper_ids, live_rows, strict=True)
+    ]
     summary_table = pd.DataFrame(
         {
             "paper_id": pd.Series(paper_ids, dtype="string"),
@@ -394,6 +401,11 @@ def ethics_check(paper: Any) -> dict[str, Any]:
         summary_text = (
             "No papers appeared to involve live data collection requiring an ethics approval "
             "statement."
+        )
+    if n_papers == 1 and paper_ids[0] in skipped:
+        summary_text = (
+            f"bibr classifies the paper as {type_name(skipped[paper_ids[0]])}, which collects "
+            "no data from participants, so it needs no ethics approval statement."
         )
 
     # report ----
@@ -443,6 +455,19 @@ def _with_bibr_ethics(table: pd.DataFrame, paper: Any) -> pd.DataFrame:
         }
     )
     return bind_rows([table, rows]).reset_index(drop=True)
+
+
+def _skipped_types(paper: Any) -> dict[str, str]:
+    """The papers bibr confidently classifies as a type without live data (D85), by ID."""
+    papers = (
+        [paper] if isinstance(paper, Paper) else list(paper) if isinstance(paper, PaperList) else []
+    )
+    out: dict[str, str] = {}
+    for p in papers:
+        kind = skipped_type(p, NO_LIVE_DATA)
+        if kind is not None:
+            out[str(p.paper_id)] = kind
+    return out
 
 
 def _as_text(x: Any) -> str:
