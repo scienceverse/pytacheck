@@ -22,3 +22,7 @@ FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
 
 Third-party software that this package installs as dependencies keeps its own
 licences; they are listed in each package's metadata.
+
+src/metacheck/resources/data/tlds.txt lists the top-level domains of the ICANN
+section of the Public Suffix List (https://publicsuffix.org), which is licensed
+under the Mozilla Public License 2.0 (https://mozilla.org/MPL/2.0/).

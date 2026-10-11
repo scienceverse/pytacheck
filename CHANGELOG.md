@@ -7,6 +7,13 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: all_urls lists bibr's links
+
+- **Changed:** all_urls reads the paper's `url` table, the links bibr (or the TEI and JATS readers) extracted with their visible text, and adds the URLs written as plain text that are not links. A link whose text is not its URL ("the data", "Supplemental Material") is listed, and a URL cut by a line break inside it (`https://github.com/Lak-`) is listed whole (D82).
+- **Changed:** dotted names that are not URLs are no longer listed: a bare host name must end in a top-level domain (the ICANN section of the Public Suffix List, shipped as `resources/data/tlds.txt`) and not be called as a function, so `pwr.t.test`, `is.na(x)`, `data.csv`, `Soc.Lond` and `publishers.This` go; so do an IPv4-shaped number with a part over 255 and the end of a DOI (`xyz.abc` of `doi:10.5555/xyz.abc`). A URL is cut at a closing bracket it did not open (`https://osf.io/abc).foot_2`), and an `ftp://` scheme or a non-ASCII first letter (`naïve.org`) is kept.
+- **Added:** the table's `link_text` (a link's visible text), `url` (the link: `https://` added when the text has no scheme), `domain` (its host, without `www.`) and `source` (`"link"` or `"text"`) columns. Rows are in document order.
+- **Unchanged:** `extract_urls()`, the summary table and the traffic light.
+
 ### Changed: JSON fields and table columns are read by their exact name
 
 - **Changed:** fields of API replies (Crossref, DataCite, doi.org, PubPeer, RegCheck, OSF, Zenodo, GitHub, GitLab, Dataverse, Dryad, Figshare, ReShare and the other repositories), of JASP, jamovi, Qualtrics `.qsf` and bibr files, notebooks, `renv.lock` and stat_output documents, of LLM parameters, the `view_only` key of an OSF link and the columns `file_category()` and `crossref_query()` read are matched by their exact name. metacheck reads them with R's `$`, which falls back to a unique prefix (a ReShare file with `hash_type` but no `hash` got the checksum `"SHA1"`, a Qualtrics choice with only `DisplayLogic` got its label from the display logic) (D81).

@@ -29,15 +29,6 @@ differences:
       numbers before a TEI tag keep their space ('p = 0.152', 'Study 1', 'Henry, 2019',
       '24 July 2025') and DOIs split by a PDF line break are rejoined; metacheck's
       number-before-operator clean-up treats a closing tag's '<' as an operator and glues them
-  - module: all_urls
-    input: demos/to_err_is_human.xml
-    field: table.text_id
-    match: values
-    kind: r_bug_fixed
-    ref: U16
-    reason: >-
-      the unlinked footnote marker after '(Table 1, Figure 1).' is a text row of its own,
-      so later sentences of the demo paper have text_ids one higher
   - module: [all_p_values, stat_p_exact]
     input: problems/0956797617737129.xml
     field: [summary_text, summary_table.p_values, table]
@@ -232,6 +223,17 @@ differences:
       'ps < .05', 'ps > .115' and the other 'ps' forms are p-values (8 more in the preprint, 7
       in the two psychsci papers, 1 in 0956797617737129); metacheck matches only p, p-value
       and P. Counted as imprecise, they turn stat_p_exact red on 3 of these papers
+  # all_urls on bibr's links (D82) -------------------------------------------
+  - module: all_urls
+    input: "*"
+    field: [traffic_light, summary_table, summary_table.urls, table, table.*]
+    match: values
+    kind: deliberate
+    ref: D82
+    reason: >-
+      all_urls lists the paper's links (with their visible text) and the plain-text URLs that
+      are not links, drops dotted names that are not URLs (pwr.t.test, Soc.Lond), and adds
+      the link_text, url, domain and source columns
 
 floors:
   - module: stat_p_exact

@@ -8,7 +8,7 @@
 ".grobid_to_bibr.review_url_na": {"r": "2d19daf2c2751d6e", "py": "3b3c99aa60712046", "diff": ["text.text[]"]},
 ".grobid_to_bibr.review_urls": {"r": "0d7c0034b432d970", "py": "4382221f3a359f71", "diff": ["text.text[]", "url.end[]", "url.start[]", "xref.contents[]", "xref.end[]", "xref.start[]"]},
 "module.all_p_values.review": {"r": "627cb1f87585811a", "py": "395f05909537ccc5", "diff": ["table.text[]", "table.text_id[]"]},
-"module.all_urls.review": {"r": "2f4160e84002998f", "py": "5faf29fe2fc75a15", "diff": ["summary_table.urls[]", "table"]},
+"module.all_urls.review": {"r": "2f4160e84002998f", "py": "e2a01fb598984871", "diff": ["summary_table.urls[]", "table"]},
 "module.ref_accuracy.review": {"r": "7ff9575c6575ce2d", "py": "23eab4caf48f6b93", "diff": ["traffic_light[]"]},
 "module.ref_consistency.review": {"r": "2ed3fd538a4aa42b", "py": "e7d7bfa5ba952483", "diff": ["report[]", "table.text[]"]},
 "module.ref_summary.review": {"r": "094a4b2748873a86", "py": "e621723839ae2663", "diff": ["table.text[]"]},
