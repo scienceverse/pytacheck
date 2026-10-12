@@ -185,13 +185,13 @@ def _fetch_url(url: str) -> bytes:
 def code_read(file_path: str | os.PathLike[str]) -> list[str]:
     """Read code from a file or URL, one element per line.
 
-    Port of ``R/code_check.R::code_read()``: the encoding is guessed the way
-    ``readr::guess_encoding()`` does it (ICU's detector), the file is read with
-    ``readr::read_lines()`` (vroom) in that encoding, falling back to base
-    ``readLines()`` when that fails, and invalid bytes are shown as ``<xx>``.
-    A 0-byte file gives an empty list.
+    Port of ``R/code_check.R::code_read()``. The bytes are decoded by
+    :func:`metacheck.codecheck._decode.decode_lines` (a byte order mark, UTF-8,
+    else chardet's guess or Windows-1252; D74), not by R's readr/vroom
+    pipeline; bytes that fit no encoding are shown as ``<xx>``. A 0-byte file
+    gives an empty list.
     """
-    from metacheck.codecheck._encoding import code_read_bytes
+    from metacheck.codecheck._decode import decode_lines
 
     if file_path is None:
         raise TypeError("argument is of length zero")
@@ -202,7 +202,7 @@ def code_read(file_path: str | os.PathLike[str]) -> list[str]:
         file_path = values[0]
     path = os.fspath(file_path)
     if _URL.search(path):
-        return code_read_bytes(_fetch_url(path), path, url=True)
+        return decode_lines(_fetch_url(path))
     local = Path(path).expanduser()
     if not local.exists():
         raise FileNotFoundError(f"'{path}' does not exist.")
@@ -210,7 +210,7 @@ def code_read(file_path: str | os.PathLike[str]) -> list[str]:
         return []
     if local.is_dir():
         raise IsADirectoryError(f"Cannot read file '{path}': it is a directory")
-    return code_read_bytes(local.read_bytes(), path)
+    return decode_lines(local.read_bytes())
 
 
 def _try_code_read(file_name: str) -> list[str] | None:
@@ -933,13 +933,13 @@ def code_extract_r(
 
     lines = [NA_LINE if t is None else t for t in _text_arg(file_path, text)]
     out = purl(lines, documentation=documentation)
-    from metacheck.codecheck._encoding import code_read_bytes
+    from metacheck.codecheck._decode import decode_lines
 
     data = out.encode("utf-8", "surrogateescape")
     if save_path is None:
         if not data:
             return []
-        return code_read_bytes(data, "output.R")
+        return decode_lines(data)
     with open(save_path, "wb") as fh:
         fh.write(data)
     return os.fspath(save_path)

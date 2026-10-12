@@ -435,11 +435,11 @@ Python: [text/causal.py](../src/metacheck/text/causal.py). Tests: [tests/text_ex
 
 ### `R/code_check.R`
 
-Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_encoding.py](../src/metacheck/codecheck/_encoding.py), [codecheck/_icu.py](../src/metacheck/codecheck/_icu.py), [codecheck/_icu_tables.py](../src/metacheck/codecheck/_icu_tables.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_purl.py](../src/metacheck/codecheck/_purl.py), [codecheck/_reval.py](../src/metacheck/codecheck/_reval.py), [codecheck/_rcoerce.py](../src/metacheck/codecheck/_rcoerce.py). Tests: [tests/codecheck](../tests/codecheck).
+Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_decode.py](../src/metacheck/codecheck/_decode.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_purl.py](../src/metacheck/codecheck/_purl.py), [codecheck/_reval.py](../src/metacheck/codecheck/_reval.py), [codecheck/_rcoerce.py](../src/metacheck/codecheck/_rcoerce.py). Tests: [tests/codecheck](../tests/codecheck).
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `code_read()` | [`metacheck.codecheck.core:code_read`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_read()` | [`metacheck.codecheck.core:code_read`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
 | `code_lang()` | [`metacheck.codecheck.core:code_lang`](../src/metacheck/codecheck/core.py) | yes | U68 |  |
 | `code_extract_r()` | [`metacheck.codecheck.core:code_extract_r`](../src/metacheck/codecheck/core.py) | yes | U153 |  |
 | `code_extract_py()` | [`metacheck.codecheck.core:code_extract_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
@@ -448,8 +448,8 @@ Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_enc
 | `code_abs_path()` | [`metacheck.codecheck.core:code_abs_path`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_setwd()` | [`metacheck.codecheck.core:code_setwd`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_install_packages()` | [`metacheck.codecheck.core:code_install_packages`](../src/metacheck/codecheck/core.py) | yes | — |  |
-| `code_remove_comments()` | [`metacheck.codecheck.core:code_remove_comments`](../src/metacheck/codecheck/core.py) | yes | — |  |
-| `code_line_stats()` | [`metacheck.codecheck.core:code_line_stats`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_remove_comments()` | [`metacheck.codecheck.core:code_remove_comments`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
+| `code_line_stats()` | [`metacheck.codecheck.core:code_line_stats`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
 | `code_library_lines()` | [`metacheck.codecheck.core:code_library_lines`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_library_names()` | [`metacheck.codecheck.core:code_library_names`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_packages()` | [`metacheck.codecheck.core:code_packages`](../src/metacheck/codecheck/core.py) | yes | — |  |
@@ -1084,7 +1084,7 @@ optional ones are in extras (for example `metacheck[data]`).
 |---|---|---|
 | `dplyr` | data-frame verbs throughout | pandas; [`_r/frames.py`](../src/metacheck/_r/frames.py) for `bind_rows()` and `count()` |
 | `tidyr` | pivots, `fill()`, `separate()` | pandas |
-| `readr` | `guess_encoding()` and `read_lines()` in `code_read()`, CSV files | port of the encoding guess and line reading in [`codecheck/_encoding.py`](../src/metacheck/codecheck/_encoding.py) (D12); pandas for CSV |
+| `readr` | `guess_encoding()` and `read_lines()` in `code_read()`, CSV files | not ported: chardet and Python's line splitting in [`codecheck/_decode.py`](../src/metacheck/codecheck/_decode.py) (D74); pandas for CSV |
 | `knitr` | `purl()`: code from R Markdown and Quarto files | port of knitr's tangling in [`codecheck/_purl.py`](../src/metacheck/codecheck/_purl.py) |
 | `quarto` | rendering reports | the `quarto` command, when `report(renderer="quarto")`; the default renderer writes HTML in Python ([`report/report.py`](../src/metacheck/report/report.py)) |
 | `DT` | interactive tables in reports | self-contained HTML tables in [`report/render.py`](../src/metacheck/report/render.py) |

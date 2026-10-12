@@ -1,3 +1,10 @@
 {
-"code_lang.my_qmd_scalar_yaml_qmd": {"r": "ac5146cf65ca52a8", "py": "8259b48afe2dfac5", "diff": ["<R error, Python value>"]}
+"code_lang.my_qmd_scalar_yaml_qmd": {"r": "ac5146cf65ca52a8", "py": "8259b48afe2dfac5", "diff": ["<R error, Python value>"]},
+"code_line_stats.my_encodings_cr_cr_lf_R": {"r": "a05d558e9f5f7be9", "py": "1b8d67008dcd80db", "diff": ["code_lines[]", "total_lines[]"]},
+"code_line_stats.my_encodings_mixed_eol_R": {"r": "fda1fa506e87e132", "py": "dbaaf9918f1fea93", "diff": ["code_lines[]", "total_lines[]"]},
+"code_read.my_encodings_cr_cr_lf_R": {"r": "facc0bdf1cf58793", "py": "04be476906d1dfab", "diff": ["<root>"]},
+"code_read.my_encodings_mixed_eol_R": {"r": "513f4128721f68f6", "py": "1c7eadf39f3844fe", "diff": ["<root>"]},
+"code_read.problems_203020_pdf": {"r": "ac5146cf65ca52a8", "py": "b9058917f6275b7b", "diff": ["<R error, Python value>"]},
+"code_remove_comments.my_encodings_cr_cr_lf_R": {"r": "42165a351f804db2", "py": "8bac93c5f9a5da06", "diff": ["<root>"]},
+"code_remove_comments.my_encodings_mixed_eol_R": {"r": "513f4128721f68f6", "py": "1c7eadf39f3844fe", "diff": ["<root>"]}
 }
