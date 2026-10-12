@@ -108,6 +108,24 @@ def test_installed_presets_are_offered_when_the_page_can_run_them(config: Path) 
     )
 
 
+def test_a_shared_server_runs_only_built_in_checks_whatever_preset_it_is_sent(
+    config: Path, tmp_path: Path
+) -> None:
+    shared = {ref for _, ref in checks.paper_presets(hosted=True)}
+    for ref in shared:
+        modules, _data = checks.preset_checks(ref)
+        assert not any("::" in m for m in modules)
+    # a pack's check or a slow one sent by the browser is dropped, preset or not
+    started = run.begin(
+        pc.demofile("json"),
+        workdir=tmp_path,
+        checks=["tue::own_check", "code_check", "marginal"],
+        args=checks.preset_args("slow"),
+        hosted=True,
+    )
+    assert [r.module for r in started.analysis.rows] == ["marginal"]
+
+
 def _handlers(**kwargs: Any) -> dict[str, Any]:
     blocks = ui.build_app(**kwargs)
     return {fn.name: fn.fn for fn in blocks.fns.values()}
