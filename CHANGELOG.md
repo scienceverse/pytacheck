@@ -7,6 +7,11 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Added: figure_table_refs, a check that every figure and table is referred to
+
+- **Added:** the module `figure_table_refs` (pytacheck's own; metacheck has none). It lists each figure and table with the number of sentences that refer to it, read from bibr's cross-references to it and, when there are none, from a search of the text for its label ("Figure 2", "Fig. 2a", "Tables 1 and 2") outside the captions. A figure or table never referred to turns the light yellow; all referred to is green; a paper without figures or tables, or whose figures have neither labels nor linked references (older exports), is `na`.
+- **Changed:** the built-in pack lists pytacheck's own modules under `pytacheck_modules` in `pack.json`; they have no parity cases (there is no R result to compare with) and a provisional status entry like the other built-ins.
+
 ### Changed: all_urls lists bibr's links
 
 - **Changed:** all_urls reads the paper's `url` table, the links bibr (or the TEI and JATS readers) extracted with their visible text, and adds the URLs written as plain text that are not links. A link whose text is not its URL ("the data", "Supplemental Material") is listed, and a URL cut by a line break inside it (`https://github.com/Lak-`) is listed whole (D82).

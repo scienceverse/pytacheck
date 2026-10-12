@@ -68,7 +68,9 @@ def test_metacheck_modules_lists_every_upstream_module(upstream_dir: Path) -> No
     assert builtin_pack().manifest["metacheck_modules"] == expected
     from metacheck.module import _builtin_names
 
-    assert set(_builtin_names()) <= set(expected), "a built-in module that metacheck lacks"
+    own = set(builtin_pack().manifest.get("pytacheck_modules", ()))
+    assert not own & set(expected), "a pytacheck module named like a metacheck module"
+    assert set(_builtin_names()) - own <= set(expected), "a built-in module that metacheck lacks"
 
 
 def test_pack_json_ships_in_the_package() -> None:

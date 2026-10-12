@@ -14,6 +14,7 @@
     "metacheck::coi_check_oi": {"provisional": true},
     "metacheck::data_check": {"provisional": true},
     "metacheck::ethics_check": {"provisional": true},
+    "metacheck::figure_table_refs": {"provisional": true},
     "metacheck::funding_check": {"provisional": true},
     "metacheck::funding_check_oi": {"provisional": true},
     "metacheck::marginal": {
