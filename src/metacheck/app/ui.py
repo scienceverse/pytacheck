@@ -124,9 +124,16 @@ PRIVACY_PACKAGE = (
     "OSF or Zenodo)."
 )
 READERS = [
-    ("GROBID (public server at TU Eindhoven)", "grobid"),
     ("bibr (the scienceverse service; needs a key)", "bibr"),
+    ("GROBID (public server at TU Eindhoven)", "grobid"),
 ]
+#: the trade-off under the choice of PDF reader
+READER_HINT = "bibr is more accurate but slower. GROBID is faster but less accurate."
+#: added when the page starts on GROBID because bibr is not set up (no key, none saved)
+READER_FALLBACK = (
+    "bibr is not set up on this computer, so GROBID is used. "
+    "Enter a bibr key to read PDFs with bibr."
+)
 PICKER_TITLE = "Choose the checks"
 PACKAGE_PICKER = "**For a data package**"
 PACKAGE_PRESET_LABEL = "Check a data package with"
@@ -409,6 +416,14 @@ def default_reader(remembered: bool = False) -> str:
     if os.environ.get(bibr.KEY_ENV, "").strip() or (remembered and bibr.setup_chose_bibr()):
         return "bibr"
     return "grobid"
+
+
+def reader_hint(first: str, hosted: bool = False) -> str:
+    """The line under the PDF reader choice: what each reader trades, and, when the page
+    starts on GROBID because bibr is not set up, that GROBID is the fallback."""
+    if first == "bibr":
+        return READER_HINT
+    return f"{READER_HINT} {here(READER_FALLBACK, hosted)}"
 
 
 def privacy_text(reader: str, hosted: bool = False) -> str:
@@ -832,6 +847,7 @@ def build_app(
             gr.Markdown(hosting.PACKAGE_NOTE)
         first = default_reader(remember_keys)
         reader = gr.Radio(READERS, value=first, label="Read PDFs with")
+        gr.Markdown(reader_hint(first, shared))
         with gr.Group(visible=first == "bibr") as key_group:
             # the key of this computer wins over a typed one, so there is nothing to type then
             key = gr.Textbox(
