@@ -25,6 +25,7 @@
 "malformed.write.scalar_shifted": {"r": "620d79bd943b257e", "py": "873c021d571d8ac8", "diff": ["[]"]},
 "malformed.write.source_scalar": {"r": "ac5146cf65ca52a8", "py": "f6d566ee4cfdf5f7", "diff": ["<R error, Python value>"]},
 "malformed.write.source_value_array": {"r": "ac5146cf65ca52a8", "py": "89d096ac0e1dca98", "diff": ["<R error, Python value>"]},
+"module.all_urls.edge_types": {"r": "d3616d82a350032c", "py": "e35351f840596aaa", "diff": ["summary_table.urls[]", "table"]},
 "module.ref_consistency.edge_types": {"r": "21dd3900ba47298f", "py": "4ef1ff34f7e74de1", "diff": ["report[]", "summary_table", "summary_table.n_bib[]"]},
 "module.ref_summary.edge_types": {"r": "778efed958386cfe", "py": "dd3bf7df3769c762", "diff": ["summary_text[]"]},
 "paper_table.edge_types.eq": {"r": "c4d0d260bdab0f33", "py": "6dfcd24588cf8b34", "diff": ["df[]"]},

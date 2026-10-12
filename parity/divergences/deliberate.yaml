@@ -98,3 +98,26 @@
 "bibr12_review/malformed.write.producer_scalar": *d81_scalar
 "codecheck/code_extract_py.text.scalar": *d81_scalar
 "datacheck_columns/parse_qsf.scalar_json": *d81_scalar
+# all_urls lists bibr's links and the plain-text URLs that are not links, without dotted
+# names that are not URLs, and adds link_text, url, domain and source columns (D82)
+"mod_urls_open/all_urls.demo": &d82
+  kind: deliberate
+  ref: D82
+  reason: all_urls reads bibr's link table (a URL cut by a line break is read whole), drops dotted names that are not URLs (pwr.t.test), lists doi:-prefixed DOIs, and adds the link_text, url, domain and source columns
+"mod_urls_open/all_urls.problem_203020": *d82
+"mod_urls_open/all_urls.synthetic": *d82
+"mod_urls_open/all_urls.none": *d82
+"mod_urls_open/all_urls.empty_paper": *d82
+"mod_urls_open/all_urls.paperlist": *d82
+"mod_urls_open_review/all_urls.review.list_order": *d82
+"mod_urls_open_review/all_urls.review.na_text": *d82
+"mod_urls_open_review/all_urls.review.sections": *d82
+"mod_urls_open_review/all_urls.review.dup_sections": *d82
+"mod_urls_open_review/all_urls.review.chain_twice": *d82
+"mod_urls_open_review/all_urls.review.list_with_empty": *d82
+"mod_urls_open_review/all_urls.review.demo_copy": *d82
+"bibr12/module.all_urls.PMC4383902": *d82
+"bibr12/module.all_urls.full": *d82
+"bibr12_review/module.all_urls.edge_types": *d82
+"grobid12/module.all_urls.0956797615569889": *d82
+"grobid12/module.all_urls.debruine": *d82
