@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 from typing import Any
 
@@ -11,6 +12,7 @@ from metacheck._r.base import plural
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import grepl, gsub
 from metacheck.module import module
+from metacheck.modules._paper_type import NO_RESEARCH, skipped_type, type_name
 from metacheck.papers.model import Paper, PaperList
 from metacheck.text.search import text_search
 
@@ -87,6 +89,9 @@ _NO_CODE_REPORT = (
     "to this article, or the repository is not recognized by our code. If there is code, please "
     "consider sharing it in a repository."
 )
+_STATED_NO_DATA_REPORT = (
+    "The data availability statement says there are no data to share for this article."
+)
 _DATA_REPORT = "Data was openly shared for this article, based on the following text:\n\n> {}"
 _CODE_REPORT = "Code was openly shared for this article, based on the following text:\n\n> {}"
 _ON_REQUEST_REPORT = (
@@ -95,14 +100,111 @@ _ON_REQUEST_REPORT = (
 )
 
 
+# D83: a data availability statement that says there is nothing to share
+_NO_DATA_VERBS = r"(generated|collected|used|analy[sz]ed|created|produced|associated)"
+_NO_DATA = (
+    r"\bnot applicable\b"
+    rf"|\bno (new |original |primary |research )?(data|datasets?)\b[^.]{{0,40}}\b{_NO_DATA_VERBS}\b"
+    rf"|\b(data|datasets?)\b[^.]{{0,60}}\b(were|was|are|is) not {_NO_DATA_VERBS}\b"
+    r"|\bdid not (generate|collect|use|create|produce|analy[sz]e) (any )?(new )?(data|datasets?)\b"
+)
+_DAS = "data_availability"
+# a sentence boundary in a statement bibr kept outside the text
+_SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[A-Z(\"'])")
+
+
+def _squash(text: str) -> str:
+    return " ".join(text.split()).lower()
+
+
+def _statement_rows(papers: Sequence[Paper], frame: pd.DataFrame) -> pd.DataFrame | None:
+    """The sentences of each paper's data availability statement (bibr's
+    ``info.data_availability``) that its text does not contain, as rows of *frame*
+    with no ``text_id`` and ``section_type`` ``"data_availability"`` (D83)."""
+    rows: list[dict[str, Any]] = []
+    for p in papers:
+        info = p.get("info")
+        if not isinstance(info, pd.DataFrame) or _DAS not in info.columns or not len(info):
+            continue
+        statement = info[_DAS].iloc[0]
+        if not isinstance(statement, str) or not statement.strip():
+            continue
+        body = frame.loc[frame["paper_id"] == p.paper_id, "text"].dropna()
+        if _squash(statement) in _squash(" ".join(body.astype(str))):
+            continue
+        rows.extend(
+            {
+                "text": sentence,
+                "paper_id": p.paper_id,
+                "header": "Data Availability",
+                "section_type": _DAS,
+            }
+            for sentence in _SENTENCE_END.split(" ".join(statement.split()))
+        )
+    if not rows:
+        return None
+    extra = pd.DataFrame(rows)
+    return pd.DataFrame(
+        {
+            c: pd.Series(extra[c].tolist() if c in extra.columns else [None] * len(extra))
+            for c in frame.columns
+        }
+    ).astype(frame.dtypes.to_dict())
+
+
 def _search_frame(paper: Any) -> Any:
     """What the searches run on: the sentence table of a paper (:func:`_code_rows` needs a
-    table); other inputs are passed through."""
+    table) and the sentences of a data availability statement bibr kept outside the
+    text (D83); other inputs are passed through."""
     if not isinstance(paper, Paper | PaperList):
         return paper
     from metacheck.text.search import sentence_table
 
-    return sentence_table(paper)[0]
+    frame = sentence_table(paper)[0]
+    if "paper_id" not in frame.columns or "text" not in frame.columns:
+        return frame
+    extra = _statement_rows(list(paper) if isinstance(paper, PaperList) else [paper], frame)
+    if extra is None:
+        return frame
+    return pd.concat([frame, extra], ignore_index=True)
+
+
+def _in_statement(frame: Any) -> list[bool]:
+    """Whether each row of *frame* is in a data availability section or statement."""
+    if not isinstance(frame, pd.DataFrame) or "section_type" not in frame.columns:
+        return [False] * len(frame) if isinstance(frame, pd.DataFrame) else []
+    return (frame["section_type"].astype("string") == _DAS).fillna(False).tolist()
+
+
+def _data_rows(frame: Any) -> Any:
+    """The rows about data: those with the word, and (D83) the sentences of a data
+    availability statement that name neither code nor materials ("They can be
+    found at https://osf.io/x")."""
+    worded = text_search(frame, _DATA_WORDS)
+    das = _in_statement(frame)
+    if not any(das):
+        return worded
+    texts = frame["text"].tolist()
+    other = grepl("|".join((*_CODE_WORDS, *_MATERIALS_WORDS)), texts, ignore_case=True)
+    data = grepl("|".join(_DATA_WORDS), texts, ignore_case=True)
+    keep = [d and not o and not w for d, o, w in zip(das, other, data, strict=True)]
+    if not any(keep):
+        return worded
+    return bind_rows([worded, frame.loc[keep].reset_index(drop=True)])
+
+
+def _no_data(frame: Any, paper_ids: list[str]) -> dict[str, bool]:
+    """Per paper, whether its data availability statement says it has no data (D83)."""
+    out = dict.fromkeys(paper_ids, False)
+    if not isinstance(frame, pd.DataFrame) or "paper_id" not in frame.columns:
+        return out
+    das = _in_statement(frame)
+    texts = frame["text"].tolist()
+    said = grepl(_NO_DATA, texts, ignore_case=True)
+    for pid, d, s in zip(frame["paper_id"].tolist(), das, said, strict=True):
+        if d and s and pid in out:
+            out[pid] = True
+    return out
 
 
 def _code_rows(frame: Any) -> Any:
@@ -223,6 +325,42 @@ def _summarise(table: pd.DataFrame, in_repo: list[bool]) -> pd.DataFrame:
     return pd.DataFrame(cols)
 
 
+def _with_no_data(
+    summary_table: pd.DataFrame, no_data: dict[str, bool], paper_ids: list[str]
+) -> pd.DataFrame:
+    """*summary_table* with a ``no_data`` column, and a row for each paper that states it
+    has no data but has no flagged sentence (D83)."""
+    out = summary_table.copy()
+    out.insert(
+        6,
+        "no_data",
+        pd.Series([no_data.get(p, False) for p in out["paper_id"].tolist()], dtype="boolean"),
+    )
+    have = set(out["paper_id"].tolist())
+    missing = [p for p in paper_ids if no_data.get(p) and p not in have]
+    if not missing:
+        return out
+    rows = pd.DataFrame(
+        {
+            c: pd.Series(
+                missing
+                if c == "paper_id"
+                else [True] * len(missing)
+                if c == "no_data"
+                else [None] * len(missing)
+                if c.endswith("_statements")
+                else [False] * len(missing),
+                dtype=out[c].dtype,
+            )
+            for c in out.columns
+        }
+    )
+    out = pd.concat([out, rows], ignore_index=True)
+    order = {p: i for i, p in enumerate(paper_ids)}
+    keys = out["paper_id"].map(lambda p: order.get(p, len(order)))
+    return out.iloc[keys.argsort(kind="stable").to_numpy()].reset_index(drop=True)
+
+
 @module(
     title="Open Practices Check",
     description=(
@@ -230,6 +368,11 @@ def _summarise(table: pd.DataFrame, in_repo: list[bool]) -> pd.DataFrame:
     ),
     details="""
         It is much faster than the previous ODDPub version of this module, and has a lower false negative rate, but also a higher false positive rate.
+
+        pytacheck also reads the data availability statement bibr extracts: its
+        sentences count as data statements without the word "data", a statement
+        kept outside the text is searched too, and a statement that there are no
+        data to share is not reported as missing data.
     """,
     keywords=["general"],
     author=["Lisa DeBruine <lisa.debruine@glasgow.ac.uk>"],
@@ -245,13 +388,18 @@ def open_practices(paper: Any) -> dict[str, Any]:
     light (green: data and code shared; yellow: one of them; red: neither,
     or some sharing only on request; info: several papers), a summary text
     and the report.
+
+    D83: bibr's data availability statement counts. Its sentences (in the text
+    or only in ``info.data_availability``) need no data word, and a statement
+    that there are no data (``summary_table.no_data``) turns the missing data
+    into "no data to share" (yellow without code, green with it).
     """
     from metacheck.papers.tables import paper_id
 
     frame = _search_frame(paper)
     repo = (_REPO_WORDS, False)
     avail = (_AVAILABILITY, False)
-    data = _chain(frame, (_DATA_WORDS, False), repo, avail)
+    data = _chain(_data_rows(frame), repo, avail)
     code = _chain(_code_rows(frame), (_CODE_WORDS, False), repo, avail)
     materials = _chain(frame, (_MATERIALS_WORDS, False), repo, avail)
     prereg = _chain(
@@ -297,6 +445,15 @@ def open_practices(paper: Any) -> dict[str, Any]:
     texts = table["text"].tolist()
     in_repo = grepl(_IN_REPO, texts, ignore_case=True)
     summary_table = _summarise(table, in_repo)
+    # D83: the data availability statement says there are no data to share; such a
+    # paper has a row even when no sentence was flagged
+    summary_table = _with_no_data(summary_table, _no_data(frame, paper_ids), paper_ids)
+
+    skipped = {
+        str(p.paper_id): kind
+        for p in (list(paper) if isinstance(paper, PaperList) else [paper])
+        if isinstance(p, Paper) and (kind := skipped_type(p, NO_RESEARCH)) is not None
+    }
 
     # traffic_light / summary_text ----
     # branch on the number of papers (metacheck branches on the rows of
@@ -328,6 +485,25 @@ def open_practices(paper: Any) -> dict[str, Any]:
             f"{both:d} paper{plural(both)} shared both data and code, {only_data:d} only data, "
             f"{only_code:d} only code, and {neither:d} neither."
         )
+        stated = dict(
+            zip(summary_table["paper_id"].tolist(), summary_table["no_data"].tolist(), strict=True)
+        )
+        none = sum(
+            bool(stated.get(pid)) and not d for pid, (d, _) in zip(paper_ids, opened, strict=True)
+        )
+        if none:
+            summary_text = summary_text[:-1] + (
+                f"; {none:d} paper{plural(none)} {'states' if none == 1 else 'state'} "
+                "that there are no data to share."
+            )
+        # D85: papers that report no research of their own
+        not_research = sum(pid in skipped for pid in paper_ids)
+        if not_research:
+            summary_text = summary_text[:-1] + (
+                f"; {not_research:d} paper{plural(not_research)} "
+                f"{'is' if not_research == 1 else 'are'} not research (a commentary, "
+                "correction or retraction)."
+            )
     elif not single:
         summary_text = "Neither shared data nor code detected."
         tl = "red"
@@ -346,16 +522,39 @@ def open_practices(paper: Any) -> dict[str, Any]:
         else:
             summary_text = "Neither shared data nor code detected."
             tl = "red"
+        if not data_open and bool(summary_table["no_data"].iloc[0]):
+            # data that do not exist cannot be shared: only code is missing
+            summary_text = (
+                "Shared code detected" if code_open else "No shared code detected"
+            ) + "; the paper states it has no data to share."
+            tl = "green" if code_open else "yellow"
         if bool(summary_table["on_request"].iloc[0]):
             summary_text = gsub(r"\.$", "; some sharing is only on request.", summary_text)
             tl = "red"
+
+    # D85: a commentary, correction or retraction reports no research of its own, so
+    # missing data and code are not flagged
+    not_checked = (
+        not several
+        and bool(paper_ids)
+        and paper_ids[0] in skipped
+        and not (single and (data_open or code_open))
+    )
+    if not_checked:
+        tl = "na"
+        summary_text = (
+            f"bibr classifies the paper as {type_name(skipped[paper_ids[0]])}, which reports "
+            "no research of its own, so no shared data or code are expected."
+        )
 
     # report ----
     report: list[str] | None = None
     if single:
         data_flag = table["data"].tolist()
         code_flag = table["code"].tolist()
-        if not data_open:
+        if not data_open and bool(summary_table["no_data"].iloc[0]):
+            data_report = _STATED_NO_DATA_REPORT
+        elif not data_open:
             data_report = _NO_DATA_REPORT
         else:
             shared = [t for t, f, r in zip(texts, data_flag, in_repo, strict=True) if f and r]
@@ -374,11 +573,14 @@ def open_practices(paper: Any) -> dict[str, Any]:
             quoted = "\n\n> ".join(gsub("\n\n", "\n\n> ", asked))
             report.append(_ON_REQUEST_REPORT.format(quoted))
 
+    if not_checked:
+        report = None  # module_run() reports the summary text
+
     # return a list ----
     return {
         "table": table,
         "summary_table": summary_table,
-        "na_replace": {"data_open": False, "code_open": False},
+        "na_replace": {"data_open": False, "code_open": False, "no_data": False},
         "traffic_light": tl,
         "summary_text": summary_text,
         "report": report,

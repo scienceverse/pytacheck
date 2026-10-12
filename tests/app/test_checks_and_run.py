@@ -303,18 +303,18 @@ def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     steps: list[str] = []
     progress = lambda _f, desc=None: steps.append(desc)  # noqa: E731
     on_demo = _button_function("on_demo")
-    page = on_demo(False, False, "grobid", "", False, request, progress)
+    page = on_demo(False, False, "grobid", "", False, None, "", request, progress)
     results, summary, table, frame, download, status, stop = page
     assert results["visible"] is True
     assert status == "" and stop["visible"] is False
-    assert "Ran 16 checks" in summary
+    assert "Ran 19 checks" in summary
     assert list(table.data["Status"]).count("Validated") == 5
     assert frame.startswith('<iframe title="Report" sandbox="allow-scripts')
     assert "srcdoc=" in frame
     assert 'href="/report/abc123/to_err_is_human_report.html"' in download
     assert "Download the report" in download
     assert steps[0] == "Reading the paper"
-    on_demo(False, False, "grobid", "", False, request, progress)  # a second run works
+    on_demo(False, False, "grobid", "", False, None, "", request, progress)  # a second run works
 
 
 def test_result_cells_are_coloured_by_traffic_light() -> None:
@@ -337,7 +337,7 @@ def test_check_button_needs_a_file_and_words_errors_plainly() -> None:
     request = SimpleNamespace(session_hash="abc123")
     on_check = _button_function("on_check")
     with pytest.raises(gr.Error, match="Upload a paper first") as info:
-        on_check(None, False, False, "grobid", "", False, request, lambda *_a, **_k: None)
+        on_check(None, False, False, "grobid", "", False, None, "", request, lambda *_a, **_k: None)
     assert info.value.print_exception is False
     folder = Path(get_upload_folder()) / "test-app-uploads"
     folder.mkdir(parents=True, exist_ok=True)
@@ -345,7 +345,18 @@ def test_check_button_needs_a_file_and_words_errors_plainly() -> None:
         txt = folder / "a.txt"
         txt.write_text("x")
         with pytest.raises(gr.Error, match="not supported") as info:
-            on_check(str(txt), False, False, "grobid", "", False, request, lambda *_a, **_k: None)
+            on_check(
+                str(txt),
+                False,
+                False,
+                "grobid",
+                "",
+                False,
+                None,
+                "",
+                request,
+                lambda *_a, **_k: None,
+            )
         assert info.value.print_exception is False
     finally:
         shutil.rmtree(folder, ignore_errors=True)

@@ -23,15 +23,13 @@ from typing import Any, cast
 import pandas as pd
 
 from metacheck._r import compile_r, gsub, sub, trimws
-from metacheck._values import as_float, is_missing
+from metacheck._values import as_float, field, is_missing
 from metacheck.archives.dataverse import (
     RequestAbort,
     _as_numeric,
     _cell,
     _chr_values,
     _collect_links,
-    _dollar,
-    _dollars,
     _download_file_table,
     _download_many,
     _elements,
@@ -260,26 +258,26 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
             obj["error"] = _cell("parse_error")
             return pd.DataFrame(obj)
 
-        authors_field = _dollar(rec, "authors")
+        authors_field = field(rec, "authors")
         authors: list[str | None] = []
         if isinstance(authors_field, list | dict):
             for a in _elements(authors_field):
-                first = _paste(_empty_or(_dollar(a, "firstName"), ""))
-                last = _paste(_empty_or(_dollar(a, "lastName"), ""))
+                first = _paste(_empty_or(field(a, "firstName"), ""))
+                last = _paste(_empty_or(field(a, "lastName"), ""))
                 full = trimws(f"{first} {last}")
                 authors.append(full if full != "" else None)
 
-        version_href = _dollars(rec, "_links", "stash:version", "href")
+        version_href = field(rec, "_links", "stash:version", "href")
         files_list: Any = []
         if version_href is not None:
             files_list = _dryad_files(f"https://datadryad.org{_paste(version_href)}/files")
 
-        obj["title"] = _field_cell(_empty_or(_dollar(rec, "title"), None))
-        obj["doi"] = _field_cell(_empty_or(_dollar(rec, "identifier"), None))
-        obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "publicationDate"), None))
-        obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "lastModificationDate"), None))
+        obj["title"] = _field_cell(_empty_or(field(rec, "title"), None))
+        obj["doi"] = _field_cell(_empty_or(field(rec, "identifier"), None))
+        obj["publication_date"] = _field_cell(_empty_or(field(rec, "publicationDate"), None))
+        obj["updated_date"] = _field_cell(_empty_or(field(rec, "lastModificationDate"), None))
         obj["authors"] = _list_cell(authors)
-        obj["license"] = _field_cell(_empty_or(_dollar(rec, "license"), None))
+        obj["license"] = _field_cell(_empty_or(field(rec, "license"), None))
         obj["files"] = _list_cell(files_list)
         return pd.DataFrame(obj)
 
@@ -303,10 +301,10 @@ def _dryad_files(url: str) -> Any:
         if resp is None or resp.status_code != 200:
             break
         rec = _resp_json(resp)
-        listed = _dollars(rec, "_embedded", "stash:files")
+        listed = field(rec, "_embedded", "stash:files")
         if listed is not None:
             pages.append(listed)
-        href = _dollars(rec, "_links", "next", "href")
+        href = field(rec, "_links", "next", "href")
         next_url = None
         if isinstance(href, str) and href != "":
             next_url = (
@@ -656,9 +654,9 @@ def dryad_file_download(
 
         rows = []
         for x in _elements(files_list):
-            self_href = _empty_or(_dollars(x, "_links", "self", "href"), None)
-            dl_href = _empty_or(_dollars(x, "_links", "stash:download", "href"), None)
-            digest_type = _empty_or(_dollar(x, "digestType"), None)
+            self_href = _empty_or(field(x, "_links", "self", "href"), None)
+            dl_href = _empty_or(field(x, "_links", "stash:download", "href"), None)
+            digest_type = _empty_or(field(x, "digestType"), None)
             rows.append(
                 {
                     "id": (
@@ -666,9 +664,9 @@ def dryad_file_download(
                         if self_href is not None
                         else None
                     ),
-                    "key": _empty_or(_dollar(x, "path"), None),
-                    "size": _as_numeric(_empty_or(_dollar(x, "size"), None)),
-                    "checksum": _empty_or(_dollar(x, "digest"), None),
+                    "key": _empty_or(field(x, "path"), None),
+                    "size": _as_numeric(_empty_or(field(x, "size"), None)),
+                    "checksum": _empty_or(field(x, "digest"), None),
                     "checksum_type": None if digest_type is None else _paste(digest_type).lower(),
                     "self": (
                         f"https://datadryad.org{_paste(dl_href)}" if dl_href is not None else None

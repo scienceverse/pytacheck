@@ -1,8 +1,7 @@
 """Shared helpers for :mod:`metacheck.db`: R idioms the database clients rely on.
 
 These reproduce the base-R / httr2 / jsonlite behaviour metacheck's database
-code depends on (``utils::URLencode()``, ``$`` partial matching on parsed
-JSON, ``unlist() |> paste()``, list-element assignment of ``NULL``,
+code depends on (``utils::URLencode()``, ``unlist() |> paste()``, list-element assignment of ``NULL``,
 ``httr2::resp_body_json()``'s content-type check, ``dplyr::bind_rows()`` of
 one-row records) so the ports can stay close to the R code.
 """
@@ -30,7 +29,6 @@ __all__ = [
     "default_email",
     "online",
     "paste_unlist",
-    "r_dollar",
     "records_frame",
     "resp_body_json",
     "resp_content_type",
@@ -147,16 +145,6 @@ def _unlist_first_str(x: Any) -> str:
 # ---------------------------------------------------------------------------
 # R list idioms on parsed JSON
 # ---------------------------------------------------------------------------
-
-
-def r_dollar(x: Any, name: str) -> Any:
-    """``x$name`` on a list: exact match, else a unique partial (prefix) match."""
-    if not isinstance(x, Mapping):
-        return None
-    if name in x:
-        return x[name]
-    hits = [k for k in x if isinstance(k, str) and k.startswith(name)]
-    return x[hits[0]] if len(hits) == 1 else None
 
 
 def unlist(x: Any) -> list[Any]:

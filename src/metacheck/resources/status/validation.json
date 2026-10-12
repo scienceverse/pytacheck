@@ -7,6 +7,7 @@
   "modules": {
     "metacheck::all_p_values": {"provisional": true},
     "metacheck::all_urls": {"provisional": true},
+    "metacheck::author_check": {"provisional": true},
     "metacheck::causal_claims": {"provisional": true},
     "metacheck::code_check": {"provisional": true},
     "metacheck::codebook_check": {"provisional": true},
@@ -14,8 +15,10 @@
     "metacheck::coi_check_oi": {"provisional": true},
     "metacheck::data_check": {"provisional": true},
     "metacheck::ethics_check": {"provisional": true},
+    "metacheck::figure_table_refs": {"provisional": true},
     "metacheck::funding_check": {"provisional": true},
     "metacheck::funding_check_oi": {"provisional": true},
+    "metacheck::license_check": {"provisional": true},
     "metacheck::marginal": {
       "provisional": true,
       "implementations": {"r": {"metacheck": ["0.3.1"]}},

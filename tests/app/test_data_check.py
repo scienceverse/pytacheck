@@ -189,7 +189,9 @@ def _handlers() -> dict[str, Any]:
 
 def _demo(fns: dict[str, Any], session: str, data: bool = True) -> tuple[Any, ...]:
     request = SimpleNamespace(session_hash=session)
-    return fns["on_demo"](False, data, "grobid", "", False, request, lambda *_a, **_k: None)
+    return fns["on_demo"](
+        False, data, "grobid", "", False, None, "", request, lambda *_a, **_k: None
+    )
 
 
 def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
@@ -204,7 +206,7 @@ def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
     fns = _handlers()
     results, summary, table, frame, _download, status, stop = _demo(fns, "s1")
     assert results["visible"] is True and stop["visible"] is True
-    assert "Ran 16 checks" in summary and len(table.data) == 16
+    assert "Ran 19 checks" in summary and len(table.data) == 19
     assert "The other results are ready" in status and "still running" in status
     assert "Data Check" not in frame
     steps = fns["follow"](SimpleNamespace(session_hash="s1"))
@@ -215,7 +217,7 @@ def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
     final = list(steps)[-1]
     _results, summary, table, frame, _download, status, stop = final
     assert table.data.iloc[-1, 0] == "Data Check" and table.data.iloc[-1, 2].startswith("Green")
-    assert len(table.data) == 17 and "Ran 17 checks" in summary
+    assert len(table.data) == 20 and "Ran 20 checks" in summary
     assert "The data check found 3 files." in frame
     assert status == "" and stop["visible"] is False
 

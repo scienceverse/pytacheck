@@ -1,13 +1,14 @@
 # Installs the metacheck preview app into one folder and opens it.
 #
 #   powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex"
-#   .\install.ps1 [-NoLaunch] [-Steward] [-Uninstall]
+#   .\install.ps1 [-NoLaunch] [-Steward] [-Preset NAME] [-Uninstall]
 #
 # Everything goes into METACHECK_HOME (default: %LOCALAPPDATA%\metacheck):
 # uv, its Python, the app and uv's cache. No PATH or registry entry is edited.
 # "irm | iex" cannot pass parameters, so these environment variables work too:
 #   METACHECK_NO_LAUNCH=1     same as -NoLaunch
 #   METACHECK_STEWARD=1       same as -Steward
+#   METACHECK_APP_PRESET=NAME same as -Preset NAME
 #   METACHECK_UNINSTALL=1     same as -Uninstall
 #   METACHECK_REF=<commit>    install this commit instead of the pinned one
 #   METACHECK_SPEC=<spec>     install this requirement instead of the GitHub archive
@@ -16,6 +17,9 @@
 # -Steward is for a data steward who only checks data packages: the app opens
 # on its "Check a data package" page. The installer has no PDF or bibr step to
 # skip; the page needs neither a PDF reader nor a key.
+#
+# -Preset NAME opens the app with that preset chosen, for example a pack's
+# (pack::name). A data package preset opens the "Check a data package" page.
 #
 # The whole script is one function called on the last line, so a download that
 # stops half way runs nothing. It has no param() block, because that does not
@@ -51,14 +55,25 @@ function Install-Metacheck {
     if ($env:METACHECK_NO_LAUNCH -eq '1') { $launch = $false }
     if ($env:METACHECK_STEWARD -eq '1') { $steward = $true }
     if ($env:METACHECK_UNINSTALL -eq '1') { $uninstall = $true }
-    foreach ($arg in $Arguments) {
+    $preset = ''
+    if ($env:METACHECK_APP_PRESET) { $preset = $env:METACHECK_APP_PRESET }
+    for ($i = 0; $i -lt $Arguments.Count; $i++) {
+        $arg = $Arguments[$i]
         switch -Regex ($arg) {
             '^-NoLaunch$' { $launch = $false }
             '^-Steward$' { $steward = $true }
             '^-Uninstall$' { $uninstall = $true }
-            default { Fail "unknown option: $arg (use -NoLaunch, -Steward or -Uninstall)" }
+            '^-Preset$' {
+                if ($i + 1 -ge $Arguments.Count) { Fail '-Preset needs the name of a preset' }
+                $i++
+                $preset = $Arguments[$i]
+            }
+            default { Fail "unknown option: $arg (use -NoLaunch, -Steward, -Preset NAME or -Uninstall)" }
         }
     }
+    # A preset name is a pack and a name (letters, digits, . _ - and ::); nothing else is
+    # passed on to the app.
+    if ($preset -and $preset -notmatch '^[A-Za-z0-9._:-]+$') { Fail "not a preset name: $preset" }
 
     # Windows does not keep an empty environment variable, so unset and empty
     # both mean the default.
@@ -281,8 +296,21 @@ function Install-Metacheck {
             Say 'This version of the app has no data package page yet; it opens on the paper page.'
         }
     }
+    # The preset is passed on only if the installed version knows -Preset.
+    if ($preset) {
+        $help = ''
+        try { $help = (& $app --help 2>&1 | Out-String) } catch { $help = '' }
+        if (-not $help.Contains('--preset')) {
+            Say "This version of the app cannot start with a preset; choose $preset on its page."
+            $preset = ''
+        }
+    }
+    $appArgs = @()
+    if ($page) { $appArgs += @('--page', 'package') }
+    if ($preset) { $appArgs += @('--preset', $preset) }
     Say 'To open it again, run the same command again (it takes a few seconds),'
-    if ($page) { Say "or run: $app --page package" } else { Say "or run: $app" }
+    $again = "or run: $app " + ($appArgs -join ' ')
+    Say $again.TrimEnd()
     Say 'To remove it, run these three lines:'
     Say '  $env:METACHECK_UNINSTALL=1'
     Say '  irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex'
@@ -290,7 +318,7 @@ function Install-Metacheck {
     Say ''
 
     if ($launch) {
-        if ($page) { & $app --page package } else { & $app }
+        & $app @appArgs
     }
 }
 

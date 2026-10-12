@@ -44,6 +44,7 @@ _PATTERN_EXC = ["financial disclosure"]
 )
 def coi_check_oi(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/coi_check_oi.R::coi_check()``."""
+    from metacheck.modules._statements import with_bibr_statements
     from metacheck.modules.coi_check import coi_results
 
     # get potential COI statements, then merge the text by section/id
@@ -51,4 +52,5 @@ def coi_check_oi(paper: Any) -> dict[str, Any]:
     table = text_search(table, _PATTERN_INC, search_header=True)
     table = text_search(table, _PATTERN_EXC, exclude=True)
     table = text_search(table, return_="section")
-    return coi_results(table)
+    # D84: a paper the expressions found nothing in gets bibr's statement
+    return coi_results(with_bibr_statements(table, paper, "coi_statement"))

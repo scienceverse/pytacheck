@@ -2,7 +2,7 @@
   "schema": 1,
   "name": "metacheck",
   "title": "metacheck built-in modules",
-  "description": "The modules ported from metacheck. metacheck_modules lists every metacheck module (ported or not) and the three presets mirror module lists hard-coded in metacheck; tests/modsys/test_builtin_presets.py keeps both equal to R's.",
+  "description": "The modules ported from metacheck, and pytacheck's own modules (pytacheck_modules), which metacheck lacks. metacheck_modules lists every metacheck module (ported or not) and the three presets mirror module lists hard-coded in metacheck; tests/modsys/test_builtin_presets.py keeps both equal to R's.",
   "license": "AGPL-3.0-or-later",
   "homepage": "https://github.com/scienceverse/metacheck",
   "fields": ["general"],
@@ -38,6 +38,7 @@
     "stat_p_exact",
     "stat_p_nonsig"
   ],
+  "pytacheck_modules": ["author_check", "figure_table_refs", "license_check"],
   "presets": {
     "default": {
       "description": "metacheck's report() defaults",

@@ -7,6 +7,53 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Added: choose the checks in the app
+
+- **Added:** the paper page of the app has "Choose the checks": a list of every check it can run, ticked as before, so a person can run more or fewer. Checks that take minutes or need a key (code_check, repo_check, codebook_check, psychds_check, reproducibility_check, reg_check, causal_claims) are not offered, and what the browser sends is checked against the list, on a shared server as well.
+- **Added:** "Start from" lists the paper presets of installed packs and of the config (not a shared server's packs), so a pack can give a group its own set of checks; choosing one ticks its checks and passes its arguments.
+- **Added:** `metacheck-app --preset NAME` starts the app with that preset chosen; a data package preset opens the package page. The installers take `--preset NAME` (`-Preset NAME`, or `METACHECK_APP_PRESET`), also with `--steward`, and pass it on only to an app that knows the option.
+- **Changed:** the app runs figure_table_refs, author_check and license_check by default (they take well under a second on the demo paper), so it runs 19 checks instead of 16.
+
+### Changed: ethics_check and open_practices skip papers bibr classifies as not applicable
+
+- **Changed:** ethics_check no longer asks a review, meta-analysis, commentary, correction or retraction for an ethics approval statement, and open_practices no longer flags a commentary, correction or retraction for not sharing data or code, when bibr classifies the paper so (`info.paper_type`, with a confidence of at least 0.7 when one is given). Such a paper is `na` with a sentence that says why (D85).
+
+### Added: license_check, the license the paper is published under
+
+- **Added:** the module `license_check` (pytacheck's own; metacheck has none). It reads the license bibr extracted (its SPDX identifier, link or statement) and, when there is none, looks for a Creative Commons license named in the text ("CC BY 4.0", a creativecommons.org link, "Creative Commons Attribution License"). CC BY, CC BY-SA and CC0 are green; a license that forbids commercial reuse or derivatives, or "all rights reserved", is yellow; no license found is `na`.
+
+### Changed: the COI, funding and ethics checks fall back to bibr's statements
+
+- **Changed:** coi_check, coi_check_oi, funding_check, funding_check_oi and ethics_check still search the text with their regular expressions first; a paper they find nothing in now gets the statement bibr extracted from the document's structure (`info.coi_statement`, `info.funding_statement`, `info.ethics_statement`), so a statement kept in a back-matter note is no longer missed (D84).
+
+### Changed: open_practices reads bibr's data availability statement
+
+- **Changed:** open_practices reads the data availability statement bibr extracts. A sentence of the statement that names neither code nor materials is a data statement without the word "data" (`They can be found at https://osf.io/abc.`), and a statement bibr kept outside the text (`info.data_availability`, from a JATS back-matter note) is searched too, as rows without a `text_id` (D83).
+- **Added:** the summary table's `no_data` column: the statement says there are no data to share ("not applicable", "no new data were created or analyzed", "did not generate any data"). Without shared data such a paper is no longer red: "No shared code detected; the paper states it has no data to share." is yellow, and green when code is shared; the data report says the statement reports no data. A paper list's summary text adds the number of papers that state they have no data.
+
+### Added: author_check, a check of the authors' ORCIDs, affiliations and corresponding author
+
+- **Added:** the module `author_check` (pytacheck's own). It lists each author bibr extracted with their ORCID and whether its ISO 7064 check digit is valid, whether they are the corresponding author, their e-mail address, their affiliations (and how many bibr matched to ROR) and their number of CRediT roles. The light is yellow when a person has no ORCID or no affiliation, an ORCID has an invalid check digit, or no corresponding author is marked; a group author ("The Europe PMC Consortium") needs no ORCID, and affiliations that name no author (older exports) are not judged.
+
+### Added: figure_table_refs, a check that every figure and table is referred to
+
+- **Added:** the module `figure_table_refs` (pytacheck's own; metacheck has none). It lists each figure and table with the number of sentences that refer to it, read from bibr's cross-references to it and, when there are none, from a search of the text for its label ("Figure 2", "Fig. 2a", "Tables 1 and 2") outside the captions. A figure or table never referred to turns the light yellow; all referred to is green; a paper without figures or tables, or whose figures have neither labels nor linked references (older exports), is `na`.
+- **Changed:** the built-in pack lists pytacheck's own modules under `pytacheck_modules` in `pack.json`; they have no parity cases (there is no R result to compare with) and a provisional status entry like the other built-ins.
+
+### Changed: all_urls lists bibr's links
+
+- **Changed:** all_urls reads the paper's `url` table, the links bibr (or the TEI and JATS readers) extracted with their visible text, and adds the URLs written as plain text that are not links. A link whose text is not its URL ("the data", "Supplemental Material") is listed, and a URL cut by a line break inside it (`https://github.com/Lak-`) is listed whole (D82).
+- **Changed:** dotted names that are not URLs are no longer listed: a bare host name must end in a top-level domain (the ICANN section of the Public Suffix List, shipped as `resources/data/tlds.txt`) and not be called as a function, so `pwr.t.test`, `is.na(x)`, `data.csv`, `Soc.Lond` and `publishers.This` go; so do a bare IPv4-shaped number (`1.9.12.31`, a version number; an address with a scheme or a path stays) and the end of a DOI (`xyz.abc` of `doi:10.5555/xyz.abc`). A URL is cut at a closing bracket it did not open (`https://osf.io/abc).foot_2`), and an `ftp://` scheme or a non-ASCII first letter (`naïve.org`) is kept.
+- **Added:** the table's `link_text` (a link's visible text), `url` (the link: `https://` added when the text has no scheme), `domain` (its host, without `www.`) and `source` (`"link"` or `"text"`) columns. Rows are in document order.
+- **Unchanged:** `extract_urls()`, the summary table and the traffic light.
+
+### Changed: JSON fields and table columns are read by their exact name
+
+- **Changed:** fields of API replies (Crossref, DataCite, doi.org, PubPeer, RegCheck, OSF, Zenodo, GitHub, GitLab, Dataverse, Dryad, Figshare, ReShare and the other repositories), of JASP, jamovi, Qualtrics `.qsf` and bibr files, notebooks, `renv.lock` and stat_output documents, of LLM parameters, the `view_only` key of an OSF link and the columns `file_category()` and `crossref_query()` read are matched by their exact name. metacheck reads them with R's `$`, which falls back to a unique prefix (a ReShare file with `hash_type` but no `hash` got the checksum `"SHA1"`, a Qualtrics choice with only `DisplayLogic` got its label from the display logic) (D81).
+- **Changed:** a string or number where a JSON object belongs has no fields, so a bibr export, notebook, `.qsf` file or OSF metadata file of that shape is read instead of stopping with "$ operator is invalid for atomic vectors" (`stat_output_validate()` still fails on such an entry, as metacheck does).
+- **Unchanged:** results on real data: no API or file format relies on a prefix match. The parity cases that change were built to show the prefix match or the scalar error. A Crossref reply without a `status` reports its message-type as the error instead of stopping.
+- **Internal:** the private `_dollar`, `_dollars`, `_dollar_key`, `_dollar_atomic`, `r_dollar` and `_r_dollar` copies are gone; their callers use `metacheck._values.field` or plain key and column lookups. Two small exact lookups stay where `field` does not fit: `_member` for `.qsf` objects (pairs that keep duplicate names) and statout's `_field_found`, which tells a `null` member from an absent one.
+
 ### Changed: R code is read from R Markdown and Quarto chunks without R
 
 - **Changed:** `code_extract_r()` (and `code_parse_r()`, code_check and reproducibility_check on `.Rmd`/`.qmd` files) reads the chunks statically instead of reproducing `knitr::purl()` and evaluating chunk options with a small R evaluator (D80). Chunk delimiters, `#|` options and `<<label>>` references work as before.
@@ -71,6 +118,18 @@ package's. The R commit each release is compared against is in
 
 - **Changed:** the 25 private copies of `_is_na`/`_is_missing`/`_isna` and the 4 copies of `_is_true` that matched the shared helpers are gone; their callers use `metacheck._values.is_missing` and `is_true`. Code that imported `is_na` from `metacheck._r` uses `is_missing` from `metacheck._values` under its own name (`metacheck._r.is_na` stays as an alias). The copies left are the ones whose rules differ (R's `%in% TRUE`, `x$name` partial matching, a `None` that is `NULL` and not `NA`).
 - **Unchanged:** results. The only values the shared test reads differently are a numpy NaN of a narrower float type, `NaT` and `pd.NA` in the few copies that missed them, which now count as missing as they do everywhere else.
+
+### Deprecated: top-level names that only mirror metacheck's R exports
+
+- **Deprecated:** 38 top-level names that exist only because the R package exports them, and that no module, check, pack, CLI command, API route or app page uses (decided by the maintainer, 2026-10-10). They go in the next minor release. Together with the helpers only they use, they are about 5,000 lines.
+  - Repository downloads: `dataverse_file_download()`, `dryad_file_download()`, `dspace7_file_download()`, `figshare_file_download()`, `psycharchives_file_download()`, `researchdata4tu_file_download()`, `reshare_file_download()`, `zenodo_file_download()`. Use the `repo_check` module, then `download_repo_files()` on its file table.
+  - Repository listings: `fsd_info()`, `fsd_links()`, `github_info()`, `github_languages()`, `github_readme()`, `osf_api_check()`, `osf_preprint_list()`, `psycharchives_info()`, `psycharchives_links()` (use `dspace_links()`), `rbox_info()`.
+  - Zenodo upload: `zenodo_upload()`.
+  - Database queries: `check_orcid()`, `credit_roles()`, `datacite_doi()`, `doi_lookup()`, `doi_resolves()`, `get_orcid()`, `openalex_doi()`, `openalex_query()`, `orcid_person()`, `rw()` (use `retractionwatch()`).
+  - Paper corpora: `papers_available()`, `papers_load()`, `papers_metadata()`, `papers_remove()`.
+  - HTML exports: `export_jasp_html()`, `export_mplus_html()`, `export_omv_html()`, `export_spv_html()`, `export_stata_smcl_html()`.
+- **How it warns:** the first read of one of these names from `metacheck` (or `pytacheck`), as `pc.name` or `from metacheck import name`, gives one `DeprecationWarning` that names the release it goes in and the replacement, if there is one. The name keeps working. Importing it from the submodule that defines it (`from metacheck.archives.zenodo_upload import zenodo_upload`) does not warn. The names stay in `__all__` until they are removed, so `from metacheck import *` warns for each of them.
+- **Not deprecated:** the token and credential settings (`*_pat()`, `dryad_auth()`), which the checks read; the cache controls (`repo_cache_*()`, `repo_info_cache*()`, `osf_cache_clear()`, `zip_peek_cache_clear()`, `llm_cache_clear()`, `metacheck_cache_info()`), which manage what the checks write and which module help and messages point to; `retractionwatch()`, `rw_update()`, `rw_date()`, `FLoRA_update()` and `FLoRA_date()`, the databases that `ref_retraction` and `ref_replication` read and whose help points to them; the local RegCheck server (`regcheck_*_local()`), which `reg_check`'s error message points to; `llm_reasoning()`, an LLM setting; and functions of the checks themselves that no module happens to call (`data_col_stats()`, `data_check_constant()`, `data_check_design_name()`, `data_check_outliers()`, `data_promote_header_row()`, `code_parse_r()`, `import_spv()` and the other statout importers, `stat_output_validate()`, `rep_if()`, `format_bib_authors()`). The evidence for each deprecated name is in [docs/API.md](docs/API.md#deprecated-python-names).
 
 ### Changed: the bibr extra requires bibr 0.6.0
 

@@ -28,6 +28,7 @@ from metacheck._r.base import paste, trimws
 from metacheck._r.regex import grepl, gsub, regexec, regextract_all, strsplit
 from metacheck._values import is_missing
 from metacheck.module import module
+from metacheck.modules._statements import with_bibr_statements
 from metacheck.report import scroll_table
 from metacheck.text import text_search
 
@@ -466,4 +467,5 @@ def coi_check(paper: Any) -> dict[str, Any]:
             "text": pd.Series([c for c, k in zip(coi, keep, strict=True) if k], dtype="string"),
         }
     )
-    return coi_results(table)
+    # D84: a paper the expressions found nothing in gets bibr's statement
+    return coi_results(with_bibr_statements(table, paper, "coi_statement"))

@@ -24,7 +24,7 @@ from typing import Any
 
 from metacheck._env import env_get, env_names
 from metacheck.app import bibr
-from metacheck.app.checks import DATA, selected_checks, status_labels
+from metacheck.app.checks import DATA, chosen_checks, selected_checks, status_labels
 
 __all__ = [
     "GROBID_SERVERS",
@@ -64,6 +64,7 @@ BAD_PAPER = (
 BAD_PDF = "The PDF server could not read this PDF. Try another copy of the paper."
 NO_TEXT = "No text was found in this file, so there is nothing to check."
 NO_TEXT_PDF = "No text was found in this PDF. Is it a scanned image?"
+NO_CHECKS = 'No check is ticked. Tick at least one check under "Choose the checks".'
 
 #: status texts of a busy server (the reason phrases of 429, 502, 503 and 504): try the next
 BUSY = ("Too Many Requests", "Bad Gateway", "Service Unavailable", "Gateway Timeout")
@@ -457,9 +458,14 @@ class Run:
     def finish(self, job: DataJob) -> Analysis:
         """The analysis with the data check's result (or its error) added."""
         from metacheck.module import SECTION_LEVELS
+        from metacheck.presets import label
         from metacheck.report.report import ReportOutput
 
-        rows = [_row(name, self.outputs[name]) for name in self.names if name in self.outputs]
+        rows = [
+            _row(label(name), self.outputs[label(name)])
+            for name in self.names
+            if label(name) in self.outputs
+        ]
         outputs = self.outputs
         if job.output is not None:
             merged = {**self.outputs, "data_check": job.output}
@@ -504,14 +510,21 @@ def begin(
     progress: Progress | None = None,
     pdf: str = "grobid",
     bibr_key: str = "",
+    checks: Sequence[str] | None = None,
+    args: dict[str, Any] | None = None,
+    hosted: bool = False,
 ) -> Run:
     """Read the paper and run the fast checks. With ``data``, the analysis says the data check is due.
 
     ``workdir`` is scratch space for the PDF conversion. ``report_dir`` (default
-    ``workdir``) gets the report file.
+    ``workdir``) gets the report file. ``checks`` are the checks the person ticked (only
+    those this server offers run, see :func:`~metacheck.app.checks.chosen_checks`); without
+    them the app's own checks run, with the online ones if ``online``. ``args`` are a
+    preset's arguments, by check name.
     """
     import metacheck as pc
     from metacheck.module import run_session, use
+    from metacheck.presets import label
     from metacheck.report.report import report_module_run
 
     tick = progress or (lambda _fraction, _text: None)
@@ -520,16 +533,23 @@ def begin(
     tick(0.05, "Reading the paper")
     paper = read_paper(source, workdir, pdf=pdf, bibr_key=bibr_key)
     tick(0.3, "Running the checks")
-    names = selected_checks(online)
+    if checks is None:
+        names = selected_checks(online)
+    else:
+        from metacheck.app.checks import pack_checks
+
+        names = chosen_checks(checks, hosted, () if hosted else pack_checks())
+        if not names and not data:
+            raise UserError(NO_CHECKS)
     if "ref_accuracy" in names and len(pc.paper_table(paper, "bib_match")) == 0:
         # only a paper file that carries CrossRef matches (the bundled JSON) can be checked
         names.remove("ref_accuracy")
     with _RUN_LOCK, use(allow_local=False), run_session(), warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        outputs = report_module_run(paper, names)
+        outputs = report_module_run(paper, names, args=args or {})
     tick(0.85, "Writing the report")
     run = Run(source, paper, outputs, names, Path(report_dir or workdir), start)
-    rows = [_row(name, outputs[name]) for name in names if name in outputs]
+    rows = [_row(label(name), outputs[label(name)]) for name in names if label(name) in outputs]
     run.analysis = run._write(rows, outputs, pending=data)
     tick(1.0, "Done")
     return run
@@ -545,8 +565,11 @@ def check_paper(
     progress: Progress | None = None,
     pdf: str = "grobid",
     bibr_key: str = "",
+    checks: Sequence[str] | None = None,
+    args: dict[str, Any] | None = None,
 ) -> Analysis:
-    """Run the demo checks on one file and write the report into ``report_dir``.
+    """Run the demo checks (or the ticked ``checks``) on one file and write the report into
+    ``report_dir``.
 
     With ``data`` the data check runs too and this waits for it: it downloads the paper's
     data files. The self-test leaves it out.
@@ -560,6 +583,8 @@ def check_paper(
         progress=progress,
         pdf=pdf,
         bibr_key=bibr_key,
+        checks=checks,
+        args=args,
     )
     if not data:
         return run.analysis

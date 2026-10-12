@@ -38,7 +38,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r import grepl, regextract_all, sub
-from metacheck._values import as_float
+from metacheck._values import as_float, field
 from metacheck.statout.spv import _unzip, _write_lines
 
 if TYPE_CHECKING:
@@ -47,18 +47,6 @@ if TYPE_CHECKING:
 __all__ = ["export_jasp_html", "import_jasp"]
 
 _JASP_INT_MIN = -2147483648  # JASP's integer missing-value sentinel
-
-
-def _dollar(x: Any, name: str) -> Any:
-    """R ``x$name`` on a parsed JSON value (exact, then unique partial match)."""
-    if isinstance(x, dict):
-        if name in x:
-            return x[name]
-        partial = [k for k in x if isinstance(k, str) and k.startswith(name)]
-        return x[partial[0]] if len(partial) == 1 else None
-    if x is None or isinstance(x, list):
-        return None
-    raise TypeError("$ operator is invalid for atomic vectors")
 
 
 def _reject_constant(name: str) -> Any:
@@ -133,16 +121,15 @@ def _xdat_entry(xdat: Any, name: Any) -> Any:
     return xdat.get(name) if isinstance(xdat, dict) and isinstance(name, str) else None
 
 
-def _jasp_binary_labels(field: Any, xdat: Any) -> list[tuple[str | None, float]]:
+def _jasp_binary_labels(spec: Any, xdat: Any) -> list[tuple[str | None, float]]:
     """Port of R/jasp.R::.jasp_binary_labels().
 
     Value labels of one binary-format field (its own ``labels``, else
     ``xdata.json[name]$labels``) as ``(label, code)`` pairs.
     """
-    lst = _dollar(field, "labels")
+    lst = field(spec, "labels")
     if not lst:
-        x = _xdat_entry(xdat, _dollar(field, "name"))
-        lst = _dollar(x, "labels") if x is not None else None
+        lst = field(_xdat_entry(xdat, field(spec, "name")), "labels")
     return _labels_from_list(lst)
 
 
@@ -301,9 +288,9 @@ def _read_jasp_binary(files: list[str]) -> dict[str, Any]:
         raise IndexError("subscript out of bounds")
     meta = _read_json(files[base.index("metadata.json")])
     xdat = _read_json(files[base.index("xdata.json")]) if "xdata.json" in base else {}
-    ds = _dollar(meta, "dataSet")
-    fields = _field_list(_dollar(ds, "fields"))
-    nrow = _dollar(ds, "rowCount")
+    ds = field(meta, "dataSet")
+    fields = _field_list(field(ds, "fields"))
+    nrow = field(ds, "rowCount")
     if nrow is None:
         raise ValueError("invalid 'n' argument")
 
@@ -313,10 +300,10 @@ def _read_jasp_binary(files: list[str]) -> dict[str, Any]:
     col_attrs: list[dict[str, Any]] = []
     with open(files[base.index("data.bin")], "rb") as fh:
         for f in fields:
-            mt = _dollar(f, "measureType")
+            mt = field(f, "measureType")
             if mt is None:
                 mt = "Nominal"
-            name = _dollar(f, "name")
+            name = field(f, "name")
             labs = None
             if mt == "Continuous":
                 vals = _read_doubles(fh, int(nrow))
@@ -324,7 +311,7 @@ def _read_jasp_binary(files: list[str]) -> dict[str, Any]:
             else:
                 cols.append(pd.array(_read_int32s(fh, int(nrow)), dtype="Int64"))
                 labs = _jasp_binary_labels(f, xdat)
-            title = _dollar(f, "title")
+            title = field(f, "title")
             label = None
             if title is not None and title != "" and title != name:
                 label = _r_chr(title)
@@ -347,7 +334,7 @@ def _read_jasp_binary(files: list[str]) -> dict[str, Any]:
         "data": df,
         "columns": columns,
         "format": "binary",
-        "data_file_path": _dollar(meta, "dataFilePath"),
+        "data_file_path": field(meta, "dataFilePath"),
     }
 
 
@@ -578,7 +565,7 @@ def _jasp_analyses_summary(analyses: Any) -> list[str]:
     """
     if analyses is None:
         return []
-    inner = _dollar(analyses, "analyses")
+    inner = field(analyses, "analyses")
     al = inner if inner is not None else analyses
     if isinstance(al, dict):
         al = list(al.values())
@@ -591,12 +578,12 @@ def _jasp_analyses_summary(analyses: Any) -> list[str]:
                 raise ValueError("values must be length 1")
             out.append(f"{i}. {_r_chr(a)}")
             continue
-        title = _dollar(a, "title")
+        title = field(a, "title")
         if title is None:
-            title = _dollar(a, "name")
+            title = field(a, "name")
         if title is None:
             title = "analysis"
-        module = _dollar(a, "module")
+        module = field(a, "module")
         mod = f"  [module: {_r_chr(module)}]" if module is not None else ""
         out.append(f"{i}. {_r_chr(title)}{mod}")
     return out

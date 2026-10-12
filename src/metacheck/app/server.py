@@ -18,9 +18,16 @@ from metacheck.app.ui import CSS, MOUNT_KWARGS, Sessions, build_app, theme
 __all__ = ["create_app", "create_hosted_app"]
 
 
-def create_app(port: int, token: str) -> Any:
-    """The full app for ``127.0.0.1:port``; every route needs the token or its cookie."""
-    return _assemble(port, None, lambda app: app.add_middleware(TokenGuard, port=port, token=token))
+def create_app(port: int, token: str, preset: str | None = None) -> Any:
+    """The full app for ``127.0.0.1:port``; every route needs the token or its cookie.
+
+    ``preset`` is chosen at first on the page that offers it (``metacheck-app --preset``)."""
+    return _assemble(
+        port,
+        None,
+        lambda app: app.add_middleware(TokenGuard, port=port, token=token),
+        preset,
+    )
 
 
 def create_hosted_app(port: int, config: HostedConfig) -> Any:
@@ -40,7 +47,12 @@ def create_hosted_app(port: int, config: HostedConfig) -> Any:
     )
 
 
-def _assemble(port: int, hosted: HostedConfig | None, guard: Callable[[Any], None]) -> Any:
+def _assemble(
+    port: int,
+    hosted: HostedConfig | None,
+    guard: Callable[[Any], None],
+    preset: str | None = None,
+) -> Any:
     api = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
     sessions = Sessions()
 
@@ -57,7 +69,7 @@ def _assemble(port: int, hosted: HostedConfig | None, guard: Callable[[Any], Non
             headers={"Content-Security-Policy": "sandbox", "X-Content-Type-Options": "nosniff"},
         )
 
-    blocks = build_app(sessions, hosted)
+    blocks = build_app(sessions, hosted, start_preset=preset)
     # Only ``launch()`` sets this, and Gradio then refuses an upload field that names a
     # file outside its upload folder. Mounted apps skip that check unless it is set here.
     blocks.has_launched = True

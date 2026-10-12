@@ -13,7 +13,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 
 __all__ = ["mendeley_info", "mendeley_links"]
 
@@ -117,7 +117,6 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
     from metacheck.archives import _spinner, _tick
     from metacheck.archives.dataverse import (
         _cell,
-        _dollar,
         _elements,
         _empty_or,
         _field_cell,
@@ -143,34 +142,32 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
             return pd.DataFrame(obj)
 
         def author(a: Any) -> str | None:
-            first = _paste_json(_empty_or(_dollar(a, "first_name"), ""))
-            last = _paste_json(_empty_or(_dollar(a, "last_name"), ""))
+            first = _paste_json(_empty_or(field(a, "first_name"), ""))
+            last = _paste_json(_empty_or(field(a, "last_name"), ""))
             full = trimws(f"{first} {last}")
             return str(full) if full else None
 
-        contributors = _dollar(rec, "contributors")
+        contributors = field(rec, "contributors")
         authors = (
             [author(a) for a in _elements(contributors)]
             if isinstance(contributors, list | dict)
             else []
         )
 
-        obj["title"] = _field_cell(_empty_or(_dollar(rec, "name"), None))
+        obj["title"] = _field_cell(_empty_or(field(rec, "name"), None))
         # a plain-string `doi` is the DOI itself (metacheck's `rec$doi$id` fails on it: U34)
-        doi = _dollar(rec, "doi")
+        doi = field(rec, "doi")
         if not isinstance(doi, str):
-            doi = _dollar(doi, "id")
+            doi = field(doi, "id")
         obj["doi"] = _field_cell(_empty_or(doi, None))
-        obj["description"] = _field_cell(_empty_or(_dollar(rec, "description"), None))
-        obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "publish_date"), None))
-        obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "modified_on"), None))
+        obj["description"] = _field_cell(_empty_or(field(rec, "description"), None))
+        obj["publication_date"] = _field_cell(_empty_or(field(rec, "publish_date"), None))
+        obj["updated_date"] = _field_cell(_empty_or(field(rec, "modified_on"), None))
         obj["authors"] = _obj_cell(authors)
-        licence = _dollar(rec, "data_licence")
+        licence = field(rec, "data_licence")
         obj["license"] = _field_cell(
-            _empty_or(
-                _empty_or(_dollar(licence, "short_name"), _dollar(licence, "full_name")), None
-            )
+            _empty_or(_empty_or(field(licence, "short_name"), field(licence, "full_name")), None)
         )
-        files = _dollar(rec, "files")
+        files = field(rec, "files")
         obj["files"] = _obj_cell(files if files is not None else [])
         return pd.DataFrame(obj)

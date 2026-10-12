@@ -606,13 +606,6 @@ def _as_character_list(v: Any) -> list[str | None]:
     return [as_character(_jnum(v))]
 
 
-def _dollar_atomic(x: Any, name: str) -> Any:
-    """``x$name``, which stops for a scalar (an atomic vector in R)."""
-    if x is not None and not isinstance(x, list | Mapping):
-        raise ValueError("$ operator is invalid for atomic vectors")
-    return _field(x, name)
-
-
 def _is_list_column(v: Any) -> bool:
     """R ``is.list()`` of a column: a list, or an object Series of list-like cells."""
     if isinstance(v, list):
@@ -890,14 +883,14 @@ def _bibr12_info(metadata: Any, source: Any, schema_version: str, extraction: An
             row[col] = _cell(meta.get(col), typ)
     for col in ("file_name", "sha256", "input_format"):
         # info$file_name <- as.character(source$file_name %||% NA)
-        row[col] = _chr_first(_dollar_atomic(source, col))
+        row[col] = _chr_first(_field(source, col))
     row["schema_version"] = schema_version
     # the older info columns paper.json requires
     sha = row["sha256"]
     row["file_hash"] = None if sha is None else str(sha)[:16]
     row["bibr_version"] = None
-    producer = _dollar_atomic(extraction, "producer")
-    if _dollar_atomic(producer, "name") == "bibr":
+    producer = _field(extraction, "producer")
+    if _field(producer, "name") == "bibr":
         row["bibr_version"] = _chr_first(_field(producer, "version"))
     frame = records_to_frame("info", [row], list(row))
     frame["keywords"] = pd.Series([row["keywords"]], dtype=object)
