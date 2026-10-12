@@ -627,3 +627,93 @@ def test_a_bad_preset_stops_the_installer_first(tmp_path, bad):
     assert result.returncode != 0
     assert "preset" in result.stderr
     assert not (root / "calls").exists()  # nothing was installed
+
+
+# A stand-in uv whose tool also has a metacheck-setup command. It records its arguments and
+# answers the way the wizard does: install_bibr=1 in the --result file when FAKE_SETUP_BIBR is set.
+FAKE_UV_SETUP = FAKE_UV_APP.replace(
+    '    chmod 755 "$UV_TOOL_BIN_DIR/metacheck-app"\n',
+    """    chmod 755 "$UV_TOOL_BIN_DIR/metacheck-app"
+    cat >"$UV_TOOL_BIN_DIR/metacheck-setup" <<'SETUP'
+#!/bin/sh
+echo "setup: $*" >>"$(dirname "$0")/../setup-calls"
+while [ "$#" -gt 0 ]; do
+  [ "$1" = "--result" ] && result="$2"
+  shift
+done
+if [ -n "${FAKE_SETUP_BIBR:-}" ]; then echo install_bibr=1 >"$result"; else echo install_bibr=0 >"$result"; fi
+SETUP
+    chmod 755 "$UV_TOOL_BIN_DIR/metacheck-setup"
+""",
+)
+
+
+def _setup_env(tmp_path, **extra):
+    root, env = _fake_install_env(tmp_path, **extra)
+    (root / "uv" / "uv").write_text(FAKE_UV_SETUP)
+    return root, env
+
+
+@needs_sh
+def test_the_setup_runs_after_the_install_and_asks_only_once_by_default(tmp_path):
+    root, env = _setup_env(tmp_path)
+    result = _install(env)
+    assert result.returncode == 0, result.stderr
+    calls = (root / "setup-calls").read_text()
+    assert "--if-new" in calls and "--data-only" not in calls
+    assert "bibr" not in (root / "calls").read_text()  # not asked for: not installed
+
+
+@needs_sh
+def test_steward_setup_skips_the_paper_questions(tmp_path):
+    root, env = _setup_env(tmp_path)
+    assert _install(env, "--steward").returncode == 0
+    assert "--data-only" in (root / "setup-calls").read_text()
+
+
+@needs_sh
+def test_setup_flag_asks_again_and_no_setup_never_asks(tmp_path):
+    root, env = _setup_env(tmp_path)
+    assert _install(env, "--setup").returncode == 0
+    assert "--if-new" not in (root / "setup-calls").read_text()
+    root2, env2 = _setup_env(tmp_path / "two", METACHECK_NO_SETUP="1")
+    assert _install(env2).returncode == 0
+    assert not (root2 / "setup-calls").exists()
+    root3, env3 = _setup_env(tmp_path / "three")
+    assert _install(env3, "--no-setup").returncode == 0
+    assert not (root3 / "setup-calls").exists()
+
+
+@needs_sh
+def test_bibr_is_installed_only_when_the_setup_asks_for_it(tmp_path):
+    root, env = _setup_env(tmp_path, FAKE_SETUP_BIBR="1")
+    result = _install(env)
+    assert result.returncode == 0, result.stderr
+    installs = [line for line in (root / "calls").read_text().splitlines() if "install" in line]
+    assert len(installs) == 2
+    assert "--with bibr>=0.6.0" not in installs[0]
+    assert "--with bibr>=0.6.0" in installs[1]
+
+
+@needs_sh
+def test_with_bibr_installs_it_straight_away(tmp_path):
+    root, env = _setup_env(tmp_path)
+    assert _install(env, "--with-bibr", "--no-setup").returncode == 0
+    assert "--with bibr>=0.6.0" in (root / "calls").read_text()
+
+
+@needs_sh
+def test_an_old_app_without_the_setup_command_installs_as_before(tmp_path):
+    root, env = _steward_env(tmp_path)
+    result = _install(env)
+    assert result.returncode == 0, result.stderr
+    assert (root / "launched").exists()
+
+
+def test_both_scripts_have_the_setup_options():
+    sh, ps1 = SH.read_text(), PS1.read_text()
+    for flag in ("--setup", "--no-setup", "--with-bibr"):
+        assert flag in sh
+    for flag in ("-Setup", "-NoSetup", "-WithBibr"):
+        assert flag in ps1
+    assert "METACHECK_NO_SETUP" in sh and "METACHECK_NO_SETUP" in ps1

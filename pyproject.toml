@@ -100,6 +100,7 @@ Upstream = "https://github.com/scienceverse/metacheck"
 metacheck = "metacheck.cli:main"
 pytacheck = "metacheck.cli:main"
 metacheck-app = "metacheck.app:main"
+metacheck-setup = "metacheck.app.setup:main"
 
 [project.entry-points."pytacheck.modules"]
 # Third-party packages can register modules under this entry-point group.

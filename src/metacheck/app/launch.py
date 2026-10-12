@@ -20,7 +20,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-from metacheck.app import bibr
+from metacheck.app import bibr, settings
 from metacheck.app import hosted as hosting
 from metacheck.app import state as saved
 
@@ -217,6 +217,10 @@ def _serve(
         print(f"Port {port} is not available ({exc.strerror or exc}). Try another --port.")
         return 1
     gradio_dir = private_gradio_dir()
+    bibr_proc = None
+    if config is None:
+        settings.apply()  # the email and the bibr address the setup saved
+        bibr_proc = settings.start_selfhost()
     from metacheck.app.server import create_app, create_hosted_app
     from metacheck.config import verbose
 
@@ -259,6 +263,8 @@ def _serve(
         pass
     finally:
         sock.close()
+        if bibr_proc is not None:
+            bibr_proc.terminate()
         if config is None:
             saved.remove_state(port)
             with contextlib.suppress(OSError):
