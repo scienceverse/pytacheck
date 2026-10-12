@@ -10,6 +10,7 @@ import contextlib
 import os
 import re
 import threading
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeout
 from pathlib import Path
@@ -59,6 +60,14 @@ REFUSED = "The bibr service did not accept this key."
 UNAVAILABLE = "The bibr service is not available right now. Use GROBID for now."
 BAD_FORMAT = "The bibr service sent a format this version cannot read yet. Use GROBID for now."
 BAD_PDF = "The bibr service could not read this PDF. Try another copy of the paper."
+#: what the person reads while bibr works, by the status of its job. bibr reports no more than
+#: this (no stage, no fraction), so a running job says so rather than showing a made-up bar.
+WORKING = {
+    "queued": "Extracting with bibr: waiting in its queue",
+    "running": "Extracting with bibr: running (it does not report how far it is)",
+    "succeeded": "Extracting with bibr: fetching the result",
+}
+SUBMITTED = "Extracting with bibr: sending the PDF"
 #: wrong settings: the person running the app can fix them (a hosted server does not start).
 #: ``{name}`` is the variable that was read; the constants below name the old one.
 _BAD_BACKEND = (
@@ -247,8 +256,17 @@ def _status(exc: BaseException) -> int | None:
     return int(match.group(1)) if match else None
 
 
-def convert_pdf(path: Path, workdir: Path, key: str) -> Path:
-    """Turn a PDF into bibr JSON with the bibr service; the paper's file is in ``workdir``."""
+def convert_pdf(
+    path: Path,
+    workdir: Path,
+    key: str,
+    progress: Callable[[float, str], None] | None = None,
+) -> Path:
+    """Turn a PDF into bibr JSON with the bibr service; the paper's file is in ``workdir``.
+
+    ``progress`` is told ``(0.0, text)`` as the job goes from sent to queued to running: the
+    fraction is 0.0 because bibr says no more than that (see :data:`WORKING`).
+    """
     import httpx
 
     import metacheck as pc
@@ -264,9 +282,22 @@ def convert_pdf(path: Path, workdir: Path, key: str) -> Path:
     if service is None:
         raise UserError(NOT_FOUND)
     url, backend = service
+
+    def working(state: str) -> None:
+        if progress is not None:
+            progress(0.0, WORKING.get(state, f"Extracting with bibr: {state}"))
+
+    if progress is not None:
+        progress(0.0, SUBMITTED)
     try:
         out = pc.convert(
-            path, save_path=workdir, method="bibr", api_url=url, api_key=key, backend=backend
+            path,
+            save_path=workdir,
+            method="bibr",
+            api_url=url,
+            api_key=key,
+            backend=backend,
+            on_status=working,
         )
     except RuntimeError as exc:
         status = _status(exc)

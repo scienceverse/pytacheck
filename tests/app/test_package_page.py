@@ -283,7 +283,11 @@ def test_a_folder_is_checked_and_the_report_is_written(tmp_path: Path) -> None:
     root = folder(tmp_path)
     steps: list[str] = []
     result = run_on(root, tmp_path, progress=lambda _f, text: steps.append(text))
-    assert steps == ["Checking the package", "Writing the report", "Done"]
+    total = default_checks()
+    assert steps[0] == "Opening the package" and steps[-2:] == ["Building the report", "Done"]
+    assert [t.split(":")[0] for t in steps[1:-2]] == [
+        f"Running check {i} of {total}" for i in range(1, total + 1)
+    ]
     assert result.name == "study1"
     assert result.preset == "datapackage::default"
     assert list(result.checks.columns) == pk.CHECK_COLUMNS

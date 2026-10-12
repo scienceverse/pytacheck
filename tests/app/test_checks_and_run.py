@@ -73,14 +73,15 @@ def test_selection_orders_the_summary_last() -> None:
 
 
 def test_demo_run(tmp_path: Path) -> None:
-    steps: list[str] = []
+    ticks: list[tuple[float, str]] = []
     analysis = run.check_paper(
         pc.demofile("json"),
         workdir=tmp_path,
         report_dir=tmp_path / "out",
-        progress=lambda _f, text: steps.append(text),
+        progress=lambda fraction, text: ticks.append((fraction, text)),
     )
-    assert steps[:3] == ["Reading the paper", "Running the checks", "Writing the report"]
+    assert ticks[0] == (0.0, "Reading the paper")
+    assert ticks[-2:] == [(1.0, "Building the report"), (1.0, "Done")]
     by_module = {r.module: r for r in analysis.rows}
     assert set(by_module) == set(checks.selected_checks())
     for name in VALIDATED:
@@ -93,6 +94,37 @@ def test_demo_run(tmp_path: Path) -> None:
     saved = analysis.report_path.read_text(encoding="utf-8")
     assert saved.strip() == run.protect(analysis.html).strip()  # the report, under its policy
     assert analysis.seconds < 10
+
+
+def test_the_progress_names_each_check_and_counts_them(tmp_path: Path) -> None:
+    names = ["marginal", "stat_p_exact", "ref_summary"]
+    ticks: list[tuple[float, str]] = []
+    run.check_paper(
+        pc.demofile("json"),
+        workdir=tmp_path,
+        checks=names,
+        progress=lambda fraction, text: ticks.append((fraction, text)),
+    )
+    # the fraction is the checks finished of the checks to run: counted, not estimated
+    assert ticks == [
+        (0.0, "Reading the paper"),
+        (0.0, f"Running check 1 of 3: {checks.title_of('marginal')}"),
+        (1 / 3, f"Running check 2 of 3: {checks.title_of('stat_p_exact')}"),
+        (2 / 3, f"Running check 3 of 3: {checks.title_of('ref_summary')}"),
+        (1.0, "Building the report"),
+        (1.0, "Done"),
+    ]
+    assert checks.title_of("marginal") != "marginal"  # the title the results table shows
+    assert checks.title_of("no_such_check") == "no_such_check"
+
+
+def test_a_progress_function_that_fails_does_not_stop_the_checks(tmp_path: Path) -> None:
+    def broken(_fraction: float, text: str) -> None:
+        if text.startswith("Running check"):
+            raise RuntimeError("the page is gone")
+
+    analysis = run.check_paper(pc.demofile("json"), workdir=tmp_path, progress=broken)
+    assert analysis.rows
 
 
 def test_report_matches_the_library_report(tmp_path: Path) -> None:
@@ -129,6 +161,26 @@ def test_no_text_in_a_pdf_is_worded_for_pdfs(
     monkeypatch.setattr(run, "_convert_pdf", lambda _path, _work: empty)
     with pytest.raises(run.UserError, match="scanned image"):
         run.check_paper(_fake_pdf(tmp_path), workdir=tmp_path)
+
+
+def test_a_pdf_read_by_grobid_says_so_and_claims_no_progress(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    demo = pc.demofile("json")
+    monkeypatch.setattr(run, "_convert_pdf", lambda _path, _work: demo)
+    ticks: list[tuple[float, str]] = []
+    run.check_paper(
+        _fake_pdf(tmp_path),
+        workdir=tmp_path,
+        checks=["marginal"],
+        progress=lambda fraction, text: ticks.append((fraction, text)),
+    )
+    before = [t for t in ticks if not t[1].startswith(("Running check", "Building", "Done"))]
+    assert before == [
+        (0.0, "Reading the PDF"),
+        (0.0, "Extracting with GROBID (it does not report how far it is)"),
+        (0.0, "Reading the extracted text"),
+    ]
 
 
 def test_markup_in_a_paper_cannot_load_anything_in_the_report(tmp_path: Path) -> None:

@@ -322,9 +322,14 @@ def test_a_repository_is_downloaded_checked_and_named_for_the_repository(tmp_pat
         result = run_link(tmp_path, progress=lambda fraction, text: ticks.append((fraction, text)))
     assert result.name == "repo" and len(result.rows) == default_checks()
     assert result.report_path.name == "repo_report.html" and result.report_path.is_file()
-    assert [f for f, _ in ticks] == sorted(f for f, _ in ticks)  # forward only
-    assert ticks[0][1] == "Fetching the repository" and ticks[-1] == (1.0, "Done")
-    assert any(text.startswith("Downloading") for _, text in ticks)
+    assert ticks[0] == (0.0, "Fetching the repository") and ticks[-1] == (1.0, "Done")
+    stages = [text.split(":")[0].split(" (")[0] for _, text in ticks]
+    first_check = next(i for i, text in enumerate(stages) if text.startswith("Running check 1 of"))
+    assert "Downloading" in stages[:first_check] and "Unpacking the archive" in stages
+    # each stage has its own bar: the checks finished of the checks to run, only moving forward
+    counts = [f for f, text in ticks[first_check:] if text.startswith("Running check")]
+    assert counts == sorted(counts) and counts[0] == 0.0 and counts[-1] < 1.0
+    assert ticks[-2] == (1.0, "Building the report")
     assert {row.status for row in result.rows} == {"Data package"}
     assert all(
         row.result.split(":")[0] in {"Red", "Yellow", "Green", "Info", "Failed"}

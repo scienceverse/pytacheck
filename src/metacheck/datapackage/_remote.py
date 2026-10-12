@@ -550,7 +550,8 @@ def _stream(
                     "The download took too long, so it was stopped. Try again later."
                 )
             out.write(chunk)
-            tick(min(0.9, written / total) if total else 0.5, f"Downloading ({_size(written)})")
+            # the share of the announced size; 0.0 when the host announced none
+            tick(min(1.0, written / total) if total else 0.0, f"Downloading ({_size(written)})")
 
 
 @contextlib.contextmanager
@@ -582,6 +583,8 @@ def open_link(
             credentials=credentials,
             progress=progress,
         )
+        if progress:
+            progress(0.0, "Unpacking the archive")
         with open_package(archive, **limits) as opened:
             opened.source = found.url
             opened.label = found.name
