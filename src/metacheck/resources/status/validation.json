@@ -18,6 +18,7 @@
     "metacheck::figure_table_refs": {"provisional": true},
     "metacheck::funding_check": {"provisional": true},
     "metacheck::funding_check_oi": {"provisional": true},
+    "metacheck::license_check": {"provisional": true},
     "metacheck::marginal": {
       "provisional": true,
       "implementations": {"r": {"metacheck": ["0.3.1"]}},

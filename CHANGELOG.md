@@ -7,6 +7,10 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Added: license_check, the license the paper is published under
+
+- **Added:** the module `license_check` (pytacheck's own; metacheck has none). It reads the license bibr extracted (its SPDX identifier, link or statement) and, when there is none, looks for a Creative Commons license named in the text ("CC BY 4.0", a creativecommons.org link, "Creative Commons Attribution License"). CC BY, CC BY-SA and CC0 are green; a license that forbids commercial reuse or derivatives, or "all rights reserved", is yellow; no license found is `na`.
+
 ### Changed: the COI, funding and ethics checks fall back to bibr's statements
 
 - **Changed:** coi_check, coi_check_oi, funding_check, funding_check_oi and ethics_check still search the text with their regular expressions first; a paper they find nothing in now gets the statement bibr extracted from the document's structure (`info.coi_statement`, `info.funding_statement`, `info.ethics_statement`), so a statement kept in a back-matter note is no longer missed (D84).
