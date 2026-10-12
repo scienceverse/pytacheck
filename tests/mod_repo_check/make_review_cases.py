@@ -25,7 +25,6 @@ sys.path.insert(0, str(ROOT))
 from tests.mod_repo_check.make_cases import (
     CODE_FILES,
     FIX,
-    LOCAL_IGNORE,
     _Dumper,
     case,
     local,
@@ -35,6 +34,9 @@ from tests.mod_repo_check.make_cases import (
 
 OUT = ROOT / "parity" / "cases" / "mod_repo_check_review.yaml"
 REV = FIX + "review/"
+
+# stays until mod_repo_check_review is re-locked
+LOCAL_IGNORE = ["table.file_location"]
 
 SIZES = [0, 1, 999, 1000, 1049, 1050, 1150, 1250, 1350, 12345, 99950, 999949, 999950]
 SIZES += [1e6, 1.25e6, 1.5e9, 123456789012, 1e15, 2.5e21, 1e27, 1e30, 3e33]
