@@ -35,6 +35,7 @@ __all__ = [
     "resolve_key",
     "save_key",
     "settings_problem",
+    "setup_chose_bibr",
     "show_key",
 ]
 
@@ -109,6 +110,13 @@ def save_key(key: str) -> Path:
     return path
 
 
+def setup_chose_bibr() -> bool:
+    """Whether the setup left a key or chose bibr on this computer."""
+    from metacheck.app import settings
+
+    return bool(load_key()) or settings.load().get("bibr_selfhost") is True
+
+
 def forget_key() -> None:
     with contextlib.suppress(OSError):
         key_path().unlink()
@@ -166,6 +174,10 @@ def _safe(url: str) -> bool:
     return parts.scheme == "https" or (
         parts.scheme == "http" and parts.hostname in ("localhost", "127.0.0.1", "::1")
     )
+
+
+def _local(url: str) -> bool:
+    return urlsplit(url).hostname in ("localhost", "127.0.0.1", "::1")
 
 
 def _configured() -> tuple[str, str] | None:
@@ -242,12 +254,13 @@ def convert_pdf(path: Path, workdir: Path, key: str) -> Path:
     import metacheck as pc
     from metacheck.app.run import UserError
 
-    if not key:
-        raise UserError(NO_KEY)
     try:
         service = bibr_service()
     except ValueError as exc:
         raise UserError(str(exc)) from None
+    # bibr on this computer needs no key
+    if not key and not (service and _local(service[0])):
+        raise UserError(NO_KEY)
     if service is None:
         raise UserError(NOT_FOUND)
     url, backend = service

@@ -311,10 +311,13 @@ def _summary(analysis: Analysis) -> str:
     )
 
 
-def default_reader() -> str:
+def default_reader(remembered: bool = False) -> str:
     """The reader a page starts with: bibr where this computer supplies the bibr key
-    (``SCIVRS_API_KEY``, as a hosted server does), else GROBID, which needs no key."""
-    return "bibr" if os.environ.get(bibr.KEY_ENV, "").strip() else "grobid"
+    (``SCIVRS_API_KEY``, as a hosted server does) or the setup saved a key or chose bibr on
+    this computer, else GROBID, which needs no key."""
+    if os.environ.get(bibr.KEY_ENV, "").strip() or (remembered and bibr.setup_chose_bibr()):
+        return "bibr"
+    return "grobid"
 
 
 def privacy_text(reader: str, hosted: bool = False) -> str:
@@ -636,7 +639,7 @@ def build_app(
         )
         if hosted:
             gr.Markdown(hosting.HOSTED_NOTE)
-        first = default_reader()
+        first = default_reader(remember_keys)
         reader = gr.Radio(READERS, value=first, label="Read PDFs with")
         with gr.Group(visible=first == "bibr") as key_group:
             # the key of this computer wins over a typed one, so there is nothing to type then
