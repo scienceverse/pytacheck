@@ -12,6 +12,7 @@ from metacheck._r.base import plural
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import grepl, gsub
 from metacheck.module import module
+from metacheck.modules._paper_type import NO_RESEARCH, skipped_type, type_name
 from metacheck.papers.model import Paper, PaperList
 from metacheck.text.search import text_search
 
@@ -448,6 +449,12 @@ def open_practices(paper: Any) -> dict[str, Any]:
     # paper has a row even when no sentence was flagged
     summary_table = _with_no_data(summary_table, _no_data(frame, paper_ids), paper_ids)
 
+    skipped = {
+        str(p.paper_id): kind
+        for p in (list(paper) if isinstance(paper, PaperList) else [paper])
+        if isinstance(p, Paper) and (kind := skipped_type(p, NO_RESEARCH)) is not None
+    }
+
     # traffic_light / summary_text ----
     # branch on the number of papers (metacheck branches on the rows of
     # summary_table, i.e. the papers with a flagged sentence, U106)
@@ -489,6 +496,14 @@ def open_practices(paper: Any) -> dict[str, Any]:
                 f"; {none:d} paper{plural(none)} {'states' if none == 1 else 'state'} "
                 "that there are no data to share."
             )
+        # D85: papers that report no research of their own
+        not_research = sum(pid in skipped for pid in paper_ids)
+        if not_research:
+            summary_text = summary_text[:-1] + (
+                f"; {not_research:d} paper{plural(not_research)} "
+                f"{'is' if not_research == 1 else 'are'} not research (a commentary, "
+                "correction or retraction)."
+            )
     elif not single:
         summary_text = "Neither shared data nor code detected."
         tl = "red"
@@ -517,6 +532,21 @@ def open_practices(paper: Any) -> dict[str, Any]:
             summary_text = gsub(r"\.$", "; some sharing is only on request.", summary_text)
             tl = "red"
 
+    # D85: a commentary, correction or retraction reports no research of its own, so
+    # missing data and code are not flagged
+    not_checked = (
+        not several
+        and bool(paper_ids)
+        and paper_ids[0] in skipped
+        and not (single and (data_open or code_open))
+    )
+    if not_checked:
+        tl = "na"
+        summary_text = (
+            f"bibr classifies the paper as {type_name(skipped[paper_ids[0]])}, which reports "
+            "no research of its own, so no shared data or code are expected."
+        )
+
     # report ----
     report: list[str] | None = None
     if single:
@@ -542,6 +572,9 @@ def open_practices(paper: Any) -> dict[str, Any]:
             asked = list(dict.fromkeys(asked))
             quoted = "\n\n> ".join(gsub("\n\n", "\n\n> ", asked))
             report.append(_ON_REQUEST_REPORT.format(quoted))
+
+    if not_checked:
+        report = None  # module_run() reports the summary text
 
     # return a list ----
     return {
