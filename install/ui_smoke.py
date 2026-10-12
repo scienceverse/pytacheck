@@ -186,7 +186,8 @@ def click_through(page: Page, url: str, paper: Path, watch: Watch) -> None:
     untick_data_check(page)
     block = page.locator(".block", has_text="Your paper, data package or repository link").last
     block.locator("input[type=file]").set_input_files(str(paper))
-    block.get_by_text(paper.name, exact=False).first.wait_for(timeout=30_000)
+    # The box shows an uploaded file as a thumbnail with no name in the page: wait for that.
+    block.get_by_role("listitem", name="File thumbnail").first.wait_for(timeout=30_000)
     page.get_by_role("button", name="Check", exact=True).click()
     check_results(page, "uploaded JSON")
 
