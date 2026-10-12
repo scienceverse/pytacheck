@@ -13,6 +13,7 @@ Routes, parameters and status codes follow the plumber API:
                            ``ignore.case``, ``fixed``, ``perl`` optional)
 ``POST /paper/module``     run one module (``name``)
 ``POST /paper/check``      metadata + several modules (``modules``, ``report``)
+``POST /package/check``    a data package: ``file`` (a zip or tar) or ``link`` (a repository)
 ========================  ====================================================
 
 Responses are plain JSON (D79), not plumber's jsonlite encoding: scalars are
@@ -23,6 +24,13 @@ appears (missing cells are ``null``), numbers keep full precision, and
 Uploads are multipart ``file`` fields holding bibr JSON (max 50 MB). As a
 pytacheck extension, PDF/DOCX/HTML uploads are accepted too when the
 ``bibr`` extra is installed (extracted in-process).
+
+``POST /package/check`` takes exactly one of a ``file`` field (a zip or tar of a data
+package) or a ``link`` field (the link of a public repository), and runs the
+``datapackage`` checks under the hosted limits of ``metacheck.app.package.HOSTED``
+(50 MB downloaded, 1 GB unpacked, no token of this server, concepts by rules). It answers
+``name``, ``checks`` (``check``, ``status`` and ``result`` for each module) and
+``report_html``.
 
 Module system (pytacheck extensions): the server runs built-in modules (bare
 names) and the modules of active packs (``pack::name``); it always runs with
@@ -60,12 +68,14 @@ import hmac
 import ipaddress
 import math
 import os
+import re
+import shutil
 import tempfile
 import uuid
 import weakref
 from collections.abc import Callable, Mapping
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import orjson
 from fastapi import FastAPI, Request
@@ -73,6 +83,9 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from metacheck._env import env_get, env_lookup, env_names
 from metacheck._logging import get_logger
+
+if TYPE_CHECKING:
+    from metacheck.app.package import Limits
 
 __all__ = [
     "API_KEY_ENV",
@@ -348,6 +361,139 @@ def _check_selection(mp: dict[str, Any]) -> list[tuple[Any, dict[str, Any]]]:
     return [(m, {}) for m in available_modules()]
 
 
+#: an upload is copied to disk this many bytes at a time
+_UPLOAD_CHUNK = 1024 * 1024
+#: what a multipart body holds beyond a file's own bytes: its headers, the boundary, a field
+_FORM_SLACK = 1024 * 1024
+#: the longest refusal text a data package returns (the library's sentences are short)
+_PACKAGE_MESSAGE_MAX = 300
+_PACKAGE_FORM = (
+    "Send multipart/form-data with one 'file' (a zip or tar archive) or one 'link' "
+    "(the link of a public repository)."
+)
+_PACKAGE_NEITHER = "Give a zip or tar archive as 'file', or the link of a repository as 'link'."
+_PACKAGE_BOTH = "Give a file or a link, not both."
+_PACKAGE_MANY = "Give one file or one link at a time."
+_PACKAGE_NOT_LINK = "That is not the link of a repository this server can check."
+_PACKAGE_UNREADABLE = "The archive could not be opened as a data package."
+_PACKAGE_FAILED = "The package could not be checked."
+
+
+def _megabytes(n: int) -> str:
+    return f"{n / 1024**2:g} MB" if n >= 1024**2 else f"{n:,} bytes"
+
+
+def _too_big(limit: int) -> Any:
+    return _error(413, f"The package is bigger than the {_megabytes(limit)} this server checks.")
+
+
+def _upload_name(filename: str | None) -> str:
+    """The name an upload is kept under: its own base name when that is a plain one.
+
+    The name only ever appears inside the temporary folder, and in the messages that name the
+    archive; a name with a folder in it, a control character or an odd length gives ``upload``.
+    """
+    name = (filename or "").replace("\\", "/").rsplit("/", 1)[-1].strip()
+    if not name or name in (".", "..") or len(name.encode()) > 200:
+        return "upload"
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in name):
+        return "upload"
+    return name
+
+
+async def _store_upload(upload: Any, path: Path, limit: int) -> bool:
+    """Copy *upload* to *path* a chunk at a time; ``False`` as soon as it is over *limit* bytes."""
+    size = 0
+    with open(path, "wb") as out:
+        while chunk := await upload.read(_UPLOAD_CHUNK):
+            size += len(chunk)
+            if size > limit:
+                return False
+            out.write(chunk)
+    return True
+
+
+def _package_refusal(exc: Exception, folder: str) -> str:
+    """The text of a refusal: short, and never the folder an upload was copied to."""
+    text = " ".join(str(exc).split())
+    if folder and folder in text:
+        return _PACKAGE_UNREADABLE
+    return text[:_PACKAGE_MESSAGE_MAX] or _PACKAGE_UNREADABLE
+
+
+def _check_options(limits: Limits) -> dict[str, Any]:
+    """The arguments of ``check_package`` on this server: the hosted limits, no token of this
+    server, and the concepts named by rules (no classifier model is downloaded), as the hosted
+    app runs a package."""
+    return {
+        "max_bytes": limits.unpacked,
+        "max_files": limits.files,
+        "max_ratio": limits.ratio,
+        "max_depth": limits.depth,
+        "max_download": limits.download,
+        "download_timeout": limits.download_seconds,
+        "credentials": False,
+        "args": {"data_check": {"concepts": "rules"}},
+    }
+
+
+def _run_package(target: str, fallback: str, folder: str, limits: Limits, request_id: str) -> Any:
+    """Check the package at *target* (an upload's copy, or a link) and answer for it.
+
+    Runs in a worker thread, as the paper checks do: local modules are off and the run is in
+    one run session. *folder* is the upload's folder (``""`` for a link), kept out of messages.
+    """
+    from metacheck.datapackage import PackageError, check_package
+    from metacheck.datapackage._check import _stand_in_paper
+    from metacheck.module import run_session, use
+
+    try:
+        with use(allow_local=False), run_session():
+            chain = check_package(target, **_check_options(limits))
+            name = _package_name(chain, fallback)
+            report_html = _without_folders(
+                _render_report_html(list(chain), _stand_in_paper(name), request_id)
+            )
+            checks = [
+                {
+                    "check": str(o.module),
+                    "status": str(o.traffic_light),
+                    "result": _without_folders(o.summary_text),
+                }
+                for o in chain
+            ]
+    except PackageError as exc:
+        return _error(400, _package_refusal(exc, folder))
+    except Exception as exc:
+        LOG.error("Package check failed (%s): %s", request_id, type(exc).__name__)
+        return _error(500, _PACKAGE_FAILED)
+    return _json({"name": name, "checks": checks, "report_html": report_html})
+
+
+def _without_folders(text: Any) -> Any:
+    """*text* with this server's temporary package folders taken out of it.
+
+    A module can name the folder it was given: data_check's report names each repository by its
+    local path, which is the folder the package was unpacked to. Those folders (the library's
+    ``metacheck-package-`` folder and the upload's own) are shown as ``package`` instead.
+    """
+    if not isinstance(text, str):
+        return text
+    prefix = re.escape(tempfile.gettempdir().rstrip("/\\"))
+    sep = r"[\\/]"  # a Windows path is written with backslashes, a posix one with slashes
+    segment = r"[^\\/\s\"'<>]+"
+    package = rf"metacheck-package-{segment}{sep}package"
+    upload = rf"pytacheck-upload-{segment}"
+    return re.sub(rf"{prefix}{sep}(?:{package}|{upload})", "package", text)
+
+
+def _package_name(chain: Any, fallback: str) -> str:
+    """The package's name from its run record; *fallback* (the file's name) if it has none."""
+    package = getattr(getattr(chain, "run_record", None), "package", None) or {}
+    name = package.get("name") if isinstance(package, dict) else None
+    return str(name) if name else (fallback or "package")
+
+
 def create_app() -> FastAPI:
     """Build the FastAPI application."""
     from starlette.concurrency import run_in_threadpool
@@ -603,6 +749,79 @@ def create_app() -> FastAPI:
             }
 
         return await with_uploaded_paper(request, "check", handler, pre)
+
+    @app.post("/package/check")
+    async def package_check(request: Request) -> Any:
+        from metacheck.app import package as hosted
+        from metacheck.datapackage import PackageError, is_link, parse_link
+        from metacheck.datapackage._remote import _normalise
+
+        request_id = str(uuid.uuid4())
+        LOG.info("Request started (package check): %s", request_id)
+        limits = hosted.HOSTED  # read per request, so the limits can be changed in one place
+        declared = request.headers.get("content-length", "")
+        if declared.isdigit() and int(declared) > limits.download + _FORM_SLACK:
+            return _too_big(limits.download)  # refused before the body is spooled to disk
+        try:
+            form = await request.form()
+        except Exception:
+            return _error(400, _PACKAGE_FORM)
+        files, fields = form.getlist("file"), form.getlist("link")
+        if any(isinstance(f, str) for f in files) or any(not isinstance(v, str) for v in fields):
+            return _error(400, _PACKAGE_FORM)
+        uploads = [f for f in files if not isinstance(f, str)]
+        links = [str(v).strip() for v in fields if str(v).strip()]
+        if uploads and links:
+            return _error(400, _PACKAGE_BOTH)
+        if len(uploads) > 1 or len(links) > 1:
+            return _error(400, _PACKAGE_MANY)
+
+        async def checked_upload(upload: Any) -> Any:
+            name = _upload_name(getattr(upload, "filename", None))
+            folder = tempfile.mkdtemp(prefix="pytacheck-upload-")
+            try:
+                path = Path(folder) / name
+                if not await _store_upload(upload, path, limits.download):
+                    return _too_big(limits.download)
+                async with semaphore():
+                    return await run_in_threadpool(
+                        contextvars.copy_context().run,
+                        _run_package,
+                        str(path),
+                        name,
+                        folder,
+                        limits,
+                        request_id,
+                    )
+            finally:
+                shutil.rmtree(folder, ignore_errors=True)
+
+        async def checked_link(text: str) -> Any:
+            # check_package reads a value that is not a web link as a folder or archive path, so
+            # the text is read the way parse_link reads it and passed on in that https form
+            link = _normalise(text)
+            try:
+                parse_link(link)
+            except PackageError as exc:
+                return _error(400, _package_refusal(exc, ""))
+            if not is_link(link):
+                return _error(400, _PACKAGE_NOT_LINK)
+            async with semaphore():
+                return await run_in_threadpool(
+                    contextvars.copy_context().run,
+                    _run_package,
+                    link,
+                    "package",
+                    "",
+                    limits,
+                    request_id,
+                )
+
+        if uploads:
+            return await checked_upload(uploads[0])
+        if links:
+            return await checked_link(links[0])
+        return _error(400, _PACKAGE_NEITHER)
 
     return app
 
