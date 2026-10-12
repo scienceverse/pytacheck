@@ -90,6 +90,14 @@ ENV_VARS: dict[str, EnvVar] = {
     "APP_ROOTS": EnvVar(("METACHECK_APP_ROOTS",)),
     "APP_TOKENS": EnvVar(("METACHECK_APP_TOKENS",), secret=True),
     "APP_USER_HEADER": EnvVar(("METACHECK_APP_USER_HEADER",)),
+    # data packages (the paper box, the package checks): the size limits of a link's download
+    # and of an archive's unpacking, read by datapackage/_limits.py. New, so no old names.
+    "PACKAGE_MAX_DOWNLOAD": EnvVar(("METACHECK_PACKAGE_MAX_DOWNLOAD",)),
+    "PACKAGE_DOWNLOAD_SECONDS": EnvVar(("METACHECK_PACKAGE_DOWNLOAD_SECONDS",)),
+    "PACKAGE_MAX_UNPACKED": EnvVar(("METACHECK_PACKAGE_MAX_UNPACKED",)),
+    "PACKAGE_MAX_FILES": EnvVar(("METACHECK_PACKAGE_MAX_FILES",)),
+    "PACKAGE_MAX_RATIO": EnvVar(("METACHECK_PACKAGE_MAX_RATIO",)),
+    "PACKAGE_MAX_DEPTH": EnvVar(("METACHECK_PACKAGE_MAX_DEPTH",)),
     # data_check's local concept classifier: new, so no old names
     "CONCEPTS": EnvVar(("METACHECK_CONCEPTS",)),
     "CONCEPT_MODEL": EnvVar(("METACHECK_CONCEPT_MODEL",)),

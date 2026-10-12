@@ -44,6 +44,7 @@ from metacheck.app.run import (
     protect,
     report_filename,
 )
+from metacheck.datapackage._limits import setting
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -84,9 +85,10 @@ __all__ = [
 
 #: Limits for a zip or tar the person uploads, lower than the library's (20 GB, 200,000
 #: files): the size and the number of files the archive says it holds, and what is really
-#: written while it is unpacked, are both counted.
-MAX_UNPACKED_BYTES = 5 * 1024**3
-MAX_FILES = 100_000
+#: written while it is unpacked, are both counted. The ``METACHECK_PACKAGE_*`` settings
+#: (see :mod:`metacheck.datapackage._limits`) replace these defaults on either kind of server.
+MAX_UNPACKED_BYTES = setting("PACKAGE_MAX_UNPACKED", 5 * 1024**3, "size")
+MAX_FILES = setting("PACKAGE_MAX_FILES", 100_000)
 
 #: what the local app accepts as an upload (the shared server keeps ``MOUNT_KWARGS``' 50 MB)
 UPLOAD_LIMIT = "1gb"
@@ -121,23 +123,26 @@ class Limits:
 #: the local app: the person's own computer and connection, and their own tokens for private
 #: repositories they can read
 LOCAL = Limits(
-    download=5 * 1024**3,
-    download_seconds=900.0,
+    download=setting("PACKAGE_MAX_DOWNLOAD", 5 * 1024**3, "size"),
+    download_seconds=setting("PACKAGE_DOWNLOAD_SECONDS", 900.0, "float"),
     unpacked=MAX_UNPACKED_BYTES,
     files=MAX_FILES,
-    ratio=250.0,
-    depth=40,
+    ratio=setting("PACKAGE_MAX_RATIO", 250.0, "float"),
+    depth=setting("PACKAGE_MAX_DEPTH", 40),
     credentials=True,
 )
 #: a shared server: anyone with a token can upload an archive or name a link, so less may be
 #: fetched and unpacked, and the server's own tokens are never used for what a visitor named
+#: The defaults of a shared server are stricter than the local app's. An operator raises them
+#: with the same ``METACHECK_PACKAGE_*`` settings, which then also apply to the local app if the
+#: same process runs it.
 HOSTED = Limits(
-    download=50 * 1024**2,
-    download_seconds=300.0,
-    unpacked=1024**3,
-    files=20_000,
-    ratio=100.0,
-    depth=20,
+    download=setting("PACKAGE_MAX_DOWNLOAD", 50 * 1024**2, "size"),
+    download_seconds=setting("PACKAGE_DOWNLOAD_SECONDS", 300.0, "float"),
+    unpacked=setting("PACKAGE_MAX_UNPACKED", 1024**3, "size"),
+    files=setting("PACKAGE_MAX_FILES", 20_000),
+    ratio=setting("PACKAGE_MAX_RATIO", 100.0, "float"),
+    depth=setting("PACKAGE_MAX_DEPTH", 20),
     credentials=False,
 )
 NO_SOURCE_FOLDER = "Type the path of the package's folder first."

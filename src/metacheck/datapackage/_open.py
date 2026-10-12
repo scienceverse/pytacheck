@@ -43,6 +43,8 @@ from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import IO, Any
 
+from metacheck.datapackage._limits import setting
+
 __all__ = [
     "ARCHIVE_SUFFIXES",
     "MAX_BYTES",
@@ -226,10 +228,10 @@ def _size(n: float) -> str:
 def open_package(
     path: str | os.PathLike[str],
     *,
-    max_bytes: int = MAX_BYTES,
-    max_files: int = MAX_FILES,
-    max_ratio: float = MAX_RATIO,
-    max_depth: int = MAX_DEPTH,
+    max_bytes: int | None = None,
+    max_files: int | None = None,
+    max_ratio: float | None = None,
+    max_depth: int | None = None,
 ) -> Iterator[OpenedPackage]:
     """Open the folder or archive at *path* as a data package.
 
@@ -241,7 +243,9 @@ def open_package(
     *max_ratio* times its own size once extracted (a zip bomb; small archives
     are exempt), or members more than *max_depth* folders deep (those are
     skipped, not refused). A file inside the archive that is a zip container or
-    a compressed stream is held to the same limits.
+    a compressed stream is held to the same limits. A limit that is not given
+    is the ``METACHECK_PACKAGE_*`` setting, or else the default (see
+    :mod:`metacheck.datapackage._limits`).
     """
     p = Path(path).expanduser()
     if p.is_dir():
@@ -254,7 +258,12 @@ def open_package(
             f"{p.name} is neither a folder nor an archive "
             f"({', '.join(ARCHIVE_SUFFIXES)}). Give the package's folder, or a zip of it."
         )
-    limits = _Limits(max_bytes, max_files, max_ratio, max_depth)
+    limits = _Limits(
+        setting("PACKAGE_MAX_UNPACKED", MAX_BYTES, "size") if max_bytes is None else max_bytes,
+        setting("PACKAGE_MAX_FILES", MAX_FILES) if max_files is None else max_files,
+        setting("PACKAGE_MAX_RATIO", MAX_RATIO, "float") if max_ratio is None else max_ratio,
+        setting("PACKAGE_MAX_DEPTH", MAX_DEPTH) if max_depth is None else max_depth,
+    )
     tmp = Path(tempfile.mkdtemp(prefix="metacheck-package-"))
     try:
         dest = tmp / "package"
