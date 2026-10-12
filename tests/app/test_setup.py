@@ -115,7 +115,10 @@ def test_apply_ignores_a_damaged_file() -> None:
     assert settings.apply() == {}
 
 
-def test_start_selfhost_does_nothing_unless_chosen_and_installed() -> None:
+def test_start_selfhost_does_nothing_unless_chosen_and_installed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "_bibr_command", lambda: None)
     assert settings.start_selfhost() is None
     settings.write(bibr_selfhost=True)
     assert settings.start_selfhost() is None  # no bibr command next to this Python

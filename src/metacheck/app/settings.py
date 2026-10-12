@@ -17,7 +17,7 @@ from typing import Any
 
 import orjson
 
-from metacheck._env import env_lookup
+from metacheck._env import env_lookup, env_names
 
 __all__ = [
     "SELFHOST_URL",
@@ -35,9 +35,9 @@ _EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 def settings_path() -> Path:
-    import platformdirs
+    from metacheck.app.bibr import key_path
 
-    return Path(platformdirs.user_config_dir("pytacheck")) / "app-settings.json"
+    return key_path().with_name("app-settings.json")
 
 
 def valid_email(address: str) -> bool:
@@ -85,8 +85,14 @@ def apply() -> dict[str, Any]:
     if isinstance(address, str) and valid_email(address) and config.email() is None:
         config.email(address)
     if data.get("bibr_selfhost") is True and env_lookup("BIBR_URL") is None:
-        os.environ["METACHECK_BIBR_URL"] = SELFHOST_URL
+        os.environ[env_names("BIBR_URL")[0]] = SELFHOST_URL
     return data
+
+
+def _bibr_command() -> Path | None:
+    """The ``bibr`` command installed beside this Python, or ``None``."""
+    exe = Path(sys.executable).with_name("bibr.exe" if os.name == "nt" else "bibr")
+    return exe if exe.is_file() else None
 
 
 def start_selfhost() -> subprocess.Popen[bytes] | None:
@@ -104,8 +110,8 @@ def start_selfhost() -> subprocess.Popen[bytes] | None:
         with httpx.Client(trust_env=False, timeout=1.0) as client:
             client.get(SELFHOST_URL + "/")
         return None  # something already answers there
-    exe = Path(sys.executable).with_name("bibr.exe" if os.name == "nt" else "bibr")
-    if not exe.is_file():
+    exe = _bibr_command()
+    if exe is None:
         return None
     try:
         return subprocess.Popen(  # noqa: S603 - our own tool environment's command
