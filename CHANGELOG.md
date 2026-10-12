@@ -7,6 +7,14 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: json_expand reads plain JSON
+
+- **Changed:** `json_expand()` parses each reply with `metacheck._json.loads()` and flattens it, instead of reproducing jsonlite's R value model, R's deparser and `utils::type.convert()` (D76). A JSON null stays missing, also in text columns (metacheck gives `""` there). A nested array or object is the text of its values joined by `";"` (`["E", "F"]` is still `"E;F"`; `{"b": [1, 3]}` is `"1;3"`, not `c(1, 3)`). Column types are still guessed from the values: `true`, `"TRUE"` and `"F"` make a logical column, `"1"` an integer, `"2.5"` a number; anything else is text.
+- **Changed:** JSON is read strictly: a reply with comments is a `"parsing error"`. `{"$date": ...}` is an ordinary object, not a date, and no column is complex. A repeated key keeps its last value, an empty key is a column, and an array that mixes objects with other values is `"not a list"`: metacheck stopped with an error on all three.
+- **Unchanged:** the values extracted from every recorded LLM reply, including the `power` module's prompt-based fallback; the `error` column (`"parsing error"`, `"not a list"`); the Markdown fence handling; the suffixes on clashing names.
+- **Removed:** `metacheck.text.json_expand.as_numeric` and `type_convert`; use `metacheck._values.as_float` for R's `as.numeric()` of one value. `causal_relations()` reads the Space's replies as plain dicts and lists.
+- **Smaller:** `text/json_expand.py` is 199 lines, down from 1,235.
+
 ### Changed: code files are decoded with chardet, not a port of readr's ICU and vroom pipeline
 
 - **Changed:** `code_read()` (and so `code_check()`, `reproducibility_check()` and the other readers of code files) decodes a file's bytes in `codecheck/_decode.py`: a byte order mark picks UTF-8, UTF-16 or UTF-32; valid UTF-8 is read as UTF-8; anything else is read in the encoding chardet names when it is fairly sure (confidence 0.2), else as Windows-1252, and bytes that fit neither show as `<xx>`. Lines end at LF, CRLF or CR (D74).
