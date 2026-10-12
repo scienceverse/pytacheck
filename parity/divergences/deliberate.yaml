@@ -159,3 +159,18 @@
 "mod_urls_open_review/open_practices.review.list_counts": *d83
 "mod_urls_open_review/open_practices.review.demo_copy": *d83
 "mod_urls_open_review/open_practices.review.tricky_urls": *d83
+# the COI, funding and ethics checks fall back to bibr's statements when their
+# expressions find nothing (D84): bibr12 full.json has them only in its info table
+"bibr12/module.coi_check.full": &d84
+  kind: deliberate
+  ref: D84
+  reason: a paper the expressions found no statement in gets the statement bibr extracted (info.coi_statement, info.funding_statement, info.ethics_statement); full.json has them only there
+"bibr12/module.coi_check.mixed": *d84
+"bibr12/module.coi_check_oi.full": *d84
+"bibr12/module.ethics_check.full": *d84
+"bibr12/module.ethics_check.mixed": *d84
+"bibr12/module.funding_check.full": *d84
+"bibr12/module.funding_check.mixed": *d84
+"bibr12/module.funding_check_oi.full": *d84
+"bibr12/module.funding_check_oi.mixed": *d84
+"mod_ethics_review/ethics_check.fixture_corpus": *d84

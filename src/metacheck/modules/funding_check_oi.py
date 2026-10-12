@@ -66,6 +66,7 @@ def funding_check_oi(paper: Any) -> dict[str, Any]:
     Keeps the sentences that mention both a funding term and a study term;
     when a paper has such sentences in a "funding" section, only those.
     """
+    from metacheck.modules._statements import with_bibr_statements
     from metacheck.modules.funding_check import _results
     from metacheck.text import text_search
 
@@ -76,4 +77,5 @@ def funding_check_oi(paper: Any) -> dict[str, Any]:
     keep = (~any_likely.astype(bool)) | likely
     table = found.loc[keep.to_numpy(), ["paper_id", "text"]].reset_index(drop=True)
     table = table.astype({"paper_id": "string", "text": "string"})
-    return _results(pd.DataFrame(table))
+    # D84: a paper the expressions found nothing in gets bibr's statement
+    return _results(with_bibr_statements(pd.DataFrame(table), paper, "funding_statement"))

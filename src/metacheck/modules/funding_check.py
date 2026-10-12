@@ -119,8 +119,10 @@ def funding_check(paper: Any) -> dict[str, Any]:
     sentences (references excluded) and returns one row per paper with a
     funding statement.
     """
+    from metacheck.modules._statements import with_bibr_statements
     from metacheck.text import text_search
 
     sentences = text_search(paper)
     table = _funding_table(sentences.loc[:, ["paper_id", "text"]])
-    return _results(table)
+    # D84: a paper the expressions found nothing in gets bibr's statement
+    return _results(with_bibr_statements(table, paper, "funding_statement"))
