@@ -38,7 +38,7 @@
     "stat_p_exact",
     "stat_p_nonsig"
   ],
-  "pytacheck_modules": ["figure_table_refs"],
+  "pytacheck_modules": ["author_check", "figure_table_refs"],
   "presets": {
     "default": {
       "description": "metacheck's report() defaults",
