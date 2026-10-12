@@ -7,6 +7,15 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+## 0.4.0a2
+
+Second pre-release on PyPI. Compared against the R package at commit
+`f1062b4` (metacheck 0.3.1, `parity/UPSTREAM.toml`). Parity with the R package
+is no longer a goal in itself: the changes below replace reproductions of R
+with Python libraries, read what bibr extracts, and add modules of pytacheck's
+own (`figure_table_refs`, `author_check`, `license_check`). The changes that
+alter results are listed in docs/UPSTREAM_ISSUES.md (D74 to D85).
+
 ### Added: a data package in the paper box, from an archive or a repository link
 
 - **Added:** the app's paper page has one box for everything. Drop a paper (PDF, GROBID XML or bibr JSON) and it is checked as before; drop a zip or tar archive of a data package, or type the link of a public repository (GitHub, GitLab, OSF or Zenodo), and it is checked as a data package with the preset chosen under "Choose the checks" (the new "For a data package" choice). A folder on this computer can be typed in the box too. The page tells the three apart, and says in plain words what it cannot check.
