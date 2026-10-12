@@ -83,7 +83,7 @@ def device_login(
     open_url: Callable[[str], bool] = webbrowser.open,
     sleep: Callable[[float], None] = time.sleep,
     clock: Callable[[], float] = time.monotonic,
-    name: str = "pytacheck",
+    name: str = "metacheck",
 ) -> str:
     """Sign in through the browser and return the token.
 

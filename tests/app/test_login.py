@@ -71,7 +71,7 @@ def test_the_token_comes_after_the_person_approves() -> None:
     assert "BCDF-GHJK" in "\n".join(said)
     assert slept == [5, 5, 5]
     first, second = gate.requests[0], gate.requests[1]
-    assert first.read() == b'{"name":"pytacheck"}'
+    assert first.read() == b'{"name":"metacheck"}'
     form = second.read().decode()
     assert "device_code=dev123" in form and "grant_type=urn%3Aietf%3Aparams%3Aoauth" in form
 
