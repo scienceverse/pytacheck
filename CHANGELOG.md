@@ -7,6 +7,13 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Added: choose the checks in the app
+
+- **Added:** the paper page of the app has "Choose the checks": a list of every check it can run, ticked as before, so a person can run more or fewer. Checks that take minutes or need a key (code_check, repo_check, codebook_check, psychds_check, reproducibility_check, reg_check, causal_claims) are not offered, and what the browser sends is checked against the list, on a shared server as well.
+- **Added:** "Start from" lists the paper presets of installed packs and of the config (not a shared server's packs), so a pack can give a group its own set of checks; choosing one ticks its checks and passes its arguments.
+- **Added:** `metacheck-app --preset NAME` starts the app with that preset chosen; a data package preset opens the package page. The installers take `--preset NAME` (`-Preset NAME`, or `METACHECK_APP_PRESET`), also with `--steward`, and pass it on only to an app that knows the option.
+- **Changed:** the app runs figure_table_refs, author_check and license_check by default (they take well under a second on the demo paper), so it runs 19 checks instead of 16.
+
 ### Changed: ethics_check and open_practices skip papers bibr classifies as not applicable
 
 - **Changed:** ethics_check no longer asks a review, meta-analysis, commentary, correction or retraction for an ethics approval statement, and open_practices no longer flags a commentary, correction or retraction for not sharing data or code, when bibr classifies the paper so (`info.paper_type`, with a confidence of at least 0.7 when one is given). Such a paper is `na` with a sentence that says why (D85).

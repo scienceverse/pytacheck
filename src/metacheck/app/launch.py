@@ -29,6 +29,12 @@ HOST = "127.0.0.1"
 #: ``--page`` value -> path of the page on the local server
 PAGES = ("paper", "package")
 PAGE_PATHS = {"paper": "", "package": "package"}
+#: said when ``--preset`` is given and the app is already running: a page's first choice is
+#: set when the app starts
+RUNNING_PRESET = (
+    "The app is already running and keeps the checks it started with. To start it with the "
+    "preset {preset}, close the window where it runs and run this again."
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -57,6 +63,13 @@ def build_parser() -> argparse.ArgumentParser:
         "(not offered with --hosted)",
     )
     parser.add_argument(
+        "--preset",
+        default=None,
+        metavar="NAME",
+        help="the preset the app starts with, for example a pack's (see 'pytacheck preset "
+        "list'); a data package preset opens the package page (not offered with --hosted)",
+    )
+    parser.add_argument(
         "--self-test",
         action="store_true",
         help="check the demo paper without starting the app; exit 0 if it works",
@@ -82,6 +95,26 @@ def _self_test() -> int:
         return 1
     print(f"Self-test passed: {len(analysis.rows)} checks in {time.perf_counter() - start:.1f} s")
     return 0
+
+
+def preset_page(ref: str) -> str | None:
+    """The page that offers the preset *ref* (a ``--page`` value), or ``None`` if none does."""
+    from metacheck.app.checks import paper_presets
+    from metacheck.app.package import package_presets
+
+    if ref in {r for _, r in package_presets()}:
+        return "package"
+    if ref and ref in {r for _, r in paper_presets()}:
+        return "paper"
+    return None
+
+
+def _preset_names() -> str:
+    from metacheck.app.checks import paper_presets
+    from metacheck.app.package import package_presets
+
+    refs = [r for _, r in (*paper_presets(), *package_presets()) if r]
+    return ", ".join(refs) if refs else "none is installed"
 
 
 def _url(port: int, token: str, page: str | None = None) -> str:
@@ -174,6 +207,7 @@ def _serve(
     config: hosting.HostedConfig | None = None,
     host: str = HOST,
     page: str | None = None,
+    preset: str | None = None,
 ) -> int:
     import uvicorn
 
@@ -190,7 +224,7 @@ def _serve(
     token = secrets.token_urlsafe(32)
     verbose(False)
     if config is None:
-        app = create_app(port, token)
+        app = create_app(port, token, preset)
         saved.write_state(port, token)
     else:
         app = create_hosted_app(port, config)
@@ -258,6 +292,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     if ns.page is not None and ns.hosted:
         print("--page only works in the local app, not with --hosted.", file=sys.stderr)
         return 2
+    if ns.preset is not None and ns.hosted:
+        print("--preset only works in the local app, not with --hosted.", file=sys.stderr)
+        return 2
+    page = ns.page
+    if ns.preset is not None:
+        found = preset_page(ns.preset)
+        if found is None:
+            print(
+                f"The app has no preset named {ns.preset!r}. Presets it can use: "
+                f"{_preset_names()}.",
+                file=sys.stderr,
+            )
+            return 2
+        if page is not None and page != found:
+            print(f"The preset {ns.preset} is for the {found} page, so the app opens there.")
+        page = found
     if ns.hosted:
         try:
             config = hosting.HostedConfig.from_env()
@@ -271,6 +321,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _serve(port, False, config, ns.host or HOST)
     running = saved.find_running()
     if running is not None and port in (0, running["port"]):
-        _announce(_url(running["port"], running["token"], ns.page), not ns.no_browser)
+        if ns.preset is not None:
+            print(RUNNING_PRESET.format(preset=ns.preset), flush=True)
+        _announce(_url(running["port"], running["token"], page), not ns.no_browser)
         return 0
-    return _serve(port, not ns.no_browser, page=ns.page)
+    return _serve(port, not ns.no_browser, page=page, preset=ns.preset)

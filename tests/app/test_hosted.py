@@ -22,7 +22,7 @@ import pytest
 from starlette.testclient import TestClient
 
 import metacheck as pc
-from metacheck.app import bibr, launch, ui
+from metacheck.app import bibr, checks, launch, ui
 from metacheck.app import hosted as hosting
 from metacheck.app.security import HOSTED_COOKIE, HOSTED_DENIED_PAGE, PROXY_DENIED_PAGE
 from metacheck.app.server import create_hosted_app
@@ -346,8 +346,9 @@ def test_no_state_file_is_written(client: TestClient, state_dir: Path) -> None:
 # --- runs ---------------------------------------------------------------------------
 
 
-#: the other inputs of both buttons: online, data check, PDF reader, bibr key, remember
-SETTINGS = [False, False, "grobid", "", False]
+#: the other inputs of both buttons: online, data check, PDF reader, bibr key, remember,
+#: the ticked checks (the page's first ticks) and the preset
+SETTINGS = [False, False, "grobid", "", False, checks.selected_checks(), ""]
 
 
 def _join(
@@ -370,7 +371,7 @@ def _join(
 
 def _fn_index(client: TestClient) -> int:
     deps = client.get("/config").json()["dependencies"]
-    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 6)
+    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 8)
     return int(dep["id"])
 
 
@@ -391,7 +392,7 @@ def test_a_run_leaves_nothing_behind(client: TestClient) -> None:
     path = _upload(client, " " * 11)  # whitespace, so that the JSON stays valid
     assert Path(path).exists()
     events = _join(client, _fn_index(client), path, "h1")
-    assert "Ran 16 checks" in events
+    assert "Ran 19 checks" in events
     assert "data:text/html" in events  # the report comes with the page, not from a file
     assert not Path(path).exists()
     assert client.get("/report/h1/paper_report.html").status_code == 404
@@ -422,8 +423,8 @@ def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch, tmp_p
     tc.__enter__()
     tc.get(f"/?token={TOKEN_A}")
     deps = tc.get("/config").json()["dependencies"]
-    (check_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 6)
-    (demo_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 5)
+    (check_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 8)
+    (demo_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 7)
     uploads = [_upload(tc, f"shared{n}") for n in range(3)]
 
     def click(button: str, number: int) -> None:
@@ -494,6 +495,8 @@ def _join_with_data(client: TestClient, path: str, session: str) -> str:
             "grobid",
             "",
             False,
+            checks.selected_checks(),
+            "",
         ],
         "fn_index": _fn_index(client),
         "session_hash": session,
@@ -644,7 +647,13 @@ def test_a_hosted_server_sends_a_pdf_to_bibr_serve(
         tc.get(f"/?token={TOKEN_A}")
         pdf = {"files": ("paper.pdf", b"%PDF-1.4 h8 not really", "application/pdf")}
         (path,) = tc.post("/gradio_api/upload", files=pdf).json()
-        events = _join(tc, _fn_index(tc), path, "h8", [False, False, "bibr", "", False])
+        events = _join(
+            tc,
+            _fn_index(tc),
+            path,
+            "h8",
+            [False, False, "bibr", "", False, checks.selected_checks(), ""],
+        )
     assert re.search(r"Ran \d+ checks", events), events[-500:]
     assert key not in events
     assert [(method, where) for method, where, _, _ in seen] == [
