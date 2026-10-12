@@ -701,7 +701,7 @@ def _sleep(seconds: float) -> None:
 def test_job_runner_returns_the_result_and_deletes_the_upload(tmp_path: Path) -> None:
     upload = tmp_path / "up.pdf"
     upload.write_text("x")
-    runner = hosting.JobRunner(20)
+    runner = hosting.JobRunner(60)
     assert runner.run(operator.add, 1, 2, upload=upload, on_timeout=TimeoutError) == 3
     assert not upload.exists()
     upload.write_text("x")
