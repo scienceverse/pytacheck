@@ -186,3 +186,15 @@ def test_cancelling_saves_nothing(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(setup, "_tty_prompter", lambda: (ask, None))
     assert setup.main([]) == 1
     assert not settings.settings_path().exists()
+
+
+def test_a_console_nobody_types_into_is_not_asked(monkeypatch: pytest.MonkeyPatch) -> None:
+    import io
+
+    class NotATerminal(io.StringIO):
+        def isatty(self) -> bool:
+            return False
+
+    monkeypatch.setattr(setup.sys, "stdin", NotATerminal())
+    monkeypatch.setattr("builtins.open", lambda *a, **k: NotATerminal())
+    assert setup._tty_prompter() is None
