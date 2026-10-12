@@ -77,8 +77,10 @@ def coloured(frame: Any, column: str = "Status") -> Any:
     )
 
 
-def add_package_page(app: gr.Blocks, sessions: Sessions) -> None:
-    """Add the page to *app*. Call it after the app's own ``with gr.Blocks()`` block."""
+def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | None = None) -> None:
+    """Add the page to *app*. Call it after the app's own ``with gr.Blocks()`` block.
+
+    ``start_preset`` is chosen at first when it is one of the page's presets."""
 
     def on_check_package(
         kind: str,
@@ -143,9 +145,11 @@ def add_package_page(app: gr.Blocks, sessions: Sessions) -> None:
         )
         gr.Markdown(pk.BIGGER_THAN_UPLOAD)
         presets = pk.package_presets()
+        refs = [ref for _, ref in presets]
+        first = start_preset if start_preset in refs else (refs[0] if refs else None)
         preset = gr.Dropdown(
             presets,
-            value=presets[0][1] if presets else None,
+            value=first,
             label="Checks",
             info=PRESET_INFO,
             interactive=True,

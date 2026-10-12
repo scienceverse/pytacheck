@@ -41,6 +41,18 @@ The scripts open the page only when the installed app has the `--page` option
 (they ask it with `--help`). The pinned commit below can be older than the page;
 a steward install of such a commit opens the app on the paper page, and says so.
 
+## `--preset`
+
+`sh install.sh --preset NAME` (Windows: `.\install.ps1 -Preset NAME`, or
+`METACHECK_APP_PRESET=NAME` with `irm | iex`) opens the app with that preset chosen
+(`metacheck-app --preset NAME`), for example the preset of a pack a group installed
+(`pack::name`). A data package preset opens the "Check a data package" page; a paper
+preset ticks its checks under "Choose the checks" on the paper page. It goes with
+`--steward`, too. The scripts accept only letters, digits, `.`, `_`, `-` and `:` in the
+name, and pass it on only when the installed app has the option; an older app opens
+without it and the scripts say so. If the app is already running it keeps the checks it
+started with, and says how to start it again with the preset.
+
 The page reads folders only inside the home folder (`METACHECK_APP_ROOTS` adds more), and
 its classifier box is ticked, as the classifier is the default of `metacheck package`. The
 installer installs `metacheck[app,llm]` without the `concepts` extra, so the page falls back to

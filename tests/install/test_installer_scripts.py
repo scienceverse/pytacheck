@@ -464,8 +464,8 @@ def test_fresh_install_has_no_force(tmp_path):
     assert "earlier version" not in failing.stderr
 
 
-# A stand-in uv whose app answers --help (with or without the --page option, as
-# FAKE_APP_PAGE says) and records the arguments it was started with.
+# A stand-in uv whose app answers --help (with or without the --page and --preset options,
+# as FAKE_APP_PAGE and FAKE_APP_PRESET say) and records the arguments it was started with.
 FAKE_UV_APP = """\
 #!/bin/sh
 case "$1" in
@@ -478,6 +478,7 @@ case "$1" in
 if [ "$1" = "--help" ]; then
   echo "usage: metacheck-app [-h] [--no-browser] [--port PORT]"
   [ -z "${FAKE_APP_PAGE:-}" ] || echo "  --page {paper,package}"
+  [ -z "${FAKE_APP_PRESET:-}" ] || echo "  --preset NAME"
   exit 0
 fi
 echo "started: $*" >"$(dirname "$0")/../launched"
@@ -569,5 +570,60 @@ def test_both_scripts_have_the_steward_option():
     assert "--steward) steward=1" in sh and "METACHECK_STEWARD" in sh
     assert "'^-Steward$' { $steward = $true }" in ps1 and "METACHECK_STEWARD" in ps1
     # both open the app on the page the same way, and only when the app knows the option
-    assert 'exec "$app" --page "$page"' in sh and "grep -q -e '--page'" in sh
-    assert "& $app --page package" in ps1 and ".Contains('--page')" in ps1
+    assert 'set -- "$@" --page "$page"' in sh and "grep -q -e '--page'" in sh
+    assert "@('--page', 'package')" in ps1 and ".Contains('--page')" in ps1
+    assert 'exec "$app" "$@"' in sh and "& $app @appArgs" in ps1
+
+
+def test_both_scripts_have_the_preset_option():
+    sh, ps1 = SH.read_text(), PS1.read_text()
+    assert "--preset)" in sh and "METACHECK_APP_PRESET" in sh
+    assert "'^-Preset$'" in ps1 and "METACHECK_APP_PRESET" in ps1
+    # the same check of the name, and only an app that knows the option gets it
+    assert "*[!A-Za-z0-9._:-]*" in sh and "'^[A-Za-z0-9._:-]+$'" in ps1
+    assert "grep -q -e '--preset'" in sh and ".Contains('--preset')" in ps1
+
+
+@needs_sh
+@pytest.mark.parametrize("how", ["flag", "equals", "variable"])
+def test_steward_with_a_preset_opens_the_app_with_it(tmp_path, how):
+    root, env = _steward_env(tmp_path, FAKE_APP_PAGE="1", FAKE_APP_PRESET="1")
+    if how == "variable":
+        result = _install({**env, "METACHECK_APP_PRESET": "tue::default"}, "--steward")
+    elif how == "equals":
+        result = _install(env, "--steward", "--preset=tue::default")
+    else:
+        result = _install(env, "--steward", "--preset", "tue::default")
+    assert result.returncode == 0, result.stderr
+    launched = (root / "launched").read_text().strip()
+    assert launched == "started: --page package --preset tue::default"
+    assert f"or run: {root}/bin/metacheck-app --page package --preset tue::default" in (
+        result.stdout
+    )
+
+
+@needs_sh
+def test_a_preset_alone_is_passed_on(tmp_path):
+    root, env = _steward_env(tmp_path, FAKE_APP_PAGE="1", FAKE_APP_PRESET="1")
+    result = _install(env, "--preset", "tue")
+    assert result.returncode == 0, result.stderr
+    assert (root / "launched").read_text().strip() == "started: --preset tue"
+
+
+@needs_sh
+def test_an_app_without_the_preset_option_still_opens(tmp_path):
+    root, env = _steward_env(tmp_path, FAKE_APP_PAGE="1")
+    result = _install(env, "--steward", "--preset", "tue")
+    assert result.returncode == 0, result.stderr
+    assert (root / "launched").read_text().strip() == "started: --page package"
+    assert "cannot start with a preset; choose tue" in result.stdout
+
+
+@needs_sh
+@pytest.mark.parametrize("bad", [["--preset"], ["--preset", "a b"], ["--preset=$(id)"]])
+def test_a_bad_preset_stops_the_installer_first(tmp_path, bad):
+    root, env = _steward_env(tmp_path, FAKE_APP_PAGE="1", FAKE_APP_PRESET="1")
+    result = _install(env, *bad)
+    assert result.returncode != 0
+    assert "preset" in result.stderr
+    assert not (root / "calls").exists()  # nothing was installed

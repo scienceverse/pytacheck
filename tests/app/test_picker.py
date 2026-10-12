@@ -155,3 +155,100 @@ def test_the_demo_button_runs_the_ticked_checks(config: Path) -> None:
     )
     assert "Ran 1 check on" in page[1]
     assert page[2].data["Check"].tolist() == ["Author Information"]
+
+
+# -- metacheck-app --preset ------------------------------------------------------------------
+
+
+def _started(monkeypatch: pytest.MonkeyPatch) -> list[tuple[str | None, str | None]]:
+    from metacheck.app import launch
+
+    started: list[tuple[str | None, str | None]] = []
+    monkeypatch.setattr(launch.saved, "find_running", lambda: None)
+    monkeypatch.setattr(
+        launch,
+        "_serve",
+        lambda _port, _browser, page=None, preset=None: started.append((page, preset)) or 0,
+    )
+    return started
+
+
+def test_a_preset_opens_the_page_that_offers_it(
+    config: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from metacheck.app.launch import main, preset_page
+
+    assert preset_page("tue") == "paper"
+    assert preset_page("datapackage::default") == "package"
+    assert preset_page("slow") is None  # the page never runs code_check
+    assert preset_page(checks.APP_DEFAULT) is None
+    started = _started(monkeypatch)
+    assert main(["--no-browser", "--preset", "tue"]) == 0
+    assert main(["--no-browser", "--preset", "datapackage::default"]) == 0
+    # the steward installer always asks for the package page: the preset's page wins
+    assert main(["--no-browser", "--page", "package", "--preset", "tue"]) == 0
+    assert started == [
+        ("paper", "tue"),
+        ("package", "datapackage::default"),
+        ("paper", "tue"),
+    ]
+    assert "is for the paper page, so the app opens there" in capsys.readouterr().out
+
+
+def test_an_unknown_preset_is_named_with_the_ones_there_are(
+    config: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from metacheck.app.launch import main
+
+    started = _started(monkeypatch)
+    assert main(["--no-browser", "--preset", "nope"]) == 2
+    err = capsys.readouterr().err
+    assert "no preset named 'nope'" in err and "tue, web, datapackage::default" in err
+    assert main(["--hosted", "--preset", "tue"]) == 2
+    assert "--preset only works in the local app" in capsys.readouterr().err
+    assert started == []
+
+
+def test_a_running_app_keeps_its_checks_and_says_so(
+    config: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from metacheck.app import launch
+
+    monkeypatch.setattr(launch.saved, "find_running", lambda: {"port": 5, "token": "t"})
+    monkeypatch.setattr(launch, "_serve", lambda *_a, **_k: pytest.fail("started a second app"))
+    assert launch.main(["--no-browser", "--preset", "tue"]) == 0
+    out = capsys.readouterr().out
+    assert launch.RUNNING_PRESET.format(preset="tue") in out
+    assert "http://127.0.0.1:5/?token=t" in out
+
+
+def test_the_pages_start_from_the_preset_they_were_given(config: Path) -> None:
+    blocks = ui.build_app(start_preset="tue")
+    assert _component(blocks, "Start from")["props"]["value"] == "tue"
+    assert _component(blocks, "Checks to run")["props"]["value"] == [
+        "author_check",
+        "license_check",
+    ]
+    web = ui.build_app(start_preset="web")
+    online = _component(web, "Also run the online checks (slower: they look things up on the web)")
+    assert online["props"]["value"] is True
+    # a preset the page does not offer leaves the page as it was
+    assert _component(ui.build_app(start_preset="slow"), "Start from")["props"]["value"] == ""
+
+
+def test_the_package_page_starts_from_its_preset(
+    config: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    body = json.loads(config.read_text(encoding="utf-8"))
+    body["presets"]["tue_package"] = {
+        "description": "TU/e package checks",
+        "extends": ["datapackage::default"],
+    }
+    config.write_text(json.dumps(body), encoding="utf-8")
+    blocks = ui.build_app(start_preset="tue_package")
+    package = [
+        c
+        for c in blocks.get_config_file()["components"]
+        if c["props"].get("label") == "Checks" and c["type"] == "dropdown"
+    ]
+    assert [c["props"]["value"] for c in package] == ["tue_package"]

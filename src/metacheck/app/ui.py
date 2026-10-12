@@ -363,8 +363,12 @@ def build_app(
     hosted: hosting.HostedConfig | None = None,
     *,
     remember_keys: bool = True,
+    start_preset: str | None = None,
 ) -> gr.Blocks:
     """The page. ``hosted`` adds the limits and texts of the shared server.
+
+    ``start_preset`` is the preset the page starts from, when the page offers it (a data package
+    preset goes to the package page, see :func:`~metacheck.app.ui_package.add_package_page`).
 
     ``remember_keys=False`` never saves a bibr key and never offers one that was saved; a
     shared server (``hosted``) never does either.
@@ -610,6 +614,11 @@ def build_app(
     # installed packs' modules are offered on this computer only: a shared server runs built-ins
     extra = () if shared else tuple(catalog.pack_checks())
     presets = catalog.paper_presets(shared)
+    first_preset = (
+        start_preset if start_preset in {ref for _, ref in presets} else catalog.APP_DEFAULT
+    )
+    first_checks, first_data = catalog.preset_checks(first_preset)
+    first_checks = catalog.chosen_checks(first_checks, shared, extra)
 
     blocks_kwargs = (
         {**BLOCKS_KWARGS, "delete_cache": hosting.sweep(hosted.job_timeout)}
@@ -653,21 +662,22 @@ def build_app(
         privacy = gr.Markdown(privacy_text(first, shared))
         online = gr.Checkbox(
             label="Also run the online checks (slower: they look things up on the web)",
-            value=False,
+            value=any(n in catalog.ONLINE for n in first_checks),
         )
-        data = gr.Checkbox(label=DATA_LABEL, value=True)
-        with gr.Accordion(PICKER_TITLE, open=False):
+        data = gr.Checkbox(label=DATA_LABEL, value=first_data)
+        # a preset chosen when the app was started is shown open, so the person sees it
+        with gr.Accordion(PICKER_TITLE, open=first_preset != catalog.APP_DEFAULT):
             gr.Markdown(here(PICKER_INTRO, shared))
             preset = gr.Dropdown(
                 presets,
-                value=catalog.APP_DEFAULT,
+                value=first_preset,
                 label="Start from",
                 info=here(PRESET_INFO, shared),
                 visible=len(presets) > 1,
             )
             picked = gr.CheckboxGroup(
                 catalog.choices(shared, extra),
-                value=catalog.selected_checks(),
+                value=first_checks,
                 label="Checks to run",
             )
         with gr.Row():
@@ -744,7 +754,7 @@ def build_app(
         from metacheck.app.ui_package import add_package_page
 
         # a folder is named by a path on this computer: only the local app has the page
-        add_package_page(app, sessions)
+        add_package_page(app, sessions, start_preset=start_preset)
     if hosted:
         app.queue(
             **{

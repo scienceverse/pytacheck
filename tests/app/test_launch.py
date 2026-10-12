@@ -163,7 +163,7 @@ def test_stale_state_starts_fresh(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         launch,
         "_serve",
-        lambda port, browser, page=None: started.append((port, browser, page)) or 0,
+        lambda port, browser, page=None, preset=None: started.append((port, browser, page)) or 0,
     )
     assert main(["--no-browser"]) == 0
     assert started == [(0, False, None)]

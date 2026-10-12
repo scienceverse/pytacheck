@@ -2,7 +2,7 @@
 # Installs the metacheck preview app into one folder and opens it.
 #
 #   curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh
-#   sh install.sh [--no-launch] [--steward] [--uninstall]
+#   sh install.sh [--no-launch] [--steward] [--preset NAME] [--uninstall]
 #   curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --uninstall
 #
 # Everything goes into METACHECK_HOME (default: ~/.local/share/metacheck):
@@ -10,6 +10,7 @@
 # edited. Other settings:
 #   METACHECK_NO_LAUNCH=1     same as --no-launch
 #   METACHECK_STEWARD=1       same as --steward
+#   METACHECK_APP_PRESET=NAME same as --preset NAME
 #   METACHECK_UNINSTALL=1     same as --uninstall
 #   METACHECK_REF=<commit>    install this commit instead of the pinned one
 #   METACHECK_SPEC=<spec>     install this requirement instead of the GitHub archive
@@ -18,6 +19,9 @@
 # --steward is for a data steward who only checks data packages: the app opens
 # on its "Check a data package" page. The installer has no PDF or bibr step to
 # skip; the page needs neither a PDF reader nor a key.
+#
+# --preset NAME opens the app with that preset chosen, for example a pack's
+# (pack::name). A data package preset opens the "Check a data package" page.
 #
 # The whole script is one function called on the last line, so a download that
 # stops half way runs nothing.
@@ -47,18 +51,31 @@ main() {
   [ "${METACHECK_NO_LAUNCH:-}" = "1" ] && launch=0
   [ "${METACHECK_STEWARD:-}" = "1" ] && steward=1
   [ "${METACHECK_UNINSTALL:-}" = "1" ] && uninstall=1
-  for arg in "$@"; do
-    case "$arg" in
+  preset="${METACHECK_APP_PRESET:-}"
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
       --no-launch) launch=0 ;;
       --steward) steward=1 ;;
       --uninstall) uninstall=1 ;;
+      --preset)
+        [ "$#" -ge 2 ] || die "--preset needs the name of a preset"
+        preset="$2"
+        shift
+        ;;
+      --preset=*) preset="${1#--preset=}" ;;
       -h | --help)
-        say "Usage: sh install.sh [--no-launch] [--steward] [--uninstall]"
+        say "Usage: sh install.sh [--no-launch] [--steward] [--preset NAME] [--uninstall]"
         return 0
         ;;
-      *) die "unknown option: $arg (use --no-launch, --steward or --uninstall)" ;;
+      *) die "unknown option: $1 (use --no-launch, --steward, --preset NAME or --uninstall)" ;;
     esac
+    shift
   done
+  # A preset name is a pack and a name (letters, digits, . _ - and ::); nothing else is
+  # passed on to the app.
+  case "$preset" in
+    *[!A-Za-z0-9._:-]*) die "not a preset name: $preset" ;;
+  esac
 
   # Set but empty is an error (the guard below refuses it); unset means default.
   if [ -z "${METACHECK_HOME+x}" ]; then
@@ -310,22 +327,22 @@ main() {
       say "This version of the app has no data package page yet; it opens on the paper page."
     fi
   fi
-  if [ -n "$page" ]; then
-    say "To open it again, run the same command again (it takes a few seconds),"
-    say "or run: $app --page package"
-  else
-    say "To open it again, run the same command again (it takes a few seconds),"
-    say "or run: $app"
+  # The preset is passed on only if the installed version knows --preset.
+  if [ -n "$preset" ] && ! "$app" --help 2>/dev/null | grep -q -e '--preset'; then
+    say "This version of the app cannot start with a preset; choose $preset on its page."
+    preset=""
   fi
+  set --
+  [ -z "$page" ] || set -- "$@" --page "$page"
+  [ -z "$preset" ] || set -- "$@" --preset "$preset"
+  say "To open it again, run the same command again (it takes a few seconds),"
+  say "or run: $app${*:+ $*}"
   say "To remove it, run the same command with --uninstall:"
   say "  curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --uninstall"
   say ""
 
   if [ "$launch" = "1" ]; then
-    if [ -n "$page" ]; then
-      exec "$app" --page "$page"
-    fi
-    exec "$app"
+    exec "$app" "$@"
   fi
 }
 
