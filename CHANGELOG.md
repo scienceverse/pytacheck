@@ -16,6 +16,11 @@ package's. The R commit each release is compared against is in
 - **Added:** on a shared server a package is checked in the run's own process under the time limit, with lower limits (50 MB downloaded, 1 GB unpacked, 20,000 files, a ratio of 100), with the concepts named by rules (no classifier model), and the upload and everything the run made removed afterwards. The report comes back as a link that holds it.
 - **Changed:** `check_package` and `report_package` take a link, `download_timeout`, `credentials` and `progress`; `open_package` takes `max_ratio` and `max_depth`. A package that is not a link or a path is read as before.
 
+### Added: a guided setup after the install
+
+- **Added:** `metacheck-setup`, a short wizard that the installers run after installing. It asks what you want to check (data packages only, or papers too), how papers are read when you pick papers (a bibr key, bibr on this computer after a warning about several GB of models and about GPU or Apple Silicon, or later) and an email address for open APIs such as OSF, Crossref and OpenAlex. Answers are saved in `app-settings.json` next to the saved bibr key; `metacheck-app` applies the email and, for bibr on this computer, starts `bibr serve` on port 8000 and needs no key for it. The paper page starts on bibr when a key was saved or bibr runs here.
+- **Added:** installer options `--setup` / `-Setup` (ask again; otherwise it asks once), `--no-setup` / `-NoSetup` or `METACHECK_NO_SETUP=1` (never ask) and `--with-bibr` / `-WithBibr` (install bibr into the same environment; the wizard asks for it only when bibr on this computer is chosen). With `--steward` the paper questions are skipped. Without a terminal the setup is skipped.
+
 ### Added: choose the checks in the app
 
 - **Added:** the paper page of the app has "Choose the checks": a list of every check it can run, ticked as before, so a person can run more or fewer. Checks that take minutes or need a key (code_check, repo_check, codebook_check, psychds_check, reproducibility_check, reg_check, causal_claims) are not offered, and what the browser sends is checked against the list, on a shared server as well.

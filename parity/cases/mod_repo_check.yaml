@@ -138,9 +138,6 @@
       "id": "p_local"
     "args":
       "local_path": "upstream/metacheck/tests/testthat/fixtures/code_files"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.vector"
   "note": "a vector of local file paths"
   "r": "identity"
@@ -160,9 +157,6 @@
       "local_path":
       - "upstream/metacheck/tests/testthat/fixtures/code_files/analysis.R"
       - "upstream/metacheck/tests/testthat/fixtures/code_files/README.md"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.tidy"
   "note": "README, data and code: green"
   "r": "identity"
@@ -180,9 +174,6 @@
       "id": "p_local"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/tidy"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.messy"
   "note": "spaces, special characters, unclassifiable files, E-Prime binaries, a .tar.gz, study folders and a manuscript naming other studies"
   "r": "identity"
@@ -205,9 +196,6 @@
       - "Study 4 is reported in the supplement."
     "args":
       "local_path": "tests/mod_repo_check/fixtures/messy"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.roster_extra"
   "note": "the repository separates out a study the manuscript does not name"
   "r": "identity"
@@ -228,9 +216,6 @@
       - "Study 2 replicated it."
     "args":
       "local_path": "tests/mod_repo_check/fixtures/messy"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.roster_missing"
   "note": "the manuscript names studies with no matching files"
   "r": "identity"
@@ -251,9 +236,6 @@
       - "Study 3 is in the supplement."
     "args":
       "local_path": "tests/mod_repo_check/fixtures/tidy"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.roster_missing_one"
   "note": "the manuscript names one study with no matching files"
   "r": "identity"
@@ -273,9 +255,6 @@
       - "Study 1 and Study 2 are reported here."
     "args":
       "local_path": "tests/mod_repo_check/fixtures/tidy"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.edat_ok"
   "note": "E-Prime files with their .txt exports"
   "r": "identity"
@@ -293,9 +272,6 @@
       "id": "p_local"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/edat_ok"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.zip"
   "note": "local archives are not peeked (no URL)"
   "r": "identity"
@@ -313,9 +289,6 @@
       "id": "p_local"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/zip_local"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.rpkg"
   "note": "an R package tree is excluded"
   "r": "identity"
@@ -333,9 +306,6 @@
       "id": "p_local"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/rpkg"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.desc_only"
   "note": "DESCRIPTION without NAMESPACE is kept"
   "r": "identity"
@@ -353,9 +323,6 @@
       "id": "p_local"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/desc_only"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.rpkg_root"
   "note": "a root package that is the deposit is kept"
   "r": "identity"
@@ -373,9 +340,6 @@
       "id": "p_local"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/rpkg_root"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.vendored"
   "note": "a vendored package is excluded"
   "r": "identity"
@@ -393,9 +357,6 @@
       "id": "p_local"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/vendored"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.missing_path"
   "note": "a local path that does not exist: an empty local repository"
   "r": "identity"
@@ -413,9 +374,6 @@
       "id": "p_local"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/does_not_exist"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.local.paperlist"
   "note": "a paper list with a local path: the local folder belongs to the first paper"
   "r": "identity"
@@ -435,9 +393,6 @@
       "id": "p_b"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/tidy"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.629bx"
   "note": "OSF project: code, data and a zip, no README"
   "r": "identity"
@@ -780,9 +735,6 @@
       "id": "p_osf_local"
     "args":
       "local_path": "upstream/metacheck/tests/testthat/fixtures/code_files"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.local_only"
   "note": "local_only = TRUE with an OSF link and a local folder"
   "r": "identity"
@@ -802,9 +754,6 @@
     "args":
       "local_path": "upstream/metacheck/tests/testthat/fixtures/code_files"
       "local_only": true
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.no_peek"
   "note": "peek_zips = FALSE"
   "r": "identity"
@@ -908,9 +857,6 @@
     - "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/tidy"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.zenodo.zip"
   "note": "a Zenodo record with one zip"
   "r": "identity"
@@ -1068,9 +1014,6 @@
     - "url":
       - "https://github.com/gzorg/treerepo"
       "id": "p_github_tree"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.github.truncated"
   "note": "a truncated GitHub tree is not listed (gated)"
   "r": "identity"
@@ -1087,9 +1030,6 @@
     - "url":
       - "https://github.com/gzorg/bigrepo"
       "id": "p_github_truncated"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.github.empty"
   "note": "an empty GitHub repository"
   "r": "identity"
@@ -1106,9 +1046,6 @@
     - "url":
       - "https://github.com/gzorg/emptyrepo"
       "id": "p_github_empty"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.gitlab.project"
   "note": "a GitLab project in a subgroup"
   "r": "identity"
@@ -1125,9 +1062,6 @@
     - "url":
       - "https://gitlab.com/gzorg/sub/glproj"
       "id": "p_gitlab_project"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.gitlab.big"
   "note": "a GitLab project with a paginated tree"
   "r": "identity"
@@ -1144,9 +1078,6 @@
     - "url":
       - "https://gitlab.com/gzorg/bigproj"
       "id": "p_gitlab_big"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.gitlab.missing"
   "note": "a GitLab project that does not exist (gated)"
   "r": "identity"
@@ -1163,9 +1094,6 @@
     - "url":
       - "https://gitlab.com/gzorg/missing"
       "id": "p_gitlab_missing"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.zenodo.records"
   "note": "two Zenodo records"
   "r": "identity"
@@ -1183,9 +1111,6 @@
       - "https://zenodo.org/records/5550001"
       - "https://zenodo.org/records/5550005"
       "id": "p_zenodo_records"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.zenodo.peek"
   "note": "zip peeking: a listable zip, a non-zip .zip, a .tar.gz, an E-Prime file, a nameless file"
   "r": "identity"
@@ -1202,9 +1127,6 @@
     - "url":
       - "https://zenodo.org/records/5559001"
       "id": "p_zenodo_peek"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.dataverse"
   "note": "a Dataverse dataset and one that does not exist"
   "r": "identity"
@@ -1222,9 +1144,6 @@
       - "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123"
       - "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE"
       "id": "p_dataverse"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.figshare"
   "note": "a Figshare article and project"
   "r": "identity"
@@ -1242,9 +1161,6 @@
       - "https://doi.org/10.6084/m9.figshare.18093368.v1"
       - "https://figshare.com/projects/PERICLES_-_Heritage_values/133332"
       "id": "p_figshare"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.figshare.share_link"
   "note": "a private Figshare share link"
   "r": "identity"
@@ -1262,8 +1178,6 @@
       - "https://figshare.com/s/5e01cc0cae4cf3e2e14f"
       "id": "p_figshare_share_link"
   "compare":
-    "ignore":
-    - "table.file_location"
     "presence":
     - "gated_repos.repo_error"
 - "id": "repo_check.dryad"
@@ -1283,9 +1197,6 @@
       - "https://doi.org/10.5061/dryad.j1fd7"
       - "https://doi.org/10.5061/dryad.missing"
       "id": "p_dryad"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.reshare"
   "note": "ReShare deposits"
   "r": "identity"
@@ -1303,9 +1214,6 @@
       - "https://doi.org/10.5255/UKDA-SN-854001"
       - "https://doi.org/10.5255/UKDA-SN-854100"
       "id": "p_reshare"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.researchdata4tu"
   "note": "a 4TU.ResearchData dataset"
   "r": "identity"
@@ -1322,9 +1230,6 @@
     - "url":
       - "https://doi.org/10.4121/16766929.v1"
       "id": "p_researchdata4tu"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.mendeley"
   "note": "a Mendeley Data dataset"
   "r": "identity"
@@ -1341,9 +1246,6 @@
     - "url":
       - "https://data.mendeley.com/datasets/vjtxybrc28"
       "id": "p_mendeley"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.dataone"
   "note": "a DataONE (KNB) dataset"
   "r": "identity"
@@ -1360,9 +1262,6 @@
     - "url":
       - "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY"
       "id": "p_dataone"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.dataone.nameless"
   "note": "a DataONE file without a name: the module fails (as in R)"
   "r": "identity"
@@ -1417,9 +1316,6 @@
     - "url":
       - "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5"
       "id": "p_dspace7"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.dspace.psycharchives"
   "note": "a PsychArchives item (metacheck's recordings)"
   "r": "identity"
@@ -1436,9 +1332,6 @@
     - "url":
       - "https://www.psycharchives.org/handle/20.500.12034/17526"
       "id": "p_dspace_psycharchives"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.dspace.bonndoc"
   "note": "a legacy DSpace item without public files"
   "r": "identity"
@@ -1455,9 +1348,6 @@
     - "url":
       - "https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234"
       "id": "p_dspace_bonndoc"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.dspace.restricted"
   "note": "a legacy DSpace item with restricted access"
   "r": "identity"
@@ -1474,9 +1364,6 @@
     - "url":
       - "https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678"
       "id": "p_dspace_restricted"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.researchbox"
   "note": "a ResearchBox box (downloaded and unzipped)"
   "r": "identity"
@@ -1493,9 +1380,6 @@
     - "url":
       - "https://researchbox.org/4377"
       "id": "p_researchbox"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.reg_closed_mirror"
   "note": "a registration whose source project is closed; files from the registration"
   "r": "identity"
@@ -1512,9 +1396,6 @@
     - "url":
       - "https://osf.io/regc1"
       "id": "p_osf_reg_closed_mirror"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.reg_closed"
   "note": "a registration whose source project is closed; no files anywhere"
   "r": "identity"
@@ -1531,9 +1412,6 @@
     - "url":
       - "https://osf.io/regc2"
       "id": "p_osf_reg_closed"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.reg_closed_plural"
   "note": "two closed source projects of each kind"
   "r": "identity"
@@ -1553,9 +1431,6 @@
       - "https://osf.io/regc5"
       - "https://osf.io/regc6"
       "id": "p_osf_reg_closed_plural"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.reg_public_parent"
   "note": "a registration whose public source project holds the files"
   "r": "identity"
@@ -1572,9 +1447,6 @@
     - "url":
       - "https://osf.io/regp3"
       "id": "p_osf_reg_public_parent"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.reg_parent_linked"
   "note": "a registration and its source project, both linked"
   "r": "identity"
@@ -1592,9 +1464,6 @@
       - "https://osf.io/regp3"
       - "https://osf.io/parp3"
       "id": "p_osf_reg_parent_linked"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.reg_orphan"
   "note": "a registration without a source project"
   "r": "identity"
@@ -1611,9 +1480,6 @@
     - "url":
       - "https://osf.io/regor"
       "id": "p_osf_reg_orphan"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.osf.private"
   "note": "a private OSF project"
   "r": "identity"
@@ -1630,9 +1496,6 @@
     - "url":
       - "https://osf.io/privn"
       "id": "p_osf_private"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.all_platforms"
   "note": "every platform in one paper"
   "r": "identity"
@@ -1861,9 +1724,6 @@
     - "url":
       - "https://www.psycharchives.org/handle/20.500.12034/99991"
       "id": "p_dspace_unfound"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.dspace.unfound_two"
   "note": "two PsychArchives items that do not exist"
   "r": "identity"
@@ -1882,8 +1742,6 @@
       - "https://www.psycharchives.org/handle/20.500.12034/99992"
       "id": "p_dspace_unfound_two"
   "compare":
-    "ignore":
-    - "table.file_location"
     "presence":
     - "gated_repos.repo_error"
 - "id": "repo_check.dspace.found_and_unfound"
@@ -1903,9 +1761,6 @@
       - "https://www.psycharchives.org/handle/20.500.12034/17526"
       - "https://www.psycharchives.org/handle/20.500.12034/99991"
       "id": "p_dspace_found_and_unfound"
-  "compare":
-    "ignore":
-    - "table.file_location"
 - "id": "repo_check.dspace7.unfound"
   "note": "a DSpace 7 item that does not exist"
   "r": "identity"
@@ -1922,6 +1777,3 @@
     - "url":
       - "https://repository.gatech.edu/entities/publication/00000000-0000-4000-8000-000000000000"
       "id": "p_dspace7_unfound"
-  "compare":
-    "ignore":
-    - "table.file_location"

@@ -2,7 +2,8 @@
 # Installs the metacheck preview app into one folder and opens it.
 #
 #   curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh
-#   sh install.sh [--no-launch] [--steward] [--preset NAME] [--uninstall]
+#   sh install.sh [--no-launch] [--steward] [--preset NAME] [--setup] [--no-setup]
+#                 [--with-bibr] [--uninstall]
 #   curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --uninstall
 #
 # Everything goes into METACHECK_HOME (default: ~/.local/share/metacheck):
@@ -11,6 +12,7 @@
 #   METACHECK_NO_LAUNCH=1     same as --no-launch
 #   METACHECK_STEWARD=1       same as --steward
 #   METACHECK_APP_PRESET=NAME same as --preset NAME
+#   METACHECK_NO_SETUP=1      same as --no-setup
 #   METACHECK_UNINSTALL=1     same as --uninstall
 #   METACHECK_REF=<commit>    install this commit instead of the pinned one
 #   METACHECK_SPEC=<spec>     install this requirement instead of the GitHub archive
@@ -22,6 +24,11 @@
 #
 # --preset NAME opens the app with that preset chosen, for example a pack's
 # (pack::name). A data package preset opens the "Check a data package" page.
+#
+# After the install a short guided setup asks what you want to check, how papers are read
+# (a bibr key, or bibr on this computer, which is installed only if you choose it) and your
+# email address for open APIs such as OSF. It asks once; --setup asks again, --no-setup
+# never asks, and it is skipped when no terminal is there. Then the app opens.
 #
 # The whole script is one function called on the last line, so a download that
 # stops half way runs nothing.
@@ -48,6 +55,9 @@ main() {
   launch=1
   steward=0
   uninstall=0
+  setup=auto
+  with_bibr=0
+  [ "${METACHECK_NO_SETUP:-}" = "1" ] && setup=off
   [ "${METACHECK_NO_LAUNCH:-}" = "1" ] && launch=0
   [ "${METACHECK_STEWARD:-}" = "1" ] && steward=1
   [ "${METACHECK_UNINSTALL:-}" = "1" ] && uninstall=1
@@ -57,6 +67,9 @@ main() {
       --no-launch) launch=0 ;;
       --steward) steward=1 ;;
       --uninstall) uninstall=1 ;;
+      --setup) setup=always ;;
+      --no-setup) setup=off ;;
+      --with-bibr) with_bibr=1 ;;
       --preset)
         [ "$#" -ge 2 ] || die "--preset needs the name of a preset"
         preset="$2"
@@ -64,10 +77,10 @@ main() {
         ;;
       --preset=*) preset="${1#--preset=}" ;;
       -h | --help)
-        say "Usage: sh install.sh [--no-launch] [--steward] [--preset NAME] [--uninstall]"
+        say "Usage: sh install.sh [--no-launch] [--steward] [--preset NAME] [--setup] [--no-setup] [--with-bibr] [--uninstall]"
         return 0
         ;;
-      *) die "unknown option: $1 (use --no-launch, --steward, --preset NAME or --uninstall)" ;;
+      *) die "unknown option: $1 (use --no-launch, --steward, --preset NAME, --setup, --no-setup, --with-bibr or --uninstall)" ;;
     esac
     shift
   done
@@ -288,9 +301,19 @@ main() {
   force=""
   [ ! -d "$old_dir" ] || force="--force"
 
+  # bibr on this computer is added to the same tool environment, only when asked for.
+  install_app() {
+    if [ "$with_bibr" = "1" ]; then
+      # shellcheck disable=SC2086 # $force is empty or one flag
+      run_uv tool install $force --managed-python --python 3.12 --with "bibr>=0.6.0" "$spec" -c "$constraints"
+    else
+      # shellcheck disable=SC2086
+      run_uv tool install $force --managed-python --python 3.12 "$spec" -c "$constraints"
+    fi
+  }
+
   say "Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ..."
-  # shellcheck disable=SC2086 # $force is empty or one flag
-  if ! run_uv tool install $force --managed-python --python 3.12 "$spec" -c "$constraints"; then
+  if ! install_app; then
     if [ -n "$force" ]; then
       die "the install failed. The earlier version is still installed. If it keeps failing, please tell us at $ISSUES_URL"
     fi
@@ -310,6 +333,19 @@ main() {
       fi
     done
     rm -rf "${old_dir:?}"
+  fi
+
+  # The guided setup. A pinned commit from before it existed has no command: skipped.
+  setup_bin="$bin_dir/metacheck-setup"
+  if [ "$setup" != "off" ] && [ -x "$setup_bin" ]; then
+    set --
+    [ "$steward" != "1" ] || set -- --data-only
+    [ "$setup" = "always" ] || set -- "$@" --if-new
+    if "$setup_bin" "$@" --result "$tmp/setup-result" && grep -q '^install_bibr=1' "$tmp/setup-result" 2>/dev/null; then
+      with_bibr=1
+      say "Adding bibr (several GB of models are downloaded the first time it reads a paper) ..."
+      install_app || die "adding bibr failed. metacheck itself is installed; run this again with --with-bibr to retry. If it keeps failing, please tell us at $ISSUES_URL"
+    fi
   fi
 
   rm -rf "$tmp"

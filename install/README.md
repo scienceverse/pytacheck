@@ -41,6 +41,17 @@ The scripts open the page only when the installed app has the `--page` option
 (they ask it with `--help`). The pinned commit below can be older than the page;
 a steward install of such a commit opens the app on the paper page, and says so.
 
+## The setup wizard
+
+After the install the scripts run `metacheck-setup` (`src/metacheck/app/setup.py`) when the installed
+version has it, with the questions on the terminal (`/dev/tty` under `curl | sh`). It saves the
+email and the bibr choice (`settings.py`, `app-settings.json`) and a pasted bibr key (`app-keys.json`),
+and writes `install_bibr=1` to the `--result` file when bibr must be installed. The script then
+runs `uv tool install --with "bibr>=0.6.0"` again, so bibr is in the environment only on request.
+`--if-new` makes later runs of the install line silent; `--setup` asks again; `--no-setup` or
+`METACHECK_NO_SETUP=1` never asks; `--steward` passes `--data-only`. A pinned commit older than the
+wizard has no command and is installed as before.
+
 ## `--preset`
 
 `sh install.sh --preset NAME` (Windows: `.\install.ps1 -Preset NAME`, or
