@@ -14,10 +14,10 @@ class PytacheckWarning(UserWarning):
 
 
 class StaleDocumentError(RuntimeError):
-    """A paper's text or section table was edited in place after its Doc was built.
+    """A paper's indexed text or reference tables were edited in place.
 
     Raised only while ``METACHECK_CHECK_MUTATION=1`` and inside a trusted scope
     (``run_modules()``, ``report()``), which read each paper's tables once and
-    so would go on using the Doc of the old values. A module must copy a paper
+    so would go on using cached values. A module must copy a paper
     before it changes it.
     """

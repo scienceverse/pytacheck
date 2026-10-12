@@ -106,7 +106,17 @@ change can only land when it matches R.
 * lazy imports keep `import pytacheck` free of pandas/scipy/httpx;
 * lazy table materialisation and corpus-wide record concatenation;
 * compiled, cached R-regex translations and the literal prefilter;
+* reference joins reused within a trusted run, with copy-on-write results;
+* native edit distance (RapidFuzz) for reference matching;
 * typed column construction without per-value Python loops when possible;
-* one pooled HTTP/2 client with polite concurrency.
+* pooled HTTP clients with shared origin-host limits (four requests to api.osf.io,
+  eight to other hosts), including across nested fetch pools;
+* concurrent OSF project listings and file-size probes, with duplicate metadata
+  requests sharing their in-flight work within a listing; failed requests retry;
+* complete public OSF trees persisted with `cache=True` for five minutes by
+  default (`metacheck.osf.cache_ttl`, in seconds; zero disables tree reuse).
+  Incomplete and failed listings are not reused; private and view-only trees
+  are never persisted. Extracted ZIP members are reused only after their size
+  and CRC agree with the archive listing.
 
 `benchmarks/compare_r.py` times the same work in R and Python.

@@ -7,6 +7,13 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Performance: repository fetching and reference checks
+
+- OSF projects are listed concurrently in input order, and duplicate metadata requests share their in-flight work during a listing. Requests have shared origin-host limits across nested pools (four to api.osf.io, eight to other hosts); retries, rate-limit handling and cancellation still apply, including when a queued request learns that the host's quota is exhausted. Unknown file sizes are probed concurrently once per distinct URL; repositories refused by the file-count cap need no probes.
+- With `cache=True`, complete public recursive OSF listings survive a process restart for five minutes (`metacheck.osf.cache_ttl` sets the lifetime in seconds; zero disables tree reuse). Failed and incomplete listings are not reused, and private or view-only trees are not persisted. Already extracted ZIP members are checked against the listing's size and CRC before reuse; corrupt or partial files are fetched again.
+- Reference checks reuse the reference table within a trusted run, returning copy-on-write views. Table replacement, paper-ID changes and later runs invalidate it; direct calls outside a run always rebuild. The CI mutation check covers bibliography tables too.
+- RapidFuzz is now a core dependency: reference matching always uses native edit distance, and its quadratic Python fallback is removed. Reference-check results are unchanged.
+
 ### Added: a data package in the paper box, from an archive or a repository link
 
 - **Added:** the app's paper page has one box for everything. Drop a paper (PDF, GROBID XML or bibr JSON) and it is checked as before; drop a zip or tar archive of a data package, or type the link of a public repository (GitHub, GitLab, OSF or Zenodo), and it is checked as a data package with the preset chosen under "Choose the checks" (the new "For a data package" choice). A folder on this computer can be typed in the box too. The page tells the three apart, and says in plain words what it cannot check.
