@@ -920,7 +920,7 @@ def _codes_as_numeric(codes: Any) -> list[float]:
     """``as.numeric(names(codes) %||% codes)`` without NA."""
     import pandas as pd
 
-    from metacheck.datacheck._checks_rvec import as_numeric_str
+    from metacheck._values import as_float
     from metacheck.modules._codebook import _na, _pstr
 
     if codes is None:
@@ -940,7 +940,7 @@ def _codes_as_numeric(codes: Any) -> list[float]:
         elif isinstance(v, int | float):
             f = float(v)
         else:
-            f = as_numeric_str(_pstr(v))
+            f = as_float(_pstr(v))
         if f is not None and not math.isnan(f):
             out.append(f)
     return out
@@ -1061,7 +1061,6 @@ def _scales_report(sg: Any, cb: Any) -> list[Any]:
     import pandas as pd
 
     from metacheck._r.base import plural
-    from metacheck.datacheck._checks_rvec import tolower
     from metacheck.report import scroll_table
 
     _ok, _vals, _pstr = cb._ok, cb._vals, cb._pstr
@@ -1095,10 +1094,8 @@ def _scales_report(sg: Any, cb: Any) -> list[Any]:
         tots = _vals(sg, "totals_only") or [None] * n
         tot = [bool(t) if t is not None else False for t in tots]
         tot = [t and _ok(s) for t, s in zip(tot, scale, strict=True)]
-        have_items = {tolower(s) for s, t in zip(scale, tot, strict=True) if not t and _ok(s)}
-        orphan = [
-            t and tolower(_pstr(s)) not in have_items for t, s in zip(tot, scale, strict=True)
-        ]
+        have_items = {_pstr(s).lower() for s, t in zip(scale, tot, strict=True) if not t and _ok(s)}
+        orphan = [t and _pstr(s).lower() not in have_items for t, s in zip(tot, scale, strict=True)]
         if any(orphan):
             files = _vals(sg, "source_file") or [None] * n
             cols = sg["columns"].tolist()

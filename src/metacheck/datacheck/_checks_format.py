@@ -13,18 +13,8 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.regex import grepl, regexec
-from metacheck.datacheck._checks_rvec import (
-    RVec,
-    as_numeric_str,
-    chr,
-    df_columns,
-    row_as_character,
-    rvec,
-    scalar_chr,
-    tolower,
-    toupper,
-    trim,
-)
+from metacheck._values import as_float
+from metacheck.datacheck._kinds import TEXT, WS, as_text, kind, row_texts
 
 __all__ = [
     "_QUALTRICS_META_COLS",
@@ -76,7 +66,7 @@ _QUALTRICS_META_COLS: dict[str, str] = {
 def _key(nm: str | None) -> str | None:
     if nm is None:
         return None
-    low = tolower(nm) or ""
+    low = nm.lower()
     return "".join(c for c in low if "a" <= c <= "z" or "0" <= c <= "9")
 
 
@@ -88,7 +78,7 @@ def _qualtrics_key(nm: Any) -> Any:
     """
     if isinstance(nm, str) or nm is None:
         return _key(nm)
-    return [_key(s) for s in chr(nm)]
+    return [_key(s) for s in as_text(nm)]
 
 
 def _qualtrics_tag_cols(col_names: Any) -> list[str | None]:
@@ -96,7 +86,9 @@ def _qualtrics_tag_cols(col_names: Any) -> list[str | None]:
 
     Port of ``R/data_check_helpers.R::.qualtrics_tag_cols()``.
     """
-    return [None if k is None else _QUALTRICS_META_COLS.get(k) for k in map(_key, chr(col_names))]
+    return [
+        None if k is None else _QUALTRICS_META_COLS.get(k) for k in map(_key, as_text(col_names))
+    ]
 
 
 def _qualtrics_col_stem(nm: Any) -> str | None:
@@ -106,10 +98,10 @@ def _qualtrics_col_stem(nm: Any) -> str | None:
     metadata columns and names whose stem has fewer than two letters.
     """
     if nm is not None and not isinstance(nm, str):
-        v = chr(nm)
+        v = as_text(nm)
         if len(v) > 1:  # `is.na(nm) || ...` on a vector
             raise ValueError(f"'length = {len(v)}' in coercion to 'logical(1)'")
-    nm = scalar_chr(nm)
+        nm = v[0] if v else None
     if nm is None or nm == "":
         return None
     if _qualtrics_tag_cols([nm])[0] is not None:
@@ -128,7 +120,7 @@ def _qualtrics_is_display_order(col_names: Any) -> list[bool]:
 
     Port of ``R/data_check_helpers.R::.qualtrics_is_display_order()``.
     """
-    return list(grepl(r"_DO(_|$)", chr(col_names), perl=True))
+    return list(grepl(r"_DO(_|$)", as_text(col_names), perl=True))
 
 
 def _col_by_name(df: pd.DataFrame, name: str) -> pd.Series:
@@ -154,11 +146,11 @@ def data_check_is_qualtrics(df: Any, min_meta: int = 4) -> bool:
     if n_meta >= 2:
         rid = [nm for nm in names if _key(nm) == "responseid"]
         if rid:
-            v = [s for s in chr(_col_by_name(df, rid[0])) if s is not None and s != ""]
+            v = [s for s in as_text(_col_by_name(df, rid[0])) if s is not None and s != ""]
             if v and sum(grepl("^R_[A-Za-z0-9]{6,}$", v)) / len(v) >= 0.5:
                 return True
-        for col in df_columns(df):
-            if any(s is not None and "ImportId" in s for s in chr(col.iloc[:3])):
+        for j in range(df.shape[1]):
+            if any(s is not None and "ImportId" in s for s in as_text(df.iloc[:3, j])):
                 return True
     return False
 
@@ -168,7 +160,7 @@ def _qualtrics_is_header_row(row_vals: Any) -> bool:
 
     Port of ``R/data_check_helpers.R::.qualtrics_is_header_row()``.
     """
-    vals = [t for s in chr(row_vals) if s is not None and (t := trim(s)) != ""]  # type: ignore[misc]
+    vals = [t for s in as_text(row_vals) if s is not None and (t := s.strip(WS)) != ""]
     if not vals:
         return False
     if any("ImportId" in s for s in vals):
@@ -177,57 +169,13 @@ def _qualtrics_is_header_row(row_vals: Any) -> bool:
     return n_meta >= 4 if len(vals) >= 4 else n_meta == len(vals)
 
 
-class _Rows:
-    """``as.character(df[i, , drop = TRUE])`` for rows of *df* (0-based *i*).
-
-    A one-column frame gives the cell itself (``drop = TRUE``); otherwise the
-    row is a list whose elements ``as.character()`` deparses.
-    """
-
-    __slots__ = ("cols", "kinds", "levels")
-
-    def __init__(self, df: pd.DataFrame, nrows: int | None = None) -> None:
-        # Only the first *nrows* rows are read. A typed column is sliced before
-        # conversion (a categorical keeps its levels); an object column's R type
-        # comes from all of its elements, so it is converted whole.
-        self.cols = [
-            rvec(c) if nrows is None else _head_rvec(c, max(nrows, 0)) for c in df_columns(df)
-        ]
-        self.kinds = [c.kind for c in self.cols]
-        self.levels = [c.levels for c in self.cols]
-
-    def __call__(self, i: int) -> list[str | None]:
-        if len(self.cols) == 1:
-            c = self.cols[0]
-            return chr(RVec(c.kind, [c.values[i]], c.levels))
-        return row_as_character([c.values[i] for c in self.cols], self.kinds, self.levels)
-
-
-def _head_rvec(col: pd.Series, k: int) -> RVec:
-    """The first *k* values of ``rvec(col)``, converting only those where the type allows.
-
-    An object column's R type depends on all of its elements, and an integer
-    column holding a value beyond R's integer range is a double column, so
-    those are typed from the whole column.
-    """
-    dtype = col.dtype
-    whole = pd.api.types.is_object_dtype(dtype)
-    if not whole and pd.api.types.is_integer_dtype(dtype):
-        s = col.dropna()
-        whole = bool(len(s)) and max(abs(int(s.max())), abs(int(s.min()))) > 2147483647
-    if whole:
-        v = rvec(col)
-        return RVec(v.kind, v.values[:k], v.levels)
-    return rvec(col.iloc[:k])
-
-
 def _is_character_column(col: pd.Series) -> bool:
-    return rvec(col).kind == "character"
+    return kind(col) == TEXT
 
 
 def _numeric_column(values: list[str | None]) -> pd.Series:
     return pd.Series(
-        [f if (f := as_numeric_str(v)) is not None else float("nan") for v in values],
+        [f if (f := as_float(v)) is not None else float("nan") for v in values],
         dtype="float64",
     )
 
@@ -245,10 +193,10 @@ def data_strip_qualtrics_header(df: Any, max_strip: int = 2) -> Any:
     n_scan = min(int(max_strip), len(df))
     if n_scan < 0:  # seq_len() of a negative number
         raise ValueError("argument must be coercible to non-negative integer")
-    row = _Rows(df, n_scan)
+    rows = row_texts(df, n_scan)
     drop = 0
     for i in range(n_scan):
-        if _qualtrics_is_header_row(row(i)):
+        if _qualtrics_is_header_row(rows[i]):
             drop = i + 1
         else:
             break
@@ -265,11 +213,11 @@ def _retype_numeric(df: pd.DataFrame) -> pd.DataFrame:
         col = df.iloc[:, j]
         if not _is_character_column(col):
             continue
-        v = [trim(s) for s in chr(col)]
+        v = [None if s is None else s.strip(WS) for s in as_text(col)]
         nonempty = [s for s in v if s is not None and s != ""]
         if not nonempty:
             continue
-        if all((f := as_numeric_str(s)) is not None and f == f for s in nonempty):
+        if all((f := as_float(s)) is not None and f == f for s in nonempty):
             cols[j] = _numeric_column(v)
     if not cols:
         return df
@@ -289,13 +237,13 @@ def _as_num_safe(x: Any) -> list[float | None]:
     Port of ``R/data_check_helpers.R::.as_num_safe()``.
     """
     out: list[float | None] = []
-    for s in chr(x):
+    for s in as_text(x):
         if s is not None:
             try:
                 s.encode("utf-8")
             except UnicodeEncodeError:
                 s = s.encode("utf-8", "surrogateescape").decode("utf-8", "ignore")
-        out.append(as_numeric_str(s))
+        out.append(as_float(s))
     return out
 
 
@@ -311,7 +259,7 @@ def _is_placeholder_name(x: Any) -> list[bool]:
 
     Port of ``R/data_check_helpers.R::.is_placeholder_name()``.
     """
-    vals = [trim(s) for s in chr(x)]
+    vals = [None if s is None else s.strip(WS) for s in as_text(x)]
     out = [s == "" for s in vals]
     for rx, ic in _PLACEHOLDER_RES:
         hits = grepl(rx, vals, ignore_case=ic)
@@ -330,7 +278,7 @@ def _numeric_col_fraction_rows(rows: list[list[str | None]], ncols: int) -> floa
         return 0
     ok = 0
     for j in range(ncols):
-        v = [trim(r[j]) if j < len(r) else None for r in rows]
+        v = [s.strip(WS) if j < len(r) and (s := r[j]) is not None else None for r in rows]
         v2 = [s for s in v if s is not None and s != ""]
         if v2 and all(_is_num_ok(s) for s in v2):
             ok += 1
@@ -345,8 +293,8 @@ def _numeric_col_fraction(df: Any) -> float:
     if df is None or df.shape[1] == 0 or len(df) == 0:
         return 0
     ok = []
-    for col in df_columns(df):
-        v = [s for s in (trim(t) for t in chr(col)) if s is not None and s != ""]
+    for j in range(df.shape[1]):
+        v = [s for t in as_text(df.iloc[:, j]) if t is not None and (s := t.strip(WS)) != ""]
         ok.append(bool(v) and all(_is_num_ok(s) for s in v))
     return sum(ok) / len(ok)
 
@@ -356,7 +304,7 @@ def _row_duplication(vals: Any) -> float:
 
     Port of ``R/data_check_helpers.R::.row_duplication()``.
     """
-    v = [s for s in (trim(t) for t in chr(vals)) if s is not None and s != ""]
+    v = [s for t in as_text(vals) if t is not None and (s := t.strip(WS)) != ""]
     if not v:
         return 0
     return 1 - len(set(v)) / len(v)
@@ -378,8 +326,8 @@ def _is_junk_above_header(
     Port of ``R/data_check_helpers.R::.is_junk_above_header()``; only in the
     context of a reasonably well-typed body (*body_numeric* >= 0.3).
     """
-    cells = chr(vals)
-    filled = _mean([s is not None and trim(s) != "" for s in cells])
+    cells = as_text(vals)
+    filled = _mean([s is not None and s.strip(WS) != "" for s in cells])
     dup = _row_duplication(cells)
     ph = _mean(_is_placeholder_name(cells))
     if body_numeric < 0.3:
@@ -410,7 +358,7 @@ def _detect_header_row(rows: Any, max_scan: int = 4) -> dict[str, Any]:
     """
     none: dict[str, Any] = {"header_row": 0, "stripped": [], "improved": 0}
     orig = list(rows)
-    rows = [chr(r) for r in orig]
+    rows = [as_text(r) for r in orig]
     n = len(rows)
     if n < 2:
         return none
@@ -430,12 +378,12 @@ def _detect_header_row(rows: Any, max_scan: int = 4) -> dict[str, Any]:
         strip += 1
     if strip < 1:
         return none
-    hdr_vals = [trim(s) for s in rows[strip]]
+    hdr_vals = [None if s is None else s.strip(WS) for s in rows[strip]]
     ph = _is_placeholder_name(hdr_vals)
     hdr_real = [
         s
         for s, p in zip(hdr_vals, ph, strict=True)
-        if s is not None and s != "" and toupper(s) not in _NA_LIKE and not p
+        if s is not None and s != "" and s.upper() not in _NA_LIKE and not p
     ]
     hdr_text = [s for s, f in zip(hdr_real, _as_num_safe(hdr_real), strict=True) if f is None]
     if len(hdr_text) < 2:
@@ -495,20 +443,18 @@ def data_promote_header_row(df: Any, raw_rows: Any = None, max_scan: int = 4) ->
         return unchanged
     use_raw = raw_rows is not None and len(raw_rows) >= 2
     if use_raw:
-        rows = [chr(r) for r in raw_rows]
+        rows = [as_text(r) for r in raw_rows]
     else:
         n_scan = min(int(max_scan), len(df))
         if n_scan < 0:  # seq_len() of a negative number
             raise ValueError("argument must be coercible to non-negative integer")
-        row = _Rows(df, n_scan)
         header_as_row: list[str | None] = [str(c) for c in df.columns]
-        body_rows = [row(i) for i in range(n_scan)]
-        rows = [header_as_row, *body_rows]
+        rows = [header_as_row, *row_texts(df, n_scan)]
     det = _detect_header_row(rows, max_scan=max_scan)
     if det["header_row"] < 1:
         return unchanged
     hdr = det["header_row"] + 1  # R's 1-based header row
-    new_names_raw = [trim(s) for s in rows[hdr - 1]]
+    new_names_raw = [None if s is None else s.strip(WS) for s in rows[hdr - 1]]
     n_strip = len(det["stripped"])
     new_names = [
         s if s is not None and s != "" else f"V{j + 1}" for j, s in enumerate(new_names_raw)
@@ -530,7 +476,7 @@ def _retype_numeric_safe(df: pd.DataFrame) -> pd.DataFrame:
         col = df.iloc[:, j]
         if not _is_character_column(col):
             continue
-        v = [trim(s) for s in chr(col)]
+        v = [None if s is None else s.strip(WS) for s in as_text(col)]
         ne = [s for s in v if s is not None and s != ""]
         if not ne:
             continue
@@ -591,7 +537,7 @@ def _bh_is_trial_level_file(path: Any) -> bool:
     p = os.fspath(path)
     if not os.path.exists(p):
         return False
-    ext = tolower(_file_ext(p)) or ""
+    ext = _file_ext(p).lower()
     if ext in ("txt", "edat", "edat2") and _eprime_is_export(p):
         return True
     if ext not in _BH_SNIFF_EXTS:
@@ -689,7 +635,7 @@ def data_check_is_inquisit(df: Any) -> bool:
     """
     if df is None or df.shape[1] == 0:
         return False
-    nm = {tolower(c) for c in _names(df)}
+    nm = {c.lower() for c in _names(df)}
     return sum(1 for c in ("subject", "blockcode", "trialcode", "latency") if c in nm) >= 3
 
 

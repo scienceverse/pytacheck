@@ -18,21 +18,14 @@ to 60).
 from __future__ import annotations
 
 import functools
+import statistics
 from collections import Counter
 from collections.abc import Mapping
 from typing import Any
 
 from metacheck._r.regex import compile_r, grepl
-from metacheck.datacheck._checks_rvec import (
-    as_numeric_str,
-    chr,
-    fmt_pct0,
-    median,
-    rvec,
-    tolower,
-    trim,
-    unique,
-)
+from metacheck._values import as_float, is_true
+from metacheck.datacheck._kinds import NUMERIC, WS, as_text, column, kind
 
 __all__ = [
     "_ACC_NAME_RE",
@@ -203,10 +196,10 @@ def _parse_frac(v: Any, fmts: tuple[str, ...] | list[str]) -> float:
     Port of ``R/data_check_helpers.R::.parse_frac()``: numeric vectors give
     0; values over 200 characters count as unparseable.
     """
-    rv = rvec(v)
-    if rv.is_numeric:
+    col = column(v)
+    if kind(col) == NUMERIC:
         return 0
-    vals = [s for s in chr(rv) if s is not None and s != ""]
+    vals = [s for s in as_text(col) if s is not None and s != ""]
     if not vals:
         return 0
     counts = Counter(s for s in vals if len(s) <= 200)
@@ -226,10 +219,10 @@ def _parse_frac(v: Any, fmts: tuple[str, ...] | list[str]) -> float:
 def _numbers(x: Any) -> list[float]:
     """``as.numeric(gsub(",", ".", as.character(x), fixed = TRUE))`` without NA."""
     out = []
-    for s in chr(x):
+    for s in as_text(x):
         if s is None:
             continue
-        f = as_numeric_str(s.replace(",", "."))
+        f = as_float(s.replace(",", "."))
         if f is not None and f == f:
             out.append(f)
     return out
@@ -243,12 +236,12 @@ def _lower_name(col_name: Any) -> str | None:
     """
     if col_name is None:
         return None
-    names = chr(col_name)
+    names = as_text(col_name)
     if not names:
         raise ValueError("argument is of length zero")
     if len(names) > 1:
         raise ValueError("the condition has length > 1")
-    return tolower(names[0])
+    return None if names[0] is None else names[0].lower()
 
 
 def _concept_is_rt(col_name: Any, x: Any) -> bool:
@@ -276,11 +269,11 @@ def _concept_is_accuracy(col_name: Any, x: Any) -> bool:
     """
     if not grepl(_ACC_NAME_RE, _lower_name(col_name), perl=True):
         return False
-    v = [t for s in chr(x) if s is not None and (t := tolower(trim(s))) != ""]
+    v = [t for s in as_text(x) if s is not None and (t := s.strip(WS).lower()) != ""]
     if len(v) < 3:
         return True
-    u = unique(v)
-    nums = [as_numeric_str(s) for s in u]
+    u = list(dict.fromkeys(v))
+    nums = [as_float(s) for s in u]
     is01 = all(f is not None and f == f for f in nums) and all(f in (0, 1) for f in nums)
     is_bool = all(s in _BOOL_WORDS for s in u)
     return is01 or is_bool
@@ -292,9 +285,10 @@ def _concept_is_condition(col_name: Any, x: Any) -> Any:  # noqa: ARG001 - R's s
     Port of ``R/data_check_helpers.R::.concept_is_condition()`` (a bare
     ``grepl()``, so vectorised: a string gives a bool, a vector a list).
     """
+    names = [None if s is None else s.lower() for s in as_text(col_name)]
     if col_name is None or isinstance(col_name, str):
-        return bool(grepl(_COND_NAME_RE, tolower(col_name), perl=True))
-    return list(grepl(_COND_NAME_RE, [tolower(s) for s in chr(col_name)], perl=True))
+        return bool(grepl(_COND_NAME_RE, names[0] if names else None, perl=True))
+    return list(grepl(_COND_NAME_RE, names, perl=True))
 
 
 def _concept_is_timestamp(col_name: Any, x: Any) -> bool:
@@ -330,7 +324,7 @@ def data_col_concept(col_name: Any, x: Any) -> str | None:
 
     if col_name is None:
         return None
-    names = chr(col_name)
+    names = as_text(col_name)
     if len(names) != 1 or names[0] is None or names[0] == "":
         return None
     nm = _utf8_name(names[0])
@@ -372,7 +366,7 @@ def _coltype_to_facets(
     Port of ``R/data_check_helpers.R::.coltype_to_facets()``.
     """
     if ct is not None and not isinstance(ct, str):
-        v = chr(ct)
+        v = as_text(ct)
         if len(v) != 1:
             raise ValueError("EXPR must be a length 1 vector")
         ct = v[0]
@@ -380,14 +374,6 @@ def _coltype_to_facets(
             return {"rep": None, "lvl": None}
     rep, lvl = _COLTYPE_FACETS.get(ct if ct is not None else "unknown", (None, None))
     return {"rep": rep, "lvl": lvl}
-
-
-def _is_true(x: Any) -> bool:
-    """R ``isTRUE(x)``: a single, non-missing ``TRUE``."""
-    if x is None or isinstance(x, str):
-        return False
-    v = rvec(x)
-    return v.kind == "logical" and len(v) == 1 and v.values[0] is True
 
 
 def data_col_facets(
@@ -413,9 +399,9 @@ def data_col_facets(
     ct = prim.get("col_type")
     if ct is not None and ct != ct:
         ct = None
-    rv = rvec(values).drop_na()
+    rv = column(values).dropna()
     n_nona = len(rv)
-    n_unique = len(unique(rv.values))
+    n_unique = rv.nunique()
     parsed: list[list[float]] = []
 
     def nums() -> list[float]:
@@ -457,7 +443,7 @@ def data_col_facets(
         elif representation == "datetime":
             concept = "timestamp"
 
-    if concept is None and _is_true(in_scale_block):
+    if concept is None and is_true(in_scale_block):
         concept = "likert"
         measurement_level = "ordinal"
 
@@ -466,7 +452,7 @@ def data_col_facets(
 
     if (
         measurement_level is None
-        and not _is_true(prim.get("is_numeric"))
+        and not is_true(prim.get("is_numeric"))
         and representation != "empty"
         and n_nona > 0
         and len(nums()) / n_nona < 0.5
@@ -477,7 +463,7 @@ def data_col_facets(
     if concept == "reaction_time":
         pos = [v for v in nums() if v > 0]
         if pos:
-            unit = "milliseconds" if median(pos) >= 100 else "seconds"
+            unit = "milliseconds" if statistics.median(pos) >= 100 else "seconds"
         if measurement_level is None:
             measurement_level = "ratio"
     elif concept == "age":
@@ -529,8 +515,8 @@ def _tabular_usable(facets: Any, df: Any) -> dict[str, Any]:
     miss_hi = []
     for j in range(p):
         f = facets[j]
-        col = rvec(df.iloc[:, j])
-        non_na = [v for v in col.values if v is not None]
+        col = df.iloc[:, j]
+        non_na = col.dropna()
         miss_hi.append((len(col) - len(non_na)) / len(col) > 0.5 if len(col) else False)
         if _facet(f, "representation") != "text":
             is_prose.append(False)
@@ -538,12 +524,12 @@ def _tabular_usable(facets: Any, df: Any) -> dict[str, Any]:
         if _facet(f, "concept") in ("id", "date", "timestamp"):
             is_prose.append(False)
             continue
-        is_prose.append(bool(non_na) and len(unique(non_na)) / len(non_na) > 0.5)
+        is_prose.append(len(non_na) > 0 and non_na.nunique() / len(non_na) > 0.5)
     prose_frac = sum(is_prose) / p
     miss_frac = sum(miss_hi) / p
 
     def pct(v: float) -> str:
-        return f"{fmt_pct0(100 * v)}%"
+        return f"{100 * v:.0f}%"
 
     if prose_frac >= _TABULAR_PROSE_HIGH:
         return {

@@ -8,27 +8,17 @@ block detectors are 0-based (R's are 1-based).
 from __future__ import annotations
 
 import math
-from collections import Counter
 from collections.abc import Mapping
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from metacheck._r.base import paste
 from metacheck._r.regex import grepl, sub
+from metacheck._values import as_float, as_str
 from metacheck.datacheck._checks_facets import _ACC_NAME_RE, _RT_NAME_RE
-from metacheck.datacheck._checks_rvec import (
-    RVec,
-    as_numeric_str,
-    chr,
-    dbl_chr,
-    df_columns,
-    num,
-    num_chr,
-    numeric_array,
-    rvec,
-    tolower,
-)
+from metacheck.datacheck._kinds import LOGICAL, NUMERIC, as_numbers, as_text, column, kind
 
 __all__ = [
     "_SCALE_MIN_ITEMS",
@@ -57,43 +47,17 @@ _COND_TASK_RE = (
 )
 
 
-def _numeric_array(x: Any) -> Any:
-    """*x* as a float64 array (NaN = NA) when it is an R numeric vector, else ``None``."""
-    got = numeric_array(x)
-    return None if got is None else got[0]
-
-
-def _coerce_text(v: RVec) -> Any:
-    """``as.numeric(as.character(x))`` of a non-numeric vector as a float64 array,
-    ``None`` when it is empty or more than 20% missing (the shared rejection).
-
-    Distinct strings are parsed once, and parsing stops as soon as the missing
-    share is known to exceed 20%.
-    """
-    import numpy as np
-
-    strs = chr(v)
-    n = len(strs)
-    if not n:
-        return None
-    limit = 0.2 * n
-    parsed: dict[str | None, float | None] = {}
-    n_na = 0
-    for s, c in Counter(strs).items():
-        f = as_numeric_str(s)
-        parsed[s] = f
-        if f is None or f != f:
-            n_na += c
-            if n_na > limit:
-                return None
-    return np.array([np.nan if (f := parsed[s]) is None else f for s in strs], dtype="float64")
-
-
 def _values_array(x: Any) -> Any:
-    """The shared coercion step of the value classifiers: a numeric vector as is,
-    otherwise ``as.numeric(as.character(x))`` (``None`` when rejected)."""
-    a = _numeric_array(x)
-    return a if a is not None else _coerce_text(rvec(x))
+    """The shared coercion step of the value classifiers: a numeric column as is,
+    otherwise ``as.numeric(as.character(x))`` as a float64 array; ``None`` when
+    that is empty or more than 20% missing (the shared rejection)."""
+    col = column(x)
+    if kind(col) == NUMERIC:
+        return as_numbers(col)
+    a = as_numbers(as_text(col))
+    if not a.size or np.isnan(a).sum() > 0.2 * a.size:
+        return None
+    return a
 
 
 def _is_likert_item(x: Any) -> bool:
@@ -101,8 +65,6 @@ def _is_likert_item(x: Any) -> bool:
 
     Port of ``R/data_check_helpers.R::.is_likert_item()``.
     """
-    import numpy as np
-
     a = _values_array(x)
     if a is None:
         return False
@@ -121,8 +83,6 @@ def _looks_like_rt(x: Any) -> bool:
 
     Port of ``R/data_check_helpers.R::.looks_like_rt()``.
     """
-    import numpy as np
-
     a = _values_array(x)
     if a is None:
         return False
@@ -139,25 +99,9 @@ def _looks_like_rt(x: Any) -> bool:
 
 
 def _logical_count(x: Any) -> int | None:
-    """The number of non-NA values when *x* is an R logical vector, else ``None``."""
-    if _numeric_array_dtype(x):
-        return None
-    v = rvec(x)
-    if v.kind != "logical":
-        return None
-    return sum(1 for b in v.values if b is not None)
-
-
-def _numeric_array_dtype(x: Any) -> bool:
-    """Is *x* a pandas / NumPy integer or float column (so not logical)?"""
-    if isinstance(x, RVec) or not hasattr(x, "dtype"):
-        return False
-    dt = x.dtype
-    return (
-        not isinstance(dt, pd.CategoricalDtype)
-        and not pd.api.types.is_bool_dtype(dt)
-        and (pd.api.types.is_integer_dtype(dt) or pd.api.types.is_float_dtype(dt))
-    )
+    """The number of non-NA values when *x* is a logical column, else ``None``."""
+    col = column(x)
+    return int(col.notna().sum()) if kind(col) == LOGICAL and len(col) else None
 
 
 def _looks_like_accuracy(x: Any) -> bool:
@@ -165,8 +109,6 @@ def _looks_like_accuracy(x: Any) -> bool:
 
     Port of ``R/data_check_helpers.R::.looks_like_accuracy()``.
     """
-    import numpy as np
-
     n_lgl = _logical_count(x)
     if n_lgl is not None:
         return n_lgl >= 10
@@ -207,19 +149,17 @@ def _detect_task_columns(df: Any) -> pd.DataFrame:
     if df is None or not isinstance(df, pd.DataFrame) or df.shape[1] == 0:
         return _empty_task_columns()
     nm = _names(df)
-    key = [tolower(s) for s in nm]
+    key = [s.lower() for s in nm]
     rt_name = [bool(b) for b in grepl(_RT_NAME_RE, key, perl=True)]
     acc_name = [bool(b) for b in grepl(_ACC_NAME_RE, key, perl=True)]
-    cols = df_columns(df)
+    cols = [df.iloc[:, j] for j in range(df.shape[1])]
     rt_val = [_looks_like_rt(c) for c in cols]
     acc_val = [_looks_like_accuracy(c) for c in cols]
     cond_name = [bool(b) for b in grepl(_COND_TASK_RE, key, perl=True)]
     cond_shape = []
     for c in cols:
-        counts = Counter(rvec(c).values)
-        counts.pop(None, None)
-        n_obs = sum(counts.values())
-        cond_shape.append(n_obs >= 10 and 2 <= len(counts) <= 8)
+        c = c.dropna()
+        cond_shape.append(len(c) >= 10 and 2 <= c.nunique() <= 8)
     kind = [""] * len(nm)
     for i in range(len(nm)):
         if acc_name[i] and acc_val[i]:
@@ -246,8 +186,6 @@ def _is_accuracy_item(x: Any) -> bool:
 
     Port of ``R/data_check_helpers.R::.is_accuracy_item()``.
     """
-    import numpy as np
-
     n_lgl = _logical_count(x)
     if n_lgl is not None:
         return n_lgl >= 10
@@ -270,8 +208,8 @@ def _scale_name_prefix(nm: Any) -> Any:
     if isinstance(nm, str) or nm is None:
         p = sub("[._-]?[0-9]+$", "", nm)
         p = sub("[._-]+$", "", p)
-        return tolower(p)
-    return [_scale_name_prefix(s) for s in chr(nm)]
+        return None if p is None else p.lower()
+    return [_scale_name_prefix(s) for s in as_text(nm)]
 
 
 def _runs(ok: list[bool], nm: list[str], min_items: int) -> list[list[int]]:
@@ -300,7 +238,7 @@ def _detect_accuracy_blocks(df: Any, min_items: int = _TASK_ACC_MIN_ITEMS) -> li
     """
     if df is None or not isinstance(df, pd.DataFrame) or df.shape[1] == 0:
         return []
-    ok = [_is_accuracy_item(c) for c in df_columns(df)]
+    ok = [_is_accuracy_item(df.iloc[:, j]) for j in range(df.shape[1])]
     return _runs(ok, _names(df), int(min_items))
 
 
@@ -321,23 +259,21 @@ def _scale_block_range(block: Any) -> str:
     Port of ``R/data_check_helpers.R::.scale_block_range()``.
     """
     if isinstance(block, pd.DataFrame):
-        cols: list[Any] = df_columns(block)
+        cols: list[Any] = [block.iloc[:, j] for j in range(block.shape[1])]
     elif isinstance(block, Mapping):
         cols = list(block.values())
     elif (
         isinstance(block, list | tuple)
         and block
-        and all(isinstance(c, list | tuple | pd.Series | RVec) for c in block)
+        and all(isinstance(c, list | tuple | pd.Series) for c in block)
     ):
         cols = list(block)
     else:
         cols = [block]
-    v: list[float] = []
-    for c in cols:
-        v.extend(f for f in num_chr(chr(c)) if f is not None and f == f)
+    v = [f for c in cols for s in as_text(c) if (f := as_float(s)) is not None and f == f]
     if not v:
         return "?"
-    return f"{dbl_chr(min(v))}-{dbl_chr(max(v))}"
+    return f"{as_str(min(v))}-{as_str(max(v))}"
 
 
 def _detect_scale_blocks(df: Any, min_items: int = _SCALE_MIN_ITEMS) -> list[list[int]]:
@@ -348,7 +284,7 @@ def _detect_scale_blocks(df: Any, min_items: int = _SCALE_MIN_ITEMS) -> list[lis
     """
     if df is None or df.shape[1] == 0:
         return []
-    ok = [_is_likert_item(c) for c in df_columns(df)]
+    ok = [_is_likert_item(df.iloc[:, j]) for j in range(df.shape[1])]
     return _runs(ok, _names(df), int(min_items))
 
 
@@ -369,25 +305,20 @@ def _scale_block_is_ratinglike(cols: Any, source_file: Any, columns_df: Any) -> 
     key = _as_list(
         paste(list(columns_df["source_file"]), list(columns_df["column_name"]), sep="\x01")
     )
-    want = set(_as_list(paste(chr(source_file), chr(cols), sep="\x01")))
+    want = set(_as_list(paste(as_text(source_file), as_text(cols), sep="\x01")))
     idx = [i for i, k in enumerate(key) if k in want]
     if len(idx) < _SCALE_MIN_ITEMS:
         return False
-    mn = num(columns_df["min"].iloc[idx])
-    mx = num(columns_df["max"].iloc[idx])
-
-    def fin(f: float | None) -> bool:
-        return f is not None and math.isfinite(f)
-
-    numeric_frac = sum(1 for a, b in zip(mn, mx, strict=True) if fin(a) and fin(b)) / len(idx)
+    mn = as_numbers(columns_df["min"].iloc[idx])
+    mx = as_numbers(columns_df["max"].iloc[idx])
+    numeric_frac = float((np.isfinite(mn) & np.isfinite(mx)).mean())
     if numeric_frac < 0.6:
         return False
-    lo_vals = [f for f in mn if f is not None and f == f]
-    hi_vals = [f for f in mx if f is not None and f == f]
-    if not lo_vals or not hi_vals:
+    lo_vals, hi_vals = mn[~np.isnan(mn)], mx[~np.isnan(mx)]
+    if not lo_vals.size or not hi_vals.size:
         return False
-    lo = min(lo_vals)
-    hi = max(hi_vals)
+    lo = float(lo_vals.min())
+    hi = float(hi_vals.max())
     if not math.isfinite(lo) or not math.isfinite(hi):
         return False
     return lo >= -1 and hi > 1 and hi <= 100

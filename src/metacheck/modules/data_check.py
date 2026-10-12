@@ -253,9 +253,9 @@ def _eq_true(x: Any) -> bool:
 
 def _is_numeric_vec(x: Any) -> bool:
     """R ``is.numeric()`` of a data-frame column."""
-    from metacheck.datacheck._checks_rvec import rvec
+    from metacheck.datacheck._kinds import NUMERIC, kind
 
-    return rvec(x).is_numeric
+    return kind(x) == NUMERIC
 
 
 def _sample_values(df: pd.DataFrame, j: int) -> str:
