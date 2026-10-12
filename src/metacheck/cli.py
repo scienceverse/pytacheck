@@ -1041,17 +1041,24 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser(
         "package",
-        help="check a data package (a folder or archive), no paper needed",
+        help="check a data package (a folder, an archive or a repository link), no paper needed",
         description=(
-            "Check a data package: the folder (or zip or tar archive) of data, code and "
-            "documentation that comes with a paper. Everything runs on this machine; an "
-            "archive is extracted to a temporary folder and removed afterwards. The one "
+            "Check a data package: the folder (or zip or tar archive, or the link of a public "
+            "repository on GitHub, GitLab, OSF or Zenodo) of data, code and documentation "
+            "that comes with a paper. The checks run on this machine; an archive is "
+            "extracted to a temporary folder and removed afterwards, and a link is "
+            "downloaded to one first (nothing is sent but the request for it). The other "
             "exception is --abstract-lookup, which you have to ask for: it fetches the "
             "paper's abstract by its DOI, and sends nothing but the DOI. Without -o the "
             "results are printed; with -o (or -f) a report is written."
         ),
     )
-    p.add_argument("path", metavar="PATH", help="the package's folder, or a zip or tar archive")
+    p.add_argument(
+        "path",
+        metavar="PATH",
+        help="the package's folder, a zip or tar archive, or the link of a public repository "
+        "(for example https://github.com/owner/repo or https://zenodo.org/records/1234567)",
+    )
     _selection_flags(
         p,
         module_help="module name, pack::name or path (repeatable); "

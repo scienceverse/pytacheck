@@ -32,6 +32,12 @@ TOKEN_B = "b-second-token-" + "x" * 20
 HOST = "metacheck.example.org"
 BASE = f"https://{HOST}"
 PORT = 7861
+PACKAGE = "datapackage::default"
+
+
+def box(path: str) -> dict[str, Any]:
+    """The value of the page's one box when a file was dropped on it."""
+    return {"text": "", "files": [{"path": path, "meta": {"_type": "gradio.FileData"}}]}
 
 
 @pytest.fixture(autouse=True, scope="module")
@@ -347,15 +353,16 @@ def test_no_state_file_is_written(client: TestClient, state_dir: Path) -> None:
 
 
 #: the other inputs of both buttons: online, data check, PDF reader, bibr key, remember,
-#: the ticked checks (the page's first ticks) and the preset
-SETTINGS = [False, False, "grobid", "", False, checks.selected_checks(), ""]
+#: the ticked checks (the page's first ticks), the preset, the preset for a data package
+#: and the local classifier
+SETTINGS = [False, False, "grobid", "", False, checks.selected_checks(), "", PACKAGE, True]
 
 
 def _join(
     client: TestClient, fn_index: int, path: str, session: str, settings: list[Any] = SETTINGS
 ) -> str:
     body = {
-        "data": [{"path": path, "meta": {"_type": "gradio.FileData"}}, *settings],
+        "data": [box(path), *settings],
         "fn_index": fn_index,
         "session_hash": session,
     }
@@ -371,7 +378,7 @@ def _join(
 
 def _fn_index(client: TestClient) -> int:
     deps = client.get("/config").json()["dependencies"]
-    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 8)
+    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 10)
     return int(dep["id"])
 
 
@@ -423,8 +430,8 @@ def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch, tmp_p
     tc.__enter__()
     tc.get(f"/?token={TOKEN_A}")
     deps = tc.get("/config").json()["dependencies"]
-    (check_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 8)
-    (demo_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 7)
+    (check_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 10)
+    (demo_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 9)
     uploads = [_upload(tc, f"shared{n}") for n in range(3)]
 
     def click(button: str, number: int) -> None:
@@ -479,7 +486,7 @@ def test_the_upload_field_is_cleared_after_a_run(env: pytest.MonkeyPatch) -> Non
         events = _join(tc, fn, _upload(tc, "h3"), "h3")
         done = next(ln for ln in events.split("data: ") if '"process_completed"' in ln)
         output = json.loads(done)["output"]["data"]
-        assert len(output) == 8 and output[-1] is None
+        assert len(output) == 9 and output[-1] == {"text": "", "files": []}
         # a second click on a file that is gone says so in plain words
         gone = _upload(tc, "h4")
         Path(gone).unlink()
@@ -489,7 +496,7 @@ def test_the_upload_field_is_cleared_after_a_run(env: pytest.MonkeyPatch) -> Non
 def _join_with_data(client: TestClient, path: str, session: str) -> str:
     body = {
         "data": [
-            {"path": path, "meta": {"_type": "gradio.FileData"}},
+            box(path),
             False,
             True,  # the data check
             "grobid",
@@ -497,6 +504,8 @@ def _join_with_data(client: TestClient, path: str, session: str) -> str:
             False,
             checks.selected_checks(),
             "",
+            PACKAGE,
+            True,
         ],
         "fn_index": _fn_index(client),
         "session_hash": session,
@@ -652,7 +661,7 @@ def test_a_hosted_server_sends_a_pdf_to_bibr_serve(
             _fn_index(tc),
             path,
             "h8",
-            [False, False, "bibr", "", False, checks.selected_checks(), ""],
+            [False, False, "bibr", "", False, checks.selected_checks(), "", PACKAGE, True],
         )
     assert re.search(r"Ran \d+ checks", events), events[-500:]
     assert key not in events

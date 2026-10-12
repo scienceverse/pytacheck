@@ -21,6 +21,7 @@ import gradio as gr
 from metacheck.app import bibr
 from metacheck.app import checks as catalog
 from metacheck.app import hosted as hosting
+from metacheck.app import package as pk
 from metacheck.app.checks import validated_checks
 from metacheck.app.run import Analysis, DataJob, Row, Run, UserError, begin, protect, scratch_dir
 
@@ -34,7 +35,9 @@ __all__ = [
     "QUEUE_KWARGS",
     "REPORT_SANDBOX",
     "Sessions",
+    "analyse_package",
     "build_app",
+    "coloured",
     "report_frame",
 ]
 
@@ -91,8 +94,20 @@ ABOUT_DATA = (
 )
 INTRO = (
     "Upload a research paper and get a report on its reporting practices: "
-    "statistics, power, open science and references."
+    "statistics, power, open science and references. Or check the data package that "
+    "comes with a paper: upload its archive, or paste the link of its repository."
 )
+BOX_LABEL = "Your paper, data package or repository link"
+BOX_PLACEHOLDER = "Drop a file here, or paste a link"
+BOX_INFO = (
+    "A paper: a PDF, a GROBID XML file or a bibr JSON file. A data package: a zip or tar "
+    "archive, or the link of a public repository on GitHub, GitLab, OSF or Zenodo"
+)
+BOX_INFO_LOCAL = f"{BOX_INFO}, or the path of its folder on this computer."
+#: what the box accepts as a file: the paper formats, and the archives of a data package
+BOX_FILE_TYPES = [*pk.PAPER_SUFFIXES, ".zip", ".tar", ".gz", ".tgz", ".bz2", ".xz"]
+#: the box when nothing is in it
+EMPTY_BOX = {"text": "", "files": []}
 PRIVACY = (
     "PDFs are turned into text by the public GROBID server at TU Eindhoven, which R "
     "metacheck also uses, so a PDF you upload is sent there. If that server does not "
@@ -103,11 +118,33 @@ PRIVACY_BIBR = (
     "PDFs are sent to the scienceverse bibr service to be turned into text. "
     "XML and JSON files are checked on this computer."
 )
+PRIVACY_PACKAGE = (
+    "A data package is checked on this computer, and none of it is sent anywhere. For a "
+    "repository link, this computer downloads the repository from its host (GitHub, GitLab, "
+    "OSF or Zenodo)."
+)
 READERS = [
     ("GROBID (public server at TU Eindhoven)", "grobid"),
     ("bibr (the scienceverse service; needs a key)", "bibr"),
 ]
 PICKER_TITLE = "Choose the checks"
+PACKAGE_PICKER = "**For a data package**"
+PACKAGE_PRESET_LABEL = "Check a data package with"
+PACKAGE_PRESET_INFO = (
+    "Which checks run on an archive or a repository. Presets from the packs installed on "
+    "this computer are listed too."
+)
+CLASSIFIER_LABEL = "Name the concept of each data column with the local classifier"
+#: the box is ticked by default, as the classifier is the default of ``metacheck package``
+CLASSIFIER_INFO = (
+    "It needs the concepts extra, and its model (about 840 MB) is downloaded the first time. "
+    "Untick it to name the concepts by rules only, with no download."
+)
+#: the same, when the extra is not installed: the box can stay ticked, the run falls back
+CLASSIFIER_MISSING_INFO = (
+    "Not installed on this computer, so the concepts will come from rules only. To get it, "
+    'install the concepts extra: `pip install "metacheck[concepts]"`.'
+)
 PICKER_INTRO = (
     "The ticked checks run on your paper. Checks that take minutes, or need a key or a "
     "server of their own, are not offered here; run them with the pytacheck command."
@@ -147,7 +184,7 @@ CSS = (
     "padding-top:12px;font-size:0.9rem;color:var(--body-text-color-subdued)} "
     "#mc-footer p{margin:0 0 6px}"
 )
-EXPIRED = "Your upload is no longer on the server. Upload the paper again."
+EXPIRED = "Your upload is no longer on the server. Upload it again."
 DATA_TOO_SLOW = (
     "The data check took longer than this server allows, so it was stopped. "
     "The other results are complete."
@@ -238,6 +275,37 @@ def analyse_upload(
     return started.finish(job)
 
 
+def analyse_package(
+    source: str,
+    preset: str,
+    workdir: str,
+    limits: pk.Limits,
+    progress: Callable[[float, str], None],
+) -> pk.PackageAnalysis:
+    """One hosted run on a data package (an uploaded archive or a link), in its own process.
+
+    The server makes ``workdir`` and removes it, so a run ended at the time limit leaves no
+    report behind. Everything this run downloads and unpacks goes into it as well: a process
+    that is killed cleans up nothing itself. The concepts of the data columns come from rules
+    (the local classifier's model is not for a shared server).
+    """
+    import tempfile
+
+    from metacheck.datapackage import is_link
+
+    if not is_link(source) and not Path(source).is_file():
+        raise UserError(EXPIRED)
+    tempfile.tempdir = workdir
+    return pk.check_package_source(
+        source,
+        preset,
+        report_dir=Path(workdir) / "report",
+        local_classifier=False,
+        progress=progress,
+        limits=limits,
+    )
+
+
 def report_frame(page: str) -> str:
     """The report inside a sandboxed iframe, under a policy that lets only its own script run."""
     return (
@@ -302,6 +370,29 @@ def table_value(rows: list[Row]) -> Any:
     return frame.style.apply(
         lambda column: [_light_style(str(cell)) for cell in column], subset=["Result"]
     )
+
+
+def coloured(frame: Any, column: str = "Status") -> Any:
+    """*frame* for a table, the cells of its status column coloured by their traffic light.
+
+    The word stays in the cell, so the colour is never the only signal. Colours are those
+    of the paper page's results.
+    """
+    return frame.style.apply(
+        lambda col: [_light_style(pk.status_light(str(cell)) or "") for cell in col],
+        subset=[column],
+    )
+
+
+def package_summary(analysis: pk.PackageAnalysis) -> str:
+    """The line above the results of a data package: its name, the time and the counts."""
+    text = (
+        f"Checked **{plain_markdown(analysis.name)}** in {analysis.seconds:.1f} s: "
+        f"{pk.counts_line(analysis.checklist)}."
+    )
+    if analysis.note:
+        text += f"\n\n{analysis.note}"  # our own text, not the package's
+    return text
 
 
 def _summary(analysis: Analysis) -> str:
@@ -381,15 +472,32 @@ def build_app(
     shared = hosted is not None
     remember_keys = remember_keys and not shared
 
+    def download_link(report: Path, page: str, session: str) -> str:
+        """The link to the report: on a shared server the page itself, else the file."""
+        if shared:
+            return hosting.data_link(report.name, protect(page))
+        return _download_link(session, report)
+
     def page(analysis: Analysis, session: str) -> tuple[Any, ...]:
+        """What the results show for a paper: the checklist of a data package is hidden."""
         return (
             gr.update(visible=True),
             _summary(analysis),
             table_value(analysis.rows),
+            gr.update(visible=False, value=None),
             report_frame(analysis.html),
-            hosting.data_link(analysis.report_path.name, protect(analysis.html))
-            if shared
-            else _download_link(session, analysis.report_path),
+            download_link(analysis.report_path, analysis.html, session),
+        )
+
+    def package_page(analysis: pk.PackageAnalysis, session: str) -> tuple[Any, ...]:
+        """What the results show for a data package: its checks, and its checklist as well."""
+        return (
+            gr.update(visible=True),
+            package_summary(analysis),
+            table_value(list(analysis.rows)),
+            gr.update(visible=True, value=coloured(analysis.checklist)),
+            report_frame(analysis.html),
+            download_link(analysis.report_path, analysis.html, session),
         )
 
     def run_hosted(
@@ -440,7 +548,7 @@ def build_app(
             old.job.stop()
 
     def run(
-        path: str | None,
+        path: str,
         online: bool,
         data: bool,
         reader: str,
@@ -451,8 +559,6 @@ def build_app(
         session: str,
         progress: Any,
     ) -> tuple[Any, ...]:
-        if not path:
-            raise gr.Error("Upload a paper first, or use the demo paper.", print_exception=False)
         use_bibr = reader == "bibr"
         if shared:
             key = bibr.resolve_key(key, remembered=False) if use_bibr else ""
@@ -499,11 +605,61 @@ def build_app(
             gr.update(visible=True),
         )
 
+    def run_package(
+        entry: pk.Entry,
+        preset: str,
+        classifier: bool,
+        session: str,
+        progress: Any,
+    ) -> tuple[Any, ...]:
+        """A data package: an archive that was uploaded, a repository link or a folder."""
+        try:
+            source = pk.resolve_entry(entry)
+            ref = pk.valid_preset(preset, shared)
+            if shared:
+                return run_package_hosted(entry, source, ref, progress)
+            leave(session)
+            analysis = pk.check_package_source(
+                source,
+                ref,
+                report_dir=sessions.folder(session),
+                local_classifier=classifier,
+                progress=lambda fraction, text: progress(fraction, desc=text),
+                limits=pk.LOCAL,
+            )
+        except UserError as exc:
+            raise gr.Error(str(exc), print_exception=False) from exc
+        except gr.Error:
+            raise
+        except Exception as exc:
+            raise gr.Error(pk.FAILED) from exc
+        return (*package_page(analysis, session), "", gr.update(visible=False))
+
+    def run_package_hosted(
+        entry: pk.Entry, source: Any, preset: str, progress: Any
+    ) -> tuple[Any, ...]:
+        """The whole check of a data package in its own process under the time limit. The
+        upload is deleted after it, a link is fetched inside the process (without any token
+        of this server) and everything the process makes is removed with its folder."""
+        assert jobs is not None and hosted is not None
+        with scratch_dir() as work:
+            analysis = jobs.run(
+                analyse_package,
+                str(source),
+                preset,
+                work,
+                pk.HOSTED,
+                upload=source if entry.kind == pk.ARCHIVE else None,
+                on_timeout=lambda: gr.Error(hosting.TOO_SLOW_PACKAGE, print_exception=False),
+                on_progress=lambda fraction, text: progress(fraction, desc=text),
+            )
+        return (*package_page(analysis, ""), "", gr.update(visible=False))
+
     def follow(request: gr.Request) -> Iterator[tuple[Any, ...]]:
         """The data check of this session: keep the status line alive, then show the result."""
         session = request.session_hash or ""
         entry = pending.get(session)
-        skip = tuple(gr.skip() for _ in range(5))
+        skip = tuple(gr.skip() for _ in range(6))
         if entry is None:
             yield (*skip, gr.skip(), gr.skip())
             return
@@ -531,7 +687,7 @@ def build_app(
         yield (*page(final, session), DATA_FAILED if failed else "", gr.update(visible=False))
 
     def on_check(
-        upload: str | None,
+        box: Any,
         online: bool,
         data: bool,
         reader: str,
@@ -539,23 +695,40 @@ def build_app(
         remember: bool,
         picked: list[str] | None,
         preset: str,
+        package_preset: str,
+        classifier: bool,
         request: gr.Request,
         progress: gr.Progress = gr.Progress(),  # noqa: B008 - Gradio reads this default
     ) -> tuple[Any, ...]:
-        shown = run(
-            upload,
-            online,
-            data,
-            reader,
-            key,
-            remember,
-            picked,
-            preset,
-            request.session_hash or "",
-            progress,
-        )
+        """The box holds a paper, or a data package (an archive, a link or a folder)."""
+        session = request.session_hash or ""
+        _text, uploads = pk.box_parts(box)
+        try:
+            try:
+                entry = pk.classify_entry(box, hosted=shared)
+            except UserError as exc:
+                raise gr.Error(str(exc), print_exception=False) from exc
+            if entry.kind == pk.PAPER:
+                shown = run(
+                    entry.value,
+                    online,
+                    data,
+                    reader,
+                    key,
+                    remember,
+                    picked,
+                    preset,
+                    session,
+                    progress,
+                )
+            else:
+                shown = run_package(entry, package_preset, classifier, session, progress)
+        finally:
+            if shared:  # whatever came of the run, an upload does not stay on a shared server
+                for upload in uploads:
+                    hosting.remove_upload(upload)
         # hosted: the upload is deleted after its run, so the field is cleared as well
-        return (*shown, None) if shared else shown
+        return (*shown, EMPTY_BOX) if shared else shown
 
     def on_demo(
         online: bool,
@@ -565,6 +738,8 @@ def build_app(
         remember: bool,
         picked: list[str] | None,
         preset: str,
+        _package_preset: str,
+        _classifier: bool,
         request: gr.Request,
         progress: gr.Progress = gr.Progress(),  # noqa: B008 - Gradio reads this default
     ) -> tuple[Any, ...]:
@@ -619,6 +794,13 @@ def build_app(
     )
     first_checks, first_data = catalog.preset_checks(first_preset)
     first_checks = catalog.chosen_checks(first_checks, shared, extra)
+    package_choices = pk.package_presets(shared)
+    first_package = (
+        start_preset
+        if start_preset in {ref for _, ref in package_choices}
+        else pk.valid_preset(None, shared)
+    )
+    picked_at_start = first_preset != catalog.APP_DEFAULT or first_package == start_preset
 
     blocks_kwargs = (
         {**BLOCKS_KWARGS, "delete_cache": hosting.sweep(hosted.job_timeout)}
@@ -629,13 +811,22 @@ def build_app(
         if not shared:
             gr.Navbar(main_page_name=MAIN_PAGE_NAME)
         gr.HTML(header(__version__), elem_id="mc-header", js_on_load=None)
-        upload = gr.File(
-            label="Your paper (PDF, GROBID XML or bibr JSON)",
-            file_types=[".pdf", ".xml", ".json"],
-            type="filepath",
+        # one box for everything: a paper, the archive of a data package, the link of a
+        # repository (or, on this computer, the path of a folder); the page tells them apart
+        upload = gr.MultimodalTextbox(
+            label=BOX_LABEL,
+            info=BOX_INFO if shared else BOX_INFO_LOCAL,
+            placeholder=BOX_PLACEHOLDER,
+            file_types=BOX_FILE_TYPES,
+            file_count="single",
+            sources=["upload"],
+            submit_btn=False,
+            lines=2,
+            max_lines=4,
         )
         if hosted:
             gr.Markdown(hosting.HOSTED_NOTE)
+            gr.Markdown(hosting.PACKAGE_NOTE)
         first = default_reader()
         reader = gr.Radio(READERS, value=first, label="Read PDFs with")
         with gr.Group(visible=first == "bibr") as key_group:
@@ -660,13 +851,15 @@ def build_app(
             )
         # a visitor's own computer is not where the files are checked
         privacy = gr.Markdown(privacy_text(first, shared))
+        if not shared:
+            gr.Markdown(PRIVACY_PACKAGE)
         online = gr.Checkbox(
             label="Also run the online checks (slower: they look things up on the web)",
             value=any(n in catalog.ONLINE for n in first_checks),
         )
         data = gr.Checkbox(label=DATA_LABEL, value=first_data)
         # a preset chosen when the app was started is shown open, so the person sees it
-        with gr.Accordion(PICKER_TITLE, open=first_preset != catalog.APP_DEFAULT):
+        with gr.Accordion(PICKER_TITLE, open=picked_at_start):
             gr.Markdown(here(PICKER_INTRO, shared))
             preset = gr.Dropdown(
                 presets,
@@ -680,8 +873,27 @@ def build_app(
                 value=first_checks,
                 label="Checks to run",
             )
+            gr.Markdown(PACKAGE_PICKER)
+            package_preset = gr.Dropdown(
+                package_choices,
+                value=first_package,
+                label=PACKAGE_PRESET_LABEL,
+                info=here(PACKAGE_PRESET_INFO, shared),
+                visible=len(package_choices) > 1,
+            )
+            # a shared server names the concepts by rules: the model is not for a server, so
+            # the box is not shown there and its value is not used
+            classifier = gr.Checkbox(
+                label=CLASSIFIER_LABEL,
+                info=here(
+                    CLASSIFIER_INFO if pk.classifier_installed() else CLASSIFIER_MISSING_INFO,
+                    shared,
+                ),
+                value=True,
+                visible=not shared,
+            )
         with gr.Row():
-            check = gr.Button("Check my paper", variant="primary", size="lg")
+            check = gr.Button("Check", variant="primary", size="lg")
             demo = gr.Button("Try the demo paper", size="lg")
         with gr.Column(visible=False) as results:
             summary = gr.Markdown()
@@ -694,6 +906,15 @@ def build_app(
                 interactive=False,
                 wrap=True,
                 column_widths=["22%", "12%", "66%"],
+            )
+            checklist = gr.Dataframe(
+                headers=pk.CHECKLIST_COLUMNS,
+                datatype="str",
+                label="Checklist of the data package",
+                interactive=False,
+                wrap=True,
+                column_widths=["18%", "22%", "10%", "50%"],
+                visible=False,
             )
             frame = gr.HTML(label="Report", elem_id="report-frame", js_on_load=None)
             download = gr.HTML(
@@ -711,8 +932,8 @@ def build_app(
                 gr.Markdown(hosting.footer(__version__, hosted.commit))
             gr.HTML(_links(), js_on_load=None)
 
-        outputs = [results, summary, table, frame, download, status, stop]
-        inputs = [online, data, reader, key, remember, picked, preset]
+        outputs = [results, summary, table, checklist, frame, download, status, stop]
+        inputs = [online, data, reader, key, remember, picked, preset, package_preset, classifier]
         keys = [key_group, privacy, note, forget]
         # hosted: one shared limit, since each button on its own would allow the full
         # number of runs; the field is cleared because the upload is deleted after its run

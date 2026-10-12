@@ -24,7 +24,9 @@ __all__ = [
     "HOSTED_NOTE",
     "MAX_QUEUE",
     "MAX_RUNS",
+    "PACKAGE_NOTE",
     "TOO_SLOW",
+    "TOO_SLOW_PACKAGE",
     "HostedConfig",
     "HostedError",
     "JobRunner",
@@ -56,9 +58,18 @@ HEADER_PATTERN = re.compile(r"[A-Za-z0-9-]+")
 
 REPO_URL = "https://github.com/scienceverse/pytacheck"
 HOSTED_NOTE = "Your paper is processed on this server and deleted when the report is ready."
+PACKAGE_NOTE = (
+    "A data package (an archive, or a repository that this server downloads from its host) "
+    "is processed on this server and deleted when the report is ready. "
+    "It can be up to 50 MB; for a bigger one, use the pytacheck command on your own computer."
+)
 TOO_SLOW = (
     "Checking this paper took too long, so it was stopped. "
     "Try a shorter paper, or try again in a few minutes."
+)
+TOO_SLOW_PACKAGE = (
+    "Checking this data package took too long, so it was stopped. "
+    "Try a smaller package, or try again in a few minutes."
 )
 
 

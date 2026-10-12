@@ -490,8 +490,10 @@ def test_the_apps_caps_are_below_the_librarys(tmp_path: Path) -> None:
 
     assert pk.MAX_UNPACKED_BYTES < _open.MAX_BYTES
     assert pk.MAX_FILES < _open.MAX_FILES
-    assert pk.check_package_source.__kwdefaults__["max_bytes"] == pk.MAX_UNPACKED_BYTES
-    assert pk.check_package_source.__kwdefaults__["max_files"] == pk.MAX_FILES
+    local = pk.check_package_source.__kwdefaults__["limits"]
+    assert local is pk.LOCAL
+    assert local.unpacked == pk.MAX_UNPACKED_BYTES and local.files == pk.MAX_FILES
+    assert local.ratio < _open.MAX_RATIO + 1 and local.depth <= _open.MAX_DEPTH
 
 
 def test_a_file_that_is_not_an_archive_says_so(tmp_path: Path) -> None:
@@ -699,7 +701,8 @@ def test_a_shared_server_has_no_package_page() -> None:
     shared = ui.build_app(hosted=cfg)
     assert [path for path, _n, _s in shared.get_config_file()["pages"]] == [""]
     dump = json.dumps(shared.get_config_file())
-    assert "Check a data package" not in dump and "package's folder" not in dump
+    # a folder is named by a path on the server's computer, which is never offered
+    assert "path of its folder" not in dump and "package's folder" not in dump
     with TestClient(
         create_hosted_app(PORT + 3, cfg), base_url=f"https://{HOST}", follow_redirects=False
     ) as tc:
@@ -712,7 +715,7 @@ def test_a_shared_server_has_no_package_page() -> None:
 def test_the_page_runs_a_folder_through_the_app(tmp_path: Path) -> None:
     root = folder(tmp_path)
     with _client() as tc:
-        done = _join(tc, ["folder", str(root), None, "datapackage::default", False], "p1")
+        done = _join(tc, ["folder", str(root), None, "", "datapackage::default", False], "p1")
         assert done["success"], done
         summary, checks, checklist, download, frame = (
             done["output"]["data"][1],
@@ -739,9 +742,12 @@ def test_the_page_runs_a_folder_through_the_app(tmp_path: Path) -> None:
 def test_the_page_says_what_is_wrong_in_plain_words(tmp_path: Path) -> None:
     with _client() as tc:
         for data, message in [
-            (["folder", "", None, "datapackage::default", False], pk.NO_SOURCE_FOLDER),
-            (["folder", str(tmp_path / "x"), None, "datapackage::default", False], pk.NOT_A_FOLDER),
-            (["zip", "", None, "datapackage::default", False], pk.NO_SOURCE_ZIP),
+            (["folder", "", None, "", "datapackage::default", False], pk.NO_SOURCE_FOLDER),
+            (
+                ["folder", str(tmp_path / "x"), None, "", "datapackage::default", False],
+                pk.NOT_A_FOLDER,
+            ),
+            (["zip", "", None, "", "datapackage::default", False], pk.NO_SOURCE_ZIP),
         ]:
             done = _join(tc, data, "p3")
             assert not done["success"] and message in json.dumps(done)
@@ -750,7 +756,7 @@ def test_the_page_says_what_is_wrong_in_plain_words(tmp_path: Path) -> None:
 def test_the_page_refuses_a_folder_outside_home_in_plain_words(
     elsewhere: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    data = ["folder", str(elsewhere), None, "datapackage::default", False]
+    data = ["folder", str(elsewhere), None, "", "datapackage::default", False]
     with _client() as tc:
         done = _join(tc, data, "p4")
         assert not done["success"]
@@ -764,12 +770,17 @@ def test_the_page_refuses_a_folder_outside_home_in_plain_words(
 
 
 def _checkbox(config: dict[str, Any]) -> dict[str, Any]:
-    (box,) = [
+    """The classifier box: the package page has one, and so has the paper page's choice of checks
+    (which asks the same, for a data package given in its box); the two read alike."""
+    both = [
         c["props"]
         for c in config["components"]
         if c["type"] == "checkbox" and c["props"].get("label") == ui_package.CLASSIFIER_LABEL
     ]
-    return box  # type: ignore[no-any-return]
+    assert len(both) == 2
+    first, second = both
+    assert {k: first[k] for k in ("value", "info")} == {k: second[k] for k in ("value", "info")}
+    return first
 
 
 def test_the_classifier_box_is_ticked_and_says_when_the_extra_is_missing(
@@ -788,10 +799,10 @@ def test_the_classifier_box_is_ticked_and_says_when_the_extra_is_missing(
 def test_the_page_runs_with_the_classifier_asked_for_but_missing(tmp_path: Path) -> None:
     root = folder(tmp_path)
     with _client() as tc:
-        ticked = _join(tc, ["folder", str(root), None, "datapackage::default", True], "p6")
+        ticked = _join(tc, ["folder", str(root), None, "", "datapackage::default", True], "p6")
         assert ticked["success"], ticked
         assert pk.NO_CLASSIFIER in ticked["output"]["data"][1]  # said under the results
-        unticked = _join(tc, ["folder", str(root), None, "datapackage::default", False], "p7")
+        unticked = _join(tc, ["folder", str(root), None, "", "datapackage::default", False], "p7")
         assert unticked["success"] and "classifier" not in unticked["output"]["data"][1]
 
 

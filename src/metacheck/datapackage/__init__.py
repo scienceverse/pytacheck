@@ -1,8 +1,9 @@
 """Data packages: check the folder or archive of files that comes with a paper.
 
 A data package is what a researcher archives or shares with a paper: data,
-code and documentation. This package opens one (a folder, or a zip or tar
-archive of it) and lists its files and folders; the checks themselves are the
+code and documentation. This package opens one (a folder, a zip or tar
+archive of it, or the link of a public repository on GitHub, GitLab, OSF or
+Zenodo) and lists its files and folders; the checks themselves are the
 modules of the ``datapackage`` pack in :mod:`metacheck.datapackage.modules`,
 which every installation has (``datapackage::package_files`` and so on).
 :func:`check_package` runs them on a package and :func:`report_package` writes
@@ -36,6 +37,13 @@ from metacheck.datapackage._open import (
     is_archive,
     open_package,
 )
+from metacheck.datapackage._remote import (
+    RepositoryLink,
+    fetch_archive,
+    is_link,
+    open_link,
+    parse_link,
+)
 from metacheck.datapackage._session import package_for, using_package
 
 __all__ = [
@@ -47,15 +55,20 @@ __all__ = [
     "FINDING_COLUMNS",
     "OpenedPackage",
     "PackageError",
+    "RepositoryLink",
     "check_package",
     "checklist_frame",
+    "fetch_archive",
     "findings_frame",
     "is_archive",
+    "is_link",
     "list_dirs",
     "list_files",
+    "open_link",
     "open_package",
     "package_for",
     "package_selection",
+    "parse_link",
     "report_package",
     "status_from_findings",
     "traffic_light",

@@ -16,6 +16,7 @@ They are pytacheck's own: metacheck has no counterpart.
 ```bash
 metacheck package my_data_folder                   # a folder
 metacheck package my_data.zip                      # a zip, or .tar .tar.gz .tgz .tar.bz2 .tar.xz
+metacheck package https://github.com/owner/repo    # a public repository, downloaded first
 metacheck package my_data.zip -o package.html      # write a report instead of printing
 metacheck package my_data.zip -f md                # ... as Markdown, to my_data_report.md
 metacheck package my_data_folder --json            # the results as JSON
@@ -31,8 +32,9 @@ inside the package's own folder is not counted among its files.
 
 The exit status is 0 when every check ran, 1 when a check failed to run (the others
 still run, and the failure is shown next to it), and 2 when the path cannot be
-opened: it does not exist, it is a file that is not a supported archive, or an
-archive is unreadable or too big (more than 20 GB extracted, or 200,000 files). It is
+opened: it does not exist, it is a file that is not a supported archive, an
+archive is unreadable or too big (more than 20 GB extracted, or 200,000 files), or a
+link cannot be downloaded (see [Repository links](#repository-links)). It is
 also 2 when `--files-dir` or `--force` is refused (see
 [Files a check hands back](#files-a-check-hands-back)).
 
@@ -87,16 +89,69 @@ extra arguments for it, as in `report()`. Both also take `max_bytes` and `max_fi
 which lower the limits on an extracted archive (20 GB and 200,000 files otherwise);
 a folder has none.
 
+## Repository links
+
+Instead of a folder or an archive, give the link of a public repository. It is
+downloaded to a temporary folder, unpacked under the same limits as an archive, checked,
+and removed when the run ends. The links that are understood:
+
+| Repository | Link | Downloaded |
+|---|---|---|
+| GitHub | `https://github.com/owner/repo`, with `/tree/<branch or tag>`, `/releases/tag/<tag>` or `/commit/<sha>` for another version | the repository's zip at that version |
+| GitLab | `https://gitlab.com/group/project` (subgroups too), with `/-/tree/<ref>` for another version | the project's `archive.zip` |
+| OSF | `https://osf.io/abcde/` (the project's id) | the project's osfstorage files, as a zip |
+| Zenodo | `https://zenodo.org/records/<id>`, `/record/<id>`, or its DOI (`10.5281/zenodo.<id>`, as a link or on its own) | the record's files, as a zip |
+
+A direct link to an archive (`.zip`, `.tar.gz` and so on) on one of these hosts is
+downloaded as it is. Pages that are not a repository (an issue, a file view, a search,
+a community or a preprint page) are refused with a message that says so. Dryad,
+Dataverse, Figshare and 4TU are not understood yet.
+
+What a download may do is limited, whatever the link says:
+
+* Only these hosts are asked, over https on the default port. A redirect that leads
+  anywhere else (another host, a plain-http address, an address of this computer or of
+  a private network, such as a cloud's metadata service) is not followed. A name is
+  checked to resolve to public addresses only, unless an HTTPS proxy is configured for
+  the computer, which then decides where connections go.
+* A download is stopped at 5 GB, or after 15 minutes, and a page that is returned in
+  place of an archive is refused. Busy hosts (429 and 5xx answers) are asked again, up to
+  three times.
+* On your own computer a token you have set for the host is sent to the host's API
+  only: `GITHUB_PAT_GITHUB_COM` (or git's credentials for GitHub), `GITLAB_PAT` and
+  `OSF_PAT`. That is how a private repository you can read is checked. A shared
+  server never sends a token for a link a visitor gave it.
+* `--offline` refuses a link, since it has to be downloaded.
+
+The package's name is the repository's (the name of the repository, the project, or the
+archive file). A report's source line names the link, not the local temporary folder.
+
 ## In the app
 
-`metacheck-app` has a second page, "Check a data package" (`/package`; open the app on
-it with `metacheck-app --page package`). Name a folder on your computer or upload a zip
-(up to 1 GB; for a bigger package give the folder), choose the checks and press the
-button. The page shows one row per check, the checklist with one row per requirement
+`metacheck-app` has the paper page's one box: drop a paper, an archive of a data package
+or type the link of a repository, and the page tells them apart. A PDF, a GROBID XML file
+or a bibr JSON file is checked as a paper. A zip or tar archive, or a link, is checked as a
+data package, with the preset chosen in the "For a data package" part of "Choose the
+checks". A folder on your computer (typed in the box as its path) is checked as a data
+package too. Give one thing at a time.
+
+The package page is still there, "Check a data package" (`/package`; open the app on it
+with `metacheck-app --page package`). Name a folder on your computer, upload a zip (up to
+1 GB; for a bigger package give the folder), or give the link of a repository, choose the
+checks and press the button. The page shows one row per check, the checklist with one row per requirement
 (the status cell is red for `fail`, yellow for `warn` and `manual`, green for `pass`;
 the word is always shown) and the report to download. It runs on your machine only and
 is not part of the hosted app (`--hosted` has no such page, because a folder is named by
 a path on the machine that runs the app).
+
+On a shared server (`--hosted`) the paper page's box takes an archive of up to 50 MB or a
+repository link, and not a folder. The package is checked in the run's own process,
+under the server's time limit, with lower limits than on your computer: a link downloads
+at most 50 MB, an archive unpacks to 1 GB and 20,000 files, and the unpacking may grow the
+archive by 100 times at most. No token of the server is used for a link. The concepts of
+the data columns come from rules there (no classifier model). The upload and the download
+are removed after the run, and the report is sent back as a link that holds it, so no
+file of the package stays on the server.
 
 The choice lists the presets that run a `datapackage::` check: `datapackage::default`
 and every preset of an installed pack or of your config that runs one (for example one
@@ -461,6 +516,9 @@ A data package can hold personal data, so the checks do not upload it.
   a private temporary folder, and the folder is removed when the run ends, also when
   a check fails. Members whose path would leave that folder (`..`, absolute paths),
   links and device files are skipped.
+* A repository link is the one thing that goes to the internet, and only to the host
+  of the repository, to fetch its archive (see [Repository links](#repository-links)).
+  Nothing about the package is sent with it; the checks still run on your computer.
 * Every selected module that takes `local_path` and `local_only` gets the package's
   folder and `local_only=True`, so nothing is looked up online. A value you give
   yourself (`-a MODULE.local_only=false`), or that a preset sets, is not overridden.
