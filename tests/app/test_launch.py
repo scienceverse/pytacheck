@@ -174,7 +174,7 @@ def test_stale_state_starts_fresh(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_self_test_passes(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["--self-test"]) == 0
     out = capsys.readouterr().out
-    assert out.startswith("Self-test passed: 16 checks in ")
+    assert out.startswith("Self-test passed: 19 checks in ")
 
 
 def test_self_test_fails_with_exit_1(

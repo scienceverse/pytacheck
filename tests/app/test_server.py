@@ -11,6 +11,7 @@ from gradio.utils import get_upload_folder
 from starlette.testclient import TestClient
 
 import metacheck as pc
+from metacheck.app import checks
 from metacheck.app.security import cookie_name
 from metacheck.app.server import create_app
 
@@ -38,6 +39,8 @@ def _join(client: TestClient, fn_index: int, path: str) -> str:
             "grobid",
             "",
             False,
+            checks.selected_checks(),  # the ticked checks, as the page first shows them
+            "",  # the preset
         ],
         "fn_index": fn_index,
         "session_hash": "t1",
@@ -56,7 +59,7 @@ def _join(client: TestClient, fn_index: int, path: str) -> str:
 def _check_fn_index(client: TestClient) -> int:
     config = client.get("/config").json()
     (dep,) = (
-        d for d in config["dependencies"] if d["targets"][0][1] == "click" and len(d["inputs"]) == 6
+        d for d in config["dependencies"] if d["targets"][0][1] == "click" and len(d["inputs"]) == 8
     )
     return int(dep["id"])
 
@@ -66,7 +69,7 @@ def test_a_path_outside_the_upload_folder_is_refused(client: TestClient, tmp_pat
     shutil.copy(pc.demofile("json"), outside)
     events = _join(client, _check_fn_index(client), str(outside))
     assert "it was not uploaded by a user" in events
-    assert "Ran 16 checks" not in events
+    assert "Ran 19 checks" not in events
     assert "This paper demonstrates" not in events
 
 
@@ -75,7 +78,7 @@ def test_an_uploaded_file_is_checked(client: TestClient) -> None:
     (path,) = client.post("/gradio_api/upload", files=files).json()
     assert Path(path).resolve().is_relative_to(Path(get_upload_folder()).resolve())
     events = _join(client, _check_fn_index(client), path)
-    assert "Ran 16 checks" in events
+    assert "Ran 19 checks" in events
     assert "/report/t1/paper_report.html" in events.replace("\\/", "/") or "_report.html" in events
 
 

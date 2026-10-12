@@ -435,7 +435,7 @@ def _handlers() -> dict[str, Any]:
 def _on_check(fns: dict[str, Any], path: Path, key: str, remember: bool) -> list[tuple[Any, ...]]:
     request = SimpleNamespace(session_hash="b1")
     step = fns["on_check"](
-        str(path), False, False, "bibr", key, remember, request, lambda *_a, **_k: None
+        str(path), False, False, "bibr", key, remember, None, "", request, lambda *_a, **_k: None
     )
     return [step]
 
@@ -541,6 +541,8 @@ def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_
             "bibr",
             "",
             False,
+            None,
+            "",
             SimpleNamespace(session_hash="b2"),
             lambda *_a, **_k: None,
         )
@@ -552,6 +554,8 @@ def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_
         "bibr",
         "typed-key-abcdef",
         True,  # asked to remember, but this server does not
+        None,
+        "",
         SimpleNamespace(session_hash="b2"),
         lambda *_a, **_k: None,
     )

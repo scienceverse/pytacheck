@@ -19,6 +19,7 @@ from urllib.parse import quote
 import gradio as gr
 
 from metacheck.app import bibr
+from metacheck.app import checks as catalog
 from metacheck.app import hosted as hosting
 from metacheck.app.checks import validated_checks
 from metacheck.app.run import Analysis, DataJob, Row, Run, UserError, begin, protect, scratch_dir
@@ -106,6 +107,14 @@ READERS = [
     ("GROBID (public server at TU Eindhoven)", "grobid"),
     ("bibr (the scienceverse service; needs a key)", "bibr"),
 ]
+PICKER_TITLE = "Choose the checks"
+PICKER_INTRO = (
+    "The ticked checks run on your paper. Checks that take minutes, or need a key or a "
+    "server of their own, are not offered here; run them with the pytacheck command."
+)
+PRESET_INFO = (
+    "Tick the checks of a preset. Presets from the packs installed on this computer are listed too."
+)
 DATA_LABEL = (
     "Check the shared data files (downloads them from OSF and other repositories; "
     "this can take a few minutes)"
@@ -186,6 +195,8 @@ def analyse_upload(
     workdir: str,
     stop_data_at: float,
     grace: float,
+    picked: list[str] | None,
+    preset: str,
     progress: Callable[[float, str], None],
 ) -> Analysis:
     """One hosted run, in its own process. The server makes ``workdir`` and removes it, so a
@@ -206,6 +217,9 @@ def analyse_upload(
         progress=progress,
         pdf=reader,
         bibr_key=key,
+        checks=picked,
+        args=catalog.preset_args(preset),
+        hosted=True,
     )
     if not data:
         return started.analysis
@@ -292,7 +306,9 @@ def table_value(rows: list[Row]) -> Any:
 
 def _summary(analysis: Analysis) -> str:
     n = len(analysis.rows)
-    return f"Ran {n} checks on **{analysis.name}** in {analysis.seconds:.1f} s."
+    return (
+        f"Ran {n} check{'' if n == 1 else 's'} on **{analysis.name}** in {analysis.seconds:.1f} s."
+    )
 
 
 def default_reader() -> str:
@@ -373,7 +389,14 @@ def build_app(
         )
 
     def run_hosted(
-        path: str, online: bool, data: bool, reader: str, key: str, progress: Any
+        path: str,
+        online: bool,
+        data: bool,
+        reader: str,
+        key: str,
+        picked: list[str] | None,
+        preset: str,
+        progress: Any,
     ) -> tuple[Any, ...]:
         """The whole run, data check included, in its own process under the time limit."""
         assert jobs is not None and hosted is not None
@@ -391,6 +414,8 @@ def build_app(
                     work,
                     time.time() + budget,
                     grace,
+                    picked,
+                    preset,
                     # the demo paper is part of the package: only an upload is deleted
                     upload=None if Path(path).resolve() == _demo_path() else path,
                     on_timeout=lambda: gr.Error(hosting.TOO_SLOW, print_exception=False),
@@ -417,6 +442,8 @@ def build_app(
         reader: str,
         key: str,
         remember: bool,
+        picked: list[str] | None,
+        preset: str,
         session: str,
         progress: Any,
     ) -> tuple[Any, ...]:
@@ -425,7 +452,7 @@ def build_app(
         use_bibr = reader == "bibr"
         if shared:
             key = bibr.resolve_key(key, remembered=False) if use_bibr else ""
-            return run_hosted(path, online, data, reader, key, progress)
+            return run_hosted(path, online, data, reader, key, picked, preset, progress)
         leave(session)
         try:
             with scratch_dir() as work:
@@ -438,6 +465,8 @@ def build_app(
                     progress=lambda fraction, text: progress(fraction, desc=text),
                     pdf=reader,
                     bibr_key=bibr.resolve_key(key, remembered=remember_keys) if use_bibr else "",
+                    checks=picked,
+                    args=catalog.preset_args(preset),
                 )
         except UserError as exc:
             raise gr.Error(str(exc), print_exception=False) from exc
@@ -504,11 +533,22 @@ def build_app(
         reader: str,
         key: str,
         remember: bool,
+        picked: list[str] | None,
+        preset: str,
         request: gr.Request,
         progress: gr.Progress = gr.Progress(),  # noqa: B008 - Gradio reads this default
     ) -> tuple[Any, ...]:
         shown = run(
-            upload, online, data, reader, key, remember, request.session_hash or "", progress
+            upload,
+            online,
+            data,
+            reader,
+            key,
+            remember,
+            picked,
+            preset,
+            request.session_hash or "",
+            progress,
         )
         # hosted: the upload is deleted after its run, so the field is cleared as well
         return (*shown, None) if shared else shown
@@ -519,6 +559,8 @@ def build_app(
         reader: str,
         key: str,
         remember: bool,
+        picked: list[str] | None,
+        preset: str,
         request: gr.Request,
         progress: gr.Progress = gr.Progress(),  # noqa: B008 - Gradio reads this default
     ) -> tuple[Any, ...]:
@@ -531,6 +573,8 @@ def build_app(
             reader,
             key,
             remember,
+            picked,
+            preset,
             request.session_hash or "",
             progress,
         )
@@ -548,9 +592,24 @@ def build_app(
             gr.update(visible=remember_keys and bool(bibr.load_key())),
         )
 
+    def on_online(online: bool, picked: list[str] | None) -> list[str]:
+        """The online box ticks the online checks, or unticks them."""
+        kept = [n for n in picked or [] if n not in catalog.ONLINE]
+        return catalog.chosen_checks([*kept, *catalog.ONLINE] if online else kept, shared, extra)
+
+    def on_preset(preset: str, online: bool) -> tuple[Any, ...]:
+        """A preset ticks its checks (and the data box, if it has the data check)."""
+        names, with_data = catalog.preset_checks(preset, online)
+        names = catalog.chosen_checks(names, shared, extra)
+        return names, with_data, any(n in catalog.ONLINE for n in names)
+
     def on_forget() -> tuple[Any, ...]:
         bibr.forget_key()
         return key_note(remember_keys, shared), gr.update(visible=False)
+
+    # installed packs' modules are offered on this computer only: a shared server runs built-ins
+    extra = () if shared else tuple(catalog.pack_checks())
+    presets = catalog.paper_presets(shared)
 
     blocks_kwargs = (
         {**BLOCKS_KWARGS, "delete_cache": hosting.sweep(hosted.job_timeout)}
@@ -597,6 +656,20 @@ def build_app(
             value=False,
         )
         data = gr.Checkbox(label=DATA_LABEL, value=True)
+        with gr.Accordion(PICKER_TITLE, open=False):
+            gr.Markdown(here(PICKER_INTRO, shared))
+            preset = gr.Dropdown(
+                presets,
+                value=catalog.APP_DEFAULT,
+                label="Start from",
+                info=here(PRESET_INFO, shared),
+                visible=len(presets) > 1,
+            )
+            picked = gr.CheckboxGroup(
+                catalog.choices(shared, extra),
+                value=catalog.selected_checks(),
+                label="Checks to run",
+            )
         with gr.Row():
             check = gr.Button("Check my paper", variant="primary", size="lg")
             demo = gr.Button("Try the demo paper", size="lg")
@@ -629,7 +702,7 @@ def build_app(
             gr.HTML(_links(), js_on_load=None)
 
         outputs = [results, summary, table, frame, download, status, stop]
-        inputs = [online, data, reader, key, remember]
+        inputs = [online, data, reader, key, remember, picked, preset]
         keys = [key_group, privacy, note, forget]
         # hosted: one shared limit, since each button on its own would allow the full
         # number of runs; the field is cleared because the upload is deleted after its run
@@ -662,6 +735,9 @@ def build_app(
                 api_visibility="private",
             )
         reader.change(on_reader, reader, keys, api_visibility="private")
+        # .input, not .change: a preset that sets the online box must not untick its checks
+        online.input(on_online, [online, picked], picked, api_visibility="private")
+        preset.input(on_preset, [preset, online], [picked, data, online], api_visibility="private")
         if remember_keys:  # a shared server has no saved key, and nobody may remove one
             forget.click(on_forget, None, [note, forget], api_visibility="private")
     if not shared:

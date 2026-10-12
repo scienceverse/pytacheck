@@ -66,6 +66,8 @@ About data files: the box "Check the shared data files" is ticked. When the pape
 - The data check is experimental too. It runs last, unless you untick its box.
 - The online checks are optional. They are slower, because they look things up on other servers.
 
+To run other checks, open "Choose the checks" and tick the ones you want. The ticks start as the checks above, and the online box ticks or unticks the online checks. The list holds every check that takes seconds and needs no key, the new ones from bibr (figures and tables referred to, author information, license) among them. Checks that take minutes or need a key or a server of their own are not in the list; run them with the `pytacheck` command. If a pack you installed has a preset for papers, "Start from" lists it, and choosing it ticks its checks (and the data box, if the preset has the data check). A shared server lists only presets made of built-in checks.
+
 ## Check a data package
 
 The app has a second page, "Check a data package" (the link at the top right of the page). Give it the folder of data, code and documentation that comes with a paper, or a zip of it, and it checks the files, the folder tree and the README, and shows a checklist. It runs on your computer only: nothing is uploaded. A shared server does not have this page. See [DATAPACKAGE.md](DATAPACKAGE.md) for what is checked.
