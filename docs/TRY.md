@@ -68,6 +68,8 @@ About data files: the box "Check the shared data files" is ticked. When the pape
 
 To run other checks, open "Choose the checks" and tick the ones you want. The ticks start as the checks above, and the online box ticks or unticks the online checks. The list holds every check that takes seconds and needs no key, the new ones from bibr (figures and tables referred to, author information, license) among them. Checks that take minutes or need a key or a server of their own are not in the list; run them with the `pytacheck` command. If a pack you installed has a preset for papers, "Start from" lists it, and choosing it ticks its checks (and the data box, if the preset has the data check). A shared server lists only presets made of built-in checks.
 
+After the install a short setup asks three things and then opens the app: what you want to check (data packages only, or papers too), how papers are read (your bibr key, or bibr on this computer, or later) and your email address, which is sent to open services such as OSF, Crossref and OpenAlex so they can reach you. bibr on this computer needs about 15 GB of free disk space and is only fast on an NVIDIA GPU or an Apple Silicon Mac; it is installed only if you choose it. The setup asks once. Run `metacheck-setup` in the `bin` folder to answer again, or add `--no-setup` to the install line to skip it (`--with-bibr` installs bibr without asking).
+
 To open the app with a preset already chosen, add `--preset NAME` to the install line (`sh -s -- --preset NAME`; on Windows set `METACHECK_APP_PRESET=NAME` first), or run `metacheck-app --preset NAME`. A data package preset opens the "Check a data package" page with it chosen.
 
 ## Check a data package

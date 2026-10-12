@@ -1,7 +1,7 @@
 # Installs the metacheck preview app into one folder and opens it.
 #
 #   powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex"
-#   .\install.ps1 [-NoLaunch] [-Steward] [-Preset NAME] [-Uninstall]
+#   .\install.ps1 [-NoLaunch] [-Steward] [-Preset NAME] [-Setup] [-NoSetup] [-WithBibr] [-Uninstall]
 #
 # Everything goes into METACHECK_HOME (default: %LOCALAPPDATA%\metacheck):
 # uv, its Python, the app and uv's cache. No PATH or registry entry is edited.
@@ -9,6 +9,7 @@
 #   METACHECK_NO_LAUNCH=1     same as -NoLaunch
 #   METACHECK_STEWARD=1       same as -Steward
 #   METACHECK_APP_PRESET=NAME same as -Preset NAME
+#   METACHECK_NO_SETUP=1      same as -NoSetup
 #   METACHECK_UNINSTALL=1     same as -Uninstall
 #   METACHECK_REF=<commit>    install this commit instead of the pinned one
 #   METACHECK_SPEC=<spec>     install this requirement instead of the GitHub archive
@@ -20,6 +21,11 @@
 #
 # -Preset NAME opens the app with that preset chosen, for example a pack's
 # (pack::name). A data package preset opens the "Check a data package" page.
+#
+# After the install a short guided setup asks what you want to check, how papers are read
+# (a bibr key, or bibr on this computer, which is installed only if you choose it) and your
+# email address for open APIs such as OSF. It asks once; -Setup asks again, -NoSetup never
+# asks. Then the app opens.
 #
 # The whole script is one function called on the last line, so a download that
 # stops half way runs nothing. It has no param() block, because that does not
@@ -52,6 +58,9 @@ function Install-Metacheck {
     $launch = $true
     $steward = $false
     $uninstall = $false
+    $setup = 'auto'
+    $withBibr = $false
+    if ($env:METACHECK_NO_SETUP -eq '1') { $setup = 'off' }
     if ($env:METACHECK_NO_LAUNCH -eq '1') { $launch = $false }
     if ($env:METACHECK_STEWARD -eq '1') { $steward = $true }
     if ($env:METACHECK_UNINSTALL -eq '1') { $uninstall = $true }
@@ -63,12 +72,15 @@ function Install-Metacheck {
             '^-NoLaunch$' { $launch = $false }
             '^-Steward$' { $steward = $true }
             '^-Uninstall$' { $uninstall = $true }
+            '^-Setup$' { $setup = 'always' }
+            '^-NoSetup$' { $setup = 'off' }
+            '^-WithBibr$' { $withBibr = $true }
             '^-Preset$' {
                 if ($i + 1 -ge $Arguments.Count) { Fail '-Preset needs the name of a preset' }
                 $i++
                 $preset = $Arguments[$i]
             }
-            default { Fail "unknown option: $arg (use -NoLaunch, -Steward, -Preset NAME or -Uninstall)" }
+            default { Fail "unknown option: $arg (use -NoLaunch, -Steward, -Preset NAME, -Setup, -NoSetup, -WithBibr or -Uninstall)" }
         }
     }
     # A preset name is a pack and a name (letters, digits, . _ - and ::); nothing else is
@@ -247,8 +259,15 @@ function Install-Metacheck {
         $force = @()
         if (Test-Path -LiteralPath $oldDir) { $force = @('--force') }
 
+        # bibr on this computer is added to the same tool environment, only when asked for.
+        function Install-App {
+            $with = @()
+            if ($withBibr) { $with = @('--with', 'bibr>=0.6.0') }
+            return (Invoke-Uv tool install @force --managed-python --python 3.12 @with $spec -c $constraints)
+        }
+
         Say 'Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ...'
-        $code = Invoke-Uv tool install @force --managed-python --python 3.12 $spec -c $constraints
+        $code = Install-App
         if ($code -ne 0) {
             if ($force.Count -gt 0) { Fail "the install failed. The earlier version is still installed. If it keeps failing, please tell us at $IssuesUrl" }
             Fail "the install failed. If it keeps failing, please tell us at $IssuesUrl"
@@ -273,6 +292,21 @@ function Install-Metacheck {
             }
             # a file still in use stays; the next install removes it
             Remove-Item -LiteralPath $oldDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        # The guided setup. A pinned commit from before it existed has no command: skipped.
+        $setupExe = Join-Path $binDir 'metacheck-setup.exe'
+        if ($setup -ne 'off' -and (Test-Path -LiteralPath $setupExe)) {
+            $setupArgs = @()
+            if ($steward) { $setupArgs += '--data-only' }
+            if ($setup -ne 'always') { $setupArgs += '--if-new' }
+            $result = Join-Path $tmp 'setup-result'
+            & $setupExe @setupArgs --result $result
+            if ((Test-Path -LiteralPath $result) -and (Get-Content -LiteralPath $result -Raw).Contains('install_bibr=1')) {
+                $withBibr = $true
+                Say 'Adding bibr (several GB of models are downloaded the first time it reads a paper) ...'
+                if ((Install-App) -ne 0) { Fail "adding bibr failed. metacheck itself is installed; run this again with -WithBibr to retry. If it keeps failing, please tell us at $IssuesUrl" }
+            }
         }
     } finally {
         foreach ($name in $uvEnv.Keys) { [Environment]::SetEnvironmentVariable($name, $saved[$name], 'Process') }
