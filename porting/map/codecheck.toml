@@ -1,10 +1,11 @@
 # R source -> Python location for codecheck (see docs/PORTING.md).
 # _decode: code_read()'s decoding (BOM, UTF-8, chardet, Windows-1252; not readr/vroom/ICU, D74);
-# _rparse: R's gram.y parser (parse errors); _purl/_reval: knitr::purl and chunk-option evaluation;
+# _rparse: R's gram.y parser (parse errors); _chunks: R code from R Markdown/Quarto/Sweave chunks, read
+# statically instead of with knitr::purl (D80);
 # _rcoerce: unlist()/as.character() of parsed JSON/YAML values (JSON is read with metacheck._json, as standard JSON, not with
 # jsonlite's yajl quirks); _rparse_tables: the parser's LALR tables, loaded from _rparse_tables.json.gz.
 [files]
-"R/code_check.R" = ["src/metacheck/codecheck/core.py", "src/metacheck/codecheck/_decode.py", "src/metacheck/codecheck/_rparse.py", "src/metacheck/codecheck/_rparse_tables.py", "src/metacheck/codecheck/_purl.py", "src/metacheck/codecheck/_reval.py", "src/metacheck/codecheck/_rcoerce.py"]
+"R/code_check.R" = ["src/metacheck/codecheck/core.py", "src/metacheck/codecheck/_decode.py", "src/metacheck/codecheck/_rparse.py", "src/metacheck/codecheck/_rparse_tables.py", "src/metacheck/codecheck/_chunks.py", "src/metacheck/codecheck/_rcoerce.py"]
 
 [functions]
 code_read = "metacheck.codecheck.core:code_read"

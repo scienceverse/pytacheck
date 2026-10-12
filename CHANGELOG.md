@@ -7,6 +7,15 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: R code is read from R Markdown and Quarto chunks without R
+
+- **Changed:** `code_extract_r()` (and `code_parse_r()`, code_check and reproducibility_check on `.Rmd`/`.qmd` files) reads the chunks statically instead of reproducing `knitr::purl()` and evaluating chunk options with a small R evaluator (D80). Chunk delimiters, `#|` options and `<<label>>` references work as before.
+- **Changed:** chunk options are used only when they are literal (`eval = FALSE`, `purl = FALSE`, `error = TRUE`, `engine = "python"`, `#| eval: false`). An option that is an R expression (`eval = params$run`, `eval = !knitr::is_latex_output()`) is not evaluated and counts as not given, so the chunk is extracted as R code; knitr dropped a chunk whose `eval` it could not evaluate (also a typo such as `eval=False`). `child` documents are not read.
+- **Fixed with it:** malformed chunk options, a `NA` first code line, `engine = NA` and similar input no longer make the extraction fail; an empty chunk of another engine no longer gives a `## NA` line; a document that mentions `\Sexpr{}` is still read as R Markdown when it has R Markdown chunks.
+- **Changed:** YAML `params` are written as `params <-` and one `list(...)` line, with `!r` values as their R source (knitr evaluated them and wrote `dput()`'s wrapped lines).
+- **Unchanged:** the extracted code of every R Markdown/Quarto file in the test and parity inputs, except a test fixture whose `eval=False` chunk is now extracted, and the accuracy report.
+- **Removed:** `metacheck.codecheck._purl` and `metacheck.codecheck._reval` (1,748 lines); the extractor, `metacheck.codecheck._chunks`, is 511.
+
 ### Changed (breaking for API clients): the REST API returns plain JSON
 
 - **Breaking:** the REST API (`pytacheck serve`) no longer copies the JSON encoding of metacheck's plumber API (jsonlite's defaults). Responses are plain JSON (D79):
