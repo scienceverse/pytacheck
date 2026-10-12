@@ -21,6 +21,7 @@ package's. The R commit each release is compared against is in
 
 - **Added:** `metacheck-setup`, a short wizard that the installers run after installing. It asks what you want to check (data packages only, or papers too), how papers are read when you pick papers (a bibr key, bibr on this computer after a warning about several GB of models and about GPU or Apple Silicon, or later) and an email address for open APIs such as OSF, Crossref and OpenAlex. Answers are saved in `app-settings.json` next to the saved bibr key; `metacheck-app` applies the email and, for bibr on this computer, starts `bibr serve` on port 8000 and needs no key for it. The paper page starts on bibr when a key was saved or bibr runs here.
 - **Added:** installer options `--setup` / `-Setup` (ask again; otherwise it asks once), `--no-setup` / `-NoSetup` or `METACHECK_NO_SETUP=1` (never ask) and `--with-bibr` / `-WithBibr` (install bibr into the same environment; the wizard asks for it only when bibr on this computer is chosen). With `--steward` the paper questions are skipped. Without a terminal the setup is skipped.
+- **Added:** browser sign-in to bibr in the setup wizard (OAuth device flow): it shows a short code, opens the browser, waits for you to approve and saves the token it receives like a pasted one. When the hosted service has no sign-in yet, or cannot be reached, the wizard says so and asks for a pasted token as before.
 
 ### Added: choose the checks in the app
 
