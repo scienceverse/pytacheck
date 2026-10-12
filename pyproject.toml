@@ -36,14 +36,14 @@ dependencies = [
     "scipy>=1.13",
     # `regex` (not `re`): POSIX leftmost-longest matching, POSIX bracket
     # classes and \m/\M word anchors are needed to reproduce R's TRE engine.
-    "regex>=2024.9.11",
-    "orjson>=3.10",
+    "regex>=2026.9.29",
+    "orjson>=3.13.0",
     "httpx[http2]>=0.28.1,<1",
     "packaging>=24",
     "h2>=4.4.1",
     "lxml>=5.3",
     "markdown-it-py>=3.0",
-    "platformdirs>=4.2",
+    "platformdirs>=4.12.4",
     "rich>=13.7",
     # codecheck reads YAML (Quarto/R Markdown headers, codecheck.yml)
     "pyyaml>=6.0.2",
@@ -72,20 +72,20 @@ data = [
 ]
 # REST API server (port of metacheck's plumber API).
 api = [
-    "fastapi>=0.115",
-    "uvicorn[standard]>=0.30",
+    "fastapi>=0.143.0",
+    "uvicorn[standard]>=0.54.0",
     "python-multipart>=0.0.31",
 ]
 # The local demo app: `metacheck-app` opens a Gradio page in the browser.
-app = ["gradio>=6.28,<7"]
+app = ["gradio>=6.30.0,<7"]
 # Kept so that `metacheck[charset]` still installs: chardet is a core dependency.
 charset = []
 # data_check's local column-concept classifier (an int8 ONNX model, ~540 MB,
 # downloaded once from the Hugging Face Hub; see metacheck.datacheck.concepts).
-concepts = ["onnxruntime>=1.20", "tokenizers>=0.21", "huggingface-hub>=0.30"]
+concepts = ["onnxruntime>=1.31.0", "tokenizers>=0.21", "huggingface-hub>=2.2.0"]
 # llm(): the official provider SDKs, imported only when a model is called. The
 # caps are major versions; these SDKs release several times a week.
-llm = ["openai>=3.3,<4", "anthropic>=1.11,<2", "google-genai>=2.28,<3"]
+llm = ["openai>=3.3,<4", "anthropic>=1.12.1,<2", "google-genai>=2.29.0,<3"]
 all = ["metacheck[bibr,data,api,charset,concepts,llm]"]
 
 [project.urls]
@@ -111,7 +111,7 @@ metacheck-app = "metacheck.app:main"
 datapackage = "metacheck.datapackage.modules"
 
 [build-system]
-requires = ["hatchling>=1.26"]
+requires = ["hatchling>=1.32.4"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
@@ -126,12 +126,12 @@ dev = [
     "pytest-cov>=6.0",
     "pytest-xdist>=3.6",
     "pytest-benchmark>=5.1",
-    "hypothesis>=6.112",
+    "hypothesis>=6.168.5",
     "respx>=0.22",
-    "ruff>=0.8.0",
-    "mypy>=1.15",
+    "ruff>=0.16.10",
+    "mypy>=2.4.0",
     "pandas-stubs>=2.2",
-    "types-regex>=2024.9",
+    "types-regex>=2026.9.29.20261005",
     "lxml-stubs>=0.5",
     "pre-commit>=4.0",
     "pip-audit>=2.7",
