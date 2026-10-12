@@ -156,8 +156,8 @@ def with_section_types(p: Any, section_type: Sequence[str]) -> Any:
 
 
 def report_qmd(out: Any) -> list[str]:
-    """``module_run(...)$report`` as R holds it: table blocks become the R
-    chunk ``scroll_table()`` returns, so tables are compared too."""
+    """``module_run(...)$report`` as text: table blocks become the ``.qmd``
+    text ``scroll_table()`` gives (raw HTML in pytacheck, an R chunk in R; D75)."""
     from metacheck.report import ReportTable
     from metacheck.report.render import table_chunk
 

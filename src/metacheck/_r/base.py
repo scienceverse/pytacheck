@@ -11,10 +11,12 @@ table cells) uses these so that it reads as metacheck's does. Prefer them over
 from __future__ import annotations
 
 import functools
+import itertools
 import math
 import os
+import re
 import unicodedata
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
 import numpy as np
@@ -29,6 +31,7 @@ __all__ = [
     "local_utc_offset",
     "paste",
     "plural",
+    "r_literal",
     "r_round",
     "r_sort_key",
     "r_sorted",
@@ -395,3 +398,108 @@ def r_sorted(x: Sequence[Any], decreasing: bool = False) -> list[Any]:
     """R ``sort()`` for a character vector (``NA`` values are dropped, as in R)."""
     kept = [v for v in x if not is_na(v)]
     return sorted(kept, key=r_sort_key, reverse=decreasing)
+
+
+# ---------------------------------------------------------------------------
+# R literals, for messages that quote a value as R code
+# ---------------------------------------------------------------------------
+
+_R_ESCAPES = {"\\": "\\\\", '"': '\\"', "\n": "\\n", "\t": "\\t", "\r": "\\r",
+              "\a": "\\a", "\b": "\\b", "\f": "\\f", "\v": "\\v"}  # fmt: skip
+_R_RESERVED = frozenset({"if", "else", "repeat", "while", "function", "for", "next", "break",
+                         "TRUE", "FALSE", "NULL", "Inf", "NaN", "NA", "NA_integer_", "NA_real_",
+                         "NA_character_", "NA_complex_", "in"})  # fmt: skip
+
+
+def _r_string(s: str) -> str:
+    out = []
+    for ch in s:
+        code = ord(ch)
+        if ch in _R_ESCAPES:
+            out.append(_R_ESCAPES[ch])
+        elif code < 0x20 or code == 0x7F:
+            out.append(f"\\{code:03o}")
+        elif 0x80 <= code < 0xA0 or code in (0x2028, 0x2029):
+            out.append(f"\\u{code:04x}")
+        else:
+            out.append(ch)
+    return '"' + "".join(out) + '"'
+
+
+def _r_kind(values: Sequence[Any]) -> str:
+    """The R vector type ``c(...)`` of these values gives (``list`` if one is not a scalar)."""
+    kinds = set()
+    for v in values:
+        if is_na(v):
+            continue
+        if isinstance(v, bool | np.bool_):
+            kinds.add("lgl")
+        elif isinstance(v, int | np.integer):
+            kinds.add("int")
+        elif isinstance(v, float | np.floating):
+            kinds.add("dbl")
+        elif isinstance(v, str):
+            kinds.add("chr")
+        else:
+            return "list"
+    for kind, allowed in (
+        ("lgl", {"lgl"}),
+        ("int", {"int", "lgl"}),
+        ("dbl", {"int", "dbl", "lgl"}),
+    ):
+        if kinds <= allowed:
+            return kind
+    return "chr"
+
+
+def _r_element(kind: str, v: Any, all_na: bool) -> str:
+    if is_na(v):
+        typed = {"int": "NA_integer_", "dbl": "NA_real_", "chr": "NA_character_"}
+        return typed.get(kind, "NA") if all_na else "NA"
+    if kind == "lgl":
+        return "TRUE" if v else "FALSE"
+    if kind == "int":
+        return f"{int(v)}L"
+    if kind == "dbl":
+        f = float(v)
+        return ("Inf" if f > 0 else "-Inf") if math.isinf(f) else str(as_character(f))
+    return _r_string(str(v))
+
+
+def r_literal(x: Any) -> str:
+    """A value written as one line of R code, as R's ``deparse()`` writes data.
+
+    For messages that quote a value the way R's do (``unused argument (x = 1)``)
+    and for list cells that R's ``as.character()`` turns into code. ``None`` is
+    ``NULL``; a list (tuple, array, Series) of scalars is an atomic vector
+    (``c("a", NA)``, ``1:3``, ``logical(0)``); a mapping or a data frame is a
+    named ``list()``; anything else is a ``list()`` of its elements.
+    """
+    import pandas as pd
+
+    if x is None:
+        return "NULL"
+    if isinstance(x, pd.DataFrame):
+        x = {str(c): x.iloc[:, i] for i, c in enumerate(x.columns)}
+    if isinstance(x, Mapping):
+        parts = []
+        for k, v in x.items():
+            name = str(k)
+            valid = re.fullmatch(r"\.\.\.|(?:[^\W\d_]|\.(?![0-9]))[\w.]*", name)
+            shown = name if valid and name not in _R_RESERVED else _r_string(name)
+            parts.append(f"{shown} = {r_literal(v)}")
+        return "list(" + ", ".join(parts) + ")"
+    values = list(x) if isinstance(x, list | tuple | np.ndarray | pd.Series) else [x]
+    if not values:
+        return "logical(0)"
+    kind = _r_kind(values)
+    if kind == "list":
+        return "list(" + ", ".join(r_literal(v) for v in values) + ")"
+    all_na = all(is_na(v) for v in values)
+    if kind == "int" and len(values) > 1 and not any(is_na(v) for v in values):
+        ints = [int(v) for v in values]
+        step = ints[1] - ints[0]
+        if abs(step) == 1 and all(b - a == step for a, b in itertools.pairwise(ints)):
+            return f"{ints[0]}:{ints[-1]}"
+    items = [_r_element(kind, v, all_na) for v in values]
+    return items[0] if len(items) == 1 else "c(" + ", ".join(items) + ")"

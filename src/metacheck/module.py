@@ -921,7 +921,7 @@ def _check_unused_args(spec: ModuleSpec, kwargs: Mapping[str, Any]) -> None:
     unused = [k for k in kwargs if k not in params]
     if not unused:
         return
-    from metacheck.report.render import deparse
+    from metacheck._r.base import r_literal
 
     def as_typed(v: Any) -> Any:
         # R deparses the call as written: `foo = 1` is a double, not 1L
@@ -931,9 +931,7 @@ def _check_unused_args(spec: ModuleSpec, kwargs: Mapping[str, Any]) -> None:
             return [as_typed(e) for e in v]
         return v
 
-    args = ", ".join(
-        f"{k} = {' '.join(line.strip() for line in deparse(as_typed(kwargs[k])))}" for k in unused
-    )
+    args = ", ".join(f"{k} = {r_literal(as_typed(kwargs[k]))}" for k in unused)
     plural = "s" if len(unused) > 1 else ""
     raise _UnusedArgumentError(f"unused argument{plural} ({args})")
 

@@ -50,7 +50,7 @@
 "mod_causal_review/causal_claims.review.fake.report.full":
   kind: r_bug_fixed
   ref: U85
-  reason: '"... in random order after participants were randomized." counts as describing randomization (7 sentences, metacheck 6)'
+  reason: '"... in random order after participants were randomized." counts as describing randomization (7 sentences, metacheck 6); the tables are raw HTML blocks, not R chunks (D75)'
 
 # ethics_check --------------------------------------------------------------------
 "mod_ethics/ethics_check.duplicates":

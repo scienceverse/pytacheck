@@ -1,4 +1,4 @@
-"""The report renderers: deparse(), Quarto-flavoured markdown to HTML / GFM, the page."""
+"""The report renderers: table blocks, Quarto-flavoured markdown to HTML / GFM, the page."""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ import metacheck as pc
 from metacheck.report import emojis, scroll_table
 from metacheck.report.render import (
     TableSlots,
-    deparse,
     markdown_to_gfm,
     markdown_to_html,
     table_chunk,
@@ -24,34 +23,36 @@ def test_emojis():
     assert len(emojis) == 32
 
 
-def test_deparse_basics():
-    assert deparse([0.1, 0.9]) == ["c(0.1, 0.9)"]
-    assert deparse("auto") == ['"auto"']
-    assert deparse([None, 200.0]) == ["c(NA, 200)"]
-    assert deparse(list(range(1, 11))) == ["1:10"]
-    assert deparse([3, 2, 1]) == ["3:1"]
-    assert deparse([1, 3]) == ["c(1L, 3L)"]
-    assert deparse({"a": 1.0, "b": ["x", None]}) == ['list(a = 1, b = c("x", NA))']
-    assert deparse(pd.DataFrame({"a": [1, 2, 3]})) == [
-        'structure(list(a = 1:3), class = "data.frame", row.names = c(NA, ',
-        "-3L))",
-    ]
+def test_r_literal_quotes_values_as_r_code():
+    # what "unused argument" messages and RegCheck's list cells show
+    from metacheck._r.base import r_literal
+
+    assert r_literal([0.1, 0.9]) == "c(0.1, 0.9)"
+    assert r_literal("auto") == '"auto"'
+    assert r_literal([None, 200.0]) == "c(NA, 200)"
+    assert r_literal(list(range(1, 11))) == "1:10"
+    assert r_literal([3, 2, 1]) == "3:1"
+    assert r_literal([1, 3]) == "c(1L, 3L)"
+    assert r_literal([None, None]) == "c(NA, NA)"
+    assert r_literal(pd.Series([None, None], dtype="string")) == "c(NA, NA)"
+    assert r_literal(["a", None]) == 'c("a", NA)'
+    assert r_literal({"a": 1.0, "b c": ["x", None]}) == 'list(a = 1, "b c" = c("x", NA))'
+    assert r_literal([[1, 2], "a"]) == 'list(1:2, "a")'
+    assert r_literal(['q"\\\n\x01\u0085']) == '"q\\"\\\\\\n\\001\\u0085"'
+    assert r_literal(None) == "NULL"
+    assert r_literal([]) == "logical(0)"
 
 
-def test_deparse_list_column_and_factor():
-    df = pd.DataFrame({"f": pd.Categorical(["u", "v"]), "l": [[1, 2], ["a"]]})
-    out = "\n".join(deparse(df))
-    # R: factors deparse with their codes and levels (parity: deparse.df_factor)
-    assert 'f = structure(1:2, levels = c("u", "v"), class = "factor")' in out
-    assert 'l = list(1:2, "a")' in out
-
-
-def test_table_chunk_attribute_order():
-    # a character column moves class after row.names (R's `[[<-.data.frame`)
-    chr_chunk = table_chunk(scroll_table(pd.DataFrame({"a": ["x"]})))
-    assert 'row.names = c(NA, -1L), class = "data.frame")' in chr_chunk
-    num_chunk = table_chunk(scroll_table(pd.DataFrame({"a": [1.0]})))
-    assert 'class = "data.frame", row.names = c(NA, \n-1L))' in num_chunk
+def test_table_chunk_is_a_raw_html_block():
+    # D75: the .qmd holds the table as HTML, not as R code that rebuilds it
+    chunk = table_chunk(scroll_table(pd.DataFrame({"a_b": ["x\ny", "<i>"], "n": [1.5, 2.0]})))
+    assert chunk.startswith('\n```{=html}\n<div class="datatables"><div class="dt-scroll">')
+    assert chunk.endswith("</table></div></div>\n```\n")
+    assert "<th>a_<wbr>b</th>" in chunk and '<th class="dt-right">n</th>' in chunk
+    assert "<td>x<br>y</td>" in chunk and '<td class="dt-right">1.5</td>' in chunk
+    assert "<td><i></td>" in chunk  # escape = FALSE, as in metacheck
+    escaped = table_chunk(scroll_table(pd.DataFrame({"a": ["<i>"]}), escape=True))
+    assert "<td>&lt;i&gt;</td>" in escaped and "```{r}" not in escaped
 
 
 def test_markdown_callouts_and_divs():
