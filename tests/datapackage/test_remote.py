@@ -82,16 +82,16 @@ def lookup(table: dict[str, str]) -> Any:
     ("text", "kind", "name", "archive"),
     [
         (
-            "https://github.com/scienceverse/pytacheck",
+            "https://github.com/scienceverse/example-study",
             "github",
-            "pytacheck",
-            "https://api.github.com/repos/scienceverse/pytacheck/zipball",
+            "example-study",
+            "https://api.github.com/repos/scienceverse/example-study/zipball",
         ),
         (
-            "github.com/scienceverse/pytacheck.git",
+            "github.com/scienceverse/example-study.git",
             "github",
-            "pytacheck",
-            "https://api.github.com/repos/scienceverse/pytacheck/zipball",
+            "example-study",
+            "https://api.github.com/repos/scienceverse/example-study/zipball",
         ),
         (
             "  <https://www.github.com/o/r/>  ",
