@@ -61,7 +61,8 @@ import pandas as pd
 
 from metacheck._env import env_get
 from metacheck._r.base import plural, slashed, trimws
-from metacheck._r.regex import compile_r, gregexpr_all, grepl, gsub, regexec, strsplit, sub
+from metacheck._r.regex import gregexpr_all, grepl, gsub, regexec, strsplit, sub
+from metacheck._values import as_float, is_missing
 from metacheck.datacheck._files_registry import EXT_REGISTRY
 from metacheck.datacheck._strings import RAW_STRING, file_ext, tolower_checked
 from metacheck.fileinfo._strings import invalid_utf8
@@ -200,12 +201,6 @@ def ext_registry() -> pd.DataFrame:
 # -----------------------------------------------------------------------------
 
 
-def _is_na(x: Any) -> bool:
-    if x is None or x is pd.NA or x is pd.NaT:
-        return True
-    return isinstance(x, float) and math.isnan(x)
-
-
 def _as_list(x: Any) -> list[Any]:
     """An R vector argument as a Python list (``None`` -> empty)."""
     if x is None:
@@ -213,10 +208,10 @@ def _as_list(x: Any) -> list[Any]:
     if isinstance(x, str):
         return [x]
     if isinstance(x, pd.Series | pd.Index):
-        return [None if _is_na(v) else v for v in x.tolist()]
+        return [None if is_missing(v) else v for v in x.tolist()]
     if isinstance(x, Iterable):
-        return [None if _is_na(v) else v for v in x]
-    return [None if _is_na(x) else x]
+        return [None if is_missing(v) else v for v in x]
+    return [None if is_missing(x) else x]
 
 
 def _tolower(s: str) -> str:
@@ -272,7 +267,7 @@ def _file_ext(x: str | None) -> str | None:
 
 def _as_logical(x: Any) -> bool | None:
     """R ``as.logical()`` of one value (``None`` for NA)."""
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, bool | np.bool_):
         return bool(x)
@@ -284,48 +279,6 @@ def _as_logical(x: Any) -> bool | None:
         if x in ("FALSE", "false", "F", "False"):
             return False
     return None
-
-
-def _r_as_numeric(s: Any) -> float | None:
-    """R ``as.numeric()`` of one string (``None`` for NA; NaN stays NaN)."""
-    if _is_na(s):
-        return None
-    if isinstance(s, bool):
-        return float(s)
-    if isinstance(s, int | float):
-        return float(s)
-    txt = str(s).strip(" \t\n\r\f\v")
-    if not txt or txt == "NA":
-        return None
-    m = _NUMERIC_RX().fullmatch(txt)
-    if m is None:
-        return None
-    body = txt.lstrip("+-")
-    neg = txt.startswith("-")
-    low = body.lower()
-    if low in ("inf", "infinity"):
-        return -math.inf if neg else math.inf
-    if low == "nan":
-        return math.nan
-    if low.startswith("0x"):
-        v = _hex_float(low[2:])
-        if v is None:
-            return None
-        return -v if neg else v
-    try:
-        v = float(body)
-    except ValueError:
-        return None
-    return -v if neg else v
-
-
-@functools.cache
-def _NUMERIC_RX() -> Any:
-    return compile_r(
-        r"[+-]?(?:(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][+-]?[0-9]+)?|[iI][nN][fF](?:[iI][nN][iI][tT][yY])?"
-        r"|[nN][aA][nN]|0[xX](?:[0-9a-fA-F]+\.?[0-9a-fA-F]*|\.[0-9a-fA-F]+)(?:[pP][+-]?[0-9]+)?)",
-        perl=True,
-    )
 
 
 def _hex_float(h: str) -> float | None:
@@ -345,7 +298,7 @@ def _r_as_character(x: Any) -> str | None:
     """R ``as.character()`` of one value, including dates and times."""
     from metacheck._r.base import as_character
 
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, pd.Timestamp | dt.datetime):
         from metacheck.datacheck._files_rdata import posixct_as_character
@@ -359,7 +312,7 @@ def _r_as_character(x: Any) -> str | None:
 def _series_as_character(col: pd.Series) -> list[str | None]:
     """``as.character(col)`` for a data-frame column."""
     if isinstance(col.dtype, pd.CategoricalDtype):
-        return [None if _is_na(v) else str(v) for v in col.tolist()]
+        return [None if is_missing(v) else str(v) for v in col.tolist()]
     return [_r_as_character(v) for v in col.tolist()]
 
 
@@ -373,7 +326,7 @@ def _file_category(file_name: list[str | None]) -> list[str | None]:
 
     out = file_category(list(file_name))
     col = out["file_category"] if isinstance(out, pd.DataFrame) else out
-    return [None if _is_na(v) else str(v) for v in _as_list(col)]
+    return [None if is_missing(v) else str(v) for v in _as_list(col)]
 
 
 def _filetype(file_name: list[str | None]) -> list[str | None]:
@@ -382,7 +335,7 @@ def _filetype(file_name: list[str | None]) -> list[str | None]:
     out = filetype(list(file_name))
     if isinstance(out, dict):
         out = list(out.values())
-    return [None if _is_na(v) else str(v) for v in _as_list(out)]
+    return [None if is_missing(v) else str(v) for v in _as_list(out)]
 
 
 _KEYWORD_RULES = (
@@ -694,7 +647,7 @@ _DDI_MAPPING = {
 def _col(df: pd.DataFrame | None, name: str) -> list[Any] | None:
     if df is None or name not in df.columns:
         return None
-    return [None if _is_na(v) else v for v in df[name].tolist()]
+    return [None if is_missing(v) else v for v in df[name].tolist()]
 
 
 def _remote_size(url: str) -> float | None:
@@ -703,7 +656,7 @@ def _remote_size(url: str) -> float | None:
     except ImportError:  # pragma: no cover - archives port not available
         return None
     v = remote_size(url)
-    return None if _is_na(v) else float(v)
+    return None if is_missing(v) else float(v)
 
 
 def _llm_use() -> bool:
@@ -798,7 +751,7 @@ def _data_check_write_manifest(
         on_disk = os.path.getsize(str(loc[i])) if downloaded[i] else None
         v = sizes[i]
         file_size.append(
-            float(on_disk) if on_disk is not None else _r_as_numeric(v)  # as.numeric()
+            float(on_disk) if on_disk is not None else as_float(v)  # as.numeric()
         )
     urls = _col(files, "file_url") or [None] * n
     for i in range(n):
@@ -811,7 +764,7 @@ def _data_check_write_manifest(
         zp = (zp + [None] * n)[:n]
 
     def paste_key(r: Any, f: Any) -> str:
-        return f"{'NA' if _is_na(r) else r} {'NA' if _is_na(f) else f}"
+        return f"{'NA' if is_missing(r) else r} {'NA' if is_missing(f) else f}"
 
     over_key = (
         {paste_key(r, f) for r, f in zip(oversize["repo_url"], oversize["file_name"], strict=True)}
@@ -821,7 +774,9 @@ def _data_check_write_manifest(
     fail_err: dict[str, str] = {}
     if failed is not None and len(failed):
         for r, f, e in zip(failed["repo_url"], failed["file_name"], failed["error"], strict=True):
-            fail_err.setdefault(paste_key(r, f), "NA" if _is_na(e) else str(e).split("\n", 1)[0])
+            fail_err.setdefault(
+                paste_key(r, f), "NA" if is_missing(e) else str(e).split("\n", 1)[0]
+            )
     skip = _as_list(skip_types)
     has_repo = "repo_url" in files.columns
     repo_urls = _col(files, "repo_url") or [None] * n
@@ -988,13 +943,13 @@ def _llm_schema(field: str, index_desc: str, value: str, value_desc: str) -> dic
 
 def _as_integer(x: Any) -> int | None:
     """R ``as.integer()`` of one value (truncates doubles; NA when not a number)."""
-    if _is_na(x):
+    if is_missing(x):
         return None
     if isinstance(x, bool):
         return int(x)
     if isinstance(x, int):
         return x
-    v = _r_as_numeric(x)
+    v = as_float(x)
     if v is None or not math.isfinite(v) or abs(v) >= 2**31:
         return None
     return int(v)
@@ -1004,7 +959,7 @@ def _llm_response_model(resp: Any) -> str | None:
     info = getattr(resp, "attrs", {}).get("llm") if resp is not None else None
     if isinstance(info, dict):
         model = info.get("model")
-        return None if _is_na(model) else model
+        return None if is_missing(model) else model
     return None
 
 
@@ -1035,7 +990,7 @@ def _llm_classify_batched(
         for start in range(0, n, batch_size):
             rows = list(range(start, min(start + batch_size, n)))
             listing = "\n".join(  # paste(): NA is "NA"
-                f"{k}. {'NA' if _is_na(items[r]) else _r_as_character(items[r])}"
+                f"{k}. {'NA' if is_missing(items[r]) else _r_as_character(items[r])}"
                 for k, r in enumerate(rows, 1)
             )
             try:
@@ -1061,7 +1016,7 @@ def _llm_classify_batched(
                 model_used = _llm_response_model(resp)
             idx = [_as_integer(v) for v in resp["index"].tolist()]
             vals = [
-                None if _is_na(v) else _tolower(str(_r_as_character(v)).strip(" \t\r\n"))
+                None if is_missing(v) else _tolower(str(_r_as_character(v)).strip(" \t\r\n"))
                 for v in resp["value"].tolist()
             ]
             for i, v in zip(idx, vals, strict=True):
@@ -1779,7 +1734,7 @@ def _detect_header(path: str | os.PathLike[str], sep: str) -> bool:
             return True
         if _toupper(x) in _NUMLIKE:
             return True
-        v = _r_as_numeric(x)
+        v = as_float(x)
         return v is not None and not math.isnan(v)
 
     def all_num(toks: list[str]) -> bool:

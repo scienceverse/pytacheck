@@ -27,6 +27,7 @@ import pandas as pd
 
 from metacheck._r import grepl, gsub, r_sort_key, strsplit, sub, trimws
 from metacheck._r.base import as_character, plural
+from metacheck._values import is_true
 from metacheck.datacheck._checks_rvec import as_numeric_str, chr, median, tolower, toupper
 
 __all__ = [
@@ -222,11 +223,6 @@ def _resp_model(resp: Any) -> str | None:
         m = info.get("model")
         return None if _na(m) else m
     return None
-
-
-def _is_true(x: Any) -> bool:
-    """R ``isTRUE()`` of one value: a non-NA logical TRUE."""
-    return (isinstance(x, bool) or type(x).__name__ == "bool_") and bool(x)
 
 
 def _first(x: Any) -> Any:
@@ -2818,7 +2814,7 @@ def codebook_match_llm(
             if model_used is None:
                 model_used = _resp_model(resp)
             eq = _first(resp["equivalent"].tolist()) if "equivalent" in resp.columns else None
-            if not _is_true(eq):
+            if not is_true(eq):
                 continue
             canonical = _first(resp["canonical"].tolist()) if "canonical" in resp.columns else ""
             if canonical is None and "canonical" not in resp.columns:

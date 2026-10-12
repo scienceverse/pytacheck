@@ -11,6 +11,7 @@ import os
 from collections.abc import Mapping
 from typing import Any
 
+from metacheck._values import is_true
 from metacheck.module import module
 
 _NA_REPLACE_EMPTY = {
@@ -548,7 +549,7 @@ def _codebook_check(
                 _decode_value_labels(l_mv[i] if l_mv is not None else None)
             )
             sv = data_check_scale_values(x, declared=declared, valid_values=valid)
-            if not cb._is_true(sv.get("problem")):
+            if not is_true(sv.get("problem")):
                 continue
             values = list(sv.get("values") or [])
             classes = list(sv.get("classes") or [])

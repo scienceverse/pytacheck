@@ -33,7 +33,6 @@ from metacheck._r import (
     bind_rows,
     grepl,
     gsub,
-    is_na,
     plural,
     r_round,
     regextract,
@@ -42,6 +41,7 @@ from metacheck._r import (
     strsplit,
     sub,
 )
+from metacheck._values import is_missing
 from metacheck.archives._atomic import atomic_write
 
 __all__ = [
@@ -74,7 +74,7 @@ class OsfResult(list):  # type: ignore[type-arg]
 
 def _eq(value: Any, target: Any) -> bool:
     """``value %in% target`` for one value: ``False`` (not ``NA``) when missing."""
-    return not is_na(value) and value == target
+    return not is_missing(value) and value == target
 
 
 def _osf_err(x: Any) -> str | None:
@@ -420,14 +420,14 @@ def _osf_info_listing(
         raw_osf_urls = table[id_col_name].tolist()
     else:
         vals = [osf_url] if isinstance(osf_url, str) or osf_url is None else list(osf_url)
-        uniq = list(dict.fromkeys(None if is_na(v) else v for v in vals))
+        uniq = list(dict.fromkeys(None if is_missing(v) else v for v in vals))
         raw_osf_urls = [as_character(v) for v in uniq if v is not None]
         id_col_name = "osf_url"
         table = pd.DataFrame({"osf_url": pd.Series(raw_osf_urls, dtype="string")})
 
     checked = osf_check_id(raw_osf_urls) if raw_osf_urls else []
     pairs = [(u, i) for u, i in zip(raw_osf_urls, checked, strict=True) if i is not None]
-    pairs = list(dict.fromkeys((None if is_na(u) else u, i) for u, i in pairs))
+    pairs = list(dict.fromkeys((None if is_missing(u) else u, i) for u, i in pairs))
     ids = pd.DataFrame(
         {
             "osf_url": pd.Series([u for u, _ in pairs], dtype="string"),
@@ -497,7 +497,7 @@ def _osf_info_listing(
 def _non_na(df: pd.DataFrame | None, col: str) -> list[str]:
     if df is None or col not in df.columns:
         return []
-    return [str(v) for v in df[col].tolist() if not is_na(v)]
+    return [str(v) for v in df[col].tolist() if not is_missing(v)]
 
 
 def osf_type(guid: Any) -> Any:
@@ -907,13 +907,13 @@ def _osf_prepare_save_paths(
     parent_folders: list[str] = []
     for last_parent in files["project"].tolist() if "project" in files else [None] * len(files):
         chain: list[int] = []
-        while not is_na(last_parent) and last_parent != osf_id:
+        while not is_missing(last_parent) and last_parent != osf_id:
             hits = rows_by_id.get(last_parent, [])
             if not hits:
                 break
             chain.extend(hits)
             last_parent = c_project[chain[-1]]
-            if last_parent is not None and is_na(last_parent):
+            if last_parent is not None and is_missing(last_parent):
                 last_parent = None
         if not chain:
             chain = list(rows_by_id.get(osf_id, []))
@@ -923,8 +923,8 @@ def _osf_prepare_save_paths(
 
     paths = files["path"].tolist()
     in_path = [
-        (f"/{folder}/" in ("NA" if is_na(p) else str(p)))
-        and ("NA" if is_na(p) else str(p)).find(f"/{folder}/") == 0
+        (f"/{folder}/" in ("NA" if is_missing(p) else str(p)))
+        and ("NA" if is_missing(p) else str(p)).find(f"/{folder}/") == 0
         for folder, p in zip(parent_folders, paths, strict=True)
     ]
     if in_path and all(in_path):
@@ -932,7 +932,7 @@ def _osf_prepare_save_paths(
 
     providers = files["provider"].tolist()
     save = [
-        f"{'NA' if is_na(prov) else prov}{'/' if folder else ''}{folder}{'NA' if is_na(p) else p}"
+        f"{'NA' if is_missing(prov) else prov}{'/' if folder else ''}{folder}{'NA' if is_missing(p) else p}"
         for prov, folder, p in zip(providers, parent_folders, paths, strict=True)
     ]
 
@@ -963,9 +963,7 @@ def _osf_prepare_save_paths(
         for pos, i in enumerate(to_copy):
             value = flat[pos]
             if value in seen:
-                value = (
-                    f"{'NA' if is_na(ids[i]) else ids[i]}-{'NA' if is_na(names[i]) else names[i]}"
-                )
+                value = f"{'NA' if is_missing(ids[i]) else ids[i]}-{'NA' if is_missing(names[i]) else names[i]}"
             else:
                 seen.add(value)
             save[i] = value
@@ -1331,7 +1329,7 @@ def _osf_file_download_ids(
                 already: list[bool] = []
                 for i in files_to_download:
                     on_disk = os.path.join(download_to, save_paths[i])
-                    trust = is_na(providers[i]) or str(providers[i]).lower() == "osfstorage"
+                    trust = is_missing(providers[i]) or str(providers[i]).lower() == "osfstorage"
                     have = os.path.exists(on_disk) and not os.path.isdir(on_disk)
                     exp = sizes[i]
                     right = (not trust) or exp != exp or (have and os.path.getsize(on_disk) == exp)
@@ -1357,7 +1355,7 @@ def _osf_file_download_ids(
             dests = [os.path.join(temppath, str(ids_col[i])) for i in files_to_download]
             expected = [
                 sizes[i]
-                if (is_na(providers[i]) or str(providers[i]).lower() == "osfstorage")
+                if (is_missing(providers[i]) or str(providers[i]).lower() == "osfstorage")
                 else math.nan
                 for i in files_to_download
             ]
@@ -1366,7 +1364,7 @@ def _osf_file_download_ids(
                 from metacheck.archives.download import _download_many_parallel
 
                 errs = list(_download_many_parallel(dl_urls, dests, expected))
-            failed_j = [j for j, e in enumerate(errs) if not is_na(e)]
+            failed_j = [j for j, e in enumerate(errs) if not is_missing(e)]
             for j in failed_j:
                 logger("osf_file_download", {"error": errs[j], "url": dl_urls[j]})
             if failed_j:
@@ -1470,11 +1468,11 @@ def _osf_file_download_ids(
     check_size = [True] * len(ret)
     if mode == "zip" and unzip is not True and "path" in ret.columns:
         for i, p in enumerate(ret["path"].tolist()):
-            if not is_na(p) and str(p).endswith(".zip"):
+            if not is_missing(p) and str(p).endswith(".zip"):
                 check_size[i] = False
     if "provider" in ret.columns:
         for i, prov in enumerate(ret["provider"].tolist()):
-            if not (is_na(prov) or str(prov).lower() == "osfstorage"):
+            if not (is_missing(prov) or str(prov).lower() == "osfstorage"):
                 check_size[i] = False
     ret = cast("pd.DataFrame", _osf_verify_downloads(ret, download_to, check_size=check_size))
 
@@ -1551,14 +1549,14 @@ def _osf_zip_mode(
     from metacheck.utils import path_sanitize
 
     kinds = files["kind"].tolist()
-    provs = [None if is_na(p) else str(p).lower() for p in files["provider"].tolist()]
+    provs = [None if is_missing(p) else str(p).lower() for p in files["provider"].tolist()]
     projects = files["project"].tolist() if "project" in files else [None] * len(files)
     is_file = [_eq(k, "file") for k in kinds]
     zip_nodes = list(
         dict.fromkeys(
             p
             for p, f, pv in zip(projects, is_file, provs, strict=True)
-            if f and pv == "osfstorage" and not is_na(p)
+            if f and pv == "osfstorage" and not is_missing(p)
         )
     )
     other_idx = [
@@ -1567,7 +1565,9 @@ def _osf_zip_mode(
     if other_idx:
         raw_provs = files["provider"].tolist()
         others = list(
-            dict.fromkeys("NA" if is_na(raw_provs[i]) else str(raw_provs[i]) for i in other_idx)
+            dict.fromkeys(
+                "NA" if is_missing(raw_provs[i]) else str(raw_provs[i]) for i in other_idx
+            )
         )
         n = len(other_idx)
         _message(
@@ -1630,7 +1630,7 @@ def _osf_zip_mode(
             paths = files["path"].tolist()
             copied = []
             for i in node_idx:
-                rel = sub("^/+", "", "NA" if is_na(paths[i]) else str(paths[i]))
+                rel = sub("^/+", "", "NA" if is_missing(paths[i]) else str(paths[i]))
                 src = os.path.join(unzip_dir, rel)
                 if not os.path.exists(src):
                     continue
@@ -1652,7 +1652,7 @@ def _osf_zip_mode(
         _tick(pb, f"Downloading {len(left)} remaining file{plural(len(left))} individually")
         urls = files["download_url"].tolist()
         ids = files["osf_id"].tolist()
-        wanted = [i for i in left if not is_na(urls[i]) and str(urls[i]) != ""]
+        wanted = [i for i in left if not is_missing(urls[i]) and str(urls[i]) != ""]
         if math.isfinite(budget) and wanted:
             # only as many as fit in what is left of the budget, smallest
             # first; a file with no listed size cannot be counted against it
@@ -1686,7 +1686,7 @@ def _osf_zip_mode(
             dests = [os.path.join(temppath2, str(ids[i])) for i in wanted]
             expected2 = [sizes[i] if provs[i] in ("osfstorage", None) else math.nan for i in wanted]
             errs = list(_download_many_parallel([urls[i] for i in wanted], dests, expected2))
-            fetched = [i for i, e in zip(wanted, errs, strict=True) if is_na(e)]
+            fetched = [i for i, e in zip(wanted, errs, strict=True) if is_missing(e)]
             copied_rows.extend(
                 i
                 for i in fetched

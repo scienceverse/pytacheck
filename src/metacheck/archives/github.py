@@ -22,7 +22,8 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from metacheck._r import is_na, slashed
+from metacheck._r import slashed
+from metacheck._values import as_int, is_missing
 
 if TYPE_CHECKING:
     import httpx
@@ -97,9 +98,9 @@ def _as_list(x: Any) -> list[Any]:
     if x is None:
         return []
     if isinstance(x, pd.Series | pd.Index):
-        return [None if is_na(v) else v for v in x.tolist()]
+        return [None if is_missing(v) else v for v in x.tolist()]
     if _is_vector(x):
-        return [None if is_na(v) else v for v in x]
+        return [None if is_missing(v) else v for v in x]
     return [x]
 
 
@@ -393,7 +394,7 @@ def github_repo(repo: Any) -> Any:
         if len(items) > 1:
             return [github_repo(r) for r in items]
         repo = items[0]
-    if is_na(repo):
+    if is_missing(repo):
         return None
 
     from metacheck._r import as_character, regexec, sub
@@ -615,8 +616,8 @@ def _github_files(repo: Any, clean_repo: str, dir: str, recursive: bool) -> pd.D
 
     if resp.status_code != 200:
         rl = resp.headers.get("x-ratelimit-remaining")
-        if rl is not None and _as_int(rl) == 0:
-            reset_at = _as_int(resp.headers.get("x-ratelimit-reset"))
+        if rl is not None and as_int(rl) == 0:
+            reset_at = as_int(resp.headers.get("x-ratelimit-reset"))
             reset = (
                 "NA"
                 if reset_at is None
@@ -672,16 +673,6 @@ def _github_files(repo: Any, clean_repo: str, dir: str, recursive: bool) -> pd.D
             ]
             files = bind_rows([files, *dir_contents])
     return files
-
-
-def _as_int(x: Any) -> int | None:
-    """R ``as.integer()`` of a header value (``None`` for NA)."""
-    if x is None:
-        return None
-    try:
-        return int(float(str(x).strip()))
-    except ValueError:
-        return None
 
 
 def github_tree_files(repo: Any) -> dict[str, Any]:
@@ -839,15 +830,6 @@ def _vapply_num(x: Any) -> float | None:
     if isinstance(x, str):
         raise TypeError("values must be type 'double', but FUN(X[[1]]) result is type 'character'")
     return float(x)
-
-
-def _num(x: Any) -> float | None:
-    if x is None or isinstance(x, bool):
-        return None if x is None else float(x)
-    try:
-        return float(x)
-    except (TypeError, ValueError):
-        return None
 
 
 def github_info(repo: Any, recursive: bool = False) -> dict[str, Any] | None:

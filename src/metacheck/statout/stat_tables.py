@@ -29,19 +29,18 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r.base import as_character, format_num
+from metacheck._r.base import as_character, format_num, trimws
 from metacheck._r.regex import compile_r, grepl, gsub, regexec, regextract_all, strsplit, sub
+from metacheck._values import as_float, as_str
 from metacheck.statout.r_output import (
     _chr_frame,
     _make_unique,
-    _r_as_numeric,
     _r_dollar,
     _r_output_oneline,
     _r_output_tables,
     _r_values,
     _RError,
     _RNamedList,
-    _trimws,
 )
 
 __all__ = ["read_stat_tables"]
@@ -95,7 +94,7 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
             def order_key(f: str) -> int:
                 folder = os.path.basename(os.path.dirname(f))
                 num = sub("^\\s*(\\d+).*$", "\\1", folder)
-                val = _r_as_numeric(num)
+                val = as_float(num)
                 if val is None or math.isnan(val) or abs(val) >= 2**31:
                     return 2**31 - 1
                 return int(val)
@@ -137,7 +136,7 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
         out: list[dict[str, Any]] = []
         for i, tb in enumerate(tables, start=1):
             heads = tb.xpath("preceding::*[self::h1 or self::h2 or self::h3 or self::h4]")
-            analysis = _trimws(_xml_text(heads[-1])) if heads else None
+            analysis = trimws(_xml_text(heads[-1])) if heads else None
             parsed = _stat_table_parse(tb)
             if parsed is None:
                 continue
@@ -233,7 +232,7 @@ def _jasp_clean_colname(x: Any) -> str:
     s = as_character(x)
     x = "NA" if s is None else s
     out = str(sub("^JaspColumn_.*?_Encoded_", "", x))
-    return x if not _trimws(out) else out
+    return x if not trimws(out) else out
 
 
 def _r_list_get(node: Any, key: str) -> Any:
@@ -258,8 +257,8 @@ def _jasp_structured_tables(analyses_json: str | os.PathLike[str]) -> list[dict[
         return []
     out: list[dict[str, Any]] = []
     for an in _r_iter(analyses):
-        an_title = _trimws(_chr1(_r_dollar(an, "title"), "")) or ""
-        an_name = _trimws(_chr1(_r_dollar(an, "name"), "")) or ""
+        an_title = trimws(_chr1(_r_dollar(an, "title"), "")) or ""
+        an_name = trimws(_chr1(_r_dollar(an, "name"), "")) or ""
         label = an_title if an_title else (an_name if an_name else None)
         an_id: Any = _r_dollar(an, "id")
         if isinstance(an_id, list | dict):
@@ -277,7 +276,7 @@ def _jasp_structured_tables(analyses_json: str | os.PathLike[str]) -> list[dict[
             if fields is not None and data is not None:
                 df = _jasp_table_to_df(fields, data)
                 if df is not None and len(df) and df.shape[1]:
-                    ttl = _trimws(_chr1(_r_dollar(node, "title"), "")) or ""
+                    ttl = trimws(_chr1(_r_dollar(node, "title"), "")) or ""
                     out.append(
                         {
                             "analysis": label,
@@ -621,7 +620,7 @@ def _jmv_is_wide_descriptives(nms: Sequence[str], nrow_df: int) -> bool:  # noqa
         return False
 
     def typed_frac(x: Sequence[str]) -> float:
-        keys = list(dict.fromkeys((_trimws(v) or "").lower() for v in x))
+        keys = list(dict.fromkeys((trimws(v) or "").lower() for v in x))
         if not keys:
             return 0.0
         typed = [bool(_typ(stato_type_column(k), "termSource")) for k in keys]
@@ -661,21 +660,15 @@ def _jmv_pivot_wide_descriptives(df: pd.DataFrame) -> pd.DataFrame:
     cols: dict[str, list[Any]] = {"name": [v for _, v in grid]}
     values = [df.iloc[:, i].tolist() for i in range(df.shape[1])]
     for lc in label_cols:
-        col = [_cell_chr(values[lc][r]) for r, _ in grid]
+        col = [as_str(values[lc][r]) for r, _ in grid]
         cols[nms[lc]] = col
     for s in stats:
         col = []
         for r, v in grid:
             hit = [i for i in range(len(nms)) if keep[i] and prefix[i] == v and suffix[i] == s]
-            col.append("" if not hit else _cell_chr(values[hit[0]][r]))
+            col.append("" if not hit else as_str(values[hit[0]][r]))
         cols[s] = col
     return _chr_frame(list(cols), list(cols.values()))
-
-
-def _cell_chr(v: Any) -> str | None:
-    if v is None or v is pd.NA or (isinstance(v, float) and math.isnan(v)):
-        return None
-    return as_character(v)
 
 
 def _jmv_table_to_df(tbl_raw: Any) -> pd.DataFrame | None:
@@ -884,9 +877,9 @@ def _xml_text(node: Any) -> str:
 def _grid_of(cells: Sequence[Any]) -> list[str]:
     out: list[str] = []
     for c in cells:
-        txt = _trimws(gsub("[[:space:]]+", " ", _xml_text(c))) or ""
+        txt = trimws(gsub("[[:space:]]+", " ", _xml_text(c))) or ""
         cs_raw = c.get("colspan")
-        cs_num = _r_as_numeric(cs_raw) if cs_raw is not None else None
+        cs_num = as_float(cs_raw) if cs_raw is not None else None
         if cs_num is None or math.isnan(cs_num) or abs(cs_num) >= 2**31:
             span = 1
         else:
@@ -913,7 +906,7 @@ def _stat_table_parse(tb: Any) -> dict[str, Any] | None:
 
     title: str | None = None
     if is_th_row[0] and len(row_cells[0]) == 1:
-        title = _trimws(_xml_text(row_cells[0][0]))
+        title = trimws(_xml_text(row_cells[0][0]))
 
     header_idx: int | None = None
     for j, th in enumerate(is_th_row):
@@ -955,7 +948,7 @@ def _stat_table_parse(tb: Any) -> dict[str, Any] | None:
     nrow = len(mat)
     keep_rows = []
     for ri in range(nrow):
-        vals = [_trimws(cols[c][ri]) for c in range(ncol)]
+        vals = [trimws(cols[c][ri]) for c in range(ncol)]
         vals = [v for v in vals if v is None or v != ""]
         if not vals:
             keep_rows.append(False)
@@ -1004,7 +997,7 @@ def _ipynb_is_noise(lines: Sequence[str]) -> bool:
     Port of ``R/stat-tables.R::.ipynb_is_noise()``.
     """
     lines = list(lines)
-    txt = _trimws(" ".join("NA" if v is None else v for v in lines)) or ""
+    txt = trimws(" ".join("NA" if v is None else v for v in lines)) or ""
     if not txt:
         return True
     if len(lines) <= 2:
@@ -1079,7 +1072,7 @@ def _ipynb_stat_table(lines: Sequence[str]) -> list[dict[str, Any]] | None:
     tabs = _r_output_tables(lines)
 
     def is_coef_table(tb: dict[str, Any]) -> bool:
-        hdr = [(_trimws(str(c)) or "").lower() for c in tb["data"].columns]
+        hdr = [(trimws(str(c)) or "").lower() for c in tb["data"].columns]
         return "coef" in hdr and any(h in hdr for h in ("std err", "t", "p>|t|", "p>|z|"))
 
     tabs = [t for t in tabs if is_coef_table(t)]
@@ -1116,8 +1109,8 @@ def _ipynb_stat_kv(lines: Sequence[str]) -> dict[str, Any] | None:
             m = rx.search(mm)
             if m is None:
                 continue
-            key = _trimws(sub(":$", "", m.group(1))) or ""
-            val = _trimws(m.group(2) or "") or ""
+            key = trimws(sub(":$", "", m.group(1))) or ""
+            val = trimws(m.group(2) or "") or ""
             if not key or not val:
                 continue
             pairs[key] = val
@@ -1253,7 +1246,7 @@ def _ipynb_read_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
 
             if otype == "stream":
                 lines = _split_lines(_ipynb_text(_r_dollar(o, "text")))
-                lines = [s for s in lines if _trimws(s)]
+                lines = [s for s in lines if trimws(s)]
                 if not lines or _ipynb_is_noise(lines):
                     continue
                 name = _r_dollar(o, "name")
@@ -1294,7 +1287,7 @@ def _ipynb_read_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
             if plain is None or not _r_len(plain):
                 continue
             lines = _split_lines(_ipynb_text(plain))
-            lines = [s for s in lines if _trimws(s)]
+            lines = [s for s in lines if trimws(s)]
             if not lines or _ipynb_is_noise(lines):
                 continue
             add_text_block(lines, f"Output (cell {ci})")

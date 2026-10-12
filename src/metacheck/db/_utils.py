@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any
 
 from metacheck._env import env_get
 from metacheck._r.base import as_character
-from metacheck._r.regex import is_na
+from metacheck._values import is_missing
 
 if TYPE_CHECKING:
     import httpx
@@ -121,7 +121,7 @@ def url_encode(url: Any, reserved: bool = False, repeated: bool = False) -> str:
     unchanged unless ``repeated=True``; every other character outside the
     allowed set is percent-encoded byte by byte (UTF-8, upper-case hex).
     """
-    if is_na(url):
+    if is_missing(url):
         return "NA"  # grepl() is FALSE for NA and strsplit()/paste() give "NA"
     s = url if isinstance(url, str) else _unlist_first_str(url)
     if not repeated and _has_escape(s):
@@ -184,9 +184,9 @@ def _coerce_common(values: Sequence[Any]) -> list[str | None]:
     if any(isinstance(v, str) for v in values):
         return [as_character(v) for v in values]
     if any(isinstance(v, float) for v in values):
-        return [as_character(float(v)) if not is_na(v) else None for v in values]
+        return [as_character(float(v)) if not is_missing(v) else None for v in values]
     if any(isinstance(v, int) and not isinstance(v, bool) for v in values):
-        return [as_character(int(v)) if not is_na(v) else None for v in values]
+        return [as_character(int(v)) if not is_missing(v) else None for v in values]
     return [as_character(v) for v in values]
 
 
@@ -208,7 +208,7 @@ def as_vector(x: Any) -> list[Any]:
         if isinstance(x, pd.DataFrame):
             raise TypeError("expected a vector, not a data frame")
         if isinstance(x, pd.Series | pd.Index):
-            return [None if is_na(v) else v for v in x.tolist()]
+            return [None if is_missing(v) else v for v in x.tolist()]
     except ImportError:  # pragma: no cover
         pass
     if isinstance(x, Mapping):

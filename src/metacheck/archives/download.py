@@ -40,7 +40,8 @@ from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
 
 from metacheck._env import env_get
-from metacheck._r import grepl, gsub, is_na, plural, sub
+from metacheck._r import grepl, gsub, plural, sub
+from metacheck._values import as_float, as_str, is_missing
 from metacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
@@ -64,22 +65,10 @@ def _message(*parts: Any) -> None:
     message(*parts)
 
 
-def _is_missing(x: Any) -> bool:
-    return x is None or is_na(x)
-
-
 def _num(x: Any) -> float:
     """One value as R double (``NA``/unparseable -> ``nan``)."""
-    if _is_missing(x):
-        return math.nan
-    if isinstance(x, str):
-        from metacheck.stats._rmath import as_numeric
-
-        return as_numeric(x)[0]
-    try:
-        return float(x)
-    except (TypeError, ValueError):
-        return math.nan
+    v = as_float(x)
+    return math.nan if v is None else v
 
 
 def _nums(values: Iterable[Any]) -> list[float]:
@@ -87,22 +76,12 @@ def _nums(values: Iterable[Any]) -> list[float]:
     return [_num(v) for v in values]
 
 
-def _chr(x: Any) -> str | None:
-    if _is_missing(x):
-        return None
-    if isinstance(x, str):
-        return x
-    from metacheck._r import as_character
-
-    return as_character(x)
-
-
 def _fmt_int(x: float) -> str:
     """``sprintf("%d", x)`` for a count; a fractional value is shown as it is
     (R's ``sprintf("%d")`` fails on it, U73)."""
     from metacheck._r import as_character
 
-    if _is_missing(x):
+    if is_missing(x):
         return "NA"
     v = float(x)
     if not v.is_integer():
@@ -188,10 +167,10 @@ def _repo_key(repo_url: Any) -> str:
             repo_url = float("nan")  # an element of a vector: NA, not NULL
     if repo_url is None:
         key: str = "unknown"
-    elif is_na(repo_url):
+    elif is_missing(repo_url):
         return "NA"  # R: gsub() keeps NA, and nzchar(NA) is TRUE
     else:
-        key = repo_url if isinstance(repo_url, str) else (_chr(repo_url) or "NA")
+        key = repo_url if isinstance(repo_url, str) else (as_str(repo_url) or "NA")
     key = gsub("^https?://", "", key)  # scheme is noise
     key = gsub("[^A-Za-z0-9._-]+", "_", key)  # filesystem-safe
     key = gsub("^_+|_+$", "", key)
@@ -215,10 +194,10 @@ def _file_path(*parts: str) -> str:
 
 
 def _rel_one(key: str, file_path: Any) -> str:
-    if _is_missing(file_path):
+    if is_missing(file_path):
         rel = "NA"
     else:
-        rel = file_path if isinstance(file_path, str) else (_chr(file_path) or "NA")
+        rel = file_path if isinstance(file_path, str) else (as_str(file_path) or "NA")
         rel = gsub(r"\\", "/", rel)
         rel = gsub("^/+", "", rel)
     return _file_path(key, rel)
@@ -231,7 +210,7 @@ def _repo_cache_rel(repo_url: Any, file_path: Any) -> Any:
     *file_path* (a sequence gives a list).
     """
     key = _repo_key(repo_url)
-    if isinstance(file_path, str) or _is_missing(file_path):
+    if isinstance(file_path, str) or is_missing(file_path):
         return _rel_one(key, file_path)
     return [_rel_one(key, p) for p in file_path]
 
@@ -643,7 +622,7 @@ def _remote_size(url: str) -> float:
     from metacheck.archives.zip_peek import _head_size, _range_size
 
     size = _head_size(url)
-    if is_na(size):
+    if is_missing(size):
         size = _range_size(url)
     return size
 
@@ -659,7 +638,9 @@ def _archive_size_estimate(files: pd.DataFrame, repo: Any) -> float:
     repos = files["repo_url"].tolist()
     sizes = _nums(files["file_size"].tolist()) if "file_size" in files.columns else []
     est = sum(
-        s for r, s in zip(repos, sizes, strict=False) if not is_na(r) and r == repo and not is_na(s)
+        s
+        for r, s in zip(repos, sizes, strict=False)
+        if not is_missing(r) and r == repo and not is_missing(s)
     )
     return float(est) if est > 0 else math.nan
 
@@ -673,7 +654,7 @@ def _archive_size_refusal(zip_bytes: float, max_download_size: float, mb: float)
     """
     from metacheck.report.blocks import _cap_num
 
-    if is_na(zip_bytes):
+    if is_missing(zip_bytes):
         return "archive size unknown: no file sizes listed"
     if math.isfinite(max_download_size) and zip_bytes > 2 * max_download_size * mb:
         return (
@@ -812,10 +793,10 @@ def _rate_limit_wait(resp: Any) -> float:
     if as_numeric(remaining)[0] != 0:
         return math.nan
     reset_time = as_numeric(reset)[0]
-    if is_na(reset_time):
+    if is_missing(reset_time):
         return math.nan
     wait = reset_time - time.time()
-    return 0.0 if is_na(wait) or wait < 0 else float(wait)
+    return 0.0 if is_missing(wait) or wait < 0 else float(wait)
 
 
 def _zip_timeout_for_size(
@@ -827,7 +808,7 @@ def _zip_timeout_for_size(
     least the time the transfer takes at *min_bytes_per_s* (200 KB/s).
     """
     expected_bytes = _scalar(expected_bytes, "expected_bytes")
-    if _is_missing(expected_bytes) or expected_bytes <= 0:
+    if is_missing(expected_bytes) or expected_bytes <= 0:
         return timeout_s
     return max(timeout_s, expected_bytes / min_bytes_per_s)
 
@@ -904,14 +885,14 @@ def _download_one(
             skip_on_api_limit is True  # R: isTRUE(skip_on_api_limit), the argument only
             and isinstance(e, _HttpError)
             and int(e.resp.status_code) == 429
-            and not is_na(_rate_limit_wait(e.resp))
+            and not is_missing(_rate_limit_wait(e.resp))
         ):
             return f"API rate limit exhausted: {e}"
         return str(e)
 
 
 def _parallel_one(url: Any, dest: str, expected: float, skip: bool) -> tuple[Any, Exception | None]:
-    if _is_missing(url):
+    if is_missing(url):
         return "bad URL", None
     try:
         resp = _storage_request(
@@ -980,7 +961,7 @@ def _download_many_parallel(
         if sc not in (200, 0):
             if os.path.exists(dest):
                 _unlink(dest)
-            if skip_on_api_limit is True and sc == 429 and not is_na(_rate_limit_wait(resp)):
+            if skip_on_api_limit is True and sc == 429 and not is_missing(_rate_limit_wait(resp)):
                 errs.append(f"API rate limit exhausted: HTTP {sc}")
             else:
                 errs.append(f"HTTP {sc:d}")
@@ -994,7 +975,7 @@ def _download_many_parallel(
             errs.append("not authorised (the OSF returned a sign-in page; see ?osf_pat)")
             continue
         exp = expected[i]
-        if not is_na(exp) and exp > 0:
+        if not is_missing(exp) and exp > 0:
             try:
                 got = float(os.path.getsize(dest))
             except OSError:
@@ -1162,9 +1143,9 @@ def _download_zip_to_cache(
             matched: list[int | None] = []
             for i in row_idx:
                 rel = paths[i]
-                if _is_missing(rel) or rel == "":
+                if is_missing(rel) or rel == "":
                     rel = fnames[i]
-                if _is_missing(rel):
+                if is_missing(rel):
                     matched.append(None)  # R: match(NA, lookup_paths) is NA
                     continue
                 rel = gsub("^/+", "", gsub(r"\\", "/", str(rel)))
@@ -1227,7 +1208,7 @@ def _cap_report(msg: str) -> None:
 def _col(files: pd.DataFrame, name: str) -> list[Any] | None:
     if name not in files.columns:
         return None
-    return [None if _is_missing(v) else v for v in files[name].tolist()]
+    return [None if is_missing(v) else v for v in files[name].tolist()]
 
 
 def _headers_fn(
@@ -1310,7 +1291,7 @@ def download_repo_files(
         df["file_location"] = pd.Series([None] * n, dtype=object)
     else:
         df["file_location"] = pd.Series(
-            [None if _is_missing(v) else v for v in df["file_location"].tolist()], dtype=object
+            [None if is_missing(v) else v for v in df["file_location"].tolist()], dtype=object
         )
 
     cache_root = None if cache is True else _repo_session_dir()
@@ -1322,7 +1303,7 @@ def download_repo_files(
 
     # a missing repo_url column is R's NULL (cache key "unknown"); a missing value is NA
     repo_urls: list[Any] = (
-        [pd.NA if _is_missing(v) else v for v in df["repo_url"].tolist()]
+        [pd.NA if is_missing(v) else v for v in df["repo_url"].tolist()]
         if ("repo_url" in df.columns)
         else [None] * n
     )
@@ -1353,11 +1334,11 @@ def download_repo_files(
     # which(files$repo_url == repo), computed once: rows per repository (NA rows in none)
     rows_of: dict[Any, list[int]] = {}
     for i, v in enumerate(repo_urls):
-        if not _is_missing(v):
+        if not is_missing(v):
             rows_of.setdefault(v, []).append(i)
 
     def rows_for(repo: Any) -> list[int]:
-        return [] if _is_missing(repo) else rows_of.get(repo, [])
+        return [] if is_missing(repo) else rows_of.get(repo, [])
 
     sizes_col = _col(df, "file_size")
 
@@ -1379,15 +1360,17 @@ def download_repo_files(
             if sizes_col is None:
                 continue  # R: as.numeric(NULL) leaves no candidates
             member_sizes = [_num(sizes_col[i]) for i in idx]
-            over = [not is_na(s) and s > max_file_size * _MB for s in member_sizes]
+            over = [not is_missing(s) and s > max_file_size * _MB for s in member_sizes]
             for i, s, o in zip(idx, member_sizes, over, strict=True):
                 if o:
                     oversize_rows.append((repo_urls[i], file_names[i], s))
             cand = [
-                i for i, s, o in zip(idx, member_sizes, over, strict=True) if not o and not is_na(s)
+                i
+                for i, s, o in zip(idx, member_sizes, over, strict=True)
+                if not o and not is_missing(s)
             ]
             cand_size = [
-                s for s, o in zip(member_sizes, over, strict=True) if not o and not is_na(s)
+                s for s, o in zip(member_sizes, over, strict=True) if not o and not is_missing(s)
             ]
             if not cand:
                 continue
@@ -1402,7 +1385,7 @@ def download_repo_files(
             if not all(keep) and math.isfinite(cap_bytes):
                 n_out = keep.count(False)
                 msg = (
-                    f"An archive in repository {_chr(repo_urls[idx[0]]) or 'NA'} exceeds the "
+                    f"An archive in repository {as_str(repo_urls[idx[0]]) or 'NA'} exceeds the "
                     f"{_cap_num(max_download_size)} MB per-repository budget: fetched the "
                     f"smallest members up to the cap, {n_out} member{plural(n_out)} omitted. "
                     "Raise `max_download_size` to include more."
@@ -1450,8 +1433,8 @@ def download_repo_files(
                 j = first.get(members[k])  # type: ignore[assignment]
                 if j is None:
                     continue
-                if f_ok[j] is not True or _is_missing(f_path[j]):
-                    why = "unknown failure" if f_error is None else _chr(f_error[j])
+                if f_ok[j] is not True or is_missing(f_path[j]):
+                    why = "unknown failure" if f_error is None else as_str(f_error[j])
                     failed_rows.append((repo_urls[k], file_names[k], arc, paper_id(k), why))
                     continue
                 df.iat[k, loc_col] = f_path[j]
@@ -1484,7 +1467,7 @@ def download_repo_files(
             continue  # R: as.numeric(NULL) leaves no candidates
         sizes = [_num(sizes_col[i]) for i in idx]
         for k, s in enumerate(sizes):
-            if not is_na(s):
+            if not is_missing(s):
                 continue
             if is_cached[k]:
                 try:
@@ -1496,14 +1479,14 @@ def download_repo_files(
                 sizes[k] = _remote_size(str(file_urls[idx[k]]))
 
         if math.isfinite(max_file_size):
-            over = [not is_na(s) and s > max_file_size * _MB for s in sizes]
+            over = [not is_missing(s) and s > max_file_size * _MB for s in sizes]
         else:
             over = [False] * len(idx)
         for k, i in enumerate(idx):
             if over[k] and not is_cached[k]:
                 oversize_rows.append((repo, file_names[i], sizes[k]))
 
-        cand = [not o and not is_na(s) for o, s in zip(over, sizes, strict=True)]
+        cand = [not o and not is_missing(s) for o, s in zip(over, sizes, strict=True)]
         if not any(cand):
             continue
         c_idx = [i for i, c in zip(idx, cand, strict=True) if c]
@@ -1539,16 +1522,16 @@ def download_repo_files(
         from metacheck._r import r_round
 
         for repo in dict.fromkeys(r[0] for r in oversize_rows):
-            rows = [r for r in oversize_rows if not _is_missing(r[0]) and r[0] == repo]
-            if _is_missing(repo):
-                rows = [r for r in oversize_rows if _is_missing(r[0])]
+            rows = [r for r in oversize_rows if not is_missing(r[0]) and r[0] == repo]
+            if is_missing(repo):
+                rows = [r for r in oversize_rows if is_missing(r[0])]
             k = len(rows)
             largest = sorted(rows, key=lambda r: -r[2])[0]
             _message(
-                f"{k} file{plural(k)} in {_chr(repo) or 'NA'} exceeded the "
+                f"{k} file{plural(k)} in {as_str(repo) or 'NA'} exceeded the "
                 f"{_cap_num(max_file_size)} MB per-file limit and {'was' if k == 1 else 'were'} "
                 "skipped (the rest of the repository was downloaded). Largest: "
-                f"{_chr(largest[1]) or 'NA'} "
+                f"{as_str(largest[1]) or 'NA'} "
                 f"({_cap_num(float(r_round(max(r[2] for r in rows) / _MB)))} MB). "
                 "Raise max_file_size to include them."
             )
@@ -1582,7 +1565,7 @@ def download_repo_files(
 
         def in_remaining(pattern: str) -> list[Any]:
             rows = remaining_rows()
-            hits = grepl(pattern, [_chr(repo_list[i]) for i in rows], ignore_case=True)
+            hits = grepl(pattern, [as_str(repo_list[i]) for i in rows], ignore_case=True)
             return list(dict.fromkeys(repo_list[i] for i, h in zip(rows, hits, strict=True) if h))
 
         def is_osfstorage(i: int) -> bool:
@@ -1607,7 +1590,7 @@ def download_repo_files(
             if sizes_col is None:
                 return 0.0
             vals = [_num(sizes_col[i]) for i in rows]
-            return float(sum(v for v in vals if not is_na(v)))
+            return float(sum(v for v in vals if not is_missing(v)))
 
         def filled(rows: list[int]) -> set[int]:
             # rows the zip wrote to their cache path (metacheck counts any
@@ -1737,7 +1720,7 @@ def download_repo_files(
             try:
                 cache_now = df[".cache_path"].tolist()
                 zen = grepl(
-                    r"zenodo\.org", [_chr(file_urls[i]) for i in remaining], ignore_case=True
+                    r"zenodo\.org", [as_str(file_urls[i]) for i in remaining], ignore_case=True
                 )
                 parallel_safe = [
                     is_osfstorage(i) or bool(z) for i, z in zip(remaining, zen, strict=True)
@@ -1788,13 +1771,13 @@ def download_repo_files(
     if failed_rows:
         for repo in dict.fromkeys(r[0] for r in failed_rows):
             frows = [
-                r for r in failed_rows if r[0] is repo or (not _is_missing(r[0]) and r[0] == repo)
+                r for r in failed_rows if r[0] is repo or (not is_missing(r[0]) and r[0] == repo)
             ]
             k = len(frows)
             first_err = sub("\n.*", "", frows[0][4])
             _message(
-                f"{k} download{plural(k)} from {_chr(repo) or 'NA'} failed after retries "
-                f"(e.g. {_chr(frows[0][1]) or 'NA'}: {first_err}). Re-run to retry: cached "
+                f"{k} download{plural(k)} from {as_str(repo) or 'NA'} failed after retries "
+                f"(e.g. {as_str(frows[0][1]) or 'NA'}: {first_err}). Re-run to retry: cached "
                 "files are reused, only the missing files are fetched."
             )
 
@@ -1807,29 +1790,29 @@ def download_repo_files(
 
     out = df.drop(columns=[".cache_path"])
     out["file_location"] = pd.Series(
-        [None if _is_missing(v) else str(v) for v in out["file_location"].tolist()],
+        [None if is_missing(v) else str(v) for v in out["file_location"].tolist()],
         dtype="string",
     )
     out.index = index
     out.attrs["gated"] = _frame(
         {
-            "repo_url": ([_chr(r[0]) for r in gated_rows], "string"),
+            "repo_url": ([as_str(r[0]) for r in gated_rows], "string"),
             "message": ([r[1] for r in gated_rows], "string"),
         }
     )
     out.attrs["oversize_skipped"] = _frame(
         {
-            "repo_url": ([_chr(r[0]) for r in oversize_rows], "string"),
-            "file_name": ([_chr(r[1]) for r in oversize_rows], "string"),
+            "repo_url": ([as_str(r[0]) for r in oversize_rows], "string"),
+            "file_name": ([as_str(r[1]) for r in oversize_rows], "string"),
             "file_size": ([r[2] for r in oversize_rows], "float64"),
         }
     )
     out.attrs["failed"] = _frame(
         {
-            "repo_url": ([_chr(r[0]) for r in failed_rows], "string"),
-            "file_name": ([_chr(r[1]) for r in failed_rows], "string"),
-            "file_url": ([_chr(r[2]) for r in failed_rows], "string"),
-            "paper_id": ([_chr(r[3]) for r in failed_rows], "string"),
+            "repo_url": ([as_str(r[0]) for r in failed_rows], "string"),
+            "file_name": ([as_str(r[1]) for r in failed_rows], "string"),
+            "file_url": ([as_str(r[2]) for r in failed_rows], "string"),
+            "paper_id": ([as_str(r[3]) for r in failed_rows], "string"),
             "error": ([r[4] for r in failed_rows], "string"),
         }
     )

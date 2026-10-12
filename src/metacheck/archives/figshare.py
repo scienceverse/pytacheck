@@ -19,7 +19,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from metacheck._r import compile_r, grepl, is_na, trimws
+from metacheck._r import compile_r, grepl, trimws
+from metacheck._values import is_missing
 from metacheck.archives.dataverse import (
     _as_numeric,
     _cell,
@@ -207,7 +208,10 @@ def figshare_links(paper: Any) -> pd.DataFrame:
     links["figshare_id"] = _string_series(_figshare_id(links["figshare_url"].tolist()))
     share = grepl(r"figshare\.com/s/[A-Za-z0-9]+", links["figshare_url"].tolist(), ignore_case=True)
     links["figshare_unsupported"] = pd.Series(
-        [bool(s) and is_na(i) for s, i in zip(share, links["figshare_id"].tolist(), strict=True)],
+        [
+            bool(s) and is_missing(i)
+            for s, i in zip(share, links["figshare_id"].tolist(), strict=True)
+        ],
         dtype=bool,
     )
     return links
@@ -410,7 +414,7 @@ def figshare_info(
                 "figshare_id": _string_series(_figshare_id(urls)),
             }
         )
-        if all(isinstance(v, str) or is_na(v) for v in urls):
+        if all(isinstance(v, str) or is_missing(v) for v in urls):
             ids["figshare_url"] = ids["figshare_url"].astype("string")
         ids = ids.drop_duplicates()
         ids = ids[ids["figshare_url"].notna().to_numpy()].reset_index(drop=True)
@@ -422,7 +426,7 @@ def figshare_info(
             ids, _figshare_collection_id, _figshare_collection_articles, host, bar
         )
 
-        valid_ids = list(dict.fromkeys(v for v in ids["figshare_id"].tolist() if not is_na(v)))
+        valid_ids = list(dict.fromkeys(v for v in ids["figshare_id"].tolist() if not is_missing(v)))
         if not valid_ids:
             _tick(bar, "No valid Figshare links")
             return left_join(table, ids, by="figshare_url")

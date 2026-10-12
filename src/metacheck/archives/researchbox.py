@@ -16,7 +16,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import is_na
+from metacheck._values import is_missing
 from metacheck.archives._atomic import atomic_write, staged_dir
 
 __all__ = ["rbox_file_download", "rbox_info", "rbox_links"]
@@ -333,10 +333,10 @@ def rbox_file_download(rb_url: Any, pb: Any = None) -> pd.DataFrame | None:
             if "error" in info.columns:
                 return None  # .rbox_info() already warned
             files = info["files"].iloc[0]
-            file_ids = [v for v in files["file_id"].tolist() if not is_na(v)]
+            file_ids = [v for v in files["file_id"].tolist() if not is_missing(v)]
             box_id = info["box_id"].iloc[0]
             reference = info["reference"].iloc[0]
-            if not file_ids or is_na(box_id) or is_na(reference):
+            if not file_ids or is_missing(box_id) or is_missing(reference):
                 warnings.warn(f"Could not find downloadable files for: {url}", stacklevel=2)
                 return None
 

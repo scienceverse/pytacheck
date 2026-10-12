@@ -9,7 +9,6 @@ follow metacheck exactly.
 
 from __future__ import annotations
 
-import math
 import re
 from typing import Any, cast
 
@@ -17,6 +16,7 @@ import pandas as pd
 
 from metacheck._r.base import trimws
 from metacheck._r.regex import compile_r, grepl, gsub, regextract, regextract_all, strsplit
+from metacheck._values import is_missing
 from metacheck.core.doc import Doc, bits
 from metacheck.core.patterns import Pat, patterns
 from metacheck.text.search import _check_pattern, _Search, search_doc, text_search
@@ -203,15 +203,9 @@ def _empty_eq() -> pd.DataFrame:
     )
 
 
-def _is_missing(x: Any) -> bool:
-    if x is None or x is pd.NA:
-        return True
-    return isinstance(x, float) and math.isnan(x)
-
-
 def _sort_key(x: Any) -> tuple[int, Any]:
     """``dplyr::arrange()`` key: C-locale strings / numbers, ``NA`` last."""
-    if _is_missing(x):
+    if is_missing(x):
         return (1, 0)
     return (0, x)
 
@@ -279,7 +273,7 @@ def eq_table(doc: Doc) -> pd.DataFrame:
         [h for each in hits for h in each],
         doc.take_series("text_id", source),
         doc.take_series("paper_id", source),
-        [None if _is_missing(pids[i]) else pids[i] for i in source],
+        [None if is_missing(pids[i]) else pids[i] for i in source],
         source,
     )
 
@@ -298,7 +292,7 @@ def _eq_of_table(table: pd.DataFrame) -> pd.DataFrame:
         [str(t) for t in eq["text"].tolist()],
         eq["text_id"].reset_index(drop=True),
         eq["paper_id"].reset_index(drop=True),
-        [None if _is_missing(v) else v for v in eq["paper_id"].tolist()],
+        [None if is_missing(v) else v for v in eq["paper_id"].tolist()],
         eq[_ROW].tolist(),
     )
 
