@@ -6,9 +6,8 @@ and its helpers. A ``.qsf`` is JSON; the question elements (``Element ==
 names are reconstructed from ``DataExportTag`` / ``ChoiceDataExportTags``.
 
 JSON is parsed as ``jsonlite::fromJSON(simplifyVector = FALSE)`` does: objects
-are ordered ``(key, value)`` pairs (:class:`_JsonObject`) and R's ``$``
-operator is emulated with its partial matching (``opt$Display`` finds a lone
-``DisplayLogic`` when ``Display`` is absent).
+are ordered ``(key, value)`` pairs (:class:`_JsonObject`), read by exact
+name (R's ``opt$Display`` also finds a lone ``DisplayLogic``: D81).
 """
 
 from __future__ import annotations
@@ -36,23 +35,14 @@ from metacheck.datacheck._columns_labels import (
 _NULL = object()
 
 
-def _dollar(x: Any, name: str) -> Any:
-    """R's ``x$name`` on a jsonlite list: exact match first, else a unique prefix."""
-    if x is None:
-        return None
-    if isinstance(x, _JsonObject):
-        for k, v in x:
-            if k == name:
-                return v
-        hits = [v for k, v in x if k.startswith(name)]
-        return hits[0] if len(hits) == 1 else None
-    if isinstance(x, list):
-        return None
-    raise TypeError("$ operator is invalid for atomic vectors")
+def _member(x: Any, name: str) -> Any:
+    """The value of the first member called *name* in a parsed QSF object, else ``None``.
 
-
-def _dbl_bracket(x: Any, name: str) -> Any:
-    """R's ``x[[name]]`` on a named list (exact matching; ``NULL`` when absent or ``""``)."""
+    :func:`metacheck._values.field` reads mappings; a QSF object is a
+    :class:`_JsonObject` (its pairs, duplicate names kept), so it needs this
+    lookup. Names match exactly; ``""`` and anything that is not an object
+    give ``None``.
+    """
     if isinstance(x, _JsonObject) and name != "":
         for k, v in x:
             if k == name:
@@ -178,9 +168,9 @@ def _unlist_first(d: Any) -> Any:
 
 def _qsf_option_display(opt: Any) -> str | None:
     """Port of ``.qsf_option_display()``: the display text of a Choices/Answers option."""
-    d = _dollar(opt, "Display")
+    d = _member(opt, "Display")
     if d is None:
-        d = _dollar(opt, "display")
+        d = _member(opt, "display")
     if isinstance(d, list):
         d = _unlist_first(d)
     return _qsf_strip_html(d)
@@ -256,11 +246,11 @@ def parse_qsf(path: str | os.PathLike[str]) -> pd.DataFrame | None:
         return None
     if j is None:
         return None
-    elements = _dollar(j, "SurveyElements")
+    elements = _member(j, "SurveyElements")
     if elements is None:
         return None
     elist = elements.values_() if isinstance(elements, _JsonObject) else _as_list(elements)
-    sq = [e for e in elist if _dollar(e, "Element") == "SQ"]
+    sq = [e for e in elist if _member(e, "Element") == "SQ"]
     if not sq:
         return None
     rows: list[pd.DataFrame] = []
@@ -290,12 +280,12 @@ def parse_qsf(path: str | os.PathLike[str]) -> pd.DataFrame | None:
         )
 
     for e in sq:
-        p = _dollar(e, "Payload")
+        p = _member(e, "Payload")
         if p is None:
             continue
-        tag = _dollar(p, "DataExportTag")
+        tag = _member(p, "DataExportTag")
         if tag is None:
-            tag = _dollar(p, "QuestionID")
+            tag = _member(p, "QuestionID")
         if tag is None:
             continue
         # R: if (is.null(tag) || !nzchar(trimws(as.character(tag)))) next
@@ -303,19 +293,19 @@ def parse_qsf(path: str | os.PathLike[str]) -> pd.DataFrame | None:
         if _if(_scalar([trimws("NA" if c is None else c) == "" for c in tag_chr])):
             continue
         tag_s = trimws("NA" if tag_chr[0] is None else tag_chr[0])
-        qtext = _qsf_strip_html(_dollar(p, "QuestionText"))
-        qt = _dollar(p, "QuestionType")
-        sel = _dollar(p, "Selector")
+        qtext = _qsf_strip_html(_member(p, "QuestionText"))
+        qt = _member(p, "QuestionType")
+        sel = _member(p, "Selector")
         qtype = _as_character(qt) if qt is not None else [""]
         selector = _as_character(sel) if sel is not None else [""]
-        choices = _dollar(p, "Choices")
-        answers = _dollar(p, "Answers")
-        ctags = _dollar(p, "ChoiceDataExportTags")
+        choices = _member(p, "Choices")
+        answers = _member(p, "Answers")
+        ctags = _member(p, "ChoiceDataExportTags")
 
         def export_col(code: str, _ctags: Any = ctags, _tag: str = tag_s) -> str:
             ct = None
             if isinstance(_ctags, list):
-                v = _dbl_bracket(_ctags, code)
+                v = _member(_ctags, code)
                 if v is not None:
                     vchr = _as_character(v)
                     if _if(_scalar([trimws("NA" if c is None else c) != "" for c in vchr])):
@@ -329,11 +319,11 @@ def parse_qsf(path: str | os.PathLike[str]) -> pd.DataFrame | None:
         if _and(is_matrix, has_choices):
             vl = _qsf_value_labels(answers)
             for code in choice_names:
-                stmt = _qsf_option_display(_dbl_bracket(choices, code))
+                stmt = _qsf_option_display(_member(choices, code))
                 add(export_col(code), stmt, tag_s, vl, question=qtext)
         elif _and(is_multi, has_choices):
             for code in choice_names:
-                opt = _qsf_option_display(_dbl_bracket(choices, code))
+                opt = _qsf_option_display(_member(choices, code))
                 add(export_col(code), opt, tag_s, question=qtext)
         elif has_choices:
             add(tag_s, qtext, tag_s, _qsf_value_labels(choices))

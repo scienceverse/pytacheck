@@ -20,14 +20,13 @@ from typing import Any, cast
 import pandas as pd
 
 from metacheck._r import compile_r, grepl, trimws
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 from metacheck.archives.dataverse import (
     _as_numeric,
     _cell,
     _chr_elt,
     _chr_values,
     _collect_links,
-    _dollar,
     _download_file_table,
     _download_many,
     _elements,
@@ -367,7 +366,7 @@ def _bundle_articles(path: str, label: str, bundle_id: Any, host: str, pb: Any) 
             if rec is None or (isinstance(rec, list | dict) and len(rec) == 0):
                 break
             items = _elements(rec)
-            ids = [_json_chr(_empty_or(_dollar(a, "id"), None)) for a in items]
+            ids = [_json_chr(_empty_or(field(a, "id"), None)) for a in items]
             all_ids.extend(i for i in ids if i is not None)
             if len(items) < 100:
                 break
@@ -517,23 +516,23 @@ def _figshare_info(
             obj["error"] = _cell("parse_error")
             return pd.DataFrame(obj)
 
-        authors_field = _dollar(rec, "authors")
+        authors_field = field(rec, "authors")
         authors = (
-            [_chr_elt(_empty_or(_dollar(a, "full_name"), None)) for a in _elements(authors_field)]
+            [_chr_elt(_empty_or(field(a, "full_name"), None)) for a in _elements(authors_field)]
             if isinstance(authors_field, list | dict)
             else []
         )
-        files = _dollar(rec, "files")
-        obj["title"] = _field_cell(_empty_or(_dollar(rec, "title"), None))
-        obj["doi"] = _field_cell(_empty_or(_dollar(rec, "doi"), None))
-        obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "published_date"), None))
-        obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "modified_date"), None))
+        files = field(rec, "files")
+        obj["title"] = _field_cell(_empty_or(field(rec, "title"), None))
+        obj["doi"] = _field_cell(_empty_or(field(rec, "doi"), None))
+        obj["publication_date"] = _field_cell(_empty_or(field(rec, "published_date"), None))
+        obj["updated_date"] = _field_cell(_empty_or(field(rec, "modified_date"), None))
         obj["authors"] = _list_cell(authors)
         # a plain-string licence is the licence name (metacheck's `license$name`
         # fails on it: U34)
-        licence = _dollar(rec, "license")
+        licence = field(rec, "license")
         if not isinstance(licence, str):
-            licence = _dollar(licence, "name")
+            licence = field(licence, "name")
         obj["license"] = _field_cell(_empty_or(licence, None))
         obj["files"] = _list_cell(files if files is not None else [])
         return pd.DataFrame(obj)
@@ -666,11 +665,11 @@ def figshare_file_download(
 
         rows = [
             {
-                "id": _json_chr(_empty_or(_dollar(x, "id"), None)),
-                "key": _empty_or(_dollar(x, "name"), None),
-                "size": _as_numeric(_empty_or(_dollar(x, "size"), None)),
-                "checksum": _empty_or(_dollar(x, "computed_md5"), None),
-                "self": _empty_or(_dollar(x, "download_url"), None),
+                "id": _json_chr(_empty_or(field(x, "id"), None)),
+                "key": _empty_or(field(x, "name"), None),
+                "size": _as_numeric(_empty_or(field(x, "size"), None)),
+                "checksum": _empty_or(field(x, "computed_md5"), None),
+                "self": _empty_or(field(x, "download_url"), None),
             }
             for x in _elements(files_list)
         ]

@@ -1,4 +1,5 @@
 {
+"code_extract_py.text.scalar": {"r": "ac5146cf65ca52a8", "py": "1e9539ad96a1e611", "diff": ["<R error, Python value>"]},
 "code_extract_r.my_qmd_first_chunk_python_qmd.doc0": {"r": "ad68b6556d0dede6", "py": "040344fe70034069", "diff": ["<root>"]},
 "code_extract_r.my_qmd_first_chunk_python_qmd.doc1": {"r": "b89bf3c2651f02f7", "py": "4d07a9a3bb69943f", "diff": ["<root>"]},
 "code_extract_r.my_qmd_first_chunk_python_qmd.doc2": {"r": "f12f7843a8ab1a0d", "py": "62948250c0c6415e", "diff": ["<root>"]},

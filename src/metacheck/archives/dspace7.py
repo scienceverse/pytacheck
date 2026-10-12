@@ -17,7 +17,7 @@ from typing import Any, cast
 import pandas as pd
 
 from metacheck._r import regextract, sub
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 
 __all__ = ["DSPACE7_HOSTS", "dspace7_file_download", "dspace7_links"]
 
@@ -237,8 +237,6 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
     from metacheck.archives.dataverse import (
         _as_numeric,
         _cell,
-        _dollar,
-        _dollars,
         _elements,
         _empty_or,
         _field_cell,
@@ -263,19 +261,19 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
             found = _dspace7_rest(
                 f"/pid/find?id={_url_encode_reserved(str(handle))}", host=_paste(host)
             )
-            found_uuid = _dollar(found, "uuid")
+            found_uuid = field(found, "uuid")
             if found is not None and found_uuid is not None:
                 piece = _url_piece(found_uuid)
                 if piece is not None:  # R: several URLs, which httr2 refuses (NULL)
                     item = _dspace7_rest(f"/core/items/{piece}", host=_paste(host))
-        item_uuid = _dollar(item, "uuid")
+        item_uuid = field(item, "uuid")
         if item is None or item_uuid is None:
             warnings.warn(f"{_paste(host)} ({ident}) could not be found", stacklevel=2)
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
         obj["dspace7_uuid"] = _field_cell(item_uuid)
 
-        md = _dollar(item, "metadata")
+        md = field(item, "metadata")
         if md is None:
             md = {}
 
@@ -285,19 +283,19 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
                 if entries is not None and not (
                     isinstance(entries, list | dict) and len(entries) == 0
                 ):
-                    vals = [_chr1(_empty_or(_dollar(m, "value"), None)) for m in _elements(entries)]
+                    vals = [_chr1(_empty_or(field(m, "value"), None)) for m in _elements(entries)]
                     vals = [v for v in vals if v is not None]
                     if vals:
                         return "; ".join(cast("list[str]", vals))
             return None
 
-        name = _empty_or(_dollar(item, "name"), None)
+        name = _empty_or(field(item, "name"), None)
         obj["title"] = _field_cell(name if name is not None else md_val(("dc.title",)))
         obj["authors"] = _cell(md_val(("dc.contributor.author",)))
         obj["doi"] = _cell(md_val(("dc.identifier.doi",)))
         obj["license"] = _cell(md_val(("dc.rights", "dc.rights.uri", "dc.rights.license")))
         obj["publication_date"] = _cell(md_val(("dc.date.issued", "dc.date.available")))
-        obj["updated_date"] = _field_cell(_empty_or(_dollar(item, "lastModified"), None))
+        obj["updated_date"] = _field_cell(_empty_or(field(item, "lastModified"), None))
 
         names: list[Any] = []
         sizes: list[float] = []
@@ -312,11 +310,11 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
         bundle_list = _bracket(_bracket(bundles, "_embedded"), "bundles")
         original = None
         for b in _elements(bundle_list):
-            bundle_name = _dollar(b, "name")
+            bundle_name = field(b, "name")
             if isinstance(bundle_name, str) and bundle_name == "ORIGINAL":  # R: identical()
                 original = b
         if original is not None:
-            piece = _url_piece(_dollar(original, "uuid"))
+            piece = _url_piece(field(original, "uuid"))
             bs = (
                 None
                 if piece is None
@@ -324,9 +322,9 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
             )
             bitstreams = _elements(_bracket(_bracket(bs, "_embedded"), "bitstreams"))
             for b in bitstreams:
-                names.append(_chr1(_empty_or(_dollar(b, "name"), None)))
-                sizes.append(_as_numeric(_empty_or(_dollar(b, "sizeBytes"), None)))
-                checksums.append(_chr1(_empty_or(_dollars(b, "checkSum", "value"), None)))
+                names.append(_chr1(_empty_or(field(b, "name"), None)))
+                sizes.append(_as_numeric(_empty_or(field(b, "sizeBytes"), None)))
+                checksums.append(_chr1(_empty_or(field(b, "checkSum", "value"), None)))
                 retrieve.append(
                     _chr1(
                         _empty_or(

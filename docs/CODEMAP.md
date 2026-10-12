@@ -152,7 +152,7 @@ modules is covered in [MODULES.md](MODULES.md).
 | Check | R file | Python | Tests | Parity areas | Status | Recorded differences |
 |---|---|---|---|---|---|---|
 | `all_p_values`<br>List All P-Values | `inst/modules/all_p_values.R` | [modules/all_p_values.py](../src/metacheck/modules/all_p_values.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | experimental | D60, U16, U204, U208 |
-| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | U16, U77, U79, U158, U206 |
+| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D82, U16, U77, U79, U158, U206 |
 | `causal_claims`<br>Randomization and Causal Claims | `inst/modules/causal_claims.R` | [modules/causal_claims.py](../src/metacheck/modules/causal_claims.py) | [tests/mod_causal](../tests/mod_causal) | mod_causal | experimental | U79, U84, U85 |
 | `code_check`<br>Code Check | `inst/modules/code_check.R` | [modules/code_check.py](../src/metacheck/modules/code_check.py)<br>[modules/_code_check.py](../src/metacheck/modules/_code_check.py) | [tests/mod_code](../tests/mod_code) | mod_code | experimental | U79, U82, U86, U87, U89 |
 | `codebook_check`<br>Codebook Check | `inst/modules/codebook_check.R` | [modules/codebook_check.py](../src/metacheck/modules/codebook_check.py)<br>[modules/_codebook.py](../src/metacheck/modules/_codebook.py) | [tests/mod_codebook](../tests/mod_codebook) | mod_codebook | experimental | D14, U91, U92 |
@@ -442,7 +442,7 @@ Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_dec
 | `code_read()` | [`metacheck.codecheck.core:code_read`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
 | `code_lang()` | [`metacheck.codecheck.core:code_lang`](../src/metacheck/codecheck/core.py) | yes | U68 |  |
 | `code_extract_r()` | [`metacheck.codecheck.core:code_extract_r`](../src/metacheck/codecheck/core.py) | yes | D80, U153 |  |
-| `code_extract_py()` | [`metacheck.codecheck.core:code_extract_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_extract_py()` | [`metacheck.codecheck.core:code_extract_py`](../src/metacheck/codecheck/core.py) | yes | D81 |  |
 | `code_extract_qmd_py()` | [`metacheck.codecheck.core:code_extract_qmd_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_parse_r()` | [`metacheck.codecheck.core:code_parse_r`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_abs_path()` | [`metacheck.codecheck.core:code_abs_path`](../src/metacheck/codecheck/core.py) | yes | — |  |
@@ -472,8 +472,8 @@ Python: [datacheck/checks.py](../src/metacheck/datacheck/checks.py), [datacheck/
 | `data_read_head()` | [`metacheck.datacheck.files:data_read_head`](../src/metacheck/datacheck/files.py) | yes | D10, D70, U216, U217 |  |
 | `data_col_type()` | [`metacheck.datacheck.columns:data_col_type`](../src/metacheck/datacheck/columns.py) | yes | — |  |
 | `data_col_stats()` | [`metacheck.datacheck.columns:data_col_stats`](../src/metacheck/datacheck/columns.py) | yes | — |  |
-| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | U64, U215 |  |
-| `parse_qsf()` | [`metacheck.datacheck.columns:parse_qsf`](../src/metacheck/datacheck/_columns_qsf.py) | yes | — |  |
+| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | D81, U64, U215 |  |
+| `parse_qsf()` | [`metacheck.datacheck.columns:parse_qsf`](../src/metacheck/datacheck/_columns_qsf.py) | yes | D81 |  |
 | `match_column_labels()` | [`metacheck.datacheck.columns:match_column_labels`](../src/metacheck/datacheck/columns.py) | yes | U58 |  |
 | `data_check_scale_values()` | [`metacheck.datacheck.checks:data_check_scale_values`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55, U59 |  |
 | `data_check_outliers()` | [`metacheck.datacheck.checks:data_check_outliers`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55 |  |
@@ -589,7 +589,7 @@ Python: [fileinfo/category.py](../src/metacheck/fileinfo/category.py), [fileinfo
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `file_category()` | [`metacheck.fileinfo.category:file_category`](../src/metacheck/fileinfo/category.py) | yes | — |  |
+| `file_category()` | [`metacheck.fileinfo.category:file_category`](../src/metacheck/fileinfo/category.py) | yes | D81 |  |
 | `filetype()` | [`metacheck.fileinfo.category:filetype`](../src/metacheck/fileinfo/category.py) | yes | — |  |
 
 ### `R/import-bibr.R`
@@ -850,7 +850,7 @@ Python: [statout/stat_output.py](../src/metacheck/statout/stat_output.py). Tests
 |---|---|---|---|---|
 | `stat_results_long()` | [`metacheck.statout.stat_output:stat_results_long`](../src/metacheck/statout/stat_output.py) | yes | U138, U141, U144 |  |
 | `stat_output_json()` | [`metacheck.statout.stat_output:stat_output_json`](../src/metacheck/statout/stat_output.py) | yes | U138, U141, U144 |  |
-| `stat_output_validate()` | [`metacheck.statout.stat_output:stat_output_validate`](../src/metacheck/statout/stat_output.py) | yes | U136 |  |
+| `stat_output_validate()` | [`metacheck.statout.stat_output:stat_output_validate`](../src/metacheck/statout/stat_output.py) | yes | D81, U136 |  |
 | `stat_output_write()` | [`metacheck.statout.stat_output:stat_output_write`](../src/metacheck/statout/stat_output.py) | yes | — |  |
 
 ### `R/stat-tables.R`
