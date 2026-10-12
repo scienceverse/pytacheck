@@ -9,7 +9,6 @@ follow metacheck exactly.
 
 from __future__ import annotations
 
-import math
 import re
 from typing import Any, cast
 
@@ -17,6 +16,7 @@ import pandas as pd
 
 from metacheck._r.base import trimws
 from metacheck._r.regex import compile_r, grepl, gsub, regextract, regextract_all, strsplit
+from metacheck._values import is_missing
 from metacheck.core.doc import Doc, bits
 from metacheck.core.patterns import Pat, patterns
 from metacheck.text.search import _check_pattern, _Search, search_doc, text_search
@@ -164,7 +164,7 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     comparators ``= < > ~ ≈ ≠ ≤ ≥ ≪ ≫`` are. Strings are searched as a text
     table (metacheck fails on a character vector; U150).
     """
-    from metacheck.text.json_expand import as_numeric
+    from metacheck._values import as_float
 
     p = text_search(
         _strings_table(paper), _P_PATTERN, return_="match", perl=True, ignore_case=False
@@ -185,7 +185,7 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     values = gsub(r"[x*×]10\^?", "e", values)
     p = p.copy()
     p["p_comp"] = pd.Series(comps, index=p.index, dtype="string")
-    p["p_value"] = pd.Series([as_numeric(v) for v in values], index=p.index, dtype="float64")
+    p["p_value"] = pd.Series([as_float(v) for v in values], index=p.index, dtype="float64")
     return p
 
 
@@ -203,15 +203,9 @@ def _empty_eq() -> pd.DataFrame:
     )
 
 
-def _is_missing(x: Any) -> bool:
-    if x is None or x is pd.NA:
-        return True
-    return isinstance(x, float) and math.isnan(x)
-
-
 def _sort_key(x: Any) -> tuple[int, Any]:
     """``dplyr::arrange()`` key: C-locale strings / numbers, ``NA`` last."""
-    if _is_missing(x):
+    if is_missing(x):
         return (1, 0)
     return (0, x)
 
@@ -279,7 +273,7 @@ def eq_table(doc: Doc) -> pd.DataFrame:
         [h for each in hits for h in each],
         doc.take_series("text_id", source),
         doc.take_series("paper_id", source),
-        [None if _is_missing(pids[i]) else pids[i] for i in source],
+        [None if is_missing(pids[i]) else pids[i] for i in source],
         source,
     )
 
@@ -298,7 +292,7 @@ def _eq_of_table(table: pd.DataFrame) -> pd.DataFrame:
         [str(t) for t in eq["text"].tolist()],
         eq["text_id"].reset_index(drop=True),
         eq["paper_id"].reset_index(drop=True),
-        [None if _is_missing(v) else v for v in eq["paper_id"].tolist()],
+        [None if is_missing(v) else v for v in eq["paper_id"].tolist()],
         eq[_ROW].tolist(),
     )
 

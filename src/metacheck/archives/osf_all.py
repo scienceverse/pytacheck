@@ -15,7 +15,8 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import bind_rows, is_na, plural, sub
+from metacheck._r import bind_rows, plural, sub
+from metacheck._values import is_missing
 
 
 def _api() -> str:
@@ -125,7 +126,7 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
             continue
 
         while "files" in info.columns and info["files"].notna().any():
-            more = [_pages_or_none(u) for u in info["files"].tolist() if not is_na(u)]
+            more = [_pages_or_none(u) for u in info["files"].tolist() if not is_missing(u)]
             more = [m for m in more if m is not None]
             if not more:
                 break
@@ -149,13 +150,14 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
         rows = [
             i
             for i, (k, u) in enumerate(zip(kind, urls, strict=True))
-            if not is_na(k) and k == "file" and not is_na(u)
+            if not is_missing(k) and k == "file" and not is_missing(u)
         ]
         if not rows:
             continue
         os.makedirs(node_dir, exist_ok=True)
         source = info["path"] if "path" in info else info["name"]
-        rel = [sub("^/+", "", "NA" if is_na(v) else str(v)) for v in source.iloc[rows].tolist()]  # type: ignore[call-overload]  # stubs lack list[int] iloc
+        picked = source.iloc[rows].tolist()  # type: ignore[call-overload]  # stubs lack list[int] iloc
+        rel = [sub("^/+", "", "NA" if is_missing(v) else str(v)) for v in picked]
         dests = [os.path.join(node_dir, p, s) for s in path_sanitize(rel)]
         for d in dict.fromkeys(os.path.dirname(x) for x in dests):
             os.makedirs(d, exist_ok=True)
@@ -165,7 +167,7 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
         errs = list(
             _download_many_parallel([urls[i] for i in rows], dests, [float("nan")] * len(rows))
         )
-        ok = [j for j, e in enumerate(errs) if is_na(e)]
+        ok = [j for j, e in enumerate(errs) if is_missing(e)]
         got += len(ok)
         nbytes += sum(os.path.getsize(dests[j]) for j in ok if os.path.exists(dests[j]))
     return {"files": got, "bytes": nbytes}
@@ -198,7 +200,7 @@ def _osf_download_all(
 
     rows: list[dict[str, Any]] = []
     for i, (node, title) in enumerate(zip(nodes["osf_id"], nodes["title"], strict=True), start=1):
-        title = None if is_na(title) else str(title)
+        title = None if is_missing(title) else str(title)
         folder = (
             node
             if title is None or title == ""

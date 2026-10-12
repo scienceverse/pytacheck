@@ -435,21 +435,21 @@ Python: [text/causal.py](../src/metacheck/text/causal.py). Tests: [tests/text_ex
 
 ### `R/code_check.R`
 
-Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_encoding.py](../src/metacheck/codecheck/_encoding.py), [codecheck/_icu.py](../src/metacheck/codecheck/_icu.py), [codecheck/_icu_tables.py](../src/metacheck/codecheck/_icu_tables.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_purl.py](../src/metacheck/codecheck/_purl.py), [codecheck/_reval.py](../src/metacheck/codecheck/_reval.py), [codecheck/_rcoerce.py](../src/metacheck/codecheck/_rcoerce.py). Tests: [tests/codecheck](../tests/codecheck).
+Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_decode.py](../src/metacheck/codecheck/_decode.py), [codecheck/_rparse.py](../src/metacheck/codecheck/_rparse.py), [codecheck/_rparse_tables.py](../src/metacheck/codecheck/_rparse_tables.py), [codecheck/_chunks.py](../src/metacheck/codecheck/_chunks.py), [codecheck/_rcoerce.py](../src/metacheck/codecheck/_rcoerce.py). Tests: [tests/codecheck](../tests/codecheck).
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `code_read()` | [`metacheck.codecheck.core:code_read`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_read()` | [`metacheck.codecheck.core:code_read`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
 | `code_lang()` | [`metacheck.codecheck.core:code_lang`](../src/metacheck/codecheck/core.py) | yes | U68 |  |
-| `code_extract_r()` | [`metacheck.codecheck.core:code_extract_r`](../src/metacheck/codecheck/core.py) | yes | U153 |  |
+| `code_extract_r()` | [`metacheck.codecheck.core:code_extract_r`](../src/metacheck/codecheck/core.py) | yes | D80, U153 |  |
 | `code_extract_py()` | [`metacheck.codecheck.core:code_extract_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_extract_qmd_py()` | [`metacheck.codecheck.core:code_extract_qmd_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_parse_r()` | [`metacheck.codecheck.core:code_parse_r`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_abs_path()` | [`metacheck.codecheck.core:code_abs_path`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_setwd()` | [`metacheck.codecheck.core:code_setwd`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_install_packages()` | [`metacheck.codecheck.core:code_install_packages`](../src/metacheck/codecheck/core.py) | yes | — |  |
-| `code_remove_comments()` | [`metacheck.codecheck.core:code_remove_comments`](../src/metacheck/codecheck/core.py) | yes | — |  |
-| `code_line_stats()` | [`metacheck.codecheck.core:code_line_stats`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_remove_comments()` | [`metacheck.codecheck.core:code_remove_comments`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
+| `code_line_stats()` | [`metacheck.codecheck.core:code_line_stats`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
 | `code_library_lines()` | [`metacheck.codecheck.core:code_library_lines`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_library_names()` | [`metacheck.codecheck.core:code_library_names`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_packages()` | [`metacheck.codecheck.core:code_packages`](../src/metacheck/codecheck/core.py) | yes | — |  |
@@ -457,7 +457,7 @@ Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_enc
 
 ### `R/data_check_helpers.R`
 
-Python: [datacheck/checks.py](../src/metacheck/datacheck/checks.py), [datacheck/_checks_quality.py](../src/metacheck/datacheck/_checks_quality.py), [datacheck/_checks_pii.py](../src/metacheck/datacheck/_checks_pii.py), [datacheck/_checks_facets.py](../src/metacheck/datacheck/_checks_facets.py), [datacheck/_checks_format.py](../src/metacheck/datacheck/_checks_format.py), [datacheck/_checks_blocks.py](../src/metacheck/datacheck/_checks_blocks.py), [datacheck/_checks_rvec.py](../src/metacheck/datacheck/_checks_rvec.py), [datacheck/columns.py](../src/metacheck/datacheck/columns.py), [datacheck/_columns_labels.py](../src/metacheck/datacheck/_columns_labels.py), [datacheck/_columns_codebook.py](../src/metacheck/datacheck/_columns_codebook.py), [datacheck/_columns_qsf.py](../src/metacheck/datacheck/_columns_qsf.py), [datacheck/files.py](../src/metacheck/datacheck/files.py), [datacheck/_files_delim.py](../src/metacheck/datacheck/_files_delim.py), [datacheck/_files_readers.py](../src/metacheck/datacheck/_files_readers.py), [datacheck/_files_rdata.py](../src/metacheck/datacheck/_files_rdata.py), [datacheck/_files_registry.py](../src/metacheck/datacheck/_files_registry.py), [datacheck/_files_strtod.py](../src/metacheck/datacheck/_files_strtod.py), [datacheck/_files_time.py](../src/metacheck/datacheck/_files_time.py), [datacheck/__init__.py](../src/metacheck/datacheck/__init__.py). Tests: [tests/datacheck_checks](../tests/datacheck_checks), [tests/datacheck_columns](../tests/datacheck_columns), [tests/datacheck_files](../tests/datacheck_files).
+Python: [datacheck/checks.py](../src/metacheck/datacheck/checks.py), [datacheck/_checks_quality.py](../src/metacheck/datacheck/_checks_quality.py), [datacheck/_checks_pii.py](../src/metacheck/datacheck/_checks_pii.py), [datacheck/_checks_facets.py](../src/metacheck/datacheck/_checks_facets.py), [datacheck/_checks_format.py](../src/metacheck/datacheck/_checks_format.py), [datacheck/_checks_blocks.py](../src/metacheck/datacheck/_checks_blocks.py), [datacheck/_kinds.py](../src/metacheck/datacheck/_kinds.py), [datacheck/columns.py](../src/metacheck/datacheck/columns.py), [datacheck/_columns_labels.py](../src/metacheck/datacheck/_columns_labels.py), [datacheck/_columns_codebook.py](../src/metacheck/datacheck/_columns_codebook.py), [datacheck/_columns_qsf.py](../src/metacheck/datacheck/_columns_qsf.py), [datacheck/files.py](../src/metacheck/datacheck/files.py), [datacheck/_files_delim.py](../src/metacheck/datacheck/_files_delim.py), [datacheck/_files_readers.py](../src/metacheck/datacheck/_files_readers.py), [datacheck/_files_rdata.py](../src/metacheck/datacheck/_files_rdata.py), [datacheck/_files_registry.py](../src/metacheck/datacheck/_files_registry.py), [datacheck/_files_strtod.py](../src/metacheck/datacheck/_files_strtod.py), [datacheck/_files_time.py](../src/metacheck/datacheck/_files_time.py), [datacheck/__init__.py](../src/metacheck/datacheck/__init__.py). Tests: [tests/datacheck_checks](../tests/datacheck_checks), [tests/datacheck_columns](../tests/datacheck_columns), [tests/datacheck_files](../tests/datacheck_files).
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
@@ -477,7 +477,7 @@ Python: [datacheck/checks.py](../src/metacheck/datacheck/checks.py), [datacheck/
 | `match_column_labels()` | [`metacheck.datacheck.columns:match_column_labels`](../src/metacheck/datacheck/columns.py) | yes | U58 |  |
 | `data_check_scale_values()` | [`metacheck.datacheck.checks:data_check_scale_values`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55, U59 |  |
 | `data_check_outliers()` | [`metacheck.datacheck.checks:data_check_outliers`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55 |  |
-| `data_check_constant()` | [`metacheck.datacheck.checks:data_check_constant`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
+| `data_check_constant()` | [`metacheck.datacheck.checks:data_check_constant`](../src/metacheck/datacheck/_checks_quality.py) | yes | D77 |  |
 | `data_check_empty()` | [`metacheck.datacheck.checks:data_check_empty`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
 | `data_check_design_name()` | [`metacheck.datacheck.checks:data_check_design_name`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
 | `data_check_spss_filter()` | [`metacheck.datacheck.checks:data_check_spss_filter`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
@@ -786,7 +786,7 @@ Python: [report/blocks.py](../src/metacheck/report/blocks.py), [report/render.py
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `scroll_table()` | [`metacheck.report.blocks:scroll_table`](../src/metacheck/report/blocks.py) | yes | U131 |  |
+| `scroll_table()` | [`metacheck.report.blocks:scroll_table`](../src/metacheck/report/blocks.py) | yes | D75, U131 |  |
 | `report_table()` | [`metacheck.report.blocks:report_table`](../src/metacheck/report/blocks.py) | — | — |  |
 | `collapse_section()` | [`metacheck.report.blocks:collapse_section`](../src/metacheck/report/blocks.py) | — | — |  |
 | `plural()` | [`metacheck._r.base:plural`](../src/metacheck/_r/base.py) | — | — |  |
@@ -884,7 +884,7 @@ Python: [stats/core.py](../src/metacheck/stats/core.py). Tests: [tests/stats](..
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `stats()` | [`metacheck.stats.core:stats`](../src/metacheck/stats/core.py) | yes | U4, U5 |  |
+| `stats()` | [`metacheck.stats.core:stats`](../src/metacheck/stats/core.py) | yes | D78, U4, U5 |  |
 
 ### `R/svutils-message.R`
 
@@ -951,7 +951,7 @@ Python: [text/json_expand.py](../src/metacheck/text/json_expand.py). Tests: [tes
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `json_expand()` | [`metacheck.text.json_expand:json_expand`](../src/metacheck/text/json_expand.py) | yes | U9, U151 |  |
+| `json_expand()` | [`metacheck.text.json_expand:json_expand`](../src/metacheck/text/json_expand.py) | yes | D76, U9, U151 |  |
 
 ### `R/text_expand.R`
 
@@ -1084,13 +1084,13 @@ optional ones are in extras (for example `metacheck[data]`).
 |---|---|---|
 | `dplyr` | data-frame verbs throughout | pandas; [`_r/frames.py`](../src/metacheck/_r/frames.py) for `bind_rows()` and `count()` |
 | `tidyr` | pivots, `fill()`, `separate()` | pandas |
-| `readr` | `guess_encoding()` and `read_lines()` in `code_read()`, CSV files | port of the encoding guess and line reading in [`codecheck/_encoding.py`](../src/metacheck/codecheck/_encoding.py) (D12); pandas for CSV |
-| `knitr` | `purl()`: code from R Markdown and Quarto files | port of knitr's tangling in [`codecheck/_purl.py`](../src/metacheck/codecheck/_purl.py) |
+| `readr` | `guess_encoding()` and `read_lines()` in `code_read()`, CSV files | not ported: chardet and Python's line splitting in [`codecheck/_decode.py`](../src/metacheck/codecheck/_decode.py) (D74); pandas for CSV |
+| `knitr` | `purl()`: code from R Markdown and Quarto files | not ported: a static chunk extractor that never evaluates R, [`codecheck/_chunks.py`](../src/metacheck/codecheck/_chunks.py) (D80) |
 | `quarto` | rendering reports | the `quarto` command, when `report(renderer="quarto")`; the default renderer writes HTML in Python ([`report/report.py`](../src/metacheck/report/report.py)) |
 | `DT` | interactive tables in reports | self-contained HTML tables in [`report/render.py`](../src/metacheck/report/render.py) |
 | `bibtex` | `format_ref()` of BibTeX text | not needed: modules pass the reference text R produced (U3) |
 | `ellmer` | LLM chats and structured output | the official provider SDKs (`openai`, `anthropic`, `google-genai`; the `metacheck[llm]` extra, D69), one request per call in [`llm/_backend.py`](../src/metacheck/llm/_backend.py); the `type_*()` builders in [`llm/types.py`](../src/metacheck/llm/types.py); five providers that need their own cloud sign-in are not supported ([`porting/skip.toml`](../porting/skip.toml)) |
-| `jsonlite` | reading and writing JSON | orjson through [`_json.py`](../src/metacheck/_json.py); jsonlite's output format in [`api/jsonlite.py`](../src/metacheck/api/jsonlite.py) |
+| `jsonlite` | reading and writing JSON | orjson through [`_json.py`](../src/metacheck/_json.py); the REST API writes plain JSON with orjson, not jsonlite's format (D79) |
 | `xml2` | XML and HTML (Grobid TEI, archive pages, SPSS output) | lxml; helpers in [`io/xml.py`](../src/metacheck/io/xml.py) |
 | `curl`, `httr2` | HTTP requests | httpx through [`http.py`](../src/metacheck/http.py) |
 | `rvest` | HTML text and tables (AsPredicted) | lxml |

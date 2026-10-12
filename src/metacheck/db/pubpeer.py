@@ -6,7 +6,7 @@ import json
 from typing import TYPE_CHECKING, Any
 
 from metacheck._r.base import as_character, trimws
-from metacheck._r.regex import is_na
+from metacheck._values import is_missing
 from metacheck.db._utils import as_vector, r_dollar, records_frame, resp_body_json, unlist
 
 if TYPE_CHECKING:
@@ -63,7 +63,7 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
                 "users": pd.array([], dtype="string"),
             }
         )
-    lower = [None if is_na(v) else str(as_character(v)).lower() for v in values]
+    lower = [None if is_missing(v) else str(as_character(v)).lower() for v in values]
     body = _request_body([d for d in lower if d is not None])
 
     resp = http.request(
@@ -103,7 +103,7 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
     first: dict[Any, int] = {}
     i: int | None
     for i, d in enumerate(fb_frame["doi"].tolist()):
-        first.setdefault(None if is_na(d) else str(d).lower(), i)
+        first.setdefault(None if is_missing(d) else str(d).lower(), i)
     rows: list[dict[str, Any]] = []
     for d in lower:
         i = first.get(d) if d is not None else None
@@ -111,9 +111,9 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
             {"doi": d} if i is None else {"doi": d, **{c: fb_values[c][i] for c in fb_cols}}
         )
     for row, original in zip(rows, values, strict=True):
-        row["doi"] = None if is_na(original) else original
+        row["doi"] = None if is_missing(original) else original
         for c in fb_cols:
-            if c in row and is_na(row[c]):
+            if c in row and is_missing(row[c]):
                 row[c] = None
     out = records_frame(rows, columns=["doi", *fb_cols])
     for col in ("total_comments", "url", "users"):  # the columns of a result

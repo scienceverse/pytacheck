@@ -358,7 +358,7 @@ OUT_DIR/
   summary.csv            item, input, paper_id, then the modules' summary columns; input order
   tables/<module>.csv    item, input, then the module's table columns; input order
   verdicts.csv           paper mode: item, paper_id, module, traffic_light, summary_text
-  papers/<item>-<id>/    outputs.json (api/jsonlite serialiser) and report.<fmt>
+  papers/<item>-<id>/    outputs.json (the REST API's plain JSON, D79) and report.<fmt>
   errors.jsonl
   logs/worker-<pid>.jsonl
   parts/                 worker output per chunk; removed after the final merge

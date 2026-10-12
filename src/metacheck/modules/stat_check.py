@@ -83,7 +83,7 @@ def _paper_ids(paper: Any) -> pd.DataFrame:
     params={"paper": "a paper object or paperlist object"},
 )
 def stat_check(paper: Any) -> dict[str, Any]:
-    from metacheck.stats._rmath import r_round
+    from metacheck._r import r_round
     from metacheck.stats.core import stats
 
     # detailed table of results ----

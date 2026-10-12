@@ -1,7 +1,6 @@
 """REST API (port of metacheck's plumber API, ``inst/plumber``).
 
-Routes, parameters, status codes and JSON shapes follow the plumber API so
-existing clients keep working:
+Routes, parameters and status codes follow the plumber API:
 
 ========================  ====================================================
 ``GET  /health``           liveness
@@ -15,6 +14,11 @@ existing clients keep working:
 ``POST /paper/module``     run one module (``name``)
 ``POST /paper/check``      metadata + several modules (``modules``, ``report``)
 ========================  ====================================================
+
+Responses are plain JSON (D79), not plumber's jsonlite encoding: scalars are
+not wrapped in arrays, tables are arrays of row objects in which every column
+appears (missing cells are ``null``), numbers keep full precision, and
+``NaN``/``Inf`` are ``null``. An absent table is ``[]``.
 
 Uploads are multipart ``file`` fields holding bibr JSON (max 50 MB). As a
 pytacheck extension, PDF/DOCX/HTML uploads are accepted too when the
@@ -51,23 +55,24 @@ from __future__ import annotations
 
 import asyncio
 import contextvars
+import datetime as dt
 import hmac
 import ipaddress
+import math
 import os
 import tempfile
 import uuid
 import weakref
-from collections.abc import Callable
-from datetime import datetime
+from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
+import orjson
 from fastapi import FastAPI, Request
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from metacheck._env import env_get, env_lookup, env_names
 from metacheck._logging import get_logger
-from metacheck.api.jsonlite import to_json
 
 __all__ = [
     "API_KEY_ENV",
@@ -210,16 +215,61 @@ def _configure_llm() -> None:
     LOG.info("LLM enabled: %s", llm_model())
 
 
-def _json(content: Any, status: int = 200, unboxed: bool = False) -> Any:
+def _plain(x: Any) -> Any:
+    """*x* as plain JSON values: tables become lists of row objects with every
+    column, missing values and non-finite numbers ``None``."""
+    import numpy as np
+    import pandas as pd
+
+    from metacheck.papers.model import Paper
+
+    if x is None or isinstance(x, str | bool):
+        return x
+    if isinstance(x, np.generic):
+        return _plain(x.item())
+    if isinstance(x, int):
+        return x if -(2**63) <= x < 2**64 else float(x)  # orjson's integer range
+    if isinstance(x, float):
+        return x if math.isfinite(x) else None
+    if isinstance(x, pd.DataFrame):
+        cols = [str(c) for c in x.columns]
+        return [
+            {c: _plain(v) for c, v in zip(cols, row, strict=True)}
+            for row in x.itertuples(index=False, name=None)
+        ]
+    if isinstance(x, Paper):
+        return _plain(x.to_dict())
+    if isinstance(x, Mapping):
+        return {str(k): _plain(v) for k, v in x.items()}
+    if isinstance(x, pd.Series | np.ndarray):
+        return [_plain(v) for v in x.tolist()]
+    if isinstance(x, list | tuple | set | frozenset):
+        return [_plain(v) for v in x]
+    if x is pd.NA or x is pd.NaT:
+        return None
+    if isinstance(x, dt.date | dt.time):
+        return x.isoformat()
+    data = getattr(x, "data", None)  # a report table block
+    if isinstance(data, pd.DataFrame):
+        return _plain(data)
+    return str(x)
+
+
+def _json(content: Any, status: int = 200) -> Any:
     from fastapi.responses import Response
 
     return Response(
-        content=to_json(content, unboxed=unboxed), status_code=status, media_type="application/json"
+        content=orjson.dumps(_plain(content)), status_code=status, media_type="application/json"
     )
 
 
+def _table(x: Any) -> Any:
+    """A paper table, ``[]`` when the paper has none."""
+    return [] if x is None else x
+
+
 def _error(status: int, message: str) -> Any:
-    return _json({"error": message}, status=status, unboxed=True)
+    return _json({"error": message}, status=status)
 
 
 class _BearerAuth:
@@ -382,7 +432,7 @@ def create_app() -> FastAPI:
 
     @app.get("/health")
     def health() -> Any:
-        return _json({"status": "ok", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+        return _json({"status": "ok", "timestamp": dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
 
     @app.get("/paper/modules")
     def modules() -> Any:
@@ -412,11 +462,13 @@ def create_app() -> FastAPI:
 
     @app.post("/paper/references")
     async def references(request: Request) -> Any:
-        return await with_uploaded_paper(request, "references", lambda p, _m, _r: p.bib)
+        return await with_uploaded_paper(request, "references", lambda p, _m, _r: _table(p.bib))
 
     @app.post("/paper/cross-references")
     async def cross_references(request: Request) -> Any:
-        return await with_uploaded_paper(request, "cross-references", lambda p, _m, _r: p.xref)
+        return await with_uploaded_paper(
+            request, "cross-references", lambda p, _m, _r: _table(p.xref)
+        )
 
     @app.post("/paper/search")
     async def search(request: Request) -> Any:
@@ -543,8 +595,8 @@ def create_app() -> FastAPI:
                     paper, ["title", "keywords", "doi", "submission", "received", "accepted"]
                 ),
                 "authors": paper_table(paper, "author"),
-                "references": paper.bib,
-                "cross_references": paper.xref,
+                "references": _table(paper.bib),
+                "cross_references": _table(paper.xref),
                 "modules_run": names,
                 "results": results,
                 "report_html": report_html,

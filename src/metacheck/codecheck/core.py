@@ -39,6 +39,7 @@ from metacheck._r.regex import (
     strsplit,
     sub,
 )
+from metacheck._values import is_missing
 from metacheck.codecheck._rcoerce import r_as_character, r_unlist_chr
 
 __all__ = [
@@ -129,10 +130,6 @@ def _nzchar(x: Any) -> bool:
     return x is None or (isinstance(x, float) and math.isnan(x)) or str(x) != ""
 
 
-def _is_na(x: Any) -> bool:
-    return x is None or x is pd.NA or (isinstance(x, float) and math.isnan(x))
-
-
 def _json_load(text: str) -> Any:
     """Parsed JSON (objects as dicts); ``None`` when *text* is not valid JSON."""
     try:
@@ -188,13 +185,13 @@ def _fetch_url(url: str) -> bytes:
 def code_read(file_path: str | os.PathLike[str]) -> list[str]:
     """Read code from a file or URL, one element per line.
 
-    Port of ``R/code_check.R::code_read()``: the encoding is guessed the way
-    ``readr::guess_encoding()`` does it (ICU's detector), the file is read with
-    ``readr::read_lines()`` (vroom) in that encoding, falling back to base
-    ``readLines()`` when that fails, and invalid bytes are shown as ``<xx>``.
-    A 0-byte file gives an empty list.
+    Port of ``R/code_check.R::code_read()``. The bytes are decoded by
+    :func:`metacheck.codecheck._decode.decode_lines` (a byte order mark, UTF-8,
+    else chardet's guess or Windows-1252; D74), not by R's readr/vroom
+    pipeline; bytes that fit no encoding are shown as ``<xx>``. A 0-byte file
+    gives an empty list.
     """
-    from metacheck.codecheck._encoding import code_read_bytes
+    from metacheck.codecheck._decode import decode_lines
 
     if file_path is None:
         raise TypeError("argument is of length zero")
@@ -205,7 +202,7 @@ def code_read(file_path: str | os.PathLike[str]) -> list[str]:
         file_path = values[0]
     path = os.fspath(file_path)
     if _URL.search(path):
-        return code_read_bytes(_fetch_url(path), path, url=True)
+        return decode_lines(_fetch_url(path))
     local = Path(path).expanduser()
     if not local.exists():
         raise FileNotFoundError(f"'{path}' does not exist.")
@@ -213,7 +210,7 @@ def code_read(file_path: str | os.PathLike[str]) -> list[str]:
         return []
     if local.is_dir():
         raise IsADirectoryError(f"Cannot read file '{path}': it is a directory")
-    return code_read_bytes(local.read_bytes(), path)
+    return decode_lines(local.read_bytes())
 
 
 def _try_code_read(file_name: str) -> list[str] | None:
@@ -339,8 +336,6 @@ def _r_yaml(x: Any) -> Any:
     Mappings stay dicts (named lists); a sequence of scalars of one type is an
     atomic vector (a tuple here), any other sequence a list.
     """
-    if type(x).__name__ == "_RExpr":
-        return x
     if isinstance(x, dict):
         return {str(k): _r_yaml(v) for k, v in x.items()}
     if isinstance(x, _RTaggedSeq):
@@ -421,7 +416,7 @@ def _ext_code_lang(ext: str) -> str | None:
 
 
 def _code_lang1(file_name: Any) -> str | None:
-    if _is_na(file_name):
+    if is_missing(file_name):
         raise ValueError("missing value where TRUE/FALSE needed")
     ext = _file_ext(str(file_name)).lower()
     if ext == "ipynb":
@@ -446,7 +441,7 @@ def code_lang(file_name: Any) -> Any:
     if isinstance(file_name, str | os.PathLike):
         return _code_lang1(os.fspath(file_name))
     values = list(file_name.tolist() if isinstance(file_name, pd.Series) else file_name)
-    return [_code_lang1(None if _is_na(v) else os.fspath(v)) for v in values]
+    return [_code_lang1(None if is_missing(v) else os.fspath(v)) for v in values]
 
 
 # ---------------------------------------------------------------------------
@@ -463,19 +458,19 @@ def _col(df: pd.DataFrame, name: str, default: Any = None) -> list[Any]:
 
 def _empty_loc(values: list[Any]) -> list[bool]:
     """``is.na(x) | !nzchar(x %||% "")``."""
-    return [_is_na(v) or str(v) == "" for v in values]
+    return [is_missing(v) or str(v) == "" for v in values]
 
 
 def _has_value(values: list[Any]) -> list[bool]:
     """``!is.na(x) & nzchar(x %||% "")``."""
-    return [not _is_na(v) and str(v) != "" for v in values]
+    return [not is_missing(v) and str(v) != "" for v in values]
 
 
 def _repo_file_counts(all_files: pd.DataFrame) -> dict[Any, int]:
     """``table(all_files$repo_url)`` (NA not counted)."""
     counts: dict[Any, int] = {}
     for v in _col(all_files, "repo_url"):
-        if not _is_na(v):
+        if not is_missing(v):
             counts[v] = counts.get(v, 0) + 1
     return counts
 
@@ -548,7 +543,7 @@ def _code_predownload(
     archive_url = _col(all_files, "archive_url")
     archive_member = _col(all_files, "archive_member")
     has_target = [
-        u or (a and not _is_na(m))
+        u or (a and not is_missing(m))
         for u, a, m in zip(
             _has_value(file_url), _has_value(archive_url), archive_member, strict=True
         )
@@ -604,13 +599,13 @@ def _expand_output(
     new_rows: list[pd.DataFrame] = []
     for i in range(len(sub_files)):
         loc = _col(sub_files, "file_location")[i]
-        if _is_na(loc) or not str(loc) or not os.path.exists(str(loc)):
+        if is_missing(loc) or not str(loc) or not os.path.exists(str(loc)):
             continue
         try:
             path = export(str(loc))
         except Exception:
             path = None
-        if _is_na(path):
+        if is_missing(path):
             continue
         new_rows.append(_synthetic_row(sub_files, i, str(path)))
     return sub_files, is_match, new_rows
@@ -627,7 +622,7 @@ def _synthetic_row(files: pd.DataFrame, i: int, path: str) -> pd.DataFrame:
     row = files.iloc[[i]].copy().reset_index(drop=True)
     if "file_path" in files.columns:
         fp = files["file_path"].iloc[i]
-        base_dir = "NA" if _is_na(fp) else _r_dirname(str(fp))
+        base_dir = "NA" if is_missing(fp) else _r_dirname(str(fp))
     else:
         base_dir = _r_dirname(str(files["file_name"].iloc[i]))
     name = os.path.basename(path)
@@ -796,24 +791,24 @@ def _code_expand_html(
     kinds: list[Any] = [None] * len(html_files)
     locs = _col(html_files, "file_location")
     for i, loc in enumerate(locs):
-        if _is_na(loc) or not str(loc) or not os.path.exists(str(loc)):
+        if is_missing(loc) or not str(loc) or not os.path.exists(str(loc)):
             continue
         try:
             kinds[i] = html_output._html_sniff_kind(str(loc))
         except Exception:
             kinds[i] = None
-        if _is_na(kinds[i]) or kinds[i] != "rmd":
+        if is_missing(kinds[i]) or kinds[i] != "rmd":
             continue
         try:
             r_path = html_output._html_export_r_source(str(loc))
         except Exception:
             r_path = None
-        if _is_na(r_path):
+        if is_missing(r_path):
             continue
         new_rows.append(_synthetic_row(html_files, i, str(r_path)))
 
     if "data_type" in all_files.columns:
-        sniffed = [not _is_na(k) for k in kinds]
+        sniffed = [not is_missing(k) for k in kinds]
         if any(sniffed):
             all_files = all_files.copy()
             positions = [i for i, h in enumerate(is_html) if h]
@@ -872,7 +867,7 @@ def _code_expand_zip(
             continue
         if "file_path" in all_files.columns:
             fp = all_files["file_path"].iloc[i]
-            base = "NA" if _is_na(fp) else str(fp)
+            base = "NA" if is_missing(fp) else str(fp)
         else:
             base = str(names[i])
         # .repo_cache_path() is outside R's tryCatch(); the fetch is inside
@@ -925,26 +920,21 @@ def code_extract_r(
     documentation: int = 0,
     text: str | Sequence[str | None] | None = None,
 ) -> Any:
-    """Extract the R code of an R Markdown/Quarto document (``knitr::purl()``).
+    """Extract the R code of an R Markdown, Quarto or Sweave document.
 
-    Port of ``R/code_check.R::code_extract_r()``. *documentation* is purl's
+    Port of ``R/code_check.R::code_extract_r()``, which runs
+    ``knitr::purl()``; the chunks are read without R
+    (:mod:`metacheck.codecheck._chunks`, D80). *documentation* is purl's
     level: 0 (code only), 1 (chunk headers as comments) or 2 (text chunks as
     roxygen comments too). Returns the code lines, or *save_path* after
     writing them there.
     """
-    from metacheck.codecheck._purl import NA_LINE, purl
+    from metacheck.codecheck._chunks import extract_r
 
-    lines = [NA_LINE if t is None else t for t in _text_arg(file_path, text)]
-    out = purl(lines, documentation=documentation)
-    from metacheck.codecheck._encoding import code_read_bytes
-
-    data = out.encode("utf-8", "surrogateescape")
+    out = extract_r(_text_arg(file_path, text), documentation=int(documentation))
     if save_path is None:
-        if not data:
-            return []
-        return code_read_bytes(data, "output.R")
-    with open(save_path, "wb") as fh:
-        fh.write(data)
+        return out
+    _write_lines(out, save_path)
     return os.fspath(save_path)
 
 
@@ -1806,7 +1796,7 @@ def _version_pin_scan(
     all_files = all_files.reset_index(drop=True)
     names = _col(all_files, "file_name")
     base_nm = [
-        None if _is_na(n) else os.path.basename(str(n).replace("\\", "/").rstrip("/"))
+        None if is_missing(n) else os.path.basename(str(n).replace("\\", "/").rstrip("/"))
         for n in names
     ]
     dl_args = {
@@ -1844,7 +1834,7 @@ def _version_pin_scan(
         rows = fetch(is_renv)
         frames = []
         for fname, loc in zip(_col(rows, "file_name"), _col(rows, "file_location"), strict=True):
-            if _is_na(loc) or not str(loc) or not os.path.exists(str(loc)):
+            if is_missing(loc) or not str(loc) or not os.path.exists(str(loc)):
                 continue
             try:
                 lock = _json_load(Path(str(loc)).read_text(encoding="utf-8"))
@@ -1884,7 +1874,7 @@ def _version_pin_scan(
     if any(si_mask):
         rows = fetch(si_mask)
         for fname, loc in zip(_col(rows, "file_name"), _col(rows, "file_location"), strict=True):
-            if _is_na(loc) or not str(loc) or not os.path.exists(str(loc)):
+            if is_missing(loc) or not str(loc) or not os.path.exists(str(loc)):
                 continue
             txt = _try_code_read(str(loc))
             if not txt:

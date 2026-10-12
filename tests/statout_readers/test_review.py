@@ -13,6 +13,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from metacheck._values import as_float
 from metacheck.statout.jasp import (
     _frame_from_columns,
     _html_inline_images,
@@ -22,7 +23,6 @@ from metacheck.statout.jasp import (
 )
 from metacheck.statout.omv import _omv_extract_syntax, import_omv
 from metacheck.statout.spv import (
-    _as_numeric,
     _fit_function,
     _raw_to_char,
     _read_lines,
@@ -213,7 +213,7 @@ def test_read_lines_cuts_at_nul(tmp_path: Path) -> None:
 
 
 def test_as_numeric_hex_floats() -> None:
-    assert _as_numeric("0x1p3") == 8.0
-    assert _as_numeric("0x.8") == 0.5
-    assert _as_numeric("-0x1A") == -26.0
-    assert _as_numeric("0x") is None
+    assert as_float("0x1p3") == 8.0
+    assert as_float("0x.8") == 0.5
+    assert as_float("-0x1A") == -26.0
+    assert as_float("0x") is None

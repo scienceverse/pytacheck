@@ -15,9 +15,9 @@ from __future__ import annotations
 import math
 from typing import Any
 
-from metacheck._r.base import as_character
+from metacheck._r.base import as_character, r_round
 from metacheck._r.regex import grepl, gsub, sub
-from metacheck.stats._rmath import as_numeric, r_round
+from metacheck._values import as_float, is_missing
 
 __all__ = [
     "_r_stat_pattern",
@@ -27,17 +27,6 @@ __all__ = [
 ]
 
 _NUMBER_TEXT = r"^[-+]?[0-9.]+([eE][-+]?[0-9]+)?$"
-
-
-def _is_na(x: Any) -> bool:
-    try:
-        import pandas as pd
-
-        if x is pd.NA:
-            return True
-    except ImportError:  # pragma: no cover
-        pass
-    return x is None or (isinstance(x, float) and math.isnan(x))
 
 
 def _format_whole(x: float) -> str:
@@ -54,18 +43,18 @@ def _stat_display_value(x: Any) -> str:
     ``NA``/``None`` gives ``""``; anything that is not plainly a number is
     returned unchanged.
     """
-    if _is_na(x):
+    if is_missing(x):
         return ""
     if isinstance(x, list | tuple):
         if len(x) != 1:
             raise ValueError("the condition has length > 1")
         x = x[0]
-        if _is_na(x):
+        if is_missing(x):
             return ""
     text = x if isinstance(x, str) else as_character(x)
     assert text is not None
-    num = as_numeric(text)[0]
-    if math.isnan(num) or not math.isfinite(num) or not grepl(_NUMBER_TEXT, text):
+    num = as_float(text)
+    if num is None or not math.isfinite(num) or not grepl(_NUMBER_TEXT, text):
         return text
     if num == r_round(num):
         return _format_whole(r_round(num))
@@ -84,7 +73,9 @@ def _stat_html_escape(x: Any) -> Any:
         x = ""
     scalar = not isinstance(x, list | tuple)
     values = [x] if scalar else list(x)
-    chars = [None if _is_na(v) else (v if isinstance(v, str) else as_character(v)) for v in values]
+    chars = [
+        None if is_missing(v) else (v if isinstance(v, str) else as_character(v)) for v in values
+    ]
     out = gsub("&", "&amp;", chars, fixed=True)
     out = gsub("<", "&lt;", out, fixed=True)
     out = gsub(">", "&gt;", out, fixed=True)

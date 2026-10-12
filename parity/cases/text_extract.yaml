@@ -646,7 +646,7 @@
         - '{"a": {"b": "x\"y", "c": "é", "b c": [1, "a"], "if": [3, 2], "_z": [null, null]}}'
         - '{"a": [[[1,2],[3,4]],[[5,6],[7,8]]], "b": [1, "NA"], "c": ["Inf", null], "d": [true, 2]}'
 - "id": "json_expand.records"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \"_row\" key is an ordinary column (jsonlite makes it the row names, dropping the column and changing row counts or failing)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \"_row\" key is an ordinary column (jsonlite makes it the row names, dropping the column and changing row counts or failing); nested values are flattened with \";\" (D76)"}
   "r": "json_expand"
   "py": "metacheck.text.json_expand.json_expand"
   "args":

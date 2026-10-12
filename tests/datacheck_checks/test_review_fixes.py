@@ -14,15 +14,14 @@ import pytest
 
 from metacheck.datacheck import checks as C
 from metacheck.datacheck._checks_facets import _strptime_ok
-from metacheck.datacheck._checks_format import _head_rvec, _utf8_bom_connection
-from metacheck.datacheck._checks_rvec import (
-    as_numeric_str,
-    chr,
-    chr_counts,
-    numeric_array,
-    rvec,
+from metacheck.datacheck._checks_format import _utf8_bom_connection
+from metacheck.datacheck._kinds import (
+    as_numbers,
+    as_text,
+    is_integer,
+    kind,
+    row_texts,
     trimmed_counts,
-    weighted_median,
 )
 
 DATA = Path(__file__).parent / "data"
@@ -61,16 +60,15 @@ def test_concepts_follow_the_strptime_fix() -> None:
     assert C.data_col_concept("timestamp", stamps) is None
 
 
-# -- table(): the string "NaN" is excluded from a character vector ----------------------------
+# -- the string "NaN" is a value like any other (R's table() drops it; D77) ---------------------
 
 
-def test_constant_drops_nan_strings_like_table() -> None:
+def test_constant_counts_nan_strings() -> None:
     res = C.data_check_constant(["a", "a", "NaN"])
-    assert res["problem"] is True and res["near"] is False and res["values"] == "a"
-    with pytest.raises(IndexError):
-        C.data_check_constant(["NaN", "NaN"])
+    assert res["problem"] is False
+    assert C.data_check_constant(["NaN", "NaN"])["values"] == "NaN"
     fct = C.data_check_constant(pd.Series(pd.Categorical(["NaN", "NaN", "a"])))
-    assert fct["problem"] is False  # a factor keeps its "NaN" level
+    assert fct["problem"] is False
     assert C.data_check_constant(["NA", "NA", "NA", "b"])["problem"] is False
 
 
@@ -103,7 +101,7 @@ def test_scale_values_integer_typo_path() -> None:
 
 def test_posixct_as_character() -> None:
     secs = [1577872800.000001, 1577872800 + 4e-7, 1577836800.5, 1577836800, 1577872809.25]
-    got = chr(pd.Series(pd.to_datetime(secs, unit="s")))
+    got = as_text(pd.Series(pd.to_datetime(secs, unit="s")))
     assert got == [
         "2020-01-01 10:00:00.000001",
         "2020-01-01 10:00:00",
@@ -154,10 +152,10 @@ def test_detect_header_row_returns_the_rows_as_given() -> None:
 
 def test_row_scan_types_object_columns_from_all_values() -> None:
     col = pd.Series([None, None, None, None, None, "z"], dtype=object)
-    head = _head_rvec(col, 4)
-    assert head.kind == "character" and head.values == [None] * 4
-    big = pd.Series([1, 2, 3, 2**40], dtype="Int64")
-    assert _head_rvec(big, 2).kind == "double"
+    two = pd.DataFrame({"a": col, "b": pd.Series([1, None, 3, 4, 5, 6], dtype="Int64")})
+    # a text NA stays NA in a row; any other NA is the string "NA"
+    assert row_texts(two, 2) == [[None, "1"], [None, "NA"]]
+    assert row_texts(two.iloc[:, :1], 1) == [[None]]
     df = pd.DataFrame(
         {
             "...1": ["Participant", "1", "2", "3", "4", "5"],
@@ -209,26 +207,24 @@ def test_trial_level_sniff_accepts_a_single_path_vector() -> None:
 # -- vectorised helpers ------------------------------------------------------------------------
 
 
-def test_fast_typed_conversions() -> None:
-    assert rvec(pd.Series([1, None, 3], dtype="Int64")).values == [1, None, 3]
-    assert rvec(pd.Series([True, None], dtype="boolean")).values == [True, None]
-    assert rvec(pd.Series(["a", None], dtype="string")).values == ["a", None]
-    assert rvec(np.array([1, 2**40])).kind == "double"
-    a, is_int = numeric_array(pd.Series([1, None], dtype="Int64"))  # type: ignore[misc]
-    assert is_int and np.isnan(a[1])
-    assert numeric_array(pd.Series(["1"], dtype="string")) is None
+def test_column_kinds() -> None:
+    assert kind(pd.Series([1, None, 3], dtype="Int64")) == "numeric"
+    assert kind([True, None]) == "logical"
+    assert kind([None, None]) == "logical"  # all missing, as in R
+    assert kind(pd.Series(["a", None], dtype="string")) == "text"
+    assert kind([1, "a"]) == "text"
+    assert kind(pd.Series(["a"], dtype="category")) == "categorical"
+    assert kind(pd.to_datetime(pd.Series(["2020-01-01"]))) == "datetime"
+    assert is_integer([1, None]) and not is_integer([1.5])
 
 
-def test_counting_helpers() -> None:
-    assert chr_counts([1.0, 1.0, None, 0.5]) == {"1": 2, None: 1, "0.5": 1}
+def test_text_and_numbers() -> None:
+    assert as_text([1.0, None, 0.1 + 0.2, 1e5, True]) == ["1", None, "0.3", "1e+05", "TRUE"]
+    assert as_text(pd.Series([3, 3 * 10**9], dtype="Int64")) == ["3", "3e+09"]  # a double in R
+    a = as_numbers(pd.Series(["1", " 2 ", "x", None], dtype="string"))
+    assert a[:2].tolist() == [1.0, 2.0] and np.isnan(a[2:]).all()
+    assert as_numbers(pd.Series(["b", "a", None], dtype="category"))[:2].tolist() == [2.0, 1.0]
     assert trimmed_counts([" a", "a ", "", "  ", None, "b"]) == {"a": 2, "b": 1}
-    assert weighted_median([(3, 1), (1, 2)]) == 1
-    assert weighted_median([(1, 1), (4, 1)]) == 2.5
-
-
-def test_as_numeric_prescreen_is_exact() -> None:
-    for s in ["Infinity", "-inf", "NaN", "+.5", " 1 ", "0x1A", "N/A", "Na", "abc", "\xa01"]:
-        assert (as_numeric_str(s) is None) == (s in ("N/A", "Na", "abc", "\xa01"))
 
 
 # -- a column's R class by position (F30 / F32) ------------------------------------------------

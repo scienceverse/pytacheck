@@ -26,6 +26,7 @@ import pandas as pd
 
 from metacheck._r.base import paste, trimws
 from metacheck._r.regex import grepl, gsub, regexec, regextract_all, strsplit
+from metacheck._values import is_missing
 from metacheck.module import module
 from metacheck.report import scroll_table
 from metacheck.text import text_search
@@ -169,17 +170,13 @@ class _Agrep:
 
     def __call__(self, x: Sequence[Any]) -> list[bool]:
         """``agrepl()`` over a vector; ``NA`` never matches."""
-        hits = set(self.which([None if _is_na(v) else self.prepare(str(v)) for v in x]))
+        hits = set(self.which([None if is_missing(v) else self.prepare(str(v)) for v in x]))
         return [i in hits for i in range(len(x))]
 
 
 def _ascii_lower(s: str) -> str:
     """Lower-case A-Z only (keeps the length, unlike :meth:`str.lower` on some letters)."""
     return s.lower() if s.isascii() else s.translate(_ASCII_LOWER)
-
-
-def _is_na(v: Any) -> bool:
-    return v is None or v is pd.NA or (isinstance(v, float) and math.isnan(v))
 
 
 def agrep(pattern: str, x: Sequence[Any], ignore_case: bool = False) -> list[int]:
@@ -193,7 +190,7 @@ def agrepl(pattern: str, x: Any, ignore_case: bool = False) -> Any:
     rx = _matcher(pattern, ignore_case)
     if isinstance(x, str):
         return rx.match(rx.prepare(x))
-    if _is_na(x):
+    if is_missing(x):
         return False
     return rx(list(x))
 
@@ -268,7 +265,7 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
     1-based, as in R. A short COI heading that is the last sentence is
     returned as it is (metacheck stops there, U97).
     """
-    splitted = [None if _is_na(s) else str(s) for s in splitted]
+    splitted = [None if is_missing(s) else str(s) for s in splitted]
     n = len(splitted)
 
     def at(i: int) -> str | None:

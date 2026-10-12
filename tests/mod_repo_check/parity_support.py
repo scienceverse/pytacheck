@@ -34,7 +34,8 @@ MOCKS = HERE / "mocks"
 FIXTURES = HERE / "fixtures"
 _REDACT = re.compile(r"[?&]page(%5[Bb]size%5[Dd]|\[size\])=100")
 _FILE_REF = re.compile(r'find_mock_file\("([^"]+)"\)')
-_R_CHUNK = re.compile(r"\n```\{r\}.*?\n```\n", re.S)
+# a table: an R chunk in R, a raw HTML block in pytacheck (D75)
+_R_CHUNK = re.compile(r'\n```(?:\{r\}|\{=html\}\n<div class="datatables).*?\n```\n', re.S)
 
 
 def mock_path(request: httpx.Request) -> str:

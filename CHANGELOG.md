@@ -7,6 +7,71 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: R code is read from R Markdown and Quarto chunks without R
+
+- **Changed:** `code_extract_r()` (and `code_parse_r()`, code_check and reproducibility_check on `.Rmd`/`.qmd` files) reads the chunks statically instead of reproducing `knitr::purl()` and evaluating chunk options with a small R evaluator (D80). Chunk delimiters, `#|` options and `<<label>>` references work as before.
+- **Changed:** chunk options are used only when they are literal (`eval = FALSE`, `purl = FALSE`, `error = TRUE`, `engine = "python"`, `#| eval: false`). An option that is an R expression (`eval = params$run`, `eval = !knitr::is_latex_output()`) is not evaluated and counts as not given, so the chunk is extracted as R code; knitr dropped a chunk whose `eval` it could not evaluate (also a typo such as `eval=False`). `child` documents are not read.
+- **Fixed with it:** malformed chunk options, a `NA` first code line, `engine = NA` and similar input no longer make the extraction fail; an empty chunk of another engine no longer gives a `## NA` line; a document that mentions `\Sexpr{}` is still read as R Markdown when it has R Markdown chunks.
+- **Changed:** YAML `params` are written as `params <-` and one `list(...)` line, with `!r` values as their R source (knitr evaluated them and wrote `dput()`'s wrapped lines).
+- **Unchanged:** the extracted code of every R Markdown/Quarto file in the test and parity inputs, except a test fixture whose `eval=False` chunk is now extracted, and the accuracy report.
+- **Removed:** `metacheck.codecheck._purl` and `metacheck.codecheck._reval` (1,748 lines); the extractor, `metacheck.codecheck._chunks`, is 511.
+
+### Changed (breaking for API clients): the REST API returns plain JSON
+
+- **Breaking:** the REST API (`pytacheck serve`) no longer copies the JSON encoding of metacheck's plumber API (jsonlite's defaults). Responses are plain JSON (D79):
+  - scalars are not wrapped in arrays: `"status": "ok"`, `"count": 47`, `"traffic_light": "red"`, `"report_html": "<!DOCTYPE html>…"` (were `["ok"]`, `[47]`, `["red"]`, `["<!DOCTYPE html>…"]`);
+  - a table is an array of row objects that holds every column, with `null` for a missing cell (missing cells were left out);
+  - numbers keep full precision (were rounded to 4 decimal places), and `NaN` and infinities are `null` (were the strings `"NA"`, `"NaN"`, `"Inf"`);
+  - a missing value is `null` (`"summary_text": null`, was `{}`), and an absent paper table is `[]` (was `{}`).
+- **Unchanged:** routes, parameters, status codes, and error bodies (`{"error": "…"}`, already unboxed).
+- **Migrating a client:** drop the `[0]` that unwrapped scalars, read a missing table cell as `null` rather than an absent key, and stop parsing `"NA"`/`"NaN"`/`"Inf"` strings. [docs/API.md](docs/API.md#responses) shows the shapes.
+- **Removed:** `metacheck.api.jsonlite` (`to_json`, `format_number`).
+
+### Changed: statcheck runs on plain Python values and scipy
+
+- **Changed:** the statcheck port behind `stats()` and stat_check computes with plain Python values (`None` is missing) and `scipy.special`, not with a port of R's runtime (three-valued `NA` logic, R's warnings and errors) and of R's nmath library (`metacheck.stats._rmath` is removed) (D78). The t and F p-values use the same reductions to the incomplete beta function as R's `pt()` and `pf()`, so on the 21 papers of the accuracy report every result of `stats()` and stat_check is unchanged, to the last digit of each p-value.
+- **Fixed with it:** a result whose p-value cannot be computed (zero degrees of freedom in a t, r or F test) or whose consistency cannot be decided is left out, never reported as consistent. statcheck reported such a result as having no error when the statistic and the p-value were given with `<` or `>` (`t(0) < 2.1, p > .05`), which could make stat_check green.
+- **Changed:** infinite degrees of freedom (a number too large for a float) follow scipy: a t test or correlation uses the normal distribution, a chi-square or Q test gets p = 1, and an F test cannot be checked and is left out (R uses the chi-square limit for F, and failed on a small chi-square statistic).
+- **Changed:** statcheck's flags (`OneTailedTests`, `pEqualAlphaSig`, `pZeroError`, `OneTailedTxt`, `AllPValues`, `messages`) must be `True` or `False` (or 1 or 0); another value such as 2 raises `ValueError` (R treated 2 as `FALSE`). `stats()` takes statcheck's settings as ordinary keyword or positional arguments (`stats(paper, stat="t", alpha=0.01)`): an abbreviated name (`alp=`) or `texts=` raises `TypeError` instead of being matched as R matches `...`. Calling `statcheck()` no longer emits R's warnings (`NAs introduced by coercion`).
+- **Smaller:** the statcheck port and `stats()` are 1,105 lines, down from 1,711.
+
+### Internal: data_check helpers read column kinds from pandas dtypes
+
+- **Changed:** `datacheck/_checks_rvec.py`, a 621-line model of R's atomic vectors (`RVec`, `rvec()`, `chr()`, `num()`, `quantile7()`, `tolower()`, ...), is gone. The data_check and codebook helpers read a column's kind (numeric, logical, text, categorical, date-time) from its pandas dtype through the small `datacheck/_kinds.py` and use plain pandas, numpy and Python string operations (D77). `as.character()` keeps R's number formatting where users see it (messages, sample values).
+- **Unchanged:** every traffic light, count and reported number on real data files; the parity cases of the data areas and the accuracy gate give the same results.
+- **Edge cases (D77):** a list mixing `True` with numbers is text, `as.numeric()` of a date-time is `NA`, a whole number beyond 2^31 is written in full in a message, lower- and upper-casing are Python's, and `data_check_constant()` counts the text `"NaN"` like any other value (R's `table()` drops it, and fails on a column of only `"NaN"`).
+
+### Changed: json_expand reads plain JSON
+
+- **Changed:** `json_expand()` parses each reply with `metacheck._json.loads()` and flattens it, instead of reproducing jsonlite's R value model, R's deparser and `utils::type.convert()` (D76). A JSON null stays missing, also in text columns (metacheck gives `""` there). A nested array or object is the text of its values joined by `";"` (`["E", "F"]` is still `"E;F"`; `{"b": [1, 3]}` is `"1;3"`, not `c(1, 3)`). Column types are still guessed from the values: `true`, `"TRUE"` and `"F"` make a logical column, `"1"` an integer, `"2.5"` a number; anything else is text.
+- **Changed:** JSON is read strictly: a reply with comments is a `"parsing error"`. `{"$date": ...}` is an ordinary object, not a date, and no column is complex. A repeated key keeps its last value, an empty key is a column, and an array that mixes objects with other values is `"not a list"`: metacheck stopped with an error on all three.
+- **Unchanged:** the values extracted from every recorded LLM reply, including the `power` module's prompt-based fallback; the `error` column (`"parsing error"`, `"not a list"`); the Markdown fence handling; the suffixes on clashing names.
+- **Removed:** `metacheck.text.json_expand.as_numeric` and `type_convert`; use `metacheck._values.as_float` for R's `as.numeric()` of one value. `causal_relations()` reads the Space's replies as plain dicts and lists.
+- **Smaller:** `text/json_expand.py` is 199 lines, down from 1,235.
+
+### Changed: code files are decoded with chardet, not a port of readr's ICU and vroom pipeline
+
+- **Changed:** `code_read()` (and so `code_check()`, `reproducibility_check()` and the other readers of code files) decodes a file's bytes in `codecheck/_decode.py`: a byte order mark picks UTF-8, UTF-16 or UTF-32; valid UTF-8 is read as UTF-8; anything else is read in the encoding chardet names when it is fairly sure (confidence 0.2), else as Windows-1252, and bytes that fit neither show as `<xx>`. Lines end at LF, CRLF or CR (D74).
+- **Removed:** the ports of ICU's charset detector, vroom's line indexer, glibc's iconv tables and base `readLines()` (3,864 lines), with the R-fidelity corpus that pinned them.
+- **Result changes to watch:** UTF-8 and ASCII scripts read exactly as before. Hebrew (ISO-8859-8, Windows-1255) and UTF-32 files are now read as their text where R showed `<xx>` bytes; files mixing CR with CRLF line ends keep every line; a binary file gives lines of text instead of an error.
+- **Dependency:** chardet (0BSD, pure Python) is a core dependency. The `charset` extra stays as an empty alias so `metacheck[charset]` still installs.
+
+### Changed: a .qmd report holds its tables as HTML
+
+- **Changed:** `report(output_format="qmd")`, `report_qmd()`, `module_report()` and `scroll_table_qmd()` write each table as a raw HTML block (the table `report_table()` renders: the same cells, column widths, page size and `column` layout), not as metacheck's R chunk that rebuilds the table as R code and calls `metacheck::report_table()` (D75). A `.qmd` report with tables ends with one HTML block of their styles and pagination script, so Quarto renders it without R or metacheck. `report_qmd()`'s `tables` argument takes only `"html"` (the default); `"r"` is an error.
+- **Changed:** a module report that contains a table always folds under "View detailed feedback" in the HTML and `.qmd` reports. metacheck measured the table's R code against its 300-character limit, so the smallest tables stayed open; on the 151 outputs with a table in the accuracy corpus nothing changes.
+- **Removed:** `metacheck.report.render.deparse()`, the port of R's `deparse()` (with its Unicode tables) that wrote the chunks. Its parity cases go with it; the `scroll_table` cases are marked `deliberate` (D75). The "unused argument" messages and RegCheck's list cells, which quoted values with it, use a one-line R literal (`metacheck._r.base.r_literal`) and read as before.
+
+### Internal: one `as.character()`, `as.numeric()`, `as.integer()` and `trimws()`
+
+- **Changed:** private copies of R's coercions whose rules matched the shared helpers are gone: 9 `as.character()` copies (`_chr`, `_chr1`, `_cell_chr`) use `metacheck._values.as_str`; 7 `as.numeric()` copies (`_r_as_numeric` in `datacheck.files` and `statout.r_output`, `_as_numeric` in `statout.spv` and `repro.core`, `_num` in `archives.github`, the bodies of `datacheck`'s `as_numeric_str` and `archives.download`'s `_num`) use `as_float`; 3 `as.integer()` copies (`_as_int`, `_int`) use `as_int`; 3 `trimws()` copies (`_trim`, `_trimws`) and 2 `paste(collapse =)` copies use `metacheck._r.trimws` and `paste`. The copies left are the ones whose rules differ: R's 32-bit integer range, `NA` as NaN or as `"NA"`, a warning on coercion, list unwrapping, `str()` instead of R's number formatting, dates and times, other whitespace sets.
+- **Unchanged:** results on real inputs. The shared helpers read a few malformed values differently: a hexadecimal number without digits (`"0x."`) is `NA`, an infinite GitHub rate-limit header or R-output line number, and a Grobid year that is not a number, are `NA` instead of an error, a decimal string is truncated as `as.integer()` does, and a container is `NA` rather than its Python text.
+
+### Internal: one missing-value test and one `isTRUE()`
+
+- **Changed:** the 25 private copies of `_is_na`/`_is_missing`/`_isna` and the 4 copies of `_is_true` that matched the shared helpers are gone; their callers use `metacheck._values.is_missing` and `is_true`. Code that imported `is_na` from `metacheck._r` uses `is_missing` from `metacheck._values` under its own name (`metacheck._r.is_na` stays as an alias). The copies left are the ones whose rules differ (R's `%in% TRUE`, `x$name` partial matching, a `None` that is `NULL` and not `NA`).
+- **Unchanged:** results. The only values the shared test reads differently are a numpy NaN of a narrower float type, `NaT` and `pd.NA` in the few copies that missed them, which now count as missing as they do everywhere else.
+
 ### Deprecated: top-level names that only mirror metacheck's R exports
 
 - **Deprecated:** 38 top-level names that exist only because the R package exports them, and that no module, check, pack, CLI command, API route or app page uses (decided by the maintainer, 2026-10-10). They go in the next minor release. Together with the helpers only they use, they are about 5,000 lines.

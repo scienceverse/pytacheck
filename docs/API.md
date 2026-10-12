@@ -4,6 +4,70 @@
 `pip install "metacheck[api]>=0.4.0a1"`. The routes are listed at `/docs` and in the
 docstring of `pytacheck.api.app`.
 
+## Responses
+
+Routes, parameters and status codes are the plumber API's. The bodies are plain
+JSON (D79 in [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md)):
+
+* A scalar is a JSON scalar: `"status": "ok"`, `"count": 47`.
+* A table (info, authors, references, cross-references, search results, a module's
+  `table` and `summary_table`) is an array of row objects. Every row has every
+  column; a missing cell is `null`. A paper without that table gives `[]`.
+* Numbers are JSON numbers at full precision. `NaN` and infinities are `null`.
+* A missing value is `null`, for example a module's `summary_text` when it has none.
+* An error is `{"error": "<message>"}` with a 4xx or 5xx status.
+
+`POST /paper/info` on the demo paper:
+
+```json
+[{"paper_id": "to_err_is_human", "title": "To Err is Human: An Empirical Investigation",
+  "keywords": null, "doi": "10.32614/10.5281/zenodo.2669586", "description": null}]
+```
+
+`POST /paper/check` with `modules=marginal,all_urls` and `report=false`, shortened:
+
+```json
+{
+  "metacheck_version": "0.3.1",
+  "paper_info": [{"paper_id": "to_err_is_human", "title": "To Err is Human: …", "keywords": null, …}],
+  "authors": [{"author_id": 1, "given": "Daniel", "family": "Lakens", "corresponding": false, …}],
+  "references": […],
+  "cross_references": […],
+  "modules_run": ["marginal", "all_urls"],
+  "results": {
+    "marginal": {
+      "module": "marginal",
+      "title": "Marginal Significance",
+      "table": [{"text": "…", "text_id": 3, "page_number": null, …}],
+      "summary_table": [{"paper_id": "to_err_is_human", "marginal": 2}],
+      "summary_text": "You described 2 effects with terms related to 'marginally significant'.",
+      "report": ["You described effects with terms …", [{"Text": "…", "Section Header": "Abstract"}, …], "…"],
+      "traffic_light": "red"
+    },
+    "all_urls": {"module": "all_urls", …, "summary_text": null, "report": "", "traffic_light": "info"}
+  },
+  "report_html": ""
+}
+```
+
+A module's `report` is a string, or a list of blocks: text blocks are strings,
+table blocks are arrays of row objects.
+
+### Migrating from metacheck's plumber API
+
+metacheck's plumber API writes JSON with jsonlite's defaults. Clients written for
+it need these changes:
+
+| plumber (jsonlite) | pytacheck |
+|---|---|
+| `"status": ["ok"]`, `"traffic_light": ["red"]`, `"report_html": ["<html>…"]` | `"status": "ok"`, `"traffic_light": "red"`, `"report_html": "<html>…"`: drop the `[0]` |
+| a missing table cell is left out of its row object | the key is there with `null` |
+| numbers rounded to 4 decimal places | full precision |
+| `"NA"`, `"NaN"`, `"Inf"` strings for missing or non-finite numbers | `null` |
+| `NULL` as `{}` (`"summary_text": {}`, a paper without references) | `null`, and `[]` for an absent table |
+
+Error bodies were already unboxed and do not change.
+
 ## Access
 
 The plumber API has no authentication. pytacheck adds an API key.

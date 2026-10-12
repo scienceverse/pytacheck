@@ -24,6 +24,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r import bind_rows, grepl, plural, r_round, strsplit
+from metacheck._values import as_str
 from metacheck.module import module
 from metacheck.modules import _reproducibility as h
 from metacheck.report import collapse_section, scroll_table
@@ -45,7 +46,7 @@ def _int_col(values: Sequence[Any]) -> pd.Series:
 
 
 def _str_col(values: Sequence[Any]) -> pd.Series:
-    return pd.Series(pd.array([h._chr(v) for v in values], dtype="string"))
+    return pd.Series(pd.array([as_str(v) for v in values], dtype="string"))
 
 
 def _bool_col(values: Sequence[Any]) -> pd.Series:
@@ -127,7 +128,7 @@ def _order_names(order_tbl: pd.DataFrame) -> list[str]:
 
 def _na_str(x: Any) -> str:
     """``sprintf("%s", x)`` of one string (``"NA"`` for a missing value)."""
-    v = h._chr(x)
+    v = as_str(x)
     return "NA" if v is None else v
 
 
@@ -897,7 +898,7 @@ def _assess_r(
     io_writes = h._col(io, "writes")
     produced = list(
         dict.fromkeys(
-            h._chr(w).lower() if h._chr(w) is not None else None  # type: ignore[union-attr]
+            as_str(w).lower() if as_str(w) is not None else None  # type: ignore[union-attr]
             for ws in io_writes
             for w in h._as_list(ws)
         )
@@ -956,7 +957,7 @@ def _assess_r(
             names[j] for j in range(n_code) if file_order[j] is not None and file_order[j] < ord_i
         ]
         vals = [
-            None if h._chr(w) is None else h._chr(w).lower()  # type: ignore[union-attr]
+            None if as_str(w) is None else as_str(w).lower()  # type: ignore[union-attr]
             for e in earlier
             for w in first_writes.get(e, [])
         ]
@@ -1601,8 +1602,8 @@ def _execute(
     pid = h._pid(paper, structure_df, code_tbl) if len(run_results) else None
     r_stat_output: list[dict[str, Any]] = []
     for i in range(len(run_results)):
-        so = h._chr(run_results["stdout"].iloc[i])
-        fn = h._chr(run_results["file_name"].iloc[i])
+        so = as_str(run_results["stdout"].iloc[i])
+        fn = as_str(run_results["file_name"].iloc[i])
         exec_lines = (
             h._as_list(run_results["script_lines"].iloc[i])
             if "script_lines" in run_results.columns

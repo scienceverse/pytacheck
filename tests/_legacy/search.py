@@ -497,9 +497,9 @@ def _combine_vectors(parts: list[list[str | None]], exclude: bool) -> list[str |
     if not exclude:
         raise ValueError("Argument 1 must be a data frame or a named atomic vector.")
     if len(parts) > 2:
-        from metacheck.report.render import deparse
+        from metacheck._r.base import r_literal
 
-        extra = ", ".join("".join(deparse(part)) if part else "character(0)" for part in parts[2:])
+        extra = ", ".join(r_literal(part) if part else "character(0)" for part in parts[2:])
         raise TypeError(f"unused argument{'s' if len(parts) > 3 else ''} ({extra})")
     second = set(parts[1])
     return [t for t in dict.fromkeys(parts[0]) if t in second]
