@@ -63,7 +63,7 @@ def test_a_value_that_is_not_a_positive_number_gives_the_default_and_a_warning(
     monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, text: str
 ) -> None:
     monkeypatch.setenv("METACHECK_PACKAGE_MAX_FILES", text)
-    with caplog.at_level(logging.WARNING, logger="pytacheck"):
+    with caplog.at_level(logging.WARNING):
         assert setting("PACKAGE_MAX_FILES", 42) == 42
     assert "METACHECK_PACKAGE_MAX_FILES" in caplog.text
 
