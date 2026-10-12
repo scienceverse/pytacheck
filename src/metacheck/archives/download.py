@@ -1342,6 +1342,32 @@ def download_repo_files(
 
     sizes_col = _col(df, "file_size")
 
+    # Known listing sizes and cached files need no request. Fetch the remaining
+    # distinct URLs concurrently; duplicates share one probe without losing rows.
+    size_by_url: dict[str, float] = {}
+    if sizes_col is not None:
+        from metacheck.archives._parallel import map_ordered
+
+        file_urls_for_size = _col(df, "file_url") or [None] * n
+        probe_rows = set()
+        for repo, repo_rows in rows_of.items():
+            downloadable = [i for i in repo_rows if file_urls_for_size[i]]
+            count = (
+                _num(repo_file_counts[repo])
+                if repo_file_counts is not None and repo in repo_file_counts
+                else len(downloadable)
+            )
+            if not (math.isfinite(max_files_per_repo) and count > max_files_per_repo):
+                probe_rows.update(downloadable)
+        unknown = list(
+            dict.fromkeys(
+                str(url)
+                for i, url in enumerate(file_urls_for_size)
+                if i in probe_rows and not already[i] and is_missing(_num(sizes_col[i]))
+            )
+        )
+        size_by_url = dict(zip(unknown, map_ordered(_remote_size, unknown), strict=True))
+
     # -- archive members (repo_check's zip-peek expansion) --------------------
     if "archive_url" in df.columns:
         from metacheck.archives.zip_peek import _zip_fetch_members
@@ -1476,7 +1502,7 @@ def download_repo_files(
                     sz = math.nan
                 sizes[k] = sz if math.isfinite(sz) else math.nan
             else:
-                sizes[k] = _remote_size(str(file_urls[idx[k]]))
+                sizes[k] = size_by_url[str(file_urls[idx[k]])]
 
         if math.isfinite(max_file_size):
             over = [not is_missing(s) and s > max_file_size * _MB for s in sizes]

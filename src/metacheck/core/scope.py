@@ -14,9 +14,10 @@ token, never the runner or its caches. ``run_session()`` opens no trusted
 scope: it is public, and its users may edit papers between runs.
 
 **The mutation check.** With ``METACHECK_CHECK_MUTATION=1`` (CI and tests), the
-outermost trusted scope also watches the papers it indexes: each time a Doc is
-built for, or served from, a paper whose text or section table is a DataFrame, it
-fingerprints the two tables (their column names, dtypes, shape and every value),
+outermost trusted scope also watches the papers it indexes: each time a Doc or
+reference table is built or reused, it fingerprints any materialised text,
+section, bibliography and matched bibliography tables (their column names,
+dtypes, shape and every value),
 and a later fingerprint that differs, with the same table objects, means that
 somebody edited a table in place after the Doc was made.
 :class:`~metacheck.core.errors.StaleDocumentError` is then raised by the next Doc
@@ -61,11 +62,14 @@ _TOKENS = itertools.count(1)
 _TRUSTED: contextvars.ContextVar[int | None] = contextvars.ContextVar(
     "metacheck_trusted_scope", default=None
 )
+_DERIVED: contextvars.ContextVar[dict[object, object] | None] = contextvars.ContextVar(
+    "metacheck_run_derived", default=None
+)
 _COUNTS: Counter[str] | None = None
 _WATCH: contextvars.ContextVar[_Watch | None] = contextvars.ContextVar(
     "metacheck_watched_papers", default=None
 )
-_TABLES = ("text", "section")
+_TABLES = ("text", "section", "bib", "bib_match")
 
 
 def mutation_check_enabled() -> bool:
@@ -76,8 +80,8 @@ def mutation_check_enabled() -> bool:
 
 
 def _fingerprint(paper: Paper) -> tuple[tuple[Any, ...], str] | None:
-    """``(identity, digest)`` of *paper*'s text and section tables, or ``None`` when
-    both are still JSON records (which no caller edits in place) or absent.
+    """``(identity, digest)`` of the indexed tables, or ``None`` when
+    all are still JSON records (which no caller edits in place) or absent.
 
     The identity is what the tables are (the frames themselves, or the records'
     token); the digest hashes each frame's column names, dtypes, shape and values.
@@ -143,16 +147,16 @@ class _Watch:
     def _stale(self, paper: Paper, ran: str | None) -> None:
         who = f"paper {paper.paper_id!r}"
         if ran is not None:
-            when = f"the module {ran!r} edited the text or section table of {who} in place"
+            when = f"the module {ran!r} edited an indexed table of {who} in place"
         elif self.module is not None:
             when = (
-                f"the text or section table of {who} was edited in place, and the module "
-                f"{self.module!r} used a Doc built before the edit"
+                f"an indexed table of {who} was edited in place, and the module "
+                f"{self.module!r} used values cached before the edit"
             )
         else:
-            when = f"the text or section table of {who} was edited in place"
+            when = f"an indexed table of {who} was edited in place"
         raise StaleDocumentError(
-            f"{when} after its Doc was built. A run reads each paper's tables once, so the "
+            f"{when} after its tables were indexed. A run reads each paper's tables once, so the "
             "modules after it would search the old values. Copy the paper (paper.copy()) "
             "before changing a table."
         )
@@ -175,6 +179,7 @@ def trusted_scope() -> Iterator[int]:
         return
     token = next(_TOKENS)
     reset = _TRUSTED.set(token)
+    reset_derived = _DERIVED.set({})
     watch = _Watch() if mutation_check_enabled() else None
     reset_watch = _WATCH.set(watch)
     try:
@@ -183,6 +188,7 @@ def trusted_scope() -> Iterator[int]:
             watch.verify(watch.module)
     finally:
         _WATCH.reset(reset_watch)
+        _DERIVED.reset(reset_derived)
         _TRUSTED.reset(reset)
 
 
@@ -224,6 +230,11 @@ def running_module(label: str) -> Iterator[None]:
 def trusted_token() -> int | None:
     """The token of the trusted scope in effect, or ``None`` outside one."""
     return _TRUSTED.get()
+
+
+def derived_cache() -> dict[object, object] | None:
+    """Values shared only until the outermost trusted run ends."""
+    return _DERIVED.get()
 
 
 def count(name: str, n: int = 1) -> None:
