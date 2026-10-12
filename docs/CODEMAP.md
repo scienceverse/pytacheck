@@ -884,7 +884,7 @@ Python: [stats/core.py](../src/metacheck/stats/core.py). Tests: [tests/stats](..
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `stats()` | [`metacheck.stats.core:stats`](../src/metacheck/stats/core.py) | yes | U4, U5 |  |
+| `stats()` | [`metacheck.stats.core:stats`](../src/metacheck/stats/core.py) | yes | D78, U4, U5 |  |
 
 ### `R/svutils-message.R`
 

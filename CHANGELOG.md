@@ -7,6 +7,14 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: statcheck runs on plain Python values and scipy
+
+- **Changed:** the statcheck port behind `stats()` and stat_check computes with plain Python values (`None` is missing) and `scipy.special`, not with a port of R's runtime (three-valued `NA` logic, R's warnings and errors) and of R's nmath library (`metacheck.stats._rmath` is removed) (D78). The t and F p-values use the same reductions to the incomplete beta function as R's `pt()` and `pf()`, so on the 21 papers of the accuracy report every result of `stats()` and stat_check is unchanged, to the last digit of each p-value.
+- **Fixed with it:** a result whose p-value cannot be computed (zero degrees of freedom in a t, r or F test) or whose consistency cannot be decided is left out, never reported as consistent. statcheck reported such a result as having no error when the statistic and the p-value were given with `<` or `>` (`t(0) < 2.1, p > .05`), which could make stat_check green.
+- **Changed:** infinite degrees of freedom (a number too large for a float) follow scipy: a t test or correlation uses the normal distribution, a chi-square or Q test gets p = 1, and an F test cannot be checked and is left out (R uses the chi-square limit for F, and failed on a small chi-square statistic).
+- **Changed:** statcheck's flags (`OneTailedTests`, `pEqualAlphaSig`, `pZeroError`, `OneTailedTxt`, `AllPValues`, `messages`) must be `True` or `False` (or 1 or 0); another value such as 2 raises `ValueError` (R treated 2 as `FALSE`). `stats()` takes statcheck's settings as ordinary keyword or positional arguments (`stats(paper, stat="t", alpha=0.01)`): an abbreviated name (`alp=`) or `texts=` raises `TypeError` instead of being matched as R matches `...`. Calling `statcheck()` no longer emits R's warnings (`NAs introduced by coercion`).
+- **Smaller:** the statcheck port and `stats()` are 1,105 lines, down from 1,711.
+
 ### Internal: data_check helpers read column kinds from pandas dtypes
 
 - **Changed:** `datacheck/_checks_rvec.py`, a 621-line model of R's atomic vectors (`RVec`, `rvec()`, `chr()`, `num()`, `quantile7()`, `tolower()`, ...), is gone. The data_check and codebook helpers read a column's kind (numeric, logical, text, categorical, date-time) from its pandas dtype through the small `datacheck/_kinds.py` and use plain pandas, numpy and Python string operations (D77). `as.character()` keeps R's number formatting where users see it (messages, sample values).

@@ -25,3 +25,34 @@
 "mod_causal_review/causal_claims.review.fake.report.title_only": *d74
 "mod_causal_review/causal_claims.review.fake.report.demo": *d74
 "mod_causal_review/causal_claims.review.fake.report.psychsci_list": *d74
+# the statcheck port on plain Python values and scipy (D78): the rule for infinite degrees of
+# freedom, flags that must be TRUE/FALSE, and stats() settings as keyword arguments
+"stats_review/statcheck.review.chisq_inf_df.small_stat": &d78_inf
+  kind: deliberate
+  ref: D78
+  reason: infinite degrees of freedom follow scipy (t is normal, chi-square and Q get their limit p = 1, F is not checkable and is dropped); R stops on if (NA) for a small chi-square or Q statistic and uses the chi-square limit for F
+"stats_review/statcheck.review.Q_inf_df": *d78_inf
+"stats_review/statcheck.review.F_inf_df1": *d78_inf
+"stats_review/statcheck.review.F_inf_df2": *d78_inf
+"stats_review/stats.review.inf_df": *d78_inf
+"stats_review/compute_p.review.chisq_inf_df": *d78_inf
+"stats_review/statcheck.review.OneTailedTests_2": &d78_flag
+  kind: deliberate
+  ref: D78
+  reason: a statcheck flag must be TRUE or FALSE (or 1/0) and 2 raises ValueError; R compares flags with == TRUE, so 2 means FALSE (decision_error_test() returns NULL)
+"stats_review/statcheck.review.OneTailedTxt_2": *d78_flag
+"stats_review/statcheck.review.OneTailedTxt.OneTailedTests_2": *d78_flag
+"stats_review/statcheck.review.pZeroError_2": *d78_flag
+"stats_review/statcheck.review.AllPValues_2": *d78_flag
+"stats_review/stats.review.AllPValues_2": *d78_flag
+"stats_review/decision_error_test.review.pEqualAlphaSig_2": *d78_flag
+"stats_review/stats.review.partial.alp": &d78_args
+  kind: deliberate
+  ref: D78
+  reason: stats() takes statcheck's settings as Python keyword or positional arguments, so an abbreviated name or texts = raises TypeError; R matches unique prefixes and lets texts = replace the text
+"stats_review/stats.review.partial.AllP": *d78_args
+"stats_review/stats.review.partial.OneTailedTe": *d78_args
+"stats_review/stats.review.partial.st": *d78_args
+"stats_review/stats.review.partial.s": *d78_args
+"stats_review/stats.review.texts_rebound": *d78_args
+"stats_review/stats.review.texts_rebound.none": *d78_args

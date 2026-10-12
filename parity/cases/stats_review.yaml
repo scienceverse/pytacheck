@@ -4,7 +4,6 @@
 "area": "stats_review"
 "cases":
 - "id": "statcheck.review.chisq_inf_df.small_stat"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result with infinite degrees of freedom cannot be checked and is dropped (R fails the whole call on if (NA))"}
   "r": "statcheck::statcheck"
   "py": "metacheck.stats.statcheck.statcheck"
   "args":
@@ -17,7 +16,6 @@
     "texts": "χ2(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 3.5, p = .05"
     "messages": !!bool "false"
 - "id": "statcheck.review.Q_inf_df"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result with infinite degrees of freedom cannot be checked and is dropped (R fails the whole call on if (NA))"}
   "r": "statcheck::statcheck"
   "py": "metacheck.stats.statcheck.statcheck"
   "args":
@@ -120,67 +118,67 @@
     "messages": !!bool "false"
 - "id": "round.review.0"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "9.5e-17"
     "digits": !!int "23"
 - "id": "round.review.1"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "9.5e-11"
     "digits": !!int "23"
 - "id": "round.review.2"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "0.0094999999999999"
     "digits": !!int "3"
 - "id": "round.review.3"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "9.500000000000001e-07"
     "digits": !!int "7"
 - "id": "round.review.4"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "0.15"
     "digits": !!int "1"
 - "id": "round.review.5"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "2.675"
     "digits": !!int "2"
 - "id": "round.review.6"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "1.0005"
     "digits": !!int "3"
 - "id": "round.review.7"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "0.12355"
     "digits": !!int "4"
 - "id": "round.review.8"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "0.715"
     "digits": !!int "2"
 - "id": "round.review.9"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "5.5e-300"
     "digits": !!int "301"
 - "id": "round.review.10"
   "r": "round"
-  "py": "metacheck.stats._rmath.r_round"
+  "py": "metacheck._r.r_round"
   "args":
     "x": !!float "1.23456789e-05"
     "digits": !!int "17"
