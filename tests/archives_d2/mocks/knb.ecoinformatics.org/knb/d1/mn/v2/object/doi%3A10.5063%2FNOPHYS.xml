@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" packageId="doi:10.5063/NOPHYS" system="knb">
+  <dataset>
+    <title>Entities without a physical description</title>
+    <creator><individualName><givenName>Ann</givenName><surName>Lee</surName></individualName></creator>
+    <dataTable id="urn-uuid-aaaaaaaa-0000-0000-0000-000000000000">
+      <entityName>table.csv</entityName>
+      <physical>
+        <objectName>table.csv</objectName>
+        <size unit="bytes">2048</size>
+        <distribution><online><url>https://cn.dataone.org/cn/v2/resolve/urn%3Auuid%3Aaaaaaaaa-0000-0000-0000-000000000000</url></online></distribution>
+      </physical>
+    </dataTable>
+    <otherEntity id="urn-uuid-11111111-2222-3333-4444-555555555555">
+      <entityName>script.R</entityName>
+      <entityType>text/x-rsrc</entityType>
+    </otherEntity>
+    <spatialVector id="urn-uuid-66666666-7777-8888-9999-000000000000">
+      <entityName>shapes.zip</entityName>
+    </spatialVector>
+    <otherEntity id="local-id-1">
+      <entityName>notes.txt</entityName>
+    </otherEntity>
+    <spatialRaster>
+      <entityName>raster.tif</entityName>
+    </spatialRaster>
+  </dataset>
+</eml:eml>

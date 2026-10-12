@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pandas as pd
 
-import pytacheck as pc
-from pytacheck.text.extract_tests import (
+import metacheck as pc
+from metacheck.text.extract_tests import (
     _empty_tests,
     _is_anchor,
     _is_primary_anchor,

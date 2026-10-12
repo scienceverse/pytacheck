@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from pytacheck.io import xml as px
+from metacheck.io import xml as px
 
 
 def test_xml_find_text() -> None:
@@ -38,7 +38,7 @@ def test_xml_read_grobid(fixtures_dir) -> None:
     with pytest.raises(FileNotFoundError, match="does not exist"):
         px._xml_read_grobid("bad_arg")
 
-    from pytacheck import demofile
+    from metacheck import demofile
 
     xml = px._xml_read_grobid(demofile("xml"))
     title = px.xml_find_first(xml, "//title")

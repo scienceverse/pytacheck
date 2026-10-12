@@ -215,7 +215,7 @@ def rv_osd_labels() -> pd.DataFrame:
 
 def rv_scales_to_osd() -> dict[str, Any]:
     """The osd objects and their attributes, for ``_scales_to_osd()`` of :func:`rv_osd_groups`."""
-    from pytacheck.modules._codebook import _scales_to_osd
+    from metacheck.modules._codebook import _scales_to_osd
 
     osds = _scales_to_osd(rv_osd_groups(), rv_osd_columns(), rv_osd_labels())
     return {"osd": osds, "attrs": rv_osd_attrs(osds)}
@@ -230,15 +230,15 @@ def rv_haven_labels(f: str) -> Any:
     """The module's embedded-label harvest of one labelled data file (read labels-only)."""
     import os
 
-    from pytacheck.datacheck.columns import _extract_haven_labels
-    from pytacheck.modules.codebook_check import _haven_labels_frame
+    from metacheck.datacheck.columns import _extract_haven_labels
+    from metacheck.modules.codebook_check import _haven_labels_frame
 
     ext = f.rsplit(".", 1)[1].lower()
     return _extract_haven_labels(_haven_labels_frame(f, ext), os.path.basename(f), group="g1")
 
 
 def rv_text_paper() -> Any:
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(
         [
@@ -302,9 +302,9 @@ def rv_fixed_llm(spec: dict[str, Any]) -> Any:
 
 def rv_llm_run(scenario: str | None, spec: str, prev: Any = None, **kwargs: Any) -> Any:
     """``module_run(<data_check output>, "codebook_check")`` with the LLM answering from *spec*."""
-    from pytacheck.module import module_run
-    from pytacheck.modules import _codebook
-    from pytacheck.utils import local_options
+    from metacheck.module import module_run
+    from metacheck.modules import _codebook
+    from metacheck.utils import local_options
     from tests.mod_codebook.helpers import cbc_prev
 
     if prev is None:

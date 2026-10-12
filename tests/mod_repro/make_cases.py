@@ -401,11 +401,15 @@ add(
 PROJECT = "local_path = 'tests/mod_repro/fixtures/project', local_only = TRUE"
 PROJECT_PY = "local_path='tests/mod_repro/fixtures/project', local_only=True"
 add("reproducibility_check.project", "project", PROJECT, PROJECT_PY)
+# D62: execute = TRUE runs the code in Docker unless told otherwise in pytacheck, on this machine
+# in metacheck. These cases compare what the code produces, not where it ran, so the Python call
+# names the sandbox metacheck defaults to (R's call strings are left as they are).
+PROCESS_PY = ', sandbox="process"'
 add(
     "reproducibility_check.project_exec",
     "project",
     PROJECT + ", execute = TRUE, timeout = 60, keep_sandbox = TRUE",
-    PROJECT_PY + ", execute=True, timeout=60, keep_sandbox=True",
+    PROJECT_PY + ", execute=True, timeout=60, keep_sandbox=True" + PROCESS_PY,
     compare={"ignore": EXEC_IGNORE},
 )
 # a prior build's saved module tables (tables_dir) instead of a chain
@@ -415,7 +419,7 @@ add("reproducibility_check.tables_dir_missing", "ok_plan", "tables = 'none'", "t
 EXEC = "execute = TRUE, timeout = 60, keep_sandbox = TRUE"
 EXEC_PY = "execute=True, timeout=60, keep_sandbox=True"
 MOCKED = {
-    "exec_install": ("install_missing = TRUE", "install_missing=True"),
+    "exec_install": ("install_missing = TRUE", 'install_missing=True, sandbox="process"'),
     "exec_docker": (
         'sandbox = "docker", install_missing = TRUE',
         'sandbox="docker", install_missing=True',
@@ -442,17 +446,17 @@ for name in SCENARIOS:
             f"reproducibility_check.{name}_10s",
             name,
             "execute = TRUE, timeout = 10, keep_sandbox = TRUE",
-            "execute=True, timeout=10, keep_sandbox=True",
+            "execute=True, timeout=10, keep_sandbox=True" + PROCESS_PY,
             compare={"ignore": [*EXEC_IGNORE, "run_results.stdout", "run_results.stderr"]},
         )
         continue
-    add(f"reproducibility_check.{name}", name, EXEC, EXEC_PY)
+    add(f"reproducibility_check.{name}", name, EXEC, EXEC_PY + PROCESS_PY)
 # execution without keeping the sandbox: the throwaway root is removed (element absent)
 add(
     "reproducibility_check.exec_ok_no_keep",
     "exec_ok",
     "execute = TRUE, timeout = 60",
-    "execute=True, timeout=60",
+    "execute=True, timeout=60" + PROCESS_PY,
     compare={"ignore": [*EXEC_IGNORE, "run_results.script_lines"]},
 )
 

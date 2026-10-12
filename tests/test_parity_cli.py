@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import multiprocessing
 import os
+import subprocess
 from pathlib import Path, PurePosixPath
 
 import pytest
@@ -127,6 +128,26 @@ def test_list_and_generate_take_a_list_of_areas(tree, monkeypatch, capsys) -> No
     assert parity_main.main(["generate", "--area", "beta,alpha+review"]) == 0
     # one R session per case file, as for a full run
     assert [Path(cmd[-1]).name for cmd in calls] == ["alpha.yaml", "alpha_review.yaml", "beta.yaml"]
+
+
+def test_generate_runs_case_files_side_by_side(tree, monkeypatch, capsys) -> None:
+    monkeypatch.setattr(parity_main, "_rscript", lambda explicit: "Rscript")
+
+    def run(cmd, **kw):
+        name = Path(cmd[-1]).stem
+        return subprocess.CompletedProcess(
+            cmd, 3 if name == "beta" else 0, f"[ok] {name}\n".encode()
+        )
+
+    monkeypatch.setattr(parity_main.subprocess, "run", run)
+    changes = iter([set(), {"?? tests/x/fixtures/out.zip.contents/a.csv"}])
+    monkeypatch.setattr(parity_main, "_tree_changes", lambda: next(changes))
+    # the worst exit status, and each session's output in one piece
+    assert parity_main.main(["generate", "--jobs", "2", "--area", "beta,alpha+review"]) == 3
+    captured = capsys.readouterr()
+    assert sorted(captured.out.splitlines()) == ["[ok] alpha", "[ok] alpha_review", "[ok] beta"]
+    # a file a case left in the checkout is named
+    assert "tests/x/fixtures/out.zip.contents/a.csv" in captured.err
 
 
 # -- check --strict ---------------------------------------------------------------------
@@ -354,7 +375,7 @@ def test_check_and_lock_stop_when_the_checkout_lacks_its_setup(
             err = capsys.readouterr().err
             assert "upstream/metacheck is empty" in err
             assert "git submodule update --init" in err
-            assert "pyreadstat, xlrd, snowballstemmer not installed" in err
+            assert "pyreadstat, xlrd, snowballstemmer, striprtf not installed" in err
             assert "uv sync --locked --all-extras" in err
     assert not (tmp_path / "parity").exists()  # nothing ran
     (submodule / "DESCRIPTION").write_text("Package: metacheck\n")
@@ -390,8 +411,8 @@ def test_the_checkout_is_repo_however_it_is_reached(tmp_path, monkeypatch) -> No
 def test_a_link_inside_the_checkout_is_not_repo_twice() -> None:
     # "/src" is a link to the checkout, which has a src folder of its own
     spelled = pcanonical.Spellings(("/home/j/pt",), ("/src",), ())
-    assert spelled.apply("/home/j/pt/src/pytacheck/x.py") == "<repo>/src/pytacheck/x.py"
-    assert spelled.apply("/src/pytacheck/x.py") == "<repo>/pytacheck/x.py"
+    assert spelled.apply("/home/j/pt/src/metacheck/x.py") == "<repo>/src/metacheck/x.py"
+    assert spelled.apply("/src/metacheck/x.py") == "<repo>/metacheck/x.py"
     assert spelled.apply("./src/x.py") == "./src/x.py"  # a relative path is not the link
 
 

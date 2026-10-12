@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.db.regcheck import (
+from metacheck.db.regcheck import (
     RegCheckError,
     _regcheck_sanitize,
     regcheck_base_url,
@@ -240,7 +240,7 @@ def test_poll_failure_and_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_null_client_is_the_first_client() -> None:
     """R: match.arg(NULL, choices) is choices[1] ("ollama")."""
-    from pytacheck.db.regcheck import _match_client
+    from metacheck.db.regcheck import _match_client
 
     assert _match_client(None) == "ollama"
     with pytest.raises(ValueError, match="exactly one of prereg_text"):

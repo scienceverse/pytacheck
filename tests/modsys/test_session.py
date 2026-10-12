@@ -5,8 +5,8 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleError, module, module_run, run_session, use, use_setting
+import metacheck as pc
+from metacheck.module import ModuleError, module, module_run, run_session, use, use_setting
 
 CALLS: list[dict] = []
 

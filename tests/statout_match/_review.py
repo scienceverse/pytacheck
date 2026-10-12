@@ -41,11 +41,11 @@ def paper_of(spec: Mapping[str, Any]) -> Any:
     if kind == "tt":
         return tt_frame(spec)
     if kind == "eq_of":
-        from pytacheck.text.extract import extract_eq
+        from metacheck.text.extract import extract_eq
 
         return extract_eq(paper_of(spec["paper"]))
     if kind == "eq_paper":
-        from pytacheck.text.extract import extract_eq
+        from metacheck.text.extract import extract_eq
 
         p = h.test_paper(spec["texts"])
         p.eq = extract_eq(h.test_paper(spec["eq_texts"]))
@@ -66,7 +66,7 @@ def match(
     what: str = "table",
 ) -> Any:
     """``match_reported_output()`` (``what = "summary"``: its summary attribute)."""
-    from pytacheck.statout.match_reported import match_reported_output
+    from metacheck.statout.match_reported import match_reported_output
 
     res = match_reported_output(
         paper_of(paper),
@@ -95,7 +95,7 @@ def derived_long(paper: Mapping[str, Any]) -> pd.DataFrame:
     7-sentence block shares a ``model_ref`` -- so real reported text exercises
     partial matches, the residual union, model sites and the regrouping.
     """
-    from pytacheck.text.extract import extract_eq
+    from metacheck.text.extract import extract_eq
 
     eq = extract_eq(paper_of(paper))
     tid = [None if pd.isna(x) else int(x) for x in eq["text_id"]]
@@ -131,14 +131,14 @@ def derived_long(paper: Mapping[str, Any]) -> pd.DataFrame:
 
 
 def table_tests(paper: Mapping[str, Any]) -> Any:
-    from pytacheck.statout.match_table import _table_tests
+    from metacheck.statout.match_table import _table_tests
 
     return _table_tests(paper_of(paper))
 
 
 def fmt_values(values: list[Any]) -> list[str]:
     """``format(<value>, trim = TRUE)`` as ``match_reported_output()`` prints it."""
-    from pytacheck.statout.match_reported import _fmt_comp
+    from metacheck.statout.match_reported import _fmt_comp
 
     return [_fmt_comp({"name": "x", "censored": "", "value": v})[2:] for v in values]
 
@@ -152,7 +152,7 @@ def table_tests_or_error(paper: Mapping[str, Any]) -> Any:
 
 
 def table_caption(paper: Mapping[str, Any], section_ids: list[Any]) -> Any:
-    from pytacheck.statout.match_table import _table_caption
+    from metacheck.statout.match_table import _table_caption
 
     p = paper_of(paper)
     return [_table_caption(p, None if s == NA else s) for s in section_ids]

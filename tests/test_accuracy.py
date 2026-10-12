@@ -494,8 +494,8 @@ def test_run_python_shares_each_paper_and_catches_changes(
     (a list inside a cell, a nested ``extra`` entry) flags every output of it."""
     import pandas as pd
 
-    import pytacheck as pc
-    import pytacheck.module as mod
+    import metacheck as pc
+    import metacheck.module as mod
 
     reads: list[str] = []
     given: dict[str, set[int]] = {}

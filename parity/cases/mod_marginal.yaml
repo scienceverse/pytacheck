@@ -20,3 +20,11 @@
   "args":
     "paper": {"$test_paper": {"text": ["Nothing here.", "Or here."]}}
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "marginal.duplicate_ids"
+  "module": "marginal"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p1 <- test_paper(c('The effect was marginally significant, p = .06.', 'There was a trend towards significance.')); p2 <- test_paper(c('Results approached statistical significance.')); p2$paper_id <- p1$paper_id; p2$text$paper_id <- p1$paper_id; paperlist(p1, p2)})"
+        "py": "(lambda p1, p2: (p2.__setitem__('paper_id', p1.paper_id), p2.__setitem__('text', p2['text'].assign(paper_id=p1.paper_id)), pc.PaperList([p1, p2]))[-1])(pc.test_paper(['The effect was marginally significant, p = .06.', 'There was a trend towards significance.']), pc.test_paper(['Results approached statistical significance.']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}

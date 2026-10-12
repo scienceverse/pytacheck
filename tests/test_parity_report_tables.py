@@ -5,11 +5,11 @@ from __future__ import annotations
 
 import pandas as pd
 
+from metacheck.module import module_run
+from metacheck.report.blocks import ReportTable, collapse_section, scroll_table
 from parity import lockfile
 from parity.canonical import canonical
 from parity.compare import Options, comparable, compare
-from pytacheck.module import module_run
-from pytacheck.report.blocks import ReportTable, collapse_section, scroll_table
 
 
 def _table() -> ReportTable:

@@ -11,9 +11,9 @@ from pathlib import Path
 
 import pytest
 
-import pytacheck as pc
-from pytacheck.io.convert import convert
-from pytacheck.papers.validate import paper_validate
+import metacheck as pc
+from metacheck.io.convert import convert
+from metacheck.papers.validate import paper_validate
 from tests.io.conftest import GROBID_URL, SERVERS_URL, api, json_response
 
 GROBID_SERVERS = [{"id": "tue", "service": "grobid", "url": GROBID_URL}]
@@ -42,7 +42,7 @@ def test_bad_method() -> None:
 
 def test_xml_needs_no_server(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """XML is converted locally, offline (metacheck looks up the server list; U18)."""
-    import pytacheck.io.convert as conv
+    import metacheck.io.convert as conv
 
     def fail(*_a: object, **_k: object) -> None:
         raise AssertionError("no server is needed for XML")
@@ -74,7 +74,7 @@ def test_xml_null_save_path_with_api_url() -> None:
 
 
 def test_xml_crossref(tmp_path: Path, online: None, monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.db.crossref as crossref
+    import metacheck.db.crossref as crossref
 
     def add_bib_match(p: pc.Paper) -> pc.Paper:
         p = p.copy()
@@ -133,7 +133,7 @@ def test_bibr_method_passes_arguments(tmp_path: Path, monkeypatch: pytest.Monkey
     """R hands convert_bibr() the argument *names*; pytacheck passes the values."""
     import functools
 
-    import pytacheck.io.bibr_convert as bc
+    import metacheck.io.bibr_convert as bc
 
     seen = {}
 

@@ -379,6 +379,7 @@
       "$expr":
         "r": "dspace7_links(test_paper(text = c(\"Data: Knb.ecoinformatics.org/view/doi:10.5063/F1K and 10.5063/KX.\", \"Deposit reſhare.ukdataservice.ac.uk/854001 and 10.5255/UKDA-ſN-854002.\", \"Box REſEARCHBOX.ORG/801, data.4tu.nl/articles/x and FSD1234 (fſd2345).\", \"Mendeley DATA.MENDELEY.COM/datasets/abc123/2 and 10.17632/XYZ.1; PsychArchives hdl.handle.net/20.500.12034/17526 and www.pſycharchives.org/en/item/abc\", \"DSpace 7: HTTPS://REPOSITORY.GATECH.EDU/handle/1853/67239. and https://ulir.ul.ie/entities/publication/x\")))"
         "py": "lambda m: m.dspace7.dspace7_links(m.pc.test_paper([\"Data: Knb.ecoinformatics.org/view/doi:10.5063/F1K and 10.5063/KX.\", \"Deposit reſhare.ukdataservice.ac.uk/854001 and 10.5255/UKDA-ſN-854002.\", \"Box REſEARCHBOX.ORG/801, data.4tu.nl/articles/x and FSD1234 (fſd2345).\", \"Mendeley DATA.MENDELEY.COM/datasets/abc123/2 and 10.17632/XYZ.1; PsychArchives hdl.handle.net/20.500.12034/17526 and www.pſycharchives.org/en/item/abc\", \"DSpace 7: HTTPS://REPOSITORY.GATECH.EDU/handle/1853/67239. and https://ulir.ul.ie/entities/publication/x\"], []))"
+  "mock_dir": "tests/archives_d2/mocks_review"
   "compare": *id001
 - "id": "dataone_links.review.empty_paperlist"
   "r": "identity"

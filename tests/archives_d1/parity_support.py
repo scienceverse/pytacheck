@@ -27,7 +27,7 @@ MOCKS = Path(__file__).resolve().parent / "mocks"
 @contextlib.contextmanager
 def online_and_no_sleep() -> Iterator[None]:
     """``online()`` reports every host as reachable; courtesy delays are skipped."""
-    from pytacheck import utils
+    from metacheck import utils
 
     saved = utils.online
     utils.online = lambda *args, **kwargs: True  # type: ignore[assignment]
@@ -59,7 +59,7 @@ def write_files(folder: str, files: dict[str, str]) -> str:
 
 
 def _namespace() -> types.SimpleNamespace:
-    from pytacheck.archives import dataverse, dryad, figshare
+    from metacheck.archives import dataverse, dryad, figshare
 
     return types.SimpleNamespace(
         dryad=dryad, figshare=figshare, dataverse=dataverse, tmp=tmp, write_files=write_files

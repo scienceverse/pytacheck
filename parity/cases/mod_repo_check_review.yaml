@@ -10,7 +10,7 @@
     "x":
       "$expr":
         "r": "vapply(c(0.0, 1.0, 999.0, 1000.0, 1049.0, 1050.0, 1150.0, 1250.0, 1350.0, 12345.0, 99950.0, 999949.0, 999950.0, 1000000.0, 1250000.0, 1500000000.0, 123456789012.0, 1000000000000000.0, 2.5e+21, 1e+27, 1e+30, 3e+33, NA, -1, Inf, NaN), function(x) { if (is.na(x) || !is.finite(x) || x < 0) return(\"\\u2014\"); utils:::format.object_size(x, units = \"auto\", standard = \"SI\", digits = 1) }, character(1))"
-        "py": "[__import__('pytacheck.modules._repo_check', fromlist=['size_label']).size_label(x) for x in [0.0, 1.0, 999.0, 1000.0, 1049.0, 1050.0, 1150.0, 1250.0, 1350.0, 12345.0, 99950.0, 999949.0, 999950.0, 1000000.0, 1250000.0, 1500000000.0, 123456789012.0, 1000000000000000.0, 2.5e+21, 1e+27, 1e+30, 3e+33, None, -1.0, float('inf'), float('nan')]]"
+        "py": "[__import__('metacheck.modules._repo_check', fromlist=['size_label']).size_label(x) for x in [0.0, 1.0, 999.0, 1000.0, 1049.0, 1050.0, 1150.0, 1250.0, 1350.0, 12345.0, 99950.0, 999949.0, 999950.0, 1000000.0, 1250000.0, 1500000000.0, 123456789012.0, 1000000000000000.0, 2.5e+21, 1e+27, 1e+30, 3e+33, None, -1.0, float('inf'), float('nan')]]"
 - "id": "repo_check.module.no_links"
   "note": "module_run() of a test paper without repository links"
   "module": "repo_check"

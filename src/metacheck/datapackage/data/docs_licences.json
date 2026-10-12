@@ -1,0 +1,103 @@
+{
+  "name": "Common licences",
+  "source": "pytacheck default",
+  "licences": [
+    {
+      "id": "cc0",
+      "name": "CC0",
+      "match": [
+        "(?<![a-z0-9])cc[ -]?0(?![a-z0-9])",
+        "public domain dedication"
+      ]
+    },
+    {
+      "id": "cc-by",
+      "name": "CC BY",
+      "match": [
+        "(?<![a-z0-9])cc[ -]by(?![a-z0-9])",
+        "creative commons"
+      ]
+    },
+    {
+      "id": "mit",
+      "name": "MIT",
+      "match": [
+        "(?-i:\\bMIT\\b)"
+      ],
+      "needs_context": true
+    },
+    {
+      "id": "gpl",
+      "name": "GNU GPL",
+      "match": [
+        "(?<![a-z0-9])[al]?gpl(?![a-z0-9])",
+        "gnu (?:affero |lesser )?general public"
+      ]
+    },
+    {
+      "id": "apache",
+      "name": "Apache",
+      "match": [
+        "\\bapache(?:[ -]?(?:licen[cs]e|2(?:\\.0)?))"
+      ]
+    },
+    {
+      "id": "bsd",
+      "name": "BSD",
+      "match": [
+        "(?-i:\\bBSD\\b)",
+        "bsd[ -]?(?:2|3)[ -]clause"
+      ],
+      "needs_context": true
+    },
+    {
+      "id": "odc",
+      "name": "Open Data Commons",
+      "match": [
+        "\\bodbl\\b",
+        "\\bodc[ -]?by\\b",
+        "\\bpddl\\b",
+        "open database licen[cs]e",
+        "open data commons"
+      ]
+    },
+    {
+      "id": "ogl",
+      "name": "Open Government Licence",
+      "match": [
+        "open government licen[cs]e"
+      ]
+    },
+    {
+      "id": "mpl",
+      "name": "Mozilla Public Licence",
+      "match": [
+        "(?-i:\\bMPL\\b)",
+        "mozilla public licen[cs]e"
+      ]
+    },
+    {
+      "id": "eupl",
+      "name": "EUPL",
+      "match": [
+        "\\beupl\\b",
+        "european union public licen[cs]e"
+      ]
+    },
+    {
+      "id": "unlicense",
+      "name": "Unlicense",
+      "match": [
+        "\\bunlicen[cs]e\\b"
+      ]
+    },
+    {
+      "id": "all-rights-reserved",
+      "name": "All rights reserved",
+      "match": [
+        "all rights reserved",
+        "alle rechten voorbehouden"
+      ]
+    }
+  ]
+}

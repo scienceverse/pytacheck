@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pytacheck.statout.r_output import _r_echo_chunks, _r_output_oneline, _r_output_tables
-from pytacheck.statout.stat_output import _stat_result_ids, _stat_test_id, stat_output_validate
-from pytacheck.statout.stat_tables import _ipynb_stat_line
+from metacheck.statout.r_output import _r_echo_chunks, _r_output_oneline, _r_output_tables
+from metacheck.statout.stat_output import _stat_result_ids, _stat_test_id, stat_output_validate
+from metacheck.statout.stat_tables import _ipynb_stat_line
 
 
 def test_oneline_results_take_the_source_label() -> None:
@@ -78,7 +78,7 @@ def test_html_tables_are_read_in_their_declared_encoding(tmp_path: Path) -> None
     # 2.15 decodes every file as UTF-8, so "café" became "caf�")
     import zipfile
 
-    from pytacheck.statout.stat_tables import _html_encoding, read_stat_tables
+    from metacheck.statout.stat_tables import _html_encoding, read_stat_tables
 
     assert _html_encoding(b"<html><body>x</body></html>") == "utf-8"
     assert _html_encoding(b'<meta charset="UTF-8">') == "utf-8"

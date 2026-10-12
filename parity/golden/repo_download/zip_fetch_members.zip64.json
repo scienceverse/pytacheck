@@ -10,7 +10,8 @@
       "name",
       "path",
       "size",
-      "ok"
+      "ok",
+      "error"
     ],
     "v": [
       {
@@ -43,6 +44,14 @@
           false,
           false,
           false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Zip64 entry (size/offset not stored in 32 bits)",
+          "short read (range request returned the wrong length)",
+          "Zip64 entry (size/offset not stored in 32 bits)"
         ]
       }
     ]

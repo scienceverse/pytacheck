@@ -2,10 +2,7 @@
   "id": "code_check.nochunk_only",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`."
-  ],
+  "warnings": [],
   "value": {
     "t": "module_output",
     "names": [
@@ -55,7 +52,6 @@
           "checked",
           "parse_error",
           "parse_error_msg",
-          "error",
           "code_abs_path",
           "absolute_paths",
           "code_setwd",
@@ -65,7 +61,13 @@
           "library_lines",
           "library_max_between",
           "packages_n",
-          "packages"
+          "packages",
+          "comment_lines",
+          "code_lines",
+          "percentage_comment",
+          "has_docstring",
+          "loaded_files_missing",
+          "loaded_files_missing_names"
         ],
         "v": [
           {
@@ -141,7 +143,7 @@
           {
             "t": "lgl",
             "v": [
-              null,
+              false,
               null
             ]
           },
@@ -153,58 +155,51 @@
             ]
           },
           {
-            "t": "chr",
-            "v": [
-              "subscript out of bounds",
-              "non-character argument"
-            ]
-          },
-          {
             "t": "int",
             "v": [
-              null,
+              0,
               0
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
+              "",
               ""
             ]
           },
           {
             "t": "int",
             "v": [
-              null,
+              0,
               0
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
+              "",
               ""
             ]
           },
           {
             "t": "int",
             "v": [
-              null,
+              0,
               0
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
+              "",
               ""
             ]
           },
           {
             "t": "int",
             "v": [
-              null,
+              0,
               0
             ]
           },
@@ -218,14 +213,56 @@
           {
             "t": "int",
             "v": [
-              null,
+              0,
               0
             ]
           },
           {
             "t": "chr",
             "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
               null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
               ""
             ]
           }
@@ -235,7 +272,7 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_), \n    \"Absolute Paths\" = c(NA, 0L), \"Code Between Libraries\" = c(NA_integer_, \n    NA_integer_)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_), \n    \"% Comments\" = c(\"\", \"\"), \"Missing Files\" = c(0L, 0L), \"Absolute Paths\" = c(0L, \n    0L), \"Code Between Libraries\" = c(NA_integer_, NA_integer_\n    )), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). None of the files found could be checked for comments.",
           "#### Missing Files",

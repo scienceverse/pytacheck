@@ -2,12 +2,12 @@
 "cases":
 - "id": "osf_check_id.guid"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id": "pngda"
 - "id": "osf_check_id.vector"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id":
       "$chr":
@@ -15,7 +15,7 @@
       - "8c3kb"
 - "id": "osf_check_id.invalid_in_vector"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id":
       "$chr":
@@ -24,22 +24,22 @@
       - "8c3kb"
 - "id": "osf_check_id.waterbutler"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id": "6846ed88e49694cd45ab8375"
 - "id": "osf_check_id.waterbutler_url"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id": "https://osf.io/j3gcx/files/osfstorage/6846ed88e49694cd45ab8375"
 - "id": "osf_check_id.invalid_waterbutler"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id": "6846ed894cd45ab8375"
 - "id": "osf_check_id.test_vector"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id":
       "$chr":
@@ -58,7 +58,7 @@
       - "6846ed88e49694cd45a"
 - "id": "osf_check_id.silent_na_platform"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id":
       "$expr":
@@ -67,7 +67,7 @@
 - "id": "osf_check_id.edge_urls"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U51", "reason": "a route name after the project ID (osf.io/j3gcx/files/) is not an ID, and a URL naming two osf.io IDs gives the first"}
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id":
       "$chr":
@@ -96,7 +96,7 @@
 - "id": "osf_check_id.realistic_non_ids"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U51", "reason": "a word after osf.io/ is not cut to a 5-character ID (osf.io/prereg is not \"prere\"), and a draft-registration page's schema id (osf.io/a5bmw/register/565fb...) is not a file ID"}
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id":
       "$chr":
@@ -109,19 +109,19 @@
       - "osf.io/n7sfm."
 - "id": "osf_check_id.empty"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id":
       "$chr": []
 - "id": "osf_check_id.na"
   "r": "osf_check_id"
-  "py": "pytacheck.archives.osf.osf_check_id"
+  "py": "metacheck.archives.osf.osf_check_id"
   "args":
     "osf_id":
       "$NA": true
 - "id": "osf_links.test_paper.urls"
   "r": "osf_links"
-  "py": "pytacheck.archives.osf.osf_links"
+  "py": "metacheck.archives.osf.osf_links"
   "args":
     "paper":
       "$test_paper":
@@ -134,7 +134,7 @@
     - "paper_id"
 - "id": "osf_links.test_paper.bare_text"
   "r": "osf_links"
-  "py": "pytacheck.archives.osf.osf_links"
+  "py": "metacheck.archives.osf.osf_links"
   "args":
     "paper":
       "$test_paper":
@@ -155,7 +155,7 @@
     - "paper_id"
 - "id": "osf_links.test_paper.none"
   "r": "osf_links"
-  "py": "pytacheck.archives.osf.osf_links"
+  "py": "metacheck.archives.osf.osf_links"
   "args":
     "paper":
       "$test_paper":
@@ -166,33 +166,33 @@
     - "paper_id"
 - "id": "osf_links.demo"
   "r": "osf_links"
-  "py": "pytacheck.archives.osf.osf_links"
+  "py": "metacheck.archives.osf.osf_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "osf_links.psychsci"
   "r": "osf_links"
-  "py": "pytacheck.archives.osf.osf_links"
+  "py": "metacheck.archives.osf.osf_links"
   "args":
     "paper":
       "$read":
       - "upstream/metacheck/tests/testthat/fixtures/psychsci"
 - "id": "aspredicted_links.demo"
   "r": "aspredicted_links"
-  "py": "pytacheck.archives.aspredicted.aspredicted_links"
+  "py": "metacheck.archives.aspredicted.aspredicted_links"
   "args":
     "paper":
       "$paper": "demo"
 - "id": "aspredicted_links.psychsci"
   "r": "aspredicted_links"
-  "py": "pytacheck.archives.aspredicted.aspredicted_links"
+  "py": "metacheck.archives.aspredicted.aspredicted_links"
   "args":
     "paper":
       "$read":
       - "upstream/metacheck/tests/testthat/fixtures/psychsci"
 - "id": "aspredicted_links.test_paper"
   "r": "aspredicted_links"
-  "py": "pytacheck.archives.aspredicted.aspredicted_links"
+  "py": "metacheck.archives.aspredicted.aspredicted_links"
   "args":
     "paper":
       "$test_paper":
@@ -209,7 +209,7 @@
     - "paper_id"
 - "id": "aspredicted_links.none"
   "r": "aspredicted_links"
-  "py": "pytacheck.archives.aspredicted.aspredicted_links"
+  "py": "metacheck.archives.aspredicted.aspredicted_links"
   "args":
     "paper":
       "$test_paper":
@@ -220,7 +220,7 @@
     - "paper_id"
 - "id": "html_text2.aspredicted.blind_php_2e8336"
   "r": "rvest::html_text2"
-  "py": "pytacheck.archives.aspredicted._html_text2"
+  "py": "metacheck.archives.aspredicted._html_text2"
   "args":
     "x":
       "$expr":
@@ -228,7 +228,7 @@
         "py": "__import__(\"lxml.html\", fromlist=[\"_\"]).document_fromstring((__import__(\"pathlib\").Path(pc.__file__).resolve().parents[2] / \"upstream/metacheck/tests/testthat/apis/aspredicted.org/blind.php-2e8336.html\").read_bytes().decode(\"utf-8\")).xpath(\"//body\")"
 - "id": "html_text2.aspredicted.ve2qn_pdf"
   "r": "rvest::html_text2"
-  "py": "pytacheck.archives.aspredicted._html_text2"
+  "py": "metacheck.archives.aspredicted._html_text2"
   "args":
     "x":
       "$expr":
@@ -236,7 +236,7 @@
         "py": "__import__(\"lxml.html\", fromlist=[\"_\"]).document_fromstring((__import__(\"pathlib\").Path(pc.__file__).resolve().parents[2] / \"upstream/metacheck/tests/testthat/apis/aspredicted.org/ve2qn.pdf.html\").read_bytes().decode(\"utf-8\")).xpath(\"//body\")"
 - "id": "html_text2.aspredicted.Y2F_6B7"
   "r": "rvest::html_text2"
-  "py": "pytacheck.archives.aspredicted._html_text2"
+  "py": "metacheck.archives.aspredicted._html_text2"
   "args":
     "x":
       "$expr":
@@ -244,7 +244,7 @@
         "py": "__import__(\"lxml.html\", fromlist=[\"_\"]).document_fromstring((__import__(\"pathlib\").Path(pc.__file__).resolve().parents[2] / \"upstream/metacheck/tests/testthat/apis/aspredicted.org/Y2F_6B7.html\").read_bytes().decode(\"utf-8\")).xpath(\"//body\")"
 - "id": "html_text2.aspredicted.by8i8v_pdf"
   "r": "rvest::html_text2"
-  "py": "pytacheck.archives.aspredicted._html_text2"
+  "py": "metacheck.archives.aspredicted._html_text2"
   "args":
     "x":
       "$expr":
@@ -252,7 +252,7 @@
         "py": "__import__(\"lxml.html\", fromlist=[\"_\"]).document_fromstring((__import__(\"pathlib\").Path(pc.__file__).resolve().parents[2] / \"upstream/metacheck/tests/testthat/apis/aspredicted.org/by8i8v.pdf.html\").read_bytes().decode(\"utf-8\")).xpath(\"//body\")"
 - "id": ".osf_parse_response.guid_node"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -261,7 +261,7 @@
     "osf_id": "pngda"
 - "id": ".osf_parse_response.guid_component"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -270,7 +270,7 @@
     "osf_id": "6nt4v"
 - "id": ".osf_parse_response.guid_private"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -279,7 +279,7 @@
     "osf_id": "ybm3c"
 - "id": ".osf_parse_response.guid_user"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -288,7 +288,7 @@
     "osf_id": "4i578"
 - "id": ".osf_parse_response.guid_preprint"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -297,7 +297,7 @@
     "osf_id": "xp5cy"
 - "id": ".osf_parse_response.guid_registration"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -306,7 +306,7 @@
     "osf_id": "8c3kb"
 - "id": ".osf_parse_response.guid_404"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -315,7 +315,7 @@
     "osf_id": "xxxxx"
 - "id": ".osf_parse_response.listing_children"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -323,7 +323,7 @@
         "py": "__import__(\"tests.httpmock\", fromlist=[\"_\"]).fixture_response(__import__(\"pathlib\").Path(pc.__file__).resolve().parents[2] / \"upstream/metacheck/tests/testthat/apis\", \"api.osf.io/v2/nodes/pngda/children\")"
 - "id": ".osf_parse_response.listing_providers"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -331,7 +331,7 @@
         "py": "__import__(\"tests.httpmock\", fromlist=[\"_\"]).fixture_response(__import__(\"pathlib\").Path(pc.__file__).resolve().parents[2] / \"upstream/metacheck/tests/testthat/apis\", \"api.osf.io/v2/nodes/mc45x/files\")"
 - "id": ".osf_parse_response.listing_404"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -339,7 +339,7 @@
         "py": "__import__(\"tests.httpmock\", fromlist=[\"_\"]).fixture_response(__import__(\"pathlib\").Path(pc.__file__).resolve().parents[2] / \"upstream/metacheck/tests/testthat/apis\", \"api.osf.io/v2/registrations/pngda/files\")"
 - "id": ".osf_parse_response.listing_empty_children"
   "r": ".osf_parse_response"
-  "py": "pytacheck.archives.osf_helpers._osf_parse_response"
+  "py": "metacheck.archives.osf_helpers._osf_parse_response"
   "args":
     "resp":
       "$expr":
@@ -347,47 +347,47 @@
         "py": "__import__(\"tests.httpmock\", fromlist=[\"_\"]).fixture_response(__import__(\"pathlib\").Path(pc.__file__).resolve().parents[2] / \"upstream/metacheck/tests/testthat/apis\", \"api.osf.io/v2/nodes/y6a34/children\")"
 - "id": ".osf_node_data.null"
   "r": ".osf_node_data"
-  "py": "pytacheck.archives.osf_helpers._osf_node_data"
+  "py": "metacheck.archives.osf_helpers._osf_node_data"
   "args":
     "data":
       "$null": true
 - "id": ".osf_file_data.null"
   "r": ".osf_file_data"
-  "py": "pytacheck.archives.osf_helpers._osf_file_data"
+  "py": "metacheck.archives.osf_helpers._osf_file_data"
   "args":
     "data":
       "$null": true
 - "id": ".osf_preprint_data.null"
   "r": ".osf_preprint_data"
-  "py": "pytacheck.archives.osf_helpers._osf_preprint_data"
+  "py": "metacheck.archives.osf_helpers._osf_preprint_data"
   "args":
     "data":
       "$null": true
 - "id": ".osf_reg_data.null"
   "r": ".osf_reg_data"
-  "py": "pytacheck.archives.osf_helpers._osf_reg_data"
+  "py": "metacheck.archives.osf_helpers._osf_reg_data"
   "args":
     "data":
       "$null": true
 - "id": ".osf_user_data.null"
   "r": ".osf_user_data"
-  "py": "pytacheck.archives.osf_helpers._osf_user_data"
+  "py": "metacheck.archives.osf_helpers._osf_user_data"
   "args":
     "data":
       "$null": true
 - "id": "osf_info.invalid_only"
   "r": "osf_info"
-  "py": "pytacheck.archives.osf.osf_info"
+  "py": "metacheck.archives.osf.osf_info"
   "args":
     "osf_url": "xx"
 - "id": "osf_info.no_links"
   "r": "osf_info"
-  "py": "pytacheck.archives.osf.osf_info"
+  "py": "metacheck.archives.osf.osf_info"
   "args":
     "osf_url":
       "$call":
         "r": "osf_links"
-        "py": "pytacheck.archives.osf.osf_links"
+        "py": "metacheck.archives.osf.osf_links"
         "args":
           "paper":
             "$test_paper":
@@ -399,7 +399,7 @@
     - "paper_id"
 - "id": "osf_info.invalid_table"
   "r": "osf_info"
-  "py": "pytacheck.archives.osf.osf_info"
+  "py": "metacheck.archives.osf.osf_info"
   "args":
     "osf_url":
       "$df":
@@ -412,7 +412,7 @@
     "id_col": "link"
 - "id": ".osf_info.invalid"
   "r": ".osf_info"
-  "py": "pytacheck.archives.osf_helpers._osf_info"
+  "py": "metacheck.archives.osf_helpers._osf_info"
   "args":
     "osf_id":
       "$chr":
@@ -420,12 +420,12 @@
       - "yy"
 - "id": "osf_type.invalid"
   "r": "osf_type"
-  "py": "pytacheck.archives.osf.osf_type"
+  "py": "metacheck.archives.osf.osf_type"
   "args":
     "guid": "xx"
 - "id": "osf_type.invalid_vector"
   "r": "osf_type"
-  "py": "pytacheck.archives.osf.osf_type"
+  "py": "metacheck.archives.osf.osf_type"
   "args":
     "guid":
       "$chr":
@@ -433,13 +433,13 @@
       - "not valid"
 - "id": ".osf_expand_user_ids.empty"
   "r": ".osf_expand_user_ids"
-  "py": "pytacheck.archives.osf_helpers._osf_expand_user_ids"
+  "py": "metacheck.archives.osf_helpers._osf_expand_user_ids"
   "args":
     "osf_id":
       "$chr": []
 - "id": ".osf_expand_user_ids.waterbutler"
   "r": ".osf_expand_user_ids"
-  "py": "pytacheck.archives.osf_helpers._osf_expand_user_ids"
+  "py": "metacheck.archives.osf_helpers._osf_expand_user_ids"
   "args":
     "osf_id":
       "$chr":
@@ -447,19 +447,19 @@
       - "pngda?view_only=abc"
 - "id": "osf_user_projects.na"
   "r": "osf_user_projects"
-  "py": "pytacheck.archives.osf_helpers.osf_user_projects"
+  "py": "metacheck.archives.osf_helpers.osf_user_projects"
   "args":
     "user_id":
       "$chr":
       - null
 - "id": "osf_file_download.invalid"
   "r": "osf_file_download"
-  "py": "pytacheck.archives.osf.osf_file_download"
+  "py": "metacheck.archives.osf.osf_file_download"
   "args":
     "osf_id": "notanid"
 - "id": "osf_file_download.table_without_id"
   "r": "osf_file_download"
-  "py": "pytacheck.archives.osf.osf_file_download"
+  "py": "metacheck.archives.osf.osf_file_download"
   "args":
     "osf_id":
       "$df":
@@ -467,18 +467,18 @@
         - "x"
 - "id": "osf_file_download.bad_mode"
   "r": "osf_file_download"
-  "py": "pytacheck.archives.osf.osf_file_download"
+  "py": "metacheck.archives.osf.osf_file_download"
   "args":
     "osf_id": "pngda"
     "mode": "everything"
 - "id": ".osf_parent_project.invalid"
   "r": ".osf_parent_project"
-  "py": "pytacheck.archives.osf_helpers._osf_parent_project"
+  "py": "metacheck.archives.osf_helpers._osf_parent_project"
   "args":
     "osf_id": "pda"
 - "id": "osf_preprint_list.error"
   "r": "osf_preprint_list"
-  "py": "pytacheck.archives.osf.osf_preprint_list"
+  "py": "metacheck.archives.osf.osf_preprint_list"
   "args":
     "provider":
       "$expr":
@@ -486,77 +486,77 @@
         "py": "(_ for _ in ()).throw(NameError('bad_arg'))"
 - "id": ".osf_max_page_size.plain"
   "r": ".osf_max_page_size"
-  "py": "pytacheck.archives.osf._osf_max_page_size"
+  "py": "metacheck.archives.osf._osf_max_page_size"
   "args":
     "url": "https://api.osf.io/v2/nodes/x/files/"
 - "id": ".osf_max_page_size.query"
   "r": ".osf_max_page_size"
-  "py": "pytacheck.archives.osf._osf_max_page_size"
+  "py": "metacheck.archives.osf._osf_max_page_size"
   "args":
     "url": "https://api.osf.io/v2/guids/x/?resolve=false"
 - "id": ".osf_max_page_size.present"
   "r": ".osf_max_page_size"
-  "py": "pytacheck.archives.osf._osf_max_page_size"
+  "py": "metacheck.archives.osf._osf_max_page_size"
   "args":
     "url": "https://api.osf.io/v2/x/?page=2&page[size]=50"
 - "id": ".osf_max_page_size.encoded"
   "r": ".osf_max_page_size"
-  "py": "pytacheck.archives.osf._osf_max_page_size"
+  "py": "metacheck.archives.osf._osf_max_page_size"
   "args":
     "url": "https://api.osf.io/v2/x/?page=2&page%5Bsize%5D=100"
 - "id": ".osf_status_error.200"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 200
 - "id": ".osf_status_error.201"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 201
 - "id": ".osf_status_error.304"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 304
 - "id": ".osf_status_error.400"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 400
 - "id": ".osf_status_error.401"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 401
 - "id": ".osf_status_error.403"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 403
 - "id": ".osf_status_error.404"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 404
 - "id": ".osf_status_error.410"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 410
 - "id": ".osf_status_error.429"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 429
 - "id": ".osf_status_error.500"
   "r": ".osf_status_error"
-  "py": "pytacheck.archives.osf._osf_status_error"
+  "py": "metacheck.archives.osf._osf_status_error"
   "args":
     "status": 500
 - "id": ".osf_cache_key.vector"
   "r": ".osf_cache_key"
-  "py": "pytacheck.archives.osf._osf_cache_key"
+  "py": "metacheck.archives.osf._osf_cache_key"
   "args":
     "osf_url":
       "$chr":
@@ -568,7 +568,7 @@
     "recursive": true
 - "id": ".osf_cache_key.table"
   "r": ".osf_cache_key"
-  "py": "pytacheck.archives.osf._osf_cache_key"
+  "py": "metacheck.archives.osf._osf_cache_key"
   "args":
     "osf_url":
       "$df":
@@ -581,84 +581,84 @@
     "recursive": false
 - "id": ".osf_cache_key.scalar"
   "r": ".osf_cache_key"
-  "py": "pytacheck.archives.osf._osf_cache_key"
+  "py": "metacheck.archives.osf._osf_cache_key"
   "args":
     "osf_url": "pngda"
     "recursive": "yes"
 - "id": ".osf_error_result"
   "r": ".osf_error_result"
-  "py": "pytacheck.archives.osf._osf_error_result"
+  "py": "metacheck.archives.osf._osf_error_result"
   "args":
     "kind": "not_found"
 - "id": "osf_delay.get"
   "r": "osf_delay"
-  "py": "pytacheck.archives.osf.osf_delay"
+  "py": "metacheck.archives.osf.osf_delay"
   "args": {}
 - "id": "osf_delay.bad"
   "r": "osf_delay"
-  "py": "pytacheck.archives.osf.osf_delay"
+  "py": "metacheck.archives.osf.osf_delay"
   "args":
     "delay": "fast"
 - "id": "osf_pat.bad"
   "r": "osf_pat"
-  "py": "pytacheck.archives.osf_helpers.osf_pat"
+  "py": "metacheck.archives.osf_helpers.osf_pat"
   "args":
     "pat": 123
 - "id": "repo_info_cache.get"
   "r": "repo_info_cache"
-  "py": "pytacheck.archives.info_cache.repo_info_cache"
+  "py": "metacheck.archives.info_cache.repo_info_cache"
   "args": {}
 - "id": "repo_info_cache.bad"
   "r": "repo_info_cache"
-  "py": "pytacheck.archives.info_cache.repo_info_cache"
+  "py": "metacheck.archives.info_cache.repo_info_cache"
   "args":
     "enabled": "yes"
 - "id": ".repo_info_cache_key.doi"
   "r": ".repo_info_cache_key"
-  "py": "pytacheck.archives.info_cache._repo_info_cache_key"
+  "py": "metacheck.archives.info_cache._repo_info_cache_key"
   "args":
     "host": "dryad"
     "id": "10.5061/dryad.abc/def"
 - "id": ".repo_info_cache_key.plain"
   "r": ".repo_info_cache_key"
-  "py": "pytacheck.archives.info_cache._repo_info_cache_key"
+  "py": "metacheck.archives.info_cache._repo_info_cache_key"
   "args":
     "host": "osf"
     "id": "pngda"
 - "id": ".repo_info_cache_key.trailing"
   "r": ".repo_info_cache_key"
-  "py": "pytacheck.archives.info_cache._repo_info_cache_key"
+  "py": "metacheck.archives.info_cache._repo_info_cache_key"
   "args":
     "host": "x"
     "id": "___"
 - "id": ".repo_info_cache_key.empty"
   "r": ".repo_info_cache_key"
-  "py": "pytacheck.archives.info_cache._repo_info_cache_key"
+  "py": "metacheck.archives.info_cache._repo_info_cache_key"
   "args":
     "host": ""
     "id": ""
 - "id": ".repo_info_cache_key.spaces"
   "r": ".repo_info_cache_key"
-  "py": "pytacheck.archives.info_cache._repo_info_cache_key"
+  "py": "metacheck.archives.info_cache._repo_info_cache_key"
   "args":
     "host": "zenodo"
     "id": " a  b "
 - "id": ".repo_info_cache_key.number"
   "r": ".repo_info_cache_key"
-  "py": "pytacheck.archives.info_cache._repo_info_cache_key"
+  "py": "metacheck.archives.info_cache._repo_info_cache_key"
   "args":
     "host": "zenodo"
     "id": 12345
 - "id": ".repo_info_cache_key.null"
   "r": ".repo_info_cache_key"
-  "py": "pytacheck.archives.info_cache._repo_info_cache_key"
+  "py": "metacheck.archives.info_cache._repo_info_cache_key"
   "args":
     "host": "zenodo"
     "id":
       "$null": true
 - "id": ".repo_info_cache_key.na"
   "r": ".repo_info_cache_key"
-  "py": "pytacheck.archives.info_cache._repo_info_cache_key"
+  "py": "metacheck.archives.info_cache._repo_info_cache_key"
   "args":
     "host": "zenodo"
     "id":
@@ -670,7 +670,7 @@
         "py": "float(\"nan\")"
 - "id": ".repo_info_ok.no_error_col"
   "r": ".repo_info_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_ok"
+  "py": "metacheck.archives.info_cache._repo_info_ok"
   "args":
     "value":
       "$df":
@@ -679,7 +679,7 @@
         - 2
 - "id": ".repo_info_ok.na_error"
   "r": ".repo_info_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_ok"
+  "py": "metacheck.archives.info_cache._repo_info_ok"
   "args":
     "value":
       "$df":
@@ -691,7 +691,7 @@
         - null
 - "id": ".repo_info_ok.error"
   "r": ".repo_info_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_ok"
+  "py": "metacheck.archives.info_cache._repo_info_ok"
   "args":
     "value":
       "$df":
@@ -699,45 +699,45 @@
         - "HTTP 404"
 - "id": ".repo_info_ok.null"
   "r": ".repo_info_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_ok"
+  "py": "metacheck.archives.info_cache._repo_info_ok"
   "args":
     "value":
       "$null": true
 - "id": ".repo_info_ok.not_df"
   "r": ".repo_info_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_ok"
+  "py": "metacheck.archives.info_cache._repo_info_ok"
   "args":
     "value":
       "$chr":
       - "x"
 - "id": ".repo_info_list_ok.gated"
   "r": ".repo_info_list_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_list_ok"
+  "py": "metacheck.archives.info_cache._repo_info_list_ok"
   "args":
     "value":
       "gated": true
       "files": "x"
 - "id": ".repo_info_list_ok.ok"
   "r": ".repo_info_list_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_list_ok"
+  "py": "metacheck.archives.info_cache._repo_info_list_ok"
   "args":
     "value":
       "gated": false
       "files": "x"
 - "id": ".repo_info_list_ok.no_gated"
   "r": ".repo_info_list_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_list_ok"
+  "py": "metacheck.archives.info_cache._repo_info_list_ok"
   "args":
     "value":
       "files": "x"
 - "id": ".repo_info_list_ok.chr"
   "r": ".repo_info_list_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_list_ok"
+  "py": "metacheck.archives.info_cache._repo_info_list_ok"
   "args":
     "value": "x"
 - "id": ".repo_info_list_ok.df"
   "r": ".repo_info_list_ok"
-  "py": "pytacheck.archives.info_cache._repo_info_list_ok"
+  "py": "metacheck.archives.info_cache._repo_info_list_ok"
   "args":
     "value":
       "$df":
@@ -745,18 +745,18 @@
         - true
 - "id": ".metacheck_dir_size.fixture"
   "r": ".metacheck_dir_size"
-  "py": "pytacheck.archives.cache._metacheck_dir_size"
+  "py": "metacheck.archives.cache._metacheck_dir_size"
   "args":
     "dir":
       "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
 - "id": ".metacheck_dir_size.missing"
   "r": ".metacheck_dir_size"
-  "py": "pytacheck.archives.cache._metacheck_dir_size"
+  "py": "metacheck.archives.cache._metacheck_dir_size"
   "args":
     "dir": "/no/such/dir"
 - "id": ".osf_verify_downloads.checks"
   "r": ".osf_verify_downloads"
-  "py": "pytacheck.archives.osf_helpers._osf_verify_downloads"
+  "py": "metacheck.archives.osf_helpers._osf_verify_downloads"
   "args":
     "ret": &id001
       "$expr":
@@ -766,7 +766,7 @@
       "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
 - "id": ".osf_verify_downloads.no_size_check"
   "r": ".osf_verify_downloads"
-  "py": "pytacheck.archives.osf_helpers._osf_verify_downloads"
+  "py": "metacheck.archives.osf_helpers._osf_verify_downloads"
   "args":
     "ret": *id001
     "download_to":
@@ -774,7 +774,7 @@
     "check_size": false
 - "id": ".osf_verify_downloads.per_row"
   "r": ".osf_verify_downloads"
-  "py": "pytacheck.archives.osf_helpers._osf_verify_downloads"
+  "py": "metacheck.archives.osf_helpers._osf_verify_downloads"
   "args":
     "ret": *id001
     "download_to":
@@ -790,7 +790,7 @@
       - true
 - "id": ".osf_verify_downloads.no_path"
   "r": ".osf_verify_downloads"
-  "py": "pytacheck.archives.osf_helpers._osf_verify_downloads"
+  "py": "metacheck.archives.osf_helpers._osf_verify_downloads"
   "args":
     "ret":
       "$df":
@@ -802,7 +802,7 @@
       "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
 - "id": ".osf_verify_downloads.empty"
   "r": ".osf_verify_downloads"
-  "py": "pytacheck.archives.osf_helpers._osf_verify_downloads"
+  "py": "metacheck.archives.osf_helpers._osf_verify_downloads"
   "args":
     "ret":
       "$expr":
@@ -812,35 +812,35 @@
       "$file": "upstream/metacheck/tests/testthat/fixtures/code_files"
 - "id": "local_files.missing"
   "r": "local_files"
-  "py": "pytacheck.archives.local.local_files"
+  "py": "metacheck.archives.local.local_files"
   "args":
     "path": "/no/such/path/exists/anywhere"
 - "id": "path_sanitize.default"
   "r": "path_sanitize"
-  "py": "pytacheck.utils.path_sanitize"
+  "py": "metacheck.utils.path_sanitize"
   "args":
     "path": " has/ spaces/\\backslashes/><|?chars/.dot.is.ok "
 - "id": "path_sanitize.replacement"
   "r": "path_sanitize"
-  "py": "pytacheck.utils.path_sanitize"
+  "py": "metacheck.utils.path_sanitize"
   "args":
     "path": " has/ spaces/\\backslashes/><|?chars/.dot.is.ok "
     "replacement": "~"
 - "id": "path_sanitize.keep_whitespace"
   "r": "path_sanitize"
-  "py": "pytacheck.utils.path_sanitize"
+  "py": "metacheck.utils.path_sanitize"
   "args":
     "path": " has/ spaces/\\backslashes/><|?chars/.dot.is.ok "
     "remove_whitespace": false
 - "id": "path_sanitize.no_sep"
   "r": "path_sanitize"
-  "py": "pytacheck.utils.path_sanitize"
+  "py": "metacheck.utils.path_sanitize"
   "args":
     "path": " has/ spaces/\\backslashes/><|?chars/.dot.is.ok "
     "keep_sep": false
 - "id": "path_sanitize.vector"
   "r": "path_sanitize"
-  "py": "pytacheck.utils.path_sanitize"
+  "py": "metacheck.utils.path_sanitize"
   "args":
     "path":
       "$expr":
@@ -848,7 +848,7 @@
         "py": "['/My Files/x><y.pdf', 'a\\tb\\nc', 'C:\\\\Users\\\\me\\\\file name.txt', '__lead__', None, '', 'tab\\x07bell', 'multi   space']"
 - "id": "path_sanitize.vector_no_sep"
   "r": "path_sanitize"
-  "py": "pytacheck.utils.path_sanitize"
+  "py": "metacheck.utils.path_sanitize"
   "args":
     "path":
       "$chr":
@@ -858,7 +858,7 @@
     "keep_sep": false
 - "id": "path_sanitize.dot_replacement"
   "r": "path_sanitize"
-  "py": "pytacheck.utils.path_sanitize"
+  "py": "metacheck.utils.path_sanitize"
   "args":
     "path":
       "$chr":
@@ -867,14 +867,14 @@
     "replacement": "."
 - "id": "rep_if.empty"
   "r": "rep_if"
-  "py": "pytacheck.utils.rep_if"
+  "py": "metacheck.utils.rep_if"
   "args":
     "x":
       "$list": []
     "y": 1
 - "id": "rep_if.null"
   "r": "rep_if"
-  "py": "pytacheck.utils.rep_if"
+  "py": "metacheck.utils.rep_if"
   "args":
     "x":
       "$list":
@@ -883,7 +883,7 @@
     "y": 1
 - "id": "rep_if.na"
   "r": "rep_if"
-  "py": "pytacheck.utils.rep_if"
+  "py": "metacheck.utils.rep_if"
   "args":
     "x":
       "$list":
@@ -894,7 +894,7 @@
       "$NA": true
 - "id": "rep_if.blank"
   "r": "rep_if"
-  "py": "pytacheck.utils.rep_if"
+  "py": "metacheck.utils.rep_if"
   "args":
     "x":
       "$list":
@@ -904,7 +904,7 @@
     "replace": ""
 - "id": "rep_if.multi_replace"
   "r": "rep_if"
-  "py": "pytacheck.utils.rep_if"
+  "py": "metacheck.utils.rep_if"
   "args":
     "x":
       "$list":
@@ -918,7 +918,7 @@
         "py": "[\"\", None]"
 - "id": "rep_if.recycle"
   "r": "rep_if"
-  "py": "pytacheck.utils.rep_if"
+  "py": "metacheck.utils.rep_if"
   "args":
     "x":
       "$list":
@@ -936,7 +936,7 @@
       - 5
 - "id": "rep_if.character"
   "r": "rep_if"
-  "py": "pytacheck.utils.rep_if"
+  "py": "metacheck.utils.rep_if"
   "args":
     "x":
       "$chr":
@@ -954,7 +954,7 @@
       - "X"
 - "id": "rep_if.coerce"
   "r": "rep_if"
-  "py": "pytacheck.utils.rep_if"
+  "py": "metacheck.utils.rep_if"
   "args":
     "x":
       "$list":
@@ -968,7 +968,7 @@
       - 3
 - "id": ".col_chr.numeric"
   "r": ".col_chr"
-  "py": "pytacheck.utils._col_chr"
+  "py": "metacheck.utils._col_chr"
   "args":
     "df":
       "$df":
@@ -979,7 +979,7 @@
     "col": "a"
 - "id": ".col_chr.logical"
   "r": ".col_chr"
-  "py": "pytacheck.utils._col_chr"
+  "py": "metacheck.utils._col_chr"
   "args":
     "df":
       "$df":
@@ -989,7 +989,7 @@
     "col": "a"
 - "id": ".col_chr.missing"
   "r": ".col_chr"
-  "py": "pytacheck.utils._col_chr"
+  "py": "metacheck.utils._col_chr"
   "args":
     "df":
       "$df":
@@ -999,7 +999,7 @@
     "col": "b"
 - "id": ".col_chr.missing_default"
   "r": ".col_chr"
-  "py": "pytacheck.utils._col_chr"
+  "py": "metacheck.utils._col_chr"
   "args":
     "df":
       "$df":
@@ -1010,7 +1010,7 @@
     "default": "none"
 - "id": ".col_chr.zero_rows"
   "r": ".col_chr"
-  "py": "pytacheck.utils._col_chr"
+  "py": "metacheck.utils._col_chr"
   "args":
     "df":
       "$expr":
@@ -1019,7 +1019,7 @@
     "col": "a"
 - "id": ".col_chr.list_column"
   "r": ".col_chr"
-  "py": "pytacheck.utils._col_chr"
+  "py": "metacheck.utils._col_chr"
   "args":
     "df":
       "$expr":
@@ -1028,23 +1028,23 @@
     "col": "a"
 - "id": ".safe_write_path.short"
   "r": ".safe_write_path"
-  "py": "pytacheck.utils._safe_write_path"
+  "py": "metacheck.utils._safe_write_path"
   "args":
     "path": "some/dir/file.csv"
 - "id": ".safe_write_path.empty"
   "r": ".safe_write_path"
-  "py": "pytacheck.utils._safe_write_path"
+  "py": "metacheck.utils._safe_write_path"
   "args":
     "path": ""
 - "id": ".safe_write_path.na"
   "r": ".safe_write_path"
-  "py": "pytacheck.utils._safe_write_path"
+  "py": "metacheck.utils._safe_write_path"
   "args":
     "path":
       "$NA": true
 - "id": ".safe_write_path.long_leaf"
   "r": ".safe_write_path"
-  "py": "pytacheck.utils._safe_write_path"
+  "py": "metacheck.utils._safe_write_path"
   "args":
     "path":
       "$expr":
@@ -1052,7 +1052,7 @@
         "py": "\"dir/\" + \"a\" * 300 + \".txt\""
 - "id": ".safe_write_path.long_dir"
   "r": ".safe_write_path"
-  "py": "pytacheck.utils._safe_write_path"
+  "py": "metacheck.utils._safe_write_path"
   "args":
     "path":
       "$expr":
@@ -1060,6 +1060,6 @@
         "py": "\"/tmp/\" + \"é\" * 260 + \"/x/\" + \"b\" * 256"
 - "id": ".safe_write_path.backslashes"
   "r": ".safe_write_path"
-  "py": "pytacheck.utils._safe_write_path"
+  "py": "metacheck.utils._safe_write_path"
   "args":
     "path": "a\\b/c/"

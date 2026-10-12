@@ -277,6 +277,11 @@ def main() -> None:
         ],
     )
     put(q(f"{FS}/projects/999/articles", "page=1&page_size=100"), [])
+    # a collection (a figshare.com/collections/ URL or a 10.6084/m9.figshare.c. DOI)
+    put(
+        q(f"{FS}/collections/8742785/articles", "page=1&page_size=100"),
+        [{"id": 6934484, "title": "b"}, {"id": 18093368}, {"id": None}],
+    )
 
     # ---------------------------------------------------------------- Dataverse
     def dv_api(host: str, doi: str) -> str:
@@ -372,6 +377,10 @@ def main() -> None:
     r404(
         q("api.figshare.com/v2/projects/404404/articles", "page=1&page_size=100"),
         "https://api.figshare.com/v2/projects/404404/articles?page=1&page_size=100",
+    )
+    r404(
+        q("api.figshare.com/v2/collections/404405/articles", "page=1&page_size=100"),
+        "https://api.figshare.com/v2/collections/404405/articles?page=1&page_size=100",
     )
     r404("ndownloader.figshare.com/files/558", "https://ndownloader.figshare.com/files/558")
     for doi in ("10.7910/DVN/NOPE", "10.18167/DVN1/T0DMFJ"):

@@ -26,7 +26,7 @@ other targets too (``doc_builds``, once ``core/`` exists):
 ``deepcopy``          top-level ``copy.deepcopy()`` calls
 ``regex_compiles``    patterns ``regex`` or ``re`` compiled for the first time
 ``regex_recompiles``  patterns compiled again, after their engine's cache dropped them
-``csv_parses``        delimited files parsed (fread, read.table), also per file
+``csv_parses``        delimited files parsed (read_delim), also per file
 ``workbook_parses``   workbooks opened (xlsx, xls, ods), also per file
 ``code_decodes``      code files decoded (``code_read()``), also per file
 ``file_opens``        files opened with ``open()`` or ``io.open_code()``, also per file
@@ -106,30 +106,29 @@ class Target:
 
 
 TARGETS: tuple[Target, ...] = (
-    Target("text_search", "pytacheck.text.search:text_search"),
-    Target("paper_table", "pytacheck.papers.tables:paper_table"),
-    Target("table_builds", "pytacheck.papers.schema:records_to_frame"),
+    Target("text_search", "metacheck.text.search:text_search"),
+    Target("paper_table", "metacheck.papers.tables:paper_table"),
+    Target("table_builds", "metacheck.papers.schema:records_to_frame"),
     Target("deepcopy", "copy:deepcopy", top_level="memo"),
     # each runs once per pattern compiled, after the cache lookups
     Target(
         "regex_compiles", "regex._regex_core:_check_group_features", front="regex._main:_compile"
     ),
     Target("regex_compiles", "re._compiler:compile", front="re:_compile"),
-    Target("csv_parses", "pytacheck.datacheck._files_fread:fread", per_file="path"),
-    Target("csv_parses", "pytacheck.datacheck._files_readtable:read_table", per_file="path"),
+    Target("csv_parses", "metacheck.datacheck._files_delim:read_delim", per_file="path"),
     Target(
-        "workbook_parses", "pytacheck.datacheck._files_readers:_XlsxBook.__init__", per_file="path"
+        "workbook_parses", "metacheck.datacheck._files_readers:_XlsxBook.__init__", per_file="path"
     ),
     Target(
-        "workbook_parses", "pytacheck.datacheck._files_readers:_XlsBook.__init__", per_file="path"
+        "workbook_parses", "metacheck.datacheck._files_readers:_XlsBook.__init__", per_file="path"
     ),
-    Target("workbook_parses", "pytacheck.datacheck._files_readers:_ods_strings", per_file="path"),
-    Target("workbook_parses", "pytacheck.datacheck._columns_codebook:_ods_root", per_file="path"),
-    Target("code_decodes", "pytacheck.codecheck._encoding:code_read_bytes", per_file="name"),
+    Target("workbook_parses", "metacheck.datacheck._files_readers:_ods_strings", per_file="path"),
+    Target("workbook_parses", "metacheck.datacheck._columns_codebook:_ods_root", per_file="path"),
+    Target("code_decodes", "metacheck.codecheck.core:code_read", per_file="file_path"),
 )
 
 #: the entry point that is timed
-RUN = "pytacheck.module:module_run"
+RUN = "metacheck.module:module_run"
 FILE_OPENS = "file_opens"
 
 # sys.monitoring tools the probe may use: not the debugger (0), coverage (1),
@@ -223,7 +222,9 @@ def _label(module: Any) -> str:
         return module
     if isinstance(module, os.PathLike):
         return Path(module).stem
-    spec = getattr(module, "__pytacheck_module__", module)
+    from metacheck.module import spec_of
+
+    spec = spec_of(module) or module
     return str(getattr(spec, "name", None) or getattr(module, "__name__", module))
 
 

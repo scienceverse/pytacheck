@@ -12,9 +12,9 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.archives import zenodo
-from pytacheck.archives.zenodo import (
+import metacheck as pc
+from metacheck.archives import zenodo
+from metacheck.archives.zenodo import (
     _zenodo_id,
     _zenodo_info,
     _zenodo_unread,
@@ -23,7 +23,7 @@ from pytacheck.archives.zenodo import (
     zenodo_info,
     zenodo_links,
 )
-from pytacheck.utils import _col_chr
+from metacheck.utils import _col_chr
 
 FULL = [
     "zenodo_id",
@@ -136,7 +136,7 @@ def _batch_query_returning(resp: httpx.Response) -> Any:
 
 def test_zenodo_info_keeps_schema_when_unreadable(monkeypatch: pytest.MonkeyPatch) -> None:
     # non-200: Zenodo had nothing for us
-    monkeypatch.setattr("pytacheck.http.batch_query", _batch_query_returning(httpx.Response(404)))
+    monkeypatch.setattr("metacheck.http.batch_query", _batch_query_returning(httpx.Response(404)))
     with pytest.warns(UserWarning):
         unread = _zenodo_info("5498371")
     assert len(unread) == 1
@@ -145,7 +145,7 @@ def test_zenodo_info_keeps_schema_when_unreadable(monkeypatch: pytest.MonkeyPatc
 
     # 200 with a body that will not parse
     monkeypatch.setattr(
-        "pytacheck.http.batch_query",
+        "metacheck.http.batch_query",
         _batch_query_returning(httpx.Response(200, content=b"not json")),
     )
     bad = _zenodo_info("5498371")
@@ -154,8 +154,8 @@ def test_zenodo_info_keeps_schema_when_unreadable(monkeypatch: pytest.MonkeyPatc
 
 
 def test_zenodo_info_keeps_doi_license_when_every_record_unreadable() -> None:
-    from pytacheck._r import bind_rows
-    from pytacheck.utils import left_join
+    from metacheck._r import bind_rows
+    from metacheck.utils import left_join
 
     unread = bind_rows([_zenodo_unread("5498371", "unfound"), _zenodo_unread("5498372", "unfound")])
     table = pd.DataFrame(
@@ -207,7 +207,7 @@ def test_zenodo_info(apis: object) -> None:
 
 
 def test_zenodo_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(RuntimeError, match="offline"):
         zenodo_info("12345")
 
@@ -231,7 +231,7 @@ def test_zenodo_info_na_url_in_table(apis: object) -> None:
 
 
 def test_zenodo_info_cache(apis: object, tmp_path: Path) -> None:
-    from pytacheck import utils
+    from metacheck import utils
 
     with utils.local_options({"metacheck.repo_info_cache.dir": str(tmp_path)}):
         first = zenodo_info("2669586", cache=True)
@@ -533,3 +533,31 @@ def test_zenodo_info_internal_with_several_ids(tmp_path: Path) -> None:
             zenodo._zenodo_info(["5559004", "5559001"])
         with pytest.raises(ValueError, match="replacement has 1 row, data has 0"):
             zenodo._zenodo_info([])
+
+
+def test_zenodo_downloads_retry_through_the_shared_stack(tmp_path: Path) -> None:
+    arc = "https://zenodo.org/api/records/1/files-archive"
+    with respx.mock(assert_all_mocked=True) as router:
+        route = router.get(arc).mock(
+            side_effect=[httpx.Response(503), httpx.Response(200, content=b"zip bytes")]
+        )
+        assert zenodo._download_archive(arc, str(tmp_path / "a.zip")) is True
+        assert route.call_count == 2
+        assert (tmp_path / "a.zip").read_bytes() == b"zip bytes"
+
+        gone = router.get("https://files.example/gone").respond(404)
+        assert zenodo._download_file("https://files.example/gone", str(tmp_path / "g")) is False
+        assert gone.call_count == 1 and not (tmp_path / "g").exists()  # a 404 is final
+
+        flaky = router.get("https://files.example/flaky").mock(
+            side_effect=[httpx.Response(502), httpx.Response(200, content=b"x")]
+        )
+        assert zenodo._download_file("https://files.example/flaky", str(tmp_path / "f")) is True
+        assert flaky.call_count == 2 and (tmp_path / "f").read_bytes() == b"x"
+
+        down = router.get("https://files.example/down").mock(side_effect=httpx.ConnectError("x"))
+        assert zenodo._download_file("https://files.example/down", str(tmp_path / "d")) is False
+        assert down.call_count == 5
+        empty = router.get("https://files.example/empty").respond(200, content=b"")
+        assert zenodo._download_archive("https://files.example/empty", str(tmp_path / "e")) is False
+        assert empty.call_count == 1

@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.fourtu (R/archive-4tu.R has no testthat file upstream)."""
+"""Tests for metacheck.archives.fourtu (R/archive-4tu.R has no testthat file upstream)."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.fourtu import (
+import metacheck as pc
+from metacheck.archives.fourtu import (
     _researchdata4tu_id,
     researchdata4tu_file_download,
     researchdata4tu_info,
@@ -69,8 +69,59 @@ def test_info_vector(mock_api: object) -> None:
     assert info["title"].tolist() == ["Wind tunnel measurements"]
 
 
+UUID = "7f866e02-eb39-4a2a-8f7d-2d053ee6cde9"
+
+
+def test_resolve_uuid(serve: object) -> None:
+    # metacheck #431: v2/articles/<id> needs the numeric id the DOI redirects to
+    import httpx
+
+    from metacheck.archives.fourtu import _researchdata4tu_resolve_uuid
+
+    landing = "https://data.4tu.nl/articles/_/16766929/1"
+    serve(  # type: ignore[operator]
+        {
+            f"https://doi.org/10.4121/uuid:{UUID}": httpx.Response(
+                302, headers={"Location": landing}
+            ),
+            landing: httpx.Response(200, text="<html></html>"),
+            "https://doi.org/10.4121/uuid:00000000-0000-0000-0000-000000000000": httpx.Response(
+                302, headers={"Location": "https://data.4tu.nl/datasets/x"}
+            ),
+            "https://data.4tu.nl/datasets/x": httpx.Response(200),
+        }
+    )
+    assert _researchdata4tu_resolve_uuid(UUID) == "16766929"
+    # a landing page without an article id, or no redirect: the uuid itself
+    zero = "00000000-0000-0000-0000-000000000000"
+    assert _researchdata4tu_resolve_uuid(zero) == zero
+    other = "11111111-1111-1111-1111-111111111111"
+    assert _researchdata4tu_resolve_uuid(other) == other
+
+
+def test_info_and_download_resolve_uuids(
+    mock_api: object, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from metacheck.archives import fourtu
+
+    asked: list[str] = []
+
+    def resolve(uuid: str) -> str:
+        asked.append(uuid)
+        return "16766929" if uuid == UUID else uuid
+
+    monkeypatch.setattr(fourtu, "_researchdata4tu_resolve_uuid", resolve)
+    info = researchdata4tu_info([f"https://doi.org/10.4121/uuid:{UUID}", "16766929"])
+    assert info["researchdata4tu_id"].tolist() == ["16766929", "16766929"]
+    assert info["title"].tolist() == ["Wind tunnel measurements"] * 2
+    assert asked == [UUID]
+    # beyond metacheck (U41): the download resolves the uuid the same way
+    dl = researchdata4tu_file_download(f"10.4121/{UUID}", download_to=str(tmp_path))
+    assert dl is not None and dl["researchdata4tu_id"].tolist() == ["16766929"]
+
+
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"data\.4tu\.nl seems to be offline"):
         researchdata4tu_info("16766929")
 
@@ -88,7 +139,7 @@ def test_pat(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_file_download_uses_the_4tu_token(mock_api: object, tmp_path: Path) -> None:
     researchdata4tu_pat("tok4tu")
     seen: list[str | None] = []
-    import pytacheck.archives.figshare as figshare
+    import metacheck.archives.figshare as figshare
 
     orig = figshare._figshare_headers
 

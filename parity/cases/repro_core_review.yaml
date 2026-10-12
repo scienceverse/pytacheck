@@ -45,7 +45,7 @@
         "py": "lambda m: m.run_order_full(m.files_df(['dup.R', 'dup.R', 'w.R'], reads=[['o.csv'], [], []], writes=[[], [], ['o.csv', 'o.csv']], sources=[[], ['w.R'], []]), None)"
 - "id": "repro_redirect_writes.variety"
   "r": "metacheck:::.repro_redirect_writes"
-  "py": "pytacheck.repro.core._repro_redirect_writes"
+  "py": "metacheck.repro.core._repro_redirect_writes"
   "args":
     "code_text":
       "$chr":
@@ -65,7 +65,7 @@
       - "\"write.csv(q, \\\"in_string.csv\\\")\""
 - "id": "repro_format_call_refs.variety"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -81,7 +81,7 @@
       - "pct <- \"100%s\""
 - "id": "repro_format_call_refs.replacement_escapes"
   "r": "metacheck:::.repro_format_call_refs"
-  "py": "pytacheck.repro.core._repro_format_call_refs"
+  "py": "metacheck.repro.core._repro_format_call_refs"
   "args":
     "code_text":
       "$chr":
@@ -93,7 +93,7 @@
       - "f <- read.csv(sprintf(\"%s/z.csv\", w3))"
 - "id": "repro_simple_string_vars.variety"
   "r": "metacheck:::.repro_simple_string_vars"
-  "py": "pytacheck.repro.core._repro_simple_string_vars"
+  "py": "metacheck.repro.core._repro_simple_string_vars"
   "args":
     "code_text":
       "$chr":
@@ -108,7 +108,7 @@
       - ".t <- ''"
 - "id": "repro_rewrite_paths.original_ext_case"
   "r": "repro_rewrite_paths"
-  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "py": "metacheck.repro.core.repro_rewrite_paths"
   "args":
     "code_text":
       "$chr":
@@ -132,7 +132,7 @@
         - ""
 - "id": "repro_dependencies.pooled_collation"
   "r": "repro_dependencies"
-  "py": "pytacheck.repro.core.repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
   "args":
     "code_text":
       "$list":
@@ -152,7 +152,7 @@
         - "remotes::install_github('me/edgeR@dev')"
 - "id": "repro_file_io.variety"
   "r": "repro_file_io"
-  "py": "pytacheck.repro.core.repro_file_io"
+  "py": "metacheck.repro.core.repro_file_io"
   "args":
     "code_text_list":
       "a.R":
@@ -169,7 +169,7 @@
         - "x <- 1"
 - "id": "repro_defined_vars.variety"
   "r": "repro_defined_vars"
-  "py": "pytacheck.repro.core.repro_defined_vars"
+  "py": "metacheck.repro.core.repro_defined_vars"
   "args":
     "code_text_list":
       "f1.R":
@@ -193,7 +193,7 @@
         - "# nothing here"
 - "id": "repro_missing_inputs.variety"
   "r": "repro_missing_inputs"
-  "py": "pytacheck.repro.core.repro_missing_inputs"
+  "py": "metacheck.repro.core.repro_missing_inputs"
   "args":
     "refs":
       "$chr":
@@ -243,7 +243,7 @@
         - "524288"
 - "id": "repro_missing_inputs.na_candidates"
   "r": "repro_missing_inputs"
-  "py": "pytacheck.repro.core.repro_missing_inputs"
+  "py": "metacheck.repro.core.repro_missing_inputs"
   "args":
     "refs":
       "$chr":
@@ -344,7 +344,7 @@
         "py": "lambda m: [m.docker._repro_docker_image_for([None, ' 4.3.1 ', '4.2'], True), m.docker._repro_docker_image_for(['R 4.1', '4', '4.1.2.3'], True), m.docker._repro_docker_image_for([], None), m.docker._repro_docker_image_for('4.3.1', 'yes')]"
 - "id": "collect_module_tables.review.mymod.table"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"
@@ -352,7 +352,7 @@
     "element": "table"
 - "id": "collect_module_tables.review.other.table"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"
@@ -360,7 +360,7 @@
     "element": "table"
 - "id": "collect_module_tables.review.mymod.summary_table"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"
@@ -368,7 +368,7 @@
     "element": "summary_table"
 - "id": "collect_module_tables.review.mymod.report"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"
@@ -376,7 +376,7 @@
     "element": "report"
 - "id": "collect_module_tables.review.nope.table"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"
@@ -384,7 +384,7 @@
     "element": "table"
 - "id": "collect_module_tables.review.types"
   "r": "metacheck:::collect_module_tables"
-  "py": "pytacheck.repro.tables.collect_module_tables"
+  "py": "metacheck.repro.tables.collect_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_types"
@@ -407,7 +407,7 @@
         "py": "lambda m: (lambda x: [x, list(x.prev_outputs), x.summary_table])(m.tables._load_module_tables('tests/repro_core/fixtures/tables_review', 'B', None))"
 - "id": "load_module_tables.review.empty"
   "r": "metacheck:::.load_module_tables"
-  "py": "pytacheck.repro.tables._load_module_tables"
+  "py": "metacheck.repro.tables._load_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"
@@ -416,7 +416,7 @@
       "$null": true
 - "id": "load_module_tables.review.corrupt"
   "r": "metacheck:::.load_module_tables"
-  "py": "pytacheck.repro.tables._load_module_tables"
+  "py": "metacheck.repro.tables._load_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"
@@ -425,7 +425,7 @@
       "$null": true
 - "id": "load_module_tables.review.d"
   "r": "metacheck:::.load_module_tables"
-  "py": "pytacheck.repro.tables._load_module_tables"
+  "py": "metacheck.repro.tables._load_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"
@@ -434,7 +434,7 @@
       "$null": true
 - "id": "load_module_tables.review.c"
   "r": "metacheck:::.load_module_tables"
-  "py": "pytacheck.repro.tables._load_module_tables"
+  "py": "metacheck.repro.tables._load_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"
@@ -443,7 +443,7 @@
       "$null": true
 - "id": "load_module_tables.review.nope"
   "r": "metacheck:::.load_module_tables"
-  "py": "pytacheck.repro.tables._load_module_tables"
+  "py": "metacheck.repro.tables._load_module_tables"
   "args":
     "results_dir":
       "$file": "tests/repro_core/fixtures/tables_review"

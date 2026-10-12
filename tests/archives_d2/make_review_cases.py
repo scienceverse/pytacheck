@@ -748,7 +748,8 @@ for name, mod in (
         f"{name}.review.unicode_case",
         f"{name}({tp_r(text=UNICODE_TEXT)})",
         f"lambda m: m.{mod}.{name}({tp_py(text=UNICODE_TEXT)})",
-        None,
+        # dspace7_links() follows DOI mentions' doi.org redirects: keep it offline
+        MOCK if name == "dspace7_links" else None,
         IGNORE_PID,
     )
 

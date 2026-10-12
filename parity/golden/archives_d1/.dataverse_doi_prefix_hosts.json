@@ -10,6 +10,7 @@
       "akf.rodbuk.pl",
       "arcadados.fiocruz.br",
       "archaeology.datastations.nl",
+      "phys-techsciences.datastations.nl",
       "archivdv.soc.cas.cz",
       "borealisdata.ca",
       "danebadawcze.uw.edu.pl",
@@ -111,6 +112,12 @@
         "t": "chr",
         "v": [
           "10.35078"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.17026"
         ]
       },
       {
@@ -367,8 +374,7 @@
         "t": "chr",
         "v": [
           "10.18710",
-          "10.23642",
-          "10.6084"
+          "10.23642"
         ]
       },
       {

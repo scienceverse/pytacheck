@@ -67,7 +67,7 @@ for name in ["spv_strings", "spv_charts", "spv_charts_ok", "spv_box_na"]:
     fn_case(
         f"import_spv.{name}",
         "import_spv",
-        "pytacheck.statout.spv.import_spv",
+        "metacheck.statout.spv.import_spv",
         {"path": {"$file": p}},
     )
     expr_case(
@@ -86,7 +86,7 @@ for name in ["spv_strings", "spv_charts", "spv_charts_ok", "spv_box_na"]:
         f"export_spv_html.{name}",
         EXPORT_R.format(fn="export_spv_html", p=p, post=IMG),
         f"{PH}.export_lines",
-        {"fn": "pytacheck.statout.spv.export_spv_html", "path": p, "images": True},
+        {"fn": "metacheck.statout.spv.export_spv_html", "path": p, "images": True},
     )
     expr_case(
         f"spv_read_structure.{name}",
@@ -100,7 +100,7 @@ expr_case(
     "spv_export_syntax.spv_strings",
     SYNTAX_R.format(fn=".spv_export_syntax", p=f"{FX}/spv_strings.spv"),
     f"{PH}.export_syntax",
-    {"fn": "pytacheck.statout.spv._spv_export_syntax", "path": f"{FX}/spv_strings.spv"},
+    {"fn": "metacheck.statout.spv._spv_export_syntax", "path": f"{FX}/spv_strings.spv"},
 )
 for member in ["t2_lightTableData.bin", "t3_lightTableData.bin"]:
     expr_case(
@@ -205,16 +205,16 @@ for fn, mod, ext, names in [
                 f'{{r <- metacheck::{fn}(rpath("{p}")); r$data[] <- lapply(r$data, function(c) '
                 'if (inherits(c, "integer64")) as.numeric(c) else c); r}',
                 f"{PH}.call",
-                {"fn": f"pytacheck.statout.{mod}.{fn}", "path": {"$file": p}},
+                {"fn": f"metacheck.statout.{mod}.{fn}", "path": {"$file": p}},
             )
         else:
-            fn_case(f"{fn}.{name}", fn, f"pytacheck.statout.{mod}.{fn}", {"path": {"$file": p}})
+            fn_case(f"{fn}.{name}", fn, f"metacheck.statout.{mod}.{fn}", {"path": {"$file": p}})
         if name not in ("empty_index", "short", "sqlite_nulltype", "nameless"):
             expr_case(
                 f"{fn}.labels.{name}",
                 LAB_R.format(fn=fn, p=p),
                 f"{PH}.data_labels",
-                {"fn": f"pytacheck.statout.{mod}.{fn}", "path": p},
+                {"fn": f"metacheck.statout.{mod}.{fn}", "path": p},
             )
 for fn, mod, name in [
     ("export_omv_html", "omv", "review.omv"),
@@ -226,13 +226,13 @@ for fn, mod, name in [
         f"{fn}.{name.split('.')[0]}",
         EXPORT_R.format(fn=fn, p=f"{FX}/{name}", post="x"),
         f"{PH}.export_lines",
-        {"fn": f"pytacheck.statout.{mod}.{fn}", "path": f"{FX}/{name}"},
+        {"fn": f"metacheck.statout.{mod}.{fn}", "path": f"{FX}/{name}"},
     )
 for fn, mod, name in [("export_omv_html", "omv", "badurl.omv")]:
     fn_case(
         f"{fn}.{name.split('.')[0]}",
         fn,
-        f"pytacheck.statout.{mod}.{fn}",
+        f"metacheck.statout.{mod}.{fn}",
         {
             "path": {"$file": f"{FX}/{name}"},
             "out": {"$expr": {"r": "tempfile()", "py": "__import__('tempfile').mktemp()"}},
@@ -273,27 +273,27 @@ vec_case(
 fn_case(
     "import_stata_smcl.nul",
     "import_stata_smcl",
-    "pytacheck.statout.stata.import_stata_smcl",
+    "metacheck.statout.stata.import_stata_smcl",
     {"path": {"$file": f"{FX}/nul_bytes.smcl"}},
 )
 p = f"{FX}/tricky.smcl"
 fn_case(
     "import_stata_smcl.tricky",
     "import_stata_smcl",
-    "pytacheck.statout.stata.import_stata_smcl",
+    "metacheck.statout.stata.import_stata_smcl",
     {"path": {"$file": p}},
 )
 expr_case(
     "export_stata_smcl_html.tricky",
     EXPORT_R.format(fn="export_stata_smcl_html", p=p, post="x"),
     f"{PH}.export_lines",
-    {"fn": "pytacheck.statout.stata.export_stata_smcl_html", "path": p},
+    {"fn": "metacheck.statout.stata.export_stata_smcl_html", "path": p},
 )
 expr_case(
     "smcl_export_syntax.tricky",
     SYNTAX_R.format(fn=".smcl_export_syntax", p=p),
     f"{PH}.export_syntax",
-    {"fn": "pytacheck.statout.stata._smcl_export_syntax", "path": p},
+    {"fn": "metacheck.statout.stata._smcl_export_syntax", "path": p},
 )
 expr_case(
     "smcl_render.tricky",
@@ -316,7 +316,7 @@ expr_case(
     "import_stata_smcl.latin1",
     f'tryCatch(metacheck::import_stata_smcl(rpath("{FX}/latin1.smcl")), error = function(e) "error")',
     f"{PH}.call",
-    {"fn": "pytacheck.statout.stata.import_stata_smcl", "path": {"$file": f"{FX}/latin1.smcl"}},
+    {"fn": "metacheck.statout.stata.import_stata_smcl", "path": {"$file": f"{FX}/latin1.smcl"}},
     known_divergence=LATIN,
 )
 SMCL_LINES = [
@@ -365,20 +365,20 @@ p = f"{FX}/tricky.out"
 fn_case(
     "import_mplus_output.tricky",
     "import_mplus_output",
-    "pytacheck.statout.mplus.import_mplus_output",
+    "metacheck.statout.mplus.import_mplus_output",
     {"path": {"$file": p}},
 )
 expr_case(
     "export_mplus_html.tricky",
     EXPORT_R.format(fn="export_mplus_html", p=p, post="x"),
     f"{PH}.export_lines",
-    {"fn": "pytacheck.statout.mplus.export_mplus_html", "path": p},
+    {"fn": "metacheck.statout.mplus.export_mplus_html", "path": p},
 )
 expr_case(
     "mplus_export_syntax.tricky",
     SYNTAX_R.format(fn=".mplus_export_syntax", p=p),
     f"{PH}.export_syntax",
-    {"fn": "pytacheck.statout.mplus._mplus_export_syntax", "path": p},
+    {"fn": "metacheck.statout.mplus._mplus_export_syntax", "path": p},
 )
 expr_case(
     "mplus_sections.tricky",
@@ -437,7 +437,7 @@ expr_case(
     "import_mplus_output.latin1",
     f'tryCatch(metacheck::import_mplus_output(rpath("{FX}/latin1.out")), error = function(e) "error")',
     f"{PH}.call",
-    {"fn": "pytacheck.statout.mplus.import_mplus_output", "path": {"$file": f"{FX}/latin1.out"}},
+    {"fn": "metacheck.statout.mplus.import_mplus_output", "path": {"$file": f"{FX}/latin1.out"}},
     known_divergence=LATIN,
 )
 

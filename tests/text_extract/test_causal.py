@@ -8,7 +8,7 @@ import httpx
 import pytest
 import respx
 
-from pytacheck.text.causal import causal_relations
+from metacheck.text.causal import causal_relations
 
 BASE = "https://lakens-causal-sentences.hf.space/gradio_api/call/predict"
 
@@ -155,7 +155,7 @@ def test_no_event_id() -> None:
     ],
 )
 def test_json_number(value: float, text: str) -> None:
-    from pytacheck.text.causal import _json_number
+    from metacheck.text.causal import _json_number
 
     assert _json_number(value) == text
 
@@ -185,3 +185,25 @@ def test_missing_sentence_is_sent_as_null() -> None:
         out = causal_relations([None, "x"])
     assert out["sentence"].isna().tolist() == [True, False]
     assert out["cause"].tolist() == ["a", "a"]
+
+
+def test_requests_use_the_shared_user_agent() -> None:
+    from metacheck import http
+
+    seen: list[str] = []
+    payload = '["[{\\"causal\\": false, \\"relations\\": []}]"]'
+    with respx.mock(assert_all_called=False) as router:
+        route = _mock(router, {"x": payload})
+        post = route.side_effect
+        route.side_effect = lambda request: (
+            seen.append(request.headers["user-agent"]),
+            post(request),
+        )[1]
+        router.get(url__regex=rf"{BASE}/ev\d+").mock(
+            side_effect=lambda request: (
+                seen.append(request.headers["user-agent"]),
+                httpx.Response(200, text=_sse(payload)),
+            )[1]
+        )
+        causal_relations("x")
+    assert seen == [http._user_agent()] * 2

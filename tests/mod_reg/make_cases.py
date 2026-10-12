@@ -500,7 +500,7 @@ SRC = (
     'source(system.file("modules", "reg_check.R", package = "metacheck"), local = e); '
     "e$prereg_row_text(row) })"
 )
-PYFN = '__import__("pytacheck.modules.reg_check", fromlist=["_"]).prereg_row_text'
+PYFN = '__import__("metacheck.modules.reg_check", fromlist=["_"]).prereg_row_text'
 
 
 # --- review cases (parity/cases/mod_reg_review.yaml)

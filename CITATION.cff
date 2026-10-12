@@ -1,8 +1,9 @@
 cff-version: 1.2.0
 message: >-
-  pytacheck is a Python port of metacheck. Please cite metacheck (below) and,
-  if relevant, the pytacheck version you used.
-title: "pytacheck: check research outputs for best practices"
+  metacheck (Python) is a port of the metacheck R package. Please cite the R
+  package (below) and, if relevant, the version of this port you used.
+title: "metacheck (Python)"
+version: 0.4.0a1
 type: software
 license: AGPL-3.0-or-later
 repository-code: "https://github.com/scienceverse/pytacheck"

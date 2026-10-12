@@ -1,0 +1,196 @@
+{
+  "id": "osf_file_download.zip.budget_stream_cap",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "archives",
+      "fetched",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "folder",
+          "osf_id",
+          "name",
+          "filetype",
+          "size",
+          "downloads",
+          "provider",
+          "path",
+          "downloaded",
+          "download_path",
+          "osf_project",
+          "osf_url",
+          "size_on_disk",
+          "attempted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "abcde",
+              "abcde",
+              "abcde"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "file1",
+              "file2",
+              "file3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a.csv",
+              "b.csv",
+              "g.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "csv",
+              "csv",
+              "csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              28,
+              39,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "osfstorage",
+              "github"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage/Data/a.csv",
+              "osfstorage/Data/b.csv",
+              "github/Data/g.csv"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abcde",
+              "abcde",
+              "abcde"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abcde",
+              "abcde",
+              "abcde"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/abcde",
+              "https://osf.io/abcde",
+              "https://osf.io/abcde"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              28,
+              39,
+              1
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "url",
+              "max_bytes"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://files.osf.io/v1/resources/child1/providers/osfstorage/?zip="
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  200
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://example.test/g.csv",
+          "https://example.test/a.csv",
+          "https://example.test/b.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abcde/github/Data/g.csv",
+          "abcde/osfstorage/Data/a.csv",
+          "abcde/osfstorage/Data/b.csv"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -36,7 +36,7 @@ def work(f: Path) -> Any:
 
 
 def parse_each(selects: Sequence[Sequence[str]]) -> list[list[Any]]:
-    from pytacheck.db.crossref import _crossref_parse_item
+    from metacheck.db.crossref import _crossref_parse_item
 
     files = work_files()
     return [
@@ -46,7 +46,7 @@ def parse_each(selects: Sequence[Sequence[str]]) -> list[list[Any]]:
 
 
 def query_parse_all(select: Sequence[str], min_score: float = 0) -> Any:
-    from pytacheck.db.crossref import _crossref_query_parse
+    from metacheck.db.crossref import _crossref_query_parse
 
     items = [work(f) for f in work_files()]
     return _crossref_query_parse(items, min_score, list(select))
@@ -59,7 +59,7 @@ def query_files() -> list[Path]:
 
 
 def query_parse_each(select: Sequence[str], min_score: float = 50) -> list[Any]:
-    from pytacheck.db.crossref import _crossref_query_parse
+    from metacheck.db.crossref import _crossref_query_parse
 
     out = []
     for f in query_files():
@@ -84,7 +84,7 @@ def call_offline(fn: str, *args: Any, **kwargs: Any) -> Any:
     """Call *fn* with ``online()`` false (R: ``with_mocked_bindings(online = \\(...) FALSE)``)."""
     import importlib
 
-    from pytacheck.db import _utils
+    from metacheck.db import _utils
 
     module, _, name = fn.rpartition(".")
     func = getattr(importlib.import_module(module), name)

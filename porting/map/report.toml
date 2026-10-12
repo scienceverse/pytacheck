@@ -1,39 +1,39 @@
 # R source -> Python location for reports, validation and messaging (see docs/PORTING.md).
 [files]
-"R/report.R" = ["src/pytacheck/report/report.py"]
-"R/report-helpers.R" = ["src/pytacheck/report/blocks.py", "src/pytacheck/report/render.py"]
+"R/report.R" = ["src/metacheck/report/report.py"]
+"R/report-helpers.R" = ["src/metacheck/report/blocks.py", "src/metacheck/report/render.py"]
 # the plumber API's render_report_html() (report_qmd() rendered to one page)
-"inst/plumber/utils/helpers.R" = ["src/pytacheck/report/report.py"]
-"R/html-output.R" = ["src/pytacheck/report/html_output.py"]
+"inst/plumber/utils/helpers.R" = ["src/metacheck/report/report.py"]
+"R/html-output.R" = ["src/metacheck/report/html_output.py"]
 "inst/templates/_report.qmd" = [
-    "src/pytacheck/report/templates/_report.qmd",
-    "src/pytacheck/report/report.py",
-    "src/pytacheck/report/templates/report.html",
-    "src/pytacheck/report/templates/report.css",
-    "src/pytacheck/report/templates/report.js",
+    "src/metacheck/report/templates/_report.qmd",
+    "src/metacheck/report/report.py",
+    "src/metacheck/report/templates/report.html",
+    "src/metacheck/report/templates/report.css",
+    "src/metacheck/report/templates/report.js",
 ]
-"R/validate.R" = ["src/pytacheck/validate.py"]
-"R/emojis.R" = ["src/pytacheck/report/emojis.py"]
-"data-raw/emojis.R" = ["src/pytacheck/report/emojis.py"]
-"data/emojis.rda" = ["src/pytacheck/report/emojis.py"]
-"R/svutils-message.R" = ["src/pytacheck/utils.py"]
-"R/svutils-pb.R" = ["src/pytacheck/utils.py"]
-# R/app.R and inst/app (Shiny apps) are not ported: pytacheck.api serves the
+"R/validate.R" = ["src/metacheck/validate.py"]
+"R/emojis.R" = ["src/metacheck/report/emojis.py"]
+"data-raw/emojis.R" = ["src/metacheck/report/emojis.py"]
+"data/emojis.rda" = ["src/metacheck/report/emojis.py"]
+"R/svutils-message.R" = ["src/metacheck/utils.py"]
+"R/svutils-pb.R" = ["src/metacheck/utils.py"]
+# R/app.R and inst/app (Shiny apps) are not ported: metacheck.api serves the
 # same functions over HTTP; report_app()/osf_app() have no Python counterpart yet.
 
 [functions]
-report = "pytacheck.report.report:report"
-report_repository = "pytacheck.report.report:report_repository"
-report_module_run = "pytacheck.report.report:report_module_run"
-report_qmd = "pytacheck.report.report:report_qmd"
-module_report = "pytacheck.report.report:module_report"
-report_table = "pytacheck.report.blocks:report_table"
-".cap_num" = "pytacheck.report.blocks:_cap_num"
-".html_sniff_kind" = "pytacheck.report.html_output:_html_sniff_kind"
-".html_export_r_source" = "pytacheck.report.html_output:_html_export_r_source"
-accuracy = "pytacheck.validate:accuracy"
-validate = "pytacheck.validate:validate"
-emojis = "pytacheck.report.emojis:emojis"
-message = "pytacheck.utils:message"
-pb = "pytacheck.utils:pb"
+report = "metacheck.report.report:report"
+report_repository = "metacheck.report.report:report_repository"
+report_module_run = "metacheck.report.report:report_module_run"
+report_qmd = "metacheck.report.report:report_qmd"
+module_report = "metacheck.report.report:module_report"
+report_table = "metacheck.report.blocks:report_table"
+".cap_num" = "metacheck.report.blocks:_cap_num"
+".html_sniff_kind" = "metacheck.report.html_output:_html_sniff_kind"
+".html_export_r_source" = "metacheck.report.html_output:_html_export_r_source"
+accuracy = "metacheck.validate:accuracy"
+validate = "metacheck.validate:validate"
+emojis = "metacheck.report.emojis:emojis"
+message = "metacheck.utils:message"
+pb = "metacheck.utils:pb"
 

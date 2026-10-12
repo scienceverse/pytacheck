@@ -5,9 +5,9 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.modules import ref_accuracy as ra
-from pytacheck.report.blocks import ReportTable
+import metacheck as pc
+from metacheck.modules import ref_accuracy as ra
+from metacheck.report.blocks import ReportTable
 from tests.mod_ref_accuracy.edits import ra_demo, ra_report_tables, ra_set, ra_xrefs
 
 # ---------------------------------------------------------------------------
@@ -375,7 +375,7 @@ def test_as_numeric_follows_r_string2real() -> None:
 
 
 def test_incompatible_join_keys_error_like_dplyr() -> None:
-    from pytacheck.module import ModuleError
+    from metacheck.module import ModuleError
     from tests.mod_ref_accuracy.edits import ra_setcol
 
     # a character xref_id cannot be joined with the integer bib_id (dplyr refuses)
@@ -392,7 +392,7 @@ def test_incompatible_join_keys_error_like_dplyr() -> None:
 
 
 def test_key_kind() -> None:
-    from pytacheck.modules.ref_consistency import _key_kind
+    from metacheck.modules.ref_consistency import _key_kind
 
     assert _key_kind(pd.Series([1, 2], dtype="Int64")) == "num"
     assert _key_kind(pd.Series([], dtype="string")) == "chr"  # vctrs checks empty keys too
@@ -424,7 +424,7 @@ def test_help_text_without_metacheck_typos() -> None:
 
 def test_ref_table_of_an_empty_paperlist() -> None:
     # metacheck's inner_join() stops: the empty tables have no paper_id or text_id
-    from pytacheck.papers.tables import ref_table
+    from metacheck.papers.tables import ref_table
 
     refs = ref_table(pc.PaperList([]))
     assert len(refs) == 0

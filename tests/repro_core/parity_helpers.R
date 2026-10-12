@@ -91,3 +91,41 @@ rc_materialize_review <- function() {
   x$materialised$source <- rc_unroot(x$materialised$source, td)
   x
 }
+
+# .repro_cran_archive_install() with the Archive listing request mocked: what
+# readLines() does for a 404 (a warning with the status, then an error), for an
+# unreachable host (an error without a 404 status) and for a listing without
+# tarballs. The install step itself is never reached.
+rc_archive_install <- function(mode) {
+  rl <- switch(mode,
+    not_found = function(con, ...) {
+      warning(sprintf("cannot open URL '%s': HTTP status was '404 Not Found'", con), call. = FALSE)
+      stop(sprintf("cannot open the connection to '%s'", con), call. = FALSE)
+    },
+    server_error = function(con, ...) {
+      warning(sprintf("cannot open URL '%s': HTTP status was '503 Service Unavailable'", con), call. = FALSE)
+      stop(sprintf("cannot open the connection to '%s'", con), call. = FALSE)
+    },
+    unreachable = function(con, ...) {
+      warning(sprintf("URL '%s': status was 'Could not resolve host'", con), call. = FALSE)
+      stop(sprintf("cannot open the connection to '%s'", con), call. = FALSE)
+    },
+    no_tarballs = function(con, ...) c("<html>", "nothing here", "</html>"))
+  testthat::with_mocked_bindings(
+    metacheck:::.repro_cran_archive_install("somepkg", tempfile(), tempfile()),
+    readLines = rl, .package = "base")
+}
+
+# The install.R script repro_install_deps_docker() writes: the script is
+# captured where it is written, and the container is never started.
+rc_docker_install_script <- function(install_deps) {
+  captured <- NULL
+  testthat::with_mocked_bindings(
+    testthat::with_mocked_bindings(
+      suppressWarnings(repro_install_deps_docker(install_deps, tempfile(), timeout = 1)),
+      writeLines = function(text, con, ...) { captured <<- text; invisible() },
+      .package = "base"),
+    run = function(...) stop("docker is not started in this case"),
+    .package = "processx")
+  captured
+}

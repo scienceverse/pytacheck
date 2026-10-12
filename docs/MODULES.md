@@ -103,7 +103,8 @@ them all. `extends` is a union: a module that one preset excludes comes back if
 another includes it (so the example adds `clinical_trials::only`, not
 `clinical_trials`, whose default extends metacheck's default and would bring back
 the `ref_replication` that `fields::medicine` leaves out). `--project` writes
-`./pytacheck.json` (for a team, commit it) instead of your user config, and pins
+`./metacheck.json` (or the `pytacheck.json` already there; for a team, commit it)
+instead of your user config, and pins
 every pack the presets need there, so it works as the team's lock file. If the
 store cannot be reached, `init` still offers the built-in presets.
 
@@ -128,6 +129,9 @@ preset or module is given, the choice is, in order: `pc.use(preset=...)`,
 its arguments (a typo is an error, not ignored). When a module fails, `run`
 shows why next to it (and in `--json` as `error`), runs the remaining modules,
 then exits with status 1.
+
+`pytacheck package PATH` takes the same flags and runs the `datapackage` pack's checks on
+a folder or archive of data and code instead of a paper (see [DATAPACKAGE.md](DATAPACKAGE.md)).
 
 In Python, the **library keeps metacheck's defaults**: `report(paper)` runs what
 metacheck's `report()` runs, whatever your config says. Choose explicitly:
@@ -167,7 +171,8 @@ pytacheck pack update [NAME]                    # newer revisions, after showing
 pytacheck pack remove NAME
 ```
 
-Add `--project` to pin in `./pytacheck.json` rather than your user config, and
+Add `--project` to pin in `./metacheck.json` (or the `pytacheck.json` already there)
+rather than your user config, and
 `--yes` to skip the confirmation. The Python functions are the same:
 `pc.pack_install("clinical_trials")`, `pc.pack_list()`, and so on.
 
@@ -212,7 +217,8 @@ instead:
   and `pytacheck run` shows the pack name next to any module that is not built
   in. (HTML reports do not show it yet; see below.)
 * **Consent.** You see the consent card before any code is installed.
-* **Project files.** A `pytacheck.json` comes with its folder, which may be a
+* **Project files.** A `metacheck.json` (or an existing `pytacheck.json`) comes
+  with its folder, which may be a
   shared folder or a repository you cloned, so it is not trusted like your own
   config. One owned by another user, or writable by others, is ignored with a
   warning (as git does; name it with `PYTACHECK_CONFIG` to use it anyway). The
@@ -230,16 +236,17 @@ Each pack has a trust label: `builtin`, `store` (listed and pinned by a store),
 A pin that names a store does not make a pack `store`: any config file can say
 that. `pack install` gives the label only when the named store's index lists
 that pack name, source, commit and tree hash, and it writes the result to the
-install record. The label a run reports is read from that record. A pin for a
-commit the store does not list, or one whose files differ from the listed hash,
-is installed as `unlisted` (the consent card says so), and so is a pin whose
-store cannot be reached. A store lists one commit of a pack, so a team lock file
-that pins an older commit installs as `unlisted` once the store moves on. If the
-cached index is out of date, `pack install` fetches it again before it decides
-(once per store in one run, also for a pack name it does not list). Files
-installed as `unlisted` are checked again on the next `pack install`, and become
-`store` once the store lists them; if you decline the reinstall or it fails, they
-stay `unlisted`.
+install record. The label a run reports is read from that record, and so is the
+source of a `store` pack, whatever source its pin names. An `unlisted` pack
+reports the source its pin names. A pin for a commit the store does not list,
+or one whose files differ from the listed hash, is installed as `unlisted` (the
+consent card says so), and so is a pin whose store cannot be reached. A store
+lists one commit of a pack, so a team lock file that pins an older commit
+installs as `unlisted` once the store moves on. If the cached index is out of
+date, `pack install` fetches it again before it decides (once per store in one
+run, also for a pack name it does not list). Files installed as `unlisted` are
+checked again on the next `pack install`, and become `store` once the store
+lists them; if you decline the reinstall or it fails, they stay `unlisted`.
 
 The REST API server never installs packs and never runs local code: it runs
 built-in modules and installed packs only (`use(allow_local=False)`).
@@ -251,7 +258,7 @@ as `out.provenance` unless the module returned an element of that name): the
 module, pack, version, commit, file hash, effective arguments and whether the
 files were modified. A **run record** collects these for a whole run, with the
 preset, the modules dropped by `--offline`, the paper IDs and the versions of
-pytacheck, metacheck and bibr:
+this package, the R metacheck it is compared against, and bibr:
 
 ```bash
 pytacheck run paper.json --preset psych --record run.json
@@ -274,10 +281,25 @@ Built-in modules come from the pytacheck you have; a different version only
 warns. A module that failed in the recorded run and still cannot be found (a
 metacheck module not ported yet) fails again rather than stopping the rerun.
 
+**The format.** A record is JSON with `"schema": "metacheck.run/2"`. `version` is
+the version of this package and `r_reference` is the R metacheck release and commit
+it is compared against (`{"version": ..., "commit": ...}`). In HTML the record sits in
+`<script type="application/json" id="metacheck-run">`. Keys a reader does not know
+are ignored, so later versions can add keys to `/2` without a new schema id. A run on a
+data package (`pytacheck package`) has no papers and adds `package`: `name`, `source`
+(the path that was checked) and `archive`.
+Records written by 0.4.0a1 (`pytacheck.run/1`, with the keys `pytacheck` and
+`metacheck`, and `id="pytacheck-run"` in HTML) still open and replay. They are
+upgraded when read, a key already under its new name wins, and a record written
+again carries the new schema. Code that tests `record["schema"] == RUN_SCHEMA`
+should test `record["schema"] in RUN_SCHEMAS`, which also holds the old id.
+`RunRecord.pytacheck` and `RunRecord.metacheck` still read the new fields (read
+only). 0.4.0a1 cannot open a `metacheck.run/2` record.
+
 **Not available yet:** HTML reports do not embed the record, and do not show pack
 names, until the report renderer runs modules through
 `pytacheck.provenance.run_modules()` (it will embed `chain.run_record.to_html()`,
-a `<script type="application/json" id="pytacheck-run">` that leaves the visible
+a `<script type="application/json" id="metacheck-run">` that leaves the visible
 report unchanged, and `RunRecord.read("report.html")` will read it back). Until
 then, use `pytacheck report ... --record run.json` to write the record next to
 the report.
@@ -287,7 +309,9 @@ the report.
 Config is JSON, in two scopes: the **user** file
 (`platformdirs.user_config_dir("pytacheck")/config.json`, e.g.
 `~/.config/pytacheck/config.json` on Linux) and the **project** file (the nearest
-`pytacheck.json` in the working directory or above it). The project wins over
+`metacheck.json` or `pytacheck.json` in the working directory or above it; if one
+folder has both, `metacheck.json` is used and the other is ignored with a warning,
+never merged). The project wins over
 the user file; `packs` and `presets` merge by key, and `null` removes an entry.
 `stores` are read from the user file only, or from the file `PYTACHECK_CONFIG`
 names (see "Project files" above).
@@ -306,18 +330,34 @@ names (see "Project files" above).
 ```
 
 Commands write these files for you (`init`, `pack install`, `store add`...). A
-committed `pytacheck.json` with pins works as a team lock file: teammates run
-`pytacheck pack install` to get the same commits.
+committed project file with pins works as a team lock file: teammates run
+`pytacheck pack install` to get the same commits. A new project file is named
+`metacheck.json`. An existing `pytacheck.json` is edited in place and never
+renamed, because teammates on 0.4.0a1 read only that name.
+
+A `metacheck.json` that is not a project file is passed over, with one warning
+for each file, and is never read or written as settings. That is the case for
+saved `--json` results, for any JSON that is not an object, and for an object
+with none of the keys `preset`, `stores`, `packs` and `presets`. An empty
+`metacheck.json` is passed over without a warning: a shell redirect such as
+`metacheck check --json > metacheck.json` creates it before the command starts.
+The search then goes on to `pytacheck.json` in the same folder and to the folders
+above. `{}`, an empty `pytacheck.json` and a file that is not valid JSON still
+count as project files, so a typo in a real project file still gives an error.
+
+Environment variables and folders: see [ENVIRONMENT.md](ENVIRONMENT.md). Each
+variable below also has a `METACHECK_` name, which is read first.
 
 Environment variables: `PYTACHECK_CONFIG` (use only this file; `none` for no
 config at all), `PYTACHECK_DATA_DIR` (installed packs and store caches),
 `PYTACHECK_PRESET`, `PYTACHECK_STORE_URL` (a mirror for the `pytacheck` store),
 `PYTACHECK_GITHUB_TOKEN` (read access to private GitHub stores and packs; see
 below) and, for the API, `PYTACHECK_API_MAX_CHECKS` (how many uploads are checked at
-once; default: the number of CPUs).
+once; default: the number of CPUs) and `PYTACHECK_API_KEY` (see
+[API.md](API.md)).
 
 **Stores.** The store `pytacheck` is built in. Add your lab's or institute's to
-your user config (a project's `pytacheck.json` cannot hold stores):
+your user config (a project file cannot hold stores):
 
 ```bash
 pytacheck store add mylab https://github.com/mylab/pytacheck-store
@@ -336,7 +376,8 @@ local folder. Offline, cached indexes are used (with a warning).
 it is private) or pack repository needs read access, in either of two ways:
 
 * a GitHub token in `PYTACHECK_GITHUB_TOKEN` (or `GH_TOKEN` / `GITHUB_TOKEN`; the
-  first one set wins), for example `export PYTACHECK_GITHUB_TOKEN=$(gh auth token)`
+  first one set wins; all four names are in [ENVIRONMENT.md](ENVIRONMENT.md)),
+  for example `export PYTACHECK_GITHUB_TOKEN=$(gh auth token)`
   or a fine-grained token with "Contents: read" on the repository. pytacheck then
   reads the index and pack tarballs through GitHub's API;
 * git credentials for github.com (for example `gh auth setup-git` or a credential
@@ -430,21 +471,56 @@ The contract (the same one the built-in modules follow):
 
 * the function's name equals the file name, and it has a title, a description and
   one section keyword;
-* it never modifies the paper it receives (copy tables before changing them);
+* it never modifies the paper it receives (copy tables before changing them).
+  `run_modules()` and `report()` read each paper's text and section tables once per
+  run, and the later modules reuse what was read, so an in-place edit by one module
+  (such as `paper.text.loc[...] = ...`) is not seen by the modules after it. Run
+  your tests with `METACHECK_CHECK_MUTATION=1`: a run that finds a table edited in
+  place raises `StaleDocumentError` before the next module, naming the module that
+  made the edit (CI runs this way);
 * `traffic_light` is one of `na`, `fail`, `info`, `green`, `yellow`, `red`;
 * `summary_table` has a `paper_id` column and at most one row per paper;
 * it works on a single paper and on a paper list, and on bibr 12.x papers as well
   as older ones (see the next section);
 * modules that call online services declare `requires=["network"]`, and those
-  that use an LLM declare `requires=["llm"]`, so `--offline` can skip them;
+  that use an LLM declare `requires=["llm"]`, so `--offline` can skip them. A module
+  that goes online only when asked to (a parameter that is off by default) does not
+  declare it, because `--offline` would then drop the whole module; it asks
+  `use_setting("offline", False)` (from `metacheck.module`) and does without the
+  request when that is true. `datapackage::package_docs` does this for its
+  `abstract_lookup`;
 * validation: describe it in a `<validation>` block in `details`, and give the
   numbers in `validation=`, from which tools compute PPV and sensitivity. An
   unvalidated module is allowed, but `pack check` warns about it.
 
+A module can also hand back **files** (a drafted README, an export), with a
+`files` key in its result:
+
+```python
+return {"summary_text": "...", "files": {"README.md": draft_text, "figure.png": png_bytes}}
+```
+
+`files` maps a plain file name to its content, `str` (written as UTF-8) or `bytes`.
+A name has no folder in it (`/`, `\`, `..`, a drive such as `C:` and control
+characters are refused; at most 255 bytes), and two names that differ only in case
+are refused too; a bad `files` result makes that module fail with a message that
+says why. A module never writes the files itself: the caller decides where they go.
+
+* `out["files"]` (or `out.files`) is a module's own; `chain.files` (the result of
+  `run_modules()` and of `check_package()`) and `report.files` (a report's outputs)
+  collect the files of every module, in run order. When two modules return the same
+  name, the later one's file is stored as `<module>_<name>` so that none is lost.
+* `metacheck.module.write_module_files(files, directory, force=False, protect=())`
+  writes them into a folder: the folder is created, nothing is written if one of the
+  names already exists (unless `force`, which replaces a file, never a folder), and a
+  folder that is, or lies inside, one of the `protect` folders is refused.
+* `metacheck package PATH --files-dir DIR [--force]` does that for the files of a
+  data package check; see [DATAPACKAGE.md](DATAPACKAGE.md#files-a-check-hands-back).
+
 Use `get_prev_outputs("other_module", "table")` to read an earlier module's
 output in the same run. Use the helpers pytacheck exports (`text_search`,
 `pytacheck.report.scroll_table`, `collapse_section`, ...); see the built-in
-modules in `src/pytacheck/modules/` for complete examples.
+modules in `src/metacheck/modules/` for complete examples.
 
 ### Papers: bibr 12.x and the older format
 
@@ -663,6 +739,7 @@ entries list each pack's `languages`.
 | `presets.select(modules, preset, args, offline=...)` | what a call would run |
 | `run_modules(paper, selection, record=None)` | run in order; returns a `ModuleChain` with `.run_record` (written to `record` if given) |
 | `use(preset=..., allow_local=..., offline=...)` | scope settings to a `with` block |
+| `module_files(outputs)`, `write_module_files(files, directory, force=False, protect=())` | the files that modules handed back (`files` in a result), and writing them to a folder (`metacheck.module`) |
 | `run_session()` | memoise repeated module runs in a `with` block (`run_modules`, the CLI and the API use it; do not edit a paper's tables inside one, as edits within a table are not detected) |
 | `pack_install(ref=None, scope="user", yes=False)` | install (or sync all pins) |
 | `pack_remove(name)`, `pack_update(name=None)`, `pack_list()`, `pack_show(name)` | manage packs |

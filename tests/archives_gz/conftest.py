@@ -22,10 +22,10 @@ UPLOAD = HERE / "fixtures" / "upload"
 
 @pytest.fixture(autouse=True)
 def _hermetic(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
-    from pytacheck import utils
-    from pytacheck.archives import github
+    from metacheck import utils
+    from metacheck.archives import github
 
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: True)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
     monkeypatch.setitem(github._TOKEN_CACHE, "token", None)
     for var in ("ZENODO_PAT", "ZENODO_SANDBOX_PAT", "GITLAB_PAT", "OSF_PAT"):
         monkeypatch.delenv(var, raising=False)

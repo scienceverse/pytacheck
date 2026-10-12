@@ -8,10 +8,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-import pytacheck as pc
-from pytacheck._version import UPSTREAM, __version__
-from pytacheck.module import ModuleOutput, ModuleSpec, module, module_find, module_run
-from pytacheck.provenance import bind_args, json_safe
+import metacheck as pc
+from metacheck._version import UPSTREAM, __version__
+from metacheck.module import ModuleOutput, ModuleSpec, module, module_find, module_run
+from metacheck.provenance import bind_args, json_safe
 from tests.modsys.helpers import REV_A, mod_src
 
 KEYS = [
@@ -147,7 +147,7 @@ def test_keywords_migrate_to_requires() -> None:
     spec = net.__pytacheck_module__
     assert spec.keywords == () and spec.section == "general" and spec.requires == ("network",)
     assert spec.validation == {"tp": 9, "fp": 1, "fn": 3}
-    from pytacheck.packs.manifest import validation_metrics
+    from metacheck.packs.manifest import validation_metrics
 
     assert validation_metrics(spec.validation) == {
         "tp": 9,

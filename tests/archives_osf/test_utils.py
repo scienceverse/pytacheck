@@ -1,5 +1,5 @@
 """Port of metacheck's tests/testthat/test-utils.R and test-svutils-utils.R
-(the parts in pytacheck.utils; ``.batch_query``/``email``/``verbose`` live in
+(the parts in metacheck.utils; ``.batch_query``/``email``/``verbose`` live in
 the foundation and are tested there)."""
 
 from __future__ import annotations
@@ -11,8 +11,8 @@ import warnings
 import pandas as pd
 import pytest
 
-from pytacheck import utils
-from pytacheck.utils import (
+from metacheck import utils
+from metacheck.utils import (
     _col_chr,
     _safe_write_path,
     get_option,

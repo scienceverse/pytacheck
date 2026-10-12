@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.reshare (R/archive-reshare.R has no testthat file upstream)."""
+"""Tests for metacheck.archives.reshare (R/archive-reshare.R has no testthat file upstream)."""
 
 from __future__ import annotations
 
@@ -9,8 +9,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.reshare import (
+import metacheck as pc
+from metacheck.archives.reshare import (
     _reshare_headers,
     _reshare_id,
     _reshare_info,

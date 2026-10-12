@@ -12,14 +12,14 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleOutput, module_info, module_run
+import metacheck as pc
+from metacheck.module import ModuleOutput, module_info, module_run
 
 MODULES = Path(__file__).resolve().parent / "modules"
 
 
 def _module_available(name: str) -> bool:
-    from pytacheck.module import module_find
+    from metacheck.module import module_find
 
     try:
         module_find(name)
@@ -194,7 +194,7 @@ def test_stat_p_nonsig_branches() -> None:
 
 @pytest.mark.parametrize("name", ["all_p_values", "stat_p_exact", "stat_p_nonsig"])
 def test_modules_do_not_mutate(name: str, demo) -> None:
-    from pytacheck.text.extract import extract_p_values
+    from metacheck.text.extract import extract_p_values
 
     before = demo.text.copy()
     p = extract_p_values(demo)
@@ -267,9 +267,11 @@ def test_chaining_p_value_modules(psychsci) -> None:
         "n_zero",
         "n_nonsignificant",
     ]
-    assert x.summary_table["p_values"].tolist() == [6, 39, 13]
-    assert x.summary_table["n_imprecise"].tolist() == [0, 0, 2]
-    assert x.summary_table["n_nonsignificant"].tolist() == [0, 17, 0]
+    # metacheck: [6, 39, 13], [0, 0, 2] and [0, 17, 0]; its pattern misses the
+    # 'ps < .05' forms of the second and third paper (U204)
+    assert x.summary_table["p_values"].tolist() == [6, 44, 15]
+    assert x.summary_table["n_imprecise"].tolist() == [0, 5, 4]
+    assert x.summary_table["n_nonsignificant"].tolist() == [0, 20, 0]
     assert isinstance(x.prev_outputs["all_p_values"], ModuleOutput)
 
 
@@ -277,7 +279,7 @@ def test_chaining_p_value_modules(psychsci) -> None:
 
 
 def test_module_report(psychsci) -> None:
-    from pytacheck.report.report import module_report
+    from metacheck.report.report import module_report
 
     module_output = module_run(psychsci[2], "stat_p_exact")
 
@@ -295,7 +297,7 @@ def test_module_report(psychsci) -> None:
 
 
 def test_report_module_run(demo) -> None:
-    from pytacheck.report.report import report_module_run
+    from metacheck.report.report import report_module_run
 
     modules = ["all_p_values"]
     mo = report_module_run(demo, modules)
@@ -307,7 +309,7 @@ def test_report_module_run(demo) -> None:
 
 
 def test_report_qmd(demo) -> None:
-    from pytacheck.report.report import report_module_run, report_qmd
+    from metacheck.report.report import report_module_run, report_qmd
 
     modules = "stat_p_nonsig"
     mo = report_module_run(demo, modules)

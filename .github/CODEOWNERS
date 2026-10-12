@@ -14,10 +14,10 @@
 /parity/deviations/                  @thesanogoeffect
 /parity/accuracy/matrix.d/           @thesanogoeffect
 /parity/accuracy/expected.d/         @thesanogoeffect
-/src/pytacheck/resources/status/validation.json  @thesanogoeffect
-/src/pytacheck/modules/marginal.py   @thesanogoeffect
-/src/pytacheck/modules/power.py      @thesanogoeffect
-/src/pytacheck/modules/_power.py     @thesanogoeffect
-/src/pytacheck/modules/stat_effect_size.py  @thesanogoeffect
-/src/pytacheck/modules/stat_p_exact.py      @thesanogoeffect
-/src/pytacheck/modules/stat_p_nonsig.py     @thesanogoeffect
+/src/metacheck/resources/status/validation.json  @thesanogoeffect
+/src/metacheck/modules/marginal.py   @thesanogoeffect
+/src/metacheck/modules/power.py      @thesanogoeffect
+/src/metacheck/modules/_power.py     @thesanogoeffect
+/src/metacheck/modules/stat_effect_size.py  @thesanogoeffect
+/src/metacheck/modules/stat_p_exact.py      @thesanogoeffect
+/src/metacheck/modules/stat_p_nonsig.py     @thesanogoeffect

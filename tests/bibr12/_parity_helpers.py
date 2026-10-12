@@ -13,7 +13,7 @@ from typing import Any
 import orjson
 import pandas as pd
 
-import pytacheck as pc
+import metacheck as pc
 
 ROOT = Path(__file__).resolve().parents[2]
 F12 = ROOT / "upstream" / "metacheck" / "tests" / "testthat" / "fixtures" / "bibr12"
@@ -244,9 +244,9 @@ def descriptive_table(schema_version: Any = "12.0") -> Any:
 
 def match_jasp(paper: Any, what: str = "table") -> Any:
     """``match_reported_output(paper, <sample.jasp>, include_tables = TRUE)``."""
-    from pytacheck.statout.match_reported import match_reported_output
-    from pytacheck.statout.stat_output import stat_results_long
-    from pytacheck.statout.stat_tables import read_stat_tables
+    from metacheck.statout.match_reported import match_reported_output
+    from metacheck.statout.stat_output import stat_results_long
+    from metacheck.statout.stat_tables import read_stat_tables
 
     jasp = ROOT / "upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp"
     output = stat_results_long(read_stat_tables(str(jasp)), source_file="sample.jasp")
@@ -256,7 +256,7 @@ def match_jasp(paper: Any, what: str = "table") -> Any:
 
 def schema_summary() -> dict[str, Any]:
     """The tables, required tables and column types of ``.paper_schema_bibr12()``."""
-    from pytacheck.io.bibr12 import _paper_schema_bibr12
+    from metacheck.io.bibr12 import _paper_schema_bibr12
 
     s = _paper_schema_bibr12()
     defs = {}

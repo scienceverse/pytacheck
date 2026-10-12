@@ -2,127 +2,127 @@
 "cases":
 - "id": "demopaper"
   "r": "demopaper"
-  "py": "pytacheck.demopaper"
+  "py": "metacheck.demopaper"
   "args": {}
 - "id": "read.golden_bibr_10_2"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "upstream/metacheck/inst/demos/golden_bibr_10_2.json"}
 - "id": "read.psychsci.1"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"}
 - "id": "read.psychsci.dir"
   "r": "read"
-  "py": "pytacheck.read"
+  "py": "metacheck.read"
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/psychsci"}
 - "id": "test_paper.default"
   "r": "test_paper"
-  "py": "pytacheck.test_paper"
+  "py": "metacheck.test_paper"
   "args": {}
   "compare": {"ignore": ["paper_id", "info.file_hash"]}
 - "id": "test_paper.urls"
   "r": "test_paper"
-  "py": "pytacheck.test_paper"
+  "py": "metacheck.test_paper"
   "args":
     "text": {"$chr": ["One sentence.", "Another with https://osf.io/abcde."]}
     "url": {"$chr": ["https://osf.io/abcde"]}
   "compare": {"ignore": ["paper_id", "info.file_hash"]}
 - "id": "paper.empty"
   "r": "paper"
-  "py": "pytacheck.paper"
+  "py": "metacheck.paper"
   "args":
     "id": "empty_paper"
   "py_args": {"paper_id": "empty_paper"}
   "py_drop": ["id"]
 - "id": "paper_table.psychsci.info"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "info"
 - "id": "paper_table.psychsci.author"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "author"
 - "id": "paper_table.psychsci.text"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "text"
 - "id": "paper_table.psychsci.section"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "section"
 - "id": "paper_table.psychsci.url"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "url"
 - "id": "paper_table.psychsci.bib"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "bib"
 - "id": "paper_table.psychsci.xref"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "xref"
 - "id": "paper_table.psychsci.figure"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "figure"
 - "id": "paper_table.psychsci.table"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "table"
 - "id": "paper_table.psychsci.eq"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "eq"
 - "id": "paper_table.psychsci.bib_match"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
     "table": "bib_match"
 - "id": "paper_table.demo.text_cols"
   "r": "paper_table"
-  "py": "pytacheck.paper_table"
+  "py": "metacheck.paper_table"
   "args":
     "paper": {"$paper": "demo"}
     "table": "text"
     "cols": {"$chr": ["text", "section_id"]}
 - "id": "ref_table.demo"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$paper": "demo"}
 - "id": "ref_table.psychsci"
   "r": "ref_table"
-  "py": "pytacheck.ref_table"
+  "py": "metacheck.ref_table"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
 - "id": "paper_id.psychsci"
   "r": "paper_id"
-  "py": "pytacheck.paper_id"
+  "py": "metacheck.paper_id"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"]}

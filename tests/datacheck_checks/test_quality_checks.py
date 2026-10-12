@@ -10,7 +10,7 @@ import math
 
 import pandas as pd
 
-from pytacheck.datacheck.checks import (
+from metacheck.datacheck.checks import (
     data_check_case_issues,
     data_check_colname,
     data_check_colname_collisions,

@@ -7,7 +7,7 @@ Module cases chain codebook_check onto a stored data_check output
 ``fixtures/make_fixtures.R``). Helper cases call the module's internal
 functions: in R from the module file sourced into an environment whose
 parent is the metacheck namespace (as upstream's testthat file does), in
-Python from :mod:`pytacheck.modules._codebook`.
+Python from :mod:`metacheck.modules._codebook`.
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ R_MOD = (
     "e <- new.env(parent = asNamespace('metacheck')); "
     "sys.source(metacheck:::module_find('codebook_check'), envir = e)"
 )
-PY_MOD = "__import__('pytacheck.modules._codebook', fromlist=['_'])"
+PY_MOD = "__import__('metacheck.modules._codebook', fromlist=['_'])"
 
 SCENARIOS = [
     "conflict",
@@ -122,7 +122,7 @@ def cases() -> list[dict[str, Any]]:
         module_case(
             "codebook_check.demo",
             "cbc_prev('panas_high', paper = demopaper())",
-            "cbc_prev('panas_high', paper=__import__('pytacheck').demopaper())",
+            "cbc_prev('panas_high', paper=__import__('metacheck').demopaper())",
         )
     )
     ps_r = ", ".join(f"'{p}'" for p in PSYCHSCI)
@@ -131,7 +131,7 @@ def cases() -> list[dict[str, Any]]:
         module_case(
             "codebook_check.psychsci",
             f"cbc_prev_papers(read(c({ps_r})), c('task', 'pl_a', 'scales_mixed'))",
-            f"cbc_prev_papers(__import__('pytacheck').read([{ps_py}]), ['task', 'pl_a', 'scales_mixed'])",
+            f"cbc_prev_papers(__import__('metacheck').read([{ps_py}]), ['task', 'pl_a', 'scales_mixed'])",
         )
     )
     # synthetic paper lists
@@ -164,14 +164,14 @@ def cases() -> list[dict[str, Any]]:
         module_case(
             "codebook_check.bibr12_task",
             f"cbc_prev('task', paper = read('{BIBR12}'))",
-            f"cbc_prev('task', paper=__import__('pytacheck').read('{BIBR12}'))",
+            f"cbc_prev('task', paper=__import__('metacheck').read('{BIBR12}'))",
         )
     )
     out.append(
         module_case(
             "codebook_check.bibr12_scales",
             f"cbc_prev('scales_mixed', paper = read('{BIBR12}'))",
-            f"cbc_prev('scales_mixed', paper=__import__('pytacheck').read('{BIBR12}'))",
+            f"cbc_prev('scales_mixed', paper=__import__('metacheck').read('{BIBR12}'))",
         )
     )
     # data_check output with a zero-row structure table and no previews
@@ -263,7 +263,7 @@ def llm_cases() -> list[dict[str, Any]]:
             "codebook_check.llm.bibr12",
             f"cbc_llm_run(NULL, 'scales', prev = cbc_prev('scales_mixed', paper = read('{BIBR12}')))",
             "cbc_llm_run(None, 'scales', prev=__import__('tests.mod_codebook.helpers', "
-            f"fromlist=['_']).cbc_prev('scales_mixed', paper=__import__('pytacheck').read('{BIBR12}')))",
+            f"fromlist=['_']).cbc_prev('scales_mixed', paper=__import__('metacheck').read('{BIBR12}')))",
         )
     )
     out.append(
@@ -271,7 +271,7 @@ def llm_cases() -> list[dict[str, Any]]:
             "codebook_check.llm.demo",
             "cbc_llm_run(NULL, 'panas', prev = cbc_prev('panas_high', paper = demopaper()))",
             "cbc_llm_run(None, 'panas', prev=__import__('tests.mod_codebook.helpers', "
-            "fromlist=['_']).cbc_prev('panas_high', paper=__import__('pytacheck').demopaper()))",
+            "fromlist=['_']).cbc_prev('panas_high', paper=__import__('metacheck').demopaper()))",
         )
     )
     for cid, scenario, spec in (("match", "fuzzy", "match"), ("scales", "scales_mixed", "scales")):
@@ -581,14 +581,14 @@ def helper_cases() -> list[dict[str, Any]]:
             helper_case(
                 f"scan_paper_for_tasks.{i}",
                 f"e$.scan_paper_for_tasks(test_paper({r_txt}))",
-                f"_scan_paper_for_tasks(__import__('pytacheck').test_paper({texts!r}))",
+                f"_scan_paper_for_tasks(__import__('metacheck').test_paper({texts!r}))",
             )
         )
     h.append(
         helper_case(
             "scan_paper_for_scales.demo",
             "e$.scan_paper_for_scales(demopaper())",
-            "_scan_paper_for_scales(__import__('pytacheck').demopaper())",
+            "_scan_paper_for_scales(__import__('metacheck').demopaper())",
         )
     )
     h.append(
@@ -596,7 +596,7 @@ def helper_cases() -> list[dict[str, Any]]:
             "scan_paper_for_scales.text",
             "e$.scan_paper_for_scales(test_paper(c('We used the PANAS and the Perceived Stress Scale.', "
             "'The Big Five Inventory was given too.')))",
-            "_scan_paper_for_scales(__import__('pytacheck').test_paper(['We used the PANAS and the "
+            "_scan_paper_for_scales(__import__('metacheck').test_paper(['We used the PANAS and the "
             "Perceived Stress Scale.', 'The Big Five Inventory was given too.']))",
         )
     )
@@ -604,7 +604,7 @@ def helper_cases() -> list[dict[str, Any]]:
         helper_case(
             "scan_paper_for_scales.empty",
             "e$.scan_paper_for_scales(test_paper(character(0)))",
-            "_scan_paper_for_scales(__import__('pytacheck').test_paper([]))",
+            "_scan_paper_for_scales(__import__('metacheck').test_paper([]))",
         )
     )
     # synonym merging

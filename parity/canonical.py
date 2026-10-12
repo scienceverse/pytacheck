@@ -318,8 +318,8 @@ def _portable_walk(value: Any) -> Any:
 
 
 def _encode(x: Any) -> dict[str, Any]:
-    from pytacheck.module import ModuleOutput
-    from pytacheck.papers import Paper, PaperList
+    from metacheck.module import ModuleOutput
+    from metacheck.papers import Paper, PaperList
 
     if x is None or x is pd.NA:
         return {"t": "null"}

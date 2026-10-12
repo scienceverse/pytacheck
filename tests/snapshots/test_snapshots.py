@@ -75,7 +75,7 @@ def test_envelope_keeps_an_index_other_than_the_default() -> None:
 
 
 def test_envelope_finds_the_frames_inside_module_outputs_and_lists() -> None:
-    from pytacheck.module import ModuleOutput
+    from metacheck.module import ModuleOutput
 
     out = ModuleOutput("m", "M", "general", table=_frame(x=[1]), summary_table=_frame(id=["a"]))
     frames = store.envelope(out)["frames"]
@@ -365,10 +365,11 @@ def test_the_same_id_fixture_expects_the_output_under_f6s_ids(upstream_dir: Path
     expected = inputs.record(inputs.find("fixtures", "all_p_values.same_id"))
     before = inputs.record(inputs.find("fixtures", "all_p_values.same_id.before"))
     assert "X~2" in store.dumps(expected).decode()
-    assert "X~2" not in store.dumps(before).decode()
-    # what the rewrite runs is the list with the repeated id, in both cases
+    # F6 is in the rewrite (U208): it resolves the repeated id where the list is taken in,
+    # so the run on the list with the repeated id is the expected output, not R's
+    assert before == expected
     case = inputs.find("fixtures", "all_p_values.same_id")
-    assert inputs.run(case) == before
+    assert inputs.run(case) == expected
 
 
 def test_fixture_gaps_read_the_resolved_id_as_the_repeated_one() -> None:
@@ -544,7 +545,9 @@ def test_missing_extras_are_the_optional_dependencies_not_installed(
     import importlib.metadata
 
     requires = ["numpy>=1.26", "pytest>=8; extra == 'data'", "no-such-dist[x]>=1; extra == 'data'"]
-    monkeypatch.setattr(importlib.metadata, "requires", lambda name: requires)
+    monkeypatch.setattr(
+        importlib.metadata, "requires", lambda name: requires if name == "metacheck" else 1 / 0
+    )
     assert script._missing_extras() == ["no-such-dist"]
 
 

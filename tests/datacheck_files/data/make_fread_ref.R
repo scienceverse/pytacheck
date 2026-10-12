@@ -1,4 +1,4 @@
-# data.table::fread() reference for tests/datacheck_files/test_fread.py. The
+# data.table::fread() reference for tests/datacheck_files/test_delim.py. The
 # inputs (<battery>_cases.json: base64 file bytes, sep, header, nrows) are small
 # randomly generated delimited files; run from the repository root with the
 # metacheck reference R in a UTF-8 locale:

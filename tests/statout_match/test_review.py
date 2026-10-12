@@ -11,13 +11,13 @@ import math
 import pandas as pd
 import pytest
 
-from pytacheck.statout.match_reported import (
+from metacheck.statout.match_reported import (
     _build_sites,
     _regroup_by_evidence,
     _tests_from_extract,
     match_reported_output,
 )
-from pytacheck.statout.match_table import _table_caption, _table_tests
+from metacheck.statout.match_table import _table_caption, _table_tests
 
 
 def _tt(text_id: list[object] | None, comps: list[list[dict[str, object]]]) -> pd.DataFrame:
@@ -142,7 +142,7 @@ def test_character_text_id_stays_character() -> None:
 
 
 def test_table_tests_missing_columns() -> None:
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(["Results are in Table 1.", "Table 1. Tests"])
     p.text = p.text.assign(section_id=[1.0, 2.0])
@@ -180,7 +180,7 @@ def test_table_caption_column_is_used() -> None:
     # U143: a paper that is not bibr 12.x but whose tables carry a caption
     # column is typed by that caption; R reads only the text rows sharing the
     # table's section_id, so an ambiguous correlation matrix went untyped
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(["Results are in Table 1.", "Table 1. Scales"])
     p.text = p.text.assign(section_id=[1.0, 2.0])
@@ -206,7 +206,7 @@ def test_table_caption_column_is_used() -> None:
 
 
 def test_paper_list_is_refused_clearly() -> None:
-    import pytacheck as pc
+    import metacheck as pc
 
     papers = pc.PaperList([pc.test_paper(["t(20) = 2.10, p = .048"])])
     with pytest.raises(TypeError, match="for each paper"):
@@ -249,7 +249,7 @@ def test_output_row_without_test_id_forms_no_site() -> None:
     # U142: an output row without a test_id beside a jamovi "_residuals" row
     # belongs to no site and changes nothing (R adds an NA site and val_in()
     # fails the whole call: "non-numeric argument to mathematical function")
-    import pytacheck as pc
+    import metacheck as pc
 
     paper = pc.test_paper(
         ["A one-way ANOVA showed an effect of gender, F(2, 2159) = 6.76, p = .001."]

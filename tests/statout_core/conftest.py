@@ -42,15 +42,15 @@ def reference_rscript() -> str:
 @pytest.fixture
 def stato_vocab(monkeypatch: pytest.MonkeyPatch) -> None:
     """Make the capture helpers buildable even before ``stato_map`` is ported."""
-    if importlib.util.find_spec("pytacheck.statout.stato_map") is not None:
+    if importlib.util.find_spec("metacheck.statout.stato_map") is not None:
         try:
-            from pytacheck.statout.r_capture import _stato_vocab_keys
+            from metacheck.statout.r_capture import _stato_vocab_keys
 
             _stato_vocab_keys()
             return
         except ImportError:
             pass
-    import pytacheck.statout.r_capture as rc
+    import metacheck.statout.r_capture as rc
 
     monkeypatch.setattr(
         rc, "_stato_vocab_keys", lambda: (["mean", "sd", "median", "t", "p"], ["iqr"])
@@ -59,6 +59,6 @@ def stato_vocab(monkeypatch: pytest.MonkeyPatch) -> None:
 
 @pytest.fixture
 def stato() -> None:
-    """Skip when the STATO typing layer (``pytacheck.statout.stato_map``) is absent."""
-    if importlib.util.find_spec("pytacheck.statout.stato_map") is None:
-        pytest.skip("pytacheck.statout.stato_map is not available yet")
+    """Skip when the STATO typing layer (``metacheck.statout.stato_map``) is absent."""
+    if importlib.util.find_spec("metacheck.statout.stato_map") is None:
+        pytest.skip("metacheck.statout.stato_map is not available yet")

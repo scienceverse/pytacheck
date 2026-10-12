@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.researchbox (port of test-archive-researchbox.R, plus more)."""
+"""Tests for metacheck.archives.researchbox (port of test-archive-researchbox.R, plus more)."""
 
 from __future__ import annotations
 
@@ -12,8 +12,8 @@ import httpx
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.researchbox import (
+import metacheck as pc
+from metacheck.archives.researchbox import (
     _rbox_headers,
     _rbox_info,
     rbox_file_download,
@@ -121,7 +121,7 @@ def test_box_without_download_tokens(mock_api: object) -> None:
 
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"ResearchBox\.org seems to be offline"):
         rbox_info("https://researchbox.org/801")
 

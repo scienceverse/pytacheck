@@ -16,7 +16,7 @@ def ec_paper(
     """``ec_paper()``: a test paper with a fixed ID (and optionally one section per sentence)."""
     import pandas as pd
 
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(list(text))
     p.paper_id = id
@@ -40,7 +40,7 @@ def ec_paper(
 
 def ec_papers(ids: Sequence[str], texts: Sequence[Sequence[str | None]]) -> Any:
     """``ec_papers()``: a paper list of test papers with the given IDs."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.PaperList([ec_paper(t, i) for i, t in zip(ids, texts, strict=True)])
 
@@ -52,7 +52,7 @@ def identity(x: Any) -> Any:
 
 def ec_direct(paper: Any) -> Any:
     """``ec_direct()``: the module function's own return value (no ``module_run()``)."""
-    from pytacheck.modules.ethics_check import ethics_check
+    from metacheck.modules.ethics_check import ethics_check
 
     return ethics_check(paper)
 

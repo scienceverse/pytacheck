@@ -19,7 +19,7 @@ from unittest import mock
 
 import pandas as pd
 
-from pytacheck.datacheck import files as F
+from metacheck.datacheck import files as F
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -56,8 +56,8 @@ def r_type(s: pd.Series, attrs: dict[str, Any]) -> list[str]:
 def _typed(df: pd.DataFrame | None) -> dict[str, Any] | None:
     if df is None:
         return None
-    from pytacheck.datacheck._colattrs import col_attrs_at
-    from pytacheck.datacheck._files_rdata import _complex_as_character
+    from metacheck.datacheck._colattrs import col_attrs_at
+    from metacheck.datacheck._files_rdata import _complex_as_character
 
     types = [r_type(df.iloc[:, j], col_attrs_at(df, j)) for j in range(df.shape[1])]
     data = df.copy()
@@ -73,16 +73,6 @@ def read_head_typed(path: str, n_rows: float | None = None) -> dict[str, Any] | 
     """``data_read_head(path, n_rows)`` with each column's R type."""
     n = math.inf if n_rows is None else n_rows
     return _typed(F.data_read_head(str(ROOT / path), n_rows=n))
-
-
-def read_delim_typed(
-    path: str, sep: str, header: bool, nrows: float | None = None, encoding: str | None = None
-) -> dict[str, Any] | None:
-    """``utils::read.delim(path, sep, header, nrows, check.names = FALSE)`` with R types."""
-    from pytacheck.datacheck._files_readers import read_delim
-
-    n = math.inf if nrows is None else nrows
-    return _typed(read_delim(str(ROOT / path), sep=sep, header=header, nrows=n, encoding=encoding))
 
 
 def manifest_scenario(scenario: str) -> Any:
@@ -115,36 +105,6 @@ def manifest_scenario(scenario: str) -> Any:
             )
             return [p.replace(tmp, "<tmp>") for p in paths]
     raise ValueError(scenario)
-
-
-def data_group_cache_key() -> str | None:
-    """The LLM cache key of the params ``data_group_llm()`` sends to ``llm()``.
-
-    The R side mocks ``llm()`` and keys ``do.call(ellmer::params, c(params,
-    temperature = 0, max_tokens = 4096))`` -- the params ``llm()`` itself would
-    key -- so an ``int`` seed (a double in R) where R has ``8675309L`` shows up
-    as a different MD5 (the canonical comparison treats 1L and 1 as equal).
-    """
-    from pytacheck.llm.cache import _llm_cache_key
-    from pytacheck.llm.providers import params as ellmer_params
-
-    key: list[str] = []
-
-    def fake_llm(*_a: Any, params: dict[str, Any], **_k: Any) -> Any:
-        p = ellmer_params(**{**params, "temperature": 0, "max_tokens": 4096})
-        key.append(_llm_cache_key("t", "s", None, "m", p))
-        raise RuntimeError("no llm")
-
-    saved = F._llm
-    F._llm = fake_llm
-    try:
-        files = pd.DataFrame(
-            {"file_name": ["first_raw.csv", "second_raw.csv"], "data_type": "data"}
-        )
-        F.data_group_llm(files, model="m")
-    finally:
-        F._llm = saved
-    return key[0] if key else None
 
 
 def _unescape(s: str | None) -> str | None:

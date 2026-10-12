@@ -1,13 +1,13 @@
-"""Contracts every built-in module must satisfy (the checks live in pytacheck.packs.check)."""
+"""Contracts every built-in module must satisfy (the checks live in metacheck.packs.check)."""
 
 from __future__ import annotations
 
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
+from metacheck.module import _builtin_names
+from metacheck.packs.check import metadata_issues, run_issues
 from parity.cases import load_cases
-from pytacheck.module import _builtin_names
-from pytacheck.packs.check import metadata_issues, run_issues
 from tests.httpmock import no_network
 
 BUILTINS = list(_builtin_names())
@@ -39,6 +39,10 @@ def test_module_does_not_mutate_paper(name: str, demo: pc.Paper) -> None:
 
 
 def test_every_module_has_parity_cases() -> None:
+    from metacheck.packs.registry import builtin_pack
+
+    # pytacheck's own modules have no metacheck counterpart to compare with
+    own = set(builtin_pack().manifest.get("pytacheck_modules", ()))
     covered = {c.spec.get("module") for c in load_cases()}
-    missing = sorted(set(BUILTINS) - covered)
+    missing = sorted(set(BUILTINS) - covered - own)
     assert not missing, f"modules without parity cases: {missing}"

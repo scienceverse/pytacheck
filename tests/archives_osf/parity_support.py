@@ -8,7 +8,7 @@ recorded responses (unrecorded requests fail, as under httptest2), no session
 listing cache, no token, no sleeping.
 
 ``filetype()`` (``R/file_category.R``) belongs to another work item; until
-``pytacheck.fileinfo.category`` exists a stub stands in and the cases ignore
+``metacheck.fileinfo.category`` exists a stub stands in and the cases ignore
 the ``filetype`` column.
 """
 
@@ -79,10 +79,10 @@ def _stub_file_category(filename: Any) -> Any:
 def stub_download_many_parallel(
     urls: list[str], dests: list[str], expected_size: Any = float("nan")
 ) -> list[str | None]:
-    """Sequential stand-in for ``pytacheck.archives.download._download_many_parallel``."""
+    """Sequential stand-in for ``metacheck.archives.download._download_many_parallel``."""
     import math
 
-    from pytacheck import http
+    from metacheck import http
 
     sizes = list(expected_size) if isinstance(expected_size, list | tuple) else None
     if sizes is None:
@@ -113,11 +113,11 @@ def _filetype_stub() -> contextlib.AbstractContextManager[None]:
     """Stand-ins for the file-category and download ports until they exist."""
     return _stub_modules(
         {
-            "pytacheck.fileinfo.category": {
+            "metacheck.fileinfo.category": {
                 "filetype": lambda filename: [None for _ in filename],
                 "file_category": _stub_file_category,
             },
-            "pytacheck.archives.download": {
+            "metacheck.archives.download": {
                 "_download_many_parallel": stub_download_many_parallel,
             },
         }
@@ -150,7 +150,7 @@ def run_mocked_local(x: Callable[[], Any]) -> Any:
 
 def run_mocked(x: Callable[[], Any], mock_dirs: tuple[str | Path, ...] = ("apis",)) -> Any:
     """Call *x* against metacheck's recorded API responses (see module docstring)."""
-    from pytacheck import utils
+    from metacheck import utils
     from tests.archives_osf.osfmock import replay_osf
 
     with (
@@ -200,7 +200,7 @@ def read_lines(folder: str, name: str) -> list[str]:
 
 def list_files(folder: str) -> list[str]:
     """R ``sort(list.files(folder))``."""
-    from pytacheck._r import r_sorted
+    from metacheck._r import r_sorted
 
     return r_sorted([p.name for p in Path(folder).iterdir() if not p.name.startswith(".")])
 
@@ -220,7 +220,7 @@ def download_summary(x: Any, folder: str) -> dict[str, Any]:
 
 def list_files_recursive(folder: str) -> list[str]:
     """R ``sort(list.files(folder, recursive = TRUE))``."""
-    from pytacheck._r import r_sorted
+    from metacheck._r import r_sorted
 
     out = []
     for dirpath, dirs, files in os.walk(folder):
@@ -231,8 +231,8 @@ def list_files_recursive(folder: str) -> list[str]:
 
 
 def online_true(fn: Callable[[], Any]) -> Any:
-    """Call *fn* with ``pytacheck.utils.online()`` reporting every host as reachable."""
-    from pytacheck import utils
+    """Call *fn* with ``metacheck.utils.online()`` reporting every host as reachable."""
+    from metacheck import utils
 
     saved = utils.online
     utils.online = lambda *args, **kwargs: True  # type: ignore[assignment]
@@ -255,9 +255,9 @@ def _fake_download_many_parallel(
 def fake_downloads(fn: Callable[[], Any]) -> Any:
     """Call *fn* with file downloads replaced by :func:`_fake_download_many_parallel`."""
     with _stub_modules(
-        {"pytacheck.archives.download": {"_download_many_parallel": stub_download_many_parallel}}
+        {"metacheck.archives.download": {"_download_many_parallel": stub_download_many_parallel}}
     ):
-        mod = __import__("pytacheck.archives.download", fromlist=["_"])
+        mod = __import__("metacheck.archives.download", fromlist=["_"])
         saved = mod._download_many_parallel
         mod._download_many_parallel = _fake_download_many_parallel
         try:

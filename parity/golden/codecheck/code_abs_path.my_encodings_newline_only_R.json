@@ -2,24 +2,21 @@
   "id": "code_abs_path.my_encodings_newline_only_R",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`."
-  ],
+  "warnings": [],
   "value": {
     "t": "df",
     "nrow": 0,
     "names": [
-      "line",
-      "abs_path"
+      "abs_path",
+      "line"
     ],
     "v": [
       {
-        "t": "int",
+        "t": "chr",
         "v": []
       },
       {
-        "t": "chr",
+        "t": "int",
         "v": []
       }
     ]

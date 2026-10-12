@@ -11,8 +11,8 @@ pytest.importorskip("fastapi")
 import httpx
 from fastapi.testclient import TestClient
 
-import pytacheck as pc
-from pytacheck.api.app import available_modules, create_app
+import metacheck as pc
+from metacheck.api.app import available_modules, create_app
 from tests.modsys import api_probe
 from tests.modsys.helpers import mod_src
 
@@ -31,7 +31,7 @@ def packs(ms):
     """An installed pack (allowed on the server) and a path pack (local code: never)."""
     policy = mod_src(
         "policy",
-        header="from pytacheck.module import use_setting",
+        header="from metacheck.module import use_setting",
         body='return {"summary_text": f"allow_local={use_setting(\'allow_local\', True)}"}',
         args="",
     )
@@ -52,14 +52,14 @@ def test_modules_lists_builtins_bare_and_pack_modules_qualified(packs) -> None:
     assert {"inst::policy", "inst::hello"} <= set(mods)
     assert not any("secret" in m or "cwd_mod" in m for m in mods), "no local code"
     body = TestClient(create_app()).get("/paper/modules").json()
-    assert body["modules"] == mods and body["count"] == [len(mods)]
+    assert body["modules"] == mods and body["count"] == len(mods)
 
 
 def test_qualified_module_runs_and_local_code_does_not(packs, demo_json) -> None:
     client = TestClient(create_app())
     r = client.post("/paper/module", files=upload(demo_json), data={"name": "inst::policy"})
     assert r.status_code == 200
-    assert r.json()["summary_text"] == ["allow_local=False"]
+    assert r.json()["summary_text"] == "allow_local=False"
     for name in ("localpack::secret", "secret", "cwd_mod", "./cwd_mod.py"):
         r = client.post("/paper/module", files=upload(demo_json), data={"name": name})
         assert r.status_code == 400, name
@@ -73,8 +73,8 @@ def test_check_with_a_preset(packs, demo_json) -> None:
         "/paper/check", files=upload(demo_json), data={"preset": "inst::both", "report": "false"}
     ).json()
     assert body["modules_run"] == ["inst::policy", "inst::hello", "marginal"]
-    assert body["results"]["inst::policy"]["summary_text"] == ["allow_local=False"]
-    assert body["results"]["inst::hello"]["summary_text"] == ["hi"]
+    assert body["results"]["inst::policy"]["summary_text"] == "allow_local=False"
+    assert body["results"]["inst::hello"]["summary_text"] == "hi"
     bad = client.post("/paper/check", files=upload(demo_json), data={"preset": "nope"})
     assert bad.status_code == 400 and bad.json()["error"].startswith("Invalid preset")
     # explicit modules win over a preset, as before
@@ -87,7 +87,7 @@ def test_check_with_a_preset(packs, demo_json) -> None:
 
 
 def test_check_defaults(packs, demo_json, monkeypatch) -> None:
-    from pytacheck.api.app import _check_selection
+    from metacheck.api.app import _check_selection
 
     # plumber: every available module (not run here: some built-ins use the network)
     assert [m for m, _ in _check_selection({})] == available_modules()
@@ -111,7 +111,7 @@ def test_a_config_preset_naming_local_code_does_not_run_it(packs, demo_json, mon
     if "error" in body:  # refused up front
         assert "localpack" in body["error"]
     else:
-        assert body["results"]["localpack::secret"]["traffic_light"] == ["fail"]
+        assert body["results"]["localpack::secret"]["traffic_light"] == "fail"
 
 
 def _pin(ms) -> dict:

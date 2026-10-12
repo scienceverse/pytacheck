@@ -12,7 +12,7 @@ import json
 
 import pytest
 
-from pytacheck.io.grobid import _tokenize_sentences
+from metacheck.io.grobid import _tokenize_sentences
 from tests.io.conftest import IO_FIXTURES
 
 CASES = json.loads((IO_FIXTURES / "sentences.json").read_text(encoding="utf-8"))["cases"]

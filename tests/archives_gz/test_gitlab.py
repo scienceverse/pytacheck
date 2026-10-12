@@ -9,8 +9,8 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.archives.gitlab import (
+import metacheck as pc
+from metacheck.archives.gitlab import (
     _gitlab_blob_sizes,
     _gitlab_config,
     _gitlab_pat,

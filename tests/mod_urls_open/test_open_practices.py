@@ -10,8 +10,9 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import SECTION_LEVELS, ModuleError
+import metacheck as pc
+from metacheck.core.errors import PytacheckWarning
+from metacheck.module import SECTION_LEVELS, ModuleError
 
 MODULE = "open_practices"
 
@@ -142,7 +143,7 @@ def test_no_statements_report() -> None:
     assert mo.summary_text == "Neither shared data nor code detected."
     # R's report is NULL, so module_run() falls back to the summary text
     assert mo.report == mo.summary_text
-    assert mo.na_replace == {"data_open": False, "code_open": False}
+    assert mo.na_replace == {"data_open": False, "code_open": False, "no_data": False}
     st = mo.summary_table
     assert st.columns.tolist() == [
         "paper_id",
@@ -151,6 +152,7 @@ def test_no_statements_report() -> None:
         "materials_open",
         "prereg_open",
         "on_request",
+        "no_data",
         "data_statements",
         "code_statements",
         "materials_statements",
@@ -254,11 +256,15 @@ def test_paperlist_summary_text(psychsci: pc.PaperList, demo: pc.Paper) -> None:
 
 
 def test_duplicate_paper_ids(demo: pc.Paper) -> None:
-    # U101: metacheck stops with "factor level [2] is duplicated"
-    single = run(demo)
-    mo = run(pc.PaperList([demo, demo]))
-    assert mo.traffic_light == single.traffic_light
-    assert mo.summary_text == single.summary_text
+    # U101: metacheck stops with "factor level [2] is duplicated"; U208: the second paper
+    # is renamed, so the list is two papers
+    with pytest.warns(PytacheckWarning, match="'to_err_is_human' as 'to_err_is_human~2'"):
+        mo = run(pc.PaperList([demo, demo]))
+    assert mo.summary_table["paper_id"].tolist() == ["to_err_is_human", "to_err_is_human~2"]
+    assert (
+        mo.summary_text
+        == "2 papers shared both data and code, 0 only data, 0 only code, and 0 neither."
+    )
 
 
 def test_empty_paper_list() -> None:
@@ -349,3 +355,103 @@ def test_chained_na_replace_leaves_open_practices_columns() -> None:
     assert pd.isna(st["materials_open"].tolist()[1])
     assert st["on_request"].tolist()[::2] == [False, True]
     assert st["urls"].tolist() == [1, 0, 1]
+
+
+def test_list_column_in_the_text_table() -> None:
+    # papers from older bibr exports have a list column (_bbox_2d) in the text table;
+    # it is part of the join key, and the module used to stop on the unhashable list
+    texts = [
+        "The data are available at https://osf.io/abc.",
+        "Code is on GitHub: github.com/a/b.",
+        "Data and code are available at https://osf.io/abc.",
+    ]
+    plain = run(pc.test_paper(texts))
+    paper = pc.test_paper(texts)
+    paper["text"]["_bbox_2d"] = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+    out = run(paper)
+    assert out.traffic_light == plain.traffic_light == "green"
+    assert out.summary_text == plain.summary_text
+    assert len(out.table) == len(plain.table)
+
+
+# ---------------------------------------------------------------------------
+# D83: bibr's data availability statement
+# ---------------------------------------------------------------------------
+
+
+def _with_statement(sentences: list[str], statement: str) -> pc.Paper:
+    paper = pc.test_paper(sentences)
+    info = paper["info"].copy()
+    info["data_availability"] = pd.array([statement], dtype="string")
+    paper["info"] = info
+    return paper
+
+
+def test_statement_sentences_need_no_data_word() -> None:
+    paper = _with_statement(
+        ["We ran a study."],
+        "All data used are publicly available. They can be found at https://osf.io/abc.",
+    )
+    mo = run(paper)
+    assert (mo.traffic_light, mo.summary_text) == ("yellow", "Shared data detected.")
+    assert mo.table["text"].tolist() == ["They can be found at https://osf.io/abc."]
+    assert mo.table["text_id"].isna().all()  # the statement is not in the text
+    assert mo.summary_table["data_statements"].tolist() == [
+        ["They can be found at https://osf.io/abc."]
+    ]
+
+
+def test_statement_in_the_text_is_not_added_twice() -> None:
+    paper = _with_statement(
+        ["Data are available at https://osf.io/abc."], "Data are available at https://osf.io/abc."
+    )
+    mo = run(paper)
+    assert mo.table["text_id"].tolist() == [1]
+
+
+def test_statement_naming_code_is_not_a_data_statement() -> None:
+    paper = _with_statement(
+        ["We ran a study."], "The analysis code can be found at https://github.com/a/b."
+    )
+    mo = run(paper)
+    assert mo.summary_table["data_open"].tolist() == [False]
+    assert mo.summary_table["code_open"].tolist() == [True]
+
+
+def test_no_data_to_share() -> None:
+    paper = _with_statement(
+        ["We review the literature."],
+        "Data sharing is not applicable to this article as no new data were created or "
+        "analyzed in this study.",
+    )
+    mo = run(paper)
+    assert mo.traffic_light == "yellow"
+    assert mo.summary_text == "No shared code detected; the paper states it has no data to share."
+    assert mo.summary_table["no_data"].tolist() == [True]
+    assert mo.report[0] == (
+        "The data availability statement says there are no data to share for this article."
+    )
+
+
+def test_no_data_with_shared_code_is_green() -> None:
+    paper = _with_statement(
+        ["The simulation code is available at https://github.com/a/b."],
+        "No data were collected for this study.",
+    )
+    mo = run(paper)
+    assert mo.traffic_light == "green"
+    assert mo.summary_text == "Shared code detected; the paper states it has no data to share."
+
+
+def test_no_data_counts_in_a_paper_list() -> None:
+    papers = pc.PaperList(
+        [
+            _with_statement(["We review."], "No data were used for the research described."),
+            pc.test_paper(["Data are available at https://osf.io/abc."]),
+        ]
+    )
+    mo = run(papers)
+    assert mo.summary_text == (
+        "0 papers shared both data and code, 1 only data, 0 only code, and 1 neither; "
+        "1 paper states that there are no data to share."
+    )

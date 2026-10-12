@@ -65,7 +65,7 @@ def fuzz_names() -> list[str]:
     """~800 file names: documentation/data/code words x separators x extensions."""
     import random
 
-    from pytacheck.fileinfo.types import file_types
+    from metacheck.fileinfo.types import file_types
 
     rng = random.Random(20260925)
     exts = file_types()["ext"].tolist()
@@ -101,10 +101,6 @@ def fuzz_names() -> list[str]:
 
 def main() -> None:
     cases: list[dict[str, Any]] = []
-
-    # -- .parse_zip_central_dir(): names with NULs, empty names ----------------
-    for f in ("trailnul", "emptyname", "emptyname_last", "bigoffset", "allnul", "midnul"):
-        cases.append(call(f"cd.{f}", "rv_cd", "cd", {"fixture": f"review/{f}.cd"}))
 
     # -- zip_peek() over the range server --------------------------------------
     for z in ("paths.zip", "cp437.zip", "crc.zip", "climb.zip"):
@@ -168,7 +164,159 @@ def main() -> None:
         )
     )
 
-    # -- .zip_fetch_members() / .zip_member_fetch() ------------------------------
+    # -- hosts that refuse HEAD (S3: Dryad, Figshare, Harvard Dataverse) --------
+    # A HEAD answered 403 (an error page's Content-Length must not count), the
+    # tail then asked for by a suffix range whose Content-Range gives the size.
+    crc = f"{SRV}/crc.zip"
+    head_403 = {
+        "url": crc,
+        "method": "HEAD",
+        "status": 403,
+        "length": False,
+        "headers": {"Content-Length": "243"},
+    }
+    cases += [
+        call(
+            "peek.s3_head_refused",
+            "rv_peek",
+            "peek",
+            {"routes": [head_403, route("crc.zip", suffix="206")], "url": crc},
+        ),
+        call(
+            "peek.s3_head_refused_small_tail",
+            "rv_peek",
+            "peek",
+            {
+                "routes": [head_403, route("crc.zip", suffix="206")],
+                "url": crc,
+                "tail_bytes": 100,
+            },
+        ),
+        call(
+            "peek.no_length_suffix",
+            "rv_peek",
+            "peek",
+            {"routes": [route("crc.zip", length=False, suffix="206")], "url": crc},
+        ),
+        call(
+            "peek.suffix_ignored",
+            "rv_peek",
+            "peek",
+            {"routes": [head_403, route("crc.zip", suffix="ignore")], "url": crc},
+        ),
+        call(
+            "peek.suffix_416",
+            "rv_peek",
+            "peek",
+            {"routes": [head_403, route("crc.zip", suffix="416")], "url": crc},
+        ),
+        call(
+            "peek.suffix_refused",
+            "rv_peek",
+            "peek",
+            {"routes": [head_403, route("crc.zip", status=403)], "url": crc},
+        ),
+        call(
+            "decision.s3_head_refused",
+            "rv_decision",
+            "decision",
+            {"routes": [head_403, route("crc.zip", suffix="206")], "url": crc},
+        ),
+        call(
+            "fetch.s3_head_refused",
+            "rv_fetch",
+            "fetch",
+            {"routes": [head_403, route("crc.zip", suffix="206")], "url": crc},
+        ),
+        call(
+            "fetch.s3_suffix_416",
+            "rv_fetch",
+            "fetch",
+            {
+                "routes": [
+                    {**head_403, "url": f"{SRV}/paths.zip"},
+                    route("paths.zip", suffix="416"),
+                ],
+                "url": f"{SRV}/paths.zip",
+                "names": ["ok/data.csv", "dup.csv"],
+            },
+        ),
+    ]
+
+    # -- .remote_size(): HEAD, then a one-byte ranged GET ------------------------
+    sz = f"{SRV}/sz"
+    cases += [
+        call("size.head", "rv_size", "size", {"routes": [route("crc.zip")], "url": crc}),
+        call(
+            "size.head_refused",
+            "rv_size",
+            "size",
+            {"routes": [head_403, route("crc.zip")], "url": crc},
+        ),
+        call(
+            "size.no_length",
+            "rv_size",
+            "size",
+            {"routes": [route("crc.zip", length=False)], "url": crc},
+        ),
+        call(
+            "size.range_ignored",
+            "rv_size",
+            "size",
+            {"routes": [route("crc.zip", length=False, range=False)], "url": crc},
+        ),
+        call(
+            "size.private",
+            "rv_size",
+            "size",
+            {
+                "routes": [{"url": f"{sz}/p.csv", "status": 403, "body": "denied"}],
+                "url": f"{sz}/p.csv",
+            },
+        ),
+        call(
+            "size.head_404",
+            "rv_size",
+            "size",
+            {
+                "routes": [
+                    {"url": f"{sz}/h.csv", "method": "HEAD", "status": 404},
+                    {"url": f"{sz}/h.csv", "body": "abcdef"},
+                ],
+                "url": f"{sz}/h.csv",
+            },
+        ),
+        call("size.no_route", "rv_size", "size", {"routes": [], "url": f"{sz}/none.csv"}),
+    ]
+
+    # -- zip_peek(cache = TRUE): the on-disk cache across sessions ---------------
+    cases += [
+        call(
+            "peek_cache.reused",
+            "rv_peek_cached",
+            "peek_cached",
+            {"first": [route("crc.zip")], "second": [], "url": crc},
+        ),
+        call(
+            "peek_cache.failure_kept",
+            "rv_peek_cached",
+            "peek_cached",
+            {"first": [route("crc.zip", range=False)], "second": [route("crc.zip")], "url": crc},
+        ),
+        call(
+            "peek_cache.rate_limited_not_kept",
+            "rv_peek_cached",
+            "peek_cached",
+            {
+                "first": [route("crc.zip")],
+                "second": [route("crc.zip")],
+                "url": crc,
+                "rate_limited": True,
+            },
+        ),
+    ]
+
+    # -- .zip_fetch_members() ------------------------------
     cases += [
         call(
             "fetch.paths_all",
@@ -237,29 +385,6 @@ def main() -> None:
             {"routes": [route("bzcrc.zip")], "url": f"{SRV}/bzcrc.zip"},
         ),
     ]
-    for name in ("good.csv", "badcrc.csv", "badsize.csv", "empty.csv", "stored.txt"):
-        cases.append(
-            call(
-                f"member.{name}",
-                "rv_member",
-                "member",
-                {"routes": [route("crc.zip")], "url": f"{SRV}/crc.zip", "name": name},
-            )
-        )
-    cases.append(
-        call(
-            "member.badcrc_noverify",
-            "rv_member",
-            "member",
-            {
-                "routes": [route("crc.zip")],
-                "url": f"{SRV}/crc.zip",
-                "name": "badcrc.csv",
-                "verify": False,
-            },
-        )
-    )
-
     # -- .expand_zip() / .expand_tar(): what R's unzip / GNU tar extract ---------
     for z in (
         "paths.zip",
@@ -308,11 +433,8 @@ def main() -> None:
             "rv_expand",
             "expand",
             {"fn": TAR_FN, "fixture": "review/abslink.tar.gz"},
-            known_divergence=(
-                "GNU tar (R's untar) extracts a symlink to an absolute path; pytacheck "
-                "refuses links that leave the extraction folder (tarfile's data filter), "
-                "so abs_link.csv is not listed"
-            ),
+            # its mark (a link that leaves the folder is refused) is in
+            # parity/divergences/archives.yaml
         )
     )
 
@@ -615,6 +737,61 @@ def main() -> None:
         )
     )
 
+    # -- GitHub's zipball: the size estimated from the listed files -------------
+    # No whole-repository archive reports its size: an archive with no listed
+    # sizes, or an estimate above 2x the budget, is not used, and one that grows
+    # past 2x the budget while downloading is stopped (files then one by one).
+    csv = 817  # bytes of the CSV each member holds
+
+    def gh(case_id: str, name: str, sizes: list[Any], **kw: Any) -> dict[str, Any]:
+        raw = f"https://raw.githubusercontent.com/owner/{name}/main"
+        body = "id,x\n" + "".join(f"{i},{i * 3}\n" for i in range(120))
+        return call(
+            case_id,
+            "rv_download_spy",
+            "download_spy",
+            {
+                "routes": [
+                    {"url": f"https://github.com/owner/{name}", "body": ""},
+                    {
+                        "url": f"https://api.github.com/repos/owner/{name}/zipball",
+                        "fixture": "review/gh.zip",
+                    },
+                    {"url": f"{raw}/a.csv", "body": body},
+                    {"url": f"{raw}/sub/b.csv", "body": body},
+                ],
+                "files": {
+                    "$df": {
+                        "repo_url": [f"https://github.com/owner/{name}"] * 2,
+                        "file_name": ["a.csv", "b.csv"],
+                        "file_path": ["a.csv", "sub/b.csv"],
+                        "file_url": [f"{raw}/a.csv", f"{raw}/sub/b.csv"],
+                        "file_size": sizes,
+                    }
+                },
+                **kw,
+            },
+        )
+
+    cases += [
+        gh("download.github_archive", "repo-zip", [csv, csv]),
+        gh("download.github_unsized", "repo-unsized", [None, None]),
+        gh(
+            "download.github_too_large",
+            "repo-big",
+            [csv, 5 * 1024 * 1024],
+            max_file_size=1,
+            max_download_size=1,
+        ),
+        gh("download.github_capped", "repo-cap", [1, 1], max_download_size=0.0001),
+        gh(
+            "download.github_no_budget",
+            "repo-inf",
+            [csv, csv],
+            max_download_size={"$expr": {"r": "Inf", "py": "float('inf')"}},
+        ),
+    ]
+
     # -- file names that are not valid UTF-8 --------------------------------------
     bad_r = 'c("caf\\x82.csv", "ok.R", "READ\\x82ME.txt", "code\\x82book.csv", "x\\x82.R")'
     bad_py = '["caf\\udc82.csv", "ok.R", "READ\\udc82ME.txt", "code\\udc82book.csv", "x\\udc82.R"]'
@@ -638,7 +815,7 @@ def main() -> None:
         {
             "id": "invalid.check_file_naming",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {"file_name": {"$expr": {"r": bad_r, "py": bad_py}}},
         }
     )
@@ -646,7 +823,7 @@ def main() -> None:
         {
             "id": "invalid.check_file_naming_path",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {
                 "file_name": "ok.csv",
                 "file_path": {"$expr": {"r": '"d\\x82/ok.csv"', "py": '"d\\udc82/ok.csv"'}},
@@ -657,7 +834,7 @@ def main() -> None:
         {
             "id": "invalid.check_file_naming_dir_only",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {
                 "file_name": {"$expr": {"r": '"d\\x82/ok.csv"', "py": '"d\\udc82/ok.csv"'}},
                 "file_path": "d/ok.csv",
@@ -668,7 +845,7 @@ def main() -> None:
         {
             "id": "invalid.is_readable_archive",
             "r": "metacheck:::.is_readable_archive",
-            "py": "pytacheck.archives.zip_peek._is_readable_archive",
+            "py": "metacheck.archives.zip_peek._is_readable_archive",
             "args": {
                 "name": {
                     "$expr": {
@@ -703,7 +880,7 @@ def main() -> None:
         {
             "id": "check_file_naming.odd_paths",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {"file_name": odd},
         }
     )
@@ -711,7 +888,7 @@ def main() -> None:
         {
             "id": "check_file_naming.odd_paths_as_path",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {"file_name": [f"f{i}.csv" for i in range(len(odd))], "file_path": odd},
         }
     )
@@ -722,7 +899,7 @@ def main() -> None:
         {
             "id": "file_category.generated_names",
             "r": "file_category",
-            "py": "pytacheck.fileinfo.category.file_category",
+            "py": "metacheck.fileinfo.category.file_category",
             "args": {"contents": names},
         }
     )
@@ -730,7 +907,7 @@ def main() -> None:
         {
             "id": "filetype.generated_names",
             "r": "filetype",
-            "py": "pytacheck.fileinfo.category.filetype",
+            "py": "metacheck.fileinfo.category.filetype",
             "args": {"filename": names},
         }
     )
@@ -738,7 +915,7 @@ def main() -> None:
         {
             "id": "check_file_naming.generated_names",
             "r": "check_file_naming",
-            "py": "pytacheck.fileinfo.naming.check_file_naming",
+            "py": "metacheck.fileinfo.naming.check_file_naming",
             "args": {
                 "file_name": names,
                 "data_type": {"$chr": ["unknown", "data", None, "code", "unknown"]},

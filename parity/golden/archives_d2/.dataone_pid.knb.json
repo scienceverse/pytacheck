@@ -1,0 +1,31 @@
+{
+  "id": ".dataone_pid.knb",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "doi:10.5063/F1Z60M87",
+      "doi:10.5063/F1Z60M87",
+      "knb.1404.1",
+      "knb.1404.1",
+      null,
+      null,
+      null,
+      null
+    ],
+    "names": [
+      "https://knb.ecoinformatics.org/#view/doi:10.5063/F1Z60M87",
+      "https://knb.ecoinformatics.org/catalog/view/doi:10.5063/F1Z60M87",
+      "knb.1404.1",
+      " knb.1404.1 ",
+      "KNB.1404.1",
+      "knb.1404",
+      "see knb.1404.1 here",
+      "https://knb.ecoinformatics.org/view/knb.1404.1"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

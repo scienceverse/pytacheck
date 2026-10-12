@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pytacheck.datacheck import checks as C
+from metacheck.datacheck import checks as C
 
 
 def detect_header_row(rows: Any, max_scan: int = 4) -> dict[str, Any]:
@@ -59,7 +59,7 @@ def profile_file(path: str) -> dict[str, Any] | None:
     The Python side of the ``fixture_profile.*`` cases; the R side is the
     ``FIXTURE_PROFILE_R`` expression in ``gen_parity_cases.py``.
     """
-    from pytacheck.datacheck.files import data_read_head
+    from metacheck.datacheck.files import data_read_head
 
     d = data_read_head(path, n_rows=float("inf"))
     if d is None:

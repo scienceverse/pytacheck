@@ -78,7 +78,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 2,
         "names": [
           "repo_url",
           "file_name",
@@ -89,23 +89,38 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://example.org/rp",
+              "https://example.org/rp"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "b.csv",
+              "evil.csv"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://srv.example.org/paths.zip",
+              "https://srv.example.org/paths.zip"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              null,
+              null
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "could not write the extracted member to disk",
+              "entry path escapes the archive (path traversal)"
+            ]
           }
         ]
       },

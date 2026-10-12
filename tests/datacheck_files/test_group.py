@@ -2,7 +2,7 @@
 
 Ports of the data_group_llm / .llm_classify_batched / .strip_llm_wrapper tests in
 upstream tests/testthat/test-codebook-helpers.R, plus the deterministic
-grouping passes. ``files._llm`` is the hook that calls pytacheck.llm.core.llm();
+grouping passes. ``files._llm`` is the hook that calls metacheck.llm.core.llm();
 tests replace it so nothing reaches a provider.
 """
 
@@ -13,7 +13,7 @@ from typing import Any
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck import files as F
+from metacheck.datacheck import files as F
 
 
 @pytest.fixture
@@ -136,7 +136,7 @@ def test_group_llm_uses_mocked_assignments(monkeypatch: pytest.MonkeyPatch) -> N
 
 
 def test_study_roster_from_text() -> None:
-    import pytacheck as pc
+    import metacheck as pc
 
     paper = pc.test_paper(
         ["In Experiment 1 we tested x.", "Study 2a replicated it.", "A pilot 1 preceded both."]

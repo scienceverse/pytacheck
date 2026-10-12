@@ -11,6 +11,7 @@ accuracy  Score pytacheck against metacheck on the realistic corpus (parity.accu
 Examples::
 
     python -m parity generate --area text          # needs R + metacheck
+    python -m parity generate --jobs 0             # every area, one R session per CPU
     python -m parity check --area text -v
     python -m parity check --area core,text_extract+review  # core, text_extract(_review)
     python -m parity check --only text_search.demo.significant
@@ -80,6 +81,7 @@ from typing import Any
 
 import orjson
 
+from metacheck._env import fold_to_legacy
 from parity.canonical import canonical
 from parity.cases import (
     NEEDS_R_REASON,
@@ -150,16 +152,82 @@ def cmd_generate(ns: argparse.Namespace) -> int:
         return 1
     rscript = _rscript(ns.rscript)
     env = without_credentials({**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"})
-    status = 0
     # one R session per case file: what a case leaves behind (a package it
     # loaded, an option it set) must not change the goldens of other areas, so
-    # that `--area x` and a full run write the same files
+    # that `--area x` and a full run write the same files. Each session writes
+    # only its own area's folder, so sessions can also run side by side.
+    cmds = []
     for f in files:
         cmd = [rscript, str(ROOT / "parity" / "r" / "run_cases.R"), str(ROOT), f]
         if ns.only:
             cmd += ["--only", ",".join(ns.only)]
-        status = max(status, subprocess.call(cmd, env=env, cwd=ROOT))
+        cmds.append(cmd)
+    jobs = ns.jobs if ns.jobs > 0 else os.cpu_count() or 1
+    before = _tree_changes()
+    status = _run_sessions(cmds, env, jobs)
+    left = sorted(_tree_changes() - before)
+    if left:
+        # what a case writes into the checkout can reach another area's
+        # goldens, above all when sessions run side by side
+        print(
+            "warning: the R sessions changed files outside parity/golden (a case "
+            "should write to a temporary copy):\n  " + "\n  ".join(left),
+            file=sys.stderr,
+        )
     return status
+
+
+def _run_sessions(cmds: list[list[str]], env: Mapping[str, str], jobs: int) -> int:
+    """Run the R sessions, *jobs* at a time; the worst exit status."""
+    if jobs == 1 or len(cmds) < 2:
+        return max(subprocess.call(cmd, env=env, cwd=ROOT) for cmd in cmds)
+
+    def run(cmd: list[str]) -> int:
+        # buffered, so that each file's progress lines come out together
+        done = subprocess.run(
+            cmd, env=env, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+        sys.stdout.buffer.write(done.stdout)
+        sys.stdout.flush()
+        return done.returncode
+
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=jobs) as pool:
+        return max(pool.map(run, cmds))
+
+
+def _tree_changes() -> set[str]:
+    """``git status`` lines of the checkout and its submodules, outside the goldens
+    and parity/_out (empty when git is not available)."""
+    try:
+        out = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=all", "--ignore-submodules=none"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+        sub = ROOT / "upstream" / "metacheck"
+        if (sub / ".git").exists():
+            out += "".join(
+                f"{line[:3]}upstream/metacheck/{line[3:]}\n"
+                for line in subprocess.run(
+                    ["git", "status", "--porcelain", "--untracked-files=all"],
+                    cwd=sub,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                ).stdout.splitlines()
+            )
+    except (OSError, subprocess.CalledProcessError):
+        return set()
+    skip = ("parity/golden/", "parity/_out/")
+    return {
+        line
+        for line in out.splitlines()
+        if line[3:] != "upstream/metacheck" and not line[3:].startswith(skip)
+    }
 
 
 # -- one case ---------------------------------------------------------------------------
@@ -327,7 +395,7 @@ def _run_case(
     err: Exception | None = None
     start = time.perf_counter()
     try:
-        with watch_run() as run, no_network(attempts), _case_cache_dir():
+        with watch_run() as run, no_network(attempts), _case_cache_dir(), _case_rate_limits():
             result = run_python(case)
     except RWithoutReference:
         res.seconds = time.perf_counter() - start
@@ -458,6 +526,23 @@ def _case_cache_dir() -> Iterator[None]:
                 os.environ.pop("PYTACHECK_CACHE_DIR", None)
             else:
                 os.environ["PYTACHECK_CACHE_DIR"] = base
+
+
+@contextlib.contextmanager
+def _case_rate_limits() -> Iterator[None]:
+    """A fresh memory of rate-limited hosts for one case (``metacheck.http``'s).
+
+    A case that records a host's reset (a mocked 429) must not make the next one
+    to the same address wait or give up.
+    """
+    from metacheck import http
+
+    saved = http._host_reset
+    http._host_reset = {}
+    try:
+        yield
+    finally:
+        http._host_reset = saved
 
 
 # -- many cases -------------------------------------------------------------------------
@@ -621,7 +706,7 @@ def stale_quarantine_entries(cases: list[Case], areas: list[str] | None = None) 
 
 #: the modules of the ``data`` extra without which some cases differ from R (with
 #: matplotlib and pypdf missing, none do)
-_EXTRA_MODULES = ("pyreadstat", "xlrd", "snowballstemmer")
+_EXTRA_MODULES = ("pyreadstat", "xlrd", "snowballstemmer", "striprtf")
 
 
 def environment_problems() -> list[str]:
@@ -1073,18 +1158,25 @@ _CACHE_DIR: Any = None  # the throwaway cache dir, removed at exit
 
 
 def _hermetic_env() -> None:
-    """No user/project config, and throwaway data and cache dirs, unless the caller set them.
+    """No user/project config, no retry sleeps, and throwaway data and cache dirs, unless the caller set them.
 
     As under pytest (``tests/conftest.py``): without ``PYTACHECK_CACHE_DIR``
     the caches (``.metacheck_repo_cache``, the LLM cache, ...) would go to the
     working directory, the checkout, as metacheck's do (the R runner points
     them at a temporary directory too). Each case gets a fresh directory inside
     the cache dir (``_case_cache_dir``).
+
+    A ``METACHECK_*`` twin in the caller's environment is folded into its
+    ``PYTACHECK_*`` name first, so it cannot shadow these folders or dodge the
+    ``<data>``/``<cache>`` placeholders (``lockfile.watch_run``).
     """
     global _DATA_DIR, _CACHE_DIR
     import atexit
 
+    fold_to_legacy()
+
     os.environ.setdefault("PYTACHECK_CONFIG", "none")
+    os.environ.setdefault("PYTACHECK_NO_SLEEP", "1")  # no backoff against mocks, as under pytest
     if not os.environ.get("PYTACHECK_DATA_DIR"):
         _DATA_DIR = tempfile.TemporaryDirectory(prefix="pytacheck-parity-data-")
         atexit.register(_DATA_DIR.cleanup)
@@ -1134,6 +1226,14 @@ def main(argv: list[str] | None = None) -> int:
     _add_area(g)
     g.add_argument("--only", nargs="*")
     g.add_argument("--rscript")
+    g.add_argument(
+        "-j",
+        "--jobs",
+        type=int,
+        default=1,
+        metavar="N",
+        help="run N case files' R sessions side by side (0: one per CPU; default 1)",
+    )
     g.set_defaults(func=cmd_generate)
     c = sub.add_parser("check", help="compare Python with goldens")
     _add_selection(c)

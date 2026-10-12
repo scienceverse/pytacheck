@@ -10,7 +10,7 @@ import math
 
 import pytest
 
-from pytacheck.stats.statcheck import (
+from metacheck.stats.statcheck import (
     VAR_APAFACTOR,
     VAR_DF1,
     VAR_DF2,

@@ -9,13 +9,13 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.archives.cache import (
+from metacheck.archives.cache import (
     _format_big_mark,
     _metacheck_cache_root,
     _metacheck_cache_subdir,
     _metacheck_dir_size,
 )
-from pytacheck.archives.info_cache import (
+from metacheck.archives.info_cache import (
     _repo_info_cache_dir,
     _repo_info_cache_get,
     _repo_info_cache_key,
@@ -26,7 +26,7 @@ from pytacheck.archives.info_cache import (
     repo_info_cache,
     repo_info_cache_clear,
 )
-from pytacheck.utils import local_options
+from metacheck.utils import local_options
 
 
 def test_cache_root_and_subdir(tmp_path: Path) -> None:
@@ -64,9 +64,9 @@ def test_format_big_mark() -> None:
 
 
 def test_metacheck_cache_info(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    pytest.importorskip("pytacheck.archives.download")
-    pytest.importorskip("pytacheck.llm.cache")
-    from pytacheck.archives.cache import metacheck_cache_info
+    pytest.importorskip("metacheck.archives.download")
+    pytest.importorskip("metacheck.llm.cache")
+    from metacheck.archives.cache import metacheck_cache_info
 
     monkeypatch.delenv("METACHECK_LLM_CACHE_DIR", raising=False)
     with local_options({"metacheck.cache.dir": str(tmp_path)}):
@@ -96,7 +96,7 @@ def test_repo_info_cache_roundtrip(tmp_path: Path) -> None:
         Path(_repo_info_cache_path("osf", "bad")).write_bytes(b"not json")
         assert _repo_info_cache_get("osf", "bad") is None
         Path(_repo_info_cache_path("osf", "old")).write_bytes(
-            b'{"format": "pytacheck.repo_info_cache", "version": 0, "value": 1}'
+            b'{"format": "metacheck.repo_info_cache", "version": 0, "value": 1}'
         )
         assert _repo_info_cache_get("osf", "old") is None
         (tmp_path / "info" / "other.txt").write_text("keep")

@@ -12,10 +12,10 @@ import httpx
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.fsd import fsd_links
-from pytacheck.archives.osf_helpers import _resp_body_json
-from pytacheck.archives.psycharchives import (
+import metacheck as pc
+from metacheck.archives.fsd import fsd_links
+from metacheck.archives.osf_helpers import _resp_body_json
+from metacheck.archives.psycharchives import (
     PasteLengthError,
     _paste_json,
     _resp_json,
@@ -112,7 +112,7 @@ def test_fsd_links_empty_paper_list() -> None:
 
 
 def test_json_field_arrays_follow_r_replacement_rules() -> None:
-    from pytacheck.archives.dataverse import _field_cell
+    from metacheck.archives.dataverse import _field_cell
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")

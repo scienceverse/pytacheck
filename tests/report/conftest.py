@@ -32,7 +32,7 @@ def html_fixture():
 @pytest.fixture
 def quiet():
     """Progress bars and messages off."""
-    from pytacheck.config import verbose
+    from metacheck.config import verbose
 
     old = verbose()
     verbose(False)

@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.db.doi import doi_clean, doi_lookup, doi_resolves, doi_valid_format
+from metacheck.db.doi import doi_clean, doi_lookup, doi_resolves, doi_valid_format
 
 EXP = "10.1038/nphys1170"
 

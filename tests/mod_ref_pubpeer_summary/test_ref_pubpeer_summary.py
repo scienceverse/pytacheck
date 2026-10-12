@@ -12,10 +12,10 @@ import warnings
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleError, module_list, module_run
-from pytacheck.modules.ref_summary import _accuracy_mismatches, _join
-from pytacheck.report.blocks import ReportTable
+import metacheck as pc
+from metacheck.module import ModuleError, module_list, module_run
+from metacheck.modules.ref_summary import _accuracy_mismatches, _join
+from metacheck.report.blocks import ReportTable
 from tests.mod_ref_pubpeer_summary import helpers as H
 
 # -- registration -------------------------------------------------------------------

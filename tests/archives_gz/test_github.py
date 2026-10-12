@@ -5,9 +5,9 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives import github
-from pytacheck.archives.github import (
+import metacheck as pc
+from metacheck.archives import github
+from metacheck.archives.github import (
     _github_config,
     github_files,
     github_info,

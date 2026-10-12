@@ -11,14 +11,15 @@ import warnings
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import orjson
 import pandas as pd
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
+from metacheck.io import bibr12
 from parity.canonical import canonical
 from parity.compare import Options, compare
-from pytacheck.io import bibr12
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -397,11 +398,11 @@ def test_from_bibr_reads_12x_natively(f12) -> None:
 
 
 def test_chew_returns_native_12x_papers(f12, monkeypatch: pytest.MonkeyPatch) -> None:
-    """``pytacheck.io.bibr.chew()`` with a stand-in bibr that returns 12.0 exports."""
+    """``metacheck.io.bibr.chew()`` with a stand-in bibr that returns 12.0 exports."""
     import sys
     import types
 
-    from pytacheck.io import bibr as bibr_io
+    from metacheck.io import bibr as bibr_io
 
     data = read_json(f12("full"))
 
@@ -442,33 +443,47 @@ def test_lazy_tables_equal_bibr12_df(f12, name: str) -> None:
         assert not same(got, expected), (tbl, same(got, expected))
 
 
-def test_bibr12_json_matches_jsonlite() -> None:
-    """jsonlite's toJSON(pretty = TRUE, auto_unbox = TRUE, digits = NA) layout."""
+def test_bibr12_json_layout_and_values() -> None:
+    """Two-space indentation, one value per line; every value reads back as written."""
     x = {
         "s": 'a"b\\c/d</e\n\t\x01\x7fé',
         "n": None,
+        "na": pd.NA,
         "e": [],
         "o": {},
         "arr": bibr12._Array(["a", None]),
         "arr0": bibr12._Array(),
-        "nums": [1, 0.1 + 0.2, 1e-5, 1e5, 1e21, 2147483648, float("nan"), True],
+        "nums": [1, 0.1 + 0.2, 1e-5, 1e5, 1e21, 2147483648, float("nan"), float("inf"), True],
+        "np": [np.int64(3), np.float64(1.5), np.bool_(False)],
         "rows": [{"a": 1, "b": [bibr12._Array(["x"])]}],
     }
-    assert bibr12.bibr12_json(x) == (
-        "{\n"
-        '  "s": "a\\"b\\\\c/d<\\/e\\n\\t\\u0001\x7fé",\n'
-        '  "n": null,\n'
-        '  "e": [],\n'
-        '  "o": {},\n'
-        '  "arr": ["a", null],\n'
-        '  "arr0": [],\n'
-        # a double 15 significant digits would change is written in full
-        # (jsonlite: 0.3; U22)
-        '  "nums": [\n    1,\n    0.30000000000000004,\n    1e-05,\n    100000,\n    1e+21,\n'
-        "    2147483648,\n    null,\n    true\n  ],\n"
-        '  "rows": [\n    {\n      "a": 1,\n      "b": [\n        ["x"]\n      ]\n    }\n  ]\n'
-        "}"
-    )
+    text = bibr12.bibr12_json(x)
+    assert text.startswith('{\n  "s": ')
+    assert '  "e": [],\n  "o": {},\n' in text
+    assert '  "arr": [\n    "a",\n    null\n  ],\n  "arr0": [],\n' in text
+    got = orjson.loads(text)
+    assert got == {
+        "s": x["s"],
+        "n": None,
+        "na": None,
+        "e": [],
+        "o": {},
+        "arr": ["a", None],
+        "arr0": [],
+        # a double that 15 significant digits would change is kept in full (U22)
+        "nums": [1, 0.30000000000000004, 1e-05, 100000, 1e21, 2147483648, None, None, True],
+        "np": [3, 1.5, False],
+        "rows": [{"a": 1, "b": [["x"]]}],
+    }
+    assert isinstance(got["nums"][2], float)
+
+
+def test_bibr12_json_other_types() -> None:
+    table = pd.DataFrame({"a": [1, 2], "b": ["x", None]})
+    got = orjson.loads(bibr12.bibr12_json({"t": table, 3: "three", "p": Path("a/b")}))
+    assert got == {"t": [{"a": 1, "b": "x"}, {"a": 2, "b": None}], "3": "three", "p": "a/b"}
+    with pytest.raises(TypeError):
+        bibr12.bibr12_json(2**70)
 
 
 def test_bibr12_helpers() -> None:
@@ -520,7 +535,7 @@ def test_older_papers_read_as_before() -> None:
 
 
 def _builtin_modules() -> list[str]:
-    from pytacheck.module import _builtin_names
+    from metacheck.module import _builtin_names
 
     return list(_builtin_names())
 
@@ -535,7 +550,7 @@ def test_every_module_runs_on_bibr12_papers(f12, module: str, name: str) -> None
     never leaves the machine. Modules that need no network or LLM are compared
     with metacheck in the bibr12 parity cases.
     """
-    from pytacheck.packs.check import run_issues
+    from metacheck.packs.check import run_issues
     from tests.httpmock import replay
 
     paper = pc.read(f12(name))

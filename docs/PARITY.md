@@ -40,6 +40,7 @@ export PYTACHECK_RSCRIPT=$(which Rscript)
 
 python -m parity generate --area text          # R -> parity/golden/text/*.json
 python -m parity generate --area text --only text_search.demo.significant
+python -m parity generate --jobs 0             # every area, one R session per CPU
 python -m parity check --area text -v          # Python vs goldens
 python -m parity check --tier 1 --jobs 4       # the realistic corpus, 4 processes
 python -m parity check --jobs 0 --md summary.md  # everything, one process per CPU
@@ -74,7 +75,7 @@ cases read:
 
 ```bash
 git submodule update --init      # upstream/metacheck: fixtures and recorded responses
-uv sync --locked --all-extras    # the data extra (pyreadstat, xlrd, snowballstemmer)
+uv sync --locked --all-extras    # the data extra (pyreadstat, xlrd, snowballstemmer, striprtf)
 ```
 
 Without the submodule some 1,800 cases fail, and without the extra some 60, all for
@@ -369,7 +370,11 @@ record the bug as a U-entry and add the mark to your lane's divergences file.
 * **Isolated.** Each case gets a fresh `PYTACHECK_CACHE_DIR`, so no case sees what
   another cached, and runs with no user or project configuration
   (`PYTACHECK_CONFIG=none`). What it prints is kept out of the terminal (`-v` shows
-  it; the report keeps it for failing cases).
+  it; the report keeps it for failing cases). The harness folds any `METACHECK_*`
+  twin of these variables into its `PYTACHECK_*` name at start-up, so a setting in
+  your shell cannot shadow the harness's folders. The R image scripts read only
+  `PYTACHECK_R_IMAGE`, and `benchmarks/compare_r.py` reads only `PYTACHECK_RSCRIPT`.
+  Environment variables and folders: see [ENVIRONMENT.md](ENVIRONMENT.md).
 * **Out of the checkout.** A case must not write into the repository: give functions
   that save files (`paper_write()`, `grobid_to_bibr()`, `convert()`, ...) a temporary
   `save_path`, because metacheck's default `"."` is the repository root when the
@@ -388,6 +393,11 @@ record the bug as a U-entry and add the mark to your lane's divergences file.
   "r")`, ...) need the reference R: without `PYTACHECK_RSCRIPT` naming an R >= 4.5
   they are reported as `skip`, never as pass or fail. The harness notices any case
   whose Python side starts `Rscript`/`R`; `needs_r: true` marks one explicitly.
+* **`execute = TRUE` cases name the sandbox.** `reproducibility_check` runs the code in
+  Docker unless told otherwise (UPSTREAM_ISSUES D62), metacheck on this machine. The
+  R call of such a case is left as it is and the Python call adds `sandbox="process"`,
+  which is what metacheck does; the case `exec_docker` names `sandbox="docker"` on both
+  sides.
 
 ## Goldens
 

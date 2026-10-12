@@ -22,7 +22,8 @@
 "researchdata4tu_info.mock.na_error": {"r": "ac5146cf65ca52a8", "py": "a68062746cbb2a5f", "diff": ["<R error, Python value>"]},
 "researchdata4tu_info.mock.none_valid": {"r": "248c74505e7a0129", "py": "a6a4614cfa71a43d", "diff": ["<root>"]},
 "researchdata4tu_info.mock.vector": {"r": "6bead8ea48ee09ee", "py": "eba45d36d958ed48", "diff": ["<root>"]},
-"reshare_file_download.mock.multi": {"r": "8a6aef474445c618", "py": "93a007af36af2365", "diff": ["<root>"]},
-"reshare_file_download.mock.one": {"r": "8a6aef474445c618", "py": "93a007af36af2365", "diff": ["<root>"]},
-"reshare_file_download.mock.total_cap": {"r": "8a6aef474445c618", "py": "93a007af36af2365", "diff": ["<root>"]}
+"reshare_file_download.mock.multi": {"r": "8a6aef474445c618", "py": "64ffdcf29d8d7d8a", "diff": ["<root>"]},
+"reshare_file_download.mock.no_caps": {"r": "174a860f4846ccb0", "py": "64ffdcf29d8d7d8a", "diff": ["checksum[]"]},
+"reshare_file_download.mock.one": {"r": "8a6aef474445c618", "py": "64ffdcf29d8d7d8a", "diff": ["<root>"]},
+"reshare_file_download.mock.total_cap": {"r": "8a6aef474445c618", "py": "64ffdcf29d8d7d8a", "diff": ["<root>"]}
 }

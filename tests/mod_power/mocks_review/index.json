@@ -1,0 +1,775 @@
+{
+ "version": 1,
+ "schemas": {
+  "schema-a64853a4": {
+   "t": "object",
+   "d": "",
+   "p": [
+    [
+     "power_analyses",
+     false,
+     {
+      "t": "array",
+      "d": "Power analyses found in the text. Empty array if none.",
+      "i": {
+       "t": "object",
+       "d": "",
+       "p": [
+        [
+         "power_type",
+         false,
+         {
+          "t": "string",
+          "d": "The type of power analysis. 'apriori' calculates the required sample size to achieve a desired power given an effect size, statistical test, and alpha level. 'sensitivity' estimates, given a sample size, which effect sizes a design has sufficient power to detect. 'posthoc' (observed/retrospective power) computes achieved power for an empirically observed effect size. Use 'unknown' if a power analysis is present but its type cannot be determined.",
+          "e": [
+           "apriori",
+           "sensitivity",
+           "posthoc",
+           "unknown"
+          ]
+         }
+        ],
+        [
+         "statistical_test",
+         true,
+         {
+          "t": "string",
+          "d": "The statistical test used.",
+          "e": [
+           "paired t-test",
+           "unpaired t-test",
+           "one-sample t-test",
+           "1-way ANOVA",
+           "2-way ANOVA",
+           "3-way ANOVA",
+           "MANOVA",
+           "regression",
+           "chi-square",
+           "correlation",
+           "other",
+           null
+          ]
+         }
+        ],
+        [
+         "statistical_test_other",
+         true,
+         {
+          "t": "string",
+          "d": "Free-text description if statistical_test is 'other'."
+         }
+        ],
+        [
+         "sample_size",
+         true,
+         {
+          "t": "number",
+          "d": "The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group."
+         }
+        ],
+        [
+         "alpha_level",
+         true,
+         {
+          "t": "number",
+          "d": "The alpha threshold used to determine significance."
+         }
+        ],
+        [
+         "power",
+         true,
+         {
+          "t": "number",
+          "d": "The statistical power, expressed as a number between 0 and 1."
+         }
+        ],
+        [
+         "effect_size",
+         true,
+         {
+          "t": "number",
+          "d": "The numeric effect size used in or determined from the power analysis."
+         }
+        ],
+        [
+         "effect_size_metric",
+         true,
+         {
+          "t": "string",
+          "d": "The effect size metric. Use 'unstandardised' for raw/non-standardized effects.",
+          "e": [
+           "Cohen's d",
+           "Hedges' g",
+           "Cohen's f",
+           "partial eta squared",
+           "eta squared",
+           "unstandardised",
+           "other",
+           null
+          ]
+         }
+        ],
+        [
+         "effect_size_metric_other",
+         true,
+         {
+          "t": "string",
+          "d": "Free-text description if effect_size_metric is 'other'."
+         }
+        ],
+        [
+         "software",
+         true,
+         {
+          "t": "string",
+          "d": "The software used to conduct the power analysis.",
+          "e": [
+           "G*Power",
+           "Superpower",
+           "Pangea",
+           "Morepower",
+           "PASS",
+           "pwr",
+           "simr",
+           "PowerUpR",
+           "simulation",
+           "InteractionPoweR",
+           "pwrss",
+           "other",
+           null
+          ]
+         }
+        ]
+       ]
+      }
+     }
+    ]
+   ]
+  }
+ },
+ "replies": [
+  {
+   "key": "c11242968f282a86",
+   "file": "api.groq.com/openai/v1/chat/completions-074dc0-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "An a priori power analysis for the FALLBACK CONTROL sample gave 52 participants for 80% power.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "5b56202eb4276430",
+   "file": "api.groq.com/openai/v1/chat/completions-16e160-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "The observed power was 0.45 for the effect in 36 participants (post-hoc).",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "1b659509ed318e49",
+   "file": "api.groq.com/openai/v1/chat/completions-19e9ab-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "An a priori power analysis in G*Power showed that 50 participants per group give 80% power (alpha = .05) for d = 0.5 in an unpaired t-test.",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "5bae511164941ac1",
+   "file": "api.groq.com/openai/v1/chat/completions-1bfdfc-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "A sensitivity power analysis for 80 participants always fails in both extraction modes.",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "113ab9dd0d624d71",
+   "file": "api.groq.com/openai/v1/chat/completions-1cb051-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "Our 20 volunteers had the power to detect nothing at all.",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "63ae90c5712df711",
+   "file": "api.groq.com/openai/v1/chat/completions-259c37-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "An a priori power analysis for 72 participants gave 80% power, but the reply carries an error key.",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "e9abc26bfa3694c9",
+   "file": "api.groq.com/openai/v1/chat/completions-278da5-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "An a priori power analysis in G*Power showed that 50 participants per group give 80% power (alpha = .05) for d = 0.5 in an unpaired t-test.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "c2de040d8b76e6a5",
+   "file": "api.groq.com/openai/v1/chat/completions-2c64c3-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "A sensitivity power analysis with the CONTROL sample of 64 showed 80% power for d = 0.5 (alpha = .05, unpaired t-test, pwr).",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "761d82fea8a76292",
+   "file": "api.groq.com/openai/v1/chat/completions-345c7a-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "A sensitivity power analysis showed that 70 participants give 80% power for d = 0.6 (alpha = .05, one-sample t-test, Superpower).",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "8684ee07b259da9f",
+   "file": "api.groq.com/openai/v1/chat/completions-370982-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "A sensitivity power analysis for 80 participants always fails in both extraction modes.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "1cd42b1fc1e25fd0",
+   "file": "api.groq.com/openai/v1/chat/completions-5d64e0-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "The post hoc power for the 25 participants was reported as 0.30 in the supplement.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "c0f2387c7632223e",
+   "file": "api.groq.com/openai/v1/chat/completions-620fbb-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "A compromise power analysis with 30 participants balanced alpha and beta errors at 0.10.",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "3101f0afb4d38114",
+   "file": "api.groq.com/openai/v1/chat/completions-6a9687-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "An a priori power analysis for the 2 x 2 design required 200 participants for 80% power and f = 0.2, while a sensitivity power analysis showed 90% power for f = 0.25.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "c8ed96b4883ede10",
+   "file": "api.groq.com/openai/v1/chat/completions-6abdce-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "Two power analyses were run: an a priori analysis (n = 60, 80% power, r = 0.6) and a sensitivity analysis (n = 60, alpha = .05, 90% power) for our correlation.",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "d0bca70ad3bb0e99",
+   "file": "api.groq.com/openai/v1/chat/completions-72f3bf-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "A sensitivity power analysis with 58 participants gave 95% power for d = 0.7 (reply keys clash).",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "92c597f337b4e594",
+   "file": "api.groq.com/openai/v1/chat/completions-7d666a-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "Two power analyses were run: an a priori analysis (n = 60, 80% power, r = 0.6) and a sensitivity analysis (n = 60, alpha = .05, 90% power) for our correlation.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "472f9fc68973c229",
+   "file": "api.groq.com/openai/v1/chat/completions-8475c3-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "A sensitivity power analysis for 46 participants gave 80% power (unparsable reply).",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "f992549941dfb108",
+   "file": "api.groq.com/openai/v1/chat/completions-84ee4d-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "A sensitivity power analysis indicated that 40 participants give 90% power for d = 0.8 with pwr.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "5189428fdd542c0b",
+   "file": "api.groq.com/openai/v1/chat/completions-8ecd1d-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "An a-priori power analysis gave 34 participants for 85% power (alpha = 0.05, d = 0.9, PASS, correlation).",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "c631824c45d4ee24",
+   "file": "api.groq.com/openai/v1/chat/completions-92e89d-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "447bb50997b8419e",
+   "file": "api.groq.com/openai/v1/chat/completions-94b95f-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "The observed power was 0.45 for the effect in 36 participants (post-hoc).",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "acbfc93990672a6d",
+   "file": "api.groq.com/openai/v1/chat/completions-a2fd3d-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "The a priori power analysis gave 88 participants for 90% power (null array).",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "9d31a7a086744444",
+   "file": "api.groq.com/openai/v1/chat/completions-c02996-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "Power analyses for 3 pilot studies are reported in the supplement.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "b00e22a46d027aed",
+   "file": "api.groq.com/openai/v1/chat/completions-c7fa4d-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "Power was not analysed a priori; the sample of 120 was a convenience sample.",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "3c142889b268e388",
+   "file": "api.groq.com/openai/v1/chat/completions-c7fc6d-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "The a priori power analysis targeted 95% power with 44 participants.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "69a353ce6f99e3c7",
+   "file": "api.groq.com/openai/v1/chat/completions-c81ff8-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "The post hoc power for the 25 participants was reported as 0.30 in the supplement.",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "4d2506c85befad9c",
+   "file": "api.groq.com/openai/v1/chat/completions-c85ecc-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\n\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://scienceverse.org/schema/power.json\",\n  \"title\": \"Power Analyses\",\n  \"description\": \"A power analysis.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"text\": {\n      \"description\": \"The specific text that contains all of the information used to determine this object's properties.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"power_type\": {\n      \"description\": \"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\"apriori\", \"sensitivity\", \"posthoc\", \"unknown\", \"none\", null]\n    },\n\n    \"statistical_test\": {\n      \"description\": \"The statistical test used. Use null if unclear.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"paired t-test\",\n        \"unpaired t-test\",\n        \"one-sample t-test\",\n        \"1-way ANOVA\",\n        \"2-way ANOVA\",\n        \"3-way ANOVA\",\n        \"MANOVA\",\n        \"regression\",\n        \"chi-square\",\n        \"correlation\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"statistical_test_other\": {\n      \"description\": \"Free-text description if statistical_test is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"sample_size\": {\n      \"description\": \"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0\n    },\n\n    \"alpha_level\": {\n      \"description\": \"The alpha threshold used to determine significance.\",\n      \"type\": [\"number\", \"null\"],\n      \"exclusiveMinimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"power\": {\n      \"description\" : \"The statistical power, expressed as a number between 0 and 1.\",\n      \"type\": [\"number\", \"null\"],\n      \"minimum\": 0,\n      \"maximum\": 1\n    },\n\n    \"effect_size\": {\n      \"description\": \"The numeric effect size used in or determined from the power analysis.\",\n      \"type\": [\"number\", \"null\"]\n    },\n\n    \"effect_size_metric\": {\n      \"description\": \"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"Cohen's d\",\n        \"Hedges' g\",\n        \"Cohen's f\",\n        \"partial eta squared\",\n        \"eta squared\",\n        \"unstandardised\",\n        \"other\",\n        null\n      ]\n    },\n\n    \"effect_size_metric_other\": {\n      \"description\": \"Free-text description if effect_size_metric is 'other', otherwise null.\",\n      \"type\": [\"string\", \"null\"]\n    },\n\n    \"software\": {\n      \"description\": \"The software used to conduct the power analysis.\",\n      \"type\": [\"string\", \"null\"],\n      \"enum\": [\n        \"G*Power\",\n        \"Superpower\",\n        \"Pangea\",\n        \"Morepower\",\n        \"PASS\",\n        \"pwr\",\n        \"simr\",\n        \"PowerUpR\",\n        \"simulation\",\n        \"InteractionPoweR\",\n        \"pwrss\",\n        \"other\",\n        null\n      ]\n    }\n  },\n\n  \"required\": [\n    \"power_type\",\n    \"statistical_test\",\n    \"statistical_test_other\",\n    \"sample_size\",\n    \"alpha_level\",\n    \"power\",\n    \"effect_size\",\n    \"effect_size_metric\",\n    \"effect_size_metric_other\",\n    \"software\"\n  ],\n\n  \"additionalProperties\": false\n}",
+    "user": "A sensitivity power analysis indicated that 40 participants give 90% power for d = 0.8 with pwr.",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "8a57df7b2a32c3d1",
+   "file": "api.groq.com/openai/v1/chat/completions-ca71a5-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "Power analyses were mentioned for 16 participants with a large effect.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "4e2ab5f90a7c73ec",
+   "file": "api.groq.com/openai/v1/chat/completions-cd5cd2-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "A power analysis (see Table 2) was reported in 2 earlier studies, and our a priori power analysis required 90 participants for 95% power at alpha = .01 (d = 0.8, G*Power, paired t-test).",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "9033653a2dbe06a7",
+   "file": "api.groq.com/openai/v1/chat/completions-d05dd0-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "The achieved power was 0.62 for the 18 participants of the pilot.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "72af98e883ed29e0",
+   "file": "api.groq.com/openai/v1/chat/completions-e099a3-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "ab0332fd163260a8",
+   "file": "api.groq.com/openai/v1/chat/completions-e55bac-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "Our 20 volunteers had the power to detect nothing at all.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "2c69943d63a7e787",
+   "file": "api.groq.com/openai/v1/chat/completions-eac9e1-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "An a priori power analysis (ANCOVA, 150 participants, 80% power, alpha = .05, f = 0.25) was run in R.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "75c72b268f074afd",
+   "file": "api.groq.com/openai/v1/chat/completions-f05c7f-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "A sensitivity power analysis for 46 participants gave 80% power (unparsable reply).",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "56bf2956e6162516",
+   "file": "api.groq.com/openai/v1/chat/completions-f0a5bb-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "Power was not analysed a priori; the sample of 120 was a convenience sample.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "ec7e15cf80fdded3",
+   "file": "api.groq.com/openai/v1/chat/completions-f15ad3-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "An a priori power analysis for 72 participants gave 80% power, but the reply carries an error key.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "9c2866f0bd4c146f",
+   "file": "api.groq.com/openai/v1/chat/completions-fd5a27-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "A sensitivity power analysis with 58 participants gave 95% power for d = 0.7 (reply keys clash).",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "0d302f141dcafcc8",
+   "file": "api.groq.com/openai/v1/chat/completions-fda327-POST.R",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "A compromise power analysis with 30 participants balanced alpha and beta errors at 0.10.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "bf1f0e14e01cf948",
+   "file": "api.groq.com/openai/v1/chat/completions-fdd256-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.",
+    "user": "No power analysis was run; 48 participants were tested for 2 weeks.",
+    "schema": "schema-a64853a4",
+    "params": {
+     "temperature": 0,
+     "seed": 8675309,
+     "max_tokens": 4096
+    }
+   }
+  }
+ ]
+}

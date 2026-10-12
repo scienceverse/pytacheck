@@ -7,9 +7,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleError, module, module_find, module_run, use
-from pytacheck.packs.manifest import PackError
+import metacheck as pc
+from metacheck.module import ModuleError, module, module_find, module_run, use
+from metacheck.packs.manifest import PackError
 from tests.modsys.helpers import mod_src
 
 
@@ -18,7 +18,7 @@ def test_builtin_wins_over_everything(ms, paper) -> None:
     ms.pin("demo", {"path": str(ms.pack(ms.root / "p", "demo", {"marginal": mod_src("marginal")}))})
     spec = module_find("marginal")
     assert spec.pack == "metacheck"
-    assert spec.func.__module__ == "pytacheck.modules.marginal"
+    assert spec.func.__module__ == "metacheck.modules.marginal"
     assert module_find("metacheck::marginal") is spec
     assert module_run(paper, "metacheck::marginal").module == "marginal"
 
@@ -33,7 +33,7 @@ def test_spec_and_function_are_used_as_is() -> None:
 
 
 def test_legacy_order_entry_point_then_files_then_packs_then_paths(ms, monkeypatch) -> None:
-    import pytacheck.module as m
+    import metacheck.module as m
 
     folder = ms.pack(ms.root / "p", "demo", {n: mod_src(n, f"pack {n}") for n in "abcde"})
     ms.pin("demo", {"path": str(folder)})

@@ -31,8 +31,8 @@ _TOKEN_OPTIONS = (
 @pytest.fixture(autouse=True)
 def _archive_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[None]:
     """No tokens from the environment; caches in a temp dir; no cached OAuth tokens."""
-    from pytacheck import utils
-    from pytacheck.archives import dryad
+    from metacheck import utils
+    from metacheck.archives import dryad
 
     for var in _TOKEN_ENV:
         monkeypatch.delenv(var, raising=False)
@@ -46,7 +46,7 @@ def _archive_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[No
 @pytest.fixture
 def online(monkeypatch: pytest.MonkeyPatch) -> None:
     """``online()`` reports every host as reachable (no DNS lookups)."""
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: True)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
 
 
 @pytest.fixture

@@ -8,10 +8,10 @@ import warnings
 
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import module_find, module_list, module_run
-from pytacheck.packs.manifest import PackError
-from pytacheck.packs.registry import active_packs, get_pack, load_module, refresh, registry
+import metacheck as pc
+from metacheck.module import module_find, module_list, module_run
+from metacheck.packs.manifest import PackError
+from metacheck.packs.registry import active_packs, get_pack, load_module, refresh, registry
 from tests.modsys.helpers import REV_A, REV_B, mod_src
 
 
@@ -110,7 +110,7 @@ def test_config_false_hides_and_null_removes(ms, paper, monkeypatch, tmp_path) -
     class EP:
         name, module, value, dist = "distpack", "dist_demo", "dist_demo", None
 
-    import pytacheck.packs.registry as reg
+    import metacheck.packs.registry as reg
 
     monkeypatch.setattr(reg, "_dist_entry_points", lambda: [EP()])
     refresh()
@@ -136,7 +136,8 @@ def test_module_list_default_unchanged_and_pack_column(ms) -> None:
     assert list(builtin.columns) == [*before.columns, "pack"]
     assert builtin.drop(columns="pack").equals(before)
     everything = module_list(pack="*")
-    assert set(everything["pack"]) == {"metacheck", "demo"}
+    # metacheck registers its own datapackage pack (an entry point in pyproject.toml)
+    assert set(everything["pack"]) == {"metacheck", "datapackage", "demo"}
     assert everything.loc[everything["pack"] == "demo", "name"].tolist() == ["zeta"]
     assert module_list(pack="demo")["name"].tolist() == ["zeta"]
     with pytest.raises(ValueError, match="not both"):

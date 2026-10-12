@@ -13,9 +13,9 @@ import httpx
 import pytest
 import respx
 
-from pytacheck.archives import github
-from pytacheck.archives.github import github_files, github_languages
-from pytacheck.archives.zenodo import _zenodo_info
+from metacheck.archives import github
+from metacheck.archives.github import github_files, github_languages
+from metacheck.archives.zenodo import _zenodo_info
 
 JSON = {"Content-Type": "application/json"}
 
@@ -114,9 +114,32 @@ def test_links_of_an_empty_paper_list(fn: str) -> None:
     # U79: the url table of an empty paper list has no columns; the (empty) link
     # table still has href (R's github_links()/gitlab_links() have none, so
     # repo_check() stops; pytacheck's zenodo_links() indexed it)
-    import pytacheck as pc
+    import metacheck as pc
 
     links = getattr(pc, fn)(pc.PaperList([]))
     assert len(links) == 0
     assert list(links.columns[:3]) == ["href", "text_id", "paper_id"]
     assert str(links["href"].dtype) == "string"
+
+
+def test_links_of_a_12x_paper() -> None:
+    # U196: a 12.x paper's url table starts with url_id; the links are searched
+    # in href (metacheck searched the first column and found none)
+    from pathlib import Path
+
+    import metacheck as pc
+
+    tei = Path(__file__).parents[1] / "io" / "fixtures" / "edge_body.tei.xml"
+    paper = pc.read(tei)
+    assert list(pc.paper_table(paper, "url").columns[:2]) == ["url_id", "href"]
+    links = pc.github_links(paper)
+    assert links["href"].tolist() == ["https://github.com/a/b"]
+    assert links["paper_id"].tolist() == ["edge_body.tei"]
+    older = pc.github_links(pc.read(tei, schema_version=None))
+    assert older["href"].tolist() == links["href"].tolist()
+    assert older["text_id"].tolist() == links["text_id"].tolist()
+
+    # a gitlab link in the same place
+    urls = pc.paper_table(paper, "url")
+    paper.url = urls.assign(href=urls["href"].str.replace("github.com", "gitlab.com"))
+    assert pc.gitlab_links(paper)["href"].tolist() == ["https://gitlab.com/a/b"]

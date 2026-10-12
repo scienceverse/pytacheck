@@ -11,18 +11,18 @@ import warnings
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import module_run
-from pytacheck.report.blocks import _cap_num, link, scroll_table
-from pytacheck.report.html_output import _html_sniff_kind
-from pytacheck.report.render import deparse, scroll_table_qmd, table_chunk
-from pytacheck.report.report import (
+import metacheck as pc
+from metacheck.module import module_run
+from metacheck.report.blocks import _cap_num, link, scroll_table
+from metacheck.report.html_output import _html_sniff_kind
+from metacheck.report.render import scroll_table_qmd, table_chunk
+from metacheck.report.report import (
     module_report,
     render_module_outputs,
     report_module_run,
     report_repository,
 )
-from pytacheck.validate import accuracy, validate
+from metacheck.validate import accuracy, validate
 
 
 @pytest.fixture
@@ -57,6 +57,15 @@ def test_module_report_header_numbers(flex):
     assert module_report(op, header=True).startswith("# ")
 
 
+def test_module_report_with_a_table_folds(flex):
+    # D75: a report with a table folds, however small the table; short text stays open
+    fold = "<details><summary>View detailed feedback</summary><div>"
+    tiny = scroll_table(pd.DataFrame({"a": [1]}))
+    assert fold in _report(flex, summary_text="S.", report=tiny)
+    assert fold not in _report(flex, summary_text="S.", report="Short text.")
+    assert fold in _report(flex, summary_text="S.", report="x" * 300)
+
+
 def test_module_report_two_validations_and_four_authors(flex):
     rep = _report(flex, summary_text="S.")
     assert "This module was developed by A One, B Two, C Three and D Four" in rep
@@ -66,43 +75,20 @@ def test_module_report_two_validations_and_four_authors(flex):
     )
 
 
-def test_deparse_unicode_like_r():
-    assert deparse("͸") == ['"\\u0378"']  # unassigned
-    assert deparse("\U000e0080") == ['"\\U{0e0080}"']
-    assert deparse("\U0010ffff") == ['"\\U{10ffff}"']
-    assert deparse("\u0085") == ['"\\u0085"']
-    assert deparse(" ") == ['"\\u2028"']
-    # printable: format, private use, emoji, Unicode 15.1 CJK
-    for ch in ("​", "﻿", "", "\U0001f600", "⁦", "\U0002ebf0"):
-        assert deparse(ch) == [f'"{ch}"']
-
-
-def test_deparse_factor_columns():
-    df = pd.DataFrame(
-        {
-            "f": pd.Categorical(["b", "a", None]),
-            "o": pd.Categorical(["lo", "hi", "lo"], categories=["lo", "hi"], ordered=True),
-        }
-    )
-    out = "".join(deparse(df))  # (ignore R's line breaks)
-    assert 'f = structure(c(2L, 1L, NA), levels = c("a", "b"), class = "factor")' in out
-    assert 'class = c("ordered", "factor")' in out
-
-
 def test_scroll_table_breaks_lines_in_every_text_column():
     # U131: R's `table[[col]]` loop skips a vector's blank-named column,
     # repeated names and factors, so their line breaks stayed
     block = scroll_table(["a\nb", "c"])
     assert block.data.iloc[0, 0] == "a<br>b"
-    assert '"a<br>b"' in table_chunk(block)
+    assert "<td>a<br>b</td>" in table_chunk(block)
     rep = pd.DataFrame([["x\ny", "p\nq"]], columns=["a", "a"])
     assert scroll_table(rep).data.iloc[0].tolist() == ["x<br>y", "p<br>q"]
-    # factors stay factors (and class stays before row.names)
+    # factors stay factors
     fac = scroll_table(pd.DataFrame({"f": pd.Categorical(["x\ny", "z"])}))
     assert isinstance(fac.data["f"].dtype, pd.CategoricalDtype)
     assert fac.data["f"].tolist() == ["x<br>y", "z"]
     chunk = scroll_table_qmd(pd.DataFrame({"f": pd.Categorical(["b", "a"])}))
-    assert 'class = "data.frame", row.names = c(NA, ' in chunk
+    assert "<td>b</td>" in chunk and "<td>a</td>" in chunk
     # string dtype survives the replacement
     s = scroll_table(pd.DataFrame({"t": pd.Series(["x\ny", None], dtype="string")}))
     assert str(s.data["t"].dtype) == "string"
@@ -207,7 +193,7 @@ def test_report_repository_single_module_name(tmp_path, quiet, test_module):
 
 
 def test_report_submodule_is_callable(tmp_path, quiet):
-    from pytacheck.report import report as report_mod
+    from metacheck.report import report as report_mod
 
     assert callable(report_mod)
     assert callable(report_mod.report)
@@ -216,8 +202,8 @@ def test_report_submodule_is_callable(tmp_path, quiet):
 
 
 def test_message_pastes_vectors(capsys):
-    from pytacheck.config import verbose
-    from pytacheck.utils import message
+    from metacheck.config import verbose
+    from metacheck.utils import message
 
     old = verbose()
     verbose(True)
@@ -229,7 +215,7 @@ def test_message_pastes_vectors(capsys):
 
 
 def test_datatable_cells_show_numbers_like_the_browser():
-    from pytacheck.report.render import _cell_text
+    from metacheck.report.render import _cell_text
 
     # htmlwidgets writes 16 significant digits; the browser prints Number#toString
     assert _cell_text(0.1 + 0.2) == "0.3"
@@ -243,8 +229,8 @@ def test_datatable_cells_show_numbers_like_the_browser():
 
 def test_report_with_ported_modules(tmp_path, quiet, test_module):
     # upstream test-report.R: "report return list" and "report pass args"
-    from pytacheck.module import ModuleError, module_find
-    from pytacheck.report.report import report
+    from metacheck.module import ModuleError, module_find
+    from metacheck.report.report import report
 
     try:
         module_find("stat_p_exact")

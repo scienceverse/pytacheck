@@ -25,7 +25,7 @@ LEAK = """
 import os
 import subprocess
 
-import pytacheck.db.regcheck_local as rl
+import metacheck.db.regcheck_local as rl
 
 
 class FakeProc:
@@ -56,14 +56,14 @@ import os
 
 import pytest
 
-from pytacheck.db.regcheck import RegCheckError, regcheck_compare
+from metacheck.db.regcheck import RegCheckError, regcheck_compare
 
 
 def test_hosted_client_asks_for_a_token(monkeypatch):
     def no_request(*args, **kwargs):
         raise AssertionError(f"reached the RegCheck server: {args}")
 
-    monkeypatch.setattr("pytacheck.http.request", no_request)
+    monkeypatch.setattr("metacheck.http.request", no_request)
     assert os.environ.get("REGCHECK_API_TOKEN") is None
     with pytest.raises(RegCheckError, match="requires an API token for the 'groq' client"):
         regcheck_compare("p", "r", client="gr")

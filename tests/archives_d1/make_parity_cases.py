@@ -47,9 +47,16 @@ def py_list(values: list[Any]) -> str:
 
 
 def fn_case(
-    id_: str, r: str, py: str, args: dict[str, Any], compare: dict[str, Any] | None = None
+    id_: str,
+    r: str,
+    py: str,
+    args: dict[str, Any],
+    compare: dict[str, Any] | None = None,
+    mock: str | None = None,
 ) -> None:
     c: dict[str, Any] = {"id": id_, "r": r, "py": py, "args": args}
+    if mock:
+        c["mock_dir"] = mock
     if compare:
         c["compare"] = compare
     cases.append(c)
@@ -93,22 +100,22 @@ IGNORE_PID = {"ignore": ["paper_id"]}
 
 # ---------------------------------------------------------------- allowlists
 for r, py in [
-    ("metacheck:::.dryad_doi_prefixes", "pytacheck.archives.dryad._dryad_doi_prefixes"),
-    ("metacheck:::.figshare_vanity_hosts", "pytacheck.archives.figshare._figshare_vanity_hosts"),
+    ("metacheck:::.dryad_doi_prefixes", "metacheck.archives.dryad._dryad_doi_prefixes"),
+    ("metacheck:::.figshare_vanity_hosts", "metacheck.archives.figshare._figshare_vanity_hosts"),
     (
         "metacheck:::.figshare_doi_prefix_hosts",
-        "pytacheck.archives.figshare._figshare_doi_prefix_hosts",
+        "metacheck.archives.figshare._figshare_doi_prefix_hosts",
     ),
-    ("metacheck:::.figshare_host_regex", "pytacheck.archives.figshare._figshare_host_regex"),
-    ("metacheck:::.dataverse_hosts", "pytacheck.archives.dataverse._dataverse_hosts"),
-    ("metacheck:::.dataverse_host_regex", "pytacheck.archives.dataverse._dataverse_host_regex"),
+    ("metacheck:::.figshare_host_regex", "metacheck.archives.figshare._figshare_host_regex"),
+    ("metacheck:::.dataverse_hosts", "metacheck.archives.dataverse._dataverse_hosts"),
+    ("metacheck:::.dataverse_host_regex", "metacheck.archives.dataverse._dataverse_host_regex"),
     (
         "metacheck:::.dataverse_doi_prefix_hosts",
-        "pytacheck.archives.dataverse._dataverse_doi_prefix_hosts",
+        "metacheck.archives.dataverse._dataverse_doi_prefix_hosts",
     ),
     (
         "metacheck:::.dataverse_doi_prefix_regex",
-        "pytacheck.archives.dataverse._dataverse_doi_prefix_regex",
+        "metacheck.archives.dataverse._dataverse_doi_prefix_regex",
     ),
 ]:
     fn_case(r.split(":::")[1], r, py, {})
@@ -137,31 +144,31 @@ DRYAD_URLS = [
 fn_case(
     ".dryad_doi.shapes",
     "metacheck:::.dryad_doi",
-    "pytacheck.archives.dryad._dryad_doi",
+    "metacheck.archives.dryad._dryad_doi",
     {"dryad_url": {"$expr": {"r": r_chr(DRYAD_URLS), "py": py_list(DRYAD_URLS)}}},
 )
 fn_case(
     ".dryad_doi.single",
     "metacheck:::.dryad_doi",
-    "pytacheck.archives.dryad._dryad_doi",
+    "metacheck.archives.dryad._dryad_doi",
     {"dryad_url": "https://doi.org/10.5061/dryad.j1fd7"},
 )
 fn_case(
     ".dryad_doi.empty",
     "metacheck:::.dryad_doi",
-    "pytacheck.archives.dryad._dryad_doi",
+    "metacheck.archives.dryad._dryad_doi",
     {"dryad_url": {"$chr": []}},
 )
 fn_case(
     ".dryad_doi.null",
     "metacheck:::.dryad_doi",
-    "pytacheck.archives.dryad._dryad_doi",
+    "metacheck.archives.dryad._dryad_doi",
     {"dryad_url": {"$null": True}},
 )
 fn_case(
     ".dryad_doi.embedded_nul_error",
     "metacheck:::.dryad_doi",
-    "pytacheck.archives.dryad._dryad_doi",
+    "metacheck.archives.dryad._dryad_doi",
     {"dryad_url": "10.5061/dryad.a%zzb"},
 )
 
@@ -198,19 +205,65 @@ FS_URLS = [
 fn_case(
     ".figshare_id.shapes",
     "metacheck:::.figshare_id",
-    "pytacheck.archives.figshare._figshare_id",
+    "metacheck.archives.figshare._figshare_id",
     {"figshare_url": {"$expr": {"r": r_chr(FS_URLS), "py": py_list(FS_URLS)}}},
+)
+# institutional DOIs whose suffix chains two sub-prefix segments (metacheck #439)
+# and collection URLs / DOIs, which are not article ids
+FS_CHAINED = [
+    "https://doi.org/10.17608/k6.auckland.25808182.v2",
+    "https://doi.org/10.15131/shef.data.13712533",
+    "10.17608/k6.auckland.25808182",
+    "https://doi.org/10.25375/a.b.c.14618526.v1.",
+    "https://doi.org/10.17608/k6.auckland.v2",
+    "https://figshare.com/collections/Some_collection/8742785",
+    "https://doi.org/10.6084/m9.figshare.c.8742785.v1",
+]
+fn_case(
+    ".figshare_id.chained_subprefix",
+    "metacheck:::.figshare_id",
+    "metacheck.archives.figshare._figshare_id",
+    {"figshare_url": {"$expr": {"r": r_chr(FS_CHAINED), "py": py_list(FS_CHAINED)}}},
+)
+COLL_URLS = [
+    "https://figshare.com/collections/Some_collection/8742785",
+    "https://figshare.com/collections/Some_collection/8742785/",
+    "https://FIGSHARE.COM/Collections/X/12",
+    "https://figshare.le.ac.uk/collections/Leicester/77",
+    "https://doi.org/10.6084/m9.figshare.c.6190228",
+    "10.6084/m9.figshare.c.6190228.v2",
+    "https://doi.org/10.6084/M9.FIGSHARE.C.42",
+    "https://figshare.com/collections/x/y/1",
+    "https://figshare.com/collections/x/1/files",
+    "https://figshare.com/projects/some_project/133332",
+    "https://doi.org/10.6084/m9.figshare.18093368",
+    "https://doi.org/10.26180/c.1234",
+    "not-a-figshare-url",
+    "",
+    None,
+]
+fn_case(
+    ".figshare_collection_id.shapes",
+    "metacheck:::.figshare_collection_id",
+    "metacheck.archives.figshare._figshare_collection_id",
+    {"figshare_url": {"$expr": {"r": r_chr(COLL_URLS), "py": py_list(COLL_URLS)}}},
+)
+fn_case(
+    ".figshare_collection_id.single",
+    "metacheck:::.figshare_collection_id",
+    "metacheck.archives.figshare._figshare_collection_id",
+    {"figshare_url": "https://doi.org/10.6084/m9.figshare.c.6190228"},
 )
 fn_case(
     ".figshare_id.numeric",
     "metacheck:::.figshare_id",
-    "pytacheck.archives.figshare._figshare_id",
+    "metacheck.archives.figshare._figshare_id",
     {"figshare_url": {"$dbl": [18093368]}},
 )
 fn_case(
     ".figshare_id.null",
     "metacheck:::.figshare_id",
-    "pytacheck.archives.figshare._figshare_id",
+    "metacheck.archives.figshare._figshare_id",
     {"figshare_url": {"$null": True}},
 )
 PROJ_URLS = [
@@ -228,7 +281,7 @@ PROJ_URLS = [
 fn_case(
     ".figshare_project_id.shapes",
     "metacheck:::.figshare_project_id",
-    "pytacheck.archives.figshare._figshare_project_id",
+    "metacheck.archives.figshare._figshare_project_id",
     {"figshare_url": {"$expr": {"r": r_chr(PROJ_URLS), "py": py_list(PROJ_URLS)}}},
 )
 
@@ -243,7 +296,7 @@ DV_TEST = [
 fn_case(
     ".dataverse_parse.testthat",
     "metacheck:::.dataverse_parse",
-    "pytacheck.archives.dataverse._dataverse_parse",
+    "metacheck.archives.dataverse._dataverse_parse",
     {"url": {"$expr": {"r": r_chr(DV_TEST), "py": py_list(DV_TEST)}}},
 )
 DV_SHIFT = [
@@ -256,7 +309,7 @@ DV_SHIFT = [
 fn_case(
     ".dataverse_parse.realignment_quirk",
     "metacheck:::.dataverse_parse",
-    "pytacheck.archives.dataverse._dataverse_parse",
+    "metacheck.archives.dataverse._dataverse_parse",
     {"url": {"$expr": {"r": r_chr(DV_SHIFT), "py": py_list(DV_SHIFT)}}},
 )
 DV_MORE = [
@@ -276,19 +329,22 @@ DV_MORE = [
 fn_case(
     ".dataverse_parse.shapes",
     "metacheck:::.dataverse_parse",
-    "pytacheck.archives.dataverse._dataverse_parse",
+    "metacheck.archives.dataverse._dataverse_parse",
     {"url": {"$expr": {"r": r_chr(DV_MORE), "py": py_list(DV_MORE)}}},
+    # a prefix several installations share (10.17026) is resolved through
+    # doi.org: unrecorded here, so both sides fall back to the first host
+    mock=MOCK,
 )
 fn_case(
     ".dataverse_parse.empty",
     "metacheck:::.dataverse_parse",
-    "pytacheck.archives.dataverse._dataverse_parse",
+    "metacheck.archives.dataverse._dataverse_parse",
     {"url": {"$chr": []}},
 )
 fn_case(
     ".dataverse_parse.all_missing",
     "metacheck:::.dataverse_parse",
-    "pytacheck.archives.dataverse._dataverse_parse",
+    "metacheck.archives.dataverse._dataverse_parse",
     {"url": {"$expr": {"r": 'c(NA, "")', "py": '[None, ""]'}}},
 )
 HOST_DOIS = [
@@ -307,8 +363,9 @@ HOST_DOIS = [
 fn_case(
     ".dataverse_host_from_doi.shapes",
     "metacheck:::.dataverse_host_from_doi",
-    "pytacheck.archives.dataverse._dataverse_host_from_doi",
+    "metacheck.archives.dataverse._dataverse_host_from_doi",
     {"doi": {"$expr": {"r": r_chr(HOST_DOIS), "py": py_list(HOST_DOIS)}}},
+    mock=MOCK,
 )
 
 # ---------------------------------------------------------------- *_links
@@ -319,7 +376,7 @@ LINK_FNS = [
     ("dataverse_links", "dataverse"),
 ]
 for name, mod in LINK_FNS:
-    py = f"pytacheck.archives.{mod}.{name}"
+    py = f"metacheck.archives.{mod}.{name}"
     fn_case(f"{name}.demo", name, py, {"paper": {"$paper": "demo"}})
     fn_case(f"{name}.psychsci", name, py, {"paper": PSYCHSCI})
     fn_case(
@@ -339,7 +396,7 @@ for name, mod in LINK_FNS:
 
 PROBLEM = "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
 for name, mod in LINK_FNS:
-    py = f"pytacheck.archives.{mod}.{name}"
+    py = f"metacheck.archives.{mod}.{name}"
     fn_case(f"{name}.problem_203020", name, py, {"paper": {"$paper": PROBLEM}})
     fn_case(
         f"{name}.paperlist",
@@ -358,7 +415,7 @@ for name, mod in LINK_FNS:
 fn_case(
     "dryad_links.test_paper",
     "dryad_links",
-    "pytacheck.archives.dryad.dryad_links",
+    "metacheck.archives.dryad.dryad_links",
     {
         "paper": {
             "$test_paper": {
@@ -391,7 +448,7 @@ ALT = [
 fn_case(
     "dryad_links.all_prefixes",
     "dryad_links",
-    "pytacheck.archives.dryad.dryad_links",
+    "metacheck.archives.dryad.dryad_links",
     {
         "paper": {
             "$test_paper": {
@@ -406,7 +463,7 @@ fn_case(
 fn_case(
     "figshare_links.test_paper",
     "figshare_links",
-    "pytacheck.archives.figshare.figshare_links",
+    "metacheck.archives.figshare.figshare_links",
     {
         "paper": {
             "$test_paper": {
@@ -436,9 +493,53 @@ fn_case(
     IGNORE_PID,
 )
 fn_case(
+    "figshare_links.collections",
+    "figshare_links",
+    "metacheck.archives.figshare.figshare_links",
+    {
+        "paper": {
+            "$test_paper": {
+                "text": [
+                    "The collection figshare.com/collections/Some_collection/8742785 and "
+                    "its DOI 10.6084/m9.figshare.c.8742785.v1.",
+                    "Auckland 10.17608/k6.auckland.25808182.v2 and Sheffield "
+                    "https://doi.org/10.15131/shef.data.13712533.",
+                ],
+                "url": [
+                    "https://figshare.le.ac.uk/collections/Leicester/77",
+                    "https://doi.org/10.6084/m9.figshare.c.6190228",
+                ],
+            }
+        },
+    },
+    IGNORE_PID,
+)
+# 10.17026 is shared by the DANS Data Stations: resolved through doi.org
+# (unrecorded here, so the first listed station), and a Figshare collection
+# DOI is no longer read as a dataverse.no one (metacheck #434)
+fn_case(
+    "dataverse_links.shared_prefix",
+    "dataverse_links",
+    "metacheck.archives.dataverse.dataverse_links",
+    {
+        "paper": {
+            "$test_paper": {
+                "text": [
+                    "DANS: https://doi.org/10.17026/dans-zbt-uhma and 10.17026/PT/ABC123.",
+                    "Collection https://doi.org/10.6084/m9.figshare.c.8742785.v1.",
+                    "phys-techsciences.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/PT/X",
+                ],
+                "url": ["https://doi.org/10.17026/SS/Q1"],
+            }
+        },
+    },
+    IGNORE_PID,
+    mock=MOCK,
+)
+fn_case(
     "dataverse_links.test_paper",
     "dataverse_links",
-    "pytacheck.archives.dataverse.dataverse_links",
+    "metacheck.archives.dataverse.dataverse_links",
     {
         "paper": {
             "$test_paper": {
@@ -484,7 +585,7 @@ expr_case(
         'dryad_info(dryad_links(test_paper(text = "see 10.5061/dryad.j1fd7 and 10.5061/dryad.missing", '
         'url = c("https://doi.org/10.5061/dryad.j1fd7/", "https://doi.org/10.25338/B8N33J"))))'
     ),
-    'lambda m: m.dryad.dryad_info(m.dryad.dryad_links(__import__("pytacheck").test_paper('
+    'lambda m: m.dryad.dryad_info(m.dryad.dryad_links(__import__("metacheck").test_paper('
     '["see 10.5061/dryad.j1fd7 and 10.5061/dryad.missing"], '
     '["https://doi.org/10.5061/dryad.j1fd7/", "https://doi.org/10.25338/B8N33J"])))',
     compare=IGNORE_PID,
@@ -567,7 +668,7 @@ expr_case(
         '"https://figshare.com/projects/PERICLES_-_Heritage_values/133332", '
         '"https://figshare.com/s/5e01cc0cae4cf3e2e14f"))))'
     ),
-    'lambda m: m.figshare.figshare_info(m.figshare.figshare_links(__import__("pytacheck").test_paper('
+    'lambda m: m.figshare.figshare_info(m.figshare.figshare_links(__import__("metacheck").test_paper('
     'None, ["https://figshare.com/articles/dataset/some_title/18093368", '
     '"https://figshare.com/projects/PERICLES_-_Heritage_values/133332", '
     '"https://figshare.com/s/5e01cc0cae4cf3e2e14f"])))',
@@ -582,6 +683,25 @@ expr_case(
     "figshare_info.mock.numeric",
     online("figshare_info(6934484)"),
     "lambda m: m.figshare.figshare_info(6934484.0)",
+)
+# collections are expanded into their articles like projects (metacheck #434)
+FS_COLL_IN = [
+    "https://figshare.com/collections/Some_collection/8742785",
+    "https://doi.org/10.6084/m9.figshare.c.8742785.v1",
+    "https://figshare.com/collections/Gone/404405",
+    "https://figshare.com/projects/Empty/999",
+    "18093368",
+]
+expr_case(
+    "figshare_info.mock.collection",
+    online(f"figshare_info({r_chr(FS_COLL_IN)})"),
+    f"lambda m: m.figshare.figshare_info({py_list(FS_COLL_IN)})",
+)
+expr_case(
+    "figshare_info.mock.collection_only",
+    online('figshare_info("https://figshare.com/collections/Some_collection/8742785")'),
+    "lambda m: m.figshare.figshare_info("
+    '"https://figshare.com/collections/Some_collection/8742785")',
 )
 
 DV_INFO_IN = [
@@ -607,7 +727,7 @@ expr_case(
         '"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE"))))'
     ),
     "lambda m: m.dataverse.dataverse_info(m.dataverse.dataverse_links("
-    '__import__("pytacheck").test_paper('
+    '__import__("metacheck").test_paper('
     '["see https://doi.org/10.18167/DVN1/T0DMFJ."], '
     '["https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123", '
     '"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE"])))',
@@ -859,25 +979,25 @@ for mod, fn in [
 fn_case(
     "dataverse_pat.set_error",
     "dataverse_pat",
-    "pytacheck.archives.dataverse.dataverse_pat",
+    "metacheck.archives.dataverse.dataverse_pat",
     {"host": "dataverse.harvard.edu", "pat": {"$dbl": [123]}},
 )
 fn_case(
     "figshare_pat.set_error",
     "figshare_pat",
-    "pytacheck.archives.figshare.figshare_pat",
+    "metacheck.archives.figshare.figshare_pat",
     {"pat": {"$lgl": [True]}},
 )
 fn_case(
     "dryad_pat.set_error",
     "dryad_pat",
-    "pytacheck.archives.dryad.dryad_pat",
+    "metacheck.archives.dryad.dryad_pat",
     {"pat": {"$dbl": [1]}},
 )
 fn_case(
     "dryad_auth.no_secret_error",
     "dryad_auth",
-    "pytacheck.archives.dryad.dryad_auth",
+    "metacheck.archives.dryad.dryad_auth",
     {"client_id": "abc"},
 )
 expr_case(

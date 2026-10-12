@@ -9,7 +9,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
 
 STRINGS = ["ethics approval here", "no", "approv only", "no"]
 

@@ -22,10 +22,10 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "parity" / "cases" / "datacheck_checks_review.yaml"
 DATA = "tests/datacheck_checks/data"
-CK = "pytacheck.datacheck.checks."
+CK = "metacheck.datacheck.checks."
 PH = "tests.datacheck_checks.parity_helpers."
 #: the checks module inside a Python ``$expr`` (only ``pc``/``pd``/``np`` are bound there)
-C = "__import__('pytacheck.datacheck.checks', fromlist=['C'])"
+C = "__import__('metacheck.datacheck.checks', fromlist=['C'])"
 
 CASES: list[dict[str, Any]] = []
 

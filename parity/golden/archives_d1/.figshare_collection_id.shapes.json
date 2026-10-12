@@ -1,0 +1,45 @@
+{
+  "id": ".figshare_collection_id.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "8742785",
+      "8742785",
+      "12",
+      "77",
+      "6190228",
+      "6190228",
+      "42",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "names": [
+      "https://figshare.com/collections/Some_collection/8742785",
+      "https://figshare.com/collections/Some_collection/8742785/",
+      "https://FIGSHARE.COM/Collections/X/12",
+      "https://figshare.le.ac.uk/collections/Leicester/77",
+      "https://doi.org/10.6084/m9.figshare.c.6190228",
+      "10.6084/m9.figshare.c.6190228.v2",
+      "https://doi.org/10.6084/M9.FIGSHARE.C.42",
+      "https://figshare.com/collections/x/y/1",
+      "https://figshare.com/collections/x/1/files",
+      "https://figshare.com/projects/some_project/133332",
+      "https://doi.org/10.6084/m9.figshare.18093368",
+      "https://doi.org/10.26180/c.1234",
+      "not-a-figshare-url",
+      "",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

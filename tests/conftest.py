@@ -15,14 +15,21 @@ from urllib.parse import urlsplit
 
 import pytest
 
+from metacheck._env import fold_to_legacy
+
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))  # makes the `parity` harness importable
+
+# The tests set and read only the old names. Fold any METACHECK_* twin from the shell into
+# its old name first, or it would shadow the folders below (and keep an API key alive).
+fold_to_legacy()
 
 # Hermetic module system: no user/project config files and no installed
 # packs from the real data dir, unless the caller set these explicitly.
 _CALLER_DATA_DIR = os.environ.get("PYTACHECK_DATA_DIR")
 os.environ.setdefault("PYTACHECK_CONFIG", "none")
+os.environ.pop("PYTACHECK_API_KEY", None)  # the API tests start without a key
 
 UPSTREAM = ROOT / "upstream" / "metacheck"
 FIXTURES = UPSTREAM / "tests" / "testthat" / "fixtures"
@@ -52,14 +59,14 @@ def fixtures_dir(upstream_dir: Path) -> Path:
 
 @pytest.fixture
 def demo():
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.demopaper()
 
 
 @pytest.fixture
 def psychsci(fixtures_dir: Path):
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.read(fixtures_dir / "psychsci")
 
@@ -80,6 +87,21 @@ def _isolated_state(
 def _no_http_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
     """Courtesy delays and retry backoff are pointless against mocks."""
     monkeypatch.setenv("PYTACHECK_NO_SLEEP", "1")
+
+
+@pytest.fixture(autouse=True)
+def _no_rate_limit_memory(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A rate limit one test records (a host's reset) is not the next test's."""
+    from metacheck import http
+
+    monkeypatch.setattr(http, "_host_reset", {})
+
+
+@pytest.fixture(autouse=True)
+def _concepts_as_metacheck(monkeypatch: pytest.MonkeyPatch) -> None:
+    """data_check's concepts come from metacheck's rules/LLM tier, not the local
+    classifier (a model download); tests/datacheck_concepts opts back in."""
+    monkeypatch.setenv("METACHECK_CONCEPTS", "llm")
 
 
 # -- hygiene: a test not marked `network` never reaches the internet ---------------

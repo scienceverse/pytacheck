@@ -30,7 +30,7 @@ MOCKS = Path(__file__).resolve().parent / "mocks"
 @contextlib.contextmanager
 def online_and_no_sleep(value: bool = True) -> Iterator[None]:
     """``online()`` reports every host as reachable (or, with *value* False, none)."""
-    from pytacheck import utils
+    from metacheck import utils
 
     saved = utils.online
     utils.online = lambda *args, **kwargs: value  # type: ignore[assignment]
@@ -64,7 +64,7 @@ def repo_cache(files: dict[str, str], fn: Callable[[str], Any]) -> Any:
     *files* maps paths relative to the cache (``"researchbox.org_801/unzipped/x.csv"``)
     to text written as R's ``writeLines()`` does.
     """
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     with tempfile.TemporaryDirectory() as d:
         for rel, text in files.items():
@@ -78,8 +78,8 @@ def repo_cache(files: dict[str, str], fn: Callable[[str], Any]) -> Any:
 def _namespace() -> types.SimpleNamespace:
     import pandas as pd
 
-    import pytacheck as pc
-    from pytacheck.archives import (
+    import metacheck as pc
+    from metacheck.archives import (
         dataone,
         dspace7,
         fourtu,
@@ -113,7 +113,7 @@ def run(x: Callable[..., Any]) -> Any:
     The metacheck caches live in a temporary directory for the call (the R
     runner does the same with ``metacheck.cache.dir``).
     """
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     with tempfile.TemporaryDirectory() as cache, local_options({"metacheck.cache.dir": cache}):
         with online_and_no_sleep():

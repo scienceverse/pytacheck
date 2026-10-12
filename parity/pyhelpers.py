@@ -5,8 +5,8 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from pytacheck._r import base as rb
-from pytacheck._r import regex as rx
+from metacheck._r import base as rb
+from metacheck._r import regex as rx
 
 
 def catch(fn: Callable[[], Any]) -> Any:
@@ -55,7 +55,7 @@ def github_readme_probe(repo: str) -> str:
     """Harness self-test for mock_dir (replays the recorded GitHub readme)."""
     import base64
 
-    from pytacheck import http
+    from metacheck import http
 
     resp = http.request("GET", f"https://api.github.com/repos/{repo}/readme")
     assert resp is not None
@@ -64,7 +64,7 @@ def github_readme_probe(repo: str) -> str:
 
 def with_mocked(bindings: dict[str, Any], thunk: Any) -> Any:
     """``testthat::with_mocked_bindings()``: run ``thunk()`` with the objects named
-    by dotted paths in *bindings* (``{"pytacheck.db.replications.FLoRA": fn}``)
+    by dotted paths in *bindings* (``{"metacheck.db.replications.FLoRA": fn}``)
     replaced, and restore them afterwards."""
     import importlib
 

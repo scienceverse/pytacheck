@@ -8,3 +8,169 @@
 "mod_codebook_review/codebook_check.llm.rv_dupscale": *d14
 "mod_codebook_review/codebook_check.llm_odd.rv_dupscale": *d14
 "mod_codebook_review/codebook_check.llm_odd_na.rv_dupscale": *d14
+# a sentence repeated word for word in a paper (V7; D60). stat_p_exact and stat_p_nonsig are
+# validated checks: this change awaits the maintainer's OK on the pull request (D60 in docs/UPSTREAM_ISSUES.md).
+"mod_p_values/all_p_values.duplicate_paragraph": &d60
+  kind: deliberate
+  ref: D60
+  reason: a paragraph repeated word for word counts once, so its p-values are listed once; metacheck lists them again for each copy (4 rows here, 2 in pytacheck)
+"mod_p_values/stat_p_exact.duplicate_paragraph": *d60
+"mod_p_values/stat_p_nonsig.duplicate_paragraph": *d60
+# tables in a .qmd are raw HTML blocks, not R chunks (D75): report_qmd() of these
+# causal_claims reports (parity_support.report_qmd) writes each table as pytacheck's .qmd does
+"mod_causal_review/causal_claims.review.fake.report.yellow": &d74
+  kind: deliberate
+  ref: D75
+  reason: the report's tables are raw HTML blocks of their cells (R writes R chunks that rebuild the tables as code); the cells and the rest of the report are the same
+"mod_causal_review/causal_claims.review.fake.report.title_only": *d74
+"mod_causal_review/causal_claims.review.fake.report.demo": *d74
+"mod_causal_review/causal_claims.review.fake.report.psychsci_list": *d74
+# the statcheck port on plain Python values and scipy (D78): the rule for infinite degrees of
+# freedom, flags that must be TRUE/FALSE, and stats() settings as keyword arguments
+"stats_review/statcheck.review.chisq_inf_df.small_stat": &d78_inf
+  kind: deliberate
+  ref: D78
+  reason: infinite degrees of freedom follow scipy (t is normal, chi-square and Q get their limit p = 1, F is not checkable and is dropped); R stops on if (NA) for a small chi-square or Q statistic and uses the chi-square limit for F
+"stats_review/statcheck.review.Q_inf_df": *d78_inf
+"stats_review/statcheck.review.F_inf_df1": *d78_inf
+"stats_review/statcheck.review.F_inf_df2": *d78_inf
+"stats_review/stats.review.inf_df": *d78_inf
+"stats_review/compute_p.review.chisq_inf_df": *d78_inf
+"stats_review/statcheck.review.OneTailedTests_2": &d78_flag
+  kind: deliberate
+  ref: D78
+  reason: a statcheck flag must be TRUE or FALSE (or 1/0) and 2 raises ValueError; R compares flags with == TRUE, so 2 means FALSE (decision_error_test() returns NULL)
+"stats_review/statcheck.review.OneTailedTxt_2": *d78_flag
+"stats_review/statcheck.review.OneTailedTxt.OneTailedTests_2": *d78_flag
+"stats_review/statcheck.review.pZeroError_2": *d78_flag
+"stats_review/statcheck.review.AllPValues_2": *d78_flag
+"stats_review/stats.review.AllPValues_2": *d78_flag
+"stats_review/decision_error_test.review.pEqualAlphaSig_2": *d78_flag
+"stats_review/stats.review.partial.alp": &d78_args
+  kind: deliberate
+  ref: D78
+  reason: stats() takes statcheck's settings as Python keyword or positional arguments, so an abbreviated name or texts = raises TypeError; R matches unique prefixes and lets texts = replace the text
+"stats_review/stats.review.partial.AllP": *d78_args
+"stats_review/stats.review.partial.OneTailedTe": *d78_args
+"stats_review/stats.review.partial.st": *d78_args
+"stats_review/stats.review.partial.s": *d78_args
+"stats_review/stats.review.texts_rebound": *d78_args
+"stats_review/stats.review.texts_rebound.none": *d78_args
+# fields and columns are read by their exact name, and a scalar has no fields (D81): R's `$`
+# also takes a unique prefix of a name, and stops on a scalar
+"archives_d2/reshare_file_download.mock.no_caps":
+  kind: deliberate
+  ref: D81
+  reason: a file without `hash` has no checksum; R's `x$hash` reads its `hash_type` ("SHA1") as the checksum
+"datacheck_columns/parse_qsf.survey.qsf": &d81_qsf
+  kind: deliberate
+  ref: D81
+  reason: a choice without `Display` has no label and a question without `QuestionText` no text; R's `$` reads them from `DisplayLogic` and `QuestionText_Unsafe`
+"datacheck_columns/parse_codebook.survey.qsf": *d81_qsf
+"datacheck_columns/parse_codebook.group_qsf": *d81_qsf
+"datacheck_columns/.qsf_option_display.partial": *d81_qsf
+"datacheck_columns_review/.qsf_option_display.displaylogic": *d81_qsf
+"datacheck_columns_review/parse_qsf.edge.qsf": *d81_qsf
+"datacheck_columns_review/parse_codebook.edge.qsf": *d81_qsf
+"db_review/doi_lookup.mock.partialpage": &d81_prefix
+  kind: deliberate
+  ref: D81
+  reason: names are matched exactly; R's `$` reads a field whose name only starts with the one asked for (a unique prefix)
+"db_review/doi_resolves.mock.codes": *d81_prefix
+"llm_review/apply_reasoning.partial_think": *d81_prefix
+"codecheck_review/code_extract_py.review.nul_in_key": *d81_prefix
+"statout_core_review/stat_output_validate.partial_names": *d81_prefix
+"statout_core_review/r_merge_captures.partial_line": *d81_prefix
+"statout_readers/jasp_analyses_summary.flat": *d81_prefix
+"statout_readers_review/import_omv.labels.review": *d81_prefix
+"repo_download/file_category.partial_match":
+  kind: deliberate
+  ref: D81
+  reason: a table without a `name` column fails as R fails on one; R's `contents$name` reads its `names` column
+"bibr12_review/malformed.read.source_scalar": &d81_scalar
+  kind: deliberate
+  ref: D81
+  reason: a scalar where a JSON object is expected has no fields, so the file is read; R stops ($ operator is invalid for atomic vectors)
+"bibr12_review/malformed.write.source_scalar": *d81_scalar
+"bibr12_review/malformed.read.extraction_scalar": *d81_scalar
+"bibr12_review/malformed.write.extraction_scalar": *d81_scalar
+"bibr12_review/malformed.read.producer_scalar": *d81_scalar
+"bibr12_review/malformed.write.producer_scalar": *d81_scalar
+"codecheck/code_extract_py.text.scalar": *d81_scalar
+"datacheck_columns/parse_qsf.scalar_json": *d81_scalar
+# all_urls lists bibr's links and the plain-text URLs that are not links, without dotted
+# names that are not URLs, and adds link_text, url, domain and source columns (D82)
+"mod_urls_open/all_urls.demo": &d82
+  kind: deliberate
+  ref: D82
+  reason: all_urls reads bibr's link table (a URL cut by a line break is read whole), drops dotted names that are not URLs (pwr.t.test), lists doi:-prefixed DOIs, and adds the link_text, url, domain and source columns
+"mod_urls_open/all_urls.problem_203020": *d82
+"mod_urls_open/all_urls.synthetic": *d82
+"mod_urls_open/all_urls.none": *d82
+"mod_urls_open/all_urls.empty_paper": *d82
+"mod_urls_open/all_urls.paperlist": *d82
+"mod_urls_open_review/all_urls.review.list_order": *d82
+"mod_urls_open_review/all_urls.review.na_text": *d82
+"mod_urls_open_review/all_urls.review.sections": *d82
+"mod_urls_open_review/all_urls.review.dup_sections": *d82
+"mod_urls_open_review/all_urls.review.chain_twice": *d82
+"mod_urls_open_review/all_urls.review.list_with_empty": *d82
+"mod_urls_open_review/all_urls.review.demo_copy": *d82
+"bibr12/module.all_urls.PMC4383902": *d82
+"bibr12/module.all_urls.full": *d82
+"bibr12_review/module.all_urls.edge_types": *d82
+"grobid12/module.all_urls.0956797615569889": *d82
+"grobid12/module.all_urls.debruine": *d82
+# open_practices reads bibr's data availability statement (its sentences need no data
+# word; one kept outside the text is searched) and adds the no_data column (D83)
+"bibr12/module.open_practices.preprint": &d83
+  kind: deliberate
+  ref: D83
+  reason: open_practices adds the summary_table column no_data (the data availability statement says there are no data) and reads bibr's data availability statement, also when it is not in the text
+"bibr12/module.open_practices.full": *d83
+"grobid12/module.open_practices.demo": *d83
+"mod_urls_open/open_practices.demo": *d83
+"mod_urls_open/open_practices.psychsci_single_2": *d83
+"mod_urls_open/open_practices.psychsci_single_3": *d83
+"mod_urls_open/open_practices.problem_203020": *d83
+"mod_urls_open/open_practices.code_only": *d83
+"mod_urls_open/open_practices.data_and_code": *d83
+"mod_urls_open/open_practices.data_and_code_separate": *d83
+"mod_urls_open/open_practices.code_on_request": *d83
+"mod_urls_open/open_practices.materials_prereg_only": *d83
+"mod_urls_open/open_practices.no_repo": *d83
+"mod_urls_open/open_practices.none": *d83
+"mod_urls_open/open_practices.empty_paper": *d83
+"mod_urls_open/open_practices.whitespace": *d83
+"mod_urls_open/open_practices.case_words": *d83
+"mod_urls_open/open_practices.paperlist": *d83
+"mod_urls_open/open_practices.cleaning": *d83
+"mod_urls_open_review/open_practices.review.na_text": *d83
+"mod_urls_open_review/open_practices.review.prereg_variants": *d83
+"mod_urls_open_review/open_practices.review.green_on_request": *d83
+"mod_urls_open_review/open_practices.review.code_open_data_on_request": *d83
+"mod_urls_open_review/open_practices.review.special_chars": *d83
+"mod_urls_open_review/open_practices.review.marker_repo": *d83
+"mod_urls_open_review/open_practices.review.sections": *d83
+"mod_urls_open_review/open_practices.review.dup_sections": *d83
+"mod_urls_open_review/open_practices.review.single_apa": *d83
+"mod_urls_open_review/open_practices.review.single_preprint_cermine": *d83
+"mod_urls_open_review/open_practices.review.single_published_cermine": *d83
+"mod_urls_open_review/open_practices.review.list_counts": *d83
+"mod_urls_open_review/open_practices.review.demo_copy": *d83
+"mod_urls_open_review/open_practices.review.tricky_urls": *d83
+# the COI, funding and ethics checks fall back to bibr's statements when their
+# expressions find nothing (D84): bibr12 full.json has them only in its info table
+"bibr12/module.coi_check.full": &d84
+  kind: deliberate
+  ref: D84
+  reason: a paper the expressions found no statement in gets the statement bibr extracted (info.coi_statement, info.funding_statement, info.ethics_statement); full.json has them only there
+"bibr12/module.coi_check.mixed": *d84
+"bibr12/module.coi_check_oi.full": *d84
+"bibr12/module.ethics_check.full": *d84
+"bibr12/module.ethics_check.mixed": *d84
+"bibr12/module.funding_check.full": *d84
+"bibr12/module.funding_check.mixed": *d84
+"bibr12/module.funding_check_oi.full": *d84
+"bibr12/module.funding_check_oi.mixed": *d84
+"mod_ethics_review/ethics_check.fixture_corpus": *d84

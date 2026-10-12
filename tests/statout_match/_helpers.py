@@ -48,7 +48,7 @@ def read_lines(path: str | Path) -> list[str]:
 
 def vocab(name: str) -> Any:
     """A vocabulary table as ``{names, values}`` (``_STATO_BY_CALL``: per call)."""
-    from pytacheck.statout import stato_map
+    from metacheck.statout import stato_map
 
     tbl = getattr(stato_map, name)
     if isinstance(tbl, str):
@@ -59,7 +59,7 @@ def vocab(name: str) -> Any:
 
 
 def vocab_keys() -> list[str]:
-    from pytacheck.statout.stato_map import _MC_STAT_MAP, _STATO_MAP
+    from metacheck.statout.stato_map import _MC_STAT_MAP, _STATO_MAP
 
     return [*_STATO_MAP, *_MC_STAT_MAP]
 
@@ -70,7 +70,7 @@ def stato_batch(headers: Sequence[Any] | None = None, call_fn: Any = None, vocab
     ``vocab``: ``"keys"`` (every vocabulary key), ``"upper"`` (the keys,
     upper-cased and padded), ``"variant"`` (the keys with ``[gg]``).
     """
-    from pytacheck.statout.stato_map import stato_type_column
+    from metacheck.statout.stato_map import stato_type_column
 
     hs = _headers(headers, vocab)
     return [stato_type_column(h, call_fn) for h in hs]
@@ -88,25 +88,25 @@ def _headers(headers: Sequence[Any] | None, vocab_: str) -> list[Any]:
 
 def stato_pairs(headers: Sequence[Any], calls: Sequence[Any]) -> Any:
     """``mapply(stato_type_column, headers, calls)``."""
-    from pytacheck.statout.stato_map import stato_type_column
+    from metacheck.statout.stato_map import stato_type_column
 
     return [stato_type_column(h, c) for h, c in zip(na(headers), na(calls), strict=True)]
 
 
 def spv_batch(labels: Sequence[Any] | None = None, vocab: str = "") -> Any:
-    from pytacheck.statout.stato_map import _spv_stato_type_label
+    from metacheck.statout.stato_map import _spv_stato_type_label
 
     return [_spv_stato_type_label(h) for h in _headers(labels, vocab)]
 
 
 def by_call_pairs(keys: Sequence[Any], calls: Sequence[Any]) -> Any:
-    from pytacheck.statout.stato_map import _stato_by_call
+    from metacheck.statout.stato_map import _stato_by_call
 
     return [_stato_by_call(k, c) for k, c in zip(na(keys), na(calls), strict=True)]
 
 
 def strip_variant(key: Sequence[Any]) -> Any:
-    from pytacheck.statout.stato_map import _stato_strip_variant
+    from metacheck.statout.stato_map import _stato_strip_variant
 
     return _stato_strip_variant(_none_na(na(list(key))))
 
@@ -115,22 +115,22 @@ def strip_variant(key: Sequence[Any]) -> Any:
 
 
 def batch(fn: str, x: Sequence[Any]) -> Any:
-    """``lapply(x, <fn>)`` for a ``pytacheck.statout`` internal."""
+    """``lapply(x, <fn>)`` for a ``metacheck.statout`` internal."""
     import importlib
 
     module, _, name = fn.rpartition(".")
-    f = getattr(importlib.import_module(f"pytacheck.statout.{module}"), name)
+    f = getattr(importlib.import_module(f"metacheck.statout.{module}"), name)
     return [f(v) for v in na(list(x))]
 
 
 def stat_family(x: Sequence[Any] | None = None, vocab: str = "") -> Any:
-    from pytacheck.statout.match_reported import _stat_family
+    from metacheck.statout.match_reported import _stat_family
 
     return _stat_family(_headers(x, vocab))
 
 
 def share_pairs(a: Sequence[Any], b: Sequence[Any]) -> Any:
-    from pytacheck.statout.match_reported import _sites_share_variable
+    from metacheck.statout.match_reported import _sites_share_variable
 
     return [_sites_share_variable(x, y) for x, y in zip(na(a), na(b), strict=True)]
 
@@ -147,7 +147,7 @@ def eq_frame(cols: Mapping[str, Sequence[Any]], types: Mapping[str, str]) -> pd.
 
 
 def test_paper(texts: Sequence[str]) -> Any:
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.test_paper(list(texts))
 
@@ -156,14 +156,14 @@ def recompose(
     source: str, texts: Sequence[str] | None = None, cols: Any = None, types: Any = None
 ) -> Any:
     """``.recompose_eq()`` of ``extract_eq(<paper>)``, a data frame, or ``NULL``."""
-    from pytacheck.statout.match_reported import _recompose_eq
+    from metacheck.statout.match_reported import _recompose_eq
 
     return _recompose_eq(_eq_source(source, texts, cols, types))
 
 
 def _eq_source(source: str, texts: Any, cols: Any, types: Any) -> Any:
-    import pytacheck as pc
-    from pytacheck.text.extract import extract_eq
+    import metacheck as pc
+    from metacheck.text.extract import extract_eq
 
     if source == "demo":
         return extract_eq(pc.demopaper())
@@ -175,9 +175,9 @@ def _eq_source(source: str, texts: Any, cols: Any, types: Any) -> Any:
 
 
 def tests_from_extract(texts: Sequence[str] | None = None, source: str = "texts") -> Any:
-    import pytacheck as pc
-    from pytacheck.statout.match_reported import _tests_from_extract
-    from pytacheck.text.extract_tests import extract_tests
+    import metacheck as pc
+    from metacheck.statout.match_reported import _tests_from_extract
+    from metacheck.text.extract_tests import extract_tests
 
     paper = pc.demopaper() if source == "demo" else test_paper(texts or [])
     return _tests_from_extract(extract_tests(paper))
@@ -188,9 +188,9 @@ def tests_from_extract(texts: Sequence[str] | None = None, source: str = "texts"
 
 def long_of(spec: Mapping[str, Any]) -> pd.DataFrame:
     """A ``stat_results_long()`` table from a fixture file (or a literal frame)."""
-    from pytacheck.statout.r_output import read_r_output
-    from pytacheck.statout.stat_output import stat_results_long
-    from pytacheck.statout.stat_tables import read_stat_tables
+    from metacheck.statout.r_output import read_r_output
+    from metacheck.statout.stat_output import stat_results_long
+    from metacheck.statout.stat_tables import read_stat_tables
 
     kind = spec["kind"]
     if kind == "file":
@@ -237,7 +237,7 @@ def _dropped(out: pd.DataFrame, spec: Mapping[str, Any]) -> pd.DataFrame:
 
 def table_paper(texts: Sequence[str], section_ids: Sequence[Any], tables: Sequence[Any]) -> Any:
     """A test paper with text section ids and a ``table`` table with ``contents``."""
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(list(texts))
     txt = p.text.copy()
@@ -265,9 +265,9 @@ def table_paper(texts: Sequence[str], section_ids: Sequence[Any], tables: Sequen
 
 
 def paper_of(spec: Mapping[str, Any]) -> Any:
-    import pytacheck as pc
-    from pytacheck.text.extract import extract_eq
-    from pytacheck.text.extract_tests import extract_tests
+    import metacheck as pc
+    from metacheck.text.extract import extract_eq
+    from metacheck.text.extract_tests import extract_tests
 
     kind = spec["kind"]
     if kind == "demo":
@@ -297,7 +297,7 @@ def match(
     what: str = "table",
 ) -> Any:
     """``match_reported_output()`` (``what = "summary"``: its summary attribute)."""
-    from pytacheck.statout.match_reported import match_reported_output
+    from metacheck.statout.match_reported import match_reported_output
 
     res = match_reported_output(
         paper_of(paper),
@@ -312,31 +312,31 @@ def match(
 
 
 def typed_cells(content: Any, caption: Any = None) -> Any:
-    from pytacheck.statout.match_table import _table_typed_cells
+    from metacheck.statout.match_table import _table_typed_cells
 
     return _table_typed_cells(_none_na(na(content)), _none_na(na(caption)))
 
 
 def matrix_cols(content: Any) -> Any:
-    from pytacheck.statout.match_table import _table_matrix_cols
+    from metacheck.statout.match_table import _table_matrix_cols
 
     return _table_matrix_cols(_none_na(na(content)))
 
 
 def tests_one(table_id: Any, content: Any, caption: Any = None) -> Any:
-    from pytacheck.statout.match_table import _table_tests_one
+    from metacheck.statout.match_table import _table_tests_one
 
     return _table_tests_one(table_id, _none_na(na(content)), _none_na(na(caption)))
 
 
 def table_tests(paper: Mapping[str, Any]) -> Any:
-    from pytacheck.statout.match_table import _table_tests
+    from metacheck.statout.match_table import _table_tests
 
     return _table_tests(paper_of(paper))
 
 
 def table_caption(paper: Mapping[str, Any], section_ids: Sequence[Any]) -> Any:
-    from pytacheck.statout.match_table import _table_caption
+    from metacheck.statout.match_table import _table_caption
 
     p = paper_of(paper)
     return [_table_caption(p, s) for s in na(list(section_ids))]

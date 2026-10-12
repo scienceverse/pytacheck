@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 from lxml import etree
 
-from pytacheck.statout.spv import _spv_table_html, _spvsx_walk_heading, spv_assemble_table
+from metacheck.statout.spv import _spv_table_html, _spvsx_walk_heading, spv_assemble_table
 
 
 def test_nested_headings_keep_the_command_name() -> None:

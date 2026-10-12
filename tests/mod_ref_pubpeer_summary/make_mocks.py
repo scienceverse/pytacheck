@@ -38,13 +38,13 @@ def _fb(doi: str, n: int, users: Any, url: str | None = "auto") -> dict[str, Any
 
 def _module_dois(paper: Any) -> list[str]:
     """The DOIs ref_pubpeer sends to pubpeer_comments() for *paper*."""
-    from pytacheck.modules.ref_pubpeer import _refs_with_doi
+    from metacheck.modules.ref_pubpeer import _refs_with_doi
 
     return _refs_with_doi(paper)["doi"].tolist()
 
 
 def _path(dois: list[str]) -> str:
-    from pytacheck.db.pubpeer import _request_body
+    from metacheck.db.pubpeer import _request_body
 
     body = _request_body([d.lower() for d in dois])
     request = httpx.Request(
@@ -79,7 +79,7 @@ def _write_status(dois: list[str], status: int) -> None:
 
 
 def main() -> None:
-    import pytacheck as pc
+    import metacheck as pc
 
     if H.MOCK_DIR.exists():
         shutil.rmtree(H.MOCK_DIR)

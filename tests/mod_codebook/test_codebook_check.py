@@ -24,10 +24,10 @@ from typing import Any
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleOutput, module_run
-from pytacheck.modules import _codebook as cbc
-from pytacheck.report.blocks import cap_gate_count
+import metacheck as pc
+from metacheck.module import ModuleOutput, module_run
+from metacheck.modules import _codebook as cbc
+from metacheck.report.blocks import cap_gate_count
 from tests.mod_codebook.helpers import (
     FIXTURES,
     ROOT,
@@ -196,7 +196,7 @@ def test_no_data_columns_returns_na_without_calling_the_llm(
         raise AssertionError("llm() must not be called")
 
     monkeypatch.setattr(cbc, "_llm", boom)
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     with local_options({"metacheck.llm.use": True}):
         cc = module_run(cbc_prev("empty"), "codebook_check")
@@ -374,7 +374,7 @@ def test_propagation_never_overwrites_an_earlier_name() -> None:
 
 
 def test_possessive_instrument_name_is_matchable() -> None:
-    from pytacheck._r import grepl
+    from metacheck._r import grepl
 
     pat = cbc._scale_text_pattern("Raven's Advanced Progressive Matrices", None)
     for text in (
@@ -712,7 +712,7 @@ def _comparable(out: ModuleOutput) -> dict[str, Any]:
 
 @pytest.mark.parametrize("scenario", ["task", "scales_mixed", "panas_high", "taskonly", "conflict"])
 def test_bibr12_paper_matches_the_legacy_paper(scenario: str) -> None:
-    from pytacheck.io.bibr12 import read_bibr12
+    from metacheck.io.bibr12 import read_bibr12
 
     p12 = read_bibr12(BIBR12_PREPRINT)
     legacy = pc.read(LEGACY_PREPRINT, schema_version=None)  # the older Grobid conversion
@@ -756,7 +756,7 @@ def test_inputs_are_not_mutated() -> None:
 
 
 def test_runs_data_check_when_its_output_is_missing(monkeypatch: pytest.MonkeyPatch) -> None:
-    import pytacheck.module as mod
+    import metacheck.module as mod
 
     prev = cbc_prev("green")
     calls: list[dict[str, Any]] = []
@@ -775,7 +775,7 @@ def test_runs_data_check_when_its_output_is_missing(monkeypatch: pytest.MonkeyPa
 
 
 def test_full_pipeline_matches_stored_data_check() -> None:
-    from pytacheck.module import ModuleError, module_find
+    from metacheck.module import ModuleError, module_find
 
     try:
         module_find("data_check")
@@ -810,7 +810,7 @@ def test_large_corpus_run_is_fast() -> None:
 def test_empty_prefix_siblings_become_na_as_in_r() -> None:
     """R looks a sibling's prefix up by name: an empty prefix ("1", "_3", "__")
     never matches, so those rows are set to NA rather than given the scale."""
-    from pytacheck.modules._codebook import _propagate_scale_by_prefix
+    from metacheck.modules._codebook import _propagate_scale_by_prefix
     from tests.mod_codebook.review_helpers import rv_propagate_df
 
     out = _propagate_scale_by_prefix(rv_propagate_df())
@@ -826,9 +826,9 @@ def test_empty_prefix_siblings_become_na_as_in_r() -> None:
 
 def test_haven_labels_are_read_without_the_data() -> None:
     """Embedded labels are harvested labels-only, as R's n_max = 0L read."""
-    from pytacheck.datacheck._columns_codebook import _haven_frame
-    from pytacheck.datacheck.columns import _extract_haven_labels
-    from pytacheck.modules.codebook_check import _haven_labels_frame
+    from metacheck.datacheck._columns_codebook import _haven_frame
+    from metacheck.datacheck.columns import _extract_haven_labels
+    from metacheck.modules.codebook_check import _haven_labels_frame
 
     for rel in (
         "tests/datacheck_files/data/labelled.sav",

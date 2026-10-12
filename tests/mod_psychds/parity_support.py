@@ -2,7 +2,7 @@
 
 psychds_check reads data_check's ``structure``, ``table`` and
 ``group_no_evidence`` (and codebook_check's ``table``) from the module chain.
-:func:`fake_chain` builds a :class:`~pytacheck.module.ModuleOutput` that looks
+:func:`fake_chain` builds a :class:`~metacheck.module.ModuleOutput` that looks
 like a finished data_check run from a named spec in
 ``tests/mod_psychds/fixtures/chains.json``, exactly as the R twin
 ``tests/mod_psychds/fake_chain.R::psychds_fake_chain()`` does, so the module is
@@ -46,7 +46,7 @@ def _chr(vals: list[Any]) -> Any:
 
 
 def load_paper(which: str | list[str] | None) -> Any:
-    import pytacheck as pc
+    import metacheck as pc
 
     if isinstance(which, list):
         # repository-relative paths: read() them (one paper or a list)
@@ -74,7 +74,7 @@ def structure(spec: dict[str, Any]) -> pd.DataFrame | None:
     cols = {k: _chr(v) for k, v in st.items() if k != "referenced_by"}
     s = pd.DataFrame(cols)
     if spec.get("classify"):
-        from pytacheck.datacheck.files import _data_doc_role, data_classify_files
+        from metacheck.datacheck.files import _data_doc_role, data_classify_files
 
         names = s["file_name"].tolist()
         paths = s["file_path"].tolist() if "file_path" in s.columns else None
@@ -94,8 +94,8 @@ def fake_chain(name: str, paper: Any = None, file: str = "chains.json") -> Any:
 
     *paper* replaces the spec's paper (e.g. a bibr 12.x reading of the demo paper).
     """
-    from pytacheck.module import ModuleOutput
-    from pytacheck.papers.tables import paper_id
+    from metacheck.module import ModuleOutput
+    from metacheck.papers.tables import paper_id
 
     spec = specs(file)["chains"][name]
     if paper is None:
@@ -148,14 +148,14 @@ def fake_chain(name: str, paper: Any = None, file: str = "chains.json") -> Any:
 
 def run_chain(name: str, paper: Any = None, file: str = "chains.json") -> Any:
     """``module_run(fake_chain(name), "psychds_check")``."""
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     return module_run(fake_chain(name, paper, file), "psychds_check")
 
 
 def run_llm(name: str, use: bool = True, file: str = "chains.json") -> Any:
     """psychds_check on a fake chain with ``llm_use(use)`` (R: ``psychds_run_llm()``)."""
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     with local_options({"metacheck.llm.use": use}):
         return run_chain(name, file=file)
@@ -166,7 +166,7 @@ def tree(name: str, file: str = "chains.json") -> str:
 
     R: ``psychds_tree()``; a ``null`` node table stays ``None``.
     """
-    from pytacheck.modules.psychds_check import psychds_tree_html
+    from metacheck.modules.psychds_check import psychds_tree_html
 
     spec = specs(file)["trees"][name]
     nodes = spec.get("nodes")

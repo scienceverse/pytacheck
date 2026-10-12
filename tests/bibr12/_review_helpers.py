@@ -13,7 +13,7 @@ from typing import Any
 import orjson
 import pandas as pd
 
-import pytacheck as pc
+import metacheck as pc
 from tests.bibr12._parity_helpers import _path, _tempdir, normalise_converter, read_lines
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -137,4 +137,4 @@ def full_with_crossref_matches() -> Any:
             "authors": [["Lisa DeBruine"], ["Lisa DeBruine"]],
         }
     )
-    return call("pytacheck.db.crossref.add_bib_match", p, 0)
+    return call("metacheck.db.crossref.add_bib_match", p, 0)

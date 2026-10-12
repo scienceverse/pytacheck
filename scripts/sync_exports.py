@@ -1,4 +1,4 @@
-"""Regenerate the metacheck-API block of ``src/pytacheck/__init__.py``.
+"""Regenerate the metacheck-API block of ``src/metacheck/__init__.py``.
 
 Every function metacheck exports (``upstream/metacheck/NAMESPACE``) that pytacheck
 has ported is exported lazily from the top-level package, under the Python name
@@ -30,7 +30,7 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-INIT = ROOT / "src" / "pytacheck" / "__init__.py"
+INIT = ROOT / "src" / "metacheck" / "__init__.py"
 NAMESPACE = ROOT / "upstream" / "metacheck" / "NAMESPACE"
 SYMBOLS = ROOT / "porting" / "symbols.json"
 LINE_LENGTH = 100
@@ -44,17 +44,17 @@ IMPORTS_MARKER = (
 
 #: section comment for each package (in this order)
 SECTIONS = {
-    "pytacheck.io": "reading and conversion",
-    "pytacheck.db": "bibliographic databases and registries",
-    "pytacheck.llm": "LLMs",
-    "pytacheck.archives": "repositories and archives",
-    "pytacheck.fileinfo": "file categories and naming",
-    "pytacheck.datacheck": "data files, codebooks and data checks",
-    "pytacheck.codecheck": "code checks",
-    "pytacheck.statout": "statistical software output",
-    "pytacheck.repro": "computational reproducibility",
-    "pytacheck.report": "report building blocks",
-    "pytacheck": "utilities",
+    "metacheck.io": "reading and conversion",
+    "metacheck.db": "bibliographic databases and registries",
+    "metacheck.llm": "LLMs",
+    "metacheck.archives": "repositories and archives",
+    "metacheck.fileinfo": "file categories and naming",
+    "metacheck.datacheck": "data files, codebooks and data checks",
+    "metacheck.codecheck": "code checks",
+    "metacheck.statout": "statistical software output",
+    "metacheck.repro": "computational reproducibility",
+    "metacheck.report": "report building blocks",
+    "metacheck": "utilities",
 }
 
 
@@ -64,7 +64,7 @@ def _section(module: str) -> str:
         key = ".".join(parts[:n])
         if key in SECTIONS:
             return key
-    return "pytacheck"
+    return "metacheck"
 
 
 def r_exports() -> list[str]:
@@ -174,10 +174,10 @@ def main(argv: list[str] | None = None) -> int:
     source = INIT.read_text(encoding="utf-8")
     new = generate(source)
     if new == source:
-        print("pytacheck/__init__.py exports are up to date")
+        print("metacheck/__init__.py exports are up to date")
         return 0
     if ns.check:
-        print("pytacheck/__init__.py exports are out of date: run scripts/sync_exports.py")
+        print("metacheck/__init__.py exports are out of date: run scripts/sync_exports.py")
         return 1
     INIT.write_text(new, encoding="utf-8")
     print(f"updated {INIT.relative_to(ROOT)}")

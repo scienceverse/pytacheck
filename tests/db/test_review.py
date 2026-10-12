@@ -14,9 +14,9 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.db import _utils
-from pytacheck.db._utils import records_frame
-from pytacheck.db.crossref import (
+from metacheck.db import _utils
+from metacheck.db._utils import records_frame
+from metacheck.db.crossref import (
     _crossref_parse_item,
     _crossref_query_parse,
     _data_frame,
@@ -25,9 +25,9 @@ from pytacheck.db.crossref import (
     crossref_doi,
     crossref_query,
 )
-from pytacheck.db.doi import doi_lookup, doi_resolves
-from pytacheck.db.pubpeer import pubpeer_comments
-from pytacheck.db.regcheck import _match_client, regcheck_compare
+from metacheck.db.doi import doi_lookup, doi_resolves
+from metacheck.db.pubpeer import pubpeer_comments
+from metacheck.db.regcheck import _match_client, regcheck_compare
 
 
 @pytest.fixture

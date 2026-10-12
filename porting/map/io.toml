@@ -1,57 +1,57 @@
 # R source -> Python location for the io area (see docs/PORTING.md).
 [files]
-"R/import-grobid.R" = ["src/pytacheck/io/grobid.py"]
-"R/import-convert.R" = ["src/pytacheck/io/convert.py"]
-"R/import-bibr.R" = ["src/pytacheck/io/bibr_convert.py"]
-"R/import-papers.R" = ["src/pytacheck/io/corpus.py"]
-"R/svutils-xml.R" = ["src/pytacheck/io/xml.py"]
+"R/import-grobid.R" = ["src/metacheck/io/grobid.py"]
+"R/import-convert.R" = ["src/metacheck/io/convert.py"]
+"R/import-bibr.R" = ["src/metacheck/io/bibr_convert.py"]
+"R/import-papers.R" = ["src/metacheck/io/corpus.py"]
+"R/svutils-xml.R" = ["src/metacheck/io/xml.py"]
 
 [functions]
 # R/import-grobid.R
-convert_grobid = "pytacheck.io.grobid:convert_grobid"
-grobid_to_bibr = "pytacheck.io.grobid:grobid_to_bibr"
-".grobid_isalive" = "pytacheck.io.grobid:_grobid_isalive"
-".grobid_to_bibr" = "pytacheck.io.grobid:_grobid_to_bibr"
-".process_full_text" = "pytacheck.io.grobid:_process_full_text"
-".tei_text" = "pytacheck.io.grobid:_tei_text"
-".tei_authors" = "pytacheck.io.grobid:_tei_authors"
-".tei_xrefs" = "pytacheck.io.grobid:_tei_xrefs"
-".tei_url" = "pytacheck.io.grobid:_tei_url"
-".tei_bib" = "pytacheck.io.grobid:_tei_bib"
-".tei_table_contents" = "pytacheck.io.grobid:_tei_table_contents"
-".xml2bib" = "pytacheck.io.grobid:_xml2bib"
+convert_grobid = "metacheck.io.grobid:convert_grobid"
+grobid_to_bibr = "metacheck.io.grobid:grobid_to_bibr"
+".grobid_isalive" = "metacheck.io.grobid:_grobid_isalive"
+".grobid_to_bibr" = "metacheck.io.grobid:_grobid_to_bibr"
+".process_full_text" = "metacheck.io.grobid:_process_full_text"
+".tei_text" = "metacheck.io.grobid:_tei_text"
+".tei_authors" = "metacheck.io.grobid:_tei_authors"
+".tei_xrefs" = "metacheck.io.grobid:_tei_xrefs"
+".tei_url" = "metacheck.io.grobid:_tei_url"
+".tei_bib" = "metacheck.io.grobid:_tei_bib"
+".tei_table_contents" = "metacheck.io.grobid:_tei_table_contents"
+".xml2bib" = "metacheck.io.grobid:_xml2bib"
 # tidytext::unnest_sentences() / tokenizers::tokenize_sentences() (ICU sentence breaks)
-"tokenizers::tokenize_sentences" = "pytacheck.io.grobid:_tokenize_sentences"
+"tokenizers::tokenize_sentences" = "metacheck.io.grobid:_tokenize_sentences"
 # R/import-convert.R
-convert = "pytacheck.io.convert:convert"
+convert = "metacheck.io.convert:convert"
 # R/import-bibr.R
-convert_bibr = "pytacheck.io.bibr_convert:convert_bibr"
-format_bib_authors = "pytacheck.io.bibr_convert:format_bib_authors"
-".bibr_isalive" = "pytacheck.io.bibr_convert:_bibr_isalive"
-".bibr_request_scivrs" = "pytacheck.io.bibr_convert:_bibr_request_scivrs"
-".bibr_request_selfhosted" = "pytacheck.io.bibr_convert:_bibr_request_selfhosted"
-".bibr_save_result" = "pytacheck.io.bibr_convert:_bibr_save_result"
-".coerce_bib_authors" = "pytacheck.io.bibr_convert:_coerce_bib_authors"
-".parse_author_string" = "pytacheck.io.bibr_convert:_parse_author_string"
+convert_bibr = "metacheck.io.bibr_convert:convert_bibr"
+format_bib_authors = "metacheck.io.bibr_convert:format_bib_authors"
+".bibr_isalive" = "metacheck.io.bibr_convert:_bibr_isalive"
+".bibr_request_scivrs" = "metacheck.io.bibr_convert:_bibr_request_scivrs"
+".bibr_request_selfhosted" = "metacheck.io.bibr_convert:_bibr_request_selfhosted"
+".bibr_save_result" = "metacheck.io.bibr_convert:_bibr_save_result"
+".coerce_bib_authors" = "metacheck.io.bibr_convert:_coerce_bib_authors"
+".parse_author_string" = "metacheck.io.bibr_convert:_parse_author_string"
 # R/import-papers.R
-papers_available = "pytacheck.io.corpus:papers_available"
-papers_load = "pytacheck.io.corpus:papers_load"
-papers_remove = "pytacheck.io.corpus:papers_remove"
-papers_metadata = "pytacheck.io.corpus:papers_metadata"
-".papers_cache_dir" = "pytacheck.io.corpus:_papers_cache_dir"
-".papers_release_assets" = "pytacheck.io.corpus:_papers_release_assets"
+papers_available = "metacheck.io.corpus:papers_available"
+papers_load = "metacheck.io.corpus:papers_load"
+papers_remove = "metacheck.io.corpus:papers_remove"
+papers_metadata = "metacheck.io.corpus:papers_metadata"
+".papers_cache_dir" = "metacheck.io.corpus:_papers_cache_dir"
+".papers_release_assets" = "metacheck.io.corpus:_papers_release_assets"
 # base::readRDS() for corpus files
-"readRDS" = "pytacheck.io.corpus:_read_rds"
+"readRDS" = "metacheck.io.corpus:_read_rds"
 # R/svutils-xml.R
-".xml_find_text" = "pytacheck.io.xml:_xml_find_text"
-".xml_find1_text" = "pytacheck.io.xml:_xml_find1_text"
-".xml_read_grobid" = "pytacheck.io.xml:_xml_read_grobid"
+".xml_find_text" = "metacheck.io.xml:_xml_find_text"
+".xml_find1_text" = "metacheck.io.xml:_xml_find1_text"
+".xml_read_grobid" = "metacheck.io.xml:_xml_read_grobid"
 # xml2 idioms used throughout
-"xml2::as.character" = "pytacheck.io.xml:as_character"
-"xml2::xml_text" = "pytacheck.io.xml:xml_text"
-"xml2::xml_attr" = "pytacheck.io.xml:xml_attr"
-"xml2::xml_find_all" = "pytacheck.io.xml:xml_find_all"
-"xml2::xml_find_first" = "pytacheck.io.xml:xml_find_first"
-"xml2::read_xml" = "pytacheck.io.xml:read_xml"
-"xml2::read_html" = "pytacheck.io.xml:read_html"
-"xml2::xml_ns" = "pytacheck.io.xml:xml_ns"
+"xml2::as.character" = "metacheck.io.xml:as_character"
+"xml2::xml_text" = "metacheck.io.xml:xml_text"
+"xml2::xml_attr" = "metacheck.io.xml:xml_attr"
+"xml2::xml_find_all" = "metacheck.io.xml:xml_find_all"
+"xml2::xml_find_first" = "metacheck.io.xml:xml_find_first"
+"xml2::read_xml" = "metacheck.io.xml:read_xml"
+"xml2::read_html" = "metacheck.io.xml:read_html"
+"xml2::xml_ns" = "metacheck.io.xml:xml_ns"

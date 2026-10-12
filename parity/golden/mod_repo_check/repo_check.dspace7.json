@@ -342,7 +342,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "repo_url",
           "doi",
@@ -352,19 +352,27 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              null
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "http://creativecommons.org/licenses/by/4.0/"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "p_dspace7"
+            ]
           }
         ]
       },

@@ -16,7 +16,7 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives.osf_metadata import (
+from metacheck.archives.osf_metadata import (
     _osf_download_logs,
     _osf_download_wikis,
     _osf_metadata_download,

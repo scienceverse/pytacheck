@@ -13,16 +13,16 @@
 # metacheck capture_module_tables() .rds read through tables_dir.
 [files]
 "inst/modules/reproducibility_check.R" = [
-    "src/pytacheck/modules/reproducibility_check.py",
-    "src/pytacheck/modules/_reproducibility.py",
+    "src/metacheck/modules/reproducibility_check.py",
+    "src/metacheck/modules/_reproducibility.py",
 ]
 
 [functions]
-"module:reproducibility_check" = "pytacheck.modules.reproducibility_check:reproducibility_check"
+"module:reproducibility_check" = "metacheck.modules.reproducibility_check:reproducibility_check"
 # module-local helpers defined in inst/modules/reproducibility_check.R
-".reproducibility_check_batch" = "pytacheck.modules._reproducibility:_reproducibility_check_batch"
-".repro_docker_resource_limits" = "pytacheck.modules._reproducibility:_repro_docker_resource_limits"
-".repro_docker_host_memory_bytes" = "pytacheck.modules._reproducibility:_repro_docker_host_memory_bytes"
+".reproducibility_check_batch" = "metacheck.modules._reproducibility:_reproducibility_check_batch"
+".repro_docker_resource_limits" = "metacheck.modules._reproducibility:_repro_docker_resource_limits"
+".repro_docker_host_memory_bytes" = "metacheck.modules._reproducibility:_repro_docker_host_memory_bytes"
 # closures inside reproducibility_check(), ported alongside it:
 #   .pid -> _reproducibility._pid; get_saved_output -> _reproducibility.SavedTables;
 #   run_missing -> _reproducibility.run_missing; .empty_match / the main-path match ->

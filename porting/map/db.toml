@@ -1,69 +1,69 @@
 # R source -> Python location for the db area (see docs/PORTING.md).
 [files]
-"R/doi.R" = ["src/pytacheck/db/doi.py"]
-"R/db-crossref.R" = ["src/pytacheck/db/crossref.py"]
-"R/db-pubpeer.R" = ["src/pytacheck/db/pubpeer.py"]
-"R/db-retractionwatch.R" = ["src/pytacheck/db/retractionwatch.py", "src/pytacheck/db/databases.py"]
-"R/db-replications.R" = ["src/pytacheck/db/replications.py", "src/pytacheck/db/databases.py"]
-"R/db-regcheck.R" = ["src/pytacheck/db/regcheck.py"]
-"R/regcheck-local.R" = ["src/pytacheck/db/regcheck_local.py"]
-"R/svutils-orcid.R" = ["src/pytacheck/db/orcid.py"]
+"R/doi.R" = ["src/metacheck/db/doi.py"]
+"R/db-crossref.R" = ["src/metacheck/db/crossref.py"]
+"R/db-pubpeer.R" = ["src/metacheck/db/pubpeer.py"]
+"R/db-retractionwatch.R" = ["src/metacheck/db/retractionwatch.py", "src/metacheck/db/databases.py"]
+"R/db-replications.R" = ["src/metacheck/db/replications.py", "src/metacheck/db/databases.py"]
+"R/db-regcheck.R" = ["src/metacheck/db/regcheck.py"]
+"R/regcheck-local.R" = ["src/metacheck/db/regcheck_local.py"]
+"R/svutils-orcid.R" = ["src/metacheck/db/orcid.py"]
 # bundled databases: regenerate with `Rscript scripts/convert_databases.R`
-"inst/databases/FLoRA.Rds" = ["src/pytacheck/resources/databases/FLoRA.json.gz", "scripts/convert_databases.R"]
-"inst/databases/retractionwatch.Rds" = ["src/pytacheck/resources/databases/retractionwatch.json.gz", "scripts/convert_databases.R"]
-"inst/databases/miscite.Rds" = ["src/pytacheck/resources/databases/miscite.json.gz", "scripts/convert_databases.R"]
-"data-raw/retractionwatch.R" = ["src/pytacheck/db/retractionwatch.py"]
-"data-raw/miscite.R" = ["src/pytacheck/resources/databases/miscite.json.gz", "src/pytacheck/db/databases.py"]
+"inst/databases/FLoRA.Rds" = ["src/metacheck/resources/databases/FLoRA.json.gz", "scripts/convert_databases.R"]
+"inst/databases/retractionwatch.Rds" = ["src/metacheck/resources/databases/retractionwatch.json.gz", "scripts/convert_databases.R"]
+"inst/databases/miscite.Rds" = ["src/metacheck/resources/databases/miscite.json.gz", "scripts/convert_databases.R"]
+"data-raw/retractionwatch.R" = ["src/metacheck/db/retractionwatch.py"]
+"data-raw/miscite.R" = ["src/metacheck/resources/databases/miscite.json.gz", "src/metacheck/db/databases.py"]
 # the bundled RegCheck server app: regenerate the archive with
-# `python -c "from pytacheck.db.regcheck_local import _build_app_archive; _build_app_archive('upstream/metacheck/inst/regcheck')"`
-"inst/regcheck" = ["src/pytacheck/db/regcheck_app.tar.gz", "src/pytacheck/db/regcheck_local.py"]
+# `python -c "from metacheck.db.regcheck_local import _build_app_archive; _build_app_archive('upstream/metacheck/inst/regcheck')"`
+"inst/regcheck" = ["src/metacheck/db/regcheck_app.tar.gz", "src/metacheck/db/regcheck_local.py"]
 
 [functions]
 # R/doi.R
-doi_clean = "pytacheck.db.doi:doi_clean"
-doi_valid_format = "pytacheck.db.doi:doi_valid_format"
-doi_resolves = "pytacheck.db.doi:doi_resolves"
-doi_lookup = "pytacheck.db.doi:doi_lookup"
+doi_clean = "metacheck.db.doi:doi_clean"
+doi_valid_format = "metacheck.db.doi:doi_valid_format"
+doi_resolves = "metacheck.db.doi:doi_resolves"
+doi_lookup = "metacheck.db.doi:doi_lookup"
 # R/db-crossref.R
-datacite_doi = "pytacheck.db.crossref:datacite_doi"
-".bibtype_convert" = "pytacheck.db.crossref:_bibtype_convert"
-crossref_doi = "pytacheck.db.crossref:crossref_doi"
-".crossref_parse_item" = "pytacheck.db.crossref:_crossref_parse_item"
-crossref_query = "pytacheck.db.crossref:crossref_query"
-".crossref_query_parse" = "pytacheck.db.crossref:_crossref_query_parse"
-add_bib_match = "pytacheck.db.crossref:add_bib_match"
-openalex_doi = "pytacheck.db.crossref:openalex_doi"
-".openalex_add_abstract" = "pytacheck.db.crossref:_openalex_add_abstract"
-openalex_query = "pytacheck.db.crossref:openalex_query"
+datacite_doi = "metacheck.db.crossref:datacite_doi"
+".bibtype_convert" = "metacheck.db.crossref:_bibtype_convert"
+crossref_doi = "metacheck.db.crossref:crossref_doi"
+".crossref_parse_item" = "metacheck.db.crossref:_crossref_parse_item"
+crossref_query = "metacheck.db.crossref:crossref_query"
+".crossref_query_parse" = "metacheck.db.crossref:_crossref_query_parse"
+add_bib_match = "metacheck.db.crossref:add_bib_match"
+openalex_doi = "metacheck.db.crossref:openalex_doi"
+".openalex_add_abstract" = "metacheck.db.crossref:_openalex_add_abstract"
+openalex_query = "metacheck.db.crossref:openalex_query"
 # R/db-pubpeer.R
-pubpeer_comments = "pytacheck.db.pubpeer:pubpeer_comments"
+pubpeer_comments = "metacheck.db.pubpeer:pubpeer_comments"
 # R/db-retractionwatch.R
-retractionwatch = "pytacheck.db.retractionwatch:retractionwatch"
-rw = "pytacheck.db.retractionwatch:rw"
-rw_date = "pytacheck.db.retractionwatch:rw_date"
-rw_update = "pytacheck.db.retractionwatch:rw_update"
+retractionwatch = "metacheck.db.retractionwatch:retractionwatch"
+rw = "metacheck.db.retractionwatch:rw"
+rw_date = "metacheck.db.retractionwatch:rw_date"
+rw_update = "metacheck.db.retractionwatch:rw_update"
 # R/db-replications.R
-FLoRA = "pytacheck.db.replications:FLoRA"
-FLoRA_date = "pytacheck.db.replications:FLoRA_date"
-FLoRA_update = "pytacheck.db.replications:FLoRA_update"
+FLoRA = "metacheck.db.replications:FLoRA"
+FLoRA_date = "metacheck.db.replications:FLoRA_date"
+FLoRA_update = "metacheck.db.replications:FLoRA_update"
 # inst/databases/miscite.Rds (read with readRDS() by the ref_miscitation module)
-miscite = "pytacheck.db.databases:miscite"
+miscite = "metacheck.db.databases:miscite"
 # R/db-regcheck.R
-regcheck_base_url = "pytacheck.db.regcheck:regcheck_base_url"
-regcheck_compare = "pytacheck.db.regcheck:regcheck_compare"
-".regcheck_sanitize" = "pytacheck.db.regcheck:_regcheck_sanitize"
-".regcheck_submit" = "pytacheck.db.regcheck:_regcheck_submit"
-".regcheck_submit_multipart" = "pytacheck.db.regcheck:_regcheck_submit_multipart"
-".regcheck_poll" = "pytacheck.db.regcheck:_regcheck_poll"
-regcheck_tidy = "pytacheck.db.regcheck:regcheck_tidy"
+regcheck_base_url = "metacheck.db.regcheck:regcheck_base_url"
+regcheck_compare = "metacheck.db.regcheck:regcheck_compare"
+".regcheck_sanitize" = "metacheck.db.regcheck:_regcheck_sanitize"
+".regcheck_submit" = "metacheck.db.regcheck:_regcheck_submit"
+".regcheck_submit_multipart" = "metacheck.db.regcheck:_regcheck_submit_multipart"
+".regcheck_poll" = "metacheck.db.regcheck:_regcheck_poll"
+regcheck_tidy = "metacheck.db.regcheck:regcheck_tidy"
 # R/regcheck-local.R
-".regcheck_app_dir" = "pytacheck.db.regcheck_local:_regcheck_app_dir"
-".regcheck_venv_dir" = "pytacheck.db.regcheck_local:_regcheck_venv_dir"
-regcheck_setup_local = "pytacheck.db.regcheck_local:regcheck_setup_local"
-regcheck_start_local = "pytacheck.db.regcheck_local:regcheck_start_local"
-regcheck_stop_local = "pytacheck.db.regcheck_local:regcheck_stop_local"
+".regcheck_app_dir" = "metacheck.db.regcheck_local:_regcheck_app_dir"
+".regcheck_venv_dir" = "metacheck.db.regcheck_local:_regcheck_venv_dir"
+regcheck_setup_local = "metacheck.db.regcheck_local:regcheck_setup_local"
+regcheck_start_local = "metacheck.db.regcheck_local:regcheck_start_local"
+regcheck_stop_local = "metacheck.db.regcheck_local:regcheck_stop_local"
 # R/svutils-orcid.R
-credit_roles = "pytacheck.db.orcid:credit_roles"
-check_orcid = "pytacheck.db.orcid:check_orcid"
-get_orcid = "pytacheck.db.orcid:get_orcid"
-orcid_person = "pytacheck.db.orcid:orcid_person"
+credit_roles = "metacheck.db.orcid:credit_roles"
+check_orcid = "metacheck.db.orcid:check_orcid"
+get_orcid = "metacheck.db.orcid:get_orcid"
+orcid_person = "metacheck.db.orcid:orcid_person"

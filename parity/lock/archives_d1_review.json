@@ -6,7 +6,6 @@
 "dataverse_info.review.string_data_error": {"r": "ac5146cf65ca52a8", "py": "9ed42fa91991b0a6", "diff": ["<R error, Python value>"]},
 "dataverse_info.review.table_duplicates": {"r": "b5c2cafdda7a2f25", "py": "5c9bce371e4522b0", "diff": ["<root>"]},
 "dataverse_links.review.empty_paperlist": {"r": "4173c689e924acbe", "py": "1fe9c00cd1964aa8", "diff": ["<root>"]},
-"dataverse_links.review.generated_shapes": {"r": "21b83be279f3eeab", "py": "c6e6f4f4abfc3c7e", "diff": ["<root>"]},
 "dataverse_links.review.invalid_utf8_error": {"r": "ac5146cf65ca52a8", "py": "99eac5d132afc4b3", "diff": ["<R error, Python value>"]},
 "dryad_file_download.review.empty_body_error": {"r": "ac5146cf65ca52a8", "py": "300a9ff66bee6b90", "diff": ["<R error, Python value>"]},
 "dryad_file_download.review.empty_body_multi": {"r": "23022ada6ca3b953", "py": "c34b5f998b173f2e", "diff": ["<root>"]},

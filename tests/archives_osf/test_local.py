@@ -11,15 +11,15 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck._r import slashed
-from pytacheck.archives.local import local_files
+from metacheck._r import slashed
+from metacheck.archives.local import local_files
 
 COLUMNS = ["repo_url", "file_name", "file_url", "file_location", "file_size", "file_type"]
 
 
 @pytest.fixture
 def category() -> None:
-    pytest.importorskip("pytacheck.fileinfo.category")
+    pytest.importorskip("metacheck.fileinfo.category")
 
 
 def test_local_files_missing_path() -> None:

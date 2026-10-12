@@ -1,0 +1,14 @@
+{
+  "id": "repro_not_loadable_msg.other_warnings",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "installed but package 'list.packages' is not loadable"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

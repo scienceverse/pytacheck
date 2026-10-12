@@ -13,8 +13,8 @@ from typing import Any
 import orjson
 import pytest
 
-import pytacheck as pc
-from pytacheck.io import bibr12
+import metacheck as pc
+from metacheck.io import bibr12
 
 FX = Path(__file__).resolve().parent / "fixtures"
 V12_1 = FX / "bibr_12_1_full.json"
@@ -150,7 +150,7 @@ def test_a_log_that_cannot_be_written_does_not_stop_the_read(monkeypatch) -> Non
         raise PermissionError(13, "Permission denied")
 
     monkeypatch.setattr(bibr12, "_LOGGED_VALUES", set())
-    monkeypatch.setattr("pytacheck.log.logpath", no_log_dir)
+    monkeypatch.setattr("metacheck.log.logpath", no_log_dir)
     paper = pc.read(V12_3)
     assert paper.section["section_type"].tolist() == ["preregistration"]
 

@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.dataverse (port of tests/testthat/test-archive-dataverse.R, plus more).
+"""Tests for metacheck.archives.dataverse (port of tests/testthat/test-archive-dataverse.R, plus more).
 
 Where the R tests mock ``.batch_query()`` or httr2's request functions, these
 serve the same payloads over mocked HTTP (respx); where they mock
@@ -15,9 +15,9 @@ import httpx
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives import dataverse
-from pytacheck.archives.dataverse import (
+import metacheck as pc
+from metacheck.archives import dataverse
+from metacheck.archives.dataverse import (
     DATAVERSE_HOSTS,
     _dataverse_headers,
     _dataverse_host_from_doi,
@@ -164,7 +164,7 @@ def test_dataverse_info_on_its_own_links_for_an_unfound_doi(serve: Any, online: 
 
 
 def test_dataverse_pat_per_host(monkeypatch: pytest.MonkeyPatch) -> None:
-    from pytacheck import utils
+    from metacheck import utils
 
     monkeypatch.setenv("DATAVERSE_PAT_DATAVERSE_HARVARD_EDU", "")
     monkeypatch.setenv("DATAVERSE_PAT_DATAVERSE_NL", "")
@@ -470,7 +470,7 @@ def test_dataverse_info_found_and_offline(mock_api: Any, monkeypatch: pytest.Mon
     )
     assert info["title"].tolist() == ["Example Dataset"]
     assert info["authors"].iloc[0] == ["Doe, Jane", None]
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"dataverse\.harvard\.edu seems to be offline"):
         dataverse_info("https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X")
     # nothing valid: no network check at all
@@ -573,7 +573,7 @@ def test_one_element_json_arrays_become_list_cells(mock_api: Any) -> None:
 
 
 def test_cell_follows_r_replacement_rules() -> None:
-    from pytacheck.archives.dataverse import _field_cell as _cell
+    from metacheck.archives.dataverse import _field_cell as _cell
 
     assert _cell({"name": "x"}).iloc[0] == ["x"]  # R keeps the element, not the object
     assert _cell([{"k": 1}]).iloc[0] == {"k": 1}
@@ -585,9 +585,79 @@ def test_is_true_is_r_in_true() -> None:
     """R `x %in% TRUE`: only TRUE, a number equal to 1 and the string "TRUE" match."""
     import numpy as np
 
-    from pytacheck.archives.dataverse import _is_true
+    from metacheck.archives.dataverse import _is_true
 
     for x in (True, np.True_, 1, 1.0, np.int64(1), "TRUE"):
         assert _is_true(x), x
     for x in (False, None, pd.NA, float("nan"), 0, 2, "FALSE", "T", "true", [True]):
         assert not _is_true(x), x
+
+
+# --------------------------------------------------------------------------- shared DOI prefixes
+
+
+def _redirects(serve: Any, doi: str, target: str) -> list[httpx.Request]:
+    return serve(  # type: ignore[no-any-return]
+        {
+            f"https://doi.org/{doi}": httpx.Response(302, headers={"Location": target}),
+            target: httpx.Response(200, text="<html></html>"),
+        }
+    )
+
+
+def test_phys_techsciences_and_figshare_prefixes() -> None:
+    hosts = dataverse.DATAVERSE_DOI_PREFIX_HOSTS
+    assert hosts["phys-techsciences.datastations.nl"] == ("10.17026",)
+    assert not any("10.6084" in p for p in hosts.values())  # Figshare's prefix (U32)
+    assert dataverse._prefix_hosts()["10.17026"] == (
+        "archaeology.datastations.nl",
+        "phys-techsciences.datastations.nl",
+        "lifesciences.datastations.nl",
+        "ssh.datastations.nl",
+    )
+
+
+def test_host_from_doi_resolves_a_shared_prefix(serve: Any) -> None:
+    doi = "10.17026/PT/ABC123"
+    target = "https://phys-techsciences.datastations.nl/dataset.xhtml?persistentId=doi:" + doi
+    requests = _redirects(serve, doi, target)
+    # a prefix with one host needs no lookup
+    assert _dataverse_host_from_doi(["10.7910/DVN/X", doi, None]) == [
+        "dataverse.harvard.edu",
+        "phys-techsciences.datastations.nl",
+        None,
+    ]
+    assert [str(r.url) for r in requests] == [f"https://doi.org/{doi}", target]
+
+
+def test_resolve_doi_host_falls_back_to_the_first_candidate(serve: Any) -> None:
+    serve({})  # every request is a 404 at doi.org itself
+    assert _dataverse_host_from_doi("10.17026/SS/Q1") == "archaeology.datastations.nl"
+
+
+def test_resolve_doi_host_connection_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    from metacheck import http
+
+    monkeypatch.setattr(http, "request", lambda *a, **k: None)
+    assert (
+        dataverse._dataverse_resolve_doi_host(
+            "10.17026/x", ["ssh.datastations.nl", "archaeology.datastations.nl"]
+        )
+        == "ssh.datastations.nl"
+    )
+
+
+def test_resolve_doi_host_compares_host_names(serve: Any) -> None:
+    # U211: metacheck takes the first candidate named anywhere in the URL, so
+    # rodbuk.pl (listed first) wins for a dataset on uj.rodbuk.pl
+    doi = "10.26106/abc"
+    _redirects(serve, doi, "https://uj.rodbuk.pl/dataset.xhtml?persistentId=doi:" + doi)
+    assert dataverse._prefix_hosts()["10.26106"] == ("rodbuk.pl", "uj.rodbuk.pl")
+    assert _dataverse_host_from_doi(doi) == "uj.rodbuk.pl"
+    doi2 = "10.26106/def"
+    _redirects(serve, doi2, "https://WWW.rodbuk.pl/dataset.xhtml?persistentId=doi:" + doi2)
+    assert _dataverse_host_from_doi(doi2) == "rodbuk.pl"
+    # a host named only in the query string is not the dataset's host
+    doi3 = "10.17026/q"
+    _redirects(serve, doi3, "https://example.org/landing?from=ssh.datastations.nl")
+    assert _dataverse_host_from_doi(doi3) == "archaeology.datastations.nl"

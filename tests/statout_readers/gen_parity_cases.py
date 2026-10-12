@@ -44,19 +44,19 @@ for name in ["modern", "legacy", "charts", "logs_only", "empty", "notzip"]:
     fn_case(
         f"import_spv.{name}",
         "import_spv",
-        "pytacheck.statout.spv.import_spv",
+        "metacheck.statout.spv.import_spv",
         {"path": {"$file": f"{FX}/spv/{name}.spv"}},
     )
 fn_case(
     "import_spv.missing",
     "import_spv",
-    "pytacheck.statout.spv.import_spv",
+    "metacheck.statout.spv.import_spv",
     {"path": {"$file": f"{FX}/spv/does_not_exist.spv"}},
 )
 fn_case(
     "import_spv.wrong_ext",
     "import_spv",
-    "pytacheck.statout.spv.import_spv",
+    "metacheck.statout.spv.import_spv",
     {"path": {"$file": f"{UP}/sample.jasp"}},
 )
 
@@ -91,7 +91,7 @@ for name in ["modern", "legacy", "charts", "logs_only"]:
         ),
         f"{PH}.export_lines",
         {
-            "fn": "pytacheck.statout.spv.export_spv_html",
+            "fn": "metacheck.statout.spv.export_spv_html",
             "path": f"{FX}/spv/{name}.spv",
             "images": images,
         },
@@ -99,7 +99,7 @@ for name in ["modern", "legacy", "charts", "logs_only"]:
 fn_case(
     "export_spv_html.notzip",
     "export_spv_html",
-    "pytacheck.statout.spv.export_spv_html",
+    "metacheck.statout.spv.export_spv_html",
     {
         "path": {"$file": f"{FX}/spv/notzip.spv"},
         "out": {"$expr": {"r": "tempfile()", "py": "__import__('tempfile').mktemp()"}},
@@ -116,7 +116,7 @@ for name in ["modern", "legacy", "logs_only", "empty"]:
         f"spv_export_syntax.{name}",
         SYNTAX_R.format(fn=".spv_export_syntax", p=f"{FX}/spv/{name}.spv"),
         f"{PH}.export_syntax",
-        {"fn": "pytacheck.statout.spv._spv_export_syntax", "path": f"{FX}/spv/{name}.spv"},
+        {"fn": "metacheck.statout.spv._spv_export_syntax", "path": f"{FX}/spv/{name}.spv"},
     )
 
 STRUCT_R = (
@@ -197,7 +197,7 @@ add(
 add(
     id="spv_assemble_table.empty",
     r="metacheck:::spv_assemble_table",
-    py="pytacheck.statout.spv.spv_assemble_table",
+    py="metacheck.statout.spv.spv_assemble_table",
     args={"dims": {"$list": []}, "axes": {"$list": []}, "cells": {"$list": []}},
 )
 
@@ -308,7 +308,7 @@ for id_, p in [
     fn_case(
         f"import_jasp.{id_}",
         "import_jasp",
-        "pytacheck.statout.jasp.import_jasp",
+        "metacheck.statout.jasp.import_jasp",
         {"path": {"$file": p}},
     )
     LAB_R = (
@@ -319,7 +319,7 @@ for id_, p in [
         f"import_jasp.labels.{id_}",
         LAB_R,
         f"{PH}.data_labels",
-        {"fn": "pytacheck.statout.jasp.import_jasp", "path": p},
+        {"fn": "metacheck.statout.jasp.import_jasp", "path": p},
     )
 for id_, p in [
     ("notzip", f"{FX}/archives/notzip.jasp"),
@@ -330,7 +330,7 @@ for id_, p in [
     fn_case(
         f"import_jasp.{id_}",
         "import_jasp",
-        "pytacheck.statout.jasp.import_jasp",
+        "metacheck.statout.jasp.import_jasp",
         {"path": {"$file": p}},
     )
 expr_case(
@@ -389,12 +389,12 @@ for id_, p in [("sample", f"{UP}/sample.jasp"), ("binary", f"{FX}/archives/binar
         f"export_jasp_html.{id_}",
         EXPORT_R.format(fn="export_jasp_html", p=p, post="x"),
         f"{PH}.export_lines",
-        {"fn": "pytacheck.statout.jasp.export_jasp_html", "path": p},
+        {"fn": "metacheck.statout.jasp.export_jasp_html", "path": p},
     )
 fn_case(
     "export_jasp_html.noindex",
     "export_jasp_html",
-    "pytacheck.statout.jasp.export_jasp_html",
+    "metacheck.statout.jasp.export_jasp_html",
     {
         "path": {"$file": f"{FX}/archives/sqlite.jasp"},
         "out": {"$expr": {"r": "tempfile()", "py": "__import__('tempfile').mktemp()"}},
@@ -406,7 +406,7 @@ for id_, p in [("sample", f"{UP}/sample.omv"), ("fixture", f"{FX}/archives/fixtu
     fn_case(
         f"import_omv.{id_}",
         "import_omv",
-        "pytacheck.statout.omv.import_omv",
+        "metacheck.statout.omv.import_omv",
         {"path": {"$file": p}},
     )
     LAB_R = (
@@ -417,13 +417,13 @@ for id_, p in [("sample", f"{UP}/sample.omv"), ("fixture", f"{FX}/archives/fixtu
         f"import_omv.labels.{id_}",
         LAB_R,
         f"{PH}.data_labels",
-        {"fn": "pytacheck.statout.omv.import_omv", "path": p},
+        {"fn": "metacheck.statout.omv.import_omv", "path": p},
     )
     expr_case(
         f"export_omv_html.{id_}",
         EXPORT_R.format(fn="export_omv_html", p=p, post="x"),
         f"{PH}.export_lines",
-        {"fn": "pytacheck.statout.omv.export_omv_html", "path": p},
+        {"fn": "metacheck.statout.omv.export_omv_html", "path": p},
     )
 for id_, p in [
     ("notzip", f"{FX}/archives/notzip.omv"),
@@ -434,7 +434,7 @@ for id_, p in [
     fn_case(
         f"import_omv.{id_}",
         "import_omv",
-        "pytacheck.statout.omv.import_omv",
+        "metacheck.statout.omv.import_omv",
         {"path": {"$file": p}},
     )
 OMV_SYNTAX = [
@@ -464,31 +464,31 @@ for name in ["analysis", "nocommands"]:
     fn_case(
         f"import_stata_smcl.{name}",
         "import_stata_smcl",
-        "pytacheck.statout.stata.import_stata_smcl",
+        "metacheck.statout.stata.import_stata_smcl",
         {"path": {"$file": f"{FX}/text/{name}.smcl"}},
     )
     expr_case(
         f"export_stata_smcl_html.{name}",
         EXPORT_R.format(fn="export_stata_smcl_html", p=f"{FX}/text/{name}.smcl", post="x"),
         f"{PH}.export_lines",
-        {"fn": "pytacheck.statout.stata.export_stata_smcl_html", "path": f"{FX}/text/{name}.smcl"},
+        {"fn": "metacheck.statout.stata.export_stata_smcl_html", "path": f"{FX}/text/{name}.smcl"},
     )
     expr_case(
         f"smcl_export_syntax.{name}",
         SYNTAX_R.format(fn=".smcl_export_syntax", p=f"{FX}/text/{name}.smcl"),
         f"{PH}.export_syntax",
-        {"fn": "pytacheck.statout.stata._smcl_export_syntax", "path": f"{FX}/text/{name}.smcl"},
+        {"fn": "metacheck.statout.stata._smcl_export_syntax", "path": f"{FX}/text/{name}.smcl"},
     )
 fn_case(
     "import_stata_smcl.missing",
     "import_stata_smcl",
-    "pytacheck.statout.stata.import_stata_smcl",
+    "metacheck.statout.stata.import_stata_smcl",
     {"path": {"$file": f"{FX}/text/none.smcl"}},
 )
 fn_case(
     "import_stata_smcl.wrong_ext",
     "import_stata_smcl",
-    "pytacheck.statout.stata.import_stata_smcl",
+    "metacheck.statout.stata.import_stata_smcl",
     {"path": {"$file": f"{FX}/text/twolevel.out"}},
 )
 expr_case(
@@ -678,19 +678,19 @@ for name in ["twolevel", "adjacent", "nosections", "compiler"]:
     fn_case(
         f"import_mplus_output.{name}",
         "import_mplus_output",
-        "pytacheck.statout.mplus.import_mplus_output",
+        "metacheck.statout.mplus.import_mplus_output",
         {"path": {"$file": f"{FX}/text/{name}.out"}},
     )
 fn_case(
     "import_mplus_output.wrong_ext",
     "import_mplus_output",
-    "pytacheck.statout.mplus.import_mplus_output",
+    "metacheck.statout.mplus.import_mplus_output",
     {"path": {"$file": f"{FX}/text/analysis.smcl"}},
 )
 fn_case(
     "import_mplus_output.missing",
     "import_mplus_output",
-    "pytacheck.statout.mplus.import_mplus_output",
+    "metacheck.statout.mplus.import_mplus_output",
     {"path": {"$file": f"{FX}/text/none.out"}},
 )
 for name in ["twolevel", "adjacent", "nosections"]:
@@ -698,14 +698,14 @@ for name in ["twolevel", "adjacent", "nosections"]:
         f"export_mplus_html.{name}",
         EXPORT_R.format(fn="export_mplus_html", p=f"{FX}/text/{name}.out", post="x"),
         f"{PH}.export_lines",
-        {"fn": "pytacheck.statout.mplus.export_mplus_html", "path": f"{FX}/text/{name}.out"},
+        {"fn": "metacheck.statout.mplus.export_mplus_html", "path": f"{FX}/text/{name}.out"},
     )
 for name in ["twolevel", "adjacent", "nosections", "compiler"]:
     expr_case(
         f"mplus_export_syntax.{name}",
         SYNTAX_R.format(fn=".mplus_export_syntax", p=f"{FX}/text/{name}.out"),
         f"{PH}.export_syntax",
-        {"fn": "pytacheck.statout.mplus._mplus_export_syntax", "path": f"{FX}/text/{name}.out"},
+        {"fn": "metacheck.statout.mplus._mplus_export_syntax", "path": f"{FX}/text/{name}.out"},
     )
 for name in ["twolevel", "adjacent"]:
     expr_case(
@@ -747,19 +747,19 @@ for title in [
 fn_case(
     "mplus_is_genuine_output.yes",
     "metacheck:::.mplus_is_genuine_output",
-    "pytacheck.statout.mplus._mplus_is_genuine_output",
+    "metacheck.statout.mplus._mplus_is_genuine_output",
     {"path": {"$file": f"{FX}/text/twolevel.out"}},
 )
 fn_case(
     "mplus_is_genuine_output.no",
     "metacheck:::.mplus_is_genuine_output",
-    "pytacheck.statout.mplus._mplus_is_genuine_output",
+    "metacheck.statout.mplus._mplus_is_genuine_output",
     {"path": {"$file": f"{FX}/text/compiler.out"}},
 )
 fn_case(
     "mplus_is_genuine_output.missing",
     "metacheck:::.mplus_is_genuine_output",
-    "pytacheck.statout.mplus._mplus_is_genuine_output",
+    "metacheck.statout.mplus._mplus_is_genuine_output",
     {"path": {"$file": f"{FX}/text/none.out"}},
 )
 MP_LINES = [

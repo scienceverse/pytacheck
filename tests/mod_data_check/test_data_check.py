@@ -23,11 +23,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import module_run
-from pytacheck.modules import _data_check as h
-from pytacheck.report import ReportTable
-from pytacheck.utils import local_options
+import metacheck as pc
+from metacheck.module import module_run
+from metacheck.modules import _data_check as h
+from metacheck.report import ReportTable
+from metacheck.utils import local_options
 
 from . import helpers as dc
 
@@ -57,7 +57,7 @@ def _dir_table(path: Path, pid: str = "p1") -> pd.DataFrame:
 
 
 def _repo_output(table: pd.DataFrame, paper: Any = None) -> Any:
-    from pytacheck.module import ModuleOutput
+    from metacheck.module import ModuleOutput
 
     if paper is None:
         paper = pc.test_paper(["x"])
@@ -80,7 +80,7 @@ def run_dir(path: Path, careless: bool = True, **kwargs: Any) -> Any:
 
 def run_local(path: Path, careless: bool = True, **kwargs: Any) -> Any:
     """The testthat call itself: ``module_run(test_paper("x"), "data_check", local_path = d)``."""
-    pytest.importorskip("pytacheck.modules.repo_check")
+    pytest.importorskip("metacheck.modules.repo_check")
     paper = pc.test_paper(["x"])
     with local_options({"metacheck.llm.use": False, "pytacheck.careless": careless}):
         return module_run(paper, "data_check", local_path=str(path), local_only=True, **kwargs)
@@ -560,8 +560,8 @@ def test_listing_without_repo_url() -> None:
 def test_study_group_model_is_reported(monkeypatch: pytest.MonkeyPatch) -> None:
     # U99: the study-group pass's model is used when the file-type pass made
     # no call (R reads grp$model, a column that does not exist)
-    from pytacheck.datacheck import files as F
-    from pytacheck.modules import data_check as D
+    from metacheck.datacheck import files as F
+    from metacheck.modules import data_check as D
 
     def fake_group(files: pd.DataFrame, **_: Any) -> pd.DataFrame:
         out = pd.DataFrame({"group": pd.Series(["ex1"] * len(files), dtype="string")})
@@ -634,8 +634,10 @@ def test_archives_are_expanded() -> None:
     paths = dict(zip(mo.structure["file_name"], mo.structure["file_path"], strict=True))
     assert paths["trials.csv"] == "bundle.zip/inner/trials.csv"
     # without peek_zips a zip is not expanded (tar/gz always are)
-    names2 = dc.dc_run("archives").structure["file_name"].tolist()
+    names2 = dc.dc_run("archives", peek_zips=False).structure["file_name"].tolist()
     assert "bundle.zip" in names2 and "summary.csv" in names2
+    # peek_zips is on by default (metacheck issue #424): the same rows as peek_zips = TRUE
+    assert dc.dc_run("archives").structure["file_name"].tolist() == names
 
 
 def test_downloads_file_urls() -> None:
@@ -885,8 +887,8 @@ def test_repo_tree_rows_scales_linearly() -> None:
 
 
 def test_stats_frame_matches_bind_rows() -> None:
-    from pytacheck._r import bind_rows
-    from pytacheck.datacheck.columns import _col_stats, _stats_frame, data_col_stats
+    from metacheck._r import bind_rows
+    from metacheck.datacheck.columns import _col_stats, _stats_frame, data_col_stats
 
     cols = [
         pd.Series([1.0, 2.0, None]),
@@ -905,11 +907,16 @@ def test_zip_peek_reasons_stay_with_their_rows(
     # U99: expanding an archive drops its row and appends its contents; the
     # zip-peek reasons must follow (R keeps the old positions, so the manifest
     # could give the reason to another file)
-    import pytacheck.archives.zip_peek as zp
-    from pytacheck.modules import data_check as D
+    import metacheck.archives.zip_peek as zp
+    from metacheck.modules import data_check as D
 
     monkeypatch.setattr(
-        zp, "zip_decision", lambda url, skip_types=None: {"worth": False, "reason": "no data"}
+        zp,
+        "zip_decision",
+        lambda url, skip_types=None, cache=False, skip_on_api_limit=False: {
+            "worth": False,
+            "reason": "no data",
+        },
     )
     tar = tmp_path / "results.tar.gz"  # expanded next to itself: keep it out of the fixtures
     shutil.copy(REPOS / "archives" / "results.tar.gz", tar)
@@ -930,6 +937,38 @@ def test_zip_peek_reasons_stay_with_their_rows(
     reasons = dict(zip(names, dl["zip_peek_reason"], strict=True))
     assert reasons["stimuli.zip"] == "zip skipped: no data"
     assert sum(r is not None for r in reasons.values()) == 1
+
+
+def test_peek_zips_default_and_forwarded_keywords(monkeypatch: pytest.MonkeyPatch) -> None:
+    """peek_zips defaults to TRUE; cache and skip_on_api_limit reach the zip peek (issue #427)."""
+    import inspect
+
+    import metacheck.archives.zip_peek as zp
+    from metacheck.modules import data_check as D
+
+    assert inspect.signature(D.data_check).parameters["peek_zips"].default is True
+    seen: dict[str, object] = {}
+
+    def fake(
+        url: str, skip_types: object = None, cache: bool = False, skip_on_api_limit: bool = False
+    ):
+        seen.update(cache=cache, skip_on_api_limit=skip_on_api_limit)
+        return {"worth": False, "reason": "no data"}
+
+    monkeypatch.setattr(zp, "zip_decision", fake)
+    files = pd.DataFrame(
+        {
+            "file_name": ["stimuli.zip"],
+            "file_path": ["stimuli.zip"],
+            "file_url": ["https://example.org/stimuli.zip"],
+            "file_location": [None],
+            "data_type": ["unknown"],
+            "doc_role": [None],
+            "data_format": [None],
+        }
+    )
+    D._download(files, "all", None, True, 100, 500, math.inf, True, True)
+    assert seen == {"cache": True, "skip_on_api_limit": True}
 
 
 # -----------------------------------------------------------------------------

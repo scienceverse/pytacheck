@@ -3,7 +3,7 @@
 metacheck's ``inst/modules/funding_check.R`` defines its helpers inside the
 module file, so the R side of these cases sources that file
 (``tests/mod_funding/funding_env.R``) and the Python side calls
-:mod:`pytacheck.modules._funding`. Positions are reported 1-based, as R's
+:mod:`metacheck.modules._funding`. Positions are reported 1-based, as R's
 ``grep()`` does.
 """
 
@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Any
 
-from pytacheck.modules import _funding as F
+from metacheck.modules import _funding as F
 
 
 def _title(words: str) -> list[str]:
@@ -108,7 +108,7 @@ def call(fn: str, *args: Any, **kwargs: Any) -> Any:
 
 def masks(patterns: Sequence[str], x: Sequence[str | None], ignore_case: bool = False) -> list[Any]:
     """``lapply(patterns, grepl, x, perl = TRUE, ignore.case = ...)`` through
-    :class:`pytacheck.modules._funding._Article` (literal prefilter and shared
+    :class:`metacheck.modules._funding._Article` (literal prefilter and shared
     column cache)."""
     art = F._Article([v if isinstance(v, str) else None for v in x])
     return [art.mask(p, ignore_case).tolist() for p in patterns]
@@ -118,7 +118,7 @@ def sectioned(text: Sequence[str], section_type: Sequence[str]) -> Any:
     """Python side of ``fc_sectioned()``: one section per sentence."""
     import pandas as pd
 
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(list(text))
     n = len(text)

@@ -7,8 +7,8 @@ import pandas as pd
 import pytest
 import respx
 
-import pytacheck as pc
-from pytacheck.db import crossref as cr
+import metacheck as pc
+from metacheck.db import crossref as cr
 from tests.db.parity_replay import paper_with_bib
 
 LAKENS = (
@@ -263,7 +263,7 @@ def test_crossref_query_throttled(monkeypatch: pytest.MonkeyPatch) -> None:
         return [None] * len(urls)
 
     monkeypatch.setattr(cr._utils, "online", lambda *_a, **_k: True)
-    monkeypatch.setattr("pytacheck.http.batch_query", fake_batch)
+    monkeypatch.setattr("metacheck.http.batch_query", fake_batch)
     obs = cr.crossref_query("x")
     assert seen["throttle_capacity"] == 3
     assert obs["error"].tolist() == ["request failed"]
@@ -346,7 +346,7 @@ def test_datacite_doi_reads_the_title_fields() -> None:
     # ("en") and the container's type ("Series") in the synthetic record dc2
     from tests.db.review_helpers import call_mock
 
-    info = call_mock("pytacheck.db.crossref.datacite_doi", ["10.9999/dc1", "10.9999/dc2"])
+    info = call_mock("metacheck.db.crossref.datacite_doi", ["10.9999/dc1", "10.9999/dc2"])
     assert info["title"].isna().iat[0] and info["title"].iat[1] == "T2"
     assert info["container"].isna().iat[0] and info["container"].iat[1] == "S"
     assert cr._datacite_title([{"title": "Main"}, {"title": "Sub", "titleType": "Subtitle"}]) == (
@@ -542,7 +542,7 @@ def test_crossref_parse_item_authors_and_year() -> None:
 
 def test_crossref_query_offline_data_frame_shape(monkeypatch: pytest.MonkeyPatch) -> None:
     """U13: one row per reference (R spreads a table's references over one row)."""
-    from pytacheck.db import _utils
+    from metacheck.db import _utils
 
     monkeypatch.setattr(_utils, "online", lambda *a, **k: False)
     refs = pd.DataFrame(

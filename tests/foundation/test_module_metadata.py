@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from pytacheck.module import _builtin_names, module_find
+from metacheck.module import _builtin_names, module_find
 
 R_MODULES = Path(__file__).resolve().parents[2] / "upstream" / "metacheck" / "inst" / "modules"
 

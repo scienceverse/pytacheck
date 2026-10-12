@@ -17,8 +17,8 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck import utils
-from pytacheck.archives.zenodo_upload import (
+from metacheck import utils
+from metacheck.archives.zenodo_upload import (
     ZenodoMetadata,
     _pb_say,
     _zenodo_api,
@@ -52,7 +52,7 @@ def _never_reach_zenodo(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_interactive_is_false_under_pytest() -> None:
-    from pytacheck.archives.zenodo_upload import _interactive
+    from metacheck.archives.zenodo_upload import _interactive
 
     assert _interactive() is False
 
@@ -120,7 +120,7 @@ def test_zenodo_license_id_maps_every_osf_license() -> None:
 
 
 def test_zenodo_regex_escape() -> None:
-    from pytacheck._r import sub
+    from metacheck._r import sub
 
     def strip(fp: str, folder: str) -> str:
         return sub("^" + _zenodo_regex_escape(folder) + "[/\\\\]*", "", fp)
@@ -379,7 +379,7 @@ def test_zenodo_upload_as_zip_split(
     respx_mock: respx.MockRouter, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # the categories come from data_classify_files(), tested with the data checks
-    monkeypatch.setattr("pytacheck.archives.zenodo_upload._zenodo_classify", _classify_by_extension)
+    monkeypatch.setattr("metacheck.archives.zenodo_upload._zenodo_classify", _classify_by_extension)
     proj = tmp_path / "My Study"
     (proj / "data").mkdir(parents=True)
     (proj / "stimuli").mkdir()
@@ -476,7 +476,7 @@ def test_zenodo_upload_failed_file_warns(respx_mock: respx.MockRouter, tmp_path:
 def test_zenodo_upload_as_zip_split_several_categories(
     respx_mock: respx.MockRouter, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr("pytacheck.archives.zenodo_upload._zenodo_classify", _classify_by_extension)
+    monkeypatch.setattr("metacheck.archives.zenodo_upload._zenodo_classify", _classify_by_extension)
     proj = tmp_path / "s"
     proj.mkdir()
     for name in ("a.csv", "b.png", "c.pdf", "d.png"):
@@ -495,10 +495,10 @@ def test_zenodo_zip_members(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> 
     import sys
     import types
 
-    from pytacheck.archives import zenodo
+    from metacheck.archives import zenodo
 
     fetched: list[list[str]] = []
-    fake = types.ModuleType("pytacheck.archives.zip_peek")
+    fake = types.ModuleType("metacheck.archives.zip_peek")
     fake.zip_peek = lambda url: pd.DataFrame(  # type: ignore[attr-defined]
         {"name": ["d/data.csv", "img/a.png", "big.csv", "zip64.csv"],
          "size": [100.0, 50.0, 20 * 1024 * 1024.0, float("nan")]}
@@ -510,9 +510,9 @@ def test_zenodo_zip_members(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> 
                              "ok": [True] * len(names)})  # fmt: skip
 
     fake._zip_fetch_members = fetch  # type: ignore[attr-defined]
-    monkeypatch.setitem(sys.modules, "pytacheck.archives.zip_peek", fake)
+    monkeypatch.setitem(sys.modules, "metacheck.archives.zip_peek", fake)
     monkeypatch.setattr(
-        "pytacheck.datacheck.files.data_classify_files",
+        "metacheck.datacheck.files.data_classify_files",
         lambda names, file_path=None: [
             "data" if n.endswith(".csv") else "materials" for n in names
         ],

@@ -10,8 +10,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-import pytacheck as pc
-from pytacheck.modules import _funding as F
+import metacheck as pc
+from metacheck.core.errors import PytacheckWarning
+from metacheck.modules import _funding as F
 
 KELVIN = "\u212a"
 LONG_S = "\u017f"
@@ -29,7 +30,7 @@ DOTLESS = "\u0131"
 
 def test_prefilter_gives_the_full_scan() -> None:
     """The literal prefilter and the shared column cache give a full scan's answer."""
-    from pytacheck._r.regex import grepl
+    from metacheck._r.regex import grepl
     from tests.mod_funding.test_funding_check import _all_patterns
 
     base = [
@@ -138,16 +139,21 @@ def test_funding_check_oi_section_spelling() -> None:
     assert pc.module_run(p, "funding_check_oi").table["text"].tolist() == expected
 
 
-def test_duplicate_paper_ids_are_one_group() -> None:
+def test_duplicate_paper_ids_are_separate_papers() -> None:
+    # U208: papers that share an ID are renamed (`id~2`), so each is grouped on its own;
+    # metacheck pools their sentences into one group
     p1 = pc.test_paper(["This research was funded by NIH.", "Funding", "", "We thank NIH."])
     p2 = pc.test_paper(["Our study was supported by the ERC."])
     p2["paper_id"] = p1.paper_id
     p2["text"] = p2["text"].assign(paper_id=p1.paper_id)
-    mo = pc.module_run(pc.PaperList([p1, p2]), "funding_check")
+    with pytest.warns(PytacheckWarning):
+        mo = pc.module_run(pc.PaperList([p1, p2]), "funding_check")
     assert mo.table["text"].tolist() == [
-        "This research was funded by NIH. Funding We thank NIH. Our study was supported by the ERC."
+        "This research was funded by NIH. Funding We thank NIH.",
+        "Our study was supported by the ERC.",
     ]
-    mo = pc.module_run(pc.PaperList([p1, p2]), "funding_check_oi")
+    with pytest.warns(PytacheckWarning):
+        mo = pc.module_run(pc.PaperList([p1, p2]), "funding_check_oi")
     assert mo.table["text"].tolist() == [
         "Our study was supported by the ERC.",
         "This research was funded by NIH.",

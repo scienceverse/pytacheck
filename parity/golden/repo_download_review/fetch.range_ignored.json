@@ -18,7 +18,8 @@
           "name",
           "path",
           "size",
-          "ok"
+          "ok",
+          "error"
         ],
         "v": [
           {
@@ -59,6 +60,16 @@
               false,
               false,
               false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "HTTP 200 (range not honoured)",
+              "HTTP 200 (range not honoured)",
+              "HTTP 200 (range not honoured)",
+              "HTTP 200 (range not honoured)",
+              "HTTP 200 (range not honoured)"
             ]
           }
         ]

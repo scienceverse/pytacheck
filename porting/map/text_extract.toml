@@ -1,22 +1,22 @@
 # R source -> Python location for the text extractors (see docs/PORTING.md).
 [files]
-"R/text-extractors.R" = ["src/pytacheck/text/extract.py"]
-"R/extract-tests.R" = ["src/pytacheck/text/extract_tests.py"]
-"R/text-json_expand.R" = ["src/pytacheck/text/json_expand.py"]
-"R/causal_sentences.R" = ["src/pytacheck/text/causal.py"]
+"R/text-extractors.R" = ["src/metacheck/text/extract.py"]
+"R/extract-tests.R" = ["src/metacheck/text/extract_tests.py"]
+"R/text-json_expand.R" = ["src/metacheck/text/json_expand.py"]
+"R/causal_sentences.R" = ["src/metacheck/text/causal.py"]
 
 [functions]
-extract_urls = "pytacheck.text.extract:extract_urls"
-extract_p_values = "pytacheck.text.extract:extract_p_values"
-extract_eq = "pytacheck.text.extract:extract_eq"
-".detect_live_data" = "pytacheck.text.extract:_detect_live_data"
-extract_tests = "pytacheck.text.extract_tests:extract_tests"
-".norm_stat_name" = "pytacheck.text.extract_tests:_norm_stat_name"
-".is_stat_name" = "pytacheck.text.extract_tests:_is_stat_name"
-".is_anchor" = "pytacheck.text.extract_tests:_is_anchor"
-".is_primary_anchor" = "pytacheck.text.extract_tests:_is_primary_anchor"
-".split_into_tests" = "pytacheck.text.extract_tests:_split_into_tests"
-".empty_tests" = "pytacheck.text.extract_tests:_empty_tests"
-".render_test" = "pytacheck.text.extract_tests:_render_test"
-json_expand = "pytacheck.text.json_expand:json_expand"
-causal_relations = "pytacheck.text.causal:causal_relations"
+extract_urls = "metacheck.text.extract:extract_urls"
+extract_p_values = "metacheck.text.extract:extract_p_values"
+extract_eq = "metacheck.text.extract:extract_eq"
+".detect_live_data" = "metacheck.text.extract:_detect_live_data"
+extract_tests = "metacheck.text.extract_tests:extract_tests"
+".norm_stat_name" = "metacheck.text.extract_tests:_norm_stat_name"
+".is_stat_name" = "metacheck.text.extract_tests:_is_stat_name"
+".is_anchor" = "metacheck.text.extract_tests:_is_anchor"
+".is_primary_anchor" = "metacheck.text.extract_tests:_is_primary_anchor"
+".split_into_tests" = "metacheck.text.extract_tests:_split_into_tests"
+".empty_tests" = "metacheck.text.extract_tests:_empty_tests"
+".render_test" = "metacheck.text.extract_tests:_render_test"
+json_expand = "metacheck.text.json_expand:json_expand"
+causal_relations = "metacheck.text.causal:causal_relations"

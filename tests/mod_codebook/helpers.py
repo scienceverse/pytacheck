@@ -3,7 +3,7 @@
 codebook_check reads data_check's output through ``get_prev_outputs()``.
 The fixtures (``tests/mod_codebook/fixtures/make_fixtures.R``) store that
 output, as produced by metacheck's ``data_check`` module, in canonical parity
-JSON; :func:`cbc_prev` rebuilds it as a :class:`~pytacheck.module.ModuleOutput`
+JSON; :func:`cbc_prev` rebuilds it as a :class:`~metacheck.module.ModuleOutput`
 whose paper is a test paper (or any paper passed in), so ``module_run()``
 chains codebook_check onto it exactly as in a report pipeline. The R twin is
 ``tests/mod_codebook/cbc_helpers.R``.
@@ -90,7 +90,7 @@ def scenario_text(scenario: str) -> list[str]:
 
 def cbc_paper(scenario: str, pid: str = "p1") -> Any:
     """A test paper of the scenario's text with a fixed id (as R's ``cbc_paper()``)."""
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(scenario_text(scenario))
     p.paper_id = pid
@@ -126,7 +126,7 @@ def cbc_pieces(scenario: str, pid: str = "p1") -> dict[str, Any]:
 
 
 def _output(paper: Any, pieces: dict[str, Any], pids: Sequence[str]) -> Any:
-    from pytacheck.module import ModuleOutput
+    from metacheck.module import ModuleOutput
 
     return ModuleOutput(
         module="data_check",
@@ -158,8 +158,8 @@ def cbc_prev(
 
 def cbc_prev_list(scenarios: Sequence[str]) -> Any:
     """data_check's output for a paper list: one scenario per paper (ids p1, p2, ...)."""
-    import pytacheck as pc
-    from pytacheck._r import bind_rows
+    import metacheck as pc
+    from metacheck._r import bind_rows
 
     pids = [f"p{i}" for i in range(1, len(scenarios) + 1)]
     papers = [cbc_paper(s, p) for s, p in zip(scenarios, pids, strict=True)]
@@ -178,7 +178,7 @@ def cbc_prev_list(scenarios: Sequence[str]) -> Any:
 
 def cbc_run(scenario: str, paper: Any = None, **kwargs: Any) -> Any:
     """``module_run(<data_check output>, "codebook_check", ...)``."""
-    from pytacheck.module import module_run
+    from metacheck.module import module_run
 
     return module_run(cbc_prev(scenario, paper=paper), "codebook_check", **kwargs)
 
@@ -453,8 +453,8 @@ def r_likert_columns(kind: str = "observed") -> pd.DataFrame:
 
 def pattern_check(name: str, acronym: str | None, text: str) -> list[Any]:
     """``.scale_text_pattern()`` and whether it matches *text* (perl, ignore case)."""
-    from pytacheck._r import grepl
-    from pytacheck.modules._codebook import _scale_text_pattern
+    from metacheck._r import grepl
+    from metacheck.modules._codebook import _scale_text_pattern
 
     p = _scale_text_pattern(name, acronym)
     hit = bool(grepl(p, text, ignore_case=True, perl=True))
@@ -464,7 +464,7 @@ def pattern_check(name: str, acronym: str | None, text: str) -> list[Any]:
 
 def cbc_prev_papers(papers: Any, scenarios: Sequence[str]) -> Any:
     """data_check's output for a real paper list: scenario i's data belongs to paper i."""
-    from pytacheck._r import bind_rows
+    from metacheck._r import bind_rows
 
     pids = [str(p.paper_id) for p in papers]
     parts = [cbc_pieces(s, p) for s, p in zip(scenarios, pids, strict=True)]
@@ -482,7 +482,7 @@ def cbc_prev_papers(papers: Any, scenarios: Sequence[str]) -> Any:
 
 def report_tables(out: Any) -> list[pd.DataFrame]:
     """The data of the ``scroll_table()`` blocks of a module report (R: ``cbc_report_tables()``)."""
-    from pytacheck.report.blocks import ReportTable
+    from metacheck.report.blocks import ReportTable
 
     report = out.report if isinstance(out.report, list) else [out.report]
     return [b.data.reset_index(drop=True) for b in report if isinstance(b, ReportTable)]
@@ -513,7 +513,7 @@ def _str_frame(cols: dict[str, list[Any]]) -> pd.DataFrame:
 
 def mock_llm(spec: dict[str, Any]) -> Any:
     """An ``llm()`` replacement answering each codebook_check phase by fixed rules."""
-    from pytacheck._r import grepl, gsub, sub
+    from metacheck._r import grepl, gsub, sub
 
     def llm(text: Any, system_prompt: Any = None, type: Any = None, text_col: str = "text",
             model: Any = None, params: Any = None, phase: str | None = None, **_: Any) -> Any:  # fmt: skip
@@ -614,9 +614,9 @@ def mock_llm(spec: dict[str, Any]) -> Any:
 
 def cbc_llm_run(scenario: str | None, spec: str, prev: Any = None, **kwargs: Any) -> Any:
     """:func:`cbc_run` with the LLM on and ``llm()`` mocked by the named spec."""
-    from pytacheck.module import module_run
-    from pytacheck.modules import _codebook
-    from pytacheck.utils import local_options
+    from metacheck.module import module_run
+    from metacheck.modules import _codebook
+    from metacheck.utils import local_options
 
     if prev is None:
         assert scenario is not None

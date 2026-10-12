@@ -16,9 +16,9 @@ from pathlib import Path
 
 import pytest
 
-import pytacheck as pc
+import metacheck as pc
+from metacheck.module import module_run, run_session
 from parity.cases import metacheck_defaults
-from pytacheck.module import module_run, run_session
 
 NEW = "This study was approved by the institutional review board zzqq (https://osf.io/zzqq/)."
 FORMS = ["raw", "materialised", "metacheck_defaults"]

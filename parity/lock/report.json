@@ -3,5 +3,13 @@
 "module_report.null_summary": {"r": "83e6cf687bf8b922", "py": "a7520b6fab235708", "diff": ["[]"]},
 "report_qmd.demo.all_sections": {"r": "913b3ff3c88ef184", "py": "4f0c4d7c7d87b33f", "diff": ["[]"]},
 "report_qmd.no_paper": {"r": "ac5146cf65ca52a8", "py": "dfc83911c1ba065c", "diff": ["<R error, Python value>"]},
-"report_repository.stand_in": {"r": "c5cf0212b72a2dbc", "py": "10f699f3df6f27a7", "diff": ["file[]"]}
+"report_repository.stand_in": {"r": "c5cf0212b72a2dbc", "py": "10f699f3df6f27a7", "diff": ["file[]"]},
+"scroll_table.colwidths_chr": {"r": "319830222b3434b0", "py": "a0b0fa8cf4059037", "diff": ["[]"]},
+"scroll_table.colwidths_frac": {"r": "2801c1e6b1322064", "py": "8000d14c62316070", "diff": ["[]"]},
+"scroll_table.colwidths_na": {"r": "50804e5d58f42f38", "py": "d2867b75a7331987", "diff": ["[]"]},
+"scroll_table.escape": {"r": "e323ecb56929f7c9", "py": "d233228f7d858c03", "diff": ["[]"]},
+"scroll_table.int_vector_maxrows": {"r": "687c0151e0e3a67c", "py": "9ce4810f3d19513d", "diff": ["[]"]},
+"scroll_table.letters_df": {"r": "68081614ec892f82", "py": "d233228f7d858c03", "diff": ["[]"]},
+"scroll_table.linebreaks": {"r": "5468a440c53656f3", "py": "244819193fff7224", "diff": ["[]"]},
+"scroll_table.vector": {"r": "d3038c42d8e0f836", "py": "b2ee3dd8090825db", "diff": ["[]"]}
 }

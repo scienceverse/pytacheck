@@ -16,8 +16,8 @@ from typing import Any
 import pandas as pd
 import pytest
 
-from pytacheck.repro import docker
-from pytacheck.repro.docker import (
+from metacheck.repro import docker
+from metacheck.repro.docker import (
     repro_docker_available,
     repro_install_deps_docker,
     repro_run_scripts_docker,
@@ -90,7 +90,7 @@ def test_docker_stop_is_best_effort(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_resource_args() -> None:
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     assert docker._repro_docker_resource_args() == []
     with local_options({"metacheck.docker_resource_limits": {"cpus": 2, "memory_gb": 3.5}}):
@@ -151,6 +151,38 @@ def test_install_script_parses_for_a_long_dependency_list(rscript: str, tmp_path
     )
     out = subprocess.run([rscript, str(script)], capture_output=True, text=True, check=True)
     assert out.stdout.split() == ["TRUE", "TRUE", str(len(pkgs))]
+
+
+def test_install_script_reports_the_unavailable_warning(rscript: str, tmp_path: Path) -> None:
+    # issue #421: install.packages() only warns for a package it cannot find; the
+    # script keeps that warning as the reason instead of "installed but ... not loadable"
+    deps = pd.DataFrame({"package": ["zzznotapackagezzz"], "source": ["cran"], "ref": [None]})
+    lines = docker._install_script(deps)
+    assert any("withCallingHandlers" in ln for ln in lines)
+    assert any('grep("is not available", warns' in ln for ln in lines)
+    repo = tmp_path / "repo" / "src" / "contrib"
+    repo.mkdir(parents=True)
+    (repo / "PACKAGES").write_text("")
+    lib = tmp_path / "lib"
+    # run the script with the container's paths swapped for local ones
+    script = "\n".join(lines)
+    # forward slashes and a file URL, so a Windows path is not read as R escapes;
+    # source packages, as Windows R otherwise looks for binaries the repository lacks
+    script = script.replace('"/rlib"', f'"{lib.as_posix()}"')
+    script = script.replace("/sandbox/", f"{tmp_path.as_posix()}/")
+    script = (
+        f'options(repos = c(CRAN = "{(tmp_path / "repo").as_uri()}"), pkgType = "source")\n'
+        + script
+    )
+    path = tmp_path / "install.R"
+    path.write_text(script)
+    subprocess.run([rscript, str(path)], capture_output=True, text=True, check=True)
+    from metacheck.datacheck._files_rdata import r_frame_to_pandas, read_rds
+
+    out = r_frame_to_pandas(read_rds(str(tmp_path / ".install_results.rds")), subset=False)
+    assert [bool(v) for v in out["installed"]] == [False]
+    msg = str(next(iter(out["message"])))
+    assert "zzznotapackagezzz" in msg and "is not available" in msg
 
 
 def test_deparse1_escapes(rscript: str, tmp_path: Path) -> None:

@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.db.orcid import _initials, check_orcid, credit_roles, get_orcid, orcid_person
+from metacheck.db.orcid import _initials, check_orcid, credit_roles, get_orcid, orcid_person
 
 SEARCH_ONE = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <search:search num-found="1" xmlns:search="http://www.orcid.org/ns/search"

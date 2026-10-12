@@ -17,12 +17,12 @@ from typing import Any
 
 import pytest
 
-from pytacheck.cli import main
-from pytacheck.packs import auth, install, ui
-from pytacheck.packs.fetch import describe_source, tarball_url
-from pytacheck.packs.install import _Candidate, _install, pack_install, pack_update
-from pytacheck.packs.manifest import PackError
-from pytacheck.packs.stores import (
+from metacheck.cli import main
+from metacheck.packs import auth, install, ui
+from metacheck.packs.fetch import describe_source, tarball_url
+from metacheck.packs.install import _Candidate, _install, pack_install, pack_update
+from metacheck.packs.manifest import PackError
+from metacheck.packs.stores import (
     StoreError,
     check_store_url,
     index_location,
@@ -30,7 +30,7 @@ from pytacheck.packs.stores import (
     store_list,
     store_update,
 )
-from pytacheck.packs.tree import INSTALL_RECORD
+from metacheck.packs.tree import INSTALL_RECORD
 from tests.modsys.helpers import REV_A, mod_src
 
 # fixed, so parametrized test ids are the same in every xdist worker
@@ -154,8 +154,8 @@ def test_install_update_and_rerun_refuse_sources_with_credentials(ms, monkeypatc
 
 
 def test_a_legacy_install_is_recorded_and_shown_without_the_token(ms, capsys) -> None:
-    import pytacheck as pc
-    from pytacheck.provenance import RunRecord, run_modules
+    import metacheck as pc
+    from metacheck.provenance import RunRecord, run_modules
 
     root = _legacy_install(ms)
     with warnings.catch_warnings(record=True) as caught:
@@ -177,8 +177,8 @@ def test_a_legacy_install_is_recorded_and_shown_without_the_token(ms, capsys) ->
 
 
 def test_a_run_record_source_with_a_token_is_not_installed(ms, monkeypatch) -> None:
-    import pytacheck as pc
-    from pytacheck.provenance import rerun, run_modules
+    import metacheck as pc
+    from metacheck.provenance import rerun, run_modules
 
     ms.install("clean", {"hello": mod_src("hello", "hi")}, store=None)
     run_modules(pc.test_paper("A sentence."), ["clean::hello"], record="run.json")

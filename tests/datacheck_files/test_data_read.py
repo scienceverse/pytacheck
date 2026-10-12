@@ -17,7 +17,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck import files as F
+from metacheck.datacheck import files as F
 
 DATA = Path(__file__).parent / "data"
 INF = math.inf
@@ -32,9 +32,9 @@ def _write_csv(path: Path, cols: dict[str, list[object]]) -> None:
 
 
 def _has_checks() -> bool:
-    if importlib.util.find_spec("pytacheck.datacheck.checks") is None:
+    if importlib.util.find_spec("metacheck.datacheck.checks") is None:
         return False
-    mod = importlib.import_module("pytacheck.datacheck.checks")
+    mod = importlib.import_module("metacheck.datacheck.checks")
     return hasattr(mod, "data_check_is_qualtrics")
 
 
@@ -153,7 +153,7 @@ def _write_qualtrics(path: Path, n: int = 6) -> None:
     path.write_text("\n".join([hdr, qtxt, imp, *rows]) + "\n", encoding="utf-8")
 
 
-@pytest.mark.skipif(not _has_checks(), reason="needs pytacheck.datacheck.checks (Qualtrics)")
+@pytest.mark.skipif(not _has_checks(), reason="needs metacheck.datacheck.checks (Qualtrics)")
 def test_strips_qualtrics_header_rows(tmp_path: Path) -> None:
     p = tmp_path / "q.csv"
     _write_qualtrics(p)

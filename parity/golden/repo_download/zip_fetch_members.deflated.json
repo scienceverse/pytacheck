@@ -10,7 +10,8 @@
       "name",
       "path",
       "size",
-      "ok"
+      "ok",
+      "error"
     ],
     "v": [
       {
@@ -35,6 +36,12 @@
         "t": "lgl",
         "v": [
           false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "short read (range request returned the wrong length)"
         ]
       }
     ]

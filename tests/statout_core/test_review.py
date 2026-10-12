@@ -10,22 +10,21 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.statout.r_output import (
-    _r_as_numeric,
-    _r_dollar,
-    _r_dollar_found,
+from metacheck._values import as_float
+from metacheck.statout.r_output import (
+    _field_found,
     _r_echo_chunks,
     _r_values,
     _RError,
     _RNamedList,
 )
-from pytacheck.statout.stat_output import (
+from metacheck.statout.stat_output import (
     _stat_result_ids,
     _stat_sanitize_id,
     stat_output_validate,
     stat_results_long,
 )
-from pytacheck.statout.stat_tables import (
+from metacheck.statout.stat_tables import (
     _ipynb_text,
     _parse_json_text,
     _pb_fields,
@@ -44,17 +43,16 @@ DATA = Path(__file__).resolve().parent / "data"
 # -- R list semantics ------------------------------------------------------------
 
 
-def test_dollar_partial_matching() -> None:
+def test_field_found_matches_names_exactly() -> None:
     x = {"line_seq": 2, "analysis_id": "a"}
-    assert _r_dollar(x, "line") == 2  # unique partial match
-    assert _r_dollar(x, "analysis") == "a"
-    assert _r_dollar({"line": 1, "line_seq": 2}, "line") == 1  # exact wins
-    assert _r_dollar({"ab": 1, "abc": 2}, "a") is None  # ambiguous partial
-    assert _r_dollar_found({"a": None}, "a") == (True, None)
-    assert _r_dollar_found(None, "a") == (False, None)
-    assert _r_dollar_found([1, 2], "a") == (False, None)
+    assert _field_found(x, "line") == (False, None)  # no prefix match (R's `$`: U141)
+    assert _field_found({"line": 1, "line_seq": 2}, "line") == (True, 1)
+    assert _field_found({"a": None}, "a") == (True, None)  # present but null
+    assert _field_found(_RNamedList([("a", 1), ("a", 2)]), "a") == (True, 1)
+    assert _field_found(None, "a") == (False, None)
+    assert _field_found([1, 2], "a") == (False, None)
     with pytest.raises(_RError, match="atomic"):
-        _r_dollar("x", "a")
+        _field_found("x", "a")
 
 
 def test_json_keeps_duplicate_names_and_bom() -> None:
@@ -83,8 +81,9 @@ def test_unlist_coercion_of_notebook_text() -> None:
 
 
 def test_as_numeric_hex_forms() -> None:
-    got = [_r_as_numeric(x) for x in ["0x.8", "0x.", "0xp1", "0x", "0x1p", "-0x10", " 0X1A "]]
-    assert got == [0.5, 0.0, 0.0, None, None, -16.0, 26.0]
+    got = [as_float(x) for x in ["0x.8", "0x.", "0xp1", "0x", "0x1p", "-0x10", " 0X1A "]]
+    # R reads "0x." and "0xp1" as 0; as_float() needs a hexadecimal digit
+    assert got == [0.5, None, None, None, None, -16.0, 26.0]
 
 
 def test_pb_str_follows_rawtochar() -> None:
@@ -190,11 +189,9 @@ def test_validate_json_quirks() -> None:
         bom = stat_output_validate(str(DATA / "review_validate_bom.json"))
     assert bom["valid"] and bom["summary"]["n_results"] == 1
     partial = stat_output_validate(str(DATA / "review_validate_partial.json"))
-    # "analysesX", "resultsZ", "valuesQ", {"values": 1} all match through `$`
-    assert partial["issues"] == [
-        "Document missing top-level field: analyses.",
-        'Result "r1": value "p" is missing `value`.',
-    ]
+    # names match exactly: "analysesX" is not "analyses" (R's `$` takes the prefix: D81)
+    assert partial["issues"] == ["Document missing top-level field: analyses."]
+    assert partial["summary"]["n_analyses"] == 0
     dup = stat_output_validate(str(DATA / "review_validate_dupkeys.json"))
     assert dup["issues"] == ['Result "r1": value "t" is missing `value`.'] * 2
 
@@ -228,14 +225,14 @@ def test_capture_runner_matches_metacheck(script: str, reference_rscript: str, s
     plus ``.r_captures_to_tables()`` / ``.r_merge_captures()`` of it, in the
     parity harness' canonical encoding.
     """
-    from parity.canonical import canonical
-    from parity.compare import Options, compare
-    from pytacheck.statout.r_capture import (
+    from metacheck.statout.r_capture import (
         _r_capture_run,
         _r_captures_to_tables,
         _r_merge_captures,
     )
-    from pytacheck.statout.r_output import read_r_output
+    from metacheck.statout.r_output import read_r_output
+    from parity.canonical import canonical
+    from parity.compare import Options, compare
     from tests.statout_core._helpers import read_lines
 
     expected = json.loads(

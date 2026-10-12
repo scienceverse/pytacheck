@@ -7,7 +7,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from pytacheck._r import regex as rx
+from metacheck._r import regex as rx
 
 
 def test_tre_is_leftmost_longest() -> None:
@@ -47,8 +47,8 @@ def test_strsplit_matches_r_examples() -> None:
 
 def test_prefilter_never_changes_grepl() -> None:
     """grepl with the literal prefilter must equal a plain engine scan."""
-    import pytacheck as pc
-    from pytacheck._r.regex import _prefilter, compile_r
+    import metacheck as pc
+    from metacheck._r.regex import _prefilter, compile_r
 
     texts = [
         *pc.paper_table(pc.demopaper(), "text")["text"].tolist(),

@@ -16,7 +16,7 @@ from typing import Any
 
 import pandas as pd
 
-from pytacheck.datacheck import files as F
+from metacheck.datacheck import files as F
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = "tests/datacheck_files/data"
@@ -43,7 +43,7 @@ def _r_attributes(df: pd.DataFrame) -> _NamedList:
     column name included. ``labels`` (``(label, code)`` pairs) is compared as
     the R side's ``as.list(labels)``, repeated label texts included.
     """
-    from pytacheck.datacheck._colattrs import col_attrs_at
+    from metacheck.datacheck._colattrs import col_attrs_at
 
     out: list[tuple[Any, Any]] = []
     for j, name in enumerate(df.columns):

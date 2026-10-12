@@ -1,9 +1,9 @@
-"""Run pytacheck.db network functions on metacheck's recorded API responses.
+"""Run metacheck.db network functions on metacheck's recorded API responses.
 
 The Python half of ``tests/db/replay.R``: parity cases in
 ``parity/cases/db.yaml`` call e.g. ::
 
-    call("pytacheck.db.crossref.crossref_doi", ["10.1177/fake"])
+    call("metacheck.db.crossref.crossref_doi", ["10.1177/fake"])
 
 which runs the function with requests served from
 ``upstream/metacheck/tests/testthat/apis`` (see :mod:`tests.httpmock`),
@@ -23,8 +23,8 @@ from typing import Any
 @contextlib.contextmanager
 def replaying(mock_dir: str = "apis") -> Iterator[None]:
     """Serve HTTP from recorded fixtures, with ``online()`` true and the test email."""
-    from pytacheck import config
-    from pytacheck.db import _utils
+    from metacheck import config
+    from metacheck.db import _utils
     from tests.httpmock import replay
 
     old_online = _utils.online
@@ -60,7 +60,7 @@ def paper_with_bib(bib: dict[str, Any], text: str = "x", paper_id: str | None = 
     """``p <- test_paper(text); p$bib <- data.frame(bib)`` (optionally with an ID)."""
     import pandas as pd
 
-    import pytacheck as pc
+    import metacheck as pc
 
     p = pc.test_paper(text)
     p.bib = pd.DataFrame(bib)
@@ -71,6 +71,6 @@ def paper_with_bib(bib: dict[str, Any], text: str = "x", paper_id: str | None = 
 
 def paperlist(*papers: Any) -> Any:
     """``paperlist(...)``."""
-    import pytacheck as pc
+    import metacheck as pc
 
     return pc.PaperList(papers)

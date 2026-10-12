@@ -15,7 +15,7 @@ from tests.report.parity_helpers import _args, _mods, _unpath, rp_mask
 def rv_report_list(
     paper: Any, modules: Any, files: Any, output_format: str = "qmd", args: Any = None
 ) -> dict[str, Any]:
-    from pytacheck.report.report import report
+    from metacheck.report.report import report
 
     d = tempfile.mkdtemp()
     try:

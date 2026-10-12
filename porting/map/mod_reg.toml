@@ -1,10 +1,10 @@
 # R source -> Python location for the reg_check module (see docs/PORTING.md).
 [files]
-"inst/modules/reg_check.R" = ["src/pytacheck/modules/reg_check.py"]
+"inst/modules/reg_check.R" = ["src/metacheck/modules/reg_check.py"]
 
 [functions]
-"module:reg_check" = "pytacheck.modules.reg_check:reg_check"
+"module:reg_check" = "metacheck.modules.reg_check:reg_check"
 # internal helpers and data defined in inst/modules/reg_check.R
-prereg_row_text = "pytacheck.modules.reg_check:prereg_row_text"
-vandenAkker2024 = "pytacheck.modules.reg_check:_VAN_DEN_AKKER_2024"
-Lakens2024 = "pytacheck.modules.reg_check:_LAKENS_2024"
+prereg_row_text = "metacheck.modules.reg_check:prereg_row_text"
+vandenAkker2024 = "metacheck.modules.reg_check:_VAN_DEN_AKKER_2024"
+Lakens2024 = "metacheck.modules.reg_check:_LAKENS_2024"

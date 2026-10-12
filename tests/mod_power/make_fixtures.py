@@ -258,7 +258,7 @@ def record_mocks() -> dict[str, tuple[int, Any]]:
     import httpx
     import respx
 
-    import pytacheck as pc
+    import metacheck as pc
     from tests.httpmock import mock_path
 
     recorded: dict[str, tuple[int, Any]] = {}

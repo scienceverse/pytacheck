@@ -2,9 +2,7 @@
   "id": "code_setwd.character0",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Unknown or uninitialised column: `text`."
-  ],
+  "warnings": [],
   "value": {
     "t": "df",
     "nrow": 0,

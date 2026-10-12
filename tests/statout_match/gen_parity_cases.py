@@ -211,7 +211,7 @@ expr_case(
 fn_case(
     "stato_type_column.null",
     "stato_type_column",
-    "pytacheck.statout.stato_map.stato_type_column",
+    "metacheck.statout.stato_map.stato_type_column",
     {"header": {"$null": True}},
 )
 CALL_PAIRS = [
@@ -238,7 +238,7 @@ expr_case(
 fn_case(
     "stato_type_column.call_null",
     "stato_type_column",
-    "pytacheck.statout.stato_map.stato_type_column",
+    "metacheck.statout.stato_map.stato_type_column",
     {"header": "W", "call_fn": {"$null": True}},
 )
 SPV = [
@@ -272,7 +272,7 @@ expr_case(
 fn_case(
     "spv_stato_type_label.null",
     "metacheck:::.spv_stato_type_label",
-    "pytacheck.statout.stato_map._spv_stato_type_label",
+    "metacheck.statout.stato_map._spv_stato_type_label",
     {"label": {"$null": True}},
 )
 BY_CALL = [
@@ -290,7 +290,7 @@ expr_case(
 fn_case(
     "stato_by_call.null_call",
     "metacheck:::.stato_by_call",
-    "pytacheck.statout.stato_map._stato_by_call",
+    "metacheck.statout.stato_map._stato_by_call",
     {"key": "w", "call_fn": {"$null": True}},
 )
 STRIP = ["f[gg]", "p[hf]", "stat[stud]", "a[b][c]", "x[]", "noop", NA, "[x]", "a[b]c", ""]
@@ -319,7 +319,7 @@ expr_case(
 fn_case(
     "norm_value.null",
     "metacheck:::.norm_value",
-    "pytacheck.statout.match_reported._norm_value",
+    "metacheck.statout.match_reported._norm_value",
     {"x": {"$null": True}},
 )
 INTERVALS = [
@@ -348,7 +348,7 @@ expr_case(
 fn_case(
     "norm_df.null",
     "metacheck:::.norm_df",
-    "pytacheck.statout.match_reported._norm_df",
+    "metacheck.statout.match_reported._norm_df",
     {"x": {"$null": True}},
 )
 FAMILIES = [
@@ -384,7 +384,7 @@ expr_case(
 fn_case(
     "stat_family.null",
     "metacheck:::.stat_family",
-    "pytacheck.statout.match_reported._stat_family",
+    "metacheck.statout.match_reported._stat_family",
     {"name": {"$null": True}},
 )
 SHARE = [
@@ -781,7 +781,7 @@ expr_case(
 fn_case(
     "table_caption_family.null",
     "metacheck:::.table_caption_family",
-    "pytacheck.statout.match_table._table_caption_family",
+    "metacheck.statout.match_table._table_caption_family",
     {"caption": {"$null": True}},
 )
 HEADERS = [

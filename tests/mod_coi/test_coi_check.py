@@ -13,9 +13,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import SECTION_LEVELS
-from pytacheck.modules.coi_check import (
+import metacheck as pc
+from metacheck.module import SECTION_LEVELS
+from metacheck.modules.coi_check import (
     _cut_after_authors,
     agrep,
     agrepl,

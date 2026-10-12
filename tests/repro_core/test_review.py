@@ -14,8 +14,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pytacheck._r.regex import gsub, sub
-from pytacheck.repro import core, docker, tables
+from metacheck._r.regex import gsub, sub
+from metacheck.repro import core, docker, tables
 from tests.repro_core.parity_support import files_df
 
 UPSTREAM_REPRO = (
@@ -29,7 +29,7 @@ def _has_r() -> bool:
     return bool(os.environ.get("PYTACHECK_RSCRIPT") or shutil.which("Rscript"))
 
 
-# -- R replacement strings (pytacheck._r.regex) --------------------------------
+# -- R replacement strings (metacheck._r.regex) --------------------------------
 
 
 def test_perl_case_conversion_applies_to_backreferences_only() -> None:
@@ -165,7 +165,7 @@ def test_jags_other_code_text_as_one_string() -> None:
 
 
 def test_resource_args_with_missing_limits() -> None:
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     with local_options({"metacheck.docker_resource_limits": {"memory_gb": 8}}):
         assert docker._repro_docker_resource_args() == ["--cpus", "--memory", "8g"]

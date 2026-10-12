@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pytacheck._r import regex as rx
+from metacheck._r import regex as rx
 from tests.foundation.record_regex_calls import DATA, load, method_result, plain
 
 

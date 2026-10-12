@@ -73,8 +73,8 @@ def outcome(call: Callable[[], Any]) -> Record:
 
 def _walk(x: Any, path: str, out: dict[str, Any]) -> None:
     """Add the ``frames`` entry of every DataFrame and Series in *x*, by path."""
-    from pytacheck.module import ModuleOutput
-    from pytacheck.papers import Paper, PaperList
+    from metacheck.module import ModuleOutput
+    from metacheck.papers import Paper, PaperList
 
     if isinstance(x, pd.DataFrame):
         out[path] = _frame_meta(x)

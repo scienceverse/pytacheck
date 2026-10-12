@@ -1,9 +1,0 @@
-{
-  "id": "msg.llm_model_list.invalid",
-  "ok": false,
-  "error": "Invalid platforms: notamodel",
-  "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.1",
-  "r_version": "R version 4.5.3 (2026-03-11)"
-}

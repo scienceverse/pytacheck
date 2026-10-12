@@ -4,68 +4,68 @@
 "cases":
 - "id": "review.text_peek.tp_trailing_nul.csv"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_trailing_nul.csv"
 - "id": "review.text_peek.tp_trailing_nul1.csv"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_trailing_nul1.csv"
 - "id": "review.text_peek.tp_dbl_nul.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_dbl_nul.txt"
 - "id": "review.text_peek.tp_all_nul.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_all_nul.txt"
 - "id": "review.text_peek.tp_mid_nul.txt"
   "r": "text_peek"
-  "py": "pytacheck.datacheck.files.text_peek"
+  "py": "metacheck.datacheck.files.text_peek"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_mid_nul.txt"
 - "id": "review.txt_classify_content.tp_trailing_nul.csv"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_trailing_nul.csv"
 - "id": "review.txt_classify_content.tp_dbl_nul.txt"
   "r": "txt_classify_content"
-  "py": "pytacheck.datacheck.files.txt_classify_content"
+  "py": "metacheck.datacheck.files.txt_classify_content"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/tp_dbl_nul.txt"
 - "id": "review.sniff_delimiter.bom_numeric.csv"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/bom_numeric.csv"
 - "id": "review.sniff_delimiter.bom_comment_cr.txt"
   "r": ".sniff_delimiter"
-  "py": "pytacheck.datacheck.files._sniff_delimiter"
+  "py": "metacheck.datacheck.files._sniff_delimiter"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/bom_comment_cr.txt"
 - "id": "review.detect_header.bom_numeric.csv"
   "r": ".detect_header"
-  "py": "pytacheck.datacheck.files._detect_header"
+  "py": "metacheck.datacheck.files._detect_header"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/bom_numeric.csv"
     "sep": ","
 - "id": "review.is_single_field_blob.bom_nohdr_blob.csv"
   "r": ".is_single_field_blob"
-  "py": "pytacheck.datacheck.files._is_single_field_blob"
+  "py": "metacheck.datacheck.files._is_single_field_blob"
   "args":
     "path":
       "$file": "tests/datacheck_files/data/review/bom_nohdr_blob.csv"
@@ -911,614 +911,9 @@
   "py_args":
     "path": "tests/datacheck_files/data/review/tagged_na.dta"
     "n_rows": null
-- "id": "review.read_delim.rt_quotes.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_quotes.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_quotes.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_int.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_int.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_int.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_int_trailing_ws.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_int_trailing_ws.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_int_trailing_ws.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_lgl.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_lgl.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_lgl.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_lgl_lower.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_lgl_lower.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_lgl_lower.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_dbl.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_dbl.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_dbl.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_nan_upper.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_nan_upper.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_nan_upper.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_cplx.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_cplx.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_cplx.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_blank_na.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_blank_na.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_blank_na.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_na_latin1.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_na_latin1.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_na_latin1.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_mb_error.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_mb_error.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_mb_error.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_dup_rownames.txt.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_dup_rownames.txt\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_dup_rownames.txt"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_rownames.txt.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_rownames.txt\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_rownames.txt"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_wrap.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_wrap.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_wrap.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_nul_quote_header.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_nul_quote_header.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_nul_quote_header.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_nul_value.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_nul_value.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_nul_value.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_cr_cr.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_cr_cr.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_cr_cr.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.fread_nul_name.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/fread_nul_name.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/fread_nul_name.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.bom_numeric.csv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/bom_numeric.csv\"\
-          ), sep = \",\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/bom_numeric.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.fread_cr_ws_first.tsv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/fread_cr_ws_first.tsv\"\
-          ), sep = \"\\t\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types\
-          \ <- unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/fread_cr_ws_first.tsv"
-    "sep": "\t"
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.tab_in_quotes.tsv.hdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/tab_in_quotes.tsv\"\
-          ), sep = \"\\t\", header = TRUE, check.names = FALSE)); if (is.null(d)) return(NULL); types\
-          \ <- unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/tab_in_quotes.tsv"
-    "sep": "\t"
-    "header": true
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_wrap.csv.nohdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_wrap.csv\"\
-          ), sep = \",\", header = FALSE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_wrap.csv"
-    "sep": ","
-    "header": false
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.bom_numeric.csv.nohdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/bom_numeric.csv\"\
-          ), sep = \",\", header = FALSE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/bom_numeric.csv"
-    "sep": ","
-    "header": false
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_blank_na.csv.nohdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_blank_na.csv\"\
-          ), sep = \",\", header = FALSE, check.names = FALSE)); if (is.null(d)) return(NULL); types <-\
-          \ unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_blank_na.csv"
-    "sep": ","
-    "header": false
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.fread_cr_ws_first.tsv.nohdr"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/fread_cr_ws_first.tsv\"\
-          ), sep = \"\\t\", header = FALSE, check.names = FALSE)); if (is.null(d)) return(NULL); types\
-          \ <- unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]]))\
-          \ d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
-          \ list(names = names(d), types = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/fread_cr_ws_first.tsv"
-    "sep": "\t"
-    "header": false
-    "nrows": null
-    "encoding": null
-- "id": "review.read_delim.rt_nrows.csv.hdr.n5"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_nrows.csv\"\
-          ), sep = \",\", header = TRUE, nrows = 5, check.names = FALSE)); if (is.null(d)) return(NULL);\
-          \ types <- unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if\
-          \ (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\"))\
-          \ d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))}; list(names = names(d), types\
-          \ = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_nrows.csv"
-    "sep": ","
-    "header": true
-    "nrows": 5
-    "encoding": null
-- "id": "review.read_delim.rt_wrap.csv.hdr.n1"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_wrap.csv\"\
-          ), sep = \",\", header = TRUE, nrows = 1, check.names = FALSE)); if (is.null(d)) return(NULL);\
-          \ types <- unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if\
-          \ (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\"))\
-          \ d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))}; list(names = names(d), types\
-          \ = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_wrap.csv"
-    "sep": ","
-    "header": true
-    "nrows": 1
-    "encoding": null
-- "id": "review.read_delim.rt_wrap.csv.nohdr.n0"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_wrap.csv\"\
-          ), sep = \",\", header = FALSE, nrows = 0, check.names = FALSE)); if (is.null(d)) return(NULL);\
-          \ types <- unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d)) {if\
-          \ (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\"))\
-          \ d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))}; list(names = names(d), types\
-          \ = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_wrap.csv"
-    "sep": ","
-    "header": false
-    "nrows": 0
-    "encoding": null
-- "id": "review.read_delim.rt_na_latin1.csv.hdr.latin1"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_na_latin1.csv\"\
-          ), sep = \",\", header = TRUE, fileEncoding = \"latin1\", check.names = FALSE)); if (is.null(d))\
-          \ return(NULL); types <- unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d))\
-          \ {if (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\"\
-          )) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))}; list(names = names(d), types\
-          \ = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_na_latin1.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": "latin1"
-- "id": "review.read_delim.rt_mb_error.csv.hdr.latin1"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.read_delim_typed"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({d <- suppressWarnings(utils::read.delim(rpath(\"tests/datacheck_files/data/review/rt_mb_error.csv\"\
-          ), sep = \",\", header = TRUE, fileEncoding = \"latin1\", check.names = FALSE)); if (is.null(d))\
-          \ return(NULL); types <- unname(lapply(d, function(x) c(typeof(x), class(x)))); for (j in seq_along(d))\
-          \ {if (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]); if (inherits(d[[j]], \"integer64\"\
-          )) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))}; list(names = names(d), types\
-          \ = types, data = d)})"
-        "py": "None"
-  "py_drop":
-  - "x"
-  "py_args":
-    "path": "tests/datacheck_files/data/review/rt_mb_error.csv"
-    "sep": ","
-    "header": true
-    "nrows": null
-    "encoding": "latin1"
 - "id": "review.detect_likert_scale.huge"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$expr":
@@ -1526,7 +921,7 @@
         "py": "[1, 2, 3, 4, 5] * 5 + [3e9]"
 - "id": "review.detect_likert_scale.huge_neg"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$expr":
@@ -1534,7 +929,7 @@
         "py": "[0, 1, 2, 3, 4] * 6 + [-3e9, 99]"
 - "id": "review.detect_likert_scale.huge_only_suspect"
   "r": ".detect_likert_scale"
-  "py": "pytacheck.datacheck.files._detect_likert_scale"
+  "py": "metacheck.datacheck.files._detect_likert_scale"
   "args":
     "x":
       "$expr":
@@ -1542,7 +937,7 @@
         "py": "[1, 2, 3, 4, 5, 6, 7] * 4 + [1e10, 1e10]"
 - "id": "review.data_group_from_path.unicode"
   "r": ".data_group_from_path"
-  "py": "pytacheck.datacheck.files._data_group_from_path"
+  "py": "metacheck.datacheck.files._data_group_from_path"
   "args":
     "paths":
       "$chr":
@@ -1555,7 +950,7 @@
       - "Study 4ΣΣ.csv"
 - "id": "review.data_group_normalize.unicode"
   "r": ".data_group_normalize"
-  "py": "pytacheck.datacheck.files._data_group_normalize"
+  "py": "metacheck.datacheck.files._data_group_normalize"
   "args":
     "x":
       "$chr":
@@ -1565,7 +960,7 @@
       - "exİ"
 - "id": "review.data_classify_files_ext.unicode"
   "r": "data_format"
-  "py": "pytacheck.datacheck.files.data_format"
+  "py": "metacheck.datacheck.files.data_format"
   "args":
     "ext":
       "$chr":
@@ -1624,20 +1019,6 @@
   - "x"
   "py_args":
     "scenario": "dir_slash"
-- "id": "review.data_group_llm.seed_cache_key"
-  "r": "identity"
-  "py": "tests.datacheck_files.review_helpers.data_group_cache_key"
-  "args":
-    "x":
-      "$expr":
-        "r": "local({key <- NULL; testthat::with_mocked_bindings(metacheck::data_group_llm(data.frame(file_name\
-          \ = c(\"first_raw.csv\", \"second_raw.csv\"), data_type = \"data\"), model = \"m\"), llm = function(...,\
-          \ params) {key <<- metacheck:::.llm_cache_key(\"t\", \"s\", NULL, \"m\", do.call(ellmer::params,\
-          \ c(params, list(temperature = 0, max_tokens = 4096)))); stop(\"no llm\")}, .package = \"metacheck\"\
-          ); key})"
-        "py": "None"
-  "py_drop":
-  - "x"
 - "id": "review.data_classify_files.invalid_utf8.ext_substring"
   "r": "identity"
   "py": "tests.datacheck_files.review_helpers.classify"

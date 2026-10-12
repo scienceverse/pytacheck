@@ -42,7 +42,7 @@
       },
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 3,
         "names": [
           "repo_name",
           "repo_url",
@@ -62,12 +62,14 @@
             "t": "chr",
             "v": [
               "F1TIDY",
+              "F1TIDY",
               "F1TIDY"
             ]
           },
           {
             "t": "chr",
             "v": [
+              "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY",
               "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY",
               "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY"
             ]
@@ -76,26 +78,30 @@
             "t": "chr",
             "v": [
               "soil_temp.csv",
-              "readme.txt"
+              "readme.txt",
+              "nameless"
             ]
           },
           {
             "t": "chr",
             "v": [
               "soil_temp.csv",
-              "readme.txt"
+              "readme.txt",
+              "nameless"
             ]
           },
           {
             "t": "chr",
             "v": [
               "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3Aabc-123",
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
               null,
               null
             ]
@@ -104,6 +110,7 @@
             "t": "dbl",
             "v": [
               20480,
+              null,
               null
             ]
           },
@@ -111,33 +118,38 @@
             "t": "chr",
             "v": [
               "data",
-              "readme"
+              "readme",
+              null
             ]
           },
           {
             "t": "chr",
             "v": [
               "data",
-              "documentation"
+              "documentation",
+              "unknown"
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              "readme"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "ex1",
+              "readme",
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              "ex1",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_dataone",
               "p_dataone",
               "p_dataone"
             ]
@@ -148,24 +160,28 @@
         "t": "chr",
         "v": [
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY' target='_blank'>knb.ecoinformatics.org/view/doi:10.5063/F1TIDY<\/a>\", \n    Platform = \"dataone\", \"All Files\" = 2L, \"Data Files\" = 1L, \n    \"Code Files\" = 0L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY' target='_blank'>knb.ecoinformatics.org/view/doi:10.5063/F1TIDY<\/a>\", \n    Platform = \"dataone\", \"All Files\" = 3L, \"Data Files\" = 1L, \n    \"Code Files\" = 0L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \n\"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\"), File = c(\"<a href='https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3Aabc-123' target='_blank'>soil_temp.csv<\/a>\", \n\"readme.txt\"), Size = c(\"20.5 kB\", \"—\"), Type = c(\"data\", \"readme\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \n\"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\"\n), File = c(\"<a href='https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3Aabc-123' target='_blank'>soil_temp.csv<\/a>\", \n\"readme.txt\", \"nameless\"), Size = c(\"20.5 kB\", \"—\", \"—\"), \n    Type = c(\"data\", \"readme\", NA)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
+          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: nameless. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"nameless\", Rule = \"unclassifiable\", Severity = \"bad\", \n    Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
-          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"soil_temp.csv\", Group = \"ex1\", Path = \"soil_temp.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"readme.txt\", Group = \"—\", Path = \"readme.txt\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"soil_temp.csv\", Group = \"ex1\", Path = \"soil_temp.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"readme.txt\", Group = \"—\", Path = \"readme.txt\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"nameless\", Group = \"—\", Path = \"nameless\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "green"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We found 2 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs."
+          "\n-  We found 3 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
         ]
       },
       {
@@ -199,7 +215,7 @@
           {
             "t": "int",
             "v": [
-              2
+              3
             ]
           },
           {
@@ -229,13 +245,13 @@
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
@@ -271,29 +287,44 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "file_name",
           "rule",
           "severity",
-          "detail"
+          "detail",
+          "paper_id"
         ],
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "nameless"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "unclassifiable"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "bad"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_dataone"
+            ]
           }
         ]
       },

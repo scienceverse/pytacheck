@@ -2,33 +2,33 @@
 "cases":
 - "id": "text_search.demo.default"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": &id001
       "$paper": "demo"
 - "id": "text_search.demo.significant"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "significan"
 - "id": "text_search.demo.significant.case"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "Significan"
     "ignore.case": false
 - "id": "text_search.demo.return.sentence"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "sentence"
 - "id": "text_search.demo.return.paragraph"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
@@ -36,35 +36,35 @@
 - "id": "text_search.demo.return.section"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U80", "reason": "return = \"section\" keeps the section's header (R groups without it and returns NA)"}
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "section"
 - "id": "text_search.demo.return.header"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "header"
 - "id": "text_search.demo.return.match"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "match"
 - "id": "text_search.demo.return.paper_id"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "paper_id"
 - "id": "text_search.demo.match.pval.perl"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "(?<![a-z])p\\s*[<=>]\\s*0?\\.\\d+"
@@ -72,41 +72,41 @@
     "return": "match"
 - "id": "text_search.demo.fixed"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "p = ."
     "fixed": true
 - "id": "text_search.demo.exclude"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "\\d"
     "exclude": true
 - "id": "text_search.demo.header"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "method|procedure"
     "search_header": true
 - "id": "text_search.demo.refs"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "journal|psychol"
     "include_refs": true
 - "id": "text_search.demo.norefs"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "journal|psychol"
 - "id": "text_search.demo.multi"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern":
@@ -116,7 +116,7 @@
       - "materials"
 - "id": "text_search.demo.multi.exclude"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern":
@@ -126,20 +126,20 @@
     "exclude": true
 - "id": "text_search.demo.nomatch"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "zzzqqqxxx"
 - "id": "text_search.demo.url"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id001
     "pattern": "https?://|osf\\.io|github"
     "return": "match"
 - "id": "text_search.psy.default"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": &id002
       "$read":
@@ -149,27 +149,27 @@
       - "upstream/metacheck/inst/demos/to_err_is_human.json"
 - "id": "text_search.psy.significant"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "significan"
 - "id": "text_search.psy.significant.case"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "Significan"
     "ignore.case": false
 - "id": "text_search.psy.return.sentence"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "sentence"
 - "id": "text_search.psy.return.paragraph"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
@@ -177,35 +177,35 @@
 - "id": "text_search.psy.return.section"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U80", "reason": "return = \"section\" keeps the section's header (R groups without it and returns NA)"}
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "section"
 - "id": "text_search.psy.return.header"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "header"
 - "id": "text_search.psy.return.match"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "match"
 - "id": "text_search.psy.return.paper_id"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "paper_id"
 - "id": "text_search.psy.match.pval.perl"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "(?<![a-z])p\\s*[<=>]\\s*0?\\.\\d+"
@@ -213,41 +213,41 @@
     "return": "match"
 - "id": "text_search.psy.fixed"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "p = ."
     "fixed": true
 - "id": "text_search.psy.exclude"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "\\d"
     "exclude": true
 - "id": "text_search.psy.header"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "method|procedure"
     "search_header": true
 - "id": "text_search.psy.refs"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "journal|psychol"
     "include_refs": true
 - "id": "text_search.psy.norefs"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "journal|psychol"
 - "id": "text_search.psy.multi"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern":
@@ -257,7 +257,7 @@
       - "materials"
 - "id": "text_search.psy.multi.exclude"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern":
@@ -267,20 +267,20 @@
     "exclude": true
 - "id": "text_search.psy.nomatch"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "zzzqqqxxx"
 - "id": "text_search.psy.url"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper": *id002
     "pattern": "https?://|osf\\.io|github"
     "return": "match"
 - "id": "text_search.vector"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$chr":
@@ -290,7 +290,7 @@
     "pattern": "\\d"
 - "id": "text_search.vector.match"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$chr":
@@ -303,28 +303,28 @@
 # intersects (base::intersect(x, y), so a third pattern is an unused argument)
 - "id": "text_search.vector.multi"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$chr": ["ethics approval here", "no"]
     "pattern": ["ethic", "approv"]
 - "id": "text_search.vector.multi.one_hit"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$chr": ["ethics approval here", "no"]
     "pattern": ["ethic", "zzz"]
 - "id": "text_search.vector.multi.no_hits"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$chr": ["ethics approval here", "no"]
     "pattern": ["zzz", "yyy"]
 - "id": "text_search.vector.multi.exclude"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$chr": ["ethics approval here", "no", "approv only", "no"]
@@ -332,7 +332,7 @@
     "exclude": true
 - "id": "text_search.vector.multi.exclude.three"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$chr": ["ethics approval here", "no", "approv only", "no"]
@@ -340,7 +340,7 @@
     "exclude": true
 - "id": "text_search.vector.multi.exclude.four"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$chr": ["ethics approval here", "no", "approv only", "no"]
@@ -348,7 +348,7 @@
     "exclude": true
 - "id": "text_search.vector.multi.exclude.three_empty"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$chr": ["ethics approval here", "no", "approv only", "no"]
@@ -356,7 +356,7 @@
     "exclude": true
 - "id": "text_search.demo.multi.exclude.three"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$paper": "demo"
@@ -364,7 +364,7 @@
     "exclude": true
 - "id": "text_search.demo.multi.exclude.four"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$paper": "demo"
@@ -372,24 +372,24 @@
     "exclude": true
 - "id": "text_search.chain"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id002
           "pattern": "significant"
     "pattern": "\\d"
 - "id": "text_search.chain.paragraph"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id001
           "pattern": "data"
@@ -397,7 +397,7 @@
     "return": "paragraph"
 - "id": "text_search.test_paper"
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$test_paper":
@@ -412,7 +412,7 @@
 - "id": "text_search.test_paper.section"
   "known_divergence": {"kind": "r_bug_fixed", "ref": "U80", "reason": "return = \"section\" keeps the section's header (R groups without it and returns NA)"}
   "r": "text_search"
-  "py": "pytacheck.text_search"
+  "py": "metacheck.text_search"
   "args":
     "paper":
       "$test_paper":
@@ -427,12 +427,12 @@
     - "paper_id"
 - "id": "text_expand.demo.sentence"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id001
           "pattern": "p\\s*[<=]\\s*\\.?\\d+"
@@ -440,12 +440,12 @@
     "paper": *id001
 - "id": "text_expand.demo.paragraph"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id001
           "pattern": "p\\s*[<=]\\s*\\.?\\d+"
@@ -454,12 +454,12 @@
     "expand_to": "paragraph"
 - "id": "text_expand.demo.section"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id001
           "pattern": "significant"
@@ -468,12 +468,12 @@
     "expand_to": "section"
 - "id": "text_expand.demo.div"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id001
           "pattern": "data"
@@ -482,12 +482,12 @@
     "expand_to": "div"
 - "id": "text_expand.demo.plusminus"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id001
           "pattern": "significant"
@@ -497,12 +497,12 @@
     "minus": 1
 - "id": "text_expand.demo.plus2"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id001
           "pattern": "effect"
@@ -511,12 +511,12 @@
     "plus": 2
 - "id": "text_expand.psy.sentence"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id002
           "pattern": "p\\s*[<=]\\s*\\.?\\d+"
@@ -524,12 +524,12 @@
     "paper": *id002
 - "id": "text_expand.psy.paragraph"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id002
           "pattern": "p\\s*[<=]\\s*\\.?\\d+"
@@ -538,12 +538,12 @@
     "expand_to": "paragraph"
 - "id": "text_expand.psy.section"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id002
           "pattern": "significant"
@@ -552,12 +552,12 @@
     "expand_to": "section"
 - "id": "text_expand.psy.div"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id002
           "pattern": "data"
@@ -566,12 +566,12 @@
     "expand_to": "div"
 - "id": "text_expand.psy.plusminus"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id002
           "pattern": "significant"
@@ -581,12 +581,12 @@
     "minus": 1
 - "id": "text_expand.psy.plus2"
   "r": "text_expand"
-  "py": "pytacheck.text.text_expand"
+  "py": "metacheck.text.text_expand"
   "args":
     "results_table":
       "$call":
         "r": "text_search"
-        "py": "pytacheck.text_search"
+        "py": "metacheck.text_search"
         "args":
           "paper": *id002
           "pattern": "effect"

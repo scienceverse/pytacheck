@@ -1,12 +1,12 @@
-"""Tests for pytacheck.archives.psycharchives (port of test-archive-psycharchives.R, plus more)."""
+"""Tests for metacheck.archives.psycharchives (port of test-archive-psycharchives.R, plus more)."""
 
 from __future__ import annotations
 
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.psycharchives import (
+import metacheck as pc
+from metacheck.archives.psycharchives import (
     DSPACE_LEGACY_HOSTS,
     _dspace_legacy_host_regex,
     _dspace_legacy_parse,
@@ -194,7 +194,7 @@ def test_info_uses_the_listing_cache(apis: object) -> None:
 
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"PsychArchives\.org seems to be offline"):
         psycharchives_info(PA)
 
@@ -209,7 +209,7 @@ def test_vector_download_is_aligned_with_input(apis: object) -> None:
 
 def test_file_lists_name_the_items_not_found(apis: object) -> None:
     # U43: repo_check() reports the items that could not be found
-    from pytacheck.archives.psycharchives import _psycharchives_file_lists
+    from metacheck.archives.psycharchives import _psycharchives_file_lists
 
     with pytest.warns(UserWarning):
         files, unfound = _psycharchives_file_lists([PA, None, "https://osf.io/x"])

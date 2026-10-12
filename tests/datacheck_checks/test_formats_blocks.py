@@ -16,7 +16,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pytacheck.datacheck.checks import (
+from metacheck.datacheck.checks import (
     _bh_is_trial_level_file,
     _detect_accuracy_blocks,
     _detect_header_row,
@@ -45,8 +45,8 @@ from pytacheck.datacheck.checks import (
     data_promote_header_row,
     data_strip_qualtrics_header,
 )
-from pytacheck.datacheck.scales import scales
-from pytacheck.datacheck.tasks import tasks
+from metacheck.datacheck.scales import scales
+from metacheck.datacheck.tasks import tasks
 
 DATA = Path(__file__).parent / "data"
 ROOT = Path(__file__).resolve().parents[2]
@@ -400,5 +400,5 @@ def test_convert_script_reproduces_bundled_data(tmp_path: Path) -> None:
         check=True, capture_output=True,
     )  # fmt: skip
     for name in ("scales", "tasks"):
-        bundled = ROOT / "src" / "pytacheck" / "resources" / "data" / f"{name}.json.gz"
+        bundled = ROOT / "src" / "metacheck" / "resources" / "data" / f"{name}.json.gz"
         assert (tmp_path / f"{name}.json.gz").read_bytes() == bundled.read_bytes()

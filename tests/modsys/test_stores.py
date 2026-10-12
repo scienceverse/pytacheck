@@ -10,8 +10,8 @@ import httpx
 import pytest
 import respx
 
-from pytacheck.config import BUILTIN_STORE_URL, load_config
-from pytacheck.packs.stores import (
+from metacheck.config import BUILTIN_STORE_URL, load_config
+from metacheck.packs.stores import (
     StoreError,
     find_entry,
     index_location,

@@ -18,7 +18,7 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives.reshare import _reshare_zip_members, reshare_file_download
+from metacheck.archives.reshare import _reshare_zip_members, reshare_file_download
 from tests.archives_gz.zipserve import MEMBERS, ZipServer, fresh_peek_cache, make_zip
 
 RECORD = "https://reshare.ukdataservice.ac.uk/id/eprint/5"

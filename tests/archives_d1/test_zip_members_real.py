@@ -17,10 +17,10 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives import dataverse
-from pytacheck.archives.dataverse import _zip_members, dataverse_file_download
-from pytacheck.archives.dryad import _dryad_zip_members
-from pytacheck.archives.figshare import _figshare_zip_members
+from metacheck.archives import dataverse
+from metacheck.archives.dataverse import _zip_members, dataverse_file_download
+from metacheck.archives.dryad import _dryad_zip_members
+from metacheck.archives.figshare import _figshare_zip_members
 from tests.archives_gz.zipserve import MEMBERS, ZipServer, fresh_peek_cache, make_zip
 
 URL = "https://dataverse.harvard.edu/api/access/datafile/42"

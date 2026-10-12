@@ -9,10 +9,10 @@
 # parity/cases/mod_code_review.yaml, goldens parity/golden/mod_code_review/.
 # The code scanners themselves are R/code_check.R (porting/map/codecheck.toml).
 [files]
-"inst/modules/code_check.R" = ["src/pytacheck/modules/code_check.py", "src/pytacheck/modules/_code_check.py"]
+"inst/modules/code_check.R" = ["src/metacheck/modules/code_check.py", "src/metacheck/modules/_code_check.py"]
 
 [functions]
-"module:code_check" = "pytacheck.modules.code_check:code_check"
+"module:code_check" = "metacheck.modules.code_check:code_check"
 # closures inside code_check()
-"pkg_union" = "pytacheck.codecheck.core:code_packages"
-"has_col" = "pytacheck.modules._code_check:summary_table"
+"pkg_union" = "metacheck.codecheck.core:code_packages"
+"has_col" = "metacheck.modules._code_check:summary_table"

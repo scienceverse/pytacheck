@@ -294,7 +294,7 @@ HARNESS-v2 carries this section: the behaviour delta and auto-close, the `symbol
 | §3.4 ICU-like collation | CHANGE | Only for sorted lists users see; audit the 55 `r_sort_key` call sites |
 | §3.4 haven/vctrs/readxl shaping | CHANGE | Values only; dtypes are Band B |
 | §3.4 api/jsonlite | DROP | Plain JSON |
-| §3.4 `%.17g` in LLM bodies | KEEP | Request bodies stay byte-identical for every module with mock-replayed parity cases: power, causal_claims and the `llm` area. The mocks are stored under a hash of R's request body, so a changed body loses its mock, and about 330 LLM parity cases would lose their oracle |
+| §3.4 `%.17g` in LLM bodies | DROP (2026-10-04) | The plan kept request bodies byte-identical so that R's recorded replies, stored under a hash of R's request body, stayed usable. The earlier counts were too high: 162 parity cases replay recorded LLM replies (`llm` 33, `llm_review` 66, `mod_power` 17, `mod_power_review` 46), served from about 70 reply files, not about 330 cases and 198 bodies, and `causal_claims` calls no LLM, so it replays none. The maintainer decided (2026-10-04) to stop matching R's request bodies: the replies are looked up by what was asked (model, system prompt, user text, schema, the parameters that change a result), and the requests go through the official provider SDKs (`openai`, `anthropic`, `google-genai`; the optional `llm` extra), which write the bodies. |
 | §3.4 repro tables, `count()`, `bind_rows` | CHANGE | Values kept; order and shape free |
 | §3.4 report renderer | KEEP | Its structure is kept; wording moves to Band C |
 | §3.4 harness comparator | CHANGE | The canonicaliser goes in front |

@@ -8,11 +8,11 @@ import types
 
 import pytest
 
-import pytacheck
+import metacheck
 
 
 def _import_all_submodules() -> None:
-    for info in pkgutil.walk_packages(pytacheck.__path__, "pytacheck."):
+    for info in pkgutil.walk_packages(metacheck.__path__, "metacheck."):
         if ".modules." in info.name or info.name.endswith("__main__"):
             continue
         try:
@@ -21,11 +21,11 @@ def _import_all_submodules() -> None:
             continue
 
 
-@pytest.mark.parametrize("name", sorted(pytacheck._EXPORTS))
+@pytest.mark.parametrize("name", sorted(metacheck._EXPORTS))
 def test_export_resolves(name: str) -> None:
     _import_all_submodules()
-    target = getattr(importlib.import_module(pytacheck._EXPORTS[name]), name)
-    obj = getattr(pytacheck, name)
+    target = getattr(importlib.import_module(metacheck._EXPORTS[name]), name)
+    obj = getattr(metacheck, name)
     if obj is not target:
         # a submodule shadowing its function must forward calls to it
         assert isinstance(obj, types.ModuleType)
@@ -34,7 +34,7 @@ def test_export_resolves(name: str) -> None:
 
 def test_module_decorator_import_forms() -> None:
     _import_all_submodules()
-    from pytacheck import module
+    from metacheck import module
 
     @module(title="T")
     def f(paper):

@@ -76,7 +76,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "repo_url",
           "file_name",
@@ -87,23 +87,33 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://example.org/repo-z"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "notes.txt"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://mock.example.org/zips/stored.zip"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              null
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "short read (range request returned the wrong length)"
+            ]
           }
         ]
       }

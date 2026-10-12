@@ -6,7 +6,7 @@
 # design: bibr export schema v12.0 as the paper schema (older v10.x files are
 # still read as metacheck reads them), bibr in-process, the Grobid TEI
 # adapter, module system v2 (packs, presets, store), the `pytacheck` CLI and the
-# FastAPI server (pytacheck.api, the port of inst/plumber). R internals that
+# FastAPI server (metacheck.api, the port of inst/plumber). R internals that
 # pytacheck does not emulate (error texts, C-library quirks, R type details) are
 # not listed here: they are policy, not skipped symbols.
 #
@@ -28,7 +28,7 @@
 "report_app" = "Shiny app (inst/app/report_app.R). Replaced by `pytacheck report`/`run` (--preset metacheck::validated, --offline) and the API's /paper/check (report_html)."
 
 # R/zzz.R -- package hooks
-".onLoad" = "R package load hook. Its option defaults are in pytacheck.config and pytacheck.llm.core (_default_model_from_env), applied lazily; .osf_pat_validate() runs when OSF is used."
+".onLoad" = "R package load hook. Its option defaults are in metacheck.config and metacheck.llm.core (_default_model_from_env), applied lazily; .osf_pat_validate() runs when OSF is used."
 ".onAttach" = "library() startup banner, including a network version check against GitHub. pytacheck does no network I/O at import; `pytacheck version` shows versions."
 
 # R/svutils-utils.R -- infix operators
@@ -39,20 +39,63 @@
 "fig_image_view" = "Plots a figure on an R graphics device (jpeg + grDevices). Python shows paper.figure.image (a base64 data URI, read with include_images=True) directly in Jupyter or any image library."
 "print.scivrs_paper" = "S3 print method. Covered by Paper.__repr__ (same text)."
 "print.scivrs_paperlist" = "S3 print method. Covered by PaperList.__repr__; paper_table(papers, 'info', ['title', 'doi']) is the table R prints."
-"print.metacheck_module_list" = "S3 print method. Covered by pytacheck.module.format_module_list() (same text)."
+"print.metacheck_module_list" = "S3 print method. Covered by metacheck.module.format_module_list() (same text)."
 "print.metacheck_module_output" = "S3 print method. Covered by ModuleOutput.__repr__ ('<title>: <summary_text>')."
 "print.metacheck_module_help" = "S3 print method. Covered by module_help(), which returns the printed text."
 
-# R/zip-peek.R -- base-R fallbacks for what Python's standard library does
-".crc32" = "Pure-R CRC-32, used when the digest package is missing. Use zlib.crc32 (fast, so .zip_crc_ok() needs no size limit, as when R has digest)."
-".le_int" = "Little-endian integer from raw bytes. Use int.from_bytes(b, 'little') or struct."
+# R's delimited-text readers, no longer reproduced by hand (the maintainer decided on 2026-10-04)
+"data.table::fread" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D69-D72, U216 and U217."
+"utils::read.delim" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D69-D72, U216 and U217."
+"utils::read.table" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D69-D72, U216 and U217."
+"utils::scan" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D69-D72, U216 and U217."
+"utils::type.convert" = "R's own readers for delimited text, which the maintainer decided (2026-10-04) to stop reproducing by hand. pytacheck reads the fields with pandas' C parser and keeps a small layer that finds the table and types the columns (metacheck.datacheck._files_delim); the differences are D69-D72, U216 and U217."
+
+# R/zip-peek.R -- reading the zip format, which Python's zipfile does (D65)
+".crc32" = "Pure-R CRC-32, used when the digest package is missing. zipfile checks the CRC-32 of every member it reads."
+".le_int" = "Little-endian integer from raw bytes, for metacheck's own zip parser. zipfile reads the format."
+".parse_zip_central_dir" = "metacheck's own parser of a zip's central directory (the maintainer decided on 2026-10-04 to stop reproducing it). zipfile.ZipFile reads it, over a file whose reads are range requests (_RangeFile in archives/zip_peek.py): Zip64, archive comments and a directory over 1 MB included."
+".zip_inflate_member" = "Inflates one stored or deflated member by hand (zip::inflate()). zipfile inflates every method it supports (bzip2 and lzma too)."
+".zip_member_fetch" = "Fetches one member by two range requests (its local header, then its data), inflates it and checks size and CRC. zipfile does it over _RangeFile with one request; _zip_fetch_members() keeps the table and the per-member errors."
+".zip_crc_ok" = "Compares a stored and a computed CRC-32 with all.equal() (U70). zipfile compares them exactly."
+
+# R/repo-download.R -- the retry, redirect and rate-limit loop, which metacheck.http.request() does
+".storage_backoff" = "min(2^attempt, 30) seconds between tries. metacheck.http.request() backs off as httr2 does by default (a random 1 to 2^attempt seconds, capped at 60); the maintainer decided on 2026-10-04 to keep one retry stack."
+".host_rate_limit_record" = "Records a host's rate-limit reset. metacheck.http keeps that memory (_record_reset(), host_reset_at()), and request() records it itself."
+".host_rate_limit_remaining" = "Seconds until a recorded reset. metacheck.http.host_reset_at() is the same lookup; request() waits for it before sending."
+".announce_rate_limit_wait" = "Says a wait over 5 s. metacheck.http.request() says it for every caller (_announce_wait())."
+".storage_retry_after_factory" = "The retry-after callback of the storage retry: the confirmed wait, recorded and announced. metacheck.http.request() reads Retry-After and the RateLimit-Reset headers, records the reset and waits for it."
+".storage_is_transient_factory" = "The storage retry rule, with skip_on_api_limit folded in. The rule is _storage_is_transient(); request() ends a rate-limited request at once under skip_on_api_limit."
+".wait_out_known_rate_limit" = "Waits out, or under skip_on_api_limit gives up on, a host's known rate limit before a request. metacheck.http.request() does it before every try (and raises RateLimited when asked to)."
 
 # ellmer providers metacheck can reach through ellmer::chat("provider/model")
-"ellmer::chat_aws_bedrock" = "Needs AWS SigV4 credentials (an SDK). pytacheck.llm.providers raises a clear error (_UNSUPPORTED)."
+"ellmer::chat_aws_bedrock" = "Needs AWS SigV4 credentials (a cloud SDK). metacheck.llm._backend raises a clear error (_UNSUPPORTED)."
 "ellmer::chat_google_vertex" = "Needs Google Cloud ADC/project auth. pytacheck raises a clear error; google_gemini works with AI Studio keys (the API default)."
 "ellmer::chat_databricks" = "Needs Databricks workspace OAuth. pytacheck raises a clear error."
 "ellmer::chat_snowflake" = "Needs Snowflake key-pair/OAuth auth. pytacheck raises a clear error."
 "ellmer::chat_posit" = "Posit AI (subscription service) needs its own OAuth. pytacheck raises a clear error."
+
+# ellmer internals and extras. LLM changes upstream are ported by behaviour
+# (prompts, schemas, parameters, result columns), never by ellmer's internals:
+# pytacheck sends requests through the provider SDKs (D73).
+"ellmer::chat" = "ellmer's chat object and its provider constructors. pytacheck builds one request per call with the provider SDKs (metacheck.llm._backend.complete)."
+"ellmer::params" = "ellmer's argument checks for model parameters. pytacheck passes the standard parameters to the SDK of the provider and drops, with a warning, the ones a provider does not take."
+"ellmer:::extract_data" = "ellmer's reading of a structured reply from a chat turn. The back end reads the JSON from the SDK's response."
+"ellmer:::match_prices" = "ellmer's bundled price table. pytacheck shows no prices."
+"ellmer:::list_to_atomic" = "ellmer's simplification of parsed JSON; metacheck.llm.types converts a reply to columns directly."
+"ellmer::models_ollama" = "Model listing. pytacheck has no llm_model_list(); name the model as provider/model."
+"ellmer::models_openai" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_anthropic" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_google_gemini" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_mistral" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_deepseek" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_portkey" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_lmstudio" = "Model listing (see ellmer::models_ollama)."
+"ellmer::models_vllm" = "Model listing (see ellmer::models_ollama)."
+"llm_model_list" = "Lists the models of each provider through ellmer's models_*() functions. Removed with them (D73): name a model as provider/model."
+".llm_model_list_groq" = "Groq's model listing, part of llm_model_list() (D73)."
+".LLM_ALLOWED_PLATFORMS" = "The provider allowlist of llm_model_list() (D73)."
+".llm_ollama_native" = "Ollama's native /api/chat path, used to switch thinking off. Ollama is reached through its OpenAI-compatible /v1 endpoint like every other provider (D73)."
+".llm_extract_thinking" = "The reasoning text of an ellmer chat turn, for llm(capture_reasoning = TRUE). Reasoning capture was removed (D73); reasoning effort settings stay."
 
 # statcheck parts metacheck never uses
 "statcheck::checkHTML" = "statcheck's own PDF/HTML file front ends (they read articles with the external pdftotext binary or a regex HTML stripper). metacheck never calls them: it gives statcheck::statcheck() a paper's sentences; pytacheck papers come from bibr or Grobid."
@@ -86,6 +129,13 @@
 "negate_disclosure_2" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
 "negate_conflict_1" = "rtransparent helper in inst/modules/funding_check.R that funding_check.R never calls."
 
+# R library behaviour that pytacheck stopped reproducing by hand (the maintainer decided on
+# 2026-10-04): the R function stays the reference, the Python side uses a library or the
+# standard library, and the parity cases that compare layout or listing are marked (D63, D64).
+"base::eval" = "metacheck's .spv_chart_html() evaluates the text of an SPSS fitted line with eval(parse(text = ...)), so any R expression is a fit. pytacheck draws a fit only when its text is arithmetic in x (numbers, x, + - * / ^, exp, log, sqrt) and evaluates it with a whitelisted `ast` walk (D63); the R expression parser stays only for scanning R code in code_check (codecheck/_rparse_tables.py)."
+"progress::progress_bar" = "The R5 class behind pb(). Its format tokens (:bar, :eta, :rate, :bytes, ...), bar width and refresh rules are not emulated: pb() keeps tick(), update(), message() and terminate() and draws with rich.progress on a terminal (metacheck.utils.ProgressBar)."
+"jsonlite::write_json (pretty layout of a bibr 12.0 file)" = "paper_write(schema_version = \"12.0\") is written with orjson, two-space indented, one array value per line, so the line layout differs from jsonlite's (inline I() arrays, 1e-05, <\\/); every value reads back equal (D64)."
+
 [skip_files]
 "R/app.R" = "Shiny app launchers (see [skip])."
 "inst/app" = "Shiny apps: report_app.R, osf_app.R, shiny_app/, tabs/, www/ (including the app's usage telemetry)."
@@ -93,15 +143,40 @@
 "R/metacheck-package.R" = "roxygen package documentation."
 "inst/CITATION" = "R's citation() entry. pytacheck has CITATION.cff."
 "inst/--CITATION" = "An inactive copy of inst/CITATION."
-"inst/plumber/Dockerfile" = "R deployment. pytacheck has its own Dockerfile, docker-compose.yml and `pytacheck serve` (the API itself is ported as pytacheck.api)."
+"inst/plumber/Dockerfile" = "R deployment. pytacheck has its own Dockerfile, docker-compose.yml and `pytacheck serve` (the API itself is ported as metacheck.api)."
 "inst/plumber/docker-compose.yml" = "R deployment (see inst/plumber/Dockerfile)."
 "inst/plumber/.dockerignore" = "R deployment (see inst/plumber/Dockerfile)."
 "inst/plumber/run_api.R" = "Starts plumber. Use `pytacheck serve`."
 "inst/plumber/run_api.sh" = "Empty file."
-"inst/plumber/README.md" = "Plumber docs. The routes are documented in pytacheck/api/app.py."
+"inst/plumber/README.md" = "Plumber docs. The routes are documented in metacheck/api/app.py."
 "data-raw" = "Maintainer scripts that build data/*.rda and inst/databases. pytacheck converts the built files (scripts/convert_databases.R, scripts/convert_datacheck_data.R)."
 "man" = "Rd help pages (generated from roxygen)."
 "pkgdown" = "R documentation website."
 "_metacheck.Rproj" = "RStudio project file."
 "makefile" = "R package build helper."
 "codecov.yml" = "R CI coverage configuration."
+
+[drop.delimited_reader]
+reason = """The hand-written ports of data.table::fread and of the read.table/scan/type.convert \
+tokenizer (1,937 lines in datacheck/_files_fread.py and datacheck/_files_readtable.py). The \
+maintainer decided on 2026-10-04 to stop maintaining reproductions of R libraries where Python \
+libraries do the job: pandas' C parser reads the fields, and datacheck/_files_delim.py finds \
+the table and types the columns. Only the strtod helpers of the old read.table port survive, in \
+datacheck/_files_strtod.py. Removed together with their fuzz and pin tests; the behaviour is \
+kept by tests/datacheck_files/test_delim.py (recorded fread output) and test_delim_reader.py."""
+r = [
+    "data.table::fread",
+    "utils::read.delim",
+    "utils::read.table",
+    "utils::scan",
+    "utils::type.convert",
+]
+python = [
+    "metacheck.datacheck._files_fread:fread",
+    "metacheck.datacheck._files_readtable:read_table",
+    "metacheck.datacheck._files_readtable:type_convert",
+]
+files = [
+    "src/metacheck/datacheck/_files_fread.py",
+    "src/metacheck/datacheck/_files_readtable.py",
+]

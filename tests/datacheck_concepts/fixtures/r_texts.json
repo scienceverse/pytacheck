@@ -1,0 +1,160 @@
+{
+ "_about": "The concept classifier's input for the columns metacheck sends to its LLM concept tier, per fixture repository (tests/mod_data_check/fixtures/repos): built by the training pipeline (collect_v2.R's value recorder on metacheck 85c8c872, build_pool.py, bert_train.serialise) from R's module_run(test_paper('x'), 'data_check', local_path = <repo>, local_only = TRUE, download = FALSE) under llm_use(TRUE) with recording LLM stubs. Columns whose name and sample values occur twice in a repository are left out (the pipeline cannot tell their files apart).",
+ "basic": [
+  "column: score | file: study.csv | neighbours: id, age, gender | n=20 missing=0 unique=20 min=0.5 max=10 mean=5.25 sd=2.958 type=numeric | values: 20 distinct in sample: 0.5 ; 1 ; 1.5 ; 2 ; 2.5 ; 3 ; 3.5 ; 4 ; 4.5 ; 5 ; 5.5 ; 6 ; 6.5 ; 7 ; 7.5 ; 8 ; 8.5 ; 9 ; 9.5 ; 10"
+ ],
+ "careless_clean": [
+  "column: panas_1 | file: survey.csv | neighbours: participant_id, panas_2, panas_3 | n=40 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 1 ; 5",
+  "column: panas_5 | file: survey.csv | neighbours: panas_2, panas_3, panas_4, panas_6, panas_7 | n=40 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 2 ; 4"
+ ],
+ "careless_short": [
+  "column: q_1 | file: survey.csv | neighbours: participant_id, q_2, q_3 | n=40 missing=0 unique=1 min=NA max=NA mean=NA sd=NA type=numeric | values: 1 distinct in sample: 3",
+  "column: q_2 | file: survey.csv | neighbours: participant_id, q_1, q_3 | n=40 missing=0 unique=1 min=NA max=NA mean=NA sd=NA type=numeric | values: 1 distinct in sample: 3",
+  "column: q_3 | file: survey.csv | neighbours: participant_id, q_1, q_2 | n=40 missing=0 unique=1 min=NA max=NA mean=NA sd=NA type=numeric | values: 1 distinct in sample: 3"
+ ],
+ "encoding": [
+  "column: city | file: latin1.csv | neighbours: id, score | n=4 missing=0 unique=4 min=NA max=NA mean=NA sd=NA type=text | values: 4 distinct in sample: Zürich ; Malmö ; Paris ; Köln",
+  "column: score | file: latin1.csv | neighbours: id, city | n=4 missing=0 unique=4 min=2 max=5 mean=3.5 sd=1.291 type=numeric | values: 4 distinct in sample: 3 ; 4 ; 5 ; 2"
+ ],
+ "flags": [
+  "column: score_txt | file: messy.csv | neighbours: id, Gender, empty_col, filter_$ | n=11 missing=1 unique=12 min=12 max=23 mean=17.82 sd=3.601 type=numeric | values: 12 distinct in sample: 12 ; 13 ; n/a ; 15 ; 16 ; 17 ; 18 ; 19 ; 20 ; 21 ; 22 ; 23",
+  "column: empty_col | file: messy.csv | neighbours: id, Gender, score_txt, filter_$, email | n=0 missing=12 unique=0 min=NA max=NA mean=NA sd=NA type=empty | values: ",
+  "column: filter_$ | file: messy.csv | neighbours: Gender, score_txt, empty_col, email, latitude | n=12 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 1 ; 0",
+  "column: email | file: messy.csv | neighbours: score_txt, empty_col, filter_$, latitude, longitude | n=12 missing=0 unique=12 min=NA max=NA mean=NA sd=NA type=text | values: 12 distinct in sample: person01@example.org ; person02@example.org ; person03@example.org ; person04@example.org ; person05@example.org ; person06@example.org ; person07@example.org ; person08@example.org ; person09@example.org ; person10@example.org ; person11@example.org ; person12@example.org",
+  "column: latitude | file: messy.csv | neighbours: empty_col, filter_$, email, longitude, comments | n=12 missing=0 unique=8 min=51.7 max=52.4 mean=52.08 sd=0.2125 type=numeric | values: 8 distinct in sample: 52.1 ; 52.2 ; 51.9 ; 52 ; 52.3 ; 51.8 ; 52.4 ; 51.7",
+  "column: longitude | file: messy.csv | neighbours: filter_$, email, latitude, comments, a b | n=12 missing=0 unique=6 min=4.1 max=4.6 mean=4.35 sd=0.1446 type=numeric | values: 6 distinct in sample: 4.3 ; 4.4 ; 4.2 ; 4.5 ; 4.1 ; 4.6",
+  "column: comments | file: messy.csv | neighbours: email, latitude, longitude, a b, a_b | n=12 missing=0 unique=12 min=NA max=NA mean=NA sd=NA type=text | values: 12 distinct in sample: I found the task quite hard because the  ; The second block was easier than the fir ; My neighbour Jan helped me set up the la ; I was a bit tired today since I had to w ; Everything went fine, although the room  ; I think I pressed the wrong key a few ti ; The instructions were clear and the brea ; I did not understand what to do in the p ; My daughter was playing in the next room ; Nothing special to report, it all worked ; I would have liked more practice trials  ; The sounds were too loud at first but I ",
+  "column: a b | file: messy.csv | neighbours: latitude, longitude, comments, a_b, rt | n=12 missing=0 unique=12 min=-1.479 max=1.731 mean=0.05035 sd=1.049 type=numeric | values: 12 distinct in sample: -0.395836027095826 ; 0.619648670891013 ; -0.0846293125066132 ; 0.0263976116173211 ; -1.32798063744909 ; -1.47911310496303 ; 1.73122030858823 ; 1.54399635750641 ; 1.15697722551155 ; -0.480178881741254 ; -0.815910301097926 ; 0.109670035434469",
+  "column: a_b | file: messy.csv | neighbours: longitude, comments, a b, rt | n=12 missing=0 unique=12 min=-1.699 max=1.77 mean=0.2443 sd=1.136 type=numeric | values: 12 distinct in sample: -0.891335142307256 ; 0.141393843324655 ; 0.22491938952134 ; -0.25709661229311 ; 1.71214684090207 ; 1.52761254943381 ; 1.77032412081383 ; -0.541585291404239 ; -1.69914567778504 ; 0.704940276515888 ; -0.846650345780404 ; 1.08650065193509"
+ ],
+ "groups": [
+  "column: y | file: data.csv | neighbours: id, id, y | n=5 missing=0 unique=5 min=1.2 max=5.5 mean=3.38 sd=1.768 type=numeric | values: 5 distinct in sample: 1.2 ; 2.3 ; 3.1 ; 4.8 ; 5.5",
+  "column: y | file: data.csv | neighbours: id, y, id | n=5 missing=0 unique=5 min=1.3 max=6.5 mean=3.58 sd=1.997 type=numeric | values: 5 distinct in sample: 1.2 ; 2.3 ; 3.1 ; 4.8 ; 5.5"
+ ],
+ "llm": [
+  "column: q3 | file: trials.csv | neighbours: pp, v7, label | n=12 missing=0 unique=12 min=470 max=620 mean=536.3 sd=52.4 type=numeric | values: 12 distinct in sample: 512 ; 498 ; 610 ; 577 ; 530 ; 489 ; 505 ; 620 ; 480 ; 555 ; 590 ; 470",
+  "column: v7 | file: trials.csv | neighbours: pp, q3, label | n=12 missing=0 unique=3 min=1 max=3 mean=2 sd=0.8528 type=numeric | values: 3 distinct in sample: 1 ; 2 ; 3",
+  "column: label | file: trials.csv | neighbours: pp, q3, v7 | n=12 missing=0 unique=4 min=NA max=NA mean=NA sd=NA type=text | values: 4 distinct in sample: x1 ; y2 ; z3 ; w4"
+ ],
+ "manifest": [
+  "column: y | file: data.csv | neighbours: id | n=3 missing=0 unique=3 min=1.5 max=3.5 mean=2.5 sd=1 type=numeric | values: 3 distinct in sample: 2.5 ; 3.5 ; 1.5"
+ ],
+ "nontabular": [
+  "column: y | file: scores.csv | neighbours: id | n=4 missing=0 unique=4 min=1 max=4 mean=2.5 sd=1.291 type=numeric | values: 4 distinct in sample: 1 ; 2 ; 3 ; 4"
+ ],
+ "qualtrics": [
+  "column: Q1_DO_Q2 | file: survey.csv | neighbours: ResponseId, LocationLatitude, LocationLongitude, q_1, q_2 | n=40 missing=0 unique=1 min=NA max=NA mean=NA sd=NA type=text | values: 1 distinct in sample: Q2|Q1"
+ ],
+ "rdata": [
+  "column: score | file: clean_data.RData | neighbours: id | n=5 missing=0 unique=5 min=1.5 max=5.5 mean=3.5 sd=1.581 type=numeric | values: 5 distinct in sample: 1.5 ; 2.5 ; 3.5 ; 4.5 ; 5.5",
+  "column: x | file: study.csv | neighbours: id | n=5 missing=0 unique=5 min=0.1 max=0.8 mean=0.4 sd=0.2739 type=numeric | values: 5 distinct in sample: 0.1 ; 0.4 ; 0.2 ; 0.8 ; 0.5"
+ ],
+ "review_dupclass": [
+  "column: d | file: dupclass.csv | neighbours: d, n | n=12 missing=0 unique=12 min=1 max=12 mean=6.5 sd=3.606 type=numeric | values: 12 distinct in sample: 2020-01-01 ; 2020-01-02 ; 2020-01-03 ; 2020-01-04 ; 2020-01-05 ; 2020-01-06 ; 2020-01-07 ; 2020-01-08 ; 2020-01-09 ; 2020-01-10 ; 2020-01-11 ; 2020-01-12",
+  "column: n | file: dupclass.csv | neighbours: d, d | n=12 missing=0 unique=12 min=3 max=36 mean=19.5 sd=10.82 type=numeric | values: 12 distinct in sample: 3 ; 6 ; 9 ; 12 ; 15 ; 18 ; 21 ; 24 ; 27 ; 30 ; 33 ; 36"
+ ],
+ "review_sheets": [
+  "column: score | file: title.ods | neighbours: id | n=2 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 5 ; 7",
+  "column: score | file: typed.ods | neighbours: id, pct, ok | n=2 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 2.5 ; 4",
+  "column: pct | file: typed.ods | neighbours: id, score, ok, day | n=2 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 0.5 ; 0.25",
+  "column: ok | file: typed.ods | neighbours: id, score, pct, day, note | n=2 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: TRUE ; FALSE",
+  "column: note | file: typed.ods | neighbours: pct, ok, day | n=3 missing=0 unique=3 min=NA max=NA mean=NA sd=NA type=text | values: 3 distinct in sample: hi ; NA ; x",
+  "column: d | file: xl_dates.xlsx | neighbours: dt, mix | n=2 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: 1900-01-01 ; 1900-03-01",
+  "column: dt | file: xl_dates.xlsx | neighbours: d, mix | n=2 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: 1999-12-31 23:59:59 ; 2000-01-01",
+  "column: mix | file: xl_dates.xlsx | neighbours: d, dt | n=2 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 43956 ; 10",
+  "column: a | file: xl_gaps.xlsx | neighbours: ...2, c | n=2 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 1 ; 4",
+  "column: ...2 | file: xl_gaps.xlsx | neighbours: a, c | n=0 missing=3 unique=0 min=NA max=NA mean=NA sd=NA type=empty | values: ",
+  "column: c | file: xl_gaps.xlsx | neighbours: a, ...2 | n=2 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 3 ; 6",
+  "column: a | file: xl_mixed.xlsx | neighbours: b, c | n=3 missing=1 unique=3 min=NA max=NA mean=NA sd=NA type=text | values: 3 distinct in sample: 1 ; 2.5 ; t",
+  "column: b | file: xl_mixed.xlsx | neighbours: a, c | n=3 missing=1 unique=3 min=NA max=NA mean=NA sd=NA type=text | values: 3 distinct in sample: x ; 3 ; TRUE",
+  "column: c | file: xl_mixed.xlsx | neighbours: a, b | n=2 missing=2 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 43831 ; 5",
+  "column: 1 | file: xl_numhdr.xlsx | neighbours: 2.5, TRUE | n=1 missing=0 unique=1 min=NA max=NA mean=NA sd=NA type=numeric | values: 1 distinct in sample: 1",
+  "column: 2.5 | file: xl_numhdr.xlsx | neighbours: 1, TRUE | n=1 missing=0 unique=1 min=NA max=NA mean=NA sd=NA type=numeric | values: 1 distinct in sample: 2",
+  "column: TRUE | file: xl_numhdr.xlsx | neighbours: 1, 2.5 | n=1 missing=0 unique=1 min=NA max=NA mean=NA sd=NA type=numeric | values: 1 distinct in sample: 3",
+  "column: only | file: xl_sheets.xlsx | neighbours: first | n=1 missing=0 unique=1 min=NA max=NA mean=NA sd=NA type=numeric | values: 1 distinct in sample: 1",
+  "column: first | file: xl_sheets.xlsx | neighbours: only | n=1 missing=0 unique=1 min=NA max=NA mean=NA sd=NA type=numeric | values: 1 distinct in sample: 2"
+ ],
+ "review_stats": [
+  "column: Sepal_Length | file: iris.sas7bdat | neighbours: Sepal_Width, Petal_Length | n=150 missing=0 unique=35 min=4.3 max=7.9 mean=5.843 sd=0.8281 type=numeric | values: 35 distinct in sample: 5.1 ; 4.9 ; 4.7 ; 4.6 ; 5 ; 5.4 ; 4.4 ; 4.8 ; 4.3 ; 5.8 ; 5.7 ; 5.2 ; 5.5 ; 4.5 ; 5.3 ; 7 ; 6.4 ; 6.9 ; 6.5 ; 6.3 ; 6.6 ; 5.9 ; 6 ; 6.1 ; 5.6 ; 6.7 ; 6.2 ; 6.8 ; 7.1 ; 7.6 ; 7.3 ; 7.2 ; 7.7 ; 7.4 ; 7.9",
+  "column: Sepal_Width | file: iris.sas7bdat | neighbours: Sepal_Length, Petal_Length, Petal_Width | n=150 missing=0 unique=23 min=2 max=4.4 mean=3.057 sd=0.4359 type=numeric | values: 23 distinct in sample: 3.5 ; 3 ; 3.2 ; 3.1 ; 3.6 ; 3.9 ; 3.4 ; 2.9 ; 3.7 ; 4 ; 4.4 ; 3.8 ; 3.3 ; 4.1 ; 4.2 ; 2.3 ; 2.8 ; 2.4 ; 2.7 ; 2 ; 2.2 ; 2.5 ; 2.6",
+  "column: Petal_Length | file: iris.sas7bdat | neighbours: Sepal_Length, Sepal_Width, Petal_Width, Species | n=150 missing=0 unique=43 min=1 max=6.9 mean=3.758 sd=1.765 type=numeric | values: 43 distinct in sample: 1.4 ; 1.3 ; 1.5 ; 1.7 ; 1.6 ; 1.1 ; 1.2 ; 1 ; 1.9 ; 4.7 ; 4.5 ; 4.9 ; 4 ; 4.6 ; 3.3 ; 3.9 ; 3.5 ; 4.2 ; 3.6 ; 4.4 ; 4.1 ; 4.8 ; 4.3 ; 5 ; 3.8 ; 3.7 ; 5.1 ; 3 ; 6 ; 5.9 ; 5.6 ; 5.8 ; 6.6 ; 6.3 ; 6.1 ; 5.3 ; 5.5 ; 6.7 ; 6.9 ; 5.7",
+  "column: Petal_Width | file: iris.sas7bdat | neighbours: Sepal_Length, Sepal_Width, Petal_Length, Species | n=150 missing=0 unique=22 min=0.1 max=2.5 mean=1.199 sd=0.7622 type=numeric | values: 22 distinct in sample: 0.2 ; 0.4 ; 0.3 ; 0.1 ; 0.5 ; 0.6 ; 1.4 ; 1.5 ; 1.3 ; 1.6 ; 1 ; 1.1 ; 1.8 ; 1.2 ; 1.7 ; 2.5 ; 1.9 ; 2.1 ; 2.2 ; 2 ; 2.4 ; 2.3",
+  "column: Species | file: iris.sas7bdat | neighbours: Sepal_Width, Petal_Length, Petal_Width | n=150 missing=0 unique=3 min=NA max=NA mean=NA sd=NA type=text | values: 3 distinct in sample: setosa ; versic ; virgin",
+  "column: likert | file: labelled.sav | neighbours: id, gender, score, name, when | n=5 missing=1 unique=5 min=1 max=5 mean=3 sd=1.581 type=numeric | values: 5 distinct in sample: 1 ; 5 ; 3 ; 2 ; 4",
+  "column: when | file: labs.rds | neighbours: id, day, lab | n=2 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: 2021-01-01 ; 2021-06-01",
+  "column: lab | file: labs.rds | neighbours: id, when, day, plain, f | n=3 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 1 ; 2",
+  "column: plain | file: labs.rds | neighbours: when, day, lab, f | n=3 missing=0 unique=3 min=1.5 max=3 mean=2.167 sd=0.7638 type=numeric | values: 3 distinct in sample: 1.5 ; 2 ; 3",
+  "column: f | file: labs.rds | neighbours: day, lab, plain | n=3 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: a ; b",
+  "column: SCORE | file: portable.por | neighbours: ID, NAME | n=2 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 2.5 ; 4",
+  "column: NAME | file: portable.por | neighbours: ID, SCORE | n=3 missing=0 unique=3 min=NA max=NA mean=NA sd=NA type=text | values: 3 distinct in sample: a ; b ; ",
+  "column: a | file: tibble.rds | neighbours: b | n=3 missing=0 unique=3 min=1 max=3 mean=2 sd=1 type=numeric | values: 3 distinct in sample: 1 ; 2 ; 3",
+  "column: b | file: tibble.rds | neighbours: a | n=3 missing=0 unique=3 min=NA max=NA mean=NA sd=NA type=text | values: 3 distinct in sample: x ; y ; z"
+ ],
+ "review_text": [
+  "column: big | file: big_int.csv | neighbours: id | n=2 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 12345678901 ; -5",
+  "column: a | file: bom.csv | neighbours: b | n=2 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 1 ; 2",
+  "column: b | file: bom.csv | neighbours: a | n=2 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: x ; y",
+  "column: stamp | file: dates.csv | neighbours: id, day | n=2 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: 2020-01-01 10:00:00 ; 2020-01-02 11:30:00",
+  "column: a | file: na_strings.csv | neighbours: b, c | n=0 missing=2 unique=0 min=NA max=NA mean=NA sd=NA type=empty | values: ",
+  "column: b | file: na_strings.csv | neighbours: a, c | n=1 missing=1 unique=1 min=NA max=NA mean=NA sd=NA type=text | values: 1 distinct in sample: x",
+  "column: c | file: na_strings.csv | neighbours: a, b | n=0 missing=2 unique=0 min=NA max=NA mean=NA sd=NA type=empty | values: ",
+  "column: score | file: semicolon.csv | neighbours: id, grp | n=3 missing=0 unique=3 min=1.5 max=3 mean=2.25 sd=0.75 type=numeric | values: 3 distinct in sample: 1.5 ; 2.25 ; 3",
+  "column: grp | file: semicolon.csv | neighbours: id, score | n=3 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: a ; b",
+  "column: score | file: single_col.csv | neighbours:  | n=5 missing=0 unique=5 min=-1.25 max=3 mean=1 sd=1.829 type=numeric | values: 5 distinct in sample: 0.5 ; -1.25 ; 3 ; 2.75 ; 0",
+  "column: val | file: tabbed.tsv | neighbours: id, label | n=2 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 10 ; 20",
+  "column: label | file: tabbed.tsv | neighbours: id, val | n=3 missing=0 unique=3 min=NA max=NA mean=NA sd=NA type=text | values: 3 distinct in sample: x y ;  ; z"
+ ],
+ "review_types": [
+  "column: x | file: dupnames.csv | neighbours: x, y | n=3 missing=0 unique=3 min=1 max=7 mean=4 sd=3 type=numeric | values: 3 distinct in sample: 1 ; 4 ; 7",
+  "column: x | file: dupnames.csv | neighbours: x, y | n=3 missing=0 unique=3 min=2 max=8 mean=5 sd=3 type=numeric | values: 3 distinct in sample: 1 ; 4 ; 7",
+  "column: y | file: dupnames.csv | neighbours: x, x | n=3 missing=0 unique=3 min=3 max=9 mean=6 sd=3 type=numeric | values: 3 distinct in sample: 3 ; 6 ; 9",
+  "column: value | file: long.csv | neighbours: id, cond | n=120 missing=0 unique=120 min=0.5 max=60 mean=30.25 sd=17.39 type=numeric | values: 120 distinct in sample: 0.5 ; 1 ; 1.5 ; 2 ; 2.5 ; 3 ; 3.5 ; 4 ; 4.5 ; 5 ; 5.5 ; 6 ; 6.5 ; 7 ; 7.5 ; 8 ; 8.5 ; 9 ; 9.5 ; 10 ; 10.5 ; 11 ; 11.5 ; 12 ; 12.5 ; 13 ; 13.5 ; 14 ; 14.5 ; 15 ; 15.5 ; 16 ; 16.5 ; 17 ; 17.5 ; 18 ; 18.5 ; 19 ; 19.5 ; 20",
+  "column: score | file: types.csv | neighbours: id, big, small | n=6 missing=0 unique=6 min=0.1 max=1e+05 mean=3.333e+04 sd=5.164e+04 type=numeric | values: 6 distinct in sample: 100000.5 ; 1e+05 ; 0.1 ; 0.333333333333333 ; 2 ; 3",
+  "column: big | file: types.csv | neighbours: id, score, small, flag | n=6 missing=0 unique=6 min=1 max=123456789012 mean=2.058e+10 sd=5.04e+10 type=numeric | values: 6 distinct in sample: 100000 ; 200000 ; 300000 ; 123456789012 ; 1 ; 2",
+  "column: small | file: types.csv | neighbours: id, score, big, flag, when | n=6 missing=0 unique=6 min=1e-10 max=5 mean=1.667 sd=2.066 type=numeric | values: 6 distinct in sample: 1e-04 ; 0.00012345 ; 1e-10 ; 5 ; 2 ; 3",
+  "column: flag | file: types.csv | neighbours: score, big, small, when, day | n=5 missing=1 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: TRUE ; FALSE",
+  "column: mixed | file: types.csv | neighbours: flag, when, day, txt, neg | n=6 missing=0 unique=6 min=NA max=NA mean=NA sd=NA type=text | values: 6 distinct in sample: 1 ; a ; 3 ;  ; 5 ; 6",
+  "column: txt | file: types.csv | neighbours: when, day, mixed, neg | n=6 missing=0 unique=5 min=NA max=NA mean=NA sd=NA type=text | values: 5 distinct in sample: Apple ; apple ; banana ; Banana ; cherry",
+  "column: neg | file: types.csv | neighbours: day, mixed, txt | n=5 missing=1 unique=5 min=-1 max=4 mean=1.1 sd=2.247 type=numeric | values: 5 distinct in sample: -0.5 ; -1 ; 0 ; 3 ; 4",
+  "column: B | file: Upper.csv | neighbours: a, _x | n=7 missing=1 unique=7 min=1 max=8 mean=4.571 sd=2.637 type=numeric | values: 7 distinct in sample: 1 ; 2 ; 3 ; 5 ; 6 ; 7 ; 8",
+  "column: a | file: Upper.csv | neighbours: B, _x, Z1 | n=7 missing=1 unique=7 min=2 max=9 mean=5.857 sd=2.41 type=numeric | values: 7 distinct in sample: 2 ; 4 ; 5 ; 6 ; 7 ; 8 ; 9",
+  "column: _x | file: Upper.csv | neighbours: B, a, Z1, été | n=6 missing=2 unique=6 min=1 max=6 mean=3.5 sd=1.871 type=numeric | values: 6 distinct in sample: 1 ; 2 ; 3 ; 4 ; 5 ; 6",
+  "column: Z1 | file: Upper.csv | neighbours: B, a, _x, été | n=8 missing=0 unique=8 min=4 max=11 mean=7.5 sd=2.449 type=numeric | values: 8 distinct in sample: 4 ; 5 ; 6 ; 7 ; 8 ; 9 ; 10 ; 11",
+  "column: été | file: Upper.csv | neighbours: a, _x, Z1 | n=8 missing=0 unique=8 min=5 max=12 mean=8.5 sd=2.449 type=numeric | values: 8 distinct in sample: 5 ; 6 ; 7 ; 8 ; 9 ; 10 ; 11 ; 12"
+ ],
+ "schema": [
+  "column: q3 | file: pp1.csv | neighbours: trial, v7 | n=6 missing=0 unique=6 min=490 max=611 mean=537 sd=47.8 type=numeric | values: 6 distinct in sample: 513 ; 499 ; 611 ; 578 ; 531 ; 490",
+  "column: q3 | file: summary.csv | neighbours: pid, note | n=3 missing=0 unique=3 min=20 max=40 mean=30 sd=10 type=numeric | values: 3 distinct in sample: 20 ; 30 ; 40",
+  "column: note | file: summary.csv | neighbours: pid, q3 | n=3 missing=0 unique=3 min=NA max=NA mean=NA sd=NA type=text | values: 3 distinct in sample: a ; b ; c"
+ ],
+ "spreadsheets": [
+  "column: value | file: clean.ods | neighbours: id | n=3 missing=0 unique=3 min=0.5 max=2.5 mean=1.5 sd=1 type=numeric | values: 3 distinct in sample: 0.5 ; 1.5 ; 2.5",
+  "column: score | file: clean.xlsx | neighbours: id | n=3 missing=0 unique=3 min=1.1 max=3.3 mean=2.2 sd=1.1 type=numeric | values: 3 distinct in sample: 1.1 ; 2.2 ; 3.3",
+  "column: mpg | file: legacy.xls | neighbours: cyl, disp | n=32 missing=0 unique=25 min=10.4 max=33.9 mean=20.09 sd=6.027 type=numeric | values: 25 distinct in sample: 21 ; 22.8 ; 21.4 ; 18.7 ; 18.1 ; 14.3 ; 24.4 ; 19.2 ; 17.8 ; 16.4 ; 17.3 ; 15.2 ; 10.4 ; 14.7 ; 32.4 ; 30.4 ; 33.9 ; 21.5 ; 15.5 ; 13.3 ; 27.3 ; 26 ; 15.8 ; 19.7 ; 15",
+  "column: cyl | file: legacy.xls | neighbours: mpg, disp, hp | n=32 missing=0 unique=3 min=4 max=8 mean=6.188 sd=1.786 type=numeric | values: 3 distinct in sample: 6 ; 4 ; 8",
+  "column: disp | file: legacy.xls | neighbours: mpg, cyl, hp, drat | n=32 missing=0 unique=27 min=71.1 max=472 mean=230.7 sd=123.9 type=numeric | values: 27 distinct in sample: 160 ; 108 ; 258 ; 360 ; 225 ; 146.7 ; 140.8 ; 167.6 ; 275.8 ; 472 ; 460 ; 440 ; 78.7 ; 75.7 ; 71.1 ; 120.1 ; 318 ; 304 ; 350 ; 400 ; 79 ; 120.3 ; 95.1 ; 351 ; 145 ; 301 ; 121",
+  "column: hp | file: legacy.xls | neighbours: mpg, cyl, disp, drat, wt | n=32 missing=0 unique=22 min=52 max=335 mean=146.7 sd=68.56 type=numeric | values: 22 distinct in sample: 110 ; 93 ; 175 ; 105 ; 245 ; 62 ; 95 ; 123 ; 180 ; 205 ; 215 ; 230 ; 66 ; 52 ; 65 ; 97 ; 150 ; 91 ; 113 ; 264 ; 335 ; 109",
+  "column: drat | file: legacy.xls | neighbours: cyl, disp, hp, wt, qsec | n=32 missing=0 unique=22 min=2.76 max=4.93 mean=3.597 sd=0.5347 type=numeric | values: 22 distinct in sample: 3.9 ; 3.85 ; 3.08 ; 3.15 ; 2.76 ; 3.21 ; 3.69 ; 3.92 ; 3.07 ; 2.93 ; 3 ; 3.23 ; 4.08 ; 4.93 ; 4.22 ; 3.7 ; 3.73 ; 4.43 ; 3.77 ; 3.62 ; 3.54 ; 4.11",
+  "column: wt | file: legacy.xls | neighbours: disp, hp, drat, qsec, vs | n=32 missing=0 unique=29 min=1.513 max=5.424 mean=3.217 sd=0.9785 type=numeric | values: 29 distinct in sample: 2.62 ; 2.875 ; 2.32 ; 3.215 ; 3.44 ; 3.46 ; 3.57 ; 3.19 ; 3.15 ; 4.07 ; 3.73 ; 3.78 ; 5.25 ; 5.424 ; 5.345 ; 2.2 ; 1.615 ; 1.835 ; 2.465 ; 3.52 ; 3.435 ; 3.84 ; 3.845 ; 1.935 ; 2.14 ; 1.513 ; 3.17 ; 2.77 ; 2.78",
+  "column: qsec | file: legacy.xls | neighbours: hp, drat, wt, vs, am | n=32 missing=0 unique=30 min=14.5 max=22.9 mean=17.85 sd=1.787 type=numeric | values: 30 distinct in sample: 16.46 ; 17.02 ; 18.61 ; 19.44 ; 20.22 ; 15.84 ; 20 ; 22.9 ; 18.3 ; 18.9 ; 17.4 ; 17.6 ; 18 ; 17.98 ; 17.82 ; 17.42 ; 19.47 ; 18.52 ; 19.9 ; 20.01 ; 16.87 ; 17.3 ; 15.41 ; 17.05 ; 16.7 ; 16.9 ; 14.5 ; 15.5 ; 14.6 ; 18.6",
+  "column: vs | file: legacy.xls | neighbours: drat, wt, qsec, am, gear | n=32 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 0 ; 1",
+  "column: am | file: legacy.xls | neighbours: wt, qsec, vs, gear, carb | n=32 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=numeric | values: 2 distinct in sample: 1 ; 0",
+  "column: gear | file: legacy.xls | neighbours: qsec, vs, am, carb | n=32 missing=0 unique=3 min=3 max=5 mean=3.688 sd=0.7378 type=numeric | values: 3 distinct in sample: 4 ; 3 ; 5",
+  "column: carb | file: legacy.xls | neighbours: vs, am, gear | n=32 missing=0 unique=6 min=1 max=8 mean=2.812 sd=1.615 type=numeric | values: 6 distinct in sample: 4 ; 1 ; 2 ; 3 ; 6 ; 8",
+  "column: grp | file: messy.xlsx | neighbours: id, empty, val | n=4 missing=0 unique=2 min=NA max=NA mean=NA sd=NA type=text | values: 2 distinct in sample: a ; b",
+  "column: empty | file: messy.xlsx | neighbours: id, grp, val | n=0 missing=4 unique=0 min=NA max=NA mean=NA sd=NA type=empty | values: ",
+  "column: val | file: messy.xlsx | neighbours: id, grp, empty | n=4 missing=0 unique=4 min=10 max=40 mean=25 sd=12.91 type=numeric | values: 4 distinct in sample: 10 ; 20 ; 30 ; 40",
+  "column: score | file: twosheets.xlsx | neighbours: pid, cond | n=6 missing=0 unique=6 min=2.8 max=4.4 mean=3.567 sd=0.6532 type=numeric | values: 6 distinct in sample: 3.2 ; 4.1 ; 2.8 ; 3.9 ; 4.4 ; 3"
+ ],
+ "yellow": [
+  "column: m1 | file: clean.csv | neighbours: m2, m3 | n=25 missing=0 unique=24 min=36.6 max=68.3 mean=51.24 sd=8.488 type=numeric | values: 24 distinct in sample: 54.4 ; 59.6 ; 58.1 ; 47.1 ; 39.1 ; 50.7 ; 49.7 ; 55.8 ; 37.4 ; 58.9 ; 59.9 ; 50.5 ; 46.7 ; 54.3 ; 44.4 ; 65.5 ; 68.3 ; 36.6 ; 40.2 ; 56.2 ; 48.1 ; 46.4 ; 59.5 ; 44",
+  "column: m2 | file: clean.csv | neighbours: m1, m3, m4 | n=25 missing=0 unique=25 min=35.9 max=67 mean=51.02 sd=9.13 type=numeric | values: 25 distinct in sample: 38.6 ; 53.1 ; 60.7 ; 65.6 ; 55.7 ; 51.8 ; 61.7 ; 39.5 ; 45.4 ; 44.2 ; 47.3 ; 67 ; 55 ; 62.9 ; 35.9 ; 59 ; 48.5 ; 38.5 ; 42.7 ; 46.8 ; 59.4 ; 43.6 ; 58.4 ; 49.1 ; 45",
+  "column: m3 | file: clean.csv | neighbours: m1, m2, m4, m5 | n=25 missing=0 unique=25 min=28.1 max=61.8 mean=47 sd=9.392 type=numeric | values: 25 distinct in sample: 44 ; 33.6 ; 48.3 ; 47.7 ; 61.2 ; 58.4 ; 42.3 ; 43.8 ; 54 ; 46.1 ; 47.4 ; 58.5 ; 44.2 ; 59.3 ; 61.8 ; 29.1 ; 51.1 ; 28.1 ; 56.8 ; 39.2 ; 41.4 ; 48.2 ; 45.1 ; 36.5 ; 49",
+  "column: m4 | file: clean.csv | neighbours: m1, m2, m3, m5, m6 | n=25 missing=0 unique=25 min=36.6 max=73.9 mean=53.08 sd=10.14 type=numeric | values: 25 distinct in sample: 40.5 ; 60.5 ; 46.7 ; 72.3 ; 49.5 ; 62.2 ; 52 ; 59.8 ; 46.3 ; 61.5 ; 50.8 ; 73.9 ; 43.5 ; 53.7 ; 57.4 ; 36.6 ; 55.8 ; 38.2 ; 51.2 ; 68.8 ; 37.9 ; 53.8 ; 47 ; 56.4 ; 50.7",
+  "column: m5 | file: clean.csv | neighbours: m2, m3, m4, m6, m7 | n=25 missing=0 unique=25 min=34.5 max=70.6 mean=51.6 sd=9.805 type=numeric | values: 25 distinct in sample: 48.5 ; 34.5 ; 38.8 ; 53.7 ; 58.5 ; 50.2 ; 53.1 ; 52.8 ; 35 ; 58.9 ; 52.6 ; 65.8 ; 55.9 ; 70.6 ; 64.3 ; 54.9 ; 59.9 ; 34.6 ; 45.9 ; 42.8 ; 48.2 ; 56.2 ; 51.1 ; 41.6 ; 61.6",
+  "column: m6 | file: clean.csv | neighbours: m3, m4, m5, m7, m8 | n=25 missing=0 unique=24 min=30.4 max=61.8 mean=51.74 sd=7.695 type=numeric | values: 24 distinct in sample: 45.1 ; 61.4 ; 60.5 ; 58.9 ; 30.4 ; 54.9 ; 60 ; 53.1 ; 56 ; 48 ; 46.2 ; 46 ; 42.2 ; 49.4 ; 49.2 ; 61.8 ; 54.7 ; 57 ; 54.2 ; 38.7 ; 51.4 ; 57.5 ; 58.8 ; 46.8",
+  "column: m7 | file: clean.csv | neighbours: m4, m5, m6, m8, m9 | n=25 missing=0 unique=24 min=31.1 max=62.4 mean=50.08 sd=8.303 type=numeric | values: 24 distinct in sample: 51.2 ; 52.5 ; 62.4 ; 56.8 ; 54.2 ; 56.1 ; 50.8 ; 45.4 ; 59.9 ; 53.6 ; 36.4 ; 53 ; 38.3 ; 53.4 ; 39.9 ; 43.7 ; 57.7 ; 47.5 ; 50.3 ; 31.1 ; 52.9 ; 55.3 ; 35.4 ; 58.1",
+  "column: m8 | file: clean.csv | neighbours: m5, m6, m7, m9, condition | n=25 missing=0 unique=25 min=31.1 max=75 mean=54.91 sd=12.9 type=numeric | values: 25 distinct in sample: 68.8 ; 53.6 ; 74.1 ; 55 ; 67.7 ; 75 ; 65.4 ; 71.9 ; 43.7 ; 47.5 ; 54.2 ; 61 ; 54.5 ; 45.3 ; 43.4 ; 38.2 ; 39.3 ; 43.3 ; 66 ; 72.2 ; 49.3 ; 64.3 ; 46.9 ; 31.1 ; 41.1",
+  "column: m9 | file: clean.csv | neighbours: m6, m7, m8, condition | n=25 missing=0 unique=24 min=28.8 max=63.6 mean=48.1 sd=8.266 type=numeric | values: 24 distinct in sample: 47.1 ; 45.8 ; 40.5 ; 37.2 ; 52.3 ; 63.6 ; 41.2 ; 32.9 ; 28.8 ; 57.2 ; 49.7 ; 46.3 ; 55.1 ; 41.8 ; 54.9 ; 46.2 ; 53.9 ; 41.4 ; 51.9 ; 50.6 ; 46.5 ; 50.5 ; 59.4 ; 57"
+ ]
+}

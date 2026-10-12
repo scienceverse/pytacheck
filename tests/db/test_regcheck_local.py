@@ -11,7 +11,7 @@ import httpx
 import pytest
 import respx
 
-from pytacheck.db import regcheck_local as rl
+from metacheck.db import regcheck_local as rl
 
 
 def test_bundled_app_matches_upstream(upstream_dir: Path, tmp_path: Path) -> None:

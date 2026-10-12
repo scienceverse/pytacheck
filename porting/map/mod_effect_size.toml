@@ -1,17 +1,17 @@
 # R source -> Python location for the stat_effect_size module (see docs/PORTING.md).
 [files]
-"inst/modules/stat_effect_size.R" = ["src/pytacheck/modules/stat_effect_size.py"]
+"inst/modules/stat_effect_size.R" = ["src/metacheck/modules/stat_effect_size.py"]
 
 [functions]
-"module:stat_effect_size" = "pytacheck.modules.stat_effect_size:stat_effect_size"
+"module:stat_effect_size" = "metacheck.modules.stat_effect_size:stat_effect_size"
 # helpers defined inside stat_effect_size() in R
-"stat_effect_size::parse_t_stats" = "pytacheck.modules.stat_effect_size:_parse_t_stats"
-"stat_effect_size::parse_d_stats" = "pytacheck.modules.stat_effect_size:_parse_d_stats"
-"stat_effect_size::parse_f_stats" = "pytacheck.modules.stat_effect_size:_parse_f_stats"
-"stat_effect_size::parse_eta_stats" = "pytacheck.modules.stat_effect_size:_parse_eta_stats"
-"stat_effect_size::classify_d_coherence" = "pytacheck.modules.stat_effect_size:_classify_d_coherence"
-"stat_effect_size::classify_f_coherence" = "pytacheck.modules.stat_effect_size:_classify_f_coherence"
-"stat_effect_size::label_lhs" = "pytacheck.modules.stat_effect_size:_label_lhs"
-"stat_effect_size::build_rows" = "pytacheck.modules.stat_effect_size:_build_rows"
-"stat_effect_size::count_coh" = "pytacheck.modules.stat_effect_size:_count_coh"
-"stat_effect_size::format_coherence_text" = "pytacheck.modules.stat_effect_size:_format_coherence_text"
+"stat_effect_size::parse_t_stats" = "metacheck.modules.stat_effect_size:_parse_t_stats"
+"stat_effect_size::parse_d_stats" = "metacheck.modules.stat_effect_size:_parse_d_stats"
+"stat_effect_size::parse_f_stats" = "metacheck.modules.stat_effect_size:_parse_f_stats"
+"stat_effect_size::parse_eta_stats" = "metacheck.modules.stat_effect_size:_parse_eta_stats"
+"stat_effect_size::classify_d_coherence" = "metacheck.modules.stat_effect_size:_classify_d_coherence"
+"stat_effect_size::classify_f_coherence" = "metacheck.modules.stat_effect_size:_classify_f_coherence"
+"stat_effect_size::label_lhs" = "metacheck.modules.stat_effect_size:_label_lhs"
+"stat_effect_size::build_rows" = "metacheck.modules.stat_effect_size:_build_rows"
+"stat_effect_size::count_coh" = "metacheck.modules.stat_effect_size:_count_coh"
+"stat_effect_size::format_coherence_text" = "metacheck.modules.stat_effect_size:_format_coherence_text"

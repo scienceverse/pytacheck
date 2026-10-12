@@ -4,7 +4,7 @@ pytacheck is a translation of metacheck, so its structure mirrors metacheck's; t
 explains the pieces that are *not* one-to-one translations and why they exist.
 
 ```
-src/pytacheck/
+src/metacheck/
   _r/            R semantics: regex engines, number formatting, collation, dplyr idioms
   papers/        Paper / PaperList (bibr export schema 12.0), reading/writing, cross-paper tables
   module.py      module decorator, discovery, module_run chaining
@@ -60,7 +60,7 @@ raw records directly into one DataFrame instead of building one per paper. Table
 returned by reference and must not be mutated by library code (tested for every
 module).
 
-With `pytacheck[bibr]`, `pc.read("paper.pdf")` runs bibr in-process and converts its
+With `metacheck[bibr]`, `pc.read("paper.pdf")` runs bibr in-process and converts its
 result dict straight into a `Paper` (`from_bibr`), without writing JSON.
 
 ## Modules
@@ -72,7 +72,7 @@ with `.<module>` suffixes, `na_replace`, and chaining through `prev_outputs` /
 `get_prev_outputs()`. Modules are discovered among the built-ins, entry points
 (`pytacheck.modules`), `./<name>.py`, `./modules/<name>.py`, or a path.
 
-Packs (`pytacheck/packs/`), presets (`presets.py`), run records (`provenance.py`)
+Packs (`metacheck/packs/`), presets (`presets.py`), run records (`provenance.py`)
 and the store extend this: community modules are addressed as `pack::name`,
 pinned by commit and file hash, and recorded in every run. See
 [MODULES.md](MODULES.md) (guides) and
@@ -80,7 +80,8 @@ pinned by commit and file hash, and recorded in every run. See
 
 Reports are lists of blocks: markdown strings (with Quarto-style callouts) and
 `ReportTable` objects. metacheck emits R code chunks for tables and needs Quarto; here
-the renderer turns blocks into self-contained HTML (or `.qmd`/Markdown) directly.
+the renderer turns blocks into self-contained HTML (or `.qmd`/Markdown) directly, and a
+`.qmd` holds each table as a raw HTML block, so Quarto renders it without R (D75).
 
 ## Parity harness
 

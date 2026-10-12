@@ -11,9 +11,9 @@ import warnings
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.module import ModuleError, module_list, module_run
-from pytacheck.modules import stat_effect_size as ses
+import metacheck as pc
+from metacheck.module import ModuleError, module_list, module_run
+from metacheck.modules import stat_effect_size as ses
 
 MODULE = "stat_effect_size"
 
@@ -161,6 +161,34 @@ def test_stat_effect_size() -> None:
     # ωp² cannot be verified from F and dfs alone — should be indeterminate, not no_match
     mod_output = _run("The model was significant, F(2, 151) = 1.00, p = .37, ωp² = 0.00.")
     assert mod_output.table["eta_coherence"].iloc[0] == "indeterminate"
+
+
+def test_stat_effect_size_hedges_g() -> None:
+    """Numeric coherence for Hedges' g, not just Cohen's d (metacheck #450)."""
+    # Hedges' g is on the same scale as Cohen's d, so a reported g is checked
+    # against the same implied-d values, not skipped as unparseable.
+    mod_output = _run("A was bigger than B, t(124) = 1.23, p 0.013, Hedges' g = 0.34.")
+    assert mod_output.table["d_coherence"].iloc[0] == "match_under_assumptions"
+    assert mod_output.table["d_coherence_assumption"].iloc[0] in (
+        "paired_dz",
+        "independent_equal_n",
+        "independent_unequal_n_range",
+    )
+
+    # a genuinely incoherent Hedges' g is still flagged as no_match, like d
+    mod_output = _run("A was bigger than B, t(20) = 1.00, p 0.32, Hedges' g = 3.00.")
+    assert mod_output.table["d_coherence"].iloc[0] == "no_match"
+    assert mod_output.table["d_coherence_assumption"].iloc[0] == "none"
+
+    # bare "g =" (no "Hedges'" prefix) is also recognized
+    mod_output = _run("A was bigger than B, t(23) = 2.73, p 0.013, g = 0.56.")
+    assert mod_output.table["d_coherence"].iloc[0] == "match_under_assumptions"
+    assert mod_output.table["d_coherence_assumption"].iloc[0] == "paired_dz"
+
+    # curly apostrophe, no apostrophe and upper case
+    for text in ("Hedges’ g = 0.45", "Hedges g = 0.45", "HEDGES' G = 0.45"):
+        t = _run(f"A was bigger than B, t(40) = 2.9, {text}.").table
+        assert t["d_coherence_assumption"].iloc[0] == "paired_dz", text
 
 
 def test_stat_effect_size_no_warnings() -> None:
@@ -370,7 +398,7 @@ def test_d_bounds(text: str, coherence: str) -> None:
 
 def test_stat_check_paper_list_summary_has_ids() -> None:
     # U124: metacheck's data.frame(paper_id = paperlist$paper_id) has no columns
-    from pytacheck.modules.stat_check import _paper_ids
+    from metacheck.modules.stat_check import _paper_ids
 
     papers = pc.PaperList([pc.test_paper(["No stats."]), pc.test_paper(["None either."])])
     assert _paper_ids(papers)["paper_id"].tolist() == [p.paper_id for p in papers]
@@ -413,7 +441,18 @@ def test_parsers() -> None:
     assert ses._parse_d_stats("Cohen’s  d = .5; dz = 1e-1; g = 2; d > 0.4") == [
         ("cohen’s d", 0.5, "Cohen’s  d = .5", "="),
         ("dz", 0.1, "dz = 1e-1", "="),
+        ("g", 2.0, "g = 2", "="),
         ("d", 0.4, "d > 0.4", ">"),
+    ]
+    # Hedges' g: with its name, its variants and the plural "gs" (metacheck #450).
+    # As in metacheck, "Hedges' g" (apostrophe after the s) is read as a bare "g".
+    assert ses._parse_d_stats(
+        "Hedges g av = .5; Hedge’s g = 1; Hedges' g = 2; gs = 0.3; gain = 2; g/kg = 1"
+    ) == [
+        ("hedges g av", 0.5, "Hedges g av = .5", "="),
+        ("hedge’s g", 1.0, "Hedge’s g = 1", "="),
+        ("g", 2.0, "g = 2", "="),
+        ("gs", 0.3, "gs = 0.3", "="),
     ]
     assert ses._parse_eta_stats("ηp² = .17; η2 = .1; f = .3; ω² = 0; BF10 = 3; xyz; d = 1") == [
         ("partial_eta_squared", 0.17, "ηp² = .17", "="),
@@ -665,3 +704,14 @@ def test_help_text_without_metacheck_typos() -> None:
     details = pc.module_info(MODULE).details
     assert "might be incorrect, the module provides a warning." in details
     assert "you the module" not in details
+
+
+def test_unicode_minus_t_test_and_its_d() -> None:
+    # U205: text from PDFs (bibr) has the Unicode minus; metacheck found neither the
+    # t-test nor its d, so the module had no test to check
+    paper = pc.test_paper(["We found t(28) = −2.15, p = .04, d = −0.80."])
+    out = module_run(paper, "stat_effect_size")
+    assert out.traffic_light == "green"
+    assert out.table["test_text"].tolist() == ["t(28) = -2.15"]
+    assert out.table["es"].tolist() == ["d = -0.80"]
+    assert out.table["d_reported"].tolist() == ["-0.8"]

@@ -9,9 +9,9 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
-from pytacheck.packs.build import _pack_fields
-from pytacheck.packs.manifest import read_manifest
-from pytacheck.packs.tree import tree_files
+from metacheck.packs.build import _pack_fields
+from metacheck.packs.manifest import read_manifest
+from metacheck.packs.tree import tree_files
 
 STORE_REPO = "example/store"
 STORE_URL = f"https://github.com/{STORE_REPO}"

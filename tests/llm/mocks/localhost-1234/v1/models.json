@@ -1,9 +1,0 @@
-{
-  "object": "list",
-  "data": [
-    {
-      "id": "qwen2.5-7b",
-      "object": "model"
-    }
-  ]
-}

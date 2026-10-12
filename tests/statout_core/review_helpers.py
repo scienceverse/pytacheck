@@ -12,7 +12,7 @@ DATA = Path(__file__).resolve().parent / "data"
 
 def parse_html_tables(path: str | Path) -> list[Any]:
     """``lapply(xml_find_all(read_html(path), "//table"), .stat_table_parse)``."""
-    from pytacheck.statout.stat_tables import _read_html_file, _stat_table_parse
+    from metacheck.statout.stat_tables import _read_html_file, _stat_table_parse
 
     doc = _read_html_file(str(path))
     return [_stat_table_parse(tb) for tb in doc.xpath("//table")]
@@ -31,7 +31,7 @@ def with_roles(df: pd.DataFrame, roles: dict[str, Any]) -> pd.DataFrame:
 
 
 def _so() -> Any:
-    import pytacheck.statout.stat_output as so
+    import metacheck.statout.stat_output as so
 
     return so
 
@@ -149,7 +149,7 @@ def na_doc() -> dict[str, Any]:
 
 
 def merge_partial() -> list[Any]:
-    so = __import__("pytacheck.statout.r_capture", fromlist=["_"])
+    so = __import__("metacheck.statout.r_capture", fromlist=["_"])
     cap = [{"analysis": "cap", "data": chr_frame(t=["1"]), "line": 3, "line_seq": 1}]
     txt = [
         {"analysis": "txt3", "data": chr_frame(t=["2"]), "line_seq": 3},

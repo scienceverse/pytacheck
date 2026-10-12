@@ -1,12 +1,12 @@
-"""Tests for pytacheck.archives.mendeley (R/archive-mendeley.R has no testthat file upstream)."""
+"""Tests for metacheck.archives.mendeley (R/archive-mendeley.R has no testthat file upstream)."""
 
 from __future__ import annotations
 
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.mendeley import (
+import metacheck as pc
+from metacheck.archives.mendeley import (
     _mendeley_id,
     _mendeley_info,
     mendeley_info,
@@ -59,6 +59,6 @@ def test_info_table(mock_api: object) -> None:
 
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"data\.mendeley\.com seems to be offline"):
         mendeley_info("short1")

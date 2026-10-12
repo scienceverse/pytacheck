@@ -1,11 +1,11 @@
 name: CI
 
 # Linux jobs run on the self-hosted runner named by the CI_RUNNER variable
-# (pytacheck-fridge-ci: the fridge runner) when the repository is private and
-# the code comes from this repository (not a fork); otherwise, and whenever
-# CI_RUNNER is unset, on GitHub's runners. The macOS and Windows test legs run
-# only when the Linux jobs are GitHub-hosted too: the fridge runner is Linux
-# only, and a private repository pays for GitHub's runners. A self-hosted
+# when the repository is private and the code comes from this repository (not
+# a fork); otherwise, and whenever CI_RUNNER is unset, on GitHub's runners. The
+# macOS and Windows test legs run only when the Linux jobs are GitHub-hosted
+# too: the self-hosted runner is Linux only, and a private repository pays for
+# GitHub's runners. A self-hosted
 # runner keeps its workspace, caches and home directory between jobs, so
 # scratch files go to $RUNNER_TEMP (emptied per job), not /tmp, and no step
 # changes the runner user's global configuration.
@@ -27,8 +27,8 @@ env:
   UV_VERSION: "0.9.8"
   PRIMARY_PYTHON: "3.12"
   # Only uv's own Python builds. uv otherwise takes an installed interpreter of
-  # the requested version over downloading one, and the fridge runner's Debian
-  # python3.13 comes without headers, so sdists such as cdifflib (in the bibr
+  # the requested version over downloading one, and a system python3.13 can
+  # come without headers, so sdists such as cdifflib (in the bibr
   # extra) fail to build against it.
   UV_PYTHON_PREFERENCE: only-managed
 
@@ -94,6 +94,8 @@ jobs:
       GIT_CONFIG_VALUE_0: "false"
       GIT_CONFIG_KEY_1: core.eol
       GIT_CONFIG_VALUE_1: lf
+      # a module that edits a paper's table in place fails the run (docs/MODULES.md)
+      METACHECK_CHECK_MUTATION: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
@@ -135,6 +137,8 @@ jobs:
           python-version: ${{ env.PRIMARY_PYTHON }}
       - run: uv sync --locked --all-extras
       - name: Parity (every case)
+        env:
+          METACHECK_CHECK_MUTATION: "1" # as in the Tests job
         run: >-
           uv run python -m parity check --jobs 0
           --report parity/_out/report.json --md "$GITHUB_STEP_SUMMARY"
@@ -173,6 +177,8 @@ jobs:
       - run: uv sync --locked --all-extras
       - uses: ./.github/actions/xdist-workers
       - name: Tier-1 parity cases with pyarrow installed
+        env:
+          METACHECK_CHECK_MUTATION: "1" # as in the Tests job
         run: uv run --with pyarrow pytest -n auto -m "parity and tier1"
 
   benchmark:
@@ -221,7 +227,11 @@ jobs:
           uv venv "$RUNNER_TEMP/wheel-env"
           uv pip install --python "$RUNNER_TEMP/wheel-env" dist/*.whl
           "$RUNNER_TEMP/wheel-env"/bin/pytacheck version
+          "$RUNNER_TEMP/wheel-env"/bin/metacheck version
+          "$RUNNER_TEMP/wheel-env"/bin/python -m metacheck --help
+          "$RUNNER_TEMP/wheel-env"/bin/python -m pytacheck.cli --help
           "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc; print(pc.module_run(pc.demopaper(), 'marginal'))"
+          "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc, metacheck as mc; assert mc.__version__ == pc.__version__"
       - name: Audit dependencies
         run: uvx pip-audit --strict -r <(uv export --locked --no-hashes --no-dev --all-extras --no-emit-project)
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

@@ -16,9 +16,9 @@ from pathlib import Path
 import pytest
 import respx
 
-from pytacheck.cli import main
-from pytacheck.packs.build import _within_one_edit, store_build
-from pytacheck.packs.manifest import PackError, validate_manifest, validate_pack_name
+from metacheck.cli import main
+from metacheck.packs.build import _within_one_edit, store_build
+from metacheck.packs.manifest import PackError, validate_manifest, validate_pack_name
 from tests.modsys.helpers import mod_src
 from tests.modsys.storekit import REV_C, codeload, dir_files, tarball
 
@@ -238,8 +238,8 @@ def _stray_file(folder: Path) -> None:
 
 
 def test_a_module_file_with_a_trailing_newline_is_not_a_module(tmp_path, monkeypatch) -> None:
-    from pytacheck.packs import manifest
-    from pytacheck.packs.manifest import Pack
+    from metacheck.packs import manifest
+    from metacheck.packs.manifest import Pack
 
     (tmp_path / "check_a.py").write_text("x = 1\n")
     monkeypatch.setattr(manifest.os, "listdir", lambda _: ["check_a.py", "check_b\n.py"])
@@ -250,7 +250,7 @@ def test_a_module_file_with_a_trailing_newline_is_not_a_module(tmp_path, monkeyp
 
 
 def test_pack_check_warns_about_a_module_file_with_a_trailing_newline(ms) -> None:
-    from pytacheck.packs.check import pack_check
+    from metacheck.packs.check import pack_check
 
     folder = ms.pack(ms.root / "lab", "lab", {"check_a": mod_src("check_a")})
     _stray_file(folder)
@@ -259,8 +259,8 @@ def test_pack_check_warns_about_a_module_file_with_a_trailing_newline(ms) -> Non
 
 
 def test_store_build_lists_no_module_file_with_a_trailing_newline(ms) -> None:
-    from pytacheck.packs.build import _pack_fields
-    from pytacheck.packs.manifest import read_manifest
+    from metacheck.packs.build import _pack_fields
+    from metacheck.packs.manifest import read_manifest
 
     folder = ms.pack(ms.root / "lab", "lab", {"check_a": mod_src("check_a")})
     _stray_file(folder)
@@ -269,8 +269,8 @@ def test_store_build_lists_no_module_file_with_a_trailing_newline(ms) -> None:
 
 
 def test_a_reference_with_a_trailing_newline_is_not_a_reference() -> None:
-    from pytacheck.module import split_ref
-    from pytacheck.packs.registry import find_module
+    from metacheck.module import split_ref
+    from metacheck.packs.registry import find_module
 
     assert split_ref("lab::mod") == ("lab", "mod")
     assert split_ref("lab::mod\n") is None
@@ -278,7 +278,7 @@ def test_a_reference_with_a_trailing_newline_is_not_a_reference() -> None:
 
 
 def test_a_preset_name_with_a_trailing_newline_is_refused() -> None:
-    from pytacheck.packs.manifest import validate_preset
+    from metacheck.packs.manifest import validate_preset
 
     validate_preset("fast", {})
     with pytest.raises(PackError, match="Invalid preset name"):
@@ -286,7 +286,7 @@ def test_a_preset_name_with_a_trailing_newline_is_refused() -> None:
 
 
 def test_a_store_name_with_a_trailing_newline_is_refused() -> None:
-    from pytacheck.packs.stores import StoreError, _validate_store_name
+    from metacheck.packs.stores import StoreError, _validate_store_name
 
     assert _validate_store_name("lab") == "lab"
     with pytest.raises(StoreError, match="Invalid store name"):
@@ -294,7 +294,7 @@ def test_a_store_name_with_a_trailing_newline_is_refused() -> None:
 
 
 def test_scaffold_names_with_a_trailing_newline_are_refused(tmp_path) -> None:
-    from pytacheck.packs.scaffold import module_template, pack_new
+    from metacheck.packs.scaffold import module_template, pack_new
 
     with pytest.raises(ValueError, match="only letters"):
         module_template("my_check\n", tmp_path)
@@ -303,7 +303,7 @@ def test_scaffold_names_with_a_trailing_newline_are_refused(tmp_path) -> None:
 
 
 def test_a_source_slug_or_git_ref_with_a_trailing_newline_is_refused() -> None:
-    from pytacheck.packs.fetch import _slug, git_read_file
+    from metacheck.packs.fetch import _slug, git_read_file
 
     assert _slug({"github": "jane/my-pack"}, "github") == "jane/my-pack"
     with pytest.raises(PackError, match="Invalid github source"):

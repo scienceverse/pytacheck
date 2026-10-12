@@ -2,12 +2,7 @@
   "id": "code_check.blank_only",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`.",
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `text`."
-  ],
+  "warnings": [],
   "value": {
     "t": "module_output",
     "names": [

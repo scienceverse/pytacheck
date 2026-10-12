@@ -11,9 +11,9 @@ import pandas as pd
 import pytest
 import respx
 
-from pytacheck.archives import osf_helpers
-from pytacheck.archives.osf import osf_file_download, osf_get_all_pages
-from pytacheck.archives.osf_helpers import (
+from metacheck.archives import osf_helpers
+from metacheck.archives.osf import osf_file_download, osf_get_all_pages
+from metacheck.archives.osf_helpers import (
     _osf_expand_user_ids,
     _osf_file_data,
     _osf_headers,
@@ -24,7 +24,7 @@ from pytacheck.archives.osf_helpers import (
     osf_pat,
     osf_user_projects,
 )
-from pytacheck.utils import local_options
+from metacheck.utils import local_options
 
 API = "https://api.osf.io/v2"
 
@@ -64,7 +64,7 @@ def test_osf_pat(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_osf_pat_validate(monkeypatch: pytest.MonkeyPatch) -> None:
     assert _osf_pat_validate("") is False
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: True)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
     probe = f"{API}/preprints/khbvy/"
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -85,6 +85,25 @@ def test_osf_pat_validate(monkeypatch: pytest.MonkeyPatch) -> None:
         router.get(probe).mock(return_value=httpx.Response(503))
         with pytest.warns(UserWarning, match="could not be validated"):
             assert _osf_pat_validate("ANY") is False
+
+
+def test_osf_pat_validate_is_one_short_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck ccc786cb: the probe runs at load time, so one try with a 5 s
+    # timeout, not the default retries against a slow or unreachable OSF
+    from metacheck import http
+
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
+    calls: list[dict[str, object]] = []
+
+    def fake(method: str, url: str, **kwargs: object) -> httpx.Response:
+        calls.append({"method": method, "url": url, **kwargs})
+        return httpx.Response(200)
+
+    monkeypatch.setattr(http, "request", fake)
+    assert _osf_pat_validate("GOODPAT") is True
+    # anonymously and with the token
+    assert len(calls) == 2
+    assert all(c["max_tries"] == 1 and c["timeout"] == 5.0 for c in calls)
 
 
 def test_osf_parent_project(mock_api: respx.MockRouter, filetype_available: bool) -> None:
@@ -271,7 +290,7 @@ def test_osf_user_projects_and_expansion(
         assert projects["public"].tolist() == [True, False, True]
         assert projects["osf_url"].tolist()[0] == "https://osf.io/proj1"
 
-        from pytacheck.config import _state
+        from metacheck.config import _state
 
         monkeypatch.setitem(_state, "verbose", True)
         expanded = _osf_expand_user_ids(["proj9", "user1", "proj1"])
@@ -347,4 +366,4 @@ def test_osf_file_download_invalid_id() -> None:
 def test_no_http_at_import() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        assert osf_helpers.__name__ == "pytacheck.archives.osf_helpers"
+        assert osf_helpers.__name__ == "metacheck.archives.osf_helpers"

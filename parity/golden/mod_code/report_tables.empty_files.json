@@ -2,10 +2,7 @@
   "id": "report_tables.empty_files",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`."
-  ],
+  "warnings": [],
   "value": {
     "t": "list",
     "names": null,
@@ -40,15 +37,15 @@
           {
             "t": "int",
             "v": [
-              null,
-              null,
+              0,
+              0,
               0
             ]
           },
           {
             "t": "int",
             "v": [
-              null,
+              0,
               0,
               0
             ]

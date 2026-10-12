@@ -1,12 +1,12 @@
-"""Tests for pytacheck.archives.fsd (R/archive-fsd.R has no testthat file upstream)."""
+"""Tests for metacheck.archives.fsd (R/archive-fsd.R has no testthat file upstream)."""
 
 from __future__ import annotations
 
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives.fsd import _fsd_ddi_xml, _fsd_info, _fsd_study_id, fsd_info, fsd_links
+import metacheck as pc
+from metacheck.archives.fsd import _fsd_ddi_xml, _fsd_info, _fsd_study_id, fsd_info, fsd_links
 
 
 def test_study_ids() -> None:
@@ -71,6 +71,6 @@ def test_info_table_and_early_stop(mock_api: object) -> None:
 
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match="FSD"):
         fsd_info("FSD2653")

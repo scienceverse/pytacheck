@@ -1,11 +1,11 @@
 # Convert metacheck's small lookup data sets (data/<name>.rda) into the
-# dependency-free files pytacheck ships under src/pytacheck/resources/data/.
+# dependency-free files pytacheck ships under src/metacheck/resources/data/.
 #
 # Usage (from the repository root, with the R reference installation):
 #
 #   Rscript scripts/convert_data.R [<metacheck dir>] [<output dir>] [<name> ...]
 #
-# Defaults: upstream/metacheck, src/pytacheck/resources/data and the data sets
+# Defaults: upstream/metacheck, src/metacheck/resources/data and the data sets
 # listed in `default_names` below (currently file_types, read by
 # pytacheck.fileinfo.types). scripts/convert_datacheck_data.R converts the
 # data_check dictionaries (scales, tasks) the same way.
@@ -25,7 +25,7 @@ default_names <- c("file_types")
 
 args <- commandArgs(trailingOnly = TRUE)
 src <- if (length(args) >= 1) args[[1]] else "upstream/metacheck"
-out <- if (length(args) >= 2) args[[2]] else "src/pytacheck/resources/data"
+out <- if (length(args) >= 2) args[[2]] else "src/metacheck/resources/data"
 names_to_convert <- if (length(args) >= 3) args[-(1:2)] else default_names
 
 data_dir <- file.path(src, "data")

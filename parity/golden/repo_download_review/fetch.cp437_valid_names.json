@@ -25,7 +25,8 @@
           "name",
           "path",
           "size",
-          "ok"
+          "ok",
+          "error"
         ],
         "v": [
           {
@@ -54,6 +55,13 @@
             "v": [
               true,
               true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
             ]
           }
         ]

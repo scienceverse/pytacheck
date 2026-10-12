@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from pytacheck.datacheck.checks import (
+from metacheck.datacheck.checks import (
     _concept_is_date,
     _concept_is_timestamp,
     _parse_frac,

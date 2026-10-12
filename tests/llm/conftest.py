@@ -13,8 +13,7 @@ from tests.llm.support import KEYS
 @pytest.fixture
 def llm_on(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[Path]:
     """``llm_use(TRUE)``, cache off (in a temp dir), fake keys, default settings."""
-    from pytacheck.llm._rds import RInt
-    from pytacheck.utils import local_options
+    from metacheck.utils import local_options
 
     cache = tmp_path / "llmcache"
     cache.mkdir()
@@ -30,7 +29,7 @@ def llm_on(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[Path]:
             "metacheck.llm.cache": False,
             "metacheck.llm_reasoning": None,
             "metacheck.llm_max_tokens": None,
-            "metacheck.llm_max_calls": RInt(30),
+            "metacheck.llm_max_calls": 30,
             "metacheck.llm.vllm.base_url": None,
         }
     ):
@@ -40,8 +39,8 @@ def llm_on(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[Path]:
 @pytest.fixture
 def restore_llm_options() -> Iterator[None]:
     """Restore every LLM option a test changes."""
-    from pytacheck.llm.core import _init_options
-    from pytacheck.utils import local_options
+    from metacheck.llm.core import _init_options
+    from metacheck.utils import local_options
 
     _init_options()
     names = [
@@ -53,7 +52,7 @@ def restore_llm_options() -> Iterator[None]:
         "metacheck.llm_reasoning",
         "metacheck.llm.cache",
     ]
-    from pytacheck.utils import get_option
+    from metacheck.utils import get_option
 
     with local_options({n: get_option(n) for n in names}):
         yield

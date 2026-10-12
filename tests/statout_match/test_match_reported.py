@@ -1,4 +1,4 @@
-"""Tests for pytacheck.statout.match_reported (port of R/match-reported.R).
+"""Tests for metacheck.statout.match_reported (port of R/match-reported.R).
 
 Ports the match_reported_output() expectations of metacheck's
 test-module-reproducibility_check.R (console output feeding the matcher; a
@@ -15,8 +15,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.statout.match_reported import (
+import metacheck as pc
+from metacheck.statout.match_reported import (
     _build_sites,
     _norm_df,
     _norm_interval,
@@ -41,8 +41,8 @@ def _lines(path: Path) -> list[str]:
 
 
 def _rout_long(name: str) -> pd.DataFrame:
-    from pytacheck.statout.r_output import read_r_output
-    from pytacheck.statout.stat_output import stat_results_long
+    from metacheck.statout.r_output import read_r_output
+    from metacheck.statout.stat_output import stat_results_long
 
     tabs = read_r_output(
         _lines(DATA / f"{name}.Rout"),
@@ -193,7 +193,7 @@ def test_recompose_eq_groups_and_filters() -> None:
 
 
 def test_tests_from_extract_tags_anchors() -> None:
-    from pytacheck.text.extract_tests import extract_tests
+    from metacheck.text.extract_tests import extract_tests
 
     tt = extract_tests(pc.test_paper("It was t(28) = 2.20, p < .05, d = 0.59."))
     tests = _tests_from_extract(tt)
@@ -252,7 +252,7 @@ def test_whole_test_signature_is_matched() -> None:
     }  # fmt: skip
 
     # without regrouping evidence (a legacy eq table), the text grouping stays
-    from pytacheck.text.extract import extract_eq
+    from metacheck.text.extract import extract_eq
 
     legacy = match_reported_output(extract_eq(paper), _long(TTEST))
     assert legacy["confidence"].tolist() == ["full", "none", "partial"]

@@ -424,7 +424,7 @@ def test_parity_ids_match_r() -> None:
 
 
 def test_deterministic_ids_number_papers_per_case() -> None:
-    import pytacheck as pc
+    import metacheck as pc
 
     with pcases.deterministic_ids():
         a, b = pc.test_paper(["x"]), pc.test_paper(["y"])
@@ -499,7 +499,7 @@ def test_r_runner_ids_paths_and_yaml_floats(tmp_path: Path) -> None:
 def test_metacheck_defaults_include_paper_write() -> None:
     import inspect
 
-    import pytacheck as pc
+    import metacheck as pc
 
     assert inspect.signature(pc.paper_write).parameters["schema_version"].default == "auto"
     with pcases.metacheck_defaults():
@@ -1347,7 +1347,7 @@ def test_network_use_is_an_error(tmp_path, monkeypatch) -> None:
         "__import__('socket').create_connection(('192.0.2.1', 80), timeout=1)",
         "__import__('socket').getaddrinfo('example.org', 443)",
         # an attempt the code catches is still an error
-        "__import__('pytacheck.http', fromlist=['_']).request('GET', 'https://example.org/')",
+        "__import__('metacheck.http', fromlist=['_']).request('GET', 'https://example.org/')",
     ):
         spec = {"py": "copy.copy", "args": {"x": {"$expr": {"py": code}}}}
         case = _golden_case(tmp_path / str(len(code)), monkeypatch, _chr_golden("a"), spec)
@@ -1386,8 +1386,8 @@ def test_expr_imports_the_modules_it_names() -> None:
 
     code = (
         "import sys; from parity.cases import decode\n"
-        "import pytacheck as pc; read = pc.read\n"
+        "import metacheck as pc; read = pc.read\n"
         "f, g = decode({'$expr': {'py': '(pc.statout.jasp._jasp_analyses_summary, pc.read)'}})\n"
-        "assert f.__module__ == 'pytacheck.statout.jasp' and g is read is pc.read\n"
+        "assert f.__module__ == 'metacheck.statout.jasp' and g is read is pc.read\n"
     )
     subprocess.run([sys.executable, "-c", code], check=True, cwd=ROOT)

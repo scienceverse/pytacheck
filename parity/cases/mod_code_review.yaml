@@ -233,6 +233,30 @@
       "$expr":
         "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_local('tests/mod_code/fixtures/mixed', local_only = TRUE)})"
         "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_local('tests/mod_code/fixtures/mixed', local_only=True)"
+- "id": "local_path.empty_py"
+  "r": "identity"
+  "py": "tests.mod_code.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_local('tests/mod_code/fixtures/review/local_empty')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_local('tests/mod_code/fixtures/review/local_empty')"
+- "id": "local_path.clean_pinned"
+  "r": "identity"
+  "py": "tests.mod_code.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_local('tests/mod_code/fixtures/review/local_clean')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_local('tests/mod_code/fixtures/review/local_clean')"
+- "id": "local_path.parse_error_pinned"
+  "r": "identity"
+  "py": "tests.mod_code.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_local('tests/mod_code/fixtures/review/local_parse_bad')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_local('tests/mod_code/fixtures/review/local_parse_bad')"
 - "id": "manifest.paperlist"
   "r": "identity"
   "py": "tests.mod_code.helpers.identity"

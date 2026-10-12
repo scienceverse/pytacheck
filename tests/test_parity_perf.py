@@ -18,12 +18,12 @@ from typing import Any
 import pytest
 import regex
 
-import pytacheck as pc
-import pytacheck.module as mod
-import pytacheck.text.search as ts
+import metacheck as pc
+import metacheck.module as mod
+import metacheck.text.search as ts
+from metacheck.datacheck import _files_readers as readers
+from metacheck.module import ModuleError, module, module_run, run_session
 from parity import perf
-from pytacheck.datacheck import _files_readers as readers
-from pytacheck.module import ModuleError, module, module_run, run_session
 
 ROOT = Path(__file__).resolve().parent.parent
 SPREADSHEETS = ROOT / "tests" / "mod_data_check" / "fixtures" / "repos" / "spreadsheets" / "data"
@@ -228,16 +228,16 @@ def test_compiles_and_recompiles(monitoring: bool) -> None:
 
 def test_readers_count_per_file(monitoring: bool, tmp_path: Path) -> None:
     # through their modules: a function imported into a local before the probe is not rebound
-    from pytacheck.codecheck import core
-    from pytacheck.datacheck import _files_fread, _files_readtable
+    from metacheck.codecheck import core
+    from metacheck.datacheck import _files_delim
 
     csv = tmp_path / "data.csv"
     csv.write_text("a,b\n1,2\n", encoding="utf-8")
     script = tmp_path / "analysis.R"
     script.write_text("x <- 1\n", encoding="utf-8")
     with perf.Probe(monitoring=monitoring) as probe:
-        _files_fread.fread(str(csv), ",", True)
-        _files_readtable.read_table(csv, ",", True)
+        _files_delim.read_delim(str(csv), ",", True)
+        _files_delim.read_delim(csv, ",", True, fill=True)
         core.code_read(str(script))
         readers.read_excel(SPREADSHEETS / "clean.xlsx")
         readers.read_ods(SPREADSHEETS / "clean.ods")

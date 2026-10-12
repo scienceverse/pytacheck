@@ -1,4 +1,4 @@
-"""Tests for pytacheck.archives.figshare (port of tests/testthat/test-archive-figshare.R, plus more).
+"""Tests for metacheck.archives.figshare (port of tests/testthat/test-archive-figshare.R, plus more).
 
 The R tests for ``.figshare_project_articles()`` and ``figshare_info()`` query
 the live API; here they run against the recorded responses in ``mocks/``.
@@ -12,9 +12,11 @@ import httpx
 import pandas as pd
 import pytest
 
-import pytacheck as pc
-from pytacheck.archives import figshare
-from pytacheck.archives.figshare import (
+import metacheck as pc
+from metacheck.archives import figshare
+from metacheck.archives.figshare import (
+    _figshare_collection_articles,
+    _figshare_collection_id,
     _figshare_doi_prefix_hosts,
     _figshare_headers,
     _figshare_id,
@@ -68,11 +70,15 @@ def test_figshare_id() -> None:
         "https://doi.org/10.26180/19095317.v1",
         "https://doi.org/10.26188/14122688",
         "https://doi.org/10.25375/uct.14618526.v1",
+        # two chained sub-prefix segments before the id (metacheck #439)
+        "https://doi.org/10.17608/k6.auckland.25808182.v2",
+        "https://doi.org/10.15131/shef.data.13712533",
     ]
     assert _figshare_id(urls) == [
         "18093368", "18093368", "18093368", "18093368", "18093368",
         "12345", None, None, None, None,
         "6934484", "19095317", "14122688", "14618526",
+        "25808182", "13712533",
     ]  # fmt: skip
     assert _figshare_id(None) == []
 
@@ -111,6 +117,37 @@ def test_figshare_project_articles(mock_api: object) -> None:
     assert _figshare_project_articles("999") == []
     with pytest.warns(UserWarning, match="Figshare project 404404 could not be found"):
         assert _figshare_project_articles("404404") == []
+
+
+def test_figshare_collection_id() -> None:
+    urls = [
+        "https://figshare.com/collections/Some_collection/8742785",
+        "https://figshare.com/collections/Some_collection/8742785/",
+        "https://figshare.le.ac.uk/collections/Leicester/77",
+        "https://doi.org/10.6084/m9.figshare.c.6190228",
+        "10.6084/m9.figshare.c.6190228.v2",
+        "https://figshare.com/projects/some_project/133332",
+        "https://doi.org/10.6084/m9.figshare.18093368",
+        "",
+        None,
+    ]
+    assert _figshare_collection_id(urls) == [
+        "8742785", "8742785", "77", "6190228", "6190228", None, None, None, None,
+    ]  # fmt: skip
+    assert _figshare_collection_id("https://doi.org/10.6084/m9.figshare.c.42") == "42"
+
+
+def test_figshare_collection_articles(mock_api: object) -> None:
+    assert _figshare_collection_articles("8742785") == ["6934484", "18093368"]
+    with pytest.warns(UserWarning, match="Figshare collection 404405 could not be found"):
+        assert _figshare_collection_articles("404405") == []
+
+
+def test_figshare_info_expands_a_collection(mock_api: object) -> None:
+    url = "https://doi.org/10.6084/m9.figshare.c.8742785.v1"
+    info = figshare_info(url)
+    assert (info["figshare_url"] == url).all()
+    assert sorted(info["figshare_id"].tolist()) == ["18093368", "6934484"]
 
 
 def test_figshare_info_expands_a_project(mock_api: object) -> None:
@@ -159,7 +196,7 @@ def test_figshare_info_unfound_parse_error_and_no_valid(mock_api: object) -> Non
 
 
 def test_figshare_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"data\.4tu\.nl seems to be offline"):
         figshare_info("123", host="data.4tu.nl")
 
@@ -251,15 +288,19 @@ def test_link_prefilters_are_exact(
     psychsci: object,
     fixtures_dir: Path,
     monkeypatch: pytest.MonkeyPatch,
+    mock_api: object,
 ) -> None:
-    """Searching only prefiltered sentences gives exactly the full search's links."""
+    """Searching only prefiltered sentences gives exactly the full search's links.
+
+    (``mock_api``: dataverse_links() resolves shared DOI prefixes through doi.org.)
+    """
     import importlib
 
     from pandas.testing import assert_frame_equal
 
     from tests.archives_d1.make_review_cases import FUZZ_TEXT, FUZZ_URL
 
-    mod = importlib.import_module(f"pytacheck.archives.{module}")
+    mod = importlib.import_module(f"metacheck.archives.{module}")
     tricky = pc.test_paper(
         [
             *FUZZ_TEXT,

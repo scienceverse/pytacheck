@@ -24,14 +24,14 @@ import httpx
 import pytest
 import respx
 
-from pytacheck.cli import main
-from pytacheck.packs import auth, fetch
-from pytacheck.packs.auth import DownloadError, get, github_token, may_send_token, token_var
-from pytacheck.packs.fetch import resolve_rev
-from pytacheck.packs.install import pack_install
-from pytacheck.packs.manifest import PackError
-from pytacheck.packs.stores import StoreError, store_index
-from pytacheck.packs.tree import INSTALL_RECORD
+from metacheck.cli import main
+from metacheck.packs import auth, fetch
+from metacheck.packs.auth import DownloadError, get, github_token, may_send_token, token_var
+from metacheck.packs.fetch import resolve_rev
+from metacheck.packs.install import pack_install
+from metacheck.packs.manifest import PackError
+from metacheck.packs.stores import StoreError, store_index
+from metacheck.packs.tree import INSTALL_RECORD
 from tests.modsys.helpers import mod_src
 from tests.modsys.storekit import (
     INDEX_URL,
@@ -380,7 +380,7 @@ def test_failures_say_how_to_authenticate_without_the_secret(private, ms, monkey
 
 
 def test_credentials_in_urls_are_refused(ms) -> None:
-    from pytacheck.packs.stores import store_add
+    from metacheck.packs.stores import store_add
 
     with pytest.raises(PackError, match="contains credentials") as info:
         pack_install(f"https://x-access-token:{TOKEN}@github.com/o/r@v1", yes=True)
@@ -430,7 +430,7 @@ def store_repo(tmp_path: Path) -> Path:
 
 @pytest.mark.parametrize("filtering", [False, True])
 def test_git_index_reads_only_the_index_file(store_repo: Path, filtering: bool) -> None:
-    from pytacheck.packs.stores import _git_index
+    from metacheck.packs.stores import _git_index
 
     if filtering:  # a server that honours --filter=blob:none (as GitHub does): lazy blobs
         _git("config", "uploadpack.allowFilter", "true", cwd=store_repo)
@@ -517,7 +517,7 @@ def _basic(login: str, password: str) -> str:
 
 
 def test_a_store_behind_a_login_reads_it_from_netrc(ms, netrc_file) -> None:
-    from pytacheck.packs.stores import store_add
+    from metacheck.packs.stores import store_add
 
     store_add("lab", "https://lab.example.org/store")
     index = json.dumps({"schema": 1, "name": "lab", "packs": []})
@@ -583,7 +583,7 @@ def test_a_redirect_with_credentials_in_it_is_refused(netrc_file) -> None:
 
 
 def test_without_a_login_the_error_points_to_netrc(ms, monkeypatch) -> None:
-    from pytacheck.packs.stores import store_add
+    from metacheck.packs.stores import store_add
 
     monkeypatch.setenv("NETRC", str(ms.root / "no-such-netrc"))
     store_add("lab", "https://lab.example.org/store")
@@ -617,8 +617,8 @@ def _written(root: Path) -> dict[str, bytes]:
 
 
 def test_no_secret_is_written_logged_or_printed(private, ms, capsys, caplog, recwarn) -> None:
-    import pytacheck as pc
-    from pytacheck.provenance import RunRecord, run_modules
+    import metacheck as pc
+    from metacheck.provenance import RunRecord, run_modules
 
     caplog.set_level(logging.DEBUG)
     assert main(["store", "update"]) == 0
@@ -703,8 +703,8 @@ def test_live_private_store(live_github_token, ms, monkeypatch, capsys, request)
         pytest.skip("no GitHub token (PYTACHECK_GITHUB_TOKEN, GH_TOKEN or GITHUB_TOKEN)")
     if not _network_selected(request):
         pytest.skip("reads the real store: run with -m network")
-    import pytacheck as pc
-    from pytacheck.provenance import run_modules
+    import metacheck as pc
+    from metacheck.provenance import run_modules
 
     monkeypatch.setenv("PYTACHECK_GITHUB_TOKEN", live_github_token)
     monkeypatch.delenv("GIT_ALLOW_PROTOCOL", raising=False)
