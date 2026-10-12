@@ -479,9 +479,12 @@ def _without_folders(text: Any) -> Any:
     """
     if not isinstance(text, str):
         return text
-    prefix = re.escape(tempfile.gettempdir().rstrip("/"))
-    folders = rf"{prefix}/(?:metacheck-package-[^/\s\"'<>]+/package|pytacheck-upload-[^/\s\"'<>]+)"
-    return re.sub(folders, "package", text)
+    prefix = re.escape(tempfile.gettempdir().rstrip("/\\"))
+    sep = r"[\\/]"  # a Windows path is written with backslashes, a posix one with slashes
+    segment = r"[^\\/\s\"'<>]+"
+    package = rf"metacheck-package-{segment}{sep}package"
+    upload = rf"pytacheck-upload-{segment}"
+    return re.sub(rf"{prefix}{sep}(?:{package}|{upload})", "package", text)
 
 
 def _package_name(chain: Any, fallback: str) -> str:

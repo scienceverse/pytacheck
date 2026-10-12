@@ -107,9 +107,11 @@ def test_an_archive_is_checked_and_answered(client: TestClient, scratch: Path) -
     assert {row["check"]: row["status"] for row in body["checks"]}["package_files"] == "green"
     assert "<html" in body["report_html"]
     # data_check names the package by its local folder in the report: that folder must not
-    # reach the answer, and the folders the upload and the unpacking used are removed
-    assert str(scratch) not in r.text
-    assert "metacheck-package-" not in r.text
+    # reach the answer, and the folders the upload and the unpacking used are removed. The
+    # report is read decoded: a Windows path is escaped in the raw JSON, which would hide it
+    report = body["report_html"]
+    assert str(scratch) not in report
+    assert "metacheck-package-" not in report
     assert list(scratch.iterdir()) == []
 
 
