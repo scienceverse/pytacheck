@@ -234,6 +234,25 @@ differences:
       all_urls lists the paper's links (with their visible text) and the plain-text URLs that
       are not links, drops dotted names that are not URLs (pwr.t.test, Soc.Lond), and adds
       the link_text, url, domain and source columns
+  # open_practices on bibr's data availability statement (D83) ------------------
+  - module: open_practices
+    input: "*"
+    field: summary_table
+    match: values
+    kind: deliberate
+    ref: D83
+    reason: >-
+      the summary table has the no_data column (the data availability statement says there
+      are no data to share)
+  - module: open_practices
+    input: bibr12/full.json
+    field: [traffic_light, summary_text, summary_table.*, table]
+    match: values
+    kind: deliberate
+    ref: D83
+    reason: >-
+      the paper's data availability statement ('Data are available on OSF.') is only in
+      bibr's info table, not in the text: pytacheck reads it and finds shared data
 
 floors:
   - module: stat_p_exact

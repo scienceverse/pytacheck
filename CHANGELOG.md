@@ -7,6 +7,11 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: open_practices reads bibr's data availability statement
+
+- **Changed:** open_practices reads the data availability statement bibr extracts. A sentence of the statement that names neither code nor materials is a data statement without the word "data" (`They can be found at https://osf.io/abc.`), and a statement bibr kept outside the text (`info.data_availability`, from a JATS back-matter note) is searched too, as rows without a `text_id` (D83).
+- **Added:** the summary table's `no_data` column: the statement says there are no data to share ("not applicable", "no new data were created or analyzed", "did not generate any data"). Without shared data such a paper is no longer red: "No shared code detected; the paper states it has no data to share." is yellow, and green when code is shared; the data report says the statement reports no data. A paper list's summary text adds the number of papers that state they have no data.
+
 ### Added: author_check, a check of the authors' ORCIDs, affiliations and corresponding author
 
 - **Added:** the module `author_check` (pytacheck's own). It lists each author bibr extracted with their ORCID and whether its ISO 7064 check digit is valid, whether they are the corresponding author, their e-mail address, their affiliations (and how many bibr matched to ROR) and their number of CRediT roles. The light is yellow when a person has no ORCID or no affiliation, an ORCID has an invalid check digit, or no corresponding author is marked; a group author ("The Europe PMC Consortium") needs no ORCID, and affiliations that name no author (older exports) are not judged.
