@@ -151,7 +151,17 @@ def test_the_preset_choice_is_hidden_without_installed_presets() -> None:
 def test_the_demo_button_runs_the_ticked_checks(config: Path) -> None:
     request = SimpleNamespace(session_hash="p1")
     page = _handlers()["on_demo"](
-        False, False, "grobid", "", False, ["author_check"], "web", request, lambda *_a, **_k: None
+        False,
+        False,
+        "grobid",
+        "",
+        False,
+        ["author_check"],
+        "web",
+        "datapackage::default",
+        True,
+        request,
+        lambda *_a, **_k: None,
     )
     assert "Ran 1 check on" in page[1]
     assert page[2].data["Check"].tolist() == ["Author Information"]

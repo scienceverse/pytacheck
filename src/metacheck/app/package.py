@@ -9,16 +9,24 @@ this computer, and no check looks anything up online. The one download is the lo
 classifier's model (about 840 MB, once), which is on by default and needs the ``concepts``
 extra.
 
-Only the local app offers this. A folder is named by a path on the computer that runs the
-app, so a shared server never builds the page. The page reads a folder only inside the
-person's home folder, or inside a folder named in ``METACHECK_APP_ROOTS``: another program on
-this computer that holds the app's token cookie could otherwise ask it to read any folder
-and return the README (see :func:`resolve_source` and ``security.py``).
+A package is named in one of four ways: an archive that was uploaded, the link of a public
+repository (GitHub, GitLab, OSF or Zenodo; the app downloads it), or, in the local app only,
+the path of a folder. :func:`classify_entry` decides which of them the paper page's one input
+box was given, and which of them is a paper instead. A folder is named by a path on the
+computer that runs the app, so a shared server never accepts one. The local app reads a folder
+only inside the person's home folder, or inside a folder named in ``METACHECK_APP_ROOTS``:
+another program on this computer that holds the app's token cookie could otherwise ask it to
+read any folder and return the README (see :func:`resolve_source` and ``security.py``).
+
+What a package may be is limited (:class:`Limits`), tighter on a shared server: the archive is
+unpacked under limits on bytes, files, depth and compression ratio, and a link is fetched only
+from the hosts the library knows, without any token of the server (``datapackage/_remote.py``).
 """
 
 from __future__ import annotations
 
 import os
+import re
 import time
 import warnings
 from dataclasses import dataclass
@@ -26,31 +34,52 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from metacheck._env import env_get, env_name
-from metacheck.app.run import _RUN_LOCK, Progress, UserError, _plain, protect, report_filename
+from metacheck.app.run import (
+    _RUN_LOCK,
+    LIGHTS,
+    Progress,
+    Row,
+    UserError,
+    _plain,
+    protect,
+    report_filename,
+)
 
 if TYPE_CHECKING:
     import pandas as pd
 
 __all__ = [
+    "ARCHIVE",
     "BIGGER_THAN_UPLOAD",
     "CHECKLIST_COLUMNS",
     "CHECK_COLUMNS",
+    "HOSTED",
+    "LINK",
+    "LOCAL",
     "MAX_FILES",
     "MAX_UNPACKED_BYTES",
     "NO_CLASSIFIER",
+    "PAPER",
     "ROOTS_ENV",
     "UPLOAD_LIMIT",
+    "Entry",
+    "Limits",
     "PackageAnalysis",
     "allowed_roots",
+    "box_parts",
     "check_package_source",
     "checklist_table",
     "checks_table",
     "classifier_installed",
+    "classify_entry",
     "counts_line",
     "package_name",
     "package_presets",
+    "resolve_entry",
+    "resolve_link",
     "resolve_source",
     "status_light",
+    "valid_preset",
 ]
 
 #: Limits for a zip or tar the person uploads, lower than the library's (20 GB, 200,000
@@ -62,6 +91,55 @@ MAX_FILES = 100_000
 #: what the local app accepts as an upload (the shared server keeps ``MOUNT_KWARGS``' 50 MB)
 UPLOAD_LIMIT = "1gb"
 BIGGER_THAN_UPLOAD = "A zip can be up to 1 GB. For a bigger package, give its folder instead."
+
+
+@dataclass(frozen=True)
+class Limits:
+    """What a package may be, and how a link to one may be fetched, on one kind of server."""
+
+    download: int  # bytes of the archive a link leads to
+    download_seconds: float  # how long that download may take
+    unpacked: int  # bytes an archive may unpack to
+    files: int  # files (and folders) an archive may hold
+    ratio: float  # how many times its own size an archive may grow, past a floor
+    depth: int  # how deep the folders may go
+    credentials: bool  # whether tokens on this computer may be sent to the host of a link
+
+    def kwargs(self) -> dict[str, Any]:
+        """The limits as the arguments of :func:`metacheck.datapackage.report_package`."""
+        return {
+            "max_download": self.download,
+            "download_timeout": self.download_seconds,
+            "max_bytes": self.unpacked,
+            "max_files": self.files,
+            "max_ratio": self.ratio,
+            "max_depth": self.depth,
+            "credentials": self.credentials,
+        }
+
+
+#: the local app: the person's own computer and connection, and their own tokens for private
+#: repositories they can read
+LOCAL = Limits(
+    download=5 * 1024**3,
+    download_seconds=900.0,
+    unpacked=MAX_UNPACKED_BYTES,
+    files=MAX_FILES,
+    ratio=250.0,
+    depth=40,
+    credentials=True,
+)
+#: a shared server: anyone with a token can upload an archive or name a link, so less may be
+#: fetched and unpacked, and the server's own tokens are never used for what a visitor named
+HOSTED = Limits(
+    download=50 * 1024**2,
+    download_seconds=300.0,
+    unpacked=1024**3,
+    files=20_000,
+    ratio=100.0,
+    depth=20,
+    credentials=False,
+)
 NO_SOURCE_FOLDER = "Type the path of the package's folder first."
 NO_SOURCE_ZIP = "Upload a zip of the package first, or use a folder."
 NOT_A_FOLDER = (
@@ -73,6 +151,28 @@ EXPIRED = "Your upload is no longer on the server. Upload the zip again."
 BAD_ARCHIVE = "This file is not a zip or tar archive. Upload a zip, or give the package's folder."
 FAILED = "Something went wrong while checking this package."
 NO_CHECKS = "This preset runs no checks on a package."
+NOTHING_GIVEN = (
+    "Upload a paper or an archive of a data package, or paste the link of a repository on "
+    "GitHub, GitLab, OSF or Zenodo. You can also try the demo paper."
+)
+NOTHING_GIVEN_LOCAL = (
+    "Upload a paper or an archive of a data package, paste the link of a repository on "
+    "GitHub, GitLab, OSF or Zenodo, or type the path of a package's folder. "
+    "You can also try the demo paper."
+)
+TOO_LONG = "That is too long to be a link or the path of a folder."
+#: the longest text the box may hold: a link or a path
+MAX_TEXT = 2000
+BOTH_GIVEN = "Give a file or a link, not both. Remove one of them."
+ONE_FILE = "Give one file at a time."
+BAD_FILE = (
+    "This file type is not supported. Upload a paper (a PDF, a GROBID XML file or a bibr JSON "
+    "file) or a zip or tar archive of a data package."
+)
+NOT_A_LINK = (
+    "That is not a link this server can check. Paste the link of a public repository on "
+    "GitHub, GitLab, OSF or Zenodo, or upload a paper or an archive."
+)
 #: What the page says (as Markdown) when the classifier is asked for and the ``concepts`` extra
 #: is missing.
 NO_CLASSIFIER = (
@@ -81,10 +181,17 @@ NO_CLASSIFIER = (
     "Its model, about 840 MB, is downloaded the first time it is used."
 )
 
-#: The two ways to name a package (the page's choice).
+#: The ways to name a package (the package page's choice), and what the paper page's box can hold.
 FOLDER = "folder"
 ZIP = "zip"
-SOURCES = [("A folder on this computer", FOLDER), ("A zip file", ZIP)]
+LINK = "link"
+SOURCES = [
+    ("A folder on this computer", FOLDER),
+    ("A zip file", ZIP),
+    ("The link of a repository", LINK),
+]
+PAPER = "paper"
+ARCHIVE = "archive"
 
 CHECK_COLUMNS = ["Check", "Status", "Result"]
 CHECKLIST_COLUMNS = ["Check", "Item", "Status", "Detail"]
@@ -124,13 +231,14 @@ def status_light(word: str) -> str | None:
 # -- what to check -----------------------------------------------------------------------
 
 
-def package_presets() -> list[tuple[str, str]]:
+def package_presets(hosted: bool = False) -> list[tuple[str, str]]:
     """``(label, ref)`` of the presets that check a data package, for the page's choice.
 
     These are the presets of every installed pack and of the person's config whose modules
     include a check of the ``datapackage`` pack (``datapackage::default`` and any preset
     that extends it), found through the pack registry. A preset for papers is not offered.
-    ``datapackage::default`` comes first.
+    ``datapackage::default`` comes first. A shared server (``hosted``) offers only the presets
+    made of its own checks, as for papers: a pack's code is run on the person's computer only.
     """
     from metacheck.datapackage import DEFAULT_PRESET
     from metacheck.module import ModuleError
@@ -144,11 +252,23 @@ def package_presets() -> list[tuple[str, str]]:
             modules = [str(m) for m, _ in expand(ref)]
         except ModuleError:
             continue  # a preset that cannot run is not offered
-        if any(m.startswith("datapackage::") for m in modules):
-            text = str(description) if description == description and description else ""
-            found.append((f"{ref}: {text}" if text else ref, ref))
+        if not any(m.startswith("datapackage::") for m in modules):
+            continue
+        if hosted and not all(m.startswith(("datapackage::", "metacheck::")) for m in modules):
+            continue
+        text = str(description) if description == description and description else ""
+        found.append((f"{ref}: {text}" if text else ref, ref))
     found.sort(key=lambda item: item[1] != DEFAULT_PRESET)
     return found
+
+
+def valid_preset(ref: str | None, hosted: bool = False) -> str:
+    """*ref* if the page offers it for a package, else the first preset it offers: the value
+    comes from the browser, which may send anything."""
+    from metacheck.datapackage import DEFAULT_PRESET
+
+    refs = [r for _, r in package_presets(hosted)]
+    return ref if ref in refs else (refs[0] if refs else DEFAULT_PRESET)
 
 
 # -- finding the package -----------------------------------------------------------------
@@ -230,6 +350,118 @@ def resolve_source(kind: str, folder: str | None, upload: str | None) -> Path:
     if not path.is_dir():
         raise UserError(NOT_A_FOLDER)
     return path
+
+
+NO_SOURCE_LINK = "Type the link of the repository first."
+
+
+def resolve_link(text: str | None) -> str:
+    """The link to fetch, as typed (without quotes and spaces around it), once it is read as
+    the link of a repository this app can fetch from.
+
+    Raises :class:`~metacheck.app.run.UserError` with what is wrong with it, or when it is empty.
+    """
+    from metacheck.datapackage import PackageError, parse_link
+
+    link = _clean_path(text or "")
+    if not link:
+        raise UserError(NO_SOURCE_LINK)
+    try:
+        parse_link(link)
+    except PackageError as exc:
+        raise UserError(str(exc)) from exc
+    return link
+
+
+def resolve_entry(entry: Entry) -> str | Path:
+    """The package to check for what the paper page's box held: the archive's path (the app's
+    own file), the link, or the folder (inside the allowed places, as for :func:`resolve_source`)."""
+    if entry.kind == LINK:
+        return resolve_link(entry.value)
+    if entry.kind == ARCHIVE:
+        return resolve_source(ZIP, None, entry.value)
+    return resolve_source(FOLDER, entry.value, None)
+
+
+# -- what the one input box was given ------------------------------------------------------
+
+#: what a paper's file ends with (the paper page's three formats)
+PAPER_SUFFIXES = (".pdf", ".xml", ".json")
+#: a link typed without its scheme: the hosts the library knows, or a DOI
+_LINKISH = re.compile(
+    r"(?:www\.)?(?:github\.com|gitlab\.com|osf\.io|zenodo\.org|doi\.org|dx\.doi\.org)/"
+    r"|(?:doi:\s*)?10\.\d{4,9}/",
+    re.IGNORECASE,
+)
+_SCHEME = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*://")
+
+
+@dataclass(frozen=True)
+class Entry:
+    """What the paper page's box holds: ``kind`` is ``PAPER``, ``ARCHIVE``, ``LINK`` or ``FOLDER``,
+    and ``value`` the file's path, the link or the folder's path."""
+
+    kind: str
+    value: str
+
+
+def box_parts(box: Any) -> tuple[str, list[str]]:
+    """The text and the file paths of the box's value (a string is a text, nothing a file)."""
+    if box is None:
+        return "", []
+    if isinstance(box, str):
+        return box, []
+    text = box.get("text") if isinstance(box, dict) else None
+    files = box.get("files") if isinstance(box, dict) else None
+    paths: list[str] = []
+    for item in files or []:
+        path = item.get("path") if isinstance(item, dict) else item
+        if path:
+            paths.append(str(path))
+    return text if isinstance(text, str) else "", paths
+
+
+def classify_entry(box: Any, *, hosted: bool = False) -> Entry:
+    """Decide what the page's one input box was given: a paper, an archive of a data package,
+    the link of a repository or (the local app only) the path of a folder.
+
+    *box* is the value of the box: ``{"text": ..., "files": [...]}``. A file is told by its
+    ending (a zip is also what a spreadsheet is, so the contents say nothing); a text by its
+    shape. A link is read here already, so that a wrong one is answered before the run is
+    queued, and a link that is not understood is never taken for a folder.
+
+    Raises :class:`~metacheck.app.run.UserError`, with a message for the person, when the box is
+    empty, holds a file and a text, a file of another kind, or on a shared server a text
+    that is no link.
+    """
+    from metacheck.datapackage import ARCHIVE_SUFFIXES, PackageError, is_link, parse_link
+
+    text, files = box_parts(box)
+    text = _clean_path(text)
+    if len(files) > 1:
+        raise UserError(ONE_FILE)
+    if files:
+        if text:
+            raise UserError(BOTH_GIVEN)
+        low = files[0].lower()
+        if low.endswith(PAPER_SUFFIXES):
+            return Entry(PAPER, files[0])
+        if low.endswith(tuple(ARCHIVE_SUFFIXES)):
+            return Entry(ARCHIVE, files[0])
+        raise UserError(BAD_FILE)
+    if not text:
+        raise UserError(NOTHING_GIVEN if hosted else NOTHING_GIVEN_LOCAL)
+    if len(text) > MAX_TEXT:
+        raise UserError(TOO_LONG)
+    if is_link(text) or _SCHEME.match(text) or _LINKISH.match(text):
+        try:
+            parse_link(text)
+        except PackageError as exc:
+            raise UserError(str(exc)) from exc
+        return Entry(LINK, text)
+    if hosted:
+        raise UserError(NOT_A_LINK)
+    return Entry(FOLDER, text)
 
 
 def classifier_installed() -> bool:
@@ -321,12 +553,19 @@ class PackageAnalysis:
     report_path: Path
     seconds: float
     note: str = ""  # something the person should know about this run; empty if nothing
+    rows: tuple[Row, ...] = ()  # one row per check, as the paper page's table shows them
 
 
 def package_name(source: str | os.PathLike[str]) -> str:
-    """A name for the package: the folder's, or the archive's name without its ending."""
-    from metacheck.datapackage import ARCHIVE_SUFFIXES
+    """A name for the package: the folder's, the archive's name without its ending, or the
+    repository's (for a link)."""
+    from metacheck.datapackage import ARCHIVE_SUFFIXES, PackageError, is_link, parse_link
 
+    if is_link(source):
+        try:
+            return parse_link(str(source)).name
+        except PackageError:
+            return "package"
     path = Path(source)
     name = path.name or path.resolve().name
     low = name.lower()
@@ -337,6 +576,17 @@ def package_name(source: str | os.PathLike[str]) -> str:
     return name or "package"
 
 
+def _rows(outputs: list[Any]) -> tuple[Row, ...]:
+    """The checks as the paper page's table has them: the traffic light, then the summary."""
+    rows = []
+    for out in outputs:
+        light = LIGHTS.get(str(out.traffic_light), str(out.traffic_light).capitalize())
+        text = _result_text(out)
+        title = str(out.title or "")
+        rows.append(Row(title, title, "Data package", f"{light}: {text}" if text else light))
+    return tuple(rows)
+
+
 def check_package_source(
     source: str | os.PathLike[str],
     preset: str,
@@ -344,14 +594,19 @@ def check_package_source(
     report_dir: Path,
     local_classifier: bool = True,
     progress: Progress | None = None,
-    max_bytes: int = MAX_UNPACKED_BYTES,
-    max_files: int = MAX_FILES,
+    limits: Limits = LOCAL,
+    max_bytes: int | None = None,
+    max_files: int | None = None,
 ) -> PackageAnalysis:
     """Run *preset* on the data package at *source* and write its report into *report_dir*.
 
-    *source* is a folder, or a zip or tar archive that is unpacked to a private folder
-    for the run (members that would leave it, links and device files are skipped; more
-    than *max_files* members or *max_bytes* unpacked is refused). ``local_classifier=True``
+    *source* is a folder, a zip or tar archive that is unpacked to a private folder for the run
+    (members that would leave it, links and device files are skipped), or the link of a
+    repository, which is downloaded first. *limits* say how much may be downloaded and
+    unpacked (an archive with more than ``limits.files`` members, or unpacking to more than
+    ``limits.unpacked`` bytes or ``limits.ratio`` times its size, is refused), and whether a
+    token on this computer may be sent to the host of a link; *max_bytes* and *max_files*
+    replace two of them. ``local_classifier=True``
     (the default, as for ``metacheck package``) leaves the concepts of the data columns to
     ``data_check``'s own default, its local classifier, which downloads a model of about
     840 MB the first time. Without the ``concepts`` extra the concepts come from rules only
@@ -362,30 +617,35 @@ def check_package_source(
     Content-Security-Policy as the paper page's report. Raises
     :class:`~metacheck.app.run.UserError` for a package that cannot be opened.
     """
-    from metacheck.datapackage import PackageError, report_package
+    from metacheck.datapackage import PackageError, is_link, report_package
     from metacheck.module import ModuleError
 
     tick = progress or (lambda _fraction, _text: None)
     start = time.perf_counter()
-    source = Path(source)
-    name = package_name(source)
+    path: str | Path = str(source).strip() if is_link(source) else Path(source)
+    name = package_name(path)
     report_dir.mkdir(parents=True, exist_ok=True)
     target = report_dir / report_filename(name)
-    tick(0.1, "Checking the package")
+    tick(0.02, "Fetching the repository" if isinstance(path, str) else "Checking the package")
     use_classifier = local_classifier and classifier_installed()
     note = NO_CLASSIFIER if local_classifier and not use_classifier else ""
     args = None if use_classifier else {"data_check": {"concepts": "rules"}}
+    given = limits.kwargs()
+    if max_bytes is not None:
+        given["max_bytes"] = max_bytes
+    if max_files is not None:
+        given["max_files"] = max_files
     with _RUN_LOCK, warnings.catch_warnings():
         warnings.simplefilter("ignore")
         try:
             report = report_package(
-                source,
+                path,
                 target,
                 "html",
                 preset=preset,
                 args=args,
-                max_bytes=max_bytes,
-                max_files=max_files,
+                progress=lambda fraction, text: tick(0.02 + 0.28 * fraction, text),
+                **given,
             )
         except (PackageError, ValueError, ModuleError) as exc:
             raise UserError(str(exc)) from exc
@@ -409,4 +669,5 @@ def check_package_source(
         report_path=target,
         seconds=time.perf_counter() - start,
         note=note,
+        rows=_rows(outputs),
     )

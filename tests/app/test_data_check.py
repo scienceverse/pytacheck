@@ -190,7 +190,7 @@ def _handlers() -> dict[str, Any]:
 def _demo(fns: dict[str, Any], session: str, data: bool = True) -> tuple[Any, ...]:
     request = SimpleNamespace(session_hash=session)
     return fns["on_demo"](
-        False, data, "grobid", "", False, None, "", request, lambda *_a, **_k: None
+        False, data, "grobid", "", False, None, "", "", True, request, lambda *_a, **_k: None
     )
 
 
@@ -204,18 +204,18 @@ def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
 
     fake.body = body
     fns = _handlers()
-    results, summary, table, frame, _download, status, stop = _demo(fns, "s1")
+    results, summary, table, _checklist, frame, _download, status, stop = _demo(fns, "s1")
     assert results["visible"] is True and stop["visible"] is True
     assert "Ran 19 checks" in summary and len(table.data) == 19
     assert "The other results are ready" in status and "still running" in status
     assert "Data Check" not in frame
     steps = fns["follow"](SimpleNamespace(session_hash="s1"))
     later = next(steps)  # the status line is kept alive while it runs
-    assert "still running" in later[5]
-    assert ui.plain_markdown("Downloading https://osf.io/pngda as zip (25 files)...") in later[5]
+    assert "still running" in later[6]
+    assert ui.plain_markdown("Downloading https://osf.io/pngda as zip (25 files)...") in later[6]
     release.set()
     final = list(steps)[-1]
-    _results, summary, table, frame, _download, status, stop = final
+    _results, summary, table, _checklist, frame, _download, status, stop = final
     assert table.data.iloc[-1, 0] == "Data Check" and table.data.iloc[-1, 2].startswith("Green")
     assert len(table.data) == 20 and "Ran 20 checks" in summary
     assert "The data check found 3 files." in frame
@@ -231,9 +231,9 @@ def test_the_stop_button_keeps_the_fast_results(fake: Fake) -> None:
     fake.body = body
     fns = _handlers()
     first = _demo(fns, "s2")
-    assert first[6]["visible"] is True
+    assert first[7]["visible"] is True
     steps = fns["follow"](SimpleNamespace(session_hash="s2"))
-    assert "still running" in next(steps)[5]
+    assert "still running" in next(steps)[6]
     status, stop = fns["on_stop"](SimpleNamespace(session_hash="s2"))
     assert status == ui.STOPPED and stop["visible"] is False
     assert list(steps) == []  # nothing replaces the fast results or the status
@@ -247,7 +247,7 @@ def test_a_failed_data_check_says_so_and_keeps_the_page(fake: Fake) -> None:
     fns = _handlers()
     _demo(fns, "s3")
     steps = list(fns["follow"](SimpleNamespace(session_hash="s3")))
-    *_, table, _frame, _download, status, _stop_button = steps[-1]
+    *_, table, _checklist, _frame, _download, status, _stop_button = steps[-1]
     assert table.data.iloc[-1, 2] == "Failed: no route"
     assert status == ui.DATA_FAILED
 
@@ -267,12 +267,12 @@ def test_the_same_button_works_again_and_a_new_check_ends_the_old_one(fake: Fake
     fns = _handlers()
     _demo(fns, "s4")
     old = fns["follow"](SimpleNamespace(session_hash="s4"))
-    assert "still running" in next(old)[5]
+    assert "still running" in next(old)[6]
     begun = time.monotonic()
     _demo(fns, "s4", data=False)  # the click returned before, so it can be pressed again
     assert time.monotonic() - begun < 30
     assert list(old) == []  # the old check is over and shows nothing more
-    assert fns["follow"](SimpleNamespace(session_hash="s4")).__next__()[5] is not None
+    assert fns["follow"](SimpleNamespace(session_hash="s4")).__next__()[6] is not None
 
 
 def test_status_text_from_outside_is_shown_as_text() -> None:

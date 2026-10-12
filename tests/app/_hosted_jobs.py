@@ -9,6 +9,8 @@ where it imports this module).
 
 from __future__ import annotations
 
+import dataclasses
+import json
 import os
 import time
 import uuid
@@ -16,6 +18,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
+from metacheck.app import package as pk
 from metacheck.app import ui
 from metacheck.app.run import Analysis, Row
 
@@ -103,3 +106,25 @@ def run_as(kind: str, *args: Any) -> Any:
     """The real hosted run, with ``begin`` replaced by the stand-in ``kind``."""
     ui.begin = BEGINS[kind]  # type: ignore[assignment]
     return REAL(*args)
+
+
+def sleep_package(*_a: Any, **_k: Any) -> Any:
+    """A data package check that never ends within the time limit."""
+    time.sleep(30)
+
+
+def echo_package(
+    source: str, preset: str, _workdir: str, limits: pk.Limits, _progress: Any
+) -> pk.PackageAnalysis:
+    """A data package check that says in its note what it was given."""
+    note = json.dumps({"source": source, "preset": preset, "limits": dataclasses.asdict(limits)})
+    return pk.PackageAnalysis(
+        name="echo",
+        preset=preset,
+        checks=pk.checks_table([]),
+        checklist=pk.checklist_table([]),
+        html="<p>x</p>",
+        report_path=Path("x_report.html"),
+        seconds=0.1,
+        note=note,
+    )

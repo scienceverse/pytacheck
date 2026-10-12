@@ -1,8 +1,8 @@
 """Run the checks on a data package, and write a report on it.
 
-:func:`check_package` opens a package (a folder, or a zip or tar archive of one),
-runs a selection of modules on it and returns their outputs.
-:func:`report_package` does the same and writes the report.
+:func:`check_package` opens a package (a folder, a zip or tar archive of one, or the link of a
+public repository, which is downloaded first), runs a selection of modules on it and returns
+their outputs. :func:`report_package` does the same and writes the report.
 Both run on this machine: an archive is extracted to a private folder
 that is removed when the run is over, and every module that takes
 ``local_path`` and ``local_only`` is given the package's folder and
@@ -25,11 +25,12 @@ import inspect
 import os
 import shutil
 import tempfile
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
-from metacheck.datapackage._open import OpenedPackage, open_package
+from metacheck.datapackage._open import OpenedPackage, PackageError, open_package
+from metacheck.datapackage._remote import is_link, open_link
 from metacheck.datapackage._session import using_package
 
 if TYPE_CHECKING:
@@ -89,10 +90,20 @@ def check_package(
     offline: bool | None = None,
     max_bytes: int | None = None,
     max_files: int | None = None,
+    max_ratio: float | None = None,
+    max_depth: int | None = None,
+    max_download: int | None = None,
+    download_timeout: float | None = None,
+    credentials: bool = True,
+    progress: Callable[[float, str], None] | None = None,
 ) -> ModuleChain:
     """Run the checks on the data package at *path*.
 
-    *path* is the package's folder, or a zip or tar archive of it. Raises
+    *path* is the package's folder, or a zip or tar archive of it, or the link of a public
+    repository on GitHub, GitLab, OSF or Zenodo (see :func:`~metacheck.datapackage.parse_link`),
+    which is downloaded first (at most *max_download* bytes, default 5 GB, in *download_timeout*
+    seconds, default 15 minutes; *credentials=False* sends no token of this computer to the
+    host; *progress* is called with a fraction and a text while it downloads). Raises
     :class:`~metacheck.datapackage.PackageError` for a path that cannot be
     opened. Which modules run: see :func:`package_selection`. Every selected
     module whose function takes ``local_path`` and ``local_only`` gets the
@@ -103,8 +114,8 @@ def check_package(
     returns: an archive's temporary folder is removed before. The run record
     (``chain.run_record``, also written to *record*) names the package, and the
     ``local_path`` of each module is the path that was given, not the temporary
-    folder. *max_bytes* and *max_files* lower the limits on an extracted archive
-    (see :func:`~metacheck.datapackage.open_package`); a folder has none.
+    folder. *max_bytes*, *max_files*, *max_ratio* and *max_depth* change the limits on an
+    extracted archive (see :func:`~metacheck.datapackage.open_package`); a folder has none.
 
     A module can hand back files (the README draft of ``package_readme`` is
     one): ``chain.files`` is ``{file name: text or bytes}`` for all of them, and
@@ -114,8 +125,15 @@ def check_package(
     from metacheck.provenance import run_modules
 
     selection = package_selection(preset=preset, modules=modules, args=args, offline=offline)
+    _refuse_offline_link(path, selection)
     with (
-        open_package(path, **_limits(max_bytes, max_files)) as opened,
+        _open(
+            path,
+            _limits(max_bytes, max_files, max_ratio, max_depth),
+            {"max_download": max_download, "timeout": download_timeout},
+            credentials,
+            progress,
+        ) as opened,
         using_package(opened),
         _offline(selection),
     ):
@@ -140,6 +158,12 @@ def report_package(
     offline: bool | None = None,
     max_bytes: int | None = None,
     max_files: int | None = None,
+    max_ratio: float | None = None,
+    max_depth: int | None = None,
+    max_download: int | None = None,
+    download_timeout: float | None = None,
+    credentials: bool = True,
+    progress: Callable[[float, str], None] | None = None,
 ) -> ReportOutput:
     """Run the checks on the data package at *path* and write a report.
 
@@ -151,7 +175,7 @@ def report_package(
     is not one of the files that are checked. Returns the report's module
     outputs (:class:`~metacheck.report.report.ReportOutput`, with the file's
     path in ``save_path``, and the files that modules hand back in ``files``).
-    *max_bytes* and *max_files* are as for :func:`check_package`.
+    The limits are as for :func:`check_package`.
     """
     from metacheck.module import run_session
     from metacheck.presets import label
@@ -161,8 +185,15 @@ def report_package(
     if fmt not in _OUTPUT_FORMATS:
         raise ValueError("The output_format must be either 'html', 'qmd' or 'md'.")
     selection = package_selection(preset=preset, modules=modules, args=args, offline=offline)
+    _refuse_offline_link(path, selection)
     with (
-        open_package(path, **_limits(max_bytes, max_files)) as opened,
+        _open(
+            path,
+            _limits(max_bytes, max_files, max_ratio, max_depth),
+            {"max_download": max_download, "timeout": download_timeout},
+            credentials,
+            progress,
+        ) as opened,
         using_package(opened),
         run_session(),
         _offline(selection),
@@ -199,9 +230,42 @@ def report_package(
 # -- helpers --------------------------------------------------------------------------
 
 
-def _limits(max_bytes: int | None, max_files: int | None) -> dict[str, int]:
+def _refuse_offline_link(path: str | os.PathLike[str], selection: Selection) -> None:
+    if selection.offline and is_link(path):
+        raise PackageError(
+            "A repository link has to be downloaded, which an offline run does not do."
+        )
+
+
+def _open(
+    path: str | os.PathLike[str],
+    limits: dict[str, Any],
+    download: dict[str, Any],
+    credentials: bool,
+    progress: Callable[[float, str], None] | None,
+) -> Any:
+    """``open_package`` for a folder or an archive, ``open_link`` for a repository link."""
+    if is_link(path):
+        fetch = {name: value for name, value in download.items() if value is not None}
+        return open_link(
+            str(path), credentials=credentials, progress=progress, **{**fetch, **limits}
+        )
+    return open_package(path, **limits)
+
+
+def _limits(
+    max_bytes: int | None,
+    max_files: int | None,
+    max_ratio: float | None,
+    max_depth: int | None,
+) -> dict[str, Any]:
     """The archive limits that were given; ``open_package`` has the defaults for the rest."""
-    given = {"max_bytes": max_bytes, "max_files": max_files}
+    given = {
+        "max_bytes": max_bytes,
+        "max_files": max_files,
+        "max_ratio": max_ratio,
+        "max_depth": max_depth,
+    }
     return {name: value for name, value in given.items() if value is not None}
 
 
@@ -290,7 +354,7 @@ def _record(outputs: Sequence[Any], selection: Selection, opened: OpenedPackage)
     from metacheck.provenance import RunRecord
 
     base = str(opened.base_dir)
-    source = os.path.abspath(os.path.expanduser(opened.source))
+    source = opened.source if opened.remote else os.path.abspath(os.path.expanduser(opened.source))
     for out in outputs:
         args = (getattr(out, "run_provenance", None) or {}).get("args")
         if isinstance(args, dict):

@@ -22,6 +22,8 @@ from metacheck.io.convert import SERVERS_URL
 BIBR = "https://bibr.example.test"
 OTHER = "https://other.example.test"
 KEY = "test-key-1234567890"
+#: the page's choice for a data package, which these tests never use
+PACKAGE_PRESET = "datapackage::default"
 FIXTURES = Path(__file__).resolve().parents[1] / "bibr12" / "fixtures"
 
 
@@ -435,7 +437,18 @@ def _handlers() -> dict[str, Any]:
 def _on_check(fns: dict[str, Any], path: Path, key: str, remember: bool) -> list[tuple[Any, ...]]:
     request = SimpleNamespace(session_hash="b1")
     step = fns["on_check"](
-        str(path), False, False, "bibr", key, remember, None, "", request, lambda *_a, **_k: None
+        {"text": "", "files": [str(path)]},
+        False,
+        False,
+        "bibr",
+        key,
+        remember,
+        None,
+        "",
+        PACKAGE_PRESET,
+        True,
+        request,
+        lambda *_a, **_k: None,
     )
     return [step]
 
@@ -535,7 +548,7 @@ def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_
     assert fns["on_reader"]("bibr")[3]["visible"] is False
     with pytest.raises(gr.Error, match="Enter your bibr key"):
         fns["on_check"](
-            str(_pdf(tmp_path)),
+            {"text": "", "files": [str(_pdf(tmp_path))]},
             False,
             False,
             "bibr",
@@ -543,12 +556,14 @@ def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_
             False,
             None,
             "",
+            PACKAGE_PRESET,
+            True,
             SimpleNamespace(session_hash="b2"),
             lambda *_a, **_k: None,
         )
     assert not server.requests
     step = fns["on_check"](
-        str(_pdf(tmp_path)),
+        {"text": "", "files": [str(_pdf(tmp_path))]},
         False,
         False,
         "bibr",
@@ -556,6 +571,8 @@ def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_
         True,  # asked to remember, but this server does not
         None,
         "",
+        PACKAGE_PRESET,
+        True,
         SimpleNamespace(session_hash="b2"),
         lambda *_a, **_k: None,
     )

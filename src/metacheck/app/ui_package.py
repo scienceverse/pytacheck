@@ -14,11 +14,14 @@ import gradio as gr
 from metacheck.app import package as pk
 from metacheck.app.run import UserError
 from metacheck.app.ui import (
+    CLASSIFIER_INFO,
+    CLASSIFIER_LABEL,
+    CLASSIFIER_MISSING_INFO,
     MAIN_PAGE_NAME,
     Sessions,
     _download_link,
-    _light_style,
-    plain_markdown,
+    coloured,
+    package_summary,
     report_frame,
 )
 
@@ -37,24 +40,15 @@ PAGE_PATH = "package"
 INTRO = (
     "Check the folder of data, code and documentation that comes with a paper before it is "
     "archived: junk files, file formats and names, the folder tree, the README and the parts a "
-    "package should have. Everything runs on this computer and nothing is uploaded. The one "
-    "download is the model of the local classifier (see below), the first time it is used."
+    "package should have. Everything runs on this computer and nothing is uploaded. The "
+    "downloads are the repository you give a link to, if you do, and the model of the local "
+    "classifier (see below), the first time it is used. The main page checks a package too: "
+    "give it the same archive or link next to a paper."
 )
 ABOUT = (
     "**Status.** *Fail* means the package does not meet a requirement, *Warning* that it could "
     "be better, *Manual* that a person has to decide, *Pass* that it meets it. A check that "
     "could not run says *Did not run*; the others still ran."
-)
-CLASSIFIER_LABEL = "Name the concept of each data column with the local classifier"
-#: the checkbox is ticked by default, as the classifier is the default of ``metacheck package``
-CLASSIFIER_INFO = (
-    "It needs the concepts extra, and its model (about 840 MB) is downloaded the first time. "
-    "Untick it to name the concepts by rules only, with no download."
-)
-#: the same, when the extra is not installed: the box can stay ticked, the run falls back
-CLASSIFIER_MISSING_INFO = (
-    "Not installed on this computer, so the concepts will come from rules only. To get it, "
-    'install the concepts extra: `pip install "metacheck[concepts]"`.'
 )
 PRESET_INFO = "Which checks to run. Presets from the packs you have installed are listed too."
 
@@ -63,18 +57,6 @@ def report_key(session: str) -> str:
     """The key of this session's package report folder, apart from the paper page's, so that
     a new report on one page does not remove the other page's file."""
     return f"{session}package"
-
-
-def coloured(frame: Any, column: str = "Status") -> Any:
-    """*frame* for a table, the cells of its status column coloured by their traffic light.
-
-    The word stays in the cell, so the colour is never the only signal. Colours are those
-    of the paper page's results.
-    """
-    return frame.style.apply(
-        lambda col: [_light_style(pk.status_light(str(cell)) or "") for cell in col],
-        subset=[column],
-    )
 
 
 def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | None = None) -> None:
@@ -86,6 +68,7 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
         kind: str,
         folder: str,
         upload: str | None,
+        link: str,
         preset: str,
         classifier: bool,
         request: gr.Request,
@@ -93,7 +76,11 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
     ) -> tuple[Any, ...]:
         key = report_key(request.session_hash or "")
         try:
-            source = pk.resolve_source(kind, folder, upload)
+            source = (
+                pk.resolve_link(link)
+                if kind == pk.LINK
+                else pk.resolve_source(kind, folder, upload)
+            )
             analysis = pk.check_package_source(
                 source,
                 preset,
@@ -105,15 +92,9 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
             raise gr.Error(str(exc), print_exception=False) from exc
         except Exception as exc:
             raise gr.Error(pk.FAILED) from exc
-        summary = (
-            f"Checked **{plain_markdown(analysis.name)}** in {analysis.seconds:.1f} s: "
-            f"{pk.counts_line(analysis.checklist)}."
-        )
-        if analysis.note:
-            summary += f"\n\n{analysis.note}"  # our own text, not the package's
         return (
             gr.update(visible=True),
-            summary,
+            package_summary(analysis),
             coloured(analysis.checks),
             coloured(analysis.checklist),
             _download_link(key, analysis.report_path),
@@ -121,7 +102,11 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
         )
 
     def on_source(kind: str) -> tuple[Any, ...]:
-        return gr.update(visible=kind == pk.FOLDER), gr.update(visible=kind == pk.ZIP)
+        return (
+            gr.update(visible=kind == pk.FOLDER),
+            gr.update(visible=kind == pk.ZIP),
+            gr.update(visible=kind == pk.LINK),
+        )
 
     with app.route(PAGE_NAME, PAGE_PATH):
         gr.Navbar(main_page_name=MAIN_PAGE_NAME)
@@ -141,6 +126,14 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
             label="Zip of the package",
             file_types=[".zip", ".tar", ".gz", ".tgz", ".bz2", ".xz"],
             type="filepath",
+            visible=False,
+        )
+        link = gr.Textbox(
+            label="Repository link",
+            info="The link of a public repository on GitHub, GitLab, OSF or Zenodo, or a "
+            "Zenodo DOI. It is downloaded to this computer (a token of yours for the host is "
+            "used if you have set one) and removed after the run.",
+            placeholder="https://github.com/owner/repository",
             visible=False,
         )
         gr.Markdown(pk.BIGGER_THAN_UPLOAD)
@@ -186,10 +179,10 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
         with gr.Accordion("About these checks", open=False):
             gr.Markdown(ABOUT)
 
-        kind.change(on_source, kind, [folder, upload], api_visibility="private")
+        kind.change(on_source, kind, [folder, upload, link], api_visibility="private")
         check.click(
             on_check_package,
-            [kind, folder, upload, preset, classifier],
+            [kind, folder, upload, link, preset, classifier],
             [results, summary, checks, checklist, download, frame],
             api_visibility="private",
         )

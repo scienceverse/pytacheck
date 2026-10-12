@@ -99,10 +99,10 @@ def test_report_sandbox_is_narrow() -> None:
 
 def test_text_of_the_page(blocks: gr.Blocks) -> None:
     labels = {getattr(b, "label", None) for b in blocks.blocks.values()}
-    assert "Your paper (PDF, GROBID XML or bibr JSON)" in labels
+    assert "Your paper, data package or repository link" in labels
     assert "Also run the online checks (slower: they look things up on the web)" in labels
     values = {str(getattr(b, "value", None)) for b in blocks.blocks.values()}
-    assert "Check my paper" in values
+    assert "Check" in values
     assert "Try the demo paper" in values
     assert ui.PRIVACY.startswith("PDFs are turned into text by the public GROBID server")
     assert os.environ.get("GRADIO_ANALYTICS_ENABLED") in (None, "False")

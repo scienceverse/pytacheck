@@ -74,9 +74,11 @@ To open the app with a preset already chosen, add `--preset NAME` to the install
 
 ## Check a data package
 
-The app has a second page, "Check a data package" (the link at the top right of the page). Give it the folder of data, code and documentation that comes with a paper, or a zip of it, and it checks the files, the folder tree and the README, and shows a checklist. It runs on your computer only: nothing is uploaded. A shared server does not have this page. See [DATAPACKAGE.md](DATAPACKAGE.md) for what is checked.
+The data package of a paper, the folder of data, code and documentation that comes with it, is checked too. Drop its zip into the same box as the paper, or type the link of its public repository on GitHub, GitLab, OSF or Zenodo there: the page checks the files, the folder tree and the README, and shows a checklist. The app downloads a repository link to your computer, and nothing else leaves it. A shared server takes a zip of up to 50 MB or a link too, and deletes the package after the run. See [DATAPACKAGE.md](DATAPACKAGE.md) for what is checked and what a link may do.
 
-The folder must be inside your home folder. For a package somewhere else, upload it as a zip. The box "Name the concept of each data column with the local classifier" is ticked. The install above does not include the classifier, so the page then names the concepts by rules only, and says so under the results. [DATAPACKAGE.md](DATAPACKAGE.md#in-the-app) explains the classifier and how to allow other folders.
+The app also has a second page, "Check a data package" (the link at the top right of the page). It takes a folder, a zip or a link, and runs on your computer only. A shared server does not have this page.
+
+The folder must be inside your home folder. For a package somewhere else, upload it as a zip or give its link. The box "Name the concept of each data column with the local classifier" is ticked. The install above does not include the classifier, so the page then names the concepts by rules only, and says so under the results. [DATAPACKAGE.md](DATAPACKAGE.md#in-the-app) explains the classifier and how to allow other folders.
 
 To open the app on that page, run the install line with `--steward` (`sh -s -- --steward`) or, on Windows, with `METACHECK_STEWARD=1` set first (the same way as for the uninstall line). Or run `metacheck-app --page package`.
 

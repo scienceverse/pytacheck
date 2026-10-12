@@ -182,12 +182,13 @@ def click_through(page: Page, url: str, paper: Path, watch: Watch) -> None:
     check_results(page, "demo paper")
 
     watch.go(page.reload)  # a clean page, so the second table is the second run's
-    page.get_by_role("button", name="Check my paper").wait_for(timeout=60_000)
+    page.get_by_role("button", name="Check", exact=True).wait_for(timeout=60_000)
     untick_data_check(page)
-    block = page.locator(".block", has_text="Your paper (PDF, GROBID XML or bibr JSON)").last
+    block = page.locator(".block", has_text="Your paper, data package or repository link").last
     block.locator("input[type=file]").set_input_files(str(paper))
-    block.get_by_label(paper.name, exact=True).first.wait_for(timeout=30_000)
-    page.get_by_role("button", name="Check my paper").click()
+    # The box shows an uploaded file as a thumbnail with no name in the page: wait for that.
+    block.get_by_role("listitem", name="File thumbnail").first.wait_for(timeout=30_000)
+    page.get_by_role("button", name="Check", exact=True).click()
     check_results(page, "uploaded JSON")
 
 
