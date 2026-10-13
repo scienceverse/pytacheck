@@ -37,7 +37,7 @@ function Install-Metacheck {
     $ErrorActionPreference = 'Stop'
 
     # The commit that gets installed. Move it when the app moves.
-    $Ref = 'd651cdfb40c782a76f2661bc8b91541f4f0c24d8'
+    $Ref = '854f54954c5d75a02c46a1b1914203887ce458e4'
 
     $UvVersion = '0.12.20'
     $UvUrl = "https://github.com/astral-sh/uv/releases/download/$UvVersion"
