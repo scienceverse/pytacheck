@@ -7,6 +7,12 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Added: a TU/e data-manager preset and one-line commands
+
+- **Added:** `datapackage::tue`, a preset for TU/e data managers. It is the data package checks (`datapackage::default`) plus `metacheck::license_check`, which runs offline. It is listed on the "Check a data package" page, so it needs no install step of its own. The check list is one `pack.json` entry, so it is easy to change.
+- **Changed:** the installers' pinned commit (`REF` in `install.sh` and `$Ref` in `install.ps1`) moved to current `main`, so the default one-line install gets the code of the last merges.
+- **Added:** TU/e data managers install and open the app on that preset with one line (`--steward --preset datapackage::tue` on a Mac or Linux, `METACHECK_STEWARD` and `METACHECK_APP_PRESET` on Windows). The commands are in [docs/TRY.md](docs/TRY.md#for-tue-data-managers).
+
 ### Added: the app says what it is doing while it checks
 
 - **Added:** the paper page and the data package page of `metacheck-app` name the stage while a run goes on: reading the PDF, extracting it ("Extracting with bibr" or "Extracting with GROBID"), "Running check 3 of 19: <the check's title>", and building the report. For a repository link they also show the download (how much has arrived) and the unpacking. A shared server shows the same.
