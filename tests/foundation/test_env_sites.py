@@ -35,6 +35,7 @@ import pytest
 from metacheck import _env, utils
 from metacheck._env import ENV_VARS, env_names
 from metacheck._logging import get_logger
+from metacheck.datapackage._limits import setting
 
 
 @dataclass
@@ -684,6 +685,48 @@ SITES: dict[str, Site] = {
         read=lambda ctx: _hosted_with_hosts(ctx, "user_header", tokens=False, proxy=True),
         expect=lambda ctx, name: "X-Forwarded-User",
         spaces=lambda ctx: None,
+    ),
+    "PACKAGE_MAX_DOWNLOAD": Site(
+        value="2 MB",
+        other="",
+        read=lambda ctx: setting("PACKAGE_MAX_DOWNLOAD", 1234, "size"),
+        expect=lambda ctx, name: 2 * 1024**2,
+        spaces=lambda ctx: 1234,
+    ),
+    "PACKAGE_DOWNLOAD_SECONDS": Site(
+        value=" 30.5 ",
+        other="",
+        read=lambda ctx: setting("PACKAGE_DOWNLOAD_SECONDS", 12.5, "float"),
+        expect=lambda ctx, name: 30.5,
+        spaces=lambda ctx: 12.5,
+    ),
+    "PACKAGE_MAX_UNPACKED": Site(
+        value="3GB",
+        other="",
+        read=lambda ctx: setting("PACKAGE_MAX_UNPACKED", 1234, "size"),
+        expect=lambda ctx, name: 3 * 1024**3,
+        spaces=lambda ctx: 1234,
+    ),
+    "PACKAGE_MAX_FILES": Site(
+        value=" 7 ",
+        other="",
+        read=lambda ctx: setting("PACKAGE_MAX_FILES", 1234, "int"),
+        expect=lambda ctx, name: 7,
+        spaces=lambda ctx: 1234,
+    ),
+    "PACKAGE_MAX_RATIO": Site(
+        value="400",
+        other="",
+        read=lambda ctx: setting("PACKAGE_MAX_RATIO", 12.5, "float"),
+        expect=lambda ctx, name: 400.0,
+        spaces=lambda ctx: 12.5,
+    ),
+    "PACKAGE_MAX_DEPTH": Site(
+        value="9",
+        other="",
+        read=lambda ctx: setting("PACKAGE_MAX_DEPTH", 1234, "int"),
+        expect=lambda ctx, name: 9,
+        spaces=lambda ctx: 1234,
     ),
     "CONCEPTS": Site(
         value=" Cascade ",

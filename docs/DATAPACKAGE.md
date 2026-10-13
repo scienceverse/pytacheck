@@ -89,6 +89,28 @@ extra arguments for it, as in `report()`. Both also take `max_bytes` and `max_fi
 which lower the limits on an extracted archive (20 GB and 200,000 files otherwise);
 a folder has none.
 
+## Size limits
+
+Every limit on a package is a default that an environment variable can change. The
+command line and the library read the variables each time a package is opened, and the app
+reads them when it starts, so a process started with one set has it for the local app, the
+command line and the library alike. The hosted app has stricter defaults, and an operator
+raises them with the same variables.
+
+| Variable | Limit | Local default | Hosted default |
+|---|---|---|---|
+| `METACHECK_PACKAGE_MAX_DOWNLOAD` | bytes of a link's download | 5 GB | 50 MB |
+| `METACHECK_PACKAGE_DOWNLOAD_SECONDS` | seconds a download may take | 900 | 300 |
+| `METACHECK_PACKAGE_MAX_UNPACKED` | bytes an archive may unpack to | 5 GB | 1 GB |
+| `METACHECK_PACKAGE_MAX_FILES` | files and folders an archive may hold | 100,000 | 20,000 |
+| `METACHECK_PACKAGE_MAX_RATIO` | times its own size an archive may expand to (past 256 MB) | 250 | 100 |
+| `METACHECK_PACKAGE_MAX_DEPTH` | folders deep | 40 | 20 |
+
+Sizes take a unit (`512MB`, `20 GiB`, powers of 1024). A value that is not a positive
+number is ignored with a warning, and the default stays. Each variable is described in
+[`ENVIRONMENT.md`](ENVIRONMENT.md). A zip bomb is still refused when a limit is raised: the
+ratio and the unpacked size are checked while the archive is read, whatever they are set to.
+
 ## Repository links
 
 Instead of a folder or an archive, give the link of a public repository. It is
@@ -114,7 +136,7 @@ What a download may do is limited, whatever the link says:
   a private network, such as a cloud's metadata service) is not followed. A name is
   checked to resolve to public addresses only, unless an HTTPS proxy is configured for
   the computer, which then decides where connections go.
-* A download is stopped at 5 GB, or after 15 minutes, and a page that is returned in
+* A download is stopped at the download limit (5 GB, or 50 MB on the hosted app) or after its time limit (15 minutes, 5 on the hosted app), and a page that is returned in
   place of an archive is refused. Busy hosts (429 and 5xx answers) are asked again, up to
   three times.
 * On your own computer a token you have set for the host is sent to the host's API

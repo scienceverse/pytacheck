@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any, TypeVar, cast
 
 from metacheck._env import env_name
+from metacheck.datapackage._open import _size
 
 __all__ = [
     "DEFAULT_PORT",
@@ -28,6 +29,7 @@ __all__ = [
     "PACKAGE_NOTE",
     "TOO_SLOW",
     "TOO_SLOW_PACKAGE",
+    "UPLOAD_BYTES",
     "WAITING_FOR_PLACE",
     "HostedConfig",
     "HostedError",
@@ -35,6 +37,7 @@ __all__ = [
     "JobRunner",
     "data_link",
     "footer",
+    "package_note",
     "sweep",
 ]
 
@@ -62,11 +65,25 @@ HEADER_PATTERN = re.compile(r"[A-Za-z0-9-]+")
 
 REPO_URL = "https://github.com/scienceverse/pytacheck"
 HOSTED_NOTE = "Your paper is processed on this server and deleted when the report is ready."
-PACKAGE_NOTE = (
-    "A data package (an archive, or a repository that this server downloads from its host) "
-    "is processed on this server and deleted when the report is ready. "
-    "It can be up to 50 MB; for a bigger one, use the pytacheck command on your own computer."
-)
+#: what a shared server takes as an upload (``MOUNT_KWARGS``' ``max_file_size``)
+UPLOAD_BYTES = 50 * 1024**2
+
+
+def package_note(download: int = UPLOAD_BYTES) -> str:
+    """What the page says about a data package on a shared server. *download* is the limit on
+    a repository's download (``METACHECK_PACKAGE_MAX_DOWNLOAD``); an upload stays at 50 MB."""
+    if download == UPLOAD_BYTES:
+        limit = "It can be up to 50 MB"
+    else:
+        limit = f"An archive can be up to 50 MB, and a repository up to {_size(download)}"
+    return (
+        "A data package (an archive, or a repository that this server downloads from its host) "
+        "is processed on this server and deleted when the report is ready. "
+        f"{limit}; for a bigger one, use the pytacheck command on your own computer."
+    )
+
+
+PACKAGE_NOTE = package_note()
 TOO_SLOW = (
     "Checking this paper took too long, so it was stopped. "
     "Try a shorter paper, or try again in a few minutes."
