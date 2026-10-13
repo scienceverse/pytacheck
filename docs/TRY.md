@@ -30,6 +30,25 @@ If it says `Could not create SSL/TLS secure channel`, paste this line in the Pow
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'; irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex
 ```
 
+## For TU/e data managers
+
+The same installer can open the app on the TU/e data-manager preset, which checks a data package with the data package checks and the licence check. It skips the paper questions and opens on "Check a data package".
+
+On a Mac or Linux, paste this line in Terminal:
+
+```sh
+curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --steward --preset datapackage::tue
+```
+
+On Windows, paste these two lines in PowerShell:
+
+```powershell
+$env:METACHECK_STEWARD = '1'; $env:METACHECK_APP_PRESET = 'datapackage::tue'
+powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex"
+```
+
+Any installed version also lists the `datapackage::tue` preset on the "Check a data package" page.
+
 ## What happens
 
 - The script downloads uv (a small tool that manages Python), Python and the app.

@@ -85,7 +85,7 @@ def run_on(source: Path, tmp_path: Path, **kw: Any) -> pk.PackageAnalysis:
 
 def test_the_default_preset_is_offered_first_with_its_description() -> None:
     found = pk.package_presets()
-    assert [ref for _, ref in found] == ["datapackage::default"]
+    assert [ref for _, ref in found] == ["datapackage::default", "datapackage::tue"]
     assert found[0][0].startswith("datapackage::default: Check a data package")
 
 
@@ -118,7 +118,7 @@ def test_presets_come_from_the_registry_not_a_fixed_list(tmp_path: Path) -> None
     refresh()
     refs = [ref for _, ref in pk.package_presets()]
     assert refs[0] == "datapackage::default"  # first, though "aaa_office" sorts before it
-    assert set(refs) == {"datapackage::default", "labx::audit", "aaa_office"}
+    assert set(refs) == {"datapackage::default", "datapackage::tue", "labx::audit", "aaa_office"}
     labels = {ref: label for label, ref in pk.package_presets()}
     assert labels["labx::audit"] == "labx::audit: Our audit"
     # the page's choice is built from the same list

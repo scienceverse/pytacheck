@@ -616,6 +616,7 @@ def test_a_preset_the_app_was_started_with_is_chosen_for_packages(tmp_path: Path
         DEFAULT,
         "tue::data_steward",
         "tue::own_check",
+        "datapackage::tue",
     ]
     (accordion,) = (
         c["props"] for c in config["components"] if c["props"].get("label") == ui.PICKER_TITLE
