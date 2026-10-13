@@ -14,7 +14,7 @@ Second pre-release on PyPI. Compared against the R package at commit
 is no longer a goal in itself: the changes below replace reproductions of R
 with Python libraries, read what bibr extracts, and add modules of pytacheck's
 own (`figure_table_refs`, `author_check`, `license_check`). The changes that
-alter results are listed in docs/UPSTREAM_ISSUES.md (D74 to D85).
+alter results are listed in docs/UPSTREAM_ISSUES.md (D74 to D86).
 
 ### Changed: bibr is the PDF reader where it is set up, with a hint on the trade-off
 
