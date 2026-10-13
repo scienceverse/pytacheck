@@ -611,11 +611,19 @@ def _osf_files(info: pd.DataFrame) -> pd.DataFrame:
 def _osf_listing(urls: list[str], pb: Any, cache: bool) -> pd.DataFrame:
     """``lapply(urls, osf_info(x, recursive = TRUE)) |> bind_rows()`` with ``repo_name``."""
     from metacheck._r import bind_rows
+    from metacheck.archives._parallel import map_ordered
     from metacheck.archives.osf import osf_info
+    from metacheck.http import _request_session
 
+    unique_urls = list(dict.fromkeys(urls))
+    with _request_session():
+        listings = map_ordered(
+            lambda x: osf_info(x, recursive=True, pb=pb, cache=cache), unique_urls
+        )
+    by_url = dict(zip(unique_urls, listings, strict=True))
     parts = []
     for x in urls:
-        f = osf_info(x, recursive=True, pb=pb, cache=cache)
+        f = by_url[x]
         f = f.copy()
         f["repo_name"] = pd.Series([x] * len(f), dtype="string")
         parts.append(f)
