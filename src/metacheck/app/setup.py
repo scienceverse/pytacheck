@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import TextIO
 
 from metacheck._env import env_get
-from metacheck.app import bibr, settings
+from metacheck.app import bibr, login, settings
 
 __all__ = ["Answers", "main", "run_wizard"]
 
@@ -76,6 +76,38 @@ def selfhost_warning(hw: str, free: float) -> str:
     return "\n".join(lines)
 
 
+def _browser_token(sign_in: Callable[[], str] | None, say: Callable[[str], None]) -> str:
+    """The token from the browser sign-in, or an empty string with the reason said: the
+    caller then asks for a pasted token."""
+    if sign_in is None:
+        return ""
+    try:
+        token = sign_in()
+    except login.LoginUnavailable as exc:
+        say(f"Browser sign-in is not available: {exc}")
+        say("You can paste a key instead.")
+        return ""
+    except login.LoginFailed as exc:
+        say(str(exc))
+        say("You can paste a key instead.")
+        return ""
+    except KeyboardInterrupt:
+        say("\nSign-in stopped. You can paste a key instead.")
+        return ""
+    say("Signed in. The token will be saved on this computer.")
+    return token
+
+
+def _real_sign_in(say: Callable[[str], None]) -> Callable[[], str]:
+    def sign_in() -> str:
+        url = login.service_for_login()
+        if url is None:
+            raise login.LoginUnavailable("no hosted bibr service is set up for browser sign-in.")
+        return login.device_login(url, say)
+
+    return sign_in
+
+
 def run_wizard(
     ask: Callable[[str], str],
     say: Callable[[str], None],
@@ -84,8 +116,13 @@ def run_wizard(
     hw: str | None = None,
     free: float | None = None,
     default_email: str = "",
+    sign_in: Callable[[], str] | None = None,
 ) -> Answers:
-    """Ask the questions. *ask* shows a prompt and returns the typed line."""
+    """Ask the questions. *ask* shows a prompt and returns the typed line.
+
+    *sign_in* signs in to bibr in the browser and returns the token; it raises
+    ``login.LoginUnavailable`` or ``login.LoginFailed``. Without it a key is always pasted.
+    """
     hw = hw or hardware()
     free = free_gb() if free is None else free
     ans = Answers()
@@ -119,7 +156,7 @@ def run_wizard(
         pick = choose(
             "2. How should papers (PDFs) be read? This uses bibr.",
             [
-                "I have a bibr API key",
+                "Sign in to bibr (in the browser), or paste a bibr key",
                 f"Run bibr on this computer (about {SELFHOST_GB} GB of disk; needs a GPU or "
                 "Apple Silicon to be fast)",
                 "Decide later (the app can use GROBID in the meantime)",
@@ -128,11 +165,13 @@ def run_wizard(
         )
         ans.access = ("key", "selfhost", "later")[pick - 1]
         if ans.access == "key":
-            say(
-                "Paste the key (it starts with bibr_pat_). It is saved on this computer "
-                "and is sent to the bibr service only."
-            )
-            ans.key = ask("Key (Enter to skip): ").strip()
+            ans.key = _browser_token(sign_in, say)
+            if not ans.key:
+                say(
+                    "Paste the key (it starts with bibr_pat_). It is saved on this computer "
+                    "and is sent to the bibr service only."
+                )
+                ans.key = ask("Key (Enter to skip): ").strip()
             if not ans.key:
                 ans.access = "later"
         elif ans.access == "selfhost":
@@ -220,7 +259,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     ask, tty = prompter
     try:
-        ans = run_wizard(ask, print, data_only=ns.data_only, default_email=env_get("EMAIL") or "")
+        ans = run_wizard(
+            ask,
+            print,
+            data_only=ns.data_only,
+            default_email=env_get("EMAIL") or "",
+            sign_in=_real_sign_in(print),
+        )
     except (EOFError, KeyboardInterrupt):
         print("\nSetup cancelled; nothing was saved. Run metacheck-setup to try again.")
         return 1
