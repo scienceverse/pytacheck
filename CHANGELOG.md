@@ -7,6 +7,11 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: bibr is the PDF reader where it is set up, with a hint on the trade-off
+
+- **Changed:** the paper page lists bibr first in "Read PDFs with", and a line under the choice says that bibr is more accurate but slower and GROBID is faster but less accurate. The choice stays open either way.
+- **Changed:** the page starts on bibr where bibr is set up here (a key in `SCIVRS_API_KEY`, or a key saved or a local bibr chosen by the setup). Where it is not, the page starts on GROBID, and the hint says so: "bibr is not set up on this computer (on this server on a shared server), so GROBID is used. Enter a bibr key to read PDFs with bibr." A bibr service that cannot be reached at run time still stops that run with a message that names GROBID as the way forward.
+
 ### Changed: the app draws the steps of a run, and has a switch for a paper or a data package
 
 - **Changed:** while a check runs, the app lists its steps under the buttons, in place of Gradio's bar over the results (which were hidden, so the bar was rarely seen): read the PDF, extract the text with bibr or GROBID, run the checks, write the report and, when it is ticked, check the shared data files; for a data package, download the repository or open the archive, run the package checks and write the report. Each step is ticked when it is done, with the time it took. The running step says what it is doing ("3 of 19: StatCheck", "2.1 MB downloaded", "Waiting in its queue") and has a bar that fills only with a known fraction; while bibr or GROBID extract, which report no fraction, it has a moving bar and says why. A run that fails marks the step it stopped in and says why. The page scrolls to the steps when a button is pressed, shows "Starting" until the server starts the run, and on a shared server says when a run waits for a free place. The "Check a data package" page draws the same steps.

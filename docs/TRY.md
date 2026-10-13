@@ -71,7 +71,8 @@ A switch at the top of the page says what you check: **Paper** or **Data package
 
 About PDFs: "Read PDFs with" lets you choose how a PDF is turned into text.
 
-- **GROBID** is the default. It is the public server at TU Eindhoven (https://grobid.hti.ieis.tue.nl). R metacheck uses the same server. So a PDF you check is sent there. If that server does not answer, the PDF goes to a public GROBID server hosted on Hugging Face instead.
+- **bibr** is the default where bibr is set up (a key is given to the app, or a key was saved). It is more accurate but slower. The line under the choice says so.
+- **GROBID** is the default where bibr is not set up. It is faster but less accurate, and the line under the choice says that GROBID is used. It is the public server at TU Eindhoven (https://grobid.hti.ieis.tue.nl). R metacheck uses the same server. So a PDF you check is sent there. If that server does not answer, the PDF goes to a public GROBID server hosted on Hugging Face instead.
 - **bibr** is the scienceverse service. It needs a key. The person who sent you the link can give you one. Paste it into the box "Your bibr key". Tick "Remember the key on this computer" if you want to type it only once. The key is saved in a file that only you can read, and it is sent to the bibr service only. If bibr does not work, the app tells you. It does not switch to GROBID by itself, because you chose where the PDF goes.
 
 XML and JSON files stay on your computer.

@@ -548,9 +548,22 @@ def test_the_privacy_text_follows_the_choice() -> None:
 
 def test_the_choices_are_named() -> None:
     assert [label for label, _ in ui.READERS] == [
-        "GROBID (public server at TU Eindhoven)",
         "bibr (the scienceverse service; needs a key)",
+        "GROBID (public server at TU Eindhoven)",
     ]
+
+
+def test_the_hint_names_the_trade_off_under_both_readers() -> None:
+    assert ui.reader_hint("bibr") == ui.READER_HINT
+    assert ui.reader_hint("grobid") == f"{ui.READER_HINT} {ui.READER_FALLBACK}"
+    assert "more accurate but slower" in ui.READER_HINT
+    assert "faster but less accurate" in ui.READER_HINT
+
+
+def test_the_fallback_hint_names_the_server_on_a_shared_server() -> None:
+    assert "on this computer" in ui.reader_hint("grobid")
+    assert "on this server" in ui.reader_hint("grobid", hosted=True)
+    assert "this computer" not in ui.reader_hint("grobid", hosted=True)
 
 
 def _start(blocks: Any) -> dict[str, Any]:
@@ -571,6 +584,8 @@ def test_grobid_is_the_default_without_a_key_on_this_computer() -> None:
     first = _start(ui.build_app())
     assert first["reader"] == "grobid" and first["key_box"] is False
     assert ui.PRIVACY in first["texts"] and ui.PRIVACY_BIBR not in first["texts"]
+    # bibr is not set up, so the page says that GROBID is the fallback
+    assert ui.reader_hint("grobid") in first["texts"]
 
 
 def test_bibr_is_the_default_where_this_computer_supplies_the_key(
@@ -581,6 +596,8 @@ def test_bibr_is_the_default_where_this_computer_supplies_the_key(
     first = _start(ui.build_app())
     assert first["reader"] == "bibr" and first["key_box"] is True
     assert ui.PRIVACY_BIBR in first["texts"] and ui.PRIVACY not in first["texts"]
+    assert ui.READER_HINT in first["texts"]
+    assert not any(t and ui.READER_FALLBACK in t for t in first["texts"])
     assert ui.KEY_ENV_NOTE in first["texts"]  # no key to type
 
 
