@@ -14,16 +14,18 @@ A failed listing is an empty :class:`OsfResult` whose ``osf_error`` says why
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import math
 import os
 import shutil
 import tempfile
 import threading
+import time
 import warnings
 import zipfile
 from collections.abc import Callable, Sequence
 from concurrent.futures import ThreadPoolExecutor
-from contextvars import copy_context
+from contextvars import ContextVar, copy_context
 from typing import Any, cast
 from urllib.parse import unquote, unquote_plus
 
@@ -302,23 +304,62 @@ def osf_check_id(osf_id: Any) -> Any:
 # ---------------------------------------------------------------------------
 
 _LISTING_CACHE: dict[str, pd.DataFrame] = {}
+_LISTING_TIMES: dict[str, float] = {}
 _LISTING_LOCK = threading.Lock()
+_LISTING_COMPLETE: ContextVar[list[bool] | None] = ContextVar("osf_listing_complete", default=None)
 
 
-def _osf_cache_key(osf_url: Any, recursive: Any) -> str:
-    """Port of R/archive-osf.R::.osf_cache_key(): session-cache key for a listing."""
-    from metacheck._r import as_character, r_sorted
+def _osf_cache_key(osf_url: Any, recursive: Any, id_col: int | str = 1) -> str:
+    """Key the exact input order/columns, endpoint and authentication identity."""
+    from metacheck.archives.osf_helpers import _osf_headers
 
+    values: Any
     if isinstance(osf_url, pd.DataFrame):
-        ids = [v for col in osf_url.columns for v in osf_url[col].tolist()]
+        values = osf_url.to_dict("split")
     elif isinstance(osf_url, str) or osf_url is None:
-        ids = [osf_url]
+        values = osf_url
     else:
-        ids = list(osf_url)
-    chars = [as_character(v) for v in ids]
-    uniq = [c for c in dict.fromkeys(chars) if c is not None]
-    rec = "TRUE" if recursive is True else "FALSE"
-    return "|".join(r_sorted(uniq)) + f"::recursive={rec}"
+        values = list(osf_url)
+    key = repr((values, recursive, id_col, _api(), _osf_headers()["headers"]))
+    return hashlib.sha256(key.encode()).hexdigest()
+
+
+def _listing_ttl() -> float:
+    from metacheck.utils import get_option
+
+    value = _num(get_option("metacheck.osf.cache_ttl", 300))
+    return max(0, value) if value is not None and math.isfinite(value) else 300.0
+
+
+def _checked_pages(value: Any) -> Any:
+    """A failed/partial traversal must not become a reusable listing."""
+    complete = _LISTING_COMPLETE.get()
+    if complete is not None and (
+        _osf_err(value) is not None or getattr(value, "osf_incomplete", None)
+    ):
+        complete[0] = False
+    return value
+
+
+def _listing_ok(data: pd.DataFrame) -> bool:
+    if len(data) == 0 or "osf_type" not in data:
+        return False
+    kinds = data["osf_type"].dropna().tolist()
+    return bool(kinds) and all(
+        k in ("nodes", "registrations", "files", "users", "preprints") for k in kinds
+    )
+
+
+def _public_listing(data: pd.DataFrame, osf_url: Any) -> bool:
+    return (
+        isinstance(osf_url, str)
+        and "view_only" not in osf_url.lower()
+        and "public" in data
+        and len(data) > 0
+        and not is_missing(data["public"].iloc[0])
+        and bool(data["public"].iloc[0])
+        and not (data["public"] == False).fillna(False).any()  # noqa: E712
+    )
 
 
 def osf_cache_clear() -> int:
@@ -329,6 +370,7 @@ def osf_cache_clear() -> int:
     with _LISTING_LOCK:
         n = len(_LISTING_CACHE)
         _LISTING_CACHE.clear()
+        _LISTING_TIMES.clear()
     return n
 
 
@@ -353,6 +395,7 @@ def _fetch_listings(urls: list[str]) -> OsfResult:
             pages = [f.result() for f in futures]
     out = OsfResult()
     for page in pages:
+        _checked_pages(page)
         if isinstance(page, list):
             out.extend(page)
     return out
@@ -371,24 +414,62 @@ def osf_info(
     (R-style 1-based position, or a name) holds them; the result keeps the
     input rows (and columns) and adds the OSF information. With *recursive*,
     all components and files are listed too (appended as extra rows).
-    Listings are memoised for the session (see :func:`osf_cache_clear`;
-    ``options({"metacheck.osf.cache": False})`` disables it); with *cache*,
-    per-ID lookups also use the on-disk listing cache.
+    Complete, successful listings are reused for five minutes (see
+    :func:`osf_cache_clear`; ``metacheck.osf.cache`` disables reuse and
+    ``metacheck.osf.cache_ttl`` sets its lifetime in seconds). With *cache*,
+    complete public recursive listings are also kept on disk, alongside the
+    per-ID cache. Private and view-only trees are never persisted.
     """
     from metacheck.archives import _spinner, _tick
+    from metacheck.archives.info_cache import _repo_info_cache_get, _repo_info_cache_put
+    from metacheck.http import _request_session
     from metacheck.utils import get_option
 
     use_cache = get_option("metacheck.osf.cache", True) is True
-    cache_key = _osf_cache_key(osf_url, recursive) if use_cache else None
+    ttl = _listing_ttl()
+    cache_key = _osf_cache_key(osf_url, recursive, id_col) if use_cache and ttl > 0 else None
     if cache_key is not None:
         with _LISTING_LOCK:
             hit = _LISTING_CACHE.get(cache_key)
+            fresh = time.monotonic() - _LISTING_TIMES.get(cache_key, -math.inf) < ttl
+            if hit is not None and not fresh:
+                _LISTING_CACHE.pop(cache_key, None)
+                _LISTING_TIMES.pop(cache_key, None)
+                hit = None
         if hit is not None:
             _tick(pb, "OSF listing (cached)")
             return hit.copy()
+        if cache is True and recursive is True and isinstance(osf_url, str):
+            saved = _repo_info_cache_get("osf_tree", cache_key)
+            if isinstance(saved, dict):
+                created, data = _num(saved.get("created")), saved.get("data")
+                if (
+                    created is not None
+                    and 0 <= time.time() - created < ttl
+                    and isinstance(data, pd.DataFrame)
+                    and _listing_ok(data)
+                    and _public_listing(data, osf_url)
+                ):
+                    with _LISTING_LOCK:
+                        _LISTING_CACHE[cache_key] = data.copy()
+                        _LISTING_TIMES[cache_key] = time.monotonic() - (time.time() - created)
+                    _tick(pb, "OSF listing (cached)")
+                    return data
 
-    with _spinner(pb, "OSF Retrieve") as bar:
-        return _osf_info_listing(osf_url, id_col, recursive, bar, cache, cache_key)
+    complete = [True]
+    reset = _LISTING_COMPLETE.set(complete)
+    try:
+        with _request_session(), _spinner(pb, "OSF Retrieve") as bar:
+            data = _osf_info_listing(osf_url, id_col, recursive, bar, cache)
+    finally:
+        _LISTING_COMPLETE.reset(reset)
+    if cache_key is not None and complete[0] and _listing_ok(data):
+        with _LISTING_LOCK:
+            _LISTING_CACHE[cache_key] = data.copy()
+            _LISTING_TIMES[cache_key] = time.monotonic()
+        if cache is True and recursive is True and _public_listing(data, osf_url):
+            _repo_info_cache_put("osf_tree", cache_key, {"created": time.time(), "data": data})
+    return data
 
 
 def _osf_info_listing(
@@ -397,7 +478,6 @@ def _osf_info_listing(
     recursive: bool,
     pb: Any,
     cache: bool,
-    cache_key: str | None,
 ) -> pd.DataFrame:
     """The body of :func:`osf_info` after the session-cache check."""
     from metacheck._r import as_character
@@ -479,9 +559,6 @@ def _osf_info_listing(
         data = bind_rows([data, child_collector, file_collector])
 
     _tick(pb, "...OSF retrieval complete!")
-    if cache_key is not None:
-        with _LISTING_LOCK:
-            _LISTING_CACHE[cache_key] = data.copy()
     return data
 
 
@@ -602,7 +679,7 @@ def osf_get_all_pages(url: str, page_end: float = math.inf) -> Any:
         http.sleep(2**attempt)
         content = _osf_get_one_page(url)
     if _osf_err(content) is not None:
-        return content
+        return _checked_pages(content)
 
     data = content.get("data") if isinstance(content, dict) else None
     next_url = _get_path(content, "links", "next")
@@ -624,7 +701,7 @@ def osf_get_all_pages(url: str, page_end: float = math.inf) -> Any:
                     stacklevel=2,
                 )
                 out.osf_incomplete = {"expected": total1, "got": float(len(out))}
-            return out
+            return _checked_pages(out)
         return data
 
     first = list(data) if isinstance(data, list) else ([] if data is None else [data])
@@ -682,7 +759,7 @@ def osf_get_all_pages(url: str, page_end: float = math.inf) -> Any:
             stacklevel=2,
         )
         out.osf_incomplete = {"expected": expected, "got": float(got)}
-    return out
+    return _checked_pages(out)
 
 
 def _osf_get_one_page(url: str) -> Any:

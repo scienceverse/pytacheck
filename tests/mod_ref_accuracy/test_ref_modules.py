@@ -331,12 +331,9 @@ def test_journal_coherent(a: str, b: str, coherent: bool) -> None:
     assert ra._journal_coherent(ta, tb) is coherent
 
 
-def test_adist_fallback(monkeypatch: pytest.MonkeyPatch) -> None:
-    pairs = [("kitten", "sitting"), ("", "abc"), ("abc", "abc"), ("flaw", "lawn")]
-    fast = [ra._adist(a, b) for a, b in pairs]
-    ra._levenshtein.cache_clear()
-    monkeypatch.setattr(ra, "_levenshtein", lambda: None)
-    assert [ra._adist(a, b) for a, b in pairs] == fast == [3, 3, 0, 2]
+def test_adist() -> None:
+    pairs = [("kitten", "sitting"), ("", "abc"), ("abc", "abc"), ("flaw", "lawn"), ("é", "e")]
+    assert [ra._adist(a, b) for a, b in pairs] == [3, 3, 0, 2, 1]
 
 
 def test_last_names_cells() -> None:

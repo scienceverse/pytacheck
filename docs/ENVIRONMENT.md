@@ -71,6 +71,7 @@ means the value is a key or token, which the package never logs.
 | `APP_COMMIT` | `METACHECK_APP_COMMIT` | none | Hosted app: the commit of the running version, for the source link. |
 | `APP_HOSTS` | `METACHECK_APP_HOSTS` | a host name set by the hosting environment | Hosted app: the host names it is served under, separated by commas. |
 | `APP_JOB_TIMEOUT` | `METACHECK_APP_JOB_TIMEOUT` | 900 seconds | Hosted app: how long one check may run. |
+| `APP_PRESET` | `METACHECK_APP_PRESET` | none | Hosted app: the preset the page starts with, as `--preset` does (a data package preset opens it on Data package), for example `datapackage::tue`. People can still choose another. The installers read the same name for the local app. New, so it has no old name. |
 | `APP_ROOTS` | `METACHECK_APP_ROOTS` | none | Local app, "Check a data package" page: folders it may read besides your home folder, separated by `:` (Linux, macOS) or `;` (Windows). A folder you type must be inside one of them (links are followed first). Zip uploads are not affected. New, so it has no old name. |
 | `APP_TOKENS` | `METACHECK_APP_TOKENS` | none | secret. Hosted app: access tokens of 32 or more characters, separated by commas. |
 | `APP_USER_HEADER` | `METACHECK_APP_USER_HEADER` | none | Hosted app, proxy mode only: the header that names the signed-in user. |

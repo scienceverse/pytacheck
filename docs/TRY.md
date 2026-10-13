@@ -30,6 +30,25 @@ If it says `Could not create SSL/TLS secure channel`, paste this line in the Pow
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'; irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex
 ```
 
+## For TU/e data managers
+
+The same installer can open the app on the TU/e data-manager preset, which checks a data package with the data package checks (the licence is checked as part of the documentation). It skips the paper questions and opens on "Check a data package".
+
+On a Mac or Linux, paste this line in Terminal:
+
+```sh
+curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --steward --preset datapackage::tue
+```
+
+On Windows, paste these two lines in PowerShell:
+
+```powershell
+$env:METACHECK_STEWARD = '1'; $env:METACHECK_APP_PRESET = 'datapackage::tue'
+powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex"
+```
+
+Any installed version also lists the `datapackage::tue` preset on the "Check a data package" page.
+
 ## What happens
 
 - The script downloads uv (a small tool that manages Python), Python and the app.
@@ -48,7 +67,7 @@ The folder is:
 
 ## Use it
 
-Drop in a PDF, a GROBID XML file or a bibr JSON file. Or try the demo paper.
+A switch at the top of the page says what you check: **Paper** or **Data package**. Drop in a PDF, a GROBID XML file or a bibr JSON file. Or try the demo paper. If you drop a data package while the switch is on Paper (or a paper while it is on Data package), the switch moves to match, and a line under the box says how the file will be checked.
 
 About PDFs: "Read PDFs with" lets you choose how a PDF is turned into text.
 
@@ -56,6 +75,8 @@ About PDFs: "Read PDFs with" lets you choose how a PDF is turned into text.
 - **bibr** is the scienceverse service. It needs a key. The person who sent you the link can give you one. Paste it into the box "Your bibr key". Tick "Remember the key on this computer" if you want to type it only once. The key is saved in a file that only you can read, and it is sent to the bibr service only. If bibr does not work, the app tells you. It does not switch to GROBID by itself, because you chose where the PDF goes.
 
 XML and JSON files stay on your computer.
+
+While a paper is checked, the page lists the steps of the run under the buttons: read the PDF, extract the text (with bibr or GROBID), run the checks and write the report. A tick marks the steps that are done, with the time each one took, and the step that runs says what it is doing, for example "3 of 19" and the name of the check. Its bar fills only when the step says how far it is: the checks that are done, or how much of a download has arrived. bibr and GROBID do not say how far they are, so while they extract the text a moving bar shows that they are still working (with bibr the step also says whether the job is waiting in its queue or running). A data package has its own steps: download the repository (for a link) or open the archive, run the package checks and write the report. If a step goes wrong, the list shows where the run stopped and why.
 
 About data files: the box "Check the shared data files" is ticked. When the paper links to data files on OSF or other repositories, the app downloads them and checks them. This can take a few minutes. The other results appear first, and the data check is added when it is done. A line under the results shows that it is still running. Press "Stop the data check" if you do not want to wait. The other results stay on the page. Downloaded files are kept on your computer, so a second run is faster. Untick the box to skip this check.
 
@@ -74,7 +95,7 @@ To open the app with a preset already chosen, add `--preset NAME` to the install
 
 ## Check a data package
 
-The data package of a paper, the folder of data, code and documentation that comes with it, is checked too. Drop its zip into the same box as the paper, or type the link of its public repository on GitHub, GitLab, OSF or Zenodo there: the page checks the files, the folder tree and the README, and shows a checklist. The app downloads a repository link to your computer, and nothing else leaves it. A shared server takes a zip of up to 50 MB or a link too, and deletes the package after the run. See [DATAPACKAGE.md](DATAPACKAGE.md) for what is checked and what a link may do.
+The data package of a paper, the folder of data, code and documentation that comes with it, is checked too. Move the switch at the top to **Data package**, then drop its zip into the box, or type the link of its public repository on GitHub, GitLab, OSF or Zenodo there: the page checks the files, the folder tree and the README, and shows a checklist. "Try the demo package" checks a small made-up study, with a few problems left in it on purpose. The app downloads a repository link to your computer, and nothing else leaves it. A shared server takes a zip of up to 50 MB or a link too, and deletes the package after the run. See [DATAPACKAGE.md](DATAPACKAGE.md) for what is checked and what a link may do.
 
 The app also has a second page, "Check a data package" (the link at the top right of the page). It takes a folder, a zip or a link, and runs on your computer only. A shared server does not have this page.
 

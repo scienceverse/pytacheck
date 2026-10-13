@@ -34,7 +34,7 @@ from typing import Any, cast
 
 from metacheck._r.regex import gsub, regextract_all, sub
 from metacheck.core.errors import StaleDocumentError
-from metacheck.core.scope import check_mutation, running_module, trusted_scope
+from metacheck.core.scope import check_mutation, note_module, running_module, trusted_scope
 from metacheck.module import SECTION_LEVELS, ModuleOutput, module_find, module_info, module_run
 from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList, is_paper_list
@@ -433,9 +433,10 @@ def report_module_run(
             bar.tick(0, tokens={"what": "Running modules"})
             op: Any = paper
             ran: str | None = None
-            for module in modules:
+            for done, module in enumerate(modules):
                 label = _label(module)
                 check_mutation(ran)  # the module before edited a paper in place (CI check)
+                note_module(done, len(modules), label)
                 bar.tick(0, tokens={"what": label})
                 mod_args = dict(args.get(label) or {})
                 mod_args.pop("paper", None)
@@ -471,6 +472,7 @@ def report_module_run(
                 bar.tick(tokens={"what": label})
                 ran = label
             check_mutation(ran)
+            note_module(len(modules), len(modules), "")
         finally:
             bar.terminate()
 
