@@ -20,6 +20,10 @@
         "metacheck::data_check",
         "metacheck::codebook_check"
       ]
+    },
+    "tue": {
+      "description": "TU/e data managers: the data package checks (the licence is checked with the documentation)",
+      "extends": ["datapackage::default"]
     }
   }
 }

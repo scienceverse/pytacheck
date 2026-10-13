@@ -182,6 +182,10 @@ def _tty_prompter() -> tuple[Callable[[str], str], TextIO | None] | None:
         tty = open("/dev/tty" if os.name != "nt" else "CONIN$", encoding="utf-8")  # noqa: SIM115
     except OSError:
         return None
+    if not tty.isatty():
+        # a console handle that nobody types into (a CI runner) would wait for ever
+        tty.close()
+        return None
 
     def ask(prompt: str) -> str:
         print(prompt, end="", flush=True)

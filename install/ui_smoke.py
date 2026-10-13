@@ -2,10 +2,11 @@
 python install/ui_smoke.py APP [--port N] [--shots DIR] [--browser-path EXE]
 
 Starts the app without a browser, opens its token link in Chromium (Playwright for
-Python), runs the demo paper, then uploads the demo JSON and checks it, then checks a
-small data package on the "Check a data package" page: a folder outside the home folder
-is refused, and a folder inside it is checked with the page's default settings. The page
-may talk to 127.0.0.1 only. The app is the one the installer makes, without the concepts
+Python), runs the demo paper, then uploads the demo JSON and checks it, then moves the
+switch at the top to Data package and runs the demo package, then checks a small data
+package on the "Check a data package" page: a folder outside the home folder is refused,
+and a folder inside it is checked with the page's default settings. The page may talk to
+127.0.0.1 only. The app is the one the installer makes, without the concepts
 extra, so the page must say that the classifier is not installed. Needs
 `pip install playwright` and `playwright install chromium`.
 """
@@ -184,12 +185,33 @@ def click_through(page: Page, url: str, paper: Path, watch: Watch) -> None:
     watch.go(page.reload)  # a clean page, so the second table is the second run's
     page.get_by_role("button", name="Check", exact=True).wait_for(timeout=60_000)
     untick_data_check(page)
-    block = page.locator(".block", has_text="Your paper, data package or repository link").last
+    block = page.locator("#mc-box")  # the one box of the page
     block.locator("input[type=file]").set_input_files(str(paper))
     # The box shows an uploaded file as a thumbnail with no name in the page: wait for that.
     block.get_by_role("listitem", name="File thumbnail").first.wait_for(timeout=30_000)
     page.get_by_role("button", name="Check", exact=True).click()
     check_results(page, "uploaded JSON")
+
+
+def click_through_demo_package(page: Page, url: str, watch: Watch) -> None:
+    """The switch at the top moves the page to Data package, and its demo is checked."""
+    watch.go(page.goto, url)
+    switch = page.locator("#mc-mode")
+    switch.get_by_text("Data package", exact=True).wait_for(timeout=60_000)
+    switch.get_by_text("Data package", exact=True).click()
+    demo = page.get_by_role("button", name="Try the demo package")
+    demo.wait_for(timeout=30_000)  # shown once the switch is on Data package
+    if page.get_by_role("button", name="Try the demo paper").is_visible():
+        raise AssertionError("demo package: the paper's demo button is still shown")
+    settle(page)
+    demo.click()
+    page.get_by_text(re.compile(r"^Checked sleep_study in ")).wait_for(timeout=SLOW)
+    statuses = page.get_by_text(re.compile(r"^(Pass|Warning|Fail)$"))
+    statuses.first.wait_for(state="attached", timeout=60_000)
+    failed = page.get_by_text("Did not run", exact=True).count()
+    if failed:
+        raise AssertionError(f"demo package: {failed} checks did not run")
+    print(f"demo package: {statuses.count()} status cells", flush=True)
 
 
 def click_through_package(page: Page, url: str, watch: Watch) -> None:
@@ -290,6 +312,7 @@ def main() -> int:
             failed = True
             try:
                 click_through(page, url, args.paper, watch)
+                click_through_demo_package(page, url, watch)
                 click_through_package(page, url, watch)
                 failed = False
             finally:

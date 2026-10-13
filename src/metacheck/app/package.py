@@ -41,6 +41,7 @@ from metacheck.app.run import (
     Row,
     UserError,
     _plain,
+    checks_progress,
     protect,
     report_filename,
 )
@@ -356,12 +357,14 @@ NO_SOURCE_LINK = "Type the link of the repository first."
 
 
 def resolve_link(text: str | None) -> str:
-    """The link to fetch, as typed (without quotes and spaces around it), once it is read as
-    the link of a repository this app can fetch from.
+    """The link to fetch, once it is read as the link of a repository this app can fetch from:
+    as typed, without quotes and spaces around it, and with ``https://`` in front when it was
+    typed without (``github.com/owner/repo``, a bare DOI), so that the run sees a link.
 
     Raises :class:`~metacheck.app.run.UserError` with what is wrong with it, or when it is empty.
     """
     from metacheck.datapackage import PackageError, parse_link
+    from metacheck.datapackage._remote import _normalise
 
     link = _clean_path(text or "")
     if not link:
@@ -370,7 +373,7 @@ def resolve_link(text: str | None) -> str:
         parse_link(link)
     except PackageError as exc:
         raise UserError(str(exc)) from exc
-    return link
+    return _normalise(link)
 
 
 def resolve_entry(entry: Entry) -> str | Path:
@@ -617,6 +620,7 @@ def check_package_source(
     Content-Security-Policy as the paper page's report. Raises
     :class:`~metacheck.app.run.UserError` for a package that cannot be opened.
     """
+    from metacheck.core.scope import module_progress
     from metacheck.datapackage import PackageError, is_link, report_package
     from metacheck.module import ModuleError
 
@@ -626,7 +630,7 @@ def check_package_source(
     name = package_name(path)
     report_dir.mkdir(parents=True, exist_ok=True)
     target = report_dir / report_filename(name)
-    tick(0.02, "Fetching the repository" if isinstance(path, str) else "Checking the package")
+    tick(0.0, "Fetching the repository" if isinstance(path, str) else "Opening the package")
     use_classifier = local_classifier and classifier_installed()
     note = NO_CLASSIFIER if local_classifier and not use_classifier else ""
     args = None if use_classifier else {"data_check": {"concepts": "rules"}}
@@ -635,7 +639,7 @@ def check_package_source(
         given["max_bytes"] = max_bytes
     if max_files is not None:
         given["max_files"] = max_files
-    with _RUN_LOCK, warnings.catch_warnings():
+    with _RUN_LOCK, module_progress(checks_progress(tick)), warnings.catch_warnings():
         warnings.simplefilter("ignore")
         try:
             report = report_package(
@@ -644,7 +648,7 @@ def check_package_source(
                 "html",
                 preset=preset,
                 args=args,
-                progress=lambda fraction, text: tick(0.02 + 0.28 * fraction, text),
+                progress=tick,
                 **given,
             )
         except (PackageError, ValueError, ModuleError) as exc:
@@ -652,7 +656,6 @@ def check_package_source(
     outputs = list(report.values())
     if not outputs:
         raise UserError(NO_CHECKS)
-    tick(0.9, "Writing the report")
     written = Path(str(report.save_path))
     if written.suffix != ".html":  # a report that cannot be rendered is saved as .qmd
         raise UserError(FAILED)

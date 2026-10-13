@@ -108,12 +108,14 @@ jobs:
         run: |
           export METACHECK_HOME="$RUNNER_TEMP/metacheck"
           export METACHECK_NO_LAUNCH=1
+          export METACHECK_NO_SETUP=1
           export METACHECK_SPEC="metacheck[app,llm] @ file://$GITHUB_WORKSPACE"
           export METACHECK_CONSTRAINTS="$GITHUB_WORKSPACE/install/constraints-app.txt"
           echo "METACHECK_HOME=$METACHECK_HOME" >> "$GITHUB_ENV"
           echo "METACHECK_SPEC=$METACHECK_SPEC" >> "$GITHUB_ENV"
           echo "METACHECK_CONSTRAINTS=$METACHECK_CONSTRAINTS" >> "$GITHUB_ENV"
           echo "METACHECK_NO_LAUNCH=1" >> "$GITHUB_ENV"
+          echo "METACHECK_NO_SETUP=1" >> "$GITHUB_ENV"
           time /bin/sh install.sh
       - name: Install (Windows PowerShell 5.1)
         if: runner.os == 'Windows'
@@ -124,6 +126,7 @@ jobs:
           $vars = @{
             METACHECK_HOME        = $home_dir
             METACHECK_NO_LAUNCH   = '1'
+            METACHECK_NO_SETUP    = '1'
             METACHECK_SPEC        = "metacheck[app,llm] @ $uri"
             METACHECK_CONSTRAINTS = Join-Path $env:GITHUB_WORKSPACE 'install\constraints-app.txt'
           }
@@ -230,6 +233,7 @@ jobs:
         shell: powershell
         env:
           METACHECK_NO_LAUNCH: "1"
+          METACHECK_NO_SETUP: "1"
         run: |
           $env:METACHECK_HOME = Join-Path $env:RUNNER_TEMP 'metacheck'
           Get-Content -Raw "$env:GITHUB_WORKSPACE\install.ps1" | Invoke-Expression
@@ -282,6 +286,8 @@ jobs:
       - name: Upgrade (Windows PowerShell 5.1)
         if: runner.os == 'Windows'
         shell: powershell
+        env:
+          METACHECK_NO_SETUP: "1"
         run: |
           $env:METACHECK_HOME = Join-Path $env:RUNNER_TEMP 'metacheck'
           $app = Join-Path $env:METACHECK_HOME 'bin\metacheck-app.exe'

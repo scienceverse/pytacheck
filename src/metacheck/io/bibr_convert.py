@@ -19,13 +19,14 @@ Also here: the author helpers ``format_bib_authors()``,
 
 from __future__ import annotations
 
+import contextlib
 import email.utils
 import math
 import os
 import re
 import time
 import warnings
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from os import PathLike
 from pathlib import Path
@@ -509,7 +510,12 @@ def _unavailable(resp: Any) -> bool:
     return resp is None or resp.status_code in (502, 503, 504)
 
 
-def _bibr_await_result(sess: _Session, job_id: str, poll_interval: float) -> bytes:
+def _bibr_await_result(
+    sess: _Session,
+    job_id: str,
+    poll_interval: float,
+    on_status: Callable[[str], None] | None = None,
+) -> bytes:
     """Poll ``GET /papers/jobs/{id}`` (queued, running, succeeded or failed) with a growing
     delay, then fetch ``/result``. A 409 from ``/result`` means not finished yet: keep
     polling. A status poll or a result fetch that gets no answer, or a 502, 503 or 504, is
@@ -518,6 +524,9 @@ def _bibr_await_result(sess: _Session, job_id: str, poll_interval: float) -> byt
 
     The job path is built from the job id and the configured address; the ``status_url`` in
     the server's answer is not followed, which keeps the token on the host it was meant for.
+
+    ``on_status`` is called with the job's status (``queued``, ``running``, ...) each time it
+    changes. That is all bibr's job API reports: no stage and no fraction.
     """
     job_url = _url_append(sess.api_url, "papers", "jobs", quote(job_id, safe=""))
     shown = _clean(job_id, 60)  # the id comes from the server: no control characters
@@ -526,6 +535,7 @@ def _bibr_await_result(sess: _Session, job_id: str, poll_interval: float) -> byt
     delay = poll_interval
     failures = 0
     state: Any = None
+    told: Any = None
 
     def outage(resp: Any, what: str) -> None:
         """Count one more failed request in a row; give up after too many."""
@@ -545,6 +555,10 @@ def _bibr_await_result(sess: _Session, job_id: str, poll_interval: float) -> byt
         else:
             status = _json_object(resp)
             state = status.get("status")
+            if on_status is not None and isinstance(state, str) and state != told:
+                told = state
+                with contextlib.suppress(Exception):  # a display must not lose the job
+                    on_status(state)
             if state == "failed":
                 error = _job_error(status)
                 logger("convert_bibr", {"job_id": shown, "error": error})
@@ -592,6 +606,7 @@ def _bibr_request_bibr(
     timeout: float,
     max_retries: int = 5,
     max_retry_wait: float = 120,
+    on_status: Callable[[str], None] | None = None,
 ) -> bytes:
     """The ``"bibr"`` backend: submit a job to ``bibr serve`` (or bibr-gate), poll it, get the
     result. Not a port: metacheck has no such backend."""
@@ -599,7 +614,7 @@ def _bibr_request_bibr(
         api_url, api_key or None, timeout, max_retries, max_retry_wait, follow_redirects=False
     )
     job_id = _bibr_submit(sess, file_path, include_figures, start_page, end_page)
-    return _bibr_await_result(sess, job_id, poll_interval)
+    return _bibr_await_result(sess, job_id, poll_interval, on_status)
 
 
 # ---------------------------------------------------------------------------
@@ -620,6 +635,7 @@ def convert_bibr(
     timeout: float = 600,
     max_retries: int = 5,
     max_retry_wait: float = 120,
+    on_status: Callable[[str], None] | None = None,
 ) -> Any:
     """Port of ``R/import-bibr.R::convert_bibr()``: convert documents with a bibr server.
 
@@ -645,6 +661,10 @@ def convert_bibr(
     A 429 answer (``"bibr"`` and ``"selfhosted"``) is retried after its ``Retry-After``
     seconds, up to ``max_retries`` times and never waiting more than ``max_retry_wait``
     seconds for one retry; ``timeout`` (seconds) bounds the whole wait for a job.
+
+    ``on_status`` (``"bibr"`` backend only) is called with the status of the job each time
+    it changes (``queued``, ``running``, ...), for a display of what the server is doing.
+    The job API reports nothing finer, so no progress is made up from it.
 
     Pages are 1-based; ``end_page=math.inf`` means all pages. Returns the saved JSON
     path, or a list of paths (``None`` for failures) for several files or a directory;
@@ -709,6 +729,7 @@ def convert_bibr(
                         timeout=timeout,
                         max_retries=max_retries,
                         max_retry_wait=max_retry_wait,
+                        on_status=on_status,
                     )
                 )
             except BibrRequestError as exc:
@@ -748,6 +769,7 @@ def convert_bibr(
             timeout,
             max_retries,
             max_retry_wait,
+            on_status,
         )
     else:
         contents = _bibr_request_selfhosted(

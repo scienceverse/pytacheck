@@ -566,6 +566,7 @@
       - null
       - "Zed"
     "recursive": true
+  "known_divergence": {"kind": "deliberate", "ref": "D86", "reason": "the cache key is a SHA-256 of the input order, columns, endpoint and authentication identity, not metacheck's readable `url::recursive=...` string"}
 - "id": ".osf_cache_key.table"
   "r": ".osf_cache_key"
   "py": "metacheck.archives.osf._osf_cache_key"
@@ -579,12 +580,14 @@
         - "project"
         - "component"
     "recursive": false
+  "known_divergence": {"kind": "deliberate", "ref": "D86", "reason": "the cache key is a SHA-256 of the input order, columns, endpoint and authentication identity, not metacheck's readable `url::recursive=...` string"}
 - "id": ".osf_cache_key.scalar"
   "r": ".osf_cache_key"
   "py": "metacheck.archives.osf._osf_cache_key"
   "args":
     "osf_url": "pngda"
     "recursive": "yes"
+  "known_divergence": {"kind": "deliberate", "ref": "D86", "reason": "the cache key is a SHA-256 of the input order, columns, endpoint and authentication identity, not metacheck's readable `url::recursive=...` string"}
 - "id": ".osf_error_result"
   "r": ".osf_error_result"
   "py": "metacheck.archives.osf._osf_error_result"

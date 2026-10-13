@@ -5,8 +5,10 @@ This is for a link that a few people open in a browser, with nothing to install.
 ## On a Hugging Face Space
 
 1. Create a new Space. Choose the Docker SDK. Make the Space public: the access tokens are what keep people out, and the files in this folder hold no secrets. A private Space opens only for members of your Hugging Face organisation who are signed in to Hugging Face, so people with a token link could not open it.
+
+   A Docker Space on the free hardware (CPU basic) needs a PRO account, or a Team or Enterprise organisation; otherwise Hugging Face refuses to start it (HTTP 402). Paid hardware (CPU upgrade) needs a payment method only. A Space runs in the US, unless it belongs to a Team or Enterprise organisation that is set to the EU region.
 2. Copy `README.md` and `Dockerfile` from this folder into the Space.
-3. In the `Dockerfile`, or as a build variable named `REF` in the Space settings, set `REF` to the commit of pytacheck to install. Use a full commit hash.
+3. In the `Dockerfile`, or as a Space variable (not a secret) named `REF` in the Space settings, set `REF` to the commit of pytacheck to install. Use a full commit hash.
 4. In the Space settings, add these secrets:
    - `METACHECK_APP_TOKENS`: one access token per person, separated by commas. Each token has at least 32 characters.
    - `SCIVRS_API_KEY` (optional): a key for the bibr service, whichever kind of service it is (R metacheck reads a key of this name). People who choose bibr to read their PDF then need no key of their own. Without it, each person types their own key; it is used for that check only and never saved on the server.
@@ -14,6 +16,7 @@ This is for a link that a few people open in a browser, with nothing to install.
    - `PYTACHECK_BIBR_BACKEND` (optional): the kind of service at `PYTACHECK_BIBR_URL`. `bibr`, the default, is `bibr serve` and the hosted bibr service. `scivrs` is the Scienceverse platform, where a paper goes to `/jobs`. The app does not start with any other value.
    - `OSF_PAT` (optional): an OSF token for the checks that look up OSF pages.
 5. The Space sets `SPACE_HOST` itself, and the app allows that host name only.
+6. Optional: a Space variable `METACHECK_APP_PRESET` makes the page start on a preset (see [A link for one group](#a-link-for-one-group)).
 
 Send people the direct address of the Space, which is the `SPACE_HOST` value (shown as the direct URL in the Space's embed settings, and ending in `.hf.space`). Do not send the `huggingface.co/spaces/...` page: it shows the app inside another site's frame, and the app refuses that.
 
@@ -32,6 +35,18 @@ https://<host>/?token=<their token>
 ```
 
 The first visit stores a cookie and takes the token out of the address bar. The cookie lasts until the browser is closed, and it is not sent when someone clicks a plain link from a mail or a chat. Tell people to keep their link and to open it each time.
+
+## A link for one group
+
+To give a group a link that opens on their checks, set `METACHECK_APP_PRESET` to a preset (as a Space variable, or with `-e` on any other host). For TU/e data managers:
+
+```
+METACHECK_APP_PRESET=datapackage::tue
+```
+
+The page then starts on Data package with that preset chosen, so a person drops their archive or pastes a repository link and presses Check. People can still move the switch to Paper or choose other checks. A shared server offers only presets made of built-in checks, and refuses to start with any other (it says which presets it can use). `metacheck-app --hosted --preset NAME` does the same as the variable.
+
+A group that needs modules of its own (a pack) installs the app on their own computers instead, where packs work: see [docs/TRY.md](../../docs/TRY.md#for-tue-data-managers).
 
 ## Take a link away
 

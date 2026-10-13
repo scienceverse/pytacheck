@@ -127,7 +127,8 @@ def _builtin_order() -> list[str]:
     return [*names, "ref_summary"]
 
 
-def _title(name: str) -> str:
+def title_of(name: str) -> str:
+    """The title of a check as the results table shows it (its name if it has none)."""
     from metacheck.module import module_find
 
     try:
@@ -145,14 +146,15 @@ def choices(hosted: bool = False, extra: Iterable[str] = ()) -> list[tuple[str, 
     """
     validated = set(validated_checks())
     out = [
-        (f"{_title(n)} ({n}){', validated' if n in validated else ''}", n) for n in _builtin_order()
+        (f"{title_of(n)} ({n}){', validated' if n in validated else ''}", n)
+        for n in _builtin_order()
     ]
     if not hosted:
         known = {n for _, n in out}
         for ref in extra:
             if ref not in known:
                 known.add(ref)
-                out.insert(len(out) - 1, (f"{_title(ref)} ({ref})", ref))
+                out.insert(len(out) - 1, (f"{title_of(ref)} ({ref})", ref))
     return out
 
 

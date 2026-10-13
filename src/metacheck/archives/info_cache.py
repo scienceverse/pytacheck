@@ -121,10 +121,10 @@ def _repo_info_cache_put(host: str, id: Any, value: Any) -> Any:
     with contextlib.suppress(Exception):
         data = orjson.dumps({"format": _FORMAT, "version": _VERSION, "value": _encode(value)})
         path = _repo_info_cache_path(host, id)
-        tmp = f"{path}.{os.getpid()}.tmp"
-        with open(tmp, "wb") as fh:
+        from metacheck.archives._atomic import atomic_write
+
+        with atomic_write(path) as fh:
             fh.write(data)
-        os.replace(tmp, path)
     return value
 
 
