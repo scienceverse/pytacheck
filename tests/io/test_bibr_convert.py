@@ -641,6 +641,29 @@ def test_bibr_session_repr_keeps_the_token_out() -> None:
     assert sess.headers["Authorization"] == f"Bearer {TOKEN}"
 
 
+def test_bibr_tells_on_status_each_time_the_status_changes(
+    pdf: Path, tmp_path: Path, sleeps: list[float]
+) -> None:
+    """The job API reports a status and nothing finer: that is all the callback hears, once
+    for each change (a status that repeats is not told again)."""
+    seen: list[str] = []
+    states = ("queued", "queued", "running", "running", "succeeded")
+    with _serve(Recorder(states=states)):
+        out = _bibr(pdf, tmp_path, api_key=None, on_status=seen.append)
+    assert Path(out).exists()
+    assert seen == ["queued", "running", "succeeded"]
+
+
+def test_bibr_survives_a_failing_on_status(pdf: Path, tmp_path: Path, sleeps: list[float]) -> None:
+    """A display that breaks must not lose a job that already counted against a quota."""
+
+    def broken(_state: str) -> None:
+        raise RuntimeError("the display is gone")
+
+    with _serve(Recorder()):
+        assert Path(_bibr(pdf, tmp_path, api_key=None, on_status=broken)).exists()
+
+
 def test_bibr_unknown_status_keeps_polling(pdf: Path, tmp_path: Path) -> None:
     """A later bibr may add states; a job in an unknown one is waited for, not failed."""
     with _serve(Recorder(states=("starting", "succeeded"))):

@@ -168,7 +168,7 @@ def test_the_preset_choice_is_hidden_without_installed_presets() -> None:
 
 def test_the_demo_button_runs_the_ticked_checks(config: Path) -> None:
     request = SimpleNamespace(session_hash="p1")
-    page = _handlers()["on_demo"](
+    *_, page = _handlers()["on_demo"](
         False,
         False,
         "grobid",
@@ -179,10 +179,9 @@ def test_the_demo_button_runs_the_ticked_checks(config: Path) -> None:
         "datapackage::default",
         True,
         request,
-        lambda *_a, **_k: None,
     )
-    assert "Ran 1 check on" in page[1]
-    assert page[2].data["Check"].tolist() == ["Author Information"]
+    assert "Ran 1 check on" in page[2]
+    assert page[3].data["Check"].tolist() == ["Author Information"]
 
 
 # -- metacheck-app --preset ------------------------------------------------------------------
@@ -232,9 +231,30 @@ def test_an_unknown_preset_is_named_with_the_ones_there_are(
     assert main(["--no-browser", "--preset", "nope"]) == 2
     err = capsys.readouterr().err
     assert "no preset named 'nope'" in err and "tue, web, datapackage::default" in err
-    assert main(["--hosted", "--preset", "tue"]) == 2
-    assert "--preset only works in the local app" in capsys.readouterr().err
     assert started == []
+
+
+def test_a_shared_server_starts_on_a_built_in_preset_only(
+    config: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from metacheck.app import launch
+
+    served: list[str | None] = []
+    monkeypatch.setenv("METACHECK_APP_TOKENS", "t" * 40)
+    monkeypatch.setenv("METACHECK_APP_HOSTS", "metacheck.example.org")
+    monkeypatch.setattr(launch, "_serve", lambda _p, _b, cfg, _h: served.append(cfg.preset) or 0)
+    # slow has a check the page never runs, so a shared server does not offer it
+    assert launch.main(["--hosted", "--preset", "slow"]) == 2
+    err = capsys.readouterr().err
+    assert "A shared server has no preset named 'slow'" in err
+    assert "tue, web, datapackage::default, datapackage::tue" in err
+    assert launch.main(["--hosted", "--preset", "datapackage::tue"]) == 0
+    monkeypatch.setenv("METACHECK_APP_PRESET", "datapackage::tue")
+    assert launch.main(["--hosted"]) == 0
+    assert launch.main(["--hosted", "--preset", "datapackage::default"]) == 0  # the flag wins
+    monkeypatch.setenv("METACHECK_APP_PRESET", "nope")
+    assert launch.main(["--hosted"]) == 2
+    assert served == ["datapackage::tue", "datapackage::tue", "datapackage::default"]
 
 
 def test_a_running_app_keeps_its_checks_and_says_so(

@@ -1,0 +1,11 @@
+participant_id,age,gender,sleep_hours,mood_score
+P01,18,female,7.5,6
+P02,19,male,5.0,4
+P03,18,female,8.0,7
+P04,20,male,6.0,5
+P05,19,female,7.0,6
+P06,18,male,4.5,3
+P07,21,female,7.5,7
+P08,19,male,6.5,5
+P09,18,female,8.5,8
+P10,20,male,5.5,4

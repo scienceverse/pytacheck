@@ -38,7 +38,7 @@ import contextvars
 import hashlib
 import itertools
 from collections import Counter
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from typing import TYPE_CHECKING, Any
 
 from metacheck._env import env_get
@@ -51,7 +51,9 @@ __all__ = [
     "check_mutation",
     "count",
     "counting",
+    "module_progress",
     "mutation_check_enabled",
+    "note_module",
     "running_module",
     "trusted_scope",
     "trusted_token",
@@ -70,6 +72,10 @@ _WATCH: contextvars.ContextVar[_Watch | None] = contextvars.ContextVar(
     "metacheck_watched_papers", default=None
 )
 _TABLES = ("text", "section", "bib", "bib_match")
+#: who wants to hear which module of a run is about to start (the app's progress bar)
+_STEPS: contextvars.ContextVar[Callable[[int, int, str], None] | None] = contextvars.ContextVar(
+    "metacheck_module_progress", default=None
+)
 
 
 def mutation_check_enabled() -> bool:
@@ -225,6 +231,29 @@ def running_module(label: str) -> Iterator[None]:
         yield
     finally:
         watch.module = before
+
+
+@contextlib.contextmanager
+def module_progress(callback: Callable[[int, int, str], None]) -> Iterator[None]:
+    """Tell *callback* ``(done, total, label)`` as a module runner starts each module of a
+    run (``report_module_run()``, so also ``report()``), with ``done`` modules finished and
+    ``total`` to run, and once more with ``done == total`` and an empty label when the last
+    has finished. Only the runs of this thread (and of the threads that copy its context)
+    are reported."""
+    token = _STEPS.set(callback)
+    try:
+        yield
+    finally:
+        _STEPS.reset(token)
+
+
+def note_module(done: int, total: int, label: str) -> None:
+    """For the runners: tell the callback of :func:`module_progress`, if any. A callback that
+    fails is not allowed to stop the run."""
+    callback = _STEPS.get()
+    if callback is not None:
+        with contextlib.suppress(Exception):
+            callback(done, total, label)
 
 
 def trusted_token() -> int | None:

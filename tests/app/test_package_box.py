@@ -16,6 +16,7 @@ import time
 import zipfile
 from collections.abc import Iterator
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -322,9 +323,14 @@ def test_a_repository_is_downloaded_checked_and_named_for_the_repository(tmp_pat
         result = run_link(tmp_path, progress=lambda fraction, text: ticks.append((fraction, text)))
     assert result.name == "repo" and len(result.rows) == default_checks()
     assert result.report_path.name == "repo_report.html" and result.report_path.is_file()
-    assert [f for f, _ in ticks] == sorted(f for f, _ in ticks)  # forward only
-    assert ticks[0][1] == "Fetching the repository" and ticks[-1] == (1.0, "Done")
-    assert any(text.startswith("Downloading") for _, text in ticks)
+    assert ticks[0] == (0.0, "Fetching the repository") and ticks[-1] == (1.0, "Done")
+    stages = [text.split(":")[0].split(" (")[0] for _, text in ticks]
+    first_check = next(i for i, text in enumerate(stages) if text.startswith("Running check 1 of"))
+    assert "Downloading" in stages[:first_check] and "Unpacking the archive" in stages
+    # each stage has its own bar: the checks finished of the checks to run, only moving forward
+    counts = [f for f, text in ticks[first_check:] if text.startswith("Running check")]
+    assert counts == sorted(counts) and counts[0] == 0.0 and counts[-1] < 1.0
+    assert ticks[-2] == (1.0, "Building the report")
     assert {row.status for row in result.rows} == {"Data package"}
     assert all(
         row.result.split(":")[0] in {"Red", "Yellow", "Green", "Info", "Failed"}
@@ -484,7 +490,17 @@ def dropped(tc: TestClient, name: str, body: bytes) -> dict[str, Any]:
 def shown(done: dict[str, Any]) -> dict[str, Any]:
     """The outputs of the check button by name."""
     assert done["success"], done
-    names = ["results", "summary", "table", "checklist", "frame", "download", "status", "stop"]
+    names = [
+        "panel",
+        "results",
+        "summary",
+        "table",
+        "checklist",
+        "frame",
+        "download",
+        "status",
+        "stop",
+    ]
     return dict(zip(names, done["output"]["data"], strict=False))
 
 
@@ -589,45 +605,133 @@ def test_a_run_from_a_link_leaves_no_download_behind(
     assert leftovers(scratch) == []
 
 
+def _props(config: dict[str, Any], **match: Any) -> dict[str, Any]:
+    (found,) = (
+        c["props"]
+        for c in config["components"]
+        if all(c["props"].get(k) == v for k, v in match.items())
+    )
+    return found  # type: ignore[no-any-return]
+
+
 def test_the_page_names_the_package_choices_and_the_box() -> None:
     config = ui.build_app().get_config_file()
     boxes = [c for c in config["components"] if c["type"] == "multimodaltextbox"]
-    assert [b["props"]["label"] for b in boxes] == [ui.BOX_LABEL]
+    assert [b["props"]["label"] for b in boxes] == [ui.BOX_LABEL]  # the page starts on Paper
     box = boxes[0]["props"]
-    assert box["file_count"] == "single" and box["info"] == ui.BOX_INFO_LOCAL
+    assert box["file_count"] == "single" and box["info"] == ui.BOX_INFO
     assert set(box["file_types"]) >= {".pdf", ".xml", ".json", ".zip", ".tar", ".gz", ".tgz"}
     labels = {c["props"].get("label") for c in config["components"]}
     assert {ui.PACKAGE_PRESET_LABEL, ui.CLASSIFIER_LABEL, "Checklist of the data package"} <= labels
-    shared = ui.build_app(hosted=hosting.HostedConfig((TOKEN_A,), (HOST,))).get_config_file()
-    (shared_box,) = (c["props"] for c in shared["components"] if c["type"] == "multimodaltextbox")
-    assert shared_box["info"] == ui.BOX_INFO and "folder" not in shared_box["info"]
+    switch = _props(config, elem_id="mc-mode")
+    assert switch["value"] == ui.PAPER_MODE
+    assert [value for _, value in switch["choices"]] == [ui.PAPER_MODE, ui.PACKAGE_MODE]
+    # Data package names the box for a package; only this computer has folders
+    on_mode = _handlers(ui.build_app())["on_mode"]
+    here = on_mode(ui.PACKAGE_MODE)[0]
+    assert here["label"] == ui.PACKAGE_BOX_LABEL and here["info"] == ui.PACKAGE_BOX_INFO_LOCAL
+    shared = ui.build_app(hosted=hosting.HostedConfig((TOKEN_A,), (HOST,)))
+    there = _handlers(shared)["on_mode"](ui.PACKAGE_MODE)[0]
+    assert there["info"] == ui.PACKAGE_BOX_INFO and "folder" not in there["info"]
+    assert on_mode(ui.PAPER_MODE)[0]["label"] == ui.BOX_LABEL
+
+
+def _handlers(blocks: Any) -> dict[str, Any]:
+    return {fn.name: fn.fn for fn in blocks.fns.values()}
+
+
+def test_the_switch_shows_the_options_and_the_demo_of_its_mode() -> None:
+    on_mode = _handlers(ui.build_app())["on_mode"]
+    _box, paper, package, demo, demo_package = on_mode(ui.PACKAGE_MODE)
+    assert paper["visible"] is False and package["visible"] is True
+    assert demo["visible"] is False and demo_package["visible"] is True
+    _box, paper, package, demo, demo_package = on_mode(ui.PAPER_MODE)
+    assert paper["visible"] is True and package["visible"] is False
+    assert demo["visible"] is True and demo_package["visible"] is False
+
+
+def test_the_switch_follows_the_box_and_says_how_it_is_checked(tmp_path: Path) -> None:
+    on_box = _handlers(ui.build_app())["on_box"]
+    paper = {"text": "", "files": [str(tmp_path / "my paper.pdf")]}
+    archive = {"text": "", "files": [str(tmp_path / "study.zip")]}
+    mode, line = on_box(paper, ui.PAPER_MODE)
+    assert (
+        mode == {"__type__": "update"} and line == "Ready to check **my paper\\.pdf** as a paper."
+    )
+    mode, line = on_box(archive, ui.PAPER_MODE)  # a package dropped on Paper moves the switch
+    assert mode == ui.PACKAGE_MODE
+    assert line.startswith("Ready to check the archive **study\\.zip** as a data package.")
+    assert line.endswith(ui.SWITCHED[ui.PACKAGE_MODE])
+    mode, line = on_box(paper, ui.PACKAGE_MODE)
+    assert mode == ui.PAPER_MODE and line.endswith(ui.SWITCHED[ui.PAPER_MODE])
+    mode, line = on_box(typed("github.com/o/repo"), ui.PACKAGE_MODE)
+    assert line == (
+        "Ready to check **github\\.com/o/repo** as a data package. The repository is "
+        "downloaded when you press Check."
+    )
+    # a text is a package, even while it is being typed and is no link yet
+    mode, line = on_box(typed("https://github.com/o"), ui.PAPER_MODE)
+    assert mode == ui.PACKAGE_MODE and line == ui.SWITCHED[ui.PACKAGE_MODE]
+    # a file that cannot be checked is named at once
+    _mode, line = on_box({"text": "", "files": [str(tmp_path / "notes.docx")]}, ui.PAPER_MODE)
+    assert line.startswith(pk.BAD_FILE)
+    assert on_box(ui.EMPTY_BOX, ui.PAPER_MODE)[1] == ""
+
+
+def test_moving_the_switch_takes_out_what_the_other_mode_holds(tmp_path: Path) -> None:
+    on_mode_input = _handlers(ui.build_app())["on_mode_input"]
+    paper = {"text": "", "files": [str(tmp_path / "paper.json")]}
+    assert on_mode_input(ui.PACKAGE_MODE, paper) == (ui.EMPTY_BOX, "")
+    assert on_mode_input(ui.PAPER_MODE, typed("https://github.com/o/repo")) == (ui.EMPTY_BOX, "")
+    kept = on_mode_input(ui.PAPER_MODE, paper)
+    assert kept == ({"__type__": "update"}, {"__type__": "update"})
+
+
+def test_the_demo_package_is_checked_like_an_uploaded_archive(tmp_path: Path) -> None:
+    archive = ui.demo_package_archive(tmp_path)
+    with zipfile.ZipFile(archive) as opened:
+        names = opened.namelist()
+    assert archive.name == "sleep_study.zip"
+    assert "sleep_study/README.md" in names and "sleep_study/data/raw/sleep_survey.csv" in names
+    on_demo_package = _handlers(ui.build_app())["on_demo_package"]
+    sent = list(on_demo_package(DEFAULT, False, SimpleNamespace(session_hash="dp1")))
+    assert "Open the archive" in sent[0][0]
+    out = dict(zip(["panel", "results", "summary", "table", "checklist"], sent[-1], strict=False))
+    assert out["panel"] == "" and out["summary"].startswith("Checked **sleep\\_study** in ")
+    statuses = set(out["checklist"]["value"].data["Status"])
+    assert {"Fail", "Warning", "Manual", "Pass"} <= statuses  # something to show in a demo
 
 
 def test_a_preset_the_app_was_started_with_is_chosen_for_packages(tmp_path: Path) -> None:
     make_pack(tmp_path)
     config = ui.build_app(start_preset="tue::data_steward").get_config_file()
-    (dropdown,) = (
-        c["props"]
-        for c in config["components"]
-        if c["props"].get("label") == ui.PACKAGE_PRESET_LABEL
-    )
-    assert dropdown["value"] == "tue::data_steward" and dropdown["visible"] is True
+    dropdown = _props(config, label=ui.PACKAGE_PRESET_LABEL)
+    assert dropdown["value"] == "tue::data_steward"
     assert [ref for _, ref in dropdown["choices"]] == [
         DEFAULT,
         "tue::data_steward",
         "tue::own_check",
+        "datapackage::tue",
     ]
-    (accordion,) = (
-        c["props"] for c in config["components"] if c["props"].get("label") == ui.PICKER_TITLE
-    )
-    assert accordion["open"] is True  # shown open, so the person sees the choice
+    # the page opens on Data package, where the choice is
+    assert _props(config, elem_id="mc-mode")["value"] == ui.PACKAGE_MODE
+    assert _props(config, label=ui.PICKER_TITLE)["open"] is False
     plain = ui.build_app().get_config_file()
-    (default,) = (
-        c["props"]
-        for c in plain["components"]
-        if c["props"].get("label") == ui.PACKAGE_PRESET_LABEL
-    )
-    assert default["value"] == DEFAULT and default["visible"] is True
+    assert _props(plain, label=ui.PACKAGE_PRESET_LABEL)["value"] == DEFAULT
+    assert _props(plain, elem_id="mc-mode")["value"] == ui.PAPER_MODE
+
+
+def test_a_shared_server_can_start_on_the_tue_preset() -> None:
+    config = hosting.HostedConfig((TOKEN_A,), (HOST,), preset="datapackage::tue")
+    page = ui.build_app(hosted=config, start_preset=config.preset).get_config_file()
+    assert _props(page, label=ui.PACKAGE_PRESET_LABEL)["value"] == "datapackage::tue"
+    assert _props(page, elem_id="mc-mode")["value"] == ui.PACKAGE_MODE
+    with TestClient(
+        create_hosted_app(PORT, config), base_url=f"https://{HOST}", follow_redirects=False
+    ) as tc:
+        tc.get(f"/?token={TOKEN_A}")
+        served = tc.get("/config").json()
+    assert _props(served, label=ui.PACKAGE_PRESET_LABEL)["value"] == "datapackage::tue"
 
 
 def test_the_package_page_takes_a_link_too(tmp_path: Path) -> None:
@@ -662,6 +766,8 @@ def test_the_package_page_takes_a_link_too(tmp_path: Path) -> None:
         with pytest.raises(UserError, match="Type the link"):
             pk.resolve_link(blank)
     assert pk.resolve_link('  "https://github.com/o/repo" ') == "https://github.com/o/repo"
+    assert pk.resolve_link("github.com/o/repo") == "https://github.com/o/repo"
+    assert pk.resolve_link("doi:10.5281/zenodo.1") == "https://doi.org/10.5281/zenodo.1"
     with pytest.raises(UserError, match="not a repository this can fetch from"):
         pk.resolve_link("https://example.com/x")
 
@@ -671,7 +777,7 @@ def test_the_package_page_takes_a_link_too(tmp_path: Path) -> None:
 
 @pytest.fixture
 def shared_env(monkeypatch: pytest.MonkeyPatch) -> pytest.MonkeyPatch:
-    for name in ("TOKENS", "HOSTS", "JOB_TIMEOUT", "COMMIT", "AUTH", "USER_HEADER"):
+    for name in ("TOKENS", "HOSTS", "JOB_TIMEOUT", "COMMIT", "AUTH", "USER_HEADER", "PRESET"):
         monkeypatch.delenv(f"METACHECK_APP_{name}", raising=False)
     monkeypatch.setattr(hosting, "START_METHOD", "spawn")
     return monkeypatch
@@ -714,7 +820,7 @@ def test_a_shared_server_clears_the_box_after_a_run(shared_env: pytest.MonkeyPat
         done = event(tc, box, "h2")
     assert done["success"]
     assert done["output"]["data"][-1] == {"text": "", "files": []}
-    assert len(done["output"]["data"]) == 9
+    assert len(done["output"]["data"]) == 10
 
 
 def test_a_shared_server_does_not_read_a_folder_or_follow_a_link_beyond_its_hosts(
@@ -789,11 +895,47 @@ def test_a_shared_server_gives_a_link_run_the_limits_and_no_token(
     with shared_client(PORT + 7) as tc:
         done = event(tc, typed("https://github.com/o/repo"), "h7")
         out = shown(done)
+        # a link typed without https://, and a bare DOI, reach the run as links (not as the
+        # path of an upload that is gone)
+        bare = [
+            json.loads(shown(event(tc, typed(text), "h7"))["summary"].split("\n\n", 1)[1])
+            for text in ("github.com/o/repo", "10.5281/zenodo.1234567")
+        ]
     seen = json.loads(out["summary"].split("\n\n", 1)[1])  # the stand-in tells in its note
     assert seen["source"] == "https://github.com/o/repo" and seen["preset"] == DEFAULT
     assert (
         seen["limits"] == dataclasses.asdict(pk.HOSTED) and seen["limits"]["credentials"] is False
     )
+    assert [b["source"] for b in bare] == [
+        "https://github.com/o/repo",
+        "https://doi.org/10.5281/zenodo.1234567",
+    ]
+
+
+def test_a_shared_server_runs_the_demo_package(shared_env: pytest.MonkeyPatch) -> None:
+    """In the run's process, like an upload, and nothing to clear from the box after it."""
+    with shared_client(PORT + 8) as tc:
+        config = tc.get("/config").json()
+        (button,) = (
+            c["id"]
+            for c in config["components"]
+            if c["props"].get("value") == ui.DEMO_PACKAGE_BUTTON
+        )
+        (dep,) = (d for d in config["dependencies"] if d["targets"][0][0] == button and d["inputs"])
+        body = {"data": [DEFAULT, False], "fn_index": dep["id"], "session_hash": "h8"}
+        assert tc.post("/gradio_api/queue/join", json=body).status_code == 200
+        text = ""
+        with tc.stream("GET", "/gradio_api/queue/data", params={"session_hash": "h8"}) as stream:
+            for line in stream.iter_lines():
+                text += line
+                if '"process_completed"' in line:
+                    break
+    done = json.loads(next(p for p in text.split("data: ") if '"process_completed"' in p))
+    out = shown(done)
+    assert out["summary"].startswith("Checked **sleep\\_study** in ")
+    assert out["checklist"]["visible"] is True and out["panel"] == ""
+    assert "Open the archive" in text  # its steps were drawn
+    assert done["output"]["data"][-1] == {"__type__": "update"}  # the box is left as it is
 
 
 def test_the_shared_server_note_names_the_limit() -> None:

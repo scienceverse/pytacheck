@@ -7,19 +7,24 @@ never offer. The logic is in :mod:`metacheck.app.package`; this module is the pa
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from typing import Any
 
 import gradio as gr
 
 from metacheck.app import package as pk
+from metacheck.app.progress import Background, package_steps
 from metacheck.app.run import UserError
 from metacheck.app.ui import (
     CLASSIFIER_INFO,
     CLASSIFIER_LABEL,
     CLASSIFIER_MISSING_INFO,
     MAIN_PAGE_NAME,
+    START_JS,
+    TICK,
     Sessions,
     _download_link,
+    _gradio_error,
     coloured,
     package_summary,
     report_frame,
@@ -72,33 +77,51 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
         preset: str,
         classifier: bool,
         request: gr.Request,
-        progress: gr.Progress = gr.Progress(),  # noqa: B008 - Gradio reads this default
-    ) -> tuple[Any, ...]:
+    ) -> Iterator[tuple[Any, ...]]:
+        """Check the package in the background, and draw its steps (the last output) while it
+        runs, as the main page does."""
         key = report_key(request.session_hash or "")
+        keep = (gr.skip(),) * 6
         try:
             source = (
                 pk.resolve_link(link)
                 if kind == pk.LINK
                 else pk.resolve_source(kind, folder, upload)
             )
-            analysis = pk.check_package_source(
+        except UserError as exc:
+            yield (*keep, "")  # takes away the panel the button drew
+            raise gr.Error(str(exc), print_exception=False) from exc
+        steps = package_steps(str(source), pk.ARCHIVE if kind == pk.ZIP else kind)
+
+        def work() -> pk.PackageAnalysis:
+            return pk.check_package_source(
                 source,
                 preset,
                 report_dir=sessions.folder(key),
                 local_classifier=classifier,
-                progress=lambda fraction, text: progress(fraction, desc=text),
+                progress=steps,
             )
-        except UserError as exc:
-            raise gr.Error(str(exc), print_exception=False) from exc
-        except Exception as exc:
-            raise gr.Error(pk.FAILED) from exc
-        return (
+
+        job = Background(work).start()
+        yield (gr.update(visible=False), *keep[1:], steps.html())  # the last results go
+        while not job.wait(TICK):
+            yield (*keep, steps.html())
+        if job.error is not None:
+            error = _gradio_error(job.error, pk.FAILED)
+            steps.fail(error.message)
+            yield (*keep, steps.html())
+            if error is job.error:
+                raise error
+            raise error from job.error
+        analysis: pk.PackageAnalysis = job.result
+        yield (
             gr.update(visible=True),
             package_summary(analysis),
             coloured(analysis.checks),
             coloured(analysis.checklist),
             _download_link(key, analysis.report_path),
             report_frame(analysis.html),
+            "",
         )
 
     def on_source(kind: str) -> tuple[Any, ...]:
@@ -153,6 +176,8 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
             value=True,
         )
         check = gr.Button("Check the package", variant="primary", size="lg")
+        # the steps of a run, drawn while it runs; empty (and so not shown) otherwise
+        panel = gr.HTML("", elem_id="mc-run-panel", js_on_load=None, padding=False)
         with gr.Column(visible=False) as results:
             summary = gr.Markdown()
             checks = gr.Dataframe(
@@ -180,11 +205,14 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
             gr.Markdown(ABOUT)
 
         kind.change(on_source, kind, [folder, upload, link], api_visibility="private")
+        quiet: dict[str, Any] = {"api_visibility": "private", "show_progress": "hidden"}
+        # the browser draws the panel at once: the run draws its own steps when it starts
+        check.click(None, None, panel, js=START_JS, **quiet)
         check.click(
             on_check_package,
             [kind, folder, upload, link, preset, classifier],
-            [results, summary, checks, checklist, download, frame],
-            api_visibility="private",
+            [results, summary, checks, checklist, download, frame, panel],
+            **quiet,
         )
         # There is no ``app.load`` here, on purpose: a load event runs at page load, and a click
         # that lands as it completes loses its answer (Gradio closes the event stream between
