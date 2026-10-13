@@ -35,6 +35,7 @@ import shutil
 import threading
 import warnings
 import zipfile
+import zlib
 from collections.abc import Iterable, Sequence
 from contextvars import ContextVar
 from typing import TYPE_CHECKING, Any
@@ -753,6 +754,12 @@ def _zip_fetch_members(
             if rel is None:
                 error[i] = "entry path escapes the archive (path traversal)"
                 continue
+            target = f"{dest}/{rel}"
+            # Reuse only bytes matching the current listing's size and CRC.
+            # A partial write or a caller's edit causes a fresh member fetch.
+            if _cached_member_ok(target, _num(row.get("size")), _num(row.get("crc")), verify):
+                out_path[i], ok[i] = target, True
+                continue
             data = b""  # an empty member has nothing to fetch
             if csize != 0:
                 if not tried:
@@ -775,7 +782,6 @@ def _zip_fetch_members(
                 except Exception as e:
                     error[i] = _member_error(e, info)
                     continue
-            target = f"{dest}/{rel}"
             try:  # R: dir.create(showWarnings = FALSE) fails silently (a file is in the way)
                 os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
             except OSError:
@@ -800,6 +806,23 @@ def _zip_fetch_members(
             "error": pd.Series(error, dtype="string"),
         }
     )
+
+
+def _cached_member_ok(path: str, size: float, crc: float, verify: bool) -> bool:
+    if not math.isfinite(size) or (verify and not math.isfinite(crc)):
+        return False
+    try:
+        if os.path.getsize(path) != size or os.path.islink(path):
+            return False
+        if not verify:
+            return True
+        checksum = 0
+        with open(path, "rb") as fh:
+            while chunk := fh.read(1024 * 1024):
+                checksum = zlib.crc32(chunk, checksum)
+        return checksum == int(crc)
+    except OSError:
+        return False
 
 
 # -- archive-format classification --------------------------------------------

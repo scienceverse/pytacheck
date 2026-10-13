@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import dataclasses
 import html
 import importlib.util
 import os
@@ -67,7 +68,8 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         metavar="NAME",
         help="the preset the app starts with, for example a pack's (see 'pytacheck preset "
-        "list'); a data package preset opens the package page (not offered with --hosted)",
+        "list'); a data package preset opens the package page. With --hosted, one of the "
+        "built-in presets (or set METACHECK_APP_PRESET)",
     )
     parser.add_argument(
         "--self-test",
@@ -109,12 +111,27 @@ def preset_page(ref: str) -> str | None:
     return None
 
 
-def _preset_names() -> str:
+def _preset_names(hosted: bool = False) -> str:
     from metacheck.app.checks import paper_presets
     from metacheck.app.package import package_presets
 
-    refs = [r for _, r in (*paper_presets(), *package_presets()) if r]
+    refs = [r for _, r in (*paper_presets(hosted), *package_presets(hosted)) if r]
     return ", ".join(refs) if refs else "none is installed"
+
+
+def hosted_preset_problem(ref: str) -> str | None:
+    """What is wrong with *ref* as the preset a shared server starts with, or ``None``.
+
+    A shared server runs only built-in checks, so only presets made of them are offered."""
+    from metacheck.app.checks import paper_presets
+    from metacheck.app.package import package_presets
+
+    if ref and ref in {r for _, r in (*paper_presets(True), *package_presets(True))}:
+        return None
+    return (
+        f"A shared server has no preset named {ref!r}: it offers only presets of built-in "
+        f"checks. Presets it can use: {_preset_names(True)}."
+    )
 
 
 def _url(port: int, token: str, page: str | None = None) -> str:
@@ -298,11 +315,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     if ns.page is not None and ns.hosted:
         print("--page only works in the local app, not with --hosted.", file=sys.stderr)
         return 2
-    if ns.preset is not None and ns.hosted:
-        print("--preset only works in the local app, not with --hosted.", file=sys.stderr)
-        return 2
     page = ns.page
-    if ns.preset is not None:
+    if ns.preset is not None and not ns.hosted:
         found = preset_page(ns.preset)
         if found is None:
             print(
@@ -320,6 +334,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         except hosting.HostedError as exc:
             print(exc, file=sys.stderr)
             return 2
+        if ns.preset is not None:  # the flag wins over METACHECK_APP_PRESET
+            config = dataclasses.replace(config, preset=ns.preset)
+        if config.preset is not None:
+            problem = hosted_preset_problem(config.preset)
+            if problem:
+                print(problem, file=sys.stderr)
+                return 2
         problem = bibr.settings_problem()
         if problem:
             print(problem, file=sys.stderr)

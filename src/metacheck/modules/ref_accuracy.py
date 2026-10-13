@@ -130,27 +130,14 @@ def _as_numeric(x: Any) -> float | None:
 
 @cache
 def _levenshtein() -> Any:
-    try:
-        from rapidfuzz.distance import Levenshtein
-    except ImportError:  # pragma: no cover - rapidfuzz is an optional speed-up
-        return None
+    from rapidfuzz.distance import Levenshtein
+
     return Levenshtein.distance
 
 
 def _adist(a: str, b: str) -> int:
     """``utils::adist(a, b)[1, 1]``: the (unweighted) Levenshtein distance."""
-    fast = _levenshtein()
-    if fast is not None:
-        return int(fast(a, b))
-    if len(a) < len(b):
-        a, b = b, a
-    prev = list(range(len(b) + 1))
-    for i, ca in enumerate(a, 1):
-        cur = [i]
-        for j, cb in enumerate(b, 1):
-            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
-        prev = cur
-    return prev[-1]
+    return int(_levenshtein()(a, b))
 
 
 # ---------------------------------------------------------------------------

@@ -27,15 +27,16 @@ from __future__ import annotations
 
 import contextlib
 import email.utils
+import functools
 import math
 import random
 import threading
 import time
 import warnings
 from collections.abc import Callable, Iterator, Sequence
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Future, ThreadPoolExecutor, TimeoutError
 from contextvars import ContextVar, copy_context
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar, cast
 from urllib.parse import urlsplit
 
 from metacheck._env import env_get
@@ -74,6 +75,111 @@ _skip_limit: ContextVar[bool] = ContextVar("pytacheck_skip_on_api_limit", defaul
 _interrupt: ContextVar[Callable[[], None] | None] = ContextVar("pytacheck_interrupt", default=None)
 _host_reset: dict[str, float] = {}
 _reset_lock = threading.Lock()
+_host_slots: dict[str, threading.BoundedSemaphore] = {}
+_slots_lock = threading.Lock()
+
+
+@contextlib.contextmanager
+def _host_slot(host: str) -> Iterator[None]:
+    """Bound requests per origin across nested pools; retry sleeps hold no slot."""
+    with _slots_lock:
+        slots = _host_slots.get(host)
+        if slots is None:
+            slots = threading.BoundedSemaphore(4 if host == "api.osf.io" else 8)
+            _host_slots[host] = slots
+    while not slots.acquire(timeout=0.25):
+        check_interrupt()
+    try:
+        check_interrupt()
+        yield
+    finally:
+        slots.release()
+
+
+class _RequestMemo:
+    def __init__(self) -> None:
+        self.lock = threading.Lock()
+        self.pending: dict[str, Future[Any]] = {}
+
+
+_REQUEST_MEMO: ContextVar[_RequestMemo | None] = ContextVar("metacheck_request_memo", default=None)
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
+
+
+@contextlib.contextmanager
+def _request_session() -> Iterator[None]:
+    """Share successful metadata GET/HEAD requests within one repository listing.
+
+    Concurrent callers of the same request share the in-flight work too. The
+    key includes headers, client identity and retry arguments; bodies streamed
+    to disk are never retained. Failures are removed so a later call can retry.
+    """
+    if _REQUEST_MEMO.get() is not None:
+        yield
+        return
+    token = _REQUEST_MEMO.set(_RequestMemo())
+    try:
+        yield
+    finally:
+        _REQUEST_MEMO.reset(token)
+
+
+def _memoize_requests(func: Callable[_P, _R]) -> Callable[_P, _R]:
+    send = cast("Callable[..., Any]", func)
+
+    @functools.wraps(func)
+    def memoized(method: str, url: str, **kwargs: Any) -> Any:
+        memo = _REQUEST_MEMO.get()
+        if (
+            memo is None
+            or method.upper() not in ("GET", "HEAD")
+            or kwargs.get("sink") is not None
+            or kwargs.get("resend_headers")
+        ):
+            return send(method, url, **kwargs)
+        check_interrupt()
+        # repr is used only as an in-memory key, never logged or persisted.
+        # Differently ordered kwargs can miss the memo, but cannot collide.
+        key = repr((method, url, kwargs, skipping_api_limits()))
+        with memo.lock:
+            future = memo.pending.get(key)
+            owner = future is None
+            if future is None:
+                future = Future()
+                memo.pending[key] = future
+        if not owner:
+            while True:
+                check_interrupt()
+                try:
+                    return future.result(timeout=0.25)
+                except TimeoutError:
+                    if future.done():  # the request itself raised TimeoutError
+                        raise
+        try:
+            response = send(method, url, **kwargs)
+        except BaseException as exc:
+            with memo.lock:
+                memo.pending.pop(key, None)
+            future.set_exception(exc)
+            raise
+        cacheable = response is not None and 200 <= response.status_code < 300
+        if (
+            cacheable
+            and method.upper() != "HEAD"
+            and _is_json_type(response.headers.get("content-type", "").split(";", 1)[0].strip())
+        ):
+            try:
+                resp_json(response, check_type=False)
+            except ValueError:
+                cacheable = False  # a truncated JSON body must be requested again
+        if not cacheable:
+            with memo.lock:
+                memo.pending.pop(key, None)
+        future.set_result(response)
+        return response
+
+    return cast("Callable[_P, _R]", memoized)
 
 
 @contextlib.contextmanager
@@ -320,6 +426,7 @@ def _send(
     return resp
 
 
+@_memoize_requests
 def request(
     method: str,
     url: str,
@@ -374,7 +481,8 @@ def request(
     stream = sink is not None or resend_headers
     retry = is_transient or (lambda r: r.status_code in retry_statuses)
     resp: httpx.Response | None = None
-    for attempt in range(1, max_tries + 1):
+    attempt = 0
+    while attempt < max_tries:
         check_interrupt()
         reset = host_reset_at(host)
         if reset is not None:
@@ -386,18 +494,34 @@ def request(
             sleep(reset - time.time())
         if throttle is not None:
             throttle.acquire(host)
+        response_reset = None
         try:
-            resp = _send(session, method, url, kwargs, stream=stream, resend_headers=resend_headers)
-            if not retry(resp):
-                try:
-                    if sink is not None:
-                        sink(resp)
-                    elif stream:
-                        resp.read()
-                finally:
-                    if stream:
-                        resp.close()
-                return resp
+            with _host_slot(host):
+                # A request ahead of this one may have exhausted the quota while
+                # it waited for a slot. Wait outside the slot, without spending
+                # a retry attempt. NO_SLEEP retains the test suite's time bypass.
+                queued_reset = host_reset_at(host)
+                if env_get("NO_SLEEP") and not skipping_api_limits():
+                    queued_reset = None
+                if queued_reset is None:
+                    attempt += 1
+                    resp = _send(
+                        session, method, url, kwargs, stream=stream, resend_headers=resend_headers
+                    )
+                    if not retry(resp):
+                        try:
+                            if sink is not None:
+                                sink(resp)
+                            elif stream:
+                                resp.read()
+                        finally:
+                            if stream:
+                                resp.close()
+                        return resp
+                    if resp.status_code == 429 or _exhausted(resp):
+                        response_reset = _parse_reset(resp)
+                        if response_reset is not None:
+                            _record_reset(host, response_reset)  # publish before releasing the slot
         except (httpx.TransportError, httpx.TimeoutException):
             if attempt == max_tries or not retry_on_failure:
                 if raise_errors:
@@ -405,19 +529,22 @@ def request(
                 return None
             sleep(_backoff(attempt))
             continue
+        if queued_reset is not None:
+            if skipping_api_limits():
+                if resp is None and raise_errors:
+                    raise RateLimited(f"{host} is rate-limited and waiting was skipped")
+                return resp
+            _announce_wait(host, queued_reset - time.time())
+            sleep(queued_reset - time.time())
+            continue
+        assert resp is not None  # a wire attempt completed; queued waits continued above
         if stream:
             resp.close()
-        remembered = False
-        if resp.status_code == 429 or _exhausted(resp):
-            reset = _parse_reset(resp)
-            if reset is not None:
-                _record_reset(host, reset)
-                remembered = True
-            if skipping_api_limits():
-                return resp
+        if (resp.status_code == 429 or _exhausted(resp)) and skipping_api_limits():
+            return resp
         if attempt == max_tries:
             return resp
-        if not remembered:  # a remembered reset is waited for, and announced, at the top
+        if response_reset is None:  # a remembered reset is waited for at the top
             sleep(_backoff(attempt))
     return resp
 

@@ -1,0 +1,6 @@
+variable,description,unit
+participant_id,Code of the student,
+age,Age at the start of the study,years
+gender,Gender as the student gave it,
+sleep_hours,Average sleep per night over the two weeks,hours
+mood_score,Average evening mood (1 = very low; 10 = very good),points

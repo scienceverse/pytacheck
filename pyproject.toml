@@ -38,6 +38,8 @@ dependencies = [
     # classes and \m/\M word anchors are needed to reproduce R's TRE engine.
     "regex>=2026.9.29",
     "orjson>=3.13.0",
+    # Native edit distance for reference matching (the Python fallback is quadratic).
+    "rapidfuzz>=3.10,<4",
     "httpx[http2]>=0.28.1,<1",
     "packaging>=24",
     "h2>=4.4.1",
