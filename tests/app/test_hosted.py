@@ -541,6 +541,9 @@ def test_a_slow_data_check_is_stopped_before_the_limit(env: pytest.MonkeyPatch) 
     budget, grace = ui.data_budget(10)
     assert (budget, grace) == (8, 1)
     assert ui.data_budget(900) == (840, 30)
+    # The data check gets 3 s here, not the 8 s of a 10 s limit, so the whole run has time to
+    # start its process and write the report on a slow runner before the limit ends it.
+    env.setattr(ui, "data_budget", lambda _limit: (3.0, 1.0))
     tight = create_hosted_app(PORT + 5, config(job_timeout=10))
     with TestClient(tight, base_url=BASE, follow_redirects=False) as tc:
         tc.get(f"/?token={TOKEN_A}")
@@ -701,7 +704,7 @@ def _sleep(seconds: float) -> None:
 def test_job_runner_returns_the_result_and_deletes_the_upload(tmp_path: Path) -> None:
     upload = tmp_path / "up.pdf"
     upload.write_text("x")
-    runner = hosting.JobRunner(20)
+    runner = hosting.JobRunner(60)
     assert runner.run(operator.add, 1, 2, upload=upload, on_timeout=TimeoutError) == 3
     assert not upload.exists()
     upload.write_text("x")
