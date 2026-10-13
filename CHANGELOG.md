@@ -13,6 +13,13 @@ package's. The R commit each release is compared against is in
 - **Changed:** the installers' pinned commit (`REF` in `install.sh` and `$Ref` in `install.ps1`) moved to current `main`, so the default one-line install gets the code of the last merges.
 - **Added:** TU/e data managers install and open the app on that preset with one line (`--steward --preset datapackage::tue` on a Mac or Linux, `METACHECK_STEWARD` and `METACHECK_APP_PRESET` on Windows). The commands are in [docs/TRY.md](docs/TRY.md#for-tue-data-managers).
 
+### Added: the app says what it is doing while it checks
+
+- **Added:** the paper page and the data package page of `metacheck-app` name the stage while a run goes on: reading the PDF, extracting it ("Extracting with bibr" or "Extracting with GROBID"), "Running check 3 of 19: <the check's title>", and building the report. For a repository link they also show the download (how much has arrived) and the unpacking. A shared server shows the same.
+- **Added:** the bar counts only what is known. Its fraction is the checks finished of the checks to run, or the share of an announced download; while bibr or GROBID extract, which they do not report, it stays at 0 and the stage text and the clock of the page say what is going on. With bibr's job API the text also says whether the job is "waiting in its queue" or "running", the only status bibr reports (no stage, no fraction); bibr in-process can report stages through a progress tracker, which the app does not use. No percentage is made up.
+- **Added:** `convert_bibr(on_status=...)` (the `"bibr"` backend) calls a function with the job's status each time it changes. `metacheck.core.scope.module_progress()` lets a caller hear `(done, total, label)` as `report_module_run()` (and so `report()`) starts each module.
+- **Changed:** the bar of the data package page no longer jumps to 0.5 when a host does not announce the size of a download, nor stops at 0.9 when it does; the data check of a shared server no longer holds the bar at 0.95.
+
 ### Performance: repository fetching and reference checks
 
 - OSF projects are listed concurrently in input order, and duplicate metadata requests share their in-flight work during a listing. Requests have shared origin-host limits across nested pools (four to api.osf.io, eight to other hosts); retries, rate-limit handling and cancellation still apply, including when a queued request learns that the host's quota is exhausted. Unknown file sizes are probed concurrently once per distinct URL; repositories refused by the file-count cap need no probes.
