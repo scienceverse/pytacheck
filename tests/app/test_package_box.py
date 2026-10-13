@@ -941,3 +941,7 @@ def test_a_shared_server_runs_the_demo_package(shared_env: pytest.MonkeyPatch) -
 def test_the_shared_server_note_names_the_limit() -> None:
     assert "50 MB" in hosting.PACKAGE_NOTE
     assert pk.HOSTED.download == 50 * 1024**2
+    assert hosting.package_note(pk.HOSTED.download) == hosting.PACKAGE_NOTE
+    # an operator who raises the download limit gets it named; an upload stays at 50 MB
+    raised = hosting.package_note(200 * 1024**2)
+    assert "An archive can be up to 50 MB, and a repository up to 200 MB" in raised

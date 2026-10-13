@@ -4,8 +4,10 @@ The limits on how much of a package is read (the bytes an archive may unpack to,
 its compression ratio, its folder depth) and on how much of a repository's download is
 fetched are built into the code as defaults. Each one can be changed with a ``METACHECK_PACKAGE_*``
 variable (the names are in :data:`metacheck._env.ENV_VARS`, and ``docs/ENVIRONMENT.md``
-lists them). The variable is read when the limit is used, so a process started with it set
-has it everywhere: the local app, the command line and the hosted app alike.
+lists them). ``open_package`` reads the variable each time it opens a package, and the app
+reads it when it starts (``metacheck.app.package.LOCAL`` and ``HOSTED``), so a process
+started with it set has it everywhere: the local app, the command line and the hosted app
+alike.
 
 A value that is not a positive number is not used: a warning names the variable, and the
 default stays. Sizes may be given in bytes or with a unit, ``512MB`` or ``20 GiB`` (units are

@@ -1161,7 +1161,7 @@ def build_app(
                     label="Checks to run",
                 )
         with gr.Column(visible=package_first) as package_options:
-            gr.Markdown(hosting.PACKAGE_NOTE if hosted else PRIVACY_PACKAGE)
+            gr.Markdown(hosting.package_note(pk.HOSTED.download) if hosted else PRIVACY_PACKAGE)
             package_preset = gr.Dropdown(
                 package_choices,
                 value=first_package,

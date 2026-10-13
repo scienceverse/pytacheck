@@ -92,9 +92,10 @@ a folder has none.
 ## Size limits
 
 Every limit on a package is a default that an environment variable can change. The
-variables are read each time a package is opened, so a process started with one set has it
-for the local app, the command line and the library alike. The hosted app has stricter
-defaults, and an operator raises them with the same variables.
+command line and the library read the variables each time a package is opened, and the app
+reads them when it starts, so a process started with one set has it for the local app, the
+command line and the library alike. The hosted app has stricter defaults, and an operator
+raises them with the same variables.
 
 | Variable | Limit | Local default | Hosted default |
 |---|---|---|---|
