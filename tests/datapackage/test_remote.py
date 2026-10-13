@@ -359,6 +359,32 @@ def test_a_repository_is_downloaded_named_for_it_and_opened(tmp_path: Path) -> N
     assert not download.exists()  # everything is removed again
 
 
+def test_the_download_reports_the_share_it_knows_and_none_it_does_not(tmp_path: Path) -> None:
+    body = _zip_bytes()
+    seen: list[tuple[float, str]] = []
+    with respx.mock(assert_all_called=False) as router:
+        router.get(GITHUB_API).respond(302, headers={"location": CODELOAD})
+        router.get(CODELOAD).respond(
+            200,
+            content=body,
+            headers={"content-type": "application/zip", "content-length": str(len(body))},
+        )
+        with open_link("https://github.com/o/repo", progress=lambda f, t: seen.append((f, t))):
+            pass
+    # the whole announced size has arrived (not a number held back or made up), then unpacking
+    assert seen[0][0] == 1.0 and seen[0][1].startswith("Downloading")
+    assert seen[-1] == (0.0, "Unpacking the archive")
+    seen.clear()
+    with respx.mock(assert_all_called=False) as router:
+        router.get(GITHUB_API).respond(302, headers={"location": CODELOAD})
+        router.get(CODELOAD).respond(
+            200, content=body, headers={"content-type": "application/zip", "content-length": "x"}
+        )
+        with open_link("https://github.com/o/repo", progress=lambda f, t: seen.append((f, t))):
+            pass
+    assert [f for f, _ in seen] == [0.0, 0.0]  # a host that announces no size gives no share
+
+
 def test_the_downloaded_file_is_named_for_the_package_by_what_it_is(tmp_path: Path) -> None:
     buffer = io.BytesIO()
     with tarfile.open(fileobj=buffer, mode="w:gz") as tf:

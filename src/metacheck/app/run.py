@@ -24,7 +24,7 @@ from typing import Any
 
 from metacheck._env import env_get, env_names
 from metacheck.app import bibr
-from metacheck.app.checks import DATA, chosen_checks, selected_checks, status_labels
+from metacheck.app.checks import DATA, chosen_checks, selected_checks, status_labels, title_of
 
 __all__ = [
     "GROBID_SERVERS",
@@ -85,7 +85,27 @@ _RUN_LOCK = threading.Lock()
 #: wait for it.
 _DATA_LOCK = threading.Lock()
 
+#: ``progress(fraction, text)`` tells the page what is happening. The text names the stage:
+#: reading the PDF, extracting it with bibr or GROBID, "Running check 3 of 19: ...", building
+#: the report. The fraction is how far that stage is, and only when it is known: the checks
+#: finished out of the checks to run, or the share of an announced download. While a stage
+#: reports nothing (bibr and GROBID say nothing while they extract) it is 0.0 and the page
+#: shows the text and its own running clock, not a made-up percentage.
 Progress = Callable[[float, str], None]
+
+
+def checks_progress(tick: Progress) -> Callable[[int, int, str], None]:
+    """The function that ``metacheck.core.scope.module_progress`` calls as the checks run:
+    "Running check 3 of 19: <title>" with the fraction 2/19 (the checks finished: counted, not
+    estimated), then "Building the report" when the last one has finished."""
+
+    def step(done: int, total: int, label: str) -> None:
+        if done >= total:
+            tick(1.0, "Building the report")
+        else:
+            tick(done / total, f"Running check {done + 1} of {total}: {title_of(label)}")
+
+    return step
 
 
 class UserError(Exception):
@@ -222,10 +242,12 @@ def read_paper(
     *,
     pdf: str = "grobid",
     bibr_key: str = "",
+    progress: Progress | None = None,
 ) -> Any:
     """Read a bibr JSON, GROBID XML or PDF file into a paper.
 
     A PDF is turned into text by GROBID, or by bibr with ``pdf="bibr"`` and a key.
+    ``progress`` is told which stage this is (see :data:`Progress`).
     """
     import metacheck as pc
 
@@ -233,11 +255,16 @@ def read_paper(
     suffix = source.suffix.lower()
     if suffix not in (".pdf", ".xml", ".json"):
         raise UserError(BAD_TYPE)
+    tick = progress or (lambda _fraction, _text: None)
     from_bibr = suffix == ".pdf" and pdf == "bibr"
+    tick(0.0, "Reading the PDF" if suffix == ".pdf" else "Reading the paper")
     if from_bibr:
-        source = bibr.convert_pdf(source, workdir, bibr_key)
+        source = bibr.convert_pdf(source, workdir, bibr_key, progress)
     elif suffix == ".pdf":
+        tick(0.0, "Extracting with GROBID (it does not report how far it is)")
         source = _convert_pdf(source, workdir)
+    if suffix == ".pdf":
+        tick(0.0, "Reading the extracted text")
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -523,6 +550,7 @@ def begin(
     preset's arguments, by check name.
     """
     import metacheck as pc
+    from metacheck.core.scope import module_progress
     from metacheck.module import run_session, use
     from metacheck.presets import label
     from metacheck.report.report import report_module_run
@@ -530,9 +558,7 @@ def begin(
     tick = progress or (lambda _fraction, _text: None)
     start = time.perf_counter()
     source = Path(path)
-    tick(0.05, "Reading the paper")
-    paper = read_paper(source, workdir, pdf=pdf, bibr_key=bibr_key)
-    tick(0.3, "Running the checks")
+    paper = read_paper(source, workdir, pdf=pdf, bibr_key=bibr_key, progress=tick)
     if checks is None:
         names = selected_checks(online)
     else:
@@ -544,10 +570,15 @@ def begin(
     if "ref_accuracy" in names and len(pc.paper_table(paper, "bib_match")) == 0:
         # only a paper file that carries CrossRef matches (the bundled JSON) can be checked
         names.remove("ref_accuracy")
-    with _RUN_LOCK, use(allow_local=False), run_session(), warnings.catch_warnings():
+    with (
+        _RUN_LOCK,
+        use(allow_local=False),
+        run_session(),
+        module_progress(checks_progress(tick)),
+        warnings.catch_warnings(),
+    ):
         warnings.simplefilter("ignore")
-        outputs = report_module_run(paper, names, args=args or {})
-    tick(0.85, "Writing the report")
+        outputs = report_module_run(paper, names, args=args or {})  # ends: "Building the report"
     run = Run(source, paper, outputs, names, Path(report_dir or workdir), start)
     rows = [_row(label(name), outputs[label(name)]) for name in names if label(name) in outputs]
     run.analysis = run._write(rows, outputs, pending=data)

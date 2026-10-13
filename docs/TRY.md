@@ -57,6 +57,8 @@ About PDFs: "Read PDFs with" lets you choose how a PDF is turned into text.
 
 XML and JSON files stay on your computer.
 
+While a paper is checked, the page says what it is doing: reading the PDF, extracting it (with bibr or GROBID), "Running check 3 of 19" with the name of the check, and building the report. The bar under the stage counts the checks that are done, and nothing else. While bibr or GROBID extracts, the bar stays at 0 %, because they do not say how far they are; the page shows the stage and the seconds that have passed, and with bibr whether the job is waiting in its queue or running. The same goes for a data package: the download of a repository link shows how much has arrived, and then the checks are counted.
+
 About data files: the box "Check the shared data files" is ticked. When the paper links to data files on OSF or other repositories, the app downloads them and checks them. This can take a few minutes. The other results appear first, and the data check is added when it is done. A line under the results shows that it is still running. Press "Stop the data check" if you do not want to wait. The other results stay on the page. Downloaded files are kept on your computer, so a second run is faster. Untick the box to skip this check.
 
 ## Which checks run
