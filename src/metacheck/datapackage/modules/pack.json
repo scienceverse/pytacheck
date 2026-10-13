@@ -20,6 +20,11 @@
         "metacheck::data_check",
         "metacheck::codebook_check"
       ]
+    },
+    "tue": {
+      "description": "TU/e data managers: the data package checks plus the licence check (offline)",
+      "extends": ["datapackage::default"],
+      "modules": ["metacheck::license_check"]
     }
   }
 }

@@ -233,6 +233,7 @@ jobs:
         shell: powershell
         env:
           METACHECK_NO_LAUNCH: "1"
+          METACHECK_NO_SETUP: "1"
         run: |
           $env:METACHECK_HOME = Join-Path $env:RUNNER_TEMP 'metacheck'
           Get-Content -Raw "$env:GITHUB_WORKSPACE\install.ps1" | Invoke-Expression
@@ -285,6 +286,8 @@ jobs:
       - name: Upgrade (Windows PowerShell 5.1)
         if: runner.os == 'Windows'
         shell: powershell
+        env:
+          METACHECK_NO_SETUP: "1"
         run: |
           $env:METACHECK_HOME = Join-Path $env:RUNNER_TEMP 'metacheck'
           $app = Join-Path $env:METACHECK_HOME 'bin\metacheck-app.exe'

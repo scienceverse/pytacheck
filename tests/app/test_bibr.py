@@ -112,6 +112,86 @@ def test_a_pdf_goes_to_bibr_and_the_answer_is_checked(server: FakeBibr, tmp_path
     assert all(r.url.host == "bibr.example.test" for r in server.requests)
 
 
+class Stages(FakeBibr):
+    """A bibr serve whose job is queued, then running, then done: all its status reports."""
+
+    def __init__(self, router: respx.MockRouter, states: tuple[str, ...]) -> None:
+        super().__init__(router)
+        self.states = list(states)
+
+    def __call__(self, request: httpx.Request) -> httpx.Response:
+        if request.method == "GET" and request.url.path == f"{self.jobs}/j1":
+            self.requests.append(request)
+            state = self.states.pop(0) if len(self.states) > 1 else self.states[0]
+            return httpx.Response(200, json={"job_id": "j1", "status": state})
+        return super().__call__(request)
+
+
+def test_the_page_hears_what_bibr_reports_and_no_fraction_is_made_up(
+    router: respx.MockRouter, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import metacheck.http as http
+
+    monkeypatch.setattr(http, "sleep", lambda _seconds: None)  # nothing really waits
+    Stages(router, ("queued", "queued", "running", "succeeded"))
+    ticks: list[tuple[float, str]] = []
+    run.check_paper(
+        _pdf(tmp_path),
+        workdir=tmp_path,
+        pdf="bibr",
+        bibr_key=KEY,
+        progress=lambda fraction, text: ticks.append((fraction, text)),
+    )
+    stages = [text for _, text in ticks]
+    first_check = next(i for i, text in enumerate(stages) if text.startswith("Running check 1 of"))
+    before = stages[:first_check]
+    assert before == [
+        "Reading the PDF",
+        bibr.SUBMITTED,
+        bibr.WORKING["queued"],  # told once although the job was polled twice in this state
+        bibr.WORKING["running"],
+        bibr.WORKING["succeeded"],
+        "Reading the extracted text",
+    ]
+    # bibr says nothing about how far it is, so these stages have no fraction
+    assert {fraction for fraction, _ in ticks[:first_check]} == {0.0}
+    assert "does not report how far" in bibr.WORKING["running"]
+
+
+def test_a_status_this_version_does_not_know_is_shown_as_it_is(
+    router: respx.MockRouter, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import metacheck.http as http
+
+    monkeypatch.setattr(http, "sleep", lambda _seconds: None)
+    Stages(router, ("starting", "succeeded"))
+    ticks: list[str] = []
+    run.check_paper(
+        _pdf(tmp_path),
+        workdir=tmp_path,
+        pdf="bibr",
+        bibr_key=KEY,
+        progress=lambda _fraction, text: ticks.append(text),
+    )
+    assert "Extracting with bibr: starting" in ticks
+
+
+def test_the_scivrs_queue_reports_no_status_and_still_works(
+    router: respx.MockRouter, tmp_path: Path
+) -> None:
+    router.get(SERVERS_URL).mock(return_value=_list(GROBID, LISTED["scivrs"]))
+    FakeBibr(router, protocol="scivrs")
+    ticks: list[str] = []
+    run.check_paper(
+        _pdf(tmp_path),
+        workdir=tmp_path,
+        pdf="bibr",
+        bibr_key=KEY,
+        progress=lambda _fraction, text: ticks.append(text),
+    )
+    assert ticks[:3] == ["Reading the PDF", bibr.SUBMITTED, "Reading the extracted text"]
+
+
 def test_the_key_goes_to_the_bibr_service_only(
     router: respx.MockRouter, server: FakeBibr, tmp_path: Path
 ) -> None:

@@ -271,7 +271,7 @@ def analyse_upload(
             if job.output is None:
                 job.error = TimeoutError(DATA_TOO_SLOW)
             break
-        progress(0.95, data_status(job, begun, hosted=True))
+        progress(0.0, data_status(job, begun, hosted=True))
     return started.finish(job)
 
 

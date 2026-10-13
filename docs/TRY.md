@@ -30,6 +30,25 @@ If it says `Could not create SSL/TLS secure channel`, paste this line in the Pow
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'; irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex
 ```
 
+## For TU/e data managers
+
+The same installer can open the app on the TU/e data-manager preset, which checks a data package with the data package checks and the licence check. It skips the paper questions and opens on "Check a data package".
+
+On a Mac or Linux, paste this line in Terminal:
+
+```sh
+curl -LsSf https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.sh | sh -s -- --steward --preset datapackage::tue
+```
+
+On Windows, paste these two lines in PowerShell:
+
+```powershell
+$env:METACHECK_STEWARD = '1'; $env:METACHECK_APP_PRESET = 'datapackage::tue'
+powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/scienceverse/pytacheck/main/install.ps1 | iex"
+```
+
+Any installed version also lists the `datapackage::tue` preset on the "Check a data package" page.
+
 ## What happens
 
 - The script downloads uv (a small tool that manages Python), Python and the app.
@@ -56,6 +75,8 @@ About PDFs: "Read PDFs with" lets you choose how a PDF is turned into text.
 - **bibr** is the scienceverse service. It needs a key. The person who sent you the link can give you one. Paste it into the box "Your bibr key". Tick "Remember the key on this computer" if you want to type it only once. The key is saved in a file that only you can read, and it is sent to the bibr service only. If bibr does not work, the app tells you. It does not switch to GROBID by itself, because you chose where the PDF goes.
 
 XML and JSON files stay on your computer.
+
+While a paper is checked, the page says what it is doing: reading the PDF, extracting it (with bibr or GROBID), "Running check 3 of 19" with the name of the check, and building the report. The bar under the stage counts the checks that are done, and nothing else. While bibr or GROBID extracts, the bar stays at 0 %, because they do not say how far they are; the page shows the stage and the seconds that have passed, and with bibr whether the job is waiting in its queue or running. The same goes for a data package: the download of a repository link shows how much has arrived, and then the checks are counted.
 
 About data files: the box "Check the shared data files" is ticked. When the paper links to data files on OSF or other repositories, the app downloads them and checks them. This can take a few minutes. The other results appear first, and the data check is added when it is done. A line under the results shows that it is still running. Press "Stop the data check" if you do not want to wait. The other results stay on the page. Downloaded files are kept on your computer, so a second run is faster. Untick the box to skip this check.
 
