@@ -19,6 +19,7 @@ package's. The R commit each release is compared against is in
 - With `cache=True`, complete public recursive OSF listings survive a process restart for five minutes (`metacheck.osf.cache_ttl` sets the lifetime in seconds; zero disables tree reuse). Failed and incomplete listings are not reused, and private or view-only trees are not persisted. Already extracted ZIP members are checked against the listing's size and CRC before reuse; corrupt or partial files are fetched again.
 - Reference checks reuse the reference table within a trusted run, returning copy-on-write views. Table replacement, paper-ID changes and later runs invalidate it; direct calls outside a run always rebuild. The CI mutation check covers bibliography tables too.
 - RapidFuzz is now a core dependency: reference matching always uses native edit distance, and its quadratic Python fallback is removed. Reference-check results are unchanged.
+- The OSF listing cache key (`_osf_cache_key`) is a SHA-256 of the input, endpoint and authentication identity instead of R's readable `url::recursive=...` string; the three parity cases that compared it are marked `deliberate` (D86), which turns the committed-goldens parity job on main green again.
 
 ### Added: a data package in the paper box, from an archive or a repository link
 
