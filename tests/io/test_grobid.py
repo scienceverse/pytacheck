@@ -516,9 +516,14 @@ def test_read_skips_unreadable_xml(fixtures_dir: Path) -> None:
 
 
 def test_faster_than_r_budget(fixtures_dir: Path) -> None:
-    """A long Grobid paper converts well within R's ~1.2 s per paper."""
+    """A long Grobid paper converts well within R's ~1.2 s per paper.
+
+    The conversion is timed on this thread's CPU clock. The wall clock also counts the time
+    other processes hold the CPU, which on a busy CI runner was 3.8 s for a conversion that
+    takes 0.2 s.
+    """
     import time
 
-    start = time.perf_counter()
+    start = time.thread_time()
     _grobid_to_bibr(fixtures_dir / "formats" / "published.pdf.tei.xml")
-    assert time.perf_counter() - start < 2.0
+    assert time.thread_time() - start < 2.0

@@ -1,0 +1,11 @@
+participant_id,name,email,age,gender,bedtime,sleep_hours,mood_score
+P01,Lena Vos,lena.vos@example.org,18,female,23:40,7.5,6
+P02,Tom Jansen,tom.jansen@example.org,19,male,01:15,5.0,4
+P03,Sara Bakker,sara.bakker@example.org,18,female,22:55,8.0,7
+P04,Max Dekker,max.dekker@example.org,20,male,00:30,6.0,5
+P05,Noor Smit,noor.smit@example.org,19,female,23:10,7.0,6
+P06,Daan Visser,daan.visser@example.org,18,male,02:05,4.5,3
+P07,Eva Mulder,eva.mulder@example.org,21,female,23:30,7.5,7
+P08,Luuk Bos,luuk.bos@example.org,19,male,00:45,6.5,5
+P09,Mila Peters,mila.peters@example.org,18,female,22:40,8.5,8
+P10,Sem Hendriks,sem.hendriks@example.org,20,male,01:30,5.5,4

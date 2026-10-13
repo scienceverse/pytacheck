@@ -61,7 +61,7 @@ def stand_in(env: pytest.MonkeyPatch, kind: str) -> Any:
 
 @pytest.fixture
 def env(monkeypatch: pytest.MonkeyPatch) -> pytest.MonkeyPatch:
-    for name in ("TOKENS", "HOSTS", "JOB_TIMEOUT", "COMMIT", "AUTH", "USER_HEADER"):
+    for name in ("TOKENS", "HOSTS", "JOB_TIMEOUT", "COMMIT", "AUTH", "USER_HEADER", "PRESET"):
         monkeypatch.delenv(f"METACHECK_APP_{name}", raising=False)
     monkeypatch.delenv("SPACE_HOST", raising=False)
     monkeypatch.delenv("PORT", raising=False)
@@ -486,7 +486,7 @@ def test_the_upload_field_is_cleared_after_a_run(env: pytest.MonkeyPatch) -> Non
         events = _join(tc, fn, _upload(tc, "h3"), "h3")
         done = next(ln for ln in events.split("data: ") if '"process_completed"' in ln)
         output = json.loads(done)["output"]["data"]
-        assert len(output) == 9 and output[-1] == {"text": "", "files": []}
+        assert len(output) == 10 and output[-1] == {"text": "", "files": []}
         # a second click on a file that is gone says so in plain words
         gone = _upload(tc, "h4")
         Path(gone).unlink()
@@ -530,8 +530,8 @@ def test_a_hosted_run_includes_the_data_check(env: pytest.MonkeyPatch) -> None:
     done = next(ln for ln in text.split("data: ") if '"process_completed"' in ln)
     output = json.loads(done)["output"]["data"]
     assert "2 data files checked" in json.dumps(output)
-    assert "Checking the shared data files" in text  # its progress reached the page
-    assert "Downloading data.csv" in text
+    assert "Check the shared data files" in text  # its step was drawn on the page
+    assert "Downloading data.csv" in text  # with what the data check said
     assert output[-3] == "" and output[-2]["visible"] is False  # no status line, no Stop
 
 
@@ -541,6 +541,9 @@ def test_a_slow_data_check_is_stopped_before_the_limit(env: pytest.MonkeyPatch) 
     budget, grace = ui.data_budget(10)
     assert (budget, grace) == (8, 1)
     assert ui.data_budget(900) == (840, 30)
+    # The data check gets 3 s here, not the 8 s of a 10 s limit, so the whole run has time to
+    # start its process and write the report on a slow runner before the limit ends it.
+    env.setattr(ui, "data_budget", lambda _limit: (3.0, 1.0))
     tight = create_hosted_app(PORT + 5, config(job_timeout=10))
     with TestClient(tight, base_url=BASE, follow_redirects=False) as tc:
         tc.get(f"/?token={TOKEN_A}")
@@ -701,7 +704,7 @@ def _sleep(seconds: float) -> None:
 def test_job_runner_returns_the_result_and_deletes_the_upload(tmp_path: Path) -> None:
     upload = tmp_path / "up.pdf"
     upload.write_text("x")
-    runner = hosting.JobRunner(20)
+    runner = hosting.JobRunner(60)
     assert runner.run(operator.add, 1, 2, upload=upload, on_timeout=TimeoutError) == 3
     assert not upload.exists()
     upload.write_text("x")
@@ -734,6 +737,65 @@ def test_job_runner_kills_a_run_at_the_limit(tmp_path: Path) -> None:
         assert not multiprocessing.active_children()
     assert not upload.exists()
     assert hosting.JobRunner(20).run(_double, 2, on_timeout=TimeoutError) == 4
+
+
+def _busy(seconds: float, report: Any = None) -> str:
+    if report:
+        report(0.0, "busy")
+    time.sleep(seconds)
+    return "done"
+
+
+def test_job_runner_ends_a_run_the_person_left(tmp_path: Path) -> None:
+    upload = tmp_path / "up.pdf"
+    upload.write_text("x")
+    left = threading.Event()
+    timer = threading.Timer(0.3, left.set)
+    timer.start()
+    start = time.perf_counter()
+    with pytest.raises(hosting.JobCancelled):
+        hosting.JobRunner(60).run(_sleep, 30, upload=upload, on_timeout=TimeoutError, cancel=left)
+    assert time.perf_counter() - start < 10
+    assert not multiprocessing.active_children()  # its process was killed, not left running
+    assert not upload.exists()
+
+
+def test_job_runner_runs_no_more_processes_than_it_has_places() -> None:
+    """A run waits for a free place and says so; one left while it waits never starts."""
+    runner = hosting.JobRunner(60, places=1)
+    busy = threading.Event()
+    results: list[str] = []
+
+    def first(seconds: float) -> threading.Thread:
+        busy.clear()
+        thread = threading.Thread(
+            target=lambda: results.append(
+                runner.run(
+                    _busy, seconds, on_timeout=TimeoutError, on_progress=lambda *_: busy.set()
+                )
+            )
+        )
+        thread.start()
+        assert busy.wait(30)  # its process holds the one place
+        return thread
+
+    holder = first(1.0)
+    seen: list[tuple[float, str]] = []
+    assert (
+        runner.run(_double, 3, on_timeout=TimeoutError, on_progress=lambda *a: seen.append(a)) == 6
+    )
+    assert seen == [(0.0, hosting.WAITING_FOR_PLACE), (0.5, "half")]
+    holder.join(30)
+    holder = first(3.0)
+    left = threading.Event()
+    left.set()
+    start = time.perf_counter()
+    with pytest.raises(hosting.JobCancelled):
+        runner.run(_double, 3, on_timeout=TimeoutError, cancel=left)
+    assert time.perf_counter() - start < 2  # it did not wait for the place
+    holder.join(30)
+    assert results == ["done", "done"]
+    assert not multiprocessing.active_children()
 
 
 def test_remove_upload_takes_its_folder_when_it_is_in_the_gradio_folder(

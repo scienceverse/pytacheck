@@ -11,6 +11,7 @@ import multiprocessing
 import os
 import pickle
 import re
+import threading
 import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
@@ -18,6 +19,7 @@ from pathlib import Path
 from typing import Any, TypeVar, cast
 
 from metacheck._env import env_name
+from metacheck.datapackage._open import _size
 
 __all__ = [
     "DEFAULT_PORT",
@@ -27,11 +29,15 @@ __all__ = [
     "PACKAGE_NOTE",
     "TOO_SLOW",
     "TOO_SLOW_PACKAGE",
+    "UPLOAD_BYTES",
+    "WAITING_FOR_PLACE",
     "HostedConfig",
     "HostedError",
+    "JobCancelled",
     "JobRunner",
     "data_link",
     "footer",
+    "package_note",
     "sweep",
 ]
 
@@ -43,6 +49,7 @@ USER_HEADER_ENV = env_name("APP_USER_HEADER")
 HOSTS_ENV = env_name("APP_HOSTS")
 SPACE_HOST_ENV = "SPACE_HOST"  # set by Hugging Face Spaces
 TIMEOUT_ENV = env_name("APP_JOB_TIMEOUT")
+PRESET_ENV = env_name("APP_PRESET")
 COMMIT_ENV = env_name("APP_COMMIT")
 PORT_ENV = "PORT"
 DEFAULT_PORT = 7860
@@ -58,11 +65,25 @@ HEADER_PATTERN = re.compile(r"[A-Za-z0-9-]+")
 
 REPO_URL = "https://github.com/scienceverse/pytacheck"
 HOSTED_NOTE = "Your paper is processed on this server and deleted when the report is ready."
-PACKAGE_NOTE = (
-    "A data package (an archive, or a repository that this server downloads from its host) "
-    "is processed on this server and deleted when the report is ready. "
-    "It can be up to 50 MB; for a bigger one, use the pytacheck command on your own computer."
-)
+#: what a shared server takes as an upload (``MOUNT_KWARGS``' ``max_file_size``)
+UPLOAD_BYTES = 50 * 1024**2
+
+
+def package_note(download: int = UPLOAD_BYTES) -> str:
+    """What the page says about a data package on a shared server. *download* is the limit on
+    a repository's download (``METACHECK_PACKAGE_MAX_DOWNLOAD``); an upload stays at 50 MB."""
+    if download == UPLOAD_BYTES:
+        limit = "It can be up to 50 MB"
+    else:
+        limit = f"An archive can be up to 50 MB, and a repository up to {_size(download)}"
+    return (
+        "A data package (an archive, or a repository that this server downloads from its host) "
+        "is processed on this server and deleted when the report is ready. "
+        f"{limit}; for a bigger one, use the pytacheck command on your own computer."
+    )
+
+
+PACKAGE_NOTE = package_note()
 TOO_SLOW = (
     "Checking this paper took too long, so it was stopped. "
     "Try a shorter paper, or try again in a few minutes."
@@ -73,8 +94,16 @@ TOO_SLOW_PACKAGE = (
 )
 
 
+#: what a run says while it waits for one of the places (a run that was left may be ending)
+WAITING_FOR_PLACE = "Waiting for a free place on this server."
+
+
 class HostedError(Exception):
     """The hosted settings are missing or wrong; the message says what to set."""
+
+
+class JobCancelled(Exception):
+    """The person left the page, so their run was ended."""
 
 
 def _items(text: str | None) -> list[str]:
@@ -91,6 +120,8 @@ class HostedConfig:
     proxy_auth: bool = False
     #: in proxy mode, a header the proxy sets on every request it lets through
     user_header: str | None = None
+    #: the preset the page starts with (``--preset``); the launcher checks it is offered here
+    preset: str | None = None
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> HostedConfig:
@@ -144,7 +175,8 @@ class HostedConfig:
             raise HostedError(
                 f"{USER_HEADER_ENV} takes one header name, for example X-Forwarded-User."
             )
-        return cls(tuple(tokens), tuple(hosts), timeout, commit, proxy_auth, user_header)
+        preset = (env.get(PRESET_ENV) or "").strip() or None
+        return cls(tuple(tokens), tuple(hosts), timeout, commit, proxy_auth, user_header, preset)
 
 
 def default_port(env: Mapping[str, str] | None = None) -> int:
@@ -221,11 +253,15 @@ class JobRunner:
     """Runs one paper check in its own process, with a time limit.
 
     At the limit the process is killed, so a check that hangs frees its place at once and
-    cannot hold up the next runs. The uploaded file is deleted when the run ends.
+    cannot hold up the next runs. A run whose ``cancel`` event is set (the person left the
+    page) is killed too. Never more than ``places`` processes run at the same time: the page
+    stops waiting for a run the person left before its process has ended, so the page's own
+    limit alone would let more start. The uploaded file is deleted when the run ends.
     """
 
-    def __init__(self, timeout: float) -> None:
+    def __init__(self, timeout: float, places: int = MAX_RUNS) -> None:
         self.timeout = timeout
+        self._places = threading.BoundedSemaphore(places)
 
     def run(
         self,
@@ -234,9 +270,35 @@ class JobRunner:
         upload: str | os.PathLike[str] | None = None,
         on_timeout: Callable[[], Exception],
         on_progress: Callable[[float, str], None] | None = None,
+        cancel: threading.Event | None = None,
     ) -> T:
         """``job(*args)`` (plus a progress function as last argument if ``on_progress`` is
-        given), then delete ``upload``. ``job`` and its arguments must be picklable."""
+        given), then delete ``upload``. ``job`` and its arguments must be picklable.
+
+        Raises :class:`JobCancelled` once ``cancel`` is set."""
+        try:
+            if not self._places.acquire(blocking=False):
+                if on_progress:
+                    on_progress(0.0, WAITING_FOR_PLACE)
+                while not self._places.acquire(timeout=0.5):
+                    if cancel is not None and cancel.is_set():
+                        raise JobCancelled
+            try:
+                return self._process(job, args, on_timeout, on_progress, cancel)
+            finally:
+                self._places.release()
+        finally:
+            if upload:
+                remove_upload(upload)
+
+    def _process(
+        self,
+        job: Callable[..., T],
+        args: tuple[Any, ...],
+        on_timeout: Callable[[], Exception],
+        on_progress: Callable[[float, str], None] | None,
+        cancel: threading.Event | None,
+    ) -> T:
         context: Any = multiprocessing.get_context(START_METHOD)
         receive, send = context.Pipe(duplex=False)
         process = context.Process(
@@ -247,8 +309,14 @@ class JobRunner:
             send.close()  # so that the end of the child shows as end of file
             deadline = time.monotonic() + self.timeout
             while True:
-                if not receive.poll(max(deadline - time.monotonic(), 0)):
+                if cancel is not None and cancel.is_set():
+                    raise JobCancelled
+                left = deadline - time.monotonic()
+                if left <= 0:
                     raise on_timeout() from None
+                # a short wait, so that a cancelled run ends soon
+                if not receive.poll(min(left, 0.5)):
+                    continue
                 try:
                     message = receive.recv()
                 except EOFError:
@@ -270,5 +338,3 @@ class JobRunner:
                 process.join()
             receive.close()
             send.close()
-            if upload:
-                remove_upload(upload)

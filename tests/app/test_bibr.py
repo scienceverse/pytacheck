@@ -112,6 +112,86 @@ def test_a_pdf_goes_to_bibr_and_the_answer_is_checked(server: FakeBibr, tmp_path
     assert all(r.url.host == "bibr.example.test" for r in server.requests)
 
 
+class Stages(FakeBibr):
+    """A bibr serve whose job is queued, then running, then done: all its status reports."""
+
+    def __init__(self, router: respx.MockRouter, states: tuple[str, ...]) -> None:
+        super().__init__(router)
+        self.states = list(states)
+
+    def __call__(self, request: httpx.Request) -> httpx.Response:
+        if request.method == "GET" and request.url.path == f"{self.jobs}/j1":
+            self.requests.append(request)
+            state = self.states.pop(0) if len(self.states) > 1 else self.states[0]
+            return httpx.Response(200, json={"job_id": "j1", "status": state})
+        return super().__call__(request)
+
+
+def test_the_page_hears_what_bibr_reports_and_no_fraction_is_made_up(
+    router: respx.MockRouter, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import metacheck.http as http
+
+    monkeypatch.setattr(http, "sleep", lambda _seconds: None)  # nothing really waits
+    Stages(router, ("queued", "queued", "running", "succeeded"))
+    ticks: list[tuple[float, str]] = []
+    run.check_paper(
+        _pdf(tmp_path),
+        workdir=tmp_path,
+        pdf="bibr",
+        bibr_key=KEY,
+        progress=lambda fraction, text: ticks.append((fraction, text)),
+    )
+    stages = [text for _, text in ticks]
+    first_check = next(i for i, text in enumerate(stages) if text.startswith("Running check 1 of"))
+    before = stages[:first_check]
+    assert before == [
+        "Reading the PDF",
+        bibr.SUBMITTED,
+        bibr.WORKING["queued"],  # told once although the job was polled twice in this state
+        bibr.WORKING["running"],
+        bibr.WORKING["succeeded"],
+        "Reading the extracted text",
+    ]
+    # bibr says nothing about how far it is, so these stages have no fraction
+    assert {fraction for fraction, _ in ticks[:first_check]} == {0.0}
+    assert "does not report how far" in bibr.WORKING["running"]
+
+
+def test_a_status_this_version_does_not_know_is_shown_as_it_is(
+    router: respx.MockRouter, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import metacheck.http as http
+
+    monkeypatch.setattr(http, "sleep", lambda _seconds: None)
+    Stages(router, ("starting", "succeeded"))
+    ticks: list[str] = []
+    run.check_paper(
+        _pdf(tmp_path),
+        workdir=tmp_path,
+        pdf="bibr",
+        bibr_key=KEY,
+        progress=lambda _fraction, text: ticks.append(text),
+    )
+    assert "Extracting with bibr: starting" in ticks
+
+
+def test_the_scivrs_queue_reports_no_status_and_still_works(
+    router: respx.MockRouter, tmp_path: Path
+) -> None:
+    router.get(SERVERS_URL).mock(return_value=_list(GROBID, LISTED["scivrs"]))
+    FakeBibr(router, protocol="scivrs")
+    ticks: list[str] = []
+    run.check_paper(
+        _pdf(tmp_path),
+        workdir=tmp_path,
+        pdf="bibr",
+        bibr_key=KEY,
+        progress=lambda _fraction, text: ticks.append(text),
+    )
+    assert ticks[:3] == ["Reading the PDF", bibr.SUBMITTED, "Reading the extracted text"]
+
+
 def test_the_key_goes_to_the_bibr_service_only(
     router: respx.MockRouter, server: FakeBibr, tmp_path: Path
 ) -> None:
@@ -435,22 +515,23 @@ def _handlers() -> dict[str, Any]:
 
 
 def _on_check(fns: dict[str, Any], path: Path, key: str, remember: bool) -> list[tuple[Any, ...]]:
+    """Press Check: all the button's function sent, the last the results."""
     request = SimpleNamespace(session_hash="b1")
-    step = fns["on_check"](
-        {"text": "", "files": [str(path)]},
-        False,
-        False,
-        "bibr",
-        key,
-        remember,
-        None,
-        "",
-        PACKAGE_PRESET,
-        True,
-        request,
-        lambda *_a, **_k: None,
+    return list(
+        fns["on_check"](
+            {"text": "", "files": [str(path)]},
+            False,
+            False,
+            "bibr",
+            key,
+            remember,
+            None,
+            "",
+            PACKAGE_PRESET,
+            True,
+            request,
+        )
     )
-    return [step]
 
 
 def test_the_privacy_text_follows_the_choice() -> None:
@@ -467,9 +548,22 @@ def test_the_privacy_text_follows_the_choice() -> None:
 
 def test_the_choices_are_named() -> None:
     assert [label for label, _ in ui.READERS] == [
-        "GROBID (public server at TU Eindhoven)",
         "bibr (the scienceverse service; needs a key)",
+        "GROBID (public server at TU Eindhoven)",
     ]
+
+
+def test_the_hint_names_the_trade_off_under_both_readers() -> None:
+    assert ui.reader_hint("bibr") == ui.READER_HINT
+    assert ui.reader_hint("grobid") == f"{ui.READER_HINT} {ui.READER_FALLBACK}"
+    assert "more accurate but slower" in ui.READER_HINT
+    assert "faster but less accurate" in ui.READER_HINT
+
+
+def test_the_fallback_hint_names_the_server_on_a_shared_server() -> None:
+    assert "on this computer" in ui.reader_hint("grobid")
+    assert "on this server" in ui.reader_hint("grobid", hosted=True)
+    assert "this computer" not in ui.reader_hint("grobid", hosted=True)
 
 
 def _start(blocks: Any) -> dict[str, Any]:
@@ -490,6 +584,8 @@ def test_grobid_is_the_default_without_a_key_on_this_computer() -> None:
     first = _start(ui.build_app())
     assert first["reader"] == "grobid" and first["key_box"] is False
     assert ui.PRIVACY in first["texts"] and ui.PRIVACY_BIBR not in first["texts"]
+    # bibr is not set up, so the page says that GROBID is the fallback
+    assert ui.reader_hint("grobid") in first["texts"]
 
 
 def test_bibr_is_the_default_where_this_computer_supplies_the_key(
@@ -500,13 +596,15 @@ def test_bibr_is_the_default_where_this_computer_supplies_the_key(
     first = _start(ui.build_app())
     assert first["reader"] == "bibr" and first["key_box"] is True
     assert ui.PRIVACY_BIBR in first["texts"] and ui.PRIVACY not in first["texts"]
+    assert ui.READER_HINT in first["texts"]
+    assert not any(t and ui.READER_FALLBACK in t for t in first["texts"])
     assert ui.KEY_ENV_NOTE in first["texts"]  # no key to type
 
 
 def test_a_remembered_key_is_saved_after_it_worked(server: FakeBibr, tmp_path: Path) -> None:
     fns = _handlers()
     steps = _on_check(fns, _pdf(tmp_path), KEY, remember=True)
-    assert steps[-1][1].startswith("Ran ")
+    assert steps[-1][2].startswith("Ran ")
     assert bibr.load_key() == KEY
     assert "…7890" in ui.key_note() and KEY not in ui.key_note()
     assert fns["on_forget"]()[1]["visible"] is False
@@ -547,36 +645,38 @@ def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_
     fns = {fn.name: fn.fn for fn in blocks.fns.values()}
     assert fns["on_reader"]("bibr")[3]["visible"] is False
     with pytest.raises(gr.Error, match="Enter your bibr key"):
+        list(
+            fns["on_check"](
+                {"text": "", "files": [str(_pdf(tmp_path))]},
+                False,
+                False,
+                "bibr",
+                "",
+                False,
+                None,
+                "",
+                PACKAGE_PRESET,
+                True,
+                SimpleNamespace(session_hash="b2"),
+            )
+        )
+    assert not server.requests
+    steps = list(
         fns["on_check"](
             {"text": "", "files": [str(_pdf(tmp_path))]},
             False,
             False,
             "bibr",
-            "",
-            False,
+            "typed-key-abcdef",
+            True,  # asked to remember, but this server does not
             None,
             "",
             PACKAGE_PRESET,
             True,
             SimpleNamespace(session_hash="b2"),
-            lambda *_a, **_k: None,
         )
-    assert not server.requests
-    step = fns["on_check"](
-        {"text": "", "files": [str(_pdf(tmp_path))]},
-        False,
-        False,
-        "bibr",
-        "typed-key-abcdef",
-        True,  # asked to remember, but this server does not
-        None,
-        "",
-        PACKAGE_PRESET,
-        True,
-        SimpleNamespace(session_hash="b2"),
-        lambda *_a, **_k: None,
     )
-    assert step[1].startswith("Ran ")
+    assert steps[-1][2].startswith("Ran ")
     assert bibr.load_key() == "someone-elses-key-7890"  # untouched
 
 

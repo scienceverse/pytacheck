@@ -136,6 +136,12 @@ What the `"bibr"` backend does:
   in the answer is not followed. A job that outlasts `timeout` keeps running on the
   server, and counts against your limit on active jobs there until it ends: a longer
   `timeout` for big documents is better than several short ones.
+* **Progress.** bibr's job status is `queued`, `running`, `succeeded` or `failed`, with
+  timestamps and a duration once it is done; it has no stage and no fraction. `on_status`
+  is called with the status each time it changes, and the app shows it ("waiting in its
+  queue", "running") beside its clock. No percentage is made up. bibr run in-process
+  (`bibr.Chewer(...).chew(path, progress=tracker)`) does report its stages (`validate`
+  to `export`) and OCR regions, but the app talks to bibr through the job API.
 * **Busy servers.** A `429` (upload limit, job limit, quota of the hosted service) is
   retried after the `Retry-After` it names (1, 2, 4 ... s if it names none), at most
   `max_retries=5` times, and never waiting more than `max_retry_wait=120` s for one retry

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -193,7 +193,52 @@ def _empty_ref_table() -> pd.DataFrame:
 
 
 def ref_table(paper: Any) -> pd.DataFrame:
-    """``ref_table()``: references with their (possibly matched) DOIs and text."""
+    """``ref_table()``: references with their (possibly matched) DOIs and text.
+
+    Internal runners reuse the joined table within their trusted scope. Outside
+    a run, tables may have been edited in place, so every call rebuilds it.
+    """
+    from metacheck.core.scope import count, derived_cache, trusted_token, watch_paper
+
+    token = trusted_token()
+    cache = derived_cache()
+    if cache is None:
+        count("ref_table_builds")
+        return _build_ref_table(paper)
+    papers = as_paper_list(paper)
+    key = ("refs", tuple(id(p) for p in papers))
+    state = tuple(_ref_key(p, token) for p in papers)
+    hit = cast("tuple[Any, pd.DataFrame] | None", cache.get(key))
+    if hit is not None and all(
+        a[:3] == b[:3]
+        and all(x[0] == y[0] and x[1] is y[1] for x, y in zip(a[3], b[3], strict=True))
+        for a, b in zip(hit[0], state, strict=True)
+    ):
+        for p in papers:
+            watch_paper(p, False)
+        return hit[1].copy(deep=False)
+    # Build the list as a whole, preserving its joins, ordering and common types.
+    result = _build_ref_table(papers)
+    count("ref_table_builds")
+    cache[key] = (tuple(_ref_key(p, token) for p in papers), result)
+    for p in papers:
+        watch_paper(p, True)
+    return result.copy(deep=False)
+
+
+def _ref_key(paper: Paper, token: int | None) -> tuple[Any, ...]:
+    deps = []
+    for name in ("bib", "bib_match", "text"):
+        value = paper._tables.get(name)
+        if paper._raw_records(name) is not None:
+            deps.append(("raw", paper._lazy.get(name)))
+        else:
+            deps.append(("table", value))
+    return token, paper.paper_id, paper._generation, tuple(deps)
+
+
+def _build_ref_table(paper: Any) -> pd.DataFrame:
+    """Build the references in their original row order and column types."""
     if len(as_paper_list(paper)) == 0:
         # an empty paper list has no references; metacheck's inner_join() stops
         # because its empty tables have no paper_id or text_id column (U79)

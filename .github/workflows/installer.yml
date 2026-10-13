@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: ${{ env.UV_VERSION }}
           python-version: "3.12"
@@ -78,7 +78,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: ${{ env.UV_VERSION }}
           python-version: "3.12"
@@ -108,12 +108,14 @@ jobs:
         run: |
           export METACHECK_HOME="$RUNNER_TEMP/metacheck"
           export METACHECK_NO_LAUNCH=1
+          export METACHECK_NO_SETUP=1
           export METACHECK_SPEC="metacheck[app,llm] @ file://$GITHUB_WORKSPACE"
           export METACHECK_CONSTRAINTS="$GITHUB_WORKSPACE/install/constraints-app.txt"
           echo "METACHECK_HOME=$METACHECK_HOME" >> "$GITHUB_ENV"
           echo "METACHECK_SPEC=$METACHECK_SPEC" >> "$GITHUB_ENV"
           echo "METACHECK_CONSTRAINTS=$METACHECK_CONSTRAINTS" >> "$GITHUB_ENV"
           echo "METACHECK_NO_LAUNCH=1" >> "$GITHUB_ENV"
+          echo "METACHECK_NO_SETUP=1" >> "$GITHUB_ENV"
           time /bin/sh install.sh
       - name: Install (Windows PowerShell 5.1)
         if: runner.os == 'Windows'
@@ -124,6 +126,7 @@ jobs:
           $vars = @{
             METACHECK_HOME        = $home_dir
             METACHECK_NO_LAUNCH   = '1'
+            METACHECK_NO_SETUP    = '1'
             METACHECK_SPEC        = "metacheck[app,llm] @ $uri"
             METACHECK_CONSTRAINTS = Join-Path $env:GITHUB_WORKSPACE 'install\constraints-app.txt'
           }
@@ -163,7 +166,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "click-through failed" }
       - name: Keep the screenshot
         if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ui-smoke-${{ matrix.os }}
           path: ${{ runner.temp }}/ui-smoke
@@ -230,6 +233,7 @@ jobs:
         shell: powershell
         env:
           METACHECK_NO_LAUNCH: "1"
+          METACHECK_NO_SETUP: "1"
         run: |
           $env:METACHECK_HOME = Join-Path $env:RUNNER_TEMP 'metacheck'
           Get-Content -Raw "$env:GITHUB_WORKSPACE\install.ps1" | Invoke-Expression
@@ -282,6 +286,8 @@ jobs:
       - name: Upgrade (Windows PowerShell 5.1)
         if: runner.os == 'Windows'
         shell: powershell
+        env:
+          METACHECK_NO_SETUP: "1"
         run: |
           $env:METACHECK_HOME = Join-Path $env:RUNNER_TEMP 'metacheck'
           $app = Join-Path $env:METACHECK_HOME 'bin\metacheck-app.exe'
