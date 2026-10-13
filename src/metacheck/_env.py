@@ -86,6 +86,7 @@ ENV_VARS: dict[str, EnvVar] = {
     "APP_COMMIT": EnvVar(("METACHECK_APP_COMMIT",)),
     "APP_HOSTS": EnvVar(("METACHECK_APP_HOSTS",)),
     "APP_JOB_TIMEOUT": EnvVar(("METACHECK_APP_JOB_TIMEOUT",)),
+    "APP_PRESET": EnvVar(("METACHECK_APP_PRESET",)),
     # the local app's data package page: extra folders it may read (new, so no old name)
     "APP_ROOTS": EnvVar(("METACHECK_APP_ROOTS",)),
     "APP_TOKENS": EnvVar(("METACHECK_APP_TOKENS",), secret=True),

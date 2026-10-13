@@ -187,11 +187,23 @@ def _handlers() -> dict[str, Any]:
     return {fn.name: fn.fn for fn in blocks.fns.values()}
 
 
-def _demo(fns: dict[str, Any], session: str, data: bool = True) -> tuple[Any, ...]:
+#: what a button's function sends, in order (the local page has no box among them)
+PARTS = ("panel", "results", "summary", "table", "checklist", "frame", "download", "status", "stop")
+
+
+def _named(sent: tuple[Any, ...]) -> dict[str, Any]:
+    return dict(zip(PARTS, sent, strict=True))
+
+
+def _skipped(value: Any) -> bool:
+    return isinstance(value, dict) and set(value) == {"__type__"}
+
+
+def _demo(fns: dict[str, Any], session: str, data: bool = True) -> dict[str, Any]:
+    """Press the demo button: what it sent last (the click ends with the fast results)."""
     request = SimpleNamespace(session_hash=session)
-    return fns["on_demo"](
-        False, data, "grobid", "", False, None, "", "", True, request, lambda *_a, **_k: None
-    )
+    sent = list(fns["on_demo"](False, data, "grobid", "", False, None, "", "", True, request))
+    return _named(sent[-1])
 
 
 def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
@@ -204,22 +216,25 @@ def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
 
     fake.body = body
     fns = _handlers()
-    results, summary, table, _checklist, frame, _download, status, stop = _demo(fns, "s1")
-    assert results["visible"] is True and stop["visible"] is True
-    assert "Ran 19 checks" in summary and len(table.data) == 19
-    assert "The other results are ready" in status and "still running" in status
-    assert "Data Check" not in frame
+    first = _demo(fns, "s1")
+    assert first["results"]["visible"] is True and first["stop"]["visible"] is True
+    assert "Ran 19 checks" in first["summary"] and len(first["table"].data) == 19
+    assert first["status"] == ""
+    assert "Data Check" not in first["frame"]
+    # the steps stay on the page: the data check is the one still running
+    assert "mc-step-running" in first["panel"] and "Check the shared data files" in first["panel"]
+    assert "The other results are ready below" in first["panel"]
     steps = fns["follow"](SimpleNamespace(session_hash="s1"))
-    later = next(steps)  # the status line is kept alive while it runs
-    assert "still running" in later[6]
-    assert ui.plain_markdown("Downloading https://osf.io/pngda as zip (25 files)...") in later[6]
+    later = _named(next(steps))  # its step is drawn while it runs
+    assert "Downloading https://osf.io/pngda as zip (25 files)..." in later["panel"]
+    assert all(_skipped(later[part]) for part in PARTS[1:-1])  # the results stay as they are
     release.set()
-    final = list(steps)[-1]
-    _results, summary, table, _checklist, frame, _download, status, stop = final
+    final = _named(list(steps)[-1])
+    table = final["table"]
     assert table.data.iloc[-1, 0] == "Data Check" and table.data.iloc[-1, 2].startswith("Green")
-    assert len(table.data) == 20 and "Ran 20 checks" in summary
-    assert "The data check found 3 files." in frame
-    assert status == "" and stop["visible"] is False
+    assert len(table.data) == 20 and "Ran 20 checks" in final["summary"]
+    assert "The data check found 3 files." in final["frame"]
+    assert final["panel"] == "" and final["status"] == "" and final["stop"]["visible"] is False
 
 
 def test_the_stop_button_keeps_the_fast_results(fake: Fake) -> None:
@@ -231,12 +246,15 @@ def test_the_stop_button_keeps_the_fast_results(fake: Fake) -> None:
     fake.body = body
     fns = _handlers()
     first = _demo(fns, "s2")
-    assert first[7]["visible"] is True
+    assert first["stop"]["visible"] is True
     steps = fns["follow"](SimpleNamespace(session_hash="s2"))
-    assert "still running" in next(steps)[6]
-    status, stop = fns["on_stop"](SimpleNamespace(session_hash="s2"))
-    assert status == ui.STOPPED and stop["visible"] is False
-    assert list(steps) == []  # nothing replaces the fast results or the status
+    assert "mc-step-running" in _named(next(steps))["panel"]
+    panel, status, stop = fns["on_stop"](SimpleNamespace(session_hash="s2"))
+    assert panel == "" and status == ui.STOPPED and stop["visible"] is False
+    # the last word on the steps is the data check's: they go, and nothing else changes
+    (last,) = [_named(sent) for sent in steps]
+    assert last["panel"] == "" and last["stop"]["visible"] is False
+    assert all(_skipped(last[part]) for part in PARTS[1:-1])
 
 
 def test_a_failed_data_check_says_so_and_keeps_the_page(fake: Fake) -> None:
@@ -246,10 +264,9 @@ def test_a_failed_data_check_says_so_and_keeps_the_page(fake: Fake) -> None:
     fake.body = boom
     fns = _handlers()
     _demo(fns, "s3")
-    steps = list(fns["follow"](SimpleNamespace(session_hash="s3")))
-    *_, table, _checklist, _frame, _download, status, _stop_button = steps[-1]
-    assert table.data.iloc[-1, 2] == "Failed: no route"
-    assert status == ui.DATA_FAILED
+    final = _named(list(fns["follow"](SimpleNamespace(session_hash="s3")))[-1])
+    assert final["table"].data.iloc[-1, 2] == "Failed: no route"
+    assert final["status"] == ui.DATA_FAILED and final["panel"] == ""
 
 
 def test_the_same_button_works_again_and_a_new_check_ends_the_old_one(fake: Fake) -> None:
@@ -267,19 +284,25 @@ def test_the_same_button_works_again_and_a_new_check_ends_the_old_one(fake: Fake
     fns = _handlers()
     _demo(fns, "s4")
     old = fns["follow"](SimpleNamespace(session_hash="s4"))
-    assert "still running" in next(old)[6]
+    assert "mc-step-running" in _named(next(old))["panel"]
     begun = time.monotonic()
-    _demo(fns, "s4", data=False)  # the click returned before, so it can be pressed again
+    again = _demo(fns, "s4", data=False)  # the click returned before, so it can be pressed again
     assert time.monotonic() - begun < 30
-    assert list(old) == []  # the old check is over and shows nothing more
-    assert fns["follow"](SimpleNamespace(session_hash="s4")).__next__()[6] is not None
+    assert again["panel"] == "" and "Ran 19 checks" in again["summary"]
+    # the old check is over and draws nothing more: the new run's steps are not taken away
+    assert list(old) == []
+    assert _skipped(next(fns["follow"](SimpleNamespace(session_hash="s4")))[0])
 
 
 def test_status_text_from_outside_is_shown_as_text() -> None:
-    job = SimpleNamespace(message='Could not get <img src="https:evil.example/p.png">.csv [x](y)')
-    line = ui.data_status(job, time.monotonic())  # type: ignore[arg-type]
-    assert "<img" not in line.replace("\\<img", "")
-    assert "\\<img src" in line and "\\[x\\]\\(y\\)" in line
+    from metacheck.app.progress import paper_steps
+
+    steps = paper_steps("paper.json", "grobid", True, data_in_run=False)
+    steps(1.0, "Done")
+    steps.data('Could not get <img src="https:evil.example/p.png">.csv [x](y)')
+    drawn = steps.html()
+    assert "<img" not in drawn
+    assert "&lt;img src=&quot;https:evil.example/p.png&quot;&gt;.csv [x](y)" in drawn
 
 
 def test_the_box_is_ticked_and_named(fake: Fake) -> None:

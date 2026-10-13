@@ -515,22 +515,23 @@ def _handlers() -> dict[str, Any]:
 
 
 def _on_check(fns: dict[str, Any], path: Path, key: str, remember: bool) -> list[tuple[Any, ...]]:
+    """Press Check: all the button's function sent, the last the results."""
     request = SimpleNamespace(session_hash="b1")
-    step = fns["on_check"](
-        {"text": "", "files": [str(path)]},
-        False,
-        False,
-        "bibr",
-        key,
-        remember,
-        None,
-        "",
-        PACKAGE_PRESET,
-        True,
-        request,
-        lambda *_a, **_k: None,
+    return list(
+        fns["on_check"](
+            {"text": "", "files": [str(path)]},
+            False,
+            False,
+            "bibr",
+            key,
+            remember,
+            None,
+            "",
+            PACKAGE_PRESET,
+            True,
+            request,
+        )
     )
-    return [step]
 
 
 def test_the_privacy_text_follows_the_choice() -> None:
@@ -586,7 +587,7 @@ def test_bibr_is_the_default_where_this_computer_supplies_the_key(
 def test_a_remembered_key_is_saved_after_it_worked(server: FakeBibr, tmp_path: Path) -> None:
     fns = _handlers()
     steps = _on_check(fns, _pdf(tmp_path), KEY, remember=True)
-    assert steps[-1][1].startswith("Ran ")
+    assert steps[-1][2].startswith("Ran ")
     assert bibr.load_key() == KEY
     assert "…7890" in ui.key_note() and KEY not in ui.key_note()
     assert fns["on_forget"]()[1]["visible"] is False
@@ -627,36 +628,38 @@ def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_
     fns = {fn.name: fn.fn for fn in blocks.fns.values()}
     assert fns["on_reader"]("bibr")[3]["visible"] is False
     with pytest.raises(gr.Error, match="Enter your bibr key"):
+        list(
+            fns["on_check"](
+                {"text": "", "files": [str(_pdf(tmp_path))]},
+                False,
+                False,
+                "bibr",
+                "",
+                False,
+                None,
+                "",
+                PACKAGE_PRESET,
+                True,
+                SimpleNamespace(session_hash="b2"),
+            )
+        )
+    assert not server.requests
+    steps = list(
         fns["on_check"](
             {"text": "", "files": [str(_pdf(tmp_path))]},
             False,
             False,
             "bibr",
-            "",
-            False,
+            "typed-key-abcdef",
+            True,  # asked to remember, but this server does not
             None,
             "",
             PACKAGE_PRESET,
             True,
             SimpleNamespace(session_hash="b2"),
-            lambda *_a, **_k: None,
         )
-    assert not server.requests
-    step = fns["on_check"](
-        {"text": "", "files": [str(_pdf(tmp_path))]},
-        False,
-        False,
-        "bibr",
-        "typed-key-abcdef",
-        True,  # asked to remember, but this server does not
-        None,
-        "",
-        PACKAGE_PRESET,
-        True,
-        SimpleNamespace(session_hash="b2"),
-        lambda *_a, **_k: None,
     )
-    assert step[1].startswith("Ran ")
+    assert steps[-1][2].startswith("Ran ")
     assert bibr.load_key() == "someone-elses-key-7890"  # untouched
 
 

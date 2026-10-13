@@ -7,9 +7,19 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Changed: the app draws the steps of a run, and has a switch for a paper or a data package
+
+- **Changed:** while a check runs, the app lists its steps under the buttons, in place of Gradio's bar over the results (which were hidden, so the bar was rarely seen): read the PDF, extract the text with bibr or GROBID, run the checks, write the report and, when it is ticked, check the shared data files; for a data package, download the repository or open the archive, run the package checks and write the report. Each step is ticked when it is done, with the time it took. The running step says what it is doing ("3 of 19: StatCheck", "2.1 MB downloaded", "Waiting in its queue") and has a bar that fills only with a known fraction; while bibr or GROBID extract, which report no fraction, it has a moving bar and says why. A run that fails marks the step it stopped in and says why. The page scrolls to the steps when a button is pressed, shows "Starting" until the server starts the run, and on a shared server says when a run waits for a free place. The "Check a data package" page draws the same steps.
+- **Added:** a switch at the top of the paper page, **Paper** or **Data package**. Each side has its own box text, options and demo button. Dropping a data package while the switch is on Paper (or a paper while it is on Data package) moves the switch, and a line under the box says how what it holds will be checked; moving the switch by hand takes out what the other side's box held. A data package preset (`--preset`) starts the page on Data package.
+- **Added:** "Try the demo package" checks a small made-up study (`metacheck/resources/demos/sleep_study`) that has a few problems on purpose: a junk file, names and email addresses in a data file, and no licence.
+- **Added:** `METACHECK_APP_PRESET` (and `metacheck-app --hosted --preset NAME`) starts a shared server's page on a preset, for example `datapackage::tue`, so that a group gets a link that opens on their checks. A shared server takes only presets made of built-in checks and does not start with another. See [deploy/space/DEPLOY.md](deploy/space/DEPLOY.md#a-link-for-one-group).
+- **Changed:** `datapackage::tue` no longer adds `metacheck::license_check`. That check reads a paper's licence, so for a package with a LICENSE file it said "No license was found" next to the documentation check's "Licence file: LICENSE".
+- **Fixed:** a repository link typed without `https://` (`github.com/owner/repo`) or a bare Zenodo DOI in the paper page's box was checked as an upload that had gone ("Your upload is no longer on the server"). It is now fetched like a full link.
+- **Changed:** a shared server ends a run's process when the person leaves the page, and never runs more than two processes at a time, also when people leave runs that are still going.
+
 ### Added: a TU/e data-manager preset and one-line commands
 
-- **Added:** `datapackage::tue`, a preset for TU/e data managers. It is the data package checks (`datapackage::default`) plus `metacheck::license_check`, which runs offline. It is listed on the "Check a data package" page, so it needs no install step of its own. The check list is one `pack.json` entry, so it is easy to change.
+- **Added:** `datapackage::tue`, a preset for TU/e data managers. It is the data package checks (`datapackage::default`); the licence is checked by the documentation check (a LICENSE file, or a licence the README names). It is listed on the "Check a data package" page, so it needs no install step of its own. The check list is one `pack.json` entry, so it is easy to change.
 - **Changed:** the installers' pinned commit (`REF` in `install.sh` and `$Ref` in `install.ps1`) moved to current `main`, so the default one-line install gets the code of the last merges.
 - **Added:** TU/e data managers install and open the app on that preset with one line (`--steward --preset datapackage::tue` on a Mac or Linux, `METACHECK_STEWARD` and `METACHECK_APP_PRESET` on Windows). The commands are in [docs/TRY.md](docs/TRY.md#for-tue-data-managers).
 

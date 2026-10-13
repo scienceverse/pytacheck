@@ -128,12 +128,14 @@ archive file). A report's source line names the link, not the local temporary fo
 
 ## In the app
 
-`metacheck-app` has the paper page's one box: drop a paper, an archive of a data package
-or type the link of a repository, and the page tells them apart. A PDF, a GROBID XML file
-or a bibr JSON file is checked as a paper. A zip or tar archive, or a link, is checked as a
-data package, with the preset chosen in the "For a data package" part of "Choose the
-checks". A folder on your computer (typed in the box as its path) is checked as a data
-package too. Give one thing at a time.
+`metacheck-app` has the paper page's one box, with a switch above it: **Paper** or
+**Data package**. Drop a paper, an archive of a data package or type the link of a
+repository, and the page tells them apart (the switch moves to match). A PDF, a GROBID XML
+file or a bibr JSON file is checked as a paper. A zip or tar archive, or a link, is
+checked as a data package, with the preset chosen in "Checks for the data package" on the
+Data package side. A folder on your computer (typed in the box as its path) is checked as
+a data package too. Give one thing at a time. "Try the demo package" checks a small
+made-up study with a few problems in it.
 
 The package page is still there, "Check a data package" (`/package`; open the app on it
 with `metacheck-app --page package`). Name a folder on your computer, upload a zip (up to

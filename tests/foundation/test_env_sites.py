@@ -657,6 +657,13 @@ SITES: dict[str, Site] = {
         expect=lambda ctx, name: 30.0,
         spaces=lambda ctx: 900.0,
     ),
+    "APP_PRESET": Site(
+        value=" datapackage::tue ",
+        other="",  # no other name
+        read=lambda ctx: _hosted_with_hosts(ctx, "preset"),
+        expect=lambda ctx, name: "datapackage::tue",
+        spaces=lambda ctx: None,
+    ),
     "APP_ROOTS": Site(
         value="<tmp>/shared",
         other="",  # no other name
@@ -942,6 +949,7 @@ def test_the_module_constants_keep_the_old_names() -> None:
         hosted.HOSTS_ENV,
         hosted.TIMEOUT_ENV,
         hosted.COMMIT_ENV,
+        hosted.PRESET_ENV,
     ) == (
         "METACHECK_APP_TOKENS",
         "METACHECK_APP_AUTH",
@@ -949,6 +957,7 @@ def test_the_module_constants_keep_the_old_names() -> None:
         "METACHECK_APP_HOSTS",
         "METACHECK_APP_JOB_TIMEOUT",
         "METACHECK_APP_COMMIT",
+        "METACHECK_APP_PRESET",
     )
     app = _api()
     assert app.API_KEY_ENVS == ("METACHECK_API_KEY", "PYTACHECK_API_KEY")

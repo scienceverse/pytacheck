@@ -357,12 +357,14 @@ NO_SOURCE_LINK = "Type the link of the repository first."
 
 
 def resolve_link(text: str | None) -> str:
-    """The link to fetch, as typed (without quotes and spaces around it), once it is read as
-    the link of a repository this app can fetch from.
+    """The link to fetch, once it is read as the link of a repository this app can fetch from:
+    as typed, without quotes and spaces around it, and with ``https://`` in front when it was
+    typed without (``github.com/owner/repo``, a bare DOI), so that the run sees a link.
 
     Raises :class:`~metacheck.app.run.UserError` with what is wrong with it, or when it is empty.
     """
     from metacheck.datapackage import PackageError, parse_link
+    from metacheck.datapackage._remote import _normalise
 
     link = _clean_path(text or "")
     if not link:
@@ -371,7 +373,7 @@ def resolve_link(text: str | None) -> str:
         parse_link(link)
     except PackageError as exc:
         raise UserError(str(exc)) from exc
-    return link
+    return _normalise(link)
 
 
 def resolve_entry(entry: Entry) -> str | Path:
