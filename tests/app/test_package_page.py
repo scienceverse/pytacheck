@@ -89,6 +89,16 @@ def test_the_default_preset_is_offered_first_with_its_description() -> None:
     assert found[0][0].startswith("datapackage::default: Check a data package")
 
 
+def test_the_tue_preset_checks_the_licence_with_the_documentation() -> None:
+    """No separate licence check, which could say there is no licence while the documentation
+    check finds one in the README."""
+    from metacheck.presets import expand
+
+    assert expand("datapackage::tue", validate=True) == expand("datapackage::default")
+    docs = dict(expand("datapackage::tue"))
+    assert "metacheck::license_check" not in docs
+
+
 def test_presets_come_from_the_registry_not_a_fixed_list(tmp_path: Path) -> None:
     pack = tmp_path / "labx"
     pack.mkdir()
@@ -644,7 +654,8 @@ def _package_clicks(config: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
-def _join(tc: TestClient, data: list[Any], session: str) -> dict[str, Any]:
+def _stream(tc: TestClient, data: list[Any], session: str) -> str:
+    """Everything the page is sent for a click on "Check the package"."""
     (dep,) = _package_clicks(tc.get("/config").json())
     body = {"data": data, "fn_index": dep["id"], "session_hash": session}
     assert tc.post("/gradio_api/queue/join", json=body).status_code == 200
@@ -654,6 +665,11 @@ def _join(tc: TestClient, data: list[Any], session: str) -> dict[str, Any]:
             text += line
             if '"process_completed"' in line:
                 break
+    return text
+
+
+def _join(tc: TestClient, data: list[Any], session: str) -> dict[str, Any]:
+    text = _stream(tc, data, session)
     done = next(part for part in text.split("data: ") if '"process_completed"' in part)
     return json.loads(done)  # type: ignore[no-any-return]
 
@@ -741,6 +757,33 @@ def test_the_page_runs_a_folder_through_the_app(tmp_path: Path) -> None:
         assert "Content-Security-Policy" in got.text
         # another session cannot read it
         assert tc.get("/report/p2package/study1_report.html").status_code == 404
+
+
+def test_the_page_draws_the_steps_while_it_checks(tmp_path: Path) -> None:
+    root = folder(tmp_path)
+    with _client() as tc:
+        text = _stream(tc, ["folder", str(root), None, "", "datapackage::default", False], "p8")
+    done = json.loads(next(p for p in text.split("data: ") if '"process_completed"' in p))
+    assert done["success"] and done["output"]["data"][6] == ""  # the steps go at the end
+    assert "Checking <strong>study1</strong>" in text and "Read the folder" in text
+
+
+def test_a_run_that_breaks_says_where_it_stopped(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def broken(*_a: Any, progress: Any, **_k: Any) -> None:
+        progress(0.0, "Opening the package")
+        progress(0.5, "Running check 2 of 4: Files")
+        raise RuntimeError("a bug")
+
+    monkeypatch.setattr(pk, "check_package_source", broken)
+    root = folder(tmp_path)
+    with _client() as tc:
+        text = _stream(tc, ["folder", str(root), None, "", "datapackage::default", False], "p9")
+    done = json.loads(next(p for p in text.split("data: ") if '"process_completed"' in p))
+    assert not done["success"] and pk.FAILED in json.dumps(done)
+    assert "mc-run-failed" in text and "Stopped <strong>study1</strong>" in text
+    assert "a bug" not in text  # the person is told what to do, not the error of the code
 
 
 def test_the_page_says_what_is_wrong_in_plain_words(tmp_path: Path) -> None:

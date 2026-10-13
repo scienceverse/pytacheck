@@ -352,11 +352,15 @@ def _button_function(name: str) -> Any:
 
 def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     request = SimpleNamespace(session_hash="abc123")
-    steps: list[str] = []
-    progress = lambda _f, desc=None: steps.append(desc)  # noqa: E731
     on_demo = _button_function("on_demo")
-    page = on_demo(False, False, "grobid", "", False, None, "", "", True, request, progress)
-    results, summary, table, checklist, frame, download, status, stop = page
+    sent = list(on_demo(False, False, "grobid", "", False, None, "", "", True, request))
+    # first the steps of the run, with the results of the run before hidden
+    first_panel, first_results, *_ = sent[0]
+    assert "Checking <strong>to_err_is_human.json</strong>" in first_panel
+    assert "Read the paper" in first_panel and first_results["visible"] is False
+    # then the results, and the steps go
+    panel, results, summary, table, checklist, frame, download, status, stop = sent[-1]
+    assert panel == ""
     assert results["visible"] is True
     assert status == "" and stop["visible"] is False
     assert checklist["visible"] is False  # the checklist is a data package's
@@ -366,8 +370,7 @@ def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     assert "srcdoc=" in frame
     assert 'href="/report/abc123/to_err_is_human_report.html"' in download
     assert "Download the report" in download
-    assert steps[0] == "Reading the paper"
-    on_demo(False, False, "grobid", "", False, None, "", "", True, request, progress)  # again
+    assert list(on_demo(False, False, "grobid", "", False, None, "", "", True, request))  # again
 
 
 def test_result_cells_are_coloured_by_traffic_light() -> None:
@@ -403,20 +406,27 @@ def test_check_button_needs_something_and_words_errors_plainly() -> None:
             "",
             True,
             request,
-            lambda *_a, **_k: None,
         )
+
+    def press(box: Any) -> list[Any]:
+        return list(click(box))
 
     for empty in (None, "", {"text": "  ", "files": []}):
         with pytest.raises(gr.Error, match="Upload a paper or an archive") as info:
-            click(empty)
+            press(empty)
         assert info.value.print_exception is False
+    # nothing ran, so the panel the browser drew at the click is taken away first
+    early = click(None)
+    assert next(early)[0] == ""
+    with pytest.raises(gr.Error):
+        next(early)
     folder = Path(get_upload_folder()) / "test-app-uploads"
     folder.mkdir(parents=True, exist_ok=True)
     try:
         txt = folder / "a.txt"
         txt.write_text("x")
         with pytest.raises(gr.Error, match="not supported") as info:
-            click({"text": "", "files": [str(txt)]})
+            press({"text": "", "files": [str(txt)]})
         assert info.value.print_exception is False
     finally:
         shutil.rmtree(folder, ignore_errors=True)

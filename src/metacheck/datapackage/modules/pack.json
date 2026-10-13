@@ -22,9 +22,8 @@
       ]
     },
     "tue": {
-      "description": "TU/e data managers: the data package checks plus the licence check (offline)",
-      "extends": ["datapackage::default"],
-      "modules": ["metacheck::license_check"]
+      "description": "TU/e data managers: the data package checks (the licence is checked with the documentation)",
+      "extends": ["datapackage::default"]
     }
   }
 }

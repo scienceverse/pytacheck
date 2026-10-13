@@ -32,7 +32,7 @@ def create_app(port: int, token: str, preset: str | None = None) -> Any:
 
 def create_hosted_app(port: int, config: HostedConfig) -> Any:
     """The app for a shared server: any of the tokens (or a sign-in proxy in front), https,
-    the configured host names."""
+    the configured host names. The page starts with ``config.preset`` when it has one."""
     return _assemble(
         port,
         config,
@@ -44,6 +44,7 @@ def create_hosted_app(port: int, config: HostedConfig) -> Any:
             proxy_auth=config.proxy_auth,
             user_header=config.user_header,
         ),
+        config.preset,
     )
 
 
