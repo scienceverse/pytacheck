@@ -37,7 +37,7 @@ main() {
   set -eu
 
   # The commit that gets installed. Move it when the app moves.
-  REF="dc4848abdaffad5782d085f4ef7e96d984ce3741"
+  REF="d651cdfb40c782a76f2661bc8b91541f4f0c24d8"
 
   UV_VERSION="0.12.20"
   UV_URL="https://github.com/astral-sh/uv/releases/download/$UV_VERSION"
