@@ -443,7 +443,7 @@ def _bitstream_table(bitstreams: Any, host: str) -> pd.DataFrame:
     items = [] if _is_empty(bitstreams) else _elements(bitstreams)
     names = [_chr1(_empty_or(field(b, "name"), None)) for b in items]
     sizes = [_as_numeric(_empty_or(field(b, "sizeBytes"), None)) for b in items]
-    retrieve = []
+    retrieve: list[str | None] = []
     for b in items:
         link = field(b, "retrieveLink")
         if link is None:
