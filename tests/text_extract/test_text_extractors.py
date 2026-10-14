@@ -288,6 +288,11 @@ def test_extract_eq_complex() -> None:
         "t", "p", "g av", "t", "p", "g_av", "n", "years", "d rm", "d s",
     ]  # fmt: skip
 
+    # the g or d is a word of its own: "and z" is z (metacheck reads "d z"),
+    # while Grobid's "d Z = 0.89" is a subscripted d
+    eq = extract_eq(pc.test_paper(["p=.05 and z ≤ 1.96 and s = 3", "t(89) = 8.44, d Z = 0.89"]))
+    assert eq["lhs"].tolist() == ["p", "z", "s", "t", "d Z"]
+
 
 def test_extract_eq_no_numeric_lhs(psychsci) -> None:
     eq = extract_eq(psychsci)

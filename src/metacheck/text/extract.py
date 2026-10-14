@@ -64,8 +64,9 @@ _GREEK = "Ͱ-Ͽ"
 # metacheck read as a statistic "av" (UX-text-1, fixed upstream for #448). A
 # bare g or d followed by one of its own subscripts is one statistic name; any
 # other two words before an operator are not ("sample size n = 40" is n, "mean
-# age years = 25" is years).
-_BARE_SUBSCRIPT = f"[gd]\\s+(?:av|z|rm|s)(?=\\s*[{_OPS}])"
+# age years = 25" is years). The g or d is a word of its own: metacheck also
+# reads "and z ≤ 1.96" as "d z".
+_BARE_SUBSCRIPT = f"\\b[gd]\\s+(?:av|z|rm|s)(?=\\s*[{_OPS}])"
 _EQ_PATTERN = (
     r"(?:(Hedge.{0,3}|Cronbach.{0,2}|Cohen.{0,2}|\d{1,2}%)\s+)?"  # common prefix
     f"(?:{_BARE_SUBSCRIPT}|"
