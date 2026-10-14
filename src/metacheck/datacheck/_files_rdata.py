@@ -538,6 +538,11 @@ def rds_reader() -> str:
 
 # a free-threaded build walks the whole heap to freeze it
 _PROMOTE = not sysconfig.get_config_var("Py_GIL_DISABLED")
+# The objects in the permanent generation when this module was loaded. Python
+# 3.12 starts with a few hundred tuples there; more than that later means the
+# program froze objects itself (before forking workers, say), and
+# gc.unfreeze() would undo that.
+_frozen_at_import = gc.get_freeze_count()
 
 
 @contextlib.contextmanager
@@ -548,17 +553,20 @@ def _gc_paused() -> Any:
     them garbage. The collector would walk them again and again while they are
     built, and then once per generation as soon as it is back on (half a second
     for one model). So they go straight to the oldest generation instead
-    (``gc.freeze()`` and ``gc.unfreeze()``), where only a full collection looks
-    at them, unless the program froze objects itself.
+    (``gc.freeze()`` and ``gc.unfreeze()``, as mypy does after it has built its
+    trees), where only a full collection looks at them, unless the program
+    froze objects itself.
     """
+    global _frozen_at_import
     was = gc.isenabled()
     gc.disable()
     try:
         yield
     finally:
-        if _PROMOTE and gc.get_freeze_count() == 0:
+        if _PROMOTE and gc.get_freeze_count() <= _frozen_at_import:
             gc.freeze()
             gc.unfreeze()
+            _frozen_at_import = 0
         if was:
             gc.enable()
 
