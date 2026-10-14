@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -294,86 +295,94 @@ GATECH_ORIGINAL = "22222222-2222-2222-2222-222222222222"
 UMASS_ITEM = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 
 
+#: metacheck's DSpace 7 lookup since 0.3.3 (pytacheck's): the item with its
+#: bundles and their bitstreams embedded, in one request
+DSPACE7_EMBED = "embed=bundles/bitstreams&embed.size=bundles/bitstreams=200"
+
+
 def dspace7() -> None:
     api = "repository.gatech.edu/server/api"
-    put(
-        f"{api}/core/items/{GATECH_ITEM}",
-        {
-            "id": GATECH_ITEM,
-            "uuid": GATECH_ITEM,
-            "name": "Dataset for a robot study",
-            "handle": "1853/67239",
-            "metadata": {
-                "dc.contributor.author": [
-                    {"value": "Doe, Jane", "language": None},
-                    {"value": "Roe, Rich"},
-                    {"value": None},
-                ],
-                "dc.identifier.doi": [],
-                "dc.rights": [{"value": None}],
-                "dc.rights.uri": [{"value": "http://creativecommons.org/licenses/by/4.0/"}],
-                "dc.date.issued": [{"value": "2022-06-01"}],
-                "dc.title": [{"value": "Title from metadata"}],
-            },
-            "lastModified": "2023-01-02T03:04:05.000+00:00",
-            "type": "item",
+    item = {
+        "id": GATECH_ITEM,
+        "uuid": GATECH_ITEM,
+        "name": "Dataset for a robot study",
+        "handle": "1853/67239",
+        "metadata": {
+            "dc.contributor.author": [
+                {"value": "Doe, Jane", "language": None},
+                {"value": "Roe, Rich"},
+                {"value": None},
+            ],
+            "dc.identifier.doi": [],
+            "dc.rights": [{"value": None}],
+            "dc.rights.uri": [{"value": "http://creativecommons.org/licenses/by/4.0/"}],
+            "dc.date.issued": [{"value": "2022-06-01"}],
+            "dc.title": [{"value": "Title from metadata"}],
         },
-    )
-    put(
-        f"{api}/core/items/{GATECH_ITEM}/bundles",
-        {
-            "_embedded": {
-                "bundles": [
-                    {"name": "LICENSE", "uuid": "11111111-1111-1111-1111-111111111111"},
-                    {"name": "ORIGINAL", "uuid": GATECH_ORIGINAL},
-                    {"name": "THUMBNAIL", "uuid": "33333333-3333-3333-3333-333333333333"},
-                ]
-            }
-        },
-    )
+        "lastModified": "2023-01-02T03:04:05.000+00:00",
+        "type": "item",
+    }
+    bundles = [
+        {"name": "LICENSE", "uuid": "11111111-1111-1111-1111-111111111111"},
+        {"name": "ORIGINAL", "uuid": GATECH_ORIGINAL},
+        {"name": "THUMBNAIL", "uuid": "33333333-3333-3333-3333-333333333333"},
+    ]
     content = "https://repository.gatech.edu/server/api/core/bitstreams/{}/content"
+    bitstreams = {
+        "_embedded": {
+            "bitstreams": [
+                {
+                    "name": "data.CSV",
+                    "sizeBytes": 1234,
+                    "checkSum": {"value": "0123456789abcdef0123456789abcdef"},
+                    "_links": {"content": {"href": content.format("b1")}},
+                },
+                {
+                    "name": "analysis.R",
+                    "sizeBytes": 99,
+                    "checkSum": {"value": None, "checkSumAlgorithm": "MD5"},
+                    "_links": {"content": {"href": content.format("b2")}},
+                },
+                {
+                    "name": "model.rds",
+                    "sizeBytes": 5000000000,
+                    "_links": {"content": {"href": content.format("b3")}},
+                },
+                {"name": "noext", "sizeBytes": None, "_links": {}},
+            ]
+        }
+    }
+    # metacheck at the pin: the item, its bundles and the ORIGINAL bundle's
+    # bitstreams, in three requests
+    put(f"{api}/core/items/{GATECH_ITEM}", item)
+    put(f"{api}/core/items/{GATECH_ITEM}/bundles", {"_embedded": {"bundles": bundles}})
+    put(f"{api}/core/bundles/{GATECH_ORIGINAL}/bitstreams", bitstreams)
+    # pytacheck (metacheck 0.3.3): the same, embedded in one answer
+    embedded = [
+        {**b, "_embedded": {"bitstreams": {**bitstreams, "page": {"totalElements": 4}}}}
+        if b["name"] == "ORIGINAL"
+        else b
+        for b in bundles
+    ]
     put(
-        f"{api}/core/bundles/{GATECH_ORIGINAL}/bitstreams",
-        {
-            "_embedded": {
-                "bitstreams": [
-                    {
-                        "name": "data.CSV",
-                        "sizeBytes": 1234,
-                        "checkSum": {"value": "0123456789abcdef0123456789abcdef"},
-                        "_links": {"content": {"href": content.format("b1")}},
-                    },
-                    {
-                        "name": "analysis.R",
-                        "sizeBytes": 99,
-                        "checkSum": {"value": None, "checkSumAlgorithm": "MD5"},
-                        "_links": {"content": {"href": content.format("b2")}},
-                    },
-                    {
-                        "name": "model.rds",
-                        "sizeBytes": 5000000000,
-                        "_links": {"content": {"href": content.format("b3")}},
-                    },
-                    {"name": "noext", "sizeBytes": None, "_links": {}},
-                ]
-            }
-        },
+        q(f"{api}/core/items/{GATECH_ITEM}", DSPACE7_EMBED),
+        {**item, "_embedded": {"bundles": {"_embedded": {"bundles": embedded}}}},
     )
     put(q(f"{api}/pid/find", "id=1853%2F67239"), {"uuid": GATECH_ITEM, "type": "item"})
     put(q(f"{api}/pid/find", "id=1853%2F404"), {"type": "item"})
 
     umass = "scholarworks.umass.edu/server/api"
+    umass_item = {
+        "uuid": UMASS_ITEM,
+        "name": [],
+        "metadata": {"dc.title": [{"value": "Fallback title"}, {"value": "Second title"}]},
+    }
+    umass_bundles = {"_embedded": {"bundles": [{"name": "THUMBNAIL", "uuid": "t"}]}}
+    put(f"{umass}/core/items/{UMASS_ITEM}", umass_item)
+    put(f"{umass}/core/items/{UMASS_ITEM}/bundles", umass_bundles)
     put(
-        f"{umass}/core/items/{UMASS_ITEM}",
-        {
-            "uuid": UMASS_ITEM,
-            "name": [],
-            "metadata": {"dc.title": [{"value": "Fallback title"}, {"value": "Second title"}]},
-        },
-    )
-    put(
-        f"{umass}/core/items/{UMASS_ITEM}/bundles",
-        {"_embedded": {"bundles": [{"name": "THUMBNAIL", "uuid": "t"}]}},
+        q(f"{umass}/core/items/{UMASS_ITEM}", DSPACE7_EMBED),
+        {**umass_item, "_embedded": {"bundles": umass_bundles}},
     )
 
 
@@ -542,25 +551,96 @@ def fsd() -> None:
     )
 
 
+#: metacheck's legacy DSpace lookup since 0.3.3 (pytacheck's): the item with
+#: its metadata and bitstreams, in one request
+DSPACE_EXPAND = "expand=metadata,bitstreams"
+
+
 def dspace_legacy() -> None:
     base = "bonndoc.ulb.uni-bonn.de/rest"
-    put(f"{base}/handle/20.500.11811/1234", {"uuid": "u-bonn-1", "name": "Bonn item"})
+    item = {"uuid": "u-bonn-1", "name": "Bonn item"}
+    metadata = [
+        {"key": "dc.contributor.author", "value": "Author, A."},
+        {"key": "dc.contributor.author", "value": "Author, B."},
+        {"key": "dc.rights", "value": "openAccess"},
+        {"key": "dc.identifier.doi", "value": None},
+        {"key": "dc.date.available", "value": "2020-05-05"},
+    ]
+    # metacheck at the pin: the handle, the item's metadata and its bitstreams
+    put(f"{base}/handle/20.500.11811/1234", item)
+    put(q(f"{base}/items/u-bonn-1", "expand=metadata"), {"uuid": "u-bonn-1", "metadata": metadata})
+    put(q(f"{base}/items/u-bonn-1/bitstreams", "limit=1000"), [])
+    # pytacheck (metacheck 0.3.3): the same in one answer
     put(
-        q(f"{base}/items/u-bonn-1", "expand=metadata"),
+        q(f"{base}/handle/20.500.11811/1234", DSPACE_EXPAND),
+        {**item, "metadata": metadata, "bitstreams": []},
+    )
+    # an item whose handle resolves to no uuid
+    put("qsardb.org/rest/handle/10967/106", {"name": "no uuid"})
+    put(q("qsardb.org/rest/handle/10967/106", DSPACE_EXPAND), {"name": "no uuid"})
+
+    # DSpace 5 (datastorre.stir.ac.uk): a numeric id, the licence in dc.rights,
+    # retrieve links from the REST root, and the bundles DSpace adds itself
+    stir = "datastorre.stir.ac.uk/rest"
+    put(
+        q(f"{stir}/handle/11667/42", DSPACE_EXPAND),
         {
-            "uuid": "u-bonn-1",
+            "id": 4242,
+            "name": "A DSpace 5 dataset",
             "metadata": [
-                {"key": "dc.contributor.author", "value": "Author, A."},
-                {"key": "dc.contributor.author", "value": "Author, B."},
-                {"key": "dc.rights", "value": "openAccess"},
-                {"key": "dc.identifier.doi", "value": None},
-                {"key": "dc.date.available", "value": "2020-05-05"},
+                {"key": "dc.rights", "value": "CC-BY 4.0"},
+                {"key": "dc.identifier.doi", "value": "10.15132/10000042"},
+            ],
+            "bitstreams": [
+                {
+                    "name": "data.csv",
+                    "bundleName": "ORIGINAL",
+                    "sizeBytes": 10,
+                    "retrieveLink": "/bitstreams/101/retrieve",
+                },
+                {
+                    "name": "license.txt",
+                    "bundleName": "LICENSE",
+                    "sizeBytes": 1700,
+                    "retrieveLink": "/bitstreams/102/retrieve",
+                },
+                {
+                    "name": "paper.pdf.txt",
+                    "bundleName": "TEXT",
+                    "sizeBytes": 900,
+                    "retrieveLink": "/bitstreams/103/retrieve",
+                },
+                {
+                    "name": "no-bundle.txt",
+                    "sizeBytes": 3,
+                    "retrieveLink": "/bitstreams/104/retrieve",
+                },
             ],
         },
     )
-    put(q(f"{base}/items/u-bonn-1/bitstreams", "limit=1000"), [])
-    # an item whose handle resolves to no uuid
-    put("qsardb.org/rest/handle/10967/106", {"name": "no uuid"})
+    # an installation that ignores `expand`: the separate requests, by id
+    put(q(f"{stir}/handle/11667/43", DSPACE_EXPAND), {"id": 4343, "name": "No expand"})
+    put(
+        q(f"{stir}/items/4343", "expand=metadata"),
+        {
+            "id": 4343,
+            "metadata": [
+                {"key": "dc.rights", "value": "embargoedAccess"},
+                {"key": "dc.rights.uri", "value": "https://creativecommons.org/licenses/by/4.0/"},
+            ],
+        },
+    )
+    put(
+        q(f"{stir}/items/4343/bitstreams", "limit=1000"),
+        [
+            {
+                "name": "x.csv",
+                "bundleName": "ORIGINAL",
+                "sizeBytes": 1,
+                "retrieveLink": "/rest/bitstreams/201/retrieve",
+            }
+        ],
+    )
 
 
 def researchbox() -> None:
@@ -576,6 +656,58 @@ def researchbox() -> None:
 """
     put("researchbox.org/99", page, ".html")
     r404("researchbox.org/404", "https://researchbox.org/404", "<html>Not found</html>")
+
+
+#: the first request of each pinned DSpace lookup -> pytacheck's (metacheck
+#: 0.3.3's) one-request form: (pattern of the mock path, query it adds)
+_FIRST_REQUESTS = (
+    (re.compile(r"(.*/rest/handle/[^/]+/[^/]+?)\.(json|R|html|txt|xml)$"), DSPACE_EXPAND),
+    (
+        re.compile(r"(.*/server/api/core/items/[0-9a-f-]{36})\.(json|R|html|txt|xml)$"),
+        DSPACE7_EMBED,
+    ),
+    (
+        re.compile(r"(.*/server/api/core/bundles/[^/]+/bitstreams)\.(json|R|html|txt|xml)$"),
+        "size=200",
+    ),
+)
+
+
+def write_pytacheck_variants(root: Path) -> None:
+    """Answer pytacheck's DSpace requests under *root* with the pinned recordings.
+
+    metacheck at the pin lists a legacy DSpace item in three requests
+    (``/handle/<h>``, ``/items/<id>?expand=metadata``, its bitstreams) and a
+    DSpace 7 item in three (the item, ``/bundles``, the bundle's
+    ``/bitstreams``); pytacheck, like metacheck 0.3.3, asks for everything in
+    the first request (``?expand=metadata,bitstreams``,
+    ``?embed=bundles/bitstreams...``) and makes the others only when the
+    answer lacks it. Each recorded first request is copied to its new name,
+    unchanged -- an installation that ignores ``expand``/``embed`` -- so that
+    pytacheck goes on to the same recorded requests as R, and a DSpace 7
+    bundle's bitstreams are copied to the ``?size=200`` address pytacheck
+    then asks. A variant that already exists is kept.
+    """
+    for f in sorted(root.rglob("*")):
+        rel = f.relative_to(root).as_posix()
+        for rx, query in _FIRST_REQUESTS:
+            m = rx.fullmatch(rel)
+            if m is None or re.search(r"-[0-9a-f]{6}$", m.group(1)):
+                continue
+            dest = root / f"{q(m.group(1), query)}.{m.group(2)}"
+            if any(
+                dest.with_suffix(ext).exists() for ext in (".json", ".R", ".html", ".txt", ".xml")
+            ):
+                continue
+            text = f.read_bytes()
+            if f.suffix == ".R":  # the recorded request's own URL, for the record
+                text = re.sub(
+                    rb'(url = "[^"?]*)"',
+                    lambda u: u.group(1) + b"?" + query.encode() + b'"',
+                    text,
+                    count=1,
+                )
+            dest.write_bytes(text)
 
 
 def main() -> None:

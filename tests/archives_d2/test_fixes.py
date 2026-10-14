@@ -60,7 +60,7 @@ def test_psycharchives_handle_on_an_unknown_host(serve: Serve) -> None:
         info = _psycharchives_info("https://hdl.handle.net/20.500.11780/3456")
     assert info["error"].tolist() == ["unfound"]
     assert [str(r.url) for r in seen] == [
-        "https://www.psycharchives.org/rest/handle/20.500.11780/3456"
+        "https://www.psycharchives.org/rest/handle/20.500.11780/3456?expand=metadata,bitstreams"
     ]
 
 

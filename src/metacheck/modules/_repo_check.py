@@ -932,13 +932,17 @@ def list_dspace(
             ]
             if restricted:
                 repos.flag(restricted, "restricted access")
+        # the licence is dc.rights.license / dc.rights.uri; dc.rights is the
+        # access level ("restrictedAccess"), which metacheck reported as the
+        # licence before 0.3.3
         doi = attrs.get("doi") or None
-        if rights or doi:
+        license_ = attrs.get("license") or None
+        if rights or doi or license_:
             meta = r_frame(
                 [
                     ("repo_url", urls, "string"),
                     ("doi", _named_lookup(doi, urls), "string"),
-                    ("license", _named_lookup(rights, urls), "string"),
+                    ("license", _named_lookup(license_, urls), "string"),
                 ]
             )
         if pa is not None and len(pa) > 0:
