@@ -10,5 +10,8 @@
 "repo_check.osf.reg.paperlist": {"r": "80afb553d5c11be5", "py": "6a6c89469e8dfe22", "diff": ["report[]", "summary_table.files_code[]", "summary_table.files_data[]", "table.data_type[]", "table.file_type[]"]},
 "repo_check.osf_license.invalid": {"r": "d7842d72cb50aa46", "py": "d28a43c696a53a7d", "diff": ["gated_repos", "repo_metadata.paper_id[]", "report[]", "summary_table.repo_n[]", "summary_text[]"]},
 "repo_check.zenodo.no_peek": {"r": "e171cb29bb0f2b93", "py": "a105d9b570b332a7", "diff": ["report[]", "summary_table.files_code[]", "summary_table.files_data[]", "table.data_type[]", "table.file_type[]"]},
-"repo_check.zenodo.no_peek.report": {"r": "85984e0a657343b6", "py": "306a854f8a1a0d24", "diff": ["[]"]}
+"repo_check.zenodo.no_peek.report": {"r": "85984e0a657343b6", "py": "306a854f8a1a0d24", "diff": ["[]"]},
+"repo_check.zenodo.peek_rich": {"r": "eb2f3b5202901c9d", "py": "92ae67345ca78a0a", "diff": ["table"]},
+"repo_check.zenodo.peek_same_zip": {"r": "a97d0bf5f519c4ba", "py": "bc56cc169a3c1e67", "diff": ["table"]},
+"repo_check.zenodo.peek_shared.paperlist": {"r": "96bbe8047b027674", "py": "43a4c559c0990569", "diff": ["table"]}
 }
