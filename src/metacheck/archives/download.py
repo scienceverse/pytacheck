@@ -1389,7 +1389,7 @@ def download_repo_files(
 
     # -- archive members (repo_check's zip-peek expansion) --------------------
     if "archive_url" in df.columns:
-        from metacheck.archives.zip_peek import _zip_fetch_members
+        from metacheck.archives.zip_peek import _whole_request_bytes, _zip_fetch_members
 
         arcs = _col(df, "archive_url") or [None] * n
         members = _col(df, "archive_member") or [None] * n
@@ -1441,9 +1441,17 @@ def download_repo_files(
             if not idx:
                 continue
             arc_key = gsub("[^A-Za-z0-9._-]+", "_", gsub("^https?://", "", str(arc)))
-            member_dest = cache_path(repo_urls[idx[0]], f".archive_members/{arc_key}") + ".contents"
-            member_dest = _safe_write_path(member_dest) or member_dest
+            arc_path = cache_path(repo_urls[idx[0]], f".archive_members/{arc_key}")
+            arc_path = _safe_write_path(arc_path) or arc_path
+            member_dest = _safe_write_path(f"{arc_path}.contents") or f"{arc_path}.contents"
             _dir_create(member_dest)
+            # The archive's own size, carried from repo_check's listing, saves the
+            # peek a HEAD request in a new session. Within the budget the archive
+            # may be downloaded once instead of fetched by range, when that is
+            # cheaper (always on Dryad, which counts every request against a
+            # daily quota: metacheck #471); it is kept at `arc_path`, so a
+            # restarted run does not request it again.
+            arc_sizes = _col(df, "archive_size")
             # why a member was not fetched is recorded in `failed` (#429)
             try:
                 fetched = _zip_fetch_members(
@@ -1452,6 +1460,10 @@ def download_repo_files(
                     dest=member_dest,
                     cache=cache,
                     skip_on_api_limit=skip_on_api_limit,
+                    max_whole_bytes=cap_bytes,
+                    archive_path=arc_path,
+                    request_bytes=_whole_request_bytes(arc),
+                    size=None if arc_sizes is None else arc_sizes[idx[0]],
                 )
             except Exception as e:
                 why: str | None = str(e)

@@ -928,7 +928,13 @@ def _download(
     file_url = h._col(all_files, "file_url")
     zip_peek_reason: list[Any] = [None] * n
     if is_true(peek_zips) and download != "none" and file_url is not None:
-        from metacheck.archives.zip_peek import zip_decision
+        from metacheck.archives.zip_peek import _zip_local_source, zip_decision
+
+        # a zip already on disk (inside a ResearchBox, whose file_url is the box's
+        # web page) is read from the file, and a size the listing gave saves the
+        # peek a HEAD request
+        zip_src = _zip_local_source(all_files)
+        zip_size = h._col(all_files, "file_size") or [None] * n
 
         is_zip = [
             w and bool(z) and h._has_value(u)
@@ -939,11 +945,13 @@ def _download(
         for i, z in enumerate(is_zip):
             if not z:
                 continue
+            src = zip_src[i]
             d = zip_decision(
-                file_url[i],
+                file_url[i] if src is None else src,
                 skip_types=skip_types if skip_types is not None else "materials",
                 cache=cache,
                 skip_on_api_limit=skip_on_api_limit,
+                size=zip_size[i],
             )
             if h._is_false(d.get("worth")):
                 want[i] = False

@@ -1111,6 +1111,89 @@ def test_archive_member_rows(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
     assert dl.attrs["oversize_skipped"]["file_name"].tolist() == ["huge.csv"]
 
 
+def test_archive_members_may_take_the_whole_archive(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # metacheck #471 / d52b3fd: the budget, the archive's own size from repo_check's
+    # listing and where the archive is kept go to the member fetch; Dryad counts
+    # requests only, every other host weighs requests against bytes
+    import metacheck.archives.zip_peek as zp
+
+    seen: list[dict[str, Any]] = []
+
+    def fake_fetch(url: str, names: list[str], dest: str, **kw: Any) -> pd.DataFrame:
+        seen.append({"url": url, "dest": dest, **kw})
+        return pd.DataFrame(
+            {"name": names, "path": [None] * len(names), "size": [1.0] * len(names),
+             "ok": [False] * len(names), "error": ["x"] * len(names)}
+        )  # fmt: skip
+
+    monkeypatch.setattr(zp, "_zip_fetch_members", fake_fetch)
+    for arc in ("https://datadryad.org/api/v2/files/9/download", "https://zenodo.org/x.zip"):
+        files = pd.DataFrame(
+            {
+                "repo_url": ["https://example.org/repo-" + secrets.token_hex(4)],
+                "file_name": ["a.csv"],
+                "file_path": ["x.zip/a.csv"],
+                "file_url": [None],
+                "file_size": [10.0],
+                "archive_url": [arc],
+                "archive_member": ["a.csv"],
+                "archive_size": [12345.0],
+            }
+        )
+        download_repo_files(files, max_download_size=2)
+    dryad, zenodo = seen
+    assert dryad["request_bytes"] == math.inf and zenodo["request_bytes"] == 1048576
+    assert dryad["max_whole_bytes"] == 2 * 1048576
+    assert dryad["size"] == 12345.0
+    # kept beside its members' folder, so a restarted run does not ask for it again
+    assert dryad["dest"] == dryad["archive_path"] + ".contents"
+
+
+def test_dryad_archive_members_come_from_one_download(tmp_path: Path) -> None:
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        for name in ("a.csv", "b.csv", "c.csv"):
+            zf.writestr(name, f"{name}\n1,2\n")
+        zf.writestr("big.bin", os.urandom(200_000), compress_type=zipfile.ZIP_STORED)
+    data = buf.getvalue()
+    arc = "https://datadryad.org/api/v2/files/" + secrets.token_hex(4) + "/download"
+    calls: list[str | None] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        rng = request.headers.get("Range")
+        calls.append(rng)
+        if rng is None:
+            return httpx.Response(200, content=data)
+        a, b = (int(v) for v in rng.removeprefix("bytes=").split("-"))
+        return httpx.Response(206, content=data[a : b + 1])
+
+    files = pd.DataFrame(
+        {
+            "repo_url": ["https://datadryad.org/dataset/doi:10.5061/dryad." + secrets.token_hex(4)]
+            * 3,
+            "file_name": ["a.csv", "b.csv", "c.csv"],
+            "file_path": ["all.zip/a.csv", "all.zip/b.csv", "all.zip/c.csv"],
+            "file_url": [None] * 3,
+            "file_size": [10.0] * 3,
+            "archive_url": [arc] * 3,
+            "archive_member": ["a.csv", "b.csv", "c.csv"],
+            "archive_size": [float(len(data))] * 3,
+        }
+    )
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=arc).mock(side_effect=handler)
+        dl = download_repo_files(files)
+    # the listing (no HEAD: the size is known) and then the archive, once
+    assert calls == [f"bytes={len(data) - 131072}-{len(data) - 1}", None]
+    assert dl["file_location"].notna().all()
+    assert Path(dl["file_location"].iloc[1]).read_bytes() == b"b.csv\n1,2\n"
+    kept = Path(dl["file_location"].iloc[0]).parent
+    assert kept.name.endswith(".zip.contents") or kept.name.endswith(".contents")
+    assert Path(str(kept).removesuffix(".contents")).read_bytes() == data
+
+
 # -- #429: archive-member failures are recorded --------------------------------
 
 

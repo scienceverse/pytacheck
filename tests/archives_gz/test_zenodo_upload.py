@@ -499,7 +499,7 @@ def test_zenodo_zip_members(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> 
 
     fetched: list[list[str]] = []
     fake = types.ModuleType("metacheck.archives.zip_peek")
-    fake.zip_peek = lambda url: pd.DataFrame(  # type: ignore[attr-defined]
+    fake.zip_peek = lambda url, size=None: pd.DataFrame(  # type: ignore[attr-defined]
         {"name": ["d/data.csv", "img/a.png", "big.csv", "zip64.csv"],
          "size": [100.0, 50.0, 20 * 1024 * 1024.0, float("nan")]}
     )  # fmt: skip

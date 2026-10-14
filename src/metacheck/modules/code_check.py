@@ -258,7 +258,9 @@ def code_check(
             all_files = set_language(expand(all_files, *size_args).reset_index(drop=True))
     if _any_name(all_files, r"\.zip$"):
         all_files = set_language(
-            _code_expand_zip(all_files, skip_on_api_limit, cache).reset_index(drop=True)
+            _code_expand_zip(
+                all_files, skip_on_api_limit, cache, max_download_size=max_download_size
+            ).reset_index(drop=True)
         )
     all_files.attrs = {}
 

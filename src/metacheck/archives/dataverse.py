@@ -700,16 +700,19 @@ def _is_zip(name: Sequence[str | None]) -> list[bool]:
 
 
 def _zip_members(
-    url: str, dest: str, keep_types: Any, max_file_size: float | None
+    url: str, dest: str, keep_types: Any, max_file_size: float | None, size: Any = None
 ) -> pd.DataFrame | None:
     """The body shared by ``.dryad_zip_members()``, ``.figshare_zip_members()`` and
-    ``.dataverse_zip_members()``: extract the wanted members of a remote zip."""
+    ``.dataverse_zip_members()``: extract the wanted members of a remote zip.
+
+    *size*, the zip's size as the repository lists it, saves the peek a
+    ``HEAD`` request (:func:`~metacheck.archives.zip_peek.zip_peek`)."""
     from metacheck.datacheck.files import data_classify_files
 
     try:
         from metacheck.archives.zip_peek import zip_peek
 
-        listing = zip_peek(url)
+        listing = zip_peek(url, size=size)
     except Exception:  # R: tryCatch(zip_peek(url), error = \(e) NULL)
         listing = None
     if listing is None or len(listing) == 0:
@@ -1018,6 +1021,7 @@ def _download_file_table(
                         dest=download_to,
                         keep_types=unzip_types,
                         max_file_size=max_file_size,
+                        size=None if math.isnan(sizes[i]) else sizes[i],
                     )
                 except Exception:
                     got = None
@@ -1825,6 +1829,7 @@ def _dataverse_zip_members(
     dest: str,
     keep_types: Any = ("data", "documentation"),
     max_file_size: float | None = 10,
+    size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-dataverse.R::.dataverse_zip_members(): extract wanted zip members.
 
@@ -1833,8 +1838,10 @@ def _dataverse_zip_members(
     *max_file_size* MB into *dest*. Returns one row per member (``name``,
     ``path``, ``size``, ``ok``), or ``None`` when the archive cannot be listed
     (the caller then downloads it whole).
+    *size*, the zip's size as the listing gives it, saves the peek a ``HEAD``
+    request.
     """
-    return _zip_members(url, dest, keep_types, max_file_size)
+    return _zip_members(url, dest, keep_types, max_file_size, size)
 
 
 def _dataverse_verify_downloads(files: pd.DataFrame | None, download_to: str) -> Any:

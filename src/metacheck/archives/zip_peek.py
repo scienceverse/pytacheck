@@ -271,8 +271,98 @@ def _range_size(url: str, skip_on_api_limit: bool = False) -> float:
         return math.nan
 
 
+def _known_size(size: Any) -> float:
+    """A size a caller passed (``zip_peek(size = )``): a positive number, else ``nan``."""
+    try:
+        value = _num(size)
+    except (TypeError, ValueError):
+        return math.nan
+    return value if math.isfinite(value) and value > 0 else math.nan
+
+
+# -- hosts that ignore Range -----------------------------------------------------
+#
+# Some hosts answer a ranged GET with 200 and the whole file: PsychArchives'
+# /rest/bitstreams/<id>/retrieve, the OSF's proxy for files in a GitHub add-on
+# and Zenodo's whole-record files-archive. Once a host has shown it, later
+# peeks and member fetches of that kind of URL give up for the session before
+# sending anything (metacheck d52b3fd). The record is keyed on the host and the
+# shape of the path, each segment holding a digit replaced by "*" (so
+# ".../bitstreams/<uuid>/retrieve" covers every PsychArchives file), not on the
+# host alone: zenodo.org honours ranges on its per-file /content URLs. A 200
+# that came from another host after a redirect is not recorded: osf.io/download/
+# <id>/ redirects files with and without range support alike. Only a range
+# starting after byte 0 shows it, since a range from byte 0 may cover the whole
+# file, which a host may answer with a plain 200. The record lives in the
+# session cache, so clearing that clears it too.
+
+#: A 200 answer to a tail request is read only when the file is at most this
+#: large (or the tail asked for, if larger); a larger one is closed unread.
+_WHOLE_BODY_MAX = 2 * 1048576
+
+_RANGE_IGNORED = "range ignored"  # the session cache key's tag: (_RANGE_IGNORED, key)
+
+
+def _range_ignored_key(url: str) -> str | None:
+    """Port of ``R/zip-peek.R::.range_ignored_key()``: the host and the shape of the path."""
+    from urllib.parse import urlsplit
+
+    try:
+        parts = urlsplit(str(url))
+        host = parts.hostname
+    except ValueError:
+        return None
+    if not host:
+        return None
+    segs = ["*" if re.search("[0-9]", s) else s for s in parts.path.split("/") if s]
+    return f"{host.lower()}/{'/'.join(segs)}"
+
+
+def _range_ignored_known(url: str) -> bool:
+    """Port of ``R/zip-peek.R::.range_ignored_known()``: has this kind of URL ignored a range?"""
+    key = _range_ignored_key(url)
+    with _CACHE_LOCK:
+        return key is not None and (_RANGE_IGNORED, key) in _ZIP_PEEK_CACHE
+
+
+def _range_ignored_record(url: str, final_url: Any = None) -> bool:
+    """Port of ``R/zip-peek.R::.range_ignored_record()``: remember that *url* ignored a range.
+
+    Not when the answer came from another host (*final_url*, the URL after
+    redirects). Returns whether it was recorded.
+    """
+    from urllib.parse import urlsplit
+
+    key = _range_ignored_key(url)
+    if key is None:
+        return False
+    if final_url is not None:
+        try:
+            same = urlsplit(str(final_url)).hostname == urlsplit(str(url)).hostname
+        except ValueError:
+            same = False
+        if not same:
+            return False
+    with _CACHE_LOCK:
+        _ZIP_PEEK_CACHE[(_RANGE_IGNORED, key)] = True
+    return True
+
+
+def _final_url(resp: Any) -> Any:
+    """The URL an answer came from, after redirects (``None`` when unknown)."""
+    try:
+        return resp.url
+    except Exception:
+        return None
+
+
 def _http_range_tail(
-    url: str, n: float, total: Any = None, skip_on_api_limit: bool = False
+    url: str,
+    n: float,
+    total: Any = None,
+    skip_on_api_limit: bool = False,
+    _resized: bool = False,
+    keep_whole: bool = False,
 ) -> _RangeBody | None:
     """Port of ``R/zip-peek.R::.http_range_tail()``: the last *n* bytes of *url*.
 
@@ -280,8 +370,17 @@ def _http_range_tail(
     request first, or ``nan`` (R ``NA``) when HEAD gave none: the tail is then
     asked for by its distance from the end (:func:`_http_range_suffix`).
     Returns the bytes -- possibly fewer than *n* for a small file -- with the
-    file's size as ``.total``, or ``None`` on failure. A 200 (range ignored)
-    to a request by position still yields the tail of the whole body.
+    file's size as ``.total``, or ``None`` on failure.
+
+    A host that ignores the range answers 200 with the whole file. That answer
+    is read (and its tail kept) only when the file is at most
+    ``max(n, 2 MB)``, by its Content-Length or else *total*; a larger one is
+    closed unread and ``None`` returned, and a range starting after byte 0
+    records the host (:func:`_range_ignored_record`). With *keep_whole* such
+    a (small) answer is returned whole rather than its last *n* bytes, so a
+    zip's members are all in hand (:func:`_open_zip`). When the host reports
+    a different size than *total* (a size from a repository's listing that is
+    out of date), the tail is asked for once more at the reported size.
     """
     from metacheck.archives.download import _storage_request
 
@@ -296,6 +395,7 @@ def _http_range_tail(
         start = max(0.0, total - n)
         keep = max(0, int(n))
         got = bytearray()
+        too_big = [False]
 
         def read(r: Any) -> None:
             # a 206 body is the tail; a 200 (range ignored) is the whole file, of which
@@ -303,9 +403,20 @@ def _http_range_tail(
             got.clear()
             if r.status_code not in (200, 206):
                 return
+            if r.status_code == 200:
+                if start > 0:
+                    _range_ignored_record(url, _final_url(r))
+                cl = _content_length(r)
+                body_size = total if cl is None or is_missing(cl) else cl
+                if not body_size <= max(keep, _WHOLE_BODY_MAX):
+                    too_big[0] = True
+                    return  # closed unread
+            whole = keep_whole and r.status_code == 200
             for chunk in r.iter_bytes():
                 got.extend(chunk)
-                if r.status_code == 200 and len(got) > keep:
+                if whole and len(got) > max(keep, _WHOLE_BODY_MAX):
+                    whole = False  # longer than it said: only its tail is kept
+                if r.status_code == 200 and not whole and len(got) > keep:
                     del got[: len(got) - keep]
 
         try:
@@ -320,7 +431,13 @@ def _http_range_tail(
             _note_transient()
             raise
         _note_transient(r.status_code)
-        if r.status_code in (200, 206):
+        if r.status_code in (206, 416) and not _resized:
+            reported = _content_range_total(r)
+            if math.isfinite(reported) and reported > 0 and reported != total:
+                return _http_range_tail(
+                    url, n, reported, skip_on_api_limit, _resized=True, keep_whole=keep_whole
+                )
+        if r.status_code == 206 or (r.status_code == 200 and not too_big[0]):
             return _with_total(bytes(got), total)
         return None
     except Exception:
@@ -368,9 +485,11 @@ def _http_range_bytes(
     """Port of ``R/zip-peek.R::.http_range_bytes()``: bytes ``[from, to]`` of *url*.
 
     0-based and inclusive. Only a 206 answer of exactly the requested length
-    counts: a 200 (range ignored, the whole archive) is a failure here. Any
-    status but 200/206 is retried. On failure *reason*, when given, gets a
-    one-line explanation under ``"msg"``.
+    counts: a 200 (range ignored, the whole archive) is a failure here, closed
+    unread, and for a range starting after byte 0 it records the host
+    (:func:`_range_ignored_record`); a request to a host so recorded fails at
+    once. Any status but 200/206 is retried. On failure *reason*, when given,
+    gets a one-line explanation under ``"msg"``.
     """
     from metacheck.archives.download import _RateLimitSkipped, _storage_request
 
@@ -382,6 +501,12 @@ def _http_range_bytes(
         if not math.isfinite(f) or not math.isfinite(t) or f < 0 or t < f:
             _set_reason(reason, "invalid byte range")
             return None
+        if _range_ignored_known(url):
+            _set_reason(
+                reason,
+                "HTTP 200 (range not honoured; host seen ignoring ranges earlier this session)",
+            )
+            return None
         r = _storage_request(
             "GET",
             url,
@@ -392,6 +517,8 @@ def _http_range_bytes(
         )
         _note_transient(r.status_code)
         if r.status_code != 206:
+            if r.status_code == 200 and f > 0:
+                _range_ignored_record(url, _final_url(r))
             _set_reason(reason, f"HTTP {int(r.status_code)} (range not honoured)")
             return None
         body = bytes(r.content)
@@ -464,15 +591,26 @@ class _RangeFile(io.RawIOBase):
         return self._pos
 
     def prefetch(self, start: int, end: int) -> None:
-        """Hold the bytes ``[start, end)`` of the file (up to its end), fetching them if needed."""
+        """Hold the bytes ``[start, end)`` of the file (up to its end), fetching them if needed.
+
+        Bytes that continue the span held are added to it (up to
+        ``_MAX_HELD``), so the members of one request (:func:`_range_plan`)
+        stay in hand when one of them needs a few bytes more.
+        """
         end = min(end, self.size, self._tail_start)  # the tail holds the rest
-        if start >= end or (self._start <= start and end <= self._start + len(self._buf)):
+        held_end = self._start + len(self._buf)
+        if start >= end or (self._start <= start and end <= held_end):
             return
+        if self._buf and self._start <= start <= held_end and end - self._start <= _MAX_HELD:
+            start = held_end  # only what is missing
         reason: dict[str, str] = {}
         data = _http_range_bytes(self.url, start, end - 1, self._skip, reason)
         if data is None:
             raise OSError(reason.get("msg", "the range request failed"))
-        self._buf, self._start = data, start
+        if self._buf and start == held_end:
+            self._buf += data
+        else:
+            self._buf, self._start = data, start
 
     def held_tail(self) -> bytes:
         """The end of the file held so far: the tail, with the span before it when they touch.
@@ -505,16 +643,16 @@ class _RangeFile(io.RawIOBase):
 
 
 def _open_zip(
-    url: str, tail_bytes: float = 131072, skip_on_api_limit: bool = False
+    url: str, tail_bytes: float = 131072, skip_on_api_limit: bool = False, size: Any = None
 ) -> tuple[zipfile.ZipFile, _RangeFile] | None:
     """The remote zip at *url* as a :class:`zipfile.ZipFile`, or ``None`` if it cannot be read.
 
-    A ``HEAD`` request gives the size (when the host refuses it, the tail is
-    asked for by its distance from the end and its ``Content-Range`` gives
-    the size), then a range request fetches the tail (*tail_bytes*); zipfile
-    reads the central directory from it, and asks for more only when the
-    directory is longer. Zip64, a comment after the directory, bzip2 and lzma
-    members are zipfile's.
+    The size is *size* when the caller knows it, else a ``HEAD`` request's
+    (when the host refuses it, the tail is asked for by its distance from the
+    end and its ``Content-Range`` gives the size); then a range request
+    fetches the tail (*tail_bytes*); zipfile reads the central directory from
+    it, and asks for more only when the directory is longer. Zip64, a comment
+    after the directory, bzip2 and lzma members are zipfile's.
     """
     memo = (url, "tail")  # in the session cache, so that clearing it clears this too
     with _CACHE_LOCK:
@@ -522,14 +660,20 @@ def _open_zip(
     if held is not None:  # members after the listing: no request to open the archive again
         with contextlib.suppress(Exception):
             return _wrap_zip(url, held[0], held[1], skip_on_api_limit)
-    total: Any = _head_size(url, skip_on_api_limit)
-    # A host that ignores ranges sends the whole file for every request: the
-    # tail of it is then all this can hold, so a larger one is tried once (1 MB).
+    total: Any = _known_size(size)
+    if is_missing(total):
+        total = _head_size(url, skip_on_api_limit)
+    # A host that ignores ranges sends the whole file for every request: a file
+    # of up to 2 MB is then held whole (every member in hand), a larger one is
+    # not read (_http_range_tail). Should a later range be refused all the same,
+    # a larger tail is tried once (1 MB).
     for nb in dict.fromkeys([float(tail_bytes), _WHOLE_BODY_TAIL]):
-        raw = _http_range_tail(url, nb, total=total, skip_on_api_limit=skip_on_api_limit)
+        raw = _http_range_tail(
+            url, nb, total=total, skip_on_api_limit=skip_on_api_limit, keep_whole=True
+        )
         if raw is None:
             return None
-        if is_missing(total):
+        if is_missing(total) or raw.total != total:  # unknown, or the size given was stale
             total = raw.total
         try:
             opened = _wrap_zip(url, bytes(raw), total, skip_on_api_limit)
@@ -582,20 +726,69 @@ def _entry_table(infos: Sequence[zipfile.ZipInfo]) -> pd.DataFrame:
     )
 
 
+_URL_SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*://")
+
+
+def _is_local_file(x: Any) -> bool:
+    """Port of ``R/zip-peek.R::.is_local_file()``: an existing file, not a URL.
+
+    Anything with a URL scheme (``https://``, ``file://``) is a URL.
+    """
+    if not isinstance(x, str | os.PathLike):
+        return False
+    s = os.fspath(x)
+    if not isinstance(s, str) or not s or _URL_SCHEME.match(s):
+        return False
+    return os.path.isfile(s)
+
+
+def _zip_local_source(files: pd.DataFrame) -> list[str | None]:
+    """Port of ``R/zip-peek.R::.zip_local_source()``: each row's zip on disk, if any.
+
+    ``file_location`` when it names an existing file, else ``None``. A row with
+    a local copy is listed and read from disk (:func:`zip_peek` and
+    :func:`_zip_fetch_members` take a path) instead of through its
+    ``file_url``: a ResearchBox row has the box's web page as ``file_url``,
+    which answers a range request with 406, and the copy unpacked from the
+    box's zip as ``file_location``.
+    """
+    if "file_location" not in files.columns:
+        return [None] * len(files)
+    return [
+        str(p) if not is_missing(p) and _is_local_file(str(p)) else None
+        for p in files["file_location"].tolist()
+    ]
+
+
+def _zip_list_local(path: str) -> pd.DataFrame | None:
+    """Port of ``R/zip-peek.R::.zip_list_local()``: :func:`zip_peek`'s table for a zip on disk."""
+    try:
+        with zipfile.ZipFile(path) as zf:
+            infos = zf.infolist()
+    except Exception:  # not a zip, or a damaged one
+        return None
+    return _entry_table(infos) if infos else None
+
+
 def zip_peek(
     url: str,
     tail_bytes: float = 131072,
     cache: bool = False,
     skip_on_api_limit: bool = False,
+    size: Any = None,
 ) -> pd.DataFrame | None:
     """Peek at the contents of a remote ZIP file without downloading it.
 
-    Port of ``R/zip-peek.R::zip_peek()``. A ``HEAD`` request gives the size
-    (when the host refuses HEAD, the tail is asked for by its distance from
-    the end and its ``Content-Range`` gives the size), then a range request
-    fetches the tail (*tail_bytes*) and :mod:`zipfile` reads the central
-    directory from it, asking for the rest of a larger one (see
-    :func:`_open_zip`).
+    Port of ``R/zip-peek.R::zip_peek()``. The archive's size is *size* when
+    the caller knows it (a repository's file listing gives it); otherwise a
+    ``HEAD`` request gives it (when the host refuses HEAD, the tail is asked
+    for by its distance from the end and its ``Content-Range`` gives the
+    size). Then a range request fetches the tail (*tail_bytes*) and
+    :mod:`zipfile` reads the central directory from it, asking for the rest of
+    a larger one (see :func:`_open_zip`). *url* may also be the path of a zip
+    on disk, which is then read directly, with no request and no caching.
+    A URL of a kind seen ignoring range requests this session
+    (:func:`_range_ignored_known`) gives ``None`` without a request.
 
     Returns a data frame with ``name`` (entry path inside the zip) and
     ``size`` (uncompressed bytes), excluding directory entries, plus
@@ -612,9 +805,17 @@ def zip_peek(
     """
     from metacheck.archives import zip_peek_cache as disk
 
+    if _is_local_file(url):  # a local file can change: not cached
+        return _zip_list_local(os.fspath(url))
+
     with _CACHE_LOCK:
         if url in _ZIP_PEEK_CACHE:
             return _ZIP_PEEK_CACHE[url]  # type: ignore[no-any-return]
+
+    if _range_ignored_known(url):
+        with _CACHE_LOCK:
+            _ZIP_PEEK_CACHE[url] = None
+        return None
 
     if cache is True and disk._zip_peek_cache_has(url):
         hit, cd = disk._zip_peek_cache_lookup(url)
@@ -634,7 +835,7 @@ def zip_peek(
         return value
 
     try:
-        opened = _open_zip(url, tail_bytes, skip_on_api_limit)
+        opened = _open_zip(url, tail_bytes, skip_on_api_limit, size=size)
         if opened is None:
             return done(None)
         with opened[0] as zf:
@@ -664,23 +865,15 @@ def _member_error(e: Exception, info: zipfile.ZipInfo) -> str:
     return f"decompression failed ({e})" if str(e) else "decompression failed"
 
 
-def _member_bytes(
-    zf: zipfile.ZipFile, rf: _RangeFile, info: zipfile.ZipInfo, verify: bool
-) -> bytes:
-    """One member's bytes: its local header and data come in one range request.
+def _member_bytes(zf: zipfile.ZipFile, info: zipfile.ZipInfo, verify: bool) -> bytes:
+    """One member's bytes, read through the archive's :class:`_RangeFile`.
 
-    zipfile inflates the data and, with *verify*, checks the CRC32 stored in
-    the archive; the size must be the archive's. Raises what :func:`_member_error` words.
+    The caller has fetched the member's range (:func:`_range_plan`); a few
+    bytes still missing (a local extra field longer than the margin) are
+    fetched by the file itself. zipfile inflates the data and, with *verify*,
+    checks the CRC32 stored in the archive; the size must be the archive's.
+    Raises what :func:`_member_error` words.
     """
-    rf.prefetch(
-        info.header_offset,
-        # the local header (30 bytes, the name, an extra field of its own) and the data
-        info.header_offset
-        + 30
-        + len(info.orig_filename.encode("utf-8", "replace"))
-        + 512
-        + info.compress_size,
-    )
     with zf.open(info) as src:
         if not verify:
             src._expected_crc = None  # type: ignore[attr-defined]  # as _unzip_all() does
@@ -699,6 +892,239 @@ def _safe_member_path(name: str) -> str | None:
     return str(rel)
 
 
+# -- byte ranges and whole archives ----------------------------------------------
+#
+# A member costs one range request: its local header (30 bytes), its name, its
+# compressed data and a margin for the local extra field, whose length only the
+# local header gives. Members close together share one request (metacheck
+# d52b3fd: the 7 code files of Harvard Dataverse doi:10.7910/DVN/SVVULN lie in
+# one 23 KB stretch of its zip). When many members are wanted, downloading the
+# whole archive once can be cheaper still (metacheck #471): see
+# :func:`_zip_whole_is_cheaper`.
+
+#: Room a member's range leaves for its local extra field.
+_MEMBER_MARGIN = 1024
+#: Members at most this far apart share one range request (cheaper than a round trip).
+_MAX_GAP = 65536
+#: The longest range one request asks for when it covers several members.
+_MAX_SPAN = 16 * 1048576
+#: What one request costs, counted in bytes of transfer, when weighing a whole
+#: download against range requests: a range request took about 0.6 s on Figshare,
+#: about as long as 1 MB took to arrive (metacheck's measurements, 2026-10-13).
+_REQUEST_BYTES = 1048576.0
+
+
+def _name_bytes(name: Any) -> int:
+    return len(str(name).encode("utf-8", "surrogateescape"))
+
+
+def _range_plan(
+    spans: Sequence[tuple[int, float, float]],
+    bounds: Iterable[Any] = (),
+    margin: int = _MEMBER_MARGIN,
+    max_gap: int = _MAX_GAP,
+    max_span: int = _MAX_SPAN,
+) -> list[tuple[list[int], int, int]]:
+    """Port of ``R/zip-peek.R::.zip_range_plan()``: the range requests for some members.
+
+    *spans* holds ``(key, start, need_end)`` per member: where its local
+    header starts and where its data ends without the local extra field
+    (0-based, inclusive). A member's range runs *margin* bytes further, cut at
+    the next of *bounds* (the other local headers and the start of the
+    central directory) or of the members' own starts, which its bytes cannot
+    run past. Members are merged
+    into one request when the gap between them is at most *max_gap* and the
+    merged range stays within *max_span*; a member larger than that still
+    gets a request of its own. Returns ``(keys, start, end)`` per request, in
+    the order of the archive.
+    """
+    import bisect
+
+    cuts = sorted({int(b) for b in bounds if not is_missing(b)} | {int(s[1]) for s in spans})
+    ranged: list[tuple[int, int, int]] = []
+    for key, start, need_end in spans:
+        first, need = int(start), int(need_end)
+        end = need + margin
+        k = bisect.bisect_right(cuts, first)  # the first bound after the member's start
+        if k < len(cuts) and cuts[k] - 1 < end:
+            end = max(need, cuts[k] - 1)
+        ranged.append((first, end, key))
+    plan: list[tuple[list[int], int, int]] = []
+    for first, end, key in sorted(ranged, key=lambda r: r[0]):
+        if plan:
+            keys, s, e = plan[-1]
+            if first - e - 1 <= max_gap and max(e, end) - s + 1 <= max_span:
+                keys.append(key)
+                plan[-1] = (keys, s, max(e, end))
+                continue
+        plan.append(([key], first, end))
+    return plan
+
+
+def _zip_whole_size(cd: pd.DataFrame) -> float:
+    """Port of ``R/zip-peek.R::.zip_whole_size()``: a zip's size estimated from its listing.
+
+    The end of the last member's data, plus the central directory and its end
+    record. Extra fields are not in the listing, so this can be short by a few
+    dozen bytes per member. ``nan`` when an offset or compressed size is unknown.
+    """
+    offsets = [_num(v) for v in cd["offset"].tolist()]
+    csizes = [_num(v) for v in cd["csize"].tolist()]
+    if not offsets or any(math.isnan(v) for v in offsets + csizes):
+        return math.nan
+    names = [_name_bytes(v) for v in cd["name"].tolist()]
+    data_end = max(o + 30 + nb + c for o, nb, c in zip(offsets, names, csizes, strict=True))
+    zip64 = 76 if data_end >= _ZIP64 or len(cd) >= 65535 else 0  # its own end records
+    return data_end + sum(46 + nb for nb in names) + 22 + zip64
+
+
+def _zip_whole_is_cheaper(
+    n_members: int,
+    size: float,
+    plan: Sequence[tuple[list[int], int, int]],
+    max_whole_bytes: Any,
+    min_whole_members: int = 3,
+    request_bytes: float = _REQUEST_BYTES,
+) -> bool:
+    """Port of ``R/zip-peek.R::.zip_whole_is_cheaper()``: download the archive instead?
+
+    Yes when at least *min_whole_members* members need fetching, the archive's
+    *size* is at most *max_whole_bytes* (0 turns this off) and one download
+    costs no more than the range requests of *plan*, each request counted as
+    *request_bytes* bytes of transfer. ``request_bytes = inf`` counts requests
+    only, so the archive is taken whenever it fits the budget (Dryad: every
+    request counts against a daily quota).
+    """
+    budget = _num(max_whole_bytes) if max_whole_bytes is not None else 0.0
+    if n_members < min_whole_members or not budget > 0:
+        return False
+    if not size <= budget:  # nan: unknown
+        return False
+    if math.isinf(request_bytes):
+        return True
+    ranged = sum(e - s + 1 for _, s, e in plan)
+    return request_bytes + size <= len(plan) * request_bytes + ranged
+
+
+def _whole_request_bytes(url: Any) -> float:
+    """What a request costs for :func:`_zip_whole_is_cheaper`: ``inf`` on Dryad.
+
+    Dryad counts every request against a strict daily quota, so an archive
+    from Dryad is downloaded whole whenever it fits the budget (metacheck #471).
+    """
+    return math.inf if re.search(r"datadryad\.org", str(url), re.IGNORECASE) else _REQUEST_BYTES
+
+
+def _zip_readable(path: str) -> bool:
+    try:
+        with zipfile.ZipFile(path) as zf:
+            return bool(zf.infolist())
+    except Exception:
+        return False
+
+
+def _zip_extract_members(
+    archive: str,
+    names: Sequence[str],
+    targets: Sequence[str | None],
+    sizes: Sequence[float],
+    crcs: Sequence[float],
+    verify: bool = True,
+) -> list[str | None]:
+    """Port of ``R/zip-peek.R::.zip_extract_members()``: members of a zip on disk.
+
+    Writes each of *names* to its target (``None``: refused) and returns the
+    written path per member, or ``None`` for one not delivered: missing from
+    the archive, or with another size or CRC32 than the listing records (the
+    archive changed since it was listed) or unreadable. zipfile checks the
+    data's CRC32 with *verify*.
+    """
+    out: list[str | None] = [None] * len(names)
+    try:
+        zf = zipfile.ZipFile(archive)
+    except Exception:
+        return out
+    with zf:
+        by_name: dict[str, zipfile.ZipInfo] = {}
+        for entry in zf.infolist():
+            by_name.setdefault(_zip_name(entry), entry)
+        for k, (name, target) in enumerate(zip(names, targets, strict=True)):
+            info = by_name.get(name)
+            if target is None or info is None:
+                continue
+            if (math.isfinite(sizes[k]) and sizes[k] != info.file_size) or (
+                math.isfinite(crcs[k]) and crcs[k] != info.CRC
+            ):
+                continue
+            try:
+                with contextlib.suppress(OSError):
+                    os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
+                with zf.open(info) as src, atomic_write(target) as fh:
+                    if not verify:
+                        src._expected_crc = None  # type: ignore[attr-defined]
+                    shutil.copyfileobj(src, fh)
+            except Exception:  # noqa: S112 - the member is left to the range fetch
+                continue
+            out[k] = target
+    return out
+
+
+def _zip_fetch_whole(
+    url: str,
+    size: float,
+    names: Sequence[str],
+    targets: Sequence[str | None],
+    sizes: Sequence[float],
+    crcs: Sequence[float],
+    max_bytes: float,
+    archive_path: str | None = None,
+    skip_on_api_limit: bool = False,
+    verify: bool = True,
+) -> list[str | None] | None:
+    """Port of ``R/zip-peek.R::.zip_fetch_whole()``: download the zip once, extract members.
+
+    Returns :func:`_zip_extract_members`'s paths, or ``None`` when the archive
+    was not used: larger than *max_bytes* or of unknown *size*, or the
+    download failed. The archive is kept at *archive_path* when given, so a
+    restarted run reuses it instead of requesting it again (one that cannot be
+    opened, a partial download, is fetched again); else it is a temporary file.
+    """
+    from metacheck.archives.download import _download_one
+
+    if not size <= max_bytes:
+        return None
+    with contextlib.ExitStack() as stack:
+        if archive_path is None:
+            import tempfile
+
+            archive_path = os.path.join(stack.enter_context(tempfile.TemporaryDirectory()), "a.zip")
+        if not _zip_readable(archive_path):
+            with contextlib.suppress(OSError):
+                os.remove(archive_path)
+            err = _download_one(
+                url, archive_path, skip_on_api_limit=skip_on_api_limit, expected_bytes=size
+            )
+            if err is not None or not _zip_readable(archive_path):
+                with contextlib.suppress(OSError):
+                    os.remove(archive_path)
+                return None
+        return _zip_extract_members(archive_path, names, targets, sizes, crcs, verify)
+    return None  # pragma: no cover - the with block returns
+
+
+def _held_tail(url: str) -> tuple[float, float]:
+    """``(start, total)`` of the archive's end held since its listing (start ``inf``: none)."""
+    with _CACHE_LOCK:
+        held = _ZIP_PEEK_CACHE.get((url, "tail"))
+    if held is None:
+        return math.inf, math.nan
+    tail, total = held
+    total = _num(total)
+    if math.isnan(total):
+        total = float(len(tail))
+    return max(0.0, total - len(tail)), total
+
+
 def _zip_fetch_members(
     url: str,
     names: Sequence[str | None] | str | None = None,
@@ -706,22 +1132,42 @@ def _zip_fetch_members(
     verify: bool = True,
     cache: bool = False,
     skip_on_api_limit: bool = False,
+    max_whole_bytes: Any = 0,
+    archive_path: str | None = None,
+    min_whole_members: int = 3,
+    request_bytes: float = _REQUEST_BYTES,
+    size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of ``R/zip-peek.R::.zip_fetch_members()``: download selected zip members.
 
-    Lists the archive with :func:`zip_peek` (given *cache* and
-    *skip_on_api_limit*) and fetches the members named in *names* (all when
-    ``None``) into *dest*, following their paths inside the archive (a member
-    that would land outside *dest*, e.g. ``../x``, is refused). Returns
-    ``name``, ``path`` (on disk, ``NA`` when not fetched), ``size``, ``ok``
-    and ``error`` (``NA`` when fetched, else why not) per wanted member; a
-    0-row ``name``/``size`` table when nothing is wanted; or ``None`` when
-    the archive cannot be listed -- the signal to download it whole instead.
+    Lists the archive with :func:`zip_peek` (given *cache*,
+    *skip_on_api_limit* and *size*, the archive's size when the caller knows
+    it) and fetches the members named in *names* (all when ``None``) into
+    *dest*, following their paths inside the archive (a member that would
+    land outside *dest*, e.g. ``../x``, is refused). A member already in
+    *dest* with the listing's size and CRC32 is kept.
+
+    Members come by range requests, one per member or per run of nearby
+    members (:func:`_range_plan`); members in the end of the archive the
+    listing already holds cost none. With *max_whole_bytes* above 0 the
+    archive is downloaded once instead, and the members extracted from it,
+    when at least *min_whole_members* members need fetching, the archive is
+    no larger than *max_whole_bytes* and that is cheaper
+    (:func:`_zip_whole_is_cheaper`, with *request_bytes*); it is kept at
+    *archive_path* when given. A member the whole archive did not deliver is
+    fetched by range. *url* may also be the path of a zip on disk, whose
+    members are then extracted with no request.
+
+    Returns ``name``, ``path`` (on disk, ``NA`` when not fetched), ``size``,
+    ``ok`` and ``error`` (``NA`` when fetched, else why not) per wanted
+    member; a 0-row ``name``/``size`` table when nothing is wanted; or
+    ``None`` when the archive cannot be listed -- the signal to download it
+    whole instead.
     """
     import pandas as pd
 
     try:
-        cd = zip_peek(url, cache=cache, skip_on_api_limit=skip_on_api_limit)
+        cd = zip_peek(url, cache=cache, skip_on_api_limit=skip_on_api_limit, size=size)
     except Exception:
         cd = None
     if cd is None or len(cd) == 0:
@@ -736,76 +1182,165 @@ def _zip_fetch_members(
         return want[["name", "size"]]
 
     n = len(want)
+    member_names = want["name"].tolist()
+    sizes = [_num(v) for v in want["size"].tolist()]
+    crcs = [_num(v) for v in want["crc"].tolist()]
+    offsets = [_num(v) for v in want["offset"].tolist()]
+    csizes = [_num(v) for v in want["csize"].tolist()]
     out_path: list[str | None] = [None] * n
     ok = [False] * n
     error: list[str | None] = [None] * n
-    member_names = want["name"].tolist()
-    opened: tuple[zipfile.ZipFile, _RangeFile] | None = None
-    entries: dict[tuple[str, int], zipfile.ZipInfo] = {}
-    tried = False  # the archive is opened once, when the first member needs it
-    try:
-        for i in range(n):
-            row = want.iloc[i]
-            offset, csize = _num(row.get("offset")), _num(row.get("csize"))
-            if is_missing(offset) or is_missing(csize):
-                error[i] = "Zip64 entry (size/offset not stored in 32 bits)"
-                continue
-            rel = _safe_member_path(member_names[i])
-            if rel is None:
-                error[i] = "entry path escapes the archive (path traversal)"
-                continue
-            target = f"{dest}/{rel}"
-            # Reuse only bytes matching the current listing's size and CRC.
-            # A partial write or a caller's edit causes a fresh member fetch.
-            if _cached_member_ok(target, _num(row.get("size")), _num(row.get("crc")), verify):
-                out_path[i], ok[i] = target, True
-                continue
-            data = b""  # an empty member has nothing to fetch
-            if csize != 0:
-                if not tried:
-                    tried = True
-                    opened = _open_zip(url, skip_on_api_limit=skip_on_api_limit)
-                    if opened is not None:
-                        entries = {
-                            (_zip_name(info), info.header_offset): info
-                            for info in opened[0].infolist()
-                        }
-                if opened is None:
-                    error[i] = "could not read the archive's central directory"
-                    continue
-                info = entries.get((member_names[i], int(offset)))
-                if info is None:
-                    error[i] = "the archive has no such entry (it changed since it was listed)"
-                    continue
-                try:
-                    data = _member_bytes(opened[0], opened[1], info, verify)
-                except Exception as e:
-                    error[i] = _member_error(e, info)
-                    continue
-            try:  # R: dir.create(showWarnings = FALSE) fails silently (a file is in the way)
-                os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
-            except OSError:
-                pass
+
+    def delivered(i: int, path: str) -> None:
+        out_path[i], ok[i], error[i] = path, True, None
+
+    def write(i: int, data: bytes) -> None:
+        target = targets[i]
+        assert target is not None
+        try:  # R: dir.create(showWarnings = FALSE) fails silently (a file is in the way)
+            os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
+        except OSError:
+            pass
+        try:
+            with atomic_write(target) as fh:
+                fh.write(data)
+        except OSError:
+            error[i] = "could not write the extracted member to disk"
+            return
+        delivered(i, target)
+
+    targets: list[str | None] = []
+    for i, name in enumerate(member_names):
+        rel = _safe_member_path(name)
+        target = None if rel is None else f"{dest}/{rel}"
+        targets.append(target)
+        if target is None:
+            error[i] = "entry path escapes the archive (path traversal)"
+        # Reuse only bytes matching the current listing's size and CRC.
+        # A partial write or a caller's edit causes a fresh member fetch.
+        elif _cached_member_ok(target, sizes[i], crcs[i], verify):
+            delivered(i, target)
+    todo = [i for i in range(n) if targets[i] is not None and not ok[i]]
+
+    def table() -> pd.DataFrame:
+        return pd.DataFrame(
+            {
+                "name": pd.Series(member_names, dtype="string"),
+                "path": pd.Series(out_path, dtype="string"),
+                "size": pd.Series(want["size"].tolist(), dtype="float64"),
+                "ok": pd.Series(ok, dtype="boolean"),
+                "error": pd.Series(error, dtype="string"),
+            }
+        )
+
+    def extracted(got: Sequence[str | None] | None, failure: str | None) -> None:
+        for i, path in zip(todo, got or [None] * len(todo), strict=True):
+            if path is not None:
+                delivered(i, path)
+            elif failure is not None:
+                error[i] = failure
+
+    def pick(values: Sequence[Any]) -> list[Any]:
+        return [values[i] for i in todo]
+
+    if _is_local_file(url):  # a zip on disk: extracted, no request
+        extracted(
+            _zip_extract_members(
+                os.fspath(url), pick(member_names), pick(targets), pick(sizes), pick(crcs), verify
+            ),
+            "could not extract the member from the local archive",
+        )
+        return table()
+
+    if todo and max_whole_bytes is not None and _num(max_whole_bytes) > 0:
+        tail_start, held_total = _held_tail(url)
+        need = [i for i in todo if not offsets[i] >= tail_start]  # the rest is in hand
+        spans = [
+            (i, offsets[i], offsets[i] + 30 + _name_bytes(member_names[i]) + csizes[i] - 1)
+            for i in need
+            if math.isfinite(offsets[i]) and math.isfinite(csizes[i]) and csizes[i] > 0
+        ]
+        plan = _range_plan(spans, cd["offset"].tolist())
+        whole = _known_size(size)
+        if math.isnan(whole):
+            whole = held_total if math.isfinite(held_total) else _zip_whole_size(cd)
+        if _zip_whole_is_cheaper(
+            len(need), whole, plan, max_whole_bytes, min_whole_members, request_bytes
+        ):
             try:
-                with atomic_write(target) as fh:
-                    fh.write(data)
-            except OSError:
-                error[i] = "could not write the extracted member to disk"
+                got = _zip_fetch_whole(
+                    url,
+                    whole,
+                    pick(member_names),
+                    pick(targets),
+                    pick(sizes),
+                    pick(crcs),
+                    _num(max_whole_bytes),
+                    archive_path=archive_path,
+                    skip_on_api_limit=skip_on_api_limit,
+                    verify=verify,
+                )
+            except Exception:
+                got = None
+            extracted(got, None)
+
+    fetch: list[int] = []
+    for i in todo:
+        if ok[i]:
+            continue
+        if is_missing(offsets[i]) or is_missing(csizes[i]):
+            error[i] = "Zip64 entry whose size/offset could not be read from the archive's listing"
+        elif csizes[i] == 0:
+            write(i, b"")  # an empty member has nothing to fetch
+        else:
+            fetch.append(i)
+    if not fetch:
+        return table()
+
+    opened = _open_zip(url, skip_on_api_limit=skip_on_api_limit, size=size)
+    if opened is None:
+        for i in fetch:
+            error[i] = "could not read the archive's central directory"
+        return table()
+    zf, rf = opened
+    with zf:
+        infos = zf.infolist()
+        entries = {(_zip_name(info), info.header_offset): info for info in infos}
+        found: dict[int, zipfile.ZipInfo] = {}
+        for i in fetch:
+            info = entries.get((member_names[i], int(offsets[i])))
+            if info is None:
+                error[i] = "the archive has no such entry (it changed since it was listed)"
+            else:
+                found[i] = info
+        spans = [
+            (
+                i,
+                info.header_offset,
+                info.header_offset
+                + 30
+                + len(info.orig_filename.encode("utf-8", "replace"))
+                + info.compress_size
+                - 1,
+            )
+            for i, info in found.items()
+        ]
+        bounds = [info.header_offset for info in infos] + [zf.start_dir]
+        for keys, start, end in _range_plan(spans, bounds):
+            try:
+                rf.prefetch(start, end + 1)
+            except OSError as e:
+                for i in keys:
+                    error[i] = str(e) or "the range request failed"
                 continue
-            out_path[i] = target
-            ok[i] = True
-    finally:
-        if opened is not None:
-            opened[0].close()
-    return pd.DataFrame(
-        {
-            "name": pd.Series(member_names, dtype="string"),
-            "path": pd.Series(out_path, dtype="string"),
-            "size": pd.Series(want["size"].tolist(), dtype="float64"),
-            "ok": pd.Series(ok, dtype="boolean"),
-            "error": pd.Series(error, dtype="string"),
-        }
-    )
+            for i in keys:
+                try:
+                    data = _member_bytes(zf, found[i], verify)
+                except Exception as e:
+                    error[i] = _member_error(e, found[i])
+                    continue
+                write(i, data)
+    return table()
 
 
 def _cached_member_ok(path: str, size: float, crc: float, verify: bool) -> bool:
@@ -1330,11 +1865,13 @@ def zip_decision(
     skip_types: Any = "materials",
     cache: bool = False,
     skip_on_api_limit: bool = False,
+    size: Any = None,
 ) -> dict[str, Any]:
     """Decide whether a remote ZIP is worth downloading for a data archive.
 
     Port of ``R/zip-peek.R::zip_decision()``. Peeks inside the zip
-    (:func:`zip_peek`, given *cache* and *skip_on_api_limit*) and classifies
+    (:func:`zip_peek`, given *cache*, *skip_on_api_limit* and *size*, the
+    zip's size when already known; *url* may be the path of a zip on disk) and classifies
     its entries: a zip is worth downloading if it holds actual data or a
     codebook, and not only types in *skip_types* (e.g. ``"materials"``).
 
@@ -1345,7 +1882,7 @@ def zip_decision(
     """
     from metacheck.datacheck.files import _data_doc_role, data_classify_files
 
-    peek = zip_peek(url, cache=cache, skip_on_api_limit=skip_on_api_limit)
+    peek = zip_peek(url, cache=cache, skip_on_api_limit=skip_on_api_limit, size=size)
     if peek is None:
         return {
             "worth": None,

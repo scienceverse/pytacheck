@@ -840,6 +840,7 @@ def _dryad_zip_members(
     dest: str,
     keep_types: Any = ("data", "documentation"),
     max_file_size: float | None = 10,
+    size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-dryad.R::.dryad_zip_members(): extract wanted zip members.
 
@@ -847,8 +848,10 @@ def _dryad_zip_members(
     only members of the *keep_types* categories no larger than
     *max_file_size* MB into *dest*. Returns one row per member (``name``,
     ``path``, ``size``, ``ok``), or ``None`` when the archive cannot be listed.
+    *size*, the zip's size as the listing gives it, saves the peek a ``HEAD``
+    request.
     """
-    return _zip_members(url, dest, keep_types, max_file_size)
+    return _zip_members(url, dest, keep_types, max_file_size, size)
 
 
 def _dryad_verify_downloads(files: pd.DataFrame | None, download_to: str) -> Any:

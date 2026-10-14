@@ -29,5 +29,5 @@
 "zip_fetch_members.all": {"r": "19596620302999a2", "py": "27a197da628247e2", "diff": ["error[]", "ok[]", "path[]"]},
 "zip_fetch_members.deflated": {"r": "4773fbab08884444", "py": "38c9eb1d44ab4d7e", "diff": ["error[]", "ok[]", "path[]"]},
 "zip_fetch_members.subset": {"r": "c85e4674de1b34f0", "py": "607f53ed79b2011e", "diff": ["error[]", "ok[]", "path[]"]},
-"zip_fetch_members.zip64": {"r": "863f3600f9056e7b", "py": "08592cdb9976bf9a", "diff": ["error[]", "ok[]", "path[]"]}
+"zip_fetch_members.zip64": {"r": "863f3600f9056e7b", "py": "b22fb9f9c9b7a589", "diff": ["error[]", "ok[]", "path[]"]}
 }
