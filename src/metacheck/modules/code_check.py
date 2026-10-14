@@ -363,7 +363,9 @@ def code_check(
             f"{_LIBRARY} In {n} code file{plural(n)}, libraries/imports were at multiple "
             "places (i.e., with more than 3 non-comment lines in between)."
         )
-        summary_library = "Libraries/imports were loaded in multiple places."
+        summary_library = (
+            f"Libraries/imports were loaded in multiple places in {', '.join(library_issue)}."
+        )
 
     ## absolute paths ----
     abs_rows = which("code_abs_path", lambda v: v > 0)
@@ -371,7 +373,6 @@ def code_check(
     report_table_absolute = None
     if not absolute_issues:
         report_absolute = f"{_ABSOLUTE} No absolute file paths were found in any of the code files."
-        summary_absolute = "No absolute file paths were found."
     else:
         n = len(absolute_issues)
         report_absolute = (
@@ -379,7 +380,6 @@ def code_check(
             f"file{plural(n)}. However, these may be false positives in code like "
             "`paste0(dir, '/file.csv')`. "
         )
-        summary_absolute = "Absolute file paths were found."
         report_table_absolute = _subtable(
             code_files,
             abs_rows,
@@ -455,21 +455,16 @@ def code_check(
             )
         report_comments = f"{_COMMENTS}{docstring_note}"
         n = len(comment_issue)
-        summary_comments = f"{n} code file{plural(n)} had no comments."
+        summary_comments = f"{n} code file{plural(n)} ({', '.join(comment_issue)}) had no comments."
 
     ## Missing files ----
     missing_rows = which("loaded_files_missing", lambda v: v > 0)
     missingfiles_issue = [names[i] for i in missing_rows]
     report_table_files_missing = None
     if not missingfiles_issue:
-        summary_missingfiles = "All files loaded in the code were present in the repository."
-        report_missingfiles = summary_missingfiles
+        report_missingfiles = "All files loaded in the code were present in the repository."
     else:
         n_missing = int(sum(v for v in nums("loaded_files_missing") if v is not None))
-        summary_missingfiles = (
-            f"{n_missing} file{plural(n_missing)} loaded in the code "
-            f"{plural(n_missing, 'was', 'were')} missing in the repository."
-        )
         k = len(missingfiles_issue)
         report_missingfiles = (
             f"The scripts load files, but {k} script{plural(k)} loaded {n_missing} "
@@ -494,13 +489,11 @@ def code_check(
         report_parse = (
             "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues."
         )
-        summary_parse = "No parsing issues of R-type files were found."
     else:
         report_parse = (
             "We encountered parsing issues when trying to read in R-type code files. The "
             f"following errors were found in {parse_issues} code file{plural(parse_issues)}:"
         )
-        summary_parse = "Parsing issues of R-type files were found."
         report_table_parse = _subtable(
             code_files,
             [i for i, v in enumerate(parse_flags) if v is True],
@@ -511,7 +504,6 @@ def code_check(
     all_packages = code_packages(col(code_files, "packages")) if has("packages") else []
     if not all_packages:
         report_packages = _NO_PACKAGES
-        summary_packages = "No packages/libraries were detected in the code."
     else:
         k = len(all_packages)
         report_packages = (
@@ -519,7 +511,6 @@ def code_check(
             f"{'y' if k == 1 else 'ies'}: {', '.join(all_packages)}. These are the names found "
             "in the source (no version information is available from static analysis)."
         )
-        summary_packages = f"The code loaded {k} distinct package{plural(k)}."
 
     ## Reproducible environment (version pinning) ----
     code_text_list = [
@@ -601,19 +592,19 @@ def code_check(
         max_files_per_repo=max_files_per_repo,
     )
 
+    # the summary names what to fix; missing files, absolute paths and parse
+    # errors are listed file by file in the report (and the brief report), the
+    # package count is information, and setwd()/install.packages() are named
+    # only when found (metacheck 7208868)
     summary_text = "".join(
         f"\n-  {s}"
         for s in (
             summary_code,
             summary_comments,
-            summary_missingfiles,
-            summary_absolute,
-            summary_setwd,
-            summary_install_packages,
+            *([summary_setwd] if setwd_issues else []),
+            *([summary_install_packages] if install_packages_issues else []),
             summary_library,
-            summary_packages,
             summary_version_pin,
-            summary_parse,
         )
     )
 

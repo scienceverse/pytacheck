@@ -59,18 +59,6 @@
   r_text: [["AI generated references, of mistakes in citations. You will need check the original source.", "AI generated references, or mistakes in citations. You will need to check the original source."]]
 
 # U82: a count of one takes the singular ---------------------------------------
-"mod_code/code_check.parse_errors": &u82_in_code_file
-  kind: r_bug_fixed
-  ref: U82
-  reason: "one file with libraries at several places is \"In 1 code file\" (metacheck: \"In 1 code files\")"
-  r_text: [["In 1 code files,", "In 1 code file,"]]
-"mod_code/code_check.psychsci": *u82_in_code_file
-"mod_code/code_check.mixed": *u82_in_code_file
-"mod_code/code_check.paperlist": *u82_in_code_file
-"mod_code_review/code_check.gaps": *u82_in_code_file
-"mod_code_review/code_check.na_pid": *u82_in_code_file
-"mod_code_review/local_path.parse_errors": *u82_in_code_file
-"mod_code_review/local_path.mixed_local_only": *u82_in_code_file
 "mod_data_check/data_check.qualtrics": &u82_file_contains_survey
   kind: r_bug_fixed
   ref: U82

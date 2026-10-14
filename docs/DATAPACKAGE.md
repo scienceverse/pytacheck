@@ -19,6 +19,7 @@ metacheck package my_data.zip                      # a zip, or .tar .tar.gz .tgz
 metacheck package https://github.com/owner/repo    # a public repository, downloaded first
 metacheck package my_data.zip -o package.html      # write a report instead of printing
 metacheck package my_data.zip -f md                # ... as Markdown, to my_data_report.md
+metacheck package my_data.zip -o p.html -t simple   # a static report with no script, to send by email
 metacheck package my_data_folder --json            # the results as JSON
 metacheck package my_data_folder --record run.json # also write a run record
 metacheck package my_data_folder -m package_readme --files-dir drafts   # draft a README into drafts/
@@ -28,7 +29,10 @@ metacheck package my_data_folder -m package_readme --files-dir drafts   # draft 
 one line per check, followed by the checklist (see below). With `-o FILE`, or with
 `-f html|qmd|md` alone (the file is then `<name>_report.<format>` in the current
 folder), the report is written and the results are printed too. A report written
-inside the package's own folder is not counted among its files.
+inside the package's own folder is not counted among its files. `-t`/`--report-type`
+picks the kind of report: `full` (the default), `simple` (the same as a static page
+with no script, which mail clients and scanners accept), `brief` (only the checks
+that need attention, as a to-do list) or `simple_brief`.
 
 The exit status is 0 when every check ran, 1 when a check failed to run (the others
 still run, and the failure is shown next to it), and 2 when the path cannot be
@@ -80,7 +84,8 @@ chain.files                                           # {"README.md": "# ...", .
 
 `check_package(path, *, preset=None, modules=None, args=None, record=None)` returns
 the outputs in run order (a `ModuleChain`). `report_package(path, output_file=None,
-output_format="html", *, preset=None, modules=None, args=None)` returns the report's
+output_format="html", *, preset=None, modules=None, args=None, report_type=None)`
+(`report_type` as for `-t`) returns the report's
 module outputs, with the file's path in `save_path`. Both results have `.files`, the
 files that checks handed back (see [Files a check hands back](#files-a-check-hands-back)). Both raise
 `metacheck.datapackage.PackageError` for a path that cannot be opened.

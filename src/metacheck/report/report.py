@@ -17,6 +17,7 @@ neither R nor Quarto:
 from __future__ import annotations
 
 import datetime as _dt
+import html as _html
 import os
 import re
 import shutil
@@ -38,7 +39,14 @@ from metacheck.core.scope import check_mutation, note_module, running_module, tr
 from metacheck.module import SECTION_LEVELS, ModuleOutput, module_find, module_info, module_run
 from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList, is_paper_list
-from metacheck.report.blocks import ReportTable, collapse_section
+from metacheck.report.blocks import (
+    ReportTable,
+    _check_report_type,
+    _report_is_brief,
+    _report_is_static,
+    collapse_section,
+)
+from metacheck.report.blocks import report_type as _report_type
 from metacheck.report.emojis import emojis
 from metacheck.report.render import (
     TableSlots,
@@ -284,6 +292,44 @@ def _module_output_list(module_output: Any) -> list[ModuleOutput]:
 # module_report()
 # ---------------------------------------------------------------------------
 
+#: Port of ``.module_no_chapter``: metacheck's modules with no chapter in its
+#: online manual (utility listings, overinclusive variants, early-stage modules).
+_NO_CHAPTER = frozenset(
+    {
+        "all_urls",
+        "all_p_values",
+        "coi_check_oi",
+        "funding_check_oi",
+        "causal_claims",
+        "ref_miscitation",
+    }
+)
+_MANUAL_CHAPTER = "https://www.scienceverse.org/metacheck_book/chapters/mod-{}.html"
+
+
+def _module_chapter_link(module: Any) -> str | None:
+    """Port of ``.module_chapter_link()``: a sentence linking a module's manual chapter.
+
+    Only metacheck's own modules have a chapter (``mod-<name>.html``, with
+    ``_`` as ``-``); metacheck also linked other modules, such as a module
+    file of one's own, to a chapter that does not exist.
+    """
+    if not isinstance(module, str) or module not in _UPSTREAM_MODULES or module in _NO_CHAPTER:
+        return None
+    url = _MANUAL_CHAPTER.format(module.replace("_", "-"))
+    return f"Read more in the [metacheck manual]({url})."
+
+
+def _report_title_slug(title: Any) -> str:
+    """Port of ``.report_title_slug()``: a module title as a heading id (and link target).
+
+    Lower case, spaces as ``-``, and nothing but ``a-z``, ``0-9``, ``_`` and
+    ``-``: a title with parentheses (metacheck's ``{#funding-check-(overinclusive)}``)
+    is not a valid Pandoc id, so Quarto showed the attribute as text.
+    """
+    slug = re.sub(r"\s+", "-", str(title).lower())
+    return re.sub(r"[^a-z0-9_-]", "", slug)
+
 
 def _how_it_works(module: Any) -> tuple[str | None, list[str]]:
     """The "How It Works" callout and validation blocks for a module."""
@@ -313,7 +359,12 @@ def _how_it_works(module: Any) -> tuple[str | None, list[str]]:
             author_ack = f"This module was developed by {authors}"
         if details is not None:
             details = gsub(r"\s*<validation>.*</validation>\s*", "", details)
-        paragraphs = [p for p in (info.description or None, details, author_ack) if p is not None]
+        chapter_link = _module_chapter_link(module)
+        paragraphs = [
+            p
+            for p in (info.description or None, details, author_ack, chapter_link)
+            if p is not None
+        ]
         if not paragraphs:
             return None, validation
         return cast(str, collapse_section(paragraphs, "How It Works", callout="note")), validation
@@ -335,8 +386,7 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
     elif level == 0:
         head = [f"{symbol}{title}"]
     elif level is not None and 1 <= level <= 6:
-        anchor = str(title).lower().replace(" ", "-")
-        head = [f"{'#' * level} {symbol}{title} {{#{anchor} .{tl}}}"]
+        head = [f"{'#' * level} {symbol}{title} {{#{_report_title_slug(title)} .{tl}}}"]
     else:
         head = [_as_text(header)]
 
@@ -353,8 +403,10 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
 
     hiw, validation = _how_it_works(module_output.module)
 
-    pre: str | None = "<details><summary>View detailed feedback</summary><div>"
-    post: str | None = "</div></details>"
+    # no <div> inside <details>: Pandoc cannot follow a raw <div> left open
+    # around fenced divs (metacheck dropped it too)
+    pre: str | None = "<details><summary>View detailed feedback</summary>"
+    post: str | None = "</details>"
     if summary_text is None and blocks is not None:
         pre = post = None
     elif blocks is None or _all_equal(summary, blocks, False):
@@ -499,16 +551,33 @@ def report_module_run(
 
 
 @cache
-def _template_lines() -> tuple[str, ...]:
+def _template_lines(name: str = "_report.qmd") -> tuple[str, ...]:
     text = (
-        resources.files("metacheck.report")
-        .joinpath("templates", "_report.qmd")
-        .read_text(encoding="utf-8")
+        resources.files("metacheck.report").joinpath("templates", name).read_text(encoding="utf-8")
     )
     lines = re.split(r"\r\n|\r|\n", text)
     if lines and lines[-1] == "":
         lines.pop()
     return tuple(lines)
+
+
+def _template_head(static: bool) -> str:
+    """The template up to its demo part: ``_report_simple.Rmd`` for a static report."""
+    lines = _template_lines("_report_simple.Rmd" if static else "_report.qmd")
+    return "\n".join(lines[: lines.index("<!-- Demo -->")])
+
+
+def _fill(template: str, values: Sequence[str]) -> str:
+    """Fill the ``%s`` slots of *template* in order, as ``sprintf()`` does (a ``%``
+    in the template's CSS needs no escaping, and a ``%s`` in a value stays as it is)."""
+    parts = template.split("%s")
+    if len(parts) - 1 < len(values):
+        raise ValueError(f"the template has {len(parts) - 1} slots for {len(values)} values")
+    out = [parts[0]]
+    for i, part in enumerate(parts[1:]):
+        out.append(values[i] if i < len(values) else "%s")
+        out.append(part)
+    return "".join(out)
 
 
 def _report_version() -> str:
@@ -533,98 +602,245 @@ def _is_na(x: Any) -> bool:
         return False
 
 
+#: The legend of a brief report, in its info box (R: report_qmd()'s legend_items).
+_LEGEND = (
+    "Legend: ⚠️ possible problems detected; \U0001f50d something to check; "
+    "✅️ no problems detected; ℹ️ informational only; ⬜ not applicable; ☠️ check failed."
+)
+_NOTHING_FLAGGED = (
+    '<li class="mc-summary-row">Nothing flagged -- no modules reported a red, yellow, '
+    "or fail status.</li>"
+)
+
+
 @dataclass
-class _ReportParts:
-    head: str  # the formatted template head ("" when R's sprintf() gives character(0))
-    subtitle: str
-    version: str
-    date: str
-    doi_text: str
-    summary: str
-    body: list[Any]  # section titles and module report blocks (tables as blocks)
+class _SummaryRow:
+    """One module in the report's summary."""
 
-    def body_text(self, table: Callable[[ReportTable], str]) -> str:
-        return re.sub(r"\n{3,}", "\n\n", render_blocks(self.body, table))
+    tl: str
+    symbol: str  # "" for a traffic light without an emoji
+    title: str
+    slug: str
+    text: str  # the one-line summary ("" when the summary is a list)
+    items: str  # the summary when it is a markdown list (else "")
+    todo: list[str]  # a brief report's to-do items
 
-    def text(self, table: Callable[[ReportTable], str]) -> str:
-        return "\n\n".join([self.head, self.summary, self.body_text(table), "\n"])
+    def html(self, link: bool) -> str:
+        """The row as metacheck writes it: raw HTML, then its lists as markdown."""
+        from metacheck.report.render import _render_inline
+
+        title = _render_inline(self.title)
+        if link:
+            title = f'<a href="#{self.slug}">{title}</a>'
+        text = _render_inline(self.text.replace("\n", " ")) if self.text else ""
+        row = (
+            f'<li class="mc-summary-row {self.tl}"><span class="mc-summary-icon">{self.symbol}'
+            f'</span><span class="mc-summary-body"><span class="mc-summary-title">{title}</span>'
+            f'<span class="mc-summary-text">{text}</span></span></li>'
+        )
+        for block in (self.items, "\n".join(self.todo)):
+            if block:
+                row += f"\n\n::: {{.mc-summary-todo}}\n{block}\n:::\n\n"
+        return row
+
+    def gfm(self, link: bool) -> str:
+        """The row as a plain markdown bullet, its lists nested under it."""
+        symbol = f"{self.symbol} " if self.symbol else ""
+        title = f"[{self.title}](#{self.slug})" if link else f"**{self.title}**"
+        text = f": {self.text}" if self.text else ""
+        lines = [f"- {symbol}{title}{text}"]
+        for block in (self.items, "\n".join(self.todo)):
+            if block:
+                lines += ["    " + line if line else "" for line in block.split("\n")]
+        return "\n".join(lines)
 
 
-def _summary_line(mo: ModuleOutput) -> str:
+def _summary_row(mo: ModuleOutput, brief: bool) -> _SummaryRow:
+    from metacheck.report.brief import flagged_bullets
+
     tl = mo.traffic_light if mo.traffic_light is not None else "info"
     emoji = emojis.get(f"tl_{tl}")
     summary_text = mo.summary_text if mo.summary_text is not None else ""
     if not isinstance(summary_text, str):
         summary_text = " ".join("NA" if s is None else str(s) for s in _flatten(summary_text))
-    if summary_text and summary_text[0] == "\n":
-        summary_text = summary_text.replace("\n", "\n    ")
-    # an undefined traffic light has no emoji (metacheck's sprintf() with NULL
-    # printed the line as "character(0)"; U128)
-    symbol = "" if emoji is None else f"{emoji} "
-    anchor = gsub(r"\s", "-", str(mo.title).lower())
-    return f"- {symbol}[{mo.title}](#{anchor}){{.{tl}}}: {summary_text}  "
+    # a summary that starts with a line break is a markdown list: it goes
+    # under the row instead of into its one line
+    is_list = summary_text[:1] == "\n"
+    return _SummaryRow(
+        tl=tl,
+        # an undefined traffic light has no emoji (metacheck's sprintf() with
+        # NULL dropped the whole line; U128)
+        symbol="" if emoji is None else emoji,
+        title=str(mo.title),
+        slug=_report_title_slug(mo.title),
+        text="" if is_list else summary_text,
+        items=summary_text.strip(" \t\r\n") if is_list else "",
+        todo=flagged_bullets(mo) if brief else [],
+    )
 
 
-def _report_parts(module_output: Any, paper: Any = None) -> _ReportParts:
+@dataclass
+class _ReportParts:
+    report_type: str
+    subtitle: str
+    version: str
+    date: str
+    doi_text: str
+    rows: list[_SummaryRow]
+    body: list[Any]  # section titles and module report blocks (tables as blocks)
+
+    @property
+    def brief(self) -> bool:
+        return _report_is_brief(self.report_type)
+
+    @property
+    def static(self) -> bool:
+        return _report_is_static(self.report_type)
+
+    def summary(self) -> str:
+        """The summary in metacheck's markup (raw HTML rows; qmd and HTML pages)."""
+        rows = [r.html(link=not self.brief) for r in self.rows]
+        if self.brief and not rows:
+            rows = [_NOTHING_FLAGGED]
+        return '## Summary\n\n<ul class="mc-summary">\n\n{}\n\n</ul>\n\n'.format("\n\n".join(rows))
+
+    def summary_gfm(self) -> str:
+        rows = [r.gfm(link=not self.brief) for r in self.rows]
+        if self.brief and not rows:
+            rows = ["Nothing flagged -- no modules reported a red, yellow, or fail status."]
+        return "## Summary\n\n{}\n\n".format("\n".join(rows))
+
+    def body_text(self, table: Callable[[ReportTable], str]) -> str:
+        text = re.sub(r"\n{3,}", "\n\n", render_blocks(self.body, table))
+        if self.static:
+            from metacheck.report.render import static_markdown
+
+            text = static_markdown(text)
+        return text
+
+    def info_lines(self) -> list[str]:
+        """The version, date and DOI lines of the report's info box."""
+        lines = [
+            f"[MetaCheck](http://www.scienceverse.org/metacheck) version {self.version}",
+            f"Report Created: {self.date}",
+        ]
+        doi = f"{self.doi_text} <!-- doi, if exists -->".strip()
+        return [*lines, doi]
+
+    def legend_box(self, info: Sequence[str] | None = None) -> str:
+        """A brief report's box: version, date and DOI, then the legend."""
+        lines = "  \n".join(info if info is not None else self.info_lines())
+        return f"::: {{.legend}}\n{lines}\n\n---\n\n{_LEGEND}\n:::"
+
+    def head(self) -> str:
+        """The template's head (YAML, style and introduction) with its slots filled."""
+        subtitle = self.subtitle.replace('"', '\\"')
+        if self.static:
+            banner = _html.escape(self.subtitle, quote=False)
+            values = [subtitle, banner, self.version, self.date, self.doi_text]
+        else:
+            values = [subtitle, self.version, self.date, self.doi_text]
+        head = _fill(_template_head(self.static), values)
+        if not self.brief:
+            return head
+        # a brief report keeps the YAML, the style (and the banner of a simple
+        # report), then the version, date and legend in one box
+        found = re.search(r"::: ?\{#info\}\n(.*?)\n:::", head, flags=re.S)
+        info = [x.strip() for x in found.group(1).strip().split("\n")] if found else None
+        if self.static:
+            head = re.sub(r"(</style>\n.*?<!-- End Banner -->\n).*$", r"\1", head, flags=re.S)
+            head += '\n<div class="mc-page">\n'
+        else:
+            head = re.sub(r"(</style>\n).*$", r"\1", head, flags=re.S)
+        head = f"{head}\n\n{self.legend_box(info)}"
+        # its only section is the summary: no table of contents
+        return head.replace("toc: true", "toc: false", 1)
+
+    def text(self, table: Callable[[ReportTable], str]) -> str:
+        parts = [self.head(), self.summary(), self.body_text(table)]
+        if self.static:
+            parts.append("\n\n</div>\n")  # closes the template's <div class="mc-page">
+        return "\n\n".join([*parts, "\n"])
+
+
+def _report_parts(module_output: Any, paper: Any = None, report_type: str = "full") -> _ReportParts:
     # metacheck's default `paper = list()` always failed (`nrow(paper$author) > 0`),
     # and a paper whose info lacks a title or DOI lost the report header
     # (`ifelse(logical(0), ...)`); here they are just left out (U128)
-    outputs = _module_output_list(module_output)
-    lines = _template_lines()
-    cut_after = lines.index("<!-- Demo -->")
-    rt_head = "\n".join(lines[:cut_after])
-    # turn real % into %%, leaving %s, %d, %f, %i for sprintf
-    rt_head = re.sub(r"%(?![sdfi])", "%%", rt_head)
+    from metacheck.report.brief import FEEDBACK, FLAGGED_LIGHTS, validation_table
 
+    outputs = _module_output_list(module_output)
+    brief = _report_is_brief(report_type)
     titles = _info_values(paper, "title")
-    subtitle_raw = ("NA" if _is_na(titles[0]) else str(titles[0])) if titles else ""
-    subtitle = subtitle_raw.replace('"', '\\"')
+    subtitle = ("NA" if _is_na(titles[0]) else str(titles[0])) if titles else ""
     dois = _info_values(paper, "doi")
-    version = _report_version()
-    date = _dt.date.today().isoformat()
     doi = dois[0] if dois else None
     doi_text = "" if _is_na(doi) or doi == "" else f"DOI: [{doi}](https://doi.org/{doi})"
-    head = rt_head % (subtitle, version, date, doi_text)
 
-    summary_list = [_summary_line(mo) for mo in outputs]
-    summary = "## Summary\n\n{}\n\n".format("\n".join(summary_list))
-
+    # a brief report lists only what needs attention, and has no module sections
+    shown = [mo for mo in outputs if mo.traffic_light in FLAGGED_LIGHTS] if brief else outputs
+    rows = [_summary_row(mo, brief) for mo in shown]
     body: list[Any] = []
-    for sec in SECTION_LEVELS:
-        section_op = [
-            mo
-            for mo in outputs
-            if mo.section == sec and mo.traffic_light not in _BAD_TRAFFIC_LIGHTS
-        ]
-        if not section_op:
-            continue
-        body.append(f"## {sec[:1].upper()}{sec[1:]} Modules")
-        for mo in section_op:
-            body.extend(_module_report_blocks(mo))
+    if brief:
+        if shown:
+            body.append(validation_table(shown))
+        body.append(FEEDBACK)
+    else:
+        for sec in SECTION_LEVELS:
+            section_op = [
+                mo
+                for mo in outputs
+                if mo.section == sec and mo.traffic_light not in _BAD_TRAFFIC_LIGHTS
+            ]
+            if not section_op:
+                continue
+            body.append(f"## {sec[:1].upper()}{sec[1:]} Modules")
+            for mo in section_op:
+                body.extend(_module_report_blocks(mo))
     return _ReportParts(
-        head=head,
-        subtitle=subtitle_raw,
-        version=version,
-        date=date,
+        report_type=report_type,
+        subtitle=subtitle,
+        version=_report_version(),
+        date=_dt.date.today().isoformat(),
         doi_text=doi_text,
-        summary=summary,
+        rows=rows,
         body=body,
     )
 
 
-def report_qmd(module_output: Any, paper: Any = None, tables: str = "html") -> str:
+def _resolve_report_type(report_type: str | Sequence[str] | None) -> str:
+    """*report_type*, or the session's :func:`~metacheck.report.blocks.report_type` when ``None``."""
+    return _report_type() if report_type is None else _check_report_type(report_type)
+
+
+def report_qmd(
+    module_output: Any,
+    paper: Any = None,
+    tables: str = "html",
+    report_type: str | Sequence[str] | None = None,
+) -> str:
     """Port of ``report_qmd()``: the Quarto report for module output.
 
     Each table is a raw HTML block, and a report with tables ends with their
     styles and pagination script, so Quarto alone renders the document.
     metacheck writes R chunks, which need R and metacheck to render (D75);
     ``tables`` takes only ``"html"``.
+
+    ``report_type`` (default: :func:`~metacheck.report.blocks.report_type`)
+    ``"brief"`` keeps only the flagged modules, with their to-do items. A
+    simple report (``"simple"``, ``"simple_brief"``) is an R Markdown
+    document for Pandoc (``_report_simple.Rmd``, as metacheck writes it):
+    static tables, callouts open, tabs as headings, and no script.
     """
     if tables != "html":
         raise ValueError(
             "'tables' should be 'html': the R table chunks of metacheck's .qmd are not written"
         )
-    parts = _report_parts(module_output, paper)
+    from metacheck.report.render import static_table_chunk
+
+    parts = _report_parts(module_output, paper, _resolve_report_type(report_type))
+    if parts.static:
+        return parts.text(static_table_chunk)
     text = parts.text(table_chunk)
     if not any(isinstance(b, ReportTable) for b in parts.body):
         return text
@@ -640,45 +856,76 @@ def report_qmd(module_output: Any, paper: Any = None, tables: str = "html") -> s
 
 def _intro_markdown(parts: _ReportParts) -> str:
     """The template's introduction (after its ``<style>``), with shortcodes filled in."""
-    lines = _template_lines()
-    cut_after = lines.index("<!-- Demo -->")
-    head = "\n".join(lines[:cut_after])
-    body = head.split("</style>", 1)[-1]
+    if parts.brief:
+        return parts.legend_box()
+    body = _template_head(False).split("</style>", 1)[-1]
     body = body.replace("{{< meta metacheck.version >}}", parts.version)
     body = body.replace("{{< meta metacheck.report-created >}}", parts.date)
     return body.replace("%s <!-- doi, if exists -->", parts.doi_text)
 
 
-def report_html(module_output: Any, paper: Any = None) -> str:
-    """The report as a self-contained HTML page (no R or Quarto needed)."""
+def _simple_html(parts: _ReportParts) -> str:
+    """A simple report's page: static, with no script (``_report_simple.Rmd``)."""
     from metacheck._version import __version__
+    from metacheck.report.render import simple_page
 
-    parts = _report_parts(module_output, paper)
-    slots = TableSlots()
-    body = "\n\n".join([parts.summary, parts.body_text(slots)])
-    intro = _intro_markdown(parts) if parts.head else ""
-    return html_page(
-        title="MetaCheck Report",
-        subtitle=parts.subtitle,
-        intro_md=intro,
-        body_md=body,
-        tables=slots,
-        generator=f"pytacheck {__version__}",
+    head = parts.head()
+    css = head.split("<style>", 1)[-1].split("</style>", 1)[0]
+    intro = head.split("</style>", 1)[-1]
+    toc = "" if parts.brief else "<!-- TOC -->"
+    slots = TableSlots(static=True)
+    body = "\n\n".join([intro, toc, parts.summary(), parts.body_text(slots), "</div>"])
+    title = f"MetaCheck Report – {parts.subtitle}" if parts.subtitle else "MetaCheck Report"
+    return simple_page(
+        title=title, css=css, body_md=body, tables=slots, generator=f"pytacheck {__version__}"
     )
 
 
-def report_markdown(module_output: Any, paper: Any = None) -> str:
+def report_html(
+    module_output: Any, paper: Any = None, report_type: str | Sequence[str] | None = None
+) -> str:
+    """The report as a self-contained HTML page (no R or Quarto needed).
+
+    A simple report (``report_type="simple"`` or ``"simple_brief"``) is a
+    static page with no script at all, safe to send by email.
+    """
+    from metacheck._version import __version__
+
+    parts = _report_parts(module_output, paper, _resolve_report_type(report_type))
+    if parts.static:
+        return _simple_html(parts)
+    slots = TableSlots()
+    body = "\n\n".join([parts.summary(), parts.body_text(slots)])
+    return html_page(
+        title="MetaCheck Report",
+        subtitle=parts.subtitle,
+        intro_md=_intro_markdown(parts),
+        body_md=body,
+        tables=slots,
+        generator=f"pytacheck {__version__}",
+        toc=not parts.brief,
+    )
+
+
+def report_markdown(
+    module_output: Any, paper: Any = None, report_type: str | Sequence[str] | None = None
+) -> str:
     """The report as plain (GitHub-flavoured) Markdown."""
-    parts = _report_parts(module_output, paper)
-    intro = _intro_markdown(parts) if parts.head else ""
+    parts = _report_parts(module_output, paper, _resolve_report_type(report_type))
+    intro = _intro_markdown(parts)
     title = "# MetaCheck Report\n\n"
     if parts.subtitle:
         title += f"**{parts.subtitle}**\n\n"
-    text = "\n\n".join([title + intro, parts.summary, parts.body_text(table_gfm)])
+    text = "\n\n".join([title + intro, parts.summary_gfm(), parts.body_text(table_gfm)])
     return markdown_to_gfm(text).strip() + "\n"
 
 
-def render_module_outputs(module_output: Any, paper: Any, output_format: str = "html") -> str:
+def render_module_outputs(
+    module_output: Any,
+    paper: Any,
+    output_format: str = "html",
+    report_type: str | Sequence[str] | None = None,
+) -> str:
     """The report text for module outputs that have already been computed.
 
     The REST API's ``/paper/check`` uses this (metacheck's plumber
@@ -686,15 +933,15 @@ def render_module_outputs(module_output: Any, paper: Any, output_format: str = "
     page) so the report reuses the results instead of re-running modules.
     ``module_output`` is a :class:`ReportOutput`, a mapping or a list of
     :class:`~metacheck.module.ModuleOutput`; ``output_format`` is ``"html"``,
-    ``"qmd"`` or ``"md"``.
+    ``"qmd"`` or ``"md"``; ``report_type`` is as for :func:`report`.
     """
     fmt = output_format.lower()
     if fmt == "html":
-        return report_html(module_output, paper)
+        return report_html(module_output, paper, report_type)
     if fmt == "qmd":
-        return report_qmd(module_output, paper)
+        return report_qmd(module_output, paper, report_type=report_type)
     if fmt == "md":
-        return report_markdown(module_output, paper)
+        return report_markdown(module_output, paper, report_type)
     raise ValueError("The output_format must be either 'html', 'qmd' or 'md'.")
 
 
@@ -756,6 +1003,7 @@ def report(
     output_format: str | Sequence[str] = "html",
     args: Mapping[str, Mapping[str, Any]] | None = None,
     renderer: str = "pytacheck",
+    report_type: str | Sequence[str] | None = None,
 ) -> ReportOutput | ReportList:
     """Port of ``report()``: run modules on a paper and write a report.
 
@@ -778,6 +1026,12 @@ def report(
     renderer:
         For HTML: ``"pytacheck"`` (built in, the default) or ``"quarto"``
         (render the ``.qmd`` with an installed Quarto).
+    report_type:
+        ``"full"``, ``"brief"``, ``"simple"`` or ``"simple_brief"`` (see
+        :func:`~metacheck.report.blocks.report_type`, whose setting ``None``
+        uses): ``"simple"`` writes a static page with no script, to send by
+        email; ``"brief"`` lists only what needs attention. A simple report
+        is always rendered by pytacheck (Quarto's HTML carries scripts).
 
     Returns
     -------
@@ -793,6 +1047,12 @@ def report(
         raise ValueError("The output_format must be either 'html', 'qmd' or 'md'.")
     if renderer not in ("pytacheck", "quarto"):
         raise ValueError("The renderer must be either 'pytacheck' or 'quarto'.")
+    rt = _resolve_report_type(report_type)
+    if renderer == "quarto" and _report_is_static(rt):
+        raise ValueError(
+            f"A '{rt}' report is rendered by pytacheck (renderer='pytacheck'): "
+            "Quarto's HTML always carries scripts."
+        )
     module_list = [modules] if isinstance(modules, str | os.PathLike) else list(modules)
     module_list = _check_modules(module_list)
 
@@ -821,7 +1081,7 @@ def report(
         out = ReportList()
         for p, of in zip(papers, files, strict=True):
             try:
-                r: ReportOutput | None = report(p, module_list, of, fmt, args, renderer)  # type: ignore[assignment]
+                r: ReportOutput | None = report(p, module_list, of, fmt, args, renderer, rt)  # type: ignore[assignment]
             except Exception as exc:
                 logger("report", {"paper": p.paper_id, "error": str(exc)})
                 warnings.warn(f"Error in {p.paper_id}:\n{exc}", stacklevel=2)
@@ -854,22 +1114,22 @@ def report(
     module_output = report_module_run(paper, module_list, args)
 
     if fmt == "qmd":
-        _write(report_qmd(module_output, paper), output_file)
+        _write(report_qmd(module_output, paper, report_type=rt), output_file)
         save_path = output_file
     elif fmt == "md":
-        _write(report_markdown(module_output, paper).rstrip("\n"), output_file)
+        _write(report_markdown(module_output, paper, rt).rstrip("\n"), output_file)
         save_path = output_file
     else:
         try:
             if renderer == "quarto":
-                _render_quarto(report_qmd(module_output, paper), output_file)
+                _render_quarto(report_qmd(module_output, paper, report_type=rt), output_file)
             else:
-                _write(report_html(module_output, paper), output_file)
+                _write(report_html(module_output, paper, rt), output_file)
             save_path = output_file
         except Exception as exc:
             # save the qmd on render error and return its path
             output_qmd = re.sub(r"\.html$", "", output_file) + ".qmd"
-            _write(report_qmd(module_output, paper), output_qmd)
+            _write(report_qmd(module_output, paper, report_type=rt), output_qmd)
             logger(
                 "quarto render",
                 {"paper": paper.paper_id, "quarto": output_qmd, "error": str(exc)},
@@ -892,12 +1152,13 @@ def report_repository(
     modules: Sequence[str] = ("repo_check", "code_check", "data_check", "codebook_check"),
     args: Mapping[str, Mapping[str, Any]] | None = None,
     renderer: str = "pytacheck",
+    report_type: str | Sequence[str] | None = None,
 ) -> ReportOutput | ReportList:
     """Port of ``report_repository()``: a report for a local repository folder.
 
     The first module is told where the files are (``local_path``,
     ``local_only=True``); the rest reuse its results. The paper is an empty
-    stand-in named after the folder.
+    stand-in named after the folder. ``report_type`` is as for :func:`report`.
     """
     from metacheck.papers.io import test_paper
 
@@ -930,6 +1191,7 @@ def report_repository(
         output_format=fmt,
         args=new_args,
         renderer=renderer,
+        report_type=report_type,
     )
 
 

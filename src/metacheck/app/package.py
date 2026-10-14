@@ -44,6 +44,7 @@ from metacheck.app.run import (
     checks_progress,
     protect,
     report_filename,
+    simple_filename,
 )
 from metacheck.datapackage._limits import setting
 
@@ -562,6 +563,8 @@ class PackageAnalysis:
     seconds: float
     note: str = ""  # something the person should know about this run; empty if nothing
     rows: tuple[Row, ...] = ()  # one row per check, as the paper page's table shows them
+    simple_html: str = ""  # the same report as a static page with no script, to send by email
+    simple_path: Path | None = None
 
 
 def package_name(source: str | os.PathLike[str]) -> str:
@@ -667,6 +670,13 @@ def check_package_source(
     # the file the library wrote has no policy: it holds names and text from the package
     page = written.read_text(encoding="utf-8")
     target.write_text(protect(page), encoding="utf-8")
+    from metacheck.report.report import render_module_outputs
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        simple = render_module_outputs(report, report.paper, report_type="simple")
+    simple_path = simple_filename(target)
+    simple_path.write_text(protect(simple), encoding="utf-8")
     tick(1.0, "Done")
     return PackageAnalysis(
         name=name,
@@ -678,4 +688,6 @@ def check_package_source(
         seconds=time.perf_counter() - start,
         note=note,
         rows=_rows(outputs),
+        simple_html=simple,
+        simple_path=simple_path,
     )

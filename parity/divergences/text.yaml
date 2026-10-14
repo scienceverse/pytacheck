@@ -319,10 +319,6 @@
   r_text: [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]
 "bibr12/module.marginal.mixed": *u3_marg_ref
 "grobid12/module.marginal.published": *u3_marg_ref
-"report/module_report.marginal.demo": *u3_marg_ref
-"report/module_report.marginal.header4": *u3_marg_ref
-"report/module_report.marginal.header0": *u3_marg_ref
-"report/module_report.marginal.header_null": *u3_marg_ref
 "report/report_module_run.demo.marginal": *u3_marg_ref
 "report/report_module_run.demo.sections": *u3_marg_ref
 "report/report_module_run.demo.error_middle": *u3_marg_ref
@@ -330,13 +326,8 @@
 "report/report_module_run.demo.error_last": *u3_marg_ref
 "report/report_module_run.args": *u3_marg_ref
 "report/report_module_run.paperlist": *u3_marg_ref
-"report/report_qmd.demo.marginal": *u3_marg_ref
-"report/report.qmd.demo": *u3_marg_ref
-"report/report.qmd.args": *u3_marg_ref
-"report_review/report_qmd.title_doi_fail_summary": *u3_marg_ref
 "report_review/report_module_run.unknown_module_in_chain": *u3_marg_ref
 "report_review/report_module_run.same_module_twice": *u3_marg_ref
-"report_review/report_qmd.demo.real_modules": *u3_marg_ref
 "repro_core/capture_module_tables.roundtrip.demo": *u3_marg_ref
 
 # empty paper lists (U79) ---------------------------------------------------------
