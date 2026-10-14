@@ -568,11 +568,16 @@ def _template_head(static: bool) -> str:
 
 
 def _fill(template: str, values: Sequence[str]) -> str:
-    """Fill the ``%s`` slots of *template* in order (one at a time, so a ``%`` in
-    the template's CSS needs no escaping)."""
-    for value in values:
-        template = template.replace("%s", value, 1)
-    return template
+    """Fill the ``%s`` slots of *template* in order, as ``sprintf()`` does (a ``%``
+    in the template's CSS needs no escaping, and a ``%s`` in a value stays as it is)."""
+    parts = template.split("%s")
+    if len(parts) - 1 < len(values):
+        raise ValueError(f"the template has {len(parts) - 1} slots for {len(values)} values")
+    out = [parts[0]]
+    for i, part in enumerate(parts[1:]):
+        out.append(values[i] if i < len(values) else "%s")
+        out.append(part)
+    return "".join(out)
 
 
 def _report_version() -> str:

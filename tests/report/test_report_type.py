@@ -27,6 +27,7 @@ from metacheck.report.blocks import (
 from metacheck.report.brief import FEEDBACK, flagged_bullets, validation_table
 from metacheck.report.render import STATIC_MAX_ROWS, static_markdown, table_chunk
 from metacheck.report.report import (
+    _fill,
     module_report,
     render_module_outputs,
     report,
@@ -296,3 +297,10 @@ def test_how_it_works_links_the_manual_chapter_of_metacheck_modules(tmp_path: Pa
     )
     # a module of your own has no chapter in the manual
     assert "metacheck manual" not in module_report(module_run(pc.test_paper(["x"]), str(path)))
+
+
+def test_fill_leaves_a_percent_s_in_a_value_alone() -> None:
+    # the slots are filled at once, as sprintf() does: a title with "%s" keeps it
+    assert _fill("a %s b %s c 100%", ["x %s", "y"]) == "a x %s b y c 100%"
+    with pytest.raises(ValueError):
+        _fill("%s", ["x", "y"])
