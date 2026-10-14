@@ -1,0 +1,18 @@
+{
+  "_embedded": {
+    "stash:files": [
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/70021"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/70021/download"
+          }
+        },
+        "path": "empty.txt",
+        "size": 0
+      }
+    ]
+  }
+}
