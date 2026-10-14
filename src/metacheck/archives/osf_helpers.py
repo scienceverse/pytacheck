@@ -669,6 +669,210 @@ def _osf_parse_response(
 
 
 # ---------------------------------------------------------------------------
+# listing a component tree in few requests
+# ---------------------------------------------------------------------------
+
+
+def _side_listing(url: str) -> Any:
+    """``osf_get_all_pages(url)`` for a shortcut that falls back when it fails.
+
+    The result never marks the surrounding :func:`~metacheck.archives.osf.osf_info`
+    listing as incomplete (a failed shortcut is not a failed listing: the old
+    route lists the same items); ``None`` when the request raises.
+    """
+    from metacheck.archives.osf import _LISTING_COMPLETE, osf_get_all_pages
+
+    token = _LISTING_COMPLETE.set(None)
+    try:
+        return osf_get_all_pages(url)
+    except Exception:
+        return None
+    finally:
+        _LISTING_COMPLETE.reset(token)
+
+
+def _osf_tree(
+    osf_id: str, osf_type: Any, root: Any, listings: dict[str, Any] | None = None
+) -> dict[str, Any] | None:
+    """The components below an OSF node and every node's storage providers, in few requests.
+
+    Port of R/archive-osf-helpers.R::.osf_tree(). Walking the tree node by node
+    costs two requests per component (its ``/children/`` and its ``/files/``);
+    ``/<osf_type>/?filter[root]=<root>&embed=files`` lists every component of the
+    project *root*, at every depth, 100 per page, each with its storage providers
+    embedded. Only *osf_id* and the nodes below it (followed through each node's
+    parent) are kept. This listing leaves out a private component that the
+    token's owner can see without being a contributor to it, which is not part
+    of what a paper shares with its readers.
+
+    An embedded provider list holds only its first page (10 providers): a node
+    with more, or whose embed failed, has its ``/files/`` link returned in
+    ``missing``, to be listed the old way. *listings* keeps the listing of each
+    project for the caller's next node in the same project.
+
+    Returns ``{"nodes": parsed components below osf_id (or None), "providers":
+    parsed provider rows of osf_id and those components (or None), "missing":
+    files links}``, or ``None`` when the tree cannot be listed like this
+    (request failed, listing incomplete, *osf_id* not in it): the caller then
+    walks it node by node.
+    """
+    from metacheck.archives.osf import _api
+
+    if osf_type not in ("nodes", "registrations") or not isinstance(root, str) or not root:
+        return None
+    if "view_only" in osf_id:
+        return None  # a view-only link's token would not reach the listing
+    url = f"{_api()}/{osf_type}/?filter[root]={root}&embed=files"
+    if listings is not None and url in listings:
+        records = listings[url]
+    else:
+        records = _side_listing(url)
+        if listings is not None:
+            listings[url] = records
+    if (
+        not isinstance(records, list)
+        or getattr(records, "osf_error", None) is not None
+        or getattr(records, "osf_incomplete", None)
+        or not records
+    ):
+        return None
+    records = _records(records)
+    if not any(r.get("id") == osf_id for r in records):
+        return None
+
+    # osf_id and everything below it
+    parent = {
+        r["id"]: _get(r, "relationships", "parent", "data", "id")
+        for r in records
+        if isinstance(r.get("id"), str)
+    }
+    keep = {osf_id}
+    frontier = {osf_id}
+    while frontier:
+        frontier = {i for i, p in parent.items() if p in frontier and i not in keep}
+        keep |= frontier
+    sub = [r for r in records if r.get("id") in keep]
+    below = [r for r in sub if r.get("id") != osf_id]
+
+    providers: list[dict[str, Any]] = []
+    missing: list[str] = []
+    for rec in sub:
+        emb = _get(rec, "embeds", "files")
+        data = _get(emb, "data")
+        total = _get(emb, "links", "meta", "total")
+        if isinstance(data, list) and data and (not isinstance(total, int) or len(data) >= total):
+            providers.extend(d for d in data if isinstance(d, dict))
+        else:
+            # no embed, an embed error, or more providers than its first page held
+            link = _get(rec, "relationships", "files", "links", "related", "href")
+            if isinstance(link, str):
+                missing.append(link)
+    return {
+        "nodes": _osf_parse_response(below) if below else None,
+        "providers": _osf_parse_response(providers) if providers else None,
+        "missing": missing,
+    }
+
+
+#: an OSF node's files link for its GitHub add-on's top folder
+_GITHUB_FILES_LINK = re.compile(r"/nodes/([a-z0-9]+)/files/github/?$")
+
+
+def _osf_github_files(node: str) -> pd.DataFrame | None:
+    """A GitHub repository linked to an OSF node, listed through GitHub itself.
+
+    Port of R/archive-osf-helpers.R::.osf_github_files(). Through the OSF, a
+    linked repository is listed one folder per (slow) proxied request, without
+    file sizes; :func:`~metacheck.archives.github.github_tree_files` lists it in
+    two requests, with sizes. The node's ``/addons/github/`` settings name the
+    repository (``owner/repo:``). The rows are shaped like
+    :func:`_osf_file_data`'s, folders first, with download links on
+    raw.githubusercontent.com; each ``osf_id`` is a made-up
+    ``<node>-github-<n>`` (only the OSF's proxy assigns real ones), unique and
+    safe as a file name.
+
+    ``None`` whenever this route cannot be used (no GitHub settings, a branch
+    other than the default, a repository GitHub does not list, such as a
+    private one the OSF shows through its owner's account): the caller then
+    lists it through the OSF.
+    """
+    from metacheck.archives.github import github_tree_files
+    from metacheck.archives.osf import _api
+    from metacheck.fileinfo.category import filetype
+
+    addon = _side_listing(f"{_api()}/nodes/{node}/addons/github/")
+    folder_id = _get(addon, "attributes", "folder_id") if isinstance(addon, dict) else None
+    if not isinstance(folder_id, str) or not folder_id:
+        return None
+    repo, _, branch = folder_id.partition(":")
+    if branch or not re.fullmatch(r"[^/\s]+/[^/\s]+", repo):
+        return None
+    try:
+        gh = github_tree_files(repo)
+    except Exception:
+        return None
+    files = gh.get("files")
+    if (
+        gh.get("gated")
+        or not isinstance(files, pd.DataFrame)
+        or len(files) == 0
+        or not {"name", "path", "download_url", "size"} <= set(files.columns)
+    ):
+        return None
+
+    names = [str(n) for n in files["name"].tolist()]
+    paths = [str(p) for p in files["path"].tolist()]
+    dirs: list[str] = []
+    for p in paths:
+        parts = p.split("/")
+        dirs.extend("/".join(parts[:k]) for k in range(1, len(parts)))
+    dirs = list(dict.fromkeys(dirs))
+
+    def rows(kind: str, ids: list[str], names: list[str], paths: list[str], **cols: Any) -> Any:
+        n = len(ids)
+        na = [None] * n
+        return _frame(
+            {
+                "osf_id": ids,
+                "name": names,
+                "description": na,
+                "provider": "github",
+                "osf_type": "files",
+                "kind": kind,
+                "filetype": cols.get("filetype", na),
+                "public": na,
+                "category": na,
+                "size": cols.get("size", na),
+                "downloads": na,
+                "path": paths,
+                "self": na,
+                "files": na,
+                "download_url": cols.get("download_url", na),
+                "parent": node,
+                "project": node,
+            },
+            n,
+        )
+
+    folders = rows(
+        "folder",
+        [f"{node}-github-dir-{k}" for k in range(1, len(dirs) + 1)],
+        [d.rpartition("/")[2] for d in dirs],
+        [f"/{d}/" for d in dirs],
+    )
+    file_rows = rows(
+        "file",
+        [f"{node}-github-{k}" for k in range(1, len(paths) + 1)],
+        names,
+        [f"/{p}" for p in paths],
+        filetype=filetype(names).tolist(),
+        size=files["size"].tolist(),
+        download_url=files["download_url"].tolist(),
+    )
+    return bind_rows([folders, file_rows])
+
+
+# ---------------------------------------------------------------------------
 # structuring API data
 # ---------------------------------------------------------------------------
 
