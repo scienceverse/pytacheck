@@ -262,7 +262,7 @@ def test_renv_bootstrap_is_not_analysis_code(paper: pc.Paper, area_fixtures: Pat
     )
     mo = module_run(chain(paper, code_tbl, None, PLAN), "reproducibility_check")
     assert mo.traffic_light == "na"
-    assert "this phase runs R code only" in mo.summary_text
+    assert "We found no R or Python code files to assess" in mo.summary_text
 
 
 def test_dependencies_include_code_check_packages(paper: pc.Paper, area_fixtures: Path) -> None:
@@ -417,14 +417,22 @@ def test_null_paper_is_an_error() -> None:
         module_run(fake, "reproducibility_check")
 
 
-def test_argument_checks(paper: pc.Paper, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_argument_checks(
+    paper: pc.Paper, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
     with pytest.raises(pc.ModuleError, match="should be one of"):
         module_run(paper, "reproducibility_check", sandbox="vm")
     from metacheck.repro import core
 
+    # the process sandbox needs R once the paper has R code to run
     monkeypatch.setattr(core, "_rscript", lambda: None)
     with pytest.raises(pc.ModuleError, match='sandbox = "process" needs R'):
-        module_run(paper, "reproducibility_check", execute=True, sandbox="process")
+        module_run(
+            exec_chain(paper, "ok.R", repro_fixture),
+            "reproducibility_check",
+            execute=True,
+            sandbox="process",
+        )
     from metacheck.repro import docker
 
     monkeypatch.setattr(docker, "repro_docker_available", lambda: {"ok": False, "msg": "no daemon"})
@@ -723,7 +731,7 @@ def test_docker_sandbox_mocked(
         warnings.simplefilter("always")
         mo = module_run(fake, "reproducibility_check", execute=True, sandbox="docker")
     assert any("declared R version 4.1.2" in str(x.message) for x in w)
-    assert seen["image"] == "ghcr.io/scienceverse/metacheck_r:latest"
+    assert seen["image"] == "ghcr.io/scienceverse/metacheck_r_large:latest"
     assert seen["order"] == ["ok.R"]
     assert mo.table["outcome"].tolist() == ["ran_ok"]
 
@@ -735,6 +743,28 @@ def test_docker_sandbox_mocked(
         docker_use_declared_version=True,
     )
     assert seen["image"] == "rocker/r-ver:4.1.2"
+
+
+def test_docker_redirects_writes_to_the_containers_output(
+    paper: pc.Paper, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # the container sees the sandbox at /sandbox; metacheck writes the host's path (UX-repro-7)
+    from metacheck.repro import docker
+
+    seen: dict[str, str] = {}
+
+    def fake_run_docker(run_tbl: pd.DataFrame, order: Any, **kw: Any) -> pd.DataFrame:
+        seen["script"] = Path(run_tbl["script_path"].iloc[0]).read_text(encoding="utf-8")
+        return _run_frame([{"fn": "writes_then_reads.R", "outcome": "ran_ok"}])
+
+    monkeypatch.setattr(docker, "repro_docker_available", lambda: {"ok": True, "msg": ""})
+    monkeypatch.setattr(docker, "repro_run_scripts_docker", fake_run_docker)
+    module_run(
+        exec_chain(paper, "writes_then_reads.R", repro_fixture),
+        "reproducibility_check",
+        execute=True,
+    )
+    assert 'write.csv(summ,"/sandbox/output/intermediate.csv", row.names = FALSE)' in seen["script"]
 
 
 def test_batch_runs_papers_concurrently(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
