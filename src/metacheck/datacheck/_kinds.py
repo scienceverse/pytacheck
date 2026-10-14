@@ -107,8 +107,11 @@ def as_text(x: Any) -> list[str | None]:
         return _values(col)
     if isinstance(col.dtype, pd.CategoricalDtype):
         col = col.astype(object)
-    elif is_integer(col) and bool((np.abs(_floats(col)) > 2147483647).any()):
-        col = col.astype("float64")  # beyond R's integers: a double
+    elif is_integer(col):
+        if bool((np.abs(_floats(col)) > 2147483647).any()):
+            col = col.astype("float64")  # beyond R's integers: a double
+        else:  # an R integer prints as its digits
+            return [None if v is None else str(int(v)) for v in _values(col)]
     cache: dict[tuple[type, Any], str | None] = {}
     out: list[str | None] = []
     for v in _values(col):
@@ -119,6 +122,22 @@ def as_text(x: Any) -> list[str | None]:
         except TypeError:  # an unhashable value
             out.append(_text(v))
     return out
+
+
+def integer_numbers(x: Any) -> list[float | None] | None:
+    """``as.numeric(as.character(x))`` of an R integer column, without the text; else ``None``.
+
+    An integer prints as its digits, which read back as the same number, so
+    the text is skipped. ``None`` for any other column (and for integers beyond
+    R's range, which print as doubles).
+    """
+    col = column(x)
+    if isinstance(col.dtype, pd.CategoricalDtype | pd.StringDtype) or not is_integer(col):
+        return None
+    floats = _floats(col)
+    if bool((np.abs(floats) > 2147483647).any()):
+        return None
+    return [None if f != f else f for f in floats.tolist()]
 
 
 def _values(col: pd.Series) -> list[Any]:

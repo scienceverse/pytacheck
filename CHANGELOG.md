@@ -15,6 +15,14 @@ package's. The R commit each release is compared against is in
 - **Added:** "Run checks with: R metacheck / Python (experimental)" in the app, under "Read PDFs with", where R runs metacheck (on a shared server only with `METACHECK_APP_R_ENGINE=on`), with R chosen. With R, the page offers only R metacheck's checks, checks papers only, runs the data check in R too, and the report and the results line name R metacheck's version.
 - How the R engine shows R's results is D87 in docs/UPSTREAM_ISSUES.md.
 
+### Faster: data_check on large data files
+
+- **Faster:** `data_check` no longer writes out every cell of a numeric, logical or date column when it looks for a file manifest (a table that lists the repository's files). Such a column can only list files when a file in the repository is named like a number, so it is skipped otherwise.
+- **Faster:** the careless-responding screen computes each respondent's IRV only for the respondents it flags, as only theirs is reported.
+- **Faster:** an integer column is written out as its digits and read back as numbers without going through the text value by value.
+- On a package with a 100,000-row CSV, a 300 x 400 survey and an xlsx file, `data_check` takes 11 s instead of 21 s (metacheck 0.3.3.1: 9.5 s). Its results are unchanged.
+- **Added:** `benchmarks/repo_bench.py` times repo_check, code_check and data_check on repository links in metacheck and pytacheck, each run cold, with the requests made per host.
+
 ## 0.4.0a2
 
 Second pre-release on PyPI. Compared against the R package at commit
