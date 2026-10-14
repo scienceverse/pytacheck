@@ -35,6 +35,12 @@ before, run `pip uninstall pytacheck` first: the old and the new package share f
 The Python module is still called `pytacheck` (`import pytacheck`) and so is one of the
 commands; `metacheck` is the same command.
 
+R's `.rds` and `.RData` files (in data packages) are read by a small C extension,
+which the wheels for Linux, macOS and Windows include. An install from source
+compiles it when a C compiler is found; without one, a Python reader that gives
+the same results, about ten times slower, is used instead. `METACHECK_PURE_PYTHON=1`
+skips the compiler, and `METACHECK_RDS_READER=python` picks the Python reader at run time.
+
 To try the app in your browser, with [uv](https://docs.astral.sh/uv/):
 
 ```bash

@@ -104,6 +104,7 @@ ENV_VARS: dict[str, EnvVar] = {
     "CONCEPT_MODEL": EnvVar(("METACHECK_CONCEPT_MODEL",)),
     "CONCEPT_THREADS": EnvVar(("METACHECK_CONCEPT_THREADS",)),
     "CONCEPT_THRESHOLD": EnvVar(("METACHECK_CONCEPT_THRESHOLD",)),
+    "RDS_READER": EnvVar(("METACHECK_RDS_READER",)),
     # the R engine (metacheck.rengine): new, so no old names
     "R_ENGINE_RSCRIPT": EnvVar(("METACHECK_R_ENGINE_RSCRIPT",)),
     "API_ENGINE": EnvVar(("METACHECK_API_ENGINE",)),

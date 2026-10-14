@@ -10,6 +10,12 @@ compact sequences and wrappers. Nothing is evaluated -- environments and
 namespaces are opaque placeholders -- so any object R could restore can be
 walked safely.
 
+The walk over the stream is done in C (``_rdata_c``, built when pytacheck is
+installed where a C compiler is available) and builds the same objects as the
+Python reader here, which is used without it, for ASCII streams, and whenever
+the C reader stops (the Python reader then gives the result or R's error).
+``METACHECK_RDS_READER=python`` turns the C reader off.
+
 :func:`workspace_first_data_frame` reproduces ``load()`` into ``new.env()``
 followed by ``Filter(is.data.frame, as.list(e))[[1]]``, including the order
 in which R's hashed environment lists its bindings.
@@ -20,10 +26,12 @@ from __future__ import annotations
 import bz2
 import contextlib
 import datetime as dt
+import gc
 import gzip
 import lzma
 import math
 import struct
+import sysconfig
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -31,6 +39,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from metacheck._env import env_get
 from metacheck.datacheck._strings import RAW_STRING
 
 __all__ = ["RObject", "r_frame_to_pandas", "read_rdata", "read_rds", "workspace_first_data_frame"]
@@ -40,10 +49,10 @@ NILSXP, SYMSXP, LISTSXP, CLOSXP, ENVSXP, PROMSXP, LANGSXP = 0, 1, 2, 3, 4, 5, 6
 SPECIALSXP, BUILTINSXP, CHARSXP, LGLSXP, INTSXP, REALSXP = 7, 8, 9, 10, 13, 14
 CPLXSXP, STRSXP, DOTSXP, VECSXP, EXPRSXP, BCODESXP = 15, 16, 17, 19, 20, 21
 EXTPTRSXP, WEAKREFSXP, RAWSXP, OBJSXP = 22, 23, 24, 25
-# pseudo-SEXPTYPEs of the serialization format
+# pseudo-SEXPTYPEs of the serialization format (R's src/main/serialize.c)
 REFSXP, NILVALUE_SXP, GLOBALENV_SXP, UNBOUNDVALUE_SXP = 255, 254, 253, 252
-MISSINGARG_SXP, BASENAMESPACE_SXP, NAMESPACESXP, PACKAGESXP = 251, 247, 249, 250
-PERSISTSXP, CLASSREFSXP, GENERICREFSXP, BCREPDEF, BCREPREF = 248, 246, 245, 244, 243
+MISSINGARG_SXP, BASENAMESPACE_SXP, NAMESPACESXP, PACKAGESXP = 251, 250, 249, 248
+PERSISTSXP, CLASSREFSXP, GENERICREFSXP, BCREPDEF, BCREPREF = 247, 246, 245, 244, 243
 EMPTYENV_SXP, BASEENV_SXP, ATTRLANGSXP, ATTRLISTSXP, ALTREP_SXP = 242, 241, 240, 239, 238
 
 UTF8_MASK, LATIN1_MASK, BYTES_MASK, ASCII_MASK = 1 << 3, 1 << 2, 1 << 1, 1 << 6
@@ -55,7 +64,7 @@ class RSerializationError(ValueError):
     """The stream is not valid R serialization (or uses an unsupported feature)."""
 
 
-@dataclass
+@dataclass(slots=True)
 class RObject:
     """A deserialized R value.
 
@@ -90,10 +99,9 @@ NULL = None
 
 
 class _Stream:
-    def __init__(self, data: bytes) -> None:
+    def __init__(self, data: bytes, offset: int = 0) -> None:
         self.data = data
-        self.pos = 0
-        fmt = data[:2]
+        fmt = data[offset : offset + 2]
         if fmt == b"X\n":
             self.kind = "xdr"
         elif fmt == b"B\n":
@@ -102,7 +110,7 @@ class _Stream:
             self.kind = "ascii"
         else:
             raise RSerializationError("unknown input format")
-        self.pos = 2
+        self.pos = offset + 2
         self.refs: list[Any] = []
 
     # -- primitives ----------------------------------------------------------
@@ -220,7 +228,7 @@ class _Stream:
             return NULL
         if t in (EMPTYENV_SXP, BASEENV_SXP, GLOBALENV_SXP, BASENAMESPACE_SXP):
             return RObject(ENVSXP, name={242: "emptyenv", 241: "baseenv", 253: "globalenv",
-                                         247: "base"}[t])  # fmt: skip
+                                         250: "base"}[t])  # fmt: skip
         if t in (UNBOUNDVALUE_SXP, MISSINGARG_SXP):
             return RObject(t)
         if t == REFSXP:
@@ -287,8 +295,7 @@ class _Stream:
             obj = RObject(t, self.reals(self.length()))
         elif t == CPLXSXP:
             n = self.length()
-            parts = self.reals(2 * n)
-            obj = RObject(t, parts[0::2] + 1j * parts[1::2])
+            obj = RObject(t, self.reals(2 * n).view(np.complex128))
         elif t == STRSXP:
             n = self.length()
             obj = RObject(t, [self._charsxp() for _ in range(n)])
@@ -492,8 +499,8 @@ def _decompress(raw: bytes) -> bytes:
     return raw
 
 
-def _unserialize(data: bytes) -> Any:
-    st = _Stream(data)
+def _unserialize_py(data: bytes, offset: int = 0) -> Any:
+    st = _Stream(data, offset)
     version = st.integer()
     st.integer()  # writer version
     st.integer()  # minimal reader version
@@ -503,6 +510,75 @@ def _unserialize(data: bytes) -> Any:
     elif version != 2:
         raise RSerializationError(f"cannot read workspace version {version}")
     return st.item()
+
+
+try:
+    from metacheck.datacheck import _rdata_c  # type: ignore[attr-defined]
+except ImportError:  # built without a C compiler: the Python reader
+    _rdata_c = None
+else:
+    _rdata_c.setup(
+        RObject,
+        Latin1Str,
+        _altrep,
+        np.empty,
+        np.dtype(np.int32),
+        np.dtype(np.float64),
+        np.dtype(np.complex128),
+    )
+
+
+def rds_reader() -> str:
+    """The reader of ``.rds``/``.RData`` files: ``"c"``, or ``"python"`` without the C
+    reader or with ``METACHECK_RDS_READER=python``."""
+    if _rdata_c is None or (env_get("RDS_READER") or "").strip().lower() == "python":
+        return "python"
+    return "c"
+
+
+# a free-threaded build walks the whole heap to freeze it
+_PROMOTE = not sysconfig.get_config_var("Py_GIL_DISABLED")
+# The objects in the permanent generation when this module was loaded. Python
+# 3.12 starts with a few hundred tuples there; more than that later means the
+# program froze objects itself (before forking workers, say), and
+# gc.unfreeze() would undo that.
+_frozen_at_import = gc.get_freeze_count()
+
+
+@contextlib.contextmanager
+def _gc_paused() -> Any:
+    """The cyclic collector off while a large object is built.
+
+    A fitted model is about a million new lists, tuples and objects, none of
+    them garbage. The collector would walk them again and again while they are
+    built, and then once per generation as soon as it is back on (half a second
+    for one model). So they go straight to the oldest generation instead
+    (``gc.freeze()`` and ``gc.unfreeze()``, as mypy does after it has built its
+    trees), where only a full collection looks at them, unless the program
+    froze objects itself.
+    """
+    global _frozen_at_import
+    was = gc.isenabled()
+    gc.disable()
+    try:
+        yield
+    finally:
+        if _PROMOTE and gc.get_freeze_count() <= _frozen_at_import:
+            gc.freeze()
+            gc.unfreeze()
+            _frozen_at_import = 0
+        if was:
+            gc.enable()
+
+
+def _unserialize(data: bytes, offset: int = 0) -> Any:
+    with _gc_paused():
+        if data[offset : offset + 2] in (b"X\n", b"B\n") and rds_reader() == "c":
+            try:
+                return _rdata_c.unserialize(data, offset)
+            except Exception:  # noqa: S110 - the Python reader decides, with R's message
+                pass
+        return _unserialize_py(data, offset)
 
 
 def read_rds(path: str | Path) -> Any:
@@ -516,7 +592,7 @@ def read_rdata(path: str | Path) -> list[tuple[str, Any]]:
     magic = data[:5]
     if magic not in (b"RDX2\n", b"RDX3\n", b"RDB2\n", b"RDB3\n", b"RDA2\n", b"RDA3\n"):
         raise RSerializationError("bad restore file magic number (file may be corrupted)")
-    obj = _unserialize(data[5:])
+    obj = _unserialize(data, 5)
     if not isinstance(obj, RObject) or obj.type != LISTSXP:
         return []
     return [(tag or "", val) for tag, val in obj.value or []]
@@ -684,6 +760,48 @@ def _is_flattened(col: RObject) -> bool:
     return isinstance(dim, RObject) and len(dim.value) == 2
 
 
+def _masked_ints(v: np.ndarray, na: int) -> pd.arrays.IntegerArray:
+    """An ``Int64`` array of R integers, *na* (R's NA) missing."""
+    mask = v == na
+    values = v.astype(np.int64)
+    values[mask] = 1  # what pandas stores under the mask
+    return pd.arrays.IntegerArray(values, mask)
+
+
+# the days since 1970-01-01 a datetime.date can hold (years 1 to 9999)
+_DATE_DAYS = (
+    (dt.date.min - dt.date(1970, 1, 1)).days,
+    (dt.date.max - dt.date(1970, 1, 1)).days,
+)
+
+
+def _r_days(v: np.ndarray, t: int) -> np.ndarray:
+    """The days of an R ``Date`` vector as doubles (an integer one's NA as NaN)."""
+    if t == INTSXP:
+        return np.where(v == NA_INTEGER, np.nan, v.astype(np.float64))
+    return v.astype(np.float64)
+
+
+def _r_dates(days: np.ndarray) -> np.ndarray:
+    """R's ``Date`` values as ``datetime.date`` objects (``None`` for NA and infinities)."""
+    finite = np.isfinite(days)
+    whole = np.floor(days[finite])
+    if whole.size and (whole.min() < _DATE_DAYS[0] or whole.max() > _DATE_DAYS[1]):
+        # out of datetime.date's range: its error
+        return np.array(
+            [
+                None
+                if not math.isfinite(d)
+                else dt.date(1970, 1, 1) + dt.timedelta(days=math.floor(d))
+                for d in days
+            ],
+            dtype=object,
+        )
+    out = np.full(len(days), None, dtype=object)
+    out[finite] = whole.astype(np.int64).astype("datetime64[D]").astype(object)
+    return out
+
+
 def _column_to_pandas(col: Any, n: int) -> pd.Series:
     if not isinstance(col, RObject):
         return pd.Series([None] * n, dtype=object)
@@ -697,28 +815,24 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
         return pd.Series(_flatten_matrix(col), dtype=RAW_STRING)
     if t == INTSXP and "factor" in classes:
         levels = [_as_bytes_str(x) for x in _strvec(col.attr("levels"))]
-        codes = np.where(v == NA_INTEGER, -1, v.astype(np.int64) - 1)
         cats = list(dict.fromkeys(levels))
-        mapping = [cats.index(lv) if lv in cats else -1 for lv in levels]
-        codes = np.array([mapping[c] if c >= 0 else -1 for c in codes], dtype=np.int64)
+        position = {lv: i for i, lv in enumerate(cats)}
+        mapping = np.array([position[lv] for lv in levels], dtype=np.int64)
+        codes = v.astype(np.int64) - 1  # NA and codes below 1 are missing
+        known = codes >= 0
+        if known.any() and codes[known].max() >= len(mapping):
+            raise IndexError("list index out of range")
+        mapped = np.full(len(codes), -1, dtype=np.int64)
+        mapped[known] = mapping[codes[known]]
         return pd.Series(
             pd.Categorical.from_codes(
-                codes.tolist(),  # type: ignore[call-overload]
-                categories=cats,
+                mapped,
+                categories=cats,  # type: ignore[call-overload]
                 ordered="ordered" in classes,
             )
         )
     if t in (INTSXP, REALSXP) and "Date" in classes:
-        days = v.astype(np.float64)
-        return pd.Series(
-            [
-                None
-                if not math.isfinite(d)
-                else dt.date(1970, 1, 1) + dt.timedelta(days=math.floor(d))
-                for d in days
-            ],
-            dtype=object,
-        )
+        return pd.Series(_r_dates(_r_days(v, t)), dtype=object)
     if t in (INTSXP, REALSXP) and "POSIXct" in classes:
         secs = pd.Series(
             np.where(v == NA_INTEGER, np.nan, v) if t == INTSXP else v, dtype="float64"
@@ -732,20 +846,22 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
                 out = out.dt.tz_convert(tz[0])
         return out
     if t == REALSXP and "integer64" in classes:
-        ints = v.view(np.int64)
-        return pd.Series([None if x == -(2**63) else int(x) for x in ints.tolist()], dtype="Int64")
+        return pd.Series(_masked_ints(v.view(np.int64), -(2**63)))
     if t == LGLSXP:
-        return pd.Series(
-            [None if x == NA_INTEGER else bool(x) for x in v.tolist()], dtype="boolean"
-        )
+        na = v == NA_INTEGER
+        values = v != 0
+        values[na] = False  # what pandas stores under the mask
+        return pd.Series(pd.arrays.BooleanArray(values, na))
     if t == INTSXP:
-        return pd.Series([None if x == NA_INTEGER else int(x) for x in v.tolist()], dtype="Int64")
+        return pd.Series(_masked_ints(v, NA_INTEGER))
     if t == REALSXP:
         return pd.Series(np.asarray(v, dtype=np.float64), dtype="float64")
     if t == CPLXSXP:
         return pd.Series(v, dtype=complex)
     if t == STRSXP:
-        return pd.Series([_as_bytes_str(x) for x in v], dtype=RAW_STRING)
+        if Latin1Str in set(map(type, v)):
+            v = [_as_bytes_str(x) for x in v]
+        return pd.Series(v, dtype=RAW_STRING)
     if t in (VECSXP, EXPRSXP):
         return pd.Series([_flatten_list_cell(e, 20) for e in v], dtype=RAW_STRING)
     if t == RAWSXP:
@@ -786,12 +902,7 @@ def _as_character_vec(obj: Any) -> list[str | None]:
         levels = _strvec(obj.attr("levels"))
         return [None if x == NA_INTEGER else levels[x - 1] for x in v.tolist()]
     if t in (INTSXP, REALSXP) and "Date" in classes:
-        return [
-            None
-            if not math.isfinite(float(d))
-            else (dt.date(1970, 1, 1) + dt.timedelta(days=math.floor(float(d)))).isoformat()
-            for d in v.tolist()
-        ]
+        return [None if d is None else d.isoformat() for d in _r_dates(_r_days(v, t))]
     if t == LGLSXP:
         return [None if x == NA_INTEGER else ("TRUE" if x else "FALSE") for x in v.tolist()]
     if t == INTSXP:

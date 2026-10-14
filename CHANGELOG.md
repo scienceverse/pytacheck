@@ -7,6 +7,28 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Performance: a C reader of `.rds` and `.RData` files
+
+- **Added:** R's serialization format, which `data_read_head()` and `data_check` read `.rds` and `.RData` files with, is read by a small C extension (`metacheck.datacheck._rdata_c`). It builds the same Python objects as the Python reader, which stays as the fallback (an ASCII stream, `saveRDS(ascii = TRUE)`, is still read by it). An 8 MB rstanarm model (22 MB uncompressed) is parsed in 0.2 s, where the Python reader took 2.4 to 3.9 s; R's `readRDS()` takes 0.24 s.
+- **Added:** the wheels for Linux (x86-64 and ARM), macOS (ARM and Intel) and Windows include the extension, built once per platform for every supported Python. An install from source compiles it when a C compiler is found and otherwise installs the Python reader, as before; `METACHECK_PURE_PYTHON=1` skips the compiler. `METACHECK_RDS_READER=python` picks the Python reader at run time (docs/ENVIRONMENT.md). The Docker images build it.
+- **Changed:** both readers pause Python's garbage collector while they build an object and then move what they built to its oldest generation, so the collector does not walk a fitted model's million objects right after the read (half a second per model). Together with the C reader, `data_read_head()` of model fits and workspaces of 8 to 38 MB went from 2.7 to 3.0 s to 0.28 to 0.57 s (R: 0.24 to 0.46 s).
+- **Changed:** data frame columns from `.rds` and `.RData` files are converted to pandas with numpy instead of value by value (integers, logicals, factors, dates, `integer64`, text): 200,000 rows and 8 columns in 0.05 s instead of 0.63 s. The values and types are the same.
+- **Fixed:** an `.rds` or `.RData` file that holds R's base namespace, a package environment or an environment saved by name (as lazy-load databases and `refhook` write it) was reported as unreadable ("names in persistent strings are not supported yet", "unknown type 0"): four type codes of R's format were swapped.
+- **Fixed:** an integer `Date` column (data.table's `IDate`) with a missing value made its file unreadable ("days=-2147483648; must have magnitude <= 999999999"); the value is now NA, as R shows it.
+- **Fixed:** complex numbers with an infinite part are read exactly (`1+Inf i` had become `NaN+Inf i`, and `-0+1i` lost its sign), and without numpy warnings.
+- **Changed:** an object nested deeper than Python's recursion limit allows (about 330 levels, for example a formula of 400 terms) is read by the C reader, as R reads it, instead of being reported as unreadable.
+
+### Faster: data_check, from an audit of its slow spots
+
+- **Faster:** a column of doubles is written out (`as.character()`) with C's `%.15g` wherever that is R's own text, and only the other values (scientific notation, trailing zeros) go through the R formatting; logical and date-time columns are written out with numpy. The text is the same (checked on 400,000 random doubles).
+- **Faster:** a column's sample values write out only its first five non-missing cells instead of the whole column.
+- **Faster:** the delimited-file reader counts each line's separators and finds blank lines with numpy searches instead of sums over every byte, and looks for a quoted `"NA"` only in a file that has one.
+- **Faster:** an xlsx sheet read for a preview is parsed only up to the last row it keeps, as readxl stops there; plain numbers and cell references take a fast path.
+- **Faster:** the careless-responding screen reuses the scale blocks found while classifying the file's columns instead of looking for them again, and a text column's distinct values are parsed as numbers once each.
+- **Faster:** the file-manifest search stops writing out a column once too few of its cells are left to name the repository's files.
+- **Fixed:** writing out a date-time column with a missing value (`as.character()` in the column checks, and a row through such a column) failed with "Unknown format code 'd'"; the missing value is NA, as in R.
+- On the fivethirtyeight/data repository, `data_check` takes 207 s instead of 303 s (R metacheck: 342 s). On generated packages it takes 26 s instead of 57 s for a 45 MB CSV (200,000 rows), 7 s instead of 19 s for a 20,000-row xlsx file and 7 s instead of 13 s for a 50,000-row SPSS file. The results are the same in each.
+
 ### Added: an R engine (R metacheck's own checks, shown with pytacheck's report)
 
 - **Added:** `metacheck.rengine` runs R metacheck's modules in an `Rscript` subprocess, one per run, and turns their outputs into `ModuleOutput` objects with the parity tooling's encoder (`canonical.R`), so pytacheck's report shows them as it shows its own. R reads the same paper file as pytacheck. A run ends R, and everything R started, at its time limit, when it is stopped, and when its process is ended. `pip install "metacheck[r]"` names the choice (it adds no Python package); R and the metacheck R package are installed separately, and `pytacheck r-engine` says whether they work. See [docs/R_ENGINE.md](docs/R_ENGINE.md).

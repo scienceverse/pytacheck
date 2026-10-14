@@ -160,15 +160,17 @@ def _lines(
     """
     quotes = _quotes(buf, sep, escape, loose)
     outside = quotes.outside
-    after = np.append(buf[1:], 0)
+    after = np.append(buf[1:], np.uint8(0))  # uint8: a Python 0 would make it int64
     eol = ((buf == 10) | ((buf == 13) & (after != 10))) & outside
     starts = np.append(0, np.flatnonzero(eol) + 1)
     starts = starts[starts < len(buf)]
-    seps = np.add.reduceat(((buf == sep) & outside).view(np.uint8), starts, dtype=np.int64)
+    # separators per line: count the separator positions between line starts
+    at = np.flatnonzero((buf == sep) & outside)
+    seps = np.diff(np.searchsorted(at, np.append(starts, len(buf))))
     space = np.zeros(256, bool)
     space[[10, 13, 32] + ([9] if sep != 9 else [])] = True
-    text = np.add.reduceat((~space[buf]).view(np.uint8), starts, dtype=np.int64)
-    return starts, seps + 1, text == 0, quotes
+    text = np.logical_or.reduceat(~space[buf], starts)  # a line with a non-blank byte
+    return starts, seps + 1, ~text, quotes
 
 
 def _table(counts: np.ndarray, blank: np.ndarray, jump: int) -> tuple[int, int]:
@@ -268,10 +270,15 @@ def _unpadded(chunk: np.ndarray, outside: np.ndarray, sep: int, tabs: bool) -> b
     solid = np.flatnonzero(~blank)
     if not len(pos) or not len(solid):
         return chunk.tobytes()
-    edge = np.isin(chunk, (sep, 10, 13))
+
+    def edge(i: np.ndarray) -> np.ndarray:
+        b = chunk[i]
+        out: np.ndarray = (b == sep) | (b == 10) | (b == 13)
+        return out
+
     k = np.searchsorted(solid, pos)  # the solid bytes on both sides of each blank
-    at_start = (k == 0) | edge[solid[np.maximum(k - 1, 0)]]
-    at_end = (k == len(solid)) | edge[solid[np.minimum(k, len(solid) - 1)]]
+    at_start = (k == 0) | edge(solid[np.maximum(k - 1, 0)])
+    at_end = (k == len(solid)) | edge(solid[np.minimum(k, len(solid) - 1)])
     return np.delete(chunk, pos[at_start | at_end]).tobytes()
 
 
@@ -312,7 +319,7 @@ def _read_plan(
     )
     if b"\r" in chunk:  # pandas' parser overflows on some lines that end in a lone CR
         chunk = chunk.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
-    if not fill:  # a quoted NA is text in a text column: mark it, pandas cannot tell
+    if not fill and b'"NA"' in chunk:  # a quoted NA is text in a text column: mark it
         around = b"[^" + re.escape(sep.encode()) + b"\r\n]"
         chunk = re.sub(rb'(?<!%b)"NA"(?!%b)' % (around, around), b'"\x1aNA"', chunk)
     try:

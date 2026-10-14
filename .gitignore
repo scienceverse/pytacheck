@@ -12,6 +12,9 @@ dist/
 coverage.xml
 htmlcov/
 .benchmarks/
+# the C reader of .rds files, built in place by an editable install
+src/metacheck/**/*.so
+src/metacheck/**/*.pyd
 # R
 .Rhistory
 .RData
