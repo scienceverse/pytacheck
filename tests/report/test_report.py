@@ -212,7 +212,8 @@ def test_report_pass_args(tmp_path, demo, test_module):
     qmd_txt = Path(r.save_path).read_text(encoding="utf-8")
     assert "Look for me in the text!" in qmd_txt
     # make sure marginal ran
-    assert "(#marginal-significance){.red}" in qmd_txt
+    assert "{#marginal-significance .red}" in qmd_txt
+    assert '<a href="#marginal-significance">Marginal Significance</a>' in qmd_txt
 
 
 def test_detected(tmp_path, demo):
@@ -309,7 +310,9 @@ def test_module_report_undefined_traffic_light(tmp_path):
     assert module_report(op).startswith("### Blue Module {#blue-module .blue}\n\nBlue.")
     assert module_report(op, header=0).startswith("Blue Module\n\nBlue.")
     qmd = report_qmd(op, pc.test_paper(["x"]))
-    assert "- [Blue Module](#blue-module){.blue}: Blue.  " in qmd
+    assert '<li class="mc-summary-row blue"><span class="mc-summary-icon"></span>' in qmd
+    assert '<a href="#blue-module">Blue Module</a>' in qmd
+    assert '<span class="mc-summary-text">Blue.</span>' in qmd
     assert "character(0)" not in qmd
 
 
@@ -330,7 +333,7 @@ def test_report_qmd_summary_text_with_several_parts(tmp_path):
     path.write_text(_TWO_PART, encoding="utf-8")
     paper = pc.test_paper(["x"])
     qmd = report_qmd(module_run(paper, str(path)), paper)
-    assert "- ✅️ [Two Part Module](#two-part-module){.green}: First part. Second part.  " in qmd
+    assert '<span class="mc-summary-text">First part. Second part.</span>' in qmd
 
 
 def test_report_qmd_without_paper():
@@ -368,7 +371,7 @@ def test_module_report_validation(demo, test_module):
 def test_module_report_details_wrapper(demo, test_module):
     # long reports are wrapped in a <details> block, short ones are not
     long = module_report(module_run(demo, "marginal"))
-    assert "<details><summary>View detailed feedback</summary><div>" in long
+    assert "<details><summary>View detailed feedback</summary>\n" in long
     short = module_report(module_run(pc.test_paper(["Nothing."]), "marginal"))
     assert "<details>" not in short
     # a report identical to the summary is dropped
@@ -452,11 +455,9 @@ def test_report_qmd_fail_and_na(test_module):
     # both only in the summary, not in the module sections
     assert "Modules\n" not in txt
     assert "☠️" in txt and "⬜" in txt
-    # a summary starting with a newline is indented under its bullet
-    assert (
-        ":     \n    * first item" in txt.replace("\n    *", "     \n    *", 1)
-        or "\n    * first item" in txt
-    )
+    # a summary that is a markdown list goes under its row
+    assert '<li class="mc-summary-row na">' in txt
+    assert "::: {.mc-summary-todo}\n* first item\n* second item\n:::" in txt
 
 
 def test_report_repository(tmp_path, test_module):

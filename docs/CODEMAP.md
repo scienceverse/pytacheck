@@ -785,7 +785,7 @@ Python: [archives/info_cache.py](../src/metacheck/archives/info_cache.py). Tests
 
 ### `R/report-helpers.R`
 
-Python: [report/blocks.py](../src/metacheck/report/blocks.py), [report/render.py](../src/metacheck/report/render.py). Tests: [tests/report](../tests/report).
+Python: [report/blocks.py](../src/metacheck/report/blocks.py), [report/render.py](../src/metacheck/report/render.py), [report/brief.py](../src/metacheck/report/brief.py). Tests: [tests/report](../tests/report).
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|

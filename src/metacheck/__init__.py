@@ -96,6 +96,7 @@ _EXPORTS: dict[str, str] = {
     "report_qmd": "metacheck.report.report",
     "report_repository": "metacheck.report.report",
     "report_table": "metacheck.report.blocks",
+    "report_type": "metacheck.report.blocks",
     "accuracy": "metacheck.validate",
     "validate": "metacheck.validate",
     # statistics
@@ -497,7 +498,7 @@ if TYPE_CHECKING:  # pragma: no cover
     )
     from metacheck.presets import preset, preset_list
     from metacheck.provenance import ModuleChain, RunRecord, rerun, run_modules
-    from metacheck.report.blocks import report_table
+    from metacheck.report.blocks import report_table, report_type
     from metacheck.report.emojis import emojis
     from metacheck.report.report import (
         module_report,
