@@ -17,6 +17,8 @@
 ".dryad_doi" = "metacheck.archives.dryad:_dryad_doi"
 "dryad_info" = "metacheck.archives.dryad:dryad_info"
 ".dryad_info" = "metacheck.archives.dryad:_dryad_info"
+".dryad_list_files" = "metacheck.archives.dryad:_dryad_list_files"
+".dryad_warn_if_no_key" = "metacheck.archives.dryad:_dryad_warn_if_no_key"
 ".dryad_headers" = "metacheck.archives.dryad:_dryad_headers"
 "dryad_pat" = "metacheck.archives.dryad:dryad_pat"
 ".dryad_pat" = "metacheck.archives.dryad:_dryad_pat"
@@ -26,6 +28,7 @@
 "dryad_file_download" = "metacheck.archives.dryad:dryad_file_download"
 ".dryad_zip_members" = "metacheck.archives.dryad:_dryad_zip_members"
 ".dryad_verify_downloads" = "metacheck.archives.dryad:_dryad_verify_downloads"
+".dryad_download_one_file" = "metacheck.archives.dryad:_dryad_http_failure"
 # R/archive-figshare.R
 ".figshare_vanity_hosts" = "metacheck.archives.figshare:_figshare_vanity_hosts"
 ".figshare_doi_prefix_hosts" = "metacheck.archives.figshare:_figshare_doi_prefix_hosts"

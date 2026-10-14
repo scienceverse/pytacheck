@@ -1,10 +1,11 @@
 {
-"repo_check.all_platforms": {"r": "44b127672b9dfd64", "py": "7812120f32fbc596", "diff": ["report[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_text[]", "table"]},
-"repo_check.all_platforms.paperlist": {"r": "6cafaa723523f0ef", "py": "2ca194612ab53316", "diff": ["report[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_text[]", "table"]},
+"repo_check.all_platforms": {"r": "44b127672b9dfd64", "py": "ae25ebe59f1d7005", "diff": ["report[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_text[]", "table"]},
+"repo_check.all_platforms.paperlist": {"r": "6cafaa723523f0ef", "py": "b3d933d314c379a8", "diff": ["report[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_text[]", "table"]},
 "repo_check.all_platforms.report": {"r": "fb213b9125907a35", "py": "ff92f0d292eb255a", "diff": ["[]"]},
 "repo_check.all_platforms.tables": {"r": "413c36a1c452a047", "py": "d693dea12f64b8f1", "diff": ["[]", "[].All Files[]", "[].READMEs[]"]},
 "repo_check.bibr12.paperlist": {"r": "791ea9a0b5dc8422", "py": "7779b776c991cc5c", "diff": ["gated_repos", "report[]", "summary_table.repo_n[]", "summary_text[]"]},
 "repo_check.dataone.nameless": {"r": "ac5146cf65ca52a8", "py": "9e860f54d28ced7c", "diff": ["<R error, Python value>"]},
+"repo_check.dryad": {"r": "5a4f2aff5fe16c4e", "py": "b1f4355ea10c93ce", "diff": ["table"]},
 "repo_check.dspace.found_and_unfound": {"r": "b9c25416797407d6", "py": "1c5a2faa5674a547", "diff": ["gated_repos", "repo_metadata.paper_id[]", "report[]", "summary_table.repo_n[]", "summary_text[]", "traffic_light[]"]},
 "repo_check.dspace.unfound": {"r": "c09fa08fcb605a42", "py": "4c7052f972e0a574", "diff": ["gated_repos"]},
 "repo_check.dspace7.unfound": {"r": "2f61ef4d936f2af3", "py": "50d5e996024cab15", "diff": ["gated_repos"]},
