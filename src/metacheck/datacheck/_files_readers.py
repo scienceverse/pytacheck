@@ -22,6 +22,7 @@ from __future__ import annotations
 import datetime as dt
 import math
 import os
+import re
 import warnings
 import zipfile
 from collections.abc import Callable, Sequence
@@ -214,7 +215,14 @@ def _atoi(s: str) -> int:
     return int(m.group(1)) if m else 0
 
 
+_PLAIN_DECIMAL = re.compile(
+    r"[0-9]+(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?|-[0-9]+(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?"
+)
+
+
 def _atof(s: str) -> float:
+    if _PLAIN_DECIMAL.fullmatch(s):  # what Excel writes: the whole string is the number
+        return float(s)
     m = _rx(
         r"\s*([+-]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][+-]?[0-9]+)?|[+-]?(?:inf|nan))", True
     ).match(s)
@@ -312,7 +320,25 @@ def _c_g17(x: float) -> str:
     return s
 
 
+_COL_REF = re.compile(r"([A-Z]{1,3})([0-9]{1,7})")
+_COLS: dict[str, int] = {}
+
+
 def _col_ref(ref: str) -> tuple[int, int]:
+    m = _COL_REF.fullmatch(ref)
+    if m is not None:  # the usual "AB12": letters, then digits
+        letters, digits = m.groups()
+        col = _COLS.get(letters)
+        if col is None:
+            col = 0
+            for ch in letters:
+                col = 26 * col + ord(ch) - 64
+            _COLS[letters] = col
+        return int(digits) - 1, col - 1
+    return _col_ref_slow(ref)
+
+
+def _col_ref_slow(ref: str) -> tuple[int, int]:
     row = col = 0
     for ch in ref:
         if "0" <= ch <= "9":
@@ -324,8 +350,16 @@ def _col_ref(ref: str) -> tuple[int, int]:
     return row - 1, col - 1
 
 
+_LOCAL: dict[str, str] = {}  # the local names of the tags seen, up to a few thousand
+
+
 def _local(tag: str) -> str:
-    return tag.rsplit("}", 1)[-1]
+    out = _LOCAL.get(tag)
+    if out is None:
+        out = tag.rsplit("}", 1)[-1]
+        if len(_LOCAL) < 4096:  # a file of made-up tags cannot grow it further
+            _LOCAL[tag] = out
+    return out
 
 
 def _xml_string(node: Any) -> str | None:
@@ -431,8 +465,13 @@ class _XlsxBook:
     def _parse(self, name: str) -> Any:
         return self.etree.fromstring(self.zf.read(name))
 
-    def sheet_cells(self, index: int) -> list[_Cell]:
-        """Every cell with content (any child element), in document order."""
+    def sheet_cells(self, index: int, skip: int = 0, n_read: float = math.inf) -> list[_Cell]:
+        """Every cell with content (any child element), in document order.
+
+        With a finite *n_read* the parse stops after the *n_read* rows that follow the
+        first row at or after *skip* holding a cell (read_excel() keeps no later cell),
+        as readxl stops reading there.
+        """
         if index >= len(self.sheet_names):
             raise ValueError(
                 f"Can't retrieve sheet in position {index + 1}, only "
@@ -443,6 +482,9 @@ class _XlsxBook:
             raise ValueError(f"`{self.sheet_ids[index]}` not found")
         cells: list[_Cell] = []
         etree = self.etree
+        stop: float | None = None
+        if not math.isfinite(n_read):
+            skip = 2**62  # a full read: never set a stop row
         with self.zf.open(target) as fh:
             i = 0
             for _event, node in etree.iterparse(fh, events=("end",), huge_tree=True):
@@ -460,6 +502,10 @@ class _XlsxBook:
                     if ref:
                         i, j = _col_ref(ref)
                     if len(c):
+                        if stop is None and i >= skip:
+                            stop = i + n_read - 1
+                        elif stop is not None and i > stop:
+                            return cells
                         cells.append(self._cell(c, i, j))
                     j += 1
                 i += 1
@@ -581,7 +627,12 @@ def read_excel(
     xls = path.lower().endswith(".xls")
     book: _XlsBook | _XlsxBook = _XlsBook(path) if xls else _XlsxBook(path)
     index = _sheet_index(book.sheet_names, sheet)
-    all_cells = book.sheet_cells(index)
+    n_read0 = n_max + 1 if col_names else n_max
+    all_cells = (
+        book.sheet_cells(index, skip=skip, n_read=n_read0)
+        if isinstance(book, _XlsxBook) and n_read0 > 0
+        else book.sheet_cells(index)
+    )
 
     # limits (0-based rows); n_max counts data rows after the header
     n_read = n_max + 1 if col_names else n_max

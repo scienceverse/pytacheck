@@ -259,8 +259,19 @@ def _is_numeric_vec(x: Any) -> bool:
 
 
 def _sample_values(df: pd.DataFrame, j: int) -> str:
-    """``paste(head(as.character(col[!is.na(col)]), 5), collapse = " | ")``."""
-    v = [s for s in h.col_chr(df, j) if s is not None]
+    """``paste(head(as.character(col[!is.na(col)]), 5), collapse = " | ")``.
+
+    Only the first five non-missing cells are written out; as_text_head() takes the
+    column-wide decisions (an integer column beyond R's range prints as doubles) from
+    the whole column, so the text is the same as writing every cell.
+    """
+    from metacheck.datacheck._kinds import as_text_head
+
+    col = df.iloc[:, j]
+    if h._is_integer64(df, j):
+        v = [str(int(x)) for x in col.dropna().iloc[:5].tolist()]
+    else:
+        v = [s for s in as_text_head(col, 5) if s is not None]
     return "" if not v else " | ".join(v[:5])
 
 
@@ -714,6 +725,7 @@ def data_check(
     # == DATA VALIDATION ===========================================================
     dv = _validate(
         previews=file_previews,
+        scale_blocks=ex["scale_blocks"],
         structure_df=all_files,
         columns_df=columns_df,
         plot_distributions=plot_distributions,
@@ -1125,7 +1137,8 @@ def _excel_sheets(path: str) -> list[str]:
         return []
 
 
-def _facets(df: pd.DataFrame) -> tuple[list[dict[str, Any]], list[str]]:
+def _facets(df: pd.DataFrame) -> tuple[list[dict[str, Any]], list[list[int]]]:
+    """The facets of each column of *df*, and its scale blocks (which _careless() uses)."""
     from metacheck.datacheck._colattrs import col_attrs_at
     from metacheck.datacheck.checks import _detect_scale_blocks, data_col_facets
 
@@ -1143,7 +1156,7 @@ def _facets(df: pd.DataFrame) -> tuple[list[dict[str, Any]], list[str]]:
         )
         for j in range(df.shape[1])
     ]
-    return cls, sorted(scale_cols)
+    return cls, blocks
 
 
 def _file_columns(
@@ -1257,6 +1270,7 @@ def _extract(
     workspace_files: list[Any] = []
     non_tabular: dict[str, Any] = {}
     previews: dict[str, pd.DataFrame] = {}
+    scale_blocks: dict[str, list[list[int]]] = {}
     columns_df: pd.DataFrame | None = None
     llm_col_updates = 0
     concept_col_updates = 0
@@ -1293,7 +1307,7 @@ def _extract(
                 continue
             if data_check_is_qualtrics(df):
                 df = data_strip_qualtrics_header(df)
-            cls, _ = _facets(df)
+            cls, blocks = _facets(df)
             usable = _tabular_usable(cls, df)
             if not is_true(usable.get("usable")) and h._file_ext(fname) in ("xlsx", "xls"):
                 sheets = _excel_sheets(loc)
@@ -1307,15 +1321,16 @@ def _extract(
                         raw_reads.setdefault(os.path.basename(loc), []).append(df2)
                     if df2 is None or df2.shape[1] == 0:
                         continue
-                    cls2, _ = _facets(df2)
+                    cls2, blocks2 = _facets(df2)
                     usable2 = _tabular_usable(cls2, df2)
                     if is_true(usable2.get("usable")):
-                        df, cls, usable = df2, cls2, usable2
+                        df, cls, usable, blocks = df2, cls2, usable2, blocks2
                         break
             if not is_true(usable.get("usable")):
                 non_tabular[fname] = usable.get("reason")
                 continue
             previews[fname] = df
+            scale_blocks[fname] = blocks
             per_file.append(_file_columns(f, df, cls, pid_fallback))
             n_extracted += 1
         columns_df = bind_rows(per_file).reset_index(drop=True) if per_file else pd.DataFrame()
@@ -1394,6 +1409,7 @@ def _extract(
         "all_files": all_files,
         "columns_df": columns_df,
         "previews": previews,
+        "scale_blocks": scale_blocks,
         "n_tabular_all": n_tabular_all,
         "n_no_local": n_no_local,
         "n_data_files": len(data_rows),
@@ -1751,6 +1767,7 @@ def _summary_table(
 
 def _validate(
     previews: dict[str, pd.DataFrame],
+    scale_blocks: dict[str, list[list[int]]],
     structure_df: pd.DataFrame,
     columns_df: pd.DataFrame | None,
     plot_distributions: bool,
@@ -1810,7 +1827,7 @@ def _validate(
         qualtrics_specs.append(s)
 
     # -- 2b. careless responding -------------------------------------------------------
-    car = _careless(previews, columns_df, labels_df)
+    car = _careless(previews, columns_df, labels_df, scale_blocks)
     careless_df: pd.DataFrame = car["careless"]
 
     findings_df = _findings_df(findings)
@@ -2224,8 +2241,13 @@ def _demographics(
 
 
 def _careless(
-    previews: dict[str, pd.DataFrame], columns_df: pd.DataFrame | None, labels_df: Any
+    previews: dict[str, pd.DataFrame],
+    columns_df: pd.DataFrame | None,
+    labels_df: Any,
+    scale_blocks: dict[str, list[list[int]]] | None = None,
 ) -> dict[str, Any]:
+    """Careless-responding scores per file; *scale_blocks* are the blocks _facets()
+    found in each preview (they are detected again where missing)."""
     from metacheck._r import bind_rows, grep
     from metacheck.datacheck.checks import (
         _detect_scale_blocks,
@@ -2248,7 +2270,8 @@ def _careless(
         if df is None or df.shape[1] < h.DV_CARELESS_MIN_ITEMS or len(df) < h.DV_CARELESS_MIN_ROWS:
             skipped += 1
             continue
-        blocks = _detect_scale_blocks(df)
+        known = (scale_blocks or {}).get(file)
+        blocks = known if known is not None else _detect_scale_blocks(df)
         if not blocks:
             skipped += 1
             continue

@@ -14,6 +14,7 @@ see in messages and sample values; :func:`as_numbers` is ``as.numeric()``.
 from __future__ import annotations
 
 import datetime as dt
+import math
 from collections import Counter
 from collections.abc import Iterable, Mapping
 from typing import Any
@@ -22,6 +23,7 @@ import numpy as np
 import pandas as pd
 from pandas.api.extensions import ExtensionArray
 
+from metacheck._r.base import format_num
 from metacheck._values import as_float, as_str
 
 __all__ = [
@@ -112,6 +114,20 @@ def as_text(x: Any) -> list[str | None]:
             col = col.astype("float64")  # beyond R's integers: a double
         else:  # an R integer prints as its digits
             return [None if v is None else str(int(v)) for v in _values(col)]
+    return _texts(col)
+
+
+def _texts(col: pd.Series) -> list[str | None]:
+    """as_text() of a column whose integer/categorical handling is done."""
+    dtype = col.dtype
+    if dtype == np.float64 or isinstance(dtype, pd.Float64Dtype):
+        return _double_texts(col.to_numpy(dtype="float64", na_value=np.nan))
+    if pd.api.types.is_bool_dtype(dtype):
+        return [None if v is None else ("TRUE" if v else "FALSE") for v in _values(col)]
+    if pd.api.types.is_datetime64_any_dtype(dtype):
+        fast = _datetime_texts(col)
+        if fast is not None:
+            return fast
     cache: dict[tuple[type, Any], str | None] = {}
     out: list[str | None] = []
     for v in _values(col):
@@ -140,9 +156,82 @@ def integer_numbers(x: Any) -> list[float | None] | None:
     return [None if f != f else f for f in floats.tolist()]
 
 
+def as_text_head(x: Any, k: int) -> list[str | None]:
+    """``head(as.character(x[!is.na(x)]), k)``: as_text() of the first *k* non-missing values.
+
+    The column-wide choice (an integer column beyond R's range prints as doubles) is made
+    on the whole column, so each value reads as it does in ``as_text(x)``.
+    """
+    col = column(x)
+    if isinstance(col.dtype, pd.StringDtype | pd.CategoricalDtype):
+        return as_text(col[col.notna()].iloc[:k])
+    if is_integer(col):
+        if bool((np.abs(_floats(col)) > 2147483647).any()):
+            col = col.astype("float64")
+        else:
+            return [str(int(v)) for v in _values(col[col.notna()].iloc[:k])]
+    return _texts(col[col.notna()].iloc[:k])
+
+
+def _datetime_texts(col: pd.Series) -> list[str | None] | None:
+    """_text() of a date-time column whose times are whole seconds in years 1000-9999, at
+    numpy speed: ``YYYY-mm-dd HH:MM:SS``, the date alone at midnight. ``None`` otherwise."""
+    wall = col.dt.tz_localize(None) if getattr(col.dtype, "tz", None) is not None else col
+    na = wall.isna().to_numpy()
+    ok = ~na
+    if not ok.any():
+        return [None] * len(col)
+    year = wall.dt.year.to_numpy(dtype="float64", na_value=np.nan)[ok]
+    frac = (wall.dt.microsecond + wall.dt.nanosecond).to_numpy(dtype="float64", na_value=0.0)[ok]
+    if (year < 1000).any() or (year > 9999).any() or frac.any():
+        return None
+    secs = wall.to_numpy(dtype="datetime64[s]")[ok]
+    full = np.char.replace(np.datetime_as_string(secs, unit="s"), "T", " ")
+    midnight = (secs - secs.astype("datetime64[D]")).astype(np.int64) == 0
+    text = np.where(midnight, np.char.ljust(full, 10).astype("U10"), full)
+    out = np.full(len(col), None, dtype=object)
+    out[ok] = text
+    return out.tolist()
+
+
+def _r_double(v: float) -> str:
+    """R's ``as.character()`` of a non-NA double: C's ``%.15g`` where it is what R writes
+    (fixed notation that is no wider than scientific), else format_num()."""
+    if v == 0:
+        return "0"
+    if v in (math.inf, -math.inf):
+        return "Inf" if v > 0 else "-Inf"
+    s = f"{v:.15g}"
+    if "e" not in s:
+        body = s[1:] if s[0] == "-" else s
+        if "." in body:
+            if not body.startswith("0.000"):
+                return s
+        elif body[-1] != "0":
+            return s
+    return format_num(v, 15)
+
+
+def _double_texts(a: np.ndarray) -> list[str | None]:
+    out: list[str | None] = []
+    cache: dict[float, str] = {}
+    for v in a.tolist():
+        if v != v:
+            out.append(None)
+            continue
+        s = cache.get(v)
+        if s is None:
+            s = cache[v] = _r_double(v)
+        out.append(s)
+    return out
+
+
 def _values(col: pd.Series) -> list[Any]:
     """The column's values as Python objects, ``None`` for a missing one."""
-    return col.to_numpy(dtype=object, na_value=None).tolist()  # type: ignore[call-overload,no-any-return]
+    vals = col.to_numpy(dtype=object, na_value=None)  # type: ignore[call-overload]
+    if col.dtype.kind in "mM":  # pandas keeps NaT in a date-time column
+        vals[col.isna().to_numpy()] = None
+    return vals.tolist()  # type: ignore[no-any-return]
 
 
 def _floats(col: pd.Series) -> np.ndarray:

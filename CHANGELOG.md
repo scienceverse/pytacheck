@@ -18,6 +18,17 @@ package's. The R commit each release is compared against is in
 - **Fixed:** complex numbers with an infinite part are read exactly (`1+Inf i` had become `NaN+Inf i`, and `-0+1i` lost its sign), and without numpy warnings.
 - **Changed:** an object nested deeper than Python's recursion limit allows (about 330 levels, for example a formula of 400 terms) is read by the C reader, as R reads it, instead of being reported as unreadable.
 
+### Faster: data_check, from an audit of its slow spots
+
+- **Faster:** a column of doubles is written out (`as.character()`) with C's `%.15g` wherever that is R's own text, and only the other values (scientific notation, trailing zeros) go through the R formatting; logical and date-time columns are written out with numpy. The text is the same (checked on 400,000 random doubles).
+- **Faster:** a column's sample values write out only its first five non-missing cells instead of the whole column.
+- **Faster:** the delimited-file reader counts each line's separators and finds blank lines with numpy searches instead of sums over every byte, and looks for a quoted `"NA"` only in a file that has one.
+- **Faster:** an xlsx sheet read for a preview is parsed only up to the last row it keeps, as readxl stops there; plain numbers and cell references take a fast path.
+- **Faster:** the careless-responding screen reuses the scale blocks found while classifying the file's columns instead of looking for them again, and a text column's distinct values are parsed as numbers once each.
+- **Faster:** the file-manifest search stops writing out a column once too few of its cells are left to name the repository's files.
+- **Fixed:** writing out a date-time column with a missing value (`as.character()` in the column checks, and a row through such a column) failed with "Unknown format code 'd'"; the missing value is NA, as in R.
+- On the fivethirtyeight/data repository, `data_check` takes 207 s instead of 303 s (R metacheck: 342 s). On generated packages it takes 26 s instead of 57 s for a 45 MB CSV (200,000 rows), 7 s instead of 19 s for a 20,000-row xlsx file and 7 s instead of 13 s for a 50,000-row SPSS file. The results are the same in each.
+
 ### Ported from metacheck: the R changes up to 98105f6 (0.3.3.2, 14 October)
 
 These port the changes metacheck made between `f1062b4` (the pinned commit, which does not move) and `98105f6`: the data check and repository changes and the other fixes. The R Shiny apps are not ported (pytacheck's app is its own). Each change that differs from the pinned R is in docs/UPSTREAM_ISSUES.md (D87 to D128, U218 to U241).

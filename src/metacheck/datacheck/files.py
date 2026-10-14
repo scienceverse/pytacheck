@@ -52,7 +52,7 @@ import re
 import shutil
 import sys
 import warnings
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from pathlib import Path
 from typing import Any, cast
 
@@ -549,22 +549,26 @@ def data_is_manifest(
         col = df.iloc[:, j]
         if not plain_names and not _may_hold_text(col):
             continue
-        vals = [v.strip(_TRIM_WS) for v in _column_text(col)]
-        vals = [_tolower(v) for v in vals if v != ""]
-        if not vals:
-            continue
-        # stop at the first value that leaves too few names to reach the threshold
-        n = len(vals)
+        # the non-missing cells bound the number of names n: once the misses leave too
+        # few names among them, they leave too few among the n, so stop writing out
+        n_upper = int(col.notna().sum())
+        vals: list[str] = []
+        is_ref: list[bool] = []
         missed = 0
-        is_ref = []
-        for v in vals:
+        for v in _column_text(col):
+            v = v.strip(_TRIM_WS)
+            if v == "":
+                continue
+            v = _tolower(v)
             hit = _r_basename(v.replace("\\", "/")) in repo_base
+            vals.append(v)
             is_ref.append(hit)
             if not hit:
                 missed += 1
-                if (n - missed) / n < threshold:
+                if (n_upper - missed) / n_upper < threshold:
                     break
-        if (n - missed) / n < threshold:
+        n = len(vals)
+        if not vals or (n_upper - missed) / n_upper < threshold or (n - missed) / n < threshold:
             continue
         exts = set(file_ext([v for v, r in zip(vals, is_ref, strict=True) if r])) - {""}
         if len(exts) >= min_exts:
@@ -601,19 +605,18 @@ def _may_hold_text(col: pd.Series) -> bool:
     return kind not in _PLAIN_KINDS
 
 
-def _column_text(col: pd.Series) -> list[str]:
-    """The non-missing values of ``as.character(col)``; text cells are taken as they are."""
+def _column_text(col: pd.Series) -> Iterator[str]:
+    """The non-missing values of ``as.character(col)`` (lazily); text cells as they are."""
     if isinstance(col.dtype, pd.CategoricalDtype):
-        return [v for v in _series_as_character(col) if v is not None]
-    out = []
+        yield from (v for v in _series_as_character(col) if v is not None)
+        return
     for v in col.tolist():
         if type(v) is str:
-            out.append(v)
+            yield v
         else:
             t = _r_as_character(v)
             if t is not None:
-                out.append(t)
-    return out
+                yield t
 
 
 # -----------------------------------------------------------------------------

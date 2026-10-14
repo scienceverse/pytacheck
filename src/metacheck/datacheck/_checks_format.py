@@ -268,7 +268,12 @@ def _is_placeholder_name(x: Any) -> list[bool]:
 
 
 def _is_num_ok(s: str) -> bool:
-    f = _as_num_safe([s])[0]
+    """``_as_num_safe(s)`` is a number (not NA or NaN), for one string, without a Series."""
+    try:
+        s.encode("utf-8")
+    except UnicodeEncodeError:
+        s = s.encode("utf-8", "surrogateescape").decode("utf-8", "ignore")
+    f = as_float(s)
     return f is not None and f == f
 
 

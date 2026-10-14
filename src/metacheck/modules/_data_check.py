@@ -1434,9 +1434,16 @@ def _xml(data: bytes) -> Any:
     return etree.fromstring(data, parser)
 
 
+_ASCII_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
+
 def _attr(node: Any, name: str) -> str | None:
     """xml2 ``xml_attr(node, name)``: the first attribute with that local name."""
-    for k, v in node.attrib.items():
+    attrib = node.attrib
+    if not any(k[:1] == "{" for k in attrib):  # no namespaced attribute: a plain lookup
+        v = attrib.get(name)
+        return None if v is None else str(v)
+    for k, v in attrib.items():
         local = k.rsplit("}", 1)[-1] if k.startswith("{") else k
         if local == name:
             return str(v)
@@ -1602,11 +1609,11 @@ def dv_excel_inspect_sheet(
         if m is not None
     ]
 
-    def ref_col(ref: str | None) -> str | None:
-        return None if ref is None else sub("[0-9]+$", "", ref)
+    def ref_col(ref: str | None) -> str | None:  # sub("[0-9]+$", "", ref)
+        return None if ref is None else ref.rstrip("0123456789")
 
-    def ref_row(ref: str | None) -> int | None:
-        return None if ref is None else _as_integer(sub("^[A-Za-z]+", "", ref))
+    def ref_row(ref: str | None) -> int | None:  # as.integer(sub("^[A-Za-z]+", "", ref))
+        return None if ref is None else _as_integer(ref.lstrip(_ASCII_LETTERS))
 
     val_col = [ref_col(r) for r in val_ref]
     val_rownum = [ref_row(r) for r in val_ref]

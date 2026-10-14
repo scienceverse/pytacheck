@@ -54,7 +54,12 @@ def _values_array(x: Any) -> Any:
     col = column(x)
     if kind(col) == NUMERIC:
         return as_numbers(col)
-    a = as_numbers(as_text(col))
+    # as_numbers(as_text(col)), parsing each distinct text once
+    codes, uniq = pd.factorize(np.array(as_text(col), dtype=object))
+    parsed = np.array(
+        [np.nan if (f := as_float(u)) is None else f for u in uniq.tolist()] + [np.nan]
+    )
+    a = parsed[codes]  # code -1 (NA) takes the trailing NaN
     if not a.size or np.isnan(a).sum() > 0.2 * a.size:
         return None
     return a
