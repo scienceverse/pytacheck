@@ -597,12 +597,22 @@ def test_is_true_is_r_in_true() -> None:
 
 
 def _redirects(serve: Any, doi: str, target: str) -> list[httpx.Request]:
+    """Register *doi* to *target* in doi.org's handle API (the landing page is never asked)."""
     return serve(  # type: ignore[no-any-return]
         {
-            f"https://doi.org/{doi}": httpx.Response(302, headers={"Location": target}),
-            target: httpx.Response(200, text="<html></html>"),
+            _handle_api(doi): httpx.Response(
+                200,
+                json={
+                    "responseCode": 1,
+                    "values": [{"index": 1, "type": "URL", "data": {"value": target}}],
+                },
+            ),
         }
     )
+
+
+def _handle_api(doi: str) -> str:
+    return "https://doi.org/api/handles/" + doi.replace("/", "%2F") + "?type=URL"
 
 
 def test_phys_techsciences_and_figshare_prefixes() -> None:
@@ -627,12 +637,18 @@ def test_host_from_doi_resolves_a_shared_prefix(serve: Any) -> None:
         "phys-techsciences.datastations.nl",
         None,
     ]
-    assert [str(r.url) for r in requests] == [f"https://doi.org/{doi}", target]
+    assert [str(r.url) for r in requests] == [_handle_api(doi)]
+    # remembered for the session, in any case (DOIs are case-insensitive)
+    assert _dataverse_host_from_doi(doi.lower()) == "phys-techsciences.datastations.nl"
+    assert len(requests) == 1
 
 
 def test_resolve_doi_host_falls_back_to_the_first_candidate(serve: Any) -> None:
-    serve({})  # every request is a 404 at doi.org itself
+    requests = serve({})  # every request is a 404 at doi.org itself
     assert _dataverse_host_from_doi("10.17026/SS/Q1") == "archaeology.datastations.nl"
+    # not a definite answer: asked again next time
+    assert _dataverse_host_from_doi("10.17026/SS/Q1") == "archaeology.datastations.nl"
+    assert len(requests) == 2
 
 
 def test_resolve_doi_host_connection_failure(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -661,3 +677,27 @@ def test_resolve_doi_host_compares_host_names(serve: Any) -> None:
     doi3 = "10.17026/q"
     _redirects(serve, doi3, "https://example.org/landing?from=ssh.datastations.nl")
     assert _dataverse_host_from_doi(doi3) == "archaeology.datastations.nl"
+
+
+def test_info_queries_a_dataset_once_when_two_urls_name_it(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # dataverse_links() gives the dataset.xhtml link and the bare DOI inside
+    # it; metacheck fetched the dataset once per URL until 0.3.3 (pytacheck
+    # since U35)
+    calls: list[str] = []
+
+    def one(host: str, doi: str, pb: Any = None) -> pd.DataFrame:
+        calls.append(f"{host} {doi}")
+        return pd.DataFrame({"dataverse_host": [host], "dataverse_doi": [doi], "title": ["T"]})
+
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
+    monkeypatch.setattr(dataverse, "_dataverse_info", one)
+    paper = pc.test_paper(
+        "Data: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/SVVULN"
+    )
+    links = dataverse.dataverse_links(paper)
+    assert len(links) == 2
+    info = dataverse.dataverse_info(links)
+    assert calls == ["dataverse.harvard.edu 10.7910/DVN/SVVULN"]
+    assert info["title"].tolist() == ["T", "T"]
