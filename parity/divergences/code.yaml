@@ -354,6 +354,11 @@
   ref: U143
   reason: the decimals of a number in scientific notation count its exponent (1.5e-05 has 6); R counts the mantissa only
 "statout_match/norm_interval.batch": *u143_dec
+"statout_match_review/match_reported_output.derived.published_tei": &ux_text_1_dz
+  kind: r_bug_fixed
+  ref: UX-text-1
+  reason: "extract_eq() reads Grobid's 'd Z = 0.89' (a d_z) as lhs 'd Z', not a z statistic 'Z', and extract_tests() does not take 'd Z' as a test, so the 22 tests that were only such a value are gone and the others lose their 'Z=...' (205 tests in R, 183)"
+"statout_match_review/match_reported_output.derived.published_tei.summary": *ux_text_1_dz
 "statout_match_review/match_reported_output.tt.format_values":
   kind: r_bug_fixed
   ref: U143

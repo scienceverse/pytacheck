@@ -1,5 +1,5 @@
 {
-"all_urls.debruine": {"r": "e62c5bb3ce63fbf9", "py": "577c39db2425b447", "diff": ["summary_table.urls[]", "table"]},
+"all_urls.debruine": {"r": "e62c5bb3ce63fbf9", "py": "ad52e89ed5c6256a", "diff": ["summary_table.urls[]", "table"]},
 "all_urls.demo": {"r": "3fd8e7cf18ba8e1a", "py": "6f6c1417d65c3b15", "diff": ["summary_table.urls[]", "table"]},
 "all_urls.empty_paper": {"r": "1df8eef5445d4a24", "py": "6c993ff8fe5da91d", "diff": ["table"]},
 "all_urls.none": {"r": "2d2ea4a1cff31f99", "py": "b3a149b772a9b557", "diff": ["table"]},
