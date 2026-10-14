@@ -16,7 +16,12 @@ from metacheck.repro.core import repro_run_scripts as repro_run_scripts
 from metacheck.repro.core import repro_write_scripts as repro_write_scripts
 from metacheck.repro.docker import repro_docker_available as repro_docker_available
 from metacheck.repro.docker import repro_install_deps_docker as repro_install_deps_docker
+from metacheck.repro.docker import repro_install_deps_py_docker as repro_install_deps_py_docker
 from metacheck.repro.docker import repro_run_scripts_docker as repro_run_scripts_docker
+from metacheck.repro.docker import repro_run_scripts_py_docker as repro_run_scripts_py_docker
+from metacheck.repro.python import repro_dependencies_py as repro_dependencies_py
+from metacheck.repro.python import repro_install_deps_py as repro_install_deps_py
+from metacheck.repro.python import repro_run_scripts_py as repro_run_scripts_py
 from metacheck.repro.tables import capture_module_tables as capture_module_tables
 from metacheck.repro.tables import collect_module_tables as collect_module_tables
 

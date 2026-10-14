@@ -119,7 +119,7 @@ def test_execute_without_a_sandbox_argument_runs_in_docker_and_starts_no_process
         warnings.simplefilter("always")
         mo = module_run(fake, "reproducibility_check", execute=True)
     assert tripwire.calls == []
-    assert seen["image"] == "ghcr.io/scienceverse/metacheck_r:latest"
+    assert seen["image"] == "ghcr.io/scienceverse/metacheck_r_large:latest"
     assert mo.table["outcome"].tolist() == ["ran_ok"]
     assert not [x for x in w if issubclass(x.category, PytacheckWarning)]  # nothing to warn about
 
