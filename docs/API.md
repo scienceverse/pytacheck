@@ -53,6 +53,27 @@ JSON (D79 in [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md)):
 A module's `report` is a string, or a list of blocks: text blocks are strings,
 table blocks are arrays of row objects.
 
+### The R engine
+
+`POST /paper/check` takes `engine`: `python` (pytacheck's modules, the default) or `r`
+(the modules of R metacheck itself). With `r` the server runs R metacheck in an
+`Rscript` subprocess on the uploaded bibr JSON (a PDF that bibr extracted here is
+handed to R as bibr JSON), each module on its own as metacheck's plumber `/check`
+does, and answers in the same shape as above. `engine` says which engine ran and
+`metacheck_version` is R metacheck's version; `paper_info`, `authors`, `references`
+and `cross_references` come from pytacheck's reading of the paper with either engine.
+`report_html` is pytacheck's report of R's results, so the server needs no Quarto.
+
+With `r`, `modules`, `preset` and the default (every module) are R metacheck's
+modules: a module R does not have (a pack's, or `author_check`, `figure_table_refs`,
+`license_check`) is a 400. `GET /paper/modules?engine=r` lists them. A server where R
+cannot run metacheck answers `engine=r` with a 400; one that fails while R runs is a 500.
+
+`pytacheck serve --engine r` (or `METACHECK_API_ENGINE=r`) makes `r` the default for
+requests that name no engine, so a second server on another loopback port can serve
+R checks to a client that does not send `engine`. It needs R with the metacheck R
+package; see [R_ENGINE.md](R_ENGINE.md).
+
 ### Migrating from metacheck's plumber API
 
 metacheck's plumber API writes JSON with jsonlite's defaults. Clients written for

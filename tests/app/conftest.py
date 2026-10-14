@@ -47,3 +47,10 @@ def bibr_settings(monkeypatch: pytest.MonkeyPatch) -> None:
     for name in (*bibr.URL_ENVS, *bibr.BACKEND_ENVS):
         monkeypatch.delenv(name, raising=False)
     bibr._forget_list()
+
+
+@pytest.fixture(autouse=True)
+def no_r_engine(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The page offers no R engine, whatever R this computer has; tests/app/test_r_engine.py
+    switches it on where it needs it."""
+    monkeypatch.setenv("METACHECK_APP_R_ENGINE", "off")

@@ -85,6 +85,9 @@ means the value is a key or token, which the package never logs.
 | `CONCEPT_MODEL` | `METACHECK_CONCEPT_MODEL` | `scienceverse/datacheck-concepts@v1` | The classifier's model: a local folder or `repo@revision` on the Hugging Face Hub. The option `metacheck.concepts.model` comes first. |
 | `CONCEPT_THREADS` | `METACHECK_CONCEPT_THREADS` | onnxruntime's default | How many threads the classifier uses. A value that is not an integer is an error when the model loads. |
 | `CONCEPT_THRESHOLD` | `METACHECK_CONCEPT_THRESHOLD` | 0.92 | Under `cascade`, columns the classifier is less sure of go to the LLM. The option `metacheck.concepts.threshold` comes first. A value that is not a number gives the default. |
+| `R_ENGINE_RSCRIPT` | `METACHECK_R_ENGINE_RSCRIPT` | `RSCRIPT`, then `Rscript` on the `PATH` | The R engine (`metacheck.rengine`): the `Rscript` of the R that has the metacheck R package. `pytacheck r-engine` says which one is used and whether it works. New, so it has no old name. |
+| `API_ENGINE` | `METACHECK_API_ENGINE` | `python` | The REST API: the engine of a `/paper/check` that names none, `python` or `r` (`pytacheck serve --engine` sets it). Any other value, or `r` where R cannot run metacheck, stops the server from starting. New, so it has no old name. |
+| `APP_R_ENGINE` | `METACHECK_APP_R_ENGINE` | on where R runs metacheck; off on the hosted app | The app's "Run checks with: Python / R" choice. `off` (or `0`, `false`, `no`) hides it; on the hosted app it is shown only with `on` (or `1`, `true`, `yes`) and where R runs metacheck. New, so it has no old name. |
 
 The hosted-app names are read through the same table. The hosted app gets them in a
 mapping it is given (its `env=` argument), so tests can pass its settings without

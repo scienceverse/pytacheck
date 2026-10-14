@@ -7,6 +7,13 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Added: an R engine (R metacheck's own checks, shown with pytacheck's report)
+
+- **Added:** `metacheck.rengine` runs R metacheck's modules in an `Rscript` subprocess, one per run, and turns their outputs into `ModuleOutput` objects with the parity tooling's encoder (`canonical.R`), so pytacheck's report shows them as it shows its own. R reads the same paper file as pytacheck. A run ends R, and everything R started, at its time limit, when it is stopped, and when its process is ended. `pip install "metacheck[r]"` names the choice (it adds no Python package); R and the metacheck R package are installed separately, and `pytacheck r-engine` says whether they work. See [docs/R_ENGINE.md](docs/R_ENGINE.md).
+- **Added:** `engine=r` on the REST API's `POST /paper/check`, `GET /paper/modules?engine=r`, and `pytacheck serve --engine r` (`METACHECK_API_ENGINE`) for a server whose default is R. The response has the same shape, with `engine` added and R metacheck's `metacheck_version`. See [docs/API.md](docs/API.md#the-r-engine).
+- **Added:** "Run checks with: Python / R" in the app, under "Read PDFs with", where R runs metacheck (on a shared server only with `METACHECK_APP_R_ENGINE=on`). With R, the page offers only R metacheck's checks, checks papers only, runs the data check in R too, and the report and the results line name R metacheck's version.
+- How the R engine shows R's results is D87 in docs/UPSTREAM_ISSUES.md.
+
 ## 0.4.0a2
 
 Second pre-release on PyPI. Compared against the R package at commit

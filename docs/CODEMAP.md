@@ -57,6 +57,7 @@ Most R files map to one Python file, grouped into subpackages by topic:
 | `resources/` | Data files: databases, demo papers, JSON schemas, the status snapshot. | `data/`, `inst/databases`, `inst/demos`, `inst/schema` |
 | `packs/` | Python only. Packs and stores: sharing modules outside the package ([MODULES.md](MODULES.md)). | none |
 | `app/` | Python only. The local demo app (a Gradio page). It is not a port of the Shiny apps. | none |
+| `rengine/` | Python only. The R engine: R metacheck's own modules run in an `Rscript` subprocess (`run.R`), their outputs decoded into `ModuleOutput`s for pytacheck's report ([R_ENGINE.md](R_ENGINE.md)). `canonical.R` is a copy of `parity/r/canonical.R`. | none |
 | `datapackage/` | Python only. Checks of a data package, the folder or archive of data, code and documentation that comes with a paper: opening and listing it, and the `datapackage` pack (files, folder structure, README and parts, personal data by value in the data files; and, only when asked, the paper's abstract by DOI) behind `metacheck package` ([DATAPACKAGE.md](DATAPACKAGE.md)). | none |
 
 A few top-level files hold shared pieces: [`module.py`](../src/metacheck/module.py)

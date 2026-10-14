@@ -104,6 +104,10 @@ ENV_VARS: dict[str, EnvVar] = {
     "CONCEPT_MODEL": EnvVar(("METACHECK_CONCEPT_MODEL",)),
     "CONCEPT_THREADS": EnvVar(("METACHECK_CONCEPT_THREADS",)),
     "CONCEPT_THRESHOLD": EnvVar(("METACHECK_CONCEPT_THRESHOLD",)),
+    # the R engine (metacheck.rengine): new, so no old names
+    "R_ENGINE_RSCRIPT": EnvVar(("METACHECK_R_ENGINE_RSCRIPT",)),
+    "API_ENGINE": EnvVar(("METACHECK_API_ENGINE",)),
+    "APP_R_ENGINE": EnvVar(("METACHECK_APP_R_ENGINE",)),
 }
 
 #: the keys whose clash was logged (once per process and key), and what guards it

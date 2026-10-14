@@ -353,7 +353,7 @@ def _button_function(name: str) -> Any:
 def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     request = SimpleNamespace(session_hash="abc123")
     on_demo = _button_function("on_demo")
-    sent = list(on_demo(False, False, "grobid", "", False, None, "", "", True, request))
+    sent = list(on_demo(False, False, "grobid", "", False, None, "", "", True, "python", request))
     # first the steps of the run, with the results of the run before hidden
     first_panel, first_results, *_ = sent[0]
     assert "Checking <strong>to_err_is_human.json</strong>" in first_panel
@@ -370,7 +370,9 @@ def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     assert "srcdoc=" in frame
     assert 'href="/report/abc123/to_err_is_human_report.html"' in download
     assert "Download the report" in download
-    assert list(on_demo(False, False, "grobid", "", False, None, "", "", True, request))  # again
+    assert list(
+        on_demo(False, False, "grobid", "", False, None, "", "", True, "python", request)
+    )  # again
 
 
 def test_result_cells_are_coloured_by_traffic_light() -> None:
@@ -405,6 +407,7 @@ def test_check_button_needs_something_and_words_errors_plainly() -> None:
             "",
             "",
             True,
+            "python",
             request,
         )
 

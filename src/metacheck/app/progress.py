@@ -41,6 +41,7 @@ _STAGES: tuple[tuple[str, str], ...] = (
     ("Extracting with ", "extract"),
     ("Reading the extracted text", "extract"),
     ("Running check ", "checks"),
+    ("Running the checks with R", "checks"),
     ("Building the report", "report"),
     ("Checking the shared data files", "data"),
     ("Waiting for another data check", "data"),
@@ -62,6 +63,7 @@ NO_BAR = {
     "bibr": "bibr says only whether the PDF is waiting or being read, so the bar only shows "
     "that it is still working.",
     "grobid": "GROBID does not say how far it is, so the bar only shows that it is still working.",
+    "r": "R metacheck does not say how far it is, so the bar only shows that it is still working.",
 }
 #: seconds one sweep of a moving bar, and one turn of the running step's circle, take
 _SWEEP = 1.6
@@ -287,8 +289,11 @@ def _row(step: Step, now: float) -> str:
     )
 
 
-def paper_steps(path: str, reader: str, data: bool, *, data_in_run: bool) -> Steps:
+def paper_steps(
+    path: str, reader: str, data: bool, *, data_in_run: bool, engine: str = "python"
+) -> Steps:
     """The steps of checking the paper at *path*: a PDF is extracted with *reader* first.
+    With the R engine (``engine="r"``) the checks are one step that reports nothing.
 
     With ``data`` the data check is the last step: part of the run on a shared server
     (``data_in_run``), after the fast results on this computer.
@@ -300,7 +305,12 @@ def paper_steps(path: str, reader: str, data: bool, *, data_in_run: bool) -> Ste
         name = "bibr" if reader == "bibr" else "GROBID"
         steps.append(("extract", f"Extract the text with {name}"))
         notes["extract"] = NO_BAR["bibr" if reader == "bibr" else "grobid"]
-    steps += [("checks", "Run the checks"), ("report", "Write the report")]
+    if engine == "r":
+        steps.append(("checks", "Run the checks with R metacheck"))
+        notes["checks"] = NO_BAR["r"]
+    else:
+        steps.append(("checks", "Run the checks"))
+    steps.append(("report", "Write the report"))
     if data:
         steps.append(("data", "Check the shared data files"))
         notes["data"] = (

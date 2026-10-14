@@ -20,6 +20,8 @@ Examples::
     pytacheck store build . --check                  # store CI
     pytacheck read paper.pdf -o paper.json           # extract with bibr, save JSON
     pytacheck serve --port 8000                      # REST API (metacheck[api])
+    pytacheck serve --port 8001 --engine r           # ... checks by R metacheck (metacheck[r])
+    pytacheck r-engine                               # can R metacheck run here? which versions?
     pytacheck app                                    # the local app in your browser (metacheck[app])
     pytacheck version
 
@@ -565,10 +567,17 @@ def cmd_serve(ns: argparse.Namespace) -> int:
     except ImportError:
         print('The API needs the api extra: pip install "metacheck[api]"', file=sys.stderr)
         return 2
-    from metacheck.api.app import API_KEY_ENV, ApiConfigError, api_key, is_loopback
+    import os
 
+    from metacheck._env import env_name
+    from metacheck.api.app import API_KEY_ENV, ApiConfigError, api_key, default_engine, is_loopback
+
+    if ns.engine:
+        # the app is built by uvicorn from a factory: the engine reaches it through the variable
+        os.environ[env_name("API_ENGINE")] = ns.engine
     try:
         key = api_key()
+        default_engine()
     except ApiConfigError as exc:
         raise _Failure(str(exc)) from exc
     if key is None and not is_loopback(ns.host):
@@ -585,6 +594,22 @@ def cmd_serve(ns: argparse.Namespace) -> int:
             stacklevel=2,
         )
     uvicorn.run("metacheck.api.app:create_app", factory=True, host=ns.host, port=ns.port)
+    return 0
+
+
+def cmd_r_engine(_: argparse.Namespace) -> int:
+    from metacheck import rengine
+
+    exe = rengine.rscript()
+    print(f"Rscript: {exe or 'not found'}")
+    try:
+        found = rengine.info(exe)
+    except rengine.REngineError as exc:
+        print(f"The R engine cannot run: {exc}", file=sys.stderr)
+        return 1
+    print(f"R: {found.r_version}")
+    print(f"metacheck (R): {found.metacheck_version}")
+    print(f"modules ({len(found.modules)}): {', '.join(found.modules)}")
     return 0
 
 
@@ -1190,7 +1215,25 @@ def build_parser() -> argparse.ArgumentParser:
         help="allow a non-loopback --host without an API key, because a proxy or gateway "
         "in front of the server authenticates every request",
     )
+    p.add_argument(
+        "--engine",
+        choices=("python", "r"),
+        default=None,
+        help="the engine of a /paper/check that names none (default: METACHECK_API_ENGINE, "
+        "else python); r runs R metacheck's modules and needs R with metacheck installed",
+    )
     p.set_defaults(func=cmd_serve)
+
+    p = sub.add_parser(
+        "r-engine",
+        help="check that R metacheck can run here (the R engine)",
+        description=(
+            "Say which Rscript the R engine uses (METACHECK_R_ENGINE_RSCRIPT, else "
+            "METACHECK_RSCRIPT, else PATH), and the versions of R and the metacheck R "
+            "package it runs. Exits with 1 when the R engine cannot run."
+        ),
+    )
+    p.set_defaults(func=cmd_r_engine)
 
     p = sub.add_parser(
         "app",

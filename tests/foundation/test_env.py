@@ -71,6 +71,7 @@ def test_the_table_has_the_twins_and_the_exceptions_the_spec_lists() -> None:
         "APP_ROOTS",
         "APP_TOKENS",
         "APP_USER_HEADER",
+        "APP_R_ENGINE",
     ]
 
 

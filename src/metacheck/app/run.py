@@ -12,6 +12,7 @@ import contextvars
 import hashlib
 import os
 import re
+import shutil
 import sys
 import tempfile
 import threading
@@ -65,6 +66,9 @@ BAD_PDF = "The PDF server could not read this PDF. Try another copy of the paper
 NO_TEXT = "No text was found in this file, so there is nothing to check."
 NO_TEXT_PDF = "No text was found in this PDF. Is it a scanned image?"
 NO_CHECKS = 'No check is ticked. Tick at least one check under "Choose the checks".'
+R_FAILED = "R metacheck could not run the checks: {}"
+#: what the data check says while R runs it (R does not say how far it is)
+R_DATA = "Checking the shared data files with R metacheck (it does not say how far it is)"
 
 #: status texts of a busy server (the reason phrases of 429, 502, 503 and 504): try the next
 BUSY = ("Too Many Requests", "Bad Gateway", "Service Unavailable", "Gateway Timeout")
@@ -131,6 +135,7 @@ class Analysis:
     report_path: Path
     seconds: float
     data_pending: bool = False  # the data check has not finished
+    engine: str = ""  # what ran the checks, when not pytacheck: "R metacheck 0.3.3.1"
 
 
 def report_filename(name: str) -> str:
@@ -249,6 +254,19 @@ def read_paper(
     A PDF is turned into text by GROBID, or by bibr with ``pdf="bibr"`` and a key.
     ``progress`` is told which stage this is (see :data:`Progress`).
     """
+    return _read(path, workdir, pdf=pdf, bibr_key=bibr_key, progress=progress)[0]
+
+
+def _read(
+    path: str | os.PathLike[str],
+    workdir: Path,
+    *,
+    pdf: str = "grobid",
+    bibr_key: str = "",
+    progress: Progress | None = None,
+) -> tuple[Any, Path]:
+    """:func:`read_paper`, and the file the paper was read from (a PDF's extracted text, in
+    *workdir*): R metacheck reads that same file."""
     import metacheck as pc
 
     source = Path(path)
@@ -278,7 +296,7 @@ def read_paper(
         raise UserError(
             bibr.BAD_FORMAT if from_bibr else NO_TEXT_PDF if suffix == ".pdf" else NO_TEXT
         )
-    return paper
+    return paper, source
 
 
 class Stopped(BaseException):
@@ -365,10 +383,15 @@ def _online() -> bool:
 
 
 class DataJob:
-    """The data check, running in a thread of its own so that the page can show its progress."""
+    """The data check, running in a thread of its own so that the page can show its progress.
 
-    def __init__(self, paper: Any) -> None:
+    With ``r_source`` (the paper's file, in a folder of its own that the job removes when it
+    ends) R metacheck runs the check.
+    """
+
+    def __init__(self, paper: Any, r_source: Path | None = None) -> None:
         self.paper = paper
+        self.r_source = r_source
         self.message = ""  # the library's latest progress text
         self.output: Any = None  # the module's output
         self.error: Exception | None = None
@@ -416,6 +439,8 @@ class DataJob:
             self.error = exc
         finally:
             _JOB.reset(token)
+            if self.r_source is not None:
+                shutil.rmtree(self.r_source.parent, ignore_errors=True)
 
     def _take_turn(self) -> None:
         if not _DATA_LOCK.acquire(blocking=False):
@@ -430,6 +455,9 @@ class DataJob:
         self.message = ""
 
     def _check(self) -> None:
+        if self.r_source is not None:
+            self._check_r(self.r_source)
+            return
         from metacheck import http
         from metacheck.config import verbose
         from metacheck.module import run_session, use
@@ -464,12 +492,37 @@ class DataJob:
                 verbose(was)
         self.output = outputs.get("data_check")
 
+    def _check_r(self, source: Path) -> None:
+        from metacheck import rengine
+
+        if not _online():
+            raise OSError(OFFLINE)
+        self.message = R_DATA
+        try:
+            r_run = rengine.run(
+                source, ["data_check"], args={"data_check": {"cache": True}}, stop=self._stop.is_set
+            )
+        except rengine.REngineStopped as exc:
+            raise Stopped from exc
+        except rengine.REngineError as exc:
+            raise RuntimeError(R_FAILED.format(exc)) from exc
+        self.output = r_run.outputs.get("data_check")
+
 
 class Run:
     """One paper after its fast checks. ``analysis`` is what the page shows first."""
 
     def __init__(
-        self, source: Path, paper: Any, outputs: Any, names: list[str], target: Path, start: float
+        self,
+        source: Path,
+        paper: Any,
+        outputs: Any,
+        names: list[str],
+        target: Path,
+        start: float,
+        *,
+        version: str | None = None,
+        r_source: Path | None = None,
     ) -> None:
         self.source = source
         self.paper = paper
@@ -477,10 +530,14 @@ class Run:
         self.names = names
         self.target = target
         self.start = start
+        #: the versions the report names, when R metacheck ran the checks
+        self.version = version
+        #: R's copy of the paper for the data check (the run's own folder is gone by then)
+        self.r_source = r_source
         self.analysis: Analysis
 
     def data_job(self) -> DataJob:
-        return DataJob(self.paper)
+        return DataJob(self.paper, r_source=self.r_source)
 
     def finish(self, job: DataJob) -> Analysis:
         """The analysis with the data check's result (or its error) added."""
@@ -516,12 +573,13 @@ class Run:
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            page = render_module_outputs(outputs, self.paper)
+            page = render_module_outputs(outputs, self.paper, version=self.version)
         self.target.mkdir(parents=True, exist_ok=True)
         report_path = self.target / report_filename(self.source.stem)
         report_path.write_text(protect(page), encoding="utf-8")
         seconds = time.perf_counter() - self.start
-        return Analysis(self.source.stem, rows, page, report_path, seconds, pending)
+        engine = f"R metacheck {self.version.split(' ', 1)[0]}" if self.version else ""
+        return Analysis(self.source.stem, rows, page, report_path, seconds, pending, engine)
 
 
 DATA_TITLE = "Data check"
@@ -540,6 +598,7 @@ def begin(
     checks: Sequence[str] | None = None,
     args: dict[str, Any] | None = None,
     hosted: bool = False,
+    engine: str = "python",
 ) -> Run:
     """Read the paper and run the fast checks. With ``data``, the analysis says the data check is due.
 
@@ -547,7 +606,8 @@ def begin(
     ``workdir``) gets the report file. ``checks`` are the checks the person ticked (only
     those this server offers run, see :func:`~metacheck.app.checks.chosen_checks`); without
     them the app's own checks run, with the online ones if ``online``. ``args`` are a
-    preset's arguments, by check name.
+    preset's arguments, by check name. With ``engine="r"`` R metacheck runs the checks (only
+    those it has), and later the data check too.
     """
     import metacheck as pc
     from metacheck.core.scope import module_progress
@@ -558,7 +618,7 @@ def begin(
     tick = progress or (lambda _fraction, _text: None)
     start = time.perf_counter()
     source = Path(path)
-    paper = read_paper(source, workdir, pdf=pdf, bibr_key=bibr_key, progress=tick)
+    paper, read_from = _read(source, workdir, pdf=pdf, bibr_key=bibr_key, progress=tick)
     if checks is None:
         names = selected_checks(online)
     else:
@@ -570,6 +630,9 @@ def begin(
     if "ref_accuracy" in names and len(pc.paper_table(paper, "bib_match")) == 0:
         # only a paper file that carries CrossRef matches (the bundled JSON) can be checked
         names.remove("ref_accuracy")
+    if engine == "r":
+        target = Path(report_dir or workdir)
+        return _begin_r(source, read_from, paper, names, data, args, target, start, tick)
     with (
         _RUN_LOCK,
         use(allow_local=False),
@@ -581,6 +644,51 @@ def begin(
         outputs = report_module_run(paper, names, args=args or {})  # ends: "Building the report"
     run = Run(source, paper, outputs, names, Path(report_dir or workdir), start)
     rows = [_row(label(name), outputs[label(name)]) for name in names if label(name) in outputs]
+    run.analysis = run._write(rows, outputs, pending=data)
+    tick(1.0, "Done")
+    return run
+
+
+def _begin_r(
+    source: Path,
+    read_from: Path,
+    paper: Any,
+    names: list[str],
+    data: bool,
+    args: dict[str, Any] | None,
+    target: Path,
+    start: float,
+    tick: Progress,
+) -> Run:
+    """:func:`begin`'s checks, run by R metacheck on the file the paper was read from."""
+    from metacheck import rengine
+    from metacheck.report.report import ReportOutput
+
+    try:
+        found = rengine.info()
+    except rengine.REngineError as exc:
+        raise UserError(R_FAILED.format(exc)) from exc
+    names = [n for n in names if n in found.modules]  # R has no packs and no Python-only checks
+    if not names and not data:
+        raise UserError(NO_CHECKS)
+    version = rengine.report_version(found.metacheck_version, found.r_version)
+    outputs = ReportOutput(paper=paper)
+    if names:
+        tick(0.0, "Running the checks with R metacheck")
+        try:
+            r_run = rengine.run(read_from, names, args=args or {})
+        except rengine.REngineError as exc:
+            raise UserError(R_FAILED.format(exc)) from exc
+        outputs = r_run.outputs
+        outputs.paper = paper
+        version = rengine.report_version(r_run.metacheck_version, r_run.r_version)
+    r_source = None
+    if data:  # the data check runs after this run's folder is removed: R gets its own copy
+        folder = Path(tempfile.mkdtemp(prefix="metacheck-app-r-"))
+        r_source = Path(shutil.copy2(read_from, folder / read_from.name))
+    tick(1.0, "Building the report")
+    run = Run(source, paper, outputs, names, target, start, version=version, r_source=r_source)
+    rows = [_row(name, outputs[name]) for name in names if name in outputs]
     run.analysis = run._write(rows, outputs, pending=data)
     tick(1.0, "Done")
     return run
