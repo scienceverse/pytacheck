@@ -254,18 +254,32 @@ def _chr(*values: str) -> rd.RObject:
 
 @pytest.mark.parametrize("enabled", [True, False])
 def test_reading_leaves_the_collector_as_it_was(enabled: bool) -> None:
-    """The collector is paused during a read and back as it was after it; objects
-    the program froze itself stay frozen."""
+    """The collector is paused during a read and back as it was after it."""
     was = gc.isenabled()
     try:
         (gc.enable if enabled else gc.disable)()
+        frozen = gc.get_freeze_count()  # not always 0: a library may have frozen objects
         rd.read_rds(DATA / "study.rds")
         assert gc.isenabled() is enabled
-        assert gc.get_freeze_count() == 0
-        gc.freeze()
-        frozen = gc.get_freeze_count()
-        rd.read_rds(DATA / "study.rds")
         assert gc.get_freeze_count() == frozen
     finally:
-        gc.unfreeze()
         (gc.enable if was else gc.disable)()
+
+
+@pytest.mark.parametrize(
+    ("frozen", "promote", "calls"),
+    [(0, True, ["freeze", "unfreeze"]), (5, True, []), (0, False, [])],
+    ids=["promoted", "program-froze-objects", "free-threaded"],
+)
+def test_what_a_read_builds_goes_to_the_oldest_generation(
+    frozen: int, promote: bool, calls: list[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """``gc.freeze()`` then ``gc.unfreeze()`` after a read, unless the program froze
+    objects itself (unfreezing would undo that) or the build is free-threaded."""
+    seen: list[str] = []
+    monkeypatch.setattr(gc, "get_freeze_count", lambda: frozen)
+    monkeypatch.setattr(gc, "freeze", lambda: seen.append("freeze"))
+    monkeypatch.setattr(gc, "unfreeze", lambda: seen.append("unfreeze"))
+    monkeypatch.setattr(rd, "_PROMOTE", promote)
+    rd.read_rds(DATA / "study.rds")
+    assert seen == calls
