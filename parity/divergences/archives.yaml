@@ -301,10 +301,6 @@
   kind: r_bug_fixed
   ref: U46
   reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
-"archives_gz/github_tree_files.meta_fails":
-  kind: r_bug_fixed
-  ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
 "archives_gz/gitlab_tree_files.subgroup_paged":
   kind: r_bug_fixed
   ref: U46
@@ -330,10 +326,6 @@
   ref: U46
   reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
 "archives_gz_review/gitlab_tree_files.review.branch_space":
-  kind: r_bug_fixed
-  ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
-"archives_gz_review/github_tree_files.review.vector":
   kind: r_bug_fixed
   ref: U46
   reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
@@ -546,3 +538,16 @@
   kind: r_bug_fixed
   ref: U209
   reason: "the files that fit in the zip-mode budget are downloaded and the rest reported (metacheck stops: its call to the renamed cap_report() fails)"
+# DX-osf-2
+"archives_gz/github_tree_files.meta_fails":
+  kind: better_logic
+  ref: DX-osf-2
+  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid"
+"archives_gz_review/github_tree_files.review.vector":
+  kind: better_logic
+  ref: DX-osf-2
+  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid"
+"archives_gz_review/gitlab_tree_files.review.vector_missing":
+  kind: better_logic
+  ref: DX-osf-2
+  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid"

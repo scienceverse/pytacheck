@@ -367,8 +367,20 @@ def _fill_zip(files: pd.DataFrame, row_idx: list[int], zip_url: str, **kw: Any) 
     return files
 
 
-def test_zip_timeout_is_passed_to_zip_transport(monkeypatch: pytest.MonkeyPatch) -> None:
+def _forbid_repo_head(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The archive downloads take the repository name from its URL, with no HEAD
+    request to the repository's page first (metacheck d52b3fd)."""
     import metacheck.archives.github as github
+    import metacheck.archives.gitlab as gitlab
+
+    def no_head(repo: Any) -> Any:
+        raise AssertionError(f"github_repo()/gitlab_repo() called for {repo}")
+
+    monkeypatch.setattr(github, "github_repo", no_head)
+    monkeypatch.setattr(gitlab, "gitlab_repo", no_head)
+
+
+def test_zip_timeout_is_passed_to_zip_transport(monkeypatch: pytest.MonkeyPatch) -> None:
 
     seen: dict[str, Any] = {}
 
@@ -378,13 +390,34 @@ def test_zip_timeout_is_passed_to_zip_transport(monkeypatch: pytest.MonkeyPatch)
 
     # a listed (small) file size gives the archive an estimate within budget,
     # so the zip transport, which is given zip_timeout_s, runs
-    monkeypatch.setattr(github, "github_repo", lambda repo: "owner/repo")
+    _forbid_repo_head(monkeypatch)
     monkeypatch.setattr(dlm, "_download_zip_to_cache", fake_zip)
     dl = download_repo_files(
         _github_files(), max_file_size=10, max_download_size=100, zip_timeout_s=7
     )
     assert seen["timeout_s"] == 7
-    assert seen["zip_url"] == "https://api.github.com/repos/owner/repo/zipball"
+    assert seen["zip_url"] == "https://api.github.com/repos/owner/repo-timeout/zipball"
+    assert not pd.isna(dl["file_location"].iloc[0])
+
+
+def test_gitlab_archive_takes_the_project_path_without_a_request(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    seen: dict[str, Any] = {}
+
+    def fake_zip(files: pd.DataFrame, row_idx: list[int], zip_url: str, **kw: Any) -> pd.DataFrame:
+        seen["zip_url"] = zip_url
+        return _fill_zip(files, row_idx, zip_url)
+
+    _forbid_repo_head(monkeypatch)
+    monkeypatch.setattr(dlm, "_download_zip_to_cache", fake_zip)
+    files = _github_files("https://gitlab.com/group/sub/proj.git")
+    files["file_url"] = ["https://gitlab.com/group/sub/proj/-/raw/main/a.csv"]
+    dl = download_repo_files(files, max_file_size=10, max_download_size=100)
+    assert (
+        seen["zip_url"]
+        == "https://gitlab.com/api/v4/projects/group%2Fsub%2Fproj/repository/archive.zip"
+    )
     assert not pd.isna(dl["file_location"].iloc[0])
 
 
@@ -403,7 +436,6 @@ def test_zip_timeout_for_size() -> None:
 def test_github_archive_is_limited_to_twice_the_budget(monkeypatch: pytest.MonkeyPatch) -> None:
     # metacheck #424: GitHub's zipball reports no size, so it used to be
     # downloaded with no byte limit; it is now limited like Dryad's archive
-    import metacheck.archives.github as github
 
     seen: dict[str, Any] = {}
 
@@ -411,7 +443,7 @@ def test_github_archive_is_limited_to_twice_the_budget(monkeypatch: pytest.Monke
         seen.update(kw)
         return _fill_zip(files, row_idx, zip_url)
 
-    monkeypatch.setattr(github, "github_repo", lambda repo: "owner/repo")
+    _forbid_repo_head(monkeypatch)
     monkeypatch.setattr(dlm, "_download_zip_to_cache", fake_zip)
     dl = download_repo_files(
         _github_files("https://github.com/owner/repo-cap"), max_file_size=10, max_download_size=100
@@ -426,7 +458,6 @@ def test_github_archive_unsized_or_too_large_is_not_used(
     # no whole-repository archive reports its size, so it is estimated from
     # the listed file sizes: with none listed there is no estimate, and an
     # estimate over 2x the budget is refused; both go file by file
-    import metacheck.archives.github as github
 
     def make_files(sizes: list[float], repo: str) -> pd.DataFrame:
         names = [f"{c}.csv" for c in "abc"[: len(sizes)]]
@@ -453,7 +484,7 @@ def test_github_archive_unsized_or_too_large_is_not_used(
         Path(dest).parent.mkdir(parents=True, exist_ok=True)
         Path(dest).write_bytes(b"\x00")
 
-    monkeypatch.setattr(github, "github_repo", lambda repo: "owner/repo")
+    _forbid_repo_head(monkeypatch)
     # a file whose size is unknown is sized on the spot: 1 KB lets it through
     monkeypatch.setattr(dlm, "_remote_size", lambda url: 1024.0)
     monkeypatch.setattr(dlm, "_download_zip_to_cache", no_zip)
@@ -1008,7 +1039,6 @@ def test_download_zip_to_cache_caps_and_failures(tmp_path: Path, messages: list[
 def test_download_repo_files_github_zip_end_to_end(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import metacheck.archives.github as gh
 
     data = _zip_bytes({"README.md": b"# r\n", "code/run.R": b"1\n"}, top="o-r-abc123/")
     files = pd.DataFrame(
@@ -1020,7 +1050,7 @@ def test_download_repo_files_github_zip_end_to_end(
             "file_size": [4.0, 2.0],
         }
     )
-    monkeypatch.setattr(gh, "github_repo", lambda repo: "o/r")
+    _forbid_repo_head(monkeypatch)
     with respx.mock(assert_all_called=False) as router:
         router.head("https://api.github.com/repos/o/r/zipball").mock(
             return_value=httpx.Response(200)

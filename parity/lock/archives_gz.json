@@ -1,6 +1,6 @@
 {
 "github_files.html_json_types": {"r": "d6b2a46d4cd2cae1", "py": "fb7b5ed42ffcb45b", "diff": ["<root>"]},
-"github_tree_files.meta_fails": {"r": "7195bc407051b6bc", "py": "0d7a02f05fe7cb97", "diff": ["files"]},
+"github_tree_files.meta_fails": {"r": "7195bc407051b6bc", "py": "3d5584a1e07a73f7", "diff": ["default_branch", "files", "gated[]", "reason[]"]},
 "github_tree_files.tree": {"r": "b92a1783e473b0f9", "py": "40a142ba848d91e4", "diff": ["files"]},
 "gitlab_tree_files.subgroup_paged": {"r": "1f27e9cd4954e4d1", "py": "b641e7795f2990bd", "diff": ["files"]},
 "zenodo_file_download.mixed": {"r": "42404d032b6706fe", "py": "99c195420830ceb5", "diff": ["<root>"]},
