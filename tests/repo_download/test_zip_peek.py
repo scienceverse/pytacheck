@@ -928,6 +928,18 @@ def test_zip_peek_with_a_stale_size_asks_again_at_the_reported_size() -> None:
     assert len(calls) == 2
 
 
+def test_zip_peek_with_a_too_large_size_and_a_short_answer_reads_the_file_as_it_is() -> None:
+    # a listing's size larger than the file and a 206 with no Content-Range: the
+    # shorter answer is the whole file, so offsets count from its first byte
+    data = (DATA / "mixed.zip").read_bytes()
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(return_value=httpx.Response(206, content=data))
+        cd = zip_peek(URL, size=len(data) + 2552)
+    assert cd is not None and len(cd) == 6
+    with zipfile.ZipFile(DATA / "mixed.zip") as zf:
+        assert list(cd["offset"]) == [i.header_offset for i in zf.infolist() if not i.is_dir()]
+
+
 def test_zip_decision_passes_a_known_size_on(monkeypatch: pytest.MonkeyPatch) -> None:
     seen: list[object] = []
 
