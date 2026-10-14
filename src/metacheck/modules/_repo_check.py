@@ -1109,9 +1109,14 @@ def dataverse_row(record: dict[str, Any], f: Any) -> dict[str, Any]:
 
 
 def figshare_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
-    return _row(
+    row = _row(
         dollar(f, "name"), _as_chr(empty_or(dollar(f, "download_url"), None)), dollar(f, "size")
     )
+    # the file's folder in the article, where Figshare gives one (folder_structure)
+    path = _as_chr(empty_or(dollar(f, "path"), None))
+    if path is not None:
+        row["file_path"] = path
+    return row
 
 
 def dryad_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:

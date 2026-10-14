@@ -976,6 +976,13 @@ def _download_file_table(
         downloaded = [False] * n
         extracted: list[int | None] = [None] * n
         keys = [None if is_missing(v) else str(v) for v in files["key"].tolist()]
+        # where a file goes inside the folder: ``rel`` (Figshare's folder/name)
+        # where the table has one, else its name
+        rels = (
+            [None if is_missing(v) else str(v) for v in files["rel"].tolist()]
+            if "rel" in files.columns
+            else keys
+        )
         ids = [None if is_missing(v) else str(v) for v in files["id"].tolist()]
         selfs = [None if is_missing(v) else str(v) for v in files["self"].tolist()]
         n_wanted = n - sum(omitted)
@@ -1042,7 +1049,7 @@ def _download_file_table(
             # a file with neither a name nor an id is still copied (file.path()
             # turns NA into "NA"), but its path is recorded as NA, so the
             # verification step marks it as not downloaded.
-            fname = keys[i] if keys[i] is not None and keys[i] != "" else ids[i]
+            fname = next((x for x in (rels[i], keys[i]) if x is not None and x != ""), ids[i])
             if not _inside(download_to, _paste(fname)):
                 continue  # divergence: R would write outside the folder (e.g. "../x")
             to = f"{download_to}/{_paste(fname)}"
