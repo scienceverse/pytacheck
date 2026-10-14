@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import httpx
 import pandas as pd
 import pytest
+import respx
 
 import metacheck as pc
 from metacheck.archives.mendeley import (
@@ -62,3 +64,23 @@ def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: False)
     with pytest.raises(ConnectionError, match=r"data\.mendeley\.com seems to be offline"):
         mendeley_info("short1")
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        # what Mendeley answered for a missing dataset in 2026-10 (metacheck d52b3fd)
+        httpx.Response(400, json={"error": {"message": "dataset not found", "status": 400}}),
+        httpx.Response(
+            200, json={"error": {"message": "error - dataset not found", "status": 404}}
+        ),
+    ],
+)
+def test_missing_dataset_is_unfound(response: httpx.Response) -> None:
+    url = "https://data.mendeley.com/public-api/datasets/doesnotexist12345xyz"
+    with respx.mock() as router:
+        router.get(url).mock(return_value=response)
+        with pytest.warns(UserWarning, match="doesnotexist12345xyz could not be found"):
+            info = _mendeley_info("doesnotexist12345xyz")
+    assert info.columns.tolist() == ["mendeley_id", "error"]
+    assert info["error"].iloc[0] == "unfound"
