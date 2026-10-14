@@ -55,14 +55,17 @@ the same environment).
   names neither uses Python, so clients such as the Platform keep Python's results when
   R is installed. `pytacheck serve --engine r` makes R the server's default. See
   [API.md](API.md#the-r-engine).
-* **The app:** "Run checks with: R metacheck / Python (experimental)" under "Read PDFs
-  with", with R chosen. It is shown where R runs metacheck; on a shared server
+* **The app:** "Run checks with: R metacheck 0.3.3.2 / Python 0.4.0a2 (experimental)"
+  under "Read PDFs with", with R chosen; each choice names the version it runs, and so
+  does the page's title ("R metacheck 0.3.3.2 · Python 0.4.0a2 (experimental)"). It is
+  shown where R runs metacheck; on a shared server
   (`--hosted`) only with `METACHECK_APP_R_ENGINE=on`, and `METACHECK_APP_R_ENGINE=off`
   hides it (and runs Python) anywhere. With R the page offers only R
   metacheck's checks (not `author_check`, `figure_table_refs`, `license_check` or packs)
   and checks papers only, not data packages. R runs the shared data check too, without
   the local concept classifier (D33), and does not report its progress. The report header
-  names R metacheck's version and the results line says "with R metacheck".
+  names R metacheck's version and the results line says "with R metacheck 0.3.3.2" (or
+  "with Python 0.4.0a2 (experimental)" after a Python run).
 
 ## What differs from Python
 
