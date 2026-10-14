@@ -499,6 +499,22 @@ def test_page_abbreviation() -> None:
     assert list(obs["formatted"]) == [fmt]
 
 
+def test_wrapped_link_text_still_prints_its_href(fixtures_dir: Path) -> None:
+    # the TEI prints "(osf.io/  a5bmw/)", a link whose text the line-wrap fix
+    # joins; the href is still printed there, and the 12.0 url row finds it
+    xml = fixtures_dir / "problems" / "0956797617737129.xml"
+    exp = "effect size found in Study 2a (https://osf.io/a5bmw/)."
+    old = grobid_to_bibr(xml, None)
+    assert any(t.endswith(exp) for t in old.text["text"])
+    paper = pc.read(xml)
+    (row,) = [t for t in paper.text["text"] if t.endswith(exp)]
+    url = paper.url[
+        paper.url["text_id"] == paper.text["text_id"][paper.text["text"] == row].iloc[0]
+    ]
+    start, end = int(url["start"].iloc[0]), int(url["end"].iloc[0])
+    assert row[start:end] == "https://osf.io/a5bmw/"
+
+
 def test_head(fixtures_dir: Path) -> None:
     paper = grobid_to_bibr(fixtures_dir / "problems" / "0956797615569889.xml", None)
     # removed from text, but kept in the section list
