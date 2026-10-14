@@ -84,3 +84,27 @@ def test_data_is_manifest_detects_file_listing() -> None:
     assert F.data_is_manifest(manifest, repo) is True
     real = pd.DataFrame({"id": [1, 2, 3], "score": [1.1, 2.2, 3.3]})
     assert F.data_is_manifest(real, repo) is False
+
+
+def test_data_is_manifest_numeric_column_names_numeric_files() -> None:
+    # numeric columns are skipped only while no repository file is named like a number
+    repo = ["1.5", "2.25", "notes.txt"]
+    numbers = pd.DataFrame({"file": [1.5, 2.25, 1.5]})
+    assert F.data_is_manifest(numbers, repo) is True
+    numbers_as_objects = pd.DataFrame({"file": pd.Series([1.5, 2.25, None], dtype=object)})
+    assert F.data_is_manifest(numbers_as_objects, repo) is True
+    assert F.data_is_manifest(numbers, ["a.csv", "b.r"]) is False
+
+
+def test_data_is_manifest_mixed_object_column() -> None:
+    repo = ["Study 1.r", "Study 1.csv", "notes.txt"]
+    mixed = pd.DataFrame(
+        {
+            "file": pd.Series(
+                ["Study 1.r", " Study 1.csv ", 3, "notes.txt", "Study 1.r"], dtype=object
+            )
+        }
+    )
+    assert F.data_is_manifest(mixed, repo) is True
+    too_few = pd.DataFrame({"file": ["Study 1.r", "x", "y", "Study 1.csv"]})
+    assert F.data_is_manifest(too_few, repo) is False

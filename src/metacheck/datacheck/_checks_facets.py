@@ -25,7 +25,7 @@ from typing import Any
 
 from metacheck._r.regex import compile_r, grepl
 from metacheck._values import as_float, is_true
-from metacheck.datacheck._kinds import NUMERIC, WS, as_text, column, kind
+from metacheck.datacheck._kinds import NUMERIC, WS, as_text, column, integer_numbers, kind
 
 __all__ = [
     "_ACC_NAME_RE",
@@ -218,6 +218,9 @@ def _parse_frac(v: Any, fmts: tuple[str, ...] | list[str]) -> float:
 
 def _numbers(x: Any) -> list[float]:
     """``as.numeric(gsub(",", ".", as.character(x), fixed = TRUE))`` without NA."""
+    ints = integer_numbers(x)
+    if ints is not None:  # an integer's text has no comma
+        return [f for f in ints if f is not None]
     out = []
     for s in as_text(x):
         if s is None:

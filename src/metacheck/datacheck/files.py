@@ -534,18 +534,80 @@ def data_is_manifest(
     if not files:
         return False
     repo_base = {_tolower(_r_basename(str(f).replace("\\", "/"))) for f in files}
+    # A column of numbers, dates or logicals is written with digits, signs, "e", ":"
+    # and spaces (or TRUE/FALSE/NA/Inf/NaN), so it can only name repository files
+    # when one of them is named like that: skip such columns otherwise, without
+    # writing out every cell.
+    plain_names = any(_PLAIN_RENDER.fullmatch(b) for b in repo_base)
     for j in range(df.shape[1]):
-        vals = trimws(_series_as_character(df.iloc[:, j]))
-        vals = [_tolower(v) for v in vals if v is not None and v != ""]
+        col = df.iloc[:, j]
+        if not plain_names and not _may_hold_text(col):
+            continue
+        vals = [v.strip(_TRIM_WS) for v in _column_text(col)]
+        vals = [_tolower(v) for v in vals if v != ""]
         if not vals:
             continue
-        is_ref = [_r_basename(v.replace("\\", "/")) in repo_base for v in vals]
-        if sum(is_ref) / len(is_ref) < threshold:
+        # stop at the first value that leaves too few names to reach the threshold
+        n = len(vals)
+        missed = 0
+        is_ref = []
+        for v in vals:
+            hit = _r_basename(v.replace("\\", "/")) in repo_base
+            is_ref.append(hit)
+            if not hit:
+                missed += 1
+                if (n - missed) / n < threshold:
+                    break
+        if (n - missed) / n < threshold:
             continue
         exts = set(file_ext([v for v, r in zip(vals, is_ref, strict=True) if r])) - {""}
         if len(exts) >= min_exts:
             return True
     return False
+
+
+_TRIM_WS = " \t\r\n"  # trimws()'s default whitespace
+# R's as.character() of a number, date, time or logical, lower-cased
+_PLAIN_RENDER = re.compile(r"[0-9e.+\-: ]*|true|false|na|nan|inf")
+
+
+_PLAIN_KINDS = frozenset(
+    {
+        "empty",
+        "integer",
+        "floating",
+        "mixed-integer-float",
+        "decimal",
+        "boolean",
+        "datetime64",
+        "datetime",
+        "date",
+        "timedelta64",
+        "timedelta",
+        "time",
+    }
+)
+
+
+def _may_hold_text(col: pd.Series) -> bool:
+    """Whether *col* can hold text: not a numeric, logical or date-time column."""
+    kind = pd.api.types.infer_dtype(col, skipna=True)
+    return kind not in _PLAIN_KINDS
+
+
+def _column_text(col: pd.Series) -> list[str]:
+    """The non-missing values of ``as.character(col)``; text cells are taken as they are."""
+    if isinstance(col.dtype, pd.CategoricalDtype):
+        return [v for v in _series_as_character(col) if v is not None]
+    out = []
+    for v in col.tolist():
+        if type(v) is str:
+            out.append(v)
+        else:
+            t = _r_as_character(v)
+            if t is not None:
+                out.append(t)
+    return out
 
 
 # -----------------------------------------------------------------------------
