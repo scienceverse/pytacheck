@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import functools
 import math
+import re
 import warnings
 from collections.abc import Iterable, Iterator, Sequence
 from typing import Any, NamedTuple, cast
@@ -37,13 +38,20 @@ _NUM = r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?)"
 # parse_t_stats(): perl = TRUE
 _T_PATTERN = r"\bt\s*\(\s*([0-9]+(?:\.[0-9]+)?)\s*\)\s*=\s*" + _NUM
 
-# parse_d_stats(): perl = TRUE
+# parse_d_stats(): perl = TRUE; a subscript may follow an underscore ("g_av",
+# "d_z"), as in metacheck since afda8a2 (UX-text-1)
 _D_PATTERN = (
     r"(?i)\b"
-    r"(hedge(?:'|’)?s\s+g\s*(?:av|z|rm)?|cohen(?:'|’)?s\s+d\s*z|cohen(?:'|’)?s\s+d|"
-    r"d\s*z|d|ds|g\s*(?:av|z|rm)?|gs)"
+    r"(hedge(?:'|’)?s\s+g[\s_]*(?:av|z|rm)?|cohen(?:'|’)?s\s+d[\s_]*z|cohen(?:'|’)?s\s+d|"
+    r"d[\s_]*z|d|ds|g[\s_]*(?:av|z|rm)?|gs)"
     r"\b\s*([=≈<>≤≥]{1,3})\s*" + _NUM
 )
+
+# A subscripted Hedges' g (g_av, g z, grm, gs), whatever word comes before it:
+# without an apostrophe ("Hedges g av") the label is the whole phrase. Differs
+# from metacheck (DX-text-1): "gav", "gz" and "grm" written together count too
+_D_PREFIX = re.compile(r"^(?:hedge.{0,3}s|cohen.{0,2}s)\s+")
+_SUBSCRIPTED_G = re.compile(r"g[ _]?(?:av|z|rm)$|gs$")
 
 # parse_f_stats(): perl = TRUE
 _F_PATTERN = r"\bF\s*\(\s*([0-9]+(?:\.[0-9]+)?)\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)\s*=\s*" + _NUM
@@ -755,6 +763,20 @@ def _classify_d_coherence(
         out["d_implied_n"] = split
         out["d_coherence_note"] = (
             f"Match under independent-samples unequal-n range assumption (closest split {split})."
+        )
+    elif _SUBSCRIPTED_G.match(_D_PREFIX.sub("", d_stats[0].label)):
+        # Hedges' g_av (Cumming, 2012) also depends on the condition SDs and the
+        # correlation between them, which t(df) does not give, so a correct g_av
+        # can match none of the tested formulas: it cannot be verified, like
+        # Welch's t above (metacheck #455). A plain g may be Hedges' (1981)
+        # correction of d, which t(df) does give, so it is still checked.
+        out["d_coherence"] = "indeterminate"
+        out["d_coherence_assumption"] = "none"
+        out["d_coherence_note"] = (
+            "Hedges' g (subscripted) reported; not checked against the tested formulas. "
+            "g_av depends on the individual condition SDs and the true observed correlation, "
+            "neither of which t(df) preserves, so a correctly-computed g_av can differ from "
+            "the implied d_z/d_rm/equal-n/unequal-n values without being an error."
         )
     else:
         out["d_coherence"] = "no_match"

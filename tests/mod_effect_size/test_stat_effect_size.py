@@ -191,6 +191,61 @@ def test_stat_effect_size_hedges_g() -> None:
         assert t["d_coherence_assumption"].iloc[0] == "paired_dz", text
 
 
+def test_stat_effect_size_collapsed_subscript() -> None:
+    """Grobid writes a subscripted g_av as "g av" (metacheck #448, 852f9dd, afda8a2)."""
+    # the whole label is kept, recognised as an effect size and checked
+    out = _run("A was bigger than B, t(23) = 2.73, p 0.013, Hedges' g av = 0.56.")
+    assert out.traffic_light == "green"
+    assert out.table["es"].iloc[0] == "Hedges' g av = 0.56"
+    assert out.table["d_coherence"].iloc[0] == "match_under_assumptions"
+    assert out.table["d_coherence_assumption"].iloc[0] == "paired_dz"
+
+    out = _run("A was bigger than B, t(23) = 2.73, p 0.013, Cohen's d z = 0.56.")
+    assert out.traffic_light == "green"
+    assert out.table["d_coherence"].iloc[0] == "match_under_assumptions"
+
+    # with no Hedges'/Cohen's word, written with a space or an underscore
+    for es in ("g av = 0.56", "g_av = 0.56"):
+        out = _run(f"A was bigger than B, t(23) = 2.73, p 0.013, {es}.")
+        assert out.traffic_light == "green", es
+        assert out.table["es"].iloc[0] == es
+        assert out.table["d_coherence"].iloc[0] == "match_under_assumptions", es
+
+
+def test_stat_effect_size_subscripted_g_is_indeterminate() -> None:
+    """An unmatched subscripted Hedges' g is indeterminate, not no_match (metacheck #455)."""
+    # g_av also depends on the condition SDs and their correlation, which t(df)
+    # does not give, so a correct g_av can match none of the tested formulas
+    out = _run("A was bigger than B, t(130) = 18.04, p < .001, Hedges' g av = 1.76.")
+    assert out.traffic_light == "green"
+    assert out.table["d_coherence"].iloc[0] == "indeterminate"
+    assert out.table["d_coherence_assumption"].iloc[0] == "none"
+    assert "g_av depends on" in out.table["d_coherence_note"].iloc[0]
+
+    for es in (
+        "Hedges g av",  # Grobid drops the apostrophe too: the label is the whole phrase
+        "Hedges' g_av",
+        "g av",
+        "g_av",
+        "gs",
+        "g rm",
+        "gav",  # written together (pytacheck; metacheck says no_match)
+        "Hedges' grm",
+    ):
+        out = _run(f"A was bigger than B, t(130) = 18.04, p < .001, {es} = 1.76.")
+        assert out.table["d_coherence"].iloc[0] == "indeterminate", es
+
+    # an unsubscripted g (Hedges' 1981 correction of d, which t(df) does give)
+    # and d are still checked
+    for es in ("Hedges' g = 3.00", "g = 3.00", "d = 3.00", "d z = 3.00"):
+        out = _run(f"A was bigger than B, t(20) = 1.00, p 0.32, {es}.")
+        assert out.table["d_coherence"].iloc[0] == "no_match", es
+
+    # a subscripted g that matches still matches
+    out = _run("A was bigger than B, t(23) = 2.73, p 0.013, Hedges' g av = 0.56.")
+    assert out.table["d_coherence"].iloc[0] == "match_under_assumptions"
+
+
 def test_stat_effect_size_no_warnings() -> None:
     """stat_effect_size emits no warnings for a paper with no stats (#308)."""
     with warnings.catch_warnings():
@@ -453,6 +508,12 @@ def test_parsers() -> None:
         ("hedge’s g", 1.0, "Hedge’s g = 1", "="),
         ("g", 2.0, "g = 2", "="),
         ("gs", 0.3, "gs = 0.3", "="),
+    ]
+    # a subscript after an underscore (metacheck afda8a2)
+    assert ses._parse_d_stats("g_av = 0.43; d_z = .5; Hedges' g_rm = 1") == [
+        ("g_av", 0.43, "g_av = 0.43", "="),
+        ("d_z", 0.5, "d_z = .5", "="),
+        ("g_rm", 1.0, "g_rm = 1", "="),
     ]
     assert ses._parse_eta_stats("ηp² = .17; η2 = .1; f = .3; ω² = 0; BF10 = 3; xyz; d = 1") == [
         ("partial_eta_squared", 0.17, "ηp² = .17", "="),

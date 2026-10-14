@@ -60,9 +60,21 @@ _P_PATTERN = (
 # "N = <number>" qualifier (see the long comment in R/text-extractors.R).
 _DF_INNER = r"(?:[0-9,\.\s]+|[nN]\s*=\s*[0-9]+)*"
 _GREEK = "Ͱ-Ͽ"
+# Grobid writes a subscript as a word after a space ("g_av" as "g av"), which
+# metacheck read as a statistic "av" (UX-text-1, fixed upstream for #448). A
+# bare g or d followed by one of its own subscripts is one statistic name; any
+# other two words before an operator are not ("sample size n = 40" is n, "mean
+# age years = 25" is years).
+_BARE_SUBSCRIPT = f"[gd]\\s+(?:av|z|rm|s)(?=\\s*[{_OPS}])"
 _EQ_PATTERN = (
     r"(?:(Hedge.{0,3}|Cronbach.{0,2}|Cohen.{0,2}|\d{1,2}%)\s+)?"  # common prefix
-    f"[{_GREEK}²a-zA-Z-_\\.0-9\\{{\\}}\\^\\\\]+\\s*"  # statistic name
+    f"(?:{_BARE_SUBSCRIPT}|"
+    f"[{_GREEK}²a-zA-Z-_\\.0-9\\{{\\}}\\^\\\\]+"  # statistic name
+    # after a prefix, one more short word before the operator is the
+    # subscript ("Hedges' g av"); without one, "(beta = 0.74, t(260) = ...)"
+    # must stay two statistics
+    f"(?(1)(?:\\s+[a-zA-Z]{{1,3}}(?=\\s*[{_OPS}]))?))"
+    r"\s*"
     f"(?:\\({_DF_INNER}\\))?\\s*"  # optional df-shaped parentheses
     f"[{_OPS}]{{1,3}}\\s*"  # 1-3 operators
     # numbers (a Unicode minus may have a space after it: "r = − 0.12"),
