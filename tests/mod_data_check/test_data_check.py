@@ -939,6 +939,43 @@ def test_zip_peek_reasons_stay_with_their_rows(
     assert sum(r is not None for r in reasons.values()) == 1
 
 
+def test_unopened_archive_is_fetched(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck e4b74e1 (#456): an archive not yet opened is typed "unknown", so
+    # under download = "data" it was never wanted; keep_archive must turn it on
+    # (R's `want & (... | keep_archive)` could only narrow `want`)
+    import metacheck.archives.download as dl_mod
+    from metacheck.modules import data_check as D
+
+    fetched: list[str] = []
+
+    def fake_download(files: pd.DataFrame, **kwargs: Any) -> pd.DataFrame:
+        fetched.extend(files["file_name"].tolist())
+        out = files.copy()
+        out["file_location"] = None
+        return out
+
+    monkeypatch.setattr(dl_mod, "download_repo_files", fake_download)
+    files = pd.DataFrame(
+        {
+            "file_name": ["results.tar.gz", "notes.pdf", "stimuli.png", "data.csv"],
+            "file_path": ["results.tar.gz", "notes.pdf", "stimuli.png", "data.csv"],
+            "file_url": [f"https://example.org/{n}" for n in ("a", "b", "c", "d")],
+            "file_location": [None] * 4,
+            "data_type": ["unknown", "unknown", "materials", "data"],
+            "doc_role": [None] * 4,
+            "data_format": [None, None, None, "tabular"],
+        }
+    )
+    dl = D._download(files.copy(), "data", None, False, 100, 500, math.inf, False, False)
+    assert dl["want"] == [True, False, False, True]
+    assert fetched == ["results.tar.gz", "data.csv"]
+    # with download = "none" nothing is wanted, archives included
+    fetched.clear()
+    dl = D._download(files.copy(), "none", None, False, 100, 500, math.inf, False, False)
+    assert dl["want"] == [False] * 4
+    assert fetched == []
+
+
 def test_peek_zips_default_and_forwarded_keywords(monkeypatch: pytest.MonkeyPatch) -> None:
     """peek_zips defaults to TRUE; cache and skip_on_api_limit reach the zip peek (issue #427)."""
     import inspect
