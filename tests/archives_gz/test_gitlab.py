@@ -12,10 +12,10 @@ import respx
 import metacheck as pc
 from metacheck.archives.gitlab import (
     _gitlab_blob_sizes,
-    _gitlab_repo_path,
     _gitlab_config,
     _gitlab_pat,
     _gitlab_project_id,
+    _gitlab_repo_path,
     _graphql_body,
     gitlab_links,
     gitlab_pat,
