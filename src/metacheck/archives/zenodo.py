@@ -22,6 +22,7 @@ import pandas as pd
 
 from metacheck._values import field, is_missing
 from metacheck.archives._atomic import atomic_write
+from metacheck.archives._memo import session_memo
 
 if TYPE_CHECKING:
     import httpx
@@ -653,8 +654,15 @@ def _zenodo_download_one(
     failed_rows: list[tuple[str | None, str | None, str | None]] = []
     with tempfile.TemporaryDirectory() as temppath:
         # --- the whole-record archive, when no file was filtered out ---
+        # (not tried again once it answered 404 this session: it did for every
+        # record metacheck tried on 2026-10-13)
         used_bulk = target == ""  # every file was omitted: nothing to fetch
-        if n == len(files_list) and not any(unzippable) and not any(omitted):
+        if (
+            n == len(files_list)
+            and not any(unzippable)
+            and not any(omitted)
+            and not _FILES_ARCHIVE.get("unavailable")
+        ):
             zip_url = f"https://zenodo.org/api/records/{zid}/files-archive"
             zip_path = os.path.join(temppath, "archive.zip")
             dl_ok = _download_archive(zip_url, zip_path)
@@ -662,7 +670,10 @@ def _zenodo_download_one(
                 used_bulk = _extract_archive(zip_path, temppath, ids, keys, downloaded)
             with contextlib.suppress(OSError):
                 os.remove(zip_path)
-            _tick(pb, "Downloaded as one archive")
+            # only when the archive supplied every file (metacheck said so after
+            # any attempt, a 404 included, until 0.3.3)
+            if used_bulk:
+                _tick(pb, "Downloaded as one archive")
 
         # --- file by file (bulk skipped or incomplete) ----
         if not used_bulk:
@@ -805,9 +816,27 @@ def _write_200(resp: httpx.Response, path: str) -> None:
                 fh.write(chunk)
 
 
+#: R ``.zenodo_files_archive_state``: ``unavailable`` once files-archive has
+#: answered 404 this session
+_FILES_ARCHIVE = session_memo()
+
+
 def _download_archive(url: str, path: str) -> bool:
-    """``req_perform(path = ...)`` of Zenodo's files-archive (metacheck's retries, 600 s timeout)."""
-    return _download_file(url, path) and os.path.exists(path) and os.path.getsize(path) > 0
+    """``req_perform(path = ...)`` of Zenodo's files-archive (metacheck's retries, 600 s timeout).
+
+    A 404 marks the endpoint as gone for the session (the record itself was
+    just found); a timeout or server error is passing trouble.
+    """
+    from metacheck import http
+
+    try:
+        resp = http.request("GET", url, timeout=600, sink=lambda r: _write_200(r, path))
+    except Exception:
+        resp = None
+    if resp is not None and resp.status_code == 404:
+        _FILES_ARCHIVE["unavailable"] = True
+    ok = resp is not None and resp.status_code == 200
+    return ok and os.path.exists(path) and os.path.getsize(path) > 0
 
 
 def _extract_archive(
