@@ -409,7 +409,7 @@ def data_classify_files(
             types[i] = _FILE_TYPE_CROSSWALK.get(first) if first is not None else None
     # metadata files: ro-crate-metadata.json (as metacheck) and Psych-DS's
     # dataset_description.json, which file_types' .json -> "data" (metacheck
-    # d52b3fd) would otherwise make a data file (DX-datacheck-2)
+    # d52b3fd) would otherwise make a data file (D90)
     for i, nm in enumerate(names):
         if nm is not None and _tolower(_r_basename(nm)) in _METADATA_JSON:
             types[i] = "documentation"

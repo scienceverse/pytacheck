@@ -61,7 +61,7 @@ _P_PATTERN = (
 _DF_INNER = r"(?:[0-9,\.\s]+|[nN]\s*=\s*[0-9]+)*"
 _GREEK = "Ͱ-Ͽ"
 # Grobid writes a subscript as a word after a space ("g_av" as "g av"), which
-# metacheck read as a statistic "av" (UX-text-1, fixed upstream for #448). A
+# metacheck read as a statistic "av" (U218, fixed upstream for #448). A
 # bare g or d followed by one of its own subscripts is one statistic name; any
 # other two words before an operator are not ("sample size n = 40" is n, "mean
 # age years = 25" is years). The g or d is a word of its own: metacheck also

@@ -761,7 +761,7 @@ def test_docker_sandbox_mocked(
 def test_docker_redirects_writes_to_the_containers_output(
     paper: pc.Paper, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    # the container sees the sandbox at /sandbox; metacheck writes the host's path (UX-repro-7)
+    # the container sees the sandbox at /sandbox; metacheck writes the host's path (U239)
     from metacheck.repro import docker
 
     seen: dict[str, str] = {}

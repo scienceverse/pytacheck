@@ -251,7 +251,7 @@ def test_peeked_zip_members_are_listed_but_not_readmes() -> None:
 def test_join_file_types_gives_one_row_per_file() -> None:
     # U46: at the pin file_types listed 27 extensions twice (json: code, data;
     # html: code, web) and R's join repeats such a file once per type. Each
-    # has one type since metacheck d52b3fd (DX-datacheck-1).
+    # has one type since metacheck d52b3fd (D89).
     files = pd.DataFrame(
         {"file_name": ["a.json", "b.HTML", "c.csv", "noext", None], "file_path": list("abcde")},
         index=[5, 6, 7, 8, 9],

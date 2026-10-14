@@ -401,5 +401,5 @@
   xfail: true
 "mod_effect_size/stat_effect_size.d_branches":
   kind: r_bug_fixed
-  ref: UX-text-1
+  ref: U218
   reason: "'d_z = 0.45' (a subscript after an underscore) is read and checked, a match under the paired dz assumption (metacheck: 'No parseable d effect size found.', indeterminate)"

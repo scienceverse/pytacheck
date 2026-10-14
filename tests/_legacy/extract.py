@@ -58,7 +58,7 @@ _P_PATTERN = (
 # "N = <number>" qualifier (see the long comment in R/text-extractors.R).
 _DF_INNER = r"(?:[0-9,\.\s]+|[nN]\s*=\s*[0-9]+)*"
 _GREEK = "Ͱ-Ͽ"
-# UX-text-1 (metacheck #448): a subscript Grobid writes as a second word ("g av")
+# U218 (metacheck #448): a subscript Grobid writes as a second word ("g av")
 _BARE_SUBSCRIPT = f"\\b[gd]\\s+(?:av|z|rm|s)(?=\\s*[{_OPS}])"
 _EQ_PATTERN = (
     r"(?:(Hedge.{0,3}|Cronbach.{0,2}|Cohen.{0,2}|\d{1,2}%)\s+)?"  # common prefix

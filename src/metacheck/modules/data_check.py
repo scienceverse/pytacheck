@@ -917,7 +917,7 @@ def _download(
     if never_fetch:
         # An archive pytacheck can open is typed "unknown" until it is opened, so
         # `want` is still False for it here: keep_archive must turn it on, not
-        # just survive the type filter (metacheck e4b74e1, #456; UX-datacheck-1).
+        # just survive the type filter (metacheck e4b74e1, #456; U220).
         # With download = "none" nothing is opened, so nothing is turned on.
         keep_archive = _is_readable_archive(names) if download != "none" else [False] * n
         want = [

@@ -324,7 +324,7 @@ def _html_to_text(x: str | None) -> str:
 # hosts with a single fixed name (doi.org, zenodo.org, osf.io, researchbox.org)
 # and their record paths. Not the repositories with many institutional hosts
 # (Dataverse, DSpace, ...), and not any space after a URL, which would join it
-# to the prose that follows. UX-text-2 (metacheck #411, #458).
+# to the prose that follows. U219 (metacheck #411, #458).
 _LINE_WRAPS = [
     (regex.compile(pattern, flags), repl)
     for pattern, repl, flags in (

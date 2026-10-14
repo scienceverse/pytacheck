@@ -733,7 +733,7 @@ def test_local_archives_are_counted(tmp_path: Path) -> None:
     # U123: a local file file_category() cannot place takes its type from the
     # extension, as an online file does: a local .tar.gz/.zip is an archive.
     # file_types has one type per extension since metacheck d52b3fd, so .json
-    # is data and .html web (DX-datacheck-1); neither is counted as code.
+    # is data and .html web (D89); neither is counted as code.
     names = ("results.tar.gz", "bundle.zip", "notes.txt", "analysis.R", "report.html", "cfg.json")
     for name in names:
         (tmp_path / name).write_text("x\n", encoding="utf-8")

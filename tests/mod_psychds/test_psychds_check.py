@@ -108,7 +108,7 @@ def test_report_blocks_match_r_exactly(area: str, case_id: str) -> None:
     out = _run_case(case_id, area)
     r_report = _element(golden, "report")["v"]
     # the report no longer points to convert_psychds()/convert_codebook(), which
-    # pytacheck does not have (metacheck 029bf63; DX-report-3)
+    # pytacheck does not have (metacheck 029bf63; D116)
     r_text = [
         s
         for s in r_report

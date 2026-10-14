@@ -710,7 +710,7 @@ def crossref_doi(doi: Any, select: Sequence[str] = CROSSREF_DOI_SELECT) -> pd.Da
         # api.crossref.org single-record lookup: polite pool allows 10 req/s. The
         # production host, as crossref_query() uses and online() checks: the
         # experimental api.labs.crossref.org mirror metacheck queried has no
-        # service guarantee (DX-text-2, metacheck #446)
+        # service guarantee (D88, metacheck #446)
         resps = http.batch_query(
             urls,
             msg="Querying CrossRef by DOI",

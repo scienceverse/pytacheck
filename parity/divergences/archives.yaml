@@ -284,55 +284,55 @@
 "archives_d2/dspace7_file_download.mock.one":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_d2/dspace7_file_download.mock.vector":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_d2/rbox_file_download.mock.cached":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz/github_files.html_json_types":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz/github_tree_files.tree":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz/gitlab_tree_files.subgroup_paged":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_files.review.tricky":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_files.review.tricky_rec":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_files.review.vector_rec":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_tree_files.review.null_branch":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_info.review.recursive":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz_review/gitlab_tree_files.review.branch_space":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_info.review.vector_dup":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; D89); metacheck at the pin repeats it once per type"
 # U48
 "archives_gz_review/github_languages.review.error_body":
   kind: r_bug_fixed
@@ -538,10 +538,10 @@
   kind: r_bug_fixed
   ref: U209
   reason: "the files that fit in the zip-mode budget are downloaded and the rest reported (metacheck stops: its call to the renamed cap_report() fails)"
-# DX-datacheck-1 (file_types has one type per extension, metacheck d52b3fd)
+# D89 (file_types has one type per extension, metacheck d52b3fd)
 "repo_download/file_types.table": &dx_dc1
   kind: better_logic
-  ref: DX-datacheck-1
+  ref: D89
   reason: "file_types has one row per extension (377; metacheck d52b3fd): json, rds, por and jasp are data, shell scripts, js, ts and php code, html web; R at the pin lists 27 extensions twice (404 rows)"
 "repo_download/filetype.examples": *dx_dc1
 "repo_download/filetype.every_extension": *dx_dc1
@@ -554,19 +554,19 @@
 "repo_download/file_category.paths_and_case": *dx_dc1
 "repo_download_review/file_category.generated_names": *dx_dc1
 "repo_download_review/filetype.generated_names": *dx_dc1
-# DX-datacheck-3 (no date-format file-naming rule, metacheck 8c1f6c1)
+# D91 (no date-format file-naming rule, metacheck 8c1f6c1)
 "repo_download/check_file_naming.mixed": &dx_dc3
   kind: better_logic
-  ref: DX-datacheck-3
+  ref: D91
   reason: "a run of 8 digits that is not a valid YYYYMMDD date is not reported (metacheck 8c1f6c1, #462: a name cannot say whether it is a date or an ID); R at the pin reports it as date-format"
 "repo_download/check_file_naming.dates": *dx_dc3
 "repo_download/file_naming_check_one.dir_and_dates": *dx_dc3
 "repo_download/file_naming_check_one.everything": *dx_dc3
 "repo_download_review/check_file_naming.odd_paths": *dx_dc3
-# DX-dryad-1: dryad_info() reports the dataset's size and whether its listing is complete (metacheck d52b3fd)
+# D93: dryad_info() reports the dataset's size and whether its listing is complete (metacheck d52b3fd)
 "archives_d1/dryad_info.mock.vector": &dx_dryad_1
   kind: deliberate
-  ref: DX-dryad-1
+  ref: D93
   reason: "dryad_info() adds storage_size, files_total and files_incomplete, as metacheck does since d52b3fd (after the pin)"
 "archives_d1/dryad_info.mock.links_table": *dx_dryad_1
 "archives_d1/dryad_info.mock.id_col_position": *dx_dryad_1
@@ -575,23 +575,23 @@
 "archives_d1_review/dryad_info.review.column_clash": *dx_dryad_1
 "archives_d1_review/dryad_info.review.id_col_is_doi": *dx_dryad_1
 "archives_d1_review/dryad_info.review.id_col_is_doi_reordered": *dx_dryad_1
-# DX-osf-2
+# D96
 "archives_gz/github_tree_files.meta_fails":
   kind: better_logic
-  ref: DX-osf-2
-  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid; a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (U46, DX-datacheck-1)"
+  ref: D96
+  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid; a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (U46, D89)"
 "archives_gz_review/github_tree_files.review.vector":
   kind: better_logic
-  ref: DX-osf-2
-  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid; a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (U46, DX-datacheck-1)"
+  ref: D96
+  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid; a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (U46, D89)"
 "archives_gz_review/gitlab_tree_files.review.vector_missing":
   kind: better_logic
-  ref: DX-osf-2
-  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid; a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (U46, DX-datacheck-1)"
-# DX-dspace-1 (placeholder, port of metacheck b5fe939: repository registries)
+  ref: D96
+  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid; a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (U46, D89)"
+# D101 (placeholder, port of metacheck b5fe939: repository registries)
 "archives_d1/.figshare_vanity_hosts": &dx_dspace_1
   kind: deliberate
-  ref: DX-dspace-1
+  ref: D101
   reason: "the repository registries have metacheck 0.3.3's entries (#461/#464): Figshare's VTechData, USDA Ag Data Commons and Adelaide hosts and the UCL/VTechData/USDA/Adelaide DOI prefixes, DSpace 7's ecommons.cornell.edu and www.repository.cam.ac.uk, legacy DSpace's datastorre.stir.ac.uk; dspace.ut.ee is reached through DSpace 7 only"
 "archives_d1/.figshare_doi_prefix_hosts": *dx_dspace_1
 "archives_d1/.figshare_host_regex": *dx_dspace_1
@@ -601,34 +601,34 @@
 "archives_d2/.dspace_legacy_host_regex": *dx_dspace_1
 "archives_d2/.dspace_legacy_parse.shapes": *dx_dspace_1
 "archives_d2/dspace_links.mixed": *dx_dspace_1
-# DX-dspace-4 (placeholder, port of metacheck d52b3fd: PsychArchives/legacy DSpace)
+# D104 (placeholder, port of metacheck d52b3fd: PsychArchives/legacy DSpace)
 "archives_d2_review/.psycharchives_info.review.objects": &dx_dspace_4
   kind: deliberate
-  ref: DX-dspace-4
+  ref: D104
   reason: "psycharchives_info() also returns PA_rights (dc.rights, the access status), before PA_license, as metacheck 0.3.3 does"
 "archives_d2_review/.psycharchives_info.review.json_904": *dx_dspace_4
 "archives_d2_review/.psycharchives_info.review.json_905": *dx_dspace_4
 "archives_d2_review/.psycharchives_info.review.json_909": *dx_dspace_4
 "archives_d2_review/.psycharchives_info.review.arrays_911": *dx_dspace_4
-# UX-dspace-2 (placeholder, port of metacheck d52b3fd: PsychArchives/legacy DSpace licence and links)
+# U227 (placeholder, port of metacheck d52b3fd: PsychArchives/legacy DSpace licence and links)
 "archives_d2/.psycharchives_info.mock.apis": &ux_dspace_2
   kind: r_bug_fixed
-  ref: UX-dspace-2
+  ref: U227
   reason: "PA_license is the licence (dc.rights.license, else dc.rights.uri), not dc.rights' access status ('restrictedAccess'), which moves to the new PA_rights; a bitstream link from the REST root gets /rest in front (metacheck 0.3.3)"
 "archives_d2/.psycharchives_info.mock.bonndoc": *ux_dspace_2
 "archives_d2/psycharchives_info.mock.vector": *ux_dspace_2
 "archives_d2/psycharchives_info.mock.table": *ux_dspace_2
 "archives_d2_review/.psycharchives_info.review.arrays_910": *ux_dspace_2
 "archives_d2_review/psycharchives_info.review.table_collisions": *ux_dspace_2
-# UX-dspace-4 (placeholder, port of metacheck 80a7d37/d52b3fd: Figshare ids)
+# U229 (placeholder, port of metacheck 80a7d37/d52b3fd: Figshare ids)
 "archives_d1/.figshare_id.shapes":
   kind: r_bug_fixed
-  ref: UX-dspace-4
+  ref: U229
   reason: "an institutional DOI whose digits run into letters (10.25375/19095317x, a hex code) has no article id, rather than the leading digits as one (metacheck 0.3.3, #465)"
-# UX-dspace-5 (placeholder, port of metacheck d52b3fd: Figshare folders)
+# U230 (placeholder, port of metacheck d52b3fd: Figshare folders)
 "archives_d1/figshare_info.mock.id_col_na_duplicated": &ux_dspace_5
   kind: r_bug_fixed
-  ref: UX-dspace-5
+  ref: U230
   reason: "each file entry gets `path`, its folder from the article's folder_structure and its name, so files in folders keep their place and same-named files no longer overwrite each other (metacheck 0.3.3)"
 "archives_d1/figshare_info.mock.links_table": *ux_dspace_5
 "archives_d1/figshare_info.mock.project": *ux_dspace_5

@@ -39,7 +39,7 @@ _NUM = r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?)"
 _T_PATTERN = r"\bt\s*\(\s*([0-9]+(?:\.[0-9]+)?)\s*\)\s*=\s*" + _NUM
 
 # parse_d_stats(): perl = TRUE; a subscript may follow an underscore ("g_av",
-# "d_z"), as in metacheck since afda8a2 (UX-text-1)
+# "d_z"), as in metacheck since afda8a2 (U218)
 _D_PATTERN = (
     r"(?i)\b"
     r"(hedge(?:'|’)?s\s+g[\s_]*(?:av|z|rm)?|cohen(?:'|’)?s\s+d[\s_]*z|cohen(?:'|’)?s\s+d|"
@@ -49,7 +49,7 @@ _D_PATTERN = (
 
 # A subscripted Hedges' g (g_av, g z, grm, gs), whatever word comes before it:
 # without an apostrophe ("Hedges g av") the label is the whole phrase. Differs
-# from metacheck (DX-text-1): "gav", "gz" and "grm" written together count too
+# from metacheck (D87): "gav", "gz" and "grm" written together count too
 _D_PREFIX = re.compile(r"^(?:hedge.{0,3}s|cohen.{0,2}s)\s+")
 _SUBSCRIPTED_G = re.compile(r"g[ _]?(?:av|z|rm)$|gs$")
 

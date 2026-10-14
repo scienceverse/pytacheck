@@ -155,8 +155,8 @@ modules is covered in [MODULES.md](MODULES.md).
 | `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D82, U16, U77, U79, U158, U206 |
 | `author_check`<br>Author Information | Python only | [modules/author_check.py](../src/metacheck/modules/author_check.py) | — | — | experimental | — |
 | `causal_claims`<br>Randomization and Causal Claims | `inst/modules/causal_claims.R` | [modules/causal_claims.py](../src/metacheck/modules/causal_claims.py) | [tests/mod_causal](../tests/mod_causal) | mod_causal | experimental | U79, U84, U85 |
-| `code_check`<br>Code Check | `inst/modules/code_check.R` | [modules/code_check.py](../src/metacheck/modules/code_check.py)<br>[modules/_code_check.py](../src/metacheck/modules/_code_check.py) | [tests/mod_code](../tests/mod_code) | mod_code | experimental | U79, U86, U87, U89 |
-| `codebook_check`<br>Codebook Check | `inst/modules/codebook_check.R` | [modules/codebook_check.py](../src/metacheck/modules/codebook_check.py)<br>[modules/_codebook.py](../src/metacheck/modules/_codebook.py) | [tests/mod_codebook](../tests/mod_codebook) | mod_codebook | experimental | D14, U91, U92 |
+| `code_check`<br>Code Check | `inst/modules/code_check.R` | [modules/code_check.py](../src/metacheck/modules/code_check.py)<br>[modules/_code_check.py](../src/metacheck/modules/_code_check.py) | [tests/mod_code](../tests/mod_code) | mod_code | experimental | D118, U79, U86, U87, U89 |
+| `codebook_check`<br>Codebook Check | `inst/modules/codebook_check.R` | [modules/codebook_check.py](../src/metacheck/modules/codebook_check.py)<br>[modules/_codebook.py](../src/metacheck/modules/_codebook.py) | [tests/mod_codebook](../tests/mod_codebook) | mod_codebook | experimental | D14, D117, U91, U92 |
 | `coi_check`<br>COI Check | `inst/modules/coi_check.R` | [modules/coi_check.py](../src/metacheck/modules/coi_check.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | D84, U95, U97 |
 | `coi_check_oi`<br>COI Check Overinclusive | `inst/modules/coi_check_oi.R` | [modules/coi_check_oi.py](../src/metacheck/modules/coi_check_oi.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | D29, D84, U80 |
 | `data_check`<br>Data Check | `inst/modules/data_check.R` | [modules/data_check.py](../src/metacheck/modules/data_check.py)<br>[modules/_data_check.py](../src/metacheck/modules/_data_check.py) | [tests/mod_data_check](../tests/mod_data_check) | mod_data_check | experimental | U79 |
@@ -169,7 +169,7 @@ modules is covered in [MODULES.md](MODULES.md).
 | `open_practices`<br>Open Practices Check | `inst/modules/open_practices.R` | [modules/open_practices.py](../src/metacheck/modules/open_practices.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D83, U16, U79, U83, U106, U107, U208 |
 | `power`<br>Power Analysis Check | `inst/modules/power.R` | [modules/power.py](../src/metacheck/modules/power.py)<br>[modules/_power.py](../src/metacheck/modules/_power.py) | [tests/mod_power](../tests/mod_power) | mod_power, bibr12, grobid12 | validated | U16 |
 | `prereg_check`<br>Preregistration Check | `inst/modules/prereg_check.R` | [modules/prereg_check.py](../src/metacheck/modules/prereg_check.py)<br>[modules/_prereg.py](../src/metacheck/modules/_prereg.py) | [tests/mod_prereg](../tests/mod_prereg) | mod_prereg | experimental | — |
-| `psychds_check`<br>Psych-DS Check | `inst/modules/psychds_check.R` | [modules/psychds_check.py](../src/metacheck/modules/psychds_check.py) | [tests/mod_psychds](../tests/mod_psychds) | mod_psychds | experimental | U78, U112, U113 |
+| `psychds_check`<br>Psych-DS Check | `inst/modules/psychds_check.R` | [modules/psychds_check.py](../src/metacheck/modules/psychds_check.py) | [tests/mod_psychds](../tests/mod_psychds) | mod_psychds | experimental | D116, U78, U112, U113 |
 | `ref_accuracy`<br>Reference Accuracy | `inst/modules/ref_accuracy.R` | [modules/ref_accuracy.py](../src/metacheck/modules/ref_accuracy.py) | [tests/mod_ref_accuracy](../tests/mod_ref_accuracy)<br>[tests/bibr12](../tests/bibr12) | mod_ref_accuracy, bibr12, grobid12 | experimental | U30, U83, U114 |
 | `ref_consistency`<br>Reference Consistency | `inst/modules/ref_consistency.R` | [modules/ref_consistency.py](../src/metacheck/modules/ref_consistency.py) | [tests/mod_ref_accuracy](../tests/mod_ref_accuracy)<br>[tests/bibr12](../tests/bibr12) | mod_ref_accuracy, bibr12, grobid12 | experimental | U16, U83, U115 |
 | `ref_miscitation`<br>Miscitation | `inst/modules/ref_miscitation.R` | [modules/ref_miscitation.py](../src/metacheck/modules/ref_miscitation.py) | [tests/mod_ref_db](../tests/mod_ref_db) | mod_ref_db, bibr12, grobid12 | experimental | U79, U117, U157 |
@@ -179,9 +179,9 @@ modules is covered in [MODULES.md](MODULES.md).
 | `ref_summary`<br>Summarise References | `inst/modules/ref_summary.R` | [modules/ref_summary.py](../src/metacheck/modules/ref_summary.py) | [tests/mod_ref_pubpeer_summary](../tests/mod_ref_pubpeer_summary) | mod_ref_pubpeer_summary, bibr12, grobid12 | experimental | U16, U119 |
 | `reg_check`<br>RegCheck Preregistration Comparison | `inst/modules/reg_check.R` | [modules/reg_check.py](../src/metacheck/modules/reg_check.py) | [tests/mod_reg](../tests/mod_reg) | mod_reg | experimental | U79 |
 | `repo_check`<br>Repository Check | `inst/modules/repo_check.R` | [modules/repo_check.py](../src/metacheck/modules/repo_check.py)<br>[modules/_repo_check.py](../src/metacheck/modules/_repo_check.py) | [tests/mod_repo_check](../tests/mod_repo_check) | mod_repo_check | experimental | U79 |
-| `reproducibility_check`<br>Reproducibility Check | `inst/modules/reproducibility_check.R` | [modules/reproducibility_check.py](../src/metacheck/modules/reproducibility_check.py)<br>[modules/_reproducibility.py](../src/metacheck/modules/_reproducibility.py)<br>[modules/_reproducibility_py.py](../src/metacheck/modules/_reproducibility_py.py) | [tests/mod_repro](../tests/mod_repro) | mod_repro | experimental | — |
+| `reproducibility_check`<br>Reproducibility Check | `inst/modules/reproducibility_check.R` | [modules/reproducibility_check.py](../src/metacheck/modules/reproducibility_check.py)<br>[modules/_reproducibility.py](../src/metacheck/modules/_reproducibility.py)<br>[modules/_reproducibility_py.py](../src/metacheck/modules/_reproducibility_py.py) | [tests/mod_repro](../tests/mod_repro) | mod_repro | experimental | D119 |
 | `stat_check`<br>StatCheck | `inst/modules/stat_check.R` | [modules/stat_check.py](../src/metacheck/modules/stat_check.py) | [tests/stats](../tests/stats) | stats, bibr12, grobid12 | experimental | U4, U16 |
-| `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U16, U79, U125, U126, U205, U208, U212 |
+| `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U16, U79, U125, U126, U205, U208, U212, U218 |
 | `stat_p_exact`<br>Exact P-Values | `inst/modules/stat_p_exact.R` | [modules/stat_p_exact.py](../src/metacheck/modules/stat_p_exact.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | D60, U16, U127, U204, U208 |
 | `stat_p_nonsig`<br>Non-Significant P Value Check | `inst/modules/stat_p_nonsig.R` | [modules/stat_p_nonsig.py](../src/metacheck/modules/stat_p_nonsig.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | D60, U16, U127, U204, U208 |
 <!-- END codemap:modules -->
@@ -299,7 +299,7 @@ Python: [archives/github.py](../src/metacheck/archives/github.py). Tests: [tests
 | `github_repo()` | [`metacheck.archives.github:github_repo`](../src/metacheck/archives/github.py) | yes | — |  |
 | `github_readme()` | [`metacheck.archives.github:github_readme`](../src/metacheck/archives/github.py) | yes | — |  |
 | `github_files()` | [`metacheck.archives.github:github_files`](../src/metacheck/archives/github.py) | yes | U46 |  |
-| `github_tree_files()` | [`metacheck.archives.github:github_tree_files`](../src/metacheck/archives/github.py) | yes | U46 |  |
+| `github_tree_files()` | [`metacheck.archives.github:github_tree_files`](../src/metacheck/archives/github.py) | yes | D96, U46 |  |
 | `.github_config()` | [`metacheck.archives.github:_github_config`](../src/metacheck/archives/github.py) | — | — |  |
 | `github_languages()` | [`metacheck.archives.github:github_languages`](../src/metacheck/archives/github.py) | yes | U48 |  |
 
@@ -313,7 +313,7 @@ Python: [archives/gitlab.py](../src/metacheck/archives/gitlab.py). Tests: [tests
 | `gitlab_repo()` | [`metacheck.archives.gitlab:gitlab_repo`](../src/metacheck/archives/gitlab.py) | yes | — |  |
 | `.gitlab_config()` | [`metacheck.archives.gitlab:_gitlab_config`](../src/metacheck/archives/gitlab.py) | — | — |  |
 | `gitlab_pat()` | [`metacheck.archives.gitlab:gitlab_pat`](../src/metacheck/archives/gitlab.py) | — | — |  |
-| `gitlab_tree_files()` | [`metacheck.archives.gitlab:gitlab_tree_files`](../src/metacheck/archives/gitlab.py) | yes | U46 |  |
+| `gitlab_tree_files()` | [`metacheck.archives.gitlab:gitlab_tree_files`](../src/metacheck/archives/gitlab.py) | yes | D96, U46 |  |
 
 ### `R/archive-local.R`
 
@@ -456,7 +456,7 @@ Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_dec
 | `code_library_lines()` | [`metacheck.codecheck.core:code_library_lines`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_library_names()` | [`metacheck.codecheck.core:code_library_names`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_packages()` | [`metacheck.codecheck.core:code_packages`](../src/metacheck/codecheck/core.py) | yes | — |  |
-| `code_file_refs()` | [`metacheck.codecheck.core:code_file_refs`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_file_refs()` | [`metacheck.codecheck.core:code_file_refs`](../src/metacheck/codecheck/core.py) | yes | D121 |  |
 
 ### `R/data_check_helpers.R`
 
@@ -584,7 +584,7 @@ Python: [fileinfo/naming.py](../src/metacheck/fileinfo/naming.py), [fileinfo/_st
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `check_file_naming()` | [`metacheck.fileinfo.naming:check_file_naming`](../src/metacheck/fileinfo/naming.py) | yes | U76 |  |
+| `check_file_naming()` | [`metacheck.fileinfo.naming:check_file_naming`](../src/metacheck/fileinfo/naming.py) | yes | D91, U76 |  |
 
 ### `R/file_category.R`
 
@@ -592,8 +592,8 @@ Python: [fileinfo/category.py](../src/metacheck/fileinfo/category.py), [fileinfo
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `file_category()` | [`metacheck.fileinfo.category:file_category`](../src/metacheck/fileinfo/category.py) | yes | D81 |  |
-| `filetype()` | [`metacheck.fileinfo.category:filetype`](../src/metacheck/fileinfo/category.py) | yes | — |  |
+| `file_category()` | [`metacheck.fileinfo.category:file_category`](../src/metacheck/fileinfo/category.py) | yes | D81, D89 |  |
+| `filetype()` | [`metacheck.fileinfo.category:filetype`](../src/metacheck/fileinfo/category.py) | yes | D89 |  |
 
 ### `R/import-bibr.R`
 

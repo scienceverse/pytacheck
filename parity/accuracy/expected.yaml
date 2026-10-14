@@ -228,7 +228,7 @@ differences:
     field: [summary_text, report, summary_table.ttests_with_es, summary_table.ttests_without_es, table.*]
     match: values
     kind: r_bug_fixed
-    ref: UX-text-1
+    ref: U218
     reason: >-
       Grobid writes the subscripted d_z as 'd Z = 0.89'; extract_eq() reads it as the effect
       size 'd Z', so 26 more t-tests have their effect size and are checked (30 with one, 0

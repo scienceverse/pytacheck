@@ -674,7 +674,7 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
 
     # Python first: what its scripts print joins stat_output before the R path matches
     # the reported statistics against it (metacheck matches before Python runs, so a
-    # Python script's output is never matched: UX-repro-1).
+    # Python script's output is never matched: U233).
     py_out: dict[str, Any] | None = None
     if len(py_files) > 0:
         from metacheck.modules._reproducibility_py import assess_py
@@ -783,7 +783,7 @@ def _py_only(
 
     The reported statistics are matched against the output, and the SPSS/Stata,
     self-reproducible-output and other-code sections are kept, as for an R paper
-    (metacheck drops them all when a paper has no R code: UX-repro-2).
+    (metacheck drops them all when a paper has no R code: U234).
     """
     em = h.match_output(paper, stat_output)
     lines = list(py["summary_lines"])
@@ -1670,7 +1670,7 @@ def _execute(
         sandbox_root,
         # a redirected write names the output folder as the code sees it: in a container,
         # /sandbox/output/ (metacheck writes the host's path, which the container has not
-        # got: UX-repro-7)
+        # got: U239)
         output_dir="/sandbox/output/" if sandbox == "docker" else None,
     )
 

@@ -7,7 +7,7 @@ as the R scripts: a Docker container by default, the host only with an explicit
 ``sandbox="process"`` (D62). :func:`assess_py` returns the pieces the module combines
 with the R path's into one result.
 
-Deliberate differences from metacheck (DX-repro-1): a Python file that does not parse is
+Deliberate differences from metacheck (D119): a Python file that does not parse is
 found statically, as an R file is; a notebook's code cells are what runs (metacheck runs
 its JSON); an import of one of the paper's own modules is not a dependency to install;
 an import is installed under its PyPI name and matched to a manifest pin by it; and a
@@ -208,7 +208,7 @@ def assess_py(
     unresolved_list: list[list[str]] = []
     for i, d in enumerate(rewrites):
         # a file an earlier script writes, or this one (`open(path, "w")` names its path as
-        # a reference too; metacheck took it for a missing input: UX-repro-3)
+        # a reference too; metacheck took it for a missing input: U235)
         before = {
             w.lower()
             for j, n in enumerate(names)
@@ -542,7 +542,7 @@ def _execute_py(
         sandbox_root,
         lang="Python",
         # the container sees the sandbox at /sandbox, not at its path on this machine
-        # (metacheck writes the host's path: UX-repro-7)
+        # (metacheck writes the host's path: U239)
         output_dir="/sandbox/output/" if docker else None,
     )
 

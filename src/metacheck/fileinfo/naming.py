@@ -8,7 +8,7 @@ budgets. Used by ``repo_check`` to surface naming problems.
 There is no date rule: metacheck's flagged every run of 8 digits that is not a
 valid ``YYYYMMDD`` date, but nothing in a file name says whether 8 digits were
 meant as a date or are an accession number, a DOI suffix or a participant code,
-so it only gave false positives (metacheck 8c1f6c1, #462; DX-datacheck-3).
+so it only gave false positives (metacheck 8c1f6c1, #462; D91).
 
 Like metacheck, this deliberately does not check letter case or
 underscore-vs-dash separator consistency: metacheck's own classifiers match

@@ -256,9 +256,6 @@ def expected_to_fail(spec: dict[str, Any]) -> bool:
 # -- docs/UPSTREAM_ISSUES.md ----------------------------------------------------------
 
 _REF = re.compile(r"[UD][1-9]\d*")
-#: a port's placeholder ref (DX-<area>-<n>, UX-<area>-<n>), renumbered into a
-#: U/D entry of docs/UPSTREAM_ISSUES.md when the port is merged
-_PLACEHOLDER_REF = re.compile(r"[UD]X-[a-z0-9]+-[1-9]\d*")
 _UNPORTABLE = re.compile(r'[<>:"/\\|?*\x00-\x1f]|[. ]\Z')
 _RESERVED = re.compile(r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|\Z)", re.IGNORECASE)
 
@@ -323,9 +320,6 @@ def check_mark(
     if ref is None:
         if series:
             problems.append(f"{kind} needs a ref to a {series}-entry of docs/UPSTREAM_ISSUES.md")
-    elif isinstance(ref, str) and _PLACEHOLDER_REF.fullmatch(ref):
-        if series and not ref.startswith(series):
-            problems.append(f"{kind} needs a {series}-entry, not {ref}")
     elif not isinstance(ref, str) or not _REF.fullmatch(ref):
         problems.append(f"ref {ref!r} is not U<n> or D<n>")
     else:

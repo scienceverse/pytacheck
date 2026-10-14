@@ -115,7 +115,7 @@ def test_static_order_and_own_writes(paper: pc.Paper) -> None:
     )
     order = dict(zip(mo.table["file_name"], mo.table["run_order"], strict=True))
     assert order["writes_then_reads.py"] < order["reads_written.py"]
-    # the file a script opens to write is not an input it is missing (UX-repro-3)
+    # the file a script opens to write is not an input it is missing (U235)
     assert mo.table["runnable"].tolist() == [True, True]
     assert mo.traffic_light == "green"
 
@@ -221,7 +221,7 @@ def test_python_files_are_not_unassessed_code(paper: pc.Paper) -> None:
 def test_spss_data_without_syntax_still_counts_for_a_python_paper(paper: pc.Paper) -> None:
     fake = py_chain(paper, ["ok.py"], {"survey.sav": str(PY / "data.csv")})
     mo = module_run(fake, "reproducibility_check")
-    # metacheck drops the SPSS section, and its red, when the paper has no R code (UX-repro-2)
+    # metacheck drops the SPSS section, and its red, when the paper has no R code (U234)
     assert mo.traffic_light == "red"
     assert "#### SPSS" in report_text(mo)
 
@@ -314,7 +314,7 @@ def test_python_output_is_matched_against_the_paper(
     )
     monkeypatch.setattr(h, "match_output", fake_match)
     module_run(py_chain(paper, ["ok.py"]), "reproducibility_check", execute=True)
-    # metacheck matches before the Python scripts run (UX-repro-1)
+    # metacheck matches before the Python scripts run (U233)
     assert seen["sources"] == ["python_output"]
 
 

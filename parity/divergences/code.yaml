@@ -112,20 +112,20 @@
 # --- repo_check module (inst/modules/repo_check.R) --------------------------
 "mod_repo_check/repo_check.dryad":
   kind: deliberate
-  ref: DX-dryad-1
+  ref: D93
   reason: "a Dryad file row carries repo_size, the dataset's storageSize, as metacheck does since d52b3fd (after the pin)"
 "mod_repo_check/repo_check.all_platforms": &u121
   kind: r_bug_fixed
   ref: U121
-  reason: files are de-duplicated per file (URL and path, or location); R's duplicated(file_url) & duplicated(file_path) also dropped a distinct DataONE readme.txt. The Dryad rows also carry repo_size (DX-dryad-1)
+  reason: files are de-duplicated per file (URL and path, or location); R's duplicated(file_url) & duplicated(file_path) also dropped a distinct DataONE readme.txt. The Dryad rows also carry repo_size (D93)
 "mod_repo_check/repo_check.all_platforms.paperlist": *u121
 "mod_repo_check/repo_check.all_platforms.report": *u121
 "mod_repo_check/repo_check.all_platforms.tables": *u121
-# DX-zip-1 (metacheck d52b3fd: a zip's entries carry the archive's listed size)
+# D110 (metacheck d52b3fd: a zip's entries carry the archive's listed size)
 "mod_repo_check/repo_check.zenodo.peek": &dx_zip_1_size
   kind: deliberate
-  ref: DX-zip-1
-  reason: the rows of a zip's entries carry archive_size, the archive's size from the listing, so a later member fetch needs no HEAD request (metacheck's newer dev does the same); json and html entries take their one type from the new file_types table (DX-datacheck-1)
+  ref: D110
+  reason: the rows of a zip's entries carry archive_size, the archive's size from the listing, so a later member fetch needs no HEAD request (metacheck's newer dev does the same); json and html entries take their one type from the new file_types table (D89)
 "mod_repo_check_review/repo_check.zenodo.peek_rich": *dx_zip_1_size
 "mod_repo_check_review/repo_check.zenodo.peek_same_zip": *dx_zip_1_size
 "mod_repo_check_review/repo_check.zenodo.peek_shared.paperlist": *dx_zip_1_size
@@ -173,10 +173,10 @@
 "mod_repo_check/repo_check.dspace.found_and_unfound":
   kind: r_bug_fixed
   ref: U43
-  reason: an unknown DSpace item beside a found one is kept, flagged "invalid or inaccessible DSpace item" (an empty repository, so yellow); R leaves it unflagged and drops it with the repositories without files. The found item's licence is its dc.rights.license, not the access status in dc.rights (UX-dspace-2)
+  reason: an unknown DSpace item beside a found one is kept, flagged "invalid or inaccessible DSpace item" (an empty repository, so yellow); R leaves it unflagged and drops it with the repositories without files. The found item's licence is its dc.rights.license, not the access status in dc.rights (U227)
 "mod_repo_check/repo_check.dspace.psycharchives": &ux_dspace_2_rc
   kind: r_bug_fixed
-  ref: UX-dspace-2
+  ref: U227
   reason: "a PsychArchives/legacy DSpace item's licence is its dc.rights.license (else dc.rights.uri), not the access status in dc.rights ('restrictedAccess', 'openAccess'), as metacheck 0.3.3"
 "mod_repo_check/repo_check.dspace.bonndoc": *ux_dspace_2_rc
 "mod_repo_check_review/repo_check.module.empty_paper": &u79_rc
@@ -235,7 +235,7 @@
 "mod_repro/reproducibility_check.smcl_mplus":
   kind: r_bug_fixed
   ref: U138
-  reason: a test_id carries its source prefix once (analysis_smcl_t1_price); R's .stat_test_id() fallback repeats it, and a value key loses its trailing underscore too (95_conf, R 95_conf_). The no-code sentence names Python too (DX-repro-1)
+  reason: a test_id carries its source prefix once (analysis_smcl_t1_price); R's .stat_test_id() fallback repeats it, and a value key loses its trailing underscore too (95_conf, R 95_conf_). The no-code sentence names Python too (D119)
   r_text: [["We found no R code files to assess for reproducibility( \\(this phase runs R code only\\))?\\.", "We found no R or Python code files to assess for reproducibility.", "regex"]]
   xfail: true
 "mod_repro/reproducibility_check.spv_notebook_py":
@@ -246,7 +246,7 @@
 # sandbox; the scenarios' .py files were "other code" at the pin.
 "mod_repro/reproducibility_check.nonr_only": &dx_repro_1_python
   kind: deliberate
-  ref: DX-repro-1
+  ref: D119
   reason: the paper's Python files are assessed (metacheck d3b8594, after the pin), in a "### Python code" section with its own rows, counts and traffic light, instead of being reported as code with no reproducible output
 "mod_repro/module.nonr_only": *dx_repro_1_python
 "mod_repro_review/tables.nonr_only": *dx_repro_1_python
@@ -254,15 +254,15 @@
 "mod_repro_review/tables.rv_jasp_nonr": *dx_repro_1_python
 "mod_repro_review/review.rv_no_file_name_col":
   kind: deliberate
-  ref: DX-repro-1
+  ref: D119
   reason: Python rows of a code table without a file_name column name no file to assess, as R rows do, so there is no code to assess (at the pin they were reported as other code; metacheck d3b8594 takes them for Python files with no names)
 "codecheck/code_file_refs.include_writes_python":
   kind: deliberate
-  ref: DX-repro-3
+  ref: D121
   reason: include_writes finds Python's write calls too (metacheck d3b8594, after the pin, adds them; pytacheck lists pandas'/numpy's/matplotlib's writers rather than every to_*() call)
 "repro_core/repro_docker_image_for.default": &dx_repro_2
   kind: deliberate
-  ref: DX-repro-2
+  ref: D120
   reason: the default R image is metacheck_r_large (metacheck 9d7cd49, after the pin)
   r_text: [["metacheck_r:latest", "metacheck_r_large:latest"]]
 "repro_core_review/repro_docker_image_for.variety": *dx_repro_2
@@ -361,7 +361,7 @@
 "statout_match/norm_interval.batch": *u143_dec
 "statout_match_review/match_reported_output.derived.published_tei": &ux_text_1_dz
   kind: r_bug_fixed
-  ref: UX-text-1
+  ref: U218
   reason: "extract_eq() reads Grobid's 'd Z = 0.89' (a d_z) as lhs 'd Z', not a z statistic 'Z', and extract_tests() does not take 'd Z' as a test, so the 22 tests that were only such a value are gone and the others lose their 'Z=...' (205 tests in R, 183)"
 "statout_match_review/match_reported_output.derived.published_tei.summary": *ux_text_1_dz
 "statout_match_review/match_reported_output.tt.format_values":
@@ -479,33 +479,36 @@
   reason: YAML params are written as one list(...) line with c() for vectors; knitr writes dput()'s wrapped lines (1:2 for consecutive integers)
 "codecheck/code_extract_r.text.params.doc1": *d80_params
 "codecheck/code_extract_r.text.params.doc2": *d80_params
-# DX-datacheck-1: file_types has one type per extension (metacheck d52b3fd), so a .json
+# D89: file_types has one type per extension (metacheck d52b3fd), so a .json
 # file is data (R at the pin: code) and counts as a data file, not a code file
 "mod_repo_check/repo_check.github.tree": &dx_dc1_repo
   kind: better_logic
-  ref: DX-datacheck-1
+  ref: D89
   reason: "a .json file is typed data (file_types has one type per extension since metacheck d52b3fd) and counted as a data file; R at the pin types it code"
 "mod_repo_check/repo_check.gitlab.project": *dx_dc1_repo
 "mod_repo_check/repo_check.dspace7": *dx_dc1_repo
 "mod_repo_check/repo_check.github.shared": *dx_dc1_repo
 "mod_repo_check/repo_check.cache": *dx_dc1_repo
 "mod_repo_check_review/repo_check.zenodo.no_peek": *dx_dc1_repo
-"mod_repo_check_review/repo_check.zenodo.no_peek.report": *dx_dc1_repo
+"mod_repo_check_review/repo_check.zenodo.no_peek.report":
+  kind: better_logic
+  ref: D89
+  reason: "a .json file is typed data (file_types has one type per extension since metacheck d52b3fd) and counted as a data file; R at the pin types it code. The report also has metacheck dev's module layout (D115: no inner <div> in the details, How It Works links the manual)"
 "mod_repo_check_review/repo_check.osf.reg.paperlist": *dx_dc1_repo
-# DX-datacheck-3: the naming table shows "Required"/"Suggestion" (metacheck 8c1f6c1)
+# D91: the naming table shows "Required"/"Suggestion" (metacheck 8c1f6c1)
 "mod_repo_check_review/repo_check.zenodo.peek_rich.tables": &dx_dc3_tables
   kind: better_logic
-  ref: DX-datacheck-3
+  ref: D91
   reason: "the naming table's Severity column says Required/Suggestion (metacheck 8c1f6c1); R at the pin shows the internal bad/suggestion"
   r_text: [["^bad$", "Required", regex], ["^suggestion$", "Suggestion", regex]]
 "mod_repo_check/repo_check.tables.osf_github": &dx_dc3_required
   kind: better_logic
-  ref: DX-datacheck-3
+  ref: D91
   reason: "the naming table's Severity column says Required (metacheck 8c1f6c1); R at the pin shows the internal bad"
   r_text: [["^bad$", "Required", regex]]
 "mod_repo_check_review/repo_check.gated.mixed.tables": *dx_dc3_required
 "mod_repo_check_review/repo_check.local.sizes.tables":
   kind: better_logic
-  ref: DX-datacheck-3
+  ref: D91
   reason: "the naming table's Severity column says Suggestion (metacheck 8c1f6c1); R at the pin shows the internal suggestion"
   r_text: [["^suggestion$", "Suggestion", regex]]

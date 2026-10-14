@@ -176,5 +176,5 @@
 "mod_ethics_review/ethics_check.fixture_corpus": *d84
 "db/crossref_doi.replay.demo_bib":
   kind: deliberate
-  ref: DX-text-2
+  ref: D88
   reason: "crossref_doi() asks api.crossref.org (metacheck at the pin: api.labs.crossref.org; metacheck itself moved in d2e4bc5); its recorded 404 for 10.0000/0123456789 is plain text, so the error is 'HTTP 404' (the Labs mirror's JSON 404 said 'Not Found')"

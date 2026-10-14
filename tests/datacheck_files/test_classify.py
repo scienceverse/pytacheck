@@ -132,14 +132,14 @@ def test_corpus_confirmed_formats() -> None:
 def test_json_html_and_scripts_after_one_type_per_extension() -> None:
     # file_types gives each extension one type since metacheck d52b3fd: .json is
     # data, .js/.php code, .html web (documentation); at the pin the first two
-    # were "code" and .html "code" too (DX-datacheck-1)
+    # were "code" and .html "code" too (D89)
     assert F.data_classify_files(["export.json", "task.js", "index.php", "report.html"]) == [
         "data",
         "code",
         "code",
         "documentation",
     ]
-    # metadata files are documentation, whatever their extension (DX-datacheck-2)
+    # metadata files are documentation, whatever their extension (D90)
     assert (
         F.data_classify_files(
             ["dataset_description.json", "ro-crate-metadata.json", "sub/DATASET_DESCRIPTION.JSON"]

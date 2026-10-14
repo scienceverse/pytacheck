@@ -11,7 +11,7 @@ are compound, e.g. ``fasta.gz``) and ``type`` (``code``, ``data``, ``stats``,
 (377 rows). At the pin, 27 extensions had two rows (``json`` was ``code`` and
 ``data``); metacheck d52b3fd gave each one type (``json``, ``rds``, ``por``,
 ``jasp``: ``data``; shell scripts, ``js``, ``ts``, ``php``: ``code``; ``html``,
-``htm``: ``web``), and pytacheck bundles that table (DX-datacheck-1).
+``htm``: ``web``), and pytacheck bundles that table (D89).
 """
 
 from __future__ import annotations
