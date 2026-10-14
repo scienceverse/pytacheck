@@ -82,11 +82,11 @@ def test_file_download_lists_the_original_bundle(mock_api: object) -> None:
     assert list(files.columns) == [
         "dspace7_url", "name", "file_url", "file_location", "size", "isdir", "ext", "type"
     ]  # fmt: skip
-    # U46: .rds is listed under two file types; the file is one row with the
-    # first (metacheck repeats it once per type)
+    # U46: at the pin .rds was listed under two file types and metacheck
+    # repeats the file once per type; it is one row, typed "data" (d52b3fd)
     assert files["name"].tolist() == ["data.CSV", "analysis.R", "model.rds", "noext"]
     assert files["ext"].tolist() == ["csv", "r", "rds", ""]
-    assert files["type"].tolist()[2] == "code"
+    assert files["type"].tolist()[2] == "data"
     assert files["file_location"].isna().all()
 
 

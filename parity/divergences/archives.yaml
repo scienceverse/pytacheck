@@ -284,63 +284,63 @@
 "archives_d2/dspace7_file_download.mock.one":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_d2/dspace7_file_download.mock.vector":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_d2/rbox_file_download.mock.cached":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz/github_files.html_json_types":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz/github_tree_files.tree":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz/github_tree_files.meta_fails":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz/gitlab_tree_files.subgroup_paged":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_files.review.tricky":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_files.review.tricky_rec":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_files.review.vector_rec":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_tree_files.review.null_branch":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_info.review.recursive":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz_review/gitlab_tree_files.review.branch_space":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_tree_files.review.vector":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 "archives_gz_review/github_info.review.vector_dup":
   kind: r_bug_fixed
   ref: U46
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
+  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
 # U48
 "archives_gz_review/github_languages.review.error_body":
   kind: r_bug_fixed
@@ -546,3 +546,28 @@
   kind: r_bug_fixed
   ref: U209
   reason: "the files that fit in the zip-mode budget are downloaded and the rest reported (metacheck stops: its call to the renamed cap_report() fails)"
+# DX-datacheck-1 (file_types has one type per extension, metacheck d52b3fd)
+"repo_download/file_types.table": &dx_dc1
+  kind: better_logic
+  ref: DX-datacheck-1
+  reason: "file_types has one row per extension (377; metacheck d52b3fd): json, rds, por and jasp are data, shell scripts, js, ts and php code, html web; R at the pin lists 27 extensions twice (404 rows)"
+"repo_download/filetype.examples": *dx_dc1
+"repo_download/filetype.every_extension": *dx_dc1
+"repo_download/filetype.every_extension_upper": *dx_dc1
+"repo_download/filetype.unicode_case": *dx_dc1
+"repo_download/file_category.vector": *dx_dc1
+"repo_download/file_category.compound_types": *dx_dc1
+"repo_download/file_category.every_extension": *dx_dc1
+"repo_download/file_category.list_column_filetype": *dx_dc1
+"repo_download/file_category.paths_and_case": *dx_dc1
+"repo_download_review/file_category.generated_names": *dx_dc1
+"repo_download_review/filetype.generated_names": *dx_dc1
+# DX-datacheck-3 (no date-format file-naming rule, metacheck 8c1f6c1)
+"repo_download/check_file_naming.mixed": &dx_dc3
+  kind: better_logic
+  ref: DX-datacheck-3
+  reason: "a run of 8 digits that is not a valid YYYYMMDD date is not reported (metacheck 8c1f6c1, #462: a name cannot say whether it is a date or an ID); R at the pin reports it as date-format"
+"repo_download/check_file_naming.dates": *dx_dc3
+"repo_download/file_naming_check_one.dir_and_dates": *dx_dc3
+"repo_download/file_naming_check_one.everything": *dx_dc3
+"repo_download_review/check_file_naming.odd_paths": *dx_dc3

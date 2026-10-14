@@ -909,9 +909,13 @@ def _download(
     else:
         never_fetch = [skip_types] if isinstance(skip_types, str) else list(skip_types)
     if never_fetch:
-        keep_archive = _is_readable_archive(names)
+        # An archive pytacheck can open is typed "unknown" until it is opened, so
+        # `want` is still False for it here: keep_archive must turn it on, not
+        # just survive the type filter (metacheck e4b74e1, #456; UX-datacheck-1).
+        # With download = "none" nothing is opened, so nothing is turned on.
+        keep_archive = _is_readable_archive(names) if download != "none" else [False] * n
         want = [
-            w and ((t not in never_fetch) or bool(k))
+            (w and t not in never_fetch) or bool(k)
             for w, t, k in zip(want, data_type, keep_archive, strict=True)
         ]
 

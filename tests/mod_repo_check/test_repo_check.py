@@ -627,11 +627,31 @@ def test_private_osf_file_rows_are_excluded_per_row() -> None:
     assert len(_osf_files(pd.DataFrame({"kind": ["file"], "public": [False]}))) == 0
 
 
+def test_naming_table_shows_display_severities(tmp_path: Path) -> None:
+    # metacheck 8c1f6c1: the report's naming table says "Required"/"Suggestion";
+    # naming_issues keeps "bad"/"suggestion", which the counts use. An 8-digit
+    # run that is not a date is not reported (the date-format rule is gone).
+    from metacheck.report import ReportTable
+
+    for name in ("my data.csv", "data_2.csv", "data_11.csv", "id_1234567890123456.csv"):
+        (tmp_path / name).write_text("x\n", encoding="utf-8")
+    mo = pc.module_run(pc.test_paper(), "repo_check", local_path=str(tmp_path))
+    tables = [b.data for b in mo.report if isinstance(b, ReportTable)]
+    naming = next(t for t in tables if list(t.columns) == ["File", "Rule", "Severity", "Detail"])
+    shown = dict(zip(naming["Rule"], naming["Severity"], strict=True))
+    assert shown["spaces"] == "Required"
+    assert shown["zero-padding"] == "Suggestion"
+    assert "date-format" not in shown
+    assert "We found 1 naming problem that should be fixed" in "\n".join(
+        b for b in mo.report if isinstance(b, str)
+    )
+
+
 def test_local_archives_are_counted(tmp_path: Path) -> None:
     # U123: a local file file_category() cannot place takes its type from the
-    # extension, as an online file does: a local .tar.gz/.zip is an archive
-    # (an extension with several types stays unclassified: .json and .rds are
-    # code or data, .html is code or web, so they are not counted as code)
+    # extension, as an online file does: a local .tar.gz/.zip is an archive.
+    # file_types has one type per extension since metacheck d52b3fd, so .json
+    # is data and .html web (DX-datacheck-1); neither is counted as code.
     names = ("results.tar.gz", "bundle.zip", "notes.txt", "analysis.R", "report.html", "cfg.json")
     for name in names:
         (tmp_path / name).write_text("x\n", encoding="utf-8")
@@ -640,9 +660,9 @@ def test_local_archives_are_counted(tmp_path: Path) -> None:
     assert {k: None if pd.isna(v) else v for k, v in types.items()} == {
         "analysis.R": "code",
         "bundle.zip": "archive",
-        "cfg.json": None,
+        "cfg.json": "data",
         "notes.txt": "text",
-        "report.html": None,
+        "report.html": "web",
         "results.tar.gz": "archive",
     }
     assert mo.summary_table["files_zip"].tolist() == [2]
