@@ -380,7 +380,8 @@ def _http_range_tail(
     a (small) answer is returned whole rather than its last *n* bytes, so a
     zip's members are all in hand (:func:`_open_zip`). When the host reports
     a different size than *total* (a size from a repository's listing that is
-    out of date), the tail is asked for once more at the reported size.
+    out of date), the tail is asked for once more at the reported size; a 206
+    answer shorter than asked, with no size reported, says the file ends there.
     """
     from metacheck.archives.download import _storage_request
 
@@ -437,6 +438,9 @@ def _http_range_tail(
                 return _http_range_tail(
                     url, n, reported, skip_on_api_limit, _resized=True, keep_whole=keep_whole
                 )
+        if r.status_code == 206 and len(got) < total - start:
+            # shorter than asked, with no size to correct *total* by: the file ends there
+            total = start + len(got)
         if r.status_code == 206 or (r.status_code == 200 and not too_big[0]):
             return _with_total(bytes(got), total)
         return None
