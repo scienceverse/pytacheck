@@ -805,6 +805,7 @@ def _code_expand_zip(
     all_files: pd.DataFrame,
     skip_on_api_limit: bool = False,
     cache: bool = False,
+    max_download_size: Any = 500,
 ) -> pd.DataFrame:
     """Fetch the code members of every unexpanded remote ``.zip`` row.
 
@@ -813,7 +814,12 @@ def _code_expand_zip(
     fetched, one new row each (the ``.zip`` row itself is kept). Under
     *skip_on_api_limit* a rate-limited host is skipped rather than waited
     out; both *skip_on_api_limit* and *cache* go on to the peek and to the
-    member fetches.
+    member fetches. The listing's ``file_size`` saves the peek a HEAD
+    request; a zip already on disk (one inside a ResearchBox, whose
+    ``file_url`` is the box's web page) is read from the file. An archive
+    within *max_download_size* (MB) is downloaded once instead of fetched by
+    range when that is cheaper (always on Dryad: metacheck #471), and kept
+    where the ordinary download would put it.
     """
     names = _col(all_files, "file_name")
     urls = _col(all_files, "file_url")
@@ -824,15 +830,28 @@ def _code_expand_zip(
     if not any(is_zip):
         return all_files
     from metacheck.archives.download import _repo_cache_path
-    from metacheck.archives.zip_peek import _zip_fetch_members, zip_peek
+    from metacheck.archives.zip_peek import (
+        _whole_request_bytes,
+        _zip_fetch_members,
+        _zip_local_source,
+        zip_peek,
+    )
 
+    local = _zip_local_source(all_files)
+    sizes = _col(all_files, "file_size")
+    try:
+        whole_bytes = float(max_download_size) * 1024 * 1024
+    except (TypeError, ValueError):
+        whole_bytes = 0.0  # R: isTRUE(NULL > 0) is FALSE, no whole download
     new_rows: list[pd.DataFrame] = []
     for i, z in enumerate(is_zip):
         if not z:
             continue
-        url = urls[i]
+        loc = local[i]
+        url = urls[i] if loc is None else loc
+        zip_size = sizes[i]
         try:
-            peek = zip_peek(url, cache=cache, skip_on_api_limit=skip_on_api_limit)
+            peek = zip_peek(url, cache=cache, skip_on_api_limit=skip_on_api_limit, size=zip_size)
         except Exception:
             peek = None
         if peek is None or len(peek) == 0:
@@ -855,6 +874,10 @@ def _code_expand_zip(
                 dest=dest,
                 cache=cache,
                 skip_on_api_limit=skip_on_api_limit,
+                max_whole_bytes=whole_bytes,
+                archive_path=re.sub(r"\.contents$", "", str(dest)),
+                request_bytes=_whole_request_bytes(url),
+                size=zip_size,
             )
         except Exception:
             fetched = None
