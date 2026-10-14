@@ -436,6 +436,10 @@ def flag_figshare_share_links(repos: Repos, fs_links: pd.DataFrame | None) -> No
 # ---------------------------------------------------------------------------
 
 _FILE_COLS = ("repo_url", "file_name", "file_path", "file_url", "file_location", "file_size")
+#: the repository's own total size in bytes, where its listing reports one
+#: (Dryad's storageSize); download_repo_files() sizes a whole-repository
+#: archive with it rather than by summing the rows it is given
+_REPO_SIZE = "repo_size"
 
 
 def _typed_files(rows: dict[str, list[Any]]) -> pd.DataFrame:
@@ -448,6 +452,7 @@ def _typed_files(rows: dict[str, list[Any]]) -> pd.DataFrame:
             ("file_url", rows["file_url"], "string"),
             ("file_location", rows["file_location"], "string"),
             ("file_size", rows["file_size"], "float64"),
+            (_REPO_SIZE, rows.get(_REPO_SIZE), "float64"),
         ]
     )
 
@@ -501,6 +506,8 @@ def _file_rows(
     per-file data frames (a zero-column table when no record has files).
     """
     rows: dict[str, list[Any]] = {k: [] for k in _FILE_COLS}
+    repo_sizes: list[Any] = []
+    has_repo_size = False
     any_rows = False
     others = [c for c in info.columns if c != "files"]
     columns = {c: info[c].tolist() for c in others}
@@ -524,9 +531,13 @@ def _file_rows(
             row.setdefault("repo_url", repo_url)
             for k in _FILE_COLS:
                 rows[k].append(row.get(k))
+            repo_sizes.append(row.get(_REPO_SIZE))
+            has_repo_size = has_repo_size or _REPO_SIZE in row
             any_rows = True
     if not any_rows:
         return pd.DataFrame()
+    if has_repo_size:
+        rows[_REPO_SIZE] = repo_sizes
     return _typed_files(rows)
 
 
@@ -1110,10 +1121,14 @@ def figshare_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
     )
 
 
-def dryad_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
+def dryad_row(record: dict[str, Any], f: Any) -> dict[str, Any]:
     href = empty_or(_f(f, "_links", "stash:download", "href"), None)
     file_url = None if _na(href) else "https://datadryad.org" + _as_chr(href)  # type: ignore[operator]
-    return _row(dollar(f, "path"), file_url, dollar(f, "size"))
+    row = _row(dollar(f, "path"), file_url, dollar(f, "size"))
+    # the dataset's own total (storageSize), which download_repo_files()
+    # prefers to summing the listed files when it sizes the dataset's zip
+    row[_REPO_SIZE] = _as_num(record.get("storage_size"))
+    return row
 
 
 def reshare_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:

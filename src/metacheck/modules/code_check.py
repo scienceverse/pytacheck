@@ -158,6 +158,11 @@ def code_check(
     missing from the repository, R parse errors, loaded packages, and whether
     the R/package environment is pinned (``renv.lock``, ``sessionInfo()``,
     ``groundhog``/``checkpoint``).
+
+    Dryad needs an API key (:func:`~metacheck.dryad_pat` or
+    :func:`~metacheck.dryad_auth`) to download file contents, even from a
+    public dataset: without one, Dryad-hosted code files are listed but not
+    checked, and their download failure says that a key is missing.
     """
     from metacheck.codecheck.core import (
         _code_expand_html,

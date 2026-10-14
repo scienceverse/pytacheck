@@ -110,10 +110,14 @@
 "mod_reg_review/reg_check.review.refused.report": *u128_err
 
 # --- repo_check module (inst/modules/repo_check.R) --------------------------
+"mod_repo_check/repo_check.dryad":
+  kind: deliberate
+  ref: DX-dryad-1
+  reason: "a Dryad file row carries repo_size, the dataset's storageSize, as metacheck does since d52b3fd (after the pin)"
 "mod_repo_check/repo_check.all_platforms": &u121
   kind: r_bug_fixed
   ref: U121
-  reason: files are de-duplicated per file (URL and path, or location); R's duplicated(file_url) & duplicated(file_path) also dropped a distinct DataONE readme.txt
+  reason: files are de-duplicated per file (URL and path, or location); R's duplicated(file_url) & duplicated(file_path) also dropped a distinct DataONE readme.txt. The Dryad rows also carry repo_size (DX-dryad-1)
 "mod_repo_check/repo_check.all_platforms.paperlist": *u121
 "mod_repo_check/repo_check.all_platforms.report": *u121
 "mod_repo_check/repo_check.all_platforms.tables": *u121

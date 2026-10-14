@@ -396,6 +396,12 @@ def data_check(
     leave blank; its default, ``"classifier"``, runs a local model where
     metacheck asks the LLM (``"llm"`` is metacheck's behaviour). See
     :mod:`metacheck.datacheck.concepts`.
+
+    Dryad lists a dataset's files without an API key but needs one
+    (:func:`~metacheck.dryad_pat` or :func:`~metacheck.dryad_auth`) to download
+    their contents, even from a public dataset. Without one, every Dryad file
+    stays classified but unread (no columns), and its download failure says
+    that a key is missing (``HTTP 401 (Dryad requires an API key ...)``).
     """
     from metacheck.datacheck.concepts import concept_mode
     from metacheck.llm.core import llm_use

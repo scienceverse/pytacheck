@@ -710,3 +710,26 @@ def test_unrecorded_request_is_a_listing_error() -> None:
     errors = mo["gated_repos"]["repo_error"]
     assert len(errors) == 1
     assert errors.iloc[0].startswith("An unexpected request was made:\nGET ")
+
+
+def test_dryad_rows_carry_the_dataset_size(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck d52b3fd: Dryad's own total (storageSize) is carried as
+    # repo_size, which download_repo_files() sizes the dataset's zip with
+    from metacheck.archives import dryad
+
+    real = dryad.dryad_info
+
+    def with_size(*args: object, **kwargs: object) -> pd.DataFrame:
+        info = real(*args, **kwargs)  # type: ignore[arg-type]
+        info["storage_size"] = 123456.0
+        return info
+
+    monkeypatch.setattr(dryad, "dryad_info", with_size)
+    mo = run(
+        tp(["https://doi.org/10.5061/dryad.j1fd7", "https://zenodo.org/records/5550001"], "p_size")
+    )
+    t = mo.table
+    is_dryad = t["repo_url"] == "https://doi.org/10.5061/dryad.j1fd7"
+    assert is_dryad.any() and (~is_dryad).any()
+    assert (t.loc[is_dryad, "repo_size"] == 123456.0).all()
+    assert t.loc[~is_dryad, "repo_size"].isna().all()

@@ -1,0 +1,175 @@
+{
+  "_links": {
+    "self": {
+      "href": "/api/v2/versions/104509/files?page=2&per_page=10"
+    },
+    "first": {
+      "href": "/api/v2/versions/104509/files?per_page=10"
+    },
+    "last": {
+      "href": "/api/v2/versions/104509/files?page=3&per_page=10"
+    },
+    "prev": {
+      "href": "/api/v2/versions/104509/files?page=1&per_page=10"
+    },
+    "next": {
+      "href": "/api/v2/versions/104509/files?page=3&per_page=10"
+    }
+  },
+  "count": 10,
+  "total": 22,
+  "_embedded": {
+    "stash:files": [
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577597"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577597/download"
+          }
+        },
+        "path": "Cooc_Sp.xlsx",
+        "size": 22552,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "3666ba7ebb4f539f5738008383d6560629ab55ad1ec218ddb14ae07b624a5757",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577794"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577794/download"
+          }
+        },
+        "path": "Lange.et.al.2021_readme.txt",
+        "size": 1800,
+        "mimeType": "text/plain",
+        "digest": "c7c26666ab0208e77e519ffd47a4b21d8998fb13033690caa174ce20f7d43758",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577790"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577790/download"
+          }
+        },
+        "path": "Logistic_regression_Dryad.xlsx",
+        "size": 35194,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "7deab1af8a395e10170e7467c82e7f5b719f25498e0f1d419c928981e180569c",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577600"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577600/download"
+          }
+        },
+        "path": "Lp.xlsx",
+        "size": 9264,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "992fdaf3c999e087c3545043de02952be8609583ca63c86635ea99535fe60fc6",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577601"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577601/download"
+          }
+        },
+        "path": "Oh.xlsx",
+        "size": 9272,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "44bde79e98e6288297a1af5a1536bb50a0e62d9e653f1074f2b260ad33873ad1",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577602"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577602/download"
+          }
+        },
+        "path": "Os.xlsx",
+        "size": 9291,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "7bff0479435846fffc6cbbc9fb60120502747f0ce52091ab8b983d0b0a23350e",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577603"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577603/download"
+          }
+        },
+        "path": "Qg.xlsx",
+        "size": 9263,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "dc621161a755b5dc67ebea28f8b4f84bbd036898c0672e946bee4ab76e6d35bd",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577604"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577604/download"
+          }
+        },
+        "path": "Qm.xlsx",
+        "size": 9269,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "1cd600d6a6f00e30b5198e0145c91b114fa999200e86331e6ecc9bf92f13e38a",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577605"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577605/download"
+          }
+        },
+        "path": "Qp.xlsx",
+        "size": 9270,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "ad80c8befad3914c67d8bc274d2cb1f8301ecedcdaf6d657bb6eee6900becae6",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577606"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577606/download"
+          }
+        },
+        "path": "Sa.xlsx",
+        "size": 9268,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "c80ccb6e61a59a273ec95f7ecdf486e415e76384dc93906315bfedd3506c23c9",
+        "digestType": "sha-256"
+      }
+    ]
+  }
+}

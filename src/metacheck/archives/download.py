@@ -631,11 +631,21 @@ def _archive_size_estimate(files: pd.DataFrame, repo: Any) -> float:
     """Port of ``R/repo-download.R::.archive_size_estimate()``.
 
     The estimated size (bytes) of a repository's whole-archive download: the
-    sum of the file sizes listed for *repo* in *files*, or ``nan`` (R ``NA``)
-    when none are listed. No whole-archive endpoint reports its size ahead of
-    time; the byte limit of the download is what actually bounds it.
+    repository's own total where its listing reports one (``repo_size``:
+    Dryad's ``storageSize``, carried by repo_check), else the sum of the file
+    sizes listed for *repo* in *files*, or ``nan`` (R ``NA``) when none are
+    listed. The sum covers only the rows passed in, often just the wanted
+    files; the byte limit of the download is what actually bounds it.
     """
     repos = files["repo_url"].tolist()
+    if "repo_size" in files.columns:
+        totals = [
+            s
+            for r, s in zip(repos, _nums(files["repo_size"].tolist()), strict=False)
+            if not is_missing(r) and r == repo and math.isfinite(s) and s > 0
+        ]
+        if totals:
+            return float(max(totals))
     sizes = _nums(files["file_size"].tolist()) if "file_size" in files.columns else []
     est = sum(
         s
@@ -888,6 +898,13 @@ def _download_one(
             and not is_missing(_rate_limit_wait(e.resp))
         ):
             return f"API rate limit exhausted: {e}"
+        if isinstance(e, _HttpError):
+            # a 401 from Dryad without a key set: say so on the line the
+            # failure report shows
+            from metacheck.archives.dryad import _dryad_401_hint
+
+            first, nl, rest = str(e).partition("\n")
+            return f"{first}{_dryad_401_hint(url, int(e.resp.status_code))}{nl}{rest}"
         return str(e)
 
 
@@ -964,7 +981,9 @@ def _download_many_parallel(
             if skip_on_api_limit is True and sc == 429 and not is_missing(_rate_limit_wait(resp)):
                 errs.append(f"API rate limit exhausted: HTTP {sc}")
             else:
-                errs.append(f"HTTP {sc:d}")
+                from metacheck.archives.dryad import _dryad_401_hint
+
+                errs.append(f"HTTP {sc:d}{_dryad_401_hint(urls[i], sc)}")
             continue
         if not os.path.exists(dest) or (os.path.getsize(dest) == 0 and expected[i] != 0):
             _unlink(dest)  # not left to be taken as cached next time (U75)
@@ -1629,20 +1648,26 @@ def download_repo_files(
             df = _download_zip_to_cache(df, rows, zip_url, _inplace=True, **kw)
             remaining_set.difference_update(filled(rows))
 
-        # Dryad: whole-dataset archive (quota-aware)
-        from metacheck.archives.dryad import _dryad_headers
+        # Dryad: whole-dataset archive (quota-aware). Every repository a Dryad
+        # DOI can be read from is one, whatever the form: metacheck at the pin
+        # matched only datadryad.org and doi.org/10.5061/dryad, so a dataset
+        # cited under another Dryad prefix (10.25338/...) or as a bare
+        # 10.5061/dryad.x went file by file
+        from metacheck.archives.dryad import _dryad_doi, _dryad_headers
 
-        for repo in in_remaining(r"datadryad\.org|doi\.org/10\.5061/dryad"):
-            ridx = in_repo(repo)
-            if not ridx:
-                continue
+        def dryad_doi_of(repo: Any) -> str | None:
             try:
-                from metacheck.archives.dryad import _dryad_doi
-
-                doi = _dryad_doi(repo)
+                doi = _dryad_doi(repo) if isinstance(repo, str) else None
             except Exception:
                 doi = None
-            if not isinstance(doi, str) or doi == "":
+            return doi if isinstance(doi, str) and doi != "" else None
+
+        for repo in dict.fromkeys(repo_list[i] for i in remaining_rows()):
+            doi = dryad_doi_of(repo)
+            if doi is None:
+                continue
+            ridx = in_repo(repo)
+            if not ridx:
                 continue
             encoded = _url_encode_reserved(f"doi:{doi}")
             zip_url = f"https://datadryad.org/api/v2/datasets/{encoded}/download"

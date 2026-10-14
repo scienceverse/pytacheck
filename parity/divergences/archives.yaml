@@ -571,3 +571,15 @@
 "repo_download/file_naming_check_one.dir_and_dates": *dx_dc3
 "repo_download/file_naming_check_one.everything": *dx_dc3
 "repo_download_review/check_file_naming.odd_paths": *dx_dc3
+# DX-dryad-1: dryad_info() reports the dataset's size and whether its listing is complete (metacheck d52b3fd)
+"archives_d1/dryad_info.mock.vector": &dx_dryad_1
+  kind: deliberate
+  ref: DX-dryad-1
+  reason: "dryad_info() adds storage_size, files_total and files_incomplete, as metacheck does since d52b3fd (after the pin)"
+"archives_d1/dryad_info.mock.links_table": *dx_dryad_1
+"archives_d1/dryad_info.mock.id_col_position": *dx_dryad_1
+"archives_d1_review/dryad_info.review.first_unfound": *dx_dryad_1
+"archives_d1_review/dryad_info.review.named_authors": *dx_dryad_1
+"archives_d1_review/dryad_info.review.column_clash": *dx_dryad_1
+"archives_d1_review/dryad_info.review.id_col_is_doi": *dx_dryad_1
+"archives_d1_review/dryad_info.review.id_col_is_doi_reordered": *dx_dryad_1

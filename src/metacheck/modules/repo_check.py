@@ -193,6 +193,13 @@ def repo_check(
     grouping when ``llm_use(TRUE)``. *cache* also reuses zip listings
     peeked before, and *skip_on_api_limit* skips a zip whose host's rate limit
     is exhausted instead of waiting for its reset.
+
+    Listing needs no API key. Dryad, however, needs one to download file
+    contents (:func:`~metacheck.dryad_pat` or :func:`~metacheck.dryad_auth`),
+    which data_check and code_check do: the first Dryad lookup without a key
+    says so once per session. A Dryad file row carries ``repo_size``, the
+    dataset's own total size, with which ``download_repo_files()`` sizes the
+    dataset's zip.
     """
     from metacheck.archives import _tick
     from metacheck.utils import pb as make_pb
