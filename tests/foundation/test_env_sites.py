@@ -372,6 +372,30 @@ def _read_rscript(ctx: Ctx) -> Any:
     return _rparse.rscript()
 
 
+def _read_r_engine_rscript(ctx: Ctx) -> Any:
+    from metacheck import rengine
+
+    return rengine.rscript()
+
+
+def _read_api_engine(ctx: Ctx) -> Any:
+    """The API's default engine, or what refuses it (an engine it does not know)."""
+    try:
+        return _api().default_engine()
+    except _api().ApiConfigError as exc:
+        return str(exc)
+
+
+def _read_app_r_engine(ctx: Ctx) -> Any:
+    """Whether the local app offers the R engine, where R runs metacheck."""
+    pytest.importorskip("gradio")
+    from metacheck import rengine
+    from metacheck.app import ui
+
+    ctx.monkeypatch.setattr(rengine, "available", lambda exe=None: True)
+    return ui.r_engine_offered(hosted=False)
+
+
 def _read_cache_root(ctx: Ctx) -> Any:
     from metacheck.archives.cache import _metacheck_cache_root
 
@@ -769,6 +793,27 @@ SITES: dict[str, Site] = {
         read=lambda ctx: _rdata().rds_reader(),
         expect=lambda ctx, name: "python",
         spaces=lambda ctx: "python" if _rdata()._rdata_c is None else "c",
+    ),
+    "R_ENGINE_RSCRIPT": Site(
+        value="<tmp>/r/Rscript",
+        other="",  # no other name
+        read=_read_r_engine_rscript,
+        expect=lambda ctx, name: str(ctx.tmp_path / "r" / "Rscript"),
+        spaces=lambda ctx: None,
+    ),
+    "API_ENGINE": Site(
+        value=" JULIA ",
+        other="",  # no other name
+        read=_read_api_engine,
+        expect=lambda ctx, name: "METACHECK_API_ENGINE is 'julia'; use one of python, r",
+        spaces=lambda ctx: "python",
+    ),
+    "APP_R_ENGINE": Site(
+        value=" Off ",
+        other="",  # no other name
+        read=_read_app_r_engine,
+        expect=lambda ctx, name: False,
+        spaces=lambda ctx: True,
     ),
 }
 

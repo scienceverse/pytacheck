@@ -202,7 +202,9 @@ def _skipped(value: Any) -> bool:
 def _demo(fns: dict[str, Any], session: str, data: bool = True) -> dict[str, Any]:
     """Press the demo button: what it sent last (the click ends with the fast results)."""
     request = SimpleNamespace(session_hash=session)
-    sent = list(fns["on_demo"](False, data, "grobid", "", False, None, "", "", True, request))
+    sent = list(
+        fns["on_demo"](False, data, "grobid", "", False, None, "", "", True, "python", request)
+    )
     return _named(sent[-1])
 
 

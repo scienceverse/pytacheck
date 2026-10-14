@@ -458,14 +458,25 @@ def client() -> TestClient:
 def settings(preset: str = DEFAULT) -> list[Any]:
     """The other inputs of the check button: online, data, reader, key, remember, ticked checks,
     paper preset, package preset, classifier."""
-    return [False, False, "grobid", "", False, ui.catalog.selected_checks(), "", preset, True]
+    return [
+        False,
+        False,
+        "grobid",
+        "",
+        False,
+        ui.catalog.selected_checks(),
+        "",
+        preset,
+        True,
+        "python",
+    ]
 
 
 def event(
     tc: TestClient, box: dict[str, Any], session: str, preset: str = DEFAULT
 ) -> dict[str, Any]:
     deps = tc.get("/config").json()["dependencies"]
-    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 10)
+    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 11)
     body = {"data": [box, *settings(preset)], "fn_index": dep["id"], "session_hash": session}
     assert tc.post("/gradio_api/queue/join", json=body).status_code == 200
     text = ""

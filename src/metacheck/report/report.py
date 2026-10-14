@@ -765,7 +765,12 @@ class _ReportParts:
         return "\n\n".join([*parts, "\n"])
 
 
-def _report_parts(module_output: Any, paper: Any = None, report_type: str = "full") -> _ReportParts:
+def _report_parts(
+    module_output: Any,
+    paper: Any = None,
+    report_type: str = "full",
+    version: str | None = None,
+) -> _ReportParts:
     # metacheck's default `paper = list()` always failed (`nrow(paper$author) > 0`),
     # and a paper whose info lacks a title or DOI lost the report header
     # (`ifelse(logical(0), ...)`); here they are just left out (U128)
@@ -802,7 +807,7 @@ def _report_parts(module_output: Any, paper: Any = None, report_type: str = "ful
     return _ReportParts(
         report_type=report_type,
         subtitle=subtitle,
-        version=_report_version(),
+        version=version or _report_version(),
         date=_dt.date.today().isoformat(),
         doi_text=doi_text,
         rows=rows,
@@ -820,6 +825,8 @@ def report_qmd(
     paper: Any = None,
     tables: str = "html",
     report_type: str | Sequence[str] | None = None,
+    *,
+    version: str | None = None,
 ) -> str:
     """Port of ``report_qmd()``: the Quarto report for module output.
 
@@ -840,7 +847,7 @@ def report_qmd(
         )
     from metacheck.report.render import static_table_chunk
 
-    parts = _report_parts(module_output, paper, _resolve_report_type(report_type))
+    parts = _report_parts(module_output, paper, _resolve_report_type(report_type), version)
     if parts.static:
         return parts.text(static_table_chunk)
     text = parts.text(table_chunk)
@@ -884,7 +891,11 @@ def _simple_html(parts: _ReportParts) -> str:
 
 
 def report_html(
-    module_output: Any, paper: Any = None, report_type: str | Sequence[str] | None = None
+    module_output: Any,
+    paper: Any = None,
+    report_type: str | Sequence[str] | None = None,
+    *,
+    version: str | None = None,
 ) -> str:
     """The report as a self-contained HTML page (no R or Quarto needed).
 
@@ -893,7 +904,7 @@ def report_html(
     """
     from metacheck._version import __version__
 
-    parts = _report_parts(module_output, paper, _resolve_report_type(report_type))
+    parts = _report_parts(module_output, paper, _resolve_report_type(report_type), version)
     if parts.static:
         return _simple_html(parts)
     slots = TableSlots()
@@ -910,10 +921,14 @@ def report_html(
 
 
 def report_markdown(
-    module_output: Any, paper: Any = None, report_type: str | Sequence[str] | None = None
+    module_output: Any,
+    paper: Any = None,
+    report_type: str | Sequence[str] | None = None,
+    *,
+    version: str | None = None,
 ) -> str:
     """The report as plain (GitHub-flavoured) Markdown."""
-    parts = _report_parts(module_output, paper, _resolve_report_type(report_type))
+    parts = _report_parts(module_output, paper, _resolve_report_type(report_type), version)
     intro = _intro_markdown(parts)
     title = "# MetaCheck Report\n\n"
     if parts.subtitle:
@@ -927,6 +942,8 @@ def render_module_outputs(
     paper: Any,
     output_format: str = "html",
     report_type: str | Sequence[str] | None = None,
+    *,
+    version: str | None = None,
 ) -> str:
     """The report text for module outputs that have already been computed.
 
@@ -935,15 +952,17 @@ def render_module_outputs(
     page) so the report reuses the results instead of re-running modules.
     ``module_output`` is a :class:`ReportOutput`, a mapping or a list of
     :class:`~metacheck.module.ModuleOutput`; ``output_format`` is ``"html"``,
-    ``"qmd"`` or ``"md"``; ``report_type`` is as for :func:`report`.
+    ``"qmd"`` or ``"md"``; ``report_type`` is as for :func:`report`. ``version`` replaces
+    the versions the report names (the outputs of the R engine name R metacheck's, see
+    :func:`metacheck.rengine.report_version`).
     """
     fmt = output_format.lower()
     if fmt == "html":
-        return report_html(module_output, paper, report_type)
+        return report_html(module_output, paper, report_type, version=version)
     if fmt == "qmd":
-        return report_qmd(module_output, paper, report_type=report_type)
+        return report_qmd(module_output, paper, report_type=report_type, version=version)
     if fmt == "md":
-        return report_markdown(module_output, paper, report_type)
+        return report_markdown(module_output, paper, report_type, version=version)
     raise ValueError("The output_format must be either 'html', 'qmd' or 'md'.")
 
 

@@ -12,7 +12,7 @@ Routes, parameters and status codes follow the plumber API:
 ``POST /paper/search``     ``text_search()`` (``pattern`` required; ``return``,
                            ``ignore.case``, ``fixed``, ``perl`` optional)
 ``POST /paper/module``     run one module (``name``)
-``POST /paper/check``      metadata + several modules (``modules``, ``report``)
+``POST /paper/check``      metadata + several modules (``modules``, ``report``, ``engine``)
 ``POST /package/check``    a data package: ``file`` (a zip or tar) or ``link`` (a repository)
 ========================  ====================================================
 
@@ -41,6 +41,17 @@ never installs packs. ``/paper/check`` also takes ``preset``; without
 module as plumber does. Parsing uploads and running modules happen off the event
 loop, at most ``METACHECK_API_MAX_CHECKS`` or ``PYTACHECK_API_MAX_CHECKS``
 (default: the CPU count) at a time, each request inside a run session.
+
+Engines (pytacheck extension): ``/paper/check`` takes ``engine``: ``r`` (R metacheck's
+modules, the reference, run by :mod:`metacheck.rengine` in an ``Rscript`` subprocess and
+shown with pytacheck's report) or ``python`` (pytacheck's experimental port, best-effort
+parity). Without it the server's default is used: ``METACHECK_API_ENGINE`` (or
+``pytacheck serve --engine``), else ``python``, so a server's answers do not change
+when R is installed on it. With ``r`` the
+modules, the presets and the default selection are R's (no packs), the response has the
+same shape, ``metacheck_version`` is R metacheck's and ``engine`` says which engine ran.
+``GET /paper/modules?engine=r`` lists R's modules. A server without R refuses ``engine=r``
+(and does not start with ``r`` as its default).
 
 Access (pytacheck extension): plumber has no authentication. Set
 ``METACHECK_API_KEY`` or ``PYTACHECK_API_KEY`` (at least 32 characters; a shorter
@@ -95,6 +106,7 @@ __all__ = [
     "ApiConfigError",
     "api_key",
     "create_app",
+    "default_engine",
     "is_loopback",
 ]
 
@@ -167,6 +179,28 @@ def available_modules() -> list[str]:
     except Exception as exc:  # a broken config must not take the API down
         LOG.warning("packs unavailable: %s", exc)
     return names
+
+
+def default_engine() -> str:
+    """The engine of a ``/paper/check`` that names none: ``METACHECK_API_ENGINE``, else
+    ``python``. Clients such as the Platform send no engine and expect Python's results, so
+    installing R on a server does not change its answers; ``pytacheck serve --engine r``
+    makes R the default.
+
+    Raises :class:`ApiConfigError` for an unknown engine, and for ``r`` named when R cannot
+    run metacheck here (a server meant to run R checks should not start without them).
+    """
+    from metacheck.rengine import ENGINES, REngineError, info
+
+    value = (env_get("API_ENGINE") or "python").strip().lower()
+    if value not in ENGINES:
+        raise ApiConfigError(f"METACHECK_API_ENGINE is {value!r}; use one of {', '.join(ENGINES)}")
+    if value == "r":
+        try:
+            info()
+        except REngineError as exc:
+            raise ApiConfigError(f"The R engine is the default, but {exc}") from exc
+    return value
 
 
 def max_checks() -> int:
@@ -347,6 +381,69 @@ def _read_upload(data: bytes, filename: str, request_id: str) -> Any:
         raise ApiError(400, str(exc)) from exc
 
 
+#: the upload a request's handler works on, as sent: ``(bytes, file name)``
+_UPLOAD: contextvars.ContextVar[tuple[bytes, str]] = contextvars.ContextVar("api_upload")
+
+
+def _engine(mp: dict[str, Any], default: str) -> str:
+    """The ``engine`` field (a 400 for one this server does not know)."""
+    from metacheck.rengine import ENGINES
+
+    value = str(mp.get("engine") or default).strip().lower()
+    if value not in ENGINES:
+        raise ApiError(400, f"Invalid engine: {value}. Available engines: {', '.join(ENGINES)}")
+    return value
+
+
+def _r_modules() -> list[str]:
+    """R metacheck's modules (a 400 when this server cannot run R)."""
+    from metacheck.rengine import REngineError, info
+
+    try:
+        return list(info().modules)
+    except REngineError as exc:
+        raise ApiError(400, f"This server cannot run the R engine: {exc}") from exc
+
+
+def _r_selection(mp: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
+    """``(module, args)`` for ``/paper/check`` with the R engine: modules, else a preset, else
+    every module of R metacheck (as its plumber API runs them). Only R's own modules run."""
+    from metacheck.presets import select
+
+    mods = _r_modules()
+    entries: list[tuple[str, dict[str, Any]]]
+    if mp.get("modules"):
+        entries = [(m, {}) for m in parse_modules(mp["modules"])]
+    elif mp.get("preset"):
+        entries = [
+            (str(ref), dict(args)) for ref, args in select(preset=mp["preset"], use_config=True)
+        ]
+    else:
+        return [(m, {}) for m in mods]
+    names = [name.removeprefix("metacheck::") for name, _ in entries]
+    invalid = [n for n in names if n not in mods]
+    if invalid:
+        raise ApiError(
+            400,
+            f"Invalid modules for the R engine: {', '.join(invalid)}. "
+            f"Available modules: {', '.join(mods)}",
+        )
+    return [(n, a) for n, (_, a) in zip(names, entries, strict=True)]
+
+
+def _r_paper(paper: Any, folder: str) -> Path:
+    """The paper as R reads it: the uploaded bibr JSON itself, or (a document bibr extracted
+    here) the paper written as bibr 12.0 JSON."""
+    from metacheck.rengine import paper_file
+
+    data, filename = _UPLOAD.get((b"", ""))
+    if data and Path(filename or "").suffix.lower() not in _SOURCE_SUFFIXES:
+        path = Path(folder) / "paper.json"
+        path.write_bytes(data)
+        return path
+    return paper_file(paper, folder)
+
+
 def _check_selection(mp: dict[str, Any]) -> list[tuple[Any, dict[str, Any]]]:
     """``(ref, args)`` for ``/paper/check``: modules, else a preset, else plumber's default."""
     from metacheck.presets import default_preset, select
@@ -502,6 +599,7 @@ def create_app() -> FastAPI:
     from metacheck.module import run_session, use
 
     key = api_key()
+    engine_default = default_engine()
     _configure_llm()
     limit = max_checks()
     semaphores: weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Semaphore] = (
@@ -567,6 +665,7 @@ def create_app() -> FastAPI:
                     paper = _read_upload(data, filename, request_id)
                 except ApiError as exc:
                     return _error(exc.status, exc.message)
+                _UPLOAD.set((data, filename))
                 try:
                     result = handler(paper, fields, request_id)
                 except ApiError as exc:
@@ -581,7 +680,13 @@ def create_app() -> FastAPI:
         return _json({"status": "ok", "timestamp": dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
 
     @app.get("/paper/modules")
-    def modules() -> Any:
+    def modules(engine: str | None = None) -> Any:
+        try:
+            if _engine({"engine": engine}, engine_default) == "r":
+                mods = _r_modules()
+                return _json({"modules": mods, "count": len(mods)})
+        except ApiError as exc:
+            return _error(exc.status, exc.message)
         with use(allow_local=False):
             mods = available_modules()
         return _json({"modules": mods, "count": len(mods)})
@@ -685,6 +790,14 @@ def create_app() -> FastAPI:
         from metacheck.papers.tables import paper_table
 
         def pre(mp: dict[str, Any]) -> tuple[int, str] | None:
+            try:
+                if _engine(mp, engine_default) == "r":
+                    _r_selection(mp)
+                    return None
+            except ApiError as exc:
+                return exc.status, exc.message
+            except ModuleError as exc:
+                return 400, f"Invalid preset: {exc}"
             mods = available_modules()
             invalid = [m for m in parse_modules(mp.get("modules")) if m not in mods]
             if invalid:
@@ -699,10 +812,31 @@ def create_app() -> FastAPI:
                     return 400, f"Invalid preset: {exc}"
             return None
 
-        def handler(paper: Any, mp: dict[str, Any], request_id: str) -> Any:
+        def run_r(paper: Any, mp: dict[str, Any]) -> tuple[list[str], Any, str, str]:
+            from metacheck import rengine
+
+            entries = _r_selection(mp)
+            names = [name for name, _ in entries]
+            with tempfile.TemporaryDirectory(prefix="pytacheck-api-r-") as folder:
+                try:
+                    r_run = rengine.run(
+                        _r_paper(paper, folder),
+                        names,
+                        args={name: args for name, args in entries if args},
+                        chain=False,
+                    )
+                except rengine.REngineError as exc:
+                    raise ApiError(500, f"The R engine failed: {exc}") from exc
+            return (
+                names,
+                r_run.outputs,
+                r_run.metacheck_version,
+                rengine.report_version(r_run.metacheck_version, r_run.r_version),
+            )
+
+        def run_python(paper: Any, mp: dict[str, Any]) -> tuple[list[str], Any]:
             entries = _check_selection(mp)
             names = [str(ref) for ref, _ in entries]
-            include_report = parse_bool(mp.get("report"), default=True)
             full: dict[str, ModuleOutput] = {}
             for name, args in zip(names, (a for _, a in entries), strict=True):
                 try:
@@ -716,6 +850,17 @@ def create_app() -> FastAPI:
                         report=f"Error running module '{name}': {exc}",
                         traffic_light="fail",
                     )
+            return names, full
+
+        def handler(paper: Any, mp: dict[str, Any], request_id: str) -> Any:
+            from metacheck._version import UPSTREAM
+
+            engine = _engine(mp, engine_default)
+            include_report = parse_bool(mp.get("report"), default=True)
+            if engine == "r":
+                names, full, version, label = run_r(paper, mp)
+            else:
+                (names, full), version, label = run_python(paper, mp), UPSTREAM["version"], None
             results = {
                 name: {
                     "module": o.module,
@@ -729,14 +874,13 @@ def create_app() -> FastAPI:
                 for name, o in full.items()
             }
             report_html = (
-                _render_report_html(list(full.values()), paper, request_id)
+                _render_report_html(list(full.values()), paper, request_id, label)
                 if include_report
                 else ""
             )
-            from metacheck._version import UPSTREAM
-
             return {
-                "metacheck_version": UPSTREAM["version"],
+                "metacheck_version": version,
+                "engine": engine,
                 "paper_info": info_fields(
                     paper, ["title", "keywords", "doi", "submission", "received", "accepted"]
                 ),
@@ -833,7 +977,9 @@ def _report_text(report: Any) -> Any:
     return report
 
 
-def _render_report_html(outputs: list[Any], paper: Any, request_id: str) -> str:
+def _render_report_html(
+    outputs: list[Any], paper: Any, request_id: str, version: str | None = None
+) -> str:
     """The HTML report for already-computed module outputs ("" if unavailable)."""
     try:
         from metacheck.report.report import render_module_outputs
@@ -841,7 +987,7 @@ def _render_report_html(outputs: list[Any], paper: Any, request_id: str) -> str:
         LOG.warning("report rendering unavailable (%s)", request_id)
         return ""
     try:
-        return str(render_module_outputs(outputs, paper, output_format="html"))
+        return str(render_module_outputs(outputs, paper, output_format="html", version=version))
     except Exception as exc:
         LOG.warning("report render failed (%s): %s", request_id, exc)
         return ""
