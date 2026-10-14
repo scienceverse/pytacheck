@@ -406,8 +406,8 @@ def code_lang(file_name: Any) -> Any:
     """Detect the code language of files from their names.
 
     Port of ``R/code_check.R::code_lang()``. Returns ``"R"``, ``"Python"``,
-    ``"SPSS"``, ``"SAS"``, ``"Stata"``, ``"Mplus"``, ``"MATLAB"`` (or ``"JASP"``
-    / ``"jamovi"``), or ``None`` for other files. A notebook's (``.ipynb``) or
+    ``"SPSS"``, ``"SAS"``, ``"Stata"``, ``"Mplus"``, ``"MATLAB"``, ``"NetLogo"``,
+    ``"Julia"`` (or ``"JASP"`` / ``"jamovi"``), or ``None`` for other files. A notebook's (``.ipynb``) or
     Quarto document's (``.qmd``) language is read from the file when it
     exists. A single name gives a single value; a sequence of names gives a
     list (R's named vector, in order).
