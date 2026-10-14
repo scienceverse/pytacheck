@@ -627,7 +627,7 @@ def _figshare_info(
         return pd.DataFrame(obj)
 
 
-def _article_files(rec: Any, files: Any, figshare_id: Any, host: str) -> list[Any]:
+def _article_files(rec: Any, files: Any, figshare_id: Any, host: str) -> Any:
     """An article's file entries, complete and each with its ``path``.
 
     Figshare documents the article's ``files`` as "up to 10" files; when the
@@ -635,28 +635,32 @@ def _article_files(rec: Any, files: Any, figshare_id: Any, host: str) -> list[An
     its files), the full list comes from the paged files endpoint. Each entry
     gets ``path``: its folder from the article's ``folder_structure`` (file id
     -> folder) and its name, so that files in folders keep their place and
-    same-named files in different folders stay apart.
+    same-named files in different folders stay apart. A listing given as an
+    object keeps its keys.
     """
-    entries = _elements(files) if isinstance(files, list | dict) else []
+    if not isinstance(files, list | dict):
+        return [] if files is None else files
+    entries = _elements(files)
     sizes = (_as_numeric(_empty_or(field(f, "size"), None)) for f in entries)
     listed = sum(n for n in sizes if not math.isnan(n))
     total = _as_numeric(_empty_or(field(rec, "size"), None))
     if not math.isnan(total) and listed < total:
         everything = _figshare_article_files(figshare_id, host=host)
         if everything is not None and len(everything) > len(entries):
-            entries = everything
+            files = everything
     folders = field(rec, "folder_structure")
     if not isinstance(folders, dict):
         folders = {}
-    out = []
-    for f in entries:
+
+    def with_path(f: Any) -> Any:
         if not isinstance(f, dict):
-            out.append(f)
-            continue
+            return f
         folder = folders.get(_json_chr(_empty_or(field(f, "id"), None)) or "")
-        name = _empty_or(field(f, "name"), None)
-        out.append({**f, "path": _figshare_file_path(name, folder)})
-    return out
+        return {**f, "path": _figshare_file_path(_empty_or(field(f, "name"), None), folder)}
+
+    if isinstance(files, dict):
+        return {k: with_path(f) for k, f in files.items()}
+    return [with_path(f) for f in files]
 
 
 def _figshare_file_path(name: Any, folder: Any = "") -> str | None:
