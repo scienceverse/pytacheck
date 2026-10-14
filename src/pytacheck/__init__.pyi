@@ -145,6 +145,7 @@ from metacheck.datacheck.files import data_study_roster as data_study_roster
 from metacheck.datacheck.files import manifest_merge as manifest_merge
 from metacheck.datacheck.files import text_peek as text_peek
 from metacheck.datacheck.files import txt_classify_content as txt_classify_content
+from metacheck.datacheck.psychds import psychds_file_plan as psychds_file_plan
 from metacheck.datacheck.scales import scales as scales
 from metacheck.datacheck.tasks import tasks as tasks
 from metacheck.db.crossref import add_bib_match as add_bib_match
@@ -257,6 +258,7 @@ from metacheck.report.blocks import collapse_section as collapse_section
 from metacheck.report.blocks import format_ref as format_ref
 from metacheck.report.blocks import link as link
 from metacheck.report.blocks import report_table as report_table
+from metacheck.report.blocks import report_type as report_type
 from metacheck.report.blocks import scroll_table as scroll_table
 from metacheck.report.emojis import emojis as emojis
 from metacheck.report.report import module_report as module_report

@@ -136,8 +136,21 @@ def test_static_runnable_single_script_is_green(paper: pc.Paper, repro_fixture: 
             "file_location": [repro_fixture("ok.R"), repro_fixture("data.csv")],
         }
     )
-    # no psychds_check plan in the chain: the module runs psychds_check itself
-    mo = module_run(chain(paper, code_tbl, structure_df), "reproducibility_check")
+    # no psychds_check plan in the chain: the module builds it with
+    # psychds_file_plan(), without running psychds_check (metacheck 029bf63)
+    import metacheck.module as mm
+
+    ran: list[str] = []
+    real = mm.module_run
+
+    def spy(paper: Any, module: Any, *args: Any, **kwargs: Any) -> Any:
+        ran.append(str(module))
+        return real(paper, module, *args, **kwargs)
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(mm, "module_run", spy)
+        mo = module_run(chain(paper, code_tbl, structure_df), "reproducibility_check")
+    assert "psychds_check" not in ran
     assert mo.table["file_name"].tolist() == ["ok.R"]
     assert mo.table["runnable"].tolist() == [True]
     assert mo.table["parses"].tolist() == [True]

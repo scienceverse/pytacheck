@@ -5,10 +5,14 @@
 # tests/mod_psychds/gen_review_cases.py and fixtures/review_chains.json.
 [files]
 "inst/modules/psychds_check.R" = ["src/metacheck/modules/psychds_check.py"]
+# the file plan psychds_check reports and reproducibility_check uses (metacheck 029bf63)
+"R/psychds-file-plan.R" = ["src/metacheck/datacheck/psychds.py"]
 
 [functions]
 "module:psychds_check" = "metacheck.modules.psychds_check:psychds_check"
 # module-local helpers defined in inst/modules/psychds_check.R
 "psychds_tree_html" = "metacheck.modules.psychds_check:psychds_tree_html"
-# (closures inside psychds_check() are ported alongside it: .pid -> _pid,
-#  keyword_slug -> _keyword_slug, target_of/scaffold/same_dir_real_name inline)
+psychds_file_plan = "metacheck.datacheck.psychds:psychds_file_plan"
+# (closures inside psychds_check() are ported alongside it: .pid -> _pid, scaffold
+#  inline; psychds_file_plan()'s keyword_slug -> _keyword_slug and
+#  target_of/same_dir_real_name are in metacheck.datacheck.psychds)

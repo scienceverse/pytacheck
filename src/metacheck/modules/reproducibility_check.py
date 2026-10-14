@@ -198,8 +198,8 @@ def _match_sandbox(sandbox: Any) -> str:
         By default (`execute = FALSE`) the module does **not run any code** — it
         performs only static analysis: reading dependencies with the same extractors
         as `code_check`, mapping referenced files to their new locations with the
-        plan from `psychds_check`, and building a run-order dependency graph. It
-        reports what *would* be installed and run rather than doing it.
+        plan from `psychds_file_plan()`, and building a run-order dependency graph.
+        It reports what *would* be installed and run rather than doing it.
 
         When `execute = TRUE`, the module additionally **runs the downloaded code** —
         a deliberate, opt-in action gated behind that argument. By default
@@ -347,7 +347,9 @@ def reproducibility_check(
     Reads ``code_check``'s ``table``/``version_pin``, ``psychds_check``'s
     ``table`` (the path-rewrite plan) and ``data_check``'s ``structure`` from
     the chain, else from *tables_dir*, else runs the missing modules (LLM
-    off). ``model=None`` means ``llm_model()``.
+    off); a missing plan is built from the structure with
+    :func:`~metacheck.datacheck.psychds.psychds_file_plan`, without running
+    ``psychds_check``. ``model=None`` means ``llm_model()``.
 
     With ``execute=True`` the paper's R scripts are RUN. By default
     (``sandbox="docker"``; metacheck's default is ``"process"``: D62) each one
@@ -513,8 +515,11 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
 
     # 1. Inputs from the upstream modules --------------------------------------
     code_tbl = upstream("code_check", "table")
+    # psychds_check's table is the plan; a missing one is built from data_check's
+    # structure (psychds_file_plan() runs no module, so nothing is fetched again)
     plan = upstream("psychds_check", "table")
     structure_df = upstream("data_check", "structure")
+    group_no_evidence = upstream("data_check", "group_no_evidence")
     version_pin = upstream("code_check", "version_pin")
 
     def run_missing(mod: str) -> Any:
@@ -535,9 +540,13 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         )
 
     if structure_df is None:
-        structure_df = run_missing("data_check").get("structure")
+        dc = run_missing("data_check")
+        structure_df = dc.get("structure")
+        group_no_evidence = dc.get("group_no_evidence")
     if plan is None:
-        plan = run_missing("psychds_check").table
+        from metacheck.datacheck.psychds import psychds_file_plan
+
+        plan = psychds_file_plan(structure_df, group_no_evidence)["table"]
     if code_tbl is None:
         cc = run_missing("code_check")
         code_tbl = cc.table
