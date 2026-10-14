@@ -701,11 +701,9 @@ def write_pytacheck_variants(root: Path) -> None:
                 continue
             text = f.read_bytes()
             if f.suffix == ".R":  # the recorded request's own URL, for the record
+                suffix = b"?" + query.encode() + b'"'
                 text = re.sub(
-                    rb'(url = "[^"?]*)"',
-                    lambda u: u.group(1) + b"?" + query.encode() + b'"',
-                    text,
-                    count=1,
+                    rb'(url = "[^"?]*)"', lambda u, s=suffix: u.group(1) + s, text, count=1
                 )
             dest.write_bytes(text)
 
