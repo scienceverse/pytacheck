@@ -5,6 +5,9 @@
 [files]
 "R/reproducibility_check.R" = ["src/metacheck/repro/core.py"]
 "R/reproducibility_check_docker.R" = ["src/metacheck/repro/docker.py"]
+# metacheck d3b8594 (after the f1062b4 pin): Python support
+"R/reproducibility_check_python.R" = ["src/metacheck/repro/python.py"]
+"R/reproducibility_check_python_docker.R" = ["src/metacheck/repro/docker.py"]
 "R/module.R" = ["src/metacheck/repro/tables.py"]
 
 [functions]
@@ -43,3 +46,13 @@ repro_run_scripts_docker = "metacheck.repro.docker:repro_run_scripts_docker"
 capture_module_tables = "metacheck.repro.tables:capture_module_tables"
 collect_module_tables = "metacheck.repro.tables:collect_module_tables"
 ".load_module_tables" = "metacheck.repro.tables:_load_module_tables"
+# R/reproducibility_check_python.R and R/reproducibility_check_python_docker.R (d3b8594)
+repro_dependencies_py = "metacheck.repro.python:repro_dependencies_py"
+".repro_py_manifest_pins" = "metacheck.repro.python:_repro_py_manifest_pins"
+".repro_py_stdlib_modules" = "metacheck.repro.python:_PY_STDLIB"
+repro_install_deps_py = "metacheck.repro.python:repro_install_deps_py"
+repro_run_scripts_py = "metacheck.repro.python:repro_run_scripts_py"
+".repro_py_defined_vars" = "metacheck.repro.python:_repro_py_defined_vars"
+".repro_docker_default_image_py" = "metacheck.repro.docker:_REPRO_DOCKER_DEFAULT_IMAGE_PY"
+repro_install_deps_py_docker = "metacheck.repro.docker:repro_install_deps_py_docker"
+repro_run_scripts_py_docker = "metacheck.repro.docker:repro_run_scripts_py_docker"

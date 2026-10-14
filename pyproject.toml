@@ -190,6 +190,7 @@ known-first-party = ["metacheck", "pytacheck", "parity", "tests"]
 [tool.ruff.lint.per-file-ignores]
 "src/metacheck/__init__.py" = ["F401"]  # TYPE_CHECKING re-exports; __all__ is built from _EXPORTS
 "tests/**/*.py" = ["S", "ARG", "E402", "SIM117", "PERF"]
+"tests/repro_core/fixtures/python/*.py" = ["F821"]  # copies of metacheck's scripts, errors included
 "parity/**/*.py" = ["S", "ARG"]
 "scripts/**/*.py" = ["S", "ARG", "E402"]
 "benchmarks/**/*.py" = ["S", "ARG"]

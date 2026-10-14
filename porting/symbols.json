@@ -2964,6 +2964,12 @@
   "ported": true,
   "python": "metacheck.repro.docker:_repro_docker_container_path"
  },
+ ".repro_docker_default_image_py": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.repro.docker:_REPRO_DOCKER_DEFAULT_IMAGE_PY"
+ },
  ".repro_docker_host_memory_bytes": {
   "file": "",
   "line": 0,
@@ -3023,6 +3029,24 @@
   "line": 1909,
   "ported": true,
   "python": "metacheck.repro.core:_repro_not_loadable_msg"
+ },
+ ".repro_py_defined_vars": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.repro.python:_repro_py_defined_vars"
+ },
+ ".repro_py_manifest_pins": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.repro.python:_repro_py_manifest_pins"
+ },
+ ".repro_py_stdlib_modules": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.repro.python:_PY_STDLIB"
  },
  ".repro_redirect_writes": {
   "file": "R/reproducibility_check.R",
@@ -6325,6 +6349,12 @@
   "ported": true,
   "python": "metacheck.repro.core:repro_dependencies"
  },
+ "repro_dependencies_py": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.repro.python:repro_dependencies_py"
+ },
  "repro_docker_available": {
   "file": "R/reproducibility_check_docker.R",
   "line": 47,
@@ -6348,6 +6378,18 @@
   "line": 233,
   "ported": true,
   "python": "metacheck.repro.docker:repro_install_deps_docker"
+ },
+ "repro_install_deps_py": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.repro.python:repro_install_deps_py"
+ },
+ "repro_install_deps_py_docker": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.repro.docker:repro_install_deps_py_docker"
  },
  "repro_materialize_layout": {
   "file": "R/reproducibility_check.R",
@@ -6384,6 +6426,18 @@
   "line": 477,
   "ported": true,
   "python": "metacheck.repro.docker:repro_run_scripts_docker"
+ },
+ "repro_run_scripts_py": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.repro.python:repro_run_scripts_py"
+ },
+ "repro_run_scripts_py_docker": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.repro.docker:repro_run_scripts_py_docker"
  },
  "repro_write_scripts": {
   "file": "R/reproducibility_check.R",

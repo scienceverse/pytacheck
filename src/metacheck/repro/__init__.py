@@ -2,7 +2,8 @@
 
 Ports of metacheck's ``R/reproducibility_check.R`` (static analysis of a
 paper's scripts and the execution helpers), ``R/reproducibility_check_docker.R``
-(the Docker sandbox backend) and the module-table capture of ``R/module.R``
+(the Docker sandbox backend), ``R/reproducibility_check_python.R`` and
+``R/reproducibility_check_python_docker.R`` (the same for Python code) and the module-table capture of ``R/module.R``
 (``capture_module_tables()``, ``collect_module_tables()``,
 ``.load_module_tables()``):
 
@@ -15,6 +16,10 @@ paper's scripts and the execution helpers), ``R/reproducibility_check_docker.R``
   subprocess, the analogue of metacheck's ``callr::r()``);
 * Docker backend -- :func:`repro_docker_available`,
   :func:`repro_install_deps_docker`, :func:`repro_run_scripts_docker`;
+* Python code -- :func:`repro_dependencies_py`, :func:`repro_install_deps_py`,
+  :func:`repro_run_scripts_py` (a ``python3`` subprocess) and the Docker
+  backend's :func:`repro_install_deps_py_docker`,
+  :func:`repro_run_scripts_py_docker`;
 * module tables -- :func:`capture_module_tables`, :func:`collect_module_tables`.
 
 Submodules are imported lazily, so ``import metacheck.repro`` stays cheap.
@@ -39,6 +44,11 @@ _LAZY = {
     "repro_docker_available": "metacheck.repro.docker",
     "repro_install_deps_docker": "metacheck.repro.docker",
     "repro_run_scripts_docker": "metacheck.repro.docker",
+    "repro_dependencies_py": "metacheck.repro.python",
+    "repro_install_deps_py": "metacheck.repro.python",
+    "repro_run_scripts_py": "metacheck.repro.python",
+    "repro_install_deps_py_docker": "metacheck.repro.docker",
+    "repro_run_scripts_py_docker": "metacheck.repro.docker",
     "capture_module_tables": "metacheck.repro.tables",
     "collect_module_tables": "metacheck.repro.tables",
 }
