@@ -301,11 +301,6 @@
   kind: r_bug_fixed
   ref: U46
   reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
-"archives_gz/github_tree_files.meta_fails":
-  kind: r_bug_fixed
-  ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
 "archives_gz/gitlab_tree_files.subgroup_paged":
   kind: r_bug_fixed
   ref: U46
@@ -334,11 +329,6 @@
   kind: r_bug_fixed
   ref: U46
   reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
-"archives_gz_review/github_tree_files.review.vector":
-  kind: r_bug_fixed
-  ref: U46
-  reason: "a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (json, rds: data; html: web; DX-datacheck-1); metacheck at the pin repeats it once per type"
-  reason: "a file whose extension file_types lists under two types is one row with the first type (metacheck repeats it once per type)"
 "archives_gz_review/github_info.review.vector_dup":
   kind: r_bug_fixed
   ref: U46
@@ -589,15 +579,15 @@
 "archives_gz/github_tree_files.meta_fails":
   kind: better_logic
   ref: DX-osf-2
-  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid"
+  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid; a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (U46, DX-datacheck-1)"
 "archives_gz_review/github_tree_files.review.vector":
   kind: better_logic
   ref: DX-osf-2
-  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid"
+  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid; a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (U46, DX-datacheck-1)"
 "archives_gz_review/gitlab_tree_files.review.vector_missing":
   kind: better_logic
   ref: DX-osf-2
-  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid"
+  reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid; a file whose extension file_types listed under two types at the pin is one row, with its one type from metacheck d52b3fd (U46, DX-datacheck-1)"
 # DX-dspace-1 (placeholder, port of metacheck b5fe939: repository registries)
 "archives_d1/.figshare_vanity_hosts": &dx_dspace_1
   kind: deliberate

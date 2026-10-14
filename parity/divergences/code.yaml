@@ -125,7 +125,7 @@
 "mod_repo_check/repo_check.zenodo.peek": &dx_zip_1_size
   kind: deliberate
   ref: DX-zip-1
-  reason: the rows of a zip's entries carry archive_size, the archive's size from the listing, so a later member fetch needs no HEAD request (metacheck's newer dev does the same)
+  reason: the rows of a zip's entries carry archive_size, the archive's size from the listing, so a later member fetch needs no HEAD request (metacheck's newer dev does the same); json and html entries take their one type from the new file_types table (DX-datacheck-1)
 "mod_repo_check_review/repo_check.zenodo.peek_rich": *dx_zip_1_size
 "mod_repo_check_review/repo_check.zenodo.peek_same_zip": *dx_zip_1_size
 "mod_repo_check_review/repo_check.zenodo.peek_shared.paperlist": *dx_zip_1_size
@@ -486,7 +486,6 @@
   ref: DX-datacheck-1
   reason: "a .json file is typed data (file_types has one type per extension since metacheck d52b3fd) and counted as a data file; R at the pin types it code"
 "mod_repo_check/repo_check.gitlab.project": *dx_dc1_repo
-"mod_repo_check/repo_check.zenodo.peek": *dx_dc1_repo
 "mod_repo_check/repo_check.dspace7": *dx_dc1_repo
 "mod_repo_check/repo_check.github.shared": *dx_dc1_repo
 "mod_repo_check/repo_check.cache": *dx_dc1_repo
