@@ -732,8 +732,10 @@ def figshare_pat(pat: str | None = None) -> str:
     """Port of R/archive-figshare.R::figshare_pat(): get or set a Figshare API token.
 
     Without *pat*, returns the token set this session, else the
-    ``FIGSHARE_PAT`` environment variable, else ``""``. A token is optional
-    (it raises rate limits and unlocks private articles).
+    ``FIGSHARE_PAT`` environment variable, else ``""``. A token is optional:
+    it unlocks private articles, but does not raise any request limit (Figshare
+    documents no automatic rate limiting and asks for at most one request a
+    second either way).
     """
     return _figshare_pat(pat)
 
