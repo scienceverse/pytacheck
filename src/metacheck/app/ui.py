@@ -179,13 +179,27 @@ READER_FALLBACK = (
 #: the choice of engine, shown where R metacheck can run (see :func:`r_engine_offered`); R is
 #: the default there, and Python is the experimental port
 ENGINE_LABEL = "Run checks with"
-ENGINE_CHOICES = [("R metacheck", "r"), ("Python (experimental)", "python")]
 ENGINE_HINT = (
-    "R runs the checks in R metacheck {version}, the reference. Python runs pytacheck's "
-    "faster port of them: experimental, with best-effort parity to R ([the known "
-    "differences]({url})), and with checks and data packages R does not have."
+    "R runs the checks in R metacheck {r_version}, the reference. Python runs them in "
+    "pytacheck {version}, an experimental, optimized port with best-effort parity to R "
+    "([the known differences]({url})), which also has checks and data packages R does not have."
 )
 DIFFERENCES_URL = f"{REPO_URL}/blob/main/docs/UPSTREAM_ISSUES.md"
+
+
+def engine_choices(r_version: str, version: str) -> list[tuple[str, str]]:
+    """The choice of engine, each with the version it runs: R first, as the default."""
+    return [
+        (f"R metacheck {r_version}".strip(), "r"),
+        (f"Python {version} (experimental)", "python"),
+    ]
+
+
+def python_engine(version: str) -> str:
+    """How a run's summary names Python, where the page also offers R."""
+    return f"Python {version} (experimental)"
+
+
 R_ONLY_PAPERS = "R metacheck checks papers only. Choose Python to check a data package."
 PICKER_TITLE = "Choose the checks"
 PACKAGE_PRESET_LABEL = "Checks for the data package"
@@ -319,10 +333,16 @@ def _links() -> str:
     return f'<ul class="mc-links">{items}</ul>'
 
 
-def header(version: str) -> str:
-    """The page's title, version, one line on what it does, and the project links."""
+def header(version: str, r_version: str = "") -> str:
+    """The page's title, versions, one line on what it does, and the project links. With
+    ``r_version`` (the page offers R metacheck) both engines are named, R first."""
+    engines = (
+        f"R metacheck {r_version} · Python {version} (experimental)"
+        if r_version
+        else f"Python preview {version}"
+    )
     return (
-        f'<h1>metacheck <span class="mc-version">Python preview {html.escape(version)}</span>'
+        f'<h1>metacheck <span class="mc-version">{html.escape(engines)}</span>'
         f'</h1><p class="mc-intro">{html.escape(INTRO)}</p>{_links()}'
     )
 
@@ -515,9 +535,12 @@ def package_summary(analysis: pk.PackageAnalysis) -> str:
     return text
 
 
-def _summary(analysis: Analysis) -> str:
+def _summary(analysis: Analysis, python: str = "") -> str:
+    """The results line. A run names its engine: R's runs always, Python's as *python* (where
+    the page offers both)."""
     n = len(analysis.rows)
-    by = f" with {analysis.engine}" if analysis.engine else ""
+    engine = analysis.engine or python
+    by = f" with {engine}" if engine else ""
     return (
         f"Ran {n} check{'' if n == 1 else 's'}{by} on **{analysis.name}** "
         f"in {analysis.seconds:.1f} s."
@@ -747,7 +770,7 @@ def build_app(
         """What the results show for a paper: the checklist of a data package is hidden."""
         return (
             gr.update(visible=True),
-            _summary(analysis),
+            _summary(analysis, python_engine(__version__) if r_offered else ""),
             table_value(analysis.rows),
             gr.update(visible=False, value=None),
             report_frame(analysis.html),
@@ -1193,7 +1216,7 @@ def build_app(
     with gr.Blocks(**blocks_kwargs) as app:
         if not shared:
             gr.Navbar(main_page_name=MAIN_PAGE_NAME)
-        gr.HTML(header(__version__), elem_id="mc-header", js_on_load=None)
+        gr.HTML(header(__version__, r_version), elem_id="mc-header", js_on_load=None)
         with gr.Row(elem_id="mc-mode-row"):
             mode = gr.Radio(
                 MODES,
@@ -1228,10 +1251,14 @@ def build_app(
             reader = gr.Radio(READERS, value=first, label="Read PDFs with")
             gr.Markdown(reader_hint(first, shared))
             engine = gr.Radio(
-                ENGINE_CHOICES, value=first_engine, label=ENGINE_LABEL, visible=r_offered
+                engine_choices(r_version, __version__),
+                value=first_engine,
+                label=ENGINE_LABEL,
+                visible=r_offered,
             )
             gr.Markdown(
-                ENGINE_HINT.format(version=r_version, url=DIFFERENCES_URL), visible=r_offered
+                ENGINE_HINT.format(r_version=r_version, version=__version__, url=DIFFERENCES_URL),
+                visible=r_offered,
             )
             with gr.Group(visible=first == "bibr") as key_group:
                 # the key of this computer wins over a typed one, so there is nothing to type

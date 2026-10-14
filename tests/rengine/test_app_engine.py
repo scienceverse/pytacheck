@@ -112,6 +112,16 @@ def test_choosing_r_on_the_page(fake_r: Path, monkeypatch: pytest.MonkeyPatch) -
     shown = {getattr(b, "label", None): b for b in blocks.blocks.values()}
     # R is chosen at the start, with R metacheck's checks, and the switch stays on Paper
     assert shown[ui.ENGINE_LABEL].value == "r"
+    # each engine names its version: R metacheck's, and pytacheck's for the experimental Python
+    from metacheck._version import __version__
+
+    assert shown[ui.ENGINE_LABEL].choices == [
+        ("R metacheck 9.9.9", "r"),
+        (f"Python {__version__} (experimental)", "python"),
+    ]
+    page_text = " ".join(str(getattr(b, "value", "")) for b in blocks.blocks.values())
+    assert f"R metacheck 9.9.9 · Python {__version__} (experimental)" in page_text
+    assert "optimized port with best-effort parity" in page_text
     assert [name for _, name in shown["Checks to run"].choices] == ["marginal", "stat_check"]
     assert shown[ui.MODE_LABEL].interactive is False
     fns = {fn.name: fn.fn for fn in blocks.fns.values()}
@@ -159,3 +169,23 @@ def test_r_ends_with_a_hosted_run_ended_at_its_limit(
     else:
         os.kill(pid, 9)
         pytest.fail("R outlived the run's process")
+
+
+def test_the_header_names_both_engines() -> None:
+    pytest.importorskip("gradio")
+    from metacheck.app import ui
+
+    assert "Python preview 1.0" in ui.header("1.0")
+    both = ui.header("1.0", "0.3.3.2")
+    assert "R metacheck 0.3.3.2 · Python 1.0 (experimental)" in both
+    assert "preview" not in both
+
+
+def test_a_python_run_names_its_version_beside_r(fake_r: Path, tmp_path: Path) -> None:
+    pytest.importorskip("gradio")
+    from metacheck.app import ui
+
+    run = app_run.begin(pc.demofile("json"), workdir=tmp_path, checks=["marginal"])
+    assert "Ran 1 check on" in ui._summary(run.analysis)  # no R on the page: as before
+    beside_r = ui._summary(run.analysis, ui.python_engine("1.0"))
+    assert "Ran 1 check with Python 1.0 (experimental) on" in beside_r
