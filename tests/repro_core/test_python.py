@@ -247,6 +247,9 @@ def test_file_io_and_order() -> None:
         ("open('in.csv')", False),
         ("open('in.csv', 'r')", False),
         ("open('in.csv', 'rb')", False),
+        # metacheck takes any quoted letters with a w, a or x in them for a write mode
+        ("open('raw')", False),
+        ("open(p, encoding='ascii')", False),
         ("df.to_csv('out.csv', index=False)", True),
         ("plt.savefig('fig.png')", True),
         ("np.save('arr.npy', a)", True),
