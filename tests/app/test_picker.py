@@ -178,6 +178,7 @@ def test_the_demo_button_runs_the_ticked_checks(config: Path) -> None:
         "web",
         "datapackage::default",
         True,
+        "python",
         request,
     )
     assert "Ran 1 check on" in page[2]

@@ -43,6 +43,7 @@ def _join(client: TestClient, fn_index: int, path: str) -> str:
             "",  # the preset
             "datapackage::default",  # the preset for a data package
             True,  # the local classifier
+            "python",  # the engine
         ],
         "fn_index": fn_index,
         "session_hash": "t1",
@@ -63,7 +64,7 @@ def _check_fn_index(client: TestClient) -> int:
     (dep,) = (
         d
         for d in config["dependencies"]
-        if d["targets"][0][1] == "click" and len(d["inputs"]) == 10
+        if d["targets"][0][1] == "click" and len(d["inputs"]) == 11
     )
     return int(dep["id"])
 

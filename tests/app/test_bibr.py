@@ -529,6 +529,7 @@ def _on_check(fns: dict[str, Any], path: Path, key: str, remember: bool) -> list
             "",
             PACKAGE_PRESET,
             True,
+            "python",
             request,
         )
     )
@@ -657,6 +658,7 @@ def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_
                 "",
                 PACKAGE_PRESET,
                 True,
+                "python",
                 SimpleNamespace(session_hash="b2"),
             )
         )
@@ -673,6 +675,7 @@ def test_a_shared_server_never_uses_or_offers_a_saved_key(server: FakeBibr, tmp_
             "",
             PACKAGE_PRESET,
             True,
+            "python",
             SimpleNamespace(session_hash="b2"),
         )
     )

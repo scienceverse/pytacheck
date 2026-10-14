@@ -176,6 +176,17 @@ READER_FALLBACK = (
     "bibr is not set up on this computer, so GROBID is used. "
     "Enter a bibr key to read PDFs with bibr."
 )
+#: the choice of engine, shown where R metacheck can run (see :func:`r_engine_offered`); R is
+#: the default there, and Python is the experimental port
+ENGINE_LABEL = "Run checks with"
+ENGINE_CHOICES = [("R metacheck", "r"), ("Python (experimental)", "python")]
+ENGINE_HINT = (
+    "R runs the checks in R metacheck {version}, the reference. Python runs pytacheck's "
+    "faster port of them: experimental, with best-effort parity to R ([the known "
+    "differences]({url})), and with checks and data packages R does not have."
+)
+DIFFERENCES_URL = f"{REPO_URL}/blob/main/docs/UPSTREAM_ISSUES.md"
+R_ONLY_PAPERS = "R metacheck checks papers only. Choose Python to check a data package."
 PICKER_TITLE = "Choose the checks"
 PACKAGE_PRESET_LABEL = "Checks for the data package"
 PACKAGE_PRESET_INFO = (
@@ -341,6 +352,7 @@ def analyse_upload(
     grace: float,
     picked: list[str] | None,
     preset: str,
+    engine: str,
     progress: Callable[[float, str], None],
 ) -> Analysis:
     """One hosted run, in its own process. The server makes ``workdir`` and removes it, so a
@@ -364,6 +376,7 @@ def analyse_upload(
         checks=picked,
         args=catalog.preset_args(preset),
         hosted=True,
+        engine=engine,
     )
     if not data:
         return started.analysis
@@ -517,9 +530,26 @@ def package_summary(analysis: pk.PackageAnalysis) -> str:
 
 def _summary(analysis: Analysis) -> str:
     n = len(analysis.rows)
+    by = f" with {analysis.engine}" if analysis.engine else ""
     return (
-        f"Ran {n} check{'' if n == 1 else 's'} on **{analysis.name}** in {analysis.seconds:.1f} s."
+        f"Ran {n} check{'' if n == 1 else 's'}{by} on **{analysis.name}** "
+        f"in {analysis.seconds:.1f} s."
     )
+
+
+def r_engine_offered(hosted: bool) -> bool:
+    """Whether the page offers the R engine: where R can run metacheck, unless
+    ``METACHECK_APP_R_ENGINE`` is ``off``. A shared server offers it only when that
+    variable is ``on``, so installing R on a server does not by itself change its page."""
+    from metacheck._env import env_get
+    from metacheck.rengine import available
+
+    setting = (env_get("APP_R_ENGINE") or "").strip().lower()
+    if setting in ("off", "0", "false", "no"):
+        return False
+    if hosted and setting not in ("on", "1", "true", "yes"):
+        return False
+    return available()
 
 
 def default_reader(remembered: bool = False) -> str:
@@ -630,6 +660,29 @@ def build_app(
     jobs = hosting.JobRunner(hosted.job_timeout) if hosted else None
     shared = hosted is not None
     remember_keys = remember_keys and not shared
+    r_offered = r_engine_offered(shared)
+    r_modules: set[str] = set()
+    r_version = ""
+    if r_offered:
+        from metacheck.rengine import info as r_info
+
+        r_modules = set(r_info().modules)
+        r_version = r_info().metacheck_version
+
+    def engine_of(value: Any) -> str:
+        """The engine a run uses: R only when the page offers it (the browser may send anything)."""
+        return "r" if value == "r" and r_offered else "python"
+
+    def offered(engine: str) -> list[tuple[str, str]]:
+        """The checks a person may tick with *engine*: with R, only those R metacheck has."""
+        everything = catalog.choices(shared, extra)
+        if engine_of(engine) == "r":
+            return [(text, name) for text, name in everything if name in r_modules]
+        return everything
+
+    def allowed(names: list[str], engine: str) -> list[str]:
+        keep = {name for _, name in offered(engine)}
+        return [n for n in names if n in keep]
 
     def shown(
         panel: Any = None,
@@ -744,6 +797,7 @@ def build_app(
         key: str,
         picked: list[str] | None,
         preset: str,
+        engine: str,
         steps: Steps,
         box: Any = None,
     ) -> Iterator[tuple[Any, ...]]:
@@ -767,6 +821,7 @@ def build_app(
                     grace,
                     picked,
                     preset,
+                    engine,
                     # the demo paper is part of the package: only an upload is deleted
                     upload=None if Path(path).resolve() == _demo_path() else path,
                     on_timeout=lambda: gr.Error(hosting.TOO_SLOW, print_exception=False),
@@ -794,15 +849,19 @@ def build_app(
         preset: str,
         session: str,
         box: Any = None,
+        engine: str = "python",
     ) -> Iterator[tuple[Any, ...]]:
         """Check the paper at *path*. On this computer the click ends with the fast results and
         the data check goes on in the background (see ``follow``). ``box`` is what the box
         holds after the run (``None``: what it held)."""
         use_bibr = reader == "bibr"
-        steps = paper_steps(path, reader, data, data_in_run=shared)
+        engine = engine_of(engine)
+        steps = paper_steps(path, reader, data, data_in_run=shared, engine=engine)
         if shared:
             key = bibr.resolve_key(key, remembered=False) if use_bibr else ""
-            yield from run_hosted(path, online, data, reader, key, picked, preset, steps, box)
+            yield from run_hosted(
+                path, online, data, reader, key, picked, preset, engine, steps, box
+            )
             return
         leave(session)
         bibr_key = bibr.resolve_key(key, remembered=remember_keys) if use_bibr else ""
@@ -820,6 +879,7 @@ def build_app(
                     bibr_key=bibr_key,
                     checks=picked,
                     args=catalog.preset_args(preset),
+                    engine=engine,
                 )
 
         started: Run = yield from watch(steps, work, FAILED)
@@ -943,6 +1003,7 @@ def build_app(
         preset: str,
         package_preset: str,
         classifier: bool,
+        engine: str,
         request: gr.Request,
     ) -> Iterator[tuple[Any, ...]]:
         """The box holds a paper, or a data package (an archive, a link or a folder)."""
@@ -966,8 +1027,11 @@ def build_app(
                     preset,
                     session,
                     after,
+                    engine,
                 )
                 return
+            if engine_of(engine) == "r":
+                raise UserError(R_ONLY_PAPERS)
             source = pk.resolve_entry(entry)
             yield from run_package(
                 source,
@@ -997,6 +1061,7 @@ def build_app(
         preset: str,
         _package_preset: str,
         _classifier: bool,
+        engine: str,
         request: gr.Request,
     ) -> Iterator[tuple[Any, ...]]:
         from metacheck.papers.io import demofile
@@ -1004,7 +1069,16 @@ def build_app(
         session = request.session_hash or ""
         yield from guarded(
             run(
-                str(demofile("json")), online, data, reader, key, remember, picked, preset, session
+                str(demofile("json")),
+                online,
+                data,
+                reader,
+                key,
+                remember,
+                picked,
+                preset,
+                session,
+                engine=engine,
             ),
             FAILED,
         )
@@ -1036,16 +1110,26 @@ def build_app(
             gr.update(visible=remember_keys and bool(bibr.load_key())),
         )
 
-    def on_online(online: bool, picked: list[str] | None) -> list[str]:
+    def on_online(online: bool, picked: list[str] | None, engine: str = "python") -> list[str]:
         """The online box ticks the online checks, or unticks them."""
         kept = [n for n in picked or [] if n not in catalog.ONLINE]
-        return catalog.chosen_checks([*kept, *catalog.ONLINE] if online else kept, shared, extra)
+        names = catalog.chosen_checks([*kept, *catalog.ONLINE] if online else kept, shared, extra)
+        return allowed(names, engine)
 
-    def on_preset(preset: str, online: bool) -> tuple[Any, ...]:
+    def on_preset(preset: str, online: bool, engine: str = "python") -> tuple[Any, ...]:
         """A preset ticks its checks (and the data box, if it has the data check)."""
         names, with_data = catalog.preset_checks(preset, online)
-        names = catalog.chosen_checks(names, shared, extra)
+        names = allowed(catalog.chosen_checks(names, shared, extra), engine)
         return names, with_data, any(n in catalog.ONLINE for n in names)
+
+    def on_engine(engine: str, picked: list[str] | None) -> tuple[Any, ...]:
+        """R offers only R metacheck's checks, and checks papers only: the checks it does not
+        have leave the list, and the switch stays on Paper until Python is chosen again."""
+        r = engine_of(engine) == "r"
+        switch = (
+            gr.update(value=PAPER_MODE, interactive=False) if r else gr.update(interactive=True)
+        )
+        return gr.update(choices=offered(engine), value=allowed(picked or [], engine)), switch
 
     def on_forget() -> tuple[Any, ...]:
         bibr.forget_key()
@@ -1115,6 +1199,10 @@ def build_app(
     # a preset given at the start opens its mode, and the checks of a paper preset are shown
     first_mode = PACKAGE_MODE if first_package == start_preset else PAPER_MODE
     package_first = first_mode == PACKAGE_MODE
+    # R is the default where the page offers it; it checks papers only, so a data package
+    # preset given at the start begins with Python
+    first_engine = "r" if r_offered and not package_first else "python"
+    first_checks = allowed(first_checks, first_engine)
 
     blocks_kwargs = (
         {**BLOCKS_KWARGS, "delete_cache": hosting.sweep(hosted.job_timeout)}
@@ -1127,7 +1215,12 @@ def build_app(
         gr.HTML(header(__version__), elem_id="mc-header", js_on_load=None)
         with gr.Row(elem_id="mc-mode-row"):
             mode = gr.Radio(
-                MODES, value=first_mode, label=MODE_LABEL, show_label=False, elem_id="mc-mode"
+                MODES,
+                value=first_mode,
+                label=MODE_LABEL,
+                show_label=False,
+                elem_id="mc-mode",
+                interactive=first_engine != "r",
             )
         # one box for everything: a paper, the archive of a data package, the link of a
         # repository (or, on this computer, the path of a folder); the page tells them apart
@@ -1153,6 +1246,12 @@ def build_app(
             first = default_reader(remember_keys)
             reader = gr.Radio(READERS, value=first, label="Read PDFs with")
             gr.Markdown(reader_hint(first, shared))
+            engine = gr.Radio(
+                ENGINE_CHOICES, value=first_engine, label=ENGINE_LABEL, visible=r_offered
+            )
+            gr.Markdown(
+                ENGINE_HINT.format(version=r_version, url=DIFFERENCES_URL), visible=r_offered
+            )
             with gr.Group(visible=first == "bibr") as key_group:
                 # the key of this computer wins over a typed one, so there is nothing to type
                 key = gr.Textbox(
@@ -1191,7 +1290,7 @@ def build_app(
                     visible=len(presets) > 1,
                 )
                 picked = gr.CheckboxGroup(
-                    catalog.choices(shared, extra),
+                    offered(first_engine),
                     value=first_checks,
                     label="Checks to run",
                 )
@@ -1258,7 +1357,18 @@ def build_app(
             gr.HTML(_links(), js_on_load=None)
 
         outputs = [panel, results, summary, table, checklist, frame, download, status, stop]
-        inputs = [online, data, reader, key, remember, picked, preset, package_preset, classifier]
+        inputs = [
+            online,
+            data,
+            reader,
+            key,
+            remember,
+            picked,
+            preset,
+            package_preset,
+            classifier,
+            engine,
+        ]
         keys = [key_group, privacy, note, forget]
         # hosted: one shared limit, since each button on its own would allow the full
         # number of runs; the field is cleared because the upload is deleted after its run
@@ -1298,8 +1408,9 @@ def build_app(
         upload.change(on_box, [upload, mode], [mode, found], trigger_mode="always_last", **ui)
         reader.change(on_reader, reader, keys, **ui)
         # .input, not .change: a preset that sets the online box must not untick its checks
-        online.input(on_online, [online, picked], picked, **ui)
-        preset.input(on_preset, [preset, online], [picked, data, online], **ui)
+        online.input(on_online, [online, picked, engine], picked, **ui)
+        preset.input(on_preset, [preset, online, engine], [picked, data, online], **ui)
+        engine.input(on_engine, [engine, picked], [picked, mode], **ui)
         if remember_keys:  # a shared server has no saved key, and nobody may remove one
             forget.click(on_forget, None, [note, forget], **ui)
     if not shared:

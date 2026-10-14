@@ -355,7 +355,18 @@ def test_no_state_file_is_written(client: TestClient, state_dir: Path) -> None:
 #: the other inputs of both buttons: online, data check, PDF reader, bibr key, remember,
 #: the ticked checks (the page's first ticks), the preset, the preset for a data package
 #: and the local classifier
-SETTINGS = [False, False, "grobid", "", False, checks.selected_checks(), "", PACKAGE, True]
+SETTINGS = [
+    False,
+    False,
+    "grobid",
+    "",
+    False,
+    checks.selected_checks(),
+    "",
+    PACKAGE,
+    True,
+    "python",
+]
 
 
 def _join(
@@ -378,7 +389,7 @@ def _join(
 
 def _fn_index(client: TestClient) -> int:
     deps = client.get("/config").json()["dependencies"]
-    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 10)
+    (dep,) = (d for d in deps if d["targets"][0][1] == "click" and len(d["inputs"]) == 11)
     return int(dep["id"])
 
 
@@ -430,8 +441,8 @@ def test_both_buttons_share_the_limit_of_two_runs(env: pytest.MonkeyPatch, tmp_p
     tc.__enter__()
     tc.get(f"/?token={TOKEN_A}")
     deps = tc.get("/config").json()["dependencies"]
-    (check_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 10)
-    (demo_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 9)
+    (check_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 11)
+    (demo_fn,) = (int(d["id"]) for d in deps if len(d["inputs"]) == 10)
     uploads = [_upload(tc, f"shared{n}") for n in range(3)]
 
     def click(button: str, number: int) -> None:
@@ -506,6 +517,7 @@ def _join_with_data(client: TestClient, path: str, session: str) -> str:
             "",
             PACKAGE,
             True,
+            "python",
         ],
         "fn_index": _fn_index(client),
         "session_hash": session,
@@ -664,7 +676,18 @@ def test_a_hosted_server_sends_a_pdf_to_bibr_serve(
             _fn_index(tc),
             path,
             "h8",
-            [False, False, "bibr", "", False, checks.selected_checks(), "", PACKAGE, True],
+            [
+                False,
+                False,
+                "bibr",
+                "",
+                False,
+                checks.selected_checks(),
+                "",
+                PACKAGE,
+                True,
+                "python",
+            ],
         )
     assert re.search(r"Ran \d+ checks", events), events[-500:]
     assert key not in events
