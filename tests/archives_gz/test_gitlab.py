@@ -15,6 +15,7 @@ from metacheck.archives.gitlab import (
     _gitlab_config,
     _gitlab_pat,
     _gitlab_project_id,
+    _gitlab_repo_path,
     _graphql_body,
     gitlab_links,
     gitlab_pat,
@@ -143,6 +144,32 @@ def test_gitlab_tree_files_failures(mocks: object) -> None:
     assert len(empty["files"]) == 0
     assert list(empty["files"].columns) == TREE_COLS
     assert empty["license"] is None
+
+
+def test_gitlab_tree_files_asks_the_api_without_a_head_first() -> None:
+    # metacheck d52b3fd: the metadata request answers 404 for a missing
+    # project itself, so no HEAD request goes to gitlab.com first
+    with respx.mock(assert_all_called=False) as router:
+        router.route().mock(return_value=httpx.Response(404))
+        out = gitlab_tree_files("https://gitlab.com/group/sub/missing-project")
+        seen = [(c.request.method, str(c.request.url)) for c in router.calls]
+    assert out["gated"] is True
+    assert out["reason"] == "invalid or inaccessible GitLab repository"
+    assert seen == [
+        ("GET", "https://gitlab.com/api/v4/projects/group%2Fsub%2Fmissing-project?license=true")
+    ]
+
+
+def test_gitlab_repo_path_makes_no_request() -> None:
+    with respx.mock(assert_all_called=False) as router:
+        assert _gitlab_repo_path("https://gitlab.com/a/b.git") == "a/b"
+        assert _gitlab_repo_path("a/b/c/") == "a/b/c"
+        assert _gitlab_repo_path(["a/b"]) == "a/b"
+        assert _gitlab_repo_path("just-one-segment") is None
+        assert _gitlab_repo_path(pd.NA) is None
+        assert _gitlab_repo_path(None) is None
+        assert _gitlab_repo_path(["a/b", "c/d"]) is None  # single values only
+        assert router.calls.call_count == 0
 
 
 def test_gitlab_blob_sizes(mocks: object) -> None:

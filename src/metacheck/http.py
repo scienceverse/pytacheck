@@ -596,7 +596,7 @@ def batch_query(
     """``.batch_query()``: GET many URLs politely; results align with *urls*.
 
     Requests run in batches of *batch_size* (concurrently within a batch,
-    with a courtesy *delay* between batches). ``req_func`` may modify the
+    with a courtesy *delay* between batches, none after the last). ``req_func`` may modify the
     request arguments (``{"method", "url", "headers", ...}``), e.g. to add
     authentication. Invalid URLs warn and give ``None``.
     """
@@ -634,7 +634,10 @@ def batch_query(
             for i, fut in zip(idx, futures, strict=True):
                 results[i] = fut.result()
             progress(len(idx))
-            sleep(delay)
+            # between batches only: nothing follows the last one to pace, and
+            # a single-URL lookup (every *_info() record) would wait for nothing
+            if start + batch_size < len(specs):
+                sleep(delay)
     return results
 
 

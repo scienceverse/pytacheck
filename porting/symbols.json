@@ -1353,6 +1353,12 @@
   "ported": true,
   "python": "metacheck.archives.github:_github_config"
  },
+ ".github_repo_name": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.archives.github:_github_repo_name"
+ },
  ".gitlab_blob_sizes": {
   "file": "R/archive-gitlab.R",
   "line": 364,
@@ -1376,6 +1382,12 @@
   "line": 144,
   "ported": true,
   "python": "metacheck.archives.gitlab:_gitlab_project_id"
+ },
+ ".gitlab_repo_path": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.archives.gitlab:_gitlab_repo_path"
  },
  ".grobid_isalive": {
   "file": "R/import-grobid.R",
@@ -2185,6 +2197,12 @@
   "ported": true,
   "python": "metacheck.archives.osf:_osf_get_pages_parallel"
  },
+ ".osf_github_files": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.archives.osf_helpers:_osf_github_files"
+ },
  ".osf_headers": {
   "file": "R/archive-osf-helpers.R",
   "line": 18,
@@ -2274,6 +2292,12 @@
   "line": 437,
   "ported": true,
   "python": "metacheck.archives.osf:_osf_status_error"
+ },
+ ".osf_tree": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.archives.osf_helpers:_osf_tree"
  },
  ".osf_user_data": {
   "file": "R/archive-osf-helpers.R",

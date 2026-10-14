@@ -34,6 +34,8 @@
 ".osf_expand_user_ids" = "metacheck.archives.osf_helpers:_osf_expand_user_ids"
 ".osf_verify_downloads" = "metacheck.archives.osf_helpers:_osf_verify_downloads"
 ".osf_parent_project" = "metacheck.archives.osf_helpers:_osf_parent_project"
+".osf_tree" = "metacheck.archives.osf_helpers:_osf_tree"
+".osf_github_files" = "metacheck.archives.osf_helpers:_osf_github_files"
 ".osf_meta_get" = "metacheck.archives.osf_metadata:_osf_meta_get"
 ".osf_download_wikis" = "metacheck.archives.osf_metadata:_osf_download_wikis"
 ".osf_download_logs" = "metacheck.archives.osf_metadata:_osf_download_logs"

@@ -1715,24 +1715,21 @@ def download_repo_files(
                 ridx = in_repo(repo)
                 if not ridx:
                     continue
+                # The name only, without github_repo()'s / gitlab_repo()'s HEAD
+                # request: the repository was confirmed when it was listed, and
+                # the archive request answers 404 by itself.
                 if host_kind == "github":
-                    try:
-                        from metacheck.archives.github import github_repo
+                    from metacheck.archives.github import _github_repo_name
 
-                        clean_repo = github_repo(repo)
-                    except Exception:
-                        clean_repo = None
+                    clean_repo = _github_repo_name(repo)
                     if clean_repo is None:
                         continue
                     zip_url = f"https://api.github.com/repos/{clean_repo}/zipball"
                     req_func = _headers_fn(_github_config)
                 else:
-                    try:
-                        from metacheck.archives.gitlab import gitlab_repo
+                    from metacheck.archives.gitlab import _gitlab_repo_path
 
-                        clean_repo = gitlab_repo(repo)
-                    except Exception:
-                        clean_repo = None
+                    clean_repo = _gitlab_repo_path(repo)
                     if clean_repo is None:
                         continue
                     from metacheck.archives.gitlab import _gitlab_project_id
