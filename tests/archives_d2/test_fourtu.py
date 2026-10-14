@@ -73,33 +73,37 @@ UUID = "7f866e02-eb39-4a2a-8f7d-2d053ee6cde9"
 
 
 def test_resolve_uuid(serve: object) -> None:
-    # metacheck #431: v2/articles/<id> needs the numeric id the DOI redirects to
+    # metacheck #431: v2/articles/<id> needs the numeric id of the URL the
+    # DOI is registered to, read from doi.org's handle API (metacheck 0.3.3)
     import httpx
 
     from metacheck.archives.fourtu import _researchdata4tu_resolve_uuid
 
-    landing = "https://data.4tu.nl/articles/_/16766929/1"
-    serve(  # type: ignore[operator]
+    def registered(url: str) -> httpx.Response:
+        return httpx.Response(
+            200, json={"responseCode": 1, "values": [{"type": "URL", "data": {"value": url}}]}
+        )
+
+    api = "https://doi.org/api/handles/10.4121%2Fuuid%3A"
+    requests = serve(  # type: ignore[operator]
         {
-            f"https://doi.org/10.4121/uuid:{UUID}": httpx.Response(
-                302, headers={"Location": landing}
+            f"{api}{UUID}?type=URL": registered("https://data.4tu.nl/articles/_/16766929/1"),
+            f"{api}00000000-0000-0000-0000-000000000000?type=URL": registered(
+                "https://data.4tu.nl/datasets/x"
             ),
-            landing: httpx.Response(200, text="<html></html>"),
-            "https://doi.org/10.4121/uuid:00000000-0000-0000-0000-000000000000": httpx.Response(
-                302, headers={"Location": "https://data.4tu.nl/datasets/x"}
-            ),
-            "https://data.4tu.nl/datasets/x": httpx.Response(200),
         }
     )
     assert _researchdata4tu_resolve_uuid(UUID) == "16766929"
-    # a landing page without an article id, or no redirect: the uuid itself
+    # a registered URL without an article id, or no URL: the uuid itself
     zero = "00000000-0000-0000-0000-000000000000"
     assert _researchdata4tu_resolve_uuid(zero) == zero
     other = "11111111-1111-1111-1111-111111111111"
     assert _researchdata4tu_resolve_uuid(other) == other
+    # the landing pages are never requested
+    assert all("/api/handles/" in str(r.url) for r in requests)
 
 
-def test_info_and_download_resolve_uuids(
+def test_info_and_download_resolve_uuid_dois(
     mock_api: object, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     from metacheck.archives import fourtu
@@ -115,9 +119,26 @@ def test_info_and_download_resolve_uuids(
     assert info["researchdata4tu_id"].tolist() == ["16766929", "16766929"]
     assert info["title"].tolist() == ["Wind tunnel measurements"] * 2
     assert asked == [UUID]
-    # beyond metacheck (U41): the download resolves the uuid the same way
-    dl = researchdata4tu_file_download(f"10.4121/{UUID}", download_to=str(tmp_path))
+    # the download resolves a uuid: DOI the same way (metacheck 0.3.3; at the
+    # pin it passed the uuid on, and re-resolved ids as Figshare ids: U41)
+    dl = researchdata4tu_file_download(f"10.4121/uuid:{UUID}", download_to=str(tmp_path))
     assert dl is not None and dl["researchdata4tu_id"].tolist() == ["16766929"]
+    assert asked == [UUID, UUID]
+
+
+def test_bare_uuids_go_straight_to_the_api(
+    mock_api: object, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # a bare uuid is the record's own, which v2/articles/<uuid> accepts; the
+    # DOI 10.4121/uuid:<uuid> built from it does not exist (metacheck 0.3.3)
+    from metacheck.archives import fourtu
+
+    asked: list[str] = []
+    monkeypatch.setattr(fourtu, "_researchdata4tu_resolve_uuid", lambda u: asked.append(u) or u)
+    bare = "ce413614-1c82-4e81-90c0-323aa7d2fabd"
+    info = researchdata4tu_info([f"10.4121/{bare}", f"https://data.4tu.nl/datasets/{bare}"])
+    assert info["title"].tolist() == ["A uuid-only dataset"] * 2
+    assert asked == []
 
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
