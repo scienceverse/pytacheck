@@ -631,11 +631,21 @@ def _archive_size_estimate(files: pd.DataFrame, repo: Any) -> float:
     """Port of ``R/repo-download.R::.archive_size_estimate()``.
 
     The estimated size (bytes) of a repository's whole-archive download: the
-    sum of the file sizes listed for *repo* in *files*, or ``nan`` (R ``NA``)
-    when none are listed. No whole-archive endpoint reports its size ahead of
-    time; the byte limit of the download is what actually bounds it.
+    repository's own total where its listing reports one (``repo_size``:
+    Dryad's ``storageSize``, carried by repo_check), else the sum of the file
+    sizes listed for *repo* in *files*, or ``nan`` (R ``NA``) when none are
+    listed. The sum covers only the rows passed in, often just the wanted
+    files; the byte limit of the download is what actually bounds it.
     """
     repos = files["repo_url"].tolist()
+    if "repo_size" in files.columns:
+        totals = [
+            s
+            for r, s in zip(repos, _nums(files["repo_size"].tolist()), strict=False)
+            if not is_missing(r) and r == repo and math.isfinite(s) and s > 0
+        ]
+        if totals:
+            return float(max(totals))
     sizes = _nums(files["file_size"].tolist()) if "file_size" in files.columns else []
     est = sum(
         s
@@ -888,6 +898,13 @@ def _download_one(
             and not is_missing(_rate_limit_wait(e.resp))
         ):
             return f"API rate limit exhausted: {e}"
+        if isinstance(e, _HttpError):
+            # a 401 from Dryad without a key set: say so on the line the
+            # failure report shows
+            from metacheck.archives.dryad import _dryad_401_hint
+
+            first, nl, rest = str(e).partition("\n")
+            return f"{first}{_dryad_401_hint(url, int(e.resp.status_code))}{nl}{rest}"
         return str(e)
 
 
@@ -964,7 +981,9 @@ def _download_many_parallel(
             if skip_on_api_limit is True and sc == 429 and not is_missing(_rate_limit_wait(resp)):
                 errs.append(f"API rate limit exhausted: HTTP {sc}")
             else:
-                errs.append(f"HTTP {sc:d}")
+                from metacheck.archives.dryad import _dryad_401_hint
+
+                errs.append(f"HTTP {sc:d}{_dryad_401_hint(urls[i], sc)}")
             continue
         if not os.path.exists(dest) or (os.path.getsize(dest) == 0 and expected[i] != 0):
             _unlink(dest)  # not left to be taken as cached next time (U75)
@@ -1370,7 +1389,7 @@ def download_repo_files(
 
     # -- archive members (repo_check's zip-peek expansion) --------------------
     if "archive_url" in df.columns:
-        from metacheck.archives.zip_peek import _zip_fetch_members
+        from metacheck.archives.zip_peek import _whole_request_bytes, _zip_fetch_members
 
         arcs = _col(df, "archive_url") or [None] * n
         members = _col(df, "archive_member") or [None] * n
@@ -1422,9 +1441,17 @@ def download_repo_files(
             if not idx:
                 continue
             arc_key = gsub("[^A-Za-z0-9._-]+", "_", gsub("^https?://", "", str(arc)))
-            member_dest = cache_path(repo_urls[idx[0]], f".archive_members/{arc_key}") + ".contents"
-            member_dest = _safe_write_path(member_dest) or member_dest
+            arc_path = cache_path(repo_urls[idx[0]], f".archive_members/{arc_key}")
+            arc_path = _safe_write_path(arc_path) or arc_path
+            member_dest = _safe_write_path(f"{arc_path}.contents") or f"{arc_path}.contents"
             _dir_create(member_dest)
+            # The archive's own size, carried from repo_check's listing, saves the
+            # peek a HEAD request in a new session. Within the budget the archive
+            # may be downloaded once instead of fetched by range, when that is
+            # cheaper (always on Dryad, which counts every request against a
+            # daily quota: metacheck #471); it is kept at `arc_path`, so a
+            # restarted run does not request it again.
+            arc_sizes = _col(df, "archive_size")
             # why a member was not fetched is recorded in `failed` (#429)
             try:
                 fetched = _zip_fetch_members(
@@ -1433,6 +1460,10 @@ def download_repo_files(
                     dest=member_dest,
                     cache=cache,
                     skip_on_api_limit=skip_on_api_limit,
+                    max_whole_bytes=cap_bytes,
+                    archive_path=arc_path,
+                    request_bytes=_whole_request_bytes(arc),
+                    size=None if arc_sizes is None else arc_sizes[idx[0]],
                 )
             except Exception as e:
                 why: str | None = str(e)
@@ -1629,20 +1660,26 @@ def download_repo_files(
             df = _download_zip_to_cache(df, rows, zip_url, _inplace=True, **kw)
             remaining_set.difference_update(filled(rows))
 
-        # Dryad: whole-dataset archive (quota-aware)
-        from metacheck.archives.dryad import _dryad_headers
+        # Dryad: whole-dataset archive (quota-aware). Every repository a Dryad
+        # DOI can be read from is one, whatever the form: metacheck at the pin
+        # matched only datadryad.org and doi.org/10.5061/dryad, so a dataset
+        # cited under another Dryad prefix (10.25338/...) or as a bare
+        # 10.5061/dryad.x went file by file
+        from metacheck.archives.dryad import _dryad_doi, _dryad_headers
 
-        for repo in in_remaining(r"datadryad\.org|doi\.org/10\.5061/dryad"):
-            ridx = in_repo(repo)
-            if not ridx:
-                continue
+        def dryad_doi_of(repo: Any) -> str | None:
             try:
-                from metacheck.archives.dryad import _dryad_doi
-
-                doi = _dryad_doi(repo)
+                doi = _dryad_doi(repo) if isinstance(repo, str) else None
             except Exception:
                 doi = None
-            if not isinstance(doi, str) or doi == "":
+            return doi if isinstance(doi, str) and doi != "" else None
+
+        for repo in dict.fromkeys(repo_list[i] for i in remaining_rows()):
+            doi = dryad_doi_of(repo)
+            if doi is None:
+                continue
+            ridx = in_repo(repo)
+            if not ridx:
                 continue
             encoded = _url_encode_reserved(f"doi:{doi}")
             zip_url = f"https://datadryad.org/api/v2/datasets/{encoded}/download"
@@ -1690,24 +1727,21 @@ def download_repo_files(
                 ridx = in_repo(repo)
                 if not ridx:
                     continue
+                # The name only, without github_repo()'s / gitlab_repo()'s HEAD
+                # request: the repository was confirmed when it was listed, and
+                # the archive request answers 404 by itself.
                 if host_kind == "github":
-                    try:
-                        from metacheck.archives.github import github_repo
+                    from metacheck.archives.github import _github_repo_name
 
-                        clean_repo = github_repo(repo)
-                    except Exception:
-                        clean_repo = None
+                    clean_repo = _github_repo_name(repo)
                     if clean_repo is None:
                         continue
                     zip_url = f"https://api.github.com/repos/{clean_repo}/zipball"
                     req_func = _headers_fn(_github_config)
                 else:
-                    try:
-                        from metacheck.archives.gitlab import gitlab_repo
+                    from metacheck.archives.gitlab import _gitlab_repo_path
 
-                        clean_repo = gitlab_repo(repo)
-                    except Exception:
-                        clean_repo = None
+                    clean_repo = _gitlab_repo_path(repo)
                     if clean_repo is None:
                         continue
                     from metacheck.archives.gitlab import _gitlab_project_id

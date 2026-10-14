@@ -109,7 +109,8 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
     """Port of R/archive-mendeley.R::.mendeley_info(): one Mendeley Data dataset.
 
     Returns a one-row table: ``mendeley_id`` and either ``error``
-    (``"unfound"``, with a warning, or ``"parse_error"``) or ``title``,
+    (``"unfound"``, with a warning, for an error status or a body holding only
+    an error; or ``"parse_error"``) or ``title``,
     ``doi``, ``description``, ``publication_date``, ``updated_date``,
     ``authors``, ``license`` and ``files`` (the API's file records).
     """
@@ -139,6 +140,12 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
         rec = _resp_json(resp)
         if rec is None:
             obj["error"] = _cell("parse_error")
+            return pd.DataFrame(obj)
+        # Mendeley has also answered a missing dataset with HTTP 200 and only an
+        # error in the body ({"error": {"message": "error - dataset not found"}})
+        if field(rec, "error") is not None and field(rec, "id") is None:
+            warnings.warn(f"{mid} could not be found", stacklevel=2)
+            obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
 
         def author(a: Any) -> str | None:

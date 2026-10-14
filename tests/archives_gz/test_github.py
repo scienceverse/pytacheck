@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import httpx
 import pandas as pd
 import pytest
+import respx
 
 import metacheck as pc
 from metacheck.archives import github
@@ -219,11 +221,12 @@ def test_github_files_types_and_order(apis: object) -> None:
 
 
 def test_github_files_duplicate_extensions(mocks: object) -> None:
-    # U46: metacheck::file_types lists html as both "code" and "web"; the file
-    # is one row with the first type (metacheck repeats it once per type)
+    # U46: at the pin metacheck::file_types listed html as both "code" and
+    # "web" and metacheck repeats the file once per type; the file is one row,
+    # typed "web" (one type per extension since metacheck d52b3fd)
     files = github_files("gzorg/fallrepo")
     assert files["name"].tolist() == ["A.csv", "b.txt", "page.html"]
-    assert files["type"].tolist() == ["data", "text", "code"]
+    assert files["type"].tolist() == ["data", "text", "web"]
 
 
 def test_github_files_rate_limited(mocks: object) -> None:
@@ -297,10 +300,12 @@ def test_github_tree_files_fallbacks(mocks: object) -> None:
     assert list(empty["files"].columns) == TREE_COLS
     assert empty["license"] is None
 
-    # the metadata request fails: the recursive contents listing is used
+    # the metadata request answers 404: no such repository (metacheck d52b3fd;
+    # at the pin, the recursive contents listing was tried)
     fall = github_tree_files("gzorg/fallrepo")
-    assert fall["default_branch"] == "main"
-    assert list(fall["files"].columns) == FILE_COLS
+    assert fall["gated"] is True
+    assert fall["reason"] == "invalid or inaccessible GitHub repository"
+    assert fall["files"] is None
 
     # the tree request fails and the contents listing is empty too
     notree = github_tree_files("gzorg/notree")
@@ -311,9 +316,75 @@ def test_github_tree_files_fallbacks(mocks: object) -> None:
 def test_file_types_table() -> None:
     ft = github._file_types()
     assert list(ft.columns) == ["ext", "type"]
-    # one row per extension (the raw table has 404 rows, 27 extensions twice):
-    # the first type in table order (U46)
+    # one row per extension (metacheck d52b3fd; at the pin 27 extensions were
+    # listed twice: U46)
     assert len(ft) == 377
     assert ft["ext"].is_unique
-    assert ft.loc[ft["ext"] == "json", "type"].tolist() == ["code"]
-    assert ft.loc[ft["ext"] == "ts", "type"].tolist() == ["web"]
+    assert ft.loc[ft["ext"] == "json", "type"].tolist() == ["data"]
+    assert ft.loc[ft["ext"] == "ts", "type"].tolist() == ["code"]
+
+
+def _tree_api(request: httpx.Request) -> httpx.Response:
+    if "/git/trees/" in request.url.path:
+        tree = [
+            {"path": "README.md", "type": "blob", "size": 12},
+            {"path": "R", "type": "tree"},
+            {"path": "R/a.R", "type": "blob", "size": 34},
+        ]
+        return httpx.Response(200, json={"truncated": False, "tree": tree})
+    return httpx.Response(200, json={"default_branch": "main", "license": {"spdx_id": "MIT"}})
+
+
+def test_github_tree_files_makes_api_requests_only() -> None:
+    # metacheck d52b3fd: no HEAD request to the github.com page first; the
+    # metadata request answers whether the repository exists
+    with respx.mock(assert_all_called=False) as router:
+        router.route().mock(side_effect=_tree_api)
+        out = github_tree_files("https://github.com/owner/repo")
+        seen = [(c.request.method, str(c.request.url)) for c in router.calls]
+    assert out["gated"] is False
+    assert out["license"] == "MIT"
+    assert out["files"]["path"].tolist() == ["README.md", "R/a.R"]
+    assert out["files"]["size"].tolist() == [12, 34]
+    assert seen == [
+        ("GET", "https://api.github.com/repos/owner/repo"),
+        ("GET", "https://api.github.com/repos/owner/repo/git/trees/main?recursive=1"),
+    ]
+
+
+def test_github_tree_files_404_is_an_invalid_repository() -> None:
+    with respx.mock(assert_all_called=False) as router:
+        router.route().mock(return_value=httpx.Response(404))
+        out = github_tree_files("owner/does-not-exist")
+        # one API request, and no fallback crawl through github_files()
+        assert [str(c.request.url) for c in router.calls] == [
+            "https://api.github.com/repos/owner/does-not-exist"
+        ]
+        assert out == {
+            "gated": True,
+            "reason": "invalid or inaccessible GitHub repository",
+            "files": None,
+            "default_branch": None,
+            "license": None,
+        }
+        # text that is not shaped like owner/repo never reaches the network
+        assert github_tree_files("not a repository")["gated"] is True
+        assert router.calls.call_count == 1
+
+
+def test_github_tree_files_other_failures_still_crawl() -> None:
+    # a rate limit says nothing about the repository: the contents crawl
+    # (github_files(), which checks the repository page first) is tried
+    contents = [{"name": "a.csv", "path": "a.csv", "type": "file", "size": 3,
+                 "download_url": "https://raw.githubusercontent.com/owner/repo/main/a.csv"}]  # fmt: skip
+    with respx.mock(assert_all_called=False) as router:
+        router.get("https://api.github.com/repos/owner/repo").mock(
+            return_value=httpx.Response(403, json={"message": "API rate limit exceeded"})
+        )
+        router.head("https://github.com/owner/repo").mock(return_value=httpx.Response(200))
+        router.get("https://api.github.com/repos/owner/repo/contents/").mock(
+            return_value=httpx.Response(200, json=contents)
+        )
+        out = github_tree_files("owner/repo")
+    assert out["gated"] is False
+    assert out["files"]["path"].tolist() == ["a.csv"]

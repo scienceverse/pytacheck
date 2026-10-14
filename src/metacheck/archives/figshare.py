@@ -12,7 +12,9 @@ Figshare-compatible 4TU.ResearchData API (``data.4tu.nl``) can reuse it.
 from __future__ import annotations
 
 import functools
+import math
 import os
+import re
 import warnings
 from collections.abc import Callable
 from typing import Any, cast
@@ -42,6 +44,7 @@ from metacheck.archives.dataverse import (
     _query,
     _resp_json,
     _string_series,
+    _url_encode_reserved,
     _url_rows,
     _verify_file_table,
     _zip_members,
@@ -96,6 +99,10 @@ FIGSHARE_VANITY_HOSTS: tuple[str, ...] = (
     "novasbe.figshare.com",  # Universidade Nova de Lisboa, NOVA SBE (Portugal)
     "figshare.uts.edu.au",  # University of Technology Sydney (Australia)
     "melbourne.figshare.com",  # University of Melbourne (Australia) -- separate DataCite client/host from figshare.unimelb.edu.au above
+    # metacheck #461/#464: answer like the hosts above (the Figshare front end)
+    "data.lib.vt.edu",  # VTechData, Virginia Tech (USA)
+    "agdatacommons.nal.usda.gov",  # USDA Ag Data Commons (USA)
+    "adelaide.figshare.com",  # University of Adelaide (Australia)
 )
 
 #: R ``.figshare_doi_prefix_hosts()``: institutional DOI prefix -> Figshare host.
@@ -131,7 +138,28 @@ FIGSHARE_DOI_PREFIX_HOSTS: dict[str, str] = {
     "10.71741": "figshare.uts.edu.au",
     "10.26180": "bridges.monash.edu",
     "10.26188": "melbourne.figshare.com",
+    # metacheck #461/#464
+    "10.5522": "rdr.ucl.ac.uk",  # UCL (host listed above; its prefix was missing)
+    "10.7294": "data.lib.vt.edu",  # VTechData -- not Dryad, although close to its prefixes
+    "10.15482": "agdatacommons.nal.usda.gov",  # USDA Ag Data Commons
+    "10.25909": "adelaide.figshare.com",  # University of Adelaide
 }
+
+#: R ``.figshare_doi_lookup_prefixes()``: prefixes whose DOI suffix never holds the
+#: article id (a handle-style code, 10.7294/WSDX-AJ44, or an unrelated accession
+#: number, 10.15482/USDA.ADC/1402049 -> article 24852405). They are left out of
+#: the digit pattern of :func:`_figshare_id`, which would read a wrong id from
+#: them, and are resolved through the API's DOI lookup instead (metacheck #465).
+_FIGSHARE_DOI_LOOKUP_PREFIXES: tuple[str, ...] = ("10.7294", "10.15482")
+
+#: R ``.figshare_doi_lookup_fallback_prefixes()``: the prefixes above plus
+#: Adelaide's, whose DOIs are mostly the numeric article id (10.25909/33113177)
+#: but in older records an opaque hex code (10.25909/5b581a5a151da -> article
+#: 6859511). A hex DOI matches no id pattern, so it falls through to the lookup.
+_FIGSHARE_DOI_LOOKUP_FALLBACK_PREFIXES: tuple[str, ...] = (
+    *_FIGSHARE_DOI_LOOKUP_PREFIXES,
+    "10.25909",
+)
 
 
 def _figshare_vanity_hosts() -> list[str]:
@@ -219,7 +247,9 @@ def figshare_links(paper: Any) -> pd.DataFrame:
 @functools.cache
 def _figshare_id_patterns() -> tuple[Any, ...]:
     host_regex = _figshare_host_regex()
-    inst_prefix_regex = _escape_prefixes(FIGSHARE_DOI_PREFIX_HOSTS)
+    inst_prefix_regex = _escape_prefixes(
+        p for p in FIGSHARE_DOI_PREFIX_HOSTS if p not in _FIGSHARE_DOI_LOOKUP_PREFIXES
+    )
     patterns = (
         r"10\.6084/m9\.figshare\.([0-9]+)",
         f"(?:{host_regex})/articles/(?:dataset|[a-z]+)/[^/]+/([0-9]+)",
@@ -227,8 +257,9 @@ def _figshare_id_patterns() -> tuple[Any, ...]:
         f"(?:{host_regex})/articles/([0-9]+)",
         r"ndownloader\.figshare\.com/files/([0-9]+)",
         # any number of sub-prefix segments before the id ("uct.", "k6.auckland.",
-        # "shef.data.")
-        f"(?:{inst_prefix_regex})/(?:[a-z0-9]+\\.)*([0-9]+)(?:\\.v[0-9]+)?(?:[^0-9]|$)",
+        # "shef.data.", UCL's "04/"); a letter after the digits means a hex code
+        # (Adelaide's 5b581a5a151da), not an id whose first digits could be taken
+        f"(?:{inst_prefix_regex})/(?:[a-z0-9]+[./])*([0-9]+)(?:\\.v[0-9]+)?(?:[^0-9a-z]|$)",
     )
     return tuple(compile_r(p, ignore_case=True, perl=True) for p in patterns)
 
@@ -260,6 +291,49 @@ def _figshare_id(figshare_url: Any) -> Any:
     vals, scalar = _chr_values(figshare_url)
     out = [_figshare_id_one(v) for v in vals]
     return out[0] if scalar else out
+
+
+@functools.cache
+def _doi_lookup_rx() -> Any:
+    prefixes = _escape_prefixes(_FIGSHARE_DOI_LOOKUP_FALLBACK_PREFIXES)
+    return compile_r(
+        f"((?:{prefixes})/[A-Za-z0-9._/-]+?)(?:\\.v[0-9]+)?(?:[^A-Za-z0-9._/-]|$)",
+        ignore_case=True,
+        perl=True,
+    )
+
+
+def _figshare_doi_lookup_doi(figshare_url: str | None) -> str | None:
+    """Port of R/archive-figshare.R::.figshare_doi_lookup_doi(): the DOI to look up.
+
+    The bare DOI (without a ``.vN`` version) in a URL or DOI under one of the
+    prefixes whose article id must be looked up, e.g. ``10.7294/WSDX-AJ44``
+    from ``https://doi.org/10.7294/WSDX-AJ44``; ``None`` for anything else.
+    """
+    if figshare_url is None or is_missing(figshare_url):
+        return None
+    m = _doi_lookup_rx().search(str(figshare_url))
+    return cast("str", m.group(1)) if m is not None else None
+
+
+def _figshare_doi_lookup(doi: str, host: str = "api.figshare.com", pb: Any = None) -> str | None:
+    """Port of R/archive-figshare.R::.figshare_doi_lookup(): an article id from its DOI.
+
+    Asks *host*'s ``/v2/articles?doi=<doi>`` (no token needed for a public
+    article) and returns the first match's id, or ``None``.
+    """
+    from metacheck.archives import _spinner, _tick
+
+    with _spinner(pb) as bar:
+        _tick(bar, f"* Resolving Figshare article id for DOI {doi}...")
+        api_url = f"https://{host}/v2/articles?doi={_url_encode_reserved(doi)}"
+        resp = _query(api_url, lambda req: _figshare_headers(req, host=host))
+        if resp is None or resp.status_code != 200:
+            return None
+        rec = _resp_json(resp)
+        if not isinstance(rec, list) or not rec:
+            return None
+        return _json_chr(_empty_or(field(rec[0], "id"), None))
 
 
 @functools.cache
@@ -424,6 +498,15 @@ def figshare_info(
         ids = _expand_bundles(
             ids, _figshare_collection_id, _figshare_collection_articles, host, bar
         )
+        # a DOI whose suffix holds no article id (VTechData, USDA Ag Data
+        # Commons, Adelaide's hex codes) is looked up through the API
+        ids = _expand_bundles(
+            ids,
+            lambda urls: [_figshare_doi_lookup_doi(u) for u in urls],
+            _doi_lookup_articles,
+            host,
+            bar,
+        )
 
         valid_ids = list(dict.fromkeys(v for v in ids["figshare_id"].tolist() if not is_missing(v)))
         if not valid_ids:
@@ -449,6 +532,12 @@ def figshare_info(
         data = left_join(data, info, by="figshare_id", suffix=("", ".figshare"))
         _tick(bar, "...Figshare retrieval complete!")
         return data
+
+
+def _doi_lookup_articles(doi: str, host: str = "api.figshare.com", pb: Any = None) -> list[str]:
+    """:func:`_figshare_doi_lookup` as a one-article (or empty) list for :func:`_expand_bundles`."""
+    fid = _figshare_doi_lookup(doi, host=host, pb=pb)
+    return [] if fid is None else [fid]
 
 
 def _expand_bundles(
@@ -534,8 +623,89 @@ def _figshare_info(
         if not isinstance(licence, str):
             licence = field(licence, "name")
         obj["license"] = _field_cell(_empty_or(licence, None))
-        obj["files"] = _list_cell(files if files is not None else [])
+        obj["files"] = _list_cell(_article_files(rec, files, figshare_id, host))
         return pd.DataFrame(obj)
+
+
+def _article_files(rec: Any, files: Any, figshare_id: Any, host: str) -> Any:
+    """An article's file entries, complete and each with its ``path``.
+
+    Figshare documents the article's ``files`` as "up to 10" files; when the
+    listed sizes add up to less than the article's ``size`` (the total of all
+    its files), the full list comes from the paged files endpoint. Each entry
+    gets ``path``: its folder from the article's ``folder_structure`` (file id
+    -> folder) and its name, so that files in folders keep their place and
+    same-named files in different folders stay apart. A listing given as an
+    object keeps its keys.
+    """
+    if not isinstance(files, list | dict):
+        return [] if files is None else files
+    entries = _elements(files)
+    sizes = (_as_numeric(_empty_or(field(f, "size"), None)) for f in entries)
+    listed = sum(n for n in sizes if not math.isnan(n))
+    total = _as_numeric(_empty_or(field(rec, "size"), None))
+    if not math.isnan(total) and listed < total:
+        everything = _figshare_article_files(figshare_id, host=host)
+        if everything is not None and len(everything) > len(entries):
+            files = everything
+    folders = field(rec, "folder_structure")
+    if not isinstance(folders, dict):
+        folders = {}
+
+    def with_path(f: Any) -> Any:
+        if not isinstance(f, dict):
+            return f
+        folder = folders.get(_json_chr(_empty_or(field(f, "id"), None)) or "")
+        return {**f, "path": _figshare_file_path(_empty_or(field(f, "name"), None), folder)}
+
+    if isinstance(files, dict):
+        return {k: with_path(f) for k, f in files.items()}
+    return [with_path(f) for f in files]
+
+
+def _figshare_file_path(name: Any, folder: Any = "") -> str | None:
+    """Port of R/archive-figshare.R::.figshare_file_path(): ``<folder>/<name>``.
+
+    Just the name when the folder is empty or missing. The folder becomes part
+    of a path written to disk, so its "", "." and ".." segments are dropped.
+    """
+    if not isinstance(name, str):
+        return None
+    folder = folder if isinstance(folder, str) else ""
+    parts = [p for p in re.split(r"[/\\]", folder) if p not in ("", ".", "..")]
+    return "/".join([*parts, name])
+
+
+def _figshare_article_files(
+    figshare_id: Any,
+    host: str = "api.figshare.com",
+    page_size: int = 1000,
+    max_pages: int = 50,
+) -> list[Any] | None:
+    """Port of R/archive-figshare.R::.figshare_article_files(): every file of an article.
+
+    Pages through ``/v2/articles/<id>/files`` (a page shorter than
+    *page_size* is the last), a second apart as Figshare asks. ``None`` when
+    the endpoint cannot be read at all.
+    """
+    from metacheck import http
+
+    out: list[Any] = []
+    for page in range(1, max_pages + 1):
+        if page > 1:
+            http.sleep(1)
+        api_url = (
+            f"https://{host}/v2/articles/{_paste(figshare_id)}/files"
+            f"?page={page}&page_size={page_size}"
+        )
+        resp = _query(api_url, lambda req: _figshare_headers(req, host=host))
+        batch = _resp_json(resp) if resp is not None and resp.status_code == 200 else None
+        if not isinstance(batch, list):
+            return out or None
+        out.extend(batch)
+        if len(batch) < page_size:
+            break
+    return out
 
 
 def _figshare_headers(req: dict[str, Any], host: str = "api.figshare.com") -> dict[str, Any]:  # noqa: ARG001
@@ -562,8 +732,10 @@ def figshare_pat(pat: str | None = None) -> str:
     """Port of R/archive-figshare.R::figshare_pat(): get or set a Figshare API token.
 
     Without *pat*, returns the token set this session, else the
-    ``FIGSHARE_PAT`` environment variable, else ``""``. A token is optional
-    (it raises rate limits and unlocks private articles).
+    ``FIGSHARE_PAT`` environment variable, else ``""``. A token is optional:
+    it unlocks private articles, but does not raise any request limit (Figshare
+    documents no automatic rate limiting and asks for at most one request a
+    second either way).
     """
     return _figshare_pat(pat)
 
@@ -670,10 +842,14 @@ def figshare_file_download(
                 "size": _as_numeric(_empty_or(field(x, "size"), None)),
                 "checksum": _empty_or(field(x, "computed_md5"), None),
                 "self": _empty_or(field(x, "download_url"), None),
+                # saved under its folder in the article (the bare name for a
+                # top-level file, or for an entry cached before paths existed)
+                "rel": _empty_or(field(x, "path"), _empty_or(field(x, "name"), None)),
             }
             for x in _elements(files_list)
         ]
         files = _file_frame(rows, typed=False)
+        files["rel"] = _string_series([r["rel"] for r in rows])
         if len(files) == 0:
             from metacheck.archives import _message
 
@@ -709,6 +885,7 @@ def _figshare_zip_members(
     dest: str,
     keep_types: Any = ("data", "documentation"),
     max_file_size: float | None = 10,
+    size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-figshare.R::.figshare_zip_members(): extract wanted zip members.
 
@@ -716,8 +893,10 @@ def _figshare_zip_members(
     only members of the *keep_types* categories no larger than
     *max_file_size* MB into *dest*. Returns one row per member (``name``,
     ``path``, ``size``, ``ok``), or ``None`` when the archive cannot be listed.
+    *size*, the zip's size as the listing gives it, saves the peek a ``HEAD``
+    request.
     """
-    return _zip_members(url, dest, keep_types, max_file_size)
+    return _zip_members(url, dest, keep_types, max_file_size, size)
 
 
 def _figshare_verify_downloads(files: pd.DataFrame | None, download_to: str) -> Any:

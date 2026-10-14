@@ -87,9 +87,10 @@ def test_osf_pat_validate(monkeypatch: pytest.MonkeyPatch) -> None:
             assert _osf_pat_validate("ANY") is False
 
 
-def test_osf_pat_validate_is_one_short_request(monkeypatch: pytest.MonkeyPatch) -> None:
-    # metacheck ccc786cb: the probe runs at load time, so one try with a 5 s
-    # timeout, not the default retries against a slow or unreachable OSF
+def test_osf_pat_validate_is_a_bounded_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck ccc786cb: the probe runs at load time, so it is bounded, not the
+    # default retries against a slow or unreachable OSF; d52b3fd: two tries of
+    # 15 s, so a slow OSF does not make a valid token look unverifiable
     from metacheck import http
 
     monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
@@ -103,7 +104,18 @@ def test_osf_pat_validate_is_one_short_request(monkeypatch: pytest.MonkeyPatch) 
     assert _osf_pat_validate("GOODPAT") is True
     # anonymously and with the token
     assert len(calls) == 2
-    assert all(c["max_tries"] == 1 and c["timeout"] == 5.0 for c in calls)
+    assert all(c["max_tries"] == 2 and c["timeout"] == 15.0 for c in calls)
+
+
+def test_osf_pat_validate_retries_a_failed_probe(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("metacheck.utils.online", lambda *a, **k: True)
+    probe = f"{API}/preprints/khbvy/"
+    with respx.mock() as router:
+        route = router.get(probe).mock(
+            side_effect=[httpx.ReadTimeout("slow"), httpx.Response(200), httpx.Response(200)]
+        )
+        assert _osf_pat_validate("GOODPAT") is True
+    assert route.call_count == 3
 
 
 def test_osf_parent_project(mock_api: respx.MockRouter, filetype_available: bool) -> None:

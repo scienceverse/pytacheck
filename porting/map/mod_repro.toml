@@ -15,6 +15,7 @@
 "inst/modules/reproducibility_check.R" = [
     "src/metacheck/modules/reproducibility_check.py",
     "src/metacheck/modules/_reproducibility.py",
+    "src/metacheck/modules/_reproducibility_py.py",
 ]
 
 [functions]
@@ -31,3 +32,7 @@
 #   the execute phase (7b) -> reproducibility_check._execute; the "Execution" report
 #   (tail_cap, output blocks, install report) -> _execution_report/_install_report;
 #   the `modifications` build -> reproducibility_check._modifications.
+# The Python code path (d3b8594, after the f1062b4 pin) -> _reproducibility_py.assess_py
+#   (its execute block -> _execute_py, its "Execution" report -> _execution_report_py);
+#   "Combine R + Python results" (na_sum, combine_tl) -> reproducibility_check._combine,
+#   _combine_tl, and _py_only for a paper with Python code only.

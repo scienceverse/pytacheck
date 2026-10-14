@@ -418,6 +418,7 @@ def _reshare_zip_members(
     dest: str,
     keep_types: Any = ("data", "documentation"),
     max_file_size: float | None = 10,
+    size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-reshare.R::.reshare_zip_members(): extract wanted zip members.
 
@@ -426,10 +427,12 @@ def _reshare_zip_members(
     *max_file_size* MB into *dest*. Returns one row per member (``name``,
     ``path``, ``size``, ``ok``), or ``None`` when the archive cannot be listed
     (the caller then downloads it whole).
+    *size*, the zip's size as the listing gives it, saves the peek a ``HEAD``
+    request.
     """
     from metacheck.archives.dataverse import _zip_members
 
-    return _zip_members(url, dest, keep_types, max_file_size)
+    return _zip_members(url, dest, keep_types, max_file_size, size)
 
 
 def _reshare_verify_downloads(files: pd.DataFrame | None, download_to: str) -> Any:

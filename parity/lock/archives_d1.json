@@ -1,6 +1,10 @@
 {
 ".dataverse_parse.realignment_quirk": {"r": "bc845ce1c9c78735", "py": "0d594bbc73f064fc", "diff": ["host[]"]},
 ".dataverse_parse.shapes": {"r": "ec112fd3ab635e2f", "py": "64d98b02905edf97", "diff": ["host[]"]},
+".figshare_doi_prefix_hosts": {"r": "e388fdc971edbcbc", "py": "f86b60e33be71375", "diff": ["10.15482", "10.25909", "10.5522", "10.7294"]},
+".figshare_host_regex": {"r": "22b784cb50e29092", "py": "963fbefaeec0748d", "diff": ["[]"]},
+".figshare_id.shapes": {"r": "8eee4bad1fea2d12", "py": "976c78a8059faf42", "diff": ["[]"]},
+".figshare_vanity_hosts": {"r": "f9a8f2b340705786", "py": "728cfead7d2daf01", "diff": ["<root>"]},
 "dataverse_file_download.mock.default": {"r": "49899deac470c084", "py": "8bbc998bf1709874", "diff": ["<root>"]},
 "dataverse_file_download.mock.error_in_vector": {"r": "49899deac470c084", "py": "8bbc998bf1709874", "diff": ["<root>"]},
 "dataverse_file_download.mock.recycled_host": {"r": "7513cde2906c2cd8", "py": "9c4d6d7ed60558a2", "diff": ["<root>"]},
@@ -15,9 +19,18 @@
 "dryad_file_download.mock.folder_exists": {"r": "cccbfd553d62b498", "py": "01c5c321af091705", "diff": ["[]"]},
 "dryad_file_download.mock.multi": {"r": "1e7cb176c5da55b3", "py": "dae55c43721d5fe7", "diff": ["<root>"]},
 "dryad_file_download.mock.new_folder": {"r": "316d611e049b8d61", "py": "dfd403ece8519013", "diff": ["<root>"]},
-"dryad_info.mock.id_col_name": {"r": "ac5146cf65ca52a8", "py": "ef98cee5aaa6e83f", "diff": ["<R error, Python value>"]},
+"dryad_info.mock.id_col_name": {"r": "ac5146cf65ca52a8", "py": "7ca7934365324dd1", "diff": ["<R error, Python value>"]},
+"dryad_info.mock.id_col_position": {"r": "d23908b20fc5c7c8", "py": "67dcf295fc8b501d", "diff": ["<root>"]},
+"dryad_info.mock.links_table": {"r": "f06fc4cdbf52dd0d", "py": "60a9cba6bb65c1dc", "diff": ["<root>"]},
+"dryad_info.mock.vector": {"r": "eb3694310443dd5d", "py": "af3ca9418ecb0cd3", "diff": ["<root>"]},
 "figshare_file_download.mock.default": {"r": "1e4f2e673ecd4425", "py": "a6f6ab3f30fd82c9", "diff": ["<root>"]},
 "figshare_file_download.mock.folder_exists_quirk": {"r": "7bf31f23aeef4c14", "py": "413a49005463ab1c", "diff": ["[]", "[][]"]},
 "figshare_file_download.mock.multi": {"r": "1e4f2e673ecd4425", "py": "a6f6ab3f30fd82c9", "diff": ["<root>"]},
-"figshare_info.mock.id_col_na_error": {"r": "ac5146cf65ca52a8", "py": "289adade8e9052cc", "diff": ["<R error, Python value>"]}
+"figshare_info.mock.collection": {"r": "01b5b7fc6cd16c62", "py": "b196e2c4a7251024", "diff": ["files[][].path"]},
+"figshare_info.mock.collection_only": {"r": "c4d428504916349d", "py": "79de852432a88c46", "diff": ["files[][].path"]},
+"figshare_info.mock.id_col_na_duplicated": {"r": "cb33c9e0d40211eb", "py": "6ccd608285f2b1dd", "diff": ["files[][].path"]},
+"figshare_info.mock.id_col_na_error": {"r": "ac5146cf65ca52a8", "py": "b5fb60d4933ec037", "diff": ["<R error, Python value>"]},
+"figshare_info.mock.links_table": {"r": "add50f2485235f1e", "py": "fb67ee924bfae889", "diff": ["files[][].path"]},
+"figshare_info.mock.project": {"r": "b742537413494d27", "py": "82df53f85393df17", "diff": ["files[][].path"]},
+"figshare_info.mock.vector": {"r": "9e99191ca963bd13", "py": "e5b4e62aa733edb1", "diff": ["files[][].path"]}
 }

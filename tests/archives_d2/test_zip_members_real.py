@@ -14,7 +14,6 @@ from collections.abc import Iterator
 from pathlib import Path
 
 import httpx
-import pandas as pd
 import pytest
 import respx
 
@@ -94,10 +93,13 @@ def test_reshare_file_download_extracts_through_zip_peek(tmp_path: Path) -> None
     assert server.sent < len(DATA) // 4
 
 
-def test_reshare_file_download_whole_zip_without_ranges(tmp_path: Path) -> None:
-    with _serve(ZipServer(DATA, head_length=False)):
+def test_reshare_file_download_listed_size_replaces_head(tmp_path: Path) -> None:
+    # the host gives no size to HEAD; the record's listing does (metacheck d52b3fd)
+    server = ZipServer(DATA, head_length=False)
+    with _serve(server):
         files = reshare_file_download("5", str(tmp_path), max_file_size=None, unzip_types="data")
     assert files is not None
-    assert pd.isna(files["extracted"].iloc[0])
+    assert files["extracted"].tolist() == [2]  # study.csv and big.csv
     assert files["downloaded"].tolist() == [True]
-    assert (tmp_path / "reshare_5" / "all.zip").read_bytes() == DATA
+    assert "HEAD" not in [m for m, _ in server.calls]
+    assert not (tmp_path / "reshare_5" / "all.zip").exists()

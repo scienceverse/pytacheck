@@ -164,6 +164,25 @@ differences:
       a notebook's language is read from its local copy, so the R notebook is checked as R
       (dplyr, ggplot2 and its missing scores.csv are found); metacheck reads a path relative
       to the working directory and checks it as Python
+  - module: code_check
+    input: "*"
+    field: summary_text
+    match: values
+    kind: deliberate
+    ref: D118
+    reason: >-
+      the summary names the files without comments and the files that load libraries in
+      several places, and has setwd()/install.packages() lines only when found; missing files
+      stay in the report (metacheck 7208868, after the pin)
+  - module: codebook_check
+    input: "*"
+    field: [report, "summary_table.scale_*", "table.scale*"]
+    match: values
+    kind: deliberate
+    ref: D117
+    reason: >-
+      scales and tasks are identified only with extract_scales=True, which is off by default
+      (metacheck 029bf63, after the pin: the scale part is experimental and unvalidated)
   - module: data_check
     input: [demo, notebooks, parse-errors]
     field: [summary_text, report, summary_table, table]
@@ -182,6 +201,15 @@ differences:
     reason: >-
       codebook_check reports data_check's table, which with no readable data file is the
       column table (U98) where metacheck's is the validation table
+  - module: data_check
+    input: [repos/basic, repos/careless, repos/qualtrics, repos/encoding, repos/yellow, code_files]
+    field: summary_text
+    match: values
+    kind: r_bug_fixed
+    ref: U241
+    reason: >-
+      with LLM use off nothing is sent to a model for study groups; metacheck sends the files,
+      llm() refuses, and the summary says the study-group step got no answer for them
   - module: data_check
     input: repos/spreadsheets
     field: summary_text
@@ -223,6 +251,16 @@ differences:
       'ps < .05', 'ps > .115' and the other 'ps' forms are p-values (8 more in the preprint, 7
       in the two psychsci papers, 1 in 0956797617737129); metacheck matches only p, p-value
       and P. Counted as imprecise, they turn stat_p_exact red on 3 of these papers
+  - module: stat_effect_size
+    input: formats/published.pdf.tei.xml
+    field: [summary_text, report, summary_table.ttests_with_es, summary_table.ttests_without_es, table.*]
+    match: values
+    kind: r_bug_fixed
+    ref: U218
+    reason: >-
+      Grobid writes the subscripted d_z as 'd Z = 0.89'; extract_eq() reads it as the effect
+      size 'd Z', so 26 more t-tests have their effect size and are checked (30 with one, 0
+      without); metacheck reads 'Z = 0.89', a z statistic, and lists 89 tests without one, not 63
   # all_urls on bibr's links (D82) -------------------------------------------
   - module: all_urls
     input: "*"

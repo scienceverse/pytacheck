@@ -111,11 +111,14 @@ def test_dataverse_file_download_extracts_through_zip_peek(
     assert server.sent < len(DATA) // 4
 
 
-def test_dataverse_file_download_whole_zip_without_ranges(
+def test_dataverse_file_download_listed_size_replaces_head(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
+    # the host gives no size to HEAD; the dataset's listing does, and the zip is
+    # listed with it (metacheck d52b3fd): its member is extracted, no HEAD is sent
     monkeypatch.setattr(dataverse, "_dataverse_info", _zip_dataset)
-    with _serve(ZipServer(DATA, head_length=False)):
+    server = ZipServer(DATA, head_length=False)
+    with _serve(server):
         dl = dataverse_file_download(
             "dataverse.harvard.edu",
             "10.7910/DVN/ZIPWHOLE",
@@ -124,7 +127,7 @@ def test_dataverse_file_download_whole_zip_without_ranges(
             max_file_size=1,
         )
     assert dl is not None
-    assert pd.isna(dl["extracted"].iloc[0])
+    assert dl["extracted"].tolist() == [1]
     assert dl["downloaded"].tolist() == [True]
-    assert dl["checksum_ok"].tolist() == [True]
-    assert (tmp_path / "10.7910_DVN_ZIPWHOLE" / "bundle.zip").read_bytes() == DATA
+    assert "HEAD" not in [m for m, _ in server.calls]
+    assert not (tmp_path / "10.7910_DVN_ZIPWHOLE" / "bundle.zip").exists()

@@ -436,6 +436,10 @@ def flag_figshare_share_links(repos: Repos, fs_links: pd.DataFrame | None) -> No
 # ---------------------------------------------------------------------------
 
 _FILE_COLS = ("repo_url", "file_name", "file_path", "file_url", "file_location", "file_size")
+#: the repository's own total size in bytes, where its listing reports one
+#: (Dryad's storageSize); download_repo_files() sizes a whole-repository
+#: archive with it rather than by summing the rows it is given
+_REPO_SIZE = "repo_size"
 
 
 def _typed_files(rows: dict[str, list[Any]]) -> pd.DataFrame:
@@ -448,6 +452,7 @@ def _typed_files(rows: dict[str, list[Any]]) -> pd.DataFrame:
             ("file_url", rows["file_url"], "string"),
             ("file_location", rows["file_location"], "string"),
             ("file_size", rows["file_size"], "float64"),
+            (_REPO_SIZE, rows.get(_REPO_SIZE), "float64"),
         ]
     )
 
@@ -455,10 +460,10 @@ def _typed_files(rows: dict[str, list[Any]]) -> pd.DataFrame:
 def join_file_types(files: pd.DataFrame) -> pd.DataFrame:
     """Add ``file_type`` from the file extension (``left_join(file_types, by = "ext")``).
 
-    One row per file: an extension ``file_types`` lists twice (``json`` is
-    both ``code`` and ``data``) takes its first type in table order, what the
-    module's de-duplication kept, as in github_files() and the other
-    listings. R's join repeats such a file once per type (UPSTREAM_ISSUES U46).
+    One row per file. ``file_types`` lists each extension once (metacheck
+    d52b3fd); at the pin 27 were listed twice and R's join repeated such a
+    file once per type (UPSTREAM_ISSUES U46). The first type is still taken,
+    should the table ever list one twice again.
     """
     out = files.reset_index(drop=True)
     if len(out) == 0:
@@ -501,6 +506,8 @@ def _file_rows(
     per-file data frames (a zero-column table when no record has files).
     """
     rows: dict[str, list[Any]] = {k: [] for k in _FILE_COLS}
+    repo_sizes: list[Any] = []
+    has_repo_size = False
     any_rows = False
     others = [c for c in info.columns if c != "files"]
     columns = {c: info[c].tolist() for c in others}
@@ -524,9 +531,13 @@ def _file_rows(
             row.setdefault("repo_url", repo_url)
             for k in _FILE_COLS:
                 rows[k].append(row.get(k))
+            repo_sizes.append(row.get(_REPO_SIZE))
+            has_repo_size = has_repo_size or _REPO_SIZE in row
             any_rows = True
     if not any_rows:
         return pd.DataFrame()
+    if has_repo_size:
+        rows[_REPO_SIZE] = repo_sizes
     return _typed_files(rows)
 
 
@@ -932,13 +943,17 @@ def list_dspace(
             ]
             if restricted:
                 repos.flag(restricted, "restricted access")
+        # the licence is dc.rights.license / dc.rights.uri; dc.rights is the
+        # access level ("restrictedAccess"), which metacheck reported as the
+        # licence before 0.3.3
         doi = attrs.get("doi") or None
-        if rights or doi:
+        license_ = attrs.get("license") or None
+        if rights or doi or license_:
             meta = r_frame(
                 [
                     ("repo_url", urls, "string"),
                     ("doi", _named_lookup(doi, urls), "string"),
-                    ("license", _named_lookup(rights, urls), "string"),
+                    ("license", _named_lookup(license_, urls), "string"),
                 ]
             )
         if pa is not None and len(pa) > 0:
@@ -1105,15 +1120,24 @@ def dataverse_row(record: dict[str, Any], f: Any) -> dict[str, Any]:
 
 
 def figshare_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
-    return _row(
+    row = _row(
         dollar(f, "name"), _as_chr(empty_or(dollar(f, "download_url"), None)), dollar(f, "size")
     )
+    # the file's folder in the article, where Figshare gives one (folder_structure)
+    path = _as_chr(empty_or(dollar(f, "path"), None))
+    if path is not None:
+        row["file_path"] = path
+    return row
 
 
-def dryad_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
+def dryad_row(record: dict[str, Any], f: Any) -> dict[str, Any]:
     href = empty_or(_f(f, "_links", "stash:download", "href"), None)
     file_url = None if _na(href) else "https://datadryad.org" + _as_chr(href)  # type: ignore[operator]
-    return _row(dollar(f, "path"), file_url, dollar(f, "size"))
+    row = _row(dollar(f, "path"), file_url, dollar(f, "size"))
+    # the dataset's own total (storageSize), which download_repo_files()
+    # prefers to summing the listed files when it sizes the dataset's zip
+    row[_REPO_SIZE] = _as_num(record.get("storage_size"))
+    return row
 
 
 def reshare_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
@@ -1194,8 +1218,8 @@ def list_local(local_path: Any) -> pd.DataFrame:
     # .txt, .pdf, images) takes its type from the extension, as the files of
     # an online repository do, when the extension has one type; R leaves it
     # NA, so a local archive was not counted as one (UPSTREAM_ISSUES U123).
-    # An extension with several types (.json and .rds: code or data; .html:
-    # code or web) stays unclassified rather than counted as code.
+    # file_types lists each extension once since metacheck d52b3fd (.json and
+    # .rds: data, .html: web); one listed twice would stay unclassified.
     if "file_type" in out.columns:
         by_ext = [t[0] if len(t) == 1 else None for t in _ext_types(vals(out["file_name"]))]
         out["file_type"] = pd.Series(

@@ -448,9 +448,22 @@ class Sessions:
         return None
 
 
-def _download_link(session: str, path: Path) -> str:
+#: the link to the report's static copy (``report_type="simple"``), which mail clients and
+#: scanners accept: it has no script
+SIMPLE_LABEL = "Download for email (no script)"
+
+
+def _download_link(session: str, path: Path, label: str = "Download the report") -> str:
     href = f"/report/{Sessions.safe(session)}/{quote(path.name)}"
-    return f'<a href="{href}" download="{html.escape(path.name)}">Download the report</a>'
+    return f'<a href="{href}" download="{html.escape(path.name)}">{html.escape(label)}</a>'
+
+
+def _download_links(session: str, analysis: Analysis | pk.PackageAnalysis) -> str:
+    """The links to the report's file, and to its static copy for email when there is one."""
+    link = _download_link(session, analysis.report_path)
+    if analysis.simple_path is None:
+        return link
+    return f"{link} · {_download_link(session, analysis.simple_path, SIMPLE_LABEL)}"
 
 
 #: the traffic light word at the start of a result -> its cell colours (background, text). The
@@ -684,11 +697,17 @@ def build_app(
             yield shown("")
             raise gr.Error(failed) from exc
 
-    def download_link(report: Path, page: str, session: str) -> str:
-        """The link to the report: on a shared server the page itself, else the file."""
-        if shared:
-            return hosting.data_link(report.name, protect(page))
-        return _download_link(session, report)
+    def download_links(analysis: Analysis | pk.PackageAnalysis, session: str) -> str:
+        """The links to the report and to its static copy for email: on a shared server the
+        pages themselves, else the files."""
+        if not shared:
+            return _download_links(session, analysis)
+        link = hosting.data_link(analysis.report_path.name, protect(analysis.html))
+        path = analysis.simple_path
+        if path is None or not analysis.simple_html:
+            return link
+        simple = hosting.data_link(path.name, protect(analysis.simple_html), SIMPLE_LABEL)
+        return f"{link} · {simple}"
 
     def page(analysis: Analysis, session: str) -> tuple[Any, ...]:
         """What the results show for a paper: the checklist of a data package is hidden."""
@@ -698,7 +717,7 @@ def build_app(
             table_value(analysis.rows),
             gr.update(visible=False, value=None),
             report_frame(analysis.html),
-            download_link(analysis.report_path, analysis.html, session),
+            download_links(analysis, session),
         )
 
     def package_page(analysis: pk.PackageAnalysis, session: str) -> tuple[Any, ...]:
@@ -709,7 +728,7 @@ def build_app(
             table_value(list(analysis.rows)),
             gr.update(visible=True, value=coloured(analysis.checklist)),
             report_frame(analysis.html),
-            download_link(analysis.report_path, analysis.html, session),
+            download_links(analysis, session),
         )
 
     def done(parts: tuple[Any, ...], status: str = "", box: Any = None) -> tuple[Any, ...]:

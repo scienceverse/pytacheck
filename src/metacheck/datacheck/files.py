@@ -338,6 +338,9 @@ def _filetype(file_name: list[str | None]) -> list[str | None]:
     return [None if is_missing(v) else str(v) for v in _as_list(out)]
 
 
+#: Metadata files that are documentation whatever their folder or extension says.
+_METADATA_JSON = frozenset({"ro-crate-metadata.json", "dataset_description.json"})
+
 _KEYWORD_RULES = (
     ("documentation", "readme"),
     ("documentation", "code[ _.-]?book"),
@@ -404,8 +407,11 @@ def data_classify_files(
             ci = coarse[i]
             first = None if ci is None else ci.split(";", 1)[0]
             types[i] = _FILE_TYPE_CROSSWALK.get(first) if first is not None else None
+    # metadata files: ro-crate-metadata.json (as metacheck) and Psych-DS's
+    # dataset_description.json, which file_types' .json -> "data" (metacheck
+    # d52b3fd) would otherwise make a data file (D90)
     for i, nm in enumerate(names):
-        if nm is not None and _tolower(_r_basename(nm)) == "ro-crate-metadata.json":
+        if nm is not None and _tolower(_r_basename(nm)) in _METADATA_JSON:
             types[i] = "documentation"
     return [t if t is not None else "unknown" for t in types]
 
@@ -1455,7 +1461,10 @@ def _data_group_llm_impl(
         answered = set(ok_idx)
         return [rows[k - 1] for k in range(1, len(rows) + 1) if k not in answered]
 
-    send_rows = [i for i in range(n) if send[i]]
+    # With LLM use off, llm() refuses, and that refusal was caught above like a
+    # failed request, so every file came back unanswered. Nothing is sent; the
+    # files go straight to the fallback rules below (metacheck 98105f6; U241).
+    send_rows = [i for i in range(n) if send[i]] if _llm_use() else []
     unresolved: list[int] = []
     for start in range(0, len(send_rows), batch_size):
         rows = send_rows[start : start + batch_size]

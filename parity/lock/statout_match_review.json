@@ -1,4 +1,6 @@
 {
+"match_reported_output.derived.published_tei": {"r": "b4050d7dbc26cec3", "py": "11dc4a3e77df99d3", "diff": ["<root>"]},
+"match_reported_output.derived.published_tei.summary": {"r": "e5fc57f9114ee716", "py": "efd1e9c5d709e1e3", "diff": ["n_found[]", "n_full[]", "n_missing[]", "n_partial[]", "n_tests[]", "pct_found[]"]},
 "match_reported_output.eq.empty_test_id.censored_only": {"r": "bade1440a44d102b", "py": "f63215500658c7ed", "diff": ["analysis[]", "confidence[]", "found[]", "match_values[]", "n_matched[]", "not_matched[]", "source_file[]"]},
 "match_reported_output.table_paper.no_section_id": {"r": "a52dd7ed25ecb64b", "py": "50b682967cb98ed3", "diff": ["<root>"]},
 "match_reported_output.table_paper.no_section_id.summary": {"r": "93b2ff0201cfec79", "py": "d737313bb3ec093a", "diff": ["n_found[]", "n_full[]", "n_tests[]", "pct_found[]"]},

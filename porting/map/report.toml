@@ -1,7 +1,11 @@
 # R source -> Python location for reports, validation and messaging (see docs/PORTING.md).
 [files]
 "R/report.R" = ["src/metacheck/report/report.py"]
-"R/report-helpers.R" = ["src/metacheck/report/blocks.py", "src/metacheck/report/render.py"]
+"R/report-helpers.R" = [
+    "src/metacheck/report/blocks.py",
+    "src/metacheck/report/render.py",
+    "src/metacheck/report/brief.py",
+]
 # the plumber API's render_report_html() (report_qmd() rendered to one page)
 "inst/plumber/utils/helpers.R" = ["src/metacheck/report/report.py"]
 "R/html-output.R" = ["src/metacheck/report/html_output.py"]
@@ -11,6 +15,12 @@
     "src/metacheck/report/templates/report.html",
     "src/metacheck/report/templates/report.css",
     "src/metacheck/report/templates/report.js",
+]
+# report_type("simple"): an R Markdown document with no script (metacheck PR #463)
+"inst/templates/_report_simple.Rmd" = [
+    "src/metacheck/report/templates/_report_simple.Rmd",
+    "src/metacheck/report/report.py",
+    "src/metacheck/report/render.py",
 ]
 "R/validate.R" = ["src/metacheck/validate.py"]
 "R/emojis.R" = ["src/metacheck/report/emojis.py"]
@@ -28,6 +38,11 @@ report_module_run = "metacheck.report.report:report_module_run"
 report_qmd = "metacheck.report.report:report_qmd"
 module_report = "metacheck.report.report:module_report"
 report_table = "metacheck.report.blocks:report_table"
+report_type = "metacheck.report.blocks:report_type"
+".report_is_static" = "metacheck.report.blocks:_report_is_static"
+".report_is_brief" = "metacheck.report.blocks:_report_is_brief"
+".report_flagged_bullets" = "metacheck.report.brief:flagged_bullets"
+".report_validation_table" = "metacheck.report.brief:validation_table"
 ".cap_num" = "metacheck.report.blocks:_cap_num"
 ".html_sniff_kind" = "metacheck.report.html_output:_html_sniff_kind"
 ".html_export_r_source" = "metacheck.report.html_output:_html_export_r_source"

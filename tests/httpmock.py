@@ -47,6 +47,11 @@ from tests import llmreplies
 UPSTREAM_TESTS = (
     Path(__file__).resolve().parent.parent / "upstream" / "metacheck" / "tests" / "testthat"
 )
+#: recordings from metacheck's newer ``dev`` (its ``tests/testthat/apis``, copied
+#: as they are, e.g. from d52b3fd) for the requests that pytacheck makes since
+#: porting that code and that the pinned recordings lack; consulted after
+#: ``apis`` whenever a replay uses it
+APIS_DEV = Path(__file__).resolve().parent / "fixtures" / "apis_dev"
 _EXTENSIONS = {
     ".json": "application/json",
     ".html": "text/html; charset=utf-8",
@@ -153,6 +158,13 @@ def _r_unescape(s: str) -> str:
     return re.sub(r"\\(u\{?[0-9a-fA-F]{4}\}?|U\{?[0-9a-fA-F]{8}\}?|.)", repl, s)
 
 
+# crossref_doi() asks api.crossref.org since metacheck d2e4bc5 (#446), which moved
+# its recordings there from api.labs.crossref.org; at the pin they are still under
+# the old host, so a works/<doi> lookup without a recording of its own uses them
+_CROSSREF_WORKS = "api.crossref.org/works/"
+_LABS_WORKS = "api.labs.crossref.org/works/"
+
+
 def fixture_file(root: Path, path: str) -> Path | None:
     """The recorded file for *path* under *root* (``path`` without its extension)."""
     r_file = root / f"{path}.R"
@@ -246,6 +258,8 @@ def replay(*mock_dirs: str | Path, assert_all_called: bool = False) -> Iterator[
     roots = [
         Path(d) if Path(d).is_absolute() else UPSTREAM_TESTS / d for d in mock_dirs or ("apis",)
     ]
+    if UPSTREAM_TESTS / "apis" in roots:
+        roots.append(APIS_DEV)
 
     log = os.environ.get("PYTACHECK_LLM_INDEX_LOG")
 
@@ -261,6 +275,8 @@ def replay(*mock_dirs: str | Path, assert_all_called: bool = False) -> Iterator[
                     return resp
                 continue
             resp = fixture_response(root, path)
+            if resp is None and path.startswith(_CROSSREF_WORKS):
+                resp = fixture_response(root, _LABS_WORKS + path.removeprefix(_CROSSREF_WORKS))
             if resp is not None:
                 return resp
         host = urlsplit(str(request.url)).hostname

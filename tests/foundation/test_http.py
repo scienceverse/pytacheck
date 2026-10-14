@@ -239,6 +239,23 @@ def test_batch_query_aligns_results() -> None:
     assert [r.status_code if r is not None else None for r in out] == [200, None, 404]
 
 
+def test_batch_query_waits_between_batches_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck d52b3fd: no courtesy delay after the last batch, so a
+    # single-URL lookup does not wait for nothing
+    slept: list[float] = []
+    monkeypatch.setattr(http, "sleep", lambda s: slept.append(s))
+    with respx.mock() as router:
+        router.get(url__startswith="https://example.org/").mock(return_value=httpx.Response(200))
+        assert len(http.batch_query(["https://example.org/a"], msg=None, delay=2)) == 1
+        assert slept == []
+        urls = [f"https://example.org/{i}" for i in range(3)]
+        assert len(http.batch_query(urls, batch_size=2, msg=None, delay=1)) == 3
+        assert slept == [1]
+        urls = [f"https://example.org/{i}" for i in range(4)]
+        assert len(http.batch_query(urls, batch_size=2, msg=None, delay=1)) == 4
+        assert slept == [1, 1]
+
+
 def _json_response(body: bytes, content_type: str | None) -> httpx.Response:
     headers = {} if content_type is None else {"Content-Type": content_type}
     request = httpx.Request("GET", "https://api.example.org/x")

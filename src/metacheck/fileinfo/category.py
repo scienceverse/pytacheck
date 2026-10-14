@@ -154,9 +154,9 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
     ``metacheck::file_types`` extension the name ends with; ``""`` when none).
 
     Only hard rules classify as data or code: a file type of exactly ``stats``
-    or ``code`` is code, exactly ``data`` is data, and a compound type holding
-    ``data`` together with ``stats`` (``.jasp``, ``.por``) or ``archive``
-    (``sample.fasta.gz``) is data. A readme name wins over everything, then a
+    or ``code`` is code, exactly ``data`` is data (``.json``, ``.rds``, ``.jasp``
+    and ``.por`` since metacheck d52b3fd), and a compound type holding
+    ``data`` together with ``stats`` or ``archive`` (``sample.fasta.gz``) is data. A readme name wins over everything, then a
     codebook name (or a ``category`` of ``"codebook"``).
 
     Columns are matched by their exact name (R's ``df$name`` also takes a
@@ -235,8 +235,8 @@ def filetype(filename: Any) -> pd.Series:
 
     Looks up the text after the last ``.`` of each file name (lower-cased) in
     ``metacheck::file_types``. Returns a ``string`` Series (R's named vector:
-    the index holds the file names) of the matching types pasted with ``";"``
-    (``"code;data"`` for ``.json``), or the string ``"NA"`` when the extension
+    the index holds the file names) of the matching type (``"data"`` for
+    ``.json``), or the string ``"NA"`` when the extension
     is unknown (R pastes the ``NA`` of an unmatched join).
 
     As in R, a name without a dot is taken whole as its extension, and an

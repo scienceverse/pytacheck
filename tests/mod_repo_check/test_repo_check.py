@@ -546,6 +546,88 @@ def test_zip_peek_gets_cache_and_skip_on_api_limit(monkeypatch: pytest.MonkeyPat
     assert seen and all(s["skip_on_api_limit"] is False for s in seen)
 
 
+def test_zip_peek_reads_a_zip_on_disk_and_carries_the_archive_size(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # metacheck d52b3fd: a zip inside a ResearchBox has the box's web page as file_url
+    # and its unpacked copy as file_location; it is listed from the file (the page
+    # answers a range request with 406), and the listed size reaches zip_peek()
+    import zipfile
+
+    from metacheck.archives import zip_peek as zp
+    from metacheck.modules.repo_check import _peek_zips
+
+    path = tmp_path / "inner.zip"
+    with zipfile.ZipFile(path, "w") as zf:
+        zf.writestr("data/study.csv", "id,x\n1,2\n")
+        zf.writestr("analysis.R", "x <- 1\n")
+    files = pd.DataFrame(
+        {
+            "repo_url": ["https://researchbox.org/123", "https://zenodo.org/records/1"],
+            "file_name": ["inner.zip", "remote.zip"],
+            "file_path": ["inner.zip", "remote.zip"],
+            "file_url": ["https://researchbox.org/123", "https://zenodo.org/r/remote.zip"],
+            "file_location": [str(path), None],
+            "file_size": [float(path.stat().st_size), 999.0],
+            "file_type": ["archive", "archive"],
+        }
+    )
+    real = zp.zip_peek
+    seen: list[tuple[str, object]] = []
+
+    def peek(url: str, *args: object, size: object = None, **kwargs: object) -> object:
+        seen.append((url, size))
+        return real(url, size=size) if url == str(path) else None
+
+    monkeypatch.setattr(zp, "zip_peek", peek)
+    out = _peek_zips(files)
+    assert seen == [
+        (str(path), float(path.stat().st_size)),
+        ("https://zenodo.org/r/remote.zip", 999.0),
+    ]
+    members = out[out["archive_url"].notna()]
+    assert sorted(members["archive_member"]) == ["analysis.R", "data/study.csv"]
+    assert set(members["archive_url"]) == {str(path)}
+    assert set(members["archive_size"]) == {float(path.stat().st_size)}
+    # a member has no copy of its own yet: the download step extracts it
+    assert members["file_location"].isna().all()
+    assert "remote.zip" in out["file_name"].tolist()  # not listable: kept as it was
+
+
+def test_a_zip_inside_a_researchbox_is_listed_from_its_local_copy(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # test-module-repo_check.R (metacheck d52b3fd): the box's web page is the
+    # row's file_url and answers a range request with 406; the unpacked copy is read
+    import zipfile
+
+    from metacheck.archives import researchbox
+
+    inner = tmp_path / "inner.zip"
+    with zipfile.ZipFile(inner, "w") as zf:
+        zf.writestr("Data/study1.csv", "id,x\n1,2\n")
+        zf.writestr("analysis.R", "x <- 1\n")
+    box = "https://researchbox.org/99999"
+    monkeypatch.setattr(
+        researchbox,
+        "rbox_file_download",
+        lambda rb_url, pb=None: pd.DataFrame(
+            {
+                "rb_url": [box],
+                "name": ["ResearchBox 99999/inner.zip"],
+                "file_location": [str(inner)],
+                "size": [float(inner.stat().st_size)],
+                "type": ["archive"],
+                "isdir": [False],
+            }
+        ),
+    )
+    mo = run(tp([box], "p_rbox_zip"))  # an unmocked request would fail the test
+    assert sorted(mo.table["file_name"]) == ["analysis.R", "study1.csv"]
+    assert set(mo.table["archive_url"]) == {str(inner)}
+    assert mo.table["file_location"].isna().all()
+
+
 def test_nameless_file_is_listed_without_a_naming_check() -> None:
     # a listed file without a name has no name to check (R's
     # check_file_naming() fails and the module errors, U122)
@@ -627,11 +709,31 @@ def test_private_osf_file_rows_are_excluded_per_row() -> None:
     assert len(_osf_files(pd.DataFrame({"kind": ["file"], "public": [False]}))) == 0
 
 
+def test_naming_table_shows_display_severities(tmp_path: Path) -> None:
+    # metacheck 8c1f6c1: the report's naming table says "Required"/"Suggestion";
+    # naming_issues keeps "bad"/"suggestion", which the counts use. An 8-digit
+    # run that is not a date is not reported (the date-format rule is gone).
+    from metacheck.report import ReportTable
+
+    for name in ("my data.csv", "data_2.csv", "data_11.csv", "id_1234567890123456.csv"):
+        (tmp_path / name).write_text("x\n", encoding="utf-8")
+    mo = pc.module_run(pc.test_paper(), "repo_check", local_path=str(tmp_path))
+    tables = [b.data for b in mo.report if isinstance(b, ReportTable)]
+    naming = next(t for t in tables if list(t.columns) == ["File", "Rule", "Severity", "Detail"])
+    shown = dict(zip(naming["Rule"], naming["Severity"], strict=True))
+    assert shown["spaces"] == "Required"
+    assert shown["zero-padding"] == "Suggestion"
+    assert "date-format" not in shown
+    assert "We found 1 naming problem that should be fixed" in "\n".join(
+        b for b in mo.report if isinstance(b, str)
+    )
+
+
 def test_local_archives_are_counted(tmp_path: Path) -> None:
     # U123: a local file file_category() cannot place takes its type from the
-    # extension, as an online file does: a local .tar.gz/.zip is an archive
-    # (an extension with several types stays unclassified: .json and .rds are
-    # code or data, .html is code or web, so they are not counted as code)
+    # extension, as an online file does: a local .tar.gz/.zip is an archive.
+    # file_types has one type per extension since metacheck d52b3fd, so .json
+    # is data and .html web (D89); neither is counted as code.
     names = ("results.tar.gz", "bundle.zip", "notes.txt", "analysis.R", "report.html", "cfg.json")
     for name in names:
         (tmp_path / name).write_text("x\n", encoding="utf-8")
@@ -640,9 +742,9 @@ def test_local_archives_are_counted(tmp_path: Path) -> None:
     assert {k: None if pd.isna(v) else v for k, v in types.items()} == {
         "analysis.R": "code",
         "bundle.zip": "archive",
-        "cfg.json": None,
+        "cfg.json": "data",
         "notes.txt": "text",
-        "report.html": None,
+        "report.html": "web",
         "results.tar.gz": "archive",
     }
     assert mo.summary_table["files_zip"].tolist() == [2]
@@ -690,3 +792,26 @@ def test_unrecorded_request_is_a_listing_error() -> None:
     errors = mo["gated_repos"]["repo_error"]
     assert len(errors) == 1
     assert errors.iloc[0].startswith("An unexpected request was made:\nGET ")
+
+
+def test_dryad_rows_carry_the_dataset_size(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck d52b3fd: Dryad's own total (storageSize) is carried as
+    # repo_size, which download_repo_files() sizes the dataset's zip with
+    from metacheck.archives import dryad
+
+    real = dryad.dryad_info
+
+    def with_size(*args: object, **kwargs: object) -> pd.DataFrame:
+        info = real(*args, **kwargs)  # type: ignore[arg-type]
+        info["storage_size"] = 123456.0
+        return info
+
+    monkeypatch.setattr(dryad, "dryad_info", with_size)
+    mo = run(
+        tp(["https://doi.org/10.5061/dryad.j1fd7", "https://zenodo.org/records/5550001"], "p_size")
+    )
+    t = mo.table
+    is_dryad = t["repo_url"] == "https://doi.org/10.5061/dryad.j1fd7"
+    assert is_dryad.any() and (~is_dryad).any()
+    assert (t.loc[is_dryad, "repo_size"] == 123456.0).all()
+    assert t.loc[~is_dryad, "repo_size"].isna().all()

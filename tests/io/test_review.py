@@ -454,7 +454,10 @@ def test_read_dir_skips_any_unreadable_file(tmp_path: Path) -> None:
     _tei_copies(tmp_path, ["b.xml"])
     # a JSON file whose root is an array (R: "$ operator is invalid for atomic vectors")
     (tmp_path / "a.json").write_text("[1, 2]")
-    p = read(tmp_path, schema_version=None)  # D6: logged and skipped
+    # D6: logged and skipped, with a warning that says why (as metacheck does
+    # since 97612c7)
+    with pytest.warns(UserWarning, match=r"^Could not read a\.json: "):
+        p = read(tmp_path, schema_version=None)
     assert p.paper_id == "b"
     with pytest.raises(AttributeError):
         read(tmp_path / "a.json")  # a single file raises the real error (U21)

@@ -533,16 +533,20 @@ def _case_rate_limits() -> Iterator[None]:
     """A fresh memory of rate-limited hosts for one case (``metacheck.http``'s).
 
     A case that records a host's reset (a mocked 429) must not make the next one
-    to the same address wait or give up.
+    to the same address wait or give up. The session memos (a DOI's registered
+    URL, an endpoint known to be missing) are emptied too, for the same reason.
     """
     from metacheck import http
+    from metacheck.archives._memo import clear_session_memos
 
     saved = http._host_reset
     http._host_reset = {}
+    clear_session_memos()
     try:
         yield
     finally:
         http._host_reset = saved
+        clear_session_memos()
 
 
 # -- many cases -------------------------------------------------------------------------

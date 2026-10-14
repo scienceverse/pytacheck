@@ -1,0 +1,113 @@
+{
+  "id": "bac086e5-c606-474b-af1e-4a6122694af5",
+  "uuid": "bac086e5-c606-474b-af1e-4a6122694af5",
+  "name": "Dataset for a robot study",
+  "handle": "1853/67239",
+  "metadata": {
+    "dc.contributor.author": [
+      {
+        "value": "Doe, Jane",
+        "language": null
+      },
+      {
+        "value": "Roe, Rich"
+      },
+      {
+        "value": null
+      }
+    ],
+    "dc.identifier.doi": [],
+    "dc.rights": [
+      {
+        "value": null
+      }
+    ],
+    "dc.rights.uri": [
+      {
+        "value": "http://creativecommons.org/licenses/by/4.0/"
+      }
+    ],
+    "dc.date.issued": [
+      {
+        "value": "2022-06-01"
+      }
+    ],
+    "dc.title": [
+      {
+        "value": "Title from metadata"
+      }
+    ]
+  },
+  "lastModified": "2023-01-02T03:04:05.000+00:00",
+  "type": "item",
+  "_embedded": {
+    "bundles": {
+      "_embedded": {
+        "bundles": [
+          {
+            "name": "LICENSE",
+            "uuid": "11111111-1111-1111-1111-111111111111"
+          },
+          {
+            "name": "ORIGINAL",
+            "uuid": "22222222-2222-2222-2222-222222222222",
+            "_embedded": {
+              "bitstreams": {
+                "_embedded": {
+                  "bitstreams": [
+                    {
+                      "name": "data.CSV",
+                      "sizeBytes": 1234,
+                      "checkSum": {
+                        "value": "0123456789abcdef0123456789abcdef"
+                      },
+                      "_links": {
+                        "content": {
+                          "href": "https://repository.gatech.edu/server/api/core/bitstreams/b1/content"
+                        }
+                      }
+                    },
+                    {
+                      "name": "analysis.R",
+                      "sizeBytes": 99,
+                      "checkSum": {
+                        "value": null,
+                        "checkSumAlgorithm": "MD5"
+                      },
+                      "_links": {
+                        "content": {
+                          "href": "https://repository.gatech.edu/server/api/core/bitstreams/b2/content"
+                        }
+                      }
+                    },
+                    {
+                      "name": "model.rds",
+                      "sizeBytes": 5000000000,
+                      "_links": {
+                        "content": {
+                          "href": "https://repository.gatech.edu/server/api/core/bitstreams/b3/content"
+                        }
+                      }
+                    },
+                    {
+                      "name": "noext",
+                      "sizeBytes": null,
+                      "_links": {}
+                    }
+                  ]
+                },
+                "page": {
+                  "totalElements": 4
+                }
+              }
+            }
+          },
+          {
+            "name": "THUMBNAIL",
+            "uuid": "33333333-3333-3333-3333-333333333333"
+          }
+        ]
+      }
+    }
+  }
+}

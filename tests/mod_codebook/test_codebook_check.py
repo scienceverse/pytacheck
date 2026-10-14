@@ -409,7 +409,7 @@ def test_scanning_a_paper_with_no_text_returns_nothing() -> None:
 
 
 def test_task_is_named_when_data_shows_it_and_paper_confirms_it() -> None:
-    cc = cbc_run("task")
+    cc = cbc_run("task", extract_scales=True)
     assert st(cc)["task_files_n"] >= 1
     assert st(cc)["task_named_n"] == 1
     assert "#### Tasks" in report_text(cc)
@@ -420,7 +420,7 @@ def test_task_is_named_when_data_shows_it_and_paper_confirms_it() -> None:
 
 
 def test_task_named_only_in_the_paper_is_reported_not_an_error() -> None:
-    cc = cbc_run("taskonly")
+    cc = cbc_run("taskonly", extract_scales=True)
     assert st(cc)["task_paper_only_n"] >= 1
     assert "named in the manuscript" in report_text(cc)
     assert cc.traffic_light in ("green", "yellow", "red")
@@ -441,7 +441,7 @@ def test_task_dictionary_has_colliding_stroop_variants() -> None:
 
 
 def test_totals_only_block_is_detected_and_reported() -> None:
-    cc = cbc_run("orphan")
+    cc = cbc_run("orphan", extract_scales=True)
     # IERQ_pos / IERQ_persp / ... differ by a word, not an item number, so they
     # form no prefix group; the Scales section still appears (as in R)
     assert "#### Scales" in report_text(cc)
@@ -531,7 +531,7 @@ def test_qualtrics_export_machinery_is_labelled_in_the_module() -> None:
 
 
 def test_rules_only_mode_names_scales_from_the_dictionary_alone() -> None:
-    cc = cbc_run("rulesonly")
+    cc = cbc_run("rulesonly", extract_scales=True)
     named = cc.table["scale"].notna()
     assert named.any()
     assert set(cc.table.loc[named, "scale_source"]) == {"matched"}
@@ -576,7 +576,7 @@ def test_llm_tiers_merge_match_and_parse() -> None:
 
 
 def test_llm_scale_tiers_name_groups_and_report_manuscript_scales() -> None:
-    cc = cbc_llm_run("scales_mixed", "scales")
+    cc = cbc_llm_run("scales_mixed", "scales", extract_scales=True)
     sources = set(cc.table["scale_source"].dropna())
     assert sources == {"manuscript", "matched", "self_generated"}
     rpt = report_text(cc)
@@ -586,7 +586,7 @@ def test_llm_scale_tiers_name_groups_and_report_manuscript_scales() -> None:
 
 
 def test_llm_errors_are_swallowed() -> None:
-    cc = cbc_llm_run("scales_mixed", "errors")
+    cc = cbc_llm_run("scales_mixed", "errors", extract_scales=True)
     assert set(cc.table["scale_source"].dropna()) == {"matched"}
     assert "LLM reviewed ambiguous cases" in report_text(cc)
 
@@ -645,7 +645,7 @@ def test_embedded_jasp_and_jamovi_labels_are_harvested() -> None:
 
 
 def test_scales_are_exported_as_openscales_osd() -> None:
-    cc = cbc_run("panas_high")
+    cc = cbc_run("panas_high", extract_scales=True)
     osd = cc.scales_osd
     assert len(osd) == 1
     o = osd[0]
@@ -660,7 +660,7 @@ def test_scales_are_exported_as_openscales_osd() -> None:
 
 
 def test_unnamed_rating_like_blocks_are_written_but_not_other_groups() -> None:
-    cc = cbc_run("loop")
+    cc = cbc_run("loop", extract_scales=True)
     writes = {
         o["definition"]["scale_info"]["abbreviation"]: o.attrs["write"] for o in cc.scales_osd
     }
@@ -685,7 +685,7 @@ def test_paper_list_gets_one_summary_row_per_paper() -> None:
 
 
 def test_paper_list_corroborates_each_file_against_its_own_paper() -> None:
-    cc = module_run(cbc_prev_list(["task", "scales_mixed"]), "codebook_check")
+    cc = module_run(cbc_prev_list(["task", "scales_mixed"]), "codebook_check", extract_scales=True)
     tbl = cc.table
     stroop = tbl[tbl["scale"] == "Stroop task"]
     assert set(stroop["paper_id"]) == {"p1"}
@@ -938,3 +938,44 @@ def test_prefix_llm_gets_the_sentences_of_the_files_own_paper(
     cbc._identify_scales_prefix_llm(previews, labels, papers, max_calls=5)
     owners = {f: p.paper_id for f, p in seen}
     assert owners == {"a.csv": "p1", "b.csv": "p2"}
+
+
+# ── extract_scales (metacheck 029bf63) ───────────────────────────────────────
+
+
+def test_scales_and_tasks_are_only_identified_with_extract_scales() -> None:
+    off = cbc_run("task")
+    assert off.table["scale"].isna().all()
+    assert st(off)["task_files_n"] == 0 and st(off)["task_named_n"] == 0
+    assert "#### Tasks" not in report_text(off) and "#### Scales" not in report_text(off)
+    assert off.scales_osd == []
+    on = cbc_run("task", extract_scales=True)
+    assert "#### Tasks" in report_text(on)
+    # the rest of the check is the same
+    assert st(off)["matched_n"] == st(on)["matched_n"]
+
+
+def test_no_manuscript_scan_without_extract_scales(monkeypatch: pytest.MonkeyPatch) -> None:
+    called: list[str] = []
+    monkeypatch.setattr(
+        cbc, "_identify_scales_text_llm", lambda *a, **k: called.append("text") or None
+    )
+    monkeypatch.setattr(cbc, "_scan_paper_for_tasks", lambda *a, **k: called.append("tasks") or [])
+    cbc_run("task")
+    assert called == []
+    cbc_run("task", extract_scales=True)
+    assert called == ["text", "tasks"]
+
+
+def test_codebook_check_says_it_is_not_validated() -> None:
+    from metacheck.module import module_info
+
+    assert (
+        "<validation>This module has not been validated." in module_info("codebook_check").details
+    )
+
+
+def test_summary_leaves_out_the_unused_variable_count() -> None:
+    cc = module_run(cbc_prev_list(["pl_a", "pl_b"]), "codebook_check")
+    assert st(cc)["unused_var_n"] >= 1
+    assert "never appear" not in cc.summary_text

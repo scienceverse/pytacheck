@@ -117,11 +117,16 @@ def test_dryad_info_found(mock_api: object) -> None:
         "authors",
         "license",
         "files",
+        "storage_size",
+        "files_total",
+        "files_incomplete",
     ]
     row = info.iloc[0]
     assert row["title"] == "Data from: An example study"
     assert row["authors"] == ["Jane Doe", "Smith", None, "Solo"]
     assert len(row["files"]) == 5
+    assert row["files_total"] == 5
+    assert info["files_incomplete"].tolist() == [False]
 
 
 def test_dryad_info_errors_and_offline(mock_api: object, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -196,7 +201,9 @@ def test_dryad_info_follows_the_file_listing_pages(serve: object) -> None:
     seen = serve(  # type: ignore[operator]
         {
             f"{base}/datasets/doi%3A10.5061%2Fdryad.p": httpx.Response(200, json=body),
-            f"{base}/versions/9/files": page(["a.csv", "b.csv"], "/api/v2/versions/9/files?page=2"),
+            f"{base}/versions/9/files?per_page=100": page(
+                ["a.csv", "b.csv"], "/api/v2/versions/9/files?page=2"
+            ),
             f"{base}/versions/9/files?page=2": page(["c.csv"], "/api/v2/versions/9/files?page=3"),
             f"{base}/versions/9/files?page=3": page([], None),
         }
@@ -206,7 +213,11 @@ def test_dryad_info_follows_the_file_listing_pages(serve: object) -> None:
     assert len(seen) == 4
     # a listing that points back at a page already read stops there
     serve(  # type: ignore[operator]
-        {f"{base}/versions/9/files?page=3": page(["d.csv"], "/api/v2/versions/9/files")}
+        {
+            f"{base}/versions/9/files?page=3": page(
+                ["d.csv"], "/api/v2/versions/9/files?per_page=100"
+            )
+        }
     )
     info = _dryad_info("10.5061/dryad.p")
     assert [f["path"] for f in info["files"].iloc[0]] == ["a.csv", "b.csv", "c.csv", "d.csv"]
@@ -512,7 +523,7 @@ def test_dryad_file_download_skips_hostile_names(serve: object, tmp_path: Path) 
             "https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.h": httpx.Response(
                 200, json={"_links": {"stash:version": {"href": "/api/v2/versions/9"}}}
             ),
-            "https://datadryad.org/api/v2/versions/9/files": httpx.Response(
+            "https://datadryad.org/api/v2/versions/9/files?per_page=100": httpx.Response(
                 200, json={"_embedded": {"stash:files": files}}
             ),
             "https://datadryad.org/api/v2/files/1/download": httpx.Response(200, content=b"hi"),
@@ -571,3 +582,192 @@ def test_dryad_file_download_keeps_an_empty_file(mock_api: object, tmp_path: Pat
     empty = out[out["key"] == "empty.txt"]
     assert empty["downloaded"].tolist() == [True]
     assert empty["size_on_disk"].tolist() == [0]
+
+
+# ------------------------------------------------- metacheck f1062b4..dev (8f2de4e, e4b74e1, d52b3fd)
+
+
+def test_dryad_list_files_follows_next_to_the_last_page(mock_api: object) -> None:
+    # recorded by metacheck from doi:10.5061/dryad.9ghx3ffgc (22 files) at
+    # per_page = 10, so the files arrive over three pages
+    listing = dryad._dryad_list_files(
+        "/api/v2/versions/104509/files", dryad_doi="10.5061/dryad.9ghx3ffgc", per_page=10
+    )
+    assert len(listing.files) == 22
+    assert listing.total == 22
+    assert listing.incomplete is False
+    assert len({f["path"] for f in listing.files}) == 22
+
+
+def test_dryad_info_lists_more_than_20_files_and_reports_storage_size(mock_api: object) -> None:
+    info = _dryad_info("10.5061/dryad.9ghx3ffgc")
+    files = info["files"].iloc[0]
+    assert len(files) == 22  # one request at per_page = 100
+    assert info["storage_size"].tolist() == [756438.0]
+    assert info["files_total"].tolist() == [22.0]
+    assert info["files_incomplete"].tolist() == [False]
+    # storageSize equals the sum of the listed sizes for this dataset
+    assert sum(f["size"] for f in files) == 756438
+
+
+def _listing_page(names: list[str], total: int | None, nxt: str | None) -> httpx.Response:
+    body: dict[str, object] = {
+        "_links": {"next": {"href": nxt}} if nxt else {},
+        "_embedded": {"stash:files": [{"path": n, "size": 1} for n in names]},
+    }
+    if total is not None:
+        body["total"] = total
+    return httpx.Response(200, json=body)
+
+
+def test_dryad_list_files_warns_and_marks_a_listing_that_stops_early(serve: object) -> None:
+    first = "https://datadryad.org/api/v2/versions/1/files?per_page=100"
+    serve(  # type: ignore[operator]
+        {first: _listing_page(["a.csv", "b.csv"], 3, "/api/v2/versions/1/files?page=2")}
+    )
+    with pytest.warns(UserWarning, match="only 2 of 3 files for 10.5061/dryad.x"):
+        listing = dryad._dryad_list_files("/api/v2/versions/1/files", dryad_doi="10.5061/dryad.x")
+    assert [f["path"] for f in listing.files] == ["a.csv", "b.csv"]
+    assert (listing.total, listing.incomplete) == (3, True)
+
+
+def test_dryad_list_files_reports_a_first_page_that_fails(serve: object) -> None:
+    serve({})  # type: ignore[operator]
+    # not returned as a dataset without files
+    with pytest.warns(UserWarning, match="only 0 of its files"):
+        listing = dryad._dryad_list_files("/api/v2/versions/1/files", dryad_doi="10.5061/dryad.x")
+    assert listing.files == []
+    assert listing.incomplete is True
+
+
+def test_dryad_list_files_one_complete_page(serve: object, recwarn: object) -> None:
+    seen = serve(  # type: ignore[operator]
+        {
+            "https://datadryad.org/api/v2/versions/1/files?per_page=100": _listing_page(
+                ["a.csv", "b.csv"], 2, None
+            )
+        }
+    )
+    listing = dryad._dryad_list_files("/api/v2/versions/1/files")
+    assert len(listing.files) == 2 and listing.incomplete is False
+    assert len(seen) == 1
+    assert not [w for w in recwarn.list if "Dryad listed only" in str(w.message)]  # type: ignore[attr-defined]
+
+
+def test_dryad_info_does_not_cache_an_incomplete_listing(serve: object, online: None) -> None:
+    base = "https://datadryad.org/api/v2"
+    body = {"title": "T", "_links": {"stash:version": {"href": "/api/v2/versions/2"}}}
+    seen = serve(  # type: ignore[operator]
+        {
+            f"{base}/datasets/doi%3A10.5061%2Fdryad.inc": httpx.Response(200, json=body),
+            f"{base}/versions/2/files?per_page=100": _listing_page(
+                ["a.csv"], 2, "/api/v2/versions/2/files?page=2"
+            ),
+        }
+    )
+    with pytest.warns(UserWarning, match="only 1 of 2 files"):
+        first = dryad_info("10.5061/dryad.inc", cache=True)
+    assert first["files_incomplete"].tolist() == [True]
+    n = len(seen)
+    # not cached: Dryad is asked again
+    with pytest.warns(UserWarning, match="only 1 of 2 files"):
+        dryad_info("10.5061/dryad.inc", cache=True)
+    assert len(seen) > n
+
+
+def test_dryad_verify_downloads_checks_sha256_as_well_as_md5(tmp_path: Path) -> None:
+    import hashlib
+
+    contents = {"a.txt": b"hello dryad\n", "b.txt": b"second file\n", "c.txt": b"third file\n"}
+    for name, data in contents.items():
+        (tmp_path / name).write_bytes(data)
+    sha_a = hashlib.sha256(contents["a.txt"]).hexdigest()
+    md5_b = hashlib.md5(contents["b.txt"], usedforsecurity=False).hexdigest()
+    files = pd.DataFrame(
+        {
+            "path": list(contents),
+            "size": [float(len(d)) for d in contents.values()],
+            "checksum": [sha_a.upper(), md5_b, "0" * 64],
+            # digestType as Dryad publishes it
+            "checksum_type": ["sha-256", "md5", "sha-256"],
+            "downloaded": [True, True, True],
+        }
+    )
+    out = _dryad_verify_downloads(files, str(tmp_path))
+    assert out["checksum_ok"].tolist() == [True, True, False]
+    assert out["downloaded"].tolist() == [True, True, False]
+    # an unrecognised digest type is left unverified rather than failed
+    files["checksum_type"] = ["sha-512", "md5", None]
+    out = _dryad_verify_downloads(files, str(tmp_path))
+    assert out["checksum_ok"].tolist()[1] is True
+    assert out["checksum_ok"].isna().tolist() == [True, False, True]
+    assert out["downloaded"].tolist() == [True, True, True]
+
+
+def test_dryad_401_hint_names_the_missing_key() -> None:
+    url = "https://datadryad.org/api/v2/files/1/download"
+    assert dryad._dryad_http_failure(url, 401).startswith("HTTP 401 (Dryad requires an API key")
+    # another status, or a 401 from another host, gets no hint
+    assert dryad._dryad_http_failure(url, 404) == "HTTP 404"
+    assert dryad._dryad_http_failure("https://example.com/file/1", 401) == "HTTP 401"
+    # with a key set, a 401 has another cause
+    dryad_pat("tok")
+    assert dryad._dryad_401_hint(url, 401) == ""
+
+
+def test_dryad_file_download_records_why_a_file_failed(serve: object, tmp_path: Path) -> None:
+    files = [
+        {
+            "_links": {
+                "self": {"href": f"/api/v2/files/{i}"},
+                "stash:download": {"href": f"/api/v2/files/{i}/download"},
+            },
+            "path": name,
+            "size": 2,
+        }
+        for i, name in ((1, "a.csv"), (2, "b.csv"))
+    ]
+    serve(  # type: ignore[operator]
+        {
+            "https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.k": httpx.Response(
+                200, json={"_links": {"stash:version": {"href": "/api/v2/versions/9"}}}
+            ),
+            "https://datadryad.org/api/v2/versions/9/files?per_page=100": httpx.Response(
+                200, json={"_embedded": {"stash:files": files}, "total": 2}
+            ),
+            "https://datadryad.org/api/v2/files/1/download": httpx.Response(401),
+            "https://datadryad.org/api/v2/files/2/download": httpx.Response(200, content=b"ok"),
+        }
+    )
+    with pytest.warns(UserWarning, match="1 of 2 files"):
+        dl = dryad_file_download("10.5061/dryad.k", download_to=str(tmp_path))
+    assert dl is not None and dl["downloaded"].tolist() == [False, True]
+    failed = dl.attrs["failed"]
+    assert failed["key"].tolist() == ["a.csv"]
+    assert failed["member"].isna().all()
+    assert failed["error"].iloc[0].startswith("HTTP 401 (Dryad requires an API key")
+
+
+def test_dryad_info_says_once_that_downloads_need_a_key(
+    serve: object, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from metacheck import utils
+
+    said: list[str] = []
+    monkeypatch.setattr(
+        "metacheck.archives._message", lambda *parts: said.append("".join(map(str, parts)))
+    )
+    serve({})  # type: ignore[operator]
+    with utils.local_options({"metacheck.dryad_pat.notified": None}):
+        for _ in range(2):
+            with pytest.warns(UserWarning, match="could not be found"):
+                _dryad_info("10.5061/dryad.x")
+        assert len(said) == 1 and said[0].startswith("No Dryad API key is set.")
+    # nothing to say when a key is set
+    said.clear()
+    dryad_pat("tok")
+    with utils.local_options({"metacheck.dryad_pat.notified": None}):
+        with pytest.warns(UserWarning, match="could not be found"):
+            _dryad_info("10.5061/dryad.x")
+        assert said == []
+        assert utils.get_option("metacheck.dryad_pat.notified") is True
