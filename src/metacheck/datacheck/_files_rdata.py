@@ -814,10 +814,14 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
         known = codes >= 0
         if known.any() and codes[known].max() >= len(mapping):
             raise IndexError("list index out of range")
-        out = np.full(len(codes), -1, dtype=np.int64)
-        out[known] = mapping[codes[known]]
+        mapped = np.full(len(codes), -1, dtype=np.int64)
+        mapped[known] = mapping[codes[known]]
         return pd.Series(
-            pd.Categorical.from_codes(out, categories=cats, ordered="ordered" in classes)
+            pd.Categorical.from_codes(
+                mapped,
+                categories=cats,  # type: ignore[call-overload]
+                ordered="ordered" in classes,
+            )
         )
     if t in (INTSXP, REALSXP) and "Date" in classes:
         return pd.Series(_r_dates(_r_days(v, t)), dtype=object)
