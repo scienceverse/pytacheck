@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://scienceverse.org/schema/paper.json",
+  "$id": "https://scienceverse.org/schema/paper-v10.5.json",
   "title": "Bibr Paper",
   "description": "A research paper, as processed by bibr (v10.5)",
   "type": "object",
