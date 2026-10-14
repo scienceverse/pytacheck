@@ -66,17 +66,15 @@ def test_github_tree_files_string_size_stops(review: object) -> None:
         github_tree_files("rv/tree6")
 
 
-def test_github_tree_files_vector_falls_back_to_contents(review: object) -> None:
+def test_github_tree_files_vector_is_invalid(review: object) -> None:
+    # one repository at a time: several are not an owner/repo name (metacheck
+    # d52b3fd; at the pin they fell back to the vectorised github_files())
     from metacheck.archives.github import github_tree_files
 
     out = github_tree_files(["rv/files", "rv/nope"])
-    assert out["gated"] is False
-    assert out["default_branch"] == "main"
-    assert out["license"] is None
-    files = out["files"]
-    # the vectorised github_files(): every input row kept, rv/nope unmatched
-    assert set(files["repo"].tolist()) == {"rv/files", "rv/nope"}
-    assert files.loc[files["repo"] == "rv/nope", "path"].isna().all()
+    assert out["gated"] is True
+    assert out["reason"] == "invalid or inaccessible GitHub repository"
+    assert out["files"] is None
 
 
 def test_github_info_vector_with_missing_repo_stops(review: object) -> None:
@@ -114,8 +112,9 @@ def test_gitlab_tree_files_vector(review: object) -> None:
     out = gitlab_tree_files(["rv/glp", "https://gitlab.com/rv/glp"])
     assert out["gated"] is True
     assert out["reason"] == "invalid or inaccessible GitLab repository"
-    with pytest.raises(ValueError, match="missing value"):
-        gitlab_tree_files(["rv/glp", "rv/nope"])
+    # one project at a time: several are invalid, whether or not each exists
+    # (metacheck d52b3fd; at the pin a missing one stopped with an error)
+    assert gitlab_tree_files(["rv/glp", "rv/nope"]) == out
 
 
 @pytest.mark.parametrize("module", ["gitlab", "zenodo_upload"])

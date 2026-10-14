@@ -670,7 +670,7 @@ def crossref_doi(doi: Any, select: Sequence[str] = CROSSREF_DOI_SELECT) -> pd.Da
     """Crossref info from DOIs (port of ``crossref_doi()``).
 
     *doi* may be a DOI, a list of DOIs, or a paper / paper list (their
-    ``info$doi``). Queries ``api.labs.crossref.org/works/<doi>`` politely
+    ``info$doi``). Queries ``api.crossref.org/works/<doi>`` politely
     (10 requests/s) and returns one row per DOI with the *select* fields;
     malformed DOIs get ``error = "malformed"``, failed lookups an ``error``
     message (e.g. ``"Not Found"`` or ``"HTTP 404"``).
@@ -704,10 +704,13 @@ def crossref_doi(doi: Any, select: Sequence[str] = CROSSREF_DOI_SELECT) -> pd.Da
     if valid_idx:
         email = default_email()
         urls = [
-            f"https://api.labs.crossref.org/works/{url_encode(cleaned[i], reserved=True)}?mailto={email}"
+            f"https://api.crossref.org/works/{url_encode(cleaned[i], reserved=True)}?mailto={email}"
             for i in valid_idx
         ]
-        # api.labs.crossref.org single-record lookup: polite pool allows 10 req/s
+        # api.crossref.org single-record lookup: polite pool allows 10 req/s. The
+        # production host, as crossref_query() uses and online() checks: the
+        # experimental api.labs.crossref.org mirror metacheck queried has no
+        # service guarantee (D88, metacheck #446)
         resps = http.batch_query(
             urls,
             msg="Querying CrossRef by DOI",

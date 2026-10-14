@@ -57,7 +57,8 @@ the same environment).
   [API.md](API.md#the-r-engine).
 * **The app:** "Run checks with: R metacheck 0.3.3.2 / Python 0.4.0a2 (experimental)"
   under "Read PDFs with", with R chosen; each choice names the version it runs, and so
-  does the page's title ("R metacheck 0.3.3.2 · Python 0.4.0a2 (experimental)"). It is shown where R runs metacheck; on a shared server
+  does the page's title ("R metacheck 0.3.3.2 · Python 0.4.0a2 (experimental)"). It is
+  shown where R runs metacheck; on a shared server
   (`--hosted`) only with `METACHECK_APP_R_ENGINE=on`, and `METACHECK_APP_R_ENGINE=off`
   hides it (and runs Python) anywhere. With R the page offers only R
   metacheck's checks (not `author_check`, `figure_table_refs`, `license_check` or packs)
@@ -72,5 +73,5 @@ The two engines give different results on the same paper on purpose:
 [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md) lists pytacheck's deliberate differences
 (D-entries) and the metacheck issues it fixes (U-entries). pytacheck is compared against
 the R commit in `parity/UPSTREAM.toml`; a newer R metacheck differs beyond that list
-until the next upstream sync. How the R engine shows R's results is D87. R is slower:
+until the next upstream sync. How the R engine shows R's results is D129. R is slower:
 about 2.5 to 3 times on the benchmark corpus (`docs/design/PERF_REPORT.md`).

@@ -20,6 +20,7 @@ import hashlib
 import math
 import numbers
 import os
+import re
 import shutil
 import tempfile
 import warnings
@@ -31,6 +32,7 @@ import pandas as pd
 from metacheck._r import as_character, compile_r, grepl, gsub, plural, r_round, sub
 from metacheck._values import as_float, field, is_missing
 from metacheck.archives._atomic import atomic_write
+from metacheck.archives._memo import session_memo
 
 if TYPE_CHECKING:
     import httpx
@@ -699,16 +701,19 @@ def _is_zip(name: Sequence[str | None]) -> list[bool]:
 
 
 def _zip_members(
-    url: str, dest: str, keep_types: Any, max_file_size: float | None
+    url: str, dest: str, keep_types: Any, max_file_size: float | None, size: Any = None
 ) -> pd.DataFrame | None:
     """The body shared by ``.dryad_zip_members()``, ``.figshare_zip_members()`` and
-    ``.dataverse_zip_members()``: extract the wanted members of a remote zip."""
+    ``.dataverse_zip_members()``: extract the wanted members of a remote zip.
+
+    *size*, the zip's size as the repository lists it, saves the peek a
+    ``HEAD`` request (:func:`~metacheck.archives.zip_peek.zip_peek`)."""
     from metacheck.datacheck.files import data_classify_files
 
     try:
         from metacheck.archives.zip_peek import zip_peek
 
-        listing = zip_peek(url)
+        listing = zip_peek(url, size=size)
     except Exception:  # R: tryCatch(zip_peek(url), error = \(e) NULL)
         listing = None
     if listing is None or len(listing) == 0:
@@ -735,10 +740,13 @@ def _zip_members(
     )
 
 
-def _md5sum(path: str) -> str | None:
-    """``tools::md5sum()`` of one file (``None`` when it cannot be read)."""
+def _md5sum(path: str, algorithm: str = "md5") -> str | None:
+    """``tools::md5sum()`` (or another *algorithm*'s digest) of one file.
+
+    ``None`` when the file cannot be read.
+    """
     try:
-        h = hashlib.md5(usedforsecurity=False)
+        h = hashlib.new(algorithm, usedforsecurity=False)
         with open(path, "rb") as fh:
             for chunk in iter(lambda: fh.read(1 << 20), b""):
                 h.update(chunk)
@@ -747,11 +755,15 @@ def _md5sum(path: str) -> str | None:
         return None
 
 
-def _verify_file_table(files: pd.DataFrame | None, download_to: str, typed: bool) -> Any:
+def _verify_file_table(
+    files: pd.DataFrame | None, download_to: str, typed: bool, sha256: bool = False
+) -> Any:
     """The body of the ``.<archive>_verify_downloads()`` functions.
 
     *typed*: only rows whose ``checksum_type`` is ``"md5"`` are hashed (Dryad,
     Dataverse); otherwise every 32-hex-digit ``checksum`` is (Figshare).
+    *sha256* (Dryad): a ``checksum_type`` of SHA-256 (``"sha-256"`` as Dryad
+    writes it) is checked too, against a 64-hex-digit ``checksum``.
     """
     if files is None or len(files) == 0:
         return files
@@ -793,21 +805,24 @@ def _verify_file_table(files: pd.DataFrame | None, download_to: str, typed: bool
         if "checksum" in files
         else [None] * n
     )
+    types: list[str | None] = [None] * n
     if typed:
-        types = (
-            [None if is_missing(v) else str(v) for v in files["checksum_type"].tolist()]
-            if "checksum_type" in files
-            else None
-        )
-        is_md5 = [t == "md5" for t in types] if types is not None else [False] * n
+        if "checksum_type" in files:
+            types = [None if is_missing(v) else str(v) for v in files["checksum_type"].tolist()]
+        if sha256:  # "SHA-256", "sha-256" and "sha256" name the same digest
+            types = [None if t is None else re.sub("[^a-z0-9]", "", t.lower()) for t in types]
     else:
-        is_md5 = [True] * n
-    hexlike = grepl("^[0-9a-f]{32}$", checksums, ignore_case=True)
+        types = ["md5"] * n
+    digest_len = {"md5": 32, "sha256": 64} if sha256 else {"md5": 32}
     checksum_ok: list[bool | None] = [None] * n
     for i in range(n):
-        if ok[i] and is_md5[i] and checksums[i] is not None and hexlike[i]:
-            got = _md5sum(full[i])  # type: ignore[arg-type]
-            checksum_ok[i] = got is not None and got.lower() == checksums[i].lower()  # type: ignore[union-attr]
+        want, kind = checksums[i], types[i]
+        if not ok[i] or want is None or kind not in digest_len:
+            continue
+        if re.fullmatch(f"[0-9a-fA-F]{{{digest_len[kind]}}}", want) is None:
+            continue
+        got = _md5sum(full[i], kind)  # type: ignore[arg-type]
+        checksum_ok[i] = got is not None and got.lower() == want.lower()
     ok = [o and c is not False for o, c in zip(ok, checksum_ok, strict=True)]
     if "downloaded" not in files:
         # R: `files$downloaded <- ok & files$downloaded %in% TRUE` is a length-0 value
@@ -832,11 +847,21 @@ def _fetch_file(
     target: str,
     reauth: Callable[[httpx.Response], dict[str, str] | None] | None = None,
 ) -> bool:
+    """:func:`_fetch_file_status` answered 200: the file is at *target*."""
+    return _fetch_file_status(url, headers, target, reauth) == 200
+
+
+def _fetch_file_status(
+    url: str,
+    headers: dict[str, str],
+    target: str,
+    reauth: Callable[[httpx.Response], dict[str, str] | None] | None = None,
+) -> int | None:
     """``httr2::request(url) |> <headers> |> req_timeout(600) |>
     req_error(is_error = \\(resp) FALSE) |> req_perform()``, body written to *target*.
 
-    True when the server answered 200 (the body is streamed to disk rather
-    than held in memory); request failures give False, as R's ``tryCatch``.
+    The HTTP status; on 200 the body is streamed to disk rather than held in
+    memory. A request that failed (no answer) gives ``None``, as R's ``tryCatch``.
     *reauth*, given a non-200 response, may return fresh headers to send the
     request once more with (httr2 re-authenticates once after an OAuth
     ``invalid_token`` answer). A 200 answer without a body is an empty file
@@ -848,25 +873,27 @@ def _fetch_file(
 
     from metacheck import http
 
+    status: int | None = None
     for attempt in range(2):
         try:
             with http.client().stream("GET", url, headers=headers, timeout=600) as resp:
-                if resp.status_code != 200:
+                status = resp.status_code
+                if status != 200:
                     try:
                         fresh = reauth(resp) if reauth is not None and attempt == 0 else None
                     except Exception:  # R: tryCatch(req_perform(...), error = \(e) NULL)
-                        return False
+                        return None
                     if fresh is None:
-                        return False
+                        return status
                     headers = fresh
                     continue
                 with atomic_write(target) as fh:
                     for chunk in resp.iter_bytes():
                         fh.write(chunk)
-                return True
+                return status
         except (httpx.HTTPError, httpx.StreamError, httpx.InvalidURL):
-            return False
-    return False  # pragma: no cover - the loop always returns
+            return None
+    return status  # pragma: no cover - the loop always returns
 
 
 def _inside(root: str, rel: str) -> bool:
@@ -891,6 +918,7 @@ def _download_file_table(
     verify: Callable[[pd.DataFrame, str], pd.DataFrame],
     what: str,
     reauth: Callable[[httpx.Response], dict[str, str] | None] | None = None,
+    http_failure: Callable[[str, int], str] | None = None,
 ) -> tuple[pd.DataFrame, str | None]:
     """Everything the three ``*_file_download()`` functions do after listing files.
 
@@ -900,7 +928,9 @@ def _download_file_table(
     file, copies files under their names, verifies them and warns about any
     that did not arrive. Returns the verified table and the folder; the table's
     ``attrs["failed"]`` lists the zip members that could not be extracted
-    (``key``, ``member``, ``error``; metacheck #429's ``attr(, "failed")``).
+    (``key``, ``member``, ``error``; metacheck #429's ``attr(, "failed")``),
+    and, with *http_failure*, the files whose download got an HTTP error
+    status (``member`` missing, ``error`` from ``http_failure(url, status)``).
 
     Files omitted by the size caps stay in the table with ``downloaded =
     False``, as metacheck documents (its code drops them: U36); when every
@@ -975,6 +1005,13 @@ def _download_file_table(
         downloaded = [False] * n
         extracted: list[int | None] = [None] * n
         keys = [None if is_missing(v) else str(v) for v in files["key"].tolist()]
+        # where a file goes inside the folder: ``rel`` (Figshare's folder/name)
+        # where the table has one, else its name
+        rels = (
+            [None if is_missing(v) else str(v) for v in files["rel"].tolist()]
+            if "rel" in files.columns
+            else keys
+        )
         ids = [None if is_missing(v) else str(v) for v in files["id"].tolist()]
         selfs = [None if is_missing(v) else str(v) for v in files["self"].tolist()]
         n_wanted = n - sum(omitted)
@@ -992,6 +1029,7 @@ def _download_file_table(
                         dest=download_to,
                         keep_types=unzip_types,
                         max_file_size=max_file_size,
+                        size=None if math.isnan(sizes[i]) else sizes[i],
                     )
                 except Exception:
                     got = None
@@ -1023,12 +1061,15 @@ def _download_file_table(
                 except Exception:
                     spec = None
                 if spec is not None:
-                    ok = _fetch_file(
+                    status = _fetch_file_status(
                         selfs[i],  # type: ignore[arg-type]
                         dict(spec.get("headers") or {}),
                         target,
                         reauth,
                     )
+                    ok = status == 200
+                    if status is not None and not ok and http_failure is not None:
+                        failed_rows.append((keys[i], None, http_failure(selfs[i], status)))  # type: ignore[arg-type]
             downloaded[i] = ok
             _tick(pb, f"Downloading file {k} of {n_wanted}")
 
@@ -1041,7 +1082,7 @@ def _download_file_table(
             # a file with neither a name nor an id is still copied (file.path()
             # turns NA into "NA"), but its path is recorded as NA, so the
             # verification step marks it as not downloaded.
-            fname = keys[i] if keys[i] is not None and keys[i] != "" else ids[i]
+            fname = next((x for x in (rels[i], keys[i]) if x is not None and x != ""), ids[i])
             if not _inside(download_to, _paste(fname)):
                 continue  # divergence: R would write outside the folder (e.g. "../x")
             to = f"{download_to}/{_paste(fname)}"
@@ -1217,8 +1258,8 @@ def _dataverse_host_from_doi(doi: Any) -> Any:
 
     The installation a DOI belongs to, from its verified prefix (``None`` when
     the prefix is not on the allowlist). A prefix that several installations
-    share (the four DANS Data Stations share 10.17026) is resolved by
-    following the DOI's redirect (:func:`_dataverse_resolve_doi_host`). A
+    share (the four DANS Data Stations share 10.17026) is resolved from the
+    URL the DOI is registered to (:func:`_dataverse_resolve_doi_host`). A
     string gives a string, a sequence a list.
     """
     vals, scalar = _chr_values(doi)
@@ -1234,21 +1275,6 @@ def _dataverse_host_from_doi(doi: Any) -> Any:
         else:
             out.append(_dataverse_resolve_doi_host(d, candidates))
     return out[0] if scalar else out
-
-
-def _resolved_url(url: str) -> str | None:
-    """The URL a GET of *url* ends on, after redirects; ``None`` when it cannot be sent.
-
-    R: ``tryCatch(resp_url(req_perform(req_error(request(url), is_error = \\(r) FALSE))),
-    error = \\(e) NA)`` -- one try, any status.
-    """
-    from metacheck import http
-
-    try:
-        resp = http.request("GET", url, max_tries=1)
-    except Exception:
-        return None
-    return None if resp is None else str(resp.url)
 
 
 def _bare_host(host: str) -> str:
@@ -1273,29 +1299,47 @@ def _on_host(url_host: str, host: str) -> bool:
     return url_host == h or url_host.endswith("." + h)
 
 
+#: R ``.dataverse_doi_host_cache``: lower-cased DOI -> the host it was resolved
+#: to, for the session (dataverse_links() and dataverse_info() both resolve it)
+_DOI_HOST_CACHE = session_memo()
+
+
 def _dataverse_resolve_doi_host(doi: str, candidates: Sequence[str]) -> str:
     """Port of R/archive-dataverse.R::.dataverse_resolve_doi_host().
 
-    The candidate whose host the URL ``https://doi.org/<doi>`` redirects to,
-    else the first candidate (also when the DOI cannot be resolved).
+    The candidate whose host the URL *doi* is registered to is on, else the
+    first candidate (also when the DOI cannot be looked up). The registered
+    URL is read from doi.org's handle API instead of following the DOI's
+    redirect, which also downloaded the installation's landing page (0.35 s
+    instead of 3.8 s, measured by metacheck); a definite answer is
+    remembered for the session.
 
-    R takes the first candidate whose name occurs anywhere in the resolved
-    URL (``grepl(host, resolved, fixed = TRUE)``), so with the candidates
+    R took the first candidate whose name occurs anywhere in the URL
+    (``grepl(host, resolved, fixed = TRUE)``), so with the candidates
     ``rodbuk.pl`` and ``uj.rodbuk.pl``, in that order, a dataset on
-    ``uj.rodbuk.pl`` is given ``rodbuk.pl``. Here the resolved URL's host
-    name is compared: the candidate it equals, else the longest candidate it
-    is a subdomain of (U211).
+    ``uj.rodbuk.pl`` was given ``rodbuk.pl`` (metacheck 0.3.3 compares the
+    host name exactly). Here the URL's host name is compared: the candidate
+    it equals (``www.`` aside), else the longest candidate it is a subdomain
+    of (U211).
     """
-    resolved = _resolved_url(f"https://doi.org/{doi}")
+    from metacheck.archives.dspace7 import _handle_registered_url
+
+    key = doi.lower()
+    if key in _DOI_HOST_CACHE:
+        return cast("str", _DOI_HOST_CACHE[key])
+    resolved, ok = _handle_registered_url(doi)
+    host = candidates[0]
     url_host = None if resolved is None else _url_host(resolved)
     if url_host is not None:
-        for host in candidates:
-            if _bare_host(host) == url_host:
-                return host
+        exact = [h for h in candidates if _bare_host(h) == url_host]
         parents = [h for h in candidates if _on_host(url_host, h)]
-        if parents:
-            return max(parents, key=len)
-    return candidates[0]
+        if exact:
+            host = exact[0]
+        elif parents:
+            host = max(parents, key=len)
+    if ok:
+        _DOI_HOST_CACHE[key] = host
+    return host
 
 
 @functools.cache
@@ -1796,6 +1840,7 @@ def _dataverse_zip_members(
     dest: str,
     keep_types: Any = ("data", "documentation"),
     max_file_size: float | None = 10,
+    size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-dataverse.R::.dataverse_zip_members(): extract wanted zip members.
 
@@ -1804,8 +1849,10 @@ def _dataverse_zip_members(
     *max_file_size* MB into *dest*. Returns one row per member (``name``,
     ``path``, ``size``, ``ok``), or ``None`` when the archive cannot be listed
     (the caller then downloads it whole).
+    *size*, the zip's size as the listing gives it, saves the peek a ``HEAD``
+    request.
     """
-    return _zip_members(url, dest, keep_types, max_file_size)
+    return _zip_members(url, dest, keep_types, max_file_size, size)
 
 
 def _dataverse_verify_downloads(files: pd.DataFrame | None, download_to: str) -> Any:

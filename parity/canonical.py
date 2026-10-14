@@ -89,8 +89,15 @@ class Spellings:
     @cached_property
     def plain_json(self) -> tuple[tuple[bytes, bytes], ...]:
         """The plain substitutions (links, then roots) in canonical JSON."""
-        pairs = [*self.links, *((r, "<repo>") for r in self.roots)]
+        pairs = [*self.links, *((r, "<repo>") for r in self.roots), *self.slugs]
         return tuple((_in_json(a), b.encode()) for a, b in pairs)
+
+    @cached_property
+    def slugs(self) -> tuple[tuple[str, str], ...]:
+        """The roots as a report heading id writes them (``_report_title_slug()``:
+        lower case, only ``a-z0-9_-``), which a module titled by its file path gets."""
+        found = {re.sub(r"[^a-z0-9_-]", "", r.lower()) for r in self.roots}
+        return tuple((s, "repo") for s in sorted(found, key=len, reverse=True) if len(s) >= 8)
 
     @cached_property
     def aliases_json(self) -> tuple[bytes, ...]:
@@ -108,6 +115,8 @@ class Spellings:
             value = value.replace(a, b)
         for r in self.roots:
             value = value.replace(r, "<repo>")
+        for a, b in self.slugs:
+            value = value.replace(a, b)
         if self.alias_pattern is not None:
             value = self.alias_pattern.sub("<repo>", value)
         return value

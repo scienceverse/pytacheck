@@ -165,7 +165,7 @@
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"]}
 - "id": "all_urls.debruine"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "Only the text read from the TEI differs ('24 July 2025', metacheck '24 July2025'; io fix of the number-before-tag clean-up)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "Only the text read from the TEI differs ('24 July 2025', metacheck '24 July2025'; io fix of the number-before-tag clean-up); the line-wrapped 'http://dx.doi. org/10.1098/rspb.2004.3003' is one URL (U219; metacheck lists 'http://dx.doi')."}
   "module": "all_urls"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"]}

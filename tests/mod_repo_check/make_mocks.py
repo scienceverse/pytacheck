@@ -376,13 +376,30 @@ def copy_recorded() -> None:
             print("copied", f.relative_to(ROOT))
 
 
+def github() -> None:
+    # the API's answer for a repository that does not exist: since metacheck
+    # d52b3fd, github_tree_files() asks the API without a github.com HEAD first
+    # (metacheck at the pin stops at the recorded HEAD and never asks)
+    url = "https://api.github.com/repos/scienceverse/norepo"
+    write(
+        "api.github.com/repos/scienceverse/norepo.R",
+        r_response("GET", url, 404, '{"message":"Not Found","status":"404"}'),
+    )
+
+
 def main() -> None:
+    github()
     osf()
     dspace()
     zenodo()
     dataone()
     researchbox()
     copy_recorded()
+    # pytacheck's one-request DSpace lookups (as by an installation that
+    # ignores expand/embed), which go on to the recorded requests R makes
+    from tests.archives_d2.make_mocks import write_pytacheck_variants
+
+    write_pytacheck_variants(MOCKS)
 
 
 if __name__ == "__main__":

@@ -330,6 +330,12 @@ def test_the_report_file_is_html_under_the_report_policy(tmp_path: Path) -> None
     saved = result.report_path.read_text(encoding="utf-8")
     assert saved.strip() == pk.protect(result.html).strip()
     assert "Content-Security-Policy" in saved
+    # the static copy to send by email
+    assert result.simple_path == tmp_path / "out" / "study1_report_simple.html"
+    assert "<script" not in result.simple_html and "study1" in result.simple_html
+    assert result.simple_path.read_text(encoding="utf-8").strip() == (
+        pk.protect(result.simple_html).strip()
+    )
     assert "Content-Security-Policy" not in result.html
     # the report is not one of the package's files
     assert not list(root.rglob("*report*"))
@@ -749,6 +755,7 @@ def test_the_page_runs_a_folder_through_the_app(tmp_path: Path) -> None:
         assert {row[2] for row in checklist["data"]} >= {"Pass", "Warning"}
         assert checklist["headers"] == pk.CHECKLIST_COLUMNS
         assert 'href="/report/p1package/study1_report.html"' in download
+        assert 'href="/report/p1package/study1_report_simple.html"' in download
         assert "<iframe" in frame and "sandbox" in frame
         # the report downloads from the app's own folder, under a sandbox policy
         got = tc.get("/report/p1package/study1_report.html")

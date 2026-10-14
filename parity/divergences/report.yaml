@@ -1,0 +1,280 @@
+# Cases that differ from R at the pin (f1062b4) because pytacheck follows metacheck's dev
+# branch (f1062b4..d52b3fd) in the report lane: the report layout and report types (PR #463,
+# D115), psychds_file_plan() (029bf63, D116), codebook_check's experimental
+# scale/task identification behind extract_scales (029bf63, 7208868; D117) and
+# code_check's summary (7208868, D118). Format (see parity/cases.py): "<area>/<id>":
+# {kind, ref, reason[, r_text]}; the refs are placeholders, renumbered into D-entries of
+# docs/UPSTREAM_ISSUES.md when the port is merged.
+
+
+# D115 -------------------------------------------------------------------------
+"mod_p_values_review/module_report.all_p_values.info": &dx_report_2_1
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>"
+  r_text: [["<summary>View detailed feedback</summary><div>", "<summary>View detailed feedback</summary>"], ["</div></details>", "</details>"]]
+"report/module_report.validation.hits": *dx_report_2_1
+"report/module_report.validation.none": *dx_report_2_1
+"mod_p_values_review/module_report.stat_p_nonsig.green":
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): How It Works links the module's chapter of the metacheck manual"
+  r_text: [["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-stat-p-nonsig.html).\n\n\\g<2>", "regex"]]
+"mod_p_values_review/module_report.stat_p_nonsig.yellow":
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual"
+  r_text: [["<summary>View detailed feedback</summary><div>", "<summary>View detailed feedback</summary>"], ["</div></details>", "</details>"], ["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-stat-p-nonsig.html).\n\n\\g<2>", "regex"]]
+"mod_prereg/prereg_check.report.demo": &dx_report_2_2
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual"
+  r_text: [["<summary>View detailed feedback</summary><div>", "<summary>View detailed feedback</summary>"], ["</div></details>", "</details>"], ["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-prereg-check.html).\n\n\\g<2>", "regex"]]
+"mod_prereg_review/prereg_check.report.no_sample_size": *dx_report_2_2
+"mod_prereg/prereg_check.report.inaccessible": &dx_report_2_3
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): How It Works links the module's chapter of the metacheck manual"
+  r_text: [["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-prereg-check.html).\n\n\\g<2>", "regex"]]
+"mod_prereg/prereg_check.report.no_links": *dx_report_2_3
+"mod_reg/reg_check.report.demo": &dx_report_2_4
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual"
+  r_text: [["<summary>View detailed feedback</summary><div>", "<summary>View detailed feedback</summary>"], ["</div></details>", "</details>"], ["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-reg-check.html).\n\n\\g<2>", "regex"]]
+"mod_reg_review/reg_check.review.http.success.report": *dx_report_2_4
+"mod_reg_review/reg_check.review.na_id.first.report": *dx_report_2_4
+"mod_reg/reg_check.report.no_links":
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): How It Works links the module's chapter of the metacheck manual"
+  r_text: [["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-reg-check.html).\n\n\\g<2>", "regex"]]
+"mod_repo_check/repo_check.report.osf_github": &dx_report_2_5
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual"
+  r_text: [["<summary>View detailed feedback</summary><div>", "<summary>View detailed feedback</summary>"], ["</div></details>", "</details>"], ["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-repo-check.html).\n\n\\g<2>", "regex"]]
+"mod_repo_check_review/repo_check.local.edat_many.report": *dx_report_2_5
+"mod_repo_check_review/repo_check.local.edat_one": *dx_report_2_5
+"mod_repo_check_review/repo_check.local.suggest_only.report": *dx_report_2_5
+"mod_repo_check_review/repo_check.local.unknown_many.report": *dx_report_2_5
+"mod_repo_check_review/repo_check.osf.reg.closed_parent_linked.report": *dx_report_2_5
+"mod_repo_check_review/repo_check.zenodo.peek_rich.report": *dx_report_2_5
+"report/module_report.marginal.demo": &dx_report_2_6
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual; r_text also corrects U3 (the guidance cites \"Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)\" (metacheck: \"Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH\"))"
+  r_text: [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"], ["<summary>View detailed feedback</summary><div>", "<summary>View detailed feedback</summary>"], ["</div></details>", "</details>"], ["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-marginal.html).\n\n\\g<2>", "regex"]]
+"report/module_report.marginal.header0": *dx_report_2_6
+"report/module_report.marginal.header4": *dx_report_2_6
+"report/module_report.marginal.header_null": *dx_report_2_6
+"report/module_report.marginal.header_1_and_6": &dx_report_2_7
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): How It Works links the module's chapter of the metacheck manual"
+  r_text: [["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-marginal.html).\n\n\\g<2>", "regex"]]
+"report/module_report.marginal.header_custom": *dx_report_2_7
+"report/module_report.marginal.none": *dx_report_2_7
+"report/report.qmd.args": &dx_report_2_8
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's report layout (PR #463): the summary lists each module as a linked row (<ul class=\"mc-summary\">), a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual, and the stylesheet changed; also U3: the guidance cites \"Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)\" (metacheck: \"Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH\")"
+"report/report.qmd.demo": *dx_report_2_8
+"report/report_qmd.demo.marginal": *dx_report_2_8
+"report_review/report_qmd.demo.real_modules": *dx_report_2_8
+"report_review/report_qmd.title_doi_fail_summary": *dx_report_2_8
+"report/report_qmd.test_paper.na_and_fail_only": &dx_report_2_9
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's report layout (PR #463): the summary lists each module as a linked row (<ul class=\"mc-summary\">), a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual, and the stylesheet changed"
+"report_review/report.paperlist.bad_file": *dx_report_2_9
+"report_review/report.paperlist.length_one": *dx_report_2_9
+"report_review/report_qmd.na_title_blank_doi": *dx_report_2_9
+"report_review/module_report.header_values": &dx_report_2_10
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): a run of spaces in the title is one hyphen in the heading id"
+  r_text: [["#flexible--module", "#flexible-module"]]
+"report_review/module_report.report_blank_vector": *dx_report_2_10
+"report_review/module_report.summary_recycled_equal": *dx_report_2_10
+"report_review/module_report.summary_vector_differs": *dx_report_2_10
+"report_review/module_report.summary_vector_equal": *dx_report_2_10
+"report_review/module_report.two_validations_four_authors": *dx_report_2_10
+"report_review/module_report.length_threshold":
+  kind: deliberate
+  ref: D115
+  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>, a run of spaces in the title is one hyphen in the heading id"
+  r_text: [["<summary>View detailed feedback</summary><div>", "<summary>View detailed feedback</summary>"], ["</div></details>", "</details>"], ["#flexible--module", "#flexible-module"]]
+
+# D116 -------------------------------------------------------------------------
+"mod_psychds/psychds_check.bibr12_mixed": &dx_report_3_11
+  kind: deliberate
+  ref: D116
+  reason: "psychds_check's table is psychds_file_plan()'s and its report no longer points to convert_psychds()/convert_codebook() (metacheck 029bf63)"
+"mod_psychds/psychds_check.tree": *dx_report_3_11
+"mod_psychds/psychds_check.yellow_six": *dx_report_3_11
+"mod_psychds/psychds_check.yellow_six.llm_use_true": *dx_report_3_11
+"mod_psychds_review/psychds_check.review.dup_targets": *dx_report_3_11
+"mod_psychds_review/psychds_check.review.icu_names": *dx_report_3_11
+"mod_psychds_review/psychds_check.review.multi_odd_groups": *dx_report_3_11
+"mod_psychds_review/psychds_check.review.one_file": *dx_report_3_11
+"mod_repro/reproducibility_check.ok_noplan":
+  kind: deliberate
+  ref: D116
+  reason: "without psychds_check's output, reproducibility_check builds the Psych-DS plan with psychds_file_plan() (metacheck 029bf63), so 1 referenced data path would be rewritten (metacheck at the pin: 0)"
+
+# D117 -------------------------------------------------------------------------
+"mod_codebook/codebook_check.bibr12_scales": &dx_report_4_12
+  kind: deliberate
+  ref: D117
+  reason: "codebook_check identifies scales and tasks only with extract_scales = TRUE (off by default), says it is not validated, and its summary no longer counts documented variables missing from the data (metacheck 029bf63, 7208868)"
+"mod_codebook/codebook_check.bibr12_task": *dx_report_4_12
+"mod_codebook/codebook_check.conflict": *dx_report_4_12
+"mod_codebook/codebook_check.demo": *dx_report_4_12
+"mod_codebook/codebook_check.downgrade": *dx_report_4_12
+"mod_codebook/codebook_check.dup": *dx_report_4_12
+"mod_codebook/codebook_check.green": *dx_report_4_12
+"mod_codebook/codebook_check.haven": *dx_report_4_12
+"mod_codebook/codebook_check.jasp_omv": *dx_report_4_12
+"mod_codebook/codebook_check.llm.bibr12": *dx_report_4_12
+"mod_codebook/codebook_check.llm.demo": *dx_report_4_12
+"mod_codebook/codebook_check.llm.errors": *dx_report_4_12
+"mod_codebook/codebook_check.llm.match": *dx_report_4_12
+"mod_codebook/codebook_check.llm.panas": *dx_report_4_12
+"mod_codebook/codebook_check.llm.scales": *dx_report_4_12
+"mod_codebook/codebook_check.llm.tables.scales": *dx_report_4_12
+"mod_codebook/codebook_check.llm.task": *dx_report_4_12
+"mod_codebook/codebook_check.llm.zero_calls": *dx_report_4_12
+"mod_codebook/codebook_check.loop": *dx_report_4_12
+"mod_codebook/codebook_check.merge": *dx_report_4_12
+"mod_codebook/codebook_check.misalign": *dx_report_4_12
+"mod_codebook/codebook_check.missing_codes": *dx_report_4_12
+"mod_codebook/codebook_check.multifile": *dx_report_4_12
+"mod_codebook/codebook_check.nocb": *dx_report_4_12
+"mod_codebook/codebook_check.norange": *dx_report_4_12
+"mod_codebook/codebook_check.orphan": *dx_report_4_12
+"mod_codebook/codebook_check.panas_high": *dx_report_4_12
+"mod_codebook/codebook_check.paperlist_scales": *dx_report_4_12
+"mod_codebook/codebook_check.partial": *dx_report_4_12
+"mod_codebook/codebook_check.pl_a": *dx_report_4_12
+"mod_codebook/codebook_check.pl_b": *dx_report_4_12
+"mod_codebook/codebook_check.psychsci": *dx_report_4_12
+"mod_codebook/codebook_check.qualtrics": *dx_report_4_12
+"mod_codebook/codebook_check.range": *dx_report_4_12
+"mod_codebook/codebook_check.readme_text": *dx_report_4_12
+"mod_codebook/codebook_check.rulesonly": *dx_report_4_12
+"mod_codebook/codebook_check.scales_mixed": *dx_report_4_12
+"mod_codebook/codebook_check.scope": *dx_report_4_12
+"mod_codebook/codebook_check.tables.jasp_omv": *dx_report_4_12
+"mod_codebook/codebook_check.tables.loop": *dx_report_4_12
+"mod_codebook/codebook_check.tables.panas_high": *dx_report_4_12
+"mod_codebook/codebook_check.tables.qualtrics": *dx_report_4_12
+"mod_codebook/codebook_check.tables.scales_mixed": *dx_report_4_12
+"mod_codebook/codebook_check.task": *dx_report_4_12
+"mod_codebook/codebook_check.task_medium": *dx_report_4_12
+"mod_codebook/codebook_check.taskonly": *dx_report_4_12
+"mod_codebook/codebook_check.unused": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.loop.max_calls_1": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.loop.max_calls_2": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.osd_attrs.panas_high": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.osd_attrs.rv_dupscale": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.osd_attrs.rv_maxitem": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.osd_attrs.scales_mixed": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.pl_scales": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.pl_scales.max_calls_2": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.rv_maxitem": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.tables.rv_dupscale": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm.tables.rv_maxitem": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd.fuzzy": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd.psychsci": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd.rv_maxitem": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd_na.fuzzy": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd_na.panas_high": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd_na.rv_maxitem": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd_na.scales_mixed": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd_selfgen.loop": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd_selfgen.psychsci": *dx_report_4_12
+"mod_codebook_review/codebook_check.llm_odd_selfgen.rv_qblock": *dx_report_4_12
+"mod_codebook_review/codebook_check.null_paper.green": *dx_report_4_12
+"mod_codebook_review/codebook_check.osd_attrs.loop": *dx_report_4_12
+"mod_codebook_review/codebook_check.osd_attrs.panas_high": *dx_report_4_12
+"mod_codebook_review/codebook_check.osd_attrs.rv_dupscale": *dx_report_4_12
+"mod_codebook_review/codebook_check.osd_attrs.rv_maxitem": *dx_report_4_12
+"mod_codebook_review/codebook_check.osd_attrs.scales_mixed": *dx_report_4_12
+"mod_codebook_review/codebook_check.pl_scales": *dx_report_4_12
+"mod_codebook_review/codebook_check.rv_maxitem": *dx_report_4_12
+"mod_codebook_review/codebook_check.rv_qblock": *dx_report_4_12
+"mod_codebook_review/codebook_check.rv_round_low": *dx_report_4_12
+"mod_codebook_review/codebook_check.rv_round_mid": *dx_report_4_12
+"mod_codebook_review/codebook_check.rv_sort": *dx_report_4_12
+"mod_codebook_review/codebook_check.rv_task_none": *dx_report_4_12
+"mod_codebook_review/codebook_check.rv_violations": *dx_report_4_12
+"mod_codebook_review/codebook_check.tables.rv_dupscale": *dx_report_4_12
+"mod_codebook_review/codebook_check.tables.rv_maxitem": *dx_report_4_12
+
+# D118 -------------------------------------------------------------------------
+"mod_code/code_check.all_failed": &dx_report_5_13
+  kind: deliberate
+  ref: D118
+  reason: "code_check's summary names the files without comments and the files that load libraries in several places, and lists setwd()/install.packages() lines only when found (metacheck 7208868)"
+"mod_code/code_check.code_files": *dx_report_5_13
+"mod_code/code_check.code_files_no_download": *dx_report_5_13
+"mod_code/code_check.demo_code": *dx_report_5_13
+"mod_code/code_check.docstring": *dx_report_5_13
+"mod_code/code_check.docstring1": *dx_report_5_13
+"mod_code/code_check.download": *dx_report_5_13
+"mod_code/code_check.download_budget": *dx_report_5_13
+"mod_code/code_check.download_no_download": *dx_report_5_13
+"mod_code/code_check.duplicates": *dx_report_5_13
+"mod_code/code_check.empty_files": *dx_report_5_13
+"mod_code/code_check.expand": *dx_report_5_13
+"mod_code/code_check.green": *dx_report_5_13
+"mod_code/code_check.groundhog": *dx_report_5_13
+"mod_code/code_check.jasp_only": *dx_report_5_13
+"mod_code/code_check.library_only": *dx_report_5_13
+"mod_code/code_check.na_repo": *dx_report_5_13
+"mod_code/code_check.no_location": *dx_report_5_13
+"mod_code/code_check.paperlist_pins": *dx_report_5_13
+"mod_code/code_check.session": *dx_report_5_13
+"mod_code/code_check.some_failed": *dx_report_5_13
+"mod_code/code_check.structure": *dx_report_5_13
+"mod_code/code_check.urls": *dx_report_5_13
+"mod_code/code_check.windows": *dx_report_5_13
+"mod_code_review/code_check.blank_only": *dx_report_5_13
+"mod_code_review/code_check.dashes": *dx_report_5_13
+"mod_code_review/code_check.dupname_rev": *dx_report_5_13
+"mod_code_review/code_check.edge": *dx_report_5_13
+"mod_code_review/code_check.emptyloc": *dx_report_5_13
+"mod_code_review/code_check.i18n": *dx_report_5_13
+"mod_code_review/code_check.locs": *dx_report_5_13
+"mod_code_review/code_check.locs_no_download": *dx_report_5_13
+"mod_code_review/code_check.mixed_repo": *dx_report_5_13
+"mod_code_review/code_check.na_pid_pin_rev": *dx_report_5_13
+"mod_code_review/code_check.nochunk_only": *dx_report_5_13
+"mod_code_review/code_check.nopin": *dx_report_5_13
+"mod_code_review/code_check.paperlist_jasp": *dx_report_5_13
+"mod_code_review/code_check.pins": *dx_report_5_13
+"mod_code_review/code_check.pins_empty": *dx_report_5_13
+"mod_code_review/code_check.pins_one": *dx_report_5_13
+"mod_code_review/code_check.pkgs": *dx_report_5_13
+"mod_code_review/code_check.refs": *dx_report_5_13
+"mod_code_review/local_path.clean_pinned": *dx_report_5_13
+"mod_code_review/local_path.code_files": *dx_report_5_13
+"mod_code_review/local_path.empty_py": *dx_report_5_13
+"mod_code_review/local_path.parse_error_pinned": *dx_report_5_13
+"mod_code_review/local_path.pins": *dx_report_5_13
+"report/report_repository.default_modules":
+  kind: deliberate
+  ref: D118
+  reason: "code_check's summary names the files without comments and the files that load libraries in several places, and lists setwd()/install.packages() lines only when found (metacheck 7208868); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)"
+"mod_code/code_check.mixed": &dx_report_5_14
+  kind: deliberate
+  ref: D118
+  reason: "code_check's summary names the files without comments and the files that load libraries in several places, and lists setwd()/install.packages() lines only when found (metacheck 7208868); also U82: one file with libraries at several places is \"In 1 code file\" (metacheck: \"In 1 code files\")"
+"mod_code/code_check.paperlist": *dx_report_5_14
+"mod_code/code_check.parse_errors": *dx_report_5_14
+"mod_code/code_check.psychsci": *dx_report_5_14
+"mod_code_review/code_check.gaps": *dx_report_5_14
+"mod_code_review/code_check.na_pid": *dx_report_5_14
+"mod_code_review/local_path.mixed_local_only": *dx_report_5_14
+"mod_code_review/local_path.parse_errors": *dx_report_5_14

@@ -89,6 +89,8 @@ _EXPORTS: dict[str, str] = {
     "file_types": "metacheck.fileinfo.types",
     "scales": "metacheck.datacheck.scales",
     "tasks": "metacheck.datacheck.tasks",
+    # Psych-DS layout of a repository's files
+    "psychds_file_plan": "metacheck.datacheck.psychds",
     # reports and validation
     "module_report": "metacheck.report.report",
     "report": "metacheck.report.report",
@@ -96,6 +98,7 @@ _EXPORTS: dict[str, str] = {
     "report_qmd": "metacheck.report.report",
     "report_repository": "metacheck.report.report",
     "report_table": "metacheck.report.blocks",
+    "report_type": "metacheck.report.blocks",
     "accuracy": "metacheck.validate",
     "validate": "metacheck.validate",
     # statistics
@@ -443,6 +446,7 @@ def __dir__() -> list[str]:
 
 if TYPE_CHECKING:  # pragma: no cover
     from metacheck.config import cache_dir, email, verbose
+    from metacheck.datacheck.psychds import psychds_file_plan
     from metacheck.datacheck.scales import scales
     from metacheck.datacheck.tasks import tasks
     from metacheck.fileinfo.types import file_types
@@ -497,7 +501,7 @@ if TYPE_CHECKING:  # pragma: no cover
     )
     from metacheck.presets import preset, preset_list
     from metacheck.provenance import ModuleChain, RunRecord, rerun, run_modules
-    from metacheck.report.blocks import report_table
+    from metacheck.report.blocks import report_table, report_type
     from metacheck.report.emojis import emojis
     from metacheck.report.report import (
         module_report,

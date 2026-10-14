@@ -377,7 +377,30 @@ def github_repo(repo: Any) -> Any:
         if len(items) > 1:
             return [github_repo(r) for r in items]
         repo = items[0]
-    if is_missing(repo):
+    simple_repo = _github_repo_name(repo)
+    if simple_repo is None:
+        return None
+
+    resp = _perform("HEAD", f"https://github.com/{simple_repo}")
+    if resp.status_code != 200:
+        return None
+    return simple_repo
+
+
+def _github_repo_name(repo: Any) -> str | None:
+    """The ``owner/repo`` text of a GitHub URL or bare mention, without a request.
+
+    Port of R/archive-github.R::.github_repo_name(). :func:`github_repo` adds a
+    ``HEAD`` request to the github.com page; a caller whose next request is to
+    the API about the same repository gets the same answer from the API's 404.
+    ``None`` when no ``owner/repo`` pattern is found (single values only).
+    """
+    if _is_vector(repo):
+        items = _as_list(repo)
+        if len(items) != 1:
+            return None
+        repo = items[0]
+    if repo is None or is_missing(repo):
         return None
 
     from metacheck._r import as_character, regexec, sub
@@ -386,12 +409,7 @@ def github_repo(repo: Any) -> Any:
     match = regexec(_REPO_REGEX, text, perl=True, ignore_case=True)
     if not match:
         return None
-    simple_repo = sub(r"\.git$", "", match[0])
-
-    resp = _perform("HEAD", f"https://github.com/{simple_repo}")
-    if resp.status_code != 200:
-        return None
-    return simple_repo
+    return str(sub(r"\.git$", "", match[0]))
 
 
 # gitcreds::gitcreds_get() caches the token for the session (in an env var)
@@ -667,18 +685,22 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
     tree), ``reason``, ``files`` (``repo``, ``clean_repo``, ``name``,
     ``path``, ``download_url``, ``size``, ``type``; ``None`` when not
     fetched), ``default_branch`` and ``license`` (the SPDX id GitHub
-    detected). When the metadata or tree request fails, falls back to the
-    recursive :func:`github_files` listing.
+    detected). The API answers whether the repository exists (a 404 is
+    reported as invalid or inaccessible), so no ``HEAD`` request goes to the
+    github.com page first. When the metadata or tree request fails otherwise
+    (a rate limit, a server error), falls back to the recursive
+    :func:`github_files` listing.
     """
-    clean_repo = github_repo(repo)
+    invalid = {
+        "gated": True,
+        "reason": "invalid or inaccessible GitHub repository",
+        "files": None,
+        "default_branch": None,
+        "license": None,
+    }
+    clean_repo = _github_repo_name(repo)
     if clean_repo is None:
-        return {
-            "gated": True,
-            "reason": "invalid or inaccessible GitHub repository",
-            "files": None,
-            "default_branch": None,
-            "license": None,
-        }
+        return invalid
 
     def fallback(default_branch: str, license: str | None) -> dict[str, Any]:
         try:
@@ -693,11 +715,6 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
             "license": license,
         }
 
-    if isinstance(clean_repo, list):
-        # several repositories: R's request() refuses a vector of URLs, and
-        # the error sends it to the github_files() fallback
-        return fallback("main", None)
-
     # 1. repository metadata (default branch + detected licence)
     try:
         meta_resp = _perform(
@@ -705,6 +722,10 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         )
     except Exception:
         meta_resp = None
+    # 404: no such repository, or a private one the token cannot see. Any other
+    # failure says nothing about the repository, so the contents crawl is tried.
+    if meta_resp is not None and meta_resp.status_code == 404:
+        return invalid
     if meta_resp is None or meta_resp.status_code != 200:
         return fallback("main", None)
 

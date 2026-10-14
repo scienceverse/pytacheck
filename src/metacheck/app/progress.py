@@ -15,6 +15,7 @@ waits. Nothing here imports gradio.
 from __future__ import annotations
 
 import html
+import math
 import re
 import threading
 import time
@@ -105,7 +106,8 @@ def _phase(period: float) -> str:
     The page replaces the steps each time they are drawn, which would start every animation
     again; begun at the same point of the clock, it runs on as if it had never stopped.
     """
-    return f"animation-delay:-{time.time() % period:.2f}s"
+    # rounded down: rounding to nearest turns 1.597 of a 1.6 s period into 1.60
+    return f"animation-delay:-{math.floor(time.time() % period * 100) / 100:.2f}s"
 
 
 @dataclass

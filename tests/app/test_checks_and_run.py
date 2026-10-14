@@ -93,6 +93,11 @@ def test_demo_run(tmp_path: Path) -> None:
     assert analysis.report_path == tmp_path / "out" / "to_err_is_human_report.html"
     saved = analysis.report_path.read_text(encoding="utf-8")
     assert saved.strip() == run.protect(analysis.html).strip()  # the report, under its policy
+    # and its static copy, to send by email: no script, every table row shown
+    assert analysis.simple_path == tmp_path / "out" / "to_err_is_human_report_simple.html"
+    simple = analysis.simple_path.read_text(encoding="utf-8")
+    assert simple.strip() == run.protect(analysis.simple_html).strip()
+    assert "<script" not in analysis.simple_html and 'class="dt-static"' in analysis.simple_html
     assert analysis.seconds < 10
 
 
@@ -370,6 +375,8 @@ def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     assert "srcdoc=" in frame
     assert 'href="/report/abc123/to_err_is_human_report.html"' in download
     assert "Download the report" in download
+    assert 'href="/report/abc123/to_err_is_human_report_simple.html"' in download
+    assert "Download for email (no script)" in download
     assert list(
         on_demo(False, False, "grobid", "", False, None, "", "", True, "python", request)
     )  # again

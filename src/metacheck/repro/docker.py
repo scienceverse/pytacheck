@@ -63,15 +63,26 @@ from metacheck.repro.core import (
 __all__ = [
     "repro_docker_available",
     "repro_install_deps_docker",
+    "repro_install_deps_py_docker",
     "repro_run_scripts_docker",
+    "repro_run_scripts_py_docker",
 ]
 
 #: The non-root uid:gid of R's backend (``.repro_docker_uid``). Here it is what a container runs
 #: as unless :func:`_repro_docker_user` finds the host's own to be a better one.
 _REPRO_DOCKER_UID = "1000:1000"
 
-#: The pre-built metacheck image with ~750 common packages (``.repro_docker_default_image``).
-_REPRO_DOCKER_DEFAULT_IMAGE = "ghcr.io/scienceverse/metacheck_r:latest"
+#: The pre-built metacheck R image (``.repro_docker_default_image``): the ~750 packages most
+#: common in papers' R code, with JAGS, a JDK and the GDAL/GEOS/PROJ stack. The more the image
+#: has, the less the install phase (the one with network) has to fetch. Built from
+#: https://github.com/scienceverse/metacheck_docker_reproducibility, as the two below.
+_REPRO_DOCKER_DEFAULT_IMAGE = "ghcr.io/scienceverse/metacheck_r_large:latest"
+
+#: The pre-built metacheck Python image (``.repro_docker_default_image_py``): the ~45
+#: packages most common in papers' Python code (numpy, pandas, scipy, matplotlib, seaborn,
+#: scikit-learn, statsmodels, ...). ``metacheck_py_large`` adds torch, tensorflow and ~70
+#: more, at ~8 GB.
+_REPRO_DOCKER_DEFAULT_IMAGE_PY = "ghcr.io/scienceverse/metacheck_py_small:latest"
 
 
 def _docker(
@@ -756,6 +767,237 @@ def repro_run_scripts_docker(
             rows.append(
                 _run_row(fn, "ran_ok", "", None, None, so, se, elapsed, exec_lines, captures)
             )
+    finally:
+        bar.terminate()
+    return _run_frame(rows)
+
+
+# ---------------------------------------------------------------------------
+# Python (port of R/reproducibility_check_python_docker.R)
+# ---------------------------------------------------------------------------
+
+#: The install driver a :func:`repro_install_deps_py_docker` container runs: one ``pip install``
+#: per requirement (``pip install a b`` stops at the first that fails), a JSON line after each
+#: one, so a timeout still reports what finished. metacheck's driver is a shell script that
+#: prints the JSON with ``printf``, which a quote in pip's message breaks.
+_PY_INSTALL_DRIVER = """\
+import json, os, subprocess, sys
+reqs = json.load(open("/sandbox/requirements.json", encoding="utf-8"))
+env = dict(os.environ, PIP_DISABLE_PIP_VERSION_CHECK="1", PIP_NO_INPUT="1")
+with open("/sandbox/.install_results.jsonl", "a", encoding="utf-8") as out:
+    for r in reqs:
+        p = subprocess.run(
+            [sys.executable, "-m", "pip", "install", "--quiet", "--no-cache-dir",
+             "--target", "/pylib", r["requirement"]],
+            stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, env=env)
+        msg = "" if p.returncode == 0 else p.stderr.decode("utf-8", "replace").strip()
+        out.write(json.dumps({"package": r["package"], "installed": p.returncode == 0,
+                              "message": msg}) + "\\n")
+        out.flush()
+"""
+
+
+def _read_py_install_results(path: str) -> dict[str, tuple[bool, str]]:
+    """The JSON lines the install driver wrote: the complete ones (a killed run cuts the last)."""
+    import json
+
+    out: dict[str, tuple[bool, str]] = {}
+    for line in _read_lines(path):
+        try:
+            rec = json.loads(line)
+            out.setdefault(str(rec["package"]), (bool(rec["installed"]), str(rec["message"])))
+        except (ValueError, KeyError, TypeError):
+            continue
+    return out
+
+
+def repro_install_deps_py_docker(
+    install_deps: pd.DataFrame | None,
+    lib_dir: str | os.PathLike[str],
+    image: str = _REPRO_DOCKER_DEFAULT_IMAGE_PY,
+    timeout: float = 600,
+) -> pd.DataFrame:
+    """Install Python dependencies inside a throwaway Docker container.
+
+    Port of ``R/reproducibility_check_python_docker.R::repro_install_deps_py_docker()``:
+    one container (default network, since PyPI must be reachable; non-root, no
+    capabilities) runs ``pip install --target /pylib`` for each requirement, into *lib_dir*
+    mounted at ``/pylib``. It sees its driver, the requirements and the library, never the
+    paper's data. A dependency without a result (the run timed out or failed) is recorded
+    as not installed, with the run's message. Same columns as
+    :func:`~metacheck.repro.python.repro_install_deps_py`.
+    """
+    import json
+
+    from metacheck.repro.python import _install_rows, _requirements
+
+    if install_deps is None or len(install_deps) == 0:
+        return _install_rows([], [], [], [])
+    lib = os.fspath(lib_dir)
+    os.makedirs(lib, exist_ok=True)
+    pkgs = _chr_list(install_deps["package"])
+    srcs = _chr_list(install_deps["source"])
+    reqs = [
+        {"package": p, "requirement": r}
+        for p, r in zip(pkgs, _requirements(install_deps), strict=True)
+    ]
+
+    sandbox_dir = tempfile.mkdtemp(prefix="repro_docker_install_py_")
+    out_fd, out_file = tempfile.mkstemp(suffix=".out")
+    os.close(out_fd)
+    try:
+        Path(sandbox_dir, "install.py").write_text(_PY_INSTALL_DRIVER, encoding="utf-8")
+        Path(sandbox_dir, "requirements.json").write_text(json.dumps(reqs), encoding="utf-8")
+        _repro_docker_hand_over(sandbox_dir)
+        _repro_docker_hand_over(lib, tree=False)
+        container_name = _repro_docker_container_name()
+        args = [
+            "run", "--rm", "--name", container_name,
+            "--user", _repro_docker_user(),
+            "--cap-drop", "ALL",
+            "--security-opt", "no-new-privileges",
+            "--pids-limit", "512",
+            *_repro_docker_resource_args(),
+            "-e", "HOME=/tmp",
+            "-v", f"{sandbox_dir}:/sandbox",
+            "-v", f"{_normalize_path(lib)}:/pylib",
+            image, "python", "/sandbox/install.py",
+        ]  # fmt: skip
+        raw = _docker(args, timeout=timeout, stdout=out_file, merge_stderr=True)
+        res = None if isinstance(raw, Exception) else raw
+        if res is None or res.get("timeout"):
+            _repro_docker_stop(container_name)
+
+        _repro_docker_scrub(sandbox_dir)  # a link the install left must not be read through
+        results_path = os.path.join(sandbox_dir, ".install_results.jsonl")
+        done = (
+            _read_py_install_results(results_path)
+            if res is not None and os.path.isfile(results_path)
+            else {}
+        )
+        if res is None:
+            msg = "docker run could not be started"
+        elif res.get("timeout"):
+            msg = f"docker install timed out after {as_character(timeout)}s"
+        else:
+            try:
+                txt = "\n".join(_read_lines(out_file))
+            except OSError:
+                txt = ""
+            status = as_character(res.get("status")) or "NA"
+            msg = f"docker install failed (status {status}): {txt}"
+    finally:
+        shutil.rmtree(sandbox_dir, ignore_errors=True)
+        with contextlib.suppress(OSError):
+            os.unlink(out_file)
+
+    ok = [done[p][0] if p in done else False for p in pkgs]
+    msgs = [done[p][1] if p in done else msg for p in pkgs]
+    return _install_rows(pkgs, srcs, ok, msgs)
+
+
+def repro_run_scripts_py_docker(
+    run_tbl: pd.DataFrame | None,
+    order: Any,
+    sandbox_root: str | os.PathLike[str],
+    lib_dir: str | os.PathLike[str] | None = None,
+    image: str = _REPRO_DOCKER_DEFAULT_IMAGE_PY,
+    timeout: float = 600,
+    skip: Sequence[str] | str = (),
+    parses: Mapping[str, Any] | pd.Series | None = None,
+    failed_deps: Sequence[str] | str = (),
+) -> pd.DataFrame:
+    """Run the paper's Python scripts, in order, each in an isolated Docker container.
+
+    Port of ``R/reproducibility_check_python_docker.R::repro_run_scripts_py_docker()``:
+    the same container as :func:`repro_run_scripts_docker` (no network, read-only root, a
+    writable in-memory ``/tmp``, non-root, no capabilities, a process limit), with
+    *sandbox_root* at ``/sandbox`` (the working directory), *lib_dir* read-only at
+    ``/pylib`` on ``PYTHONPATH``, and ``python <script>``. What the code left in the
+    sandbox that leads out of it is removed after each container. Same columns and
+    outcomes as :func:`~metacheck.repro.python.repro_run_scripts_py`.
+    """
+    from metacheck.repro.python import _py_run_row
+    from metacheck.utils import pb
+
+    if run_tbl is None or len(run_tbl) == 0:
+        return _run_frame([])
+    ordered = _ordered_names(run_tbl, order)
+    root = _normalize_path(os.fspath(sandbox_root), must_work=True)
+    lib_norm = (
+        _normalize_path(os.fspath(lib_dir), must_work=True)
+        if lib_dir is not None and os.path.isdir(lib_dir)
+        else None
+    )
+    names = _chr_list(run_tbl["file_name"])
+    paths = _chr_list(run_tbl["script_path"])
+    user = _repro_docker_user()
+    _repro_docker_hand_over(root)
+
+    bar = pb(len(ordered), ":what [:bar] :current/:total")
+    rows: list[dict[str, Any]] = []
+    try:
+        bar.tick(0, {"what": ""})
+        for fn in ordered:
+            bar.tick(1, {"what": fn})
+            i = names.index(fn)
+            pre = _pre_run_outcome(fn, skip, parses)
+            if pre is not None:
+                rows.append(pre)
+                continue
+            exec_lines = _script_lines(paths[i])
+            _message(
+                "[repro/py-docker]   -> running '", fn, "' (timeout ", as_character(timeout),
+                "s) ...",
+            )  # fmt: skip
+            container_name = _repro_docker_container_name()
+            args = [
+                "run", "--rm", "--name", container_name,
+                "--network", "none", "--read-only",
+                "--tmpfs", "/tmp",  # noqa: S108 - inside the container
+                "--user", user,
+                "--cap-drop", "ALL",
+                "--security-opt", "no-new-privileges",
+                "--pids-limit", "512",
+                *_repro_docker_resource_args(),
+                # caches and settings (matplotlib's, say) go to the writable /tmp
+                "-e", "HOME=/tmp",
+                "-w", "/sandbox",
+                "-v", f"{root}:/sandbox",
+            ]  # fmt: skip
+            if lib_norm is not None:
+                args += ["-v", f"{lib_norm}:/pylib:ro", "-e", "PYTHONPATH=/pylib"]
+            args += [image, "python", _repro_docker_container_path(paths[i] or "", root)]
+
+            with tempfile.TemporaryDirectory(prefix="pytacheck_docker_") as tmp:
+                out_file = os.path.join(tmp, "out.txt")
+                err_file = os.path.join(tmp, "err.txt")
+                t0 = time.monotonic()
+                res = _docker(args, timeout=timeout, stdout=out_file, stderr=err_file)
+                elapsed = time.monotonic() - t0
+                timed_out = isinstance(res, dict) and bool(res.get("timeout"))
+                if timed_out:
+                    _repro_docker_stop(container_name)
+                removed = _repro_docker_scrub(root)
+                if removed:
+                    _message(
+                        "[repro/py-docker]   removed from the sandbox after '", fn, "': ",
+                        ", ".join(removed[:10]), " ..." if len(removed) > 10 else "",
+                    )  # fmt: skip
+                so, se = _read_cap(out_file), _read_cap(err_file)
+            _message(
+                "[repro/py-docker]   <- '", fn, "' done in ", as_character(round(elapsed, 1)), "s"
+            )
+            if isinstance(res, Exception):
+                rows.append(
+                    _run_row(fn, "errored", str(res), "runtime", None, so, se, elapsed, exec_lines)
+                )
+                continue
+            row = _py_run_row(
+                fn, res.get("status"), timed_out, so, se, elapsed, exec_lines, timeout,
+                failed_deps,
+            )  # fmt: skip
+            rows.append(row)
     finally:
         bar.terminate()
     return _run_frame(rows)

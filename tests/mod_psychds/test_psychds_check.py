@@ -95,13 +95,25 @@ def _run_case(case_id: str, area: str = "mod_psychds") -> ModuleOutput:
 # -- the report, exactly --------------------------------------------------------------
 
 
+_CALL_TO_ACTION = (
+    "You can generate a Psych-DS-compliant copy of this repository",
+    "To also produce a human-readable codebook of the extracted variables",
+)
+
+
 @pytest.mark.parametrize(("area", "case_id"), _module_cases())
 def test_report_blocks_match_r_exactly(area: str, case_id: str) -> None:
     """Every prose block (the tree's indentation too) and the checklist table."""
     golden = _golden(case_id, area)["value"]
     out = _run_case(case_id, area)
     r_report = _element(golden, "report")["v"]
-    r_text = [s for s in r_report if not s.lstrip().startswith("```{r}")]
+    # the report no longer points to convert_psychds()/convert_codebook(), which
+    # pytacheck does not have (metacheck 029bf63; D116)
+    r_text = [
+        s
+        for s in r_report
+        if not s.lstrip().startswith("```{r}") and not s.startswith(_CALL_TO_ACTION)
+    ]
     report = out.report if isinstance(out.report, list) else [out.report]
     py_text = [b for b in report if isinstance(b, str)]
     assert py_text == r_text

@@ -13,24 +13,20 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-import numpy as np
 import pandas as pd
 
-from metacheck._r import gsub, plural, r_sort_key, regextract, slashed, sub
+from metacheck._r import plural, r_sort_key
 from metacheck._values import as_str
+from metacheck.datacheck.psychds import (
+    _backslash_to_slash,
+    _is_true,
+    _paste,
+    _tolower,
+    file_plan,
+    plan_table,
+)
 from metacheck.module import module
 from metacheck.report import scroll_table
-
-# R: type_to_subdir -- file type -> Psych-DS subdirectory (data and readme are
-# handled separately, by data_type and doc_role). "unknown" gets its own visible
-# folder rather than being folded into documentation/.
-_TYPE_TO_SUBDIR = {
-    "code": "analysis",
-    "materials": "materials",
-    "output": "outputs",
-    "documentation": "documentation",
-    "unknown": "unknown",
-}
 
 _NA_REPLACE = {
     "required_met": 0.0,
@@ -48,15 +44,6 @@ _TREE_INTRO = (
     f"{_MISSING_SPAN}red</span> are required but missing; files annotated "
     "*(move from ...)* exist but need relocating."
 )
-_CALL_TO_ACTION = [
-    "You can generate a Psych-DS-compliant copy of this repository — with the moves above "
-    "applied and a `dataset_description.json` built from the extracted variables — using "
-    "`metacheck::convert_psychds(paper, output_dir)`.",
-    "To also produce a human-readable codebook of the extracted variables (a labelled data "
-    "frame plus a ready-to-run R Markdown document for the `codebook` package), use "
-    "`metacheck::convert_codebook(paper, output_dir)`.",
-]
-
 # (item, detail) of the required / recommended Psych-DS items, in R's order
 _REQUIRED = (
     (
@@ -80,91 +67,6 @@ _RECOMMENDED = (
         "Codebook descriptions for variables improve reuse (recommended; see codebook_check).",
     ),
 )
-
-
-# -- small R helpers ---------------------------------------------------------------
-
-
-def _paste(x: str | None) -> str:
-    """How ``paste0()`` prints one value (``NA`` becomes ``"NA"``)."""
-    return "NA" if x is None else x
-
-
-def _col(df: pd.DataFrame, name: str) -> list[str | None] | None:
-    """``df$name`` as a list of strings (``None`` when the column is absent)."""
-    if name not in df.columns:
-        return None
-    return [as_str(v) for v in df[name].tolist()]
-
-
-def _is_true(x: Any) -> bool:
-    """R ``isTRUE()``: a single, non-missing ``TRUE``."""
-    if isinstance(x, pd.Series | list | tuple | np.ndarray):
-        vals = list(np.asarray(x, dtype=object).reshape(-1))
-        return len(vals) == 1 and _is_true(vals[0])
-    if isinstance(x, np.bool_):
-        return bool(x)
-    return x is True
-
-
-def _backslash_to_slash(x: str | None) -> str | None:
-    """R ``gsub("\\\\", "/", x)``."""
-    return None if x is None else x.replace("\\", "/")
-
-
-def _basename(path: str | None) -> str | None:
-    """R ``basename()`` on Unix: tilde expansion, trailing slashes dropped."""
-    if path is None:
-        return None
-    if path.startswith("~"):
-        path = os.path.expanduser(path)
-    return slashed(path).rstrip("/").rpartition("/")[2]
-
-
-def _dirname(path: str) -> str:
-    """R ``dirname()`` on Unix."""
-    if path.startswith("~"):
-        path = os.path.expanduser(path)
-    if path == "":
-        return ""
-    stripped = path.rstrip("/")
-    if not stripped:
-        return "/"
-    head, sep, _ = stripped.rpartition("/")
-    if not sep:
-        return "."
-    head = head.rstrip("/")
-    return head if head else "/"
-
-
-def _file_ext(x: list[str | None]) -> list[str | None]:
-    """``tools::file_ext()`` of a vector: the trailing alphanumeric extension, or ``""``."""
-    return [
-        None if v is None else ("" if m is None else m[1:])
-        for v, m in zip(x, regextract(r"\.([[:alnum:]]+)$", x), strict=True)
-    ]
-
-
-def _file_path_sans_ext(x: list[str | None]) -> list[str | None]:
-    """``tools::file_path_sans_ext()`` of a vector."""
-    out: list[str | None] = sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", x)
-    return out
-
-
-def _keyword_slug(x: list[str | None]) -> list[str | None]:
-    """R ``keyword_slug()``: drop what a Psych-DS keyword *value* may not contain."""
-    out: list[str | None] = gsub("[^a-zA-Z0-9]+", "", x)
-    return out
-
-
-def _tolower(x: str | None) -> str | None:
-    """R ``tolower()`` (``towlower()`` per character)."""
-    if x is None:
-        return None
-    if x.isascii():
-        return x.lower()
-    # towlower() maps U+0130 to "i"; other one-to-many lowerings stay unchanged
-    return "".join("i" if c == "\u0130" else low if len(low := c.lower()) == 1 else c for c in x)
 
 
 # -- the target tree ---------------------------------------------------------------
@@ -300,15 +202,6 @@ def _subset(df: Any, pid: str) -> Any:
     return df.loc[keep].reset_index(drop=True)
 
 
-# Psych-DS's own validator rule for a data file name (schema_model "Datafile"):
-# keyword-value pairs, then "_data.csv" / "_data.tsv"
-_PSYCHDS_DATAFILE = re.compile(r"^[a-z]+-[a-zA-Z0-9]+(_[a-z]+-[a-zA-Z0-9]+)*_data\.(csv|tsv)$")
-# documentation types whose readme/licence/CHANGES files go to the root (a bare
-# LICENSE or CHANGES is "unknown" in data_check); dataset_description.json and
-# ro-crate-metadata.json go there by name whatever their type ("code" for .json)
-_ROOT_DOC_TYPES = ("documentation", "unknown")
-
-
 def _data_check_outputs(
     paper: Any,
     local_path: Any,
@@ -390,11 +283,12 @@ def _data_check_outputs(
         path/repository split and no LLM), a single-rooted tree is shown together
         with a note that subgrouping could not be detected. A materials or
         documentation file genuinely reused across studies is still owned by
-        exactly one study; the others get a reference to it (not a copy) written
-        into their own metadata by `convert_psychds()`.
+        exactly one study; a future converter could write the others a reference
+        to it (not a copy) instead of duplicating it. The plan itself is
+        `psychds_file_plan()`, which `reproducibility_check` uses too.
 
-        This module only *checks* compliance; it does not modify the repository. The
-        report points to a dedicated builder for generating a compliant copy.
+        This module only *checks* compliance; it does not modify the repository.
+        Generating a compliant copy is not yet implemented.
     """,
     keywords=["results"],
     requires=["network", "llm"],
@@ -581,8 +475,6 @@ def psychds_check(
     if suggestions:
         report += ["#### Suggestions", "\n".join(f"- {s}" for s in suggestions)]
 
-    report += _CALL_TO_ACTION
-
     # 9. Summary table + return ----------------------------------------------------
     # one row per paper, each assessed on its own files (R reports the pooled
     # counts once, for the first paper only)
@@ -605,33 +497,8 @@ def psychds_check(
         owner = pids[0] if pids else _pid(paper, structure_df, columns_df)
         summary_table = _summary([(owner, a["counts"])])
 
-    status = [
-        "excluded" if ex else ("move" if m else "present")
-        for ex, m in zip(is_excluded, misplaced, strict=True)
-    ]
-    if "referenced_by" in structure_df.columns:
-        # copies, so the plan never shares a list with the input structure
-        referenced_by = [
-            list(v) if isinstance(v, list) else v for v in structure_df["referenced_by"].tolist()
-        ]
-    else:
-        referenced_by = [None] * n_files
-    plan_table = pd.DataFrame(
-        {
-            "file_name": pd.array(a["file_name"], dtype="string"),
-            "data_type": pd.array(a["data_type"], dtype="string"),
-            "group": pd.array(a["groups"], dtype="string"),
-            "current_path": pd.array(current_path, dtype="string"),
-            "target_path": pd.array(target_path, dtype="string"),
-            "status": pd.array(status, dtype="string"),
-            "convert": pd.array(a["needs_convert"], dtype="boolean"),
-            "original_target": pd.array(a["original_target"], dtype="string"),
-            "referenced_by": pd.Series(referenced_by, dtype=object),
-        }
-    )
-
     return {
-        "table": plan_table,
+        "table": plan_table(structure_df, a["plan"]),
         "summary_table": summary_table,
         "na_replace": dict(_NA_REPLACE),
         "traffic_light": a["traffic_light"],
@@ -642,91 +509,11 @@ def psychds_check(
 
 def _assess(structure_df: pd.DataFrame, columns_df: Any, labels_df: Any) -> dict[str, Any]:
     """Target paths, compliance items and counts of one set of repository files."""
-    from metacheck.datacheck.files import data_format
-
+    # 2.-3. Each file's current and target path (psychds_file_plan())
+    plan = file_plan(structure_df)
     n_files = len(structure_df)
-    raw_name = _col(structure_df, "file_name") or [None] * n_files
-    raw_path = _col(structure_df, "file_path") or [None] * n_files
-    data_type = _col(structure_df, "data_type") or [None] * n_files
-    groups = _col(structure_df, "group") or [None] * n_files
-    doc_role = _col(structure_df, "doc_role") or [None] * n_files
-    study_groups = list(dict.fromkeys(g for g in groups if g is not None))
-    multi_study = len(study_groups) > 1
-
-    # 2. Each file's name and current location ---------------------------------
-    # the name falls back to the path's basename; a file with neither cannot be
-    # placed (R fails on a missing name or data type)
-    current_path = [
-        _backslash_to_slash(p) if p is not None else _backslash_to_slash(f)
-        for p, f in zip(raw_path, raw_name, strict=True)
-    ]
-    names = [
-        _basename(_backslash_to_slash(f)) if f is not None else _basename(c)
-        for f, c in zip(raw_name, current_path, strict=True)
-    ]
-    file_name = [f if f is not None else nm for f, nm in zip(raw_name, names, strict=True)]
-    dtypes = [dt if dt is not None else "unknown" for dt in data_type]
-    stems = _keyword_slug(_file_path_sans_ext(names))
-    name_ext = _file_ext(names)
-
-    # 3. Map each file to its Psych-DS target path -------------------------------
-    def target_of(i: int) -> str | None:
-        name = names[i]
-        if name is None:
-            return None
-        dt, role, grp = dtypes[i], doc_role[i], groups[i]
-        prefix = f"study-{grp}/" if multi_study and grp is not None else ""
-        low = _tolower(name) or ""
-        ext = name_ext[i] or ""
-        if low == "dataset_description.json":
-            return f"{prefix}dataset_description.json"
-        if low == "ro-crate-metadata.json":
-            return name  # collection-level metadata: the root, under its own name
-        if dt == "data":
-            if _PSYCHDS_DATAFILE.match(name):
-                return f"{prefix}data/{name}"  # already a valid Psych-DS data file name
-            stem = stems[i] or f"file{i + 1}"
-            return f"{prefix}data/study-{stem}_data.csv"
-        if dt in _ROOT_DOC_TYPES:
-            if role == "readme" or role == "license":
-                base = "README" if role == "readme" else "LICENSE"
-                return prefix + (f"{base}.{ext}" if ext else base)
-            if re.match(r"^changes(\.|$)", low):
-                return prefix + name  # a CHANGES log sits at the root, under its own name
-        return f"{prefix}{_TYPE_TO_SUBDIR.get(dt, 'documentation')}/{name}"
-
-    target_path: list[str | None] = [target_of(i) for i in range(n_files)]
-    is_data = [dt == "data" for dt in dtypes]
-
-    # tabular data not already in CSV is converted (original kept alongside);
-    # raw (non-tabular) data keeps its own name and extension; a file already
-    # named as a Psych-DS data file (.csv or .tsv) stays as it is
-    src_ext = [_tolower(e) or "" for e in name_ext]
-    src_format = data_format(src_ext)
-    compliant = [n is not None and bool(_PSYCHDS_DATAFILE.match(n)) for n in names]
-    needs_convert = [
-        d and e != "csv" and fmt == "tabular" and not ok
-        for d, e, fmt, ok in zip(is_data, src_ext, src_format, compliant, strict=True)
-    ]
-    is_raw_data = [
-        d and e != "" and e != "csv" and not nc and not ok
-        for d, e, nc, ok in zip(is_data, src_ext, needs_convert, compliant, strict=True)
-    ]
-
-    def same_dir_real_name(i: int) -> str:
-        # the same directory as the _data.csv target, but the file's own basename
-        return f"{_dirname(_paste(target_path[i]))}/{_paste(names[i])}"
-
-    original_target = [same_dir_real_name(i) if needs_convert[i] else None for i in range(n_files)]
-    for i in range(n_files):
-        if is_raw_data[i]:
-            target_path[i] = same_dir_real_name(i)
-    # misplaced against the final target (R compares before a raw file's target
-    # is set, so raw data already in place was "moved" onto itself)
-    is_excluded = [t is None for t in target_path]
-    misplaced = [
-        not ex and c != t for ex, c, t in zip(is_excluded, current_path, target_path, strict=True)
-    ]
+    names, doc_role, is_data = plan.names, plan.doc_role, plan.is_data
+    misplaced = plan.misplaced
 
     # 4. Required / recommended compliance items ---------------------------------
     file_names_lc = [_tolower(n) for n in names]
@@ -759,18 +546,14 @@ def _assess(structure_df: pd.DataFrame, columns_df: Any, labels_df: Any) -> dict
         tl = "red"  # not convertible yet
 
     return {
+        "plan": plan,
         "n_files": n_files,
-        "file_name": file_name,
-        "data_type": data_type,
-        "groups": groups,
-        "study_groups": study_groups,
-        "multi_study": multi_study,
-        "current_path": current_path,
-        "target_path": target_path,
-        "is_excluded": is_excluded,
+        "study_groups": plan.study_groups,
+        "multi_study": plan.multi_study,
+        "current_path": plan.current_path,
+        "target_path": plan.target_path,
+        "is_excluded": plan.is_excluded,
         "misplaced": misplaced,
-        "needs_convert": needs_convert,
-        "original_target": original_target,
         "has_dataset_desc": has_dataset_desc,
         "has_readme": has_readme,
         "has_changes": has_changes,

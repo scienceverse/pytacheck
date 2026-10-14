@@ -448,6 +448,23 @@ def test_an_unwritable_report_path_fails_before_anything_runs(tmp_path: Path, pr
         report_package(root, tmp_path / "no" / "such" / "r.html", modules=[probe])
 
 
+def test_report_package_report_type(tmp_path: Path, probe: str) -> None:
+    root = _folder(tmp_path)
+    report_package(root, tmp_path / "r.html", modules=[probe], report_type="simple")
+    html = (tmp_path / "r.html").read_text(encoding="utf-8")
+    assert "study1" in html and "<script" not in html
+    with pytest.raises(ValueError, match="report_type must be one of"):
+        report_package(root, tmp_path / "r2.html", modules=[probe], report_type="short")
+    assert not (tmp_path / "r2.html").exists()
+
+
+def test_cli_writes_a_simple_report(tmp_path: Path, probe: str, capsys: Any) -> None:
+    root = _folder(tmp_path)
+    out = tmp_path / "r.html"
+    assert main(["package", str(root), "-m", probe, "-o", str(out), "-t", "Simple"]) == 0
+    assert "<script" not in out.read_text(encoding="utf-8")
+
+
 def test_report_package_gives_the_package_to_its_modules(tmp_path: Path, probe: str) -> None:
     archive = _zip(tmp_path)
     result = report_package(

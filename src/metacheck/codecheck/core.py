@@ -406,8 +406,8 @@ def code_lang(file_name: Any) -> Any:
     """Detect the code language of files from their names.
 
     Port of ``R/code_check.R::code_lang()``. Returns ``"R"``, ``"Python"``,
-    ``"SPSS"``, ``"SAS"``, ``"Stata"``, ``"Mplus"``, ``"MATLAB"`` (or ``"JASP"``
-    / ``"jamovi"``), or ``None`` for other files. A notebook's (``.ipynb``) or
+    ``"SPSS"``, ``"SAS"``, ``"Stata"``, ``"Mplus"``, ``"MATLAB"``, ``"NetLogo"``,
+    ``"Julia"`` (or ``"JASP"`` / ``"jamovi"``), or ``None`` for other files. A notebook's (``.ipynb``) or
     Quarto document's (``.qmd``) language is read from the file when it
     exists. A single name gives a single value; a sequence of names gives a
     list (R's named vector, in order).
@@ -805,6 +805,7 @@ def _code_expand_zip(
     all_files: pd.DataFrame,
     skip_on_api_limit: bool = False,
     cache: bool = False,
+    max_download_size: Any = 500,
 ) -> pd.DataFrame:
     """Fetch the code members of every unexpanded remote ``.zip`` row.
 
@@ -813,7 +814,12 @@ def _code_expand_zip(
     fetched, one new row each (the ``.zip`` row itself is kept). Under
     *skip_on_api_limit* a rate-limited host is skipped rather than waited
     out; both *skip_on_api_limit* and *cache* go on to the peek and to the
-    member fetches.
+    member fetches. The listing's ``file_size`` saves the peek a HEAD
+    request; a zip already on disk (one inside a ResearchBox, whose
+    ``file_url`` is the box's web page) is read from the file. An archive
+    within *max_download_size* (MB) is downloaded once instead of fetched by
+    range when that is cheaper (always on Dryad: metacheck #471), and kept
+    where the ordinary download would put it.
     """
     names = _col(all_files, "file_name")
     urls = _col(all_files, "file_url")
@@ -824,15 +830,28 @@ def _code_expand_zip(
     if not any(is_zip):
         return all_files
     from metacheck.archives.download import _repo_cache_path
-    from metacheck.archives.zip_peek import _zip_fetch_members, zip_peek
+    from metacheck.archives.zip_peek import (
+        _whole_request_bytes,
+        _zip_fetch_members,
+        _zip_local_source,
+        zip_peek,
+    )
 
+    local = _zip_local_source(all_files)
+    sizes = _col(all_files, "file_size")
+    try:
+        whole_bytes = float(max_download_size) * 1024 * 1024
+    except (TypeError, ValueError):
+        whole_bytes = 0.0  # R: isTRUE(NULL > 0) is FALSE, no whole download
     new_rows: list[pd.DataFrame] = []
     for i, z in enumerate(is_zip):
         if not z:
             continue
-        url = urls[i]
+        loc = local[i]
+        url = urls[i] if loc is None else loc
+        zip_size = sizes[i]
         try:
-            peek = zip_peek(url, cache=cache, skip_on_api_limit=skip_on_api_limit)
+            peek = zip_peek(url, cache=cache, skip_on_api_limit=skip_on_api_limit, size=zip_size)
         except Exception:
             peek = None
         if peek is None or len(peek) == 0:
@@ -855,6 +874,10 @@ def _code_expand_zip(
                 dest=dest,
                 cache=cache,
                 skip_on_api_limit=skip_on_api_limit,
+                max_whole_bytes=whole_bytes,
+                archive_path=re.sub(r"\.contents$", "", str(dest)),
+                request_bytes=_whole_request_bytes(url),
+                size=zip_size,
             )
         except Exception:
             fetched = None
@@ -1943,18 +1966,33 @@ _LOAD_REGEX = {
         r"\s*\(",
     ),
 }
-_WRITE_REGEX = _alternation(
-    [
-        r"write[\._][A-Za-z\._0-9]*",
-        "saveRDS",
-        "save",
-        r"save\.image",
-        "ggsave",
-        "export",
-        "fwrite",
-    ],
-    r"\s*\(",
-)
+#: The calls that write a file, by language (``code_file_refs(include_writes = TRUE)``).
+#: Python's are named one by one: metacheck's generic ``to_[A-Za-z_0-9]+`` also takes
+#: ``pd.to_datetime("2020.01")`` or ``to_numeric("1.5")`` for a write of a file.
+_PY_WRITE_FNS = [
+    "to_(?:csv|excel|parquet|pickle|json|feather|hdf|stata|html|latex|markdown|xml|orc|netcdf|file)",
+    "write_[A-Za-z0-9_]+",
+    "savez(?:_compressed)?",
+    "savetxt",
+    "savefig",
+    "save",
+    "dump",
+]
+_WRITE_REGEX = {
+    "R": _alternation(
+        [
+            r"write[\._][A-Za-z\._0-9]*",
+            "saveRDS",
+            "save",
+            r"save\.image",
+            "ggsave",
+            "export",
+            "fwrite",
+        ],
+        r"\s*\(",
+    ),
+    "Python": _alternation(_PY_WRITE_FNS, r"\s*\("),
+}
 _QUOTED_FILE = "(['\"])(?!\\.\\1)[^'\"]+\\.[A-Za-z0-9]{1,8}(?:\\.[A-Za-z0-9]{1,8})*\\1"
 _FORMAT_SPEC = r"^%[-+ 0#]*[0-9]*(\.[0-9]+)?[diouxXeEfgGaAscp]$"
 _UNQUOTED = {
@@ -1982,13 +2020,13 @@ def code_file_refs(
     ``import()``, ``fread``, ``load``, ``source``, pandas readers, ``use``,
     ``GET FILE=``, ...), plus bare-word references for SAS/SPSS/Stata.
     Format specifiers such as ``"%.2f"`` are not file names. With
-    *include_writes* (R only) written files count too.
+    *include_writes* (R and Python) written files count too.
     """
     lang = _match_arg(lang)
     lines = code_remove_comments(code_text, lang)
     pattern = _LOAD_REGEX[lang]
-    if include_writes is True and lang == "R":
-        pattern = f"{pattern}|{_WRITE_REGEX}"
+    if include_writes is True and lang in _WRITE_REGEX:
+        pattern = f"{pattern}|{_WRITE_REGEX[lang]}"
     load_hits = grepl(pattern, lines, perl=True)
     load_lines = [s for s, h in zip(lines, load_hits, strict=True) if h]
     found = [m for ms in regextract_all(_QUOTED_FILE, load_lines, perl=True) for m in ms]

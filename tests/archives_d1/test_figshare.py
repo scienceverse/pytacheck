@@ -349,3 +349,213 @@ def test_figshare_info_list_valued_fields(mock_api: object) -> None:
     assert out["license"].iloc[0] == ["CC BY"]
     with pytest.raises(ValueError, match="replacement has 2 rows, data has 1"):
         figshare.figshare_info("700008")
+
+
+# ------------------------------------------------- metacheck 0.3.3 (#461, #464, #465)
+
+
+def test_figshare_registry_has_the_new_institutional_hosts() -> None:
+    assert {"data.lib.vt.edu", "agdatacommons.nal.usda.gov", "adelaide.figshare.com"} <= set(
+        _figshare_vanity_hosts()
+    )
+    prefixes = _figshare_doi_prefix_hosts()
+    assert prefixes["10.5522"] == "rdr.ucl.ac.uk"
+    assert prefixes["10.7294"] == "data.lib.vt.edu"
+    assert prefixes["10.15482"] == "agdatacommons.nal.usda.gov"
+    assert prefixes["10.25909"] == "adelaide.figshare.com"
+
+
+def test_figshare_id_institutional_doi_shapes() -> None:
+    # UCL separates its sub-prefix with "/" (this used to give "04")
+    assert _figshare_id("10.5522/04/14484084.v1") == "14484084"
+    assert _figshare_id("10.5522/04/23217572.v1") == "23217572"
+    # Adelaide: mostly the article id itself...
+    assert _figshare_id("10.25909/33113177") == "33113177"
+    # ...but an older hex code is no id, not its leading "5"
+    assert _figshare_id("10.25909/5b581a5a151da") is None
+    # VTechData and USDA Ag Data Commons never carry the article id
+    assert _figshare_id("10.7294/WSDX-AJ44") is None
+    assert _figshare_id("10.15482/USDA.ADC/1402049") is None
+    # the sub-prefix shapes that worked before still do
+    assert _figshare_id("https://doi.org/10.25375/uct.12345678.v2") == "12345678"
+
+
+def test_figshare_doi_lookup_doi() -> None:
+    assert figshare._figshare_doi_lookup_doi("https://doi.org/10.7294/WSDX-AJ44") == (
+        "10.7294/WSDX-AJ44"
+    )
+    assert figshare._figshare_doi_lookup_doi("10.15482/USDA.ADC/1402049.v2") == (
+        "10.15482/USDA.ADC/1402049"
+    )
+    assert figshare._figshare_doi_lookup_doi("10.25909/5b581a5a151da") == "10.25909/5b581a5a151da"
+    assert figshare._figshare_doi_lookup_doi("10.6084/m9.figshare.1") is None
+    assert figshare._figshare_doi_lookup_doi(None) is None
+
+
+def _doi_api(doi: str) -> str:
+    from urllib.parse import quote
+
+    return f"https://api.figshare.com/v2/articles?doi={quote(doi, safe='')}"
+
+
+def test_figshare_info_resolves_unparseable_dois_through_the_api(
+    serve: object, online: None
+) -> None:
+    article = "https://api.figshare.com/v2/articles/{}"
+    seen = serve(  # type: ignore[operator]
+        {
+            _doi_api("10.7294/WSDX-AJ44"): httpx.Response(200, json=[{"id": 14096975}]),
+            _doi_api("10.15482/USDA.ADC/1402049"): httpx.Response(200, json=[{"id": 24852405}]),
+            _doi_api("10.25909/5b581a5a151da"): httpx.Response(200, json=[{"id": 6859511}]),
+            article.format(14096975): httpx.Response(200, json={"title": "VT"}),
+            article.format(24852405): httpx.Response(200, json={"title": "USDA"}),
+            article.format(6859511): httpx.Response(200, json={"title": "Adelaide"}),
+        }
+    )
+    info = figshare_info(
+        ["https://doi.org/10.7294/WSDX-AJ44", "10.15482/USDA.ADC/1402049", "10.25909/5b581a5a151da"]
+    )
+    by_url = dict(zip(info["figshare_url"], info["figshare_id"], strict=True))
+    assert by_url == {
+        "https://doi.org/10.7294/WSDX-AJ44": "14096975",
+        "10.15482/USDA.ADC/1402049": "24852405",
+        "10.25909/5b581a5a151da": "6859511",
+    }
+    assert info["title"].tolist() == ["VT", "USDA", "Adelaide"]
+    assert len(seen) == 6
+
+
+def test_figshare_info_keeps_a_doi_the_api_does_not_know(serve: object, online: None) -> None:
+    serve({_doi_api("10.7294/NOPE"): httpx.Response(200, json=[])})  # type: ignore[operator]
+    info = figshare_info("10.7294/NOPE")
+    assert info["figshare_url"].tolist() == ["10.7294/NOPE"]
+    assert pd.isna(info["figshare_id"].iloc[0])
+
+
+def test_figshare_file_path() -> None:
+    path = figshare._figshare_file_path
+    assert path("a.csv", "Experiment_1") == "Experiment_1/a.csv"
+    assert path("a.csv", "Experiment_1/raw/") == "Experiment_1/raw/a.csv"
+    assert path("Readme.pdf", "") == "Readme.pdf"
+    assert path("Readme.pdf", None) == "Readme.pdf"
+    assert path("x.csv", "../../etc") == "etc/x.csv"
+    assert path("x.csv", "..\\x") == "x/x.csv"
+    assert path("x.csv", "..") == "x.csv"
+    assert path(None, "A") is None
+
+
+def _fs_file(fid: int, name: str, size: int) -> dict[str, object]:
+    return {
+        "id": fid,
+        "name": name,
+        "size": size,
+        "download_url": f"https://ndownloader.figshare.com/files/{fid}",
+        "computed_md5": None,
+    }
+
+
+def _fs_article(files: list[object], size: int, folders: object = None) -> dict[str, object]:
+    rec: dict[str, object] = {"id": 1, "title": "T", "size": size, "files": files}
+    if folders is not None:
+        rec["folder_structure"] = folders
+    return rec
+
+
+ARTICLE_1 = "https://api.figshare.com/v2/articles/1"
+FILES_1 = ARTICLE_1 + "/files?page={}&page_size={}"
+
+
+def test_figshare_info_gives_each_file_its_folder_path(serve: object) -> None:
+    files = [_fs_file(11, "a.csv", 3), _fs_file(12, "a.csv", 4), _fs_file(13, "Readme.pdf", 5)]
+    folders = {"11": "Experiment_1", "12": "Experiment_2", "13": ""}
+    seen = serve({ARTICLE_1: httpx.Response(200, json=_fs_article(files, 12, folders))})  # type: ignore[operator]
+    info = figshare._figshare_info("1")
+    got = info["files"].iloc[0]
+    assert [f["path"] for f in got] == ["Experiment_1/a.csv", "Experiment_2/a.csv", "Readme.pdf"]
+    assert [f["name"] for f in got] == ["a.csv", "a.csv", "Readme.pdf"]
+    # the sizes add up to the article's: no second request for the file list
+    assert [str(r.url) for r in seen] == [ARTICLE_1]
+
+
+def test_figshare_info_fetches_the_full_list_when_the_article_lists_too_few(
+    serve: object,
+) -> None:
+    every = [_fs_file(11, "a.csv", 3), _fs_file(12, "b.csv", 4), _fs_file(13, "c.csv", 5)]
+    seen = serve(  # type: ignore[operator]
+        {
+            ARTICLE_1: httpx.Response(200, json=_fs_article(every[:1], 12)),
+            FILES_1.format(1, 1000): httpx.Response(200, json=every),
+        }
+    )
+    info = figshare._figshare_info("1")
+    assert [f["name"] for f in info["files"].iloc[0]] == ["a.csv", "b.csv", "c.csv"]
+    assert [f["path"] for f in info["files"].iloc[0]] == ["a.csv", "b.csv", "c.csv"]
+    assert [str(r.url) for r in seen] == [ARTICLE_1, FILES_1.format(1, 1000)]
+
+
+def test_figshare_info_keeps_its_list_when_the_files_endpoint_fails(serve: object) -> None:
+    seen = serve(  # type: ignore[operator]
+        {ARTICLE_1: httpx.Response(200, json=_fs_article([_fs_file(11, "a.csv", 3)], 12))}
+    )
+    info = figshare._figshare_info("1")
+    assert [f["name"] for f in info["files"].iloc[0]] == ["a.csv"]
+    assert len(seen) == 2
+
+
+def test_figshare_article_files_follows_pages_and_keeps_what_it_has(serve: object) -> None:
+    seen = serve(  # type: ignore[operator]
+        {
+            FILES_1.format(1, 2): httpx.Response(
+                200, json=[_fs_file(1, "a", 1), _fs_file(2, "b", 1)]
+            ),
+            FILES_1.format(2, 2): httpx.Response(200, json=[_fs_file(3, "c", 1)]),
+        }
+    )
+    out = figshare._figshare_article_files("1", page_size=2)
+    assert out is not None and [f["name"] for f in out] == ["a", "b", "c"]
+    assert len(seen) == 2
+    # a page that fails after the first keeps the files already listed
+    seen.clear()
+    full_page = [_fs_file(1, "a", 1), _fs_file(2, "b", 1)]
+    serve({FILES_1.replace("/1/", "/3/").format(1, 2): httpx.Response(200, json=full_page)})  # type: ignore[operator]
+    out = figshare._figshare_article_files("3", page_size=2)
+    assert out is not None and [f["name"] for f in out] == ["a", "b"]
+    assert len(seen) == 2  # page 2 answered 404
+    # no page at all: None, so the caller keeps the article's own list
+    assert figshare._figshare_article_files("2") is None
+
+
+def test_figshare_file_download_saves_files_under_their_folders(
+    serve: object, tmp_path: Path
+) -> None:
+    files = [_fs_file(11, "a.csv", 8), _fs_file(12, "a.csv", 8)]
+    folders = {"11": "Experiment_1", "12": "Experiment_2"}
+    serve(  # type: ignore[operator]
+        {
+            "https://api.figshare.com/v2/articles/4242": httpx.Response(
+                200, json=_fs_article(files, 16, folders)
+            ),
+            "https://ndownloader.figshare.com/files/11": httpx.Response(200, content=b"x,y\n1,2\n"),
+            "https://ndownloader.figshare.com/files/12": httpx.Response(200, content=b"x,y\n3,4\n"),
+        }
+    )
+    dl = figshare_file_download("4242", download_to=str(tmp_path))
+    assert dl is not None
+    assert dl["path"].tolist() == ["Experiment_1/a.csv", "Experiment_2/a.csv"]
+    assert dl["key"].tolist() == ["a.csv", "a.csv"]
+    assert dl["downloaded"].tolist() == [True, True]
+    # two same-named files, both kept
+    base = tmp_path / "figshare_4242"
+    assert (base / "Experiment_1" / "a.csv").read_bytes() == b"x,y\n1,2\n"
+    assert (base / "Experiment_2" / "a.csv").read_bytes() == b"x,y\n3,4\n"
+
+
+def test_repo_check_lists_figshare_files_under_their_folders() -> None:
+    from metacheck.modules import _repo_check as rc
+
+    row = rc.figshare_row({}, {**_fs_file(11, "a.csv", 3), "path": "Experiment_1/a.csv"})
+    assert row["file_name"] == "a.csv"
+    assert row["file_path"] == "Experiment_1/a.csv"
+    # a listing cached before paths existed: the name, as before
+    row = rc.figshare_row({}, _fs_file(11, "a.csv", 3))
+    assert row["file_path"] == "a.csv"

@@ -314,6 +314,18 @@ def test_crossref_doi_status_not_ok(monkeypatch: pytest.MonkeyPatch) -> None:
     assert out["error"].tolist() == ["unknown"]
 
 
+def test_crossref_doi_asks_the_production_api(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck #446: not the experimental api.labs.crossref.org mirror
+    monkeypatch.setattr(cr._utils, "online", lambda *_a, **_k: True)
+    with respx.mock() as router:
+        route = router.route().mock(
+            return_value=httpx.Response(200, json={"status": "ok", "message": {"DOI": "10.1234/a"}})
+        )
+        cr.crossref_doi("10.1234/a")
+    url = str(route.calls[0].request.url)
+    assert url.startswith("https://api.crossref.org/works/10.1234%2Fa?mailto=")
+
+
 # DataCite ----------------------------------------------------------------------
 
 
@@ -456,7 +468,7 @@ def test_crossref_doi_connection_failure_is_a_network_error(monkeypatch) -> None
     # response object", which add_bib_match() never counted as a network error
     monkeypatch.setattr(cr._utils, "online", lambda url: True)
     with respx.mock() as router:
-        router.route(host="api.labs.crossref.org").mock(side_effect=httpx.ConnectError("down"))
+        router.route(host="api.crossref.org").mock(side_effect=httpx.ConnectError("down"))
         out = cr.crossref_doi("10.1098/rspb.2002.2034")
         paper = paper_with_bib(
             {

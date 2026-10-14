@@ -26,7 +26,7 @@ from unittest import mock as umock
 import httpx
 import respx
 
-from tests.httpmock import UPSTREAM_TESTS, fixture_response, r_digest
+from tests.httpmock import APIS_DEV, UPSTREAM_TESTS, fixture_response, r_digest
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
@@ -91,6 +91,8 @@ def replay(*mock_dirs: str | Path) -> Iterator[respx.MockRouter]:
     roots = [
         Path(d) if Path(d).is_absolute() else UPSTREAM_TESTS / d for d in mock_dirs or ("apis",)
     ]
+    if UPSTREAM_TESTS / "apis" in roots:
+        roots.append(APIS_DEV)
 
     def handler(request: httpx.Request) -> httpx.Response:
         path = mock_path(request)

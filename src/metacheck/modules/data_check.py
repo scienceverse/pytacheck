@@ -396,6 +396,12 @@ def data_check(
     leave blank; its default, ``"classifier"``, runs a local model where
     metacheck asks the LLM (``"llm"`` is metacheck's behaviour). See
     :mod:`metacheck.datacheck.concepts`.
+
+    Dryad lists a dataset's files without an API key but needs one
+    (:func:`~metacheck.dryad_pat` or :func:`~metacheck.dryad_auth`) to download
+    their contents, even from a public dataset. Without one, every Dryad file
+    stays classified but unread (no columns), and its download failure says
+    that a key is missing (``HTTP 401 (Dryad requires an API key ...)``).
     """
     from metacheck.datacheck.concepts import concept_mode
     from metacheck.llm.core import llm_use
@@ -909,16 +915,26 @@ def _download(
     else:
         never_fetch = [skip_types] if isinstance(skip_types, str) else list(skip_types)
     if never_fetch:
-        keep_archive = _is_readable_archive(names)
+        # An archive pytacheck can open is typed "unknown" until it is opened, so
+        # `want` is still False for it here: keep_archive must turn it on, not
+        # just survive the type filter (metacheck e4b74e1, #456; U220).
+        # With download = "none" nothing is opened, so nothing is turned on.
+        keep_archive = _is_readable_archive(names) if download != "none" else [False] * n
         want = [
-            w and ((t not in never_fetch) or bool(k))
+            (w and t not in never_fetch) or bool(k)
             for w, t, k in zip(want, data_type, keep_archive, strict=True)
         ]
 
     file_url = h._col(all_files, "file_url")
     zip_peek_reason: list[Any] = [None] * n
     if is_true(peek_zips) and download != "none" and file_url is not None:
-        from metacheck.archives.zip_peek import zip_decision
+        from metacheck.archives.zip_peek import _zip_local_source, zip_decision
+
+        # a zip already on disk (inside a ResearchBox, whose file_url is the box's
+        # web page) is read from the file, and a size the listing gave saves the
+        # peek a HEAD request
+        zip_src = _zip_local_source(all_files)
+        zip_size = h._col(all_files, "file_size") or [None] * n
 
         is_zip = [
             w and bool(z) and h._has_value(u)
@@ -929,11 +945,13 @@ def _download(
         for i, z in enumerate(is_zip):
             if not z:
                 continue
+            src = zip_src[i]
             d = zip_decision(
-                file_url[i],
+                file_url[i] if src is None else src,
                 skip_types=skip_types if skip_types is not None else "materials",
                 cache=cache,
                 skip_on_api_limit=skip_on_api_limit,
+                size=zip_size[i],
             )
             if h._is_false(d.get("worth")):
                 want[i] = False

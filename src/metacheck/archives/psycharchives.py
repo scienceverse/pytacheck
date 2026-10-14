@@ -20,6 +20,7 @@ extension / ``file_types`` columns of a file listing (:func:`_add_ext_type`).
 from __future__ import annotations
 
 import functools
+import re
 import warnings
 from collections.abc import Callable, Sequence
 from typing import Any, cast
@@ -41,11 +42,19 @@ __all__ = [
 DSPACE_LEGACY_HOSTS: tuple[str, ...] = (
     "www.psycharchives.org",  # PsychArchives, ZPID (Germany)
     "bonndoc.ulb.uni-bonn.de",  # bonndoc, University of Bonn (Germany)
-    "dspace.ut.ee",  # University of Tartu Library (Estonia)
+    # dspace.ut.ee runs DSpace 7 (its /rest is DSpace 7's deprecated copy of the
+    # old API), so it is listed in DSPACE7_HOSTS only; listed in both, every
+    # citation of it was looked up twice (metacheck 0.3.3)
     "qsardb.org",  # QsarDB
     "repositorio-digital.cide.edu",  # CIDE (Mexico)
     "ses.library.usyd.edu.au",  # University of Sydney eScholarship (Australia)
+    # added upstream 2026-10-05 (metacheck #461): /rest/test answers
+    # "REST api is running."; a DSpace 5 installation
+    "datastorre.stir.ac.uk",  # University of Stirling DataSTORRE (UK)
 )
+
+#: dc.rights values that are an access level, not a licence (PsychArchives)
+_ACCESS_TERMS = re.compile(r"^(open|restricted|embargoed|closed|metadataOnly)Access$", re.I)
 
 _HANDLE_RX = r"[0-9]{1,5}(?:\.[0-9]+){0,3}/[0-9A-Za-z.]+"
 
@@ -293,8 +302,8 @@ def psycharchives_info(
     (e.g. from :func:`psycharchives_links`). Each distinct URL is looked up
     in turn (with *cache*, from the on-disk listing cache when possible),
     stopping at the first that fails; the input rows are returned with
-    ``PA_title``, ``PA_authors``, ``PA_doi``, ``PA_license``, ``PA_date``,
-    ``PA_abstract`` and ``files`` (or ``error``) added.
+    ``PA_title``, ``PA_authors``, ``PA_doi``, ``PA_rights``, ``PA_license``,
+    ``PA_date``, ``PA_abstract`` and ``files`` (or ``error``) added.
     """
     from metacheck.utils import online
 
@@ -317,11 +326,20 @@ def psycharchives_info(
 def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
     """Port of R/archive-psycharchives.R::.psycharchives_info(): one legacy DSpace item.
 
-    Resolves the URL's handle on its host's REST API and returns a one-row
-    table: ``pa_url`` and either ``error`` (``"unfound"``, with a warning) or
-    ``PA_title``, ``PA_authors``, ``PA_doi``, ``PA_license``, ``PA_date``,
-    ``PA_abstract`` and ``files`` (``name``, ``size``, ``retrieve``: the
-    public bitstreams).
+    Resolves the URL's handle on its host's REST API, with the item's
+    metadata and bitstreams, in one request (``?expand=metadata,bitstreams``;
+    an installation that ignores ``expand`` is asked for them separately),
+    and returns a one-row table: ``pa_url`` and either ``error``
+    (``"unfound"``, with a warning) or ``PA_title``, ``PA_authors``,
+    ``PA_doi``, ``PA_rights``, ``PA_license``, ``PA_date``, ``PA_abstract``
+    and ``files`` (``name``, ``size``, ``retrieve``: the public bitstreams
+    of the ``ORIGINAL`` bundle).
+
+    ``PA_rights`` is ``dc.rights``, which holds the access level on
+    PsychArchives (``"restrictedAccess"``); the licence is
+    ``dc.rights.license``, else ``dc.rights.uri``, else ``dc.rights`` when it
+    is not an access level (DSpace 5's datastorre.stir.ac.uk: ``"CC-BY
+    4.0"``). A DSpace 5 item has a numeric ``id`` instead of a uuid.
     """
     from metacheck.archives import _spinner, _tick
     from metacheck.archives.dataverse import _cell, _empty_or, _field_cell, _paste
@@ -345,22 +363,24 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
             return pd.DataFrame(obj)
         handle = str(handle_v)
 
-        item = _psycharchives_rest(f"/handle/{handle}", host=_paste(host))
-        uuid = field(item, "uuid")
-        if item is None or uuid is None:
+        item = _psycharchives_rest(
+            f"/handle/{handle}?expand=metadata,bitstreams", host=_paste(host)
+        )
+        item_id = field(item, "uuid")
+        if item_id is None:
+            item_id = field(item, "id")  # DSpace 5 numbers its items
+        if item is None or item_id is None:
             warnings.warn(f"{_paste(pa_url)} could not be found", stacklevel=2)
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
 
-        # R: paste0("/items/", uuid, ...) -- several strings for an array, which
+        # R: paste0("/items/", id, ...) -- several strings for an array, which
         # httr2::request() refuses inside .psycharchives_rest()'s tryCatch (NULL)
-        upath = _url_piece(uuid)
-        meta = (
-            None
-            if upath is None
-            else _psycharchives_rest(f"/items/{upath}?expand=metadata", host=_paste(host))
-        )
-        md = field(meta, "metadata")
+        upath = _url_piece(item_id)
+        md = field(item, "metadata")
+        if md is None and upath is not None:
+            meta = _psycharchives_rest(f"/items/{upath}?expand=metadata", host=_paste(host))
+            md = field(meta, "metadata")
         if md is None:
             md = []
 
@@ -381,15 +401,31 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
         obj["PA_title"] = _field_cell(title if title is not None else md_val("dc.title"))
         obj["PA_authors"] = _cell(md_val("dc.contributor.author"))
         obj["PA_doi"] = _cell(md_val("dc.identifier.doi"))
-        obj["PA_license"] = _cell(md_val("dc.rights"))
+        rights = md_val("dc.rights")
+        license_ = md_val("dc.rights.license")
+        if license_ is None:
+            license_ = md_val("dc.rights.uri")
+        if license_ is None and rights is not None and not _ACCESS_TERMS.match(rights):
+            license_ = rights
+        obj["PA_rights"] = _cell(rights)
+        obj["PA_license"] = _cell(license_)
         obj["PA_date"] = _cell(md_val("dc.date.available"))
         obj["PA_abstract"] = _cell(md_val("dc.description.abstract"))
 
-        bitstreams = (
-            None
-            if upath is None
-            else _psycharchives_rest(f"/items/{upath}/bitstreams?limit=1000", host=_paste(host))
-        )
+        bitstreams = field(item, "bitstreams")
+        if bitstreams is None and upath is not None:
+            bitstreams = _psycharchives_rest(
+                f"/items/{upath}/bitstreams?limit=1000", host=_paste(host)
+            )
+        # only the ORIGINAL bundle holds what the author deposited; DSpace adds
+        # LICENSE (the deposit agreement), TEXT (text extracted from PDFs) and
+        # THUMBNAIL (preview images). A bitstream without a bundle is kept.
+        if isinstance(bitstreams, list):
+            bitstreams = [
+                b
+                for b in bitstreams
+                if _empty_or(field(b, "bundleName"), None) in (None, "ORIGINAL")
+            ]
         obj["files"] = _obj_cell(_bitstream_table(bitstreams, _paste(host)))
         return pd.DataFrame(obj)
 
@@ -407,10 +443,16 @@ def _bitstream_table(bitstreams: Any, host: str) -> pd.DataFrame:
     items = [] if _is_empty(bitstreams) else _elements(bitstreams)
     names = [_chr1(_empty_or(field(b, "name"), None)) for b in items]
     sizes = [_as_numeric(_empty_or(field(b, "sizeBytes"), None)) for b in items]
-    retrieve = []
+    retrieve: list[str | None] = []
     for b in items:
         link = field(b, "retrieveLink")
-        retrieve.append(None if link is None else f"https://{host}{_paste_json(link)}")
+        if link is None:
+            retrieve.append(None)
+            continue
+        # DSpace 6 gives the link from the server root (/rest/bitstreams/...),
+        # DSpace 5 from the REST root (/bitstreams/...), which needs /rest
+        link = _paste_json(link)
+        retrieve.append(f"https://{host}{'' if link.startswith('/rest/') else '/rest'}{link}")
     return pd.DataFrame(
         {
             "name": pd.Series(names, dtype="string"),
@@ -584,10 +626,10 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
     them: one row per file with ``pa_url``, ``name``, ``file_url`` (the
     bitstream's retrieve URL, fetched later by ``download_repo_files()``),
     ``file_location`` (``NA``), ``size``, ``isdir``, ``ext`` and ``type``.
-    Each item's rights statement and DOI are carried in the table's
-    ``attrs["rights"]`` / ``attrs["doi"]`` (``{url: value}``; R: named
-    vectors in attributes), also for an item that lists no public files (a
-    zero-row table). ``None`` when the item could not be found (or *pa_url*
+    Each item's access level (``dc.rights``), licence and DOI are carried in
+    the table's ``attrs["rights"]``, ``attrs["license"]`` and ``attrs["doi"]``
+    (``{url: value}``; R: named vectors in attributes), also for an item that
+    lists no public files (a zero-row table). ``None`` when the item could not be found (or *pa_url*
     is ``None``, R's ``NA``). A sequence of URLs gives one table, aligned with
     the input. With *cache*, listings are reused from the on-disk cache.
     """
@@ -621,7 +663,7 @@ def _psycharchives_file_lists(
                 return None, unfound  # every URL failed (metacheck's join errors here: U43)
             df = left_join(orig, info, by="pa_url")
             # R: unlist(lapply(file_lists, attr, "rights")) -- NULL (no attribute) if none
-            for name in ("rights", "doi"):
+            for name in ("rights", "license", "doi"):
                 merged: dict[str, Any] = {}
                 for fl in file_lists:
                     if fl is not None:
@@ -647,12 +689,11 @@ def _psycharchives_file_lists(
             v = info[col].iloc[0] if col in info.columns and len(info) else None
             return {_paste(url): None if is_missing(v) else v}
 
-        rights, doi = attr("PA_license"), attr("PA_doi")
+        rights, license_, doi = attr("PA_rights"), attr("PA_license"), attr("PA_doi")
         file_list = info["files"].iloc[0] if "files" in info.columns and len(info) else None
         if file_list is None or len(file_list) == 0:
             empty = pd.DataFrame({k: pd.Series([], dtype=t) for k, t in _EMPTY_FILES.items()})
-            empty.attrs["rights"] = rights
-            empty.attrs["doi"] = doi
+            empty.attrs.update(rights=rights, license=license_, doi=doi)
             return empty, []
 
         n = len(file_list)
@@ -667,6 +708,5 @@ def _psycharchives_file_lists(
             }
         )
         df = _add_ext_type(df)
-        df.attrs["rights"] = rights
-        df.attrs["doi"] = doi
+        df.attrs.update(rights=rights, license=license_, doi=doi)
         return df, []

@@ -38,6 +38,24 @@ def test_falls_back_to_single_study_without_evidence(no_llm: None) -> None:
     assert out["group"].tolist() == ["ex1"] * 3
 
 
+def test_no_model_request_when_llm_use_is_off(monkeypatch: pytest.MonkeyPatch) -> None:
+    # llm()'s refusal used to be caught like a failed request, so every file
+    # came back unanswered ("the model request failed"; metacheck 98105f6)
+    def fail(*_a: Any, **_k: Any) -> Any:
+        raise AssertionError("llm() must not be called")
+
+    monkeypatch.setattr(F, "_llm", fail)
+    monkeypatch.setattr(F, "_llm_use", lambda: False)
+    f = pd.DataFrame({
+        "file_name": ["data.csv", "analysis.R", "stimulus1.png", "notes.txt"],
+        "file_path": ["data.csv", "analysis.R", "materials/stimulus1.png", "notes.txt"],
+        "data_type": ["data", "code", "materials", "documentation"],
+    })  # fmt: skip
+    out = F.data_group_llm(f)
+    assert out.attrs["unresolved"] == []
+    assert out["group"].notna().all()
+
+
 def test_returns_none_on_empty_input() -> None:
     assert F.data_group_llm(pd.DataFrame()) is None
     assert F.data_group_llm(None) is None
@@ -122,6 +140,7 @@ def test_group_llm_uses_mocked_assignments(monkeypatch: pytest.MonkeyPatch) -> N
                            "assignments.group": groups}, model="mock-model")  # fmt: skip
 
     monkeypatch.setattr(F, "_llm", fake_llm)
+    monkeypatch.setattr(F, "_llm_use", lambda: True)
     f = pd.DataFrame({
         "file_name": ["first_raw.csv", "second_raw.csv", "analysis.R"],
         "file_path": ["first_raw.csv", "second_raw.csv", "analysis.R"],

@@ -17,24 +17,12 @@
   </div>
   <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">&#9680;</button>
 </header>
-<div class="page-layout">
+<div class="page-layout{{layout_class}}">
   <main id="quarto-document-content" class="content">
 {{intro}}
 {{body}}
   </main>
-  <nav id="TOC" class="toc" role="doc-toc">
-    <ul class="emoji-key">
-      <li class="red">⚠️ possible problems detected;</li>
-      <li class="yellow">🔍 something to check;</li>
-      <li class="green">✅️ no problems detected;</li>
-      <li class="info">ℹ️ informational only;</li>
-      <li class="na">⬜ not applicable;</li>
-      <li class="fail">☠️ check failed</li>
-    </ul>
-    <hr>
-    <p class="toc-title"><strong>Table of Contents</strong></p>
-{{toc}}
-  </nav>
+{{sidebar}}
 </div>
 <script>
 {{js}}

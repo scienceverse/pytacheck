@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import warnings
 from collections.abc import Sequence
 from os import PathLike
 from pathlib import Path
@@ -59,9 +60,10 @@ def read(
     files as ``list.files()`` does (lower-case extensions only, hidden files
     and directories skipped, full paths in R's sort order), a ``.xml`` is
     skipped when a ``.json`` of the same name is read and repeated paths are
-    read once. Unreadable files are logged and skipped (a deliberate
-    difference: metacheck then fails altogether), and a single paper is
-    returned unwrapped. A JSON file with a root ``schema_version`` is a bibr export:
+    read once. A file that cannot be read is logged and skipped with a warning
+    that names it and says why, and a single paper is returned unwrapped. A
+    single file that cannot be read raises its error (a deliberate difference:
+    metacheck warns and returns an empty list). A JSON file with a root ``schema_version`` is a bibr export:
     schema 12.x is read natively (:mod:`metacheck.io.bibr12`), any other
     version (bibr 11.x included) is refused; files without one (bibr v10.x and
     older) are read exactly as metacheck reads them. Source documents (PDF,
@@ -113,5 +115,6 @@ def read(
             logger("read", {"file": p, "error": str(exc)})
             if len(paths) == 1:
                 raise
+            warnings.warn(f"Could not read {os.path.basename(p)}: {exc}", stacklevel=2)
     plist = PaperList(papers)
     return plist[0] if len(plist) == 1 else plist

@@ -1,0 +1,39 @@
+{
+  "_links": {
+    "self": {
+      "href": "/api/v2/datasets/doi%3A10.5061%2Fdryad.9ghx3ffgc"
+    },
+    "stash:version": {
+      "href": "/api/v2/versions/104509"
+    },
+    "stash:download": {
+      "href": "/api/v2/datasets/doi%3A10.5061%2Fdryad.9ghx3ffgc/download"
+    }
+  },
+  "identifier": "doi:10.5061/dryad.9ghx3ffgc",
+  "id": 61628,
+  "storageSize": 756438,
+  "title": "Spatiotemporal niche-based mechanisms support a stable coexistence of ants and spiders in an extrafloral nectary-bearing plant community",
+  "authors": [
+    {
+      "firstName": "Denise",
+      "lastName": "Lange"
+    },
+    {
+      "firstName": "Eduardo",
+      "lastName": "Calixto"
+    },
+    {
+      "firstName": "Kleber",
+      "lastName": "Del-Claro"
+    },
+    {
+      "firstName": "Vanessa",
+      "lastName": "Stefani"
+    }
+  ],
+  "publicationDate": "2021-02-10",
+  "lastModificationDate": "2021-02-10",
+  "visibility": "public",
+  "license": "https://spdx.org/licenses/CC0-1.0.html"
+}

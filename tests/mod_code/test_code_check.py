@@ -237,7 +237,9 @@ def test_records_loaded_packages() -> None:
     assert n_by_name["analysis.R"] == 2
     assert n_by_name["helper.R"] == 0
     assert st(mo)["code_packages_n"] == 2
-    assert "2 distinct packages" in mo.summary_text
+    # the package count left the summary (metacheck 7208868); the report states it
+    assert "2 distinct packages" not in mo.summary_text
+    assert "2 distinct packages" in report_text(mo)
     assert "ggplot2" in report_text(mo)
 
 
@@ -248,7 +250,9 @@ def test_no_pinned_environment(tmp_path: Path) -> None:
     write(tmp_path / "analysis.R", ["library(dplyr)", "x <- 1"])
     mo = run_dir(tmp_path)
     assert st(mo)["code_version_pinned"] is False or not st(mo)["code_version_pinned"]
-    assert "No pinned" in mo.summary_text
+    assert mo.summary_text.endswith(
+        "was found. Consider adding a solution to improve computational reproducibility."
+    )
     assert "renv.lock" in report_text(mo)
 
 
@@ -694,7 +698,8 @@ def test_green_light_and_parse_errors(tmp_path: Path) -> None:
     assert mo.traffic_light == "yellow"
     assert mo.table["parse_error"].tolist() == [True, False]
     assert "bad.R" in all_report(mo)
-    assert "Parsing issues of R-type files were found." in mo.summary_text
+    # parse errors are listed in the report, not counted in the summary (metacheck 7208868)
+    assert "Parsing issues" not in mo.summary_text
 
 
 def test_empty_code_files_are_checked_without_errors_or_warnings(tmp_path: Path) -> None:
@@ -1136,7 +1141,10 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
     import metacheck.codecheck.core as cc
 
     def fake_expand(
-        all_files: pd.DataFrame, skip_on_api_limit: bool = False, cache: bool = False
+        all_files: pd.DataFrame,
+        skip_on_api_limit: bool = False,
+        cache: bool = False,
+        max_download_size: Any = 500,
     ) -> pd.DataFrame:
         member = all_files.iloc[[0]].copy()
         member["file_name"] = "member.R"
@@ -1266,7 +1274,8 @@ def test_zip_expansion_forwards_skip_on_api_limit_and_cache(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     # R (PR #428): .code_expand_zip() passes skip_on_api_limit and cache on to
-    # zip_peek() and .zip_fetch_members()
+    # zip_peek() and .zip_fetch_members(); since metacheck d52b3fd also the listed
+    # size, and the download budget for a whole-archive download (#471)
     import metacheck.archives.zip_peek as zp
     from metacheck.codecheck.core import _code_expand_zip
 
@@ -1289,14 +1298,21 @@ def test_zip_expansion_forwards_skip_on_api_limit_and_cache(
                 "repo_url": "https://osf.io/x",
                 "file_url": "https://osf.io/x/code.zip",
                 "file_location": None,
+                "file_size": 2048.0,
             }
         ]
     )
     _code_expand_zip(table, skip_on_api_limit=True, cache=True)
-    _code_expand_zip(table)
-    both = {"skip_on_api_limit": True, "cache": True}
-    neither = {"skip_on_api_limit": False, "cache": False}
-    assert seen == [("peek", both), ("fetch", both), ("peek", neither), ("fetch", neither)]
+    _code_expand_zip(table, max_download_size=1)
+    both = {"skip_on_api_limit": True, "cache": True, "size": 2048.0}
+    neither = {"skip_on_api_limit": False, "cache": False, "size": 2048.0}
+    assert [s[1] for s in seen if s[0] == "peek"] == [both, neither]
+    fetched = [s[1] for s in seen if s[0] == "fetch"]
+    assert [{k: f[k] for k in both} for f in fetched] == [both, neither]
+    assert [f["max_whole_bytes"] for f in fetched] == [500 * 1048576, 1048576]
+    assert fetched[0]["request_bytes"] == 1048576  # not Dryad: whichever costs less
+    # the archive is kept where the ordinary download would put it
+    assert fetched[0]["archive_path"].endswith("code.zip")
 
 
 def test_code_check_forwards_skip_on_api_limit_to_repo_check(
@@ -1334,3 +1350,27 @@ def test_empty_paper_gives_the_na_result(empty: Any) -> None:
     ids = [] if isinstance(paper, pc.PaperList) else [paper.paper_id]
     assert mo.summary_table["paper_id"].tolist() == ids
     assert mo.summary_table["code_n"].tolist() == [0] * len(ids)
+
+
+def test_summary_names_the_files_to_fix(tmp_path: Path) -> None:
+    # metacheck 7208868: the summary names the files without comments or with
+    # libraries loaded in several places, says setwd()/install.packages() only
+    # when found, and leaves out missing files, absolute paths, packages and
+    # parse errors (the report lists them)
+    write(
+        tmp_path / "a.R",
+        ["library(dplyr)", "x <- 1", "y <- 2", "z <- 3", "w <- 4", "library(ggplot2)"],
+    )
+    write(tmp_path / "b.R", ["# a comment", "read.csv('C:/data/missing.csv')"])
+    lines = run_dir(tmp_path).summary_text.split("\n-  ")[1:]
+    assert lines[1] == "1 code file (a.R) had no comments."
+    assert lines[2] == "Libraries/imports were loaded in multiple places in a.R."
+    assert lines[3].startswith("No pinned R/package environment")
+    assert len(lines) == 4
+    text = "\n".join(lines)
+    assert "setwd" not in text and "install.packages" not in text
+    assert "absolute" not in text.lower() and "missing" not in text
+    write(tmp_path / "c.R", ["# set up", "setwd('/home/me')", "install.packages('x')"])
+    text = run_dir(tmp_path).summary_text
+    assert "setwd() calls were found." in text
+    assert "install.packages() calls were found." in text

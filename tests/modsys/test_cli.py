@@ -161,6 +161,12 @@ def test_report(lab, ms, capsys, demo_json) -> None:
     assert main(argv) == 0
     assert out.is_file()
     assert json.loads(record.read_text())["modules"][0]["id"] == "metacheck::marginal"
+    # -t/--report-type: a static page with no script, safe to send by email
+    simple = ms.work / "simple.html"
+    assert main(["report", demo_json, "-m", "marginal", "-o", str(simple), "-t", "simple"]) == 0
+    assert "<script" not in simple.read_text(encoding="utf-8")
+    with pytest.raises(SystemExit):
+        main(["report", demo_json, "-m", "marginal", "--report-type", "short"])
 
 
 def test_pack_commands(store, ms, capsys) -> None:

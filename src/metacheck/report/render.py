@@ -39,12 +39,16 @@ if TYPE_CHECKING:
     from metacheck.report.blocks import ReportTable
 
 __all__ = [
+    "STATIC_MAX_ROWS",
     "DataTable",
     "html_page",
     "markdown_to_gfm",
     "markdown_to_html",
     "report_table",
     "scroll_table_qmd",
+    "simple_page",
+    "static_markdown",
+    "static_table_chunk",
     "table_chunk",
     "table_gfm",
 ]
@@ -54,13 +58,20 @@ __all__ = [
 # ---------------------------------------------------------------------------
 
 
-def table_chunk(block: ReportTable) -> str:
+def table_chunk(block: ReportTable, static: bool = False) -> str:
     """A table block as it goes into a ``.qmd``: a raw HTML block (D75).
 
     metacheck writes an R chunk that calls ``report_table()``; the HTML is the
     table that chunk renders to, so Quarto needs no R to render the document.
+    ``static`` writes the plain table of a simple report (every row, no
+    pagination).
     """
-    return f"\n```{{=html}}\n{_table_html(block)}\n```\n"
+    return f"\n```{{=html}}\n{_table_html(block, static)}\n```\n"
+
+
+def static_table_chunk(block: ReportTable) -> str:
+    """:func:`table_chunk` for a simple (static) report."""
+    return table_chunk(block, static=True)
 
 
 def scroll_table_qmd(
@@ -159,6 +170,12 @@ def _cell_text(v: Any) -> str:
     return str(v)
 
 
+#: Port of ``.report_table_simple_max_rows``: the most rows one table of a simple
+#: report shows (it has no pagination to hide rows behind), so that one huge
+#: table cannot make the file unboundedly large.
+STATIC_MAX_ROWS = 500
+
+
 @dataclass
 class DataTable:
     """What ``report_table()`` returns: a table plus its DataTables options.
@@ -173,9 +190,17 @@ class DataTable:
     options: dict[str, Any] = field(default_factory=dict)
     escape: bool = False
     column: str = "body"
+    #: a simple report's table: plain HTML, every row, no pagination (and no script)
+    static: bool = False
 
     def to_html(self) -> str:
-        """The table as HTML (pagination is done by the report's inline script)."""
+        """The table as HTML (pagination is done by the report's inline script).
+
+        A static table (``report_type("simple")``) is a plain ``<table
+        class="dt-static">`` with every row, in a box that scrolls when the
+        table has more than ``pageLength`` rows; past
+        :data:`STATIC_MAX_ROWS` rows it is cut, with a note.
+        """
         df = self.data
         page_length = self.options.get("pageLength", 2)
         paged = self.options.get("dom") != "t"
@@ -209,6 +234,8 @@ class DataTable:
                 )
                 + "</colgroup>"
             )
+        if self.static:
+            return self._static_html(cols, colgroup, numeric, int(page_length))
         rows = []
         columns = [df.iloc[:, i].tolist() for i in range(df.shape[1])]
         for r in range(len(df)):
@@ -234,6 +261,38 @@ class DataTable:
             f"<tbody>{''.join(rows)}</tbody></table></div></div>"
         )
 
+    def _static_html(
+        self, header: list[str], colgroup: str, numeric: list[bool], page_length: int
+    ) -> str:
+        """Port of ``.report_table_static()``: the table of a simple report."""
+        df = self.data
+        n_total = len(df)
+        shown = df.iloc[:STATIC_MAX_ROWS] if n_total > STATIC_MAX_ROWS else df
+        esc = self.escape is True
+        columns = [shown.iloc[:, i].tolist() for i in range(shown.shape[1])]
+        rows = []
+        for r in range(len(shown)):
+            cells = []
+            for i, col in enumerate(columns):
+                text = _cell_text(col[r])
+                if esc:
+                    text = _html.escape(text, quote=False)
+                cls = ' class="dt-right"' if numeric[i] else ""
+                cells.append(f"<td{cls}>{text}</td>")
+            rows.append("<tr>" + "".join(cells) + "</tr>")
+        table = (
+            f'<table class="dt-static">{colgroup}<thead><tr>{"".join(header)}</tr></thead>'
+            f"<tbody>{''.join(rows)}</tbody></table>"
+        )
+        if n_total > page_length:
+            # a box about `maxrows` rows high (2.5em a row, plus the header) that scrolls
+            height = f"{(page_length + 1) * 2.5:.0f}em"
+            table = f'<div class="dt-static-scroll" style="max-height:{height};overflow:auto;">{table}</div>'
+        if n_total > STATIC_MAX_ROWS:
+            table += f"<p><em>Showing the first {STATIC_MAX_ROWS} of {n_total} rows.</em></p>"
+        cls = "dt-static-wrap" + (f" column-{self.column}" if self.column != "body" else "")
+        return f'<div class="{cls}">{table}</div>'
+
     def _repr_html_(self) -> str:
         return f"<style>{_asset('report.css')}</style>{self.to_html()}<script>{_asset('report.js')}</script>"
 
@@ -249,15 +308,27 @@ def _is_numeric(s: pd.Series) -> bool:
 
 
 def report_table(
-    table: pd.DataFrame, colwidths: Any = "auto", maxrows: int = 2, escape: bool = False
+    table: pd.DataFrame,
+    colwidths: Any = "auto",
+    maxrows: int = 2,
+    escape: bool = False,
+    static: bool | None = None,
 ) -> DataTable:
     """Port of ``report_table()``: display a table in a report.
 
     Column widths are pixels for numbers > 1, fractions of the width for
     numbers <= 1, or CSS strings (``"3em"``); ``None``/``NaN`` leaves a
-    column automatic. Tables longer than ``maxrows`` are paginated.
+    column automatic. Tables longer than ``maxrows`` are paginated. A static
+    table (the default under ``report_type("simple")`` or
+    ``"simple_brief"``) shows every row instead, in a box about ``maxrows``
+    rows high that scrolls, with no script (see :meth:`DataTable.to_html`).
     """
     import pandas as pd
+
+    from metacheck.report.blocks import _report_is_static, report_type
+
+    if static is None:
+        static = _report_is_static(report_type())
 
     if not isinstance(table, pd.DataFrame):
         raise TypeError("'data' must be 2-dimensional (e.g. data frame or matrix)")
@@ -289,11 +360,11 @@ def report_table(
         "pageLength": maxrows,
         "columnDefs": cd,
     }
-    return DataTable(data, options, escape=escape is True)
+    return DataTable(data, options, escape=escape is True, static=static)
 
 
-def _table_html(block: ReportTable) -> str:
-    dt = report_table(block.data, block.colwidths, block.maxrows, block.escape)
+def _table_html(block: ReportTable, static: bool = False) -> str:
+    dt = report_table(block.data, block.colwidths, block.maxrows, block.escape, static=static)
     dt.column = block.column
     return dt.to_html()
 
@@ -463,7 +534,7 @@ def _split_tabs(nodes: list[Any]) -> tuple[list[Any], list[tuple[str, list[Any]]
     return pre, tabs
 
 
-def _emit_html(nodes: list[Any], inline: Callable[[str], str]) -> list[str]:
+def _emit_html(nodes: list[Any], inline: Callable[[str], str], static: bool = False) -> list[str]:
     out: list[str] = []
     for node in nodes:
         if not isinstance(node, _Div):
@@ -472,7 +543,23 @@ def _emit_html(nodes: list[Any], inline: Callable[[str], str]) -> list[str]:
         attrs = node.attrs
         callout = _callout_type(attrs)
         children = _mark_headings(node.children)
-        if callout is not None:
+        if callout is not None and static:
+            # a simple report's callout: always open, its title a bold line
+            # (opening and closing one needs a script; R: collapse_section())
+            title = attrs.kv.get("title")
+            cls = " ".join(["callout", *attrs.classes])
+            id_attr = f' id="{_html.escape(attrs.id)}"' if attrs.id else ""
+            head = ["", f"**{title}**", ""] if title else []
+            out += ["", f'<div{id_attr} class="{_html.escape(cls)}">', *head]
+            out += ["", *_emit_html(children, inline, static), "", "</div>", ""]
+        elif "panel-tabset" in attrs.classes and static:
+            # a simple report's tabs: one heading per tab, one after the other
+            pre, tabs = _split_tabs(node.children)
+            out += _emit_html(_mark_headings(pre), inline, static)
+            for label, body in tabs:
+                out += ["", f"##### {label} {{.unlisted}}", ""]
+                out += _emit_html(_mark_headings(body), inline, static)
+        elif callout is not None:
             title = attrs.kv.get("title") or _CALLOUT_TITLES[callout]
             title_html = inline(title)
             collapse = attrs.kv.get("collapse")
@@ -492,11 +579,11 @@ def _emit_html(nodes: list[Any], inline: Callable[[str], str]) -> list[str]:
                     '<div class="callout-body">'
                 )
                 close_html = "</div></div>"
-            out += ["", open_html, "", *_emit_html(children, inline), "", close_html, ""]
+            out += ["", open_html, "", *_emit_html(children, inline, static), "", close_html, ""]
         elif "panel-tabset" in attrs.classes:
             pre, tabs = _split_tabs(node.children)
             out += ["", '<div class="panel-tabset">', ""]
-            out += _emit_html(_mark_headings(pre), inline)
+            out += _emit_html(_mark_headings(pre), inline, static)
             if tabs:
                 buttons = "".join(
                     f'<button type="button" role="tab" class="tab-btn{" active" if i == 0 else ""}">'
@@ -507,7 +594,7 @@ def _emit_html(nodes: list[Any], inline: Callable[[str], str]) -> list[str]:
                 for i, (_, body) in enumerate(tabs):
                     active = " active" if i == 0 else ""
                     out += ["", f'<div class="tab-pane{active}" role="tabpanel">', ""]
-                    out += _emit_html(_mark_headings(body), inline)
+                    out += _emit_html(_mark_headings(body), inline, static)
                     out += ["", "</div>", ""]
             out += ["", "</div>", ""]
         else:
@@ -522,12 +609,57 @@ def _emit_html(nodes: list[Any], inline: Callable[[str], str]) -> list[str]:
                 "",
                 f"<div{id_attr}{cls}{kv}>",
                 "",
-                *_emit_html(children, inline),
+                *_emit_html(children, inline, static),
                 "",
                 "</div>",
                 "",
             ]
     return out
+
+
+def _attr_text(attrs: _Attrs) -> str:
+    """Fenced-div attributes written back as ``{#id .class key="value"}``."""
+    parts = [f"#{attrs.id}"] if attrs.id else []
+    parts += [f".{c}" for c in attrs.classes]
+    parts += [f'{k}="{v}"' for k, v in attrs.kv.items()]
+    return "{" + " ".join(parts) + "}"
+
+
+def _emit_static_md(nodes: list[Any]) -> list[str]:
+    out: list[str] = []
+    for node in nodes:
+        if not isinstance(node, _Div):
+            out.append(node)
+            continue
+        attrs = node.attrs
+        callout = _callout_type(attrs)
+        if callout is not None:
+            title = attrs.kv.get("title")
+            plain = _Attrs(attrs.id, attrs.classes, {})
+            head = ["", f"**{title}**"] if title else []
+            out += ["", f"::: {_attr_text(plain)}", *head, "", *_emit_static_md(node.children)]
+            out += ["", ":::", ""]
+        elif "panel-tabset" in attrs.classes:
+            pre, tabs = _split_tabs(node.children)
+            out += _emit_static_md(pre)
+            for label, body in tabs:
+                out += ["", f"##### {label}", "", *_emit_static_md(body)]
+        else:
+            out += ["", f"::: {_attr_text(attrs)}", "", *_emit_static_md(node.children)]
+            out += ["", ":::", ""]
+    return out
+
+
+def static_markdown(text: str) -> str:
+    """Quarto-flavoured markdown as a simple (static) report writes it.
+
+    Callouts lose their ``title``/``collapse`` attributes (opening one needs
+    a script), their title becoming a bold first line, and each tabset
+    becomes its tabs one after the other under ``#####`` headings: what
+    metacheck's ``collapse_section()``, ``file_tabset()`` and
+    ``codebook_file_tabset()`` write under ``report_type("simple")``.
+    """
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(_emit_static_md(_parse_divs(text))))
 
 
 def _emit_gfm(nodes: list[Any]) -> list[str]:
@@ -662,10 +794,14 @@ def _render_inline(text: str) -> str:
     return str(_markdown().renderInline(text))
 
 
-def markdown_to_html(text: str) -> str:
-    """Render Quarto-flavoured markdown (as metacheck modules write it) to HTML."""
+def markdown_to_html(text: str, static: bool = False) -> str:
+    """Render Quarto-flavoured markdown (as metacheck modules write it) to HTML.
+
+    ``static`` renders it for a simple report, which needs no script: callouts
+    open, with their title as a bold line, and tabsets as headings.
+    """
     nodes = _parse_divs(text)
-    md = "\n".join(_emit_html(nodes, _render_inline))
+    md = "\n".join(_emit_html(nodes, _render_inline, static))
     return str(_markdown().render(md))
 
 
@@ -726,10 +862,12 @@ def render_blocks(
 
 
 class TableSlots:
-    """Placeholders for tables while markdown is rendered, then their HTML."""
+    """Placeholders for tables while markdown is rendered, then their HTML
+    (``static``: a simple report's plain tables)."""
 
-    def __init__(self) -> None:
+    def __init__(self, static: bool = False) -> None:
         self.tables: list[ReportTable] = []
+        self.static = static
 
     def __call__(self, block: ReportTable) -> str:
         self.tables.append(block)
@@ -739,7 +877,9 @@ class TableSlots:
         """Replace the placeholders in *html* with the tables (one pass)."""
         if not self.tables:
             return html
-        return _TABLE_MARK_RE.sub(lambda m: _table_html(self.tables[int(m.group(1))]), html)
+        return _TABLE_MARK_RE.sub(
+            lambda m: _table_html(self.tables[int(m.group(1))], self.static), html
+        )
 
 
 def _toc(body_html: str) -> str:
@@ -776,6 +916,21 @@ def _toc(body_html: str) -> str:
     return "".join(out)
 
 
+_SIDEBAR = """  <nav id="TOC" class="toc" role="doc-toc">
+    <ul class="emoji-key">
+      <li class="red">⚠️ possible problems detected;</li>
+      <li class="yellow">🔍 something to check;</li>
+      <li class="green">✅️ no problems detected;</li>
+      <li class="info">ℹ️ informational only;</li>
+      <li class="na">⬜ not applicable;</li>
+      <li class="fail">☠️ check failed</li>
+    </ul>
+    <hr>
+    <p class="toc-title"><strong>Table of Contents</strong></p>
+{toc}
+  </nav>"""
+
+
 def html_page(
     *,
     title: str,
@@ -784,11 +939,15 @@ def html_page(
     body_md: str,
     tables: TableSlots,
     generator: str,
+    toc: bool = True,
 ) -> str:
-    """The self-contained HTML report page (layout of ``inst/templates/_report.qmd``)."""
+    """The self-contained HTML report page (layout of ``inst/templates/_report.qmd``).
+
+    ``toc=False`` leaves out the table of contents and the legend beside it (a
+    brief report has its legend at the top, and only one section).
+    """
     intro_html = tables.fill(markdown_to_html(intro_md))
     body_html = tables.fill(markdown_to_html(body_md))
-    toc = _toc(body_html)
     page_title = f"{title} \u2013 {subtitle}" if subtitle else title
     template = _asset("report.html")
     values = {
@@ -801,6 +960,28 @@ def html_page(
         "js": _asset("report.js"),
         "intro": intro_html,
         "body": body_html,
-        "toc": toc,
+        "sidebar": _SIDEBAR.replace("{toc}", _toc(body_html)) if toc else "",
+        "layout_class": "" if toc else " no-toc",
     }
     return re.sub(r"\{\{(\w+)\}\}", lambda m: values.get(m.group(1), m.group(0)), template)
+
+
+def simple_page(*, title: str, css: str, body_md: str, tables: TableSlots, generator: str) -> str:
+    """The HTML page of a simple report: static, no script (``_report_simple.Rmd``).
+
+    *body_md* is the whole document after the template's ``<style>`` block
+    (banner, introduction, summary and module sections). A ``<!-- TOC -->``
+    line in it becomes the table of contents of the headings after it.
+    """
+    body_html = tables.fill(markdown_to_html(body_md, static=True))
+    if "<!-- TOC -->" in body_html:
+        before, after = body_html.split("<!-- TOC -->", 1)
+        body_html = f'{before}<div id="TOC" class="toc">{_toc(after)}</div>{after}'
+    return (
+        "<!DOCTYPE html>\n"
+        '<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        f'<meta name="generator" content="{_html.escape(generator)}">\n'
+        f"<title>{_html.escape(title)}</title>\n<style>\n{css}\n</style>\n</head>\n"
+        f"<body>\n{body_html}\n</body>\n</html>\n"
+    )

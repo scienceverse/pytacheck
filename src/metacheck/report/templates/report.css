@@ -137,6 +137,44 @@ main h2, main h3, main h4 { scroll-margin-top: 1em; }
 /* summary links carry the traffic light as a class */
 main a.red, main a.yellow, main a.green, main a.info, main a.na, main a.fail { text-decoration: none; }
 
+/* the summary: one row per module, a stripe in its traffic light's colour */
+ul.mc-summary { list-style: none; padding: 0; margin: 0 0 1.5em; }
+li.mc-summary-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8em;
+  padding: 0.6em 0.9em;
+  margin: 0 0 0.3em;
+  border-left: 4px solid var(--border);
+  border-radius: 0.2em;
+  background: var(--code-bg);
+}
+li.mc-summary-row.red, li.mc-summary-row.fail { border-left-color: #a4282f; }
+li.mc-summary-row.yellow { border-left-color: #a67c1f; }
+li.mc-summary-row.green { border-left-color: var(--banner); }
+li.mc-summary-row.info { border-left-color: #4a7a9c; }
+.mc-summary-icon { flex-shrink: 0; }
+.mc-summary-body { display: flex; flex-direction: column; min-width: 0; }
+.mc-summary-title { font-weight: 700; }
+.mc-summary-title a { color: inherit; text-decoration: none; }
+.mc-summary-title a:hover { text-decoration: underline; }
+.mc-summary-text { font-size: 0.95em; opacity: 0.85; }
+.mc-summary-todo { margin: -0.3em 0 0.8em 2.6em; }
+.mc-summary-todo li { font-size: 0.92em; }
+
+/* a brief report: its version, date and legend in one box, and no table of contents */
+.legend {
+  font-size: 0.9em;
+  padding: 0.8em 1.2em;
+  border: 1px solid var(--border);
+  border-radius: 0.4em;
+  background: var(--code-bg);
+  margin-bottom: 1.5em;
+}
+.legend p { margin: 0.2em 0; }
+.legend hr { margin: 0.6em 0; border: none; border-top: 1px solid var(--border); }
+.page-layout.no-toc { grid-template-columns: minmax(0, 1fr); max-width: 60em; }
+
 /* feedback & callouts */
 details > summary { cursor: pointer; color: var(--summary-fg); }
 details { margin: 0.75em 0; }

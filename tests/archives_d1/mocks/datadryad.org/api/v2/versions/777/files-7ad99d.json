@@ -1,0 +1,34 @@
+{
+  "_embedded": {
+    "stash:files": [
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/901"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/901/download"
+          }
+        },
+        "path": "bundle.zip",
+        "size": 136314880,
+        "digest": "zzz",
+        "digestType": "md5"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/902"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/902/download"
+          }
+        },
+        "path": "small.csv",
+        "size": 8,
+        "digest": "344fd2323dd33d5c058b7cf27de029e8",
+        "digestType": "md5"
+      }
+    ]
+  }
+}

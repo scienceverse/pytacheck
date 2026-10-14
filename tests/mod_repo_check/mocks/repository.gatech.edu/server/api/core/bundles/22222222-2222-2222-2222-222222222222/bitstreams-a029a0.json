@@ -1,0 +1,45 @@
+{
+  "_embedded": {
+    "bitstreams": [
+      {
+        "name": "data.CSV",
+        "sizeBytes": 1234,
+        "checkSum": {
+          "value": "0123456789abcdef0123456789abcdef"
+        },
+        "_links": {
+          "content": {
+            "href": "https://repository.gatech.edu/server/api/core/bitstreams/b1/content"
+          }
+        }
+      },
+      {
+        "name": "analysis.R",
+        "sizeBytes": 99,
+        "checkSum": {
+          "value": null,
+          "checkSumAlgorithm": "MD5"
+        },
+        "_links": {
+          "content": {
+            "href": "https://repository.gatech.edu/server/api/core/bitstreams/b2/content"
+          }
+        }
+      },
+      {
+        "name": "model.rds",
+        "sizeBytes": 5000000000,
+        "_links": {
+          "content": {
+            "href": "https://repository.gatech.edu/server/api/core/bitstreams/b3/content"
+          }
+        }
+      },
+      {
+        "name": "noext",
+        "sizeBytes": null,
+        "_links": {}
+      }
+    ]
+  }
+}
