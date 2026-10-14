@@ -96,6 +96,9 @@ jobs:
       GIT_CONFIG_VALUE_1: lf
       # a module that edits a paper's table in place fails the run (docs/MODULES.md)
       METACHECK_CHECK_MUTATION: "1"
+      # `uv sync` builds the C reader of .rds files on every runner (hatch_build.py);
+      # without this a failed build would only skip its tests
+      METACHECK_REQUIRE_C_READER: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:

@@ -441,6 +441,13 @@ def _builtin_store() -> tuple[str, tuple[str, str]]:
     return BUILTIN_STORE_URL, ("builtin", "builtin")
 
 
+def _rdata() -> Any:
+    """The module that reads ``.rds``/``.RData`` files."""
+    from metacheck.datacheck import _files_rdata
+
+    return _files_rdata
+
+
 def _concepts(reader: str) -> Any:
     """What a reader of ``datacheck.concepts`` gives with its option unset."""
     from metacheck.datacheck import concepts
@@ -755,6 +762,13 @@ SITES: dict[str, Site] = {
         read=lambda ctx: _concepts("concept_threshold"),
         expect=lambda ctx, name: 0.5,
         spaces=lambda ctx: 0.92,
+    ),
+    "RDS_READER": Site(
+        value="Python ",
+        other="",
+        read=lambda ctx: _rdata().rds_reader(),
+        expect=lambda ctx, name: "python",
+        spaces=lambda ctx: "python" if _rdata()._rdata_c is None else "c",
     ),
 }
 

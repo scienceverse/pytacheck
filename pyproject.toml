@@ -114,14 +114,23 @@ metacheck-setup = "metacheck.app.setup:main"
 datapackage = "metacheck.datapackage.modules"
 
 [build-system]
-requires = ["hatchling>=1.32.4"]
+# setuptools only compiles the optional C reader of .rds files (hatch_build.py)
+requires = ["hatchling>=1.32.4", "setuptools>=70"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
-include = ["/src/metacheck", "/src/pytacheck", "/README.md", "/LICENSE.md", "/NOTICE", "/CITATION.cff", "/CHANGELOG.md", "/pyproject.toml"]
+include = ["/src/metacheck", "/src/pytacheck", "/README.md", "/LICENSE.md", "/NOTICE", "/CITATION.cff", "/CHANGELOG.md", "/pyproject.toml", "/hatch_build.py"]
+exclude = ["*.so", "*.pyd"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/metacheck", "src/pytacheck"]
+# the C reader is compiled by hatch_build.py and added there; a copy built in
+# place by an editable install is not taken along
+exclude = ["*.so", "*.pyd", "*.c"]
+
+# The optional C reader of .rds/.RData files: built where a C compiler is
+# available, else the wheel is pure Python (METACHECK_PURE_PYTHON=1 forces that).
+[tool.hatch.build.targets.wheel.hooks.custom]
 
 [dependency-groups]
 dev = [
@@ -143,6 +152,8 @@ dev = [
 ]
 
 [tool.uv]
+# rebuild the editable install (and its C reader) when the C source changes
+cache-keys = [{ file = "pyproject.toml" }, { file = "hatch_build.py" }, { file = "src/metacheck/datacheck/_rdata_c.c" }]
 constraint-dependencies = [
     "h2>=4.4.1",
     "idna>=3.15",

@@ -1,0 +1,49 @@
+name: Wheels
+
+# The wheels with the C reader of .rds files (hatch_build.py), one per platform:
+# the extension uses Python 3.11's limited C API, so a cp311-abi3 wheel serves
+# every supported Python. Each wheel is installed and the reader's tests run
+# against it. release.yml calls this workflow and publishes the wheels; pull
+# requests that touch the reader or its build run it too. GitHub's own runners
+# only: the macOS and Windows legs need them.
+
+on:
+  pull_request:
+    paths:
+      - hatch_build.py
+      - src/metacheck/datacheck/_rdata_c.c
+      - src/metacheck/datacheck/_files_rdata.py
+      - pyproject.toml
+      - .github/workflows/wheels.yml
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  wheels:
+    name: Wheels (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel, windows-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: pypa/cibuildwheel@8d2b08b68458a16aeb24b64e68a09ab1c8e82084 # v3.4.1
+        env:
+          CIBW_BUILD: "cp311-*"
+          CIBW_SKIP: "*-musllinux_*"
+          CIBW_ARCHS: native
+          CIBW_TEST_REQUIRES: pytest
+          CIBW_TEST_ENVIRONMENT: METACHECK_REQUIRE_C_READER=1
+          CIBW_TEST_COMMAND: >-
+            pytest -q -p no:cacheprovider {project}/tests/datacheck_files/test_rdata_reader.py
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: wheels-${{ matrix.os }}
+          path: wheelhouse/*.whl

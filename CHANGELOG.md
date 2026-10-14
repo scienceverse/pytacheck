@@ -7,6 +7,17 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Performance: a C reader of `.rds` and `.RData` files
+
+- **Added:** R's serialization format, which `data_read_head()` and `data_check` read `.rds` and `.RData` files with, is read by a small C extension (`metacheck.datacheck._rdata_c`). It builds the same Python objects as the Python reader, which stays as the fallback (an ASCII stream, `saveRDS(ascii = TRUE)`, is still read by it). A 22 MB rstanarm model is read in 0.2 s, where the Python reader took 2.4 to 3.9 s and R's `readRDS()` takes 0.23 s.
+- **Added:** the wheels for Linux (x86-64 and ARM), macOS (ARM and Intel) and Windows include the extension, built once per platform for every supported Python. An install from source compiles it when a C compiler is found and otherwise installs the Python reader, as before; `METACHECK_PURE_PYTHON=1` skips the compiler. `METACHECK_RDS_READER=python` picks the Python reader at run time (docs/ENVIRONMENT.md). The Docker images build it.
+- **Changed:** both readers pause Python's garbage collector while they build an object and then move what they built to its oldest generation, so the collector does not walk a fitted model's million objects right after the read (half a second per model). Together with the C reader, `data_read_head()` of the 20 to 40 MB model files of the benchmark went from 3 to 4.7 s to 0.3 to 0.7 s.
+- **Changed:** data frame columns from `.rds` and `.RData` files are converted to pandas with numpy instead of value by value (integers, logicals, factors, dates, `integer64`, text): 200,000 rows and 8 columns in 0.05 s instead of 0.63 s. The values and types are the same.
+- **Fixed:** an `.rds` or `.RData` file that holds R's base namespace, a package environment or an environment saved by name (as lazy-load databases and `refhook` write it) was reported as unreadable ("names in persistent strings are not supported yet", "unknown type 0"): four type codes of R's format were swapped.
+- **Fixed:** an integer `Date` column (data.table's `IDate`) with a missing value made its file unreadable ("days=-2147483648; must have magnitude <= 999999999"); the value is now NA, as R shows it.
+- **Fixed:** complex numbers with an infinite part are read exactly (`1+Inf i` had become `NaN+Inf i`, and `-0+1i` lost its sign), and without numpy warnings.
+- **Changed:** an object nested deeper than Python's recursion limit allows (about 330 levels, for example a formula of 400 terms) is read by the C reader, as R reads it, instead of being reported as unreadable.
+
 ## 0.4.0a2
 
 Second pre-release on PyPI. Compared against the R package at commit

@@ -1853,7 +1853,8 @@ def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
         for j in range(df.shape[1]):
             col = df.iloc[:, j]
             if col.dtype != object or not any(
-                isinstance(v, list | tuple | dict | np.ndarray) for v in col.tolist()
+                issubclass(tp, list | tuple | dict | np.ndarray)
+                for tp in set(map(type, col.tolist()))
             ):
                 continue
             flat = [_flatten_cell(v, 20) for v in col.tolist()]

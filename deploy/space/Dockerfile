@@ -22,10 +22,13 @@ ADD https://raw.githubusercontent.com/scienceverse/pytacheck/${REF}/install/cons
 
 ENV VIRTUAL_ENV=/opt/metacheck
 ENV PATH=/opt/metacheck/bin:$PATH
-RUN uv venv "$VIRTUAL_ENV" && \
+# a C compiler for the install only: it builds pytacheck's C reader of .rds files
+RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev && \
+    uv venv "$VIRTUAL_ENV" && \
     uv pip install --no-cache -c /tmp/constraints-app.txt \
       "metacheck[app] @ https://github.com/scienceverse/pytacheck/archive/${REF}.tar.gz" && \
-    rm /tmp/constraints-app.txt
+    rm /tmp/constraints-app.txt && \
+    apt-get purge -y --auto-remove gcc libc6-dev && rm -rf /var/lib/apt/lists/*
 
 # Spaces run the app as user 1000
 RUN useradd --create-home --uid 1000 user
