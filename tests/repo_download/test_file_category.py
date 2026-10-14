@@ -24,9 +24,18 @@ def test_file_category_empty_vector_and_frame() -> None:
 def test_file_category_as_vector() -> None:
     contents = ["a.csv", "b.R", "codebook.xlsx", "readme.txt", "ambiguous", "file.json"]
     summary = file_category(contents)
-    assert summary["file_category"].tolist() == ["data", "code", "codebook", "readme", pd.NA, pd.NA]
+    # .json is "data" in file_types since metacheck d52b3fd (it was listed as
+    # both code and data, which file_category() left undecided)
+    assert summary["file_category"].tolist() == [
+        "data",
+        "code",
+        "codebook",
+        "readme",
+        pd.NA,
+        "data",
+    ]
     assert list(summary.columns) == ["name", "filetype", "file_category"]
-    assert summary["filetype"].tolist() == ["data", "code", "data", "text", "", "code;data"]
+    assert summary["filetype"].tolist() == ["data", "code", "data", "text", "", "data"]
 
 
 def test_file_category_as_data_frame() -> None:
@@ -38,7 +47,8 @@ def test_file_category_as_data_frame() -> None:
         }
     )
     summary = file_category(contents)
-    # not currently categorising from category
+    # not currently categorising from category; an explicit "code;data"
+    # filetype is still left undecided
     assert summary["file_category"].tolist() == ["data", "code", "codebook", "readme", pd.NA, pd.NA]
     # the input is not modified
     assert "file_category" not in contents.columns
@@ -102,29 +112,34 @@ def test_edge_case_summarise() -> None:
 def test_filetype_quirks() -> None:
     # unknown extensions paste R's NA; the name's last "." part is the extension
     ft = filetype(["noext", "x.", "a.R.", "b.json", "c.JSON", "d.İNİ", None])
-    assert ft.tolist() == ["NA", "NA", "code", "code;data", "code;data", "config", "NA"]
+    assert ft.tolist() == ["NA", "NA", "code", "data", "data", "config", "NA"]
     with pytest.raises(IndexError):
         filetype([""])
     assert len(filetype([])) == 0
 
 
 def test_file_category_compound_types() -> None:
-    out = file_category(["x.jasp", "sample.fq.gz", "c.tar.gz", "x.json", "run.sh", "x.sps"])
+    # a name ending in two known extensions (fq.gz and gz) has a compound type
+    out = file_category(
+        ["x.jasp", "sample.fq.gz", "c.tar.gz", "x.json", "run.sh", "x.sps", "page.html"]
+    )
     assert out["filetype"].tolist() == [
-        "data;stats",
+        "data",
         "data;archive",
         "archive",
-        "code;data",
-        "code;exec",
+        "data",
+        "code",
         "stats",
+        "web",
     ]
     assert [None if v is pd.NA else v for v in out["file_category"]] == [
         "data",
         "data",
         None,
-        None,
-        None,
+        "data",
         "code",
+        "code",
+        None,
     ]
 
 
@@ -137,9 +152,18 @@ def test_file_category_null_and_errors() -> None:
 def test_file_types_table() -> None:
     ft = file_types()
     assert list(ft.columns) == ["ext", "type"]
-    assert len(ft) == 404
+    # one type per extension (metacheck d52b3fd: 27 extensions were listed twice)
+    assert len(ft) == 377
+    assert not ft["ext"].duplicated().any()
     assert str(ft["ext"].dtype) == "string"
-    assert ft.loc[ft["ext"] == "json", "type"].tolist() == ["code", "data"]
+    types = dict(zip(ft["ext"], ft["type"], strict=True))
+    for ext in ("json", "rds", "por", "jasp"):
+        assert types[ext] == "data"
+    for ext in ("sh", "bash", "bat", "js", "jsx", "ts", "tsx", "php", "asp", "jsp", "inc"):
+        assert types[ext] == "code"
+    assert types["html"] == types["htm"] == "web"
+    assert types["3ds"] == "3D"
+    assert types["yuv"] == "video"
     assert set(ft["type"]) == {
         "3D",
         "archive",
@@ -166,7 +190,7 @@ def test_bundled_data_loader() -> None:
     from metacheck.resources.data import load_data
 
     ft = load_data("file_types")
-    assert ft.shape == (404, 2)
+    assert ft.shape == (377, 2)
     assert ft["ext"].iloc[0] == "1.ada"
 
 

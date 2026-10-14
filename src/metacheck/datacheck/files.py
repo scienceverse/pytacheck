@@ -338,6 +338,9 @@ def _filetype(file_name: list[str | None]) -> list[str | None]:
     return [None if is_missing(v) else str(v) for v in _as_list(out)]
 
 
+#: Metadata files that are documentation whatever their folder or extension says.
+_METADATA_JSON = frozenset({"ro-crate-metadata.json", "dataset_description.json"})
+
 _KEYWORD_RULES = (
     ("documentation", "readme"),
     ("documentation", "code[ _.-]?book"),
@@ -404,8 +407,11 @@ def data_classify_files(
             ci = coarse[i]
             first = None if ci is None else ci.split(";", 1)[0]
             types[i] = _FILE_TYPE_CROSSWALK.get(first) if first is not None else None
+    # metadata files: ro-crate-metadata.json (as metacheck) and Psych-DS's
+    # dataset_description.json, which file_types' .json -> "data" (metacheck
+    # d52b3fd) would otherwise make a data file (DX-datacheck-2)
     for i, nm in enumerate(names):
-        if nm is not None and _tolower(_r_basename(nm)) == "ro-crate-metadata.json":
+        if nm is not None and _tolower(_r_basename(nm)) in _METADATA_JSON:
             types[i] = "documentation"
     return [t if t is not None else "unknown" for t in types]
 

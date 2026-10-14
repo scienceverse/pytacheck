@@ -7,8 +7,11 @@ bundled as ``metacheck/resources/data/file_types.json.gz``, generated from R by
 
 The table has two columns, ``ext`` (lower case, without the leading dot; some
 are compound, e.g. ``fasta.gz``) and ``type`` (``code``, ``data``, ``stats``,
-``archive``, ``text``, ...), sorted by ``ext`` as in R. An extension can have
-several rows (``json`` is both ``code`` and ``data``).
+``archive``, ``text``, ...), sorted by ``ext`` as in R, one row per extension
+(377 rows). At the pin, 27 extensions had two rows (``json`` was ``code`` and
+``data``); metacheck d52b3fd gave each one type (``json``, ``rds``, ``por``,
+``jasp``: ``data``; shell scripts, ``js``, ``ts``, ``php``: ``code``; ``html``,
+``htm``: ``web``), and pytacheck bundles that table (DX-datacheck-1).
 """
 
 from __future__ import annotations
@@ -34,8 +37,8 @@ def _pairs() -> tuple[tuple[str, str], ...]:
 def file_types() -> pd.DataFrame:
     """``metacheck::file_types`` (``data/file_types.rda``) as a data frame.
 
-    Columns ``ext`` and ``type`` (both ``string``), one row per extension/type
-    pair, sorted by ``ext``. A fresh copy is returned, so callers may modify it.
+    Columns ``ext`` and ``type`` (both ``string``), one row per extension,
+    sorted by ``ext``. A fresh copy is returned, so callers may modify it.
     """
     from metacheck.resources.data import load_data
 
@@ -44,7 +47,7 @@ def file_types() -> pd.DataFrame:
 
 @functools.cache
 def ext_types() -> dict[str, str]:
-    """Extension -> its types pasted with ``";"`` in table order (``json`` -> ``"code;data"``).
+    """Extension -> its type (several would be pasted with ``";"`` in table order).
 
     This is ``left_join(ext, file_types, by = "ext")`` followed by
     ``summarise(type = paste(type, collapse = ";"))``, as in

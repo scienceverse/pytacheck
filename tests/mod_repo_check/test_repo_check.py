@@ -629,9 +629,9 @@ def test_private_osf_file_rows_are_excluded_per_row() -> None:
 
 def test_local_archives_are_counted(tmp_path: Path) -> None:
     # U123: a local file file_category() cannot place takes its type from the
-    # extension, as an online file does: a local .tar.gz/.zip is an archive
-    # (an extension with several types stays unclassified: .json and .rds are
-    # code or data, .html is code or web, so they are not counted as code)
+    # extension, as an online file does: a local .tar.gz/.zip is an archive.
+    # file_types has one type per extension since metacheck d52b3fd, so .json
+    # is data and .html web (DX-datacheck-1); neither is counted as code.
     names = ("results.tar.gz", "bundle.zip", "notes.txt", "analysis.R", "report.html", "cfg.json")
     for name in names:
         (tmp_path / name).write_text("x\n", encoding="utf-8")
@@ -640,9 +640,9 @@ def test_local_archives_are_counted(tmp_path: Path) -> None:
     assert {k: None if pd.isna(v) else v for k, v in types.items()} == {
         "analysis.R": "code",
         "bundle.zip": "archive",
-        "cfg.json": None,
+        "cfg.json": "data",
         "notes.txt": "text",
-        "report.html": None,
+        "report.html": "web",
         "results.tar.gz": "archive",
     }
     assert mo.summary_table["files_zip"].tolist() == [2]

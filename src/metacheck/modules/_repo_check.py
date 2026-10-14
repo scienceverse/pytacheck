@@ -455,10 +455,10 @@ def _typed_files(rows: dict[str, list[Any]]) -> pd.DataFrame:
 def join_file_types(files: pd.DataFrame) -> pd.DataFrame:
     """Add ``file_type`` from the file extension (``left_join(file_types, by = "ext")``).
 
-    One row per file: an extension ``file_types`` lists twice (``json`` is
-    both ``code`` and ``data``) takes its first type in table order, what the
-    module's de-duplication kept, as in github_files() and the other
-    listings. R's join repeats such a file once per type (UPSTREAM_ISSUES U46).
+    One row per file. ``file_types`` lists each extension once (metacheck
+    d52b3fd); at the pin 27 were listed twice and R's join repeated such a
+    file once per type (UPSTREAM_ISSUES U46). The first type is still taken,
+    should the table ever list one twice again.
     """
     out = files.reset_index(drop=True)
     if len(out) == 0:
@@ -1194,8 +1194,8 @@ def list_local(local_path: Any) -> pd.DataFrame:
     # .txt, .pdf, images) takes its type from the extension, as the files of
     # an online repository do, when the extension has one type; R leaves it
     # NA, so a local archive was not counted as one (UPSTREAM_ISSUES U123).
-    # An extension with several types (.json and .rds: code or data; .html:
-    # code or web) stays unclassified rather than counted as code.
+    # file_types lists each extension once since metacheck d52b3fd (.json and
+    # .rds: data, .html: web); one listed twice would stay unclassified.
     if "file_type" in out.columns:
         by_ext = [t[0] if len(t) == 1 else None for t in _ext_types(vals(out["file_name"]))]
         out["file_type"] = pd.Series(
