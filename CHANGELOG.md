@@ -90,6 +90,14 @@ These port the changes metacheck made between `f1062b4` (the pinned commit, whic
 - **Fixed:** the module's no-code and other-code notes name Python, and the reported-vs- reproduced match, the SPSS/Stata sections and the self-reproducible output section are kept for a paper with only Python code (U233, U234, U238).
 - **Fixed:** for Python code, a file a script writes with `open(path, "w")` is not taken for a missing input, `open()` counts as a write only by its mode, an `os.chdir()` alone in a block no longer breaks the script, and `pyproject.toml` pins are read as TOML (U235, U236, U237, U240).
 
+### Faster: data_check on large data files
+
+- **Faster:** `data_check` no longer writes out every cell of a numeric, logical or date column when it looks for a file manifest (a table that lists the repository's files). Such a column can only list files when a file in the repository is named like a number, so it is skipped otherwise.
+- **Faster:** the careless-responding screen computes each respondent's IRV only for the respondents it flags, as only theirs is reported.
+- **Faster:** an integer column is written out as its digits and read back as numbers without going through the text value by value.
+- On a package with a 100,000-row CSV, a 300 x 400 survey and an xlsx file, `data_check` takes 11 s instead of 21 s (metacheck 0.3.3.1: 9.5 s). Its results are unchanged.
+- **Added:** `benchmarks/repo_bench.py` times repo_check, code_check and data_check on repository links in metacheck and pytacheck, each run cold, with the requests made per host.
+
 ## 0.4.0a2
 
 Second pre-release on PyPI. Compared against the R package at commit
