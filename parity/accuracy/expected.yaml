@@ -164,6 +164,25 @@ differences:
       a notebook's language is read from its local copy, so the R notebook is checked as R
       (dplyr, ggplot2 and its missing scores.csv are found); metacheck reads a path relative
       to the working directory and checks it as Python
+  - module: code_check
+    input: "*"
+    field: summary_text
+    match: values
+    kind: deliberate
+    ref: D118
+    reason: >-
+      the summary names the files without comments and the files that load libraries in
+      several places, and has setwd()/install.packages() lines only when found; missing files
+      stay in the report (metacheck 7208868, after the pin)
+  - module: codebook_check
+    input: "*"
+    field: [report, "summary_table.scale_*", "table.scale*"]
+    match: values
+    kind: deliberate
+    ref: D117
+    reason: >-
+      scales and tasks are identified only with extract_scales=True, which is off by default
+      (metacheck 029bf63, after the pin: the scale part is experimental and unvalidated)
   - module: data_check
     input: [demo, notebooks, parse-errors]
     field: [summary_text, report, summary_table, table]
