@@ -654,7 +654,7 @@ static PyObject *read_item(Stream *s) {
 }
 
 /* The objects that read their attributes after the payload: the payload. */
-static PyObject *read_payload(Stream *s, int t, int32_t flags, PyObject **made) {
+static PyObject *read_payload(Stream *s, int t, PyObject **made) {
     Py_ssize_t n;
     *made = NULL;
     switch (t) {
@@ -925,7 +925,7 @@ static PyObject *read_item_flags(Stream *s, int32_t flags) {
     }
     /* the remaining types read their attributes after the payload */
     PyObject *made;
-    PyObject *payload = read_payload(s, t, flags, &made);
+    PyObject *payload = read_payload(s, t, &made);
     if (payload == NULL)
         goto done;
     PyObject *attrs = NULL;
