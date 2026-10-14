@@ -114,6 +114,7 @@ _NAMING_BAD = (
     "should be classifiable by name or extension."
 )
 _NAMING_OK = "File names are broadly machine-parseable."
+_NAMING_SEVERITY_LABEL = {"bad": "Required", "suggestion": "Suggestion"}
 
 
 @module(
@@ -1021,6 +1022,9 @@ def _report(
     summary_naming = None
     if len(naming_issues) > 0:
         naming_tbl = naming_issues.copy()
+        # the report shows "Required"/"Suggestion"; the counts above use the
+        # internal "bad"/"suggestion" (metacheck 8c1f6c1; DX-datacheck-3)
+        naming_tbl["severity"] = naming_tbl["severity"].map(_NAMING_SEVERITY_LABEL)
         naming_tbl.columns = ["File", "Rule", "Severity", "Detail"]
         lead = _NAMING_BAD if n_naming_bad > 0 else _NAMING_OK
         report_naming = [

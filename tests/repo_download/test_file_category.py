@@ -211,12 +211,21 @@ def test_check_file_naming_rules() -> None:
     assert ("résumé.txt", "special-characters") in rules
     assert ("résumé.txt", "diacritics") in rules
     assert ("x_20231301.csv", "unclassifiable") in rules
-    assert ("x_20231301.csv", "date-format") in rules
     assert ("data_2.csv", "zero-padding") in rules
     assert "ok.R" not in out["file_name"].tolist()
     assert set(out["severity"]) <= {"bad", "suggestion"}
     assert out.loc[out["rule"] == "zero-padding", "severity"].tolist() == ["suggestion"]
     assert FILE_NAMING_SEVERITY["path-length-255"] == "bad"
+
+
+def test_check_file_naming_has_no_date_rule() -> None:
+    # metacheck 8c1f6c1 (#462): an 8-digit run is not checked as a YYYYMMDD
+    # date, so a long numeric ID is not reported as invalid dates
+    out = check_file_naming(
+        ["sample_1234567890123456.csv", "x_20231301.csv"], data_type=["data", "data"]
+    )
+    assert len(out) == 0
+    assert "date-format" not in FILE_NAMING_SEVERITY
 
 
 def test_check_file_naming_clean_and_empty() -> None:
