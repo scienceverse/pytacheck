@@ -1,6 +1,6 @@
 {
 "psychds_check.bibr12": {"r": "fc14dc25e1d3790d", "py": "3eb9cbaee37c44bf", "diff": ["report[]", "summary_table.misplaced_n[]", "table.status[]", "table.target_path[]"]},
-"psychds_check.classified": {"r": "f852c272ccbf2d1d", "py": "31dfc03411f386d8", "diff": ["report[]", "summary_table.misplaced_n[]", "table.status[]", "table.target_path[]"]},
+"psychds_check.classified": {"r": "f852c272ccbf2d1d", "py": "230503e8ef73a66a", "diff": ["report[]", "summary_table.misplaced_n[]", "table.data_type[]", "table.status[]", "table.target_path[]"]},
 "psychds_check.compliant": {"r": "f569e5faf109c9db", "py": "3d0386008fd38fec", "diff": ["report[]", "summary_table.misplaced_n[]", "table.status[]", "table.target_path[]"]},
 "psychds_check.compliant_raw": {"r": "5e8c936ded945dbb", "py": "c4bc5866755ab78c", "diff": ["report[]", "summary_table.misplaced_n[]", "table.convert[]", "table.original_target[]", "table.status[]", "table.target_path[]"]},
 "psychds_check.green_partial": {"r": "99fcfbc7723283b1", "py": "438a04e52835dd4c", "diff": ["report[]", "summary_table.misplaced_n[]", "table.status[]", "table.target_path[]"]},
