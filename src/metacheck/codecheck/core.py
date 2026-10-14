@@ -1943,18 +1943,33 @@ _LOAD_REGEX = {
         r"\s*\(",
     ),
 }
-_WRITE_REGEX = _alternation(
-    [
-        r"write[\._][A-Za-z\._0-9]*",
-        "saveRDS",
-        "save",
-        r"save\.image",
-        "ggsave",
-        "export",
-        "fwrite",
-    ],
-    r"\s*\(",
-)
+#: The calls that write a file, by language (``code_file_refs(include_writes = TRUE)``).
+#: Python's are named one by one: metacheck's generic ``to_[A-Za-z_0-9]+`` also takes
+#: ``pd.to_datetime("2020.01")`` or ``to_numeric("1.5")`` for a write of a file.
+_PY_WRITE_FNS = [
+    "to_(?:csv|excel|parquet|pickle|json|feather|hdf|stata|html|latex|markdown|xml|orc|netcdf|file)",
+    "write_[A-Za-z0-9_]+",
+    "savez(?:_compressed)?",
+    "savetxt",
+    "savefig",
+    "save",
+    "dump",
+]
+_WRITE_REGEX = {
+    "R": _alternation(
+        [
+            r"write[\._][A-Za-z\._0-9]*",
+            "saveRDS",
+            "save",
+            r"save\.image",
+            "ggsave",
+            "export",
+            "fwrite",
+        ],
+        r"\s*\(",
+    ),
+    "Python": _alternation(_PY_WRITE_FNS, r"\s*\("),
+}
 _QUOTED_FILE = "(['\"])(?!\\.\\1)[^'\"]+\\.[A-Za-z0-9]{1,8}(?:\\.[A-Za-z0-9]{1,8})*\\1"
 _FORMAT_SPEC = r"^%[-+ 0#]*[0-9]*(\.[0-9]+)?[diouxXeEfgGaAscp]$"
 _UNQUOTED = {
@@ -1982,13 +1997,13 @@ def code_file_refs(
     ``import()``, ``fread``, ``load``, ``source``, pandas readers, ``use``,
     ``GET FILE=``, ...), plus bare-word references for SAS/SPSS/Stata.
     Format specifiers such as ``"%.2f"`` are not file names. With
-    *include_writes* (R only) written files count too.
+    *include_writes* (R and Python) written files count too.
     """
     lang = _match_arg(lang)
     lines = code_remove_comments(code_text, lang)
     pattern = _LOAD_REGEX[lang]
-    if include_writes is True and lang == "R":
-        pattern = f"{pattern}|{_WRITE_REGEX}"
+    if include_writes is True and lang in _WRITE_REGEX:
+        pattern = f"{pattern}|{_WRITE_REGEX[lang]}"
     load_hits = grepl(pattern, lines, perl=True)
     load_lines = [s for s, h in zip(lines, load_hits, strict=True) if h]
     found = [m for ms in regextract_all(_QUOTED_FILE, load_lines, perl=True) for m in ms]
