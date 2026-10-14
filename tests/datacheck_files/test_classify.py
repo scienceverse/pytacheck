@@ -140,9 +140,12 @@ def test_json_html_and_scripts_after_one_type_per_extension() -> None:
         "documentation",
     ]
     # metadata files are documentation, whatever their extension (DX-datacheck-2)
-    assert F.data_classify_files(
-        ["dataset_description.json", "ro-crate-metadata.json", "sub/DATASET_DESCRIPTION.JSON"]
-    ) == ["documentation"] * 3
+    assert (
+        F.data_classify_files(
+            ["dataset_description.json", "ro-crate-metadata.json", "sub/DATASET_DESCRIPTION.JSON"]
+        )
+        == ["documentation"] * 3
+    )
 
 
 def test_data_format_of_plain_text_tables_and_domain_formats() -> None:

@@ -23,7 +23,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import grepl, regexec, slashed, sub
+from metacheck._r import grepl, regexec, slashed
 from metacheck._values import is_missing
 
 __all__ = ["check_file_naming"]
