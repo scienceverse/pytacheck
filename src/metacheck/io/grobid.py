@@ -781,14 +781,15 @@ def _printed_before(node: Any, contents: Any, squish: bool = False) -> int | Non
     """How often the row of *node* prints *contents* before *node* (``None`` for no contents).
 
     With *squish*, the text is compared with its whitespace squished (as the
-    12.0 conversion prints it).
+    12.0 conversion prints it). Both are compared without the line-wrap spaces
+    in links, as the text prints them (:func:`_join_wrapped_links`).
     """
     if contents is None or contents == "":
         return None
     before = "".join(node.xpath("preceding::text()"))
     if squish:
         before = regex.sub(r"\s+", " ", before)
-    return before.lstrip().count(contents)
+    return _join_wrapped_links(before.lstrip()).count(_join_wrapped_links(contents))
 
 
 # the punctuation a link text can print around a URL: "(osf.io/abc)", "osf.io/abc;"
@@ -935,6 +936,8 @@ def _print_hrefs_at(
             lt, h = link_text[i], href[i]
             if _na(lt) or not lt or _na(h) or not h:
                 continue
+            # as the text prints it, without the line-wrap spaces Grobid left in it
+            lt = _join_wrapped_links(lt)
             n = None if occurrence is None else occurrence[i]
             at = -1 if n is None else _nth(t, lt, n)
             if at < pos:  # not where it was counted: the next printing
