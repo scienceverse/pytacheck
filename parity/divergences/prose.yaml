@@ -118,3 +118,37 @@
 "bibr12/module.stat_effect_size.full": *u125_consider_adding_effect
 "bibr12/module.stat_effect_size.mixed": *u125_consider_adding_effect
 "grobid12/module.stat_effect_size.debruine": *u125_consider_adding_effect
+
+# DX-repro-1 / UX-repro-6: reproducibility_check assesses Python code too (metacheck
+# d3b8594, after the pin), so its no-code sentence names both languages; a .py file
+# is no longer "non-R code" the note counts; and the note says the phase RUNS R and
+# Python code (metacheck d3b8594 still says "R code") ----------------------------------
+"mod_repro/reproducibility_check.no_code": &dx_repro_1_no_code
+  kind: deliberate
+  ref: DX-repro-1
+  reason: "the no-code sentence names Python, which is assessed too (metacheck d3b8594: 'We found no R or Python code files to assess for reproducibility.')"
+  r_text: [["We found no R code files to assess for reproducibility( \\(this phase runs R code only\\))?\\.", "We found no R or Python code files to assess for reproducibility.", "regex"]]
+"mod_repro/reproducibility_check.no_language": *dx_repro_1_no_code
+"mod_repro/reproducibility_check.stata_red": *dx_repro_1_no_code
+"mod_repro/reproducibility_check.bibr12_nocode": *dx_repro_1_no_code
+"mod_repro/reproducibility_check.tables_dir_missing": *dx_repro_1_no_code
+"mod_repro/reproducibility_check.spss_no_syntax": *dx_repro_1_no_code
+"mod_repro/reproducibility_check.jasp_only": *dx_repro_1_no_code
+"mod_repro/reproducibility_check.jasp_only_keep_sandbox": *dx_repro_1_no_code
+"mod_repro/reproducibility_check.spss_selfcontained": *dx_repro_1_no_code
+"mod_repro/module.spss_no_syntax": *dx_repro_1_no_code
+"mod_repro/module.jasp_only": *dx_repro_1_no_code
+"mod_repro_review/review.rv_psychsci_omv": *dx_repro_1_no_code
+"mod_repro/reproducibility_check.spss_with_syntax": &ux_repro_6_runs
+  kind: r_bug_fixed
+  ref: UX-repro-6
+  reason: "the no-code sentence names Python (DX-repro-1), and the note on other code says the phase RUNS R and Python code (metacheck d3b8594 still says 'R code', which is no longer true)"
+  r_text: [["We found no R code files to assess for reproducibility( \\(this phase runs R code only\\))?\\.", "We found no R or Python code files to assess for reproducibility.", "regex"], ["this phase only RUNS R code", "this phase only RUNS R and Python code"]]
+"mod_repro/reproducibility_check.stata_with_do": *ux_repro_6_runs
+"mod_repro_review/review.rv_spss_spv": *ux_repro_6_runs
+"mod_repro/reproducibility_check.renv_only": &dx_repro_1_no_py_note
+  kind: deliberate
+  ref: DX-repro-1
+  reason: "the no-code sentence names Python, and the repository's .py files are not 'non-R code' this phase does not run (metacheck d3b8594 drops py from the note's extensions), so the note on other code goes"
+  r_text: [["We found no R code files to assess for reproducibility( \\(this phase runs R code only\\))?\\.", "We found no R or Python code files to assess for reproducibility.", "regex"], [" The repository does contain \\d+ non-R code files?; this phase only RUNS R code \\(see the sections? above for what we found and could — or could not — check for those files\\)\\.", "", "regex"]]
+"mod_repro_review/review.rv_py_only_structure": *dx_repro_1_no_py_note

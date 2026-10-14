@@ -215,11 +215,40 @@
   reason: a test_id carries its source prefix once (notebook_r_ipynb_t1); R's .stat_test_id() fallback repeats it, and a value key loses its trailing underscore too (95_conf, R 95_conf_)
 "mod_repro/reproducibility_check.jasp_with_r": *u138_rep
 "mod_repro/reproducibility_check.jasp_with_r_keep_sandbox": *u138_rep
-"mod_repro/reproducibility_check.smcl_mplus": *u138_rep
+"mod_repro/reproducibility_check.smcl_mplus":
+  kind: r_bug_fixed
+  ref: U138
+  reason: a test_id carries its source prefix once (analysis_smcl_t1_price); R's .stat_test_id() fallback repeats it, and a value key loses its trailing underscore too (95_conf, R 95_conf_). The no-code sentence names Python too (DX-repro-1)
+  r_text: [["We found no R code files to assess for reproducibility( \\(this phase runs R code only\\))?\\.", "We found no R or Python code files to assess for reproducibility.", "regex"]]
+  xfail: true
 "mod_repro/reproducibility_check.spv_notebook_py":
   kind: r_bug_fixed
   ref: U148
   reason: the SPSS Notes table's template cell renders as 3, so it adds 2 statistics (38, R 36); test_ids carry the source prefix once (U138)
+# Python code (metacheck d3b8594, after the pin) is assessed, and run under pytacheck's
+# sandbox; the scenarios' .py files were "other code" at the pin.
+"mod_repro/reproducibility_check.nonr_only": &dx_repro_1_python
+  kind: deliberate
+  ref: DX-repro-1
+  reason: the paper's Python files are assessed (metacheck d3b8594, after the pin), in a "### Python code" section with its own rows, counts and traffic light, instead of being reported as code with no reproducible output
+"mod_repro/module.nonr_only": *dx_repro_1_python
+"mod_repro_review/tables.nonr_only": *dx_repro_1_python
+"mod_repro_review/review.rv_jasp_nonr": *dx_repro_1_python
+"mod_repro_review/tables.rv_jasp_nonr": *dx_repro_1_python
+"mod_repro_review/review.rv_no_file_name_col":
+  kind: deliberate
+  ref: DX-repro-1
+  reason: Python rows of a code table without a file_name column name no file to assess, as R rows do, so there is no code to assess (at the pin they were reported as other code; metacheck d3b8594 takes them for Python files with no names)
+"codecheck/code_file_refs.include_writes_python":
+  kind: deliberate
+  ref: DX-repro-3
+  reason: include_writes finds Python's write calls too (metacheck d3b8594, after the pin, adds them; pytacheck lists pandas'/numpy's/matplotlib's writers rather than every to_*() call)
+"repro_core/repro_docker_image_for.default": &dx_repro_2
+  kind: deliberate
+  ref: DX-repro-2
+  reason: the default R image is metacheck_r_large (metacheck 9d7cd49, after the pin)
+  r_text: [["metacheck_r:latest", "metacheck_r_large:latest"]]
+"repro_core_review/repro_docker_image_for.variety": *dx_repro_2
 
 # --- statout readers (R/spv.R, R/jasp.R, R/omv.R, R/stata.R, R/mplus.R) ------
 "statout_readers/import_spv.modern": &u148_tpl
