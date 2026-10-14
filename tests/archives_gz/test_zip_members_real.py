@@ -119,16 +119,34 @@ def test_file_download_extracts_members_through_zip_peek(
     assert server.sent < len(DATA) // 4
 
 
-def test_file_download_whole_zip_when_ranges_are_unavailable(
+def test_file_download_listed_size_replaces_head(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     monkeypatch.setattr(zenodo, "zenodo_info", _record)
-    with _serve(ZipServer(DATA, head_length=False)):
+    server = ZipServer(DATA, head_length=False)
+    with _serve(server):
         dl = zenodo_file_download(
             "24680", download_to=str(tmp_path), unzip_types="data", max_file_size=1
         )
-    # the archive could not be listed: fetched whole, and checked like any file
+    # the host gives no size to HEAD, but the record's listing does: the archive is
+    # listed with that size (metacheck d52b3fd) and its member extracted
+    assert dl["extracted"].tolist() == [1]
+    assert dl["downloaded"].tolist() == [True]
+    assert "HEAD" not in [m for m, _ in server.calls]
+    assert not (tmp_path / "24680" / "bundle.zip").exists()
+
+    # with no size anywhere the archive cannot be listed: fetched whole, and
+    # checked like any file
+    def unsized(*args: Any, **kwargs: Any) -> pd.DataFrame:
+        rec = _record(*args, **kwargs)
+        rec["files"] = [[{k: v for k, v in f.items() if k != "size"} for f in rec["files"][0]]]
+        return rec
+
+    monkeypatch.setattr(zenodo, "zenodo_info", unsized)
+    with fresh_peek_cache(), _serve(ZipServer(DATA, head_length=False)):
+        dl = zenodo_file_download(
+            "24680", download_to=str(tmp_path / "again"), unzip_types="data", max_file_size=1
+        )
     assert pd.isna(dl["extracted"].iloc[0])
     assert dl["downloaded"].tolist() == [True]
-    assert dl["checksum_ok"].tolist() == [True]
-    assert (tmp_path / "24680" / "bundle.zip").read_bytes() == DATA
+    assert (tmp_path / "again" / "bundle.zip").read_bytes() == DATA

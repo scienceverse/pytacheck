@@ -311,7 +311,9 @@ def test_dataverse_file_download_extracts_wanted_members(
 ) -> None:
     requested: list[str] = []
 
-    def fake_members(url: str, dest: str, keep_types: Any, max_file_size: Any) -> pd.DataFrame:
+    def fake_members(
+        url: str, dest: str, keep_types: Any, max_file_size: Any, size: Any = None
+    ) -> pd.DataFrame:
         requested.append(url)
         assert keep_types == "data"
         Path(dest, "study.csv").write_text("id,x\n1,2\n")

@@ -680,6 +680,7 @@ def _zenodo_download_one(
                             dest=target,
                             keep_types=unzip_types,
                             max_file_size=max_file_size,
+                            size=files["size"].iloc[i],
                         )
                     except Exception:
                         got = None
@@ -852,6 +853,7 @@ def _zenodo_zip_members(
     dest: str,
     keep_types: Any = ("data", "documentation"),
     max_file_size: float | None = 10,
+    size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-zenodo.R::.zenodo_zip_members(): pull chosen members out of a zip.
 
@@ -862,7 +864,8 @@ def _zenodo_zip_members(
     fetches only those into *dest*. Returns one row per member (``name``,
     ``path``, ``size``, ``ok``), a zero-row table when nothing is wanted, or
     ``None`` when the archive cannot be listed (the caller then downloads it
-    whole).
+    whole). *size*, the zip's size as the record lists it, saves the peek a
+    ``HEAD`` request.
     """
     from metacheck.archives.github import _as_list, _r_basename
     from metacheck.archives.zip_peek import (  # type: ignore[import-not-found]
@@ -872,7 +875,7 @@ def _zenodo_zip_members(
     from metacheck.datacheck.files import data_classify_files
 
     try:
-        listing = zip_peek(url)
+        listing = zip_peek(url, size=size)
     except Exception:
         listing = None
     if listing is None or len(listing) == 0:
