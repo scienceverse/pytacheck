@@ -2,7 +2,7 @@
 
 pytacheck can run the checks of R metacheck itself, the package it ports, and show
 their results with its own report. Where R can run metacheck, R is the default engine
-of the app and the REST API: R metacheck is the reference, and pytacheck's Python
+of the app (the REST API stays on Python unless started with `--engine r`): R metacheck is the reference, and pytacheck's Python
 modules are an experimental, faster port with best-effort parity to R. Reading the paper stays the same: R reads the same
 bibr JSON or GROBID XML file that pytacheck read. Only the checks differ.
 
@@ -52,8 +52,9 @@ the same environment).
   the module outputs by name; `render_module_outputs(outputs, paper,
   version=rengine.report_version(...))` makes the report.
 * **The REST API:** `engine=r` or `engine=python` on `POST /paper/check`; a request that
-  names neither uses R where R runs metacheck. `pytacheck serve --engine` fixes a
-  server's default. See [API.md](API.md#the-r-engine).
+  names neither uses Python, so clients such as the Platform keep Python's results when
+  R is installed. `pytacheck serve --engine r` makes R the server's default. See
+  [API.md](API.md#the-r-engine).
 * **The app:** "Run checks with: R metacheck / Python (experimental)" under "Read PDFs
   with", with R chosen. It is shown where R runs metacheck; on a shared server
   (`--hosted`) only with `METACHECK_APP_R_ENGINE=on`, and `METACHECK_APP_R_ENGINE=off`

@@ -46,8 +46,8 @@ Engines (pytacheck extension): ``/paper/check`` takes ``engine``: ``r`` (R metac
 modules, the reference, run by :mod:`metacheck.rengine` in an ``Rscript`` subprocess and
 shown with pytacheck's report) or ``python`` (pytacheck's experimental port, best-effort
 parity). Without it the server's default is used: ``METACHECK_API_ENGINE`` (or
-``pytacheck serve --engine``), else ``r`` where R can run metacheck and ``python``
-elsewhere. With ``r`` the
+``pytacheck serve --engine``), else ``python``, so a server's answers do not change
+when R is installed on it. With ``r`` the
 modules, the presets and the default selection are R's (no packs), the response has the
 same shape, ``metacheck_version`` is R metacheck's and ``engine`` says which engine ran.
 ``GET /paper/modules?engine=r`` lists R's modules. A server without R refuses ``engine=r``
@@ -182,17 +182,17 @@ def available_modules() -> list[str]:
 
 
 def default_engine() -> str:
-    """The engine of a ``/paper/check`` that names none: ``METACHECK_API_ENGINE``, else ``r``
-    where R can run metacheck (R metacheck is the reference) and ``python`` elsewhere.
+    """The engine of a ``/paper/check`` that names none: ``METACHECK_API_ENGINE``, else
+    ``python``. Clients such as the Platform send no engine and expect Python's results, so
+    installing R on a server does not change its answers; ``pytacheck serve --engine r``
+    makes R the default.
 
     Raises :class:`ApiConfigError` for an unknown engine, and for ``r`` named when R cannot
     run metacheck here (a server meant to run R checks should not start without them).
     """
-    from metacheck.rengine import ENGINES, REngineError, available, info
+    from metacheck.rengine import ENGINES, REngineError, info
 
-    value = (env_get("API_ENGINE") or "").strip().lower()
-    if not value:
-        return "r" if available() else "python"
+    value = (env_get("API_ENGINE") or "python").strip().lower()
     if value not in ENGINES:
         raise ApiConfigError(f"METACHECK_API_ENGINE is {value!r}; use one of {', '.join(ENGINES)}")
     if value == "r":
