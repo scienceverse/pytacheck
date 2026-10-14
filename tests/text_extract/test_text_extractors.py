@@ -256,6 +256,43 @@ def test_extract_eq_complex() -> None:
     eq = extract_eq(pc.test_paper(["What if Cohen's d > 1.0?", "(..., Hedges's g = 0.32, ...)"]))
     assert eq["lhs"].tolist() == ["Cohen's d", "Hedges's g"]
 
+    # Grobid writes a subscript as a word after a space ("g_av" -> "g av"):
+    # after a Hedges'/Cohen's prefix the word is part of lhs, but a following
+    # clause ("beta = ...") is not joined to the statistic before it (#448)
+    eq = extract_eq(
+        pc.test_paper(
+            [
+                "t(130) = 18.04, p < 0.001, Hedges' g av = 1.76.",
+                "t(23) = 2.73, p = .01, Cohen's d z = 0.56.",
+                "This was significant (beta = 0.74, t(260) = 11.32).",
+            ]
+        )
+    )
+    assert eq["lhs"].tolist() == ["t", "p", "Hedges' g av", "t", "p", "Cohen's d z", "beta", "t"]
+    assert eq["rhs"].tolist()[2] == "1.76"
+
+    # without a prefix, only g or d followed by one of its subscripts (av, z,
+    # rm, s) is one name, so "sample size n" and "age years" stay apart
+    eq = extract_eq(
+        pc.test_paper(
+            [
+                "t(34) = 3.4, p = .003, g av = 0.43.",
+                "t(34) = 3.4, p = .003, g_av = 0.43.",
+                "the sample size n = 40.",
+                "mean age years = 25.",
+                "d rm = 0.31 and d s = 0.2.",
+            ]
+        )
+    )
+    assert eq["lhs"].tolist() == [
+        "t", "p", "g av", "t", "p", "g_av", "n", "years", "d rm", "d s",
+    ]  # fmt: skip
+
+    # the g or d is a word of its own: "and z" is z (metacheck reads "d z"),
+    # while Grobid's "d Z = 0.89" is a subscripted d
+    eq = extract_eq(pc.test_paper(["p=.05 and z ≤ 1.96 and s = 3", "t(89) = 8.44, d Z = 0.89"]))
+    assert eq["lhs"].tolist() == ["p", "z", "s", "t", "d Z"]
+
 
 def test_extract_eq_no_numeric_lhs(psychsci) -> None:
     eq = extract_eq(psychsci)

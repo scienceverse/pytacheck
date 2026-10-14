@@ -913,7 +913,7 @@ def test_zip_peek_reasons_stay_with_their_rows(
     monkeypatch.setattr(
         zp,
         "zip_decision",
-        lambda url, skip_types=None, cache=False, skip_on_api_limit=False: {
+        lambda url, skip_types=None, cache=False, skip_on_api_limit=False, size=None: {
             "worth": False,
             "reason": "no data",
         },
@@ -939,6 +939,43 @@ def test_zip_peek_reasons_stay_with_their_rows(
     assert sum(r is not None for r in reasons.values()) == 1
 
 
+def test_unopened_archive_is_fetched(monkeypatch: pytest.MonkeyPatch) -> None:
+    # metacheck e4b74e1 (#456): an archive not yet opened is typed "unknown", so
+    # under download = "data" it was never wanted; keep_archive must turn it on
+    # (R's `want & (... | keep_archive)` could only narrow `want`)
+    import metacheck.archives.download as dl_mod
+    from metacheck.modules import data_check as D
+
+    fetched: list[str] = []
+
+    def fake_download(files: pd.DataFrame, **kwargs: Any) -> pd.DataFrame:
+        fetched.extend(files["file_name"].tolist())
+        out = files.copy()
+        out["file_location"] = None
+        return out
+
+    monkeypatch.setattr(dl_mod, "download_repo_files", fake_download)
+    files = pd.DataFrame(
+        {
+            "file_name": ["results.tar.gz", "notes.pdf", "stimuli.png", "data.csv"],
+            "file_path": ["results.tar.gz", "notes.pdf", "stimuli.png", "data.csv"],
+            "file_url": [f"https://example.org/{n}" for n in ("a", "b", "c", "d")],
+            "file_location": [None] * 4,
+            "data_type": ["unknown", "unknown", "materials", "data"],
+            "doc_role": [None] * 4,
+            "data_format": [None, None, None, "tabular"],
+        }
+    )
+    dl = D._download(files.copy(), "data", None, False, 100, 500, math.inf, False, False)
+    assert dl["want"] == [True, False, False, True]
+    assert fetched == ["results.tar.gz", "data.csv"]
+    # with download = "none" nothing is wanted, archives included
+    fetched.clear()
+    dl = D._download(files.copy(), "none", None, False, 100, 500, math.inf, False, False)
+    assert dl["want"] == [False] * 4
+    assert fetched == []
+
+
 def test_peek_zips_default_and_forwarded_keywords(monkeypatch: pytest.MonkeyPatch) -> None:
     """peek_zips defaults to TRUE; cache and skip_on_api_limit reach the zip peek (issue #427)."""
     import inspect
@@ -950,9 +987,13 @@ def test_peek_zips_default_and_forwarded_keywords(monkeypatch: pytest.MonkeyPatc
     seen: dict[str, object] = {}
 
     def fake(
-        url: str, skip_types: object = None, cache: bool = False, skip_on_api_limit: bool = False
+        url: str,
+        skip_types: object = None,
+        cache: bool = False,
+        skip_on_api_limit: bool = False,
+        size: object = None,
     ):
-        seen.update(cache=cache, skip_on_api_limit=skip_on_api_limit)
+        seen.update(cache=cache, skip_on_api_limit=skip_on_api_limit, size=size)
         return {"worth": False, "reason": "no data"}
 
     monkeypatch.setattr(zp, "zip_decision", fake)
@@ -962,13 +1003,15 @@ def test_peek_zips_default_and_forwarded_keywords(monkeypatch: pytest.MonkeyPatc
             "file_path": ["stimuli.zip"],
             "file_url": ["https://example.org/stimuli.zip"],
             "file_location": [None],
+            "file_size": [4096.0],
             "data_type": ["unknown"],
             "doc_role": [None],
             "data_format": [None],
         }
     )
     D._download(files, "all", None, True, 100, 500, math.inf, True, True)
-    assert seen == {"cache": True, "skip_on_api_limit": True}
+    # the listed size saves the peek a HEAD request (metacheck d52b3fd)
+    assert seen == {"cache": True, "skip_on_api_limit": True, "size": 4096.0}
 
 
 # -----------------------------------------------------------------------------
@@ -1034,3 +1077,42 @@ def test_empty_paper_gives_the_na_result(empty: Any) -> None:
     assert mo.summary_text == "We found no files to analyse."
     ids = [] if isinstance(paper, pc.PaperList) else [paper.paper_id]
     assert mo.summary_table["paper_id"].tolist() == ids
+
+
+def test_brief_report_leaves_out_study_groups_and_demographics(tmp_path: Path) -> None:
+    # a brief report is about what to improve: how the files were grouped into
+    # studies, and which columns hold demographics, stay in the full report
+    # (metacheck 98105f6; pytacheck drops them when rendering, D128)
+    from metacheck.report.report import _summary_row
+
+    pd.DataFrame({
+        "id": range(1, 7), "Age": [21, 25, 30, 22, 28, 35],
+        "Gender": ["Male", "female", "Female", "male", "Male", "Female"],
+        "score": [1.2, 3.4, 2.2, 4.1, 3.3, 2.8],
+    }).to_csv(tmp_path / "study1_data.csv", index=False)  # fmt: skip
+    (tmp_path / "README.md").write_text("Data for study 1.\n")
+    mo = run_local(tmp_path)
+    full = _summary_row(mo, brief=False)
+    assert "study group" in full.items and "demographic column" in full.items
+    brief = _summary_row(mo, brief=True)
+    assert "study group" not in brief.items and "did not get an answer" not in brief.items
+    assert "demographic" not in brief.items
+    assert "We found 1 tabular data file" in brief.items
+    assert brief.items.count("\n-  ") == full.items.count("\n-  ") - 1
+
+
+def test_brief_summary_drops_the_unanswered_study_group_sentence() -> None:
+    from metacheck.report.brief import _brief_summary_text
+
+    text = (
+        "\n-  We found 2 files."
+        "\n-  We grouped the files into 2 study groups (ex1, ex2), plus 1 collection-level "
+        "file (README/ro-crate metadata)."
+        "\n-  The study-group step did not get an answer for 3 files (the model request "
+        "failed); they were grouped by the fallback rules instead. All columns are named."
+        " We detected demographic columns for Age, Gender."
+    )
+    assert _brief_summary_text("data_check", text) == (
+        "\n-  We found 2 files. All columns are named."
+    )
+    assert _brief_summary_text("repo_check", text) == text

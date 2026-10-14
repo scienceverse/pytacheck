@@ -77,7 +77,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ---------------------------------------------------------------- d labels and values
 - "id": "stat_effect_size.review.d_variants"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U218", "reason": "'Cohen's d z = 0.45' (a subscript Grobid wrote as a second word) is an effect size and is checked (metacheck: lhs 'z', so the t-test has no effect size); the missing-effect-size summary also ends with a full stop (U125).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]], "xfail": true}
   "module": "stat_effect_size"
   "args":
     "paper":

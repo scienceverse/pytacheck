@@ -414,6 +414,59 @@ def test_osf_view_only_links(fixtures_dir: Path) -> None:
     ]
 
 
+def _full_text(*formatted: str) -> pd.DataFrame:
+    n = len(formatted)
+    return pd.DataFrame(
+        {"p": [1] * n, "div": [1] * n, "section": [1] * n, "header": ["demo"] * n,
+         "formatted": list(formatted)}
+    )  # fmt: skip
+
+
+def test_line_wrap_spaces_in_dois_and_urls() -> None:
+    # Grobid sometimes keeps a PDF line wrap inside a DOI or URL as a space
+    # (metacheck #411, #458); the space is removed after a fixed anchor only
+    obs = _process_full_text(
+        _full_text(
+            "<p>Data are available at https ://doi. org/10.5061/dryad.m20hf10.</p>",
+            "<p>See also https://doi.org/ 10.5281/zenodo.5070812.</p>",
+            "<p>A normal http://example.com/page link, unaffected.</p>",
+            "<p>See https://zenodo. org/ record/8347003 for the data.</p>",
+            "<p>Available at https://doi. org/ 10.17026/ dans-zqs-g6cn.</p>",
+            "<p>Hosted at 10.5061/dryad. dz08kprzw as a Dryad package.</p>",
+            "<p>DOI: https://doi.org/10.13020/ 1f35-rn20.</p>",
+            "<p>Zenodo record 10.5281/ zenodo.5810881 holds the materials.</p>",
+            "<p>Our data are on osf. io/ abc12 and https://researchbox. org/ 123.</p>",
+            "<p>A normal reference (Smith et al., 2020) stays untouched.</p>",
+        )
+    )
+    assert list(obs["text"]) == [
+        "Data are available at https://doi.org/10.5061/dryad.m20hf10.",
+        "See also https://doi.org/10.5281/zenodo.5070812.",
+        "A normal http://example.com/page link, unaffected.",
+        "See https://zenodo.org/record/8347003 for the data.",
+        "Available at https://doi.org/10.17026/dans-zqs-g6cn.",
+        "Hosted at 10.5061/dryad.dz08kprzw as a Dryad package.",
+        "DOI: https://doi.org/10.13020/1f35-rn20.",
+        "Zenodo record 10.5281/zenodo.5810881 holds the materials.",
+        "Our data are on osf.io/abc12 and https://researchbox.org/123.",
+        "A normal reference (Smith et al., 2020) stays untouched.",
+    ]
+    # the formatted text keeps what Grobid wrote
+    assert obs["formatted"].iloc[0] == (
+        "Data are available at https ://doi. org/10.5061/dryad.m20hf10."
+    )
+
+    # prose with the anchors' words is left as it is
+    prose = [
+        "See https://doi.org/10.5061/dryad.abc123 (Smith et al., 2020).",
+        "We studied the dryad population over several years.",
+        "Our approach was zenodo-adjacent in spirit.",
+        "The records/datasets we collected were extensive.",
+    ]
+    obs = _process_full_text(_full_text(*(f"<p>{s}</p>" for s in prose)))
+    assert list(obs["text"]) == prose
+
+
 def test_page_abbreviation() -> None:
     full_text = pd.DataFrame(
         {
@@ -444,6 +497,22 @@ def test_page_abbreviation() -> None:
     obs = _process_full_text(full_text)
     assert list(obs["text"]) == ["This research (Frith & Singer, 2008, p. 3876)."]
     assert list(obs["formatted"]) == [fmt]
+
+
+def test_wrapped_link_text_still_prints_its_href(fixtures_dir: Path) -> None:
+    # the TEI prints "(osf.io/  a5bmw/)", a link whose text the line-wrap fix
+    # joins; the href is still printed there, and the 12.0 url row finds it
+    xml = fixtures_dir / "problems" / "0956797617737129.xml"
+    exp = "effect size found in Study 2a (https://osf.io/a5bmw/)."
+    old = grobid_to_bibr(xml, None)
+    assert any(t.endswith(exp) for t in old.text["text"])
+    paper = pc.read(xml)
+    (row,) = [t for t in paper.text["text"] if t.endswith(exp)]
+    url = paper.url[
+        paper.url["text_id"] == paper.text["text_id"][paper.text["text"] == row].iloc[0]
+    ]
+    start, end = int(url["start"].iloc[0]), int(url["end"].iloc[0])
+    assert row[start:end] == "https://osf.io/a5bmw/"
 
 
 def test_head(fixtures_dir: Path) -> None:

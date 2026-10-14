@@ -83,6 +83,8 @@ _INTRO = (
         text that the rules could not handle, fuzzy-matching still-unlabelled columns
         to still-unmatched codebook variables, and merging conflicting label
         definitions into a single canonical label.
+
+        <validation>This module has not been validated. All checks in the codebook_check module have unknown error rates. Carefully evaluate the output of this module. You can help improve this module by reporting an issue on GitHub.</validation>
     """,
     keywords=["results"],
     author=["Daniel Lakens <D.Lakens@tue.nl>"],
@@ -92,12 +94,17 @@ _INTRO = (
         "local_path": "optional path to a local directory, passed through to `data_check` / "
         "`repo_check` when their output is not already available",
         "local_only": "if TRUE, skip online repository lookups (see `repo_check`)",
+        "extract_scales": "if TRUE, also identify psychometric scales and behavioural tasks "
+        "represented in the data (column-prefix grouping, dictionary/manuscript matching, and "
+        "-- with `llm_use(TRUE)` -- an LLM fallback for unmatched blocks), and report them in "
+        'a "Scales"/"Tasks" section. This part of the module is experimental and has not been '
+        "validated, so it defaults to FALSE; set TRUE to opt in.",
         "codebook_max_calls": "the maximum number of LLM calls a single tier will make "
         "(default 40): the number of 100-line text blocks per unstructured codebook file, "
-        "and the number of distinct survey layouts sent for scale identification. This is "
-        "an upfront gate: if a tier would need more calls than this, the whole tier is "
-        "skipped (not truncated) with a message naming `codebook_max_calls` and the number "
-        "needed.",
+        "and the number of distinct survey layouts sent for scale identification (only "
+        "relevant when `extract_scales = TRUE`). This is an upfront gate: if a tier would "
+        "need more calls than this, the whole tier is skipped (not truncated) with a message "
+        "naming `codebook_max_calls` and the number needed.",
         "model": "the LLM model name (`provider/model`, for example `groq/openai/gpt-oss-20b`) used only when `llm_use(TRUE)`",
         "params": "a named list passed to `llm()`, used only when `llm_use(TRUE)`",
     },
@@ -106,6 +113,7 @@ def codebook_check(
     paper: Any,
     local_path: str | os.PathLike[str] | None = None,
     local_only: bool = False,
+    extract_scales: bool = False,
     codebook_max_calls: int = 40,
     model: Any = None,
     params: Mapping[str, Any] | None = None,
@@ -115,9 +123,11 @@ def codebook_check(
     Checks whether the data columns found by ``data_check`` are documented in
     a codebook, README or embedded (SPSS/Stata/SAS/JASP/jamovi) labels, and
     reports coverage, conflicting definitions, unused documented variables,
-    values outside a documented range, the scale / task inventory (named from
-    the manuscript, the ``scales`` / ``tasks`` dictionaries or an LLM) and
-    duplicated column names. *model* defaults to :func:`~metacheck.llm_model`.
+    values outside a documented range and duplicated column names. With
+    ``extract_scales=True`` (experimental, off by default since metacheck
+    029bf63) it also reports the scale / task inventory (named from the
+    manuscript, the ``scales`` / ``tasks`` dictionaries or an LLM). *model*
+    defaults to :func:`~metacheck.llm_model`.
     """
     from metacheck.module import get_prev_outputs, module_run
 
@@ -142,7 +152,14 @@ def codebook_check(
             "We found no extracted data columns to check against a codebook.",
         )
     return _codebook_check(
-        paper, columns_df, structure_df, previews, codebook_max_calls, model, params
+        paper,
+        columns_df,
+        structure_df,
+        previews,
+        codebook_max_calls,
+        model,
+        params,
+        extract_scales=extract_scales is True,
     )
 
 
@@ -216,6 +233,7 @@ def _codebook_check(
     codebook_max_calls: int,
     model: Any,
     params: dict[str, Any],
+    extract_scales: bool = False,
 ) -> dict[str, Any]:
     import pandas as pd
 
@@ -240,8 +258,9 @@ def _codebook_check(
     max_llm_chunks = codebook_max_calls
     gate_msgs: list[str] = []
 
-    # text_scales: instruments named in the manuscript (LLM only)
-    text_scales = cb._identify_scales_text_llm(paper, model, params)
+    # text_scales: instruments named in the manuscript (LLM only); scale and task
+    # identification is experimental and off unless extract_scales
+    text_scales = cb._identify_scales_text_llm(paper, model, params) if extract_scales else None
 
     # ── 2. codebook/readme files and labelled data files with a local copy ──
     struct = structure_df if isinstance(structure_df, pd.DataFrame) else pd.DataFrame()
@@ -365,7 +384,7 @@ def _codebook_check(
     n_tasks_found = 0
     n_task_files = 0
     scale_groups: pd.DataFrame | None = None
-    have_previews = previews is not None and len(previews) > 0
+    have_previews = extract_scales and previews is not None and len(previews) > 0
     lkey = [
         _key(f, c)
         for f, c in zip(
@@ -479,38 +498,48 @@ def _codebook_check(
                 llm_model_used = sg.attrs.get("llm_model")
     del n_scale_selfgen  # counted as in R, but not reported
 
-    # Stage 4: propagate to same-prefix siblings
-    labels_df = cb._propagate_scale_by_prefix(state["labels_df"])
-    assert labels_df is not None
-
-    # Backfill scale_groups from the final labels_df
-    if scale_groups is not None and len(scale_groups) > 0 and len(labels_df) > 0:
-        scale_groups = _backfill_scale_groups(scale_groups, labels_df, cb)
-
-    scales_osd = (
-        cb._scales_to_osd(scale_groups, columns_df, labels_df)
-        if scale_groups is not None and len(scale_groups) > 0
-        else []
-    )
-
+    scales_osd: list[Any] = []
+    n_scales_found = 0
+    n_scale_unnamed = 0
+    tasks_paper_only: list[Any] = []
+    n_tasks_paper_only = 0
+    labels_df = state["labels_df"]
     l_scale = _vals(labels_df, "scale") or []
-    l_ssrc = _vals(labels_df, "scale_source") or []
     l_file = _vals(labels_df, "source_file") or []
-    named = [_ok(s) for s in l_scale]
-    n_scales_found = len(_unique(s for s, nm in zip(l_scale, named, strict=True) if nm))
-    files_named = _unique(f for f, nm in zip(l_file, named, strict=True) if nm)
-    n_scale_unnamed = max(0, n_scale_files - len(files_named))
+    named = [_ok(sv) for sv in l_scale]
+    if extract_scales:
+        # Stage 4: propagate to same-prefix siblings
+        labels_df = cb._propagate_scale_by_prefix(state["labels_df"])
+        assert labels_df is not None
 
-    tasks_in_paper = cb._scan_paper_for_tasks(paper)
-    tasks_in_data = set(
-        _unique(
-            s
-            for s, nm, src in zip(l_scale, named, l_ssrc, strict=True)
-            if nm and src == "task_matched"
+        # Backfill scale_groups from the final labels_df
+        if scale_groups is not None and len(scale_groups) > 0 and len(labels_df) > 0:
+            scale_groups = _backfill_scale_groups(scale_groups, labels_df, cb)
+
+        scales_osd = (
+            cb._scales_to_osd(scale_groups, columns_df, labels_df)
+            if scale_groups is not None and len(scale_groups) > 0
+            else []
         )
-    )
-    tasks_paper_only = _unique(t for t in tasks_in_paper if t not in tasks_in_data)
-    n_tasks_paper_only = len(tasks_paper_only)
+
+        l_scale = _vals(labels_df, "scale") or []
+        l_ssrc = _vals(labels_df, "scale_source") or []
+        l_file = _vals(labels_df, "source_file") or []
+        named = [_ok(s) for s in l_scale]
+        n_scales_found = len(_unique(s for s, nm in zip(l_scale, named, strict=True) if nm))
+        files_named = _unique(f for f, nm in zip(l_file, named, strict=True) if nm)
+        n_scale_unnamed = max(0, n_scale_files - len(files_named))
+
+        tasks_in_paper = cb._scan_paper_for_tasks(paper)
+        tasks_in_data = set(
+            _unique(
+                s
+                for s, nm, src in zip(l_scale, named, l_ssrc, strict=True)
+                if nm and src == "task_matched"
+            )
+        )
+        tasks_paper_only = _unique(t for t in tasks_in_paper if t not in tasks_in_data)
+        n_tasks_paper_only = len(tasks_paper_only)
 
     # ── 4c. data values the codebook does not allow ──────────────────────────
     sv_rows: list[dict[str, Any]] = []
@@ -683,11 +712,9 @@ def _codebook_check(
                 f"{'has' if n_conflicted == 1 else 'have'} a conflicting or ambiguous label "
                 "that needs resolution."
             )
-        if n_unused > 0:
-            parts_txt.append(
-                f"{n_unused:d} documented variable{plural(n_unused)} never "
-                f"appear{'s' if n_unused == 1 else ''} in the data."
-            )
+        # the number of documented variables that never appear in the data is
+        # left out: the report lists them, and the brief report names each one
+        # (metacheck 7208868)
         if misalign_msg is not None:
             parts_txt.append(misalign_msg)
         summary_text = "".join(f"\n-  {p}" for p in parts_txt)
@@ -799,49 +826,18 @@ def _codebook_check(
             scroll_table(sv_tbl, maxrows=20),
         ]
 
-    # ── scales ───────────────────────────────────────────────────────────────
-    if scale_groups is not None and len(scale_groups) > 0:
-        report += _scales_report(scale_groups, cb)
-    elif not llm_on and previews is not None and len(previews) > 0:
-        report += [
-            "#### Scales",
-            "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the "
-            "dictionary rules matcher still names instruments whose abbreviation matches a "
-            "known scale.",
-        ]
-
-    report += cb._scale_text_report(
-        text_scales, matched=_unique(s for s, nm in zip(l_scale, named, strict=True) if nm)
-    )
-
-    # ── tasks ────────────────────────────────────────────────────────────────
-    if n_task_files > 0 or n_tasks_paper_only > 0:
-        task_lines: list[str] = []
-        if n_task_files > 0:
-            found = (
-                f"{n_tasks_found:d} distinct task{plural(n_tasks_found)} "
-                f"{'was' if n_tasks_found == 1 else 'were'}"
-                if n_tasks_found > 0
-                else "None could be"
-            )
-            task_lines.append(
-                f"{n_task_files:d} data file{plural(n_task_files)} "
-                f"contain{'s' if n_task_files == 1 else ''} columns that look like a behavioural "
-                "task (reaction times, accuracy, or a block of correct/incorrect items). "
-                f"{found} named to a known task."
-            )
-        if n_tasks_paper_only > 0:
-            task_lines.append(
-                f"**{n_tasks_paper_only:d} task{plural(n_tasks_paper_only)} named in the "
-                f"manuscript {'has' if n_tasks_paper_only == 1 else 'have'} no matching data.** "
-                "The trial-level data may not be shared, may live in a file we could not read, "
-                "or may use column names we did not recognise. Sharing trial-level data (one "
-                "row per trial, with condition, response time and accuracy) would let the task "
-                "be verified:"
-            )
-            task_lines += [f"- {_pstr(t)}" for t in tasks_paper_only]
-        if task_lines:
-            report += ["#### Tasks", *task_lines]
+    # ── scales and tasks (only with extract_scales) ──────────────────────────
+    if extract_scales:
+        report += _scales_and_tasks_report(
+            scale_groups,
+            cb,
+            no_llm_note=not llm_on and previews is not None and len(previews) > 0,
+            text_scales=text_scales,
+            matched=_unique(sv for sv, nm in zip(l_scale, named, strict=True) if nm),
+            n_task_files=n_task_files,
+            n_tasks_found=n_tasks_found,
+            tasks_paper_only=tasks_paper_only,
+        )
 
     if llm_on:
         who = f"LLM model '{llm_model_used}' " if llm_model_used is not None else "LLM "
@@ -1125,3 +1121,60 @@ def _scales_report(sg: Any, cb: Any) -> list[Any]:
             '15-item scale").'
         )
     return out
+
+
+def _scales_and_tasks_report(
+    scale_groups: Any,
+    cb: Any,
+    *,
+    no_llm_note: bool,
+    text_scales: Any,
+    matched: list[Any],
+    n_task_files: int,
+    n_tasks_found: int,
+    tasks_paper_only: list[Any],
+) -> list[Any]:
+    """The "Scales" and "Tasks" report sections (``extract_scales=True`` only)."""
+    from metacheck._r.base import plural
+
+    _pstr = cb._pstr
+    report: list[Any] = []
+    if scale_groups is not None and len(scale_groups) > 0:
+        report += _scales_report(scale_groups, cb)
+    elif no_llm_note:
+        report += [
+            "#### Scales",
+            "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the "
+            "dictionary rules matcher still names instruments whose abbreviation matches a "
+            "known scale.",
+        ]
+    report += cb._scale_text_report(text_scales, matched=matched)
+    n_tasks_paper_only = len(tasks_paper_only)
+    if n_task_files > 0 or n_tasks_paper_only > 0:
+        task_lines: list[str] = []
+        if n_task_files > 0:
+            found = (
+                f"{n_tasks_found:d} distinct task{plural(n_tasks_found)} "
+                f"{'was' if n_tasks_found == 1 else 'were'}"
+                if n_tasks_found > 0
+                else "None could be"
+            )
+            task_lines.append(
+                f"{n_task_files:d} data file{plural(n_task_files)} "
+                f"contain{'s' if n_task_files == 1 else ''} columns that look like a behavioural "
+                "task (reaction times, accuracy, or a block of correct/incorrect items). "
+                f"{found} named to a known task."
+            )
+        if n_tasks_paper_only > 0:
+            task_lines.append(
+                f"**{n_tasks_paper_only:d} task{plural(n_tasks_paper_only)} named in the "
+                f"manuscript {'has' if n_tasks_paper_only == 1 else 'have'} no matching data.** "
+                "The trial-level data may not be shared, may live in a file we could not read, "
+                "or may use column names we did not recognise. Sharing trial-level data (one "
+                "row per trial, with condition, response time and accuracy) would let the task "
+                "be verified:"
+            )
+            task_lines += [f"- {_pstr(t)}" for t in tasks_paper_only]
+        if task_lines:
+            report += ["#### Tasks", *task_lines]
+    return report

@@ -1,0 +1,44 @@
+{
+  "_embedded": {
+    "stash:files": [
+      {
+        "_links": {
+          "stash:download": {
+            "href": "/api/v2/files/70011/download"
+          }
+        },
+        "size": 8,
+        "digest": "344fd2323dd33d5c058b7cf27de029e8",
+        "digestType": "md5"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/70012"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/70012/download"
+          }
+        },
+        "path": "",
+        "size": 5,
+        "digest": "4358b5009c67d0e31d7fbf1663fcd3bf",
+        "digestType": "MD5"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/70013"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/70013/download"
+          }
+        },
+        "path": "nested/deeper/file.txt",
+        "size": "11",
+        "digest": "426e712f0524e4dee5de612f6520bf86",
+        "digestType": "md5"
+      }
+    ]
+  }
+}

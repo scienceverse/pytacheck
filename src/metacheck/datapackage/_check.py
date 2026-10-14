@@ -164,6 +164,7 @@ def report_package(
     download_timeout: float | None = None,
     credentials: bool = True,
     progress: Callable[[float, str], None] | None = None,
+    report_type: str | None = None,
 ) -> ReportOutput:
     """Run the checks on the data package at *path* and write a report.
 
@@ -175,15 +176,20 @@ def report_package(
     is not one of the files that are checked. Returns the report's module
     outputs (:class:`~metacheck.report.report.ReportOutput`, with the file's
     path in ``save_path``, and the files that modules hand back in ``files``).
-    The limits are as for :func:`check_package`.
+    The limits are as for :func:`check_package`; *report_type* is as for
+    :func:`~metacheck.report.report.report` (``"simple"``: a static page with
+    no script, to send by email).
     """
     from metacheck.module import run_session
     from metacheck.presets import label
+    from metacheck.report.blocks import _check_report_type
     from metacheck.report.report import report
 
     fmt = str(output_format).lower()
     if fmt not in _OUTPUT_FORMATS:
         raise ValueError("The output_format must be either 'html', 'qmd' or 'md'.")
+    if report_type is not None:
+        _check_report_type(report_type)  # before anything is opened or downloaded
     selection = package_selection(preset=preset, modules=modules, args=args, offline=offline)
     _refuse_offline_link(path, selection)
     with (
@@ -213,6 +219,7 @@ def report_package(
                     output_file=str(Path(tmp) / dest.name),
                     output_format=fmt,
                     args=by_ref or None,
+                    report_type=report_type,
                 ),
             )
             # a report that could not be rendered is saved as .qmd instead

@@ -118,6 +118,36 @@ def test_domain_formats_are_data_by_extension_alone() -> None:
     assert F.data_classify_files(["model.stl"]) == ["materials"]
 
 
+def test_corpus_confirmed_formats() -> None:
+    # upstream test-data-checks.R (issue #456, metacheck e4b74e1): .rdat (R's
+    # dput() ASCII dump), .str (STRUCTURE input) and .dtg (DTAG sensor output)
+    # are data; .nlogo (NetLogo) and .jl (Julia) are code
+    files = ["sample.rdat", "genotypes.str", "recording.dtg"]
+    assert F.data_classify_files(files) == ["data"] * 3
+    assert F.data_classify_files(["model.nlogo", "fit.jl"]) == ["code", "code"]
+    # none of them has a reader
+    assert F.data_format(["rdat", "str", "dtg"]) == ["raw", "raw", "raw"]
+
+
+def test_json_html_and_scripts_after_one_type_per_extension() -> None:
+    # file_types gives each extension one type since metacheck d52b3fd: .json is
+    # data, .js/.php code, .html web (documentation); at the pin the first two
+    # were "code" and .html "code" too (D89)
+    assert F.data_classify_files(["export.json", "task.js", "index.php", "report.html"]) == [
+        "data",
+        "code",
+        "code",
+        "documentation",
+    ]
+    # metadata files are documentation, whatever their extension (D90)
+    assert (
+        F.data_classify_files(
+            ["dataset_description.json", "ro-crate-metadata.json", "sub/DATASET_DESCRIPTION.JSON"]
+        )
+        == ["documentation"] * 3
+    )
+
+
 def test_data_format_of_plain_text_tables_and_domain_formats() -> None:
     # .tab/.table are delimited text, read like .csv/.txt/.tsv/.dat
     assert F.data_format(["tab", "table"]) == ["tabular", "tabular"]

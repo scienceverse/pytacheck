@@ -943,7 +943,8 @@ def _bibr_isalive(
     sends none. A non-empty key is not sent over plain http to a host other than
     localhost: ``/ready`` is public, so the probe works without it.
 
-    Ready means ``status == "ready"``. An anonymous ``bibr serve`` answers only that
+    A 401 or 403 means the server is up but refuses the key. Ready means
+    ``status == "ready"``. An anonymous ``bibr serve`` answers only that
     (``{"status": "ready"}``: ``checks`` and ``build_sha`` are for authenticated callers,
     as is the platform's ``checks.bibr``), so a ``checks.bibr`` is only held against the
     server when it is there and not ``"ok"`` (metacheck requires it).
@@ -953,7 +954,8 @@ def _bibr_isalive(
     if api_key == "__env__":
         api_key = os.environ.get("SCIVRS_API_KEY", "")
     headers = {} if api_key is None else {"Authorization": f"Bearer {api_key}"}
-    if api_key and not _may_send_token(api_url):
+    withheld = bool(api_key) and not _may_send_token(api_url)
+    if withheld:
         headers = {}
     failure = None
     try:
@@ -975,6 +977,12 @@ def _bibr_isalive(
         return False
 
     status = resp.status_code
+    if status in (401, 403):
+        # a server that refuses the key is up: the key is the problem
+        if error:
+            note = " (it is not sent over plain http)" if withheld else ""
+            raise RuntimeError(f"The server is running, but the API key is not valid{note}")
+        return False
     if status != 200:
         if error:
             raise RuntimeError(

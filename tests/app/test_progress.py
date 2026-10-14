@@ -210,6 +210,12 @@ def test_animations_carry_on_where_they_were_when_the_steps_are_drawn_again() ->
     assert 0 <= delays[0] < pg._TURN and 0 <= delays[1] < pg._SWEEP
 
 
+def test_an_animation_delay_stays_below_its_period(monkeypatch: pytest.MonkeyPatch) -> None:
+    # 1000 * 1.6 + 1.597: the remainder rounded to two decimals would be 1.60
+    monkeypatch.setattr(pg.time, "time", lambda: 1601.597)
+    assert pg._phase(pg._SWEEP) == "animation-delay:-1.59s"
+
+
 def test_the_panel_says_the_check_is_starting_before_it_has_steps() -> None:
     page = pg.starting()
     assert pg.STARTING in page and "mc-bar-moving" in page and "mc-run-clock" not in page

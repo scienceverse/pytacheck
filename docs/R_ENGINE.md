@@ -70,5 +70,5 @@ The two engines give different results on the same paper on purpose:
 [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md) lists pytacheck's deliberate differences
 (D-entries) and the metacheck issues it fixes (U-entries). pytacheck is compared against
 the R commit in `parity/UPSTREAM.toml`; a newer R metacheck differs beyond that list
-until the next upstream sync. How the R engine shows R's results is D87. R is slower:
+until the next upstream sync. How the R engine shows R's results is D129. R is slower:
 about 2.5 to 3 times on the benchmark corpus (`docs/design/PERF_REPORT.md`).

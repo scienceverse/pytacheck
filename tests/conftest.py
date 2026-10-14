@@ -98,6 +98,16 @@ def _no_rate_limit_memory(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.fixture(autouse=True)
+def _no_session_memory() -> Iterator[None]:
+    """Answers one test leaves in a session memo (a DOI's URL) are not the next test's."""
+    from metacheck.archives._memo import clear_session_memos
+
+    clear_session_memos()
+    yield
+    clear_session_memos()
+
+
+@pytest.fixture(autouse=True)
 def _concepts_as_metacheck(monkeypatch: pytest.MonkeyPatch) -> None:
     """data_check's concepts come from metacheck's rules/LLM tier, not the local
     classifier (a model download); tests/datacheck_concepts opts back in."""

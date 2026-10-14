@@ -23,7 +23,7 @@ from metacheck.app.ui import (
     START_JS,
     TICK,
     Sessions,
-    _download_link,
+    _download_links,
     _gradio_error,
     coloured,
     package_summary,
@@ -119,7 +119,7 @@ def add_package_page(app: gr.Blocks, sessions: Sessions, start_preset: str | Non
             package_summary(analysis),
             coloured(analysis.checks),
             coloured(analysis.checklist),
-            _download_link(key, analysis.report_path),
+            _download_links(key, analysis),
             report_frame(analysis.html),
             "",
         )

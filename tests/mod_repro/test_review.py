@@ -76,7 +76,7 @@ def test_code_table_without_file_name_has_no_r_rows(paper: pc.Paper, repro_fixtu
         "reproducibility_check",
     )
     assert mo.traffic_light == "na"
-    assert "this phase runs R code only" in mo.summary_text
+    assert "We found no R or Python code files to assess" in mo.summary_text
 
 
 def test_rnamedlist_is_an_r_named_list() -> None:

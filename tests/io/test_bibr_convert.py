@@ -1179,6 +1179,9 @@ def test_bibr_isalive() -> None:
         (httpx.Response(200, json=["ready"]), "not ready200"),
         (httpx.Response(200, json={"status": "ready", "checks": "fine"}), None),
         (httpx.Response(503, json={"status": "not_ready"}), "Status: 503"),
+        # a refused key: the server is up (metacheck d52b3fd)
+        (httpx.Response(401, json={"detail": "unauthorised"}), "API key is not valid$"),
+        (httpx.Response(403, text="forbidden"), "API key is not valid$"),
     ],
 )
 def test_bibr_isalive_responses(response: httpx.Response, message: str | None) -> None:
@@ -1207,6 +1210,11 @@ def test_bibr_isalive_keeps_the_token_off_plain_http() -> None:
             assert _bibr_isalive(url, TOKEN) is True
             headers = router.calls.last.request.headers
         assert (headers.get("authorization") == f"Bearer {TOKEN}") is sent, url
+    # a server that wants the key it was not sent says so
+    refused = httpx.Response(401, json={"detail": "unauthorised"})
+    with api(routes={("GET", "http://bibr.example/ready"): lambda _r: refused}):
+        with pytest.raises(RuntimeError, match="not valid \\(it is not sent over plain http\\)"):
+            _bibr_isalive("http://bibr.example", TOKEN)
 
 
 # authors ----------------------------------------------------------------------------

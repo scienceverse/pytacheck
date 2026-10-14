@@ -140,7 +140,7 @@ def test_crossref_doi_drops_zero_row_results(online: None) -> None:
         return _works({"DOI": "10.1234/b"})
 
     with respx.mock() as router:
-        router.route(host="api.labs.crossref.org").mock(side_effect=handler)
+        router.route(host="api.crossref.org").mock(side_effect=handler)
         out = crossref_doi(["10.1234/a", "10.1234/b"], select=["abstract"])
     assert out["abstract"].tolist() == ["Abs"]
 

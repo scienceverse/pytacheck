@@ -1,6 +1,6 @@
 """Downloading a whole OSF project, one archive per node (port of ``R/archive-osf-all.R``).
 
-``osf_file_download(mode = "all")`` walks the component tree and takes one
+``osf_file_download(mode = "all")`` lists the component tree and takes one
 Waterbutler archive per node, never listing individual files; files on a
 linked add-on (GitHub, Dropbox, ...) are in no OSF archive, so those are
 listed and fetched individually.
@@ -47,13 +47,47 @@ def _files_under(folder: str) -> list[str]:
 def _osf_walk_nodes(osf_id: str, pb: Any = None) -> pd.DataFrame:
     """Port of R/archive-osf-all.R::.osf_walk_nodes(): every node under a project.
 
-    Breadth-first, the project itself first; returns ``osf_id`` and ``title``.
+    The project itself first; returns ``osf_id`` and ``title``. The tree is
+    listed in one request per 100 nodes where possible (``_osf_tree()``), else
+    walked breadth-first, one ``/children/`` request per node.
     """
     from metacheck import http
     from metacheck.archives import _tick
-    from metacheck.archives.osf_helpers import _data_of, _get, _osf_headers, _resp_body_json
+    from metacheck.archives.osf_helpers import (
+        _data_of,
+        _get,
+        _osf_headers,
+        _osf_tree,
+        _resp_body_json,
+    )
 
     api = _api()
+    # the root's own title (nothing lists it as a child) and its project id
+    root: Any = None
+    try:
+        resp = http.request(
+            "GET", f"{api}/nodes/{osf_id}/", headers=_osf_headers()["headers"], max_tries=1
+        )
+        if resp is not None and resp.status_code == 200:
+            root = _data_of(_resp_body_json(resp))
+    except Exception:
+        root = None
+    root_title = _get(root, "attributes", "title")
+    root_project = _get(root, "relationships", "root", "data", "id")
+
+    _tick(pb, f"Finding the components of {osf_id}")
+    tree = _osf_tree(osf_id, "nodes", root_project)
+    if tree is not None:
+        kids = tree["nodes"]
+        ids_t = [] if kids is None else kids["osf_id"].tolist()
+        names = [] if kids is None or "name" not in kids else kids["name"].tolist()
+        return pd.DataFrame(
+            {
+                "osf_id": pd.Series([osf_id, *ids_t], dtype="string"),
+                "title": pd.Series([root_title, *names], dtype="string"),
+            }
+        )
+
     ids: list[str] = []
     titles: list[str | None] = []
     todo = [osf_id]
@@ -70,16 +104,6 @@ def _osf_walk_nodes(osf_id: str, pb: Any = None) -> pd.DataFrame:
             titles.extend(_get(k, "attributes", "title") for k in kids)
             nxt.extend(k.get("id") for k in kids)
         todo = nxt
-
-    root_title = None
-    try:
-        resp = http.request(
-            "GET", f"{api}/nodes/{osf_id}/", headers=_osf_headers()["headers"], max_tries=1
-        )
-        if resp is not None and resp.status_code == 200:
-            root_title = _get(_data_of(_resp_body_json(resp)), "attributes", "title")
-    except Exception:
-        root_title = None
 
     return pd.DataFrame(
         {

@@ -23,7 +23,7 @@ from typing import Any
 
 import yaml
 
-from tests.archives_d2.make_mocks import q
+from tests.archives_d2.make_mocks import q, write_pytacheck_variants
 from tests.archives_d2.make_parity_cases import (
     IGNORE_PID,
     RUN,
@@ -547,6 +547,10 @@ def write_mocks() -> None:
         },
         ".json",
     )
+
+    # pytacheck's one-request DSpace lookups, answered as by an installation
+    # that ignores expand/embed, so they go on to the requests recorded above
+    write_pytacheck_variants(MOCKS)
 
 
 # ---------------------------------------------------------------------------

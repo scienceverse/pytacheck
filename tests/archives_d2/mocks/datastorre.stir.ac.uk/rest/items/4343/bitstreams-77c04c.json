@@ -1,0 +1,8 @@
+[
+  {
+    "name": "x.csv",
+    "bundleName": "ORIGINAL",
+    "sizeBytes": 1,
+    "retrieveLink": "/rest/bitstreams/201/retrieve"
+  }
+]

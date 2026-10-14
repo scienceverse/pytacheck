@@ -173,6 +173,40 @@ def test_version_pin_check_lockfiles(tmp_path: Path) -> None:
         core._code_version_pin_check(af.drop(columns="file_location"))
 
 
+def test_code_expand_zip_reads_a_zip_on_disk(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # metacheck d52b3fd: a zip inside a ResearchBox (its file_url is the box's web
+    # page, its file_location the unpacked copy) is listed and extracted from the file
+    import zipfile
+
+    import respx
+
+    path = tmp_path / "box" / "code.zip"
+    path.parent.mkdir()
+    with zipfile.ZipFile(path, "w") as zf:
+        zf.writestr("analysis.R", "x <- 1\n")
+        zf.writestr("data.csv", "a\n1\n")
+    monkeypatch.setattr(
+        "metacheck.archives.download._repo_cache_path",
+        lambda repo, fp: str(tmp_path / "cache" / fp),
+    )
+    af = pd.DataFrame(
+        {
+            "repo_url": ["https://researchbox.org/123"],
+            "file_name": ["code.zip"],
+            "file_path": ["code.zip"],
+            "file_url": ["https://researchbox.org/123"],
+            "file_location": [str(path)],
+            "file_size": [float(path.stat().st_size)],
+        }
+    )
+    with respx.mock(assert_all_mocked=True):  # no route: any request would fail
+        out = core._code_expand_zip(af)
+    assert out["file_name"].tolist() == ["code.zip", "analysis.R"]
+    assert Path(out["file_location"].iloc[1]).read_text() == "x <- 1\n"
+
+
 def test_code_expand_zip_mocked(monkeypatch: pytest.MonkeyPatch) -> None:
     """Expected rows from R with the same three functions mocked (testthat)."""
 

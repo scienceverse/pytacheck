@@ -1,0 +1,39 @@
+{
+  "id": 4242,
+  "name": "A DSpace 5 dataset",
+  "metadata": [
+    {
+      "key": "dc.rights",
+      "value": "CC-BY 4.0"
+    },
+    {
+      "key": "dc.identifier.doi",
+      "value": "10.15132/10000042"
+    }
+  ],
+  "bitstreams": [
+    {
+      "name": "data.csv",
+      "bundleName": "ORIGINAL",
+      "sizeBytes": 10,
+      "retrieveLink": "/bitstreams/101/retrieve"
+    },
+    {
+      "name": "license.txt",
+      "bundleName": "LICENSE",
+      "sizeBytes": 1700,
+      "retrieveLink": "/bitstreams/102/retrieve"
+    },
+    {
+      "name": "paper.pdf.txt",
+      "bundleName": "TEXT",
+      "sizeBytes": 900,
+      "retrieveLink": "/bitstreams/103/retrieve"
+    },
+    {
+      "name": "no-bundle.txt",
+      "sizeBytes": 3,
+      "retrieveLink": "/bitstreams/104/retrieve"
+    }
+  ]
+}

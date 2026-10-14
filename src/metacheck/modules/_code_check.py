@@ -528,7 +528,8 @@ def version_pin_report(version_pin: Mapping[str, Any]) -> tuple[str, str, pd.Dat
         return (
             REPORT_NO_PIN,
             "No pinned R/package environment (renv.lock, sessionInfo(), or "
-            "groundhog/checkpoint) was found.",
+            "groundhog/checkpoint) was found. Consider adding a solution to improve "
+            "computational reproducibility.",
             None,
         )
     mechanisms = list(version_pin.get("mechanisms") or [])

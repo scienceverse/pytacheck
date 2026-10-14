@@ -51,7 +51,6 @@ def gitlab_repo(repo: Any) -> Any:
     exists with a ``HEAD`` request. ``None`` when it does not. Several
     projects give a list aligned with the input.
     """
-    from metacheck._r import as_character, grepl, sub, trimws
     from metacheck.archives.github import _as_list, _is_vector, _perform
 
     if repo is None:
@@ -63,19 +62,42 @@ def gitlab_repo(repo: Any) -> Any:
         if len(items) > 1:
             return [gitlab_repo(r) for r in items]
         repo = items[0]
-    if is_missing(repo):
+    path = _gitlab_repo_path(repo)
+    if path is None:
         return None
 
+    resp = _perform("HEAD", f"https://gitlab.com/{path}")
+    if resp.status_code != 200:
+        return None
+    return path
+
+
+def _gitlab_repo_path(repo: Any) -> str | None:
+    """The ``namespace/project`` path of a GitLab URL or bare mention, without a request.
+
+    Port of R/archive-gitlab.R::.gitlab_repo_path(). :func:`gitlab_repo` adds a
+    ``HEAD`` request to the gitlab.com page; the API's own 404 for the project
+    gives the same answer. ``None`` when there is no valid path (single values
+    only).
+    """
+    from metacheck._r import as_character, grepl, sub, trimws
+    from metacheck.archives.github import _as_list, _is_vector
+
+    if _is_vector(repo):
+        items = _as_list(repo)
+        if len(items) != 1:
+            return None
+        repo = items[0]
+    if repo is None or is_missing(repo):
+        return None
+
+    # GitLab groups nest, so every path segment is kept (GitHub has exactly two)
     path = repo if isinstance(repo, str) else as_character(repo)
     path = sub(r"^(?:https?://)?(?:www\.)?gitlab\.com/", "", path, ignore_case=True, perl=True)
     path = sub(r"\.git/?$", "", path)
     path = sub("/+$", "", path)
     path = trimws(path)
     if not path or not grepl(r"^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)+$", path):
-        return None
-
-    resp = _perform("HEAD", f"https://gitlab.com/{path}")
-    if resp.status_code != 200:
         return None
     return str(path)
 
@@ -153,7 +175,9 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
     listed at all), ``reason``, ``files`` (``repo``, ``clean_repo``,
     ``name``, ``path``, ``download_url``, ``size``, ``type``; ``None`` when
     the tree could not be fetched), ``default_branch`` and ``license`` (the
-    licence key GitLab detected, e.g. ``"mit"``).
+    licence key GitLab detected, e.g. ``"mit"``). A project the API does not
+    find (404), or any failed metadata request, is reported as invalid or
+    inaccessible.
     """
     from metacheck.archives.github import (
         _add_file_types,
@@ -169,15 +193,10 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
         _url_encode,
     )
 
-    clean_repo = gitlab_repo(repo)
+    # the path only: the metadata request below answers 404 for a project that
+    # does not exist or cannot be seen, so no HEAD goes to gitlab.com first
+    clean_repo = _gitlab_repo_path(repo)
     if clean_repo is None:
-        return _unset()
-    if isinstance(clean_repo, list):
-        # several projects: URLencode() of a missing one stops R outright;
-        # otherwise request() refuses the vector of URLs, which R reports
-        # as an inaccessible project
-        if any(c is None for c in clean_repo):
-            raise ValueError("missing value where TRUE/FALSE needed")
         return _unset()
     proj_id = _gitlab_project_id(clean_repo)
 

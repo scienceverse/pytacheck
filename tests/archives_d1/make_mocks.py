@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 
 from tests.httpmock import r_digest
@@ -27,6 +28,10 @@ def put(path: str, content: object, ext: str = ".json") -> None:
         f.write_bytes(content)
     else:
         f.write_text(content, encoding="utf-8")
+    # pytacheck asks for a Dryad file listing 100 files a page; metacheck at
+    # the pin asks without a page size. The same reply answers both.
+    if re.search(r"datadryad\.org/api/v2/versions/[^/]+/files$", path):
+        put(q(path, "per_page=100"), content, ext)
 
 
 def q(base: str, query: str) -> str:

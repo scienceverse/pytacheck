@@ -11,6 +11,7 @@ a handler that honours ``Range`` requests.
 from __future__ import annotations
 
 import io
+import math
 import re
 import shutil
 import subprocess
@@ -19,6 +20,7 @@ import zipfile
 import zlib
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 
 import httpx
 import pandas as pd
@@ -534,9 +536,10 @@ def test_zip_fetch_members_after_a_listing_opens_the_archive_without_a_request(
         router.route(url=URL).mock(side_effect=handler)
         assert zip_peek(URL) is not None
         before = len(calls)
-        out = _zip_fetch_members(URL, names=["f3.csv", "f4.csv"], dest=str(tmp_path))
+        out = _zip_fetch_members(URL, names=["f3.csv", "f40.csv"], dest=str(tmp_path))
     assert out is not None and out["ok"].tolist() == [True, True]
-    assert [m for m, _ in calls[before:]] == ["GET", "GET"]  # one range request per member
+    # one range request per member (two members 110 KB apart are not merged)
+    assert [m for m, _ in calls[before:]] == ["GET", "GET"]
 
 
 def test_zip_fetch_members_rejects_bad_crc_and_traversal(tmp_path: Path) -> None:
@@ -589,17 +592,18 @@ def test_zip_fetch_members_host_ignoring_ranges(tmp_path: Path) -> None:
 
 def test_zip_fetch_members_host_ignoring_ranges_for_a_larger_archive(tmp_path: Path) -> None:
     members = [(f"f{i}.csv", bytes([i]) * 3000) for i in range(100)]  # more than the tail
-    handler, _ = _range_route(
+    handler, calls = _range_route(
         _build_zip(members, compression=zipfile.ZIP_STORED), honour_range=False
     )
     with respx.mock(assert_all_called=False) as router:
         router.route(url=URL).mock(side_effect=handler)
         out = _zip_fetch_members(URL, names=["f0.csv", "f99.csv"], dest=str(tmp_path))
     assert out is not None
-    # a 200 is never a member's bytes; each failed member says why (#429)
-    assert out["ok"].tolist() == [False, True]  # the last member is in the tail that came
-    assert out["error"].iloc[0] == "HTTP 200 (range not honoured)"
-    assert pd.isna(out["error"].iloc[1])
+    # the host sent the whole (300 KB) archive for the tail: it is all in hand, so
+    # every member comes from that one answer
+    assert out["ok"].tolist() == [True, True]
+    assert (tmp_path / "f0.csv").read_bytes() == bytes([0]) * 3000
+    assert [m for m, _ in calls] == ["HEAD", "GET"]
 
 
 # -- #429: why a member fetch failed --------------------------------------------------
@@ -887,3 +891,361 @@ def test_zip_peek_skips_a_known_rate_limit() -> None:
     finally:
         with http._reset_lock:
             http._host_reset.pop(host, None)
+
+
+# -- metacheck d52b3fd: known sizes, hosts that ignore Range, local zips ------------
+
+
+def test_zip_peek_with_a_known_size_sends_no_head() -> None:
+    data = (DATA / "mixed.zip").read_bytes()
+    handler, calls = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        cd = zip_peek(URL, size=len(data))
+    assert cd is not None and len(cd) == 6
+    assert calls == [("GET", f"bytes=0-{len(data) - 1}")]
+
+
+def test_zip_peek_with_a_stale_size_asks_again_at_the_reported_size() -> None:
+    # a listing's size that no longer matches the file: the 206 says the real size
+    members = [(f"f{i}.csv", bytes([i + 1]) * 3000) for i in range(100)]
+    data = _build_zip(members, compression=zipfile.ZIP_STORED)
+    calls: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        rng = request.headers["Range"]
+        calls.append(rng)
+        a, b = (int(v) for v in re.fullmatch(r"bytes=(\d+)-(\d+)", rng).groups())  # type: ignore[union-attr]
+        b = min(b, len(data) - 1)
+        return httpx.Response(
+            206, content=data[a : b + 1], headers={"Content-Range": f"bytes {a}-{b}/{len(data)}"}
+        )
+
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        cd = zip_peek(URL, size=len(data) - 5000)
+    assert cd is not None and len(cd) == 100
+    assert len(calls) == 2
+
+
+def test_zip_peek_with_a_too_large_size_and_a_short_answer_reads_the_file_as_it_is() -> None:
+    # a listing's size larger than the file and a 206 with no Content-Range: the
+    # shorter answer is the whole file, so offsets count from its first byte
+    data = (DATA / "mixed.zip").read_bytes()
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(return_value=httpx.Response(206, content=data))
+        cd = zip_peek(URL, size=len(data) + 2552)
+    assert cd is not None and len(cd) == 6
+    with zipfile.ZipFile(DATA / "mixed.zip") as zf:
+        assert list(cd["offset"]) == [i.header_offset for i in zf.infolist() if not i.is_dir()]
+
+
+def test_zip_decision_passes_a_known_size_on(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: list[object] = []
+
+    def fake_peek(url: str, *args: object, size: object = None, **kwargs: object) -> pd.DataFrame:
+        seen.append(size)
+        return pd.DataFrame({"name": ["study.csv"], "size": [1.0]})
+
+    monkeypatch.setattr(zp, "zip_peek", fake_peek)
+    zip_decision("http://x/data.zip", size=1234)
+    assert seen == [1234]
+
+
+def test_range_ignored_key_keeps_the_paths_shape() -> None:
+    assert (
+        zp._range_ignored_key(
+            "https://www.psycharchives.org/rest/bitstreams/112719a3-3346/retrieve"
+        )
+        == "www.psycharchives.org/rest/bitstreams/*/retrieve"
+    )
+    # Zenodo's per-file URLs and its whole-record archive differ
+    assert zp._range_ignored_key(
+        "https://zenodo.org/api/records/123/files-archive"
+    ) != zp._range_ignored_key("https://zenodo.org/api/records/123/files/a.zip/content")
+    assert zp._range_ignored_key("not a url") is None
+
+
+class _CountingStream(httpx.SyncByteStream):
+    """A body that counts how much of it was read."""
+
+    def __init__(self, data: bytes) -> None:
+        self.data = data
+        self.read = 0
+
+    def __iter__(self) -> Iterator[bytes]:
+        for i in range(0, len(self.data), 65536):
+            self.read += len(self.data[i : i + 65536])
+            yield self.data[i : i + 65536]
+
+
+def _ignoring_host(data: bytes) -> tuple[Any, list[tuple[str, str | None]], list[_CountingStream]]:
+    """A host answering every GET with 200, the whole file and its Content-Length."""
+    calls: list[tuple[str, str | None]] = []
+    bodies: list[_CountingStream] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append((request.method, request.headers.get("Range")))
+        headers = {"Content-Length": str(len(data))}
+        if request.method == "HEAD":
+            return httpx.Response(200, headers=headers)
+        bodies.append(_CountingStream(data))
+        return httpx.Response(200, headers=headers, stream=bodies[-1])
+
+    return handler, calls, bodies
+
+
+def test_a_host_ignoring_range_is_not_read_whole_and_is_skipped_afterwards() -> None:
+    big = bytes(range(256)) * (3 * 4096)  # 3 MB, over the 2 MB a whole answer may be
+    handler, calls, bodies = _ignoring_host(big)
+    url1 = "https://ignores.example/bitstreams/111/retrieve"
+    url2 = "https://ignores.example/bitstreams/222/retrieve"
+    with respx.mock(assert_all_called=False) as router:
+        router.route(host="ignores.example").mock(side_effect=handler)
+        assert zp._http_range_tail(url1, 131072, total=len(big)) is None
+        assert bodies[0].read < len(big)  # closed, not read
+        assert zp._range_ignored_known(url2)  # the same host and shape of path
+        n = len(calls)
+        # later peeks and member fetches of that kind of URL send nothing
+        assert zip_peek(url2, size=len(big)) is None
+        reason: dict[str, str] = {}
+        assert zp._http_range_bytes(url2, 10, 20, reason=reason) is None
+        assert "range not honoured" in reason["msg"]
+        assert len(calls) == n
+    # another kind of URL on the same host is still asked
+    assert not zp._range_ignored_known("https://ignores.example/files/a.zip")
+
+
+def test_a_small_file_sent_whole_is_still_read() -> None:
+    data = _test_zip_bytes()
+    handler, _, _ = _ignoring_host(data)
+    url = "https://ignores-small.example/files/1/retrieve"
+    with respx.mock(assert_all_called=False) as router:
+        router.route(host="ignores-small.example").mock(side_effect=handler)
+        raw = zp._http_range_tail(url, 64, total=len(data))
+    assert raw is not None and bytes(raw) == data[-64:]
+    assert zp._range_ignored_known(url)
+
+
+def test_a_whole_answer_to_a_range_from_byte_0_is_not_recorded() -> None:
+    # a range from byte 0 may cover the whole file, which a host may answer with 200
+    handler, _, _ = _ignoring_host(bytes(100))
+    url = "https://whole-ok.example/files/1/tiny.zip"
+    with respx.mock(assert_all_called=False) as router:
+        router.route(host="whole-ok.example").mock(side_effect=handler)
+        assert zp._http_range_bytes(url, 0, 500) is None
+        assert not zp._range_ignored_known(url)
+        assert zp._http_range_bytes(url, 5, 50) is None
+        assert zp._range_ignored_known(url)
+
+
+def test_a_whole_answer_from_another_host_after_a_redirect_is_not_recorded() -> None:
+    url = "https://osf.io/download/6891f2f7157709eae14783e1/"
+    other = "https://files.osf.io/v1/resources/x/providers/github/a.zip"
+    assert not zp._range_ignored_record(url, other)
+    assert not zp._range_ignored_known(url)
+    assert zp._range_ignored_record(url, url)
+    assert zp._range_ignored_known(url)
+
+
+def test_zip_peek_lists_a_zip_on_disk_without_a_request(tmp_path: Path) -> None:
+    data = (DATA / "mixed.zip").read_bytes()
+    path = tmp_path / "t.zip"
+    path.write_bytes(data)
+    handler, _ = _range_route(data)
+    with respx.mock(assert_all_mocked=True):  # no route: any request fails
+        local = zip_peek(str(path))
+        assert local is not None
+        assert str(path) not in zp._ZIP_PEEK_CACHE  # a local file can change
+        out = _zip_fetch_members(str(path), names="sub/codebook.csv", dest=str(tmp_path / "out"))
+    assert out is not None and out["ok"].tolist() == [True]
+    with zipfile.ZipFile(path) as zf:
+        assert Path(out["path"].iloc[0]).read_bytes() == zf.read("sub/codebook.csv")
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        remote = zip_peek(URL)
+    pd.testing.assert_frame_equal(local, remote)
+    files = pd.DataFrame({"file_location": [str(path), None, str(tmp_path / "missing.zip")]})
+    assert zp._zip_local_source(files) == [str(path), None, None]
+    assert not zp._is_local_file("file:///" + str(path))  # a URL, even of a local file
+
+
+def test_range_plan_merges_members_within_the_gap_and_splits_the_rest() -> None:
+    # (key, start, end of the data without the local extra field)
+    spans = [(0, 0, 130), (1, 200, 330), (2, 1_000_000, 1_000_130)]
+    plan = zp._range_plan(spans)
+    assert [keys for keys, _, _ in plan] == [[0, 1], [2]]
+    assert plan[0][2] == 330 + 1024  # a 1 KB margin for the local extra field ...
+    # ... cut at the next local header, or at the start of the central directory
+    assert zp._range_plan(spans[:1], [0, 200, 1_000_000])[0][2] == 199
+    assert zp._range_plan(spans[2:], [1_000_131])[0][2] == 1_000_130
+    # without a gap allowance every member is requested on its own
+    assert len(zp._range_plan(spans, max_gap=-1)) == 3
+
+
+def _filler_zip(members: list[tuple[str, bytes, bytes]]) -> bytes:
+    """Small members (name, data, local extra field) then a 200 KB stored filler."""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        for name, content, extra in members:
+            info = zipfile.ZipInfo(name)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.extra = extra
+            zf.writestr(info, content)
+        zf.writestr("filler.bin", secrets_bytes(200_000), compress_type=zipfile.ZIP_STORED)
+    return buf.getvalue()
+
+
+def secrets_bytes(n: int) -> bytes:
+    import random
+
+    return random.Random(1).randbytes(n)
+
+
+def test_nearby_members_share_one_range_request(tmp_path: Path) -> None:
+    members = [("data.csv", b"id,x\n" * 100, b""), ("notes.txt", b"hello\n", b"")]
+    data = _filler_zip(members)
+    handler, calls = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        assert zip_peek(URL, size=len(data)) is not None
+        before = len(calls)
+        out = _zip_fetch_members(URL, names=["data.csv", "notes.txt"], dest=str(tmp_path))
+    assert out is not None and out["ok"].tolist() == [True, True]
+    assert len(calls[before:]) == 1  # one request for the two (it used to be one each)
+    assert (tmp_path / "notes.txt").read_bytes() == b"hello\n"
+
+
+def test_a_local_extra_field_longer_than_the_margin_costs_a_second_request(
+    tmp_path: Path,
+) -> None:
+    extra = (0xCAFE).to_bytes(2, "little") + (2996).to_bytes(2, "little") + bytes(2996)
+    data = _filler_zip([("b.R", b"x <- 1\n", extra)])
+    handler, calls = _range_route(data)
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        assert zip_peek(URL, size=len(data)) is not None
+        before = len(calls)
+        out = _zip_fetch_members(URL, names="b.R", dest=str(tmp_path))
+    assert out is not None and out["ok"].tolist() == [True]
+    assert (tmp_path / "b.R").read_bytes() == b"x <- 1\n"
+    assert len(calls[before:]) == 2
+
+
+def test_zip_whole_size_estimates_the_archive_from_its_listing() -> None:
+    data = (DATA / "mixed.zip").read_bytes()
+    cd = zip_peek_from_bytes(data)
+    assert cd is not None
+    est = zp._zip_whole_size(cd)
+    assert abs(est - len(data)) < 100 * len(cd)
+    cd.loc[0, "offset"] = math.nan  # unknown
+    assert math.isnan(zp._zip_whole_size(cd))
+
+
+def test_zip_whole_is_cheaper_weighs_requests_against_bytes() -> None:
+    spans = [(i, i * 1_000_000, i * 1_000_000 + 1100) for i in range(20)]
+    plan = zp._range_plan(spans)  # 20 members 1 MB apart: 20 requests
+    assert len(plan) == 20
+    size = 19_000_000.0
+    assert zp._zip_whole_is_cheaper(20, size, plan, math.inf)
+    assert not zp._zip_whole_is_cheaper(20, size, plan, 1e6)  # over the budget
+    assert not zp._zip_whole_is_cheaper(20, size, plan, 0)  # turned off
+    assert not zp._zip_whole_is_cheaper(20, math.nan, plan, math.inf)  # size unknown
+    few = zp._range_plan(spans[:3])
+    assert not zp._zip_whole_is_cheaper(3, size, few, math.inf)  # 3 requests < 19 MB
+    # counting requests only (Dryad's quota), three members are enough ...
+    assert zp._zip_whole_is_cheaper(3, size, few, math.inf, request_bytes=math.inf)
+    # ... and fewer never take the archive
+    assert not zp._zip_whole_is_cheaper(2, size, few[:2], math.inf, request_bytes=math.inf)
+    assert zp._whole_request_bytes("https://datadryad.org/api/v2/files/1/download") == math.inf
+    assert zp._whole_request_bytes("https://zenodo.org/records/1/files/a.zip") == 1048576
+
+
+def test_zip_fetch_members_downloads_the_archive_once_in_whole_archive_mode(
+    tmp_path: Path,
+) -> None:
+    # metacheck #471: Dryad counts every request, so three wanted members take the
+    # archive whenever it fits the budget; it is kept for a restarted run
+    members = [
+        ("a.csv", b"id,x\n" * 200, b""),
+        ("b.csv", b"y\n" * 50, b""),
+        ("sub/c.R", b"z <- 1\n", b""),
+    ]
+    data = _filler_zip(members)
+    handler, calls = _range_route(data)
+    kept = tmp_path / "kept.zip"
+    names = ["a.csv", "b.csv", "sub/c.R"]
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=handler)
+        assert zip_peek(URL, size=len(data)) is not None
+        before = len(calls)
+        out = _zip_fetch_members(
+            URL,
+            names=names,
+            dest=str(tmp_path / "out"),
+            max_whole_bytes=math.inf,
+            archive_path=str(kept),
+            request_bytes=math.inf,
+        )
+        assert out is not None and out["ok"].tolist() == [True, True, True]
+        assert calls[before:] == [("GET", None)]  # the archive, once
+        assert kept.read_bytes() == data
+        assert (tmp_path / "out" / "sub" / "c.R").read_bytes() == b"z <- 1\n"
+        assert not (tmp_path / "out" / "filler.bin").exists()  # not wanted, not written
+        # a restarted run reuses the kept archive: no request
+        before = len(calls)
+        again = _zip_fetch_members(
+            URL,
+            names=names,
+            dest=str(tmp_path / "out2"),
+            max_whole_bytes=math.inf,
+            archive_path=str(kept),
+            request_bytes=math.inf,
+        )
+        assert again is not None and again["ok"].tolist() == [True, True, True]
+        assert calls[before:] == []
+        # counted in bytes, three members next to each other are one small range
+        # request, cheaper than the 200 KB archive
+        before = len(calls)
+        ranged = _zip_fetch_members(
+            URL, names=names, dest=str(tmp_path / "out3"), max_whole_bytes=math.inf
+        )
+        assert ranged is not None and ranged["ok"].tolist() == [True, True, True]
+        assert len(calls[before:]) == 1 and calls[before][1] is not None
+    # too large for the budget: the archive is not downloaded
+    assert (
+        zp._zip_fetch_whole(
+            URL, float(len(data)), names, [None] * 3, [math.nan] * 3, [math.nan] * 3, 10,
+            archive_path=str(tmp_path / "kept2.zip"),
+        )
+        is None
+    )  # fmt: skip
+    assert not (tmp_path / "kept2.zip").exists()
+
+
+def test_whole_archive_mode_falls_back_to_ranges_when_the_download_fails(
+    tmp_path: Path,
+) -> None:
+    members = [("a.csv", b"1\n", b""), ("b.csv", b"2\n", b""), ("c.csv", b"3\n", b"")]
+    data = _filler_zip(members)
+    handler, calls = _range_route(data)
+
+    def no_whole(request: httpx.Request) -> httpx.Response:
+        if request.method == "GET" and "Range" not in request.headers:
+            calls.append(("GET", None))
+            return httpx.Response(404)
+        return handler(request)
+
+    with respx.mock(assert_all_called=False) as router:
+        router.route(url=URL).mock(side_effect=no_whole)
+        out = _zip_fetch_members(
+            URL,
+            dest=str(tmp_path),
+            names=["a.csv", "b.csv", "c.csv"],
+            max_whole_bytes=math.inf,
+            archive_path=str(tmp_path / "kept.zip"),
+            request_bytes=math.inf,
+            size=len(data),
+        )
+    assert out is not None and out["ok"].tolist() == [True, True, True]
+    assert ("GET", None) in calls and not (tmp_path / "kept.zip").exists()

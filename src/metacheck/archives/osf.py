@@ -482,7 +482,13 @@ def _osf_info_listing(
     """The body of :func:`osf_info` after the session-cache check."""
     from metacheck._r import as_character
     from metacheck.archives import _tick
-    from metacheck.archives.osf_helpers import _osf_info, _osf_parse_response
+    from metacheck.archives.osf_helpers import (
+        _GITHUB_FILES_LINK,
+        _osf_github_files,
+        _osf_info,
+        _osf_parse_response,
+        _osf_tree,
+    )
     from metacheck.utils import left_join
 
     if isinstance(osf_url, pd.DataFrame):
@@ -519,8 +525,36 @@ def _osf_info_listing(
     if recursive is True:
         _tick(pb, "...Main retrieval complete")
         _tick(pb, "Starting retrieval of children...")
+        # Each linked node's component tree, with every component's storage
+        # providers, is first listed in one request per 100 components
+        # (_osf_tree()), instead of a /children/ and a /files/ request per
+        # component; the walk below covers the nodes it could not list.
         child_parts: list[pd.DataFrame] = []
-        children: pd.DataFrame | None = info
+        provider_parts: list[pd.DataFrame] = []
+        provider_missing: list[str] = []
+        covered: set[str] = set()
+        listings: dict[str, Any] = {}
+        for row in info.itertuples(index=False):
+            node_id, otype = getattr(row, "osf_id", None), getattr(row, "osf_type", None)
+            if otype not in ("nodes", "registrations") or is_missing(
+                getattr(row, "children", None)
+            ):
+                continue
+            _tick(pb, f"Listing the components of {node_id}")
+            project = getattr(row, "project", None)
+            tree = _osf_tree(
+                str(node_id), otype, None if is_missing(project) else project, listings
+            )
+            if tree is None:
+                continue
+            covered.add(str(node_id))
+            child_parts.extend(f for f in (tree["nodes"],) if f is not None)
+            provider_parts.extend(f for f in (tree["providers"],) if f is not None)
+            provider_missing.extend(tree["missing"])
+
+        uncovered = info[~info["osf_id"].isin(covered)]
+        walked: list[pd.DataFrame] = []
+        children: pd.DataFrame | None = uncovered
         urls = _non_na(children, "children")
         depth = 0
         while urls:
@@ -533,16 +567,34 @@ def _osf_info_listing(
             children = _osf_parse_response(_fetch_listings(urls))
             if children is not None:
                 child_parts.append(children)
+                walked.append(children)
             urls = _non_na(children, "children")
         child_collector = bind_rows(child_parts) if child_parts else pd.DataFrame()
         if len(child_collector) > 0:
             n = len(child_collector)
             _tick(pb, f"Found {n} component{plural(n)}")
 
-        all_nodes = bind_rows([info, child_collector])
-        file_parts: list[pd.DataFrame] = []
-        urls = _non_na(all_nodes, "files")
+        # providers of the nodes the tree listings did not cover are listed
+        # through their /files/ links, as are the providers' own folders
+        file_parts: list[pd.DataFrame] = list(provider_parts)
+        urls = (
+            _non_na(bind_rows([uncovered, *walked]), "files")
+            + provider_missing
+            + [u for p in provider_parts for u in _non_na(p, "files")]
+        )
         while urls:
+            # a linked GitHub repository is listed through GitHub itself (2
+            # requests, with sizes); only the add-on's top folder is matched,
+            # so when that fails it is listed through the OSF in full
+            for u in dict.fromkeys(urls):
+                if (m := _GITHUB_FILES_LINK.search(u)) is None:
+                    continue
+                gh_rows = _osf_github_files(m.group(1))
+                if gh_rows is not None:
+                    file_parts.append(gh_rows)
+                    urls = [x for x in urls if x != u]
+            if not urls:
+                break
             n_files = sum(
                 int((p["kind"] == "file").fillna(False).sum()) for p in file_parts if "kind" in p
             )

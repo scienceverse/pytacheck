@@ -410,7 +410,9 @@ def test_zenodo_file_download_extracts_wanted_members(
 ) -> None:
     requested: list[str] = []
 
-    def members(url: str, dest: str, keep_types: Any, max_file_size: Any) -> pd.DataFrame:
+    def members(
+        url: str, dest: str, keep_types: Any, max_file_size: Any, size: Any = None
+    ) -> pd.DataFrame:
         requested.append(url)
         assert keep_types == "data"
         Path(dest, "study.csv").write_text("id,x\n1,2\n")
@@ -561,3 +563,42 @@ def test_zenodo_downloads_retry_through_the_shared_stack(tmp_path: Path) -> None
         empty = router.get("https://files.example/empty").respond(200, content=b"")
         assert zenodo._download_archive("https://files.example/empty", str(tmp_path / "e")) is False
         assert empty.call_count == 1
+
+
+def test_zenodo_file_download_skips_files_archive_after_a_404(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, respx_mock: respx.MockRouter
+) -> None:
+    # metacheck 0.3.3: files-archive answered 404 for every record tried, so
+    # after its first 404 it is not asked again this session, and "Downloaded
+    # as one archive" is said only when the archive supplied the files
+    body = b"x,y\n1,2\n"
+    monkeypatch.setattr(
+        zenodo,
+        "zenodo_info",
+        _mock_info(
+            [{"id": "f_{zid}", "key": "plain.csv", "size": len(body),
+              "links": {"self": "https://files.example/plain.csv"}}]
+        ),
+    )  # fmt: skip
+    archive = respx_mock.get(url__regex=r"https://zenodo\.org/api/records/\d+/files-archive").mock(
+        return_value=httpx.Response(404)
+    )
+    respx_mock.get("https://files.example/plain.csv").mock(
+        return_value=httpx.Response(200, content=body)
+    )
+    said: list[str] = []
+
+    class Bar:
+        def tick(self, n: int = 1, tokens: dict | None = None) -> None:
+            said.append((tokens or {}).get("what", ""))
+
+        def terminate(self) -> None:
+            pass
+
+    dl1 = zenodo_file_download("11111", download_to=str(tmp_path), pb=Bar())
+    dl2 = zenodo_file_download("22222", download_to=str(tmp_path), pb=Bar())
+    assert dl1["downloaded"].tolist() == dl2["downloaded"].tolist() == [True]
+    assert [str(c.request.url) for c in archive.calls] == [
+        "https://zenodo.org/api/records/11111/files-archive"
+    ]
+    assert "Downloaded as one archive" not in said
