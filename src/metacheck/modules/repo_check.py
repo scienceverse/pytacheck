@@ -611,9 +611,14 @@ def _peek_zips(
 ) -> pd.DataFrame:
     """Replace each listable ``.zip`` row by the archive's entries (one Range request each).
 
-    *cache* and *skip_on_api_limit* go to :func:`~metacheck.archives.zip_peek.zip_peek`.
+    *cache* and *skip_on_api_limit* go to :func:`~metacheck.archives.zip_peek.zip_peek`,
+    with the size the listing gave (which saves a HEAD request). A zip already
+    on disk (a ResearchBox box is downloaded and unpacked whole, so a zip in it
+    has its copy in ``file_location`` and the box's web page as ``file_url``)
+    is listed from the file, with no request: peeking at the web page only
+    earned a 406. Only rows with a ``file_url`` are expanded, as before.
     """
-    from metacheck.archives.zip_peek import _is_zip, zip_peek
+    from metacheck.archives.zip_peek import _is_zip, _zip_local_source, zip_peek
     from metacheck.fileinfo.types import file_types
 
     names = rc.vals(all_files["file_name"])
@@ -623,6 +628,11 @@ def _peek_zips(
     ]
     if not any(is_zip):
         return all_files
+    local = _zip_local_source(all_files)
+    sources = [u if loc is None else loc for u, loc in zip(urls, local, strict=True)]
+    sizes = (
+        rc.vals(all_files["file_size"]) if "file_size" in all_files.columns else [None] * len(urls)
+    )
     ft = file_types()
     first_type: dict[str, Any] = {}
     for e, t in zip(rc.vals(ft["ext"]), rc.vals(ft["type"]), strict=True):
@@ -636,13 +646,15 @@ def _peek_zips(
     try:
         for i in [k for k, z in enumerate(is_zip) if z]:
             try:
-                peek = zip_peek(urls[i], cache=cache, skip_on_api_limit=skip_on_api_limit)
+                peek = zip_peek(
+                    sources[i], cache=cache, skip_on_api_limit=skip_on_api_limit, size=sizes[i]
+                )
             except Exception:
                 peek = None
             with contextlib.suppress(Exception):  # a progress display must never break a run
                 zpb.tick()
             if peek is not None and len(peek) > 0:
-                expanded.append(_zip_rows(all_files, i, names[i], urls[i], peek, first_type))
+                expanded.append(_zip_rows(all_files, i, names[i], sources[i], peek, first_type))
                 consumed.append(i)
     finally:
         with contextlib.suppress(Exception):
@@ -665,8 +677,11 @@ def _zip_rows(
 
     R: the entry's name and size replace the archive's, the inner path is
     prefixed with the archive's name, ``file_url`` is ``NA`` and
-    ``archive_url`` / ``archive_member`` locate the entry inside the archive;
-    ``file_type`` is re-derived from the entry's extension.
+    ``archive_url`` / ``archive_member`` locate the entry inside the archive
+    (*archive_url* is the archive's path for a zip on disk); ``file_type`` is
+    re-derived from the entry's extension. ``archive_size`` carries the
+    archive's size, so the later member fetch need not ask for it, and
+    ``file_location`` is ``NA``: the entry has no copy of its own yet.
     """
     members = [str(n) for n in rc.vals(peek["name"])]
     n = len(members)
@@ -678,6 +693,10 @@ def _zip_rows(
     rows["file_url"] = pd.Series([None] * n, dtype="string")
     rows["archive_url"] = pd.Series([archive_url] * n, dtype="string")
     rows["archive_member"] = pd.Series(members, dtype="string")
+    size = rc._as_num(all_files["file_size"].iloc[i]) if "file_size" in all_files.columns else None
+    rows["archive_size"] = pd.Series([size] * n, dtype="float64")
+    if "file_location" in rows.columns:
+        rows["file_location"] = pd.Series([None] * n, dtype="string")
     if "file_type" in rows.columns:
         types = []
         for name in rc.vals(rows["file_name"]):

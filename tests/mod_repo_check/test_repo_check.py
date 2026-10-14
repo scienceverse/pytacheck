@@ -546,6 +546,88 @@ def test_zip_peek_gets_cache_and_skip_on_api_limit(monkeypatch: pytest.MonkeyPat
     assert seen and all(s["skip_on_api_limit"] is False for s in seen)
 
 
+def test_zip_peek_reads_a_zip_on_disk_and_carries_the_archive_size(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # metacheck d52b3fd: a zip inside a ResearchBox has the box's web page as file_url
+    # and its unpacked copy as file_location; it is listed from the file (the page
+    # answers a range request with 406), and the listed size reaches zip_peek()
+    import zipfile
+
+    from metacheck.archives import zip_peek as zp
+    from metacheck.modules.repo_check import _peek_zips
+
+    path = tmp_path / "inner.zip"
+    with zipfile.ZipFile(path, "w") as zf:
+        zf.writestr("data/study.csv", "id,x\n1,2\n")
+        zf.writestr("analysis.R", "x <- 1\n")
+    files = pd.DataFrame(
+        {
+            "repo_url": ["https://researchbox.org/123", "https://zenodo.org/records/1"],
+            "file_name": ["inner.zip", "remote.zip"],
+            "file_path": ["inner.zip", "remote.zip"],
+            "file_url": ["https://researchbox.org/123", "https://zenodo.org/r/remote.zip"],
+            "file_location": [str(path), None],
+            "file_size": [float(path.stat().st_size), 999.0],
+            "file_type": ["archive", "archive"],
+        }
+    )
+    real = zp.zip_peek
+    seen: list[tuple[str, object]] = []
+
+    def peek(url: str, *args: object, size: object = None, **kwargs: object) -> object:
+        seen.append((url, size))
+        return real(url, size=size) if url == str(path) else None
+
+    monkeypatch.setattr(zp, "zip_peek", peek)
+    out = _peek_zips(files)
+    assert seen == [
+        (str(path), float(path.stat().st_size)),
+        ("https://zenodo.org/r/remote.zip", 999.0),
+    ]
+    members = out[out["archive_url"].notna()]
+    assert sorted(members["archive_member"]) == ["analysis.R", "data/study.csv"]
+    assert set(members["archive_url"]) == {str(path)}
+    assert set(members["archive_size"]) == {float(path.stat().st_size)}
+    # a member has no copy of its own yet: the download step extracts it
+    assert members["file_location"].isna().all()
+    assert "remote.zip" in out["file_name"].tolist()  # not listable: kept as it was
+
+
+def test_a_zip_inside_a_researchbox_is_listed_from_its_local_copy(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # test-module-repo_check.R (metacheck d52b3fd): the box's web page is the
+    # row's file_url and answers a range request with 406; the unpacked copy is read
+    import zipfile
+
+    from metacheck.archives import researchbox
+
+    inner = tmp_path / "inner.zip"
+    with zipfile.ZipFile(inner, "w") as zf:
+        zf.writestr("Data/study1.csv", "id,x\n1,2\n")
+        zf.writestr("analysis.R", "x <- 1\n")
+    box = "https://researchbox.org/99999"
+    monkeypatch.setattr(
+        researchbox,
+        "rbox_file_download",
+        lambda rb_url, pb=None: pd.DataFrame(
+            {
+                "rb_url": [box],
+                "name": ["ResearchBox 99999/inner.zip"],
+                "file_location": [str(inner)],
+                "size": [float(inner.stat().st_size)],
+                "type": ["archive"],
+                "isdir": [False],
+            }
+        ),
+    )
+    mo = run(tp([box], "p_rbox_zip"))  # an unmocked request would fail the test
+    assert sorted(mo.table["file_name"]) == ["analysis.R", "study1.csv"]
+    assert set(mo.table["archive_url"]) == {str(inner)}
+    assert mo.table["file_location"].isna().all()
+
+
 def test_nameless_file_is_listed_without_a_naming_check() -> None:
     # a listed file without a name has no name to check (R's
     # check_file_naming() fails and the module errors, U122)

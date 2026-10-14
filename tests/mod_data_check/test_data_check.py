@@ -913,7 +913,7 @@ def test_zip_peek_reasons_stay_with_their_rows(
     monkeypatch.setattr(
         zp,
         "zip_decision",
-        lambda url, skip_types=None, cache=False, skip_on_api_limit=False: {
+        lambda url, skip_types=None, cache=False, skip_on_api_limit=False, size=None: {
             "worth": False,
             "reason": "no data",
         },
@@ -950,9 +950,13 @@ def test_peek_zips_default_and_forwarded_keywords(monkeypatch: pytest.MonkeyPatc
     seen: dict[str, object] = {}
 
     def fake(
-        url: str, skip_types: object = None, cache: bool = False, skip_on_api_limit: bool = False
+        url: str,
+        skip_types: object = None,
+        cache: bool = False,
+        skip_on_api_limit: bool = False,
+        size: object = None,
     ):
-        seen.update(cache=cache, skip_on_api_limit=skip_on_api_limit)
+        seen.update(cache=cache, skip_on_api_limit=skip_on_api_limit, size=size)
         return {"worth": False, "reason": "no data"}
 
     monkeypatch.setattr(zp, "zip_decision", fake)
@@ -962,13 +966,15 @@ def test_peek_zips_default_and_forwarded_keywords(monkeypatch: pytest.MonkeyPatc
             "file_path": ["stimuli.zip"],
             "file_url": ["https://example.org/stimuli.zip"],
             "file_location": [None],
+            "file_size": [4096.0],
             "data_type": ["unknown"],
             "doc_role": [None],
             "data_format": [None],
         }
     )
     D._download(files, "all", None, True, 100, 500, math.inf, True, True)
-    assert seen == {"cache": True, "skip_on_api_limit": True}
+    # the listed size saves the peek a HEAD request (metacheck d52b3fd)
+    assert seen == {"cache": True, "skip_on_api_limit": True, "size": 4096.0}
 
 
 # -----------------------------------------------------------------------------

@@ -117,6 +117,14 @@
 "mod_repo_check/repo_check.all_platforms.paperlist": *u121
 "mod_repo_check/repo_check.all_platforms.report": *u121
 "mod_repo_check/repo_check.all_platforms.tables": *u121
+# DX-zip-1 (metacheck d52b3fd: a zip's entries carry the archive's listed size)
+"mod_repo_check/repo_check.zenodo.peek": &dx_zip_1_size
+  kind: deliberate
+  ref: DX-zip-1
+  reason: the rows of a zip's entries carry archive_size, the archive's size from the listing, so a later member fetch needs no HEAD request (metacheck's newer dev does the same)
+"mod_repo_check_review/repo_check.zenodo.peek_rich": *dx_zip_1_size
+"mod_repo_check_review/repo_check.zenodo.peek_same_zip": *dx_zip_1_size
+"mod_repo_check_review/repo_check.zenodo.peek_shared.paperlist": *dx_zip_1_size
 "mod_repo_check_review/repo_check.local.two_folders": &u121_local
   kind: r_bug_fixed
   ref: U121
