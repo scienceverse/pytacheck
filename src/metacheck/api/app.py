@@ -42,10 +42,12 @@ module as plumber does. Parsing uploads and running modules happen off the event
 loop, at most ``METACHECK_API_MAX_CHECKS`` or ``PYTACHECK_API_MAX_CHECKS``
 (default: the CPU count) at a time, each request inside a run session.
 
-Engines (pytacheck extension): ``/paper/check`` takes ``engine``: ``python`` (pytacheck's
-own modules) or ``r`` (R metacheck's, run by :mod:`metacheck.rengine` in an ``Rscript``
-subprocess and shown with pytacheck's report). Without it the server's default is used:
-``METACHECK_API_ENGINE`` (or ``pytacheck serve --engine``), else ``python``. With ``r`` the
+Engines (pytacheck extension): ``/paper/check`` takes ``engine``: ``r`` (R metacheck's
+modules, the reference, run by :mod:`metacheck.rengine` in an ``Rscript`` subprocess and
+shown with pytacheck's report) or ``python`` (pytacheck's experimental port, best-effort
+parity). Without it the server's default is used: ``METACHECK_API_ENGINE`` (or
+``pytacheck serve --engine``), else ``r`` where R can run metacheck and ``python``
+elsewhere. With ``r`` the
 modules, the presets and the default selection are R's (no packs), the response has the
 same shape, ``metacheck_version`` is R metacheck's and ``engine`` says which engine ran.
 ``GET /paper/modules?engine=r`` lists R's modules. A server without R refuses ``engine=r``
@@ -180,14 +182,17 @@ def available_modules() -> list[str]:
 
 
 def default_engine() -> str:
-    """The engine of a ``/paper/check`` that names none: ``METACHECK_API_ENGINE``, else python.
+    """The engine of a ``/paper/check`` that names none: ``METACHECK_API_ENGINE``, else ``r``
+    where R can run metacheck (R metacheck is the reference) and ``python`` elsewhere.
 
-    Raises :class:`ApiConfigError` for an unknown engine, and for ``r`` when R cannot run
-    metacheck here (a server meant to run R checks should not start without them).
+    Raises :class:`ApiConfigError` for an unknown engine, and for ``r`` named when R cannot
+    run metacheck here (a server meant to run R checks should not start without them).
     """
-    from metacheck.rengine import ENGINES, REngineError, info
+    from metacheck.rengine import ENGINES, REngineError, available, info
 
-    value = (env_get("API_ENGINE") or "python").strip().lower()
+    value = (env_get("API_ENGINE") or "").strip().lower()
+    if not value:
+        return "r" if available() else "python"
     if value not in ENGINES:
         raise ApiConfigError(f"METACHECK_API_ENGINE is {value!r}; use one of {', '.join(ENGINES)}")
     if value == "r":

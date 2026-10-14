@@ -1,7 +1,9 @@
 # The R engine
 
 pytacheck can run the checks of R metacheck itself, the package it ports, and show
-their results with its own report. Reading the paper stays the same: R reads the same
+their results with its own report. Where R can run metacheck, R is the default engine
+of the app and the REST API: R metacheck is the reference, and pytacheck's Python
+modules are an experimental, faster port with best-effort parity to R. Reading the paper stays the same: R reads the same
 bibr JSON or GROBID XML file that pytacheck read. Only the checks differ.
 
 ```sh
@@ -49,11 +51,13 @@ the same environment).
 * **In Python:** `metacheck.rengine.run("paper.json", ["stat_check", "marginal"])` gives
   the module outputs by name; `render_module_outputs(outputs, paper,
   version=rengine.report_version(...))` makes the report.
-* **The REST API:** `engine=r` on `POST /paper/check`, and `pytacheck serve --engine r`
-  for a server whose default is R. See [API.md](API.md#the-r-engine).
-* **The app:** "Run checks with: Python / R" under "Read PDFs with". It is shown where R
-  runs metacheck; on a shared server (`--hosted`) only with `METACHECK_APP_R_ENGINE=on`,
-  and `METACHECK_APP_R_ENGINE=off` hides it anywhere. With R the page offers only R
+* **The REST API:** `engine=r` or `engine=python` on `POST /paper/check`; a request that
+  names neither uses R where R runs metacheck. `pytacheck serve --engine` fixes a
+  server's default. See [API.md](API.md#the-r-engine).
+* **The app:** "Run checks with: R metacheck / Python (experimental)" under "Read PDFs
+  with", with R chosen. It is shown where R runs metacheck; on a shared server
+  (`--hosted`) only with `METACHECK_APP_R_ENGINE=on`, and `METACHECK_APP_R_ENGINE=off`
+  hides it (and runs Python) anywhere. With R the page offers only R
   metacheck's checks (not `author_check`, `figure_table_refs`, `license_check` or packs)
   and checks papers only, not data packages. R runs the shared data check too, without
   the local concept classifier (D33), and does not report its progress. The report header

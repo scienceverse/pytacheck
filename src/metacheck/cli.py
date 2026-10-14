@@ -1220,7 +1220,8 @@ def build_parser() -> argparse.ArgumentParser:
         choices=("python", "r"),
         default=None,
         help="the engine of a /paper/check that names none (default: METACHECK_API_ENGINE, "
-        "else python); r runs R metacheck's modules and needs R with metacheck installed",
+        "else r where R can run metacheck and python elsewhere); r runs R metacheck's "
+        "modules, python pytacheck's experimental port",
     )
     p.set_defaults(func=cmd_serve)
 

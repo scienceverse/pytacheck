@@ -176,13 +176,14 @@ READER_FALLBACK = (
     "bibr is not set up on this computer, so GROBID is used. "
     "Enter a bibr key to read PDFs with bibr."
 )
-#: the choice of engine, shown where R metacheck can run (see :func:`r_engine_offered`)
+#: the choice of engine, shown where R metacheck can run (see :func:`r_engine_offered`); R is
+#: the default there, and Python is the experimental port
 ENGINE_LABEL = "Run checks with"
-ENGINE_CHOICES = [("Python (pytacheck)", "python"), ("R (metacheck)", "r")]
+ENGINE_CHOICES = [("R metacheck", "r"), ("Python (experimental)", "python")]
 ENGINE_HINT = (
-    "R runs the checks in R metacheck {version}, the package this app ports, and shows its "
-    "results in the same report. It checks papers only, and only the checks R metacheck has. "
-    "Its results can differ from Python's: [the known differences]({url})."
+    "R runs the checks in R metacheck {version}, the reference. Python runs pytacheck's "
+    "faster port of them: experimental, with best-effort parity to R ([the known "
+    "differences]({url})), and with checks and data packages R does not have."
 )
 DIFFERENCES_URL = f"{REPO_URL}/blob/main/docs/UPSTREAM_ISSUES.md"
 R_ONLY_PAPERS = "R metacheck checks papers only. Choose Python to check a data package."
@@ -1179,6 +1180,10 @@ def build_app(
     # a preset given at the start opens its mode, and the checks of a paper preset are shown
     first_mode = PACKAGE_MODE if first_package == start_preset else PAPER_MODE
     package_first = first_mode == PACKAGE_MODE
+    # R is the default where the page offers it; it checks papers only, so a data package
+    # preset given at the start begins with Python
+    first_engine = "r" if r_offered and not package_first else "python"
+    first_checks = allowed(first_checks, first_engine)
 
     blocks_kwargs = (
         {**BLOCKS_KWARGS, "delete_cache": hosting.sweep(hosted.job_timeout)}
@@ -1191,7 +1196,12 @@ def build_app(
         gr.HTML(header(__version__), elem_id="mc-header", js_on_load=None)
         with gr.Row(elem_id="mc-mode-row"):
             mode = gr.Radio(
-                MODES, value=first_mode, label=MODE_LABEL, show_label=False, elem_id="mc-mode"
+                MODES,
+                value=first_mode,
+                label=MODE_LABEL,
+                show_label=False,
+                elem_id="mc-mode",
+                interactive=first_engine != "r",
             )
         # one box for everything: a paper, the archive of a data package, the link of a
         # repository (or, on this computer, the path of a folder); the page tells them apart
@@ -1217,7 +1227,9 @@ def build_app(
             first = default_reader(remember_keys)
             reader = gr.Radio(READERS, value=first, label="Read PDFs with")
             gr.Markdown(reader_hint(first, shared))
-            engine = gr.Radio(ENGINE_CHOICES, value="python", label=ENGINE_LABEL, visible=r_offered)
+            engine = gr.Radio(
+                ENGINE_CHOICES, value=first_engine, label=ENGINE_LABEL, visible=r_offered
+            )
             gr.Markdown(
                 ENGINE_HINT.format(version=r_version, url=DIFFERENCES_URL), visible=r_offered
             )
@@ -1259,7 +1271,7 @@ def build_app(
                     visible=len(presets) > 1,
                 )
                 picked = gr.CheckboxGroup(
-                    catalog.choices(shared, extra),
+                    offered(first_engine),
                     value=first_checks,
                     label="Checks to run",
                 )

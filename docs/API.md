@@ -55,8 +55,12 @@ table blocks are arrays of row objects.
 
 ### The R engine
 
-`POST /paper/check` takes `engine`: `python` (pytacheck's modules, the default) or `r`
-(the modules of R metacheck itself). With `r` the server runs R metacheck in an
+`POST /paper/check` takes `engine`: `r` (the modules of R metacheck itself, the
+reference) or `python` (pytacheck's faster port of them: experimental, with
+best-effort parity to R, see [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md)). A request that
+names no engine uses the server's default: `METACHECK_API_ENGINE` (or
+`pytacheck serve --engine`), else `r` where R can run metacheck and `python` where it
+cannot. With `r` the server runs R metacheck in an
 `Rscript` subprocess on the uploaded bibr JSON (a PDF that bibr extracted here is
 handed to R as bibr JSON), each module on its own as metacheck's plumber `/check`
 does, and answers in the same shape as above. `engine` says which engine ran and
@@ -69,10 +73,10 @@ modules: a module R does not have (a pack's, or `author_check`, `figure_table_re
 `license_check`) is a 400. `GET /paper/modules?engine=r` lists them. A server where R
 cannot run metacheck answers `engine=r` with a 400; one that fails while R runs is a 500.
 
-`pytacheck serve --engine r` (or `METACHECK_API_ENGINE=r`) makes `r` the default for
-requests that name no engine, so a second server on another loopback port can serve
-R checks to a client that does not send `engine`. It needs R with the metacheck R
-package; see [R_ENGINE.md](R_ENGINE.md).
+`pytacheck serve --engine r` (or `METACHECK_API_ENGINE=r`) requires `r`: the server
+does not start where R cannot run metacheck. `--engine python` keeps a server with R on
+Python, for clients that ask for checks R does not have without sending `engine`. R
+needs the metacheck R package; see [R_ENGINE.md](R_ENGINE.md).
 
 ### Migrating from metacheck's plumber API
 

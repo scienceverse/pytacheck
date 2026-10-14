@@ -27,7 +27,7 @@ def client(fake_r: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
 def test_modules_of_each_engine(client: TestClient) -> None:
     r = client.get("/paper/modules", params={"engine": "r"}).json()
     assert r == {"modules": ["marginal", "stat_check", "data_check"], "count": 3}
-    python = client.get("/paper/modules").json()
+    python = client.get("/paper/modules", params={"engine": "python"}).json()
     assert "author_check" in python["modules"]
     assert client.get("/paper/modules", params={"engine": "julia"}).status_code == 400
 
@@ -66,10 +66,19 @@ def test_r_refuses_what_it_does_not_have(client: TestClient) -> None:
     assert bad.status_code == 400 and "Invalid engine: julia" in bad.json()["error"]
 
 
-def test_python_stays_the_default(client: TestClient) -> None:
+def test_r_is_the_default_where_r_runs(client: TestClient) -> None:
     body = client.post("/paper/check", files=upload(), data={"modules": "marginal"}).json()
-    assert body["engine"] == "python"
-    assert body["metacheck_version"] == UPSTREAM["version"]
+    assert body["engine"] == "r" and body["metacheck_version"] == "9.9.9"
+    assert client.get("/paper/modules").json()["modules"] == [
+        "marginal",
+        "stat_check",
+        "data_check",
+    ]
+    python = client.post(
+        "/paper/check", files=upload(), data={"engine": "python", "modules": "marginal"}
+    ).json()
+    assert python["engine"] == "python"
+    assert python["metacheck_version"] == UPSTREAM["version"]
 
 
 def test_r_failures(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -86,6 +95,11 @@ def test_the_server_default(fake_r: Path, monkeypatch: pytest.MonkeyPatch) -> No
     client = TestClient(create_app())
     body = client.post("/paper/check", files=upload(), data={"modules": "marginal"}).json()
     assert body["engine"] == "r"
+    monkeypatch.setenv("METACHECK_API_ENGINE", "python")  # a server with R kept on Python
+    body = TestClient(create_app()).post(
+        "/paper/check", files=upload(), data={"modules": "author_check"}
+    )
+    assert body.json()["engine"] == "python"
     monkeypatch.setenv("METACHECK_API_ENGINE", "julia")
     with pytest.raises(ApiConfigError, match="use one of python, r"):
         default_engine()
@@ -97,6 +111,7 @@ def test_no_r_no_r_default(fake_r: Path, monkeypatch: pytest.MonkeyPatch) -> Non
     with pytest.raises(ApiConfigError, match="The R engine is the default, but"):
         create_app()
     monkeypatch.delenv("METACHECK_API_ENGINE")
+    assert default_engine() == "python"  # without R, Python is the default
     client = TestClient(create_app())
     r = client.post("/paper/check", files=upload(), data={"engine": "r"})
     assert r.status_code == 400 and "cannot run the R engine" in r.json()["error"]

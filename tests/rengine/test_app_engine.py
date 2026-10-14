@@ -109,6 +109,11 @@ def test_choosing_r_on_the_page(fake_r: Path, monkeypatch: pytest.MonkeyPatch) -
 
     monkeypatch.delenv("METACHECK_APP_R_ENGINE", raising=False)
     blocks = ui.build_app()
+    shown = {getattr(b, "label", None): b for b in blocks.blocks.values()}
+    # R is chosen at the start, with R metacheck's checks, and the switch stays on Paper
+    assert shown[ui.ENGINE_LABEL].value == "r"
+    assert [name for _, name in shown["Checks to run"].choices] == ["marginal", "stat_check"]
+    assert shown[ui.MODE_LABEL].interactive is False
     fns = {fn.name: fn.fn for fn in blocks.fns.values()}
     picked, switch = fns["on_engine"]("r", ["marginal", "author_check", "stat_check"])
     # only R metacheck's checks are offered, and the switch stays on Paper

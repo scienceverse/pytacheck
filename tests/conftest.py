@@ -104,6 +104,14 @@ def _concepts_as_metacheck(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("METACHECK_CONCEPTS", "llm")
 
 
+@pytest.fixture(autouse=True)
+def _python_engine(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Python runs the checks, whatever R this computer has (where R runs metacheck, R is the
+    default of the app and the REST API); tests/rengine switches R on where it needs it."""
+    monkeypatch.setenv("METACHECK_APP_R_ENGINE", "off")
+    monkeypatch.setenv("METACHECK_API_ENGINE", "python")
+
+
 # -- hygiene: a test not marked `network` never reaches the internet ---------------
 #
 # A request a test forgets to mock goes out for real, and the offline suite
