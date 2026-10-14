@@ -280,10 +280,10 @@ def _write_lines(lines: Sequence[str | None], path: str | os.PathLike[str]) -> N
     )
 
 
-def _code_remove_comments(code_text: Any) -> list[str | None]:
+def _code_remove_comments(code_text: Any, lang: str = "R") -> list[str | None]:
     from metacheck.codecheck.core import code_remove_comments
 
-    return list(code_remove_comments(code_text, "R") or [])
+    return list(code_remove_comments(code_text, lang) or [])
 
 
 def _is_file_list(code_text: Any) -> bool:
@@ -649,6 +649,40 @@ _WRITE_FN_PAT = r"\b(write[\._][A-Za-z\._0-9]*|saveRDS|save\.image|save|ggsave|e
 _ASSIGN_ANY_PAT = r"^([.a-zA-Z][.a-zA-Z0-9_]*)\s*(?:<<-|<-|=)\s*(.+)$"
 
 
+class _Lang:
+    """What the static helpers match differently in R and in Python code."""
+
+    def __init__(
+        self, write_fn: str, assign_any: str, ident: str, path_build: str, setwd: str
+    ) -> None:
+        self.write_fn = write_fn  # a call that writes a file (group 1: its name)
+        self.assign_any = assign_any  # a top-level assignment (groups: name, value)
+        self.ident = ident  # a bare variable name
+        self.path_build = path_build  # a call that builds a path
+        self.setwd = setwd  # the call that sets the working directory
+
+
+def _lang_rules(lang: str) -> _Lang:
+    if lang == "Python":
+        from metacheck.codecheck.core import _PY_WRITE_FNS
+
+        return _Lang(
+            write_fn=r"\b(" + "|".join(_PY_WRITE_FNS) + r")\s*\(",
+            assign_any=r"^([A-Za-z_][A-Za-z0-9_]*)\s*=(?!=)\s*(.+)$",
+            ident=r"[A-Za-z_][A-Za-z0-9_]*",
+            # an f-string or .format() builds a path too, but nothing marks it as one
+            path_build=r"^(os\.path\.join|pathlib\.Path|Path)\s*\(",
+            setwd="os.chdir",
+        )
+    return _Lang(
+        write_fn=_WRITE_FN_PAT,
+        assign_any=_ASSIGN_ANY_PAT,
+        ident=r"[.a-zA-Z][.a-zA-Z0-9_]*",
+        path_build=r"^(paste0|paste|sprintf|file\.path)\s*\(",
+        setwd="setwd",
+    )
+
+
 def _path_like_ext(expr_text: str) -> str | None:
     """The extension the LAST quoted piece of an expression ends in, or ``None``."""
     qs = regextract_all(_QUOTED, expr_text, perl=True)
@@ -667,13 +701,18 @@ def _split_args(args_text: str) -> list[dict[str, Any]]:
     return _repro_split_args(args_text)
 
 
-def _repro_redirect_writes(code_text: Any) -> pd.DataFrame:
+def _repro_redirect_writes(code_text: Any, lang: str = "R") -> pd.DataFrame:
     """Find a script's write calls and redirect their targets into the sandbox.
 
     Port of ``.repro_redirect_writes()``: one row per resolvable write call
     with ``call_text``, ``replacement`` (the call with its target replaced by
     ``"{{REPRO_OUTPUT}}<basename>"``), ``redirected_name`` and ``line``.
+    *lang* is ``"R"`` or ``"Python"`` (pandas' ``to_csv()`` and the other
+    writers, ``savefig()``, ``np.save()``, ``pickle.dump()``; ``os.path.join()``
+    builds a path). Python's ``open(path, "w")`` is left alone: it returns a
+    handle, and the path is not the argument of the call that writes.
     """
+    rules = _lang_rules(lang)
     rows: list[tuple[str, str, str, int]] = []
 
     def result() -> pd.DataFrame:
@@ -689,15 +728,15 @@ def _repro_redirect_writes(code_text: Any) -> pd.DataFrame:
     lines = _chr_list(code_text)
     if code_text is None or len(lines) == 0:
         return result()
-    nc = _code_remove_comments(lines)
+    nc = _code_remove_comments(lines, lang)
     joined = _paste_lines(nc)
-    starts = gregexpr_all(_WRITE_FN_PAT, joined, perl=True)
+    starts = gregexpr_all(rules.write_fn, joined, perl=True)
     if not starts:
         return result()
 
     path_like_vars: dict[str, bool] = {}
     var_ext: dict[str, str] = {}
-    for a in regexec(_ASSIGN_ANY_PAT, nc, perl=True):
+    for a in regexec(rules.assign_any, nc, perl=True):
         if len(a) != 3:
             continue
         ext = _path_like_ext(a[2])
@@ -711,7 +750,7 @@ def _repro_redirect_writes(code_text: Any) -> pd.DataFrame:
         if end is None:
             continue
         call_text = joined[start - 1 : end]
-        fn_name = regexec(_WRITE_FN_PAT, call_text, perl=True)[1]
+        fn_name = regexec(rules.write_fn, call_text, perl=True)[1]
         args_text = joined[open_paren : end - 1]
         line = _line_of(joined, start)
 
@@ -720,12 +759,9 @@ def _repro_redirect_writes(code_text: Any) -> pd.DataFrame:
             # a named argument keeps its name (R drops it, so save(a, b, file
             # = "ab.RData") became save(a, b, "<out>/ab.RData"), which saves
             # the string as another object; UPSTREAM_ISSUES U134)
-            name = regextract(
-                r"^[.a-zA-Z][.a-zA-Z0-9_]*\s*=\s*(?!=)", trimws(arg["text"]), perl=True
-            )
-            val = trimws(
-                sub(r"^[.a-zA-Z][.a-zA-Z0-9_]*\s*=\s*(?!=)", "", trimws(arg["text"]), perl=True)
-            )
+            name_pat = "^" + rules.ident + r"\s*=\s*(?!=)"
+            name = regextract(name_pat, trimws(arg["text"]), perl=True)
+            val = trimws(sub(name_pat, "", trimws(arg["text"]), perl=True))
             lead = arg["text"][: len(arg["text"]) - len(arg["text"].lstrip())]
             prefix = "" if name is None else lead + str(name)
             if regextract(r"""^(['"])((?:[^'"\\]|\\.)*)\1$""", val, perl=True) is not None:
@@ -734,10 +770,10 @@ def _repro_redirect_writes(code_text: Any) -> pd.DataFrame:
                     hit = (arg["start"], arg["end"], _basename(_bs2fs(target)) or "", prefix)
                     break
                 continue
-            if grepl(r"^[.a-zA-Z][.a-zA-Z0-9_]*$", val) and val in path_like_vars:
+            if grepl("^" + rules.ident + "$", val) and val in path_like_vars:
                 hit = (arg["start"], arg["end"], val + var_ext[val], prefix)
                 break
-            if grepl(r"^(paste0|paste|sprintf|file\.path)\s*\(", val, perl=True):
+            if grepl(rules.path_build, val, perl=True):
                 ext = _path_like_ext(val)
                 if ext is not None:
                     hit = (arg["start"], arg["end"], f"write_{k}{ext}", prefix)
@@ -833,10 +869,14 @@ def repro_rewrite_paths(
     converted tabular files, ``original_target``) by basename; ambiguities
     are resolved by study group and, with *structure_df*, by collapsing
     byte-identical mirrors. Columns ``ref``, ``basename``, ``matched``,
-    ``target``, ``ambiguous``, ``n_candidates`` and ``is_call``.
+    ``target``, ``ambiguous``, ``n_candidates`` and ``is_call``. *lang* is
+    ``"R"`` or ``"Python"``; any other language gives the empty frame. For
+    Python only quoted paths are rewritten: a path built at run time
+    (f-string, ``.format()``, ``os.path.join()``) is left as it is and its
+    literal pieces are matched like any other reference.
     """
     empty = _rewrite_frame([])
-    if lang != "R" or code_text is None:
+    if lang not in ("R", "Python") or code_text is None:
         return empty
     if (
         plan is None
@@ -847,8 +887,12 @@ def repro_rewrite_paths(
 
     from metacheck.codecheck.core import code_file_refs
 
-    refs = list(code_file_refs(code_text, "R"))
-    call_refs = _repro_format_call_refs(code_text)
+    refs = list(code_file_refs(code_text, lang))
+    call_refs = (
+        _repro_format_call_refs(code_text)
+        if lang == "R"
+        else _frame({c: ("string", []) for c in ("call_text", "fmt", "resolved")})
+    )
     if len(call_refs) > 0:
         refs = _setdiff(refs, _col(call_refs, "fmt"))
     if len(refs) == 0 and len(call_refs) == 0:
@@ -1194,14 +1238,30 @@ def _code_text_items(code_text_list: Any) -> tuple[list[str], list[Any]]:
 
 _IO_WRITE_PAT = r"\b(write[._][A-Za-z._0-9]*|saveRDS|save|save\.image|ggsave|export|fwrite)\s*\("
 _SRC_PAT = r"""source\s*\(\s*['"]([^'"]+)['"]"""
+# open() reads unless one of its arguments is a mode that writes ("w", "a", "x", "r+",
+# with "b"/"t"/"+"); metacheck takes any quoted run of letters with a w, a or x in it, so
+# open(os.path.join("raw", "d.csv")) was a write of d.csv
+_PY_OPEN_WRITE_PAT = (
+    r"""\bopen\s*\(.*?[,(]\s*(?:mode\s*=\s*)?(['"])(?:[bt+]*[wxa][bt+]*|[bt]*r\+[bt]*)\1\s*[,)]"""
+)
 
 
-def repro_file_io(code_text_list: Any) -> pd.DataFrame:
+def _langs_for(fnames: Sequence[str], lang: Any) -> list[str]:
+    """The language of each file: one for all (a string) or a mapping by file name."""
+    if isinstance(lang, str) or lang is None:
+        return [lang or "R"] * len(fnames)
+    return [as_str(lang.get(fn)) or "R" for fn in fnames]
+
+
+def repro_file_io(code_text_list: Any, lang: str | Mapping[str, str] = "R") -> pd.DataFrame:
     """Extract the files each script reads, writes, and sources.
 
     Port of ``R/reproducibility_check.R::repro_file_io()``. *code_text_list*
-    maps file names to code text. Returns ``file_name`` and list columns
-    ``reads``, ``writes`` and ``sources`` (lowercased basenames).
+    maps file names to code text; *lang* is the language of every file, or a
+    mapping from file name to language. Returns ``file_name`` and list columns
+    ``reads``, ``writes`` and ``sources`` (lowercased basenames). Python has no
+    ``source()``: an ``import`` names a module, not a script to run first, so
+    ``sources`` is empty; its ``open()`` writes only with a writing mode.
     """
     if code_text_list is None or len(code_text_list) == 0:
         return _frame({"file_name": ("string", [])})
@@ -1209,18 +1269,23 @@ def repro_file_io(code_text_list: Any) -> pd.DataFrame:
     from metacheck.codecheck.core import code_file_refs
 
     fnames, texts = _code_text_items(code_text_list)
+    langs = _langs_for(fnames, lang)
     out_reads: list[list[str]] = []
     out_writes: list[list[str]] = []
     out_srcs: list[list[str]] = []
-    for ct in texts:
-        nc = _code_remove_comments(ct)
-        all_refs = list(code_file_refs(cast(list[str], nc), "R", include_writes=True))
+    for ct, fn_lang in zip(texts, langs, strict=True):
+        nc = _code_remove_comments(ct, fn_lang)
+        all_refs = list(code_file_refs(cast(list[str], nc), fn_lang, include_writes=True))
         joined = _paste_lines(nc)
         ref_base = [_norm_base(r) for r in all_refs]
         # grepl(write_fns, grep(ref, nc, fixed = TRUE, value = TRUE)): every
         # line is classified once, then looked up per reference
         lines = [s for s in nc if s is not None]
-        line_w = list(grepl(_IO_WRITE_PAT, lines, perl=True, ignore_case=True))
+        write_pat = _lang_rules(fn_lang).write_fn if fn_lang == "Python" else _IO_WRITE_PAT
+        line_w = list(grepl(write_pat, lines, perl=True, ignore_case=True))
+        if fn_lang == "Python":
+            opens = grepl(_PY_OPEN_WRITE_PAT, lines, perl=True)
+            line_w = [w or bool(o) for w, o in zip(line_w, opens, strict=True)]
         is_write: list[bool] = []
         is_read: list[bool] = []
         for ref in all_refs:
@@ -1229,10 +1294,12 @@ def repro_file_io(code_text_list: Any) -> pd.DataFrame:
             is_read.append(any(not x for x in w))
         reads = [b for b, r in zip(ref_base, is_read, strict=True) if r]
         writes = [b for b, w in zip(ref_base, is_write, strict=True) if w]
-        srcs_raw = list(
-            sub(_SRC_PAT, r"\1", regextract_all(_SRC_PAT, joined, perl=True), perl=True)
-        )
-        srcs = [_norm_base(s) for s in srcs_raw]
+        srcs: list[str | None] = []
+        if fn_lang == "R":
+            srcs_raw = list(
+                sub(_SRC_PAT, r"\1", regextract_all(_SRC_PAT, joined, perl=True), perl=True)
+            )
+            srcs = [_norm_base(s) for s in srcs_raw]
         reads = _setdiff(reads, srcs)
         out_reads.append(_unique(reads))
         out_writes.append(_unique(writes))
@@ -1665,6 +1732,8 @@ def repro_materialize_layout(
 
 _SETWD_LINE = r"^(\s*)(setwd\s*\(.*)$"
 _SETWD_ARG = r"""setwd\s*\(\s*['"]([^'"]+)['"]"""
+_CHDIR_LINE = r"^(\s*)(os\.chdir\s*\(.*)$"
+_CHDIR_ARG = r"""os\.chdir\s*\(\s*['"]([^'"]+)['"]"""
 _FAMILY_PAT = r"""\b(base_family|family)\s*=\s*(['"])[^'"]*\2"""
 
 
@@ -1674,6 +1743,8 @@ def repro_write_scripts(
     plan: pd.DataFrame | None,
     root: str | os.PathLike[str],
     inject_libs: Mapping[str, str] | None = None,
+    lang: str | Mapping[str, str] = "R",
+    output_dir: str | None = None,
 ) -> pd.DataFrame:
     """Write path-rewritten scripts into the materialised layout.
 
@@ -1685,6 +1756,13 @@ def repro_write_scripts(
     Returns ``file_name``, ``script_path``, ``run_dir``, ``setwd_removed``,
     ``setwd_paths``, ``family_replaced``, ``family_detail`` and
     ``library_injected``.
+
+    *lang* is the language of every script, or a mapping from file name to
+    language. A Python script has its ``os.chdir()`` lines replaced with
+    ``pass`` (a comment alone would leave an empty block) and counted in
+    ``setwd_removed``; fonts and *inject_libs* are R only. *output_dir* is the
+    directory the redirected writes name, as the running code sees it
+    (default ``<root>/output/``; ``/sandbox/output/`` inside a container).
     """
     if code_text_list is None or len(code_text_list) == 0:
         return pd.DataFrame()  # dplyr::bind_rows(list()): no rows, no columns
@@ -1712,9 +1790,13 @@ def repro_write_scripts(
                     return t
         return _basename(fn) or ""
 
-    output_dir = str(_bs2fs(_file_path(root_s, "output"))) + "/"
+    if output_dir is None:
+        output_dir = str(_bs2fs(_file_path(root_s, "output"))) + "/"
+    langs = dict(zip(fnames, _langs_for(fnames, lang), strict=True))
     rows: list[tuple[Any, ...]] = []
     for fn in fnames:
+        fn_lang = langs[fn]
+        is_py = fn_lang == "Python"
         txt = _chr_list(code_text_list[fn])
         rw = rewrite_list.get(fn) if isinstance(rewrite_list, Mapping) else None
         if rw is not None and len(rw) > 0:
@@ -1736,7 +1818,7 @@ def repro_write_scripts(
                 repl = f'"{target[k]}"' if _is_true(is_call[k]) else target[k]
                 txt = list(gsub(refs[k], repl, txt, fixed=True))
 
-        wr = _repro_redirect_writes(txt)
+        wr = _repro_redirect_writes(txt, lang=fn_lang)
         if len(wr) > 0:
             joined_txt = _paste_lines(txt)
             for call_text, replacement in zip(
@@ -1746,30 +1828,34 @@ def repro_write_scripts(
                 joined_txt = sub(call_text, repl, joined_txt, fixed=True)
             txt = list(strsplit(joined_txt, "\n", fixed=True))
 
-        is_setwd = list(grepl(_SETWD_LINE, txt, perl=True))
+        setwd_line, setwd_arg = (_CHDIR_LINE, _CHDIR_ARG) if is_py else (_SETWD_LINE, _SETWD_ARG)
+        is_setwd = list(grepl(setwd_line, txt, perl=True))
         setwd_n = sum(is_setwd)
         setwd_paths: list[str] = []
         if setwd_n > 0:
             hit_lines = [s for s, h in zip(txt, is_setwd, strict=True) if h]
-            m = [x for x in regextract(_SETWD_ARG, hit_lines, perl=True) if x is not None]
+            m = [x for x in regextract(setwd_arg, hit_lines, perl=True) if x is not None]
             setwd_paths = list(
-                sub(".*" + _SETWD_ARG + ".*", r"\1", [x for x in m if x != ""], perl=True)
+                sub(".*" + setwd_arg + ".*", r"\1", [x for x in m if x != ""], perl=True)
             )
-            commented = sub(
-                _SETWD_LINE, r"\1# [reproducibility_check removed setwd] \2", hit_lines, perl=True
+            marker = (
+                r"\1pass  # [reproducibility_check removed os.chdir] \2"
+                if is_py
+                else r"\1# [reproducibility_check removed setwd] \2"
             )
+            commented = sub(setwd_line, marker, hit_lines, perl=True)
             it = iter(commented)
             txt = [next(it) if h else s for s, h in zip(txt, is_setwd, strict=True)]
 
         joined_for_family = _paste_lines(txt)
-        family_matches = regextract_all(_FAMILY_PAT, joined_for_family, perl=True)
+        family_matches = [] if is_py else regextract_all(_FAMILY_PAT, joined_for_family, perl=True)
         family_n = len(family_matches)
         if family_n > 0:
             joined_for_family = gsub(_FAMILY_PAT, r'\1 = "sans"', joined_for_family, perl=True)
             txt = list(strsplit(joined_for_family, "\n", fixed=True))
 
         injected: str | None = None
-        if inject_libs is not None and fn in inject_libs:
+        if not is_py and inject_libs is not None and fn in inject_libs:
             injected = as_str(inject_libs[fn])
         if injected is not None and injected != "":
             txt = [f"library({injected})  # [reproducibility_check injected]", *txt]

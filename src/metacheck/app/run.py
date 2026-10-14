@@ -131,12 +131,19 @@ class Analysis:
     report_path: Path
     seconds: float
     data_pending: bool = False  # the data check has not finished
+    simple_html: str = ""  # the same report as a static page with no script, to send by email
+    simple_path: Path | None = None
 
 
 def report_filename(name: str) -> str:
     """``<paper name>_report.html`` with only safe characters in the name."""
     stem = re.sub(r"[^A-Za-z0-9._-]+", "_", name).strip("._-") or "paper"
     return f"{stem[:80]}_report.html"
+
+
+def simple_filename(report: Path) -> Path:
+    """The email-safe copy of the report ``<name>_report.html``: ``<name>_report_simple.html``."""
+    return report.with_name(f"{report.stem}_simple{report.suffix}")
 
 
 def _script_hash() -> str:
@@ -517,11 +524,16 @@ class Run:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             page = render_module_outputs(outputs, self.paper)
+            simple = render_module_outputs(outputs, self.paper, report_type="simple")
         self.target.mkdir(parents=True, exist_ok=True)
         report_path = self.target / report_filename(self.source.stem)
         report_path.write_text(protect(page), encoding="utf-8")
+        simple_path = simple_filename(report_path)
+        simple_path.write_text(protect(simple), encoding="utf-8")
         seconds = time.perf_counter() - self.start
-        return Analysis(self.source.stem, rows, page, report_path, seconds, pending)
+        return Analysis(
+            self.source.stem, rows, page, report_path, seconds, pending, simple, simple_path
+        )
 
 
 DATA_TITLE = "Data check"

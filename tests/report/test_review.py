@@ -59,7 +59,7 @@ def test_module_report_header_numbers(flex):
 
 def test_module_report_with_a_table_folds(flex):
     # D75: a report with a table folds, however small the table; short text stays open
-    fold = "<details><summary>View detailed feedback</summary><div>"
+    fold = "<details><summary>View detailed feedback</summary>"
     tiny = scroll_table(pd.DataFrame({"a": [1]}))
     assert fold in _report(flex, summary_text="S.", report=tiny)
     assert fold not in _report(flex, summary_text="S.", report="Short text.")
@@ -248,5 +248,5 @@ def test_report_with_ported_modules(tmp_path, quiet, test_module):
     assert list(rep) == ["stat_p_exact", "marginal", chained]
     assert rep["stat_p_exact"].module == "stat_p_exact"
     qmd = out_file.read_text(encoding="utf-8")
-    assert "(#exact-p-values){.red}" in qmd
+    assert "{#exact-p-values .red}" in qmd
     assert "Look for me in the text!" in qmd

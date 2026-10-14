@@ -66,6 +66,8 @@ def test_code_lang() -> None:
     names = ["file.Rmd", "file.SAS", "file.r", "file.qmd", "file.txt"]
     assert code_lang(names) == ["R", "SAS", "R", "R", None]
     assert code_lang([]) == []
+    # NetLogo and Julia source (metacheck e4b74e1, #456)
+    assert code_lang(["model.nlogo", "fit.jl"]) == ["NetLogo", "Julia"]
 
 
 def test_code_lang_python_and_notebook_kernels(fixtures_dir: Path) -> None:

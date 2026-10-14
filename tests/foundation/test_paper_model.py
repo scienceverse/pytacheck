@@ -50,6 +50,16 @@ def test_validate(demo: pc.Paper) -> None:
         pc.paper_validate(broken)
 
 
+def test_bundled_schema_names_its_version() -> None:
+    # Since scienceverse/schema#2, paper.json at scienceverse.org is bibr's 12.2
+    # export schema; the bundled 10.5 schema is published as paper-v10.5.json.
+    from metacheck.papers.schema import load_schema
+
+    schema = load_schema()
+    assert schema["$id"] == "https://scienceverse.org/schema/paper-v10.5.json"
+    assert "(v10.5)" in schema["description"]
+
+
 def test_import_is_lazy() -> None:
     import subprocess
     import sys

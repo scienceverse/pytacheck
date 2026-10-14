@@ -1,10 +1,14 @@
 """File-naming convention checks (port of ``R/file-naming.R``).
 
 Checks file names against the metacheck "machine readable FAIR data and code"
-guide: no spaces or special characters, no diacritics, valid ``YYYYMMDD``
-dates, an actually classifiable name, zero-padded numbering across sibling
-files, and path-length budgets. Used by ``repo_check`` to surface naming
-problems.
+guide: no spaces or special characters, no diacritics, an actually
+classifiable name, zero-padded numbering across sibling files, and path-length
+budgets. Used by ``repo_check`` to surface naming problems.
+
+There is no date rule: metacheck's flagged every run of 8 digits that is not a
+valid ``YYYYMMDD`` date, but nothing in a file name says whether 8 digits were
+meant as a date or are an accession number, a DOI suffix or a participant code,
+so it only gave false positives (metacheck 8c1f6c1, #462; D91).
 
 Like metacheck, this deliberately does not check letter case or
 underscore-vs-dash separator consistency: metacheck's own classifiers match
@@ -19,7 +23,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import grepl, regexec, regextract_all, slashed, sub
+from metacheck._r import grepl, regexec, slashed
 from metacheck._values import is_missing
 
 __all__ = ["check_file_naming"]
@@ -30,7 +34,6 @@ FILE_NAMING_SEVERITY: dict[str, str] = {
     "spaces": "bad",
     "special-characters": "bad",
     "diacritics": "bad",
-    "date-format": "bad",
     "unclassifiable": "bad",
     "zero-padding": "suggestion",
     "path-length-255": "bad",
@@ -41,7 +44,6 @@ FILE_NAMING_SEVERITY: dict[str, str] = {
 
 _SPECIAL_RX = "[^A-Za-z0-9._ -]"
 _NON_ASCII_RX = "[^\x01-\x7f]"  # R: "[^\x01-\x7F]" (real control characters)
-_DATE_RX = "[0-9]{8}"
 _PADDING_RX = "^(.*?)([0-9]+)([^0-9]*)$"
 
 _DETAIL = {
@@ -104,32 +106,6 @@ def _r_dirname(path: str | None) -> str | None:
     return head if head else "/"
 
 
-def _file_path_sans_ext(x: list[str | None]) -> list[str | None]:
-    """``tools::file_path_sans_ext()``."""
-    out: list[str | None] = sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", x)
-    return out
-
-
-def _is_leap(year: int) -> bool:
-    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-
-
-_MONTH_DAYS = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-
-
-def _valid_yyyymmdd(d: str) -> bool:
-    """``!is.na(as.Date(d, format = "%Y%m%d"))`` for a run of 8 ASCII digits.
-
-    ``%Y`` takes the first 4 digits (years 0-9999, proleptic Gregorian),
-    ``%m`` and ``%d`` two digits each; the day must exist in that month.
-    """
-    year, month, day = int(d[:4]), int(d[4:6]), int(d[6:8])
-    if not 1 <= month <= 12:
-        return False
-    days = 29 if month == 2 and _is_leap(year) else _MONTH_DAYS[month - 1]
-    return 1 <= day <= days
-
-
 def _frame(rows: Sequence[tuple[Any, ...]], columns: Sequence[str]) -> pd.DataFrame:
     # Python-backed strings: a name that is not valid UTF-8 keeps its surrogates,
     # which Arrow's (pandas' default with pyarrow installed) cannot hold
@@ -150,10 +126,8 @@ def _check_rows(file_names: list[str | None], data_types: list[str | None]) -> l
     ``sub()`` refuses it and the whole check fails (U76).
     """
     bases = [_r_basename(f) for f in file_names]
-    stems = _file_path_sans_ext(bases)
     special = grepl(_SPECIAL_RX, bases)
     non_ascii = grepl(_NON_ASCII_RX, bases)
-    dates = regextract_all(_DATE_RX, stems)
     rows: list[Row] = []
     for i, base in enumerate(bases):
         f = file_names[i]
@@ -165,11 +139,6 @@ def _check_rows(file_names: list[str | None], data_types: list[str | None]) -> l
             rows.append((f, "diacritics", _DETAIL["diacritics"]))
         if data_types[i] is not None and data_types[i] == "unknown":
             rows.append((f, "unclassifiable", _DETAIL["unclassifiable"]))
-        rows.extend(
-            (f, "date-format", f"'{d}' is not a valid YYYYMMDD date")
-            for d in dates[i] or []
-            if not _valid_yyyymmdd(d)
-        )
     return rows
 
 
@@ -187,9 +156,8 @@ def _file_naming_check_one(file_name: Any, data_type: Any = None) -> pd.DataFram
     """Port of ``R/file-naming.R::.file_naming_check_one()``.
 
     Checks ONE file name (its basename) against the rules that apply to a file
-    in isolation -- spaces, special characters, diacritics, classifiability
-    (``data_type == "unknown"``) and ``YYYYMMDD`` dates (every run of 8 digits
-    in the name without its extension). Returns the violations as a data frame
+    in isolation -- spaces, special characters, diacritics and classifiability
+    (``data_type == "unknown"``). Returns the violations as a data frame
     with columns ``rule`` and ``detail`` (0 rows when clean).
     """
     name = _scalar(file_name, "file_name")
@@ -322,9 +290,8 @@ def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = No
 
     Notes
     -----
-    ``"bad"`` rules: spaces, special characters, diacritics, invalid
-    ``YYYYMMDD`` dates, ``data_type == "unknown"`` and the hard 255-character
-    path limit. ``"suggestion"`` rules: unpadded sibling numbering and the
+    ``"bad"`` rules: spaces, special characters, diacritics,
+    ``data_type == "unknown"`` and the hard 255-character path limit. ``"suggestion"`` rules: unpadded sibling numbering and the
     228/100/50-character budgets. As in R, a missing path raises
     ``ValueError("missing value where TRUE/FALSE needed")`` unless another
     path breaks every length budget.

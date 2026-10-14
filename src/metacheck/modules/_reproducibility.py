@@ -486,11 +486,14 @@ def nonr_code(
     has_dta: bool,
     has_self_repro_now: bool,
 ) -> tuple[list[str], list[str] | None]:
-    """``nonr_lang`` (non-R code files' languages) and the ``nonr_report`` section."""
+    """``nonr_lang`` (the languages of code files not run here) and the ``nonr_report`` section.
+
+    R and Python code is run (or assessed for a run), so neither counts.
+    """
     from metacheck._r import r_sort_key
 
     langs = _chr_col(code_tbl, "language")
-    nonr_lang = [x for x in langs if x is not None and x not in ("R", "JASP", "jamovi")]
+    nonr_lang = [x for x in langs if x is not None and x not in ("R", "Python", "JASP", "jamovi")]
     if not nonr_lang:
         return nonr_lang, None
     counts: dict[str, int] = {}
@@ -561,9 +564,7 @@ def nonr_code(
 def non_r_note(structure_df: Any, nonr_lang: Sequence[str]) -> str:
     """The note on non-R code (and MATLAB ``.mat`` data) files the repository holds."""
     names = _chr_col(structure_df, "file_name")
-    code_hits = grepl(
-        r"\.(py|jl|m|sas|sps|spss|do|ado|java|cpp|c|sql|inp)$", names, ignore_case=True
-    )
+    code_hits = grepl(r"\.(jl|m|sas|sps|spss|do|ado|java|cpp|c|sql|inp)$", names, ignore_case=True)
     data_hits = grepl(r"\.(mat)$", names, ignore_case=True)
     n_non_r = sum(bool(h) for h in code_hits) if names else 0
     n_non_r_data = sum(bool(h) for h in data_hits) if names else 0
@@ -571,7 +572,7 @@ def non_r_note(structure_df: Any, nonr_lang: Sequence[str]) -> str:
     if n_non_r > 0:
         note = (
             f" The repository does contain {n_non_r:d} non-R code file{plural(n_non_r)}; "
-            "this phase only RUNS R code (see the "
+            "this phase only RUNS R and Python code (see the "
             f"section{plural(len(nonr_lang))} above for what we found and could — or "
             "could not — check for those files)."
         )

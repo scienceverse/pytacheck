@@ -411,7 +411,11 @@ def cmd_report(ns: argparse.Namespace) -> int:
     _announce(sel)
     modules = [ref for ref, _ in sel]
     args = {(ref if isinstance(ref, str) else label(ref)): a for ref, a in sel if a}
-    kwargs: dict[str, Any] = {"output_file": ns.output, "output_format": ns.format}
+    kwargs: dict[str, Any] = {
+        "output_file": ns.output,
+        "output_format": ns.format,
+        "report_type": ns.report_type,
+    }
     with run_session():
         result = report(papers, modules=modules, args=args or None, **kwargs)
     if ns.record:
@@ -475,7 +479,12 @@ def cmd_package(ns: argparse.Namespace) -> int:
     try:
         if report_file:
             report = report_package(
-                ns.path, ns.output, ns.format or "html", modules=sel, record=ns.record
+                ns.path,
+                ns.output,
+                ns.format or "html",
+                modules=sel,
+                record=ns.record,
+                report_type=ns.report_type,
             )
             outputs: list[Any] = list(report.values())
         else:
@@ -979,6 +988,21 @@ def cmd_init(ns: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 
 
+def _report_type_flag(p: argparse.ArgumentParser) -> None:
+    from metacheck.report.blocks import REPORT_TYPES
+
+    p.add_argument(
+        "-t",
+        "--report-type",
+        default=None,
+        type=str.lower,
+        choices=REPORT_TYPES,
+        help="full (the default): every module, as an interactive page; simple: the same as "
+        "a static page with no script, safe to send by email; brief: only what needs "
+        "attention, as a to-do list; simple_brief: the brief report as a static page",
+    )
+
+
 def _selection_flags(p: argparse.ArgumentParser, *, module_help: str) -> None:
     p.add_argument("-m", "--module", action="append", help=module_help)
     p.add_argument("--preset", default=None, help="a preset (see `pytacheck presets`)")
@@ -1037,6 +1061,7 @@ def build_parser() -> argparse.ArgumentParser:
     _selection_flags(p, module_help="module (repeatable)")
     p.add_argument("-o", "--output", default=None)
     p.add_argument("-f", "--format", default="html", choices=["html", "qmd", "md"])
+    _report_type_flag(p)
     p.set_defaults(func=cmd_report)
 
     p = sub.add_parser(
@@ -1073,6 +1098,7 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["html", "qmd", "md"],
         help="the report's format (default html); without -o the file is <name>_report.<format>",
     )
+    _report_type_flag(p)
     p.add_argument(
         "--files-dir",
         default=None,

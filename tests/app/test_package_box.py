@@ -809,6 +809,8 @@ def test_a_shared_server_checks_an_uploaded_archive_and_keeps_nothing(
         assert out["summary"].startswith("Checked **my\\_study** in ")
         assert out["checklist"]["visible"] is True
         assert "data:text/html" in out["download"]  # the report comes with the page
+        assert out["download"].count("data:text/html") == 2  # and its static copy for email
+        assert "Download for email (no script)" in out["download"]
         assert tc.get("/report/h1/my_study_report.html").status_code == 404  # no file on the server
     assert not path.exists()
     assert leftovers(scratch) == []  # not the unpacked package, not the report folder

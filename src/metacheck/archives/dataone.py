@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, Any, cast
 import pandas as pd
 
 from metacheck._r import regexec, sub, trimws
-from metacheck._values import is_missing
+from metacheck._values import field, is_missing
 
 if TYPE_CHECKING:
     from lxml import etree
@@ -428,6 +428,42 @@ def _dataone_object_size(host: str, api_base: str, pid: str) -> float:
     return _as_numeric_quiet(resp.headers.get("Content-Length"))
 
 
+def _dataone_package_sizes(host: str, api_base: str, pid: str) -> dict[str, float]:
+    """Port of R/archive-dataone.R::.dataone_package_sizes(): sizes of a package's objects.
+
+    One query to the member node's Solr index for every object the metadata
+    document *pid* documents
+    (``<api_base>query/solr/?q=isDocumentedBy:"<pid>"&fl=id,fileName,size``),
+    instead of one ``HEAD`` request per file. Returns ``{object id: size}``,
+    empty when the node has no Solr endpoint or the query fails (one try,
+    30 s at most: some nodes refuse the connection or take seconds).
+    """
+    from metacheck import http
+    from metacheck.archives.dataverse import _as_numeric, _elements, _url_encode_reserved
+
+    query = 'isDocumentedBy:"' + pid.replace('"', '\\"') + '"'
+    url = (
+        f"https://{host}{api_base}query/solr/?q={_url_encode_reserved(query)}"
+        "&fl=id,fileName,size&rows=1000&wt=json"
+    )
+    try:
+        resp = http.request(
+            "GET", url, headers={"Accept": "application/json"}, max_tries=1, timeout=30
+        )
+        rec = None if resp is None or resp.status_code != 200 else http.resp_json(resp)
+    except Exception:
+        rec = None
+    sizes: dict[str, float] = {}
+    for doc in _elements(field(rec, "response", "docs")):
+        doc_id = field(doc, "id")
+        if isinstance(doc_id, str | int | float) and not isinstance(doc_id, bool):
+            size = field(doc, "size")
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                sizes[str(doc_id)] = _as_numeric(size) if size is not None else float("nan")
+    return sizes
+
+
 def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
     """Port of R/archive-dataone.R::.dataone_info(): one dataset from one member node.
 
@@ -440,8 +476,9 @@ def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
     ``pid``) per data entity (``dataTable``, ``otherEntity``,
     ``spatialVector``, ``spatialRaster``), read from its first
     ``<physical>``; for an entity without one, the ``entityName``, the PID its
-    ``urn-uuid-`` id stands for and the size a ``HEAD`` request reports
-    (:func:`_dataone_object_size`).
+    ``urn-uuid-`` id stands for and its size, from one Solr query for the
+    whole package (:func:`_dataone_package_sizes`), else from a ``HEAD``
+    request per file (:func:`_dataone_object_size`).
     """
     import math
 
@@ -495,7 +532,8 @@ def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
         pub_date = _text_of(doc, _local("pubDate"))
         license_ = _text_of(doc, _local("intellectualRights"))
 
-        files = []
+        files: list[dict[str, Any]] = []
+        unsized: list[tuple[int, str]] = []  # files without <physical> that have a PID
         entities = cast(
             "list[etree._Element]",
             doc.xpath(
@@ -520,22 +558,27 @@ def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
                 continue
             # an entity without <physical> (a bare name/type pair, as some KNB
             # records list): its "urn-uuid-<uuid>" id is the object's PID, and
-            # its size comes from a HEAD request; any other id is not a PID
+            # its size is looked up below; any other id is not a PID
             raw_id = e.get("id")
             pid_ = (
                 sub("^urn-uuid-", "urn:uuid:", raw_id)
                 if raw_id is not None and raw_id.startswith("urn-uuid-")
                 else None
             )
-            files.append(
-                {
-                    "key": _text_of(e, _local("entityName")),
-                    "size": math.nan
-                    if pid_ is None
-                    else _dataone_object_size(str(host), str(api_base), pid_),
-                    "pid": pid_,
-                }
-            )
+            files.append({"key": _text_of(e, _local("entityName")), "size": math.nan, "pid": pid_})
+            if pid_ is not None:
+                unsized.append((len(files) - 1, pid_))
+
+        # the sizes the metadata does not give: one Solr query for the whole
+        # package (metacheck 0.3.3; one HEAD request per file before), and a
+        # HEAD request for a file the query did not answer for
+        if unsized:
+            sizes = _dataone_package_sizes(str(host), str(api_base), _paste(pid))
+            for j, file_pid in unsized:
+                bytes_ = sizes.get(file_pid, math.nan)
+                if math.isnan(bytes_):
+                    bytes_ = _dataone_object_size(str(host), str(api_base), file_pid)
+                files[j]["size"] = bytes_
 
         obj["title"] = _cell(title)
         obj["doi"] = _cell(pid)

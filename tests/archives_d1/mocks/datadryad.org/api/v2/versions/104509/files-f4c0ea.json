@@ -1,0 +1,172 @@
+{
+  "_links": {
+    "self": {
+      "href": "/api/v2/versions/104509/files?per_page=10"
+    },
+    "first": {
+      "href": "/api/v2/versions/104509/files?per_page=10"
+    },
+    "last": {
+      "href": "/api/v2/versions/104509/files?page=3&per_page=10"
+    },
+    "next": {
+      "href": "/api/v2/versions/104509/files?page=2&per_page=10"
+    }
+  },
+  "count": 10,
+  "total": 22,
+  "_embedded": {
+    "stash:files": [
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577598"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577598/download"
+          }
+        },
+        "path": "Cb.xlsx",
+        "size": 9266,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "723b2b67074358be6d8fe7e2615ff9573219092973ac21d270e879b5c21a3ee1",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577588"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577588/download"
+          }
+        },
+        "path": "Cooc_all.xlsx",
+        "size": 22514,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "50f832896f952dff64e9fe5c48c25eff0818ee8035485de6413140ec4e6b9b15",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577589"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577589/download"
+          }
+        },
+        "path": "Cooc_Cb.xlsx",
+        "size": 21609,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "fe087b55a8d6180d9e7b5be35d869f720278376a1d06e84797a3ae489caab6be",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577590"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577590/download"
+          }
+        },
+        "path": "Cooc_Lp.xlsx",
+        "size": 18216,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "087211c1cfeb07d46f32948111d474bf694407f52d1cb2ae7a638f93dbdf6e0c",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577591"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577591/download"
+          }
+        },
+        "path": "Cooc_Oh.xlsx",
+        "size": 22675,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "0831ba1b350ba163c0848efa238810b4461ca4c7a565008ee7c5250041059ba4",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577592"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577592/download"
+          }
+        },
+        "path": "Cooc_Os.xlsx",
+        "size": 20547,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "ac60302a8e8045d37921789dbf63a20bbd5600609d796f895aa02129804eeef6",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577593"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577593/download"
+          }
+        },
+        "path": "Cooc_Qg.xlsx",
+        "size": 21307,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "82f541ed19223ff3892aa8691d10890ed48d9c344c6cc05375adc8c76c4e8809",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577594"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577594/download"
+          }
+        },
+        "path": "Cooc_Qm.xlsx",
+        "size": 21925,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "c4533f0a1c175d65ed07daefb9c6571848f34e69d7386d33c70ae97b398136ac",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577595"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577595/download"
+          }
+        },
+        "path": "Cooc_Qp.xlsx",
+        "size": 20686,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "572123a0446145a41198cb9e12bf0285e806d3f89b0c22093ece123382660a4d",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/577596"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/577596/download"
+          }
+        },
+        "path": "Cooc_Sa.xlsx",
+        "size": 18902,
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "digest": "4f88f12a64d3624ff8ac9cb16044a02124db29f2d414158e613f62648402fe89",
+        "digestType": "sha-256"
+      }
+    ]
+  }
+}

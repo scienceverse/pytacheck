@@ -14,6 +14,7 @@ from __future__ import annotations
 import functools
 import math
 import os
+import re
 import threading
 import time
 import warnings
@@ -180,8 +181,11 @@ def dryad_info(
     Each dataset is fetched from Dryad's API (with *cache*, from the on-disk
     listing cache when possible); the input rows are returned with
     ``dryad_doi`` and the dataset's ``title``, ``doi``, ``publication_date``,
-    ``updated_date``, ``authors``, ``license`` and ``files`` (or ``error``)
-    added.
+    ``updated_date``, ``authors``, ``license``, ``files``, ``storage_size``
+    (the dataset's total size in bytes as Dryad reports it), ``files_total``
+    (the number of files Dryad reports) and ``files_incomplete`` (fewer files
+    could be listed than Dryad reports; a warning is given too) added, or
+    ``error``. An incomplete listing is not cached.
     """
     from metacheck._r import bind_rows
     from metacheck.archives import _spinner, _tick
@@ -223,7 +227,9 @@ def dryad_info(
                 id_info.append(cached)
                 continue
             got = _dryad_info(doi, pb=bar)
-            if cache is True and _repo_info_ok(got):
+            # a cached incomplete listing would be replayed on every later
+            # run, so files on a page that failed once would never be seen
+            if cache is True and _repo_info_ok(got) and not _listing_incomplete(got):
                 _repo_info_cache_put("dryad", doi, got)
             id_info.append(got)
 
@@ -238,11 +244,13 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
     """Port of R/archive-dryad.R::.dryad_info(): one dataset.
 
     Returns a one-row table: ``dryad_doi`` and either ``error`` (``"unfound"``,
-    with a warning, or ``"parse_error"``) or the dataset's metadata and the
-    file listing of its latest version (``files``).
+    with a warning, or ``"parse_error"``) or the dataset's metadata, the file
+    listing of its latest version (``files``), ``storage_size``,
+    ``files_total`` and ``files_incomplete`` (see :func:`dryad_info`).
     """
     from metacheck.archives import _spinner, _tick
 
+    _dryad_warn_if_no_key()
     with _spinner(pb) as bar:
         _tick(bar, f"* Retrieving info from Dryad DOI {_paste(dryad_doi)}...")
         obj: dict[str, pd.Series] = {"dryad_doi": _cell(dryad_doi)}
@@ -268,9 +276,9 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
                 authors.append(full if full != "" else None)
 
         version_href = field(rec, "_links", "stash:version", "href")
-        files_list: Any = []
+        listing = _DryadListing([], None, False)
         if version_href is not None:
-            files_list = _dryad_files(f"https://datadryad.org{_paste(version_href)}/files")
+            listing = _dryad_list_files(f"{_paste(version_href)}/files", dryad_doi=dryad_doi)
 
         obj["title"] = _field_cell(_empty_or(field(rec, "title"), None))
         obj["doi"] = _field_cell(_empty_or(field(rec, "identifier"), None))
@@ -278,41 +286,156 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
         obj["updated_date"] = _field_cell(_empty_or(field(rec, "lastModificationDate"), None))
         obj["authors"] = _list_cell(authors)
         obj["license"] = _field_cell(_empty_or(field(rec, "license"), None))
-        obj["files"] = _list_cell(files_list)
+        obj["files"] = _list_cell(listing.files)
+        # storageSize is Dryad's own total for the dataset, independent of the
+        # listing, so a whole-dataset download can be sized without summing a
+        # listing that may be incomplete (download_repo_files())
+        obj["storage_size"] = pd.Series(
+            [_as_numeric(_empty_or(field(rec, "storageSize"), None))], dtype="float64"
+        )
+        obj["files_total"] = pd.Series(
+            [math.nan if listing.total is None else listing.total], dtype="float64"
+        )
+        obj["files_incomplete"] = pd.Series([listing.incomplete], dtype="boolean")
         return pd.DataFrame(obj)
+
+
+def _listing_incomplete(info: pd.DataFrame) -> bool:
+    """Did any dataset of a :func:`_dryad_info` table list fewer files than Dryad reports?"""
+    if "files_incomplete" not in info.columns:
+        return False
+    return any(v is True for v in info["files_incomplete"].tolist())
 
 
 _MAX_FILE_PAGES = 1000
 
+#: Dryad's largest page size: a dataset of up to 100 files costs one request
+#: (its default is 20 files a page).
+_PER_PAGE = 100
 
-def _dryad_files(url: str) -> Any:
-    """The ``stash:files`` records of a version's file listing, every page of it.
 
-    The listing is paged (HAL ``_links.next``); metacheck reads only the
-    first page, so a large dataset was listed incompletely (U38). A page
-    that fails ends the listing with the pages read so far.
+@dataclass(frozen=True)
+class _DryadListing:
+    """A version's file records, the file count Dryad reports, and whether fewer arrived."""
+
+    files: list[Any]
+    total: float | None
+    incomplete: bool
+
+
+def _dryad_list_files(
+    files_href: str, dryad_doi: Any = None, per_page: int = _PER_PAGE
+) -> _DryadListing:
+    """Port of R/archive-dryad.R::.dryad_list_files(): every file of one dataset version.
+
+    *files_href* is the listing's path (``/api/v2/versions/<id>/files``) or
+    URL. Pages of *per_page* files are requested and HAL ``_links.next`` is
+    followed to the end (metacheck at the pin read only the first page, 20
+    files: U38). Each page carries ``total``, the version's file count. When
+    fewer files arrive than that (a later page failed, e.g. on Dryad's rate
+    limit), or the first page fails altogether, the listing is returned as far
+    as it got, marked incomplete, with a warning.
     """
-    pages: list[Any] = []
+
+    def absolute(href: str) -> str:
+        return href if href.startswith(("http://", "https://")) else f"https://datadryad.org{href}"
+
+    sep = "&" if "?" in files_href else "?"
+    next_url: str | None = f"{absolute(files_href)}{sep}per_page={per_page}"
+    files: list[Any] = []
+    total: float | None = None
+    failed = False
     seen: set[str] = set()
-    next_url: str | None = url
     while next_url is not None and next_url not in seen and len(seen) < _MAX_FILE_PAGES:
         seen.add(next_url)
         resp = _dryad_query(next_url)
-        if resp is None or resp.status_code != 200:
+        rec = _resp_json(resp) if resp is not None and resp.status_code == 200 else None
+        if not isinstance(rec, dict):
+            failed = True
             break
-        rec = _resp_json(resp)
+        if total is None:
+            total = _whole_number(field(rec, "total"))
         listed = field(rec, "_embedded", "stash:files")
         if listed is not None:
-            pages.append(listed)
+            files.extend(_elements(listed))
         href = field(rec, "_links", "next", "href")
-        next_url = None
-        if isinstance(href, str) and href != "":
-            next_url = (
-                href if href.startswith(("http://", "https://")) else f"https://datadryad.org{href}"
-            )
-    if len(pages) == 1:
-        return pages[0]
-    return [x for page in pages for x in _elements(page)]
+        next_url = absolute(href) if isinstance(href, str) and href != "" else None
+
+    short = failed if total is None else len(files) < total
+    if short:
+        of = "its" if total is None else f"{total:.0f}"
+        warnings.warn(
+            f"Dryad listed only {len(files)} of {of} files for {_paste(dryad_doi)}. Files not "
+            "listed are not retrieved, so this listing is incomplete. Run again later (Dryad "
+            "limits requests; see ?dryad_auth, which raises the limit).",
+            stacklevel=3,
+        )
+    return _DryadListing(files, total, short)
+
+
+def _whole_number(x: Any) -> float | None:
+    """A listing's ``total`` as a number (``None`` when it is missing or not a number)."""
+    if isinstance(x, bool) or x is None:
+        return None
+    num = as_float(x)
+    return None if num is None or math.isnan(num) else num
+
+
+def _dryad_has_key() -> bool:
+    """Is a Dryad token (:func:`dryad_pat`) or client (:func:`dryad_auth`) set?"""
+    try:
+        pat = dryad_pat()
+    except Exception:  # an unreadable setting is no key
+        pat = ""
+    if pat:
+        return True
+    try:
+        client = _dryad_oauth_client()
+    except Exception:
+        client = None
+    return client is not None
+
+
+def _dryad_warn_if_no_key() -> None:
+    """Port of R/archive-dryad.R::.dryad_warn_if_no_key(): say once that file bytes need a key.
+
+    Dryad lists a dataset's files without a key but answers every file
+    download with HTTP 401 until one is set, even for a public dataset. Shown
+    the first time a dataset is looked up without one, at most once per
+    session (reset the ``metacheck.dryad_pat.notified`` option to see it again).
+    """
+    from metacheck.utils import get_option, options
+
+    if get_option("metacheck.dryad_pat.notified") is True:
+        return
+    if not _dryad_has_key():
+        from metacheck.archives import _message
+
+        _message(
+            "No Dryad API key is set. Dryad dataset listings and metadata can be read without "
+            "one, but downloading file contents from Dryad requires a key even for a fully "
+            "public dataset: every such download fails with 'HTTP 401' until one is set. See "
+            "?dryad_pat or ?dryad_auth."
+        )
+    options({"metacheck.dryad_pat.notified": True})
+
+
+def _dryad_401_hint(url: Any, status: Any) -> str:
+    """Port of R/repo-download.R::.dryad_401_hint(): why a Dryad download answered 401.
+
+    Dryad requires a key to download file bytes even from a public dataset,
+    so a 401 from datadryad.org without one set almost always means that.
+    Appended to the ``HTTP 401`` failure; ``""`` for any other status, host,
+    or when a key is set.
+    """
+    if status != 401 or not re.search(r"datadryad\.org", str(url), re.IGNORECASE):
+        return ""
+    if _dryad_has_key():
+        return ""
+    return (
+        " (Dryad requires an API key to download file bytes, even from a public dataset -- "
+        "see ?dryad_pat)"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -612,7 +735,8 @@ def dryad_file_download(
     files); files left out by the size limits have ``downloaded = False``
     (when all are, no folder is made and ``folder`` is missing), and files
     that did not arrive intact have ``downloaded = False`` and are warned
-    about.
+    about. ``attrs["failed"]`` says why a file or zip member failed, e.g.
+    ``HTTP 401`` with a note that Dryad needs a key to download file bytes.
     """
     from metacheck.archives import _spinner, _tick
 
@@ -691,6 +815,7 @@ def dryad_file_download(
             pb=bar,
             headers=_dryad_headers,
             reauth=_dryad_reauth,
+            http_failure=_dryad_http_failure,
             zip_members=lambda *a, **k: _dryad_zip_members(*a, **k),
             verify=lambda f, to: _dryad_verify_downloads(f, to),
             what="Dryad dataset",
@@ -701,11 +826,21 @@ def dryad_file_download(
         return _finish_file_table(files, folder, {"dryad_doi": doi}, _FILE_COLUMNS)
 
 
+def _dryad_http_failure(url: str, status: int) -> str:
+    """Why one file's download failed, for ``attrs["failed"]`` (R ``.dryad_download_one_file()``).
+
+    ``"HTTP <status>"``, naming the missing key for a 401 from Dryad
+    (:func:`_dryad_401_hint`), so it can be told apart from other failures.
+    """
+    return f"HTTP {status}{_dryad_401_hint(url, status)}"
+
+
 def _dryad_zip_members(
     url: str,
     dest: str,
     keep_types: Any = ("data", "documentation"),
     max_file_size: float | None = 10,
+    size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-dryad.R::.dryad_zip_members(): extract wanted zip members.
 
@@ -713,16 +848,18 @@ def _dryad_zip_members(
     only members of the *keep_types* categories no larger than
     *max_file_size* MB into *dest*. Returns one row per member (``name``,
     ``path``, ``size``, ``ok``), or ``None`` when the archive cannot be listed.
+    *size*, the zip's size as the listing gives it, saves the peek a ``HEAD``
+    request.
     """
-    return _zip_members(url, dest, keep_types, max_file_size)
+    return _zip_members(url, dest, keep_types, max_file_size, size)
 
 
 def _dryad_verify_downloads(files: pd.DataFrame | None, download_to: str) -> Any:
     """Port of R/archive-dryad.R::.dryad_verify_downloads(): check files on disk.
 
     ``downloaded`` becomes whether each file is on disk under *download_to*
-    with the reported size and (for an MD5 ``checksum_type``) digest; adds
-    ``size_on_disk`` and ``checksum_ok``. Rows extracted from a zip count as
-    downloaded.
+    with the reported size and (for an MD5 or SHA-256 ``checksum_type``)
+    digest; adds ``size_on_disk`` and ``checksum_ok`` (missing for another
+    digest type: not verified). Rows extracted from a zip count as downloaded.
     """
-    return _verify_file_table(files, download_to, typed=True)
+    return _verify_file_table(files, download_to, typed=True, sha256=True)

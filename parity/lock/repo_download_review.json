@@ -1,4 +1,5 @@
 {
+"check_file_naming.odd_paths": {"r": "e7a5d106ab1888f1", "py": "19df8b8a5d9fe8b4", "diff": ["<root>"]},
 "decision.cp437.zip": {"r": "ac5146cf65ca52a8", "py": "e7190d25adc37929", "diff": ["<R error, Python value>"]},
 "download.rate_limit_skip": {"r": "767d2b09fbacd241", "py": "4c47f9225261bbe0", "diff": ["failed.error[]"]},
 "expand.abslink.tar.gz": {"r": "dd2c5cd73d6d8d27", "py": "5751ece53bf13260", "diff": ["<root>"]},
@@ -8,6 +9,8 @@
 "fetch.bzip2": {"r": "7b0dfa1c7aa2cec9", "py": "ef2a7da2e8542bb1", "diff": ["files", "result.error[]", "result.ok[]", "result.path[]", "sizes"]},
 "fetch.cp437_all": {"r": "ac5146cf65ca52a8", "py": "f6e90c53ff74c5ff", "diff": ["<R error, Python value>"]},
 "fetch.range_ignored": {"r": "4af62df1bff80e97", "py": "211cb73ff3825922", "diff": ["files", "result.error[]", "result.ok[]", "result.path[]", "sizes"]},
+"file_category.generated_names": {"r": "8b186297dbfefb48", "py": "cddec6c9f9d8ae4f", "diff": ["file_category[]", "filetype[]"]},
+"filetype.generated_names": {"r": "0775c0b4b10fc089", "py": "5858b04fb46cf612", "diff": ["[]"]},
 "invalid.check_file_naming": {"r": "ac5146cf65ca52a8", "py": "d09467717014d431", "diff": ["<R error, Python value>"]},
 "invalid.check_file_naming_path": {"r": "ac5146cf65ca52a8", "py": "4ddb4503aeb7ede3", "diff": ["<R error, Python value>"]},
 "invalid.file_category": {"r": "694a81b306aba2c0", "py": "ee1dbb8f583cd3d6", "diff": ["file_category[]", "filetype[]"]},

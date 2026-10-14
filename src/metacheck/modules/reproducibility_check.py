@@ -198,8 +198,8 @@ def _match_sandbox(sandbox: Any) -> str:
         By default (`execute = FALSE`) the module does **not run any code** — it
         performs only static analysis: reading dependencies with the same extractors
         as `code_check`, mapping referenced files to their new locations with the
-        plan from `psychds_check`, and building a run-order dependency graph. It
-        reports what *would* be installed and run rather than doing it.
+        plan from `psychds_file_plan()`, and building a run-order dependency graph.
+        It reports what *would* be installed and run rather than doing it.
 
         When `execute = TRUE`, the module additionally **runs the downloaded code** —
         a deliberate, opt-in action gated behind that argument. By default
@@ -218,14 +218,16 @@ def _match_sandbox(sandbox: Any) -> str:
         must be fetched. It runs the packages' install scripts, as a non-root user
         with all capabilities dropped, and sees only its install script and the
         package library, never the paper's data. The image is the pre-built
-        `ghcr.io/scienceverse/metacheck_r:latest` (or `rocker/r-ver:<version>` with
-        `docker_use_declared_version = TRUE`), which Docker pulls under its `:latest`
-        tag, so it can change between runs — a known limit. A container shares the
+        `ghcr.io/scienceverse/metacheck_r_large:latest` (or `rocker/r-ver:<version>`
+        with `docker_use_declared_version = TRUE`) for R code and
+        `ghcr.io/scienceverse/metacheck_py_small:latest` for Python code, which Docker
+        pulls under their `:latest` tag, so they can change between runs — a known
+        limit. A container shares the
         host's kernel: it is a strong boundary for ordinary code, not a promise
         against a kernel exploit.
 
         `sandbox = "process"` is the explicit, unsafe alternative (it needs R, an
-        `Rscript`): it runs the code **on your machine, as you, with no filesystem or
+        `Rscript`, for R code and a `python3` for Python code): it runs the code **on your machine, as you, with no filesystem or
         network isolation**. A subprocess isolates a crash and nothing else, so the
         code can read, change or delete your files and use the network. Never use it
         for code you do not trust; the module warns each time it is used. Installs
@@ -251,6 +253,13 @@ def _match_sandbox(sandbox: Any) -> str:
         package already shipped with R) — static analysis cannot know which *version*
         was used, and running against current package versions is itself informative:
         a break argues the authors should have pinned versions.
+
+        Python code (`.py` files and Jupyter notebooks' code cells) is assessed the same
+        way, in a section of its own: its imports are its dependencies (installed with
+        `pip`, pinned by the repository's `requirements.txt` or `pyproject.toml` when it
+        has one), each script runs whole with `python` under the same sandbox as R code,
+        and the statistics a script prints are matched against the paper like R
+        output.
 
         Run order is derived from read-after-write data dependencies (a script writing
         a file another reads must run first), `source()` edges, and numeric filename
@@ -294,7 +303,7 @@ def _match_sandbox(sandbox: Any) -> str:
         "a deliberate difference, D62.)",
         "docker_use_declared_version": 'if TRUE (and `sandbox = "docker"`), use\n'
         "the R version `code_check`'s version-pinning detection found declared in\n"
-        "the repository instead of the pre-built `metacheck_r` image.",
+        "the repository instead of the pre-built `metacheck_r_large` image.",
         "install_missing": "if TRUE (and `execute = TRUE`), install the code's\n"
         "declared dependencies into a throwaway temp library before running.",
         "cran_install_main": "if TRUE (and `install_missing` and `execute` are\n"
@@ -347,9 +356,11 @@ def reproducibility_check(
     Reads ``code_check``'s ``table``/``version_pin``, ``psychds_check``'s
     ``table`` (the path-rewrite plan) and ``data_check``'s ``structure`` from
     the chain, else from *tables_dir*, else runs the missing modules (LLM
-    off). ``model=None`` means ``llm_model()``.
+    off); a missing plan is built from the structure with
+    :func:`~metacheck.datacheck.psychds.psychds_file_plan`, without running
+    ``psychds_check``. ``model=None`` means ``llm_model()``.
 
-    With ``execute=True`` the paper's R scripts are RUN. By default
+    With ``execute=True`` the paper's R and Python scripts are RUN. By default
     (``sandbox="docker"``; metacheck's default is ``"process"``: D62) each one
     runs in its own locked-down Docker container: in the run phase no network, a
     read-only root filesystem, only the throwaway sandbox directory (and the
@@ -362,7 +373,7 @@ def reproducibility_check(
     the package library, never the paper's data; and the image is pulled and tagged
     ``:latest``, so it can change between runs (a known limit).
 
-    ``sandbox="process"`` runs the scripts in ``Rscript`` subprocesses on this
+    ``sandbox="process"`` runs the scripts in ``Rscript`` (``python3``) subprocesses on this
     machine, as you, with NO filesystem or network isolation: not for code you do
     not trust. It must be asked for by name, and each run with it emits one
     :class:`~metacheck.core.errors.PytacheckWarning`. A paper list with
@@ -459,9 +470,9 @@ def _require_sandbox(sandbox: str) -> None:
     """Check that the sandbox ``execute = TRUE`` asked for is available, or refuse.
 
     ``"docker"`` needs a running Docker, else :class:`RuntimeError` says why and how to go on
-    (install or start Docker, or ask for ``sandbox = "process"`` by name). ``"process"`` needs
-    an ``Rscript`` and warns once that nothing isolates the code. There is no fallback from
-    one to the other.
+    (install or start Docker, or ask for ``sandbox = "process"`` by name). ``"process"`` is
+    checked by :func:`_require_process` once the paper's code files are known. There is no
+    fallback from one to the other.
     """
     if sandbox == "docker":
         from metacheck.repro.docker import repro_docker_available
@@ -474,17 +485,31 @@ def _require_sandbox(sandbox: str) -> None:
                 'so nothing was run. Install or start Docker; or pass sandbox = "process" to run '
                 "the code on this machine WITHOUT any isolation (not for code you do not trust)."
             )
-        return
+
+
+def _require_process(*, has_r: bool, has_py: bool) -> None:
+    """Check the interpreters ``sandbox = "process"`` runs the paper's code with, then warn.
+
+    Called once the paper's code files are known and before any of them runs: R code needs
+    an ``Rscript``, Python code a ``python3``. The warning that nothing isolates the code
+    is given once per run.
+    """
     from metacheck.core.errors import PytacheckWarning
+    from metacheck.repro import python as rpy
     from metacheck.repro.core import _rscript
 
-    if _rscript() is None:
+    if has_r and _rscript() is None:
         raise RuntimeError(
             'execute = TRUE with sandbox = "process" needs R (an `Rscript` on PATH or '
             "PYTACHECK_RSCRIPT): it runs each script in a subprocess. "
             'Install R, or use sandbox = "docker".'
         )
-    warnings.warn(_PROCESS_WARNING, PytacheckWarning, stacklevel=3)
+    if has_py and rpy._python() is None:
+        raise RuntimeError(
+            'execute = TRUE with sandbox = "process" needs Python (a `python3` on PATH) to '
+            'run the paper\'s Python scripts in a subprocess. Install it, or use sandbox = "docker".'
+        )
+    warnings.warn(_PROCESS_WARNING, PytacheckWarning, stacklevel=4)
 
 
 def _new_sandbox(keep_sandbox: bool, cleanup: list[str]) -> str:
@@ -513,8 +538,11 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
 
     # 1. Inputs from the upstream modules --------------------------------------
     code_tbl = upstream("code_check", "table")
+    # psychds_check's table is the plan; a missing one is built from data_check's
+    # structure (psychds_file_plan() runs no module, so nothing is fetched again)
     plan = upstream("psychds_check", "table")
     structure_df = upstream("data_check", "structure")
+    group_no_evidence = upstream("data_check", "group_no_evidence")
     version_pin = upstream("code_check", "version_pin")
 
     def run_missing(mod: str) -> Any:
@@ -535,9 +563,13 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         )
 
     if structure_df is None:
-        structure_df = run_missing("data_check").get("structure")
+        dc = run_missing("data_check")
+        structure_df = dc.get("structure")
+        group_no_evidence = dc.get("group_no_evidence")
     if plan is None:
-        plan = run_missing("psychds_check").table
+        from metacheck.datacheck.psychds import psychds_file_plan
+
+        plan = psychds_file_plan(structure_df, group_no_evidence)["table"]
     if code_tbl is None:
         cc = run_missing("code_check")
         code_tbl = cc.table
@@ -621,27 +653,67 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         empty_tl = "na"
     extra = [*(spss_report or []), *(stata_report or []), *(nonr_report or [])]
 
-    # Only R is handled in this phase.
+    # R and Python are handled in this phase.
+    no_code = "We found no R or Python code files to assess for reproducibility."
     if code_tbl is None or len(code_tbl) == 0 or "language" not in code_tbl.columns:
-        return empty(
-            "We found no R code files to assess for reproducibility." + note, empty_tl, extra
-        )
+        return empty(no_code + note, empty_tl, extra)
     langs = h._chr_col(code_tbl, "language")
     if "file_name" in code_tbl.columns:
         renv = grepl(r"(^|/)renv/activate\.R$", h._chr_col(code_tbl, "file_name"), ignore_case=True)
         keep = [i for i, lang in enumerate(langs) if lang == "R" and not renv[i]]
+        keep_py = [i for i, lang in enumerate(langs) if lang == "Python"]
     else:
         # r_files[!grepl(pattern, NULL), ] is r_files[logical(0), ]: no rows
-        keep = []
+        keep = keep_py = []
     r_files = code_tbl.iloc[keep].reset_index(drop=True)
-    if len(r_files) == 0:
-        return empty(
-            "We found no R code files to assess for reproducibility (this phase runs R code only)."
-            + note,
-            empty_tl,
-            extra,
+    py_files = code_tbl.iloc[keep_py].reset_index(drop=True)
+    if len(r_files) == 0 and len(py_files) == 0:
+        return empty(no_code + note, empty_tl, extra)
+    if execute and a["sandbox"] == "process":
+        _require_process(has_r=len(r_files) > 0, has_py=len(py_files) > 0)
+
+    # Python first: what its scripts print joins stat_output before the R path matches
+    # the reported statistics against it (metacheck matches before Python runs, so a
+    # Python script's output is never matched: U233).
+    py_out: dict[str, Any] | None = None
+    if len(py_files) > 0:
+        from metacheck.modules._reproducibility_py import assess_py
+
+        py_out = assess_py(
+            paper,
+            cleanup,
+            a,
+            py_files=py_files,
+            code_tbl=code_tbl,
+            plan=plan,
+            structure_df=structure_df,
+            stat_output=stat_output,
+            sandbox_root=sandbox_root,
+            execute=execute,
         )
-    return _assess_r(
+        stat_output = py_out["stat_output"]
+        sandbox_root = py_out["sandbox_root"]
+    shared = {
+        "spss_red": spss_red,
+        "stata_red": stata_red,
+        "spss_report": spss_report,
+        "stata_report": stata_report,
+        "self_repro_report": self_repro_report,
+        "nonr_report": nonr_report,
+        "keep_sandbox": keep_sandbox,
+    }
+    if len(r_files) == 0:
+        assert py_out is not None
+        return _py_only(
+            paper,
+            py_out,
+            structure_df=structure_df,
+            code_tbl=code_tbl,
+            stat_output=stat_output,
+            sandbox_root=sandbox_root,
+            **shared,
+        )
+    r_out = _assess_r(
         paper,
         cleanup,
         a,
@@ -652,15 +724,125 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         version_pin=version_pin,
         stat_output=stat_output,
         sandbox_root=sandbox_root,
-        spss_red=spss_red,
-        stata_red=stata_red,
-        spss_report=spss_report,
-        stata_report=stata_report,
-        self_repro_report=self_repro_report,
-        nonr_report=nonr_report,
         execute=execute,
-        keep_sandbox=keep_sandbox,
+        **shared,
     )
+    return r_out if py_out is None else _combine(r_out, py_out)
+
+
+_TL_RANK = {"red": 4, "error": 4, "yellow": 2, "info": 2, "green": 1, "na": 0}
+
+
+def _combine_tl(a: str, b: str) -> str:
+    """The more severe of two traffic lights (red/error > yellow/info > green > na)."""
+    return a if _TL_RANK.get(a, 0) >= _TL_RANK.get(b, 0) else b
+
+
+def _bind(a: pd.DataFrame | None, b: pd.DataFrame | None) -> pd.DataFrame | None:
+    """``dplyr::bind_rows(a, b)``, ``None`` when neither side has a frame."""
+    frames = [x for x in (a, b) if x is not None]
+    if not frames:
+        return None
+    if len(frames) == 1:
+        return frames[0]
+    return bind_rows(frames)
+
+
+def _py_summary_row(pid: str | None, counts: Mapping[str, Any], em: Any) -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "paper_id": pd.array([pid], dtype="string"),
+            **{k: pd.array([counts[k]], dtype="Int64") for k in counts},
+            "repro_tests_reported": pd.array(
+                [None if em is None else int(em["summary"]["n_tests"])], dtype="Int64"
+            ),
+            "repro_tests_matched": pd.array(
+                [None if em is None else int(em["summary"]["n_found"])], dtype="Int64"
+            ),
+        }
+    )
+
+
+def _py_only(
+    paper: Any,
+    py: Mapping[str, Any],
+    *,
+    structure_df: Any,
+    code_tbl: Any,
+    stat_output: list[dict[str, Any]],
+    sandbox_root: str | None,
+    spss_red: bool,
+    stata_red: bool,
+    spss_report: list[str] | None,
+    stata_report: list[str] | None,
+    self_repro_report: list[str] | None,
+    nonr_report: list[str] | None,
+    keep_sandbox: bool,
+) -> dict[str, Any]:
+    """The result for a paper with Python code and no R code.
+
+    The reported statistics are matched against the output, and the SPSS/Stata,
+    self-reproducible-output and other-code sections are kept, as for an R paper
+    (metacheck drops them all when a paper has no R code: U234).
+    """
+    em = h.match_output(paper, stat_output)
+    lines = list(py["summary_lines"])
+    if em is not None:
+        n_output_stats = h._n_stats(stat_output)
+        lines.append(
+            f"{n_output_stats:d} statistic{plural(n_output_stats)} stored from the extracted "
+            "output; " + h.match_summary_line(em["summary"])
+        )
+    tl = "red" if spss_red or stata_red else py["tl"]
+    report = [
+        "### Python code",
+        *py["report"],
+        *(em["report"] if em is not None else []),
+        *(spss_report or []),
+        *(stata_report or []),
+        *(self_repro_report or []),
+        *(nonr_report or []),
+    ]
+    out: dict[str, Any] = {
+        "table": py["table"],
+        "summary_table": _py_summary_row(h._pid(paper, structure_df, code_tbl), py["counts"], em),
+        "na_replace": dict(_NA_REPLACE),
+        "traffic_light": tl,
+        "report": report,
+        "summary_text": h._paste_bullets(lines),
+        "run_results": py["run_results"],
+        "install_results": py["install_results"],
+        "stat_output": stat_output or None,
+        "match_table": em["table_raw"] if em is not None else None,
+        "modifications": py["modifications"],
+    }
+    if keep_sandbox and sandbox_root is not None:
+        out["sandbox"] = sandbox_root
+    return out
+
+
+def _combine(r: dict[str, Any], py: Mapping[str, Any]) -> dict[str, Any]:
+    """One result for a paper with both R and Python code: the R path's, then Python's.
+
+    Counts add up (``NA`` only when both sides are ``NA``); the reported-statistics match,
+    already run over both languages' output, is the R path's.
+    """
+    st = r["summary_table"].copy()
+    for k, v in py["counts"].items():
+        cur = st[k].iloc[0]
+        if pd.isna(cur) and v is None:
+            continue
+        st[k] = pd.array([(0 if pd.isna(cur) else int(cur)) + (v or 0)], dtype="Int64")
+    out = dict(r)
+    out["table"] = _bind(r["table"], py["table"])
+    out["summary_table"] = st
+    out["traffic_light"] = _combine_tl(r["traffic_light"], py["tl"])
+    out["report"] = [*r["report"], "### Python code", *py["report"]]
+    out["summary_text"] = r["summary_text"] + h._paste_bullets(py["summary_lines"])
+    out["run_results"] = _bind(r["run_results"], py["run_results"])
+    out["install_results"] = _bind(r["install_results"], py["install_results"])
+    out["modifications"] = _bind(r["modifications"], py["modifications"])
+    return out
 
 
 def _resolver(r_files: pd.DataFrame, structure_df: Any) -> Any:
@@ -1470,7 +1652,7 @@ def _execute(
             warnings.warn(
                 'reproducibility_check(sandbox = "docker"): this paper declared R version '
                 f"{declared[0]}, but docker_use_declared_version = FALSE (the default), so the "
-                "run uses the pre-built metacheck_r image's own R version instead, for speed. "
+                "run uses the pre-built metacheck_r_large image's own R version instead, for speed. "
                 "Set docker_use_declared_version = TRUE to match the paper's declared version "
                 "exactly -- slower, since every dependency then installs from scratch rather "
                 "than using the pre-built image.",
@@ -1481,7 +1663,16 @@ def _execute(
 
     # 1. Build the data tree the plan describes, and write the scripts into it.
     repro_materialize_layout(plan, structure_df, sandbox_root)
-    run_tbl = repro_write_scripts(code_text_list, rewrite_list, plan, sandbox_root)
+    run_tbl = repro_write_scripts(
+        code_text_list,
+        rewrite_list,
+        plan,
+        sandbox_root,
+        # a redirected write names the output folder as the code sees it: in a container,
+        # /sandbox/output/ (metacheck writes the host's path, which the container has not
+        # got: U239)
+        output_dir="/sandbox/output/" if sandbox == "docker" else None,
+    )
 
     # 2. Optionally install dependencies.
     install_results: pd.DataFrame | None = None
@@ -1586,6 +1777,7 @@ def _execute(
                     plan,
                     sandbox_root,
                     inject_libs=library_injections,
+                    output_dir="/sandbox/output/" if sandbox == "docker" else None,
                 )
                 if library_injections
                 else run_tbl

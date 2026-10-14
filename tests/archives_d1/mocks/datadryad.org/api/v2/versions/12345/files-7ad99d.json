@@ -1,0 +1,80 @@
+{
+  "_links": {
+    "self": {
+      "href": "/api/v2/versions/12345/files"
+    }
+  },
+  "count": 5,
+  "total": 5,
+  "_embedded": {
+    "stash:files": [
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/111"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/111/download"
+          }
+        },
+        "path": "data.csv",
+        "size": 8,
+        "mimeType": "text/csv",
+        "digest": "344fd2323dd33d5c058b7cf27de029e8",
+        "digestType": "md5"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/112"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/112/download"
+          }
+        },
+        "path": "README.md",
+        "size": 21,
+        "mimeType": "text/markdown",
+        "digest": "0123456789abcdef0123456789abcdef",
+        "digestType": "MD5"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/113"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/113/download"
+          }
+        },
+        "path": "big.bin",
+        "size": 20971520,
+        "digest": null,
+        "digestType": "md5"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/114"
+          },
+          "stash:download": {
+            "href": "/api/v2/files/114/download"
+          }
+        },
+        "path": "sub/notes.txt",
+        "size": 5,
+        "digest": "abc",
+        "digestType": "sha-256"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "/api/v2/files/115"
+          }
+        },
+        "path": "nolink.txt",
+        "size": 3
+      }
+    ]
+  }
+}

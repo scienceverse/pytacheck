@@ -652,6 +652,11 @@ def _careless_available() -> bool:
 
 def _as_num_chr(x: Any) -> list[float | None]:
     """``suppressWarnings(as.numeric(as.character(x)))``."""
+    from metacheck.datacheck._kinds import integer_numbers
+
+    ints = integer_numbers(x)
+    if ints is not None:
+        return ints
     out: list[float | None] = []
     for s in _chr(x):
         f = as_float(s)
@@ -671,11 +676,12 @@ def dv_careless_block(
     n_items = len(cols)
     rows = [[c[i] for c in cols] for i in range(len(block))]
     ls = _longstring(rows)
-    iv = _irv(rows)
     straight_cut = max(5, math.ceil(0.8 * n_items))
     flagged = [i for i, v in enumerate(ls) if v >= straight_cut]
     if not flagged:
         return None
+    # the IRV is reported for the flagged respondents only, so only theirs is computed
+    iv = dict(zip(flagged, _irv([rows[i] for i in flagged]), strict=True))
     n = len(flagged)
     label = f"{_dquote_free(prefix)} ({scale}, {n_items} items)"
     return pd.DataFrame(

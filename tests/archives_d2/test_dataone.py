@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -243,3 +244,52 @@ def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
         dataone_info("10.18739/A2GT5FG86")
     # nothing valid: no connectivity check needed
     assert len(dataone_info("https://example.org")) == 1
+
+
+def test_package_sizes_come_from_one_solr_query(serve: object) -> None:
+    # metacheck 0.3.3: the sizes the EML does not give come from one Solr query
+    # on the member node; a file the query does not answer for gets the HEAD
+    import httpx
+
+    from metacheck.archives.dataone import _dataone_info, _dataone_package_sizes
+
+    api = "https://knb.ecoinformatics.org/knb/d1/mn/v2/"
+    solr = (
+        api + "query/solr/?q=isDocumentedBy%3A%22doi%3A10.5063%2FNOPHYS%22"
+        "&fl=id,fileName,size&rows=1000&wt=json"
+    )
+    eml = Path(__file__).parent / "mocks/knb.ecoinformatics.org/knb/d1/mn/v2/object"
+    requests = serve(  # type: ignore[operator]
+        {
+            api + "object/doi%3A10.5063%2FNOPHYS": httpx.Response(
+                200, content=(eml / "doi%3A10.5063%2FNOPHYS.xml").read_bytes()
+            ),
+            solr: httpx.Response(
+                200,
+                json={
+                    "response": {
+                        "docs": [
+                            {"id": "doi:10.5063/NOPHYS", "size": 9000},
+                            {
+                                "id": "urn:uuid:11111111-2222-3333-4444-555555555555",
+                                "fileName": "script.R",
+                                "size": 213713,
+                            },
+                        ]
+                    }
+                },
+            ),
+            api + "object/urn%3Auuid%3A66666666-7777-8888-9999-000000000000": httpx.Response(
+                200, headers={"Content-Length": "77"}
+            ),
+        }
+    )
+    files = _dataone_info("doi:10.5063/NOPHYS", host="knb.ecoinformatics.org")["files"].iloc[0]
+    assert files[1]["size"] == 213713.0
+    assert files[2]["size"] == 77.0  # not in the Solr answer: HEAD
+    assert [(r.method, str(r.url)) for r in requests[1:]] == [
+        ("GET", solr),
+        ("HEAD", api + "object/urn%3Auuid%3A66666666-7777-8888-9999-000000000000"),
+    ]
+    # a node without the endpoint: no sizes, and the caller falls back
+    assert _dataone_package_sizes("knb.ecoinformatics.org", "/knb/d1/mn/v2/", "doi:x") == {}

@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 import orjson
+import pandas as pd
 import pytest
 
 import metacheck as pc
@@ -178,3 +179,102 @@ def test_a_12_1_paper_is_saved_as_a_paper_object(tmp_path: Path) -> None:
     assert again.get("extraction") is None
     assert "abstract" in paper.info.columns
     assert "abstract" not in again.info.columns
+
+
+# -- a 12.1 export from the ScienceVerse Platform (metacheck 46da81a, 97612c7) ---------
+#
+# platform_12_1.json is metacheck's tests/testthat/fixtures/bibr12/platform_12_1.json: a
+# 12.1 export, as bibr's convert_bibr(backend = "scivrs") saves it from the ScienceVerse
+# Platform, of Sanchez Medero G (2026) Power concentration and political dynamics in
+# liquid democracy, Open Research Europe 6:335,
+# https://doi.org/10.12688/openreseurope.23863.2 (CC BY 4.0).
+
+PLATFORM = FX / "platform_12_1.json"
+
+
+def test_a_platform_12_1_export_reads() -> None:
+    data = orjson.loads(PLATFORM.read_bytes())
+    paper = pc.read(PLATFORM)
+    assert pc.paper_validate(paper)
+    assert paper.paper_id == "08be289905897e61"
+
+    # metadata and source make the info table
+    info = paper.info.iloc[0]
+    assert info["schema_version"] == "12.1"
+    assert info["title"] == data["metadata"]["title"]
+    assert info["journal"] == "Open Research Europe"
+    assert list(info["keywords"]) == data["metadata"]["keywords"]
+    assert info["sha256"] == data["source"]["sha256"]
+    assert info["bibr_version"] == "0.5.1"
+
+    # extraction.fields, which 12.1 adds, says why the DOI is missing
+    assert pd.isna(info["doi"])
+    fields = paper.extraction["fields"]
+    assert fields["doi"]["state"] == "abstained"
+    assert fields["doi"]["issues"][0] == "VAL_DOI_AMBIGUOUS"
+    assert fields["title"]["state"] == "extracted"
+
+    # a citation resolves to its reference by target_id; its xref_id is the
+    # row's own key, which no reference has
+    text = paper.text.set_index("text_id")
+    cite = paper.xref[paper.xref["xref_type"] == "bib"].iloc[0]
+    assert cite["contents"] == "Paulin, 2020"
+    assert "Paulin, 2020" in text.loc[cite["text_id"], "text"]
+    ref = paper.bib[paper.bib["bib_id"] == cite["target_id"]]
+    assert ref["title"].tolist() == ["An overview of ten years of liquid democracy research"]
+    assert cite["xref_id"] not in paper.bib["bib_id"].tolist()
+
+    # the table caption and the note under it are text rows with no section
+    tbl = paper.table.iloc[0]
+    assert tbl["label"] == "1"
+    assert text.loc[tbl["text_id"], "text"] == tbl["caption"]
+    assert pd.isna(text.loc[tbl["text_id"], "section_id"])
+    (note_id,) = paper.footnote["text_id"].tolist()
+    assert text.loc[note_id, "text"].startswith("Note: All metrics")
+    assert pd.isna(text.loc[note_id, "section_id"])
+
+    # every citation counts
+    out = pc.module_run(paper, "ref_consistency")
+    assert out.summary_table["n_bib"].tolist() == [10]
+    assert out.summary_table["n_xrefs"].tolist() == [28]
+
+
+def test_a_later_12x_platform_export_reads(tmp_path: Path) -> None:
+    data = orjson.loads(PLATFORM.read_bytes())
+    data["schema_version"] = "12.3"
+    data["notes"] = {"added_in": "12.3"}
+    data["section"][0]["section_type"] = "preregistration"
+    data["extraction"]["fields"]["data_availability"] = {"state": "extracted"}
+    path = tmp_path / "platform_12_3.json"
+    path.write_bytes(orjson.dumps(data))
+
+    paper = pc.read(path)
+    orig = pc.read(PLATFORM)
+    assert pc.paper_validate(paper)
+    assert paper.info["schema_version"].tolist() == ["12.3"]
+    assert list(paper.keys()) == list(orig.keys())
+    assert paper.section["section_type"].iloc[0] == "preregistration"
+    pd.testing.assert_frame_equal(paper.text, orig.text)
+    pd.testing.assert_frame_equal(paper.xref, orig.xref)
+    assert paper.extraction["fields"]["data_availability"]["state"] == "extracted"
+
+
+def test_a_folder_reads_both_formats(tmp_path: Path) -> None:
+    (tmp_path / "demo.json").write_bytes(pc.demofile("json").read_bytes())
+    (tmp_path / "platform.json").write_bytes(PLATFORM.read_bytes())
+    papers = pc.read(tmp_path)
+    assert len(papers) == 2
+    assert [bibr12.is_bibr12(p) for p in papers] == [False, True]
+
+
+def test_read_warns_why_it_skipped_a_file(tmp_path: Path) -> None:
+    path = with_changes(PLATFORM, tmp_path, schema_version="13.0")
+    (tmp_path / "platform.json").write_bytes(PLATFORM.read_bytes())
+    with pytest.warns(
+        UserWarning, match=r"^Could not read changed\.json: bibr export schema 13\.0 is not"
+    ):
+        paper = pc.read(tmp_path)
+    assert paper.info["schema_version"].tolist() == ["12.1"]
+    # one file on its own raises its error
+    with pytest.raises(ValueError, match=r"schema 13\.0 is not supported"):
+        pc.read(path)

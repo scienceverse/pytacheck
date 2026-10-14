@@ -18,6 +18,97 @@ package's. The R commit each release is compared against is in
 - **Fixed:** complex numbers with an infinite part are read exactly (`1+Inf i` had become `NaN+Inf i`, and `-0+1i` lost its sign), and without numpy warnings.
 - **Changed:** an object nested deeper than Python's recursion limit allows (about 330 levels, for example a formula of 400 terms) is read by the C reader, as R reads it, instead of being reported as unreadable.
 
+### Ported from metacheck: the R changes up to 98105f6 (0.3.3.2, 14 October)
+
+These port the changes metacheck made between `f1062b4` (the pinned commit, which does not move) and `98105f6`: the data check and repository changes and the other fixes. The R Shiny apps are not ported (pytacheck's app is its own). Each change that differs from the pinned R is in docs/UPSTREAM_ISSUES.md (D87 to D128, U218 to U241).
+
+#### Data checks: one file type per extension, file naming and new extensions
+
+- **Changed:** File types follow metacheck's one-type-per-extension table: `.json`, `.rds`, `.por` and `.jasp` files are data; shell scripts, JavaScript/TypeScript and PHP files are code; `.html`/`.htm` are web pages (documentation). `file_category()` now classifies `.json`/`.rds` files as data instead of leaving them undecided, and data_check, repo_check and the data-package checks count a `.json` file as data (was code) and an `.html` file as documentation (D89).
+- **Changed:** Psych-DS's `dataset_description.json` is classified as documentation, like `ro-crate-metadata.json`, so psychds_check keeps it at the dataset root (D90).
+- **Changed:** `check_file_naming()` no longer reports runs of 8 digits that are not valid YYYYMMDD dates, which flagged IDs and accession numbers. repo_check's naming table shows "Required"/"Suggestion" instead of "bad"/"suggestion" (D91).
+- **Changed:** in the data package checks (`datapackage::default` and the TU/e preset `datapackage::tue`), a `.json` file now counts as data and an `.html` file as documentation, so a rendered report no longer stands in for code (D89). The TU/e preset's own file-name date suggestion is unchanged.
+- **Added:** `.rdat`, `.str` (STRUCTURE) and `.dtg` (DTAG) files are recognised as data, and NetLogo (`.nlogo`) and Julia (`.jl`) files as code (D92).
+- **Fixed:** with LLM use off, data_check's study-group step sends nothing to a model and groups the files by its rules alone. Before, every such run said "The study-group step did not get an answer for N files (the model request failed)" (U241).
+- **Fixed:** data_check downloads and opens archives (`.tar.gz`, a zip it could not peek into, ...) under the default `download = "data"`; before, they were never fetched (U220).
+
+#### Dryad: complete listings, SHA-256 checks and a note on the API key
+
+- **Changed:** `dryad_info()` lists a dataset's files 100 a page (one request for up to 100 files) and returns `storage_size`, `files_total` and `files_incomplete`; `repo_check` gives each Dryad file `repo_size`, the dataset's own size, which `download_repo_files()` uses to decide whether the dataset's zip fits the download budget (D93).
+- **Added:** the first Dryad lookup without an API key says once that Dryad needs a key to download file contents, even from a public dataset; a Dryad download refused with HTTP 401 for that reason now says so in the failure report, and `dryad_file_download()` lists why each file failed in `attrs["failed"]` (D94).
+- **Fixed:** a Dryad file listing that stops early now warns and is marked `files_incomplete`, and is not cached (U221).
+- **Fixed:** Dryad files published with a SHA-256 checksum are verified after download (U222).
+- **Fixed:** a Dryad dataset cited under another Dryad DOI prefix or as a bare DOI is downloaded as one archive, like other Dryad datasets (U223).
+
+#### OSF, GitHub and GitLab: far fewer requests
+
+- **Changed:** listing an OSF project (`osf_info(recursive=True)`, used by `repo_check` and `osf_file_download()`) asks for the whole component tree, with each component's storage providers, in one request per 100 components instead of two requests per component; `osf_file_download(mode="all")` finds its components the same way. When this listing cannot be used, components are listed one by one as before. A private component that your OSF token can see without you being a contributor to it is no longer listed (D95).
+- **Changed:** a GitHub repository linked to an OSF project is listed through GitHub (2 requests, with file sizes) instead of folder by folder through the OSF, and its files are downloaded from GitHub; the OSF listing is still used when GitHub cannot list it, for example a private repository (D97).
+- **Changed:** `github_tree_files()`, `gitlab_tree_files()` and `download_repo_files()` no longer send a request to a GitHub or GitLab repository's web page before using the API; a repository the API does not find (404) is reported as invalid or inaccessible. They take one repository at a time (D96).
+- **Changed:** checking the OSF token allows 15 seconds and one retry, so a slow OSF no longer makes a valid token look unverifiable (D98).
+- **Changed:** repository lookups no longer wait 0.5 s after their last request (D99).
+- **Changed:** the bundled bibr 10.5 paper schema names itself `https://scienceverse.org/schema/paper-v10.5.json`, where scienceverse.org now keeps it (D100).
+- **Fixed:** a bibr server that refuses the API key (HTTP 401 or 403) is reported as "the API key is not valid", not as a server that is not running (U224).
+- **Fixed:** `mendeley_info()` reports a dataset that does not exist as `unfound` also when Mendeley answers HTTP 200 with only an error; it came back as a dataset with every field empty (U225).
+
+#### Other repositories: DSpace, PsychArchives, 4TU, Dataverse, DataONE, Zenodo and Figshare
+
+- **Added:** more repositories are recognised: Figshare's VTechData, USDA Ag Data Commons and University of Adelaide instances and the UCL, VTechData, USDA and Adelaide DOI prefixes; DSpace 7's eCommons (Cornell) and Apollo (Cambridge); legacy DSpace's DataSTORRE (Stirling). dspace.ut.ee is read through its DSpace 7 API only (D101).
+- **Added:** Figshare DOIs that do not contain the article id (VTechData, USDA Ag Data Commons, older Adelaide records) are resolved through Figshare's DOI lookup (D109).
+- **Changed:** `dspace7_links()` no longer looks up the paper's own DOI or DOIs of repositories other detectors handle. It looks each DOI up once per session in doi.org's handle API, and it recognises items cited under a repository's former address (D102).
+- **Changed:** fewer requests to repositories. A DSpace 7 item takes 1–2 requests, a PsychArchives/legacy DSpace item 1, and a DataONE package's missing file sizes 1 Solr query. A 4TU `uuid:` DOI or a shared-prefix Dataverse DOI takes one handle-API lookup, remembered for the session. Zenodo's files-archive endpoint is not tried again after it answers 404 (D103, D104, D105, D106, D107, D108).
+- **Added:** `psycharchives_info()` returns `PA_rights`, the item's access status. DSpace 5 installations are supported (D104).
+- **Fixed:** a DSpace 7 bundle with more than 20 files is listed in full, with a warning when the host lists fewer files than it reports (U226).
+- **Fixed:** the licence of a PsychArchives/legacy DSpace item, and in repo_check, is the item's licence, not its access status ("restrictedAccess"). Thumbnails and other derived bitstreams are no longer listed as files, and DSpace 5 file links work (U227).
+- **Fixed:** `zenodo_file_download()` no longer says "Downloaded as one archive" when the archive could not be downloaded (U228).
+- **Fixed:** a Figshare institutional DOI whose suffix is not an article id no longer yields a wrong id, and UCL's `10.5522/04/<id>` DOIs give the right one (U229).
+- **Fixed:** Figshare files kept in folders keep their folder in `figshare_info()`, in downloads and in repo_check, so same-named files no longer overwrite each other. An article listing fewer files than its size accounts for is listed in full (U230).
+
+#### Zip archives: fewer requests, local copies and whole downloads
+
+- **Changed:** a zip's listing no longer starts with a HEAD request when the repository's own listing gives the zip's size (Zenodo, Figshare, Dataverse, Dryad, ReShare and the zip peeks of `repo_check`, `data_check` and `code_check`); `zip_peek()` and `zip_decision()` take `size` (D110).
+- **Fixed:** a zip inside a ResearchBox is listed and read from its unpacked copy; it used to be asked for at the box's web page, which refused it (D110). `repo_check`'s rows for a zip's entries have a new column, `archive_size`.
+- **Fixed:** a host that sends the whole file to a range request is no longer read whole when the file is large (over 2 MB): the answer is closed unread (U231). Once a kind of URL has done this, later peeks and member fetches of it in the session give up at once; a whole answer of up to 2 MB is used for every member of the zip (D111).
+- **Changed:** members of a remote zip that lie close together are fetched with one range request (D112).
+- **Added:** when many members of a zip within the download budget are wanted, `download_repo_files()` and `code_check` download the zip once and extract them, and keep it for the next run; on Dryad, which limits requests per day, whenever the zip fits the budget (D113).
+
+#### Text and papers: subscripted effect sizes, Grobid line wraps, Crossref
+
+- **Fixed:** `extract_eq()` keeps a subscripted statistic that Grobid wrote as two words: "Hedges' g av = 1.76" has `lhs` "Hedges' g av" (it was "av"), and "g av = 0.43" and "d Z = 0.89" have "g av" and "d Z" (they were "av" and "Z", a z statistic). `stat_effect_size` therefore counts these effect sizes and checks them, and also reads values written with an underscore ("g_av = 0.56", "d_z = 0.5"); `extract_tests()` and `match_reported_output()` no longer take such a d_z for a z-test (U218).
+- **Changed:** `stat_effect_size` reports a subscripted Hedges' g (g av, g_av, gs, gav, ...) that matches none of the formulas it tests as `indeterminate`, not `no_match`: g_av depends on the condition SDs and their correlation, which t(df) does not give. A plain g and Cohen's d are checked as before (D87).
+- **Fixed:** reading Grobid TEI removes the space a PDF line wrap leaves in a DOI or repository link ("https ://doi. org/10.5061/ dryad. m20hf10", "10.5281/ zenodo.5810881", "osf. io/ abc12"), so these links are found in the text and `all_urls` lists them whole ("http://dx.doi.org/10.1098/rspb.2004.3003", not "http://dx.doi") (U219).
+- **Changed:** `crossref_doi()` (and `add_bib_match()` through it) asks Crossref's production API (`api.crossref.org`) instead of the experimental `api.labs.crossref.org` mirror (D88).
+- **Changed:** `read()` of a directory or a list of files warns when it skips a file it cannot read, with the file's name and the reason ("Could not read v11.json: bibr export schema 11.0 is not supported ..."); it was only logged (D6).
+
+#### Reports: a static and a brief report type
+
+- **Added:** `report_type()` and a `report_type` argument of `report()`, `report_repository()` and `report_package()`, and `-t/--report-type` of `metacheck report` and `metacheck package`: `simple` writes a static page with no script, safe to send by email; `brief` and `simple_brief` write a to-do list of only the modules that need attention, with what to fix and how each module was validated (D114).
+- **Added:** the app offers each report as a static page for email too (D114).
+- **Added:** `psychds_file_plan()`, the Psych-DS file plan of data_check's structure; psychds_check reports it and reproducibility_check uses it when psychds_check has not run (D116).
+- **Changed:** the report's summary is a list of linked rows, a module's details have no extra box, and "How It Works" links the module's chapter of the metacheck manual (D115).
+- **Changed:** codebook_check identifies scales and tasks only with `extract_scales=True` (experimental, unvalidated), and its summary no longer counts documented variables missing from the data (D117).
+- **Changed:** code_check's summary names the files without comments and the files that load libraries in several places, and mentions setwd()/install.packages() only when found (D118).
+- **Changed:** in a brief report, data_check's summary no longer says how the files were grouped into studies, whether the study-group step got an answer, or which demographic columns were found; the full report keeps them (D128).
+- **Fixed:** a module whose title has punctuation (e.g. "Funding Check (Overinclusive)") gets a valid heading id, so its heading shows no stray `{#...}` and the summary links to it (U232).
+
+#### Reproducibility: Python code
+
+- **Added:** `reproducibility_check` assesses Python code (`.py` files and Jupyter notebooks) alongside R: dependencies (from imports, pinned by the repository's `requirements.txt` or `pyproject.toml`), data-path rewrites, run order and missing inputs, and with `execute = TRUE` it runs each script with `python` under the same sandbox as R code (a locked-down Docker container by default; on this machine only with `sandbox = "process"`). What a script prints is matched against the statistics the paper reports (D119, D122, D123, D124, D125, D126, D127).
+- **Added:** `metacheck.repro` exports `repro_dependencies_py()`, `repro_install_deps_py()`, `repro_run_scripts_py()`, `repro_install_deps_py_docker()` and `repro_run_scripts_py_docker()` (D119).
+- **Changed:** the default Docker image for R code is `ghcr.io/scienceverse/metacheck_r_large:latest`, and Python code runs in `ghcr.io/scienceverse/metacheck_py_small:latest` (D120).
+- **Changed:** `code_file_refs(include_writes = TRUE)` also finds Python write calls (pandas' `to_csv()` and the like, `savefig()`, `np.save()`, `pickle.dump()`), but not conversions such as `pd.to_datetime()` (D121).
+- **Fixed:** in a Docker run, a write the module redirects into the sandbox's `output/` folder now names the folder as the container sees it, so the write no longer fails (U239).
+- **Fixed:** the module's no-code and other-code notes name Python, and the reported-vs- reproduced match, the SPSS/Stata sections and the self-reproducible output section are kept for a paper with only Python code (U233, U234, U238).
+- **Fixed:** for Python code, a file a script writes with `open(path, "w")` is not taken for a missing input, `open()` counts as a write only by its mode, an `os.chdir()` alone in a block no longer breaks the script, and `pyproject.toml` pins are read as TOML (U235, U236, U237, U240).
+
+### Faster: data_check on large data files
+
+- **Faster:** `data_check` no longer writes out every cell of a numeric, logical or date column when it looks for a file manifest (a table that lists the repository's files). Such a column can only list files when a file in the repository is named like a number, so it is skipped otherwise.
+- **Faster:** the careless-responding screen computes each respondent's IRV only for the respondents it flags, as only theirs is reported.
+- **Faster:** an integer column is written out as its digits and read back as numbers without going through the text value by value.
+- On a package with a 100,000-row CSV, a 300 x 400 survey and an xlsx file, `data_check` takes 11 s instead of 21 s (metacheck 0.3.3.1: 9.5 s). Its results are unchanged.
+- **Added:** `benchmarks/repo_bench.py` times repo_check, code_check and data_check on repository links in metacheck and pytacheck, each run cold, with the requests made per host.
+
 ## 0.4.0a2
 
 Second pre-release on PyPI. Compared against the R package at commit

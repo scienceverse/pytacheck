@@ -198,14 +198,14 @@ def footer(version: str, commit: str | None) -> str:
     return f"metacheck (Python) {version}. Source code: [{url}]({url})"
 
 
-def data_link(name: str, page: str) -> str:
+def data_link(name: str, page: str, label: str = "Download the report") -> str:
     """A download link that holds the report itself, so no file stays on the server."""
     from html import escape
 
     body = base64.b64encode(page.encode("utf-8")).decode("ascii")
     return (
         f'<a href="data:text/html;charset=utf-8;base64,{body}" download="{escape(name)}">'
-        "Download the report</a>"
+        f"{escape(label)}</a>"
     )
 
 

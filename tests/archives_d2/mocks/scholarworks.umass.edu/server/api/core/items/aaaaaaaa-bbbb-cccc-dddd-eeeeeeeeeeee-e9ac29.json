@@ -1,0 +1,26 @@
+{
+  "uuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "name": [],
+  "metadata": {
+    "dc.title": [
+      {
+        "value": "Fallback title"
+      },
+      {
+        "value": "Second title"
+      }
+    ]
+  },
+  "_embedded": {
+    "bundles": {
+      "_embedded": {
+        "bundles": [
+          {
+            "name": "THUMBNAIL",
+            "uuid": "t"
+          }
+        ]
+      }
+    }
+  }
+}

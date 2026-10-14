@@ -21,6 +21,7 @@ from metacheck._r.base import plural
 from metacheck._values import is_missing
 
 __all__ = [
+    "REPORT_TYPES",
     "ReportTable",
     "cap_gate_count",
     "collapse_section",
@@ -28,8 +29,65 @@ __all__ = [
     "link",
     "plural",
     "report_table",
+    "report_type",
     "scroll_table",
 ]
+
+#: The kinds of report :func:`report_type` names: how much a report shows
+#: (every module, or only what needs attention) times how it is rendered
+#: (interactive, or static with no script).
+REPORT_TYPES = ("full", "brief", "simple", "simple_brief")
+
+_report_type_state: dict[str, str] = {}
+
+
+def _check_report_type(value: Any) -> str:
+    """*value* as a report type (case-insensitive; the first of a sequence)."""
+    if not isinstance(value, str) and isinstance(value, Sequence) and len(value) > 0:
+        value = value[0]
+    rt = str(value).lower() if isinstance(value, str) else None
+    if rt not in REPORT_TYPES:
+        raise ValueError(
+            "The report_type must be one of 'full', 'brief', 'simple' or 'simple_brief'."
+        )
+    return rt
+
+
+def report_type(report_type: str | Sequence[str] | None = None) -> str:
+    """Get or set the default type of report (port of ``report_type()``).
+
+    * ``"full"`` (the default): every module with its details, as an
+      interactive page (paginated tables, tabs, a light/dark switch).
+    * ``"simple"``: the same content as a static page with no script at all
+      (every table row shown, tabs as headings, callouts open), safe to send
+      by email: mail clients and scanners flag pages that carry scripts.
+    * ``"brief"``: a to-do list: only the modules flagged red, yellow or
+      failed, each with the specific things to fix, then how those modules
+      were validated.
+    * ``"simple_brief"``: the brief report as a static page.
+
+    With no argument, returns the current setting; with one, sets it for the
+    session and returns it. :func:`~metacheck.report.report.report` and the
+    other report writers use it when their own ``report_type`` is ``None``.
+    metacheck's modules also read it while they run, to write tabs or plain
+    headings; pytacheck decides that when the report is rendered, so a
+    module's output is the same for every report type.
+    """
+    if report_type is None:
+        return _report_type_state.get("value", "full")
+    rt = _check_report_type(report_type)
+    _report_type_state["value"] = rt
+    return rt
+
+
+def _report_is_static(report_type: str) -> bool:
+    """Port of ``.report_is_static()``: a report with no script (simple, simple_brief)."""
+    return report_type in ("simple", "simple_brief")
+
+
+def _report_is_brief(report_type: str) -> bool:
+    """Port of ``.report_is_brief()``: only the flagged modules (brief, simple_brief)."""
+    return report_type in ("brief", "simple_brief")
 
 
 @dataclass
@@ -242,9 +300,17 @@ def cap_gate_count(
 
 
 def report_table(
-    table: Any, colwidths: Any = "auto", maxrows: int = 2, escape: bool = False
+    table: Any,
+    colwidths: Any = "auto",
+    maxrows: int = 2,
+    escape: bool = False,
+    static: bool | None = None,
 ) -> Any:
-    """Port of ``report_table()``: the table widget of a report (a :class:`~metacheck.report.render.DataTable`)."""
+    """Port of ``report_table()``: the table widget of a report (a :class:`~metacheck.report.render.DataTable`).
+
+    ``static=None`` follows :func:`report_type`: a simple report's table is
+    static (every row, no script).
+    """
     from metacheck.report.render import report_table as _report_table
 
-    return _report_table(table, colwidths=colwidths, maxrows=maxrows, escape=escape)
+    return _report_table(table, colwidths=colwidths, maxrows=maxrows, escape=escape, static=static)
