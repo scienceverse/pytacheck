@@ -19,6 +19,10 @@
 "figshare_file_download.review.empty_body_multi": {"r": "d6b78eb88daddb0a", "py": "d6f7fd75d449f203", "diff": ["<root>"]},
 "figshare_file_download.review.file_cap_missing_size": {"r": "bfc2525bb6cb7f93", "py": "c2dbc50238060343", "diff": ["<root>"]},
 "figshare_file_download.review.total_cap_ties": {"r": "bce38101fcf32111", "py": "c2dbc50238060343", "diff": ["<root>"]},
+"figshare_info.review.first_unfound": {"r": "94d12f8f364d7d0a", "py": "2c79ee3ddee58dfd", "diff": ["files[][].path"]},
+"figshare_info.review.id_col_is_id": {"r": "54a610ce5a95c9ff", "py": "7797ee73cbbca42e", "diff": ["files[][].path"]},
+"figshare_info.review.numeric_vector": {"r": "ce8c0206fd59ce46", "py": "e3360784ea5cade3", "diff": ["files[][].path"]},
+"figshare_info.review.object_files": {"r": "0221de4b65c6623e", "py": "159dff6920c4b071", "diff": ["files[].first.path", "files[].second.path"]},
 "figshare_info.review.string_license_error": {"r": "ac5146cf65ca52a8", "py": "55eda5b8a1d63bbb", "diff": ["<R error, Python value>"]},
 "figshare_links.review.empty_paperlist": {"r": "8bffaee348234c20", "py": "d779687957246347", "diff": ["<root>"]}
 }

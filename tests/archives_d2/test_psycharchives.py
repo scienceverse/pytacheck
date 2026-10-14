@@ -56,7 +56,9 @@ def test_private_psycharchives_info(apis: object) -> None:
     assert info["pa_url"].iloc[0] == PA
     assert "International Cognitive Ability Resource" in info["PA_title"].iloc[0]
     assert "Doebler" in info["PA_authors"].iloc[0]
-    assert "restrictedAccess" in info["PA_license"].iloc[0]
+    # dc.rights is the access level; the licence is dc.rights.license
+    assert info["PA_rights"].iloc[0] == "restrictedAccess"
+    assert info["PA_license"].iloc[0] == "Terms for individual files apply"
 
     files = info["files"].iloc[0]
     # only public bitstreams are returned by the API (readme is public; the
@@ -82,6 +84,8 @@ def test_psycharchives_file_download(apis: object) -> None:
     rights = files.attrs["rights"]
     assert list(rights.values()) == ["restrictedAccess"]
     assert list(rights) == [PA]
+    # the licence travels separately from the access level
+    assert files.attrs["license"] == {PA: "Terms for individual files apply"}
 
 
 # --------------------------------------------------------------------------- more
@@ -102,7 +106,7 @@ def test_dspace_legacy_parse_shapes() -> None:
             "",
             "20.500.12034/17526.",
             f"{BONN};",
-            "https://DSPACE.UT.EE/handle/10062/12345.",
+            "https://DATASTORRE.STIR.AC.UK/handle/11667/12345.",
             "see 12.34/abc and 20.500.12034/1",
         ]
     )
@@ -112,8 +116,8 @@ def test_dspace_legacy_parse_shapes() -> None:
     assert parsed["handle"].iloc[3] == "20.500.12034/17526"
     assert parsed["host"].iloc[4] == "bonndoc.ulb.uni-bonn.de"
     assert parsed["handle"].iloc[4] == "20.500.11811/1234"
-    assert parsed["host"].iloc[5] == "dspace.ut.ee"  # lower-cased
-    assert parsed["handle"].iloc[5] == "10062/12345"
+    assert parsed["host"].iloc[5] == "datastorre.stir.ac.uk"  # lower-cased
+    assert parsed["handle"].iloc[5] == "11667/12345"
     # the first handle-shaped string wins; the host comes from the PsychArchives prefix
     assert parsed["handle"].iloc[6] == "12.34/abc"
     assert parsed["host"].iloc[6] == "www.psycharchives.org"
@@ -125,13 +129,13 @@ def test_dspace_legacy_parse_shapes() -> None:
 def test_dspace_links_finds_every_host() -> None:
     paper = pc.test_paper(
         ["Also 20.500.12034/999 and bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234"],
-        [PA, "https://dspace.ut.ee/handle/10062/1/", "https://osf.io/x"],
+        [PA, "https://datastorre.stir.ac.uk/handle/11667/1/", "https://osf.io/x"],
     )
     hrefs = dspace_links(paper)["href"].tolist()
     # hyperlinks must name a known host (a hdl.handle.net link does not), bare
     # mentions may also be a PsychArchives handle
     assert hrefs == [
-        "https://dspace.ut.ee/handle/10062/1",
+        "https://datastorre.stir.ac.uk/handle/11667/1",
         "20.500.12034/999",
         "bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234",
     ]
@@ -147,6 +151,8 @@ def test_restricted_item_lists_no_files_but_keeps_rights(mock_api: object) -> No
         "pa_url", "name", "file_url", "file_location", "size", "isdir", "ext", "type"
     ]  # fmt: skip
     assert files.attrs["rights"] == {BONN: "openAccess"}
+    # an access level is not a licence
+    assert files.attrs["license"] == {BONN: None}
     assert files.attrs["doi"] == {BONN: None}
 
 
@@ -181,7 +187,8 @@ def test_info_joins_back_onto_a_links_table(apis: object) -> None:
     info = psycharchives_info(links, "href")
     assert len(info) == len(links) == 2  # rows differ in link_text, so both stay
     assert list(info.columns[: len(links.columns)]) == list(links.columns)
-    assert info["PA_license"].iloc[0] == "restrictedAccess"
+    assert info["PA_rights"].iloc[0] == "restrictedAccess"
+    assert info["PA_license"].iloc[0] == "Terms for individual files apply"
 
 
 def test_info_uses_the_listing_cache(apis: object) -> None:
@@ -222,3 +229,57 @@ def test_file_lists_name_the_items_not_found(apis: object) -> None:
         )
     with pytest.warns(UserWarning):
         assert _psycharchives_file_lists(None) == (None, [])
+
+
+# --------------------------------------------------------------------------- metacheck 0.3.3
+
+
+def test_dspace_ut_ee_is_dspace7_only() -> None:
+    from metacheck.archives.dspace7 import DSPACE7_HOSTS
+
+    assert "dspace.ut.ee" not in DSPACE_LEGACY_HOSTS
+    assert "dspace.ut.ee" in DSPACE7_HOSTS
+    assert "datastorre.stir.ac.uk" in DSPACE_LEGACY_HOSTS
+    paper = pc.test_paper(url=["https://dspace.ut.ee/handle/10062/1"])
+    assert len(dspace_links(paper)) == 0
+
+
+def test_info_reads_metadata_and_bitstreams_in_one_request(apis: object) -> None:
+    requests = apis.calls  # type: ignore[attr-defined]
+    info = _psycharchives_info(PA)
+    assert [str(c.request.url) for c in requests] == [
+        "https://www.psycharchives.org/rest/handle/20.500.12034/17526?expand=metadata,bitstreams"
+    ]
+    assert info["files"].iloc[0]["name"].tolist() == ["readme.txt"]
+    assert info["PA_rights"].iloc[0] == "restrictedAccess"
+
+
+def test_info_reads_a_dspace5_item(mock_api: object) -> None:
+    # a numeric id instead of a uuid, the licence in dc.rights, retrieve links
+    # from the REST root; only the ORIGINAL bundle (and a bitstream without a
+    # bundle) is listed
+    info = _psycharchives_info("https://datastorre.stir.ac.uk/handle/11667/42")
+    assert "error" not in info.columns
+    assert info["PA_title"].iloc[0] == "A DSpace 5 dataset"
+    assert info["PA_rights"].iloc[0] == "CC-BY 4.0"
+    assert info["PA_license"].iloc[0] == "CC-BY 4.0"
+    files = info["files"].iloc[0]
+    assert files["name"].tolist() == ["data.csv", "no-bundle.txt"]
+    assert files["retrieve"].tolist() == [
+        "https://datastorre.stir.ac.uk/rest/bitstreams/101/retrieve",
+        "https://datastorre.stir.ac.uk/rest/bitstreams/104/retrieve",
+    ]
+
+
+def test_info_asks_separately_when_expand_is_ignored(mock_api: object) -> None:
+    info = _psycharchives_info("https://datastorre.stir.ac.uk/handle/11667/43")
+    assert info["PA_rights"].iloc[0] == "embargoedAccess"
+    # no dc.rights.license, so the licence address is used
+    assert info["PA_license"].iloc[0] == "https://creativecommons.org/licenses/by/4.0/"
+    assert info["files"].iloc[0]["retrieve"].tolist() == [
+        "https://datastorre.stir.ac.uk/rest/bitstreams/201/retrieve"
+    ]
+    files = psycharchives_file_download("https://datastorre.stir.ac.uk/handle/11667/43")
+    assert files.attrs["rights"] == {
+        "https://datastorre.stir.ac.uk/handle/11667/43": "embargoedAccess"
+    }

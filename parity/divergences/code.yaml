@@ -173,7 +173,12 @@
 "mod_repo_check/repo_check.dspace.found_and_unfound":
   kind: r_bug_fixed
   ref: U43
-  reason: an unknown DSpace item beside a found one is kept, flagged "invalid or inaccessible DSpace item" (an empty repository, so yellow); R leaves it unflagged and drops it with the repositories without files
+  reason: an unknown DSpace item beside a found one is kept, flagged "invalid or inaccessible DSpace item" (an empty repository, so yellow); R leaves it unflagged and drops it with the repositories without files. The found item's licence is its dc.rights.license, not the access status in dc.rights (UX-dspace-2)
+"mod_repo_check/repo_check.dspace.psycharchives": &ux_dspace_2_rc
+  kind: r_bug_fixed
+  ref: UX-dspace-2
+  reason: "a PsychArchives/legacy DSpace item's licence is its dc.rights.license (else dc.rights.uri), not the access status in dc.rights ('restrictedAccess', 'openAccess'), as metacheck 0.3.3"
+"mod_repo_check/repo_check.dspace.bonndoc": *ux_dspace_2_rc
 "mod_repo_check_review/repo_check.module.empty_paper": &u79_rc
   kind: r_bug_fixed
   ref: U79

@@ -1,0 +1,24 @@
+{
+  "_embedded": {
+    "bitstreams": [
+      {
+        "name": "data.tar.gz",
+        "sizeBytes": "2048",
+        "checkSum": {
+          "value": "abc"
+        },
+        "_links": {
+          "content": {
+            "href": "https://x/content"
+          }
+        }
+      },
+      {
+        "name": "README",
+        "sizeBytes": null,
+        "checkSum": {},
+        "_links": {}
+      }
+    ]
+  }
+}

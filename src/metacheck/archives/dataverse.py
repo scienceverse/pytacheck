@@ -32,6 +32,7 @@ import pandas as pd
 from metacheck._r import as_character, compile_r, grepl, gsub, plural, r_round, sub
 from metacheck._values import as_float, field, is_missing
 from metacheck.archives._atomic import atomic_write
+from metacheck.archives._memo import session_memo
 
 if TYPE_CHECKING:
     import httpx
@@ -1004,6 +1005,13 @@ def _download_file_table(
         downloaded = [False] * n
         extracted: list[int | None] = [None] * n
         keys = [None if is_missing(v) else str(v) for v in files["key"].tolist()]
+        # where a file goes inside the folder: ``rel`` (Figshare's folder/name)
+        # where the table has one, else its name
+        rels = (
+            [None if is_missing(v) else str(v) for v in files["rel"].tolist()]
+            if "rel" in files.columns
+            else keys
+        )
         ids = [None if is_missing(v) else str(v) for v in files["id"].tolist()]
         selfs = [None if is_missing(v) else str(v) for v in files["self"].tolist()]
         n_wanted = n - sum(omitted)
@@ -1074,7 +1082,7 @@ def _download_file_table(
             # a file with neither a name nor an id is still copied (file.path()
             # turns NA into "NA"), but its path is recorded as NA, so the
             # verification step marks it as not downloaded.
-            fname = keys[i] if keys[i] is not None and keys[i] != "" else ids[i]
+            fname = next((x for x in (rels[i], keys[i]) if x is not None and x != ""), ids[i])
             if not _inside(download_to, _paste(fname)):
                 continue  # divergence: R would write outside the folder (e.g. "../x")
             to = f"{download_to}/{_paste(fname)}"
@@ -1250,8 +1258,8 @@ def _dataverse_host_from_doi(doi: Any) -> Any:
 
     The installation a DOI belongs to, from its verified prefix (``None`` when
     the prefix is not on the allowlist). A prefix that several installations
-    share (the four DANS Data Stations share 10.17026) is resolved by
-    following the DOI's redirect (:func:`_dataverse_resolve_doi_host`). A
+    share (the four DANS Data Stations share 10.17026) is resolved from the
+    URL the DOI is registered to (:func:`_dataverse_resolve_doi_host`). A
     string gives a string, a sequence a list.
     """
     vals, scalar = _chr_values(doi)
@@ -1267,21 +1275,6 @@ def _dataverse_host_from_doi(doi: Any) -> Any:
         else:
             out.append(_dataverse_resolve_doi_host(d, candidates))
     return out[0] if scalar else out
-
-
-def _resolved_url(url: str) -> str | None:
-    """The URL a GET of *url* ends on, after redirects; ``None`` when it cannot be sent.
-
-    R: ``tryCatch(resp_url(req_perform(req_error(request(url), is_error = \\(r) FALSE))),
-    error = \\(e) NA)`` -- one try, any status.
-    """
-    from metacheck import http
-
-    try:
-        resp = http.request("GET", url, max_tries=1)
-    except Exception:
-        return None
-    return None if resp is None else str(resp.url)
 
 
 def _bare_host(host: str) -> str:
@@ -1306,29 +1299,47 @@ def _on_host(url_host: str, host: str) -> bool:
     return url_host == h or url_host.endswith("." + h)
 
 
+#: R ``.dataverse_doi_host_cache``: lower-cased DOI -> the host it was resolved
+#: to, for the session (dataverse_links() and dataverse_info() both resolve it)
+_DOI_HOST_CACHE = session_memo()
+
+
 def _dataverse_resolve_doi_host(doi: str, candidates: Sequence[str]) -> str:
     """Port of R/archive-dataverse.R::.dataverse_resolve_doi_host().
 
-    The candidate whose host the URL ``https://doi.org/<doi>`` redirects to,
-    else the first candidate (also when the DOI cannot be resolved).
+    The candidate whose host the URL *doi* is registered to is on, else the
+    first candidate (also when the DOI cannot be looked up). The registered
+    URL is read from doi.org's handle API instead of following the DOI's
+    redirect, which also downloaded the installation's landing page (0.35 s
+    instead of 3.8 s, measured by metacheck); a definite answer is
+    remembered for the session.
 
-    R takes the first candidate whose name occurs anywhere in the resolved
-    URL (``grepl(host, resolved, fixed = TRUE)``), so with the candidates
+    R took the first candidate whose name occurs anywhere in the URL
+    (``grepl(host, resolved, fixed = TRUE)``), so with the candidates
     ``rodbuk.pl`` and ``uj.rodbuk.pl``, in that order, a dataset on
-    ``uj.rodbuk.pl`` is given ``rodbuk.pl``. Here the resolved URL's host
-    name is compared: the candidate it equals, else the longest candidate it
-    is a subdomain of (U211).
+    ``uj.rodbuk.pl`` was given ``rodbuk.pl`` (metacheck 0.3.3 compares the
+    host name exactly). Here the URL's host name is compared: the candidate
+    it equals (``www.`` aside), else the longest candidate it is a subdomain
+    of (U211).
     """
-    resolved = _resolved_url(f"https://doi.org/{doi}")
+    from metacheck.archives.dspace7 import _handle_registered_url
+
+    key = doi.lower()
+    if key in _DOI_HOST_CACHE:
+        return cast("str", _DOI_HOST_CACHE[key])
+    resolved, ok = _handle_registered_url(doi)
+    host = candidates[0]
     url_host = None if resolved is None else _url_host(resolved)
     if url_host is not None:
-        for host in candidates:
-            if _bare_host(host) == url_host:
-                return host
+        exact = [h for h in candidates if _bare_host(h) == url_host]
         parents = [h for h in candidates if _on_host(url_host, h)]
-        if parents:
-            return max(parents, key=len)
-    return candidates[0]
+        if exact:
+            host = exact[0]
+        elif parents:
+            host = max(parents, key=len)
+    if ok:
+        _DOI_HOST_CACHE[key] = host
+    return host
 
 
 @functools.cache

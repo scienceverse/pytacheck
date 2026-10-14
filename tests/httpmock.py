@@ -47,6 +47,11 @@ from tests import llmreplies
 UPSTREAM_TESTS = (
     Path(__file__).resolve().parent.parent / "upstream" / "metacheck" / "tests" / "testthat"
 )
+#: recordings from metacheck's newer ``dev`` (its ``tests/testthat/apis``, copied
+#: as they are, e.g. from d52b3fd) for the requests that pytacheck makes since
+#: porting that code and that the pinned recordings lack; consulted after
+#: ``apis`` whenever a replay uses it
+APIS_DEV = Path(__file__).resolve().parent / "fixtures" / "apis_dev"
 _EXTENSIONS = {
     ".json": "application/json",
     ".html": "text/html; charset=utf-8",
@@ -253,6 +258,8 @@ def replay(*mock_dirs: str | Path, assert_all_called: bool = False) -> Iterator[
     roots = [
         Path(d) if Path(d).is_absolute() else UPSTREAM_TESTS / d for d in mock_dirs or ("apis",)
     ]
+    if UPSTREAM_TESTS / "apis" in roots:
+        roots.append(APIS_DEV)
 
     log = os.environ.get("PYTACHECK_LLM_INDEX_LOG")
 

@@ -395,6 +395,11 @@ def main() -> None:
     dataone()
     researchbox()
     copy_recorded()
+    # pytacheck's one-request DSpace lookups (as by an installation that
+    # ignores expand/embed), which go on to the recorded requests R makes
+    from tests.archives_d2.make_mocks import write_pytacheck_variants
+
+    write_pytacheck_variants(MOCKS)
 
 
 if __name__ == "__main__":

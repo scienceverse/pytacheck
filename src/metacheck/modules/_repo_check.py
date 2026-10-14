@@ -943,13 +943,17 @@ def list_dspace(
             ]
             if restricted:
                 repos.flag(restricted, "restricted access")
+        # the licence is dc.rights.license / dc.rights.uri; dc.rights is the
+        # access level ("restrictedAccess"), which metacheck reported as the
+        # licence before 0.3.3
         doi = attrs.get("doi") or None
-        if rights or doi:
+        license_ = attrs.get("license") or None
+        if rights or doi or license_:
             meta = r_frame(
                 [
                     ("repo_url", urls, "string"),
                     ("doi", _named_lookup(doi, urls), "string"),
-                    ("license", _named_lookup(rights, urls), "string"),
+                    ("license", _named_lookup(license_, urls), "string"),
                 ]
             )
         if pa is not None and len(pa) > 0:
@@ -1116,9 +1120,14 @@ def dataverse_row(record: dict[str, Any], f: Any) -> dict[str, Any]:
 
 
 def figshare_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
-    return _row(
+    row = _row(
         dollar(f, "name"), _as_chr(empty_or(dollar(f, "download_url"), None)), dollar(f, "size")
     )
+    # the file's folder in the article, where Figshare gives one (folder_structure)
+    path = _as_chr(empty_or(dollar(f, "path"), None))
+    if path is not None:
+        row["file_path"] = path
+    return row
 
 
 def dryad_row(record: dict[str, Any], f: Any) -> dict[str, Any]:

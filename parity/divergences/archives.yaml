@@ -598,3 +598,55 @@
   kind: better_logic
   ref: DX-osf-2
   reason: "github_tree_files() and gitlab_tree_files() take the repository name from the text alone, with no HEAD to its web page (metacheck d52b3fd): an API 404 is an invalid repository (no contents crawl), and several repositories at once are invalid"
+# DX-dspace-1 (placeholder, port of metacheck b5fe939: repository registries)
+"archives_d1/.figshare_vanity_hosts": &dx_dspace_1
+  kind: deliberate
+  ref: DX-dspace-1
+  reason: "the repository registries have metacheck 0.3.3's entries (#461/#464): Figshare's VTechData, USDA Ag Data Commons and Adelaide hosts and the UCL/VTechData/USDA/Adelaide DOI prefixes, DSpace 7's ecommons.cornell.edu and www.repository.cam.ac.uk, legacy DSpace's datastorre.stir.ac.uk; dspace.ut.ee is reached through DSpace 7 only"
+"archives_d1/.figshare_doi_prefix_hosts": *dx_dspace_1
+"archives_d1/.figshare_host_regex": *dx_dspace_1
+"archives_d2/.dspace7_hosts": *dx_dspace_1
+"archives_d2/.dspace7_host_regex": *dx_dspace_1
+"archives_d2/.dspace_legacy_hosts": *dx_dspace_1
+"archives_d2/.dspace_legacy_host_regex": *dx_dspace_1
+"archives_d2/.dspace_legacy_parse.shapes": *dx_dspace_1
+"archives_d2/dspace_links.mixed": *dx_dspace_1
+# DX-dspace-4 (placeholder, port of metacheck d52b3fd: PsychArchives/legacy DSpace)
+"archives_d2_review/.psycharchives_info.review.objects": &dx_dspace_4
+  kind: deliberate
+  ref: DX-dspace-4
+  reason: "psycharchives_info() also returns PA_rights (dc.rights, the access status), before PA_license, as metacheck 0.3.3 does"
+"archives_d2_review/.psycharchives_info.review.json_904": *dx_dspace_4
+"archives_d2_review/.psycharchives_info.review.json_905": *dx_dspace_4
+"archives_d2_review/.psycharchives_info.review.json_909": *dx_dspace_4
+"archives_d2_review/.psycharchives_info.review.arrays_911": *dx_dspace_4
+# UX-dspace-2 (placeholder, port of metacheck d52b3fd: PsychArchives/legacy DSpace licence and links)
+"archives_d2/.psycharchives_info.mock.apis": &ux_dspace_2
+  kind: r_bug_fixed
+  ref: UX-dspace-2
+  reason: "PA_license is the licence (dc.rights.license, else dc.rights.uri), not dc.rights' access status ('restrictedAccess'), which moves to the new PA_rights; a bitstream link from the REST root gets /rest in front (metacheck 0.3.3)"
+"archives_d2/.psycharchives_info.mock.bonndoc": *ux_dspace_2
+"archives_d2/psycharchives_info.mock.vector": *ux_dspace_2
+"archives_d2/psycharchives_info.mock.table": *ux_dspace_2
+"archives_d2_review/.psycharchives_info.review.arrays_910": *ux_dspace_2
+"archives_d2_review/psycharchives_info.review.table_collisions": *ux_dspace_2
+# UX-dspace-4 (placeholder, port of metacheck 80a7d37/d52b3fd: Figshare ids)
+"archives_d1/.figshare_id.shapes":
+  kind: r_bug_fixed
+  ref: UX-dspace-4
+  reason: "an institutional DOI whose digits run into letters (10.25375/19095317x, a hex code) has no article id, rather than the leading digits as one (metacheck 0.3.3, #465)"
+# UX-dspace-5 (placeholder, port of metacheck d52b3fd: Figshare folders)
+"archives_d1/figshare_info.mock.id_col_na_duplicated": &ux_dspace_5
+  kind: r_bug_fixed
+  ref: UX-dspace-5
+  reason: "each file entry gets `path`, its folder from the article's folder_structure and its name, so files in folders keep their place and same-named files no longer overwrite each other (metacheck 0.3.3)"
+"archives_d1/figshare_info.mock.links_table": *ux_dspace_5
+"archives_d1/figshare_info.mock.project": *ux_dspace_5
+"archives_d1/figshare_info.mock.collection_only": *ux_dspace_5
+"archives_d1/figshare_info.mock.vector": *ux_dspace_5
+"archives_d1/figshare_info.mock.collection": *ux_dspace_5
+"archives_d1_review/figshare_info.review.numeric_vector": *ux_dspace_5
+"archives_d1_review/figshare_info.review.first_unfound": *ux_dspace_5
+"archives_d1_review/figshare_info.review.id_col_is_id": *ux_dspace_5
+"archives_d1_review/figshare_info.review.object_files": *ux_dspace_5
+"archives_d2/researchdata4tu_info.mock.uuid_doi": *ux_dspace_5
