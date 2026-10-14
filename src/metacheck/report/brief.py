@@ -502,6 +502,36 @@ _MODULE_BULLETS: dict[str, Callable[[Any], list[str]]] = {
 }
 
 
+#: Sentences a module's summary drops in a brief report: information about how
+#: the check went, not something the author has to fix (metacheck 98105f6; D128).
+_BRIEF_SUMMARY_DROP: dict[str, tuple[re.Pattern[str], ...]] = {
+    "data_check": (
+        re.compile(
+            r"\n-  We grouped the files into \d+ study groups? \(.*?\)"
+            r"(?:, plus \d+ collection-level files? \(README/ro-crate metadata\))?"
+            r"(?:, and \d+ files? reused across studies \(referenced, not duplicated\))?\."
+        ),
+        re.compile(
+            r"\n-  The study-group step did not get an answer for \d+ files? "
+            r"\(the model request failed\); (?:it was|they were) grouped by the fallback "
+            r"rules instead\."
+        ),
+        re.compile(r" We detected demographic columns? for [^.]*\."),
+    ),
+}
+
+
+def _brief_summary_text(module: str, text: str) -> str:
+    """A module's summary as a brief report shows it (see :data:`_BRIEF_SUMMARY_DROP`).
+
+    metacheck leaves these sentences out while the module runs; pytacheck's
+    modules do not know the report type, so they are taken out when rendering.
+    """
+    for pattern in _BRIEF_SUMMARY_DROP.get(module, ()):
+        text = pattern.sub("", text)
+    return text
+
+
 def flagged_bullets(module_output: Any) -> list[str]:
     """Port of ``.report_flagged_bullets()``: a module's to-do items, as markdown bullets.
 

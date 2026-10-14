@@ -7,7 +7,7 @@
 "report_qmd.demo.marginal": {"r": "99a771e28c376537", "py": "edebecb4917346f7", "diff": ["[]"]},
 "report_qmd.no_paper": {"r": "ac5146cf65ca52a8", "py": "2463a24f23a26c68", "diff": ["<R error, Python value>"]},
 "report_qmd.test_paper.na_and_fail_only": {"r": "86ee8161d0f9b8d3", "py": "0222e7a39d71ce60", "diff": ["[]"]},
-"report_repository.default_modules": {"r": "267e74627d0231ee", "py": "52239152dcdf4cf8", "diff": ["file[]", "output.code_check.summary_text[]", "output.codebook_check.report[]"]},
+"report_repository.default_modules": {"r": "267e74627d0231ee", "py": "2eae1210f2eb08bd", "diff": ["file[]", "output.code_check.summary_text[]", "output.codebook_check.report[]", "output.data_check.summary_text[]"]},
 "report_repository.stand_in": {"r": "c5cf0212b72a2dbc", "py": "4e7c0ef44d6a5e33", "diff": ["file[]"]},
 "scroll_table.colwidths_chr": {"r": "319830222b3434b0", "py": "a0b0fa8cf4059037", "diff": ["[]"]},
 "scroll_table.colwidths_frac": {"r": "2801c1e6b1322064", "py": "8000d14c62316070", "diff": ["[]"]},

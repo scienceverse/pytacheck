@@ -62,20 +62,24 @@
 "mod_data_check/data_check.qualtrics": &u82_file_contains_survey
   kind: r_bug_fixed
   ref: U82
-  reason: "\"1 file contains survey data\" (metacheck: \"contain\")"
-  r_text: [["1 file contain survey data", "1 file contains survey data"]]
+  reason: "\"1 file contains survey data\" (metacheck: \"contain\"); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)"
+  r_text: [["1 file contain survey data", "1 file contains survey data"], ['\n-  The study-group step did not get an answer for \d+ files? \(the model request failed\); (?:it was|they were) grouped by the fallback rules instead\.', '', regex]]
 "mod_data_check/data_check.careless_missing": *u82_file_contains_survey
 "mod_data_check/data_check.careless":
   kind: r_bug_fixed
   ref: U82
-  reason: "\"1 distinct respondent was flagged\" (metacheck: \"were\")"
-  r_text: [["1 distinct respondent were flagged", "1 distinct respondent was flagged"]]
-"mod_data_check/data_check.careless_two": &u82_of_these_was
+  reason: "\"1 distinct respondent was flagged\" (metacheck: \"were\"); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)"
+  r_text: [["1 distinct respondent were flagged", "1 distinct respondent was flagged"], ['\n-  The study-group step did not get an answer for \d+ files? \(the model request failed\); (?:it was|they were) grouped by the fallback rules instead\.', '', regex]]
+"mod_data_check/data_check.careless_two":
+  kind: r_bug_fixed
+  ref: U82
+  reason: "\"Of these, **1 was flagged\" (metacheck: \"were\"); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)"
+  r_text: [["Of these, **1 were flagged", "Of these, **1 was flagged"], ['\n-  The study-group step did not get an answer for \d+ files? \(the model request failed\); (?:it was|they were) grouped by the fallback rules instead\.', '', regex]]
+"mod_data_check/data_check.codebook_chain": &u82_of_these_was
   kind: r_bug_fixed
   ref: U82
   reason: "\"Of these, **1 was flagged\" (metacheck: \"were\")"
   r_text: [["Of these, **1 were flagged", "Of these, **1 was flagged"]]
-"mod_data_check/data_check.codebook_chain": *u82_of_these_was
 "mod_data_check/data_check.psychsci": *u82_of_these_was
 "mod_data_check/data_check_tables.spreadsheets": &u82_merged_range_breaks
   kind: r_bug_fixed
@@ -83,12 +87,16 @@
   reason: "a spreadsheet finding with a count of one takes a singular verb (\"1 merged range ... breaks\", \"1 column is empty or has a blank header\"; metacheck: \"break\", \"have\")"
   r_text: [["\\b1 merged range (\\([^)]*\\)) break the", "1 merged range \\1 breaks the", "regex"], ["1 column is empty or have a blank header", "1 column is empty or has a blank header"]]
 "mod_data_check/dv_spreadsheet_findings.fixture": *u82_merged_range_breaks
-"mod_data_check_review/review.sheets": &u82_column_is_empty
+"mod_data_check_review/review.sheets":
+  kind: r_bug_fixed
+  ref: U82
+  reason: "\"1 column is empty or has a blank header\" (metacheck: \"have\"); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)"
+  r_text: [["1 column is empty or have a blank header", "1 column is empty or has a blank header"], ['\n-  The study-group step did not get an answer for \d+ files? \(the model request failed\); (?:it was|they were) grouped by the fallback rules instead\.', '', regex]]
+"mod_data_check_review/review_tables.sheets": &u82_column_is_empty
   kind: r_bug_fixed
   ref: U82
   reason: "\"1 column is empty or has a blank header\" (metacheck: \"have\")"
   r_text: [["1 column is empty or have a blank header", "1 column is empty or has a blank header"]]
-"mod_data_check_review/review_tables.sheets": *u82_column_is_empty
 "mod_data_check_review/review.dv_spreadsheet_findings.handmade": *u82_column_is_empty
 "mod_ref_pubpeer_summary/ref_pubpeer.no_comments": &u82_we_checked_reference
   kind: r_bug_fixed

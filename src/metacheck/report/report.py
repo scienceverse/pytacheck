@@ -656,13 +656,15 @@ class _SummaryRow:
 
 
 def _summary_row(mo: ModuleOutput, brief: bool) -> _SummaryRow:
-    from metacheck.report.brief import flagged_bullets
+    from metacheck.report.brief import _brief_summary_text, flagged_bullets
 
     tl = mo.traffic_light if mo.traffic_light is not None else "info"
     emoji = emojis.get(f"tl_{tl}")
     summary_text = mo.summary_text if mo.summary_text is not None else ""
     if not isinstance(summary_text, str):
         summary_text = " ".join("NA" if s is None else str(s) for s in _flatten(summary_text))
+    if brief:
+        summary_text = _brief_summary_text(str(mo.module), summary_text)
     # a summary that starts with a line break is a markdown list: it goes
     # under the row instead of into its one line
     is_list = summary_text[:1] == "\n"

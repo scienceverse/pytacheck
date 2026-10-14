@@ -7,9 +7,9 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
-### Ported from metacheck: the R changes up to d52b3fd (0.3.3.1, 14 October)
+### Ported from metacheck: the R changes up to 98105f6 (0.3.3.2, 14 October)
 
-These port the changes metacheck made between `f1062b4` (the pinned commit, which does not move) and `d52b3fd`: the data check and repository changes and the other fixes. The R Shiny apps are not ported (pytacheck's app is its own). Each change that differs from the pinned R is in docs/UPSTREAM_ISSUES.md (D87 to D127, U218 to U240).
+These port the changes metacheck made between `f1062b4` (the pinned commit, which does not move) and `98105f6`: the data check and repository changes and the other fixes. The R Shiny apps are not ported (pytacheck's app is its own). Each change that differs from the pinned R is in docs/UPSTREAM_ISSUES.md (D87 to D128, U218 to U241).
 
 #### Data checks: one file type per extension, file naming and new extensions
 
@@ -18,6 +18,7 @@ These port the changes metacheck made between `f1062b4` (the pinned commit, whic
 - **Changed:** `check_file_naming()` no longer reports runs of 8 digits that are not valid YYYYMMDD dates, which flagged IDs and accession numbers. repo_check's naming table shows "Required"/"Suggestion" instead of "bad"/"suggestion" (D91).
 - **Changed:** in the data package checks (`datapackage::default` and the TU/e preset `datapackage::tue`), a `.json` file now counts as data and an `.html` file as documentation, so a rendered report no longer stands in for code (D89). The TU/e preset's own file-name date suggestion is unchanged.
 - **Added:** `.rdat`, `.str` (STRUCTURE) and `.dtg` (DTAG) files are recognised as data, and NetLogo (`.nlogo`) and Julia (`.jl`) files as code (D92).
+- **Fixed:** with LLM use off, data_check's study-group step sends nothing to a model and groups the files by its rules alone. Before, every such run said "The study-group step did not get an answer for N files (the model request failed)" (U241).
 - **Fixed:** data_check downloads and opens archives (`.tar.gz`, a zip it could not peek into, ...) under the default `download = "data"`; before, they were never fetched (U220).
 
 #### Dryad: complete listings, SHA-256 checks and a note on the API key
@@ -76,6 +77,7 @@ These port the changes metacheck made between `f1062b4` (the pinned commit, whic
 - **Changed:** the report's summary is a list of linked rows, a module's details have no extra box, and "How It Works" links the module's chapter of the metacheck manual (D115).
 - **Changed:** codebook_check identifies scales and tasks only with `extract_scales=True` (experimental, unvalidated), and its summary no longer counts documented variables missing from the data (D117).
 - **Changed:** code_check's summary names the files without comments and the files that load libraries in several places, and mentions setwd()/install.packages() only when found (D118).
+- **Changed:** in a brief report, data_check's summary no longer says how the files were grouped into studies, whether the study-group step got an answer, or which demographic columns were found; the full report keeps them (D128).
 - **Fixed:** a module whose title has punctuation (e.g. "Funding Check (Overinclusive)") gets a valid heading id, so its heading shows no stray `{#...}` and the summary links to it (U232).
 
 #### Reproducibility: Python code

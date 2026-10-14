@@ -202,6 +202,15 @@ differences:
       codebook_check reports data_check's table, which with no readable data file is the
       column table (U98) where metacheck's is the validation table
   - module: data_check
+    input: [repos/basic, repos/careless, repos/qualtrics, repos/encoding, repos/yellow, code_files]
+    field: summary_text
+    match: values
+    kind: r_bug_fixed
+    ref: U241
+    reason: >-
+      with LLM use off nothing is sent to a model for study groups; metacheck sends the files,
+      llm() refuses, and the summary says the study-group step got no answer for them
+  - module: data_check
     input: repos/spreadsheets
     field: summary_text
     match: values

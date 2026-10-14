@@ -263,7 +263,10 @@
 "mod_code_review/local_path.empty_py": *dx_report_5_13
 "mod_code_review/local_path.parse_error_pinned": *dx_report_5_13
 "mod_code_review/local_path.pins": *dx_report_5_13
-"report/report_repository.default_modules": *dx_report_5_13
+"report/report_repository.default_modules":
+  kind: deliberate
+  ref: D118
+  reason: "code_check's summary names the files without comments and the files that load libraries in several places, and lists setwd()/install.packages() lines only when found (metacheck 7208868); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)"
 "mod_code/code_check.mixed": &dx_report_5_14
   kind: deliberate
   ref: D118

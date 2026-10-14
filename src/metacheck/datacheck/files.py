@@ -1399,7 +1399,10 @@ def _data_group_llm_impl(
         answered = set(ok_idx)
         return [rows[k - 1] for k in range(1, len(rows) + 1) if k not in answered]
 
-    send_rows = [i for i in range(n) if send[i]]
+    # With LLM use off, llm() refuses, and that refusal was caught above like a
+    # failed request, so every file came back unanswered. Nothing is sent; the
+    # files go straight to the fallback rules below (metacheck 98105f6; U241).
+    send_rows = [i for i in range(n) if send[i]] if _llm_use() else []
     unresolved: list[int] = []
     for start in range(0, len(send_rows), batch_size):
         rows = send_rows[start : start + batch_size]
