@@ -7,6 +7,10 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Links to the Metacheck app
+
+- **Changed:** the README, docs/TRY.md and the links at the top and bottom of the app's page point to the [Metacheck app](https://metacheckserve.metacheck.src.surf-hosted.nl/) on SURF Research Cloud, R metacheck's own app for checking a paper or a data package in the browser with nothing to install.
+
 ### Performance: a C reader of `.rds` and `.RData` files
 
 - **Added:** R's serialization format, which `data_read_head()` and `data_check` read `.rds` and `.RData` files with, is read by a small C extension (`metacheck.datacheck._rdata_c`). It builds the same Python objects as the Python reader, which stays as the fallback (an ASCII stream, `saveRDS(ascii = TRUE)`, is still read by it). An 8 MB rstanarm model (22 MB uncompressed) is parsed in 0.2 s, where the Python reader took 2.4 to 3.9 s; R's `readRDS()` takes 0.24 s.

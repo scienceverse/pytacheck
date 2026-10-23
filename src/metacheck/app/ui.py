@@ -52,9 +52,12 @@ MAIN_PAGE_NAME = "Check a paper"
 REPO_URL = "https://github.com/scienceverse/pytacheck"
 SCIENCEVERSE_URL = "https://www.scienceverse.org/"
 BIBR_DEMO_URL = "https://try.bibr.org/"
+#: Metacheck's own site on SURF Research Cloud: R metacheck's paper app and check pages
+METACHECK_APP_URL = "https://metacheckserve.metacheck.src.surf-hosted.nl/"
 #: The links at the top and bottom of the page: (label, url).
 LINKS = (
     ("ScienceVerse", SCIENCEVERSE_URL),
+    ("Metacheck app", METACHECK_APP_URL),
     ("bibr demo", BIBR_DEMO_URL),
     ("Metacheck (R) on GitHub", "https://github.com/scienceverse/metacheck"),
     ("Pytacheck on GitHub", REPO_URL),

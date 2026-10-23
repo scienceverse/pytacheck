@@ -2,7 +2,7 @@
 
 **Check research outputs for best practices — in Python.**
 
-**Try it:** a preview app that runs on your own computer, installed with one command. See [docs/TRY.md](https://github.com/scienceverse/pytacheck/blob/main/docs/TRY.md).
+**Try it:** to check a paper or a data package in the browser, with nothing to install, use the [Metacheck app](https://metacheckserve.metacheck.src.surf-hosted.nl/) on SURF Research Cloud (R metacheck). To run the Python preview app on your own computer, installed with one command, see [docs/TRY.md](https://github.com/scienceverse/pytacheck/blob/main/docs/TRY.md).
 
 metacheck (Python) is a fast, Python-native port of ScienceVerse's
 [metacheck](https://github.com/scienceverse/metacheck) R package, designed to work

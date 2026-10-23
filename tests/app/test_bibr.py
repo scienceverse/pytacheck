@@ -698,6 +698,7 @@ def test_the_page_links_scienceverse_and_the_three_repositories() -> None:
     assert "1.0" in top and ui.INTRO in top
     for url in (
         "https://www.scienceverse.org/",
+        "https://metacheckserve.metacheck.src.surf-hosted.nl/",
         "https://try.bibr.org/",
         "https://github.com/scienceverse/metacheck",
         "https://github.com/scienceverse/pytacheck",
