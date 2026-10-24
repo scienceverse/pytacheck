@@ -1,0 +1,41 @@
+# Advisories the "Audit dependencies" step of ci.yml ignores while the lock holds pillow 12.
+# All are pillow advisories fixed only in pillow 13.0.0, which gradio (the app extra) does not
+# allow yet: gradio 6.30.0 requires pillow<13. The step stops ignoring them once pillow 13 is
+# locked; delete this file then. A new advisory, for pillow or anything else, still fails.
+CVE-2026-112390
+CVE-2026-112391
+CVE-2026-112392
+CVE-2026-112393
+CVE-2026-112395
+CVE-2026-112396
+CVE-2026-112397
+CVE-2026-112398
+CVE-2026-112399
+CVE-2026-112400
+CVE-2026-112401
+CVE-2026-112402
+CVE-2026-112404
+CVE-2026-112405
+CVE-2026-112406
+CVE-2026-112891
+CVE-2026-112892
+CVE-2026-112893
+CVE-2026-112894
+CVE-2026-112895
+CVE-2026-112896
+CVE-2026-112897
+CVE-2026-112899
+CVE-2026-112900
+CVE-2026-112901
+CVE-2026-114501
+CVE-2026-96636
+CVE-2026-96637
+CVE-2026-96638
+CVE-2026-96639
+CVE-2026-96640
+CVE-2026-96641
+CVE-2026-96642
+CVE-2026-96643
+CVE-2026-96644
+CVE-2026-96778
+GHSA-78g4-xqwv-q3g8

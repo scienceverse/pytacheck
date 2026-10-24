@@ -184,6 +184,26 @@ def _no_internet(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
     monkeypatch.setattr(socket.socket, "connect_ex", guarded_connect_ex)
 
 
+# -- hygiene: a test never opens the real browser -----------------------------------
+#
+# A sign-in or launch a test forgets to stub calls webbrowser.open for real and
+# opens a tab on the machine running the suite (the device sign-in's fake
+# https://bibr.example.org/device?user_code=... page, for one). That fails the
+# test there and then; a test that wants to see what was opened patches
+# webbrowser.open itself, as tests/app/test_launch.py does.
+
+
+@pytest.fixture(autouse=True)
+def _no_browser(monkeypatch: pytest.MonkeyPatch) -> None:
+    import webbrowser
+
+    def refuse(url: str, *_a: Any, **_k: Any) -> bool:
+        raise AssertionError(f"a test tried to open {url} in the real browser; stub the opener")
+
+    for name in ("open", "open_new", "open_new_tab"):
+        monkeypatch.setattr(webbrowser, name, refuse)
+
+
 # -- hygiene: tests write to tmp_path, never into the checkout's root ---------------
 #
 # A function that saves files takes metacheck's default ``save_path = "."``

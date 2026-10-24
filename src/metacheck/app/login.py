@@ -80,7 +80,7 @@ def device_login(
     say: Callable[[str], None],
     *,
     client: Any | None = None,
-    open_url: Callable[[str], bool] = webbrowser.open,
+    open_url: Callable[[str], bool] | None = None,
     sleep: Callable[[float], None] = time.sleep,
     clock: Callable[[], float] = time.monotonic,
     name: str = "metacheck",
@@ -115,7 +115,9 @@ def device_login(
 
         say("")
         say(f"Your sign-in code is: {user_code}")
-        opened = _openable(link) and bool(open_url(link))
+        # looked up at call time, so the tests' guard on webbrowser.open covers it
+        opener = open_url or webbrowser.open
+        opened = _openable(link) and bool(opener(link))
         if opened:
             say("The browser should open now. Check that it shows this code, then press Approve.")
         elif link:

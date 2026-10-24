@@ -141,7 +141,9 @@ def test_a_lost_connection_while_waiting_gives_up_after_three_tries() -> None:
 
     client = httpx.Client(transport=httpx.MockTransport(flaky))
     with pytest.raises(login.LoginFailed, match="connection"):
-        login.device_login(BASE, lambda _t: None, client=client, sleep=lambda _s: None)
+        login.device_login(
+            BASE, lambda _t: None, client=client, sleep=lambda _s: None, open_url=lambda _u: True
+        )
     assert calls["n"] == 3
 
 
