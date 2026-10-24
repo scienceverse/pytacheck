@@ -7,6 +7,11 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Dependencies
+
+- **Changed:** the lock takes aiohttp 3.14.5, brotli 1.2.1, certifi 2026.10.23, filelock 4.2.4 and pypdf 6.21.2, for advisories published in October 2026.
+- **Changed:** CI's dependency audit ignores pillow 12's advisories while pillow 12 is locked (`.github/pip-audit-pillow12.txt`): they are fixed only in pillow 13, which gradio 6.30 does not allow yet. Any other advisory still fails the audit.
+
 ### Links to the Metacheck app
 
 - **Changed:** the README, docs/TRY.md and the links at the top and bottom of the app's page point to the [Metacheck app](https://metacheckserve.metacheck.src.surf-hosted.nl/) on SURF Research Cloud, R metacheck's own app for checking a paper or a data package in the browser with nothing to install.
