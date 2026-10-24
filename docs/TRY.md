@@ -2,7 +2,9 @@
 
 This is a preview of metacheck in Python. It runs on your own computer: you give it a paper, and it checks the paper and writes a report.
 
-If you were sent a link to a hosted copy, you can open that link instead and install nothing. It runs the same app on a server.
+To check a paper without installing anything, open the [Metacheck app](https://metacheckserve.metacheck.src.surf-hosted.nl/) on SURF Research Cloud. It is R metacheck's own app, run by the Metacheck team: it checks a paper in the browser and also has the TU/e data manager check of a data package. A paper you upload there is sent to that server.
+
+If you were sent a link to a hosted copy of this Python app, you can open that link instead and install nothing. It runs the same app on a server.
 
 ## Install it
 

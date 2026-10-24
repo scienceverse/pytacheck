@@ -236,7 +236,15 @@ jobs:
           "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc; print(pc.module_run(pc.demopaper(), 'marginal'))"
           "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc, metacheck as mc; assert mc.__version__ == pc.__version__"
       - name: Audit dependencies
-        run: uvx pip-audit --strict -r <(uv export --locked --no-hashes --no-dev --all-extras --no-emit-project)
+        # pillow 12's advisories are fixed only in pillow 13, which gradio does not allow yet;
+        # they are ignored while pillow 12 is locked (.github/pip-audit-pillow12.txt says why).
+        run: |
+          uv export --locked --no-hashes --no-dev --all-extras --no-emit-project > "$RUNNER_TEMP/audit-requirements.txt"
+          ignore=()
+          if grep -q '^pillow==12\.' "$RUNNER_TEMP/audit-requirements.txt"; then
+            while read -r id; do ignore+=(--ignore-vuln "$id"); done < <(grep -v '^#' .github/pip-audit-pillow12.txt)
+          fi
+          uvx pip-audit --strict "${ignore[@]}" -r "$RUNNER_TEMP/audit-requirements.txt"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist
