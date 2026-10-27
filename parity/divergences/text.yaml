@@ -399,7 +399,3 @@
   reason: papers that share an ID are searched as separate papers, each with its own count; metacheck pools them (3 and 3 here, 2 and 1 in pytacheck); the guidance cites 'Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)' (U3)
   r_text: [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]
   xfail: true
-"mod_effect_size/stat_effect_size.d_branches":
-  kind: r_bug_fixed
-  ref: U218
-  reason: "'d_z = 0.45' (a subscript after an underscore) is read and checked, a match under the paired dz assumption (metacheck: 'No parseable d effect size found.', indeterminate)"

@@ -221,9 +221,7 @@
         "v": [
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 1 codebook/README/label source and 4 data columns across 1 file.",
-          "No codebook or README documentation was found, so no data columns could be matched to variable definitions.",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "No codebook or README documentation was found, so no data columns could be matched to variable definitions."
         ]
       },
       {
@@ -480,6 +478,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

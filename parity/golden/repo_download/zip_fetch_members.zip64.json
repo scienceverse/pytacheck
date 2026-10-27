@@ -49,13 +49,13 @@
       {
         "t": "chr",
         "v": [
-          "Zip64 entry (size/offset not stored in 32 bits)",
+          "Zip64 entry whose size/offset could not be read from the archive's listing",
           "short read (range request returned the wrong length)",
-          "Zip64 entry (size/offset not stored in 32 bits)"
+          "Zip64 entry whose size/offset could not be read from the archive's listing"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

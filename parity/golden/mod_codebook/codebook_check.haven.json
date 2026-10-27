@@ -290,9 +290,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 2 codebook/README/label sources and 8 data columns across 2 files.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## labelled.dta\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"age\", \"q1\", \"sex\"), Documented = c(\"no\", \n\"yes\", \"yes\", \"yes\"), Label = c(NA, \"Age in years\", \"1\", \"Sex\"\n), \"Codebook Variable\" = c(NA, \"age\", \"q1\", \"sex\"), Source = c(NA, \n\"labelled.dta\", \"labelled.dta\", \"labelled.dta\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\")), row.names = c(1L, 3L, 5L, \n7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## labelled.sav\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"age\", \"q1\", \"sex\"), Documented = c(\"no\", \n\"yes\", \"yes\", \"yes\"), Label = c(NA, \"Age in years\", \"1\", \"Sex\"\n), \"Codebook Variable\" = c(NA, \"age\", \"q1\", \"sex\"), Source = c(NA, \n\"labelled.dta\", \"labelled.dta\", \"labelled.dta\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\")), row.names = c(2L, 4L, 6L, \n8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "::: {.panel-tabset}\n\n## labelled.dta\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"age\", \"q1\", \"sex\"), Documented = c(\"no\", \n\"yes\", \"yes\", \"yes\"), Label = c(NA, \"Age in years\", \"1\", \"Sex\"\n), \"Codebook Variable\" = c(NA, \"age\", \"q1\", \"sex\"), Source = c(NA, \n\"labelled.dta\", \"labelled.dta\", \"labelled.dta\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\")), row.names = c(1L, 3L, 5L, \n7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## labelled.sav\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"age\", \"q1\", \"sex\"), Documented = c(\"no\", \n\"yes\", \"yes\", \"yes\"), Label = c(NA, \"Age in years\", \"1\", \"Sex\"\n), \"Codebook Variable\" = c(NA, \"age\", \"q1\", \"sex\"), Source = c(NA, \n\"labelled.dta\", \"labelled.dta\", \"labelled.dta\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\")), row.names = c(2L, 4L, 6L, \n8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
         ]
       },
       {
@@ -589,6 +587,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

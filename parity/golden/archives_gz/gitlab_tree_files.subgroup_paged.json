@@ -27,7 +27,7 @@
       },
       {
         "t": "df",
-        "nrow": 5,
+        "nrow": 4,
         "names": [
           "repo",
           "clean_repo",
@@ -44,14 +44,12 @@
               "https://gitlab.com/gzorg/sub/glproj",
               "https://gitlab.com/gzorg/sub/glproj",
               "https://gitlab.com/gzorg/sub/glproj",
-              "https://gitlab.com/gzorg/sub/glproj",
               "https://gitlab.com/gzorg/sub/glproj"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "gzorg/sub/glproj",
               "gzorg/sub/glproj",
               "gzorg/sub/glproj",
               "gzorg/sub/glproj",
@@ -64,7 +62,6 @@
               "README.md",
               "d1.csv",
               "run.py",
-              "x.json",
               "x.json"
             ]
           },
@@ -74,7 +71,6 @@
               "README.md",
               "data/d1.csv",
               "src/run.py",
-              "x.json",
               "x.json"
             ]
           },
@@ -84,7 +80,6 @@
               "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/README.md",
               "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/data/d1.csv",
               "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/src/run.py",
-              "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/x.json",
               "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/x.json"
             ]
           },
@@ -94,7 +89,6 @@
               1234,
               56,
               789,
-              null,
               null
             ]
           },
@@ -103,7 +97,6 @@
             "v": [
               "text",
               "data",
-              "code",
               "code",
               "data"
             ]
@@ -124,6 +117,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

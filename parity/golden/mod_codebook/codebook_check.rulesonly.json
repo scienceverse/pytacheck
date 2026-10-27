@@ -289,48 +289,48 @@
             "t": "chr",
             "v": [
               null,
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule"
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium"
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched"
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           }
         ]
@@ -340,11 +340,7 @@
         "v": [
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 0 codebook/README/label sources and 11 data columns across 1 file.",
-          "No codebook or README documentation was found, so no data columns could be matched to variable definitions.",
-          "#### Scales",
-          "We detected 1 column group (by shared abbreviation) that look like scales; 1 was matched to a named instrument from the paper text or dictionary. Groups we could not name are listed too — they are real scale-like column families whose instrument the manuscript did not identify. Identified scales are exported in the OpenScales OSD structure.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"s.csv\", Abbrev = \"PANAS\", Columns = 10L, \n    \"Max item\" = \"10\", Scale = \"Positive and Negative Affect Schedule\", \n    Confidence = \"medium\", Source = \"matched\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 40, FALSE)\n```\n",
-          "To let this tool (and anyone reusing the data) identify these scales with **high confidence**:\n- **Name the instrument in the manuscript with its abbreviation** — e.g. \"the Breakup Distress Scale (BDS)\" — matching the column prefix.\n- **Add a codebook** giving the item wording, or state the number of items (\"a 15-item scale\")."
+          "No codebook or README documentation was found, so no data columns could be matched to variable definitions."
         ]
       },
       {
@@ -430,13 +426,13 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -564,457 +560,7 @@
       {
         "t": "list",
         "names": null,
-        "v": [
-          {
-            "t": "list",
-            "names": [
-              "osd_version",
-              "definition"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "1.0"
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "scale_info",
-                  "likert_options",
-                  "items",
-                  "dimensions",
-                  "scoring",
-                  "metacheck"
-                ],
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "name",
-                      "code",
-                      "abbreviation"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Positive and Negative Affect Schedule"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "positive_and_negative_affect_schedule"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "PANAS"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "points",
-                      "min",
-                      "max",
-                      "order",
-                      "source"
-                    ],
-                    "v": [
-                      {
-                        "t": "int",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "dbl",
-                        "v": [
-                          1
-                        ]
-                      },
-                      {
-                        "t": "dbl",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "ascending"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "observed"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": [
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_5"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_5"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_6"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_6"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_7"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_7"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_8"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_8"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_9"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_9"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_10"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_10"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [],
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "scale_source",
-                      "provenance",
-                      "confidence",
-                      "source_files",
-                      "n_columns",
-                      "declared_length"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "dictionary"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Matched a known instrument in metacheck's scale dictionary (OpenScales-derived or curated)."
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "medium"
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": null,
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "s.csv"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          10
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          10
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "v": []
       },
       {
         "t": "dbl",
@@ -1051,6 +597,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

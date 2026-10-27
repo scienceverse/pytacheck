@@ -190,9 +190,7 @@
           "#### Column Documentation",
           "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"mood\", \"id\"), Documented = c(\"conflict\", \n\"no\"), Label = c(\"Sleep quality rating | Positive affect\", NA\n), \"Codebook Variable\" = c(\"mood\", NA), Source = c(\"codebook_b.csv | codebook.csv\", \nNA), Status = c(\"conflicting_definition\", \"unlabelled\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Conflicting or Ambiguous Definitions\n\n1 matched column has more than one codebook definition, or a definition scoped to a different experiment. These are matched to a codebook but need manual resolution before the label can be trusted.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"s.csv\", Column = \"mood\", \"Conflicting Labels\" = \"Sleep quality rating | Positive affect\", \n    Sources = \"codebook_b.csv | codebook.csv\", Issue = \"conflicting_definition\"), row.names = 2L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"s.csv\", Column = \"mood\", \"Conflicting Labels\" = \"Sleep quality rating | Positive affect\", \n    Sources = \"codebook_b.csv | codebook.csv\", Issue = \"conflicting_definition\"), row.names = 2L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n"
         ]
       },
       {
@@ -479,6 +477,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -256,9 +256,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 1 codebook/README/label source and 6 data columns across 1 file.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"a\", \"b\", \"c\", \"dd\", \"ee\"), Documented = c(\"no\", \n\"yes\", \"yes\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \"Item a\", \"Item b\", \n\"Item c\", \"Item d\", \"Item e\"), \"Codebook Variable\" = c(NA, \"a\", \n\"b\", \"c\", \"dd\", \"ee\"), Source = c(NA, \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(NA, \n6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"a\", \"b\", \"c\", \"dd\", \"ee\"), Documented = c(\"no\", \n\"yes\", \"yes\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \"Item a\", \"Item b\", \n\"Item c\", \"Item d\", \"Item e\"), \"Codebook Variable\" = c(NA, \"a\", \n\"b\", \"c\", \"dd\", \"ee\"), Source = c(NA, \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(NA, \n6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
         ]
       },
       {
@@ -575,6 +573,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

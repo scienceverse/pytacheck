@@ -22,6 +22,6 @@
       "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor advice on how to make causal claims, and when not to, see:\n\nAntonakis J, Bendahan S, Jacquart P, Lalive R (2010). &ldquo;On making causal claims: A review and recommendations.&rdquo; <em>The Leadership Quarterly<\/em>, <b>21<\/b>(6), 1086&ndash;1120. <a href=\"https://doi.org/10.1016/j.leaqua.2010.10.010\">doi:10.1016/j.leaqua.2010.10.010<\/a>.\n\nGrosz M, Rohrer J, Thoemmes F (2020). &ldquo;The Taboo Against Explicit Causal Inference in Nonexperimental Psychology.&rdquo; <em>Perspectives on Psychological Science<\/em>, <b>15<\/b>(5), 1243&ndash;1255. <a href=\"https://doi.org/10.1177/1745691620921521\">doi:10.1177/1745691620921521<\/a>.\n\nFor the APA journal articles reporting standards, see <https://apastyle.apa.org/jars>\n\n:::\n"
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

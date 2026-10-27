@@ -170,66 +170,9 @@
             ]
           }
         ]
-      },
-      {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "File",
-          "Abbrev",
-          "Columns",
-          "Max item",
-          "Scale",
-          "Confidence",
-          "Source"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "survey.csv"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "TIPI"
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              5
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "5"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Ten Item Personality Inventory"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "medium"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "matched"
-            ]
-          }
-        ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

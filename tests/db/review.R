@@ -8,9 +8,9 @@
 
 .review_apis <- file.path(root, "upstream", "metacheck", "tests", "testthat", "apis")
 
-# recorded api.labs.crossref.org/works/<doi> bodies that hold a work
+# recorded api.crossref.org/works/<doi> bodies that hold a work
 review_work_files <- function() {
-  dir <- file.path(.review_apis, "api.labs.crossref.org", "works")
+  dir <- file.path(.review_apis, "api.crossref.org", "works")
   files <- list.files(dir, "\\.json$")
   files <- files[order(files, method = "radix")]
   keep <- vapply(files, \(f) {

@@ -1,6 +1,4 @@
 {
-"check_file_naming.dates": {"r": "f28e0a5902c87d42", "py": "e7bd03c5c6dd424e", "diff": ["<root>"]},
-"check_file_naming.mixed": {"r": "aec736783288e387", "py": "0faa9b0a32346e99", "diff": ["<root>"]},
 "download_repo_files.archive_members": {"r": "765e7987c6fb0003", "py": "eacfeff0db2f9862", "diff": ["failed", "file_location[]"]},
 "expand.bz2": {"r": "66a6e9b6900ea324", "py": "e7d2efac5ad216a0", "diff": ["file_size[]", "file_type[]"]},
 "expand.gz": {"r": "75fd8efec08b164e", "py": "fc205dc57c928ba1", "diff": ["file_size[]", "file_type[]"]},
@@ -13,21 +11,9 @@
 "expand.zip_skip_code": {"r": "26325af701e34dab", "py": "ced8c5dded57147f", "diff": ["file_type[]"]},
 "expand.zip_stimuli": {"r": "ff4f88d73b40db37", "py": "d65c76d6e469d810", "diff": ["file_type[]"]},
 "expand.zip_unicode": {"r": "6310e50b58e4788b", "py": "c4c734aaa985e60b", "diff": ["file_type[]"]},
-"file_category.compound_types": {"r": "7249de4ecb203c67", "py": "059b8964aefb6ba0", "diff": ["file_category[]", "filetype[]"]},
-"file_category.every_extension": {"r": "4acce627fb49afaf", "py": "f97a5f740527c31c", "diff": ["<root>"]},
-"file_category.list_column_filetype": {"r": "518ce226cd5e7c29", "py": "d2f9d0a851beb6d2", "diff": ["filetype[]"]},
-"file_category.partial_match": {"r": "9a5edaa5f428a541", "py": "raises:ValueError", "diff": ["<R value, Python error>"]},
-"file_category.paths_and_case": {"r": "0e090f453ecaa134", "py": "f2899811e1ae44cb", "diff": ["file_category[]", "filetype[]"]},
-"file_category.vector": {"r": "86ec74a7fe0dcba7", "py": "4385053e807b26f4", "diff": ["file_category[]", "filetype[]"]},
-"file_naming_check_one.dir_and_dates": {"r": "f116f097730bdd09", "py": "da7b3ca9a19b8d61", "diff": ["<root>"]},
-"file_naming_check_one.everything": {"r": "dbe0ef4a7b23c35a", "py": "75886993983b9d04", "diff": ["<root>"]},
-"file_types.table": {"r": "a2c9f75b90fab5a9", "py": "2995e18879e297c9", "diff": ["<root>"]},
-"filetype.every_extension": {"r": "5ea81b32d87089da", "py": "daa2d40ff279c731", "diff": ["<root>"]},
-"filetype.every_extension_upper": {"r": "903d37a11d3b1efd", "py": "daa2d40ff279c731", "diff": ["<root>"]},
-"filetype.examples": {"r": "c89341694a4997e7", "py": "6dfa7dc9716eb6cd", "diff": ["[]"]},
-"filetype.unicode_case": {"r": "4953da036c90b832", "py": "1e84e96bd161f516", "diff": ["[]"]},
+"file_category.partial_match": {"r": "5b65fe2174f43035", "py": "raises:ValueError", "diff": ["<R value, Python error>"]},
 "zip_fetch_members.all": {"r": "19596620302999a2", "py": "27a197da628247e2", "diff": ["error[]", "ok[]", "path[]"]},
 "zip_fetch_members.deflated": {"r": "4773fbab08884444", "py": "38c9eb1d44ab4d7e", "diff": ["error[]", "ok[]", "path[]"]},
 "zip_fetch_members.subset": {"r": "c85e4674de1b34f0", "py": "607f53ed79b2011e", "diff": ["error[]", "ok[]", "path[]"]},
-"zip_fetch_members.zip64": {"r": "863f3600f9056e7b", "py": "b22fb9f9c9b7a589", "diff": ["error[]", "ok[]", "path[]"]}
+"zip_fetch_members.zip64": {"r": "4131de2b5c83f522", "py": "b22fb9f9c9b7a589", "diff": ["error[]", "ok[]", "path[]"]}
 }

@@ -241,9 +241,7 @@
           "#### Column Documentation",
           "::: {.panel-tabset}\n\n## b.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"anx\", \"id\", \"mood\"), Documented = c(\"no\", \n\"no\", \"yes\"), Label = c(NA, NA, \"Positive affect\"), \"Codebook Variable\" = c(NA, \nNA, \"mood\"), Source = c(NA, NA, \"codebook_b.csv\"), Status = c(\"unlabelled\", \n\"unlabelled\", \"labelled\")), row.names = c(1L, 2L, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## a.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\"), Documented = c(\"yes\", \n\"yes\"), Label = c(\"Age in years\", \"Participant id\"), \"Codebook Variable\" = c(\"age\", \n\"id\"), Source = c(\"codebook_a.csv\", \"codebook_a.csv\"), Status = c(\"labelled\", \n\"labelled\")), row.names = 3:4, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Documented but Unused Variables\n\n1 documented variable was not matched to any data column.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = \"income\", Label = \"Annual income\", \n    Source = \"codebook_a.csv\"), row.names = 3L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = \"income\", Label = \"Annual income\", \n    Source = \"codebook_a.csv\"), row.names = 3L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n"
         ]
       },
       {
@@ -255,7 +253,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 4 variable definitions from codebook/README files.\n-  3 of 5 data columns (60%) are documented in a codebook; 2 are not.\n-  1 documented variable never appears in the data."
+          "\n-  We parsed 4 variable definitions from codebook/README files.\n-  3 of 5 data columns (60%) are documented in a codebook; 2 are not."
         ]
       },
       {
@@ -564,6 +562,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

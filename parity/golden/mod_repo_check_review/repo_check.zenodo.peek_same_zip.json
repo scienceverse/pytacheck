@@ -54,6 +54,7 @@
           "file_type",
           "archive_url",
           "archive_member",
+          "archive_size",
           "data_type",
           "doc_role",
           "group",
@@ -211,6 +212,21 @@
             ]
           },
           {
+            "t": "dbl",
+            "v": [
+              null,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295
+            ]
+          },
+          {
             "t": "chr",
             "v": [
               "code",
@@ -285,7 +301,7 @@
           "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: inner.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
           "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 4 naming problems that should be fixed, and 1 file with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"raw data.csv\", \"données.csv\", \"données.csv\", \n\"inner.zip\", \"participant_2.csv\"), Rule = c(\"spaces\", \"special-characters\", \n\"diacritics\", \"unclassifiable\", \"zero-padding\"), Severity = c(\"bad\", \n\"bad\", \"bad\", \"bad\", \"suggestion\"), Detail = c(\"contains a space\", \n\"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"raw data.csv\", \"données.csv\", \"données.csv\", \n\"inner.zip\", \"participant_2.csv\"), Rule = c(\"spaces\", \"special-characters\", \n\"diacritics\", \"unclassifiable\", \"zero-padding\"), Severity = c(\"Required\", \n\"Required\", \"Required\", \"Required\", \"Suggestion\"), Detail = c(\"contains a space\", \n\"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"analysis.R\", \"analysis.R\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"analysis.R\", \"deposit.zip/Study 1/analysis.R\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (4 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"raw data.csv\", \"participant_01.csv\", \n\"participant_2.csv\", \"données.csv\"), Group = c(\"ex1\", \"ex1\", \n\"ex1\", \"ex1\"), Path = c(\"deposit.zip/data/raw data.csv\", \"deposit.zip/data/participant_01.csv\", \n\"deposit.zip/data/participant_2.csv\", \"deposit.zip/données.csv\"\n)), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"deposit.zip/README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"task.edat2\", Group = \"ex1\", Path = \"deposit.zip/task.edat2\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**output** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"results.tar.gz\", Group = \"—\", Path = \"deposit.zip/results.tar.gz\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"inner.zip\", Group = \"—\", Path = \"deposit.zip/inner.zip\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -558,6 +574,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -254,7 +254,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 5 variable definitions from codebook/README files.\n-  3 of 5 data columns (60%) are documented in a codebook; 2 are not.\n-  2 documented variables never appear in the data."
+          "\n-  We parsed 5 variable definitions from codebook/README files.\n-  3 of 5 data columns (60%) are documented in a codebook; 2 are not."
         ]
       },
       {
@@ -559,6 +559,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1,5 +1,4 @@
 {
-"stat_effect_size.review.d_variants": {"r": "8b10fa0ef0c1caea", "py": "397ebb4ef76940f8", "diff": ["report[]", "summary_table.ttests_with_es[]", "summary_table.ttests_without_es[]", "summary_text[]", "table.d_coherence[]", "table.d_coherence_assumption[]", "table.d_coherence_note[]", "table.d_implied_indep_equal_n[]", "table.d_implied_indep_unequal_max[]", "table.d_implied_indep_unequal_min[]", "table.d_implied_n[]", "table.d_implied_paired_drm_r05[]", "table.d_implied_paired_dz[]", "table.d_reported[]", "table.d_reported_text[]", "table.df[]", "table.es[]", "table.t_value[]"]},
 "stat_effect_size.review.empty_paperlist": {"r": "ac5146cf65ca52a8", "py": "e04d3d0e257a3a5f", "diff": ["<R error, Python value>"]},
 "stat_effect_size.review.f_variants": {"r": "918a357973d70abe", "py": "6a7bb709c744fc83", "diff": ["report[]", "summary_text[]", "table.eta_coherence[]", "table.eta_coherence_assumption[]", "table.eta_coherence_note[]"]},
 "stat_effect_size.review.inf_t_and_d": {"r": "ac5146cf65ca52a8", "py": "ca066ad0bc826070", "diff": ["<R error, Python value>"]},

@@ -53,6 +53,7 @@
           "file_url",
           "file_location",
           "file_size",
+          "repo_size",
           "file_type",
           "data_type",
           "doc_role",
@@ -128,6 +129,16 @@
               20971520,
               5,
               3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -427,6 +438,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

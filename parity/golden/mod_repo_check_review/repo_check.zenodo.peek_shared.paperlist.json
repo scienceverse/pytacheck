@@ -54,6 +54,7 @@
           "file_type",
           "archive_url",
           "archive_member",
+          "archive_size",
           "data_type",
           "doc_role",
           "group",
@@ -311,6 +312,31 @@
             ]
           },
           {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295,
+              1295
+            ]
+          },
+          {
             "t": "chr",
             "v": [
               "code",
@@ -425,7 +451,7 @@
           "#### Unclassified Files\n\nWe could not classify 2 files by name or extension: inner.zip, inner.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
           "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 8 naming problems that should be fixed, and 1 file with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"raw data.csv\", \"raw data.csv\", \"données.csv\", \n\"données.csv\", \"données.csv\", \"données.csv\", \"inner.zip\", \n\"inner.zip\", \"participant_2.csv\", \"participant_2.csv\"), Rule = c(\"spaces\", \n\"spaces\", \"special-characters\", \"diacritics\", \"special-characters\", \n\"diacritics\", \"unclassifiable\", \"unclassifiable\", \"zero-padding\", \n\"zero-padding\"), Severity = c(\"bad\", \"bad\", \"bad\", \"bad\", \"bad\", \n\"bad\", \"bad\", \"bad\", \"suggestion\", \"suggestion\"), Detail = c(\"contains a space\", \n\"contains a space\", \"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"raw data.csv\", \"raw data.csv\", \"données.csv\", \n\"données.csv\", \"données.csv\", \"données.csv\", \"inner.zip\", \n\"inner.zip\", \"participant_2.csv\", \"participant_2.csv\"), Rule = c(\"spaces\", \n\"spaces\", \"special-characters\", \"diacritics\", \"special-characters\", \n\"diacritics\", \"unclassifiable\", \"unclassifiable\", \"zero-padding\", \n\"zero-padding\"), Severity = c(\"Required\", \"Required\", \"Required\", \n\"Required\", \"Required\", \"Required\", \"Required\", \"Required\", \"Suggestion\", \n\"Suggestion\"), Detail = c(\"contains a space\", \"contains a space\", \n\"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (4 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"analysis.R\", \"analysis.R\", \"analysis.R\", \n\"analysis.R\"), Group = c(\"ex1\", \"ex1\", \"ex1\", \"ex1\"), Path = c(\"analysis.R\", \n\"analysis.R\", \"deposit.zip/Study 1/analysis.R\", \"deposit.zip/Study 1/analysis.R\"\n)), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (8 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"raw data.csv\", \"raw data.csv\", \"participant_01.csv\", \n\"participant_01.csv\", \"participant_2.csv\", \"participant_2.csv\", \n\"données.csv\", \"données.csv\"), Group = c(\"ex1\", \"ex1\", \"ex1\", \n\"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\"), Path = c(\"deposit.zip/data/raw data.csv\", \n\"deposit.zip/data/raw data.csv\", \"deposit.zip/data/participant_01.csv\", \n\"deposit.zip/data/participant_01.csv\", \"deposit.zip/data/participant_2.csv\", \n\"deposit.zip/data/participant_2.csv\", \"deposit.zip/données.csv\", \n\"deposit.zip/données.csv\")), row.names = c(NA, -8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README.md\", \"README.md\"), Group = c(\"—\", \n\"—\"), Path = c(\"deposit.zip/README.md\", \"deposit.zip/README.md\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"task.edat2\", \"task.edat2\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"deposit.zip/task.edat2\", \"deposit.zip/task.edat2\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**output** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"results.tar.gz\", \"results.tar.gz\"), \n    Group = c(\"—\", \"—\"), Path = c(\"deposit.zip/results.tar.gz\", \n    \"deposit.zip/results.tar.gz\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"inner.zip\", \"inner.zip\"), Group = c(\"—\", \n\"—\"), Path = c(\"deposit.zip/inner.zip\", \"deposit.zip/inner.zip\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -733,6 +759,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

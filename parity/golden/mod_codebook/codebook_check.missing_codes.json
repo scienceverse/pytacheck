@@ -208,9 +208,7 @@
           "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"q1\", \"q2\"), Documented = c(\"no\", \n\"yes\", \"yes\"), Label = c(NA, \"Agreement\", \"Satisfaction\"), \"Codebook Variable\" = c(NA, \n\"q1\", \"q2\"), Source = c(NA, \"codebook.csv\", \"codebook.csv\"), \n    Status = c(\"unlabelled\", \"labelled\", \"labelled\")), row.names = c(NA, \n3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Values Outside the Documented Range",
           "2 columns contain 3 values the codebook does not list. Each is either an unrecoded missing code (a stray -99 or 999), a keying error (a 55 where 5 was meant), or unexplained — the `Kind` column says which. Only columns whose codebook documents a value range are checked, so every row here is a discrepancy between what the authors declared and what the data contains.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"s.csv\", \"s.csv\"), Column = c(\"q1\", \"q2\"\n), \"Codebook range\" = c(\"[1, 9]\", \"[1, 5]\"), \"N values\" = 2:1, \n    \"Values found\" = c(\"-99, 12\", \"77\"), Kind = c(\"missing, typo:2\", \n    \"missing\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"s.csv\", \"s.csv\"), Column = c(\"q1\", \"q2\"\n), \"Codebook range\" = c(\"[1, 9]\", \"[1, 5]\"), \"N values\" = 2:1, \n    \"Values found\" = c(\"-99, 12\", \"77\"), Kind = c(\"missing, typo:2\", \n    \"missing\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n"
         ]
       },
       {
@@ -515,6 +513,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

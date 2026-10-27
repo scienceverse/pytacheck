@@ -174,9 +174,7 @@
           "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = \"q1\", Documented = \"yes\", Label = \"Agreement\", \n    \"Codebook Variable\" = \"q1\", Source = \"codebook.csv\", Status = \"labelled\"), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Values Outside the Documented Range",
           "1 column contains 1 value the codebook does not list. Each is either an unrecoded missing code (a stray -99 or 999), a keying error (a 55 where 5 was meant), or unexplained — the `Kind` column says which. Only columns whose codebook documents a value range are checked, so every row here is a discrepancy between what the authors declared and what the data contains.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"s.csv\", Column = \"q1\", \"Codebook range\" = \"[1, 3]\", \n    \"N values\" = 1L, \"Values found\" = \"9\", Kind = \"unexplained\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"s.csv\", Column = \"q1\", \"Codebook range\" = \"[1, 3]\", \n    \"N values\" = 1L, \"Values found\" = \"9\", Kind = \"unexplained\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n"
         ]
       },
       {
@@ -465,6 +463,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

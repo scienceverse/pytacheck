@@ -14,6 +14,7 @@
       "PA_title",
       "PA_authors",
       "PA_doi",
+      "PA_rights",
       "PA_license",
       "PA_date",
       "PA_abstract",
@@ -74,6 +75,13 @@
         "v": [
           "restrictedAccess",
           "restrictedAccess"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Terms for individual files apply",
+          "Terms for individual files apply"
         ]
       },
       {
@@ -156,6 +164,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

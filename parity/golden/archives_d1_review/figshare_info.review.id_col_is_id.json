@@ -147,7 +147,8 @@
                   "size",
                   "computed_md5",
                   "download_url",
-                  "is_link_only"
+                  "is_link_only",
+                  "path"
                 ],
                 "v": [
                   {
@@ -185,6 +186,12 @@
                     "v": [
                       false
                     ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv"
+                    ]
                   }
                 ]
               },
@@ -195,7 +202,8 @@
                   "name",
                   "size",
                   "computed_md5",
-                  "download_url"
+                  "download_url",
+                  "path"
                 ],
                 "v": [
                   {
@@ -227,6 +235,12 @@
                     "v": [
                       "https://ndownloader.figshare.com/files/556"
                     ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
+                    ]
                   }
                 ]
               },
@@ -237,7 +251,8 @@
                   "name",
                   "size",
                   "computed_md5",
-                  "download_url"
+                  "download_url",
+                  "path"
                 ],
                 "v": [
                   {
@@ -269,6 +284,12 @@
                     "v": [
                       "https://ndownloader.figshare.com/files/557"
                     ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "video.mp4"
+                    ]
                   }
                 ]
               },
@@ -279,7 +300,8 @@
                   "name",
                   "size",
                   "computed_md5",
-                  "download_url"
+                  "download_url",
+                  "path"
                 ],
                 "v": [
                   {
@@ -311,6 +333,12 @@
                     "v": [
                       "https://ndownloader.figshare.com/files/558"
                     ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "missing.csv"
+                    ]
                   }
                 ]
               }
@@ -323,6 +351,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
