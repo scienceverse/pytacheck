@@ -7,6 +7,15 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Compared with metacheck 0.3.3.2 (`dev` at 98105f6)
+
+- **Changed:** the parity checks compare pytacheck with metacheck `dev` at 98105f6 (0.3.3.2) instead of f1062b4 (0.3.1, `dev` plus pull request #423). The pull request is merged, so the pin no longer names it. The R goldens are regenerated, and the marks and lock entries are settled against them: the marks that R's changes made stale (261 cases that now match R) are removed, the substitutions that no longer change R's text are dropped, and the marks that still hold are locked again.
+- **Fixed:** data_check's summary of trial-level files ends "... not listed as separate datasets. Nothing is deleted." as metacheck's does; the sentence about `convert_psychds()` is gone.
+- **Changed:** the Repository Check module's "How It Works" text carries metacheck's paragraph on API keys and its validation notice.
+- **Added:** D130 (the module-manual link of a module that is not one of metacheck's own) and U242 (metacheck 0.3.3.2 stops `reproducibility_check()` on a code table without a `file_name` column) in docs/UPSTREAM_ISSUES.md. U241 notes that metacheck fixed the same bug in the same commit.
+- The test helpers pass `report()`'s `args` by name (metacheck 0.3.3.1 inserted `report_type` before it), `rv_serve` forgets the hosts a case found to ignore Range requests, the Crossref recordings are read from `api.crossref.org/works/`, and the replay fallback to the old `api.labs.crossref.org` folder is removed.
+- The prereg_check and reg_check cases (138) keep their goldens from the previous pin: the machine that regenerated the goldens could not reach AsPredicted. The dataone_info table-collisions case keeps its old golden for the same reason (R answers "dataone.org seems to be offline").
+
 ### Performance: a C reader of `.rds` and `.RData` files
 
 - **Added:** R's serialization format, which `data_read_head()` and `data_check` read `.rds` and `.RData` files with, is read by a small C extension (`metacheck.datacheck._rdata_c`). It builds the same Python objects as the Python reader, which stays as the fallback (an ASCII stream, `saveRDS(ascii = TRUE)`, is still read by it). An 8 MB rstanarm model (22 MB uncompressed) is parsed in 0.2 s, where the Python reader took 2.4 to 3.9 s; R's `readRDS()` takes 0.24 s.

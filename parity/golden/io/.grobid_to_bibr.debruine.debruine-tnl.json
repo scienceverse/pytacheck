@@ -288,7 +288,7 @@
               "Proc.",
               "R. Soc.",
               "B (2005) Downloaded from https://royalsocietypublishing.org/ on 24 July2025",
-              "The supplementary Electronic Appendix is available at http://dx.doi. org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.",
+              "The supplementary Electronic Appendix is available at http://dx.doi.org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.",
               "Bereczkei, T., Gyuris, P., Koves, P. & Bernath, L. 2002 Homogamy, genetic similarity, and imprinting; parental influence on mate choice preferences. Pers. Individ. Dif. 33, 677-690.",
               "Bereczkei, T., Gyuris, P. & Weisfeld, G. E. 2004 Sexual imprinting in human mate choice. Proc. R. Soc. B 271, 1129-1134.",
               "Bittles, A. H. 2001 Consanguinity and its relevance to clinical genetics. Clin. Genet. 60, 89-98.",
@@ -1912,6 +1912,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

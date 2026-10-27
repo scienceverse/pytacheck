@@ -190,9 +190,7 @@
           "#### Column Documentation",
           "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"sex\"), Documented = c(\"no\", \n\"yes\"), Label = c(NA, \"Sex of respondent\"), \"Codebook Variable\" = c(NA, \n\"sex\"), Source = c(NA, \"codebook.csv\"), Status = c(\"unlabelled\", \n\"labelled\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Documented but Unused Variables\n\n2 documented variables were not matched to any data column.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = c(\"age\", \"sex\"), Label = c(\"Age in years\", \n\"Sex\"), Source = c(\"codebook.csv\", \"codebook.csv\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = c(\"age\", \"sex\"), Label = c(\"Age in years\", \n\"Sex\"), Source = c(\"codebook.csv\", \"codebook.csv\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n"
         ]
       },
       {
@@ -204,7 +202,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 3 variable definitions from codebook/README files.\n-  1 of 2 data columns (50%) is documented in a codebook; 1 is not.\n-  2 documented variables never appear in the data."
+          "\n-  We parsed 3 variable definitions from codebook/README files.\n-  1 of 2 data columns (50%) is documented in a codebook; 1 is not."
         ]
       },
       {
@@ -503,6 +501,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

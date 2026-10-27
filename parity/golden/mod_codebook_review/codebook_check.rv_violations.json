@@ -279,9 +279,7 @@
           "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"q1\", \"q2\", \"q3\", \"q4\", \"q5\", \n\"q6\"), Documented = c(\"no\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \n\"yes\"), Label = c(NA, \"Agreement\", \"Rating\", \"Score\", \"Fruit\", \n\"Consent\", \"Other rating\"), \"Codebook Variable\" = c(NA, \"q1\", \n\"q2\", \"q3\", \"q4\", \"q5\", \"q6\"), Source = c(NA, \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\"), Status = c(\"unlabelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(NA, \n7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Values Outside the Documented Range",
           "4 columns contain 17 values the codebook does not list. Each is either an unrecoded missing code (a stray -99 or 999), a keying error (a 55 where 5 was meant), or unexplained — the `Kind` column says which. Only columns whose codebook documents a value range are checked, so every row here is a discrepancy between what the authors declared and what the data contains.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"s.csv\", \"s.csv\", \"s.csv\", \"s.csv\"), \n    Column = c(\"q1\", \"q2\", \"q6\", \"q5\"), \"Codebook range\" = c(\"[1, 5]\", \n    \"[1, 5]\", \"[1, 5]\", \"[0, 1]\"), \"N values\" = c(6L, 5L, 5L, \n    1L), \"Values found\" = c(\"-99, 0.1235, 6, 7, 1e+05, 1235000\", \n    \"6, 7, 8, 9, 10\", \"6, 7, 8, 9, 10\", \"2\"), Kind = c(\"missing, unexplained, typo:1, typo:5\", \n    \"unexplained, typo:1\", \"unexplained, typo:1\", \"unexplained\"\n    )), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"s.csv\", \"s.csv\", \"s.csv\", \"s.csv\"), \n    Column = c(\"q1\", \"q2\", \"q6\", \"q5\"), \"Codebook range\" = c(\"[1, 5]\", \n    \"[1, 5]\", \"[1, 5]\", \"[0, 1]\"), \"N values\" = c(6L, 5L, 5L, \n    1L), \"Values found\" = c(\"-99, 0.1235, 6, 7, 1e+05, 1235000\", \n    \"6, 7, 8, 9, 10\", \"6, 7, 8, 9, 10\", \"2\"), Kind = c(\"missing, unexplained, typo:1, typo:5\", \n    \"unexplained, typo:1\", \"unexplained, typo:1\", \"unexplained\"\n    )), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n"
         ]
       },
       {
@@ -367,7 +365,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -379,7 +377,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -638,6 +636,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

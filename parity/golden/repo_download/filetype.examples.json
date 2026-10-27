@@ -7,10 +7,10 @@
     "t": "chr",
     "v": [
       "code",
-      "code;data",
+      "data",
       "NA",
       "NA",
-      "code;data",
+      "data",
       "archive",
       "archive",
       "NA",
@@ -29,9 +29,9 @@
       "stats",
       "stats",
       "text",
-      "data;stats",
-      "data;stats",
-      "code;web",
+      "data",
+      "data",
+      "web",
       "text"
     ],
     "names": [
@@ -64,6 +64,6 @@
       "a b.docx"
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -219,33 +219,33 @@
             "t": "chr",
             "v": [
               null,
-              "Big Five Inventory",
-              "Big Five Inventory",
-              "Big Five Inventory",
-              "Big Five Inventory",
-              "Big Five Inventory"
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium"
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              "manuscript",
-              "manuscript",
-              "manuscript",
-              "manuscript",
-              "manuscript"
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           }
         ]
@@ -257,11 +257,7 @@
           "We examined 1 codebook/README/label source and 6 data columns across 1 file.",
           "#### Column Documentation",
           "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"bfi_1\", \"bfi_2\", \"bfi_2\", \"bfi_3\", \n\"bfi_4\"), Documented = c(\"no\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\"\n), Label = c(NA, \"Personality item 1\", \"Personality item 2\", \n\"Personality item 2\", \"Personality item 3\", \"Personality item 4\"\n), \"Codebook Variable\" = c(NA, \"bfi_1\", \"bfi_2\", \"bfi_2\", \"bfi_3\", \n\"bfi_4\"), Source = c(NA, \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(NA, \n6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "We detected 1 column group (by shared abbreviation) that look like scales; 1 was matched to a named instrument from the paper text or dictionary. Groups we could not name are listed too — they are real scale-like column families whose instrument the manuscript did not identify. Identified scales are exported in the OpenScales OSD structure.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"s.csv\", Abbrev = \"BFI\", Columns = 5L, \n    \"Max item\" = \"4\", Scale = \"Big Five Inventory\", Confidence = \"medium\", \n    Source = \"manuscript\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 40, FALSE)\n```\n",
-          "To let this tool (and anyone reusing the data) identify these scales with **high confidence**:\n- **Name the instrument in the manuscript with its abbreviation** — e.g. \"the Breakup Distress Scale (BDS)\" — matching the column prefix.\n- **Add a codebook** giving the item wording, or state the number of items (\"a 15-item scale\").",
-          "LLM model 'mock/rv' reviewed ambiguous cases (parsed 0 files, matched 0 columns, merged 0 labels).",
+          "LLM reviewed ambiguous cases (parsed 0 files, matched 0 columns, merged 0 labels).",
           "#### Duplicated Column Names",
           "- **Duplicated column names in `s.csv`.** 1 column name appears more than once (worst: `bfi_2`×2), so 2 of the file's 6 columns share a name with another. This usually means a survey loop/merge exported repeated blocks without numbering each iteration; the repeats cannot be told apart and can only be documented once. Consider re-exporting with per-iteration column names."
         ]
@@ -349,13 +345,13 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -533,379 +529,7 @@
       {
         "t": "list",
         "names": null,
-        "v": [
-          {
-            "t": "list",
-            "names": [
-              "osd_version",
-              "definition",
-              "translations"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "1.0"
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "scale_info",
-                  "likert_options",
-                  "items",
-                  "dimensions",
-                  "scoring",
-                  "metacheck"
-                ],
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "name",
-                      "code",
-                      "abbreviation"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Big Five Inventory"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "big_five_inventory"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "BFI"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "points",
-                      "min",
-                      "max",
-                      "labels",
-                      "order",
-                      "source"
-                    ],
-                    "v": [
-                      {
-                        "t": "int",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          1
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Disagree strongly",
-                          "Disagree",
-                          "Neutral",
-                          "Agree",
-                          "Agree strongly"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "ascending"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "codebook"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": [
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "bfi_4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [],
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "scale_source",
-                      "provenance",
-                      "confidence",
-                      "source_files",
-                      "n_columns",
-                      "declared_length"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "dictionary"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Matched a known instrument in metacheck's scale dictionary (OpenScales-derived or curated)."
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "medium"
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": null,
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "s.csv"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          4
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "en"
-                ],
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "bfi_1",
-                      "bfi_2",
-                      "bfi_2",
-                      "bfi_3",
-                      "bfi_4"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Personality item 1"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Personality item 2"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Personality item 2"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Personality item 3"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Personality item 4"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "v": []
       },
       {
         "t": "dbl",
@@ -942,6 +566,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

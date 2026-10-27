@@ -78,13 +78,13 @@
           {
             "t": "chr",
             "v": [
-              "data;stats"
+              "data"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "data;stats"
+              "data"
             ]
           },
           {
@@ -120,31 +120,7 @@
           {
             "t": "chr",
             "v": [
-              "code;web"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "code;exec"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "code;data"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "code;data"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "web;code"
+              "web"
             ]
           },
           {
@@ -156,7 +132,31 @@
           {
             "t": "chr",
             "v": [
-              "data;stats"
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
             ]
           },
           {
@@ -248,10 +248,10 @@
           "data",
           "data",
           null,
-          null,
-          null,
-          null,
-          null,
+          "code",
+          "data",
+          "data",
+          "code",
           "code",
           "data",
           "data",
@@ -270,6 +270,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

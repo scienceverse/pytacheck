@@ -50,7 +50,7 @@ rp_report <- function(paper, modules, output_format = "qmd", args = list()) {
   names(args) <- vapply(names(args), rp_mod, character(1), USE.NAMES = FALSE)
   f <- tempfile(fileext = paste0(".", output_format))
   on.exit(unlink(f))
-  res <- suppressWarnings(report(paper, mods, f, output_format, args))
+  res <- suppressWarnings(report(paper, mods, f, output_format, args = args))
   txt <- paste(readLines(f), collapse = "\n")
   list(
     output = rp_norm_output(res),

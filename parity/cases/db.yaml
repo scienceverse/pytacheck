@@ -400,56 +400,56 @@
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.psychsci"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797613520608-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797613520608-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797613520608-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797613520608-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.book_chapter"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.cran"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.springer"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.jss"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.select"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
     "select":
       "$chr":
       - "title"

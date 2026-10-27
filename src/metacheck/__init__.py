@@ -334,7 +334,12 @@ _EXPORTS: dict[str, str] = {
     "repro_write_scripts": "metacheck.repro.core",
     "repro_docker_available": "metacheck.repro.docker",
     "repro_install_deps_docker": "metacheck.repro.docker",
+    "repro_install_deps_py_docker": "metacheck.repro.docker",
     "repro_run_scripts_docker": "metacheck.repro.docker",
+    "repro_run_scripts_py_docker": "metacheck.repro.docker",
+    "repro_dependencies_py": "metacheck.repro.python",
+    "repro_install_deps_py": "metacheck.repro.python",
+    "repro_run_scripts_py": "metacheck.repro.python",
     # report building blocks
     "cap_gate_count": "metacheck.report.blocks",
     "collapse_section": "metacheck.report.blocks",
@@ -726,7 +731,14 @@ if TYPE_CHECKING:  # pragma: no cover
     from metacheck.repro.docker import (
         repro_docker_available,
         repro_install_deps_docker,
+        repro_install_deps_py_docker,
         repro_run_scripts_docker,
+        repro_run_scripts_py_docker,
+    )
+    from metacheck.repro.python import (
+        repro_dependencies_py,
+        repro_install_deps_py,
+        repro_run_scripts_py,
     )
     from metacheck.statout.jasp import export_jasp_html, import_jasp
     from metacheck.statout.match_reported import match_reported_output

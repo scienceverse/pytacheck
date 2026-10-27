@@ -293,9 +293,7 @@
           "#### Column Documentation",
           "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"c2\", \"c3\", \"c4\", \"c5\", \"c6\", \"c7\", \n\"id\", \"c1\"), Documented = c(\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"yes\"), Label = c(NA, NA, NA, NA, NA, NA, NA, \"Column one\"\n), \"Codebook Variable\" = c(NA, NA, NA, NA, NA, NA, NA, \"c1\"), \n    Source = c(NA, NA, NA, NA, NA, NA, NA, \"codebook.csv\"), Status = c(\"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"labelled\")), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Documented but Unused Variables\n\n5 documented variables were not matched to any data column.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = c(\"other1\", \"other2\", \"other3\", \"other4\", \n\"other5\"), Label = c(\"Other 1\", \"Other 2\", \"Other 3\", \"Other 4\", \n\"Other 5\"), Source = c(\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\")), row.names = 2:6, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = c(\"other1\", \"other2\", \"other3\", \"other4\", \n\"other5\"), Label = c(\"Other 1\", \"Other 2\", \"Other 3\", \"Other 4\", \n\"Other 5\"), Source = c(\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\")), row.names = 2:6, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n"
         ]
       },
       {
@@ -307,7 +305,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 6 variable definitions from codebook/README files.\n-  1 of 8 data columns (12%) is documented in a codebook; 7 are not.\n-  5 documented variables never appear in the data.\n-  A codebook was found and parsed (6 variable definitions), but its variable names do not match the data columns, so the documentation could not be linked automatically (only 12% of columns matched). For example, the codebook documents `other1`, `other2`, `other3` while the data has `id`, `c2`, `c3`. This often means the data holds computed scores or subscales while the codebook lists the underlying items. To make the codebook usable automatically, document variables under the exact names used in the data file (one row per data column), with a label and, for rating items, the response scale."
+          "\n-  We parsed 6 variable definitions from codebook/README files.\n-  1 of 8 data columns (12%) is documented in a codebook; 7 are not.\n-  A codebook was found and parsed (6 variable definitions), but its variable names do not match the data columns, so the documentation could not be linked automatically (only 12% of columns matched). For example, the codebook documents `other1`, `other2`, `other3` while the data has `id`, `c2`, `c3`. This often means the data holds computed scores or subscales while the codebook lists the underlying items. To make the codebook usable automatically, document variables under the exact names used in the data file (one row per data column), with a label and, for rating items, the response scale."
         ]
       },
       {
@@ -622,6 +620,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -955,7 +955,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 12 files: 11 data, 1 unknown.\n-  We found 11 tabular data files and extracted 22 columns from 7 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 11 files (the model request failed); they were grouped by the fallback rules instead.\n-  4 files read as a table but are not a usable rectangular dataset (readxl_type-me.xls: 100% of columns are free text, not variables; xl_bools.xlsx: 100% of columns are free text, not variables; xl_header_only.xlsx: the file has no data rows or columns; xl_title.xlsx: 100% of columns are free text, not variables). No columns were extracted and they were not sent to the LLM. Share the underlying data as a plain rectangular table (one header row, one column per variable) with a codebook: readxl_type-me.xls, xl_bools.xlsx, xl_header_only.xlsx, xl_title.xlsx. We ran automated data-quality checks on 22 columns; 1 column has at least one potential issue (1 column with no observed values (entirely empty)). 6 of 12 spreadsheet files have at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
+          "\n-  We classified 12 files: 11 data, 1 unknown.\n-  We found 11 tabular data files and extracted 22 columns from 7 of them.\n-  We grouped the files into 1 study group (ex1).\n-  4 files read as a table but are not a usable rectangular dataset (readxl_type-me.xls: 100% of columns are free text, not variables; xl_bools.xlsx: 100% of columns are free text, not variables; xl_header_only.xlsx: the file has no data rows or columns; xl_title.xlsx: 100% of columns are free text, not variables). No columns were extracted and they were not sent to the LLM. Share the underlying data as a plain rectangular table (one header row, one column per variable) with a codebook: readxl_type-me.xls, xl_bools.xlsx, xl_header_only.xlsx, xl_title.xlsx. We ran automated data-quality checks on 22 columns; 1 column has at least one potential issue (1 column with no observed values (entirely empty)). 6 of 12 spreadsheet files have at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
         ]
       },
       {
@@ -1808,6 +1808,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

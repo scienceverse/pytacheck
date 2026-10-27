@@ -192,8 +192,8 @@
             "v": [
               null,
               null,
-              "Stroop task",
-              "Stroop task"
+              null,
+              null
             ]
           },
           {
@@ -201,8 +201,8 @@
             "v": [
               null,
               null,
-              "high",
-              "high"
+              null,
+              null
             ]
           },
           {
@@ -210,8 +210,8 @@
             "v": [
               null,
               null,
-              "task_matched",
-              "task_matched"
+              null,
+              null
             ]
           }
         ]
@@ -221,13 +221,7 @@
         "v": [
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 0 codebook/README/label sources and 4 data columns across 1 file.",
-          "No codebook or README documentation was found, so no data columns could be matched to variable definitions.",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale.",
-          "#### Tasks",
-          "1 data file contains columns that look like a behavioural task (reaction times, accuracy, or a block of correct/incorrect items). 1 distinct task was named to a known task.",
-          "**1 task named in the manuscript has no matching data.** The trial-level data may not be shared, may live in a file we could not read, or may use column names we did not recognise. Sharing trial-level data (one row per trial, with condition, response time and accuracy) would let the task be verified:",
-          "- Reaction Time"
+          "No codebook or README documentation was found, so no data columns could be matched to variable definitions."
         ]
       },
       {
@@ -319,7 +313,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -331,19 +325,19 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           }
         ]
@@ -484,6 +478,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

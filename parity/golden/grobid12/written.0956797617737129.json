@@ -1106,7 +1106,7 @@
       "      \"formatted\": null",
       "    },",
       "    {",
-      "      \"text\": \"Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (https://osf.io/a5bmw/).\",",
+      "      \"text\": \"Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (osf.io/a5bmw/).\",",
       "      \"text_id\": 122,",
       "      \"paragraph_id\": 25,",
       "      \"section_id\": 7,",
@@ -2477,8 +2477,8 @@
       "      \"href\": \"https://osf.io/a5bmw/\",",
       "      \"link_text\": null,",
       "      \"text_id\": 122,",
-      "      \"start\": 215,",
-      "      \"end\": 236",
+      "      \"start\": null,",
+      "      \"end\": null",
       "    },",
       "    {",
       "      \"url_id\": 7,",
@@ -5879,6 +5879,6 @@
       "}"
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

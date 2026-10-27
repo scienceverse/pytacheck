@@ -336,7 +336,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 3 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  All your code files had comments.\n-  All files loaded in the code were present in the repository.\n-  No absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  All libraries/imports were loaded in one block.\n-  The code loaded 3 distinct packages.\n-  A pinned R/package environment was found (groundhog).\n-  No parsing issues of R-type files were found."
+          "\n-  We found 3 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  All your code files had comments.\n-  All libraries/imports were loaded in one block.\n-  A pinned R/package environment was found (groundhog)."
         ]
       },
       {
@@ -505,6 +505,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

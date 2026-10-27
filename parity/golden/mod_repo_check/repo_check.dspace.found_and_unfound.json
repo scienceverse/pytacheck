@@ -321,7 +321,7 @@
           {
             "t": "chr",
             "v": [
-              "restrictedAccess",
+              "Terms for individual files apply",
               null
             ]
           },
@@ -351,6 +351,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

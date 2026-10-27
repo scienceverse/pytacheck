@@ -188,12 +188,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 1 codebook/README/label source and 2 data columns across 1 file.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## demo.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\"), Documented = c(\"yes\", \n\"yes\"), Label = c(\"Age in years\", \"Participant id\"), \"Codebook Variable\" = c(\"age\", \n\"id\"), Source = c(\"codebook.csv\", \"codebook.csv\"), Status = c(\"labelled\", \n\"labelled\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale.",
-          "#### Tasks",
-          "**1 task named in the manuscript has no matching data.** The trial-level data may not be shared, may live in a file we could not read, or may use column names we did not recognise. Sharing trial-level data (one row per trial, with condition, response time and accuracy) would let the task be verified:",
-          "- Stroop task"
+          "::: {.panel-tabset}\n\n## demo.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\"), Documented = c(\"yes\", \n\"yes\"), Label = c(\"Age in years\", \"Participant id\"), \"Codebook Variable\" = c(\"age\", \n\"id\"), Source = c(\"codebook.csv\", \"codebook.csv\"), Status = c(\"labelled\", \n\"labelled\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
         ]
       },
       {
@@ -309,7 +304,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           }
         ]
@@ -480,6 +475,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
