@@ -11,6 +11,7 @@ package's. The R commit each release is compared against is in
 
 - **Changed:** `uv.lock` and `install/constraints-app.txt` take the releases that fix the 78 advisories `pip-audit` reports against the locked versions: aiohttp 3.14.5, brotli 1.2.1, certifi 2026.10.23, filelock 4.2.4, msgpack 1.2.4, pillow 13.0.0 and pypdf 6.21.4.
 - **Changed:** gradio (6.31 and earlier) caps pillow below 13, so `pyproject.toml` lifts the cap (`override-dependencies`), and `install.sh`, `install.ps1` and the Hugging Face Space's `Dockerfile` pass the constraints file with `--overrides` too, so the app gets pillow 13. `pip install "metacheck[app]"` still gets pillow 12 through gradio's cap.
+- **Changed:** CI's dependency audit reads the exported lock as it stands (`pip-audit --no-deps --disable-pip`). It used to resolve the export again with pip, which knows nothing of the override and failed on gradio's cap.
 
 ### Performance: a C reader of `.rds` and `.RData` files
 
