@@ -7,6 +7,10 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Fixed: extract_eq() hung on a long list of numbers in parentheses
+
+- **Fixed:** a sentence with a parenthesised list of numbers that is not a df ("Items (1, 4, 7, 10, 13, 16, 19, 22) were reverse-scored, alpha = .85.") made `extract_eq()`, and so every read of a paper, backtrack for a time that grew 16-fold with each number: 3 s for seven numbers, 54 s for eight. It now takes milliseconds, with the same statistics. metacheck stops at PCRE2's match limit on such a sentence and finds none of its statistics (D130).
+
 ### Performance: a C reader of `.rds` and `.RData` files
 
 - **Added:** R's serialization format, which `data_read_head()` and `data_check` read `.rds` and `.RData` files with, is read by a small C extension (`metacheck.datacheck._rdata_c`). It builds the same Python objects as the Python reader, which stays as the fallback (an ASCII stream, `saveRDS(ascii = TRUE)`, is still read by it). An 8 MB rstanarm model (22 MB uncompressed) is parsed in 0.2 s, where the Python reader took 2.4 to 3.9 s; R's `readRDS()` takes 0.24 s.
