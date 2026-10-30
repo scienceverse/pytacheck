@@ -17,7 +17,8 @@ RUN test "$REF" != "set-REF-to-a-commit-hash" || \
 
 RUN pip install --no-cache-dir "uv==${UV_VERSION}"
 
-# the pinned versions of the app's dependencies, from the same commit
+# the pinned versions of the app's dependencies, from the same commit; passed as
+# overrides too, so a version uv.lock overrides (pillow) is installed despite a cap
 ADD https://raw.githubusercontent.com/scienceverse/pytacheck/${REF}/install/constraints-app.txt /tmp/constraints-app.txt
 
 ENV VIRTUAL_ENV=/opt/metacheck
@@ -25,7 +26,7 @@ ENV PATH=/opt/metacheck/bin:$PATH
 # a C compiler for the install only: it builds pytacheck's C reader of .rds files
 RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev && \
     uv venv "$VIRTUAL_ENV" && \
-    uv pip install --no-cache -c /tmp/constraints-app.txt \
+    uv pip install --no-cache -c /tmp/constraints-app.txt --overrides /tmp/constraints-app.txt \
       "metacheck[app] @ https://github.com/scienceverse/pytacheck/archive/${REF}.tar.gz" && \
     rm /tmp/constraints-app.txt && \
     apt-get purge -y --auto-remove gcc libc6-dev && rm -rf /var/lib/apt/lists/*

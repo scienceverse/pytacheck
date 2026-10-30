@@ -305,10 +305,10 @@ main() {
   install_app() {
     if [ "$with_bibr" = "1" ]; then
       # shellcheck disable=SC2086 # $force is empty or one flag
-      run_uv tool install $force --managed-python --python 3.12 --with "bibr>=0.6.0" "$spec" -c "$constraints"
+      run_uv tool install $force --managed-python --python 3.12 --with "bibr>=0.6.0" "$spec" -c "$constraints" --overrides "$constraints"
     else
       # shellcheck disable=SC2086
-      run_uv tool install $force --managed-python --python 3.12 "$spec" -c "$constraints"
+      run_uv tool install $force --managed-python --python 3.12 "$spec" -c "$constraints" --overrides "$constraints"
     fi
   }
 
