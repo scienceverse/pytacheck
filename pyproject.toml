@@ -31,7 +31,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "pandas>=3.0",
+    "pandas>=3.1.0",
     "numpy>=1.26",
     "scipy>=1.13",
     # `regex` (not `re`): POSIX leftmost-longest matching, POSIX bracket
@@ -45,12 +45,12 @@ dependencies = [
     "h2>=4.4.1",
     "lxml>=5.3",
     "markdown-it-py>=3.0",
-    "platformdirs>=4.12.4",
+    "platformdirs>=4.13.6",
     "rich>=13.7",
     # codecheck reads YAML (Quarto/R Markdown headers, codecheck.yml)
     "pyyaml>=6.0.2",
     # the encoding of a code file that is not UTF-8 (0BSD since 7.0)
-    "chardet>=7",
+    "chardet>=7.7.0",
 ]
 
 [project.optional-dependencies]
@@ -65,16 +65,16 @@ bibr = ["bibr>=0.6.0"]
 # the parity engine and is used when found on PATH or via PYTACHECK_PDFTOTEXT) and
 # the text of RTF codebooks (striprtf; without it an RTF codebook is read as raw lines).
 data = [
-    "pyreadstat>=1.2.7",
+    "pyreadstat>=1.3.7",
     "xlrd>=2.0.1",
     "matplotlib>=3.8",
     "snowballstemmer>=2.2",
     "pypdf>=6.20.0",
-    "striprtf>=0.0.33",
+    "striprtf>=0.0.35",
 ]
 # REST API server (port of metacheck's plumber API).
 api = [
-    "fastapi>=0.143.0",
+    "fastapi>=0.162.0",
     "uvicorn[standard]>=0.54.0",
     "python-multipart>=0.0.31",
 ]
@@ -88,10 +88,10 @@ charset = []
 r = []
 # data_check's local column-concept classifier (an int8 ONNX model, ~540 MB,
 # downloaded once from the Hugging Face Hub; see metacheck.datacheck.concepts).
-concepts = ["onnxruntime>=1.31.0", "tokenizers>=0.21", "huggingface-hub>=2.2.0"]
+concepts = ["onnxruntime>=1.31.1", "tokenizers>=0.21", "huggingface-hub>=2.3.0"]
 # llm(): the official provider SDKs, imported only when a model is called. The
 # caps are major versions; these SDKs release several times a week.
-llm = ["openai>=3.3,<4", "anthropic>=1.13.0,<2", "google-genai>=2.29.0,<3"]
+llm = ["openai>=3.3,<4", "anthropic>=2.3.0,<3", "google-genai>=2.33.0,<3"]
 all = ["metacheck[bibr,data,api,charset,concepts,llm]"]
 
 [project.urls]
@@ -119,7 +119,7 @@ datapackage = "metacheck.datapackage.modules"
 
 [build-system]
 # setuptools only compiles the optional C reader of .rds files (hatch_build.py)
-requires = ["hatchling>=1.32.4", "setuptools>=70"]
+requires = ["hatchling>=1.32.4", "setuptools>=84.2.1"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
@@ -142,14 +142,14 @@ dev = [
     "pytest-cov>=6.0",
     "pytest-xdist>=3.6",
     "pytest-benchmark>=5.1",
-    "hypothesis>=6.168.5",
+    "hypothesis>=6.170.12",
     "respx>=0.22",
-    "ruff>=0.17.0",
+    "ruff>=0.17.3",
     "mypy>=2.4.0",
     "pandas-stubs>=2.2",
-    "types-regex>=2026.9.29.20261005",
+    "types-regex>=2026.9.29.20261017",
     "lxml-stubs>=0.5",
-    "pre-commit>=4.0",
+    "pre-commit>=4.7.0",
     "pip-audit>=2.7",
     # builds spreadsheet fixtures in tests (the runtime readers do not need it)
     "openpyxl>=3.1",
