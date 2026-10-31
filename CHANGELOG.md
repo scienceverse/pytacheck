@@ -7,6 +7,10 @@ package's. The R commit each release is compared against is in
 
 ## Unreleased
 
+### Fixed: extract_eq() hung on a long list of numbers in parentheses
+
+- **Fixed:** a sentence with a parenthesised list of numbers that is not a df ("Items (1, 4, 7, 10, 13, 16, 19, 22) were reverse-scored, alpha = .85.") made `extract_eq()`, and so every read of a paper, backtrack for a time that grew 16-fold with each number: 3 s for seven numbers, 54 s for eight. It now takes milliseconds, with the same statistics. metacheck stops at PCRE2's match limit on such a sentence and finds none of its statistics (D130).
+
 ### Security: dependency updates for published advisories
 
 - **Changed:** `uv.lock` and `install/constraints-app.txt` take the releases that fix the 78 advisories `pip-audit` reports against the locked versions: aiohttp 3.14.5, brotli 1.2.1, certifi 2026.10.23, filelock 4.2.4, msgpack 1.2.4, pillow 13.0.0 and pypdf 6.21.4.

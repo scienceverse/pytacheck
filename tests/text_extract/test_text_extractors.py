@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import time
 
 import pandas as pd
 import pytest
@@ -292,6 +293,24 @@ def test_extract_eq_complex() -> None:
     # while Grobid's "d Z = 0.89" is a subscripted d
     eq = extract_eq(pc.test_paper(["p=.05 and z ≤ 1.96 and s = 3", "t(89) = 8.44, d Z = 0.89"]))
     assert eq["lhs"].tolist() == ["p", "z", "s", "t", "d Z"]
+
+
+def test_extract_eq_long_number_list_is_fast() -> None:
+    # a parenthesised list of numbers that is not a df ("Items (1, 4, ...) were
+    # reverse-scored") made the df pattern backtrack exponentially: 3 s for 7
+    # numbers, 54 s for 8 (metacheck stops at PCRE2's match limit, D130)
+    items = ", ".join(str(i) for i in range(1, 25, 3))
+    t0 = time.perf_counter()
+    eq = extract_eq(
+        [
+            f"Items ({items}) were reverse-scored, alpha = .85.",
+            f"F({items}) = 2.1",
+        ]
+    )
+    assert time.perf_counter() - t0 < 2
+    assert eq["lhs"].tolist() == ["alpha", "F"]
+    assert eq["df"].isna().tolist() == [True, False]
+    assert eq["df"].iloc[1] == f"({items})"
 
 
 def test_extract_eq_no_numeric_lhs(psychsci) -> None:
