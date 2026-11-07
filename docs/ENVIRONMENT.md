@@ -89,6 +89,7 @@ means the value is a key or token, which the package never logs.
 | `R_ENGINE_RSCRIPT` | `METACHECK_R_ENGINE_RSCRIPT` | `RSCRIPT`, then `Rscript` on the `PATH` | The R engine (`metacheck.rengine`): the `Rscript` of the R that has the metacheck R package. `pytacheck r-engine` says which one is used and whether it works. New, so it has no old name. |
 | `API_ENGINE` | `METACHECK_API_ENGINE` | `python` (also where R is installed) | The REST API: the engine of a `/paper/check` that names none, `r` or `python` (`pytacheck serve --engine` sets it). Any other value, or `r` where R cannot run metacheck, stops the server from starting. New, so it has no old name. |
 | `APP_R_ENGINE` | `METACHECK_APP_R_ENGINE` | on where R runs metacheck; off on the hosted app | The app's "Run checks with: R metacheck / Python (experimental)" choice, which starts on R. `off` (or `0`, `false`, `no`) hides it and runs Python; on the hosted app it is shown only with `on` (or `1`, `true`, `yes`) and where R runs metacheck. New, so it has no old name. |
+| `PSYARXIV_API` | `METACHECK_PSYARXIV_API` | `https://next.psyarxiv.org/api/v1` | `pytacheck site`: the PsyArXiv API it fetches a preprint's record and PDF from (`psyarxiv` field of a job). Stripped. A file address on another site is never followed. New, so it has no old name. See [SITE.md](SITE.md). |
 
 The hosted-app names are read through the same table. The hosted app gets them in a
 mapping it is given (its `env=` argument), so tests can pass its settings without
