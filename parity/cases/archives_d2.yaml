@@ -1619,3 +1619,66 @@
         "r": "testthat::with_mocked_bindings(fsd_info(\"FSD2653\"), online = function(...) FALSE, .package = \"metacheck\")"
         "py": "lambda m: m.offline(lambda: m.fsd.fsd_info(\"FSD2653\"))"
   "mock_dir": "tests/archives_d2/mocks"
+- "id": ".rbox_info.api.801"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); metacheck:::.rbox_info(\"https://researchbox.org/801\") }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox._rbox_info(\"https://researchbox.org/801\")))"
+  "mock_dir": "apis"
+- "id": "rbox_files.api.801"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_files(\"https://researchbox.org/801\") }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_files(\"https://researchbox.org/801\")))"
+  "mock_dir": "apis"
+- "id": "rbox_files.api.no_key"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_files(\"https://researchbox.org/801\") }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_files(\"https://researchbox.org/801\")))"
+  "mock_dir": "apis"
+- "id": "rbox_search.api.happi"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_search(\"happi*\", limit = 3) }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_search(\"happi*\", limit=3)))"
+  "mock_dir": "apis"
+- "id": "rbox_search.api.no_key"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_search(\"happi*\") }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_search(\"happi*\")))"
+  "mock_dir": "apis"
+- "id": "rbox_search.api.limit_zero"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_search(\"happi*\", limit = 0) }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_search(\"happi*\", limit=0)))"
+  "mock_dir": "apis"
+- "id": "rbox_search.api.not_a_string"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_search(1) }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_search(1)))"
+  "mock_dir": "apis"
