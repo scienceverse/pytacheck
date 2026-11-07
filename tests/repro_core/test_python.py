@@ -8,7 +8,6 @@ the Docker backends run with ``docker`` itself replaced by fakes.
 
 from __future__ import annotations
 
-import json
 import os
 import re
 import shutil
@@ -640,23 +639,26 @@ def test_install_deps_py_docker(monkeypatch: pytest.MonkeyPatch, tmp_path: Path)
             return {"status": 0, "timeout": False}
         seen["args"] = args
         sandbox = _mount(args, "/sandbox")
-        seen["reqs"] = json.loads(Path(sandbox, "requirements.json").read_text())
-        compile(Path(sandbox, "install.py").read_text(), "install.py", "exec")
-        Path(sandbox, ".install_results.jsonl").write_text(
-            json.dumps({"package": "numpy", "installed": True, "message": ""}) + "\n"
-            '{"package": "scikit-learn", "installed": fal'  # cut off by the timeout
-        )
+        seen["driver"] = Path(sandbox, "install.sh").read_text()
+        # numpy finished; the timeout stopped scikit-learn
+        Path(sandbox, ".install_results").write_text("1 ok\n")
         return {"status": None, "timeout": True}
 
     monkeypatch.setattr(docker, "_docker", fake)
     deps = repro_dependencies_py(["import numpy", "import sklearn"])
     out = repro_install_deps_py_docker(deps, tmp_path / "lib", timeout=9)
+    assert out["package"].tolist() == ["numpy", "scikit-learn"]
     assert out["installed"].tolist() == [True, False]
     assert out["message"].tolist() == ["", "docker install timed out after 9s"]
-    assert seen["reqs"] == [
-        {"package": "numpy", "requirement": "numpy"},
-        {"package": "scikit-learn", "requirement": "scikit-learn"},
-    ]
+    # one sh driver, one pip per requirement, each with a time limit of its own
+    driver = seen["driver"]
+    assert driver.startswith("#!/bin/sh\nset -u\n")
+    pip = (
+        "timeout 120 pip install --quiet --prefer-binary --no-input --prefix /tmp/pyt_{} "
+        "--extra-index-url https://download.pytorch.org/whl/cpu '{}'"
+    )
+    assert pip.format(1, "numpy") in driver
+    assert pip.format(2, "scikit-learn") in driver
     assert seen["stopped"]
     args = seen["args"]
     assert "--network" not in args  # PyPI must be reachable
@@ -665,8 +667,8 @@ def test_install_deps_py_docker(monkeypatch: pytest.MonkeyPatch, tmp_path: Path)
     assert _mount(args, "/pylib") == os.path.normpath(tmp_path / "lib")
     assert args[-3:] == [
         "ghcr.io/scienceverse/metacheck_py_small:latest",
-        "python",
-        "/sandbox/install.py",
+        "sh",
+        "/sandbox/install.sh",
     ]
 
 
@@ -732,14 +734,25 @@ def test_run_scripts_py_docker(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) 
     # the run phase gets the same sandbox as R code
     assert run[run.index("--network") + 1] == "none"
     assert "--read-only" in run
-    assert run[run.index("--tmpfs") + 1] == "/tmp"
+    # compiled code in /tmp may run (metacheck 0.4.3.7); nosuid and nodev stay
+    assert run[run.index("--tmpfs") + 1] == "/tmp:exec,nosuid,nodev"
     assert run[run.index("--cap-drop") + 1] == "ALL"
     assert run[run.index("--pids-limit") + 1] == "512"
     assert "no-new-privileges" in run
     assert run[run.index("--user") + 1] != "0:0"
     assert run[run.index("-w") + 1] == "/sandbox"
-    assert f"{os.path.realpath(lib)}:/pylib:ro" in run
-    assert "PYTHONPATH=/pylib" in run
+    env = [run[k + 1] for k, a in enumerate(run) if a == "-e"]
+    assert env == [
+        "PWD=/sandbox",
+        "HOME=/tmp",
+        "NUMBA_CACHE_DIR=/tmp/numba",
+        "MPLCONFIGDIR=/tmp/matplotlib",
+        "XDG_CACHE_HOME=/tmp/.cache",
+        "MPLBACKEND=Agg",
+        "QT_QPA_PLATFORM=offscreen",
+        "PYTHONPATH=/pylib",
+    ]
+    assert f"{os.path.realpath(lib)}:/pylib:ro" in run  # read-only, unlike metacheck's (#575)
     assert run[-3:] == [
         "ghcr.io/scienceverse/metacheck_py_small:latest",
         "python",

@@ -7,9 +7,12 @@ real daemon runs only when Docker is available.
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import subprocess
+import time
+import types
 from pathlib import Path
 from typing import Any
 
@@ -71,6 +74,51 @@ def test_docker_daemon_up(monkeypatch: pytest.MonkeyPatch) -> None:
     assert repro_docker_available() == {"ok": True, "msg": ""}
 
 
+@pytest.mark.parametrize(
+    ("answers", "waits", "expected"),
+    [
+        # a late answer earns another, longer try (#560); an answer stops the tries
+        ([True, False], [15, 30], {"ok": True, "msg": ""}),
+        ([True, True, False], [15, 30, 60], {"ok": True, "msg": ""}),
+        (
+            [True, True, True],
+            [15, 30, 60],
+            {
+                "ok": False,
+                "msg": "Docker did not answer within 60 seconds, after two shorter tries. "
+                "It may be busy; try again when it has less to do.",
+            },
+        ),
+        # a failing answer is not tried again
+        (
+            ["down"],
+            [15],
+            {
+                "ok": False,
+                "msg": "Docker does not appear to be running. Start Docker Desktop and try again.",
+            },
+        ),
+    ],
+)
+def test_docker_available_tries_a_slow_daemon_again(
+    monkeypatch: pytest.MonkeyPatch, answers: list[Any], waits: list[int], expected: dict[str, Any]
+) -> None:
+    seen: list[float] = []
+
+    def fake(args: list[str], *, timeout: float, **kw: Any) -> dict[str, Any]:
+        assert args == ["info"]
+        late = answers[len(seen)]
+        seen.append(timeout)
+        if late == "down":
+            return {"status": 1, "timeout": False, "stdout": ""}
+        return {"status": None if late else 0, "timeout": late, "stdout": ""}
+
+    monkeypatch.setattr(docker.shutil, "which", lambda _: "/usr/bin/docker")
+    monkeypatch.setattr(docker, "_docker", fake)
+    assert repro_docker_available() == expected
+    assert seen == waits
+
+
 def test_container_name() -> None:
     a, b = docker._repro_docker_container_name(), docker._repro_docker_container_name()
     assert re.fullmatch(r"repro_repro_[0-9a-f]+", a)
@@ -122,6 +170,21 @@ def test_image_for() -> None:
     assert docker._repro_docker_image_for([], True) == "rocker/r-ver:latest"
     assert docker._repro_docker_image_for([None, "\n4.5.0"], True) == "rocker/r-ver:4.5.0"
     assert docker._repro_docker_image_for(["4.5.0 patched"], True) == "rocker/r-ver:latest"
+
+
+def test_image_options() -> None:
+    from metacheck.utils import local_options
+
+    # metacheck.docker_image names another image, to try one before it is published; a
+    # declared R version still wins when asked for
+    with local_options({"metacheck.docker_image": "example/r:test"}):
+        assert docker._repro_docker_image_for(["4.3.1"]) == "example/r:test"
+        assert docker._repro_docker_image_for(["4.3.1"], True) == "rocker/r-ver:4.3.1"
+    # metacheck.docker_image_py is the Python runners' default image; a given one wins
+    assert docker._repro_docker_image_py() == docker._REPRO_DOCKER_DEFAULT_IMAGE_PY
+    with local_options({"metacheck.docker_image_py": "example/py:test"}):
+        assert docker._repro_docker_image_py() == "example/py:test"
+        assert docker._repro_docker_image_py("example/py2:test") == "example/py2:test"
 
 
 def test_make_names() -> None:
@@ -429,3 +492,608 @@ def test_run_scripts_docker_real(tmp_path: Path) -> None:
     )
     out = repro_run_scripts_docker(tbl, ["a.R"], root, timeout=300)
     assert out["outcome"].tolist() == ["ran_ok"]
+
+
+# metacheck 0.4.3.7: the container, the network, memory and time ------------------------------
+
+
+def _env(args: list[str]) -> list[str]:
+    return [args[k + 1] for k, a in enumerate(args) if a == "-e"]
+
+
+def _locked_down(args: list[str]) -> None:
+    """The run-phase rules pytacheck keeps (D62): none of them is relaxed."""
+    assert "--read-only" in args
+    assert args[args.index("--cap-drop") + 1] == "ALL"
+    assert args[args.index("--security-opt") + 1] == "no-new-privileges"
+    assert args[args.index("--pids-limit") + 1] == "512"
+    assert args[args.index("--user") + 1].split(":")[0] != "0"
+    assert args[args.index("--ulimit") + 1] == "core=1"
+    # compiled code in /tmp may run (rstan); nosuid and nodev stay
+    assert args[args.index("--tmpfs") + 1] == "/tmp:exec,nosuid,nodev"
+
+
+def test_run_scripts_docker_container_of_0437(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    root = tmp_path / "sb"
+    (root / "code").mkdir(parents=True)
+    lib = tmp_path / "lib"
+    lib.mkdir()
+    (root / "code" / "a.R").write_text("x <- 1\n")
+    tbl = pd.DataFrame(
+        {
+            "file_name": ["a.R"],
+            "script_path": [str(root / "code" / "a.R")],
+            "run_dir": [str(root / "code")],
+        }
+    )
+    seen: dict[str, Any] = {}
+
+    def fake(args: list[str], **kw: Any) -> Any:
+        if args[0] == "run":
+            seen["args"] = args
+            seen["timeout"] = kw["timeout"]
+            host = Path(_mount(args, "/sandbox"), args[-1].removeprefix("/sandbox/"))
+            seen["wrapper"] = host.read_text(encoding="utf-8")
+        return {"status": 0, "timeout": False}
+
+    monkeypatch.setattr(docker, "_docker", fake)
+    out = repro_run_scripts_docker(tbl, ["a.R"], root, lib_dir=lib, image="img", timeout=9)
+    assert out["outcome"].tolist() == ["ran_ok"]
+    args = seen["args"]
+    _locked_down(args)
+    assert args[args.index("--network") + 1] == "none"  # no internet asked for
+    # the script's own folder, and PWD as a shell would set it (#568)
+    assert args[args.index("-w") + 1] == "/sandbox/code"
+    assert _env(args) == [
+        "PWD=/sandbox/code",
+        "JAVA_TOOL_OPTIONS=--add-opens=java.base/java.util=ALL-UNNAMED",
+    ]
+    # metacheck mounts the library writable (#575); here it stays read-only
+    assert f"{os.path.realpath(lib)}:/rlib:ro" in args
+    assert args[-3:] == ["img", "Rscript", "/sandbox/.runner_a.R.R"]  # no counting command
+    assert seen["timeout"] == 9
+    wrapper = seen["wrapper"]
+    for line in [
+        '  .libPaths(c("/rlib", .libPaths()))',
+        '  Sys.setenv(R_LIBS = paste(.libPaths(), collapse = ":"))',
+        '  Sys.setenv(XDG_CACHE_HOME = "/tmp/.cache", XDG_CONFIG_HOME = "/tmp/.config",',
+        "  options(knitr.graphics.error = FALSE)",
+        '  if (isTRUE(capabilities("cairo"))) options(device = function(...) '
+        'grDevices::cairo_pdf("Rplots.pdf", onefile = TRUE))',
+        '  attach(stand_ins, name = "metacheck:stand_ins", warn.conflicts = FALSE)',
+        "    if (sink.number() > 0) {",
+    ]:
+        assert line + "\n" in wrapper
+    # the set-up comes first, then the library, then the run
+    assert (
+        wrapper.index("stand_ins <- new.env()")
+        < wrapper.index("R_LIBS")
+        < wrapper.index("captures <- list()")
+    )
+
+
+def test_wrapper_without_a_library_sets_no_library_path() -> None:
+    lines = docker._wrapper_lines([], "/sandbox/a.R", False, "/sandbox/.capture.json")
+    assert not [x for x in lines if "/rlib" in x or "R_LIBS" in x]
+    assert '    echo <- paste0(paste0("> ", txt, collapse = "\\n"), "\\n")' in lines
+
+
+def test_workdir(tmp_path: Path) -> None:
+    root = tmp_path / "sb"
+    (root / "a" / "b").mkdir(parents=True)
+    assert docker._repro_docker_workdir(None, str(root)) == "/sandbox"
+    assert docker._repro_docker_workdir("", str(root)) == "/sandbox"
+    assert docker._repro_docker_workdir(str(root), str(root)) == "/sandbox"
+    assert docker._repro_docker_workdir(str(root / "a" / "b"), str(root)) == "/sandbox/a/b"
+
+
+def test_network_args_and_counted_command() -> None:
+    net = {"max_file": 1.0, "max_total": 2.0, "used": {"bytes": 0}}
+    assert docker._repro_docker_network_args(None) == ["--network", "none"]
+    assert docker._repro_docker_network_args(net) == []
+    assert docker._repro_docker_counted_cmd(["python", "/sandbox/a.py"], None) == [
+        "python",
+        "/sandbox/a.py",
+    ]
+    cmd = docker._repro_docker_counted_cmd(["python", "/sandbox/a.py"], net)
+    assert cmd[:2] == ["sh", "-c"]
+    assert cmd[2] == (
+        'touch /tmp/.repro_t0; "$@"; s=$?; cat /sys/class/net/eth0/statistics/rx_bytes '
+        "> /sandbox/.repro_received 2>/dev/null; exit $s"
+    )
+    assert cmd[3:] == ["sh", "python", "/sandbox/a.py"]
+
+
+def test_received(monkeypatch: pytest.MonkeyPatch) -> None:
+    asked: list[list[str]] = []
+    answer = {"stdout": "2000000\n104857700 /sandbox/data/big.zip\n"}
+
+    def fake(args: list[str], **kw: Any) -> Any:
+        asked.append(args)
+        assert kw["timeout"] == 20
+        return {"status": 0, "timeout": False, **answer}
+
+    monkeypatch.setattr(docker, "_docker", fake)
+    got = docker._repro_docker_received("repro_x", 100 * 1024**2)
+    assert got == {"bytes": 2e6, "file": "/sandbox/data/big.zip", "file_bytes": 104857700.0}
+    assert asked[0][:5] == ["exec", "repro_x", "sh", "-c", asked[0][4]]
+    assert '[ "$r" -ge 104857600 ]' in asked[0][4]
+    assert "-size +102400k" in asked[0][4]
+    answer["stdout"] = "512\n"
+    assert docker._repro_docker_received("repro_x") == {
+        "bytes": 512.0,
+        "file": None,
+        "file_bytes": None,
+    }
+    assert "find" not in asked[-1][4]  # no limit per file: no search
+    answer["stdout"] = "cat: no such file\n"
+    assert docker._repro_docker_received("repro_x")["bytes"] is None
+
+
+def test_read_received_never_follows_a_link(tmp_path: Path) -> None:
+    (tmp_path / "real").write_text("999\n")
+    os.symlink(tmp_path / "real", tmp_path / "link")
+    assert docker._read_received(str(tmp_path / "real")) == 999.0
+    assert docker._read_received(str(tmp_path / "link")) is None
+    assert docker._read_received(str(tmp_path / "absent")) is None
+    os.mkfifo(tmp_path / "pipe")
+    assert docker._read_received(str(tmp_path / "pipe")) is None  # not waited on
+
+
+class _Clock:
+    def __init__(self) -> None:
+        self.t = 0.0
+
+    def __call__(self) -> float:
+        return self.t
+
+
+class _Proc:
+    """A started ``docker run`` (the ``_docker_start`` seam) on a fake clock."""
+
+    def __init__(self, clock: _Clock, ends_after: float = math.inf, status: int = 0) -> None:
+        self.clock, self.ends_at, self.status = clock, clock.t + ends_after, status
+        self.ended = False
+
+    def end(self, status: int) -> None:
+        self.ended, self.status = True, status
+
+    def wait(self, timeout: float | None = None) -> int:
+        if not self.ended:
+            step = timeout or 0.0
+            if self.clock.t + step >= self.ends_at:
+                self.clock.t = self.ends_at
+                self.ended = True
+            else:
+                self.clock.t += step
+                raise subprocess.TimeoutExpired("docker", step)
+        return self.status
+
+    def poll(self) -> int | None:
+        return self.status if self.ended else None
+
+    def kill(self) -> None:
+        self.end(-9)
+
+
+def _watched_docker(
+    monkeypatch: pytest.MonkeyPatch, received: list[float], **proc: Any
+) -> dict[str, Any]:
+    """Fake docker for a run with the internet on: what each check sees, in order."""
+    clock = _Clock()
+    monkeypatch.setattr(docker, "time", types.SimpleNamespace(monotonic=clock, time=time.time))
+    seen: dict[str, Any] = {"runs": [], "checks": 0, "stops": 0, "procs": []}
+    counts = iter(received)
+
+    def start(args: list[str], *, stdout: str, stderr: str) -> Any:
+        seen["runs"].append(args)
+        Path(stdout).write_text("> download.file(u, 'big.zip')\n")
+        p = _Proc(clock, **proc)
+        seen["procs"].append(p)
+        return p
+
+    def fake(args: list[str], **kw: Any) -> Any:
+        if args[0] == "exec":
+            seen["checks"] += 1
+            return {"status": 0, "timeout": False, "stdout": f"{next(counts):.0f}\n"}
+        if args[0] == "stop":
+            seen["stops"] += 1
+            seen["procs"][-1].end(137)
+            return {"status": 0, "timeout": False, "stdout": ""}
+        raise AssertionError(f"with the internet on, a run is watched: {args}")
+
+    monkeypatch.setattr(docker, "_docker_start", start)
+    monkeypatch.setattr(docker, "_docker", fake)
+    return seen
+
+
+MB = 1024**2
+
+
+def test_run_scripts_docker_net_stops_what_downloads_too_much(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    root = tmp_path / "sb"
+    root.mkdir()
+    tbl = _run_tbl(root, ["dl.R", "next.R"])
+    seen = _watched_docker(monkeypatch, [300 * MB, 600 * MB, 1])
+    net = {"max_file": math.inf, "max_total": 500 * MB, "used": {"bytes": 0}}
+    out = repro_run_scripts_docker(tbl, ["dl.R", "next.R"], root, image="img", net=net)
+    assert out["outcome"].tolist() == ["download_too_large", "download_too_large"]
+    assert out["error"].tolist() == [
+        "stopped: the paper's scripts downloaded 600 MB, more than the limit of 500 MB "
+        "(max_download_size)",
+        # the scripts share the limit: the next one is stopped at its first check
+        "stopped: the paper's scripts downloaded 600 MB, more than the limit of 500 MB "
+        "(max_download_size)",
+    ]
+    assert out["stdout"].tolist()[0] == "> download.file(u, 'big.zip')"  # the output is kept
+    assert _na(out["error_type"]) == [None, None]
+    assert net["used"]["bytes"] == 600 * MB + 1
+    assert seen["stops"] == 2
+    run = seen["runs"][0]
+    _locked_down(run)
+    assert "--network" not in run  # the internet is on
+    assert run[run.index("img") + 1 :] == [
+        "sh",
+        "-c",
+        run[run.index("img") + 3],
+        "sh",
+        "Rscript",
+        "/sandbox/.runner_dl.R.R",
+    ]
+
+
+def test_run_scripts_docker_net_stops_a_file_too_large(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    root = tmp_path / "sb"
+    root.mkdir()
+    tbl = _run_tbl(root, ["dl.R"])
+    _watched_docker(monkeypatch, [])
+
+    def fake(args: list[str], **kw: Any) -> Any:
+        if args[0] == "exec":
+            return {"status": 0, "timeout": False, "stdout": "2000000\n104857700 /sandbox/big.zip"}
+        return {"status": 0, "timeout": False, "stdout": ""}
+
+    monkeypatch.setattr(docker, "_docker", fake)
+    net = {"max_file": 100 * MB, "max_total": 500 * MB, "used": {"bytes": 0}}
+    out = repro_run_scripts_docker(tbl, ["dl.R"], root, net=net)
+    assert out["error"].tolist() == [
+        "stopped: it downloaded big.zip, a file of 100 MB, more than the limit of 100 MB per "
+        "file (max_file_size)"
+    ]
+
+
+def test_run_scripts_docker_net_names_a_download_still_arriving(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    root = tmp_path / "sb"
+    root.mkdir()
+    tbl = _run_tbl(root, ["slow.R"])
+    seen = _watched_docker(monkeypatch, [1 * MB, 2 * MB, 3 * MB])
+    net = {"max_file": math.inf, "max_total": math.inf, "used": {"bytes": 0}}
+    out = repro_run_scripts_docker(tbl, ["slow.R"], root, timeout=5, net=net)
+    assert out["outcome"].tolist() == ["timed_out"]
+    assert out["error"].tolist() == [
+        "timed out after 5s while a download was still arriving (3 MB received)"
+    ]
+    assert _na(out["error_type"]) == ["timeout"]
+    assert seen["checks"] == 3  # at 2 s, 4 s and 5 s
+    assert net["used"]["bytes"] == 3 * MB
+
+
+def test_run_scripts_docker_net_counts_what_came_in_after_the_last_check(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    root = tmp_path / "sb"
+    root.mkdir()
+    tbl = _run_tbl(root, ["a.R"])
+    seen = _watched_docker(monkeypatch, [1000], ends_after=3)
+    # what the container wrote when it ended
+    real_start = docker._docker_start
+
+    def start(args: list[str], *, stdout: str, stderr: str) -> Any:
+        (root / ".repro_received").write_text("5000\n")
+        return real_start(args, stdout=stdout, stderr=stderr)
+
+    monkeypatch.setattr(docker, "_docker_start", start)
+    net = {"max_file": math.inf, "max_total": math.inf, "used": {"bytes": 10}}
+    out = repro_run_scripts_docker(tbl, ["a.R"], root, net=net)
+    assert out["outcome"].tolist() == ["ran_ok"]
+    assert net["used"]["bytes"] == 10 + 5000
+    assert seen["checks"] == 1
+    assert not (root / ".repro_received").exists()
+
+
+def test_run_scripts_docker_out_of_memory_note(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from metacheck.utils import local_options
+
+    root = tmp_path / "sb"
+    root.mkdir()
+    tbl = _run_tbl(root, ["big.R"])
+    monkeypatch.setattr(docker, "_docker", lambda args, **kw: {"status": 137, "timeout": False})
+    note = (
+        "\n[reproducibility_check] The script was stopped for using more than the memory "
+        "limit of 4 GB that each script has here; this says nothing about the code."
+    )
+    with local_options({"metacheck.docker_resource_limits": {"cpus": 2, "memory_gb": 4}}):
+        out = repro_run_scripts_docker(tbl, ["big.R"], root)
+    assert out["stderr"].tolist() == [note]
+    assert out["error"].tolist() == [note]
+    assert _na(out["error_type"]) == ["runtime"]
+    # without a memory limit, exit status 137 says nothing more
+    assert repro_run_scripts_docker(tbl, ["big.R"], root)["stderr"].tolist() == [""]
+
+
+def test_run_scripts_docker_deadline(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    root = tmp_path / "sb"
+    root.mkdir()
+    tbl = _run_tbl(root, ["a.R", "b.R"])
+    limits: list[float] = []
+
+    def fake(args: list[str], **kw: Any) -> Any:
+        if args[0] == "run":
+            limits.append(kw["timeout"])
+            return {"status": None, "timeout": True}
+        return {"status": 0, "timeout": False}
+
+    monkeypatch.setattr(docker, "_docker", fake)
+    out = repro_run_scripts_docker(tbl, ["a.R", "b.R"], root, timeout=60, deadline=time.time() + 3)
+    # stopped by the time for all scripts together, not its own limit (#581)
+    assert limits == [3, 3]
+    assert _na(out["error_type"]) == ["deadline", "deadline"]
+    assert out["error"].tolist() == ["timed out after 3s"] * 2
+    out = repro_run_scripts_docker(tbl, ["a.R"], root, deadline=time.time() - 1)
+    assert out["outcome"].tolist() == ["skipped_time_limit", "skipped_time_limit"]
+    assert (
+        out["error"].tolist() == ["not started: the time for all scripts together had run out"] * 2
+    )
+    assert len(limits) == 2  # no container was started
+
+
+# repro_run_scripts_py_docker() and repro_install_deps_py_docker() of 0.4.3.7 ---------------------
+
+
+def _py_tbl(root: Path, names: list[str], **cols: list[Any]) -> pd.DataFrame:
+    for n in names:
+        (root / n).parent.mkdir(parents=True, exist_ok=True)
+        (root / n).write_text("x = 1\n")
+    return pd.DataFrame(
+        {
+            "file_name": [Path(n).name for n in names],
+            "script_path": [str(root / n) for n in names],
+            "run_dir": [str((root / n).parent) for n in names],
+            **cols,
+        }
+    )
+
+
+def test_run_scripts_py_docker_container_of_0437(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from metacheck.repro.docker import repro_run_scripts_py_docker
+
+    root = tmp_path / "sb"
+    root.mkdir()
+    lib = tmp_path / "pylib"
+    lib.mkdir()
+    tbl = _py_tbl(
+        root,
+        ["src/run.py"],
+        module_folders=[".\nsrc"],
+        module_root=[str(root)],
+    )
+    runs: list[list[str]] = []
+
+    def fake(args: list[str], **kw: Any) -> Any:
+        runs.append(args)
+        return {"status": 0, "timeout": False}
+
+    monkeypatch.setattr(docker, "_docker", fake)
+    out = repro_run_scripts_py_docker(tbl, ["run.py"], root, lib_dir=lib, image="img")
+    assert out["outcome"].tolist() == ["ran_ok"]
+    (run,) = runs
+    _locked_down(run)
+    assert run[run.index("--network") + 1] == "none"
+    assert run[run.index("-w") + 1] == "/sandbox/src"
+    assert _env(run) == [
+        "PWD=/sandbox/src",
+        "HOME=/tmp",
+        "NUMBA_CACHE_DIR=/tmp/numba",
+        "MPLCONFIGDIR=/tmp/matplotlib",
+        "XDG_CACHE_HOME=/tmp/.cache",
+        "MPLBACKEND=Agg",
+        "QT_QPA_PLATFORM=offscreen",
+        # the repository's own modules first, then what was installed
+        "PYTHONPATH=/sandbox:/sandbox/src:/pylib",
+    ]
+    assert f"{os.path.realpath(lib)}:/pylib:ro" in run  # read-only, unlike metacheck's (#575)
+    assert run[-3:] == ["img", "python", "/sandbox/src/run.py"]
+    # no library and no own modules: no PYTHONPATH
+    runs.clear()
+    repro_run_scripts_py_docker(_py_tbl(root, ["a.py"]), ["a.py"], root)
+    assert not [e for e in _env(runs[0]) if e.startswith("PYTHONPATH")]
+    assert runs[0][-3] == docker._REPRO_DOCKER_DEFAULT_IMAGE_PY
+    # without an image, the option metacheck.docker_image_py names it
+    from metacheck.utils import local_options
+
+    runs.clear()
+    with local_options({"metacheck.docker_image_py": "example/py:test"}):
+        repro_run_scripts_py_docker(_py_tbl(root, ["a.py"]), ["a.py"], root)
+    assert runs[0][-3] == "example/py:test"
+
+
+def test_run_scripts_py_docker_net_deadline_and_memory(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from metacheck.repro.docker import repro_run_scripts_py_docker
+    from metacheck.utils import local_options
+
+    root = tmp_path / "sb"
+    root.mkdir()
+    tbl = _py_tbl(root, ["dl.py"])
+    seen = _watched_docker(monkeypatch, [2 * MB])
+    net = {"max_file": math.inf, "max_total": 1 * MB, "used": {"bytes": 0}}
+    out = repro_run_scripts_py_docker(tbl, ["dl.py"], root, net=net)
+    assert out["outcome"].tolist() == ["download_too_large"]
+    assert out["stdout"].tolist() == ["> download.file(u, 'big.zip')"]
+    run = seen["runs"][0]
+    assert "--network" not in run  # the internet is on
+    # the counting command
+    assert run[-7:-4] == [docker._REPRO_DOCKER_DEFAULT_IMAGE_PY, "sh", "-c"]
+    assert run[-3:] == ["sh", "python", "/sandbox/dl.py"]
+
+    limits: list[float] = []
+
+    def fake(args: list[str], stderr: str | None = None, **kw: Any) -> Any:
+        if args[0] != "run":
+            return {"status": 0, "timeout": False}
+        limits.append(kw["timeout"])
+        if args[-1].endswith("m.py"):
+            Path(stderr or "").write_text("Traceback\nMemoryError\n")
+            return {"status": 137, "timeout": False}
+        return {"status": None, "timeout": True}
+
+    monkeypatch.setattr(docker, "_docker", fake)
+    two = _py_tbl(root, ["a.py", "b.py"])
+    out = repro_run_scripts_py_docker(two, ["a.py", "b.py"], root, deadline=time.time() + 3)
+    # stopped by the time for all scripts together, not its own limit (#581)
+    assert limits == [3, 3]
+    assert _na(out["error_type"]) == ["deadline", "deadline"]
+    assert out["error"].tolist() == ["timed out after 3s"] * 2
+    out = repro_run_scripts_py_docker(two, ["a.py"], root, deadline=time.time() - 1)
+    assert out["outcome"].tolist() == ["skipped_time_limit"] * 2
+    assert len(limits) == 2  # no container was started
+    with local_options({"metacheck.docker_resource_limits": {"cpus": 1, "memory_gb": 2}}):
+        out = repro_run_scripts_py_docker(_py_tbl(root, ["m.py"]), ["m.py"], root)
+    se = out["stderr"].tolist()[0]
+    assert se.startswith("Traceback\nMemoryError\n[reproducibility_check] The script was stopped")
+    assert "memory limit of 2 GB" in se
+    assert out["outcome"].tolist() == ["errored"]
+
+
+def _py_install_fake(
+    monkeypatch: pytest.MonkeyPatch, results: str, errors: dict[int, str], ret: Any
+) -> dict[str, Any]:
+    seen: dict[str, Any] = {}
+
+    def fake(args: list[str], stdout: str | None = None, **kw: Any) -> Any:
+        if args[0] == "stop":
+            seen["stopped"] = True
+            return {"status": 0, "timeout": False}
+        seen["args"] = args
+        seen["timeout"] = kw["timeout"]
+        sandbox = _mount(args, "/sandbox")
+        seen["driver"] = Path(sandbox, "install.sh").read_text()
+        seen["mode"] = os.stat(Path(sandbox, "install.sh")).st_mode & 0o777
+        Path(sandbox, ".install_results").write_text(results)
+        for i, text in errors.items():
+            Path(sandbox, f".err_{i}.txt").write_text(text)
+        Path(stdout or "").write_text("pip says\nno\n")
+        return ret
+
+    monkeypatch.setattr(docker, "_docker", fake)
+    return seen
+
+
+def test_install_deps_py_docker_driver_pins_failures_and_messages(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from metacheck.repro.docker import repro_install_deps_py_docker
+
+    deps = pd.DataFrame(
+        {
+            "package": ["numpy", "tqdm", "torch", "gone"],
+            "source": ["pypi"] * 4,
+            "ref": ["numpy==1.16.0", None, None, None],
+        }
+    )
+    seen = _py_install_fake(
+        monkeypatch,
+        # a line the container made up, or a second one, does not count
+        "1 pinned\n2 failed\n9 ok\n2 ok\n3 ok\n",
+        {2: 'ERROR: No matching distribution for "tqdm"\nother\n'},
+        {"status": 1, "timeout": False},
+    )
+    out = repro_install_deps_py_docker(deps, tmp_path / "lib", timeout=3000)
+    assert out["package"].tolist() == ["numpy", "tqdm", "torch", "gone"]
+    assert out["installed"].tolist() == [True, False, True, False]
+    assert out["message"].tolist() == [
+        "",
+        'ERROR: No matching distribution for "tqdm"other',
+        "",
+        "docker install failed (status 1): pip says\nno",
+    ]
+    assert _na(out["version_note"]) == [
+        "the pinned version numpy==1.16.0 could not be installed, so the current one was",
+        None,
+        None,
+        None,
+    ]
+    assert out["via_archive"].tolist() == [False] * 4
+    assert _na(out["category"]) == [None] * 4
+    assert seen["mode"] == 0o755
+    assert seen["timeout"] == 3000
+    driver = seen["driver"].split("\n")
+    # 900 s per requirement at most; the pinned one is tried again by its bare name, and
+    # then each apart with --target
+    pip = "timeout 900 pip install --quiet --prefer-binary --no-input"
+    index = "--extra-index-url https://download.pytorch.org/whl/cpu"
+    assert f"if {pip} --prefix /tmp/pyt_1 {index} 'numpy==1.16.0' 2> /sandbox/.err_1.txt; then" in (
+        driver
+    )
+    assert f"elif {pip} --prefix /tmp/pyt_1 {index} 'numpy' 2>> /sandbox/.err_1.txt; then" in (
+        driver
+    )
+    assert (
+        f"elif rm -rf /tmp/pyt_t2; {pip} --target /tmp/pyt_t2 {index} 'tqdm' "
+        "2>> /sandbox/.err_2.txt; then"
+    ) in driver
+    # tqdm has no pinned version, so no second try by its bare name
+    assert not [x for x in driver if x.startswith(f"elif {pip} --prefix /tmp/pyt_2 ")]
+    assert (
+        "  for f in /tmp/pyt_3/lib*/python*/site-packages/* /tmp/pyt_3/lib*/python*/"
+        'site-packages/.[!.]*; do [ -e "$f" ] && [ ! -e "/pylib/${f##*/}" ] && '
+        'cp -r "$f" /pylib/; done; rm -rf /tmp/pyt_3'
+    ) in driver
+    assert driver.count("fi") == 4
+    args = seen["args"]
+    assert "--network" not in args  # PyPI must be reachable
+    assert args[args.index("--cap-drop") + 1] == "ALL"
+    assert "HOME=/tmp" in _env(args)
+    assert args[-2:] == ["sh", "/sandbox/install.sh"]
+
+
+def test_install_deps_py_docker_per_package_limit() -> None:
+    assert docker._py_install_per_package(9) == 120
+    assert docker._py_install_per_package(601) == 301
+    assert docker._py_install_per_package(10_000) == 900
+
+
+def test_install_deps_py_docker_no_result_messages(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from metacheck.repro.docker import repro_install_deps_py_docker
+
+    deps = pd.DataFrame({"package": ["a", "b"], "source": ["pypi", "pypi"]})
+    seen = _py_install_fake(monkeypatch, "1 ok\n", {}, {"status": None, "timeout": True})
+    out = repro_install_deps_py_docker(deps, tmp_path / "lib", timeout=59.6)
+    assert out["message"].tolist() == ["", "docker install timed out after 60s"]
+    assert seen["stopped"]
+    # a run that ended without a result for a requirement; a quote in it is quoted for sh
+    a_quote = pd.DataFrame({"package": ["it"], "source": ["pypi"], "ref": ["it'x"]})
+    seen = _py_install_fake(monkeypatch, "", {}, {"status": 0, "timeout": False})
+    out = repro_install_deps_py_docker(a_quote, tmp_path / "lib")
+    assert out["installed"].tolist() == [False]
+    assert out["message"].tolist() == ["docker install failed (status 0): pip says\nno"]
+    assert " 'it'\\''x' 2> /sandbox/.err_1.txt; then" in seen["driver"]
+    # not started
+    monkeypatch.setattr(docker, "_docker", lambda args, **kw: OSError("docker"))
+    out = repro_install_deps_py_docker(deps, tmp_path / "lib")
+    assert out["message"].tolist() == ["docker run could not be started"] * 2
