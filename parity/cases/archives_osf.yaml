@@ -65,7 +65,6 @@
         "r": "c(NA, \"http://osf.io\", \"https://osf.io/\", \"osf.io\", \"https://www.osf.io/\", \"pngda\")"
         "py": "[None, \"http://osf.io\", \"https://osf.io/\", \"osf.io\", \"https://www.osf.io/\", \"pngda\"]"
 - "id": "osf_check_id.edge_urls"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U51", "reason": "a route name after the project ID (osf.io/j3gcx/files/) is not an ID, and a URL naming two osf.io IDs gives the first"}
   "r": "osf_check_id"
   "py": "metacheck.archives.osf.osf_check_id"
   "args":
@@ -94,7 +93,6 @@
       - "https://files.de-1.osf.io/v1/resources/j3gcx/providers/osfstorage/685a46eb8c103f8ab307047f/?zip="
       - "https://osf.io/averyveryverylongsegment"
 - "id": "osf_check_id.realistic_non_ids"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U51", "reason": "a word after osf.io/ is not cut to a 5-character ID (osf.io/prereg is not \"prere\"), and a draft-registration page's schema id (osf.io/a5bmw/register/565fb...) is not a file ID"}
   "r": "osf_check_id"
   "py": "metacheck.archives.osf.osf_check_id"
   "args":
