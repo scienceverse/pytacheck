@@ -122,12 +122,22 @@ jobs:
         if: always()
         run: |
           git rev-parse --show-toplevel > /dev/null # fails here, not in a folder-to-folder diff, if git sees no repository
-          if ! git diff --quiet -- parity/golden parity/accuracy/golden; then
+          changed=$(git diff --quiet -- parity/golden parity/accuracy/golden || echo yes)
+          untracked=$(git ls-files --others --exclude-standard -- parity/golden parity/accuracy/golden)
+          if [ -n "$changed$untracked" ]; then
+            # the regenerated goldens as one patch, new files included, uploaded
+            # below: a machine without the R reference takes them over with
+            # `git apply --binary goldens.patch`
+            mkdir -p parity/_out
+            [ -z "$untracked" ] || echo "$untracked" | git add --intent-to-add --pathspec-from-file=-
+            git diff --binary -- parity/golden parity/accuracy/golden > parity/_out/goldens.patch
+            [ -z "$untracked" ] || echo "$untracked" | git reset --quiet --pathspec-from-file=-
+          fi
+          if [ -n "$changed" ]; then
             git diff --stat -- parity/golden parity/accuracy/golden
             echo "::error::Goldens regenerated from R differ from the committed goldens."
             exit 1
           fi
-          untracked=$(git ls-files --others --exclude-standard -- parity/golden parity/accuracy/golden)
           if [ -n "$untracked" ]; then
             echo "$untracked"
             echo "::error::Cases or accuracy modules without committed goldens."
@@ -147,6 +157,13 @@ jobs:
           path: |
             parity/_out/report.json
             parity/_out/accuracy.json
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: regenerated-goldens
+          path: parity/_out/goldens.patch
+          if-no-files-found: ignore
 
       # The container runs as root. On a self-hosted runner whose user reaches
       # the host's Docker daemon, what it leaves in the mounted work folder (the
