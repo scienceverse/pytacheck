@@ -7,11 +7,12 @@ import re
 import shutil
 import tempfile
 import warnings
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
-from tests.report.parity_helpers import ROOT, rp_mask
+from tests.report.parity_helpers import ROOT, _args, _mods, _unpath, rp_mask, rp_norm_output
 
 LOGO = str(ROOT / "src" / "metacheck" / "report" / "assets" / "logo.png")
 
@@ -188,6 +189,25 @@ def rc_scenario(name: str) -> list[Any]:
         ]
     if name == "no_tree":
         return [repro, other]
+    if name == "brief_keep":
+        return [
+            rc_mo(
+                "kept",
+                "Kept",
+                "green",
+                summary_text="The code ran.",
+                report="Ran fine.",
+                brief=True,
+            ),
+            rc_mo("green", "Plain green", "green", summary_text="Nothing to see."),
+            rc_mo(
+                "red",
+                "Red",
+                "red",
+                summary_text="Fix this.",
+                report="Details of the problem.",
+            ),
+        ]
     if name == "section_note":
         return [
             rc_mo(
@@ -249,10 +269,68 @@ def rc_qmd(name: str, paper: str = "plain") -> str:
     return rc_mask(checklist_qmd(rc_scenario(name), rc_paper(paper)))
 
 
-def rc_report_qmd(name: str, paper: str = "titled") -> str:
+def rc_report_qmd(name: str, paper: str = "titled", type: str = "checklist") -> str:
     from metacheck.report.report import report_qmd
 
-    return rc_mask(report_qmd(rc_scenario(name), rc_paper(paper), report_type="checklist"))
+    return rc_mask(report_qmd(rc_scenario(name), rc_paper(paper), report_type=type))
+
+
+def rc_report(
+    paper: Any, modules: Any, type: str = "checklist", args: Any = None
+) -> dict[str, Any]:
+    from metacheck.report.blocks import report_type
+    from metacheck.report.report import report
+
+    fd, f = tempfile.mkstemp(suffix=".qmd")
+    os.close(fd)
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            res = report(paper, _mods(modules), f, "qmd", _args(args), report_type=type)
+        txt = Path(f).read_text(encoding="utf-8")
+        txt = txt[:-1] if txt.endswith("\n") else txt
+    finally:
+        os.unlink(f)
+    return {
+        "output": rp_norm_output(res),
+        "save_path_ok": res.save_path == f,
+        "type_after": report_type(),
+        "file": rc_mask(_unpath(txt)),
+    }
+
+
+def rc_report_repository(
+    folder: str, modules: Any, args: Any = None, type: str = "checklist"
+) -> dict[str, Any]:
+    from metacheck.report.report import report_repository
+
+    d = tempfile.mkdtemp()
+    fd, f = tempfile.mkstemp(suffix=".qmd")
+    os.close(fd)
+    try:
+        os.makedirs(os.path.join(d, folder))
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            res = report_repository(
+                os.path.join(d, folder),
+                output_file=f,
+                output_format="qmd",
+                modules=_mods(modules),
+                args=_args(args),
+                report_type=type,
+            )
+        txt = Path(f).read_text(encoding="utf-8")
+        txt = txt[:-1] if txt.endswith("\n") else txt
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+        os.unlink(f)
+    out = rp_norm_output(res)
+    for op in out.values():
+        if op.summary_table is not None and "paper_id" in op.summary_table.columns:
+            st = op.summary_table.copy()
+            st["paper_id"] = "test_paper"
+            op.summary_table = st
+    return {"output": out, "file": rc_mask(_unpath(txt))}
 
 
 # ---- file tree -----------------------------------------------------------------

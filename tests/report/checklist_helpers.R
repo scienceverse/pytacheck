@@ -86,6 +86,12 @@ rc_scenario <- function(name) {
         summary_text = "The code ran.", report = "Ran.", checklist_section = "The scripts."),
       other = rc_mo("other", "Other", "green", summary_text = "Fine.", report = "Other details.")
     ),
+    brief_keep = list(
+      kept = rc_mo("kept", "Kept", "green", summary_text = "The code ran.", report = "Ran fine.",
+                   brief = TRUE),
+      green = rc_mo("green", "Plain green", "green", summary_text = "Nothing to see."),
+      red = rc_mo("red", "Red", "red", summary_text = "Fix this.", report = "Details of the problem.")
+    ),
     section_note = list(sec = rc_mo("sec", "Sectioned", "red",
       summary_text = "Look below.", report = c("Long", "report"),
       checklist_section = c("Paragraph one.", "Paragraph two."))),
@@ -131,12 +137,46 @@ rc_qmd <- function(name, paper = "plain") {
   rc_mask(metacheck:::.report_checklist_qmd(rc_scenario(name), rc_paper(paper)))
 }
 
-# report_qmd() with report_type "checklist" on module outputs
-rc_report_qmd <- function(name, paper = "titled") {
+# report_qmd() on module outputs, with a report type
+rc_report_qmd <- function(name, paper = "titled", type = "checklist") {
   prev <- report_type()
-  report_type("checklist")
+  report_type(type)
   on.exit(report_type(prev))
   rc_mask(report_qmd(rc_scenario(name), rc_paper(paper)))
+}
+
+# report() to a .qmd, with a report type
+rc_report <- function(paper, modules, type = "checklist", args = list()) {
+  mods <- vapply(modules, rp_mod, character(1), USE.NAMES = FALSE)
+  names(args) <- vapply(names(args), rp_mod, character(1), USE.NAMES = FALSE)
+  f <- tempfile(fileext = ".qmd")
+  on.exit(unlink(f))
+  res <- suppressWarnings(report(paper, mods, f, "qmd", report_type = type, args = args))
+  txt <- paste(readLines(f), collapse = "\n")
+  list(output = rp_norm_output(res),
+       save_path_ok = identical(attr(res, "save_path"), f),
+       type_after = report_type(),
+       file = rc_mask(gsub("tests/report/modules/([a-z_]+)\\.[Rr]", "\\1", txt)))
+}
+
+# report_repository() on an empty folder, with a report type
+rc_report_repository <- function(folder, modules, args = list(), type = "checklist") {
+  mods <- vapply(modules, rp_mod, character(1), USE.NAMES = FALSE)
+  names(args) <- vapply(names(args), rp_mod, character(1), USE.NAMES = FALSE)
+  d <- tempfile()
+  dir.create(file.path(d, folder), recursive = TRUE)
+  f <- tempfile(fileext = ".qmd")
+  on.exit(unlink(c(d, f), recursive = TRUE))
+  res <- suppressWarnings(report_repository(file.path(d, folder), output_file = f,
+                                            output_format = "qmd", modules = mods, args = args,
+                                            report_type = type))
+  txt <- paste(readLines(f), collapse = "\n")
+  out <- rp_norm_output(res)
+  for (i in seq_along(out)) {
+    if (!is.null(out[[i]]$summary_table)) out[[i]]$summary_table$paper_id <- "test_paper"
+  }
+  list(output = out,
+       file = rc_mask(gsub("tests/report/modules/([a-z_]+)\\.[Rr]", "\\1", txt)))
 }
 
 # ---- file tree -----------------------------------------------------------

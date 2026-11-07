@@ -36,6 +36,10 @@ def rp_mask(x: str) -> str:
     x = re.sub(r"\n\n```\{r, include=FALSE\}\n[^`]*```\n\n", "\n\n", x)
     x = re.sub(r"\n```\{r\}.*?\n```\n", "\n<R-CHUNK>\n", x, flags=re.S)
     x = re.sub(r'\n```\{=html\}\n<div class="datatables.*?\n```\n', "\n<R-CHUNK>\n", x, flags=re.S)
+    # (a static report's tables: raw HTML blocks)
+    x = re.sub(
+        r'\n```\{=html\}\n<div class="dt-static-wrap".*?\n```\n', "\n<R-CHUNK>\n", x, flags=re.S
+    )
     x = re.sub(r"\n```\{=html\}\n<style>\n.*?\n</script>\n```\n\Z", "", x, flags=re.S)
     return re.sub(r"(?m)^(\s*(?:version|report-created): ).*$", r"\1<masked>", x)
 
