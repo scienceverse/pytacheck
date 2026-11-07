@@ -26,10 +26,6 @@
 "mod_urls_open_review/all_urls.review.chain_after_open_practices_none": *u77_chain
 "mod_urls_open_review/all_urls.review.chain_after_open_practices_twice": *u77_chain
 "mod_urls_open_review/all_urls.review.chain_single_after_open_practices": *u77_chain
-"mod_ref_pubpeer_summary_review/ref_pubpeer.nourl_only":
-  kind: r_bug_fixed
-  ref: U14
-  reason: pubpeer_comments() always returns the url and users columns, so feedback without a url is reported (R's table lacks the column and the module fails)
 # U158
 "mod_urls_open/all_urls.psychsci":
   kind: r_bug_fixed

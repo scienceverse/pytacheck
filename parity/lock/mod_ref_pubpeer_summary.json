@@ -1,6 +1,5 @@
 {
-"ref_pubpeer.paperlist": {"r": "fc0d5c6af9b68943", "py": "e730e5ad0602983c", "diff": ["report[]", "summary_table.pubpeer_comments[]", "summary_text[]", "table"]},
-"ref_pubpeer.paperlist.report_table": {"r": "dcdf3988104118d0", "py": "4edc6e373947f43e", "diff": ["table"]},
-"ref_pubpeer.request_failed": {"r": "ac5146cf65ca52a8", "py": "44ded917c6bc8762", "diff": ["<R error, Python value>"]},
-"ref_summary.paperlist.chain_all": {"r": "238d63ac74650da7", "py": "20e136046d8d1078", "diff": ["summary_table.pubpeer_comments[]", "summary_text[]", "table"]}
+"ref_pubpeer.paperlist": {"r": "825aa0abee0c00d7", "py": "e730e5ad0602983c", "diff": ["table"]},
+"ref_pubpeer.paperlist.report_table": {"r": "481a9ef3d6946730", "py": "4edc6e373947f43e", "diff": ["table"]},
+"ref_summary.paperlist.chain_all": {"r": "8d9571638fd70b4f", "py": "20e136046d8d1078", "diff": ["table.pubpeer[]"]}
 }

@@ -37,10 +37,6 @@
   reason: "PCRE2 resource limit in R: on this 640-character sentence grepl(perl = TRUE) stops with 'match limit exceeded' (a warning) and returns FALSE; the regex engine has no such limit and finds the match. Only reached by pathologically repetitive text (no metacheck fixture sentence reaches the limit with any funding pattern)."
 
 # ref_pubpeer, ref_summary --------------------------------------------------------
-"mod_ref_pubpeer_summary/ref_pubpeer.request_failed":
-  kind: r_bug_fixed
-  ref: U23
-  reason: a failed PubPeer request gives the "fail" light and says so; metacheck stops ("`x` and `y` must share the same src.")
 "mod_ref_pubpeer_summary/ref_pubpeer.paperlist": &u118_dup
   kind: r_bug_fixed
   ref: U118
