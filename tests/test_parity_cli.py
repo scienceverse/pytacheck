@@ -150,6 +150,24 @@ def test_generate_runs_case_files_side_by_side(tree, monkeypatch, capsys) -> Non
     assert "tests/x/fixtures/out.zip.contents/a.csv" in captured.err
 
 
+def test_tree_changes_reads_paths_git_quotes(tmp_path, monkeypatch) -> None:
+    """A golden whose name has a space or a non-ASCII character is a golden, not a
+    change outside the goldens (``git status`` quotes such paths without -z)."""
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@t"]
+    subprocess.run([*git, "init", "-q"], cwd=tmp_path, check=True)
+    (tmp_path / "keep.txt").write_text("a")
+    subprocess.run([*git, "add", "keep.txt"], cwd=tmp_path, check=True)
+    subprocess.run([*git, "commit", "-qm", "init"], cwd=tmp_path, check=True)
+    golden = tmp_path / "parity" / "golden" / "area"
+    golden.mkdir(parents=True)
+    (golden / "pii.Zip Code.json").write_text("{}")
+    (golden / "caf\u00e9.json").write_text("{}")
+    (tmp_path / "left over.csv").write_text("x")
+    subprocess.run([*git, "mv", "keep.txt", "kept.txt"], cwd=tmp_path, check=True)
+    monkeypatch.setattr(parity_main, "ROOT", tmp_path)
+    assert parity_main._tree_changes() == {"?? left over.csv", "R  kept.txt"}
+
+
 # -- check --strict ---------------------------------------------------------------------
 
 
