@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 8,
+    "nrow": 7,
     "names": [
       "file_name",
       "rule",
@@ -19,7 +19,6 @@
           "~/data 1.csv",
           "C:\\x\\y 2.csv",
           "C:\\x\\y 2.csv",
-          "20200230.csv",
           "run 01.csv",
           "run 1.csv",
           "20200230.csv",
@@ -32,7 +31,6 @@
           "spaces",
           "spaces",
           "special-characters",
-          "date-format",
           "spaces",
           "spaces",
           "zero-padding",
@@ -42,7 +40,6 @@
       {
         "t": "chr",
         "v": [
-          "bad",
           "bad",
           "bad",
           "bad",
@@ -58,7 +55,6 @@
           "contains a space",
           "contains a space",
           "contains a character other than letters, digits, underscore, or dash",
-          "'20200230' is not a valid YYYYMMDD date",
           "contains a space",
           "contains a space",
           "numbered inconsistently with sibling files (pad to 16 digits so names sort in numeric order)",
@@ -67,6 +63,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

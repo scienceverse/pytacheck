@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 23,
+    "nrow": 22,
     "names": [
       "file_name",
       "rule",
@@ -19,7 +19,6 @@
           "my file.csv",
           "résumé.txt",
           "résumé.txt",
-          "x_20231301.csv",
           "a b&c.R",
           "a b&c.R",
           "file 1.R",
@@ -47,7 +46,6 @@
           "spaces",
           "special-characters",
           "diacritics",
-          "date-format",
           "spaces",
           "special-characters",
           "spaces",
@@ -92,7 +90,6 @@
           "bad",
           "bad",
           "bad",
-          "bad",
           "suggestion",
           "suggestion"
         ]
@@ -103,7 +100,6 @@
           "contains a space",
           "contains a character other than letters, digits, underscore, or dash",
           "contains non-ASCII characters (e.g. accented letters)",
-          "'20231301' is not a valid YYYYMMDD date",
           "contains a space",
           "contains a character other than letters, digits, underscore, or dash",
           "contains a space",
@@ -127,6 +123,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

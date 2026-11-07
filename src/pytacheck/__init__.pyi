@@ -278,7 +278,12 @@ from metacheck.repro.core import repro_run_scripts as repro_run_scripts
 from metacheck.repro.core import repro_write_scripts as repro_write_scripts
 from metacheck.repro.docker import repro_docker_available as repro_docker_available
 from metacheck.repro.docker import repro_install_deps_docker as repro_install_deps_docker
+from metacheck.repro.docker import repro_install_deps_py_docker as repro_install_deps_py_docker
 from metacheck.repro.docker import repro_run_scripts_docker as repro_run_scripts_docker
+from metacheck.repro.docker import repro_run_scripts_py_docker as repro_run_scripts_py_docker
+from metacheck.repro.python import repro_dependencies_py as repro_dependencies_py
+from metacheck.repro.python import repro_install_deps_py as repro_install_deps_py
+from metacheck.repro.python import repro_run_scripts_py as repro_run_scripts_py
 from metacheck.statout.jasp import export_jasp_html as export_jasp_html
 from metacheck.statout.jasp import import_jasp as import_jasp
 from metacheck.statout.match_reported import match_reported_output as match_reported_output

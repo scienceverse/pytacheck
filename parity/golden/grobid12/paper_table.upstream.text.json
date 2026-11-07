@@ -2277,7 +2277,7 @@
           "Specifically, participants tended to show stronger vicarious optimism for the identifiable stranger compared with the unidentifiable stranger.",
           "In line with this pattern, 74.4% of the participants showed an optimistic bias in their learning rates for their friend, 68.7% showed an optimistic bias for an identifiable stranger, and 59.2% showed an optimistic bias for an unidentifiable stranger.",
           "Identifiability increased vicarious optimism specifically by reducing updating from bad news, t(168) = 3.19, p = .002; identifiability did not affect updating from good news, t(168) = 1.11, p =.27.",
-          "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (https://osf.io/a5bmw/).",
+          "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (osf.io/a5bmw/).",
           "Here, the interaction between valence and identifiability was significant, F(1, 467) = 4.38, p = .037, ηp² = .009.",
           "As predicted, participants showed greater vicarious optimism, as indicated by biased learning rates, for the identifiable stranger than for the unidentifiable stranger (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. 3b).",
           "Consistent with this finding, a total of 69.9% of the participants showed an optimistic bias in their learning rates for an identifiable stranger, and 59.2% for an unidentifiable stranger.",
@@ -24574,6 +24574,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

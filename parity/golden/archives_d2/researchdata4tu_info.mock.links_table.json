@@ -102,7 +102,8 @@
                   "name",
                   "size",
                   "download_url",
-                  "computed_md5"
+                  "computed_md5",
+                  "path"
                 ],
                 "v": [
                   {
@@ -133,6 +134,12 @@
                     "t": "chr",
                     "v": [
                       "86621499bc8a27bdf497a6dedc2c545d"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
                     ]
                   }
                 ]
@@ -150,7 +157,8 @@
                   "name",
                   "size",
                   "download_url",
-                  "computed_md5"
+                  "computed_md5",
+                  "path"
                 ],
                 "v": [
                   {
@@ -182,6 +190,12 @@
                     "v": [
                       "86621499bc8a27bdf497a6dedc2c545d"
                     ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
+                    ]
                   }
                 ]
               }
@@ -191,6 +205,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

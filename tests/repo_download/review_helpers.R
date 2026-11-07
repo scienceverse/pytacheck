@@ -104,12 +104,19 @@ rv_mock <- function(routes) {
 # performs its requests one after the other, as it does under test mocks).
 rv_serve <- function(routes, fn, ...) {
   cache <- metacheck:::.zip_peek_cache
-  rm(list = ls(cache, all.names = TRUE), envir = cache)
+  # hosts remembered as ignoring Range requests (metacheck 0.3.3.1): one case's
+  # "ignore" route must not make the next case's peek give up
+  ignored <- metacheck:::.range_ignored_hosts
+  forget <- function() {
+    rm(list = ls(cache, all.names = TRUE), envir = cache)
+    rm(list = ls(ignored, all.names = TRUE), envir = ignored)
+  }
+  forget()
   old <- Sys.getenv("TESTTHAT", unset = NA)
   Sys.setenv(TESTTHAT = "true")
   on.exit({
     if (is.na(old)) Sys.unsetenv("TESTTHAT") else Sys.setenv(TESTTHAT = old)
-    rm(list = ls(cache, all.names = TRUE), envir = cache)
+    forget()
   })
   httr2::with_mocked_responses(rv_mock(routes), fn(...))
 }

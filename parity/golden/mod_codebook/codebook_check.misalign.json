@@ -225,9 +225,7 @@
           "#### Column Documentation",
           "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"neoAnxiety\", \"neoImagination\", \n\"neoWarmth\"), Documented = c(\"no\", \"no\", \"no\", \"no\"), Label = c(NA_character_, \nNA_character_, NA_character_, NA_character_), \"Codebook Variable\" = c(NA_character_, \nNA_character_, NA_character_, NA_character_), Source = c(NA_character_, \nNA_character_, NA_character_, NA_character_), Status = c(\"unlabelled\", \n\"unlabelled\", \"unlabelled\", \"unlabelled\")), row.names = c(NA, \n4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Documented but Unused Variables\n\n8 documented variables were not matched to any data column.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = c(\"neo1\", \"neo2\", \"neo3\", \"neo4\", \"neo5\", \n\"neo6\", \"neo7\", \"neo8\"), Label = c(\"NEO item 1\", \"NEO item 2\", \n\"NEO item 3\", \"NEO item 4\", \"NEO item 5\", \"NEO item 6\", \"NEO item 7\", \n\"NEO item 8\"), Source = c(\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\")), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = c(\"neo1\", \"neo2\", \"neo3\", \"neo4\", \"neo5\", \n\"neo6\", \"neo7\", \"neo8\"), Label = c(\"NEO item 1\", \"NEO item 2\", \n\"NEO item 3\", \"NEO item 4\", \"NEO item 5\", \"NEO item 6\", \"NEO item 7\", \n\"NEO item 8\"), Source = c(\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\")), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n"
         ]
       },
       {
@@ -239,7 +237,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 8 variable definitions from codebook/README files.\n-  0 of 4 data columns (0%) are documented in a codebook; 4 are not.\n-  8 documented variables never appear in the data.\n-  A codebook was found and parsed (8 variable definitions), but its variable names do not match the data columns, so the documentation could not be linked automatically (only 0% of columns matched). For example, the codebook documents `neo1`, `neo2`, `neo3` while the data has `id`, `neoImagination`, `neoAnxiety`. This often means the data holds computed scores or subscales while the codebook lists the underlying items. To make the codebook usable automatically, document variables under the exact names used in the data file (one row per data column), with a label and, for rating items, the response scale."
+          "\n-  We parsed 8 variable definitions from codebook/README files.\n-  0 of 4 data columns (0%) are documented in a codebook; 4 are not.\n-  A codebook was found and parsed (8 variable definitions), but its variable names do not match the data columns, so the documentation could not be linked automatically (only 0% of columns matched). For example, the codebook documents `neo1`, `neo2`, `neo3` while the data has `id`, `neoImagination`, `neoAnxiety`. This often means the data holds computed scores or subscales while the codebook lists the underlying items. To make the codebook usable automatically, document variables under the exact names used in the data file (one row per data column), with a label and, for rating items, the response scale."
         ]
       },
       {
@@ -574,6 +572,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

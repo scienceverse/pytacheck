@@ -239,9 +239,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 2 codebook/README/label sources and 5 data columns across 1 file.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\", \"age\", \"sex\", \"sex\"), \n    Documented = c(\"no\", \"no\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \n    NA, \"Age in years\", \"Sex of respondent\", \"Sex\"), \"Codebook Variable\" = c(NA, \n    NA, \"age\", \"sex\", \"sex\"), Source = c(NA, NA, \"codebook.csv\", \n    \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n    \"unlabelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\", \"age\", \"sex\", \"sex\"), \n    Documented = c(\"no\", \"no\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \n    NA, \"Age in years\", \"Sex of respondent\", \"Sex\"), \"Codebook Variable\" = c(NA, \n    NA, \"age\", \"sex\", \"sex\"), Source = c(NA, NA, \"codebook.csv\", \n    \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n    \"unlabelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
         ]
       },
       {
@@ -552,6 +550,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

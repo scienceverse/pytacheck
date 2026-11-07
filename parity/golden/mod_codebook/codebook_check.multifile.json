@@ -258,9 +258,7 @@
           "#### Column Documentation",
           "::: {.panel-tabset}\n\n## results.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"rt_mean\", \"pid\", \"score\"), Documented = c(\"no\", \n\"yes\", \"yes\"), Label = c(NA, \"Participant number\", \"Total score\"\n), \"Codebook Variable\" = c(NA, \"pid\", \"score\"), Source = c(NA, \n\"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \"labelled\", \n\"labelled\")), row.names = c(1L, 4L, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## demographics.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"pid\", \"sex\"), Documented = c(\"yes\", \n\"yes\", \"yes\"), Label = c(\"Age in years\", \"Participant number\", \n\"Sex\"), \"Codebook Variable\" = c(\"age\", \"pid\", \"sex\"), Source = c(\"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\"), Status = c(\"labelled\", \"labelled\", \n\"labelled\")), row.names = c(2L, 3L, 6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Documented but Unused Variables\n\n1 documented variable was not matched to any data column.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = \"education\", Label = \"Years of education\", \n    Source = \"codebook.csv\"), row.names = 5L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = \"education\", Label = \"Years of education\", \n    Source = \"codebook.csv\"), row.names = 5L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n"
         ]
       },
       {
@@ -272,7 +270,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 5 variable definitions from codebook/README files.\n-  5 of 6 data columns (83%) are documented in a codebook; 1 is not.\n-  1 documented variable never appears in the data."
+          "\n-  We parsed 5 variable definitions from codebook/README files.\n-  5 of 6 data columns (83%) are documented in a codebook; 1 is not."
         ]
       },
       {
@@ -577,6 +575,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

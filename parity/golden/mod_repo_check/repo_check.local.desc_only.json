@@ -155,7 +155,7 @@
           "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: DESCRIPTION. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
           "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"DESCRIPTION\", Rule = \"unclassifiable\", \n    Severity = \"bad\", Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"DESCRIPTION\", Rule = \"unclassifiable\", \n    Severity = \"Required\", Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"analysis.R\", Group = \"ex1\", Path = \"analysis.R\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"DESCRIPTION\", Group = \"—\", Path = \"DESCRIPTION\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -396,6 +396,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

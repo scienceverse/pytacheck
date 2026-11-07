@@ -6,9 +6,9 @@
   "value": {
     "t": "chr",
     "v": [
-      "www\\.psycharchives\\.org|bonndoc\\.ulb\\.uni-bonn\\.de|dspace\\.ut\\.ee|qsardb\\.org|repositorio-digital\\.cide\\.edu|ses\\.library\\.usyd\\.edu\\.au"
+      "www\\.psycharchives\\.org|bonndoc\\.ulb\\.uni-bonn\\.de|qsardb\\.org|repositorio-digital\\.cide\\.edu|ses\\.library\\.usyd\\.edu\\.au|datastorre\\.stir\\.ac\\.uk"
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

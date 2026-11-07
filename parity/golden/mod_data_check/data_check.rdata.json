@@ -390,7 +390,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 3 files: 3 data.\n-  We found 3 tabular data files and extracted 4 columns from 3 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 3 files (the model request failed); they were grouped by the fallback rules instead.\n-  1 R workspace file (`.RData`/`.rda`) contains no reusable tabular data — only fitted models or saved session objects. Such files need R (and the exact packages used) to open and are not machine-readable. Share the underlying data as CSV (or a documented `.sav`/`.dta`) with a codebook so it can be reused without R: analysis_workspace.RData. We ran automated data-quality checks on 4 columns and found no issues."
+          "\n-  We classified 3 files: 3 data.\n-  We found 3 tabular data files and extracted 4 columns from 3 of them.\n-  We grouped the files into 1 study group (ex1).\n-  1 R workspace file (`.RData`/`.rda`) contains no reusable tabular data — only fitted models or saved session objects. Such files need R (and the exact packages used) to open and are not machine-readable. Share the underlying data as CSV (or a documented `.sav`/`.dta`) with a codebook so it can be reused without R: analysis_workspace.RData. We ran automated data-quality checks on 4 columns and found no issues."
         ]
       },
       {
@@ -831,6 +831,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

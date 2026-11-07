@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 3,
+    "nrow": 0,
     "names": [
       "rule",
       "detail"
@@ -13,22 +13,14 @@
     "v": [
       {
         "t": "chr",
-        "v": [
-          "date-format",
-          "date-format",
-          "date-format"
-        ]
+        "v": []
       },
       {
         "t": "chr",
-        "v": [
-          "'20230230' is not a valid YYYYMMDD date",
-          "'12345678' is not a valid YYYYMMDD date",
-          "'90123456' is not a valid YYYYMMDD date"
-        ]
+        "v": []
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

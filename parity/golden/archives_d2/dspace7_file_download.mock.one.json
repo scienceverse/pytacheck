@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 5,
+    "nrow": 4,
     "names": [
       "dspace7_url",
       "name",
@@ -23,7 +23,6 @@
           "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
           "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
           "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
-          "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5",
           "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5"
         ]
       },
@@ -32,7 +31,6 @@
         "v": [
           "data.CSV",
           "analysis.R",
-          "model.rds",
           "model.rds",
           "noext"
         ]
@@ -43,14 +41,12 @@
           "https://repository.gatech.edu/server/api/core/bitstreams/b1/content",
           "https://repository.gatech.edu/server/api/core/bitstreams/b2/content",
           "https://repository.gatech.edu/server/api/core/bitstreams/b3/content",
-          "https://repository.gatech.edu/server/api/core/bitstreams/b3/content",
           null
         ]
       },
       {
         "t": "chr",
         "v": [
-          null,
           null,
           null,
           null,
@@ -63,14 +59,12 @@
           1234,
           99,
           5000000000,
-          5000000000,
           null
         ]
       },
       {
         "t": "lgl",
         "v": [
-          false,
           false,
           false,
           false,
@@ -83,7 +77,6 @@
           "csv",
           "r",
           "rds",
-          "rds",
           ""
         ]
       },
@@ -92,13 +85,12 @@
         "v": [
           "data",
           "code",
-          "code",
           "data",
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

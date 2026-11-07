@@ -2,10 +2,7 @@
   "id": "repo_check.osf.local",
   "ok": true,
   "error": null,
-  "warnings": [
-    "input string 1 is invalid UTF-8",
-    "input string 1 is invalid UTF-8"
-  ],
+  "warnings": [],
   "value": {
     "t": "module_output",
     "names": [
@@ -283,7 +280,7 @@
           "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: Archive.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
           "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Archive.zip\", Rule = \"unclassifiable\", \n    Severity = \"bad\", Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Archive.zip\", Rule = \"unclassifiable\", \n    Severity = \"Required\", Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (7 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"bad.R\", \"bad.Rmd\", \"analysis_no_comments.R\", \n\"analysis.R\", \"stata_latin1.do\", \"stata_utf16.do\", \"helper.R\"\n), Group = c(\"ex1\", \"ex1\", \"ex2\", \"ex2\", \"ex2\", \"ex2\", \"ex2\"), \n    Path = c(\"bad.R\", \"bad.Rmd\", \"analysis_no_comments.R\", \"analysis.R\", \n    \"stata_latin1.do\", \"stata_utf16.do\", \"subdir/helper.R\")), row.names = c(NA, \n-7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"example2.csv\", \"data.csv\"), Group = c(\"ex1\", \n\"ex2\"), Path = c(\"example2.csv\", \"data.csv\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Archive.zip\", Group = \"ex1\", Path = \"Archive.zip\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -526,6 +523,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

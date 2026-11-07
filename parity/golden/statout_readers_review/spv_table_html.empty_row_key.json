@@ -9,6 +9,6 @@
       "<table>\n<thead>\n<tr><th>G<\/th><th>s<\/th><\/tr>\n<\/thead>\n<tbody>\n<tr><td>1<\/td><\/tr>\n<tr><td>a<\/td><td>2<\/td><\/tr>\n<\/tbody>\n<\/table>"
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

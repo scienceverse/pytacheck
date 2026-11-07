@@ -127,7 +127,7 @@
               "readme",
               "data",
               "code",
-              "code"
+              "data"
             ]
           },
           {
@@ -136,7 +136,7 @@
               "documentation",
               "data",
               "code",
-              "code"
+              "data"
             ]
           },
           {
@@ -172,12 +172,12 @@
         "t": "chr",
         "v": [
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://gitlab.com/gzorg/sub/glproj' target='_blank'>gitlab.com/gzorg/sub/glproj<\/a>\", \n    Platform = \"gitlab\", \"All Files\" = 4L, \"Data Files\" = 1L, \n    \"Code Files\" = 2L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://gitlab.com/gzorg/sub/glproj' target='_blank'>gitlab.com/gzorg/sub/glproj<\/a>\", \n    Platform = \"gitlab\", \"All Files\" = 4L, \"Data Files\" = 2L, \n    \"Code Files\" = 1L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://gitlab.com/gzorg/sub/glproj\", \n\"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/sub/glproj\", \n\"https://gitlab.com/gzorg/sub/glproj\"), File = c(\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/README.md' target='_blank'>README.md<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/data/d1.csv' target='_blank'>d1.csv<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/src/run.py' target='_blank'>run.py<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/x.json' target='_blank'>x.json<\/a>\"\n), Size = c(\"1.2 kB\", \"56 B\", \"789 B\", \"—\"), Type = c(\"readme\", \n\"data\", \"code\", \"code\")), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://gitlab.com/gzorg/sub/glproj\", \n\"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/sub/glproj\", \n\"https://gitlab.com/gzorg/sub/glproj\"), File = c(\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/README.md' target='_blank'>README.md<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/data/d1.csv' target='_blank'>d1.csv<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/src/run.py' target='_blank'>run.py<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/x.json' target='_blank'>x.json<\/a>\"\n), Size = c(\"1.2 kB\", \"56 B\", \"789 B\", \"—\"), Type = c(\"readme\", \n\"data\", \"code\", \"data\")), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
           "#### File Classification",
-          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"run.py\", \"x.json\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"src/run.py\", \"x.json\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"d1.csv\", Group = \"ex1\", Path = \"data/d1.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"run.py\", Group = \"ex1\", Path = \"src/run.py\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"d1.csv\", \"x.json\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"data/d1.csv\", \"x.json\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
       },
       {
@@ -229,13 +229,13 @@
           {
             "t": "int",
             "v": [
-              1
+              2
             ]
           },
           {
             "t": "int",
             "v": [
-              2
+              1
             ]
           },
           {
@@ -409,6 +409,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

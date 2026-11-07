@@ -21,7 +21,7 @@
     "metacheck::license_check": {"provisional": true},
     "metacheck::marginal": {
       "provisional": true,
-      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "implementations": {"r": {"metacheck": ["0.3.3.2"]}},
       "evidence": [
         {
           "id": "marginal-r-0.3.1",
@@ -40,7 +40,7 @@
     "metacheck::open_practices": {"provisional": true},
     "metacheck::power": {
       "provisional": true,
-      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "implementations": {"r": {"metacheck": ["0.3.3.2"]}},
       "evidence": [
         {
           "id": "power-r-0.3.1",
@@ -83,7 +83,7 @@
     },
     "metacheck::stat_effect_size": {
       "provisional": true,
-      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "implementations": {"r": {"metacheck": ["0.3.3.2"]}},
       "evidence": [
         {
           "id": "stat_effect_size-r-0.3.1",
@@ -107,7 +107,7 @@
     },
     "metacheck::stat_p_exact": {
       "provisional": true,
-      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "implementations": {"r": {"metacheck": ["0.3.3.2"]}},
       "evidence": [
         {
           "id": "stat_p_exact-r-0.3.1",
@@ -125,7 +125,7 @@
     },
     "metacheck::stat_p_nonsig": {
       "provisional": true,
-      "implementations": {"r": {"metacheck": ["0.3.1"]}},
+      "implementations": {"r": {"metacheck": ["0.3.3.2"]}},
       "evidence": [
         {
           "id": "stat_p_nonsig-r-0.3.1",

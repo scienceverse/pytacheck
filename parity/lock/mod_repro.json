@@ -1,11 +1,10 @@
 {
-"module.nonr_only": {"r": "5d88764c4ed63e7a", "py": "b09c6ad951ac92a6", "diff": ["modifications", "na_replace", "report[]", "summary_table", "summary_table.repro_code_n[]", "summary_table.repro_runnable[]", "summary_text[]", "table", "traffic_light[]"]},
+"module.nonr_only": {"r": "2c226e9a87a5e36a", "py": "b09c6ad951ac92a6", "diff": ["report[]", "summary_text[]"]},
 "reproducibility_check.bibr12": {"r": "480e311ee722bf30", "py": "3a087461eea987a2", "diff": ["stat_output[].json.analyses[].results[].test_id[]", "stat_output[].long.test_id[]"]},
 "reproducibility_check.exec_docker": {"r": "8dee34b7b2c1b593", "py": "cc29e84dc2967261", "diff": ["report[]", "run_results.error_type[]", "run_results.outcome[]", "summary_text[]", "table.error_type[]", "table.outcome[]", "traffic_light[]"]},
 "reproducibility_check.jasp_with_r": {"r": "1981dca546657910", "py": "fd737a9eab48b0c8", "diff": ["stat_output[].json.analyses[].results[].test_id[]", "stat_output[].long.test_id[]"]},
 "reproducibility_check.jasp_with_r_keep_sandbox": {"r": "16190e6066e6136d", "py": "74f5bdb21c03c9fd", "diff": ["stat_output[].json.analyses[].results[].test_id[]", "stat_output[].long.test_id[]"]},
-"reproducibility_check.nonr_only": {"r": "5d88764c4ed63e7a", "py": "b09c6ad951ac92a6", "diff": ["modifications", "na_replace", "report[]", "summary_table", "summary_table.repro_code_n[]", "summary_table.repro_runnable[]", "summary_text[]", "table", "traffic_light[]"]},
-"reproducibility_check.ok_noplan": {"r": "8f2dd82a47c39d69", "py": "22a5a2260fb08cd1", "diff": ["modifications", "report[]", "table.paths_rewritten[]"]},
-"reproducibility_check.smcl_mplus": {"r": "fa6795c90b6ba82e", "py": "ad107eb9175e8e2e", "diff": ["stat_output[].json.analyses[].results[].test_id[]", "stat_output[].json.analyses[].results[].values.95_conf", "stat_output[].json.analyses[].results[].values.95_conf_", "stat_output[].long.test_id[]"]},
+"reproducibility_check.nonr_only": {"r": "2c226e9a87a5e36a", "py": "b09c6ad951ac92a6", "diff": ["report[]", "summary_text[]"]},
+"reproducibility_check.smcl_mplus": {"r": "99b00482d7653b6f", "py": "ad107eb9175e8e2e", "diff": ["stat_output[].json.analyses[].results[].test_id[]", "stat_output[].json.analyses[].results[].values.95_conf", "stat_output[].json.analyses[].results[].values.95_conf_", "stat_output[].long.test_id[]"]},
 "reproducibility_check.spv_notebook_py": {"r": "dc42b393ffbb35a9", "py": "0fdb70780f02fbbb", "diff": ["report[]", "stat_output[].json.analyses", "stat_output[].json.analyses[].results[].test_id[]", "stat_output[].long", "stat_output[].long.test_id[]", "summary_text[]"]}
 }

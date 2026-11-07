@@ -188,9 +188,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 2 codebook/README/label sources and 2 data columns across 1 file.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"mood\"), Documented = c(\"no\", \n\"yes\"), Label = c(NA, \"positive affect\"), \"Codebook Variable\" = c(NA, \n\"mood\"), Source = c(NA, \"codebook_b.csv | codebook.csv\"), Status = c(\"unlabelled\", \n\"labelled\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"mood\"), Documented = c(\"no\", \n\"yes\"), Label = c(NA, \"positive affect\"), \"Codebook Variable\" = c(NA, \n\"mood\"), Source = c(NA, \"codebook_b.csv | codebook.csv\"), Status = c(\"unlabelled\", \n\"labelled\")), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
         ]
       },
       {
@@ -477,6 +475,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -88,7 +88,8 @@
                   "name",
                   "size",
                   "computed_md5",
-                  "download_url"
+                  "download_url",
+                  "path"
                 ],
                 "v": [
                   {
@@ -120,6 +121,12 @@
                     "v": [
                       "https://ndownloader.figshare.com/files/700901"
                     ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "first.csv"
+                    ]
                   }
                 ]
               },
@@ -129,7 +136,8 @@
                   "id",
                   "name",
                   "size",
-                  "download_url"
+                  "download_url",
+                  "path"
                 ],
                 "v": [
                   {
@@ -155,6 +163,12 @@
                     "v": [
                       "https://ndownloader.figshare.com/files/700902"
                     ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "second.txt"
+                    ]
                   }
                 ]
               }
@@ -164,6 +178,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

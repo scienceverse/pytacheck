@@ -1296,7 +1296,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 10 files: 10 data.\n-  We found 10 tabular data files and extracted 33 columns from 9 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 10 files (the model request failed); they were grouped by the fallback rules instead.\n-  1 file read as a table but is not a usable rectangular dataset (coding.xlsx: 100% of columns are free text, not variables). No columns were extracted and they were not sent to the LLM. Share the underlying data as a plain rectangular table (one header row, one column per variable) with a codebook: coding.xlsx. We ran automated data-quality checks on 33 columns; 3 columns have at least one potential issue (3 columns with no observed values (entirely empty)). 7 of 10 spreadsheet files have at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
+          "\n-  We classified 10 files: 10 data.\n-  We found 10 tabular data files and extracted 33 columns from 9 of them.\n-  We grouped the files into 1 study group (ex1).\n-  1 file read as a table but is not a usable rectangular dataset (coding.xlsx: 100% of columns are free text, not variables). No columns were extracted and they were not sent to the LLM. Share the underlying data as a plain rectangular table (one header row, one column per variable) with a codebook: coding.xlsx. We ran automated data-quality checks on 33 columns; 3 columns have at least one potential issue (3 columns with no observed values (entirely empty)). 7 of 10 spreadsheet files have at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
         ]
       },
       {
@@ -2638,6 +2638,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

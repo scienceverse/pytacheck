@@ -309,9 +309,7 @@
           "#### Column Documentation",
           "::: {.panel-tabset}\n\n## b.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"gamma\", \"Alpha\", \"beta\"), Documented = c(\"conflict\", \n\"yes\", \"yes\"), Label = c(\"A different third letter | Third letter\", \n\"First letter\", \"Second letter\"), \"Codebook Variable\" = c(\"gamma\", \n\"alpha\", \"Beta\"), Source = c(\"codebook_b.csv | codebook.csv\", \n\"codebook.csv\", \"codebook.csv\"), Status = c(\"conflicting_definition\", \n\"labelled\", \"labelled\")), row.names = c(1L, 5L, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## a.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"Zeta\", \"_id\", \"delta\", \"Beta\", \"alpha\", \n\"émotion\"), Documented = c(\"no\", \"no\", \"no\", \"yes\", \"yes\", \"yes\"\n), Label = c(NA, NA, NA, \"Second letter\", \"First letter\", \"Emotion rating\"\n), \"Codebook Variable\" = c(NA, NA, NA, \"Beta\", \"alpha\", \"émotion\"\n), Source = c(NA, NA, NA, \"codebook.csv\", \"codebook.csv\", \"codebook.csv\"\n), Status = c(\"unlabelled\", \"unlabelled\", \"unlabelled\", \"labelled\", \n\"labelled\", \"labelled\")), row.names = c(2L, 3L, 4L, 6L, 7L, 9L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Conflicting or Ambiguous Definitions\n\n1 matched column has more than one codebook definition, or a definition scoped to a different experiment. These are matched to a codebook but need manual resolution before the label can be trusted.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"b.csv\", Column = \"gamma\", \"Conflicting Labels\" = \"A different third letter | Third letter\", \n    Sources = \"codebook_b.csv | codebook.csv\", Issue = \"conflicting_definition\"), row.names = 9L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"b.csv\", Column = \"gamma\", \"Conflicting Labels\" = \"A different third letter | Third letter\", \n    Sources = \"codebook_b.csv | codebook.csv\", Issue = \"conflicting_definition\"), row.names = 9L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n"
         ]
       },
       {
@@ -628,6 +626,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

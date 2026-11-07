@@ -652,9 +652,7 @@ def data_check(
             f"{n_tl:d} trial-level data file{plural(n_tl)} (E-Prime / Inquisit / jsPsych / "
             f"Behaverse) {'was' if n_tl == 1 else 'were'} recognised. These are "
             "per-participant records of a behavioural task, so they are not listed as "
-            "separate datasets — convert_psychds() merges them per instrument into Behaverse "
-            "`paradata/<instrument>.json` (one file per instrument, all participants). "
-            "Nothing is deleted."
+            "separate datasets. Nothing is deleted."
         ]
 
     report: list[Any] = [_INTRO]

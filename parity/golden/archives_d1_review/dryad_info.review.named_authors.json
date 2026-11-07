@@ -15,7 +15,10 @@
       "updated_date",
       "authors",
       "license",
-      "files"
+      "files",
+      "storage_size",
+      "files_total",
+      "files_incomplete"
     ],
     "v": [
       {
@@ -283,9 +286,27 @@
             ]
           }
         ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

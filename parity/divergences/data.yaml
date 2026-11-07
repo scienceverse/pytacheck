@@ -162,13 +162,10 @@
   reason: '"extracted N columns from M of them" counts the files columns were extracted from; R also counts unreadable and workspace-only files'
 # (the spreadsheet findings with a count of one also take a singular verb: U82)
 "mod_data_check/data_check.spreadsheets": &u99_sheet
-  kind: r_bug_fixed
-  ref: U99
-  reason: '"extracted N columns from M of them" counts the files columns were extracted from; R also counts unreadable and workspace-only files (and U82: "1 merged range ... breaks", "1 column is empty or has a blank header"); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)'
-  r_text:
-  - ['\b1 merged range \(([^)]*)\) break the', '1 merged range (\1) breaks the', regex]
-  - ["1 column is empty or have a blank header", "1 column is empty or has a blank header"]
-  - ['\n-  The study-group step did not get an answer for \d+ files? \(the model request failed\); (?:it was|they were) grouped by the fallback rules instead\.', '', regex]
+  kind: "r_bug_fixed"
+  ref: "U99"
+  reason: "\"extracted N columns from M of them\" counts the files columns were extracted from; R also counts unreadable and workspace-only files (and U82: \"1 merged range ... breaks\", \"1 column is empty or has a blank header\"); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)"
+  r_text: [["\\b1 merged range \\(([^)]*)\\) break the", "1 merged range (\\1) breaks the", "regex"], ["1 column is empty or have a blank header", "1 column is empty or has a blank header"]]
   xfail: true
 "mod_data_check/data_check.local.spreadsheets": *u99_sheet
 "mod_data_check/data_check.nontabular": *u99_u241
@@ -190,16 +187,6 @@
 "mod_codebook_review/codebook_check.pl_samefile": *u91
 
 # U92: codebook_check scale inventory
-"mod_codebook/codebook_check.max_calls_zero": &u92_cap
-  kind: r_bug_fixed
-  ref: U92
-  reason: every file's scale-like column groups are listed whatever codebook_max_calls is (the cap limits LLM calls only); R stops the inventory after the first file with groups once the cap is reached, even with the LLM off
-"mod_codebook_review/codebook_check.llm.pl_scales.max_calls_1": *u92_cap
-"mod_codebook/codebook_check.llm.selfgen": &u92_syn
-  kind: r_bug_fixed
-  ref: U92
-  reason: self-generated construct labels are lower-cased before punctuation is stripped, so "Slider ratings" and "slider ratings of power" merge; R strips capitals first ("lider ratings")
-"mod_codebook_review/codebook_check.llm.osd_attrs.loop": *u92_syn
 
 # U93: .scale_text_report()
 "mod_codebook/scale_text_report.basic": &u93
@@ -210,10 +197,6 @@
 "mod_codebook_review/scale_text_report.no_match": *u93
 "mod_codebook_review/scale_text_report.name_only": *u93
 "mod_codebook_review/scale_text_report.no_admin": *u93
-"mod_codebook_review/codebook_check.llm_odd.panas_high": *u93
-"mod_codebook_review/codebook_check.llm_odd.scales_mixed": *u93
-"mod_codebook_review/codebook_check.llm_odd.bibr12": *u93
-"mod_codebook_review/codebook_check.llm_odd.demo": *u93
 "mod_codebook_review/scale_text_report.special_acronyms":
   kind: r_bug_fixed
   ref: U93
@@ -253,11 +236,10 @@
   kind: r_bug_fixed
   ref: U113
   reason: the summary row goes to the paper that owns the files (the paper list's last paper); R credits the first paper, which has no files (the valid names/root files are U112)
-"mod_psychds/psychds_check.na_type": &u113
+"mod_psychds/psychds_check.no_type_col": &u113
   kind: r_bug_fixed
   ref: U113
   reason: a missing file name falls back to the file path's basename, a missing data type is "unknown", and a file with neither name nor path is listed as excluded; R stops the module (missing value where TRUE/FALSE needed, differing number of rows, subscript out of bounds, ...)
-"mod_psychds/psychds_check.no_type_col": *u113
 "mod_psychds/psychds_check.no_name_col": *u113
 "mod_psychds/psychds_check.no_name_col_data": *u113
 "mod_psychds/psychds_check.path_na": *u113
@@ -365,38 +347,3 @@
 
 # U241: with LLM use off, R's study-group step sends files to llm(), which refuses,
 # and counts every one as unanswered; pytacheck sends nothing
-"datacheck_files/data_group_llm.attr.unresolved.materials": &u241_unresolved
-  kind: r_bug_fixed
-  ref: U241
-  reason: with LLM use off nothing is sent to a model, so no file is left unanswered; R lists every file it sent, since llm() refused
-"datacheck_files/data_group_llm.attr.unresolved.single_repo": *u241_unresolved
-"mod_data_check/data_check.basic": &u241_summary
-  kind: r_bug_fixed
-  ref: U241
-  reason: R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)
-  r_text: [['\n-  The study-group step did not get an answer for \d+ files? \(the model request failed\); (?:it was|they were) grouped by the fallback rules instead\.', '', regex]]
-"mod_data_check/data_check.flags_red": *u241_summary
-"mod_data_check/data_check.yellow": *u241_summary
-"mod_data_check/data_check.download_partial": *u241_summary
-"mod_data_check/data_check.qualtrics_careless": *u241_summary
-"mod_data_check/data_check.careless_clean": *u241_summary
-"mod_data_check/data_check.careless_short": *u241_summary
-"mod_data_check/data_check.trial": *u241_summary
-"mod_data_check/data_check.manifest": *u241_summary
-"mod_data_check/data_check.txt": *u241_summary
-"mod_data_check/data_check.encoding": *u241_summary
-"mod_data_check/data_check.schema": *u241_summary
-"mod_data_check/data_check.download": *u241_summary
-"mod_data_check/data_check.download_all": *u241_summary
-"mod_data_check/data_check.download_all_everything": *u241_summary
-"mod_data_check/data_check.download_archives_nopeek": *u241_summary
-"mod_data_check/data_check.naming": *u241_summary
-"mod_data_check/data_check.bibr12": *u241_summary
-"mod_data_check/data_check.module.basic": *u241_summary
-"mod_data_check/data_check.module.flags": *u241_summary
-"mod_data_check_review/review.types": *u241_summary
-"mod_data_check_review/review.qualtrics": *u241_summary
-"mod_data_check_review/review.int64": *u241_summary
-"mod_data_check_review/review.stats": *u241_summary
-"mod_data_check_review/review.dupclass": *u241_summary
-"mod_data_check_review/review.download_true": *u241_summary

@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 13,
+    "nrow": 12,
     "names": [
       "repo",
       "clean_repo",
@@ -20,7 +20,6 @@
       {
         "t": "chr",
         "v": [
-          "https://github.com/rv/files",
           "https://github.com/rv/files",
           "https://github.com/rv/files",
           "https://github.com/rv/files",
@@ -49,7 +48,6 @@
           "rv/files",
           "rv/files",
           "rv/files",
-          "rv/files",
           "rv/files"
         ]
       },
@@ -62,7 +60,6 @@
           "analysis.R",
           "archive.tar.gz",
           "Beta.md",
-          "DATA.JSON",
           "DATA.JSON",
           "émoji.txt",
           "file.",
@@ -80,7 +77,6 @@
           "analysis.R",
           "archive.tar.gz",
           "Beta.md",
-          "DATA.JSON",
           "DATA.JSON",
           "émoji.txt",
           "file.",
@@ -99,7 +95,6 @@
           "https://raw.githubusercontent.com/rv/files/main/archive.tar.gz",
           "https://raw.githubusercontent.com/rv/files/main/Beta.md",
           "https://raw.githubusercontent.com/rv/files/main/DATA.JSON",
-          "https://raw.githubusercontent.com/rv/files/main/DATA.JSON",
           "https://raw.githubusercontent.com/rv/files/main/émoji.txt",
           "https://raw.githubusercontent.com/rv/files/main/file.",
           "https://raw.githubusercontent.com/rv/files/main/Makefile",
@@ -116,7 +111,6 @@
           0,
           300,
           1,
-          40,
           40,
           1,
           1,
@@ -135,7 +129,6 @@
           "gz",
           "md",
           "json",
-          "json",
           "txt",
           "",
           "",
@@ -152,7 +145,6 @@
           "code",
           "archive",
           "text",
-          "code",
           "data",
           "text",
           "file",
@@ -163,6 +155,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

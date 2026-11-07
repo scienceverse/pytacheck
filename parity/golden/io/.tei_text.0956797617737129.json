@@ -120,7 +120,7 @@
           "Again, we expected that about 15% of the participants on MTurk would have a BDI score higher than 12.",
           "Hence, we recruited 240 participants (mean age = 28.31 years, SD = 0.51; male = 122, female = 117, other = 1).",
           "We excluded 51 participants with a BDI score higher than 12 and a further 16 participants who failed to provide at least four valid positive and negative updates on the learning task.",
-          "For Study 2b, we preregistered the hypothesis, sampling procedures, and analysis plan (https://osf.io/  a5bmw/).",
+          "For Study 2b, we preregistered the hypothesis, sampling procedures, and analysis plan (https://osf.io/a5bmw/).",
           "To obtain .90 power to detect the effect size in the difference between identifiable and unidentifiable strangers found in Study 2a, we aimed to recruit 470 participants after exclusion of participants with a BDI score higher than 12.",
           "Hence, we collected participants until we obtained 470 useable participants (mean age = 38.57 years [2 missing], SD = 12.51; male = 205, female = 265; see the preregistered material for further details).",
           "Note that we preregistered a different statistical analysis plan from that reported below.",
@@ -141,7 +141,7 @@
           "Specifically, participants tended to show stronger vicarious optimism for the identifiable stranger compared with the unidentifiable stranger.",
           "In line with this pattern, 74.4% of the participants showed an optimistic bias in their learning rates for their friend, 68.7% showed an optimistic bias for an identifiable stranger, and 59.2% showed an optimistic bias for an unidentifiable stranger.",
           "Identifiability increased vicarious optimism specifically by reducing updating from bad news, t(168) = 3.19, p = .002; identifiability did not affect updating from good news, t(168) = 1.11, p =.27.",
-          "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (osf.io/  a5bmw/).",
+          "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (osf.io/a5bmw/).",
           "Here, the interaction between valence and identifiability was significant, F(1, 467) = 4.38, p = .037, ηp² = .009.",
           "As predicted, participants showed greater vicarious optimism, as indicated by biased learning rates, for the identifiable stranger than for the unidentifiable stranger (see Fig. 3b).",
           "Consistent with this finding, a total of 69.9% of the participants showed an optimistic bias in their learning rates for an identifiable stranger, and 59.2% for an unidentifiable stranger.",
@@ -1995,6 +1995,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1506,7 +1506,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 9 files: 9 data.\n-  We found 9 tabular data files and extracted 40 columns from 8 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 9 files (the model request failed); they were grouped by the fallback rules instead.\n-  1 file read as a table but is not a usable rectangular dataset (twoframes.rda: 100% of columns are free text, not variables). No columns were extracted and they were not sent to the LLM. Share the underlying data as a plain rectangular table (one header row, one column per variable) with a codebook: twoframes.rda. We ran automated data-quality checks on 40 columns and found no issues. We detected demographic column for Gender."
+          "\n-  We classified 9 files: 9 data.\n-  We found 9 tabular data files and extracted 40 columns from 8 of them.\n-  We grouped the files into 1 study group (ex1).\n-  1 file read as a table but is not a usable rectangular dataset (twoframes.rda: 100% of columns are free text, not variables). No columns were extracted and they were not sent to the LLM. Share the underlying data as a plain rectangular table (one header row, one column per variable) with a codebook: twoframes.rda. We ran automated data-quality checks on 40 columns and found no issues. We detected demographic column for Gender."
         ]
       },
       {
@@ -3230,6 +3230,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

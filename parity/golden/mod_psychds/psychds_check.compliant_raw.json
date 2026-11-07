@@ -196,9 +196,7 @@
           "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
           "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── analysis.R\n│   └── dataset_description.json <span style=\"color:#b9770e\">(move from dataset_description.json)<\/span>\n├── data/\n│   ├── eeg.npy <span style=\"color:#b9770e\">(move from data/eeg.npy)<\/span>\n│   └── study-study1taskstroopdata_data.csv <span style=\"color:#b9770e\">(move from data/study-1_task-stroop_data.tsv)<\/span>\n├── unknown/\n│   ├── CHANGES <span style=\"color:#b9770e\">(move from CHANGES)<\/span>\n│   └── LICENSE <span style=\"color:#b9770e\">(move from LICENSE)<\/span>\n├── README.json <span style=\"color:#b9770e\">(move from ro-crate-metadata.json)<\/span>\n└── README.md\n<\/pre>",
           "#### Suggestions",
-          "- **Move** `data/study-1_task-stroop_data.tsv` → `data/study-study1taskstroopdata_data.csv`.\n- **Move** `data/eeg.npy` → `data/eeg.npy`.\n- **Move** `dataset_description.json` → `analysis/dataset_description.json`.\n- **Move** `LICENSE` → `unknown/LICENSE`.\n- **Move** `CHANGES` → `unknown/CHANGES`.\n- ...and 1 more file to relocate.",
-          "You can generate a Psych-DS-compliant copy of this repository — with the moves above applied and a `dataset_description.json` built from the extracted variables — using `metacheck::convert_psychds(paper, output_dir)`.",
-          "To also produce a human-readable codebook of the extracted variables (a labelled data frame plus a ready-to-run R Markdown document for the `codebook` package), use `metacheck::convert_codebook(paper, output_dir)`."
+          "- **Move** `data/study-1_task-stroop_data.tsv` → `data/study-study1taskstroopdata_data.csv`.\n- **Move** `data/eeg.npy` → `data/eeg.npy`.\n- **Move** `dataset_description.json` → `analysis/dataset_description.json`.\n- **Move** `LICENSE` → `unknown/LICENSE`.\n- **Move** `CHANGES` → `unknown/CHANGES`.\n- ...and 1 more file to relocate."
         ]
       },
       {
@@ -282,6 +280,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

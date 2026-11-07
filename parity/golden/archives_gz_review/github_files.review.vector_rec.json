@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 18,
+    "nrow": 16,
     "names": [
       "repo",
       "clean_repo",
@@ -20,8 +20,6 @@
       {
         "t": "chr",
         "v": [
-          "rv/files",
-          "rv/files",
           "rv/files",
           "rv/files",
           "rv/files",
@@ -58,8 +56,6 @@
           "rv/files",
           "rv/files",
           "rv/files",
-          "rv/files",
-          "rv/files",
           null
         ]
       },
@@ -72,7 +68,6 @@
           "analysis.R",
           "archive.tar.gz",
           "Beta.md",
-          "DATA.JSON",
           "DATA.JSON",
           "émoji.txt",
           "file.",
@@ -82,7 +77,6 @@
           "deeper",
           "x y.txt",
           "z.sh",
-          "z.sh",
           null
         ]
       },
@@ -96,7 +90,6 @@
           "archive.tar.gz",
           "Beta.md",
           "DATA.JSON",
-          "DATA.JSON",
           "émoji.txt",
           "file.",
           "Makefile",
@@ -104,7 +97,6 @@
           "Zeta.R",
           "my dir/deeper",
           "my dir/x y.txt",
-          "my dir/deeper/z.sh",
           "my dir/deeper/z.sh",
           null
         ]
@@ -119,7 +111,6 @@
           "https://raw.githubusercontent.com/rv/files/main/archive.tar.gz",
           "https://raw.githubusercontent.com/rv/files/main/Beta.md",
           "https://raw.githubusercontent.com/rv/files/main/DATA.JSON",
-          "https://raw.githubusercontent.com/rv/files/main/DATA.JSON",
           "https://raw.githubusercontent.com/rv/files/main/émoji.txt",
           "https://raw.githubusercontent.com/rv/files/main/file.",
           "https://raw.githubusercontent.com/rv/files/main/Makefile",
@@ -127,7 +118,6 @@
           "https://raw.githubusercontent.com/rv/files/main/Zeta.R",
           null,
           "https://raw.githubusercontent.com/rv/files/main/my dir/x y.txt",
-          "https://raw.githubusercontent.com/rv/files/main/my dir/deeper/z.sh",
           "https://raw.githubusercontent.com/rv/files/main/my dir/deeper/z.sh",
           null
         ]
@@ -142,7 +132,6 @@
           300,
           1,
           40,
-          40,
           1,
           1,
           1,
@@ -150,7 +139,6 @@
           10,
           0,
           3,
-          5,
           5,
           null
         ]
@@ -165,7 +153,6 @@
           "gz",
           "md",
           "json",
-          "json",
           "txt",
           "",
           "",
@@ -173,7 +160,6 @@
           "r",
           "",
           "txt",
-          "sh",
           "sh",
           null
         ]
@@ -187,7 +173,6 @@
           "code",
           "archive",
           "text",
-          "code",
           "data",
           "text",
           "file",
@@ -197,12 +182,11 @@
           "dir",
           "text",
           "code",
-          "exec",
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

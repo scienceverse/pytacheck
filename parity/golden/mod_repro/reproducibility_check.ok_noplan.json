@@ -102,7 +102,7 @@
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
@@ -185,7 +185,7 @@
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1L, File = \"ok.R\", \"Runs after\" = \"—\", \n    Basis = \"none\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "To run against the Psych-DS layout, 0 referenced data paths would be rewritten to their new locations.",
+          "To run against the Psych-DS layout, 1 referenced data path would be rewritten to its new location.",
           "#### Missing inputs",
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "*Executing the code is a separate, opt-in phase (run with `execute = TRUE`). This report describes what a run would involve; it did not run anything.*"
@@ -298,7 +298,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "file_name",
           "change_type",
@@ -307,20 +307,26 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "ok.R"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "path_rewrite"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "\"data.csv\" -> \"unknown/data.csv\""
+            ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -6,9 +6,9 @@
   "value": {
     "t": "chr",
     "v": [
-      "### ℹ️ List Summary {#list-summary .info}\n\n\n* first item\n* second item\n\nShort report.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nA summary that is a markdown list.\n\n\n\nThis module was developed by A One and B Two\n\n:::\n\n\n::: {.validation}\nValidation: Only validation.\n:::"
+      "### ℹ️ List Summary {#list-summary .info}\n\n\n* first item\n* second item\n\nShort report.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nA summary that is a markdown list.\n\n\n\nThis module was developed by A One and B Two\n\nRead more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-tests/report/modules/rp-list-summary.R.html).\n\n:::\n\n\n::: {.validation}\nValidation: Only validation.\n:::"
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

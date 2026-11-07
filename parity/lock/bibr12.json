@@ -43,6 +43,5 @@
 "paper_write.text.probe_docx": {"r": "02658c19cbaac4e6", "py": "bca08a5d7814f6ac", "diff": ["<root>"]},
 "paper_write.text.probe_docx.images": {"r": "146f17b7bd0b06ce", "py": "51f75f362f3c8dcc", "diff": ["<root>"]},
 "paper_write.text.probe_html": {"r": "eee0d28090f01ee0", "py": "b638afc011036df0", "diff": ["<root>"]},
-"paper_write.text.pyfull": {"r": "f9e9a3bd4e947f84", "py": "1bd0dd5d8dd4a002", "diff": ["<root>"]},
-"read.dir.v11_and_v12": {"r": "ac5146cf65ca52a8", "py": "35e45a022be29dfa", "diff": ["<R error, Python value>"]}
+"paper_write.text.pyfull": {"r": "f9e9a3bd4e947f84", "py": "1bd0dd5d8dd4a002", "diff": ["<root>"]}
 }

@@ -175,7 +175,7 @@
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
           "#### File Naming",
           "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 1 file with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Suplemental Material_Chairs used for data collection.docx\", \n\"Suplemental Material_Chairs used for data collection.docx\"), \n    Rule = c(\"spaces\", \"filename-length-50\"), Severity = c(\"bad\", \n    \"suggestion\"), Detail = c(\"contains a space\", \"filename-length-50 is 57 characters, over the 50-character budget\"\n    )), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Suplemental Material_Chairs used for data collection.docx\", \n\"Suplemental Material_Chairs used for data collection.docx\"), \n    Rule = c(\"spaces\", \"filename-length-50\"), Severity = c(\"Required\", \n    \"Suggestion\"), Detail = c(\"contains a space\", \"filename-length-50 is 57 characters, over the 50-character budget\"\n    )), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Data_Experiment_1.xlsx\", \"Data_Experiment_2.xlsx\", \n\"Suplemental Material_Chairs used for data collection.docx\"), \n    Group = c(\"ex1\", \"ex2\", \"ex1\"), Path = c(\"Data_Experiment_1.xlsx\", \n    \"Data_Experiment_2.xlsx\", \"Suplemental Material_Chairs used for data collection.docx\"\n    )), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -423,6 +423,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

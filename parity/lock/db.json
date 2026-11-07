@@ -1,7 +1,6 @@
 {
 "check_orcid.na": {"r": "ac5146cf65ca52a8", "py": "e6e5bcc9388d34ec", "diff": ["<R error, Python value>"]},
 "check_orcid.x_inside": {"r": "ac5146cf65ca52a8", "py": "e6e5bcc9388d34ec", "diff": ["<R error, Python value>"]},
-"crossref_doi.replay.demo_bib": {"r": "6c5092d534f26c5a", "py": "baaefce1ab2f6f92", "diff": ["error[]"]},
 "crossref_parse_item.synthetic.editor": {"r": "1b568c81b00c0250", "py": "17689ee5302d5e20", "diff": ["<root>"]},
 "crossref_parse_item.synthetic.null_field": {"r": "ac5146cf65ca52a8", "py": "00d60df5d28ed485", "diff": ["<R error, Python value>"]},
 "crossref_query.replay.data_frame": {"r": "e9d20de1b007604f", "py": "da1211a99af74a78", "diff": ["ref[]"]},

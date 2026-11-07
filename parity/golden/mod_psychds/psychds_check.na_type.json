@@ -1,9 +1,219 @@
 {
   "id": "psychds_check.na_type",
-  "ok": false,
-  "error": "Running the module 'psychds_check' produced errors: missing value where TRUE/FALSE needed",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.1",
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "psychds_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psych-DS Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "file_name",
+          "data_type",
+          "group",
+          "current_path",
+          "target_path",
+          "status",
+          "convert",
+          "original_target",
+          "referenced_by"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a.R",
+              "b.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a.R",
+              "b.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown/a.R",
+              "analysis/b.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "move",
+              "move"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks the repository against the Psych-DS dataset standard. We examined 2 files.",
+          "#### Compliance Checklist",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"missing\", \n\"missing\", \"present\", \"missing\", \"missing\", \"missing\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Target Psych-DS Structure",
+          "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   └── b.R <span style=\"color:#b9770e\">(move from b.R)<\/span>\n├── unknown/\n│   └── a.R <span style=\"color:#b9770e\">(move from a.R)<\/span>\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n├── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n└── <span style=\"color:#c0392b\">README  ← missing<\/span>\n<\/pre>",
+          "#### Suggestions",
+          "- **Add** dataset_description.json — Root metadata file describing the dataset (required).\n- **Add** data/ directory with data files — At least one machine-readable data file under data/ (required).\n- **Move** `a.R` → `unknown/a.R`.\n- **Move** `b.R` → `analysis/b.R`.\n- **Document** the 1 of 1 data column without a codebook description (see codebook_check).\n- **Add** README — A README at the repository root (recommended).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended).\n- **Add** variable descriptions — Codebook descriptions for variables improve reuse (recommended; see codebook_check)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  1 of 3 required Psych-DS items present; 2 missing.\n-  2 files would need to move to a Psych-DS location.\n-  3 recommended items missing."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

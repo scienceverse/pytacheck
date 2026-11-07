@@ -46,7 +46,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found no R code files to assess for reproducibility (this phase runs R code only). The repository does contain 1 non-R code file; this phase only RUNS R code (see the sections above for what we found and could — or could not — check for those files). It also contains 1 MATLAB data file (`.mat`), which is not code and is not assessed here either."
+          "\n-  We found no R or Python code files to assess for reproducibility. It also contains 1 MATLAB data file (`.mat`), which is not code and is not assessed here either."
         ]
       },
       {
@@ -58,7 +58,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found no R code files to assess for reproducibility (this phase runs R code only). The repository does contain 1 non-R code file; this phase only RUNS R code (see the sections above for what we found and could — or could not — check for those files). It also contains 1 MATLAB data file (`.mat`), which is not code and is not assessed here either."
+          "\n-  We found no R or Python code files to assess for reproducibility. It also contains 1 MATLAB data file (`.mat`), which is not code and is not assessed here either."
         ]
       },
       {
@@ -141,6 +141,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

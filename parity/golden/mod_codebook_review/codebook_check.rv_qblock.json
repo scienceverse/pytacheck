@@ -273,9 +273,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 1 codebook/README/label source and 7 data columns across 1 file.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"q1\", \"q2\", \"q3\", \"q4\", \"q5\", \"q6\", \n\"id\"), Documented = c(\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"yes\"\n), Label = c(NA, NA, NA, NA, NA, NA, \"Participant id\"), \"Codebook Variable\" = c(NA, \nNA, NA, NA, NA, NA, \"id\"), Source = c(NA, NA, NA, NA, NA, NA, \n\"codebook.csv\"), Status = c(\"unlabelled\", \"unlabelled\", \"unlabelled\", \n\"unlabelled\", \"unlabelled\", \"unlabelled\", \"labelled\")), row.names = c(NA, \n7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"q1\", \"q2\", \"q3\", \"q4\", \"q5\", \"q6\", \n\"id\"), Documented = c(\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"yes\"\n), Label = c(NA, NA, NA, NA, NA, NA, \"Participant id\"), \"Codebook Variable\" = c(NA, \nNA, NA, NA, NA, NA, \"id\"), Source = c(NA, NA, NA, NA, NA, NA, \n\"codebook.csv\"), Status = c(\"unlabelled\", \"unlabelled\", \"unlabelled\", \n\"unlabelled\", \"unlabelled\", \"unlabelled\", \"labelled\")), row.names = c(NA, \n7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
         ]
       },
       {
@@ -361,7 +359,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -373,7 +371,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -552,6 +550,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -12,7 +12,6 @@
 "code_extract_r.text.unbalanced.doc0": {"r": "9333b8d2a314ce0b", "py": "1fa3d5e2966009cb", "diff": ["<root>"]},
 "code_extract_r.text.unbalanced.doc1": {"r": "218b2e02d6a3067e", "py": "9469aad822863298", "diff": ["<root>"]},
 "code_extract_r.text.unbalanced.doc2": {"r": "1111e3a01ded318d", "py": "9469aad822863298", "diff": ["[]"]},
-"code_file_refs.include_writes_python": {"r": "f6122c70c0cf4f13", "py": "27c3dd2342a90656", "diff": ["<root>"]},
 "code_lang.my_qmd_scalar_yaml_qmd": {"r": "ac5146cf65ca52a8", "py": "8259b48afe2dfac5", "diff": ["<R error, Python value>"]},
 "code_line_stats.my_encodings_cr_cr_lf_R": {"r": "a05d558e9f5f7be9", "py": "1b8d67008dcd80db", "diff": ["code_lines[]", "total_lines[]"]},
 "code_line_stats.my_encodings_mixed_eol_R": {"r": "fda1fa506e87e132", "py": "dbaaf9918f1fea93", "diff": ["code_lines[]", "total_lines[]"]},

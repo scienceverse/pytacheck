@@ -1,9 +1,9 @@
 {
   "id": ".read_bibr.error.v10_root",
   "ok": false,
-  "error": "bibr export schema 10.3 is not supported: metacheck reads schema 12.x and the older files without a root schema_version (v.json)",
+  "error": "bibr export schema 10.3 is not supported: metacheck reads schema 12.x and the older files without a root schema_version (v.json). Extract the paper again with a bibr version that writes schema 12.x.",
   "warnings": [],
   "value": null,
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

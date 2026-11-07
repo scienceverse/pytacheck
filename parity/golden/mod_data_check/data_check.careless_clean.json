@@ -607,7 +607,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 11 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 11 columns and found no issues."
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 11 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1). We ran automated data-quality checks on 11 columns and found no issues."
         ]
       },
       {
@@ -1467,6 +1467,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

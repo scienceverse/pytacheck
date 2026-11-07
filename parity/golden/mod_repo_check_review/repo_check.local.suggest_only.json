@@ -190,7 +190,7 @@
           "README files were found in all repositories.",
           "#### File Naming",
           "File names are broadly machine-parseable. We found 0 naming problems that should be fixed, and 2 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"data_1.csv\", \"data_2.csv\"), Rule = c(\"zero-padding\", \n\"zero-padding\"), Severity = c(\"suggestion\", \"suggestion\"), Detail = c(\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"data_1.csv\", \"data_2.csv\"), Rule = c(\"zero-padding\", \n\"zero-padding\"), Severity = c(\"Suggestion\", \"Suggestion\"), Detail = c(\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"analysis.R\", Group = \"ex1\", Path = \"analysis.R\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"data_1.csv\", \"data_10.csv\", \"data_2.csv\"\n), Group = c(\"ex1\", \"ex1\", \"ex1\"), Path = c(\"data_1.csv\", \"data_10.csv\", \n\"data_2.csv\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -436,6 +436,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

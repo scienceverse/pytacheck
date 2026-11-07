@@ -457,27 +457,27 @@
             "t": "chr",
             "v": [
               null,
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
               null,
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
-              "Positive and Negative Affect Schedule",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
               null
             ]
           },
@@ -485,27 +485,27 @@
             "t": "chr",
             "v": [
               null,
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
               null,
-              "high",
-              "high",
-              "high",
-              "high",
-              "high",
-              "high",
-              "high",
-              "high",
-              "high",
-              "high",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
               null
             ]
           },
@@ -513,27 +513,27 @@
             "t": "chr",
             "v": [
               null,
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
               null,
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
               null
             ]
           }
@@ -545,11 +545,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 1 codebook/README/label source and 23 data columns across 2 files.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"panas_1\", \"panas_10\", \"panas_2\", \n\"panas_3\", \"panas_4\", \"panas_5\", \"panas_6\", \"panas_7\", \"panas_8\", \n\"panas_9\"), Documented = c(\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\"), Label = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    \"Codebook Variable\" = c(NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_\n    ), Source = c(NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_\n    ), Status = c(\"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\")), row.names = c(1L, 3L, 4L, 5L, \n6L, 7L, 8L, 9L, 10L, 11L, 12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## affect.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"PANAS1\", \"PANAS10\", \"PANAS2\", \n\"PANAS3\", \"PANAS4\", \"PANAS5\", \"PANAS6\", \"PANAS7\", \"PANAS8\", \"PANAS9\", \n\"PANAS_total\"), Documented = c(\"no\", \"yes\", \"yes\", \"yes\", \"yes\", \n\"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \n\"Affect item 1\", \"Affect item 10\", \"Affect item 2\", \"Affect item 3\", \n\"Affect item 4\", \"Affect item 5\", \"Affect item 6\", \"Affect item 7\", \n\"Affect item 8\", \"Affect item 9\", \"Total affect score\"), \"Codebook Variable\" = c(NA, \n\"PANAS1\", \"PANAS10\", \"PANAS2\", \"PANAS3\", \"PANAS4\", \"PANAS5\", \n\"PANAS6\", \"PANAS7\", \"PANAS8\", \"PANAS9\", \"PANAS_total\"), Source = c(NA, \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(2L, \n13L, 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L, 23L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "We detected 2 column groups (by shared abbreviation) that look like scales; 2 were matched to a named instrument from the paper text or dictionary. Groups we could not name are listed too — they are real scale-like column families whose instrument the manuscript did not identify. Identified scales are exported in the OpenScales OSD structure.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"s.csv\", \"affect.csv\"), Abbrev = c(\"PANAS\", \n\"PANAS\"), Columns = c(10L, 10L), \"Max item\" = c(\"10\", \"10\"), \n    Scale = c(\"Positive and Negative Affect Schedule\", \"Positive and Negative Affect Schedule\"\n    ), Confidence = c(\"medium\", \"high\"), Source = c(\"matched\", \n    \"matched\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 40, FALSE)\n```\n",
-          "To let this tool (and anyone reusing the data) identify these scales with **high confidence**:\n- **Name the instrument in the manuscript with its abbreviation** — e.g. \"the Breakup Distress Scale (BDS)\" — matching the column prefix.\n- **Add a codebook** giving the item wording, or state the number of items (\"a 15-item scale\")."
+          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"panas_1\", \"panas_10\", \"panas_2\", \n\"panas_3\", \"panas_4\", \"panas_5\", \"panas_6\", \"panas_7\", \"panas_8\", \n\"panas_9\"), Documented = c(\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\"), Label = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    \"Codebook Variable\" = c(NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_\n    ), Source = c(NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_\n    ), Status = c(\"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\")), row.names = c(1L, 3L, 4L, 5L, \n6L, 7L, 8L, 9L, 10L, 11L, 12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## affect.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"PANAS1\", \"PANAS10\", \"PANAS2\", \n\"PANAS3\", \"PANAS4\", \"PANAS5\", \"PANAS6\", \"PANAS7\", \"PANAS8\", \"PANAS9\", \n\"PANAS_total\"), Documented = c(\"no\", \"yes\", \"yes\", \"yes\", \"yes\", \n\"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \n\"Affect item 1\", \"Affect item 10\", \"Affect item 2\", \"Affect item 3\", \n\"Affect item 4\", \"Affect item 5\", \"Affect item 6\", \"Affect item 7\", \n\"Affect item 8\", \"Affect item 9\", \"Total affect score\"), \"Codebook Variable\" = c(NA, \n\"PANAS1\", \"PANAS10\", \"PANAS2\", \"PANAS3\", \"PANAS4\", \"PANAS5\", \n\"PANAS6\", \"PANAS7\", \"PANAS8\", \"PANAS9\", \"PANAS_total\"), Source = c(NA, \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(2L, \n13L, 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L, 23L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
         ]
       },
       {
@@ -643,15 +639,15 @@
           {
             "t": "int",
             "v": [
-              2,
-              2
+              0,
+              0
             ]
           },
           {
             "t": "int",
             "v": [
-              1,
-              1
+              0,
+              0
             ]
           },
           {
@@ -903,1003 +899,7 @@
       {
         "t": "list",
         "names": null,
-        "v": [
-          {
-            "t": "list",
-            "names": [
-              "osd_version",
-              "definition"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "1.0"
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "scale_info",
-                  "likert_options",
-                  "items",
-                  "dimensions",
-                  "scoring",
-                  "metacheck"
-                ],
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "name",
-                      "code",
-                      "abbreviation"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Positive and Negative Affect Schedule"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "positive_and_negative_affect_schedule"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "PANAS"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "points",
-                      "min",
-                      "max",
-                      "order",
-                      "source"
-                    ],
-                    "v": [
-                      {
-                        "t": "int",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "dbl",
-                        "v": [
-                          1
-                        ]
-                      },
-                      {
-                        "t": "dbl",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "ascending"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "observed"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": [
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_5"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_5"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_6"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_6"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_7"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_7"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_8"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_8"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_9"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_9"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_10"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "panas_10"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [],
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "scale_source",
-                      "provenance",
-                      "confidence",
-                      "source_files",
-                      "n_columns",
-                      "declared_length"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "dictionary"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Matched a known instrument in metacheck's scale dictionary (OpenScales-derived or curated)."
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "medium"
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": null,
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "s.csv"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          10
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          10
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "t": "list",
-            "names": [
-              "osd_version",
-              "definition",
-              "translations"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "1.0"
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "scale_info",
-                  "likert_options",
-                  "items",
-                  "dimensions",
-                  "scoring",
-                  "metacheck"
-                ],
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "name",
-                      "code",
-                      "abbreviation"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Positive and Negative Affect Schedule"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "positive_and_negative_affect_schedule"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "PANAS"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "points",
-                      "min",
-                      "max",
-                      "labels",
-                      "order",
-                      "source"
-                    ],
-                    "v": [
-                      {
-                        "t": "int",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          1
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Very slightly",
-                          "A little",
-                          "Moderately",
-                          "Quite a bit",
-                          "Extremely"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "ascending"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "codebook"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": [
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS5"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS5"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS6"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS6"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS7"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS7"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS8"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS8"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS9"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS9"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS10"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "PANAS10"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [],
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "scale_source",
-                      "provenance",
-                      "confidence",
-                      "source_files",
-                      "n_columns",
-                      "declared_length"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "dictionary"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Matched a known instrument in metacheck's scale dictionary (OpenScales-derived or curated)."
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "high"
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": null,
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "affect.csv"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          10
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          10
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "en"
-                ],
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "PANAS1",
-                      "PANAS2",
-                      "PANAS3",
-                      "PANAS4",
-                      "PANAS5",
-                      "PANAS6",
-                      "PANAS7",
-                      "PANAS8",
-                      "PANAS9",
-                      "PANAS10"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 1"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 2"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 3"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 4"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 5"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 6"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 7"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 8"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 9"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Affect item 10"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "v": []
       },
       {
         "t": "dbl",
@@ -1936,6 +936,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

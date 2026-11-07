@@ -222,10 +222,6 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 0 codebook/README/label sources and 4 data columns across 1 file.",
           "No codebook or README documentation was found, so no data columns could be matched to variable definitions.",
-          "#### Scales",
-          "We detected 1 column group (by shared abbreviation) that look like scales; 0 were matched to a named instrument from the paper text or dictionary. Groups we could not name are listed too — they are real scale-like column families whose instrument the manuscript did not identify. Identified scales are exported in the OpenScales OSD structure.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"loop.csv\", Abbrev = \"POWER\", Columns = 3L, \n    \"Max item\" = \"?\", Scale = \"— not matched to a named scale —\", \n    Confidence = \"\", Source = \"\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 40, FALSE)\n```\n",
-          "To let this tool (and anyone reusing the data) identify these scales with **high confidence**:\n- **Name the instrument in the manuscript with its abbreviation** — e.g. \"the Breakup Distress Scale (BDS)\" — matching the column prefix.\n- **Add a codebook** giving the item wording, or state the number of items (\"a 15-item scale\").",
           "#### Duplicated Column Names",
           "- **Duplicated column names in `loop.csv`.** 1 column name appears more than once (worst: `POWER`×3), so 3 of the file's 4 columns share a name with another. This usually means a survey loop/merge exported repeated blocks without numbering each iteration; the repeats cannot be told apart and can only be documented once. Consider re-exporting with per-iteration column names."
         ]
@@ -313,7 +309,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -325,7 +321,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -447,247 +443,7 @@
       {
         "t": "list",
         "names": null,
-        "v": [
-          {
-            "t": "list",
-            "names": [
-              "osd_version",
-              "definition"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "1.0"
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "scale_info",
-                  "likert_options",
-                  "items",
-                  "dimensions",
-                  "scoring",
-                  "metacheck"
-                ],
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "name",
-                      "code",
-                      "abbreviation"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          ""
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "power"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "POWER"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "points",
-                      "min",
-                      "max",
-                      "order",
-                      "source"
-                    ],
-                    "v": [
-                      {
-                        "t": "int",
-                        "v": [
-                          4
-                        ]
-                      },
-                      {
-                        "t": "dbl",
-                        "v": [
-                          2
-                        ]
-                      },
-                      {
-                        "t": "dbl",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "ascending"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "observed"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": [
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "POWER"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "POWER"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "POWER"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "POWER"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "POWER"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "POWER"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [],
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "scale_source",
-                      "provenance",
-                      "source_files",
-                      "n_columns"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "unnamed_block"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "A coherent block of same-prefix rating columns detected in the data, but NOT named: neither a known instrument nor a construct metacheck could infer from the available text. Recorded for its structure (items + response scale) only."
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": null,
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "loop.csv"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          3
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "v": []
       },
       {
         "t": "dbl",
@@ -724,6 +480,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

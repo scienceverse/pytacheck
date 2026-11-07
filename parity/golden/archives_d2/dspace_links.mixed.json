@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 7,
+    "nrow": 6,
     "names": [
       "href",
       "link_text",
@@ -17,7 +17,6 @@
         "t": "chr",
         "v": [
           "https://www.psycharchives.org/jspui/handle/20.500.12034/17526",
-          "https://dspace.ut.ee/handle/10062/1",
           "https://www.psycharchives.org/en/item/abc-123",
           "hdl.handle.net/20.500.12034/17526",
           "20.500.12034/999",
@@ -33,7 +32,6 @@
           null,
           null,
           null,
-          null,
           null
         ]
       },
@@ -41,7 +39,6 @@
         "t": "int",
         "v": [
           2,
-          3,
           1,
           1,
           2,
@@ -57,12 +54,11 @@
           "6c4258abe0fec3",
           "6c4258abe0fec3",
           "6c4258abe0fec3",
-          "6c4258abe0fec3",
           "6c4258abe0fec3"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -9,7 +9,7 @@ rv_report_list <- function(paper, modules, files, output_format = "qmd", args = 
   d <- tempfile()
   dir.create(d)
   on.exit(unlink(d, recursive = TRUE))
-  res <- suppressWarnings(report(paper, mods, file.path(d, files), output_format, args))
+  res <- suppressWarnings(report(paper, mods, file.path(d, files), output_format, args = args))
   sp <- attr(res, "save_path")
   list(
     names = names(res),

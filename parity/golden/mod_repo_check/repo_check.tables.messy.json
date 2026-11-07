@@ -187,12 +187,12 @@
           {
             "t": "chr",
             "v": [
-              "bad",
-              "bad",
-              "bad",
-              "bad",
-              "suggestion",
-              "suggestion"
+              "Required",
+              "Required",
+              "Required",
+              "Required",
+              "Suggestion",
+              "Suggestion"
             ]
           },
           {
@@ -408,6 +408,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -532,7 +532,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 6 R, 4 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  1 code file had no comments.\n-  1 file loaded in the code was missing in the repository.\n-  Absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  All libraries/imports were loaded in one block.\n-  The code loaded 2 distinct packages.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  No parsing issues of R-type files were found."
+          "\n-  We found 6 R, 4 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  1 code file (chdir.py) had no comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility."
         ]
       },
       {
@@ -699,6 +699,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

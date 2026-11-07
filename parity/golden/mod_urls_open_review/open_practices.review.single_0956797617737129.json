@@ -62,7 +62,7 @@
               "We examined the learning rate (the unstandardized regression coefficient indicating the strength of the relationship between the estimation error and the subsequent update) for good and bad news for the self and a friend using repeated measures analyses of variance, controlling for the differences in estimation errors between good and bad news for both conditions (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. 2).",
               "For Study 2b, we preregistered the hypothesis, sampling procedures, and analysis plan (https://osf.io/a5bmw/).",
               "We report the preregistered analyses in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 which produced the same results as reported here.",
-              "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (https://osf.io/a5bmw/).",
+              "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (osf.io/a5bmw/).",
               "As in Study 2b, we preregistered our hypothesis, methods, participant recruitment strategy, and analysis before running the studies and analyzing the data (osf.io/zmf4c).",
               "In a pilot study, another set of participants (N = 40) rated both strangers (liked and disliked) on likability (likability, generosity, warmth, blameworthiness, morality, friendliness; see the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 for factor analyses confirming one general-likability dimension) as well as intelligence and health.",
               "The learning bias for the self condition and the learning bias for the stranger condition were not significantly correlated, r(76) = .10, p = .386 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S3b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129).",
@@ -418,7 +418,7 @@
                 "v": [
                   "For Study 2b, we preregistered the hypothesis, sampling procedures, and analysis plan (https://osf.io/a5bmw/).",
                   "We report the preregistered analyses in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 which produced the same results as reported here.",
-                  "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (https://osf.io/a5bmw/).",
+                  "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (osf.io/a5bmw/).",
                   "As in Study 2b, we preregistered our hypothesis, methods, participant recruitment strategy, and analysis before running the studies and analyzing the data (osf.io/zmf4c).",
                   "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67 Study 3: http://www.osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be).",
                   "Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
@@ -451,6 +451,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

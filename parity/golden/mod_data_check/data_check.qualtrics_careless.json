@@ -830,7 +830,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 18 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 18 columns; 3 columns have at least one potential issue (3 columns whose name suggests personal information; 2 columns that look like geographic coordinates; 1 column whose values look like personal information). 1 file is a Qualtrics survey export (5 rows look like previews/unfinished responses to review)."
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 18 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1). We ran automated data-quality checks on 18 columns; 3 columns have at least one potential issue (3 columns whose name suggests personal information; 2 columns that look like geographic coordinates; 1 column whose values look like personal information). 1 file is a Qualtrics survey export (5 rows look like previews/unfinished responses to review)."
         ]
       },
       {
@@ -2112,6 +2112,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

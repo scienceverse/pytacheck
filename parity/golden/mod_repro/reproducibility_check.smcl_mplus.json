@@ -61,7 +61,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 2 self-reproducible output files (JASP/jamovi/SPSS-Viewer/Mplus) instead of R code.\n-  127 statistics stored from the extracted output.\n-  We found no R code files to assess for reproducibility."
+          "\n-  We assessed 2 self-reproducible output files (JASP/jamovi/SPSS-Viewer/Mplus) instead of R code.\n-  127 statistics stored from the extracted output.\n-  We found no R or Python code files to assess for reproducibility."
         ]
       },
       {
@@ -6261,6 +6261,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

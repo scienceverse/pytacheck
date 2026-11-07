@@ -2,13 +2,15 @@
   "id": "data_code_refs.latin1",
   "ok": true,
   "error": null,
-  "warnings": [
-    "input string 1 is invalid UTF-8"
-  ],
+  "warnings": [],
   "value": {
     "t": "chr",
-    "v": []
+    "v": [
+      "donnees_etude1.csv",
+      "mod<e8>le.rds",
+      "resultats.csv"
+    ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

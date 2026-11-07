@@ -114,11 +114,11 @@
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "gav = 0.45",
+              "g z = 0.45",
+              "Hedges' grm = 0.45",
+              "gs = 0.45",
+              "Hedges' g av = 0.45"
             ]
           },
           {
@@ -154,131 +154,131 @@
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "0.45",
+              "0.45",
+              "0.45",
+              "0.45",
+              "0.45"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "gav = 0.45",
+              "g z = 0.45",
+              "grm = 0.45",
+              "gs = 0.45",
+              "g av = 0.45"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "2.9",
+              "2.9",
+              "2.9",
+              "2.9",
+              "2.9"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "40",
+              "40",
+              "40",
+              "40",
+              "40"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "0.452903909476958",
+              "0.452903909476958",
+              "0.452903909476958",
+              "0.452903909476958",
+              "0.452903909476958"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "0.64050285123411",
+              "0.64050285123411",
+              "0.64050285123411",
+              "0.64050285123411",
+              "0.64050285123411"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "0.894959429780133",
+              "0.894959429780133",
+              "0.894959429780133",
+              "0.894959429780133",
+              "0.894959429780133"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "0.894959429780133",
+              "0.894959429780133",
+              "0.894959429780133",
+              "0.894959429780133",
+              "0.894959429780133"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "2.10124962819747",
+              "2.10124962819747",
+              "2.10124962819747",
+              "2.10124962819747",
+              "2.10124962819747"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null
+              "n = 41",
+              "n = 41",
+              "n = 41",
+              "n = 41",
+              "n = 41"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "indeterminate",
-              "indeterminate",
-              "indeterminate",
-              "indeterminate",
-              "indeterminate"
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "none",
-              "none",
-              "none",
-              "none",
-              "none"
+              "paired_dz",
+              "paired_dz",
+              "paired_dz",
+              "paired_dz",
+              "paired_dz"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "No parseable d effect size found.",
-              "No parseable d effect size found.",
-              "No parseable d effect size found.",
-              "No parseable d effect size found.",
-              "No parseable d effect size found."
+              "Match under paired-samples dz assumption.",
+              "Match under paired-samples dz assumption.",
+              "Match under paired-samples dz assumption.",
+              "Match under paired-samples dz assumption.",
+              "Match under paired-samples dz assumption."
             ]
           },
           {
@@ -376,22 +376,21 @@
       {
         "t": "chr",
         "v": [
-          "We recommend checking the sentences below, and add any missing effect sizes.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"gav, t(40) = 2.9, gav = 0.45.\", \"gz, t(40) = 2.9, g z = 0.45.\", \n\"grm, t(40) = 2.9, Hedges' grm = 0.45.\", \"gs, t(40) = 2.9, gs = 0.45.\", \n\"Hedges' g av, t(40) = 2.9, Hedges' g av = 0.45.\")), names = \"\", class = \"data.frame\", row.names = c(NA, \n-5L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
-          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
-          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"gav, t(40) = 2.9, gav = 0.45.\", \n\"gz, t(40) = 2.9, g z = 0.45.\", \"grm, t(40) = 2.9, Hedges' grm = 0.45.\", \n\"gs, t(40) = 2.9, gs = 0.45.\", \"Hedges' g av, t(40) = 2.9, Hedges' g av = 0.45.\"\n), \"Effect Size\" = c(NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_), \"Reported Test\" = c(\"t(40) = 2.9\", \n\"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\"), \n    \"Test Type\" = c(\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\"\n    ), \"d Coherence\" = c(\"indeterminate\", \"indeterminate\", \"indeterminate\", \n    \"indeterminate\", \"indeterminate\"), \"d Assumption\" = c(\"none\", \n    \"none\", \"none\", \"none\", \"none\"), \"d Coherence Note\" = c(\"No parseable d effect size found.\", \n    \"No parseable d effect size found.\", \"No parseable d effect size found.\", \n    \"No parseable d effect size found.\", \"No parseable d effect size found.\"\n    ), \"eta Coherence\" = c(NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_), \"eta Assumption\" = c(NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_\n    ), \"eta Coherence Note\" = c(NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_)), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+          "All detected t-tests and F-tests had an effect size reported in the same sentence.",
+          "For t-tests with a reported d, coherence checks yielded 5 matches under assumptions.",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"gav, t(40) = 2.9, gav = 0.45.\", \n\"gz, t(40) = 2.9, g z = 0.45.\", \"grm, t(40) = 2.9, Hedges' grm = 0.45.\", \n\"gs, t(40) = 2.9, gs = 0.45.\", \"Hedges' g av, t(40) = 2.9, Hedges' g av = 0.45.\"\n), \"Effect Size\" = c(\"gav = 0.45\", \"g z = 0.45\", \"Hedges' grm = 0.45\", \n\"gs = 0.45\", \"Hedges' g av = 0.45\"), \"Reported Test\" = c(\"t(40) = 2.9\", \n\"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\"), \n    \"Test Type\" = c(\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\"\n    ), \"d Coherence\" = c(\"match_under_assumptions\", \"match_under_assumptions\", \n    \"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\"\n    ), \"d Assumption\" = c(\"paired_dz\", \"paired_dz\", \"paired_dz\", \n    \"paired_dz\", \"paired_dz\"), \"d Coherence Note\" = c(\"Match under paired-samples dz assumption.\", \n    \"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n    \"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\"\n    ), \"eta Coherence\" = c(NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_), \"eta Assumption\" = c(NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_\n    ), \"eta Coherence Note\" = c(NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_)), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "red"
+          "green"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We found 5 t-tests and/or F-tests where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes"
+          "All detected t-tests and F-tests had an effect size reported in the same sentence."
         ]
       },
       {
@@ -414,13 +413,13 @@
           {
             "t": "int",
             "v": [
-              0
+              5
             ]
           },
           {
             "t": "int",
             "v": [
-              5
+              0
             ]
           },
           {
@@ -445,6 +444,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

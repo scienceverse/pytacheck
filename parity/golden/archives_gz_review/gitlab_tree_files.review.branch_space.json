@@ -27,7 +27,7 @@
       },
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 5,
         "names": [
           "repo",
           "clean_repo",
@@ -45,14 +45,12 @@
               "https://gitlab.com/rv/glp.git",
               "https://gitlab.com/rv/glp.git",
               "https://gitlab.com/rv/glp.git",
-              "https://gitlab.com/rv/glp.git",
               "https://gitlab.com/rv/glp.git"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "rv/glp",
               "rv/glp",
               "rv/glp",
               "rv/glp",
@@ -67,7 +65,6 @@
               "c.R",
               "z.csv",
               "w.JSON",
-              "w.JSON",
               "q.md"
             ]
           },
@@ -77,7 +74,6 @@
               "b.txt",
               "a/c.R",
               "z.csv",
-              "w.JSON",
               "w.JSON",
               "q.md"
             ]
@@ -89,7 +85,6 @@
               "https://gitlab.com/rv/glp/-/raw/feat/x%20y/a/c.R",
               "https://gitlab.com/rv/glp/-/raw/feat/x%20y/z.csv",
               "https://gitlab.com/rv/glp/-/raw/feat/x%20y/w.JSON",
-              "https://gitlab.com/rv/glp/-/raw/feat/x%20y/w.JSON",
               "https://gitlab.com/rv/glp/-/raw/feat/x%20y/q.md"
             ]
           },
@@ -100,7 +95,6 @@
               null,
               300,
               null,
-              null,
               null
             ]
           },
@@ -110,7 +104,6 @@
               "text",
               "code",
               "data",
-              "code",
               "data",
               "text"
             ]
@@ -131,6 +124,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

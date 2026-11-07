@@ -422,36 +422,11 @@
               null,
               null,
               null,
-              "Ten Item Personality Inventory",
-              "Ten Item Personality Inventory",
-              "Ten Item Personality Inventory",
-              "Ten Item Personality Inventory",
-              "Ten Item Personality Inventory",
               null,
               null,
               null,
               null,
               null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              "medium",
-              "medium",
-              "medium",
-              "medium",
-              "medium",
               null,
               null,
               null,
@@ -472,11 +447,36 @@
               null,
               null,
               null,
-              "matched",
-              "matched",
-              "matched",
-              "matched",
-              "matched",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
               null,
               null,
               null,
@@ -494,11 +494,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 1 codebook/README/label source and 20 data columns across 1 file.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"TIPI_2\", \"TIPI_3\", \"TIPI_4\", \"TIPI_5\", \n\"Duration (in seconds)\", \"EndDate\", \"Finished\", \"Progress\", \"Q1_DO_order\", \n\"Q2_TEXT\", \"Q8timing_Click.Count\", \"Q8timing_First.Click\", \"Q8timing_Last.Click\", \n\"Q8timing_Page.Submit\", \"RecordedDate\", \"ResponseId\", \"StartDate\", \n\"Status\", \"TIPI_1\", \"age\"), Documented = c(\"no\", \"no\", \"no\", \n\"no\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \n\"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \nNA, NA, NA, \"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Other please specify\", \"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Extraverted enthusiastic\", \"Age in years\"), \"Codebook Variable\" = c(NA, \nNA, NA, NA, \"Duration (in seconds)\", \"EndDate\", \"Finished\", \"Progress\", \n\"Q1_DO_order\", \"Q2_TEXT\", \"Q8timing_Click.Count\", \"Q8timing_First.Click\", \n\"Q8timing_Last.Click\", \"Q8timing_Page.Submit\", \"RecordedDate\", \n\"ResponseId\", \"StartDate\", \"Status\", \"TIPI_1\", \"age\"), Source = c(NA, \nNA, NA, NA, NA, NA, NA, NA, NA, \"codebook.csv\", NA, NA, NA, NA, \nNA, NA, NA, NA, \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n\"unlabelled\", \"unlabelled\", \"unlabelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\")), row.names = c(NA, 20L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "We detected 1 column group (by shared abbreviation) that look like scales; 1 was matched to a named instrument from the paper text or dictionary. Groups we could not name are listed too — they are real scale-like column families whose instrument the manuscript did not identify. Identified scales are exported in the OpenScales OSD structure.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"survey.csv\", Abbrev = \"TIPI\", Columns = 5L, \n    \"Max item\" = \"5\", Scale = \"Ten Item Personality Inventory\", \n    Confidence = \"medium\", Source = \"matched\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 40, FALSE)\n```\n",
-          "To let this tool (and anyone reusing the data) identify these scales with **high confidence**:\n- **Name the instrument in the manuscript with its abbreviation** — e.g. \"the Breakup Distress Scale (BDS)\" — matching the column prefix.\n- **Add a codebook** giving the item wording, or state the number of items (\"a 15-item scale\")."
+          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"TIPI_2\", \"TIPI_3\", \"TIPI_4\", \"TIPI_5\", \n\"Duration (in seconds)\", \"EndDate\", \"Finished\", \"Progress\", \"Q1_DO_order\", \n\"Q2_TEXT\", \"Q8timing_Click.Count\", \"Q8timing_First.Click\", \"Q8timing_Last.Click\", \n\"Q8timing_Page.Submit\", \"RecordedDate\", \"ResponseId\", \"StartDate\", \n\"Status\", \"TIPI_1\", \"age\"), Documented = c(\"no\", \"no\", \"no\", \n\"no\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \n\"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \nNA, NA, NA, \"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Other please specify\", \"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Export machinery / paradata column (not a measured variable).\", \n\"Extraverted enthusiastic\", \"Age in years\"), \"Codebook Variable\" = c(NA, \nNA, NA, NA, \"Duration (in seconds)\", \"EndDate\", \"Finished\", \"Progress\", \n\"Q1_DO_order\", \"Q2_TEXT\", \"Q8timing_Click.Count\", \"Q8timing_First.Click\", \n\"Q8timing_Last.Click\", \"Q8timing_Page.Submit\", \"RecordedDate\", \n\"ResponseId\", \"StartDate\", \"Status\", \"TIPI_1\", \"age\"), Source = c(NA, \nNA, NA, NA, NA, NA, NA, NA, NA, \"codebook.csv\", NA, NA, NA, NA, \nNA, NA, NA, NA, \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n\"unlabelled\", \"unlabelled\", \"unlabelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\")), row.names = c(NA, 20L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
         ]
       },
       {
@@ -584,13 +580,13 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -758,340 +754,7 @@
       {
         "t": "list",
         "names": null,
-        "v": [
-          {
-            "t": "list",
-            "names": [
-              "osd_version",
-              "definition",
-              "translations"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "1.0"
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "scale_info",
-                  "likert_options",
-                  "items",
-                  "dimensions",
-                  "scoring",
-                  "metacheck"
-                ],
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "name",
-                      "code",
-                      "abbreviation"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Ten Item Personality Inventory"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "ten_item_personality_inventory"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "TIPI"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "points",
-                      "min",
-                      "max",
-                      "order",
-                      "source"
-                    ],
-                    "v": [
-                      {
-                        "t": "int",
-                        "v": [
-                          6
-                        ]
-                      },
-                      {
-                        "t": "dbl",
-                        "v": [
-                          2
-                        ]
-                      },
-                      {
-                        "t": "dbl",
-                        "v": [
-                          7
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "ascending"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "observed"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": [
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_1"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_2"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_3"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_4"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "id",
-                          "text_key",
-                          "type"
-                        ],
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_5"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "TIPI_5"
-                            ]
-                          },
-                          {
-                            "t": "chr",
-                            "v": [
-                              "likert"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "t": "list",
-                    "names": null,
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [],
-                    "v": []
-                  },
-                  {
-                    "t": "list",
-                    "names": [
-                      "scale_source",
-                      "provenance",
-                      "confidence",
-                      "source_files",
-                      "n_columns",
-                      "declared_length"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "dictionary"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Matched a known instrument in metacheck's scale dictionary (OpenScales-derived or curated)."
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "medium"
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": null,
-                        "v": [
-                          {
-                            "t": "chr",
-                            "v": [
-                              "survey.csv"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          5
-                        ]
-                      },
-                      {
-                        "t": "int",
-                        "v": [
-                          5
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "en"
-                ],
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "TIPI_1"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "Extraverted enthusiastic"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "v": []
       },
       {
         "t": "dbl",
@@ -1128,6 +791,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.3.3.2",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

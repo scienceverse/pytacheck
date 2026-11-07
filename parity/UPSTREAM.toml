@@ -3,9 +3,5 @@
 [upstream]
 repository = "https://github.com/scienceverse/metacheck"
 branch = "dev"
-commit = "f1062b43d0ec541ef143b67de2baf60a9e416400"
-# dev plus pull request #423 (bibr export schema 12.0: read, write, Grobid TEI -> 12.0),
-# which pytacheck targets ahead of its merge. Move back to dev once it is merged.
-pull_request = 423
-base_commit = "49f97ec5a1252a7a00562f621281c915ea7a9955"
-version = "0.3.1"
+commit = "98105f6a81da74f4d2c42d35e692dac0ab83dac3"
+version = "0.3.3.2"

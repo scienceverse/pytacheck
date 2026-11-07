@@ -1,17 +1,11 @@
 {
 "repo_check.local.edat_many": {"r": "78c7059ddd0490c0", "py": "a961202a4d2d6bff", "diff": ["table.file_type[]"]},
-"repo_check.local.several_folders.paperlist": {"r": "a4d3a519442f0222", "py": "8c549d13f8404ca3", "diff": ["report[]", "summary_table.files_code[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_text[]", "table", "traffic_light[]"]},
+"repo_check.local.several_folders.paperlist": {"r": "eadcb4362266a959", "py": "8c549d13f8404ca3", "diff": ["report[]", "summary_table.files_code[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_text[]", "table", "traffic_light[]"]},
 "repo_check.local.two_folders": {"r": "3a792ebb96483b88", "py": "cf40708abb92f8d7", "diff": ["group_no_evidence[]", "report[]", "roster_check.extra", "roster_check.found", "summary_table.files_data[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_table.repo_n[]", "summary_text[]", "table"]},
-"repo_check.local.two_folders.report": {"r": "803d9c2f47223cd5", "py": "dc9b20c251cf23bf", "diff": ["[]"]},
-"repo_check.local.unicode": {"r": "0eff60c30d59af3e", "py": "7b6d5b850b269c6e", "diff": ["table.file_type[]"]},
-"repo_check.local.unicode.tables": {"r": "7ee869c11975c80a", "py": "82c21645df3d8a38", "diff": ["[].Severity[]", "[].Type[]"]},
+"repo_check.local.two_folders.report": {"r": "5dcac632679892e7", "py": "e73dfeb619789c74", "diff": ["[]"]},
+"repo_check.local.unicode": {"r": "13562fc802a137c7", "py": "7b6d5b850b269c6e", "diff": ["table.file_type[]"]},
+"repo_check.local.unicode.tables": {"r": "19ef7f2e96f4c331", "py": "82c21645df3d8a38", "diff": ["[].Type[]"]},
 "repo_check.module.empty_paper": {"r": "ac5146cf65ca52a8", "py": "1b380f67397bc0f3", "diff": ["<R error, Python value>"]},
 "repo_check.module.empty_paperlist": {"r": "ac5146cf65ca52a8", "py": "c28e7c89ff853a4d", "diff": ["<R error, Python value>"]},
-"repo_check.osf.reg.paperlist": {"r": "80afb553d5c11be5", "py": "6a6c89469e8dfe22", "diff": ["report[]", "summary_table.files_code[]", "summary_table.files_data[]", "table.data_type[]", "table.file_type[]"]},
-"repo_check.osf_license.invalid": {"r": "d7842d72cb50aa46", "py": "d28a43c696a53a7d", "diff": ["gated_repos", "repo_metadata.paper_id[]", "report[]", "summary_table.repo_n[]", "summary_text[]"]},
-"repo_check.zenodo.no_peek": {"r": "e171cb29bb0f2b93", "py": "a105d9b570b332a7", "diff": ["report[]", "summary_table.files_code[]", "summary_table.files_data[]", "table.data_type[]", "table.file_type[]"]},
-"repo_check.zenodo.no_peek.report": {"r": "85984e0a657343b6", "py": "24a018bb13476335", "diff": ["[]"]},
-"repo_check.zenodo.peek_rich": {"r": "eb2f3b5202901c9d", "py": "92ae67345ca78a0a", "diff": ["table"]},
-"repo_check.zenodo.peek_same_zip": {"r": "a97d0bf5f519c4ba", "py": "bc56cc169a3c1e67", "diff": ["table"]},
-"repo_check.zenodo.peek_shared.paperlist": {"r": "96bbe8047b027674", "py": "43a4c559c0990569", "diff": ["table"]}
+"repo_check.osf_license.invalid": {"r": "242e2a80ca55ac07", "py": "d28a43c696a53a7d", "diff": ["gated_repos", "repo_metadata.paper_id[]", "report[]", "summary_table.repo_n[]", "summary_text[]"]}
 }
