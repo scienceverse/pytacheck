@@ -16,6 +16,7 @@
     "src/metacheck/modules/reproducibility_check.py",
     "src/metacheck/modules/_reproducibility.py",
     "src/metacheck/modules/_reproducibility_py.py",
+    "src/metacheck/modules/_reproducibility_exec.py",
 ]
 
 [functions]
@@ -29,10 +30,13 @@
 #   run_missing -> _reproducibility.run_missing; .empty_match / the main-path match ->
 #   _reproducibility.match_output; empty -> reproducibility_check._check.empty;
 #   resolve_row_path -> reproducibility_check._resolver; hash_source (dedup),
-#   the execute phase (7b) -> reproducibility_check._execute; the "Execution" report
-#   (tail_cap, output blocks, install report) -> _execution_report/_install_report;
-#   the `modifications` build -> reproducibility_check._modifications.
-# The Python code path (d3b8594, after the f1062b4 pin) -> _reproducibility_py.assess_py
-#   (its execute block -> _execute_py, its "Execution" report -> _execution_report_py);
-#   "Combine R + Python results" (na_sum, combine_tl) -> reproducibility_check._combine,
-#   _combine_tl, and _py_only for a paper with Python code only.
+#   the R block's static part -> reproducibility_check._assess_r, its execute phase
+#   (7b) -> _reproducibility_exec._execute; the "Execution" report (tail_cap, output
+#   blocks, install report) -> _reproducibility_exec._execution_report/_install_report;
+#   the `modifications` build -> _reproducibility_exec._modifications and
+#   reproducibility_check._r_modifications.
+# The Python code path (metacheck 0.4.3.7) -> _reproducibility_py.assess_py
+#   (its execute block -> _execute_py, its "Execution" report -> _execution_report_py,
+#   its modifications -> _modifications_py);
+#   "Combine R + Python results" (na_sum, combine_tl) and the checklist section ->
+#   reproducibility_check._finish, _na_sum, _combine_tl and _checklist.
