@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import itertools
 import math
+from collections.abc import Iterator, Mapping, Sequence
 from typing import Any
 
 import numpy as np
@@ -604,16 +605,58 @@ def data_check_colname(col_name: Any, max_chars: int = 64) -> dict[str, Any]:
     }
 
 
-def data_check_colname_collisions(col_names: Any) -> dict[str, str]:
+class _NamedMessages(Mapping[str, str]):
+    """An R named list of messages: a name repeats once per column that has it.
+
+    ``x[name]`` is the first match (R's ``x[[name]]``); iterating yields every
+    name in order, repeats included, and :meth:`items` every message.
+    """
+
+    def __init__(self, names: Sequence[str], values: Sequence[str]) -> None:
+        self._names = list(names)
+        self._values = list(values)
+        self._first: dict[str, int] = {}
+        for i, n in enumerate(self._names):
+            self._first.setdefault(n, i)
+
+    def __getitem__(self, key: str) -> str:
+        i = self._first.get(key) if isinstance(key, str) else None
+        if i is None:
+            raise KeyError(key)
+        return self._values[i]
+
+    def __contains__(self, key: object) -> bool:
+        return isinstance(key, str) and key in self._first
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(list(self._names))
+
+    def __len__(self) -> int:
+        return len(self._names)
+
+    def keys(self) -> list[str]:  # type: ignore[override]
+        return list(self._names)
+
+    def values(self) -> list[str]:  # type: ignore[override]
+        return list(self._values)
+
+    def items(self) -> list[tuple[str, str]]:  # type: ignore[override]
+        return list(zip(self._names, self._values, strict=True))
+
+    def __repr__(self) -> str:
+        return f"_NamedMessages({self.items()!r})"
+
+
+def data_check_colname_collisions(col_names: Any) -> Mapping[str, str]:
     """Flag column names that collide once special characters are replaced by ``_``.
 
     Port of ``R/data_check_helpers.R::data_check_colname_collisions()``:
-    returns a dict mapping each colliding column name to a message (empty
-    when all names stay distinct).
-
-    Blank (``""``) names collide like any other and get an entry (R's
-    ``out[[""]] <- msg`` appends unnamed elements that no lookup by name can
-    retrieve, so there a blank column's collision is never reported).
+    returns a mapping from each colliding column to a message (empty when all
+    names stay distinct). Like R's named list it holds one element per
+    colliding column, so a name that two columns share appears twice
+    (iterating gives every name; ``x[name]`` is the first match). A blank
+    (``""``) name collides like any other (metacheck's ``setNames()`` fix of
+    U56, which R stored where no lookup by name could read it back).
     """
     nms = as_text(col_names)
     keys = gsub(r"[^\p{L}\p{N}]", "_", nms, perl=True)
@@ -624,7 +667,8 @@ def data_check_colname_collisions(col_names: Any) -> dict[str, str]:
             dups.append(k)
         else:
             seen.add(k)
-    out: dict[str, str] = {}
+    names: list[str] = []
+    values: list[str] = []
     for k in dict.fromkeys(dups):
         if k is None:
             continue
@@ -638,9 +682,10 @@ def data_check_colname_collisions(col_names: Any) -> dict[str, str]:
                 desc = f"{n_same} other identically named column{plural(n_same)}"
             else:
                 desc = ", ".join(f'"{o}"' for o in others[:5])
-            out[me] = (  # type: ignore[index]
+            names.append(me)  # type: ignore[arg-type]
+            values.append(
                 f'Column name becomes "{k}" when special characters are replaced, the same as '
                 f"{desc}: tools that sanitize names (R's make.names(), SPSS/SAS/Stata import, "
                 "codebook section links) cannot tell these columns apart."
             )
-    return out
+    return _NamedMessages(names, values)
