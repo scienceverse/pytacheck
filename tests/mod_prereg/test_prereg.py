@@ -219,6 +219,52 @@ def test_several_aspredicted_links_one_row_each() -> None:
     assert mo.summary_table["preregistration"].tolist() == [2]
 
 
+def test_unreadable_aspredicted_link_is_named_with_its_reason_not_counted() -> None:
+    # metacheck: it was a row with every field empty, counted as a preregistration found
+    def fake_info(urls: object, *args: object, **kwargs: object) -> pd.DataFrame:
+        rows = []
+        for u in list(urls):  # type: ignore[call-overload]
+            if "abc12" in u:
+                rows.append(
+                    {
+                        "ap_url": u,
+                        "AP_title": "Study A",
+                        "AP_created": "2017/08/18 06:55 (PT)",
+                        "AP_registered": "2017-08-18",
+                        "AP_analyses": "ANOVA",
+                        "AP_outliers": None,
+                        "AP_secondary": "Exploratory: domains",
+                        "AP_sample_size": "35",
+                        "error": None,
+                    }
+                )
+            else:
+                rows.append({"ap_url": u, "error": "Not Found"})
+        return pd.DataFrame(rows)
+
+    urls = ["https://aspredicted.org/abc12.pdf", "https://aspredicted.org/zzz99.pdf"]
+    with (
+        mock.patch("metacheck.archives.aspredicted.aspredicted_info", fake_info),
+        mock.patch("metacheck.archives.osf.osf_type", lambda ids, *a, **k: "nodes"),
+    ):
+        mo = pc.module_run(tp(urls, "p_ap3"), "prereg_check")
+        assert len(mo.table) == 1
+        assert mo.summary_table["preregistration"].tolist() == [1]
+        assert "1 AsPredicted link could not be read" in mo.summary_text
+        assert "zzz99.pdf (Not Found)" in str(mo.report)
+        # version 1.05 of AsPredicted's questions asks about secondary analyses
+        assert mo.table["exploratory_analyses"].tolist() == ["Exploratory: domains"]
+        assert mo.table["date_registered"].tolist() == ["2017-08-18"]
+
+        # nothing could be read: not "0 OSF links"
+        mo = pc.module_run(tp(urls[1:], "p_ap4"), "prereg_check")
+        assert mo.summary_text.startswith(
+            "We found 1 OSF or AsPredicted link, but no accessible registrations"
+        )
+        assert mo.summary_table["preregistration"].tolist() == [0]
+        assert "zzz99.pdf (Not Found)" in str(mo.report)
+
+
 def test_withdrawn_registration() -> None:
     mo = run(osf_paper("wdrwn"), LOCAL_MOCKS)
     assert mo.table["description"].tolist() == ["WITHDRAWN"]
