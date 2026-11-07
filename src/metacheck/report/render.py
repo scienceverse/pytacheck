@@ -625,7 +625,7 @@ def _attr_text(attrs: _Attrs) -> str:
     return "{" + " ".join(parts) + "}"
 
 
-def _emit_static_md(nodes: list[Any], fold: bool = False) -> list[str]:
+def _emit_static_md(nodes: list[Any]) -> list[str]:
     out: list[str] = []
     for node in nodes:
         if not isinstance(node, _Div):
@@ -633,12 +633,7 @@ def _emit_static_md(nodes: list[Any], fold: bool = False) -> list[str]:
             continue
         attrs = node.attrs
         callout = _callout_type(attrs)
-        if callout is not None and fold and attrs.kv.get("title"):
-            # a checklist report folds a callout in a <details> box, which needs
-            # no script (R: collapse_section() under report_type("checklist"))
-            out += ["", f"<details><summary>{attrs.kv['title']}</summary>", ""]
-            out += [*_emit_static_md(node.children, fold), "", "</details>", ""]
-        elif callout is not None:
+        if callout is not None:
             title = attrs.kv.get("title")
             plain = _Attrs(attrs.id, attrs.classes, {})
             head = ["", f"**{title}**"] if title else []
@@ -647,21 +642,21 @@ def _emit_static_md(nodes: list[Any], fold: bool = False) -> list[str]:
                 f"::: {_attr_text(plain)}",
                 *head,
                 "",
-                *_emit_static_md(node.children, fold),
+                *_emit_static_md(node.children),
             ]
             out += ["", ":::", ""]
         elif "panel-tabset" in attrs.classes:
             pre, tabs = _split_tabs(node.children)
-            out += _emit_static_md(pre, fold)
+            out += _emit_static_md(pre)
             for label, body in tabs:
-                out += ["", f"##### {label}", "", *_emit_static_md(body, fold)]
+                out += ["", f"##### {label}", "", *_emit_static_md(body)]
         else:
-            out += ["", f"::: {_attr_text(attrs)}", "", *_emit_static_md(node.children, fold)]
+            out += ["", f"::: {_attr_text(attrs)}", "", *_emit_static_md(node.children)]
             out += ["", ":::", ""]
     return out
 
 
-def static_markdown(text: str, fold: bool = False) -> str:
+def static_markdown(text: str) -> str:
     """Quarto-flavoured markdown as a simple (static) report writes it.
 
     Callouts lose their ``title``/``collapse`` attributes (opening one needs
@@ -669,12 +664,44 @@ def static_markdown(text: str, fold: bool = False) -> str:
     becomes its tabs one after the other under ``#####`` headings: what
     metacheck's ``collapse_section()``, ``file_tabset()`` and
     ``codebook_file_tabset()`` write under ``report_type("simple")``.
-
-    With ``fold`` (the checklist report) a callout with a title becomes a
-    closed ``<details>`` box instead, as ``collapse_section()`` writes it under
-    ``report_type("checklist")``.
     """
-    return re.sub(r"\n{3,}", "\n\n", "\n".join(_emit_static_md(_parse_divs(text), fold)))
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(_emit_static_md(_parse_divs(text))))
+
+
+def _emit_fold(nodes: list[Any]) -> list[str]:
+    out: list[str] = []
+    for node in nodes:
+        if not isinstance(node, _Div):
+            out.append(node)
+            continue
+        attrs = node.attrs
+        callout = _callout_type(attrs)
+        if callout is not None and attrs.kv.get("title"):
+            out += [f"<details><summary>{attrs.kv['title']}</summary>", *_emit_fold(node.children)]
+            out.append("</details>")
+        elif callout is not None:
+            plain = _Attrs(attrs.id, attrs.classes, {})
+            out += [f"::: {_attr_text(plain)}", *_emit_fold(node.children), ":::"]
+        elif "panel-tabset" in attrs.classes:
+            pre, tabs = _split_tabs(node.children)
+            out += _emit_fold(pre)
+            for label, body in tabs:
+                out += ["", f"##### {label}", "", *_emit_fold(body)]
+        else:
+            out += [f"::: {_attr_text(attrs)}", *_emit_fold(node.children), ":::"]
+    return out
+
+
+def fold_markdown(text: str) -> str:
+    """Quarto-flavoured markdown as the checklist report writes it.
+
+    A callout with a title becomes a closed ``<details>`` box, whatever its
+    ``collapse`` (what ``collapse_section()`` writes under
+    ``report_type("checklist")``; a script is not needed to open it). Tabsets
+    become their tabs one after the other under ``#####`` headings, and any
+    other fenced div and the text between the divs stay as they are.
+    """
+    return "\n".join(_emit_fold(_parse_divs(text)))
 
 
 def _emit_gfm(nodes: list[Any]) -> list[str]:

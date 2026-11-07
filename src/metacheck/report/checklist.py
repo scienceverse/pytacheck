@@ -157,9 +157,9 @@ def _md(text: str) -> str:
     in a ``<details>`` box and tabs become headings (R: written so under ``report_type()``)."""
     if ":::" not in text:
         return text
-    from metacheck.report.render import static_markdown
+    from metacheck.report.render import fold_markdown
 
-    return static_markdown(text, fold=True)
+    return fold_markdown(text)
 
 
 def _escape(x: str) -> str:
@@ -486,10 +486,12 @@ def checklist_qmd(
 
     # metacheck's logo, and any logo a module gives (`logo`, a file path)
     logos = [_asset_uri("logo.png")]
+    seen: set[str] = set()  # R: unique() of the paths
     for mo in outputs:
         for path in _plain(_field(mo, "logo"), table):
-            uri = _file_uri(path)
-            if uri and uri not in logos:
+            uri = _file_uri(path) if path not in seen else ""
+            seen.add(path)
+            if uri:
                 logos.append(uri)
     imgs = "".join(f'<img src="{uri}" alt="logo">' for uri in logos)
 
