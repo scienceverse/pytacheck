@@ -152,39 +152,39 @@ modules is covered in [MODULES.md](MODULES.md).
 
 | Check | R file | Python | Tests | Parity areas | Status | Recorded differences |
 |---|---|---|---|---|---|---|
-| `all_p_values`<br>List All P-Values | `inst/modules/all_p_values.R` | [modules/all_p_values.py](../src/metacheck/modules/all_p_values.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | experimental | D60, U16, U204, U208 |
-| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D82, U16, U77, U79, U158, U206 |
+| `all_p_values`<br>List All P-Values | `inst/modules/all_p_values.R` | [modules/all_p_values.py](../src/metacheck/modules/all_p_values.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | experimental | D60, U16 |
+| `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D82, U16, U77, U158, U206 |
 | `author_check`<br>Author Information | Python only | [modules/author_check.py](../src/metacheck/modules/author_check.py) | — | — | experimental | — |
-| `causal_claims`<br>Randomization and Causal Claims | `inst/modules/causal_claims.R` | [modules/causal_claims.py](../src/metacheck/modules/causal_claims.py) | [tests/mod_causal](../tests/mod_causal) | mod_causal | experimental | U79, U84, U85 |
+| `causal_claims`<br>Randomization and Causal Claims | `inst/modules/causal_claims.R` | [modules/causal_claims.py](../src/metacheck/modules/causal_claims.py) | [tests/mod_causal](../tests/mod_causal) | mod_causal | experimental | — |
 | `code_check`<br>Code Check | `inst/modules/code_check.R` | [modules/code_check.py](../src/metacheck/modules/code_check.py)<br>[modules/_code_check.py](../src/metacheck/modules/_code_check.py) | [tests/mod_code](../tests/mod_code) | mod_code | experimental | — |
 | `codebook_check`<br>Codebook Check | `inst/modules/codebook_check.R` | [modules/codebook_check.py](../src/metacheck/modules/codebook_check.py)<br>[modules/_codebook.py](../src/metacheck/modules/_codebook.py) | [tests/mod_codebook](../tests/mod_codebook) | mod_codebook | experimental | — |
-| `coi_check`<br>COI Check | `inst/modules/coi_check.R` | [modules/coi_check.py](../src/metacheck/modules/coi_check.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | D84, U95, U97 |
-| `coi_check_oi`<br>COI Check Overinclusive | `inst/modules/coi_check_oi.R` | [modules/coi_check_oi.py](../src/metacheck/modules/coi_check_oi.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | D29, D84, U80 |
+| `coi_check`<br>COI Check | `inst/modules/coi_check.R` | [modules/coi_check.py](../src/metacheck/modules/coi_check.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | D84 |
+| `coi_check_oi`<br>COI Check Overinclusive | `inst/modules/coi_check_oi.R` | [modules/coi_check_oi.py](../src/metacheck/modules/coi_check_oi.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | D29, D84 |
 | `data_check`<br>Data Check | `inst/modules/data_check.R` | [modules/data_check.py](../src/metacheck/modules/data_check.py)<br>[modules/_data_check.py](../src/metacheck/modules/_data_check.py) | [tests/mod_data_check](../tests/mod_data_check) | mod_data_check | experimental | — |
-| `ethics_check`<br>Ethics Approval Check | `inst/modules/ethics_check.R` | [modules/ethics_check.py](../src/metacheck/modules/ethics_check.py) | [tests/mod_ethics](../tests/mod_ethics) | mod_ethics, bibr12, grobid12 | experimental | D84, U79, U102, U208 |
+| `ethics_check`<br>Ethics Approval Check | `inst/modules/ethics_check.R` | [modules/ethics_check.py](../src/metacheck/modules/ethics_check.py) | [tests/mod_ethics](../tests/mod_ethics) | mod_ethics, bibr12, grobid12 | experimental | D84, U102 |
 | `figure_table_refs`<br>Figure and Table References | Python only | [modules/figure_table_refs.py](../src/metacheck/modules/figure_table_refs.py) | — | — | experimental | — |
-| `funding_check`<br>Funding Check | `inst/modules/funding_check.R` | [modules/funding_check.py](../src/metacheck/modules/funding_check.py)<br>[modules/_funding.py](../src/metacheck/modules/_funding.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, D84, U79, U103, U208 |
-| `funding_check_oi`<br>Funding Check (Overinclusive) | `inst/modules/funding_check_oi.R` | [modules/funding_check_oi.py](../src/metacheck/modules/funding_check_oi.py)<br>[modules/funding_check.py](../src/metacheck/modules/funding_check.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, D84, U79, U105 |
+| `funding_check`<br>Funding Check | `inst/modules/funding_check.R` | [modules/funding_check.py](../src/metacheck/modules/funding_check.py)<br>[modules/_funding.py](../src/metacheck/modules/_funding.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, D84 |
+| `funding_check_oi`<br>Funding Check (Overinclusive) | `inst/modules/funding_check_oi.R` | [modules/funding_check_oi.py](../src/metacheck/modules/funding_check_oi.py)<br>[modules/funding_check.py](../src/metacheck/modules/funding_check.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, D84 |
 | `license_check`<br>License | Python only | [modules/license_check.py](../src/metacheck/modules/license_check.py) | — | — | experimental | — |
-| `marginal`<br>Marginal Significance | `inst/modules/marginal.R` | [modules/marginal.py](../src/metacheck/modules/marginal.py) | — | bibr12, grobid12, mod_marginal | validated | U3, U208 |
-| `open_practices`<br>Open Practices Check | `inst/modules/open_practices.R` | [modules/open_practices.py](../src/metacheck/modules/open_practices.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D83, U16, U79, U83, U106, U107, U208 |
+| `marginal`<br>Marginal Significance | `inst/modules/marginal.R` | [modules/marginal.py](../src/metacheck/modules/marginal.py) | — | bibr12, grobid12, mod_marginal | validated | — |
+| `open_practices`<br>Open Practices Check | `inst/modules/open_practices.R` | [modules/open_practices.py](../src/metacheck/modules/open_practices.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D83, U16, U82, U106, U107, U208 |
 | `power`<br>Power Analysis Check | `inst/modules/power.R` | [modules/power.py](../src/metacheck/modules/power.py)<br>[modules/_power.py](../src/metacheck/modules/_power.py) | [tests/mod_power](../tests/mod_power) | mod_power, bibr12, grobid12 | validated | U16 |
 | `prereg_check`<br>Preregistration Check | `inst/modules/prereg_check.R` | [modules/prereg_check.py](../src/metacheck/modules/prereg_check.py)<br>[modules/_prereg.py](../src/metacheck/modules/_prereg.py) | [tests/mod_prereg](../tests/mod_prereg) | mod_prereg | experimental | — |
 | `psychds_check`<br>Psych-DS Check | `inst/modules/psychds_check.R` | [modules/psychds_check.py](../src/metacheck/modules/psychds_check.py) | [tests/mod_psychds](../tests/mod_psychds) | mod_psychds | experimental | U78, U112, U113, U260 |
-| `ref_accuracy`<br>Reference Accuracy | `inst/modules/ref_accuracy.R` | [modules/ref_accuracy.py](../src/metacheck/modules/ref_accuracy.py) | [tests/mod_ref_accuracy](../tests/mod_ref_accuracy)<br>[tests/bibr12](../tests/bibr12) | mod_ref_accuracy, bibr12, grobid12 | experimental | U30, U83, U114 |
-| `ref_consistency`<br>Reference Consistency | `inst/modules/ref_consistency.R` | [modules/ref_consistency.py](../src/metacheck/modules/ref_consistency.py) | [tests/mod_ref_accuracy](../tests/mod_ref_accuracy)<br>[tests/bibr12](../tests/bibr12) | mod_ref_accuracy, bibr12, grobid12 | experimental | U16, U83, U115 |
-| `ref_miscitation`<br>Miscitation | `inst/modules/ref_miscitation.R` | [modules/ref_miscitation.py](../src/metacheck/modules/ref_miscitation.py) | [tests/mod_ref_db](../tests/mod_ref_db) | mod_ref_db, bibr12, grobid12 | experimental | U79, U117, U157 |
-| `ref_pubpeer`<br>PubPeer Comments | `inst/modules/ref_pubpeer.R` | [modules/ref_pubpeer.py](../src/metacheck/modules/ref_pubpeer.py) | [tests/mod_ref_pubpeer_summary](../tests/mod_ref_pubpeer_summary) | mod_ref_pubpeer_summary | experimental | U14, U23, U82, U118 |
-| `ref_replication`<br>Replication Check | `inst/modules/ref_replication.R` | [modules/ref_replication.py](../src/metacheck/modules/ref_replication.py) | [tests/mod_ref_db](../tests/mod_ref_db) | mod_ref_db, bibr12, grobid12 | experimental | U79, U82, U116, U157 |
-| `ref_retraction`<br>RetractionWatch | `inst/modules/ref_retraction.R` | [modules/ref_retraction.py](../src/metacheck/modules/ref_retraction.py) | [tests/mod_ref_db](../tests/mod_ref_db) | mod_ref_db, bibr12, grobid12 | experimental | U79, U82, U157 |
+| `ref_accuracy`<br>Reference Accuracy | `inst/modules/ref_accuracy.R` | [modules/ref_accuracy.py](../src/metacheck/modules/ref_accuracy.py) | [tests/mod_ref_accuracy](../tests/mod_ref_accuracy)<br>[tests/bibr12](../tests/bibr12) | mod_ref_accuracy, bibr12, grobid12 | experimental | — |
+| `ref_consistency`<br>Reference Consistency | `inst/modules/ref_consistency.R` | [modules/ref_consistency.py](../src/metacheck/modules/ref_consistency.py) | [tests/mod_ref_accuracy](../tests/mod_ref_accuracy)<br>[tests/bibr12](../tests/bibr12) | mod_ref_accuracy, bibr12, grobid12 | experimental | U16, U83 |
+| `ref_miscitation`<br>Miscitation | `inst/modules/ref_miscitation.R` | [modules/ref_miscitation.py](../src/metacheck/modules/ref_miscitation.py) | [tests/mod_ref_db](../tests/mod_ref_db) | mod_ref_db, bibr12, grobid12 | experimental | U117, U300 |
+| `ref_pubpeer`<br>PubPeer Comments | `inst/modules/ref_pubpeer.R` | [modules/ref_pubpeer.py](../src/metacheck/modules/ref_pubpeer.py) | [tests/mod_ref_pubpeer_summary](../tests/mod_ref_pubpeer_summary) | mod_ref_pubpeer_summary | experimental | U118 |
+| `ref_replication`<br>Replication Check | `inst/modules/ref_replication.R` | [modules/ref_replication.py](../src/metacheck/modules/ref_replication.py) | [tests/mod_ref_db](../tests/mod_ref_db) | mod_ref_db, bibr12, grobid12 | experimental | U16 |
+| `ref_retraction`<br>RetractionWatch | `inst/modules/ref_retraction.R` | [modules/ref_retraction.py](../src/metacheck/modules/ref_retraction.py) | [tests/mod_ref_db](../tests/mod_ref_db) | mod_ref_db, bibr12, grobid12 | experimental | — |
 | `ref_summary`<br>Summarise References | `inst/modules/ref_summary.R` | [modules/ref_summary.py](../src/metacheck/modules/ref_summary.py) | [tests/mod_ref_pubpeer_summary](../tests/mod_ref_pubpeer_summary) | mod_ref_pubpeer_summary, bibr12, grobid12 | experimental | U16, U119 |
-| `reg_check`<br>RegCheck Preregistration Comparison | `inst/modules/reg_check.R` | [modules/reg_check.py](../src/metacheck/modules/reg_check.py) | [tests/mod_reg](../tests/mod_reg) | mod_reg | experimental | U79 |
+| `reg_check`<br>RegCheck Preregistration Comparison | `inst/modules/reg_check.R` | [modules/reg_check.py](../src/metacheck/modules/reg_check.py) | [tests/mod_reg](../tests/mod_reg) | mod_reg | experimental | — |
 | `repo_check`<br>Repository Check | `inst/modules/repo_check.R` | [modules/repo_check.py](../src/metacheck/modules/repo_check.py)<br>[modules/_repo_check.py](../src/metacheck/modules/_repo_check.py) | [tests/mod_repo_check](../tests/mod_repo_check) | mod_repo_check | experimental | — |
 | `reproducibility_check`<br>Reproducibility Check | `inst/modules/reproducibility_check.R` | [modules/reproducibility_check.py](../src/metacheck/modules/reproducibility_check.py)<br>[modules/_reproducibility.py](../src/metacheck/modules/_reproducibility.py)<br>[modules/_reproducibility_py.py](../src/metacheck/modules/_reproducibility_py.py)<br>[modules/_reproducibility_exec.py](../src/metacheck/modules/_reproducibility_exec.py) | [tests/mod_repro](../tests/mod_repro) | mod_repro | experimental | — |
 | `stat_check`<br>StatCheck | `inst/modules/stat_check.R` | [modules/stat_check.py](../src/metacheck/modules/stat_check.py) | [tests/stats](../tests/stats) | stats, bibr12, grobid12 | experimental | U4, U16 |
-| `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U16, U79, U125, U126, U205, U208, U218 |
-| `stat_p_exact`<br>Exact P-Values | `inst/modules/stat_p_exact.R` | [modules/stat_p_exact.py](../src/metacheck/modules/stat_p_exact.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | D60, U16, U127, U204, U208 |
-| `stat_p_nonsig`<br>Non-Significant P Value Check | `inst/modules/stat_p_nonsig.R` | [modules/stat_p_nonsig.py](../src/metacheck/modules/stat_p_nonsig.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | D60, U16, U127, U204, U208 |
+| `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U126 |
+| `stat_p_exact`<br>Exact P-Values | `inst/modules/stat_p_exact.R` | [modules/stat_p_exact.py](../src/metacheck/modules/stat_p_exact.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | D60, U16 |
+| `stat_p_nonsig`<br>Non-Significant P Value Check | `inst/modules/stat_p_nonsig.R` | [modules/stat_p_nonsig.py](../src/metacheck/modules/stat_p_nonsig.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | D60, U16 |
 <!-- END codemap:modules -->
 
 ## R functions
@@ -195,7 +195,7 @@ the test folders of its areas. Functions not ported by design are listed with
 the reason from [`porting/skip.toml`](../porting/skip.toml).
 
 <!-- BEGIN codemap:functions (generated by scripts/codemap.py; do not edit) -->
-metacheck exports 297 functions and 7 S3 methods. Ported: 285. Not ported by design: 13. Not ported yet: 6. Ported under a different Python name: 2. Called directly by parity cases: 182.
+metacheck exports 297 functions and 7 S3 methods. Ported: 285. Not ported by design: 17. Not ported yet: 2. Ported under a different Python name: 2. Called directly by parity cases: 182.
 
 ### `R/api-keys.R`
 
@@ -707,10 +707,10 @@ Python: none.
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `module_install()` | — | — | — | Not ported yet. |
-| `module_update()` | — | — | — | Not ported yet. |
-| `module_remove()` | — | — | — | Not ported yet. |
-| `module_installed()` | — | — | — | Not ported yet. |
+| `module_install()` | — | — | — | Not ported by design: Installs metacheck modules (R files) from a GitHub repository into the user's module folder. pytacheck's modules come in packs: pack_install() (metacheck.packs.install). |
+| `module_update()` | — | — | — | Not ported by design: Updates modules installed with module_install(). pytacheck: pack_update(). |
+| `module_remove()` | — | — | — | Not ported by design: Removes modules installed with module_install(). pytacheck: pack_remove(). |
+| `module_installed()` | — | — | — | Not ported by design: Lists modules installed with module_install(). pytacheck: pack_list(). |
 
 ### `R/module.R`
 

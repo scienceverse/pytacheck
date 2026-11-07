@@ -1820,7 +1820,8 @@
  ".empty_input_result": {
   "file": "R/paper.R",
   "line": 642,
-  "python": "metacheck.papers:_empty_input_result"
+  "ported": true,
+  "python": "metacheck.modules._empty:empty_input_result"
  },
  ".empty_tests": {
   "file": "R/extract-tests.R",
@@ -3508,7 +3509,8 @@
  ".paper_is_empty": {
   "file": "R/paper.R",
   "line": 635,
-  "python": "metacheck.papers:_paper_is_empty"
+  "ported": true,
+  "python": "metacheck.modules._empty:paper_is_empty"
  },
  ".paper_schema": {
   "file": "R/paper.R",
@@ -3637,7 +3639,8 @@
  ".per_paper_table": {
   "file": "R/paper.R",
   "line": 599,
-  "python": "metacheck.papers:_per_paper_table"
+  "ported": true,
+  "python": "metacheck.modules._empty:per_paper_table"
  },
  ".pid": {
   "file": "",
@@ -6834,7 +6837,8 @@
  ".unique_paper_ids": {
   "file": "R/paper.R",
   "line": 614,
-  "python": "metacheck.papers:_unique_paper_ids"
+  "ported": true,
+  "python": "metacheck.papers.ids:resolve"
  },
  ".unnest_result": {
   "file": "R/llm.R",
