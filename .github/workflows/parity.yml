@@ -111,9 +111,13 @@ jobs:
         shell: bash
 
       - name: Regenerate all goldens
+        id: generate
         run: uv run python -m parity generate --jobs 0
 
+      # Also when a golden session failed, so one run gives every golden R can
+      # write (the regenerated-goldens patch below holds both kinds).
       - name: Regenerate the accuracy report's R outputs, and score them
+        if: ${{ !cancelled() && steps.generate.outcome != 'skipped' }}
         run: >-
           uv run python -m parity accuracy --generate --gate
           --report parity/_out/accuracy.json --md "$GITHUB_STEP_SUMMARY"
