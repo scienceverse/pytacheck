@@ -84,17 +84,6 @@
   reason: "only the sentence text read from the TEI differs ('G*Power 3.1', metacheck 'G*Power3.1'; io fix of the number-before-tag clean-up)"
 "mod_power/power.psychsci.tables": *u16_power
 
-# empty paper lists (U79) ---------------------------------------------------------
-# An empty paper list gives the module's empty result (a summary table without
-# rows); metacheck stops, because paper_id() of an empty list is NULL and
-# data.frame(paper_id = NULL) has no rows or no column.
-"mod_ethics/ethics_check.empty_paperlist": &u79_empty_list
-  kind: r_bug_fixed
-  ref: U79
-  reason: an empty paper list gives the module's empty result ("na", a summary table without rows); metacheck stops
-"mod_ethics_review/ethics_check.direct_empty_list": *u79_empty_list
-"mod_power_review/power.review.empty_paperlist": *u79_empty_list
-
 # reg_check: a light for a check that could not run (U30) --------------------------
 # When every RegCheck comparison fails, reg_check's light is "fail" (what report()
 # gives a module that fails); metacheck returns "error", which is not a traffic light.

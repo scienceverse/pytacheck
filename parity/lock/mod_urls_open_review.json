@@ -6,7 +6,7 @@
 "all_urls.review.chain_twice": {"r": "6a2f2ba4bf72adcf", "py": "653c2463b1a7ba8b", "diff": ["table"]},
 "all_urls.review.demo_copy": {"r": "e3f1d656232445ed", "py": "820faa6107bcc08b", "diff": ["summary_table.urls[]", "table"]},
 "all_urls.review.dup_sections": {"r": "7bc1d0dd966d3689", "py": "a106d00184bce931", "diff": ["table"]},
-"all_urls.review.empty_list": {"r": "10e3a704e5a2858a", "py": "eed304130beea785", "diff": ["table"]},
+"all_urls.review.empty_list": {"r": "10e3a704e5a2858a", "py": "450d02d6adad94dc", "diff": ["table"]},
 "all_urls.review.formats": {"r": "b5113a3668d3fc71", "py": "d862042a1f9e0759", "diff": ["summary_table.urls[]", "table"]},
 "all_urls.review.list_order": {"r": "e6f9a91b9a350019", "py": "414b02369610724a", "diff": ["table"]},
 "all_urls.review.list_with_empty": {"r": "18796a127389c17f", "py": "b1e675e032be10e3", "diff": ["table"]},

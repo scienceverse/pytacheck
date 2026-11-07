@@ -1,5 +1,4 @@
 {
-"power.review.empty_paperlist": {"r": "ade220cd2924552a", "py": "9548b7b580ba651b", "diff": ["table"]},
 "power.review.tricky": {"r": "79d2adf8444d0799", "py": "6791998e00d764a1", "diff": ["summary_table.power_n[]", "summary_text[]", "table"]},
 "power.review.tricky.tables": {"r": "91481c1d43ae25fc", "py": "079b58b318e10ba6", "diff": ["[]"]}
 }
