@@ -3614,6 +3614,21 @@ def _repro_duration(secs: float) -> str:
     return f"{mins // 60:d} h {mins % 60:d} min"
 
 
+def _repro_install_what(
+    i: int, n: int, pkg: str | None, version: str | None, started: float
+) -> str:
+    """Port of ``.repro_install_what()``: what the install is doing, for its progress line.
+
+    ``"Installing pkg 1.2 (3 of 10, 4 min so far, about 9 min left)"``: the package, its
+    version (when one is recorded), the count, the time since *started*
+    (``time.monotonic()``) and, from the second package on, the time left at the pace so far.
+    """
+    elapsed = time.monotonic() - started
+    ver = "" if version is None else f" {version}"
+    left = f", about {_repro_duration(elapsed / (i - 1) * (n - i + 1))} left" if i > 1 else ""
+    return f"Installing {pkg}{ver} ({i:d} of {n:d}, {_repro_duration(elapsed)} so far{left})"
+
+
 def repro_install_deps(
     install_deps: pd.DataFrame | None,
     lib_dir: str | os.PathLike[str],
@@ -3650,125 +3665,140 @@ def repro_install_deps(
     versions = (
         _chr_list(install_deps["version"]) if "version" in install_deps.columns else [None] * n
     )
+    from metacheck.utils import pb
+
     rows: list[dict[str, Any]] = []
-    for pkg, src, ref, version in zip(pkgs, srcs, refs, versions, strict=True):
-        if _repro_time_left(deadline) <= 0:
-            # a package left out may still be found in another library when the scripts run
-            chk = _install_r("check_main", lib, pkg=pkg, version=version)
-            rows.append(
-                {
-                    "package": pkg,
-                    "source": src,
-                    "installed": False,
-                    "message": "not started: the time for installing had run out",
-                    "via_archive": False,
-                    "category": "other",
-                    "version_recorded": version,
-                    "version_installed": chk.get("version_installed"),
-                    "version_note": "",
-                }
-            )
-            continue
-        cran_main = src == "cran" and _r_is_true(cran_to_main_lib) and version is None
-        main_lib: str | None = None
-        if cran_main or version is not None:
-            # the recorded version already there, or a CRAN package already in the REAL
-            # library (not the throwaway one): nothing to do
-            chk = _install_r(
-                "check_main", lib, pkg=pkg, version=version, cran_to_main_lib=cran_main
-            )
-            main_lib = chk.get("install_lib")
-            if chk.get("skipped"):
-                if chk.get("same_version"):
-                    _message(
-                        "[repro]     '", pkg, "' ", version, " is already installed; skipping."
-                    )
-                else:
-                    _message("[repro]     '", pkg, "' already installed (main library); skipping.")
-                # with a category (NA) like every other row (UPSTREAM_ISSUES U135)
+    # what is being installed, with the count and the time so far and left (#568)
+    bar = pb(None, "(:spin) :what")
+    started = time.monotonic()
+    try:
+        for i, (pkg, src, ref, version) in enumerate(
+            zip(pkgs, srcs, refs, versions, strict=True), start=1
+        ):
+            bar.tick(1, {"what": _repro_install_what(i, n, pkg, version, started)})
+            if _repro_time_left(deadline) <= 0:
+                # a package left out may still be found in another library when the scripts run
+                chk = _install_r("check_main", lib, pkg=pkg, version=version)
                 rows.append(
                     {
                         "package": pkg,
                         "source": src,
-                        "installed": True,
-                        "message": "",
+                        "installed": False,
+                        "message": "not started: the time for installing had run out",
                         "via_archive": False,
-                        "category": None,
+                        "category": "other",
                         "version_recorded": version,
                         "version_installed": chk.get("version_installed"),
                         "version_note": "",
                     }
                 )
                 continue
-        _message(
-            "[repro]     installing '",
-            pkg,
-            "'",
-            "" if version is None else f" {version}",
-            " (source: ",
-            src,
-            ", into main library" if cran_main else ", into throwaway library",
-            ") ...",
-        )
-        res = _install_r(
-            "install",
-            lib,
-            pkg=pkg,
-            src=src,
-            ref=ref,
-            version=version,
-            cran_to_main_lib=_r_is_true(cran_to_main_lib),
-        )
-        ok = bool(res.get("ok"))
-        msg = str(res.get("msg") or "")
-        version_note = str(res.get("version_note") or "")
-        if res.get("not_loadable"):
-            msg = _repro_not_loadable_msg(
-                pkg, res.get("warnings") or [], str(res.get("load_error") or "")
-            )
-        via_archive = False
-        have = as_str(res.get("version_installed"))
-        if not ok and src == "cran":
+            cran_main = src == "cran" and _r_is_true(cran_to_main_lib) and version is None
+            main_lib: str | None = None
+            if cran_main or version is not None:
+                # the recorded version already there, or a CRAN package already in the REAL
+                # library (not the throwaway one): nothing to do
+                chk = _install_r(
+                    "check_main", lib, pkg=pkg, version=version, cran_to_main_lib=cran_main
+                )
+                main_lib = chk.get("install_lib")
+                if chk.get("skipped"):
+                    if chk.get("same_version"):
+                        _message(
+                            "[repro]     '", pkg, "' ", version, " is already installed; skipping."
+                        )
+                    else:
+                        _message(
+                            "[repro]     '", pkg, "' already installed (main library); skipping."
+                        )
+                    # with a category (NA) like every other row (UPSTREAM_ISSUES U135)
+                    rows.append(
+                        {
+                            "package": pkg,
+                            "source": src,
+                            "installed": True,
+                            "message": "",
+                            "via_archive": False,
+                            "category": None,
+                            "version_recorded": version,
+                            "version_installed": chk.get("version_installed"),
+                            "version_note": "",
+                        }
+                    )
+                    continue
             _message(
-                "[repro]     '",
+                "[repro]     installing '",
                 pkg,
-                "' not available on live CRAN; trying the CRAN Archive (last published version) ...",
+                "'",
+                "" if version is None else f" {version}",
+                " (source: ",
+                src,
+                ", into main library" if cran_main else ", into throwaway library",
+                ") ...",
             )
-            install_lib = res.get("install_lib") or (main_lib if cran_main else lib) or lib
-            res2 = _repro_cran_archive_install(pkg, str(install_lib), lib)
-            if res2["ok"]:
+            res = _install_r(
+                "install",
+                lib,
+                pkg=pkg,
+                src=src,
+                ref=ref,
+                version=version,
+                cran_to_main_lib=_r_is_true(cran_to_main_lib),
+            )
+            ok = bool(res.get("ok"))
+            msg = str(res.get("msg") or "")
+            version_note = str(res.get("version_note") or "")
+            if res.get("not_loadable"):
+                msg = _repro_not_loadable_msg(
+                    pkg, res.get("warnings") or [], str(res.get("load_error") or "")
+                )
+            via_archive = False
+            have = as_str(res.get("version_installed"))
+            if not ok and src == "cran":
                 _message(
                     "[repro]     '",
                     pkg,
-                    "' installed from the CRAN Archive (",
-                    res2["version"],
-                    ").",
+                    "' not available on live CRAN; trying the CRAN Archive (last published version) ...",
                 )
-                ok, msg, via_archive = True, "", True
-                have = as_str(res2.get("version_installed")) or have
-            else:
-                _message(
-                    "[repro]     '",
-                    pkg,
-                    "' could not be installed from the CRAN Archive either: ",
-                    res2["msg"],
+                install_lib = res.get("install_lib") or (main_lib if cran_main else lib) or lib
+                res2 = _repro_cran_archive_install(pkg, str(install_lib), lib)
+                if res2["ok"]:
+                    _message(
+                        "[repro]     '",
+                        pkg,
+                        "' installed from the CRAN Archive (",
+                        res2["version"],
+                        ").",
+                    )
+                    ok, msg, via_archive = True, "", True
+                    have = as_str(res2.get("version_installed")) or have
+                else:
+                    _message(
+                        "[repro]     '",
+                        pkg,
+                        "' could not be installed from the CRAN Archive either: ",
+                        res2["msg"],
+                    )
+                    msg = f"{msg} (CRAN Archive retry also failed: {res2['msg']})"
+            if ok and version is not None and not _repro_same_version(have, version):
+                version_note = (
+                    version_note or "the source gave another version than the recorded one"
                 )
-                msg = f"{msg} (CRAN Archive retry also failed: {res2['msg']})"
-        if ok and version is not None and not _repro_same_version(have, version):
-            version_note = version_note or "the source gave another version than the recorded one"
-        rows.append(
-            {
-                "package": pkg,
-                "source": src,
-                "installed": ok,
-                "message": msg,
-                "via_archive": via_archive,
-                "category": None if ok else _repro_classify_install_message(msg),
-                "version_recorded": version,
-                "version_installed": have,
-                "version_note": version_note,
-            }
-        )
+            rows.append(
+                {
+                    "package": pkg,
+                    "source": src,
+                    "installed": ok,
+                    "message": msg,
+                    "via_archive": via_archive,
+                    "category": None if ok else _repro_classify_install_message(msg),
+                    "version_recorded": version,
+                    "version_installed": have,
+                    "version_note": version_note,
+                }
+            )
+    finally:
+        bar.terminate()
     return _install_frame(rows)
 
 

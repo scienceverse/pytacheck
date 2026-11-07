@@ -365,6 +365,61 @@ def test_install_deps_docker_not_started(monkeypatch: pytest.MonkeyPatch, tmp_pa
     assert len(stops) == 1
 
 
+# the install's progress (.repro_install_what(), .repro_docker_run_install()) -------------------
+
+
+def test_install_what_counts_the_time_so_far_and_left() -> None:
+    from metacheck.repro.core import _repro_install_what
+
+    started = time.monotonic() - 125
+    assert _repro_install_what(1, 10, "dplyr", None, started) == (
+        "Installing dplyr (1 of 10, 2 min so far)"
+    )
+    # 125 s for two packages: about 500 s for the eight left
+    assert _repro_install_what(3, 10, "lme4", "1.1-35", started) == (
+        "Installing lme4 1.1-35 (3 of 10, 2 min so far, about 8 min left)"
+    )
+
+
+def test_read_install_status_never_follows_a_link(tmp_path: Path) -> None:
+    status = tmp_path / ".install_status"
+    status.write_text("2\n")
+    assert docker._read_install_status(str(status)) == 2
+    status.write_text("two\n")
+    assert docker._read_install_status(str(status)) is None
+    secret = tmp_path / "secret"
+    secret.write_text("7\n")
+    status.unlink()
+    status.symlink_to(secret)
+    assert docker._read_install_status(str(status)) is None
+    assert docker._read_install_status(str(tmp_path / "absent")) is None
+
+
+def test_install_shows_each_package_it_starts(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """While the container runs, the package it has started is read every second."""
+    status = tmp_path / ".install_status"
+    said: list[str] = []
+
+    def fake(args: list[str], **kw: Any) -> dict[str, Any]:
+        for i in ("1", "2"):
+            status.write_text(i + "\n")
+            time.sleep(1.4)
+        return {"status": 0, "timeout": False, "stdout": ""}
+
+    monkeypatch.setattr(docker, "_docker", fake)
+    monkeypatch.setattr(docker, "_message", lambda *p: said.append("".join(map(str, p))))
+    res = docker._repro_docker_run_install(
+        ["run"], 60, str(tmp_path / "out"), str(status), ["a", "b"], [None, "1.0"]
+    )
+    assert res == {"status": 0, "timeout": False, "stdout": ""}
+    assert [re.sub(r"\(.*\)", "(...)", s) for s in said] == [
+        "[repro/docker]   Installing a (...)",
+        "[repro/docker]   Installing b 1.0 (...)",
+    ]
+
+
 # repro_run_scripts_docker() with a fake docker ------------------------------------------------
 
 

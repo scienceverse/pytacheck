@@ -778,6 +778,71 @@ def _read_install_results(path: str) -> pd.DataFrame | None:
     return out
 
 
+def _read_install_status(path: str) -> int | None:
+    """The number the install container left in ``.install_status``: a small regular file,
+    never read through a link."""
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    try:
+        fd = os.open(path, flags)
+    except OSError:
+        return None
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            return None
+        first = os.read(fd, 32).decode("ascii", "replace").split("\n")[0].strip()
+    finally:
+        os.close(fd)
+    return int(first) if first.isdigit() else None
+
+
+def _repro_docker_run_install(
+    args: Sequence[str],
+    timeout: float,
+    out_file: str,
+    status_file: str,
+    pkgs: Sequence[str | None],
+    versions: Sequence[str | None],
+) -> dict[str, Any] | Exception:
+    """Run the install container and show what it is doing (``.repro_docker_run_install()``).
+
+    The container writes the number of the package it has started to *status_file*; while
+    :func:`_docker` runs the container, a thread reads that number every second and shows
+    the package, the count and the time so far
+    (:func:`~metacheck.repro.core._repro_install_what`; #568). The output, with the error
+    output, goes to *out_file*. Returns :func:`_docker`'s result.
+    """
+    import threading
+
+    from metacheck.repro.core import _repro_install_what
+    from metacheck.utils import pb
+
+    n = len(pkgs)
+    bar = pb(None, "(:spin) :what")
+    started = time.monotonic()
+    done = threading.Event()
+
+    def watch() -> None:
+        current = 0
+        while not done.wait(1.0):
+            i = _read_install_status(status_file)
+            if i is None or not 1 <= i <= n:
+                continue
+            what = _repro_install_what(i, n, pkgs[i - 1], versions[i - 1], started)
+            if i != current:
+                _message("[repro/docker]   ", what)
+            bar.tick(max(0, i - current), {"what": what})
+            current = i
+
+    watcher = threading.Thread(target=watch, name="repro-install-status", daemon=True)
+    watcher.start()
+    try:
+        return _docker(args, timeout=timeout, stdout=out_file, merge_stderr=True)
+    finally:
+        done.set()
+        watcher.join(5)
+        bar.terminate()
+
+
 def repro_install_deps_docker(
     install_deps: pd.DataFrame | None,
     lib_dir: str | os.PathLike[str],
@@ -823,7 +888,18 @@ def repro_install_deps_docker(
             "-v", f"{_normalize_path(lib)}:/rlib",
             image, "Rscript", "/sandbox/install.R",
         ]  # fmt: skip
-        raw = _docker(args, timeout=timeout, stdout=out_file, merge_stderr=True)
+        n = len(install_deps)
+        versions = (
+            _chr_list(install_deps["version"]) if "version" in install_deps.columns else [None] * n
+        )
+        raw = _repro_docker_run_install(
+            args,
+            timeout,
+            out_file,
+            os.path.join(sandbox_dir, ".install_status"),
+            _chr_list(install_deps["package"]),
+            versions,
+        )
         res = None if isinstance(raw, Exception) else raw
         if res is None or res.get("timeout"):
             _repro_docker_stop(container_name)
