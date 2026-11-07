@@ -62,11 +62,7 @@
 "mod_coi_review/coi_check_oi.coi_lowercase_word": *u80_coi
 "mod_coi_review/coi_check_oi.paperlist_one_errors": *u80_coi
 "mod_coi_review/coi_check_oi.paperlist_empty_middle": *u80_coi
-"bibr12/module.coi_check_oi.preprint": *u80_coi
-"bibr12/module.coi_check_oi.PMC4383902": *u80_coi
 "bibr12/module.coi_check_oi.mixed": *u80_coi
-"grobid12/module.coi_check_oi.demo": *u80_coi
-"grobid12/module.coi_check_oi.0956797615569889": *u80_coi
 "mod_causal_review/causal_claims.review.error.empty_paperlist": &u79_empty
   kind: r_bug_fixed
   ref: U79

@@ -266,16 +266,6 @@
   reason: "the caveat says 'likely' (metacheck: 'likley'); summary_table always has n_missing and n_extra (U115; metacheck drops a count column when no row has it), and duplicated bib_match rows no longer repeat a reference (U114)"
 "mod_ref_accuracy_review/ref_consistency.xref_type_na": *u83_likley
 "mod_ref_accuracy_review/ref_consistency.duplicate_match": *u83_likley
-"bibr12/module.ref_consistency.preprint": *u83_likley
-"bibr12/module.ref_consistency.PMC4383902": *u83_likley
-"bibr12/module.ref_consistency.full":
-  kind: r_bug_fixed
-  ref: U115
-  reason: "the paper has no references, so its citation [1] is reported as missing from the bibliography (metacheck reports only citations without an xref_id); summary_table always has n_missing and n_extra, and the caveat says 'likely' (U83)"
-"bibr12/module.ref_consistency.list": *u83_likley
-"bibr12/module.ref_consistency.mixed": *u83_likley
-"bibr12_review/module.ref_consistency.edge_types": *u83_likley
-"grobid12/module.ref_consistency.demo": *u83_likley
 "mod_ref_accuracy_review/ref_consistency.xml_fixtures": &u83_likley_tei
   kind: r_bug_fixed
   ref: U83
@@ -304,31 +294,6 @@
   ref: U16
   reason: "only the sentence text read from the TEI differs ('G*Power 3.1', metacheck 'G*Power3.1'; io fix of the number-before-tag clean-up)"
 "mod_power/power.psychsci.tables": *u16_power
-
-# marginal (U3) -------------------------------------------------------------------
-# The Olsson-Collentine et al. (2019) reference in marginal's guidance is formatted
-# from person() authors ("Olsson-Collentine A, van Assen MALM, Hartgerink CHJ");
-# metacheck's author string is mangled by R's bibentry formatter. Every case that
-# shows marginal's red report differs in that one string, which r_text corrects in
-# R's golden, so the rest stays compared with R (the report lane's hand-written
-# report cases are listed here too; mod_marginal's cases carry the mark inline).
-"bibr12/module.marginal.preprint": &u3_marg_ref
-  kind: r_bug_fixed
-  ref: U3
-  reason: 'the guidance cites "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)" (metacheck: "Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH")'
-  r_text: [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]
-"bibr12/module.marginal.mixed": *u3_marg_ref
-"grobid12/module.marginal.published": *u3_marg_ref
-"report/report_module_run.demo.marginal": *u3_marg_ref
-"report/report_module_run.demo.sections": *u3_marg_ref
-"report/report_module_run.demo.error_middle": *u3_marg_ref
-"report/report_module_run.demo.error_first": *u3_marg_ref
-"report/report_module_run.demo.error_last": *u3_marg_ref
-"report/report_module_run.args": *u3_marg_ref
-"report/report_module_run.paperlist": *u3_marg_ref
-"report_review/report_module_run.unknown_module_in_chain": *u3_marg_ref
-"report_review/report_module_run.same_module_twice": *u3_marg_ref
-"repro_core/capture_module_tables.roundtrip.demo": *u3_marg_ref
 
 # empty paper lists (U79) ---------------------------------------------------------
 # An empty paper list gives the module's empty result (a summary table without
