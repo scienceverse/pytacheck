@@ -7,12 +7,12 @@
 
   const PAGES = {
     researchbox: {
-      // a box number, or the address of a box
+      // a box number, the address of a box, or a peer-review link (its passcode goes along)
       parse(text) {
         const t = text.trim();
-        const m = /^(?:https?:\/\/)?(?:www\.)?researchbox\.org\/(\d+)(?:[/?#].*)?$/i.exec(t) || /^#?(\d{1,7})$/.exec(t);
-        if (!m) throw new Error("Enter a ResearchBox number, such as 1234, or an address such as https://researchbox.org/1234.");
-        return { id: m[1], fields: { kind: "repocheck", url: "https://researchbox.org/" + m[1] } };
+        const m = /^(?:https?:\/\/)?(?:www\.)?researchbox\.org\/(\d{1,7})(&PEER_REVIEW_passcode=[A-Za-z0-9]+)?(?:[/?#].*)?$/i.exec(t) || /^#?(\d{1,7})$/.exec(t);
+        if (!m) throw new Error("Enter a ResearchBox number, such as 1234, an address such as https://researchbox.org/1234, or a peer-review link.");
+        return { id: m[1], fields: { kind: "repocheck", url: "https://researchbox.org/" + m[1] + (m[2] || "") } };
       },
       modules: () => null,
     },

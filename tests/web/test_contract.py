@@ -14,7 +14,7 @@ from fastapi.testclient import TestClient
 
 from metacheck.web import app as web_app
 from metacheck.web import uploads
-from metacheck.web.config import ALLOWED_MODULES, DEFAULT_MODULES
+from metacheck.web.config import ALLOWED_MODULES, DEFAULT_MODULES, RESEARCHBOX_NO_KEY
 from tests.web.helpers import BIBR, PDF, form, send, wait_for, zip_bytes
 
 # -- the answer to a job ------------------------------------------------------------------
@@ -181,7 +181,8 @@ def test_a_link_needs_kind_repocheck(client: TestClient) -> None:
     [
         "https://example.com/a/b",
         "http://github.com/../../etc/passwd",
-        "https://researchbox.org/1234",
+        "https://researchbox.org/abc",
+        "https://notresearchbox.org/1234",
         "file:///etc/passwd",
         "https://github.com/" + "a" * 600,
     ],
@@ -195,6 +196,39 @@ def test_a_link_to_somewhere_else_is_refused(client: TestClient, link: str) -> N
 def test_a_public_repository_link_is_accepted(client: TestClient) -> None:
     r = form(client, "/api/repocheck", {"url": "https://github.com/scienceverse/pytacheck"})
     assert r.status_code == 200
+
+
+def test_a_researchbox_box_needs_a_key(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("RESEARCHBOX_API_KEY", raising=False)
+    r = form(client, "/api/jobs", {"url": "https://researchbox.org/1234", "kind": "repocheck"})
+    assert r.status_code == 400
+    assert r.json()["error"] == RESEARCHBOX_NO_KEY
+
+
+@pytest.mark.parametrize(
+    ("link", "url"),
+    [
+        ("https://researchbox.org/1234", "https://researchbox.org/1234"),
+        ("researchbox.org/1234/", "https://researchbox.org/1234"),
+        ("http://www.ResearchBox.org/1234", "https://researchbox.org/1234"),
+        (
+            "https://researchbox.org/1150&PEER_REVIEW_passcode=MJUAAS",
+            "https://researchbox.org/1150&PEER_REVIEW_passcode=MJUAAS",
+        ),
+    ],
+)
+def test_a_researchbox_box_is_taken_with_the_senders_or_the_servers_key(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch, link: str, url: str
+) -> None:
+    monkeypatch.delenv("RESEARCHBOX_API_KEY", raising=False)
+    r = form(client, "/api/jobs", {"url": link, "kind": "repocheck", "key_researchbox": "k"})
+    assert r.status_code == 202, r.text
+    spec = spec_of(client, r)
+    assert spec["url"] == url
+    assert "passcode" not in str(spec["name"])  # the job's name does not carry it
+    monkeypatch.setenv("RESEARCHBOX_API_KEY", "the-servers-key")
+    r = form(client, "/api/jobs", {"url": link, "kind": "repocheck"})
+    assert r.status_code == 202, r.text
 
 
 def test_checklist_report_type_is_accepted(client: TestClient) -> None:
@@ -289,6 +323,22 @@ def test_health(client: TestClient) -> None:
     assert isinstance(body["bibr"], bool)
     assert body["key_problems"] == []
     assert body["metacheck_version"]
+
+
+def test_health_lists_the_servers_key_problems(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from metacheck.archives.api_keys import key_problem_record
+
+    monkeypatch.setenv("OSF_PAT", "the-servers-token")
+    key_problem_record("osf", "rejected")
+    problems = client.get("/api/health").json()["key_problems"]
+    assert [(p["service"], p["problem"], p["source"]) for p in problems] == [
+        ("osf", "rejected", "server")
+    ]
+    assert problems[0]["message"]
+    assert "the-servers-token" not in str(problems)
+    assert problems[0]["until"].endswith(" UTC")
 
 
 @pytest.mark.parametrize(("docker", "expected"), [(True, True), (False, False)])

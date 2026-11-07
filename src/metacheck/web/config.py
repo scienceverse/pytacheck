@@ -12,7 +12,6 @@ from pathlib import Path
 __all__ = [
     "ALLOWED_MODULES",
     "DEFAULT_MODULES",
-    "KEY_ENV",
     "KEY_SERVICES",
     "MAX_UNPACKED_BYTES",
     "MAX_UPLOAD_BYTES",
@@ -20,6 +19,7 @@ __all__ = [
     "MAX_ZIP_FILES",
     "PSYARXIV_API",
     "REPOSITORY_MODULES",
+    "RESEARCHBOX_NO_KEY",
     "SiteConfig",
     "allowed_modules",
     "module_info",
@@ -68,18 +68,17 @@ DEFAULT_MODULES: tuple[str, ...] = (
 #: the checks of a repository: they run one after the other on the unpacked folder
 REPOSITORY_MODULES: tuple[str, ...] = ("repo_check", "code_check", "data_check")
 
-#: the data repositories a visitor may send their own key for (field ``key_<service>``)
+#: the services a visitor may send their own key for (field ``key_<service>``); a job uses
+#: them in place of the server's keys (``metacheck.api_keys_use()``)
 KEY_SERVICES: tuple[str, ...] = ("github", "osf", "dryad", "researchbox", "gitlab", "openalex")
-#: the variable that pytacheck reads each key from; a service with no variable is accepted
-#: and has no effect yet (pytacheck reads no ResearchBox or OpenAlex key)
-KEY_ENV: dict[str, str | None] = {
-    "github": "GITHUB_PAT_GITHUB_COM",
-    "osf": "OSF_PAT",
-    "dryad": "DRYAD_PAT",
-    "gitlab": "GITLAB_PAT",
-    "researchbox": None,
-    "openalex": None,
-}
+
+#: what a ResearchBox link is answered with when neither the server nor the sender has a
+#: ResearchBox key: without one a box's size is not known before it is downloaded
+RESEARCHBOX_NO_KEY = (
+    "This server has no ResearchBox key, so it cannot check a box from its link. Download the "
+    "box and send it as a .zip file, or send your own ResearchBox key in the key_researchbox "
+    "field (make one at https://researchbox.org/api)."
+)
 
 #: where a PsyArXiv record and its file are fetched from (``METACHECK_PSYARXIV_API`` replaces it)
 PSYARXIV_API = "https://next.psyarxiv.org/api/v1"

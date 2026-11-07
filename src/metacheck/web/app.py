@@ -28,6 +28,7 @@ from metacheck.web.config import (
     DEFAULT_MODULES,
     KEY_SERVICES,
     MAX_ZIP_BYTES,
+    RESEARCHBOX_NO_KEY,
     SiteConfig,
     allowed_modules,
     module_info,
@@ -124,7 +125,42 @@ def _report_type(text: str | None) -> str:
     return value
 
 
-def _repository_link(text: str) -> str:
+#: a box on ResearchBox: its number, and the passcode of a box that is not public yet
+_RBOX = re.compile(
+    r"https?://(?:www\.)?researchbox\.org/(\d{1,7})"
+    r"(&PEER_REVIEW_passcode=[A-Za-z0-9]+)?/?",
+    re.IGNORECASE,
+)
+
+
+def _researchbox_link(link: str, keys: dict[str, str]) -> str:
+    """A ResearchBox link as the worker takes it (``https://researchbox.org/<number>``, with a
+    peer-review link's passcode), or :class:`Refused`. A box is checked only with a key, the
+    sender's or the server's: ResearchBox's API says how big the box is before it is
+    downloaded."""
+    from metacheck.archives.api_keys import rbox_token
+
+    found = _RBOX.fullmatch(link)
+    if found is None:
+        raise Refused(
+            400,
+            "That is not the link of a box. Give the box's number, such as "
+            "https://researchbox.org/1234, or its peer-review link.",
+        )
+    if not keys.get("researchbox") and not rbox_token():
+        raise Refused(400, RESEARCHBOX_NO_KEY)
+    code = found.group(2) or ""
+    return f"https://researchbox.org/{found.group(1)}" + (
+        "&PEER_REVIEW_passcode=" + code.split("=", 1)[1] if code else ""
+    )
+
+
+def _shown_link(url: str) -> str:
+    """*url* as the job's name: a peer-review passcode left out."""
+    return re.sub(r"&PEER_REVIEW_passcode=[A-Za-z0-9]+", "", url)
+
+
+def _repository_link(text: str, keys: dict[str, str] | None = None) -> str:
     """The link of a public repository this server can fetch from, or :class:`Refused`."""
     from urllib.parse import urlsplit
 
@@ -134,13 +170,9 @@ def _repository_link(text: str) -> str:
     if len(text.strip()) > 500:
         raise Refused(400, "That link is too long.")
     link = _normalise(text.strip())
-    host = (urlsplit(link).hostname or "").lower() if link else ""
-    if host.endswith("researchbox.org"):
-        raise Refused(
-            400,
-            "This server cannot fetch from ResearchBox yet. Download the box and send it as a "
-            ".zip file.",
-        )
+    host = (urlsplit(link).hostname or "").lower().rstrip(".") if link else ""
+    if host in ("researchbox.org", "www.researchbox.org"):
+        return _researchbox_link(link, keys or {})
     path = urlsplit(link).path.lower().replace("\\", "/")
     if any(part in (".", "..", "%2e", "%2e%2e") for part in path.split("/")):
         raise Refused(400, "That link is not the address of a repository.")
@@ -154,6 +186,41 @@ def _repository_link(text: str) -> str:
 def _own_keys(fields: dict[str, str]) -> dict[str, str]:
     keys = {s: fields.get(f"key_{s}", "").strip() for s in KEY_SERVICES}
     return {s: v for s, v in keys.items() if v}
+
+
+def _key_problems() -> list[dict[str, Any]]:
+    """The server's keys that a service refused or whose limit is reached, with the message
+    for visitors (``api_key_status()``), as the site on SURF Research Cloud lists them in
+    ``/api/health``."""
+    import pandas as pd
+
+    from metacheck.archives.api_keys import api_key_status, api_keys_use
+    from metacheck.utils import options
+
+    before = api_keys_use({}, shared=True)  # the server is shared: "the key it provides"
+    try:
+        status = api_key_status()
+    except Exception:
+        return []
+    finally:
+        options(before)
+    out = []
+    for row in status.to_dict("records"):
+        if pd.isna(row["message"]):
+            continue
+        until = row["until"]
+        out.append(
+            {
+                "service": row["service"],
+                "label": row["label"],
+                "message": row["message"],
+                "url": row["url"],
+                "problem": None if pd.isna(row["problem"]) else row["problem"],
+                "source": row["key"],
+                "until": None if pd.isna(until) else until.strftime("%Y-%m-%d %H:%M UTC"),
+            }
+        )
+    return out
 
 
 def _grobid_kind() -> str:
@@ -341,7 +408,11 @@ def create_app(config: SiteConfig | None = None) -> FastAPI:
             )
         if kind == "repocheck" and input_kind in ("pdf", "json", "xml"):
             raise Refused(400, "A paper is checked with kind=report or kind=check.")
-        url = _repository_link(fields.get("url", "")) if input_kind == "url" else None
+        url = (
+            _repository_link(fields.get("url", ""), _own_keys(fields))
+            if input_kind == "url"
+            else None
+        )
         try:
             preprint = psyarxiv_id(fields.get("psyarxiv")) if input_kind == "psyarxiv" else None
         except ValueError as exc:
@@ -358,7 +429,7 @@ def create_app(config: SiteConfig | None = None) -> FastAPI:
             "kind": kind,
             "input_kind": input_kind,
             "input_file": input_file,
-            "name": url or preprint or name or "",
+            "name": (url and _shown_link(url)) or preprint or name or "",
             "url": url,
             "psyarxiv": preprint,
             "psyarxiv_api": config.psyarxiv_api,
@@ -441,7 +512,7 @@ def create_app(config: SiteConfig | None = None) -> FastAPI:
                 "run_code": run_code,
                 "sandbox": "docker" if run_code else "none",
                 "local": False,
-                "key_problems": [],
+                "key_problems": _key_problems(),
                 "workers": config.max_running,
             }
         )

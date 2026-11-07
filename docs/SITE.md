@@ -63,12 +63,12 @@ The fields:
 | Field | Meaning |
 |---|---|
 | `file` | A PDF, bibr JSON, GROBID XML (up to 50 MB) or a `.zip` of a folder (up to 500 MB). The kind is told by the first bytes of the file, not by its name. |
-| `url` | Instead of a file, for `repocheck`: the link of a public repository (GitHub, GitLab, OSF or Zenodo). |
+| `url` | Instead of a file, for `repocheck`: the link of a public repository (GitHub, GitLab, OSF or Zenodo), or of a ResearchBox box (its number or its peer-review link; see "ResearchBox"). |
 | `psyarxiv` | Instead of a file, for `report` and `check`: a PsyArXiv link, DOI or id. The server fetches the preprint's PDF. |
 | `kind` | `report`, `check`, `convert` or `repocheck`. Left out, it is `repocheck` for a zip or a link, else `report`. |
 | `modules` | Comma-separated checks for a paper. Left out, the default checks run. `GET /api/modules` lists them. |
 | `report` | `check` only: `true` adds the HTML report to the JSON. |
-| `report_type` | `checklist`, or left out. See "What is stubbed". |
+| `report_type` | `checklist`: the checklist report, every check sorted by its result with what to fix first. Left out: the full report (a paper) or the brief report (a repository). The website always asks for `checklist`. |
 | `crossref` | `true` has the references looked up at Crossref. Default `false`. |
 | `run_code` | `true` or `false`. See "Running code". |
 | `key_github`, `key_osf`, `key_dryad`, `key_gitlab`, `key_researchbox`, `key_openalex` | The visitor's own key for that service. See "Keys". |
@@ -81,8 +81,8 @@ The kinds:
   `report=true`, `report_html`.
 * `convert`: a PDF in, bibr JSON out. No checks run.
 * `repocheck`: a `.zip` or a link in, an HTML report of the repository checks out
-  (`repo_check`, `code_check`, `data_check`). The report is the brief one. A folder
-  is named after the zip, or after the one folder the zip holds.
+  (`repo_check`, `code_check`, `data_check`). A folder is named after the zip, or after the
+  one folder the zip holds.
 
 ### Follow a job
 
@@ -216,20 +216,37 @@ data package limits (`METACHECK_PACKAGE_DOWNLOAD_SECONDS`, `METACHECK_PACKAGE_MA
 
 ## Keys
 
-A visitor can send their own key for a service with a `key_<service>` field. It is for
-that job only: it is held in memory until the job starts, put in the environment of the
-job's own process, and never written to disk. It is not in the job's status. A link's
-download is sent the server's own tokens only if the visitor sent a key for that host.
+A visitor can send their own key for a service with a `key_<service>` field: `key_github`,
+`key_osf`, `key_dryad`, `key_gitlab`, `key_researchbox` or `key_openalex`. It is for that
+job only: it is held in memory until the job starts, set in the job's own process in place
+of the server's key (`api_keys_use()`, as metacheck's apps do), and never written to disk.
+It is not in the job's status.
 
-| Field | Read as |
-|---|---|
-| `key_github` | `GITHUB_PAT_GITHUB_COM` |
-| `key_osf` | `OSF_PAT` |
-| `key_dryad` | `DRYAD_PAT` |
-| `key_gitlab` | `GITLAB_PAT` |
-| `key_researchbox`, `key_openalex` | Accepted, and no effect: pytacheck reads no such key. |
+The download of a GitHub, GitLab or OSF link is sent a key only if the visitor sent their
+own for that host: the server's own token could open its owner's private repositories.
+A ResearchBox box is the exception (see "ResearchBox").
+
+`GET /api/health` lists the server's keys that a service refused or whose limit is reached
+(`key_problems`): `service`, `label`, `message` (for visitors), `url` (where a key is made),
+`problem` (`rejected` or `limit`), `source` and `until`.
 
 The website has no box for keys. They are for scripts.
+
+## ResearchBox
+
+A `repocheck` link may name a ResearchBox box: `https://researchbox.org/1234`, or the
+peer-review link of a box that is not public yet (its passcode goes along). The box is
+listed through ResearchBox's API first, so a box with more files or bytes than a link may
+bring (20,000 files, 500 MB) is refused before anything is downloaded. Then the whole box
+is downloaded into the job's folder (`rbox_file_download()`, with its checksums) and
+counted again.
+
+This needs a ResearchBox key: the visitor's (`key_researchbox`), else the server's
+(`RESEARCHBOX_API_KEY`, made at https://researchbox.org/api). Without either, a box link
+is refused with a message. The server's key is used for any box, because a ResearchBox key
+opens no box that is not public without the box's passcode. ResearchBox blocks a key for 10
+days after 10 requests for boxes that are not public without a passcode; metacheck stops
+sending such boxes to the API before that (see `rbox_file_download()`).
 
 ## Running code
 
@@ -245,14 +262,6 @@ When it is on, a repository job runs the repository's code unless the field says
 
 ## What is stubbed
 
-* **`report_type=checklist`** is accepted, but pytacheck has no checklist report yet, so
-  the full report (a paper) or the brief report (a repository) is made. The header
-  `X-Metacheck-Report-Type` says which. The one place to change when the checklist
-  report is ported is `report_layout()` in `src/metacheck/web/worker.py`.
-* **ResearchBox links** are refused with a message. pytacheck's data package code does not
-  fetch from ResearchBox yet. Download the box and send it as a `.zip`. The ResearchBox page
-  of the site says this too.
-* **`key_researchbox` and `key_openalex`** have no effect (see "Keys").
 * **`crossref`** only has an effect when GROBID converts the PDF. pytacheck's bibr client has
   no such option.
 * **`installed`** in `/api/modules` is always `[]`, and a `repocheck` with `modules` is
@@ -266,7 +275,7 @@ written again, not copied. These differ:
 * The checks are pytacheck's own. No R runs. The report is pytacheck's report.
 * Word files (`.docx`) are refused. GROBID XML is accepted.
 * No limit per visitor and no usage log. A server in front of this one can limit visitors.
-* No installed modules (see above), and no checklist report yet.
+* No installed modules (see above).
 * No PsyArXiv record checks in the browser. The page does not ask PsyArXiv anything; the
   server fetches the preprint, and a bad id or a missing file comes back as the job's error.
 * No interactive API page (see "Other routes").
@@ -284,7 +293,7 @@ The pages are in `src/metacheck/web/site/` and are served from the package:
 | Path | Page |
 |---|---|
 | `/` | Check a paper, check a repository |
-| `/researchbox/` | Check a ResearchBox by its number |
+| `/researchbox/` | Check a ResearchBox by its number or its peer-review link |
 | `/psyarxiv/` | Check a PsyArXiv preprint by its link |
 | `/site/...` | Style, scripts, font and logo |
 
@@ -311,3 +320,4 @@ styles, images and fonts, and no request to anywhere else.
 | `METACHECK_BIBR_URL`, `METACHECK_GROBID_URL` | The converters (see [ENVIRONMENT.md](ENVIRONMENT.md)). |
 | `METACHECK_PACKAGE_DOWNLOAD_SECONDS`, `METACHECK_PACKAGE_MAX_RATIO`, `METACHECK_PACKAGE_MAX_DEPTH` | The time, compression ratio and depth limits of a link's download. |
 | `GEMINI_API_KEY` and the other LLM keys | Used by the checks that call an LLM, as everywhere else. |
+| `RESEARCHBOX_API_KEY`, `GITHUB_PAT_GITHUB_COM`, `OSF_PAT` and the other repository keys | The server's keys (see "Keys" and "ResearchBox"). |

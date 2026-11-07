@@ -3,8 +3,8 @@
 ``run_job`` is what the child process runs: it reads the paper (or unpacks the repository),
 runs the checks and writes the result into the job's folder. It tells the parent how far
 it is through the ``report(fraction, text)`` function the process runner gives it; a
-fraction below 0 means "not known". The visitor's own API keys arrive as an argument and go
-into this process's environment only: they are not written anywhere.
+fraction below 0 means "not known". The visitor's own API keys arrive as an argument and are
+set for this process only (``api_keys_use()``): they are not written anywhere.
 
 Nothing here imports FastAPI.
 """
@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import contextlib
 import os
+import re
 import shutil
 import tempfile
 import warnings
@@ -21,11 +22,11 @@ from pathlib import Path
 from typing import Any
 
 from metacheck.web.config import (
-    KEY_ENV,
     MAX_UNPACKED_BYTES,
     MAX_ZIP_BYTES,
     MAX_ZIP_FILES,
     REPOSITORY_MODULES,
+    RESEARCHBOX_NO_KEY,
 )
 from metacheck.web.uploads import folder_name
 
@@ -63,19 +64,15 @@ class JobFailed(Exception):
     """The job cannot be finished; the message is for the person who sent it."""
 
 
-#: the report layout of each ``report_type`` that has one of its own. ``checklist`` (every check
-#: sorted by its result, with what to fix) joins here when its renderer is ported.
-LAYOUTS: dict[str, str] = {}
+#: the report layout of each ``report_type`` that has one of its own: ``checklist`` is every
+#: check sorted by its result, with what to fix first (``metacheck.report.checklist``)
+LAYOUTS: dict[str, str] = {"checklist": "checklist"}
 
 
 def report_layout(requested: str, repository: bool) -> str:
-    """The report layout a job gets, from the ``report_type`` field.
-
-    ``checklist`` is asked for by the site, but pytacheck has no checklist report yet; it
-    arrives with the metacheck 0.4.x catch-up (``R/report-checklist.R``). Until then the full
-    report (a paper) or the brief report (a repository) is made. This is the one place that
-    decides, so the checklist renderer plugs in here and nowhere else.
-    """
+    """The report layout a job gets, from the ``report_type`` field: the checklist report when
+    it is asked for (the site always asks), else the full report (a paper) or the brief report
+    (a repository), as on the site on SURF Research Cloud."""
     return LAYOUTS.get(requested, "brief" if repository else "full")
 
 
@@ -291,6 +288,98 @@ def _render(outputs: Any, paper: Any, layout: str) -> str:
 
 # -- the repository ------------------------------------------------------------------------
 
+#: a ResearchBox link as the site takes it (``app._repository_link``): the box's number, and
+#: the passcode of a box that is not public yet
+RBOX_LINK = re.compile(r"https://researchbox\.org/(\d{1,7})(?:&PEER_REVIEW_passcode=[A-Za-z0-9]+)?")
+
+
+def _rbox_problem(error: str) -> str:
+    """What to tell the sender about a box that ResearchBox did not list or give."""
+    if error == "unfound":
+        return (
+            "ResearchBox has no public box with that number. A box that is not public yet is "
+            "checked with its peer-review link."
+        )
+    if error.startswith("API rate limit exhausted"):
+        return (
+            "ResearchBox's limit on requests is used up. Try again later, or download the box "
+            "and send it as a .zip file."
+        )
+    return (
+        f"ResearchBox did not give the box ({error}). Try again later, or download the box and "
+        "send it as a .zip file."
+    )
+
+
+@contextlib.contextmanager
+def _researchbox(url: str, folder: Path, report: Report) -> Iterator[Any]:
+    """The files of the ResearchBox box at *url*, downloaded into the job's folder (a context
+    manager, as ``open_link``). The box is listed first, so one with more files or bytes than
+    this server takes from a link is not downloaded, and what arrives is counted again."""
+    from types import SimpleNamespace
+
+    import pandas as pd
+
+    from metacheck.archives.api_keys import rbox_token
+    from metacheck.archives.researchbox import _rbox_id, rbox_file_download, rbox_files
+    from metacheck.datapackage._open import _size
+    from metacheck.utils import options
+
+    if not rbox_token():
+        raise JobFailed(RESEARCHBOX_NO_KEY)
+    report(-1.0, "listing the box's files at ResearchBox")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        listed = rbox_files(url)
+    errors = listed["error"].dropna() if "error" in listed.columns else pd.Series([], dtype=object)
+    if len(errors) > 0:
+        raise JobFailed(_rbox_problem(str(errors.iloc[0])))
+    if len(listed) == 0:
+        raise JobFailed("The box has no files to check.")
+    sizes = pd.to_numeric(listed["size"], errors="coerce")
+    if sizes.isna().any():
+        raise JobFailed(
+            "ResearchBox did not say how big the box's files are, so it was not downloaded. "
+            "Download the box and send it as a .zip file."
+        )
+    if len(listed) > MAX_ZIP_FILES or float(sizes.sum()) > MAX_ZIP_BYTES:
+        raise JobFailed(
+            f"The box holds {len(listed):,} files, {_size(float(sizes.sum()))}: more than the "
+            f"{MAX_ZIP_FILES:,} files or {_size(MAX_ZIP_BYTES)} this server takes from a link. "
+            "Download it yourself and send it as a .zip file."
+        )
+    report(-1.0, "downloading the box from ResearchBox")
+    box = folder / "box"
+    options({"metacheck.repo_cache.session_dir": str(box)})  # the download stays in the job
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            got = rbox_file_download(url, cache=False)
+        failed = got.attrs.get("failed")
+        if len(got) == 0:
+            reasons = [] if failed is None else failed["error"].dropna().tolist()
+            raise JobFailed(_rbox_problem(str(reasons[0]) if reasons else "no files"))
+        if failed is not None and len(failed) > 0:
+            raise JobFailed(
+                f"{len(failed)} of the box's files did not arrive intact. Try again later."
+            )
+        first, name = str(got["file_location"].iloc[0]), str(got["name"].iloc[0])
+        base = Path(first.removesuffix("/" + name))
+        arrived = [p for p in base.rglob("*") if p.is_file()]
+        if (
+            len(arrived) > MAX_ZIP_FILES
+            or sum(p.stat().st_size for p in arrived) > MAX_UNPACKED_BYTES
+        ):
+            raise JobFailed(
+                "The box ResearchBox sent is bigger than this server checks. Download it "
+                "yourself and send it as a .zip file."
+            )
+        yield SimpleNamespace(
+            name=f"researchbox-{_rbox_id(url)}", base=None, remote=True, base_dir=base
+        )
+    finally:
+        shutil.rmtree(box, ignore_errors=True)
+
 
 def _open_repository(
     spec: dict[str, Any], folder: Path, keys: dict[str, str], report: Report
@@ -310,9 +399,11 @@ def _open_repository(
     if spec["input_kind"] == "zip":
         report(-1.0, "unpacking the .zip file")
         return open_package(folder / spec["input_file"], **limits)
+    if RBOX_LINK.fullmatch(spec["url"]):
+        return _researchbox(spec["url"], folder, report)
     link = parse_link(_normalise(spec["url"]))
     # a token goes to a link's host only when the visitor sent their own for that host
-    own = bool(keys.get(link.kind)) and KEY_ENV.get(link.kind) is not None
+    own = bool(keys.get(link.kind))
     return open_link(
         link,
         max_download=MAX_ZIP_BYTES,
@@ -362,12 +453,13 @@ def _repository_job(
 # -- the process ---------------------------------------------------------------------------
 
 
-def _set_keys(keys: dict[str, str]) -> None:
-    """Put the visitor's own keys in this process's environment (nowhere else)."""
-    for service, value in keys.items():
-        name = KEY_ENV.get(service)
-        if name and value:
-            os.environ[name] = value
+def _use_keys(keys: dict[str, str]) -> None:
+    """The visitor's own keys, in place of the server's for this process only, as metacheck's
+    apps do (``api_keys_use()``): the server is shared, so a message about the server's key
+    calls it the key the server provides."""
+    from metacheck.archives.api_keys import api_keys_use
+
+    api_keys_use(keys, shared=True)
 
 
 def _message(exc: BaseException) -> str:
@@ -398,7 +490,7 @@ def run_job(
     scratch = work / "tmp"
     scratch.mkdir(exist_ok=True)
     tempfile.tempdir = str(scratch)  # unpacked archives land in the job's own folder
-    _set_keys(keys)
+    _use_keys(keys)
     try:
         if spec["kind"] != "convert":
             from metacheck.api.app import _configure_llm

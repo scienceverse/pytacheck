@@ -30,13 +30,16 @@ def real(make_client: Callable[..., TestClient]) -> TestClient:
     return make_client(fake=False)
 
 
-# -- the layout (the one place a checklist report would plug in) --------------------------
+# -- the layout ----------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("asked", ["", "checklist"])
-def test_checklist_falls_back_to_the_default_layout(asked: str) -> None:
-    assert worker.report_layout(asked, repository=False) == "full"
-    assert worker.report_layout(asked, repository=True) == "brief"
+@pytest.mark.parametrize(
+    ("asked", "paper", "repository"),
+    [("", "full", "brief"), ("checklist", "checklist", "checklist")],
+)
+def test_the_layout_of_each_report_type(asked: str, paper: str, repository: str) -> None:
+    assert worker.report_layout(asked, repository=False) == paper
+    assert worker.report_layout(asked, repository=True) == repository
 
 
 def test_scrub_paths_removes_the_servers_places(tmp_path: Path) -> None:
@@ -123,14 +126,13 @@ def test_a_paper_report(real: TestClient, demo_json: bytes) -> None:
     assert str(real.app.state.manager.root) not in r.text  # type: ignore[attr-defined]
 
 
-def test_a_checklist_is_asked_for_and_the_full_report_comes(
-    real: TestClient, demo_json: bytes
-) -> None:
+def test_a_checklist_is_asked_for_and_made(real: TestClient, demo_json: bytes) -> None:
     r = send(
         real, "demo.json", demo_json, "/api/report", modules="marginal", report_type="checklist"
     )
     assert r.status_code == 200
-    assert r.headers["x-metacheck-report-type"] == "full"
+    assert r.headers["x-metacheck-report-type"] == "checklist"
+    assert '<nav class="counts"' in r.text
 
 
 def test_a_paper_check(real: TestClient, demo_json: bytes) -> None:
@@ -163,20 +165,28 @@ def test_a_file_without_a_paper_in_it_fails_with_a_message(real: TestClient) -> 
     assert "could not be read as a paper" in r.json()["error"] or "No text" in r.json()["error"]
 
 
-def test_a_visitors_key_is_in_the_jobs_environment_only(
+def test_a_visitors_keys_are_used_in_the_job_only(
     real: TestClient, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
+    from metacheck.archives import api_keys
+    from metacheck.utils import get_option
+
     secret = "ghp_" + "S" * 36
-    monkeypatch.delenv("GITHUB_PAT_GITHUB_COM", raising=False)
-    monkeypatch.delenv("OSF_PAT", raising=False)
+    for name in ("GITHUB_PAT_GITHUB_COM", "OSF_PAT", "RESEARCHBOX_API_KEY", "OPENALEX_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
 
     def probe(spec: dict[str, Any], folder: Path, report: Any) -> dict[str, Any]:
+        from metacheck.archives.osf_helpers import osf_pat
+
         out = folder / "result.json"
         out.write_text(
             json.dumps(
                 {
-                    "github_seen": os.environ.get("GITHUB_PAT_GITHUB_COM") == secret,
-                    "osf_seen": os.environ.get("OSF_PAT"),
+                    "github": api_keys.github_pat() == secret,
+                    "researchbox": api_keys.rbox_token(),
+                    "openalex": api_keys.openalex_key(),
+                    "osf": osf_pat(),
+                    "shared": get_option("metacheck.keys.shared"),
                     "tmp_in_job": tempfile.gettempdir().startswith(str(folder)),
                 }
             )
@@ -184,10 +194,28 @@ def test_a_visitors_key_is_in_the_jobs_environment_only(
         return {"result": out.name, "type": "application/json", "converter": None}
 
     monkeypatch.setattr(worker, "_paper_job", probe)
-    r = send(real, "demo.json", b'{"a": 1}', "/api/check", key_github=secret, key_researchbox="x")
+    r = send(
+        real,
+        "demo.json",
+        b'{"a": 1}',
+        "/api/check",
+        key_github=secret,
+        key_researchbox="rb-key",
+        key_openalex="oa-key",
+    )
     assert r.status_code == 200, r.text
-    assert r.json() == {"github_seen": True, "osf_seen": None, "tmp_in_job": True}
-    assert "GITHUB_PAT_GITHUB_COM" not in os.environ  # this process never had it
+    assert r.json() == {
+        "github": True,
+        "researchbox": "rb-key",
+        "openalex": "oa-key",
+        "osf": "",
+        "shared": True,
+        "tmp_in_job": True,
+    }
+    # this process never had them
+    for service in ("github", "researchbox", "openalex"):
+        assert get_option(api_keys.KEY_SERVICES[service].option) is None
+    assert "GITHUB_PAT_GITHUB_COM" not in os.environ
     manager = real.app.state.manager  # type: ignore[attr-defined]
     assert secret.encode() not in b"".join(
         p.read_bytes() for p in manager.root.rglob("*") if p.is_file()
@@ -271,6 +299,115 @@ def test_a_link_is_fetched_with_the_repository_code(
     r = form(real, "/api/repocheck", {"url": url, "key_osf": "osfkey"})
     assert r.status_code == 200
     assert seen()["credentials"] is False
+
+
+def test_a_repository_checklist(real: TestClient) -> None:
+    r = send(real, "study.zip", study_zip(), "/api/repocheck", report_type="checklist")
+    assert r.status_code == 200
+    assert r.headers["x-metacheck-report-type"] == "checklist"
+    assert '<nav class="counts"' in r.text
+    assert str(real.app.state.manager.root) not in r.text  # type: ignore[attr-defined]
+
+
+# -- a ResearchBox box ---------------------------------------------------------------------
+
+
+@pytest.fixture
+def researchbox(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> Callable[..., Callable[[], dict[str, Any]]]:
+    """ResearchBox, faked: a box's file list and its download. Returns a function that sets
+    what the box holds; that returns what the job asked for (the job runs in a process of
+    its own, so it is written to a file)."""
+    import pandas as pd
+
+    from metacheck.archives import researchbox as rbox
+
+    record = tmp_path / "researchbox.json"
+    monkeypatch.setenv("RESEARCHBOX_API_KEY", "the-servers-key")
+
+    def make(
+        files: dict[str, str] | None = None,
+        sizes: list[float] | None = None,
+        error: str | None = None,
+        failed: int = 0,
+    ) -> Callable[[], dict[str, Any]]:
+        box = files if files is not None else {"Data/data.csv": "id,x\n1,2\n", "code.R": "1\n"}
+
+        def rbox_files(url: str, *args: Any, **kwargs: Any) -> pd.DataFrame:
+            if error is not None:
+                return pd.DataFrame({"rb_url": [url], "error": [error]})
+            return pd.DataFrame(
+                {
+                    "rb_url": [url] * len(box),
+                    "name": list(box),
+                    "size": sizes if sizes is not None else [float(len(v)) for v in box.values()],
+                }
+            )
+
+        def rbox_file_download(url: str, *args: Any, **kwargs: Any) -> pd.DataFrame:
+            from metacheck.archives.download import _repo_session_dir
+
+            out = Path(_repo_session_dir()) / "researchbox.org_1234" / "unzipped"
+            for name, text in box.items():
+                (out / name).parent.mkdir(parents=True, exist_ok=True)
+                (out / name).write_text(text)
+            record.write_text(
+                json.dumps({"url": url, "cache": kwargs.get("cache"), "where": str(out)})
+            )
+            got = pd.DataFrame(
+                {"name": list(box), "file_location": [f"{out}/{name}" for name in box]}
+            )
+            got.attrs["failed"] = pd.DataFrame(
+                {"rb_url": [url] * failed, "name": ["code.R"] * failed, "error": ["md5"] * failed}
+            )
+            return got
+
+        monkeypatch.setattr(rbox, "rbox_files", rbox_files)
+        monkeypatch.setattr(rbox, "rbox_file_download", rbox_file_download)
+        return lambda: json.loads(record.read_text())  # type: ignore[no-any-return]
+
+    return make
+
+
+def test_a_researchbox_box_is_downloaded_into_the_job_and_checked(
+    real: TestClient, researchbox: Callable[..., Callable[[], dict[str, Any]]]
+) -> None:
+    asked = researchbox()
+    link = "https://researchbox.org/1234&PEER_REVIEW_passcode=ABC123"
+    r = form(real, "/api/repocheck", {"url": link, "report_type": "checklist"})
+    assert r.status_code == 200, r.text
+    assert r.headers["x-metacheck-report-type"] == "checklist"
+    assert "researchbox-1234" in r.text
+    seen = asked()
+    assert seen["url"] == link and seen["cache"] is False
+    manager = real.app.state.manager  # type: ignore[attr-defined]
+    assert seen["where"].startswith(str(manager.root))  # the download stayed in the job
+    assert str(manager.root) not in r.text
+    assert not Path(seen["where"]).exists()  # and is gone
+
+
+@pytest.mark.parametrize(
+    ("box", "message"),
+    [
+        ({"sizes": [400e6, 200e6]}, "more than the 20,000 files or 500 MB"),
+        ({"sizes": [float("nan"), 1.0]}, "did not say how big"),
+        ({"error": "unfound"}, "no public box with that number"),
+        ({"error": "API rate limit exhausted: wait"}, "limit on requests is used up"),
+        ({"files": {}}, "no files to check"),
+        ({"failed": 1}, "did not arrive intact"),
+    ],
+)
+def test_a_researchbox_box_that_cannot_be_checked_fails_with_a_message(
+    real: TestClient,
+    researchbox: Callable[..., Callable[[], dict[str, Any]]],
+    box: dict[str, Any],
+    message: str,
+) -> None:
+    researchbox(**box)
+    r = form(real, "/api/repocheck", {"url": "https://researchbox.org/1234"})
+    assert r.status_code == 422, r.text
+    assert message in r.json()["error"]
 
 
 def test_a_pdf_is_not_a_repository(real: TestClient) -> None:
