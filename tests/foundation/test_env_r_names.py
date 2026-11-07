@@ -22,10 +22,13 @@ SHARED = {
     "METACHECK_LLM_MAX_CALLS",
     "METACHECK_STATE_DIR",
 }
-#: read by R, reviewed, and not in the table: the Shiny apps' usage folder
-REVIEWED_OTHER = {"METACHECK_USAGE_DIR"}
-#: read only by R's tests
-R_TEST_ONLY = {"METACHECK_API_URL", "METACHECK_BIBR12_EXPORTS"}
+#: read by R, reviewed, and not in the table: the Shiny apps' usage folder; the Shiny apps'
+#: switch for running on someone's own computer (their keys are then not shared); the
+#: folder of modules installed with module_install(), whose Python counterpart comes with
+#: the port of R/module-install.R
+REVIEWED_OTHER = {"METACHECK_USAGE_DIR", "METACHECK_LOCAL", "METACHECK_MODULES_DIR"}
+#: read only by R's tests (FULL_TESTS: run the slow and online tests too)
+R_TEST_ONLY = {"METACHECK_API_URL", "METACHECK_BIBR12_EXPORTS", "METACHECK_FULL_TESTS"}
 #: the installer's variables: not the package's, and never read by it with another meaning
 INSTALLER = {
     "METACHECK_HOME",

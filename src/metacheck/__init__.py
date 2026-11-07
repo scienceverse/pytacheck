@@ -207,7 +207,6 @@ _EXPORTS: dict[str, str] = {
     "gitlab_pat": "metacheck.archives.gitlab",
     "gitlab_repo": "metacheck.archives.gitlab",
     "gitlab_tree_files": "metacheck.archives.gitlab",
-    "repo_info_cache": "metacheck.archives.info_cache",
     "repo_info_cache_clear": "metacheck.archives.info_cache",
     "local_files": "metacheck.archives.local",
     "mendeley_info": "metacheck.archives.mendeley",
