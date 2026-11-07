@@ -3,7 +3,6 @@
 ".grobid_to_bibr.review_urls": {"r": "d098d623348478a2", "py": "4382221f3a359f71", "diff": ["text.text[]", "url.end[]", "url.start[]"]},
 "module.all_p_values.review": {"r": "e799d2e170bcc4f2", "py": "395f05909537ccc5", "diff": ["table.text_id[]"]},
 "module.all_urls.review": {"r": "fe914630bb350b3d", "py": "e2a01fb598984871", "diff": ["summary_table.urls[]", "table"]},
-"module.ref_accuracy.review": {"r": "7ff9575c6575ce2d", "py": "23eab4caf48f6b93", "diff": ["traffic_light[]"]},
 "module.stat_check.review": {"r": "0a26c6a765e48b2a", "py": "967d200125e4ae91", "diff": ["table.text[]", "table.text_id[]"]},
 "write_read.review_sentences": {"r": "d79003f19c5ad447", "py": "0c5145fe61c6af45", "diff": ["bib.text_id[]", "eq.text_id[]", "figure.caption[]", "figure.text_id[]", "footnote.text_id[]", "info.abstract[]", "text", "url.end[]", "url.start[]", "url.text_id[]", "xref.end[]", "xref.start[]", "xref.text_id[]"]},
 "write_read.review_urls": {"r": "d098d623348478a2", "py": "4382221f3a359f71", "diff": ["text.text[]", "url.end[]", "url.start[]"]},

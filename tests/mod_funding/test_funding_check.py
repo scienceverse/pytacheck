@@ -79,14 +79,24 @@ def test_outputs_green(module: str) -> None:
 
 @pytest.mark.parametrize("module", ["funding_check", "funding_check_oi"])
 def test_outputs_red_and_empty(module: str) -> None:
-    for paper in (pc.test_paper([NONE]), pc.test_paper([])):
-        mo = pc.module_run(paper, module)
-        assert mo.traffic_light == "red"
-        assert list(mo.table.columns) == ["paper_id", "text"]
-        assert len(mo.table) == 0
-        assert mo.summary_text == "No funding statement was detected."
-        assert mo.report == "No funding statement was detected. Consider adding one."
-        assert mo.summary_table["funding_found"].tolist() == [False]
+    mo = pc.module_run(pc.test_paper([NONE]), module)
+    assert mo.traffic_light == "red"
+    assert list(mo.table.columns) == ["paper_id", "text"]
+    assert len(mo.table) == 0
+    assert mo.summary_text == "No funding statement was detected."
+    assert mo.report == "No funding statement was detected. Consider adding one."
+    assert mo.summary_table["funding_found"].tolist() == [False]
+
+
+@pytest.mark.parametrize("module", ["funding_check", "funding_check_oi"])
+def test_empty_paper_has_nothing_to_check(module: str) -> None:
+    # metacheck 0.4: a paper with no text and no references gets .empty_input_result()
+    paper = pc.test_paper([])
+    mo = pc.module_run(paper, module)
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "There was no text to check."
+    assert list(mo.summary_table.columns) == ["paper_id"]
+    assert mo.summary_table["paper_id"].tolist() == [paper.paper_id]
 
 
 def test_funding_check_psychsci(psychsci: pc.PaperList) -> None:

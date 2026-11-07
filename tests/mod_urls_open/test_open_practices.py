@@ -141,8 +141,15 @@ def test_no_statements_report() -> None:
     mo = run(pc.test_paper(["Nothing here.", "Or here."]))
     assert mo.traffic_light == "red"
     assert mo.summary_text == "Neither shared data nor code detected."
-    # R's report is NULL, so module_run() falls back to the summary text
-    assert mo.report == mo.summary_text
+    # a single paper gets the "not detected" reports of data and code (metacheck 0.4)
+    assert mo.report == [
+        "We did not detect open sharing of data, which could be because there is no data "
+        "related to this article, or the repository is not recognized by our code. If there "
+        "is data, please consider sharing it in a repository.",
+        "We did not detect open sharing of code, which could be because there is no code "
+        "related to this article, or the repository is not recognized by our code. If there "
+        "is code, please consider sharing it in a repository.",
+    ]
     assert mo.na_replace == {"data_open": False, "code_open": False, "no_data": False}
     st = mo.summary_table
     assert st.columns.tolist() == [
@@ -159,14 +166,19 @@ def test_no_statements_report() -> None:
         "prereg_statements",
     ]
     assert st["data_open"].tolist() == [False]
-    assert st["materials_open"].isna().all()
+    # a paper without a flagged sentence has FALSE, not NA, in every flag (U106)
+    assert st["materials_open"].tolist() == [False]
+    assert st["on_request"].tolist() == [False]
 
 
 def test_empty_paper() -> None:
-    mo = run(pc.paper())
-    assert len(mo.table) == 0
-    assert mo.table.columns[-5:].tolist() == ["data", "code", "materials", "prereg", "on_request"]
-    assert mo.traffic_light == "red"
+    # metacheck 0.4: a paper with no text and no references has nothing to check
+    paper = pc.paper()
+    mo = run(paper)
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "There was no text to check."
+    assert mo.summary_table["paper_id"].tolist() == [paper.paper_id]
+    assert mo.summary_table.columns.tolist() == ["paper_id"]
 
 
 def test_on_request_report() -> None:
@@ -237,7 +249,7 @@ def test_paperlist_single_summary_row() -> None:
     )
     assert mo.report == mo.summary_text
     assert mo.summary_table["data_open"].tolist() == [False, True]
-    assert mo.summary_table["on_request"].isna().tolist() == [True, False]
+    assert mo.summary_table["on_request"].tolist() == [False, True]
 
 
 def test_paperlist_summary_text(psychsci: pc.PaperList, demo: pc.Paper) -> None:
@@ -268,12 +280,11 @@ def test_duplicate_paper_ids(demo: pc.Paper) -> None:
 
 
 def test_empty_paper_list() -> None:
-    # U79: metacheck's summarise() fails on `text[data]` (its searches of an empty
-    # list have no text column); an empty list has no statements
+    # U79: metacheck 0.3's summarise() failed on `text[data]` (its searches of an empty
+    # list have no text column); 0.4 answers an empty input with .empty_input_result()
     mo = run(pc.PaperList([]))
-    assert mo.traffic_light == "red"
-    assert mo.summary_text == "Neither shared data nor code detected."
-    assert len(mo.table) == 0
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "There was no text to check."
     assert len(mo.summary_table) == 0
 
 
@@ -351,9 +362,9 @@ def test_chained_na_replace_leaves_open_practices_columns() -> None:
     assert pd.isna(st["prereg_statements"].tolist()[0])
     # open_practices' own na_replace: data_open and code_open are FALSE for p2
     assert st["data_open"].tolist() == [True, False, False]
-    assert st["materials_open"].tolist()[::2] == [False, False]
-    assert pd.isna(st["materials_open"].tolist()[1])
-    assert st["on_request"].tolist()[::2] == [False, True]
+    # p2 has no flagged sentence: FALSE in every flag (U106), not NA
+    assert st["materials_open"].tolist() == [False, False, False]
+    assert st["on_request"].tolist() == [False, False, True]
     assert st["urls"].tolist() == [1, 0, 1]
 
 

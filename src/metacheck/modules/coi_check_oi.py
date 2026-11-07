@@ -18,6 +18,7 @@ from __future__ import annotations
 from typing import Any
 
 from metacheck.module import module
+from metacheck.modules._empty import empty_input_result, paper_is_empty
 from metacheck.text import text_search
 
 __all__ = ["coi_check_oi"]
@@ -47,6 +48,8 @@ def coi_check_oi(paper: Any) -> dict[str, Any]:
     from metacheck.modules._statements import with_bibr_statements
     from metacheck.modules.coi_check import coi_results
 
+    if paper_is_empty(paper):
+        return empty_input_result(paper)
     # get potential COI statements, then merge the text by section/id
     table = text_search(paper, _PATTERN_MAIN, search_header=True)
     table = text_search(table, _PATTERN_INC, search_header=True)

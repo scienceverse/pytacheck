@@ -13,7 +13,7 @@ import pandas as pd
 import pytest
 
 import metacheck as pc
-from metacheck.module import ModuleError, module_list, module_run
+from metacheck.module import module_list, module_run
 from metacheck.modules.ref_summary import _accuracy_mismatches, _join
 from metacheck.report.blocks import ReportTable
 from tests.mod_ref_pubpeer_summary import helpers as H
@@ -359,19 +359,18 @@ def _acc(**cols: object) -> pd.DataFrame:
     )
 
 
-def test_accuracy_mismatches_pivot_types() -> None:
-    # logical and character values cannot be combined by pivot_longer()
+def test_accuracy_mismatches_only_logical_true_counts() -> None:
+    # metacheck 0.4 reads each flag with isTRUE(): character, integer and double values
+    # never are TRUE (0.3 combined the columns with pivot_longer(), which failed on
+    # logical next to character values)
     acc = _acc(
         doi_mismatch=pd.array(["TRUE", "FALSE"], dtype="string"),
         year_mismatch=pd.array([True, False], dtype="boolean"),
         no_match=pd.array([False, False], dtype="boolean"),
     )
-    with pytest.raises(ValueError, match="Can't combine `doi_mismatch` <character>"):
-        _accuracy_mismatches(acc)
-    # an all-NA logical column is "unspecified" and combines with anything
-    acc["year_mismatch"] = pd.array([None, None], dtype="boolean")
-    assert _accuracy_mismatches(acc)["accuracy_mismatch"].tolist() == ["doi, year", "year"]
-    # logical, integer and double combine
+    out = _accuracy_mismatches(acc)
+    assert out["bib_id"].tolist() == [0]
+    assert out["accuracy_mismatch"].tolist() == ["year"]
     acc = _acc(
         doi_mismatch=pd.array([1, 0], dtype="Int64"),
         year_mismatch=[0.5, 0.0],
@@ -379,30 +378,35 @@ def test_accuracy_mismatches_pivot_types() -> None:
         no_match=[1.0, 2.0],
     )
     out = _accuracy_mismatches(acc)
-    # 1 %in% TRUE is TRUE, 2 %in% TRUE is FALSE
-    assert out["accuracy_mismatch"].tolist() == ["no match", "title"]
+    assert len(out) == 0
+    assert list(out.columns) == ["paper_id", "bib_id", "accuracy_mismatch"]
 
 
-def test_accuracy_mismatches_in_semantics() -> None:
-    # `%in%` coerces FALSE / TRUE to "FALSE" / "TRUE" for character values
+def test_accuracy_mismatches_no_match_decided_per_reference() -> None:
+    # U119: a reference with no_match and every *_mismatch FALSE says "no match" (0.3 dropped
+    # it), and the names of the TRUE flags follow the columns' order
     acc = _acc(
-        doi_mismatch=pd.array(["FALSE", "false", None, "0"], dtype="string"),
-        no_match=pd.array(["TRUE", "FALSE", None, "1"], dtype="string"),
+        doi_mismatch=pd.array([False, True, True, False], dtype="boolean"),
+        year_mismatch=pd.array([False, False, True, False], dtype="boolean"),
+        no_match=pd.array([True, False, False, None], dtype="boolean"),
     )
     out = _accuracy_mismatches(acc)
-    # U119: bib 0 (no_match "TRUE", doi "FALSE") says "no match"
-    assert out["bib_id"].tolist() == [1, 2, 3, 0]
-    assert out["accuracy_mismatch"].tolist() == ["doi", "doi", "doi", "no match"]
-    # factors compare by their labels
+    assert out["bib_id"].tolist() == [0, 1, 2]
+    assert out["accuracy_mismatch"].tolist() == ["no match", "doi", "doi, year"]
+    # character and factor flags are not TRUE, whatever they say
     acc = _acc(
         doi_mismatch=pd.Categorical(["FALSE", "x"]),
         no_match=pd.array([False, True], dtype="boolean"),
     )
     assert _accuracy_mismatches(acc)["accuracy_mismatch"].tolist() == ["no match"]
+    # a table without no_match has no reference without a match
+    assert _accuracy_mismatches(_acc(doi_mismatch=pd.array([True], dtype="boolean")))[
+        "accuracy_mismatch"
+    ].tolist() == ["doi"]
 
 
-def test_accuracy_mismatches_group_order() -> None:
-    # groups follow their first kept cell; duplicated keys collect every name
+def test_accuracy_mismatches_first_row_of_a_reference() -> None:
+    # metacheck keeps the first row of a reference (!duplicated(paper_id, bib_id))
     acc = pd.DataFrame(
         {
             "paper_id": pd.array(["p", "p", "p", "p"], dtype="string"),
@@ -413,8 +417,8 @@ def test_accuracy_mismatches_group_order() -> None:
         }
     )
     out = _accuracy_mismatches(acc)
-    assert out["bib_id"].tolist() == [1, 0]
-    assert out["accuracy_mismatch"].tolist() == ["doi, title", "doi, title"]
+    assert out["bib_id"].tolist() == [1]
+    assert out["accuracy_mismatch"].tolist() == ["doi"]
     # nothing kept: an empty table with R's columns
     acc[["doi_mismatch", "title_mismatch"]] = False
     empty = _accuracy_mismatches(acc)
@@ -443,9 +447,10 @@ def test_ref_summary_suffix_collisions() -> None:
     ]
 
 
-def test_ref_summary_mixed_accuracy_types_error() -> None:
-    with pytest.raises(ModuleError, match="Can't combine"):
-        module_run(H.rv_acc_mixed(), "ref_summary")
+def test_ref_summary_mixed_accuracy_types_no_longer_an_error() -> None:
+    # metacheck 0.3: "Can't combine `doi_mismatch` <character> and ..." from pivot_longer()
+    out = module_run(H.rv_acc_mixed(), "ref_summary")
+    assert "accuracy_mismatch" in out.table.columns
 
 
 def test_ref_pubpeer_edge_feedbacks(mock_pubpeer: None) -> None:

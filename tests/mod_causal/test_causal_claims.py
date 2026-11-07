@@ -96,7 +96,7 @@ def test_patterns(text: str, inc: bool, exc: bool) -> None:
 def test_no_randomization_no_causal_claims() -> None:
     paper = untitled(["We included random effects.", "Nothing else."], id="p")
     res = pc.module_run(paper, "causal_claims")  # no sentences: no network
-    assert res["traffic_light"] == "green"
+    assert res["traffic_light"] == "na"  # no causal language: nothing to check (metacheck 0.4)
     assert res["summary_text"] == (
         "\n-  We identified no sentences describing randomization."
         "\n-  No causal claims were observed in the title."
@@ -138,7 +138,7 @@ def test_randomization_sentences() -> None:
     assert table.iloc[:, 0].tolist() == [texts[0], texts[1], texts[3]]
     assert report[4].startswith("If this was a study that contained random assignment")
     assert report[5].startswith("1. Random assignment method")
-    assert res["traffic_light"] == "green"
+    assert res["traffic_light"] == "na"  # no causal language
 
     one = pc.module_run(untitled(texts[:1], title="  "), "causal_claims")
     assert one["report"][2] == "We identified 1 sentence describing randomization."
@@ -146,14 +146,15 @@ def test_randomization_sentences() -> None:
 
 def test_empty_paper() -> None:
     res = pc.module_run(pc.paper(), "causal_claims")
-    assert res["traffic_light"] == "green"
-    assert len(res["table"]) == 0
+    assert res["traffic_light"] == "na"
+    assert res["summary_text"] == "There was no text to check."
+    assert len(res["summary_table"]) == 1
 
 
 def test_na_title_is_skipped() -> None:
     # U84: metacheck stops on causal_relations(NA) ("missing value where TRUE/FALSE needed")
     res = pc.module_run(untitled(["Some text."], title=None), "causal_claims")
-    assert res["traffic_light"] == "green"
+    assert res["traffic_light"] == "na"
     assert "No causal claims were observed in the title." in res["report"]
 
 
@@ -365,13 +366,12 @@ def test_no_text_column_is_a_join_error() -> None:
 
 def test_empty_paper_list() -> None:
     # U79: metacheck's text_search() of an empty list has no `text` column, so the
-    # module failed ("Join columns in `y` must be present"); an empty list has
-    # nothing to report
+    # module failed ("Join columns in `y` must be present"); metacheck 0.4 answers
+    # an empty input with .empty_input_result()
     res = pc.module_run(pc.PaperList([]), "causal_claims")
-    assert res.traffic_light == "green"
-    assert len(res.table) == 0
+    assert res.traffic_light == "na"
     assert len(res.summary_table) == 0
-    assert "We identified no sentences describing randomization." in res.summary_text
+    assert res.summary_text == "There was no text to check."
 
 
 def test_references_are_not_searched() -> None:

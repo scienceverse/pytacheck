@@ -12,6 +12,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck.module import module
+from metacheck.modules._empty import empty_input_result, paper_is_empty
 
 PATTERN_FUND = ("funder", "funded", "funding", "financed", "support")
 PATTERN_STUDY = (
@@ -70,6 +71,8 @@ def funding_check_oi(paper: Any) -> dict[str, Any]:
     from metacheck.modules.funding_check import _results
     from metacheck.text import text_search
 
+    if paper_is_empty(paper):
+        return empty_input_result(paper)
     found = text_search(text_search(paper, list(PATTERN_FUND)), list(PATTERN_STUDY))
     likely = found["section_type"].isin(LIKELY_SECTION).fillna(False).astype(bool)
     groups = found["paper_id"].astype(object).where(found["paper_id"].notna(), None)

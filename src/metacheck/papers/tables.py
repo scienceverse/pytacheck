@@ -59,6 +59,11 @@ def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd
     semantics, and ``cols`` (plus ``paper_id``) selects columns in that order.
     """
     papers = as_paper_list(paper)
+    # An empty paper list has no tables to bind: its result had no columns, and joins
+    # on paper_id and string functions on text stopped nearly every module (U79).
+    # An empty paper's tables are typed and have no rows.
+    if len(papers) == 0:
+        papers = PaperList([Paper()])
 
     fast = (
         len(papers) > 1

@@ -6,10 +6,11 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r.base import plural
-from metacheck._r.frames import bind_rows, count
+from metacheck._r.base import as_character, plural
+from metacheck._r.frames import bind_rows
 from metacheck._values import is_missing
 from metacheck.module import module
+from metacheck.modules._empty import empty_input_result, paper_is_empty
 
 _COLS = ["paper_id", "bib_id", "doi", "citation", "reftext", "warning"]
 
@@ -30,8 +31,6 @@ def _key(x: Any) -> Any:
 
 def _chr(x: Any) -> str:
     """``sprintf("%s", x)`` / ``paste()`` of a value (``NA`` prints as ``"NA"``)."""
-    from metacheck._r.base import as_character
-
     if is_missing(x):
         return "NA"
     return x if isinstance(x, str) else str(as_character(x))
@@ -128,6 +127,9 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
     from metacheck.modules.ref_summary import _join_doi
     from metacheck.papers.tables import as_paper_list, empty_paper_table, paper_table
 
+    if paper_is_empty(paper):
+        return empty_input_result(paper)
+
     def table_of(name: str, cols: list[str] | None = None) -> pd.DataFrame:
         # an empty paper list has tables without columns, which no join accepts
         # (metacheck stops on the missing doi column, U79): use empty typed ones
@@ -142,26 +144,17 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
         db = _miscite_db()
     elif not isinstance(db, pd.DataFrame):
         db = pd.DataFrame(db)
-    # dplyr::inner_join(bibs, db, by = "doi"): both tables need the key, which
-    # must have compatible types
-    for side, df in (("x", bibs), ("y", db)):
-        if "doi" not in df.columns:  # e.g. a CERMINE paper's bib table has no doi
-            raise ValueError(
-                f"Join columns in `{side}` must be present in the data.\n✖ Problem with `doi`."
-            )
-    doi = db["doi"]
-    character = (
-        pd.api.types.is_string_dtype(doi)
-        or doi.dtype == object
-        or isinstance(doi.dtype, pd.CategoricalDtype)
+    # the DOIs are compared as lower-case text (U157): a database with a factor, numeric or
+    # logical `doi` column is read as text, and a missing DOI matches nothing (U117)
+    if "doi" not in db.columns:
+        raise ValueError("Join columns in `y` must be present in the data.\n✖ Problem with `doi`.")
+    if "doi" not in bibs.columns:  # e.g. a CERMINE paper's bib table has no doi
+        raise ValueError("Join columns in `x` must be present in the data.\n✖ Problem with `doi`.")
+    db = db.assign(
+        doi=db["doi"]
+        .map(lambda v: v if isinstance(v, str) or is_missing(v) else as_character(v))
+        .astype("string")
     )
-    if not character:
-        # dplyr joins a character key only to a character (or factor) key, or
-        # to a non-empty all-NA logical column (vctrs "unspecified"), which is
-        # what pandas infers as an all-NaN float64 column
-        if len(doi) == 0 or not bool(doi.isna().all()):
-            raise TypeError("Can't join `x$doi` with `y$doi` due to incompatible types.")
-        db = db.assign(doi=doi.astype("string"))
     # a missing or empty DOI is no DOI: metacheck's inner_join() matches an NA
     # DOI in the database to every reference without a DOI (U117); DOIs match
     # whatever their case (U157)
@@ -212,11 +205,20 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
     table = xrefs.loc[:, _COLS].drop_duplicates().reset_index(drop=True)
 
     # summary output for paperlists ----
-    counted = count(table, ["paper_id", "bib_id", "doi"]).drop(columns="n")
+    # one bib_id per paper and DOI (the lowest): two references with the same DOI made list
+    # columns with a warning (U117); the columns follow the table's order
+    counted = (
+        table.groupby(["paper_id", "doi"], sort=False, dropna=False)["bib_id"]
+        .min()
+        .reset_index()
+        .loc[:, ["paper_id", "bib_id", "doi"]]
+    )
     summary_table = _pivot_wider(counted)
 
     # determine the traffic light ----
-    tl = "yellow" if len(table) > 0 else "green"
+    # no commonly miscited paper cited: nothing to check, so "na", as ref_retraction
+    # and ref_replication do
+    tl = "yellow" if len(table) > 0 else "na"
 
     # report text for each possible traffic light ----
     report: Any

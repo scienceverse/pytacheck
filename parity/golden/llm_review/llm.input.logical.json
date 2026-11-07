@@ -2,17 +2,13 @@
   "id": "llm.input.logical",
   "ok": true,
   "error": null,
-  "warnings": [
-    "There were errors in the following rows: 1, 2 \n  *  An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Is this a number? Answer TRUE or FALSE\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"TRUE\"}]}],\"model\":\"test-model\",\"temperature\":0,\"max_completion_tokens\":4096,\"stream\":false}\nExpected mock file: api.groq.com/openai/v1/chat/completions-e219b0-POST.*There were errors in the following rows: 1, 2 \n  *  An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Is this a number? Answer TRUE or FALSE\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"FALSE\"}]}],\"model\":\"test-model\",\"temperature\":0,\"max_completion_tokens\":4096,\"stream\":false}\nExpected mock file: api.groq.com/openai/v1/chat/completions-c25fdb-POST.*"
-  ],
+  "warnings": [],
   "value": {
     "t": "df",
     "nrow": 2,
     "names": [
       "text",
-      "answer",
-      "error",
-      "error_msg"
+      "answer"
     ],
     "v": [
       {
@@ -25,22 +21,8 @@
       {
         "t": "chr",
         "v": [
-          null,
-          null
-        ]
-      },
-      {
-        "t": "lgl",
-        "v": [
-          true,
-          true
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Is this a number? Answer TRUE or FALSE\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"TRUE\"}]}],\"model\":\"test-model\",\"temperature\":0,\"max_completion_tokens\":4096,\"stream\":false}\nExpected mock file: api.groq.com/openai/v1/chat/completions-e219b0-POST.*",
-          "An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Is this a number? Answer TRUE or FALSE\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"FALSE\"}]}],\"model\":\"test-model\",\"temperature\":0,\"max_completion_tokens\":4096,\"stream\":false}\nExpected mock file: api.groq.com/openai/v1/chat/completions-c25fdb-POST.*"
+          "FALSE",
+          "FALSE"
         ]
       }
     ]

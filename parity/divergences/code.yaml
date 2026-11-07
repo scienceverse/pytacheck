@@ -35,31 +35,8 @@
 # --- code_check module (inst/modules/code_check.R) --------------------------
 
 # --- reg_check module (inst/modules/reg_check.R) ----------------------------
-"mod_reg/reg_check.odd_judgements":
-  kind: r_bug_fixed
-  ref: U120
-  reason: a missing judgement is left out of the counts; R prints "flagged NA potential deviationNA" and na_replace turns the counts into 0
-"mod_reg/reg_check.paperlist.shared_prereg": &u120_shared
-  kind: r_bug_fixed
-  ref: U120
-  reason: a preregistration linked by two papers gets a section per paper, named after it; R mixes both papers' rows in one unlabelled section
-"mod_reg/reg_check.tables.shared_prereg": *u120_shared
-"mod_reg_review/reg_check.review.na_id.first.tables": &u120_na
-  kind: r_bug_fixed
-  ref: U120
-  reason: each report section holds its own rows; R's regcheck_table[prereg_id == rid, ] adds a row of NAs per NA prereg_id
-"mod_reg_review/reg_check.review.na_id.all.tables": *u120_na
 # caused by the text lane's prereg_check() fix (U109), not by this lane
-"mod_reg/reg_check.paperlist.aspredicted":
-  kind: r_bug_fixed
-  ref: U109
-  reason: each paper's AsPredicted preregistration is compared for that paper (prereg_check fix); R pastes both into one row with an NA paper_id, so 3 comparisons instead of 4
 # caused by the report lane's module_report() fix (U128), not by this lane
-"mod_reg/reg_check.report.all_fail": &u128_err
-  kind: r_bug_fixed
-  ref: U30
-  reason: reg_check's light is "fail" where metacheck returns "error" (U30), so module_report() prints the module heading; R's sprintf() with the NULL emoji of "error" drops it (U128)
-"mod_reg_review/reg_check.review.refused.report": *u128_err
 
 # --- repo_check module (inst/modules/repo_check.R) --------------------------
 "mod_repo_check/repo_check.osf.registration2":

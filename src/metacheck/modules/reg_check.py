@@ -464,7 +464,6 @@ def reg_check(
         if len(papers_of[rid]) > 1:
             paper_label = "NA" if pid is None else pid
             heading = f"Comparison of paper {paper_label} with preregistration {label}:"
-            evidence_title = f"{evidence_title} ({paper_label})"
         evidence = collapse_section(scroll_table(evidence_table, maxrows=5), evidence_title)
         prereg_sections.extend(
             [

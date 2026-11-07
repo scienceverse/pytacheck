@@ -275,7 +275,9 @@ def _read_llm_cache_dir(ctx: Ctx) -> Any:
     from metacheck.llm.cache import _llm_cache_dir
 
     ctx.monkeypatch.chdir(ctx.tmp_path)
-    return Path(_llm_cache_dir())
+    # the lasting folder: by default the replies last only for the session (a temp folder)
+    with utils.local_options({"metacheck.llm.cache": True}):
+        return Path(_llm_cache_dir())
 
 
 def _read_llm_workers(ctx: Ctx) -> Any:

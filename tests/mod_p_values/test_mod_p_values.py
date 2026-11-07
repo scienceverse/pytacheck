@@ -170,12 +170,12 @@ def test_stat_p_exact_paperlist_summary() -> None:
 
 def test_stat_p_nonsig_branches() -> None:
     out = module_run(pc.test_paper(["Nothing."]), "stat_p_nonsig")
-    assert out.traffic_light == "green"
+    assert out.traffic_light == "na"  # nothing to check (metacheck 0.4), not green
     assert out.summary_text == out.report == "We detected no nonsignificant p values."
 
     paper = pc.test_paper(["p = .05, p <= .02, p =< .04 and p ≤ .01"])
     out = module_run(paper, "stat_p_nonsig")
-    assert out.traffic_light == "green"
+    assert out.traffic_light == "na"
     assert len(out.table) == 0
 
     paper = pc.test_paper(["No difference, p > .05.", "Not significant (p = n.s.)."])
@@ -270,7 +270,7 @@ def test_chaining_p_value_modules(psychsci) -> None:
     # metacheck: [6, 39, 13], [0, 0, 2] and [0, 17, 0]; its pattern misses the
     # 'ps < .05' forms of the second and third paper (U204)
     assert x.summary_table["p_values"].tolist() == [6, 44, 15]
-    assert x.summary_table["n_imprecise"].tolist() == [0, 5, 4]
+    assert x.summary_table["n_imprecise"].tolist() == [0, 5, 5]
     assert x.summary_table["n_nonsignificant"].tolist() == [0, 20, 0]
     assert isinstance(x.prev_outputs["all_p_values"], ModuleOutput)
 
@@ -339,16 +339,19 @@ def test_stat_p_exact_star_note_information_separators() -> None:
 
 
 def test_stat_p_exact_star_note_hides_only_its_p_value() -> None:
-    # U127: metacheck drops every imprecise p-value of a sentence with a star note
+    # U127: metacheck 0.3 drops every imprecise p-value of a sentence with a star note;
+    # 0.4 leaves out as many rows of a starred p-value as there are starred copies, the
+    # last ones (a footnote comes after the results): the "p < .05" of the footnote stays
+    # and the copy in the running text goes, "** p < .01" goes, "p = .03" is exact
     paper = pc.test_paper(["Note. * p < .05, ** p < .01. The effect was p < .05 and p = .03."])
     out = module_run(paper, "stat_p_exact")
-    assert out.table["imprecise"].tolist() == [False, False, True, False]
+    assert out.table["imprecise"].tolist() == [True, False, False, False]
     assert out.summary_text == "We found 1 imprecise *p* value out of 4 detected *p* values."
 
 
 def test_stat_p_exact_same_p_value_twice_listed_once() -> None:
-    # U127: the match text keeps trailing whitespace, so metacheck lists "p < .05 "
-    # and "p < .05" of one sentence as two rows
+    # U127: the match text kept trailing whitespace, so metacheck 0.3 listed "p < .05 "
+    # and "p < .05" of one sentence as two rows (0.4 trims it)
     out = module_run(pc.test_paper(["It was p < .05 and later p < .05"]), "stat_p_exact")
     assert out.summary_text == "We found 1 imprecise *p* value out of 2 detected *p* values."
 
@@ -366,14 +369,14 @@ def test_stat_p_exact_comparator_quirks() -> None:
     ]
     out = module_run(pc.test_paper(texts), "stat_p_exact")
     t = out.table
-    assert t["p_comp"].tolist() == ["==", "~", "<", "=", "=", "<", "<", "<", "<"]
+    # "==" is "=" (U127)
+    assert t["p_comp"].tolist() == ["=", "~", "<", "=", "=", "<", "<", "<", "<"]
     # U127: "p == .000" and "p < 0.0" are reported as zero ("==" is exact), and
-    # "p = 1.0e-400", which only underflows to 0, is not (metacheck: imprecise,
-    # neither, zero)
+    # "p = 1.0e-400", which underflows to 0, is zero too (p_value == 0 in metacheck 0.4)
     assert t["imprecise"].tolist() == [False, True, False, False, False, False, True, True, False]
-    assert t["zero"].tolist() == [True, False, True, False, True, False, False, False, False]
+    assert t["zero"].tolist() == [True, False, True, True, True, False, False, False, True]
     assert out.summary_text == (
-        "We found 3 imprecise *p* values and 3 *p* values reported as exactly zero "
+        "We found 3 imprecise *p* values and 5 *p* values reported as exactly zero "
         "out of 9 detected *p* values."
     )
 

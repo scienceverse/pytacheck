@@ -830,6 +830,12 @@ def _classify_f_coherence(
 
     eta_implied = _fdiv(df1 * abs(f_value), df1 * abs(f_value) + df2)
     out["eta_implied_partial"] = _chr(eta_implied)
+    # F(0, 0) gives 0/0: the NaN stopped the module later (U126)
+    if not math.isfinite(eta_implied):
+        out["eta_coherence"] = "indeterminate"
+        out["eta_coherence_assumption"] = "none"
+        out["eta_coherence_note"] = "The F-test's degrees of freedom do not give an eta-squared."
+        return out
 
     omega_implied = _fdiv(df1 * (abs(f_value) - 1), df1 * abs(f_value) + df2 + 1)
     out["omega_implied_partial"] = _chr(omega_implied)
@@ -879,23 +885,15 @@ def _classify_f_coherence(
         return out
 
     labels = {e.label for e in eta_stats}
-    # metacheck sets this note and then always overwrites it (U125): it is
-    # added to the note of the partial eta-squared check below
+    # kept in front of the partial-eta result below, which overwrote it (U125)
     both_note = (
-        " Both eta-squared and partial eta-squared reported; "
+        "Both eta-squared and partial eta-squared reported; "
         "coherence evaluated only for partial eta-squared."
         if "partial_eta_squared" in labels and "eta_squared" in labels
-        else ""
+        else None
     )
-
-    # F(0, 0): the implied effect size is 0/0 (metacheck stops on `if (NA)`, U126)
-    if math.isnan(eta_implied):
-        out["eta_coherence"] = "indeterminate"
-        out["eta_coherence_assumption"] = "none"
-        out["eta_coherence_note"] = (
-            "The implied effect size is undefined for these degrees of freedom."
-        )
-        return out
+    if both_note is not None:
+        out["eta_coherence_note"] = both_note
 
     no_match_note = (
         f"Tolerance = {_chr(tol)}. A no-match can occur when fewer than 2 decimal places "
@@ -908,17 +906,15 @@ def _classify_f_coherence(
         if _cond(_any(fits)):
             out["eta_coherence"] = "match_under_assumptions"
             out["eta_coherence_assumption"] = "partial_eta_squared"
-            out["eta_coherence_note"] = (
-                "Match under partial eta-squared formula from F and dfs." + both_note
-            )
+            out["eta_coherence_note"] = "Match under partial eta-squared formula from F and dfs."
         else:
             out["eta_coherence"] = "no_match"
             out["eta_coherence_assumption"] = "partial_eta_squared"
             out["eta_coherence_note"] = (
-                "No match under partial eta-squared formula from F and dfs. "
-                + no_match_note
-                + both_note
+                "No match under partial eta-squared formula from F and dfs. " + no_match_note
             )
+        if both_note is not None:
+            out["eta_coherence_note"] = f"{both_note} {out['eta_coherence_note']}"
 
     # Check partial omega squared coherence
     # When omega_implied < 0, reporting convention is to report 0; match if reported value is 0.

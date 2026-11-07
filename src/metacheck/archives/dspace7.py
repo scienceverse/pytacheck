@@ -248,7 +248,7 @@ def _dspace7_skip_doi_prefixes() -> list[str]:
 
     Each belongs to a host that another detector already handles (OSF,
     Zenodo, Dryad, Figshare and its institutional instances,
-    4TU.ResearchData, Mendeley Data, DataONE, UK Data Service ReShare,
+    4TU.ResearchData, Mendeley Data, LDbase, DataONE, UK Data Service ReShare,
     PsychArchives, Dataverse), so a DOI under it cannot lead to a DSpace 7
     item. Read from those detectors' own tables, so a prefix added there is
     skipped here too. 10.23673 is listed for datadoi.ee (the University of
@@ -269,6 +269,7 @@ def _dspace7_skip_doi_prefixes() -> list[str]:
         *FIGSHARE_DOI_PREFIX_HOSTS,
         "10.4121",  # 4TU.ResearchData
         "10.17632",  # Mendeley Data
+        "10.33009",  # LDbase
         *(str(h["doi_prefix"]) for h in DATAONE_HOSTS if h["doi_prefix"]),
         "10.5255",  # UK Data Service ReShare
         "10.23668",  # PsychArchives

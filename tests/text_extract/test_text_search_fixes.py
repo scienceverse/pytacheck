@@ -23,19 +23,12 @@ def test_section_return_keeps_the_header(demo) -> None:
 
 
 def test_empty_paper_list_gives_a_typed_text_table() -> None:
-    # U79: R adds the missing columns as logical NA and drops `text`, so
-    # searches of the result (and modules) fail
+    # U79 (fixed in metacheck 0.4): an empty list is searched as an empty paper, so the
+    # table has the typed columns of one and `text` is kept; it used to lose them
     empty = pc.text_search(PaperList([]), "x")
     assert len(empty) == 0
-    assert list(empty.columns) == [
-        "text",
-        "text_id",
-        "section_id",
-        "paragraph_id",
-        "paper_id",
-        "header",
-        "section_type",
-    ]
+    assert list(empty.columns) == list(pc.text_search(pc.paper(), "x").columns)
+    assert list(empty.columns)[:3] == ["text", "text_id", "paragraph_id"]
     assert str(empty["text"].dtype) == "string"
     assert str(empty["text_id"].dtype) == "Int64"
     again = pc.text_search(empty, "y", return_="section")

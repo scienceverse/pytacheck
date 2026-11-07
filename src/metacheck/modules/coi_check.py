@@ -28,6 +28,7 @@ from metacheck._r.base import paste, trimws
 from metacheck._r.regex import grepl, gsub, regexec, regextract_all, strsplit
 from metacheck._values import is_missing
 from metacheck.module import module
+from metacheck.modules._empty import empty_input_result, paper_is_empty
 from metacheck.modules._statements import with_bibr_statements
 from metacheck.report import scroll_table
 from metacheck.text import text_search
@@ -451,6 +452,8 @@ def coi_results(table: pd.DataFrame) -> dict[str, Any]:
 )
 def coi_check(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/coi_check.R::coi_check()``."""
+    if paper_is_empty(paper):
+        return empty_input_result(paper)
     sentences = text_search(paper)
     paper_ids = sentences["paper_id"].astype("string")
     texts = sentences["text"].tolist()

@@ -1,11 +1,6 @@
 {
-"apply_reasoning.partial_think": {"r": "880843f1621e3228", "py": "28a257434a4d6f40", "diff": ["params_list.think"]},
-"llm.input.logical": {"r": "ac5146cf65ca52a8", "py": "bc5199e7352dad12", "diff": ["<R error, Python value>"]},
-"llm.input.mixed_order_1": {"r": "ac5146cf65ca52a8", "py": "7bfb1be0bd9efea1", "diff": ["<R error, Python value>"]},
-"llm.input.mixed_order_2": {"r": "ac5146cf65ca52a8", "py": "3289c9cbea5eb20f", "diff": ["<R error, Python value>"]},
-"llm.input.mixed_order_3": {"r": "ac5146cf65ca52a8", "py": "7cd9920a52591bce", "diff": ["<R error, Python value>"]},
-"llm.input.na_only": {"r": "bf22b492428bda8e", "py": "966d019877e6b98e", "diff": ["answer[]"]},
-"llm.input.sanitised_duplicates": {"r": "9513d86bb433d763", "py": "4e07774612c1e45b", "diff": ["<root>"]},
+"apply_reasoning.partial_think": {"r": "121971c4a61c3801", "py": "847f15ff8ee6183c", "diff": ["params_list.think"]},
+"llm.input.na_only": {"r": "ac5146cf65ca52a8", "py": "966d019877e6b98e", "diff": ["<R error, Python value>"]},
 "llm.input.text_col_answer": {"r": "067de7c5301a098b", "py": "b60e5f2707c90921", "diff": ["<root>"]},
 "structured.probe_truncated": {"r": "a5c3c9bdd66d166d", "py": "64d7f088b59014bc", "diff": ["error_msg[]"]}
 }

@@ -7,51 +7,6 @@
 # case that also differs for another reason stays in its lane's file.
 
 # U83: typos -------------------------------------------------------------------
-"bibr12/module.open_practices.PMC4383902": &u83_recognized
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the no-code report says 'not recognized' (metacheck: 'not reconized')"
-  r_text: [["reconized", "recognized"]]
-  # the summary table also has D83's no_data column
-  xfail: true
-"grobid12/module.open_practices.0956797615569889": *u83_recognized
-"bibr12/module.ref_accuracy.preprint": &u83_such_an_incoherence
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')"
-  r_text: [["Such an incoherent", "Such an incoherence"], [" ar an AI generated", " or an AI generated"]]
-"bibr12/module.ref_accuracy.list": *u83_such_an_incoherence
-"bibr12/module.ref_accuracy.mixed": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.year.character": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.year.character_ws": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.authors.character_column": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.min_mismatches_0": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.max_authors_negative": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.max_authors_0": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.max_authors_fractional": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.max_authors_fractional_small": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.max_authors_inf": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.title_similarity_1": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.year_tolerance_negative": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.doi.url": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.doi.record_missing": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.report.line_breaks": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.authors.metacharacters": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.journal.whitespace": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.title.empty_after_normalising": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.authors.cited_missing": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.paperlist.unsorted": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.bib_match.extra_rows": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.bib_match.double_key": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_accuracy.single_reference": *u83_such_an_incoherence
-"mod_ref_accuracy_review/ref_consistency.text_missing": &u83_likely
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the caveat says 'likely' (metacheck: 'likley')"
-  r_text: [["likley", "likely"]]
-"mod_ref_accuracy_review/ref_consistency.paperlist.unsorted": *u83_likely
-"mod_ref_accuracy_review/ref_consistency.paperlist.no_bib_match": *u83_likely
-"mod_ref_accuracy_review/ref_consistency.problems_203020": *u83_likely
 "mod_ref_accuracy_review/ref_accuracy.module_help":
   kind: r_bug_fixed
   ref: U83
@@ -70,20 +25,6 @@
   reason: "\"Of these, **1 was flagged\" (metacheck: \"were\")"
   r_text: [["Of these, **1 were flagged", "Of these, **1 was flagged"]]
 "mod_data_check/data_check.psychsci": *u82_of_these_was
-"mod_ref_pubpeer_summary/ref_pubpeer.no_comments": &u82_we_checked_reference
-  kind: r_bug_fixed
-  ref: U82
-  reason: "\"We checked 1 reference with DOIs.\" (metacheck: \"1 references\")"
-  r_text: [["We checked 1 references with DOIs.", "We checked 1 reference with DOIs."]]
-"mod_ref_pubpeer_summary/ref_pubpeer.invalid_doi": *u82_we_checked_reference
 
 # U125: the missing-effect-size summary ends with a full stop ------------------
-"bibr12/module.stat_effect_size.preprint": &u125_consider_adding_effect
-  kind: r_bug_fixed
-  ref: U125
-  reason: "the missing-effect-size summary ends with a full stop (metacheck leaves it out)"
-  r_text: [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]
-"bibr12/module.stat_effect_size.full": *u125_consider_adding_effect
-"bibr12/module.stat_effect_size.mixed": *u125_consider_adding_effect
-"grobid12/module.stat_effect_size.debruine": *u125_consider_adding_effect
 

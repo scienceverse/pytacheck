@@ -519,7 +519,7 @@ def test_pytacheck_fixtures() -> None:
     assert len(p.affiliation_match) == 0  # a table the file leaves out
     assert list(p.affiliation_match.columns) == list(bibr12.BIBR12_COLS["affiliation_match"])
     out = pc.module_run(p, "marginal")
-    assert out.traffic_light in ("green", "red")
+    assert out.traffic_light in ("green", "red", "na")
 
 
 def test_older_papers_read_as_before() -> None:

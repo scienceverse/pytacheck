@@ -52,14 +52,14 @@ _ISSPACE = " \t\n\v\f\r"
 _STOPWORDS = frozenset(["of", "and", "the", "for", "in", "on", "a", "an", "de", ""])
 
 _NO_REFS = "We found no references"
-_NO_MATCH = "We found no bib_match entries. You may need to add them with `add_bib_match()`."
+_NO_MATCH = "The references were not looked up at Crossref, so their accuracy was not checked."
 
-# metacheck's typos ("Such an incoherent", "ar an AI") are fixed (U83)
+# the guidance is metacheck's (0.4.3.7 fixed the typos of U83)
 _GUIDANCE = (
     "The references below supplied a DOI, but one or more of the cited details (title, "
     "authors, journal, or year) does not match the record that DOI points to. Such an "
     "incoherence is most often an error in reading the reference from the PDF, but it could be "
-    "a mistake, or an AI generated reference. Check each against the original source. "
+    "a mistake, or an AI-generated reference. Check each against the original source. "
     "Incoherent references are mostly PDF parsing errors (we are working on improving "
     "reference parsing)."
 )
@@ -485,9 +485,9 @@ def ref_accuracy(
     if len(bib) == 0:
         return {"traffic_light": "na", "summary_text": _NO_REFS}
     if len(bib_match) == 0:
-        # the check could not run: metacheck returns "error", which is not a
-        # traffic light (U30)
-        return {"traffic_light": "fail", "summary_text": _NO_MATCH}
+        # no Crossref lookup (convert() without crossref, no add_bib_match()): the references
+        # were not checked, which is not a fault of the paper
+        return {"traffic_light": "na", "summary_text": _NO_MATCH}
 
     # one record per reference: metacheck's three left joins give k * k * k rows
     # for a reference with k bib_match rows (ref_table() repeats it too, U114)
