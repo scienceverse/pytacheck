@@ -563,6 +563,40 @@ def _make_names(x: str | None) -> str:
     return s + "." if s in reserved else s
 
 
+#: What the container's R session sets up before the script runs (``env_setup`` of
+#: ``.repro_docker_run()``, R/reproducibility_check_docker.R): home folders in /tmp (the
+#: container is read-only elsewhere), pandoc from Quarto, no error for a missing figure, a
+#: plot device that takes any font name, and stand-ins for what only a person's computer
+#: has, in an attached environment of their own (a script starting with rm(list = ls())
+#: clears the workspace).
+_ENV_SETUP_R = [
+    '  Sys.setenv(XDG_CACHE_HOME = "/tmp/.cache", XDG_CONFIG_HOME = "/tmp/.config",',
+    '             XDG_DATA_HOME = "/tmp/.local/share", R_USER_CACHE_DIR = "/tmp/.cache",',
+    '             R_USER_CONFIG_DIR = "/tmp/.config", R_USER_DATA_DIR = "/tmp/.local/share")',
+    '  quarto <- Sys.which("quarto")',
+    '  if (nzchar(quarto) && !nzchar(Sys.getenv("RSTUDIO_PANDOC"))) {',
+    '    tools <- file.path(dirname(normalizePath(quarto)), "tools")',
+    '    pandoc <- c(file.path(tools, "pandoc"), Sys.glob(file.path(tools, "*", "pandoc")))',
+    "    pandoc <- pandoc[file.exists(pandoc)]",
+    "    if (length(pandoc)) Sys.setenv(RSTUDIO_PANDOC = dirname(pandoc[1]))",
+    "  }",
+    "  options(knitr.graphics.error = FALSE)",
+    # Plots without a screen go to R's pdf device, which stops on a font it does not know
+    # (theme_ipsum() asks for "Arial Narrow"); Cairo's device takes any font name.
+    '  if (isTRUE(capabilities("cairo"))) options(device = function(...) '
+    'grDevices::cairo_pdf("Rplots.pdf", onefile = TRUE))',
+    "  stand_ins <- new.env()",
+    '  assign("View", function(...) invisible(NULL), envir = stand_ins)',
+    '  assign("windowsFonts", function(...) invisible(NULL), envir = stand_ins)',
+    '  assign("windowsFont", function(...) "sans", envir = stand_ins)',
+    '  for (ask in c("file.choose", "choose.files", "choose.dir", "tk_choose.files", '
+    '"tk_choose.dir"))',
+    '    assign(ask, function(...) stop("file choice cancelled", call. = FALSE), '
+    "envir = stand_ins)",
+    '  attach(stand_ins, name = "metacheck:stand_ins", warn.conflicts = FALSE)',
+]
+
+
 def _wrapper_lines(
     preamble: list[str], container_script: str, lib: bool, cap_file_container: str
 ) -> list[str]:
@@ -570,18 +604,33 @@ def _wrapper_lines(
     lines = [
         *preamble,
         ".repro_docker_run <- function() {",
-        *(['  .libPaths(c("/rlib", .libPaths()))'] if lib else []),
+        *_ENV_SETUP_R,
+        *(
+            [
+                '  .libPaths(c("/rlib", .libPaths()))',
+                '  Sys.setenv(R_LIBS = paste(.libPaths(), collapse = ":"))',
+            ]
+            if lib
+            else []
+        ),
         "  captures <- list()",
         f'  on.exit(try(.mc_write_json(captures, "{cap_file_container}"), silent = TRUE), '
         "add = TRUE)",
         f'  exprs <- parse("{container_script}", keep.source = TRUE)',
         '  srcrefs <- attr(exprs, "srcref")',
         "  env <- globalenv()",
+        # the echo goes past a sink() the script opened: a model written with
+        # sink("m.jags"); cat("model {...}"); sink() got the "> cat(..." lines
+        "  echo_con <- NULL",
         "  for (i in seq_along(exprs)) {",
         "    e <- exprs[[i]]",
         "    sr <- if (!is.null(srcrefs) && length(srcrefs) >= i) srcrefs[[i]] else NULL",
         "    txt <- if (!is.null(sr)) as.character(sr) else deparse(e)",
-        '    cat(paste0("> ", txt, collapse = "\\n"), "\\n", sep = "")',
+        '    echo <- paste0(paste0("> ", txt, collapse = "\\n"), "\\n")',
+        "    if (sink.number() > 0) {",
+        '      if (is.null(echo_con)) echo_con <- suppressWarnings(file("/dev/stdout", "w", raw = TRUE))',
+        "      cat(echo, file = echo_con); flush(echo_con)",
+        "    } else cat(echo)",
         "    res <- withVisible(eval(e, envir = env))",
         "    if (res$visible) print(res$value)",
         '    call_txt <- paste(txt, collapse = " ")',
