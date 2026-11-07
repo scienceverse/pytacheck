@@ -712,7 +712,7 @@ def _title_with_next(art: _Article, a: list[int]) -> list[int]:
 
     metacheck's ``.title_lines_with_next()`` leaves out a follow-up line past
     the end of the article. A title followed by a missing (``NA``) line stops
-    the module ("missing value where TRUE/FALSE needed", U299); here that title
+    the module ("missing value where TRUE/FALSE needed", U252); here that title
     has no follow-up line.
     """
     n = len(art)

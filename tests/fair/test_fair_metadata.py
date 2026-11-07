@@ -60,7 +60,7 @@ def test_fair_repo_writes_the_metadata_files(proj: Path, fair_run: FairRun) -> N
     )
     logs = sorted(p.name for p in (out / "logs").iterdir())
     assert len([n for n in logs if n.endswith("files.json")]) == 1
-    # R writes the checks' results as <paper>.rds; the Python port writes <paper>.json (D172)
+    # R writes the checks' results as <paper>.rds; the Python port writes <paper>.json (D138)
     assert [n for n in logs if n.endswith(".json") and not n.endswith("files.json")] == [
         "proj.json"
     ]

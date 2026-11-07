@@ -184,6 +184,7 @@ from metacheck.db.retractionwatch import retractionwatch as retractionwatch
 from metacheck.db.retractionwatch import rw as rw
 from metacheck.db.retractionwatch import rw_date as rw_date
 from metacheck.db.retractionwatch import rw_update as rw_update
+from metacheck.fair.repo import FAIR_repo as FAIR_repo
 from metacheck.fileinfo.category import file_category as file_category
 from metacheck.fileinfo.category import filetype as filetype
 from metacheck.fileinfo.naming import check_file_naming as check_file_naming

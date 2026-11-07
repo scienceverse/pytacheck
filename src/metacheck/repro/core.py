@@ -2449,7 +2449,7 @@ def repro_materialize_layout(
     LFS pointer is swapped for the real copy elsewhere in the deposit, and a file that
     cannot be copied still gets its folder, since a script can write into a folder that
     holds only a placeholder (#575). The copies and folders are opened for the code to
-    change, for the host user only (D154). Returns *root* with the copy log in ``attrs["materialised"]`` and the swaps
+    change, for the host user only (D135). Returns *root* with the copy log in ``attrs["materialised"]`` and the swaps
     in ``attrs["lfs"]``.
     """
     root_s = os.fspath(root)
@@ -2513,7 +2513,7 @@ def repro_materialize_layout(
             _dir_create(os.path.dirname(dest))
             rows.append((tgt, src, _copy_file(src, dest)))
     # and its folders, so a script can save a new file next to the data (for the host
-    # user only: metacheck opens them to everyone, D154)
+    # user only: metacheck opens them to everyone, D135)
     for d, _subdirs, _files in os.walk(root_s):
         with contextlib.suppress(OSError):
             os.chmod(d, os.stat(d).st_mode | 0o700)

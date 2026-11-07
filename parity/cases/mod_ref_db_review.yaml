@@ -296,7 +296,7 @@
           "r": "data.frame(doi = 1, reftext = \"r\", warning = \"w\")"
           "py": "pd.DataFrame({\"doi\": [1.0], \"reftext\": [\"r\"], \"warning\": [\"w\"]})"
   - "id": "ref_miscitation.factor_db"
-    "known_divergence": {"kind": "r_bug_fixed", "ref": "U300", "reason": "A database whose doi column is a factor is read as text (R's new nzchar(db$doi) stops with \"'nzchar()' requires a character vector\")."}
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U253", "reason": "A database whose doi column is a factor is read as text (R's new nzchar(db$doi) stops with \"'nzchar()' requires a character vector\")."}
     "module": "ref_miscitation"
     "args":
       "paper":

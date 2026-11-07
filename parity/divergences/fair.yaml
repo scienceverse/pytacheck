@@ -2,7 +2,7 @@
 # parity/cases.py): "<area>/<id>": {kind, ref, reason[, r_text]}, the refs are D- and U-entries
 # of docs/UPSTREAM_ISSUES.md.
 #
-# D172 (the results of the checks are saved as logs/<folder>.json, metacheck writes an R data
+# D138 (the results of the checks are saved as logs/<folder>.json, metacheck writes an R data
 # file logs/<folder>.rds) is NOT marked here. The file name occurs in four places of a run's
 # output: the list of files, the RO-Crate (the @id, the name, the hasPart reference and the
 # encodingFormat of the entity), the README's folder tree and logs/ itself. A mark's r_text
@@ -19,10 +19,10 @@
 # No other difference is known yet. Once R's goldens exist, a case that differs for a reason of
 # metacheck (a bug fixed, a better rule) is marked here, one entry per case.
 
-# U293: .FAIR_repo_missing_columns()
+# U250: .FAIR_repo_missing_columns()
 "fair/run.latin1_column":
   kind: r_bug_fixed
-  ref: U293
+  ref: U250
   reason: a column of a Latin-1 CSV is described once in dataset_description.json (R lists it a second time, at the end, with only its name and source file, because it compares the header's bytes with the UTF-8 name data_check read)
 
 # U112: psychds_check target paths (the repository's own dataset_description.json stays at the root)

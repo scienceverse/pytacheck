@@ -2036,7 +2036,7 @@ def _FAIR_repo_write_logs(
     """The ``logs/`` folder (``.FAIR_repo_write_logs()``).
 
     The list of the original folder's files, and every check's results as a JSON file
-    (``capture_module_tables()``; R writes an R data file, readRDS(), see D172), without
+    (``capture_module_tables()``; R writes an R data file, readRDS(), see D138), without
     the places on this computer the files are in. Returns the written paths, each with a
     one-line description, in the order they were written.
     """
@@ -2058,7 +2058,7 @@ def _FAIR_repo_write_logs(
     except Exception:
         saved = None
     if saved and os.path.exists(saved):
-        # D172: pytacheck saves the results as a JSON file; metacheck's is an .rds file
+        # D138: pytacheck saves the results as a JSON file; metacheck's is an .rds file
         written[saved] = "The results of every metacheck check that was run, as a JSON file."
 
     # what each file holds, in a log of its own in the folder, so the copy keeps one

@@ -222,7 +222,7 @@ def read_bibr(file_path: str | PathLike[str], include_images: bool = False) -> P
     data = orjson.loads(Path(file_path).read_bytes())
     # a JSON file that is not a paper ("{}", the output of another tool) is no
     # paper: every bibr export has a paper_id at its root (#499). A number is an
-    # id too (metacheck refuses it as "no paper_id"; U281).
+    # id too (metacheck refuses it as "no paper_id"; U249).
     pid = data.get("paper_id") if isinstance(data, Mapping) else None
     numeric = isinstance(pid, int | float) and not isinstance(pid, bool)
     if not numeric and (not isinstance(pid, str) or pid == ""):

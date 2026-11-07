@@ -4,7 +4,7 @@
 # docs/UPSTREAM_ISSUES.md entry.
 "llm_review/llm.input.na_only":
   kind: r_bug_fixed
-  ref: U298
+  ref: U251
   reason: "when every text is NA there is nothing to ask and every answer is missing (R stops with \"object 'structured' not found\", because its early return for this case uses `structured` before it is defined)"
 "llm_review/llm.input.text_col_answer":
   kind: r_bug_fixed

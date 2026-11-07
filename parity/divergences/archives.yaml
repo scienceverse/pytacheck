@@ -28,15 +28,15 @@
   kind: deliberate
   ref: D65
   reason: "a bzip2 member of a remote zip is fetched (metacheck reads stored and deflated members only: 'unsupported compression method (12)')"
-# U249 (R's unzip/untar are stopped by the first member with an odd name)
+# U245 (R's unzip/untar are stopped by the first member with an odd name)
 "repo_download_review/expand.paths.zip": &u249_rest
   kind: r_bug_fixed
-  ref: U249
+  ref: U245
   reason: "the members after a name with a ../ component are extracted too (metacheck stops unpacking at that name, on its warning, and returns only the members before it)"
 "repo_download_review/expand.climb.zip": *u249_rest
 "repo_download_review/expand.hostile.tar.gz":
   kind: r_bug_fixed
-  ref: U249
+  ref: U245
   reason: "a tar member whose name holds a backslash is extracted (metacheck's untar leaves sub\\win.csv out)"
 # D66 (local archives are extracted by zipfile)
 "repo_download_review/expand.lzma.zip":

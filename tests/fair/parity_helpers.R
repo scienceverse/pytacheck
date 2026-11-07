@@ -9,7 +9,7 @@
 # * today's date -> "<date>" (CHANGES.md, the README, metacheck:generated, dateCreated);
 # * any temporary folder -> "<tmp>";
 # * the file the checks' results are saved in: metacheck writes an R data file
-#   (logs/<folder>.rds), pytacheck a JSON file (logs/<folder>.json, D172). Both are written
+#   (logs/<folder>.rds), pytacheck a JSON file (logs/<folder>.json, D138). Both are written
 #   "<folder>.<results>" wherever the name occurs (the file list, the RO-Crate, the README's
 #   tree), and the RO-Crate's encodingFormat of that one file is "<results>".
 # Nothing else is changed.

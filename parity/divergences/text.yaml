@@ -28,7 +28,7 @@
 # funding_check -------------------------------------------------------------------
 "mod_funding_review/rtransparent_funding.boundaries": &u299_na_next
   kind: r_bug_fixed
-  ref: U299
+  ref: U252
   reason: "a title line followed by a missing (NA) line has no follow-up line (R's .title_lines_with_next() stops with \"missing value where TRUE/FALSE needed\", because nchar(NA) is NA in its if())"
 "mod_funding_review/locate.boundary.funding_title_na_next": *u299_na_next
 "mod_funding_review/negate_absence_1.match_limit":

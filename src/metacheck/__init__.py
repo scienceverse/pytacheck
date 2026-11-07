@@ -363,6 +363,7 @@ _EXPORTS: dict[str, str] = {
     "scroll_table": "metacheck.report.blocks",
     # utilities
     "plural": "metacheck._r.base",
+    "FAIR_repo": "metacheck.fair.repo",
     "message": "metacheck.utils",
     "online": "metacheck.utils",
     "path_sanitize": "metacheck.utils",
@@ -710,6 +711,7 @@ if TYPE_CHECKING:  # pragma: no cover
     )
     from metacheck.db.replications import FLoRA, FLoRA_date, FLoRA_update
     from metacheck.db.retractionwatch import retractionwatch, rw, rw_date, rw_update
+    from metacheck.fair.repo import FAIR_repo
     from metacheck.fileinfo.category import file_category, filetype
     from metacheck.fileinfo.naming import check_file_naming
     from metacheck.io.bibr_convert import convert_bibr, format_bib_authors

@@ -175,7 +175,7 @@
 "bibr12/module.all_urls.mixed": *u206_email
 "bibr12_review/read.edge_numeric_id": &u281
   kind: r_bug_fixed
-  ref: U281
+  ref: U249
   reason: "a number is a paper_id: the file is read (metacheck refuses it as 'not bibr output (it has no paper_id)', warns, and reads nothing)"
 "bibr12_review/paper_validate.warnings.edge_numeric_id": *u281
 "bibr12_review/paper_validate.edge_numeric_id": *u281

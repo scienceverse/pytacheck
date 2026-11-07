@@ -455,7 +455,7 @@ def reproducibility_check(
     runs in its own locked-down Docker container: in the run phase no network
     (unless ``internet=True``, and then within the download limits), a read-only
     root filesystem, only the throwaway sandbox directory (and the package library,
-    read-only: D155) mounted, a non-root user, all capabilities dropped and a
+    read-only: D136) mounted, a non-root user, all capabilities dropped and a
     process limit. Without a running Docker the call raises ``RuntimeError``
     and nothing runs; it never falls back to the host. What the container does not
     isolate: the optional install phase (``install_missing=True``), which has

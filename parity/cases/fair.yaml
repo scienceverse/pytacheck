@@ -4,7 +4,7 @@
 # tests/fair/make_fixtures.py) or of the demo repository, with the language model off, and
 # compares a summary of the folder it wrote. R helper: tests/fair/parity_helpers.R; Python
 # twin: tests/fair/parity_helpers.py. The file the results are saved in (R .rds, pytacheck
-# .json, D172) is masked in the helpers, so no mark is needed for it.
+# .json, D138) is masked in the helpers, so no mark is needed for it.
 "area": "fair"
 "cases":
 - "id": "run.basic"
