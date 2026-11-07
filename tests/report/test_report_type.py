@@ -24,10 +24,21 @@ from metacheck.report.blocks import (
     report_type,
     scroll_table,
 )
-from metacheck.report.brief import FEEDBACK, flagged_bullets, validation_table
+from metacheck.report.brief import (
+    FEEDBACK,
+    _report_extract_tables,
+    _report_file_finding_bullets,
+    _report_file_findings_by_file,
+    _report_find_callout,
+    _report_group_table,
+    _report_merge_tables,
+    flagged_bullets,
+    validation_table,
+)
 from metacheck.report.render import STATIC_MAX_ROWS, static_markdown, table_chunk
 from metacheck.report.report import (
     _fill,
+    _report_move,
     module_report,
     render_module_outputs,
     report,
@@ -305,3 +316,118 @@ def test_fill_leaves_a_percent_s_in_a_value_alone() -> None:
     assert _fill("a %s b %s c 100%", ["x %s", "y"]) == "a x %s b y c 100%"
     with pytest.raises(ValueError):
         _fill("%s", ["x", "y"])
+
+
+def test_report_extract_tables_keeps_the_non_empty_tables_in_order() -> None:
+    a = pd.DataFrame({"x": [1]})
+    b = pd.DataFrame({"y": [2, 3]})
+    empty = pd.DataFrame({"z": []})
+    got = _report_extract_tables(["prose", scroll_table(a), [scroll_table(empty), scroll_table(b)]])
+    assert [list(t.columns) for t in got] == [["x"], ["y"]]
+    assert _report_extract_tables(None) == []
+
+
+def test_report_merge_tables_stacks_the_same_columns_and_joins_on_one_shared_column() -> None:
+    one = pd.DataFrame({"File": ["a.R"], "Status": ["x"]})
+    two = pd.DataFrame({"File": ["b.R"], "Status": ["y"]})
+    stacked = _report_merge_tables([one, two])
+    assert len(stacked) == 1 and stacked[0]["File"].tolist() == ["a.R", "b.R"]
+    # power_id is a number in one table and text in the other: joined on its value
+    info = pd.DataFrame({"power_id": [1, 2], "power_type": ["unknown", "apriori"]})
+    text = pd.DataFrame({"power_id": ["1", "2"], "text": ["First.", "Second."]})
+    joined = _report_merge_tables([info, text])
+    assert len(joined) == 1
+    assert list(joined[0].columns) == ["power_id", "power_type", "text"]
+    assert joined[0]["text"].tolist() == ["First.", "Second."]
+    # no or several shared columns: left apart
+    other = pd.DataFrame({"a": [1], "b": [2]})
+    assert len(_report_merge_tables([other, pd.DataFrame({"a": [1], "b": [2], "c": [3]})])) == 2
+    assert len(_report_merge_tables([info, other])) == 2
+    assert _report_merge_tables([info]) == [info]
+
+
+def test_report_group_table_gives_a_bullet_per_row_when_nothing_repeats() -> None:
+    tbl = pd.DataFrame({"File name": ["a.R", "b.R"], "Missing": ["x.csv", "y.csv"]})
+    assert _report_group_table(tbl) == [
+        "- **File name:** a.R -- **Missing:** x.csv",
+        "- **File name:** b.R -- **Missing:** y.csv",
+    ]
+    assert _report_group_table(tbl.iloc[0:0]) == []
+
+
+def test_report_find_callout_returns_the_body_as_html() -> None:
+    callout = (
+        '::: {.callout-note title="Output - a.R (ok)" collapse="true"}\n\n'
+        "**stdout**\n\n````\nx < y & z\n````\n\n:::\n"
+    )
+    found = _report_find_callout(["Some text.", callout], "Output - ")
+    assert found is not None
+    title, body = found
+    assert title == "Output - a.R (ok)"
+    assert body == "<strong>stdout</strong>\n\n<pre>x &lt; y &amp; z</pre>"
+    assert _report_find_callout(["Some text."], "Output - ") is None
+    assert _report_find_callout(["Output - without a callout"], "Output - ") is None
+
+
+def test_report_file_findings_by_file_splits_and_dedupes() -> None:
+    tbl = pd.DataFrame(
+        {
+            "File name": ["a.R", "a.R", "b.R"],
+            "Missing Files": ["x.csv, x.csv, y.csv", "y.csv | z.csv", "w.csv"],
+        }
+    )
+    assert _report_file_findings_by_file(tbl, "File name", "Missing Files") == {
+        "a.R": ["x.csv", "y.csv", "z.csv"],
+        "b.R": ["w.csv"],
+    }
+    assert _report_file_finding_bullets(tbl, "File name", "Missing Files", "missing file") == [
+        "- missing file: x.csv, y.csv, z.csv in a.R",
+        "- missing file: w.csv in b.R",
+    ]
+    # free text keeps its comma and loses its line breaks
+    err = pd.DataFrame({"File name": ["a.R"], "Error": ["unexpected, token<br>1:  ^\n2: x"]})
+    assert _report_file_findings_by_file(err, "File name", "Error", split=False) == {
+        "a.R": ["unexpected, token 1: ^ 2: x"]
+    }
+
+
+def test_a_static_table_cell_that_starts_like_a_list_item_stays_text() -> None:
+    # metacheck escapes the marker (Pandoc reads the cells of its table as markdown); here the
+    # table is a raw HTML block that Pandoc passes on as it is, so the text stays as written
+    tbl = pd.DataFrame({"Section": ["1. General information", "- a dash", "2) two", "1.5 cm"]})
+    chunk = table_chunk(scroll_table(tbl), static=True)
+    assert chunk.lstrip().startswith("```{=html}\n")
+    for cell in ["1. General information", "- a dash", "2) two", "1.5 cm"]:
+        assert f"<td>{cell}</td>" in chunk
+
+
+def test_report_move_renames_and_copies_when_a_rename_cannot_cross_disks(tmp_path: Path) -> None:
+    src = tmp_path / "rendered.html"
+    dst = tmp_path / "out" / "report.html"
+    dst.parent.mkdir()
+    # a normal rename
+    src.write_text("<html>report</html>", encoding="utf-8")
+    _report_move(src, dst)
+    assert dst.read_text(encoding="utf-8") == "<html>report</html>"
+    assert not src.exists()
+
+    def cross_disk(from_: str, to: str) -> bool:
+        raise OSError(18, "Invalid cross-device link")
+
+    # the report is copied over the placeholder the caller wrote, and the temporary file removed
+    dst.write_text("test", encoding="utf-8")
+    src.write_text("<html>new report</html>", encoding="utf-8")
+    _report_move(src, dst, rename=cross_disk)
+    assert dst.read_text(encoding="utf-8") == "<html>new report</html>"
+    assert not src.exists()
+    # a rename that answers False (as R's file.rename does) is handled the same way
+    src.write_text("again", encoding="utf-8")
+    _report_move(src, dst, rename=lambda a, b: False)
+    assert dst.read_text(encoding="utf-8") == "again"
+    # nothing rendered: an error, not the placeholder
+    with pytest.raises(FileNotFoundError, match="rendered report was not found"):
+        _report_move(src, dst, rename=cross_disk)
+    # a copy that fails says where the report should have gone
+    src.write_text("x", encoding="utf-8")
+    with pytest.raises(OSError, match="could not be saved as"):
+        _report_move(src, tmp_path / "no-such-folder" / "report.html", rename=cross_disk)

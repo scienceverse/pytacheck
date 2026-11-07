@@ -1043,6 +1043,31 @@ def _write(text: str, path: str) -> None:
         fh.write(text + "\n")
 
 
+def _report_move(
+    src: str | os.PathLike[str],
+    dst: str | os.PathLike[str],
+    rename: Callable[[str, str], Any] = os.replace,
+) -> None:
+    """Port of ``.report_move()``: move the rendered report to *dst*, also to another disk.
+
+    A rename cannot cross file systems (a server whose output folders are on a
+    storage volume), so when it fails the file is copied and the original
+    removed. ``rename`` is replaceable in tests.
+    """
+    try:
+        if rename(str(src), str(dst)) is not False:
+            return
+    except OSError:
+        pass
+    if not os.path.exists(src):
+        raise FileNotFoundError(f"The rendered report was not found ({src}).")
+    try:
+        shutil.copyfile(src, dst)
+    except OSError as err:
+        raise OSError(f"The report could not be saved as {dst}.") from err
+    os.unlink(src)
+
+
 def _render_quarto(qmd_text: str, output_file: str) -> None:
     quarto = shutil.which("quarto")
     if quarto is None:
@@ -1058,7 +1083,7 @@ def _render_quarto(qmd_text: str, output_file: str) -> None:
         )
         if res.returncode != 0:
             raise RuntimeError((res.stderr or res.stdout or "quarto render failed").strip())
-        shutil.move(str(Path(tmp) / "report.html"), output_file)
+        _report_move(Path(tmp) / "report.html", output_file)
 
 
 def _report_temp_message(path: Any) -> None:
