@@ -78,10 +78,16 @@ def report_layout(requested: str, repository: bool) -> str:
 
 def scrub_paths(text: str, *folders: Path) -> str:
     """*text* without the places on this server that a check names: each folder in
-    *folders*, as given and with its links followed, becomes nothing."""
-    places = sorted({str(f) for f in folders} | {str(f.resolve()) for f in folders}, key=len)
-    for place in reversed(places):
-        text = text.replace(place + os.sep, "").replace(place, "")
+    *folders*, as given and with its links followed, becomes nothing, written with this
+    system's separator or with ``/`` (as R and the reports write paths on Windows too)."""
+    places: set[str] = set()
+    for folder in folders:
+        for where in (folder, folder.resolve()):
+            places |= {str(where), where.as_posix()}
+    for place in sorted(places, key=len, reverse=True):
+        for sep in dict.fromkeys(("/", os.sep)):
+            text = text.replace(place + sep, "")
+        text = text.replace(place, "")
     return text
 
 

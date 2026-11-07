@@ -1,10 +1,9 @@
 """Fixtures of the web interface tests: an app whose jobs are small fakes (helpers.py).
 
-A job runs in a process of its own (``JobRunner``). On Linux the tests start it with ``fork``,
-so a test's fakes and settings reach it. Elsewhere they start it as the site does, with
-``spawn``: macOS's ``fork`` is not safe once threads run, and Windows has none. The tests
-that need their fakes in the job's process (``test_worker``'s ``real``) are skipped there.
-``METACHECK_TEST_START`` chooses the start method.
+A job runs in a process of its own (``JobRunner``), started as the site starts it, with
+``spawn``. The tests that need their fakes and settings in the job's process fork it
+instead (the ``forked`` fixture), on Linux only: macOS's ``fork`` is not safe once threads
+run, and Windows has none. ``METACHECK_TEST_FORK=0`` skips those tests on Linux too.
 """
 
 from __future__ import annotations
@@ -27,13 +26,21 @@ from metacheck.web.config import SiteConfig
 from metacheck.web.jobs import JobManager
 from tests.web.helpers import Clock, fake_job
 
-#: how a job's process is started in these tests (see the top of this file)
-START = os.environ.get("METACHECK_TEST_START") or ("fork" if sys.platform == "linux" else "spawn")
+#: whether the tests that need it may fork a job's process (see the top of this file)
+FORK = os.environ.get("METACHECK_TEST_FORK", "1" if sys.platform == "linux" else "0") == "1"
 
 
 @pytest.fixture(autouse=True)
 def _start_method(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(hosted, "START_METHOD", START)
+    monkeypatch.setattr(hosted, "START_METHOD", "spawn")
+
+
+@pytest.fixture
+def forked(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A job's process is forked, so this test's fakes and settings reach it."""
+    if not FORK:
+        pytest.skip("the job's process sees this test's fakes only when it is forked (Linux)")
+    monkeypatch.setattr(hosted, "START_METHOD", "fork")
 
 
 @pytest.fixture

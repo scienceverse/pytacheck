@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -206,8 +207,9 @@ def test_ids_are_random_and_folders_private(manager_for: Callable[..., JobManage
     a, folder_a = manager.new_folder()
     b, _ = manager.new_folder()
     assert a != b and len(a) == 36
-    assert folder_a.stat().st_mode & 0o777 == 0o700
-    assert manager.root.stat().st_mode & 0o777 == 0o700
+    if os.name != "nt":  # Windows has no such permission bits
+        assert folder_a.stat().st_mode & 0o777 == 0o700
+        assert manager.root.stat().st_mode & 0o777 == 0o700
 
 
 def test_a_server_that_made_its_folder_removes_it(tmp_path: Path) -> None:

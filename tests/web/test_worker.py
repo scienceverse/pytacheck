@@ -17,7 +17,6 @@ from fastapi.testclient import TestClient
 import metacheck as pc
 from metacheck.app.run import UserError
 from metacheck.web import worker
-from tests.web.conftest import START
 from tests.web.helpers import PDF, form, send, wait_for, zip_bytes
 
 
@@ -27,11 +26,9 @@ def demo_json() -> bytes:
 
 
 @pytest.fixture
-def real(make_client: Callable[..., TestClient]) -> TestClient:
+def real(make_client: Callable[..., TestClient], forked: None) -> TestClient:
     """The site with its real jobs. The tests fake services and set options in this process,
     which reach the job's process only when it is forked (see conftest.py)."""
-    if START != "fork":
-        pytest.skip("the job's process sees this test's fakes only when it is forked")
     return make_client(fake=False)
 
 
@@ -54,6 +51,8 @@ def test_scrub_paths_removes_the_servers_places(tmp_path: Path) -> None:
     link.symlink_to(folder)
     text = f"see {folder}/repo/a.R and {link}/b.R and {folder}"
     assert worker.scrub_paths(text, folder, link) == "see repo/a.R and b.R and "
+    native = f"see {folder}{os.sep}repo{os.sep}a.R and {folder.as_posix()}/c.R"
+    assert worker.scrub_paths(native, folder) == f"see repo{os.sep}a.R and c.R"
 
 
 # -- converting a PDF ----------------------------------------------------------------------
