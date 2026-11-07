@@ -2529,7 +2529,8 @@
  ".is_readme_name": {
   "file": "R/file_category.R",
   "line": 137,
-  "python": "metacheck.fileinfo.category:_is_readme_name"
+  "ported": true,
+  "python": "metacheck.fileinfo.category:is_readme_name"
  },
  ".is_single_compress": {
   "file": "R/zip-peek.R",
@@ -2564,7 +2565,8 @@
  ".is_useless_file": {
   "file": "R/file-naming.R",
   "line": 113,
-  "python": "metacheck.fileinfo.naming:_is_useless_file"
+  "ported": true,
+  "python": "metacheck.archives._useless:is_useless_file"
  },
  ".is_zip": {
   "file": "R/zip-peek.R",
@@ -3687,7 +3689,8 @@
  ".plain_s4_columns": {
   "file": "R/data_check_helpers.R",
   "line": 2675,
-  "python": "metacheck.datacheck.columns:_plain_s4_columns"
+  "ported": true,
+  "python": "metacheck.datacheck._files_rdata:_plain_s4_columns"
  },
  ".plan_readme_folder": {
   "file": "R/psychds-file-plan.R",
@@ -6859,12 +6862,14 @@
  ".useless_file_kind": {
   "file": "R/file-naming.R",
   "line": 54,
-  "python": "metacheck.fileinfo.naming:_useless_file_kind"
+  "ported": true,
+  "python": "metacheck.archives._useless:useless_file_kind"
  },
  ".useless_file_severity": {
   "file": "R/file-naming.R",
   "line": 107,
-  "python": "metacheck.fileinfo.naming:_useless_file_severity"
+  "ported": true,
+  "python": "metacheck.archives._useless:useless_file_severity"
  },
  ".utf16_as_utf8": {
   "file": "R/data_check_helpers.R",
