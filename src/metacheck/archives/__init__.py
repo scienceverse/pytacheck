@@ -19,7 +19,10 @@ import contextlib
 import importlib
 import sys
 from collections.abc import Callable, Iterator
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 # public name -> defining module
 _EXPORTS: dict[str, str] = {
@@ -71,7 +74,7 @@ def _message(*parts: Any) -> None:
         print("".join("NA" if p is None else str(p) for p in parts), file=sys.stderr)
 
 
-def _paper_urls(paper: Any) -> Any:
+def _paper_urls(paper: Any) -> pd.DataFrame:
     """``paper_table(paper, "url")``, typed also for an empty paper list.
 
     metacheck 0.4.3.7 gives an empty paper list the same typed, empty tables as an empty
