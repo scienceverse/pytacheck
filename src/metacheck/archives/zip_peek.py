@@ -1631,6 +1631,18 @@ def _r_member_path(raw: bytes, windows: bool = os.name == "nt") -> bytes:
     return raw
 
 
+def _zip_disk_name(name: str, windows: bool = os.name == "nt") -> str:
+    """The name :func:`_unzip_all` writes member *name* under, below its folder: on
+    Windows with ``"/"`` for ``"\\"`` and without a leading drive (``C:/x.csv`` is
+    ``x.csv``), as :func:`_r_member_path` does; elsewhere *name* itself."""
+    if not windows:
+        return name
+    name = name.replace("\\", "/")
+    if len(name) >= 2 and name[1] == ":" and name[0].isalpha():
+        name = name[2:].lstrip("/")
+    return name
+
+
 def _unzip_all(zip_path: str, exdir: str, members: set[str] | None = None) -> None:
     """``utils::unzip(zip_path, exdir = exdir)``: extract a zip below *exdir*.
 
@@ -1882,9 +1894,9 @@ def _expand_zip(
     over = [k and s > max_bytes for k, s in zip(keep, sizes, strict=True)]
     for n, o in zip(names, over, strict=True):
         if o:
-            _unlink(dest, n)
+            _unlink(dest, _zip_disk_name(n))
     want = [n for n, k, o in zip(names, keep, over, strict=True) if k and not o]
-    missing = [n for n in want if not os.path.exists(f"{dest}/{n}")]
+    missing = [n for n in want if not os.path.exists(f"{dest}/{_zip_disk_name(n)}")]
     if missing:
         part = f"{dest}.part"
         shutil.rmtree(part, ignore_errors=True)
@@ -1896,7 +1908,7 @@ def _expand_zip(
             shutil.rmtree(part, ignore_errors=True)
             raise
         os.makedirs(dest, exist_ok=True)
-        _move_extracted(part, dest, missing)
+        _move_extracted(part, dest, [_zip_disk_name(n) for n in missing])
     label = os.path.basename(zip_path)
     rows = _archive_rows(dest, zip_row, label, skip_types) if want else empty
     return _with_oversize(

@@ -230,7 +230,7 @@ def test_install_script_reports_the_unavailable_warning(rscript: str, tmp_path: 
     deps = pd.DataFrame({"package": ["zzznotapackagezzz"], "source": ["cran"], "ref": [None]})
     lines = docker._install_script(deps)
     assert any("withCallingHandlers" in ln for ln in lines)
-    assert any('grep("is not available", warns' in ln for ln in lines)
+    assert any('grep("is not available|non-zero exit status", warns' in ln for ln in lines)
     repo = tmp_path / "repo" / "src" / "contrib"
     repo.mkdir(parents=True)
     (repo / "PACKAGES").write_text("")
@@ -1047,10 +1047,11 @@ def _py_install_fake(
         sandbox = _mount(args, "/sandbox")
         seen["driver"] = Path(sandbox, "install.sh").read_text()
         seen["mode"] = os.stat(Path(sandbox, "install.sh")).st_mode & 0o777
-        Path(sandbox, ".install_results").write_text(results)
+        # the container is Linux: its files end their lines with "\n", also on Windows
+        Path(sandbox, ".install_results").write_text(results, newline="\n")
         for i, text in errors.items():
-            Path(sandbox, f".err_{i}.txt").write_text(text)
-        Path(stdout or "").write_text("pip says\nno\n")
+            Path(sandbox, f".err_{i}.txt").write_text(text, newline="\n")
+        Path(stdout or "").write_text("pip says\nno\n", newline="\n")
         return ret
 
     monkeypatch.setattr(docker, "_docker", fake)

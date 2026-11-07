@@ -460,7 +460,8 @@ def test_load_check_replaces_a_recorded_version_that_keeps_a_package_from_loadin
 
     # the script ran in a process, on the library of this machine, and saves its results
     assert len(ran) == 1
-    assert f'lib <- "{lib}"' in ran[0]
+    # with "/" between folders, so a Windows path is no R escape
+    assert f'lib <- "{lib.as_posix()}"' in ran[0]
     assert 'pkgs <- c("mcNew", "mcOld", "mcFine", "mcBroken")' in ran[0]
     assert 'recorded <- c("mcOld", "mcFine", "mcBroken")' in ran[0]
     assert 'results_file <- "' in ran[0] and ran[0].count("results.rds") == 1
@@ -493,7 +494,8 @@ def test_load_check_in_docker_runs_the_script_in_a_container(
     def fake_docker(args: list[str], **kwargs: Any) -> dict[str, Any]:
         calls.append(list(args))
         mount = next(a for a in args if a.endswith(":/sandbox"))
-        scripts.append((Path(mount.split(":")[0]) / "check.R").read_text())
+        # the host folder, which on Windows has a drive's ":" of its own
+        scripts.append((Path(mount[: -len(":/sandbox")]) / "check.R").read_text())
         assert kwargs["timeout"] == 1800
         return {"status": 0, "timeout": False, "stdout": ""}
 

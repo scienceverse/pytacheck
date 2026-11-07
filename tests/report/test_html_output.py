@@ -50,7 +50,7 @@ def test_html_export_r_source_classic(tmp_path, html_fixture):
     # file's checksum, and the user's folder is not changed
     digest = hashlib.md5(src.read_bytes(), usedforsecurity=False).hexdigest()
     assert out is not None
-    assert out.endswith(f"/metacheck-recovered-code/{digest}/code/knit_classic.R")
+    assert Path(out).as_posix().endswith(f"/metacheck-recovered-code/{digest}/code/knit_classic.R")
     assert not (tmp_path / "code").exists()
     assert Path(out).read_text(encoding="utf-8") == (
         'library(dplyr)\ndat <- read.csv("data.csv")\n\nsummary(dat$x > 2)\n'

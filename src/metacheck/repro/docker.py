@@ -778,20 +778,32 @@ def _read_install_results(path: str) -> pd.DataFrame | None:
     return out
 
 
-def _read_install_status(path: str) -> int | None:
-    """The number the install container left in ``.install_status``: a small regular file,
-    never read through a link."""
-    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+def _read_regular_head(path: str, n: int) -> bytes | None:
+    """The first *n* bytes of *path* when it is a regular file, never read through a link
+    (``None`` otherwise). Where ``os.open()`` has no ``O_NOFOLLOW`` (Windows), a link is
+    refused by its ``lstat()``."""
+    nofollow = getattr(os, "O_NOFOLLOW", 0)
+    if not nofollow and os.path.islink(path):
+        return None
     try:
-        fd = os.open(path, flags)
+        fd = os.open(path, os.O_RDONLY | nofollow | getattr(os, "O_NONBLOCK", 0))
     except OSError:
         return None
     try:
         if not stat.S_ISREG(os.fstat(fd).st_mode):
             return None
-        first = os.read(fd, 32).decode("ascii", "replace").split("\n")[0].strip()
+        return os.read(fd, n)
     finally:
         os.close(fd)
+
+
+def _read_install_status(path: str) -> int | None:
+    """The number the install container left in ``.install_status``: a small regular file,
+    never read through a link."""
+    head = _read_regular_head(path, 32)
+    if head is None:
+        return None
+    first = head.decode("ascii", "replace").split("\n")[0].strip()
     return int(first) if first.isdigit() else None
 
 
@@ -1205,17 +1217,10 @@ def _wait(proc: Any, secs: float) -> bool:
 
 def _read_received(path: str) -> float | None:
     """The count the container left in ``.repro_received``: a small regular file, never a link."""
-    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
-    try:
-        fd = os.open(path, flags)
-    except OSError:
+    head = _read_regular_head(path, 64)
+    if head is None:
         return None
-    try:
-        if not stat.S_ISREG(os.fstat(fd).st_mode):
-            return None
-        first = os.read(fd, 64).decode("ascii", "replace").split("\n")[0]
-    finally:
-        os.close(fd)
+    first = head.decode("ascii", "replace").split("\n")[0]
     try:
         value = float(first)
     except ValueError:

@@ -646,11 +646,12 @@ def _repro_not_downloaded_text(nd: pd.DataFrame | None, max_file_size: float = 1
 
 
 def _list_files(top: str) -> list[str]:
-    """``list.files(top, recursive = TRUE)``: the files below *top*, hidden ones left out."""
+    """``list.files(top, recursive = TRUE)``: the files below *top*, hidden ones left out,
+    with ``/`` between folders as in R (also on Windows)."""
     found: list[str] = []
     for d, subdirs, names in os.walk(top, followlinks=True):
         subdirs[:] = [s for s in subdirs if not s.startswith(".")]
-        rel = os.path.relpath(d, top)
+        rel = os.path.relpath(d, top).replace(os.sep, "/")
         found.extend(nm if rel == "." else f"{rel}/{nm}" for nm in names if not nm.startswith("."))
     return cast(list[str], r_sorted(found))
 

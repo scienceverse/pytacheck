@@ -319,6 +319,9 @@ def test_install_deps_main_library_skip(rscript: str, tmp_path: Path) -> None:
         "message",
         "via_archive",
         "category",
+        "version_recorded",
+        "version_installed",
+        "version_note",
     ]
     assert out["category"].isna().all()
 
@@ -422,9 +425,12 @@ def test_cran_archive_installs_latest(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_install_r_runs_real_r(rscript: str, tmp_path: Path) -> None:
-    """The R install step reports an already-installed main-library package."""
-    res = core._install_r("check_main", str(tmp_path / "lib"), pkg="utils")
+    """The R install step reports an already-installed main-library package, when CRAN
+    packages may go to the main library (metacheck 0.4.3.7)."""
+    res = core._install_r("check_main", str(tmp_path / "lib"), pkg="utils", cran_to_main_lib=True)
     assert res["ok"] is True and res["skipped"] is True
+    res = core._install_r("check_main", str(tmp_path / "lib"), pkg="utils")
+    assert res["ok"] is True and res["skipped"] is False
     res = core._install_r("check_main", str(tmp_path / "lib"), pkg="not_a_pkg_xyz")
     assert res["skipped"] is False and res["install_lib"]
 
