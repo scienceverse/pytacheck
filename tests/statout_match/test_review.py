@@ -82,13 +82,13 @@ def test_absent_text_id_without_sites() -> None:
 
 
 def test_empty_test_id_site_is_a_site() -> None:
-    # an output site named "" matches like any other (R: used_sites[[""]]
-    # fails the call, or the site never matches, U142)
+    # an output site named "" matches like any other; metacheck 0.4.3.7 calls it "\x01empty"
+    # (by_site[[""]] stopped the call, U142), which also decides where it sorts
     long = _long([("", "t", "2.103"), ("", "p", "0.0481"), ("e", "t", "2.103")])
     res = match_reported_output(_tt([1], [T1]), long)
     assert res["found"].tolist()[0]
     sites = _build_sites(long)
-    assert sites.names[0] == ""
+    assert sites.names == ["e", "\x01empty"]
     eq = pd.DataFrame(
         {
             "text_id": [1, 1],

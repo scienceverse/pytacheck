@@ -173,7 +173,8 @@ def test_redirect_writes_shapes() -> None:
     assert out["replacement"].iloc[0] == (
         'write.csv(d, file = "{{REPRO_OUTPUT}}a.csv", row.names = FALSE)'
     )
-    assert out["replacement"].iloc[1] == 'write.csv(d,"{{REPRO_OUTPUT}}f.csv")'
+    # the argument keeps its leading space too (metacheck 0.4.x)
+    assert out["replacement"].iloc[1] == 'write.csv(d, "{{REPRO_OUTPUT}}f.csv")'
 
 
 def test_redirect_writes_keeps_file_argument_named() -> None:

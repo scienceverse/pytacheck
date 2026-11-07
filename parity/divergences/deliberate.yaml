@@ -39,16 +39,6 @@
 "stats_review/statcheck.review.AllPValues_2": *d78_flag
 "stats_review/stats.review.AllPValues_2": *d78_flag
 "stats_review/decision_error_test.review.pEqualAlphaSig_2": *d78_flag
-"stats_review/stats.review.partial.alp": &d78_args
-  kind: deliberate
-  ref: D78
-  reason: stats() takes statcheck's settings as Python keyword or positional arguments, so an abbreviated name or texts = raises TypeError; R matches unique prefixes and lets texts = replace the text
-"stats_review/stats.review.partial.AllP": *d78_args
-"stats_review/stats.review.partial.OneTailedTe": *d78_args
-"stats_review/stats.review.partial.st": *d78_args
-"stats_review/stats.review.partial.s": *d78_args
-"stats_review/stats.review.texts_rebound": *d78_args
-"stats_review/stats.review.texts_rebound.none": *d78_args
 # fields and columns are read by their exact name, and a scalar has no fields (D81): R's `$`
 # also takes a unique prefix of a name, and stops on a scalar
 "archives_d2/reshare_file_download.mock.no_caps":

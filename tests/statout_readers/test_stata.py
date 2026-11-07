@@ -137,7 +137,12 @@ def test_export_html_and_syntax(tmp_path: Path) -> None:
     src = tmp_path / "analysis.smcl"
     src.write_bytes((FIX / "analysis.smcl").read_bytes())
     do = _smcl_export_syntax(src)
-    assert Path(do) == tmp_path / "code" / "analysis.do"  # joined with "/", as R does
+    # a file of the user's own is not written beside: the code goes to the temporary folder
+    # under the file's checksum (metacheck 0.4.3.7)
+    assert Path(do).parent.parent.parent.name == "metacheck-recovered-code"
+    assert Path(do).parent.name == "code"
+    assert Path(do).name == "analysis.do"
+    assert not (tmp_path / "code").exists()
     lines = Path(do).read_text().splitlines()
     assert lines[0] == "summarize price mpg weight"
     assert lines[-1] == "log close"

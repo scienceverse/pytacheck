@@ -9,7 +9,6 @@
   "args":
     "xml_path": {"$file": "tests/io/fixtures/tables_empty_second.tei.xml"}
 - "id": ".grobid_to_bibr.tables_empty_first"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the number before the tag ending a reference keeps its space ('Ref one. 2020.', R: 'Ref one.2020.'); the table without rows has no contents in both"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
@@ -194,14 +193,12 @@
   "args":
     "repo": "scienceverse/nords"
 - "id": "papers_available.nords"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U18", "reason": "a repository without .rds assets has no corpora: an empty table (R: 'arguments imply differing number of rows: 0, 1')"}
   "r": "papers_available"
   "py": "metacheck.io.corpus.papers_available"
   "mock_dir": "tests/io/fixtures/apis_papers_nords"
   "args":
     "repo": "scienceverse/nords"
 - "id": "papers_available.no_releases"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U18", "reason": "a repository without releases has no corpora: an empty table (R: 'arguments imply differing number of rows: 0, 1')"}
   "r": "papers_available"
   "py": "metacheck.io.corpus.papers_available"
   "mock_dir": "apis_papers_empty"
@@ -324,7 +321,6 @@
   "r": "identity"
   "py": "tests.io._parity_helpers.basename"
   "mock_dir": "tests/io/fixtures/apis_bibr_local"
-  "known_divergence": {"kind": "deliberate", "ref": "D2", "reason": "metacheck's convert() passes the argument names instead of their values to convert_bibr() (do.call(convert_bibr, valid_args)), so method = 'bibr' always fails ('second argument must be a list'); pytacheck passes the values and converts the file"}
   "args":
     "x": {"$expr": {"r": "basename(metacheck::convert(file.path(getwd(), 'upstream/metacheck/inst/demos/to_err_is_human.docx'), file.path(tempdir(), 'pc_io_review_bibr'), method = 'bibr', api_url = 'http://localhost:8000'))", "py": "None"}}
   "py_args":

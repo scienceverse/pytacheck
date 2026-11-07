@@ -922,10 +922,12 @@ def _stat_table_parse(tb: Any) -> dict[str, Any] | None:
     data_rows = [k for k, th in enumerate(is_th_row) if not th and k > header_idx]
     if not data_rows:
         return None
-    mat: list[list[str | None]] = []
+    mat: list[list[str]] = []
     for k in data_rows:
-        v: list[str | None] = list(_grid_of(row_cells[k]))
-        v = v[:gw] + [None] * (gw - len(v))
+        # a short row is padded with empty cells, not NA, so a row without content is dropped as
+        # empty below (NA padding made it an NA row; U141, fixed in metacheck 0.4.3.7)
+        v = list(_grid_of(row_cells[k]))
+        v = v[:gw] + [""] * (gw - len(v))
         mat.append(v)
 
     runs: list[tuple[str, int, int]] = []
@@ -935,11 +937,11 @@ def _stat_table_parse(tb: Any) -> dict[str, Any] | None:
         else:
             runs.append((h, idx, idx))
     names = [r[0] for r in runs]
-    cols: list[list[str | None]] = []
+    cols: list[list[str]] = []
     for _, a, b in runs:
-        col: list[str | None] = []
+        col: list[str] = []
         for row in mat:
-            nz = [x for x in row[a : b + 1] if x is None or x != ""]
+            nz = [x for x in row[a : b + 1] if x != ""]
             col.append(nz[0] if nz else "")
         cols.append(col)
 
@@ -947,21 +949,14 @@ def _stat_table_parse(tb: Any) -> dict[str, Any] | None:
     nrow = len(mat)
     keep_rows = []
     for ri in range(nrow):
-        vals = [trimws(cols[c][ri]) for c in range(ncol)]
-        vals = [v for v in vals if v is None or v != ""]
+        vals = [trimws(cols[c][ri]) or "" for c in range(ncol)]
+        vals = [v for v in vals if v != ""]
         if not vals:
             keep_rows.append(False)
             continue
         uniq = list(dict.fromkeys(vals))
         if len(uniq) == 1:
             v1 = uniq[0]
-            if v1 is None:
-                # no content (a row shorter than the header grid, its cells
-                # missing or empty) is dropped like an empty row; in R the
-                # footnote test is NA and df[NA, ] adds a row of NAs
-                # (UPSTREAM_ISSUES U141)
-                keep_rows.append(False)
-                continue
             is_note = (
                 bool(grepl("^Note", v1, ignore_case=True))
                 or bool(grepl("^[*a-z]?\\s*p\\s*[<>=]", v1))
@@ -973,9 +968,7 @@ def _stat_table_parse(tb: Any) -> dict[str, Any] | None:
     cols = [[v for v, k in zip(col, keep_rows, strict=True) if k] for col in cols]
 
     kept = [
-        (n, col)
-        for n, col in zip(names, cols, strict=True)
-        if n != "" or any(v is None or v != "" for v in col)
+        (n, col) for n, col in zip(names, cols, strict=True) if n != "" or any(v != "" for v in col)
     ]
     nm = [n if n != "" else f"V{i}" for i, (n, _) in enumerate(kept, start=1)]
     nrow_out = sum(keep_rows)

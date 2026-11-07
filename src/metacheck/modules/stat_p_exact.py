@@ -129,9 +129,11 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
     # Expand the sentences so the full sentence can be seen
     p = expand_text(p, paper, expand_to="sentence")
 
-    # the match keeps trailing spaces (R: trimws(p$text), U127)
+    # the match keeps trailing spaces ("ps < .025 (Table 1)" matches "ps < .025 "), so one
+    # p-value twice in a sentence gave two report rows (R: trimws(p$text), U127;
+    # metacheck 0.4.3.7 trims it too)
     p = p.copy()
-    p["text"] = p["text"].str.strip()
+    p["text"] = p["text"].str.strip(" \t\r\n")
 
     # "==" is "=": it counted as imprecise (U127)
     p["p_comp"] = p["p_comp"].where(~p["p_comp"].eq("==").fillna(False), "=")
@@ -165,13 +167,12 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
     imp_rows = imprecise
     zero_rows = np.asarray(p["zero"].fillna(False), dtype=bool)
 
-    # one report row per p-value text and sentence: the match text can keep
-    # trailing whitespace, so metacheck's unique() listed the same p-value twice (U127)
+    # one report row per p-value text and sentence
     cols = ["text", "expanded"]
 
     def listed(rows: np.ndarray) -> pd.DataFrame:
         sub = p.loc[rows, cols]
-        dup = sub.assign(text=sub["text"].str.strip()).duplicated().to_numpy(dtype=bool)
+        dup = sub.duplicated().to_numpy(dtype=bool)
         out = sub.loc[~dup].reset_index(drop=True)
         out.columns = ["P-Value", "Text"]
         return out

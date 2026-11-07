@@ -136,6 +136,14 @@
 "progress::progress_bar" = "The R5 class behind pb(). Its format tokens (:bar, :eta, :rate, :bytes, ...), bar width and refresh rules are not emulated: pb() keeps tick(), update(), message() and terminate() and draws with rich.progress on a terminal (metacheck.utils.ProgressBar)."
 "jsonlite::write_json (pretty layout of a bibr 12.0 file)" = "paper_write(schema_version = \"12.0\") is written with orjson, two-space indented, one array value per line, so the line layout differs from jsonlite's (inline I() arrays, 1e-05, <\\/); every value reads back equal (D64)."
 
+# R/reproducibility_check_docker.R and R/reproducibility_check.R -- pytacheck's own sandbox (D154, D156)
+".repro_docker_share" = "Opens the folders a container writes in to every user when the container user is not the host user. pytacheck runs the containers as the host user and opens nothing (D154, D156)."
+".repro_docker_bind" = "Builds R's bind-mount arguments; pytacheck's runner mounts the sandbox read-only with its own arguments (metacheck.repro.docker, D154)."
+".repro_docker_lib_volume_name" = "Names the Docker volume R keeps a run's R library in; pytacheck's library is a folder in the sandbox (D154)."
+".repro_docker_lib_mount" = "Mounts that Docker volume; pytacheck's library is a folder in the sandbox (D154)."
+".repro_docker_lib_remove" = "Removes that Docker volume; pytacheck's library goes with the sandbox (D154)."
+".repro_installed_version" = "R reads a package's version from its DESCRIPTION in the run's library; pytacheck reads it inside the R install script it writes (have_version() in metacheck.repro.recorded), where that library is."
+
 [skip_files]
 "R/app.R" = "Shiny app launchers (see [skip])."
 "inst/app" = "Shiny apps: report_app.R, osf_app.R, shiny_app/, tabs/, www/ (including the app's usage telemetry)."

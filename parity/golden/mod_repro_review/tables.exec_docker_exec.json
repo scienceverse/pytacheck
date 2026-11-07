@@ -1,9 +1,109 @@
 {
   "id": "tables.exec_docker_exec",
-  "ok": false,
-  "error": "Running the module 'reproducibility_check' produced errors: unused arguments (deadline = script_deadline, net = net)",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "needs_missing_pkg.R",
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—",
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Outcome",
+          "Detail",
+          "Time (s)"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "needs_missing_pkg.R",
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dependency_unavailable",
+              "ran_ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dependency_unavailable",
+              ""
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "needs_missing_pkg.R"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

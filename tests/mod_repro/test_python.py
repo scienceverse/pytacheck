@@ -122,12 +122,21 @@ def test_static_order_and_own_writes(paper: pc.Paper) -> None:
 
 def test_static_parse_error(paper: pc.Paper, tmp_path: Path) -> None:
     script = tmp_path / "py2.py"
-    script.write_text("print 'python 2'\n")
+    script.write_text("x = (1,\n")
     mo = module_run(py_chain(paper, [str(script), "ok.py"]), "reproducibility_check")
     assert mo.table["parses"].tolist() == [False, True]
     assert mo.table["not_runnable_reason"].tolist()[0] == "parse_error"
     assert mo.traffic_light == "yellow"
     assert "1 Python file did not parse" in report_text(mo)
+
+
+def test_static_python2_is_not_a_parse_error(paper: pc.Paper, tmp_path: Path) -> None:
+    script = tmp_path / "py2.py"
+    script.write_text("print 'python 2'\n")
+    mo = module_run(py_chain(paper, [str(script), "ok.py"]), "reproducibility_check")
+    assert mo.table["parses"].tolist() == [False, True]
+    assert mo.table["not_runnable_reason"].tolist()[0] == "python2"
+    assert "written for Python 2" in report_text(mo)
 
 
 def test_static_dependencies(paper: pc.Paper, tmp_path: Path) -> None:
@@ -214,7 +223,7 @@ def test_python_files_are_not_unassessed_code(paper: pc.Paper) -> None:
     nonr_lang, _ = h.nonr_code(code_tbl, fnames, False, False, False)
     assert nonr_lang == ["Julia"]
     note = h.non_r_note(pd.DataFrame({"file_name": fnames}), nonr_lang)
-    assert "1 non-R code file" in note
+    assert "contain 1 code file in other languages" in note
     assert "only RUNS R and Python code" in note
 
 
@@ -274,9 +283,10 @@ def test_docker_is_the_default_for_python(
     assert seen["install"] == ["numpy"]
     assert seen["failed_deps"] == ["numpy"]
     assert seen["order"] == ["python_plots.py"]
-    # the write is redirected to the output folder as the container sees it
-    assert 'df.to_csv("/sandbox/output/t.csv")' in seen["script"]
-    assert "pass  # [reproducibility_check removed os.chdir]" in seen["script"]
+    # metacheck 0.4.x writes in place: the working folder is the script's own, so the write
+    # is not redirected, and only the chdir is taken out
+    assert "df.to_csv('t.csv')" in seen["script"]
+    assert "pass  # [reproducibility_check removed os.chdir] os.chdir('/home/me')" in seen["script"]
     assert "Docker container" in report_text(mo)
     assert "**Failed:** numpy (no network)" in report_text(mo)
     # what the script printed joins the statistical output

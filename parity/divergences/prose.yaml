@@ -79,14 +79,3 @@
 "bibr12/module.stat_effect_size.mixed": *u125_consider_adding_effect
 "grobid12/module.stat_effect_size.debruine": *u125_consider_adding_effect
 
-# D119 / U238: reproducibility_check assesses Python code too (metacheck
-# d3b8594, after the pin), so its no-code sentence names both languages; a .py file
-# is no longer "non-R code" the note counts; and the note says the phase RUNS R and
-# Python code (metacheck d3b8594 still says "R code") ----------------------------------
-"mod_repro/reproducibility_check.spss_with_syntax": &ux_repro_6_runs
-  kind: "r_bug_fixed"
-  ref: "U238"
-  reason: "the no-code sentence names Python (D119), and the note on other code says the phase RUNS R and Python code (metacheck d3b8594 still says 'R code', which is no longer true)"
-  r_text: [["this phase only RUNS R code", "this phase only RUNS R and Python code"]]
-"mod_repro/reproducibility_check.stata_with_do": *ux_repro_6_runs
-"mod_repro_review/review.rv_spss_spv": *ux_repro_6_runs

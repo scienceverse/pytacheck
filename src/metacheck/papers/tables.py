@@ -136,13 +136,18 @@ def _fast_concat(papers: PaperList, table: str) -> pd.DataFrame:
 
 
 def paper_id(paper: Any) -> list[str]:
-    """IDs of the papers (``paper_id()``), taken from their ``info`` tables.
+    """IDs of the papers (``paper_id()``): each paper's own ID.
 
-    ``paper_table(paper, "info", "paper_id")`` gives each paper's ID once per
-    row of its ``info`` table, so only the rows are counted (building the
-    table costs more than every module's use of it).
+    A paper (or every paper of a list) with a valid ``paper_id`` (a non-empty
+    string) gives that ID once. Otherwise the IDs come from the ``info``
+    tables, ``paper_table(paper, "info", "paper_id")``, once per row; only the
+    rows are counted (building the table costs more than every module's use of
+    it). metacheck 0.3 always took them from the info tables, so a paper whose
+    info table has no rows had no ID (U102).
     """
     papers = as_paper_list(paper)
+    if len(papers) > 0 and all(_valid_id(p.paper_id) for p in papers):
+        return [str(p.paper_id) for p in papers]
     ids: list[str] = []
     for p in papers:
         rows = _info_rows(p)
@@ -150,6 +155,10 @@ def paper_id(paper: Any) -> list[str]:
             return _paper_id_table(paper)
         ids += [p.paper_id] * rows
     return ids
+
+
+def _valid_id(value: Any) -> bool:
+    return isinstance(value, str) and value != ""
 
 
 def _info_rows(p: Paper) -> int | None:

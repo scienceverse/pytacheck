@@ -53,7 +53,7 @@ def test_vocabulary_is_closed() -> None:
     assert all(k == k.lower().strip() for k in [*_STATO_MAP, *_MC_STAT_MAP])
     # sizes of metacheck's tables (.STATO_LABELS has one duplicated entry)
     assert (len(_STATO_LABELS), len(_MC_STAT_LABELS)) == (56, 38)
-    assert (len(_MC_STAT_MAP), len(_STATO_MAP), len(_STATO_BY_CALL)) == (68, 271, 21)
+    assert (len(_MC_STAT_MAP), len(_STATO_MAP), len(_STATO_BY_CALL)) == (68, 271, 24)
 
 
 def test_tier1_stato_class() -> None:

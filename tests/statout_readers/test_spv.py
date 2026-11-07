@@ -336,7 +336,12 @@ def test_spv_export_syntax(tmp_path: Path) -> None:
     for name in ("logs_only.spv", "modern.spv", "empty.spv"):
         (tmp_path / name).write_bytes((FIX / name).read_bytes())
     out = _spv_export_syntax(tmp_path / "logs_only.spv")
-    assert Path(out) == tmp_path / "code" / "logs_only.sps"  # joined with "/", as R does
+    # a file of the user's own is not written beside: the code goes to the temporary folder
+    # under the file's checksum (metacheck 0.4.3.7)
+    assert Path(out).parent.parent.parent.name == "metacheck-recovered-code"
+    assert Path(out).parent.name == "code"
+    assert Path(out).name == "logs_only.sps"
+    assert not (tmp_path / "code").exists()
     assert Path(out).read_text() == "GET FILE='data.sav'.\n\nFREQUENCIES age.\n"
     assert _spv_export_syntax(tmp_path / "empty.spv") is None
     with pytest.raises(FileNotFoundError):
