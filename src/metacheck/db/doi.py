@@ -208,6 +208,7 @@ def _author_name(a: Any) -> str:
     An organisation has a ``name`` or ``literal`` instead of ``family``; a missing part is
     ``""`` and the comma is left out without a given name (metacheck 0.4.3.7).
     """
+
     def part(*keys: str) -> str:
         for key in keys:
             v = field(a, key)
@@ -248,7 +249,9 @@ def _lookup_row(bd: Any) -> dict[str, Any]:
         authors = ""
     else:
         items = list(author_list.values()) if isinstance(author_list, Mapping) else author_list
-        authors = "; ".join(_author_name(a) for a in (items if isinstance(items, list) else [items]))
+        authors = "; ".join(
+            _author_name(a) for a in (items if isinstance(items, list) else [items])
+        )
 
     def get(key: str) -> Any:
         return bd.get(key) if isinstance(bd, Mapping) else None

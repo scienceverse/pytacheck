@@ -594,7 +594,8 @@ def _crossref_parse_item(
     Titles and container titles are reduced to their first element, ``year``
     comes from the print issue date (else the published date), and authors
     become a table (``given``, ``family``, ``ORCID``) in an ``author`` cell.
-    Other list fields are spread over columns as ``data.frame()`` does.
+    A field holding a list (or several values) becomes one text joined with ``"; "``;
+    empty fields are left out, and when nothing is selected the row holds a missing DOI.
     """
     return _frame_df(_parse_item(item, list(select)))
 
@@ -1066,7 +1067,9 @@ def _str_list(values: Sequence[Any]) -> list[str | None]:
 def _openalex_add_abstract(info: Any) -> Any:
     """Add ``abstract`` from ``abstract_inverted_index`` (port of ``.openalex_add_abstract()``)."""
     aii = field(info, "abstract_inverted_index")
-    if aii is None:
+    # an empty index ({}) has no words to put in order: no abstract is added (metacheck
+    # 3cd8c202, U14)
+    if aii is None or (isinstance(aii, Mapping | list | tuple) and len(aii) == 0):
         return info
     values = list(aii.values()) if isinstance(aii, Mapping) else aii
     if not isinstance(values, list):
@@ -1079,8 +1082,7 @@ def _openalex_add_abstract(info: Any) -> Any:
     )
     positions = unlist(values)
     if not positions:
-        # an empty index is an empty abstract (metacheck's order(NULL) failed,
-        # so the work was reported "not found"; U14)
+        # an index of empty position lists: an empty abstract
         out = dict(info)
         out["abstract"] = ""
         return out
