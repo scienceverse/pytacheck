@@ -32,7 +32,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.base import as_character, r_sort_key, trimws
-from metacheck._r.regex import grepl, regextract, sub
+from metacheck._r.regex import grepl, regexec, regextract, strsplit, sub
 from metacheck._values import as_str
 from metacheck.repro.core import (
     _chr_list,
@@ -45,6 +45,7 @@ from metacheck.repro.core import (
     _message,
     _ordered_names,
     _pre_run_outcome,
+    _r_dirname,
     _read_cap,
     _run_frame,
     _run_row,
@@ -563,3 +564,289 @@ def _repro_py_parses(code_text: Sequence[str | None]) -> bool:
         except (RecursionError, MemoryError):  # too deeply nested to check: let it run
             return True
     return True
+
+
+# ---------------------------------------------------------------------------
+# the interpreter, Python 2, the repository's own modules
+# ---------------------------------------------------------------------------
+
+
+def _repro_py2_modules() -> list[str]:
+    """Port of ``R/reproducibility_check_python.R::.repro_py2_modules()``.
+
+    Modules of Python 2's standard library, which have other names in Python 3 and cannot
+    be installed: importing one shows that the code is Python 2 (#568, item 13).
+    """
+    return [
+        "cPickle", "cStringIO", "StringIO", "Queue", "BaseHTTPServer", "SocketServer",
+        "SimpleHTTPServer", "CGIHTTPServer", "Tkinter", "tkFileDialog", "tkMessageBox",
+        "ttk", "urlparse", "urllib2", "httplib", "ConfigParser", "commands", "HTMLParser",
+        "cookielib", "exceptions", "__builtin__", "sets", "thread", "dummy_thread", "anydbm",
+        "dumbdbm", "gdbm", "whichdb", "copy_reg", "repr", "xmlrpclib", "htmlentitydefs",
+    ]  # fmt: skip
+
+
+def _repro_find_python(python_bin: str | None = "python") -> str:
+    """Port of ``R/reproducibility_check_python.R::.repro_find_python()``.
+
+    The Python interpreter to run: *python_bin* when it is on the path and works, else
+    ``python3`` (the only name on many macOS and Linux machines). "Works" is checked by
+    running it, because on Windows ``python3`` can be a placeholder that only opens the
+    Microsoft Store. Returns ``""`` when neither works.
+
+    Unlike :func:`_python`, which only looks a name up (``python3`` before ``python`` when
+    no name is given, and no second candidate for a name that is given), this tries
+    *python_bin* first and then ``python3``, each by running it.
+    """
+    for cand in _unique(c for c in (python_bin, "python3") if c is not None):
+        exe = shutil.which(cand)
+        if not exe:
+            continue
+        try:
+            res = subprocess.run(  # noqa: S603 - a configured python, run to see that it works
+                [exe, "-c", "import sys"],
+                capture_output=True,
+                stdin=subprocess.DEVNULL,
+                timeout=30,
+                check=False,
+            )
+        except (OSError, subprocess.SubprocessError):
+            continue
+        if res.returncode == 0:
+            return str(exe)
+    return ""
+
+
+def _repro_python_missing_reason() -> str:
+    """Port of ``R/reproducibility_check_python.R::.repro_python_missing_reason()``.
+
+    Why no Python interpreter can be used, for the report. R names a missing ``processx``
+    package as the other possible reason; Python needs no such package.
+    """
+    return "no Python interpreter (`python` or `python3`) was found on this computer"
+
+
+def _repro_py2_error(txt: Any) -> Any:
+    """Port of ``R/reproducibility_check_python.R::.repro_py2_error()``.
+
+    Whether a run's error output shows Python 2 code: a print or exec statement, the form
+    ``except E, e``, or tabs mixed with spaces, which Python 2 accepted. The image only
+    has Python 3, and converting the code could change results without a word (``/``
+    between whole numbers divides differently), so these are only named. One value gives
+    a bool, a sequence a list of bools; a missing value reads as no text.
+    """
+    pat = (
+        r"SyntaxError: (Missing parentheses in call to|multiple exception types must be "
+        r"parenthesized)|TabError:|No module named '(" + "|".join(_repro_py2_modules()) + ")'"
+    )
+    if txt is None or isinstance(txt, str):
+        return bool(grepl(pat, txt or "", perl=True))
+    return [bool(grepl(pat, t or "", perl=True)) for t in _chr_list(txt)]
+
+
+def _repro_py_stdlib_modules() -> list[str]:
+    """Port of ``R/reproducibility_check_python.R::.repro_py_stdlib_modules()``.
+
+    The Python standard library's top-level module names (3.10+), analogous to
+    ``.repro_base_packages()``: a run never needs to ``pip install`` these. A static list,
+    as R's, because the standard library is not queryable without running an interpreter.
+    A module missing from it is reported ``source = "pypi"`` and a ``pip install`` is
+    attempted for it at run time, which fails harmlessly.
+
+    This is metacheck's list exactly. ``_PY_STDLIB`` (used for the dependencies) holds
+    these and more names of modules removed since, which suits a dependency check but
+    would hide a repository's own ``parser.py`` here, so it is not used for this.
+    """
+    return """
+        __future__ _thread abc aifc argparse array ast asyncio atexit base64 bdb binascii
+        bisect builtins bz2 calendar cgi cgitb chunk cmath cmd code codecs codeop collections
+        colorsys compileall concurrent configparser contextlib contextvars copy copyreg
+        cProfile csv ctypes curses dataclasses datetime dbm decimal difflib dis distutils
+        doctest email encodings ensurepip enum errno faulthandler fcntl filecmp fileinput
+        fnmatch fractions ftplib functools gc getopt getpass gettext glob graphlib grp gzip
+        hashlib heapq hmac html http idlelib imaplib imghdr imp importlib inspect io
+        ipaddress itertools json keyword lib2to3 linecache locale logging lzma mailbox
+        mailcap marshal math mimetypes mmap modulefinder msilib msvcrt multiprocessing netrc
+        nis nntplib numbers operator optparse os ossaudiodev pathlib pdb pickle pickletools
+        pipes pkgutil platform plistlib poplib posix posixpath pprint profile pstats pty pwd
+        py_compile pyclbr pydoc queue quopri random re readline reprlib resource rlcompleter
+        runpy sched secrets select selectors shelve shlex shutil signal site smtpd smtplib
+        sndhdr socket socketserver spwd sqlite3 ssl stat statistics string stringprep struct
+        subprocess sunau symtable sys sysconfig syslog tabnanny tarfile telnetlib tempfile
+        termios test textwrap this threading time timeit tkinter token tokenize tomllib trace
+        traceback tracemalloc tty turtle turtledemo types typing unicodedata unittest urllib
+        uu uuid venv warnings wave weakref webbrowser winreg winsound wsgiref xdrlib xml
+        xmlrpc zipapp zipfile zipimport zlib zoneinfo
+    """.split()  # noqa: SIM905 - a word list, kept readable
+
+
+def _repro_py_depth_shared(a: str, b: str) -> int:
+    """How many leading folders two ``/``-separated paths share."""
+    x, y = (a.split("/") if a else []), (b.split("/") if b else [])
+    n = min(len(x), len(y))
+    for i in range(n):
+        if x[i] != y[i]:
+            return i
+    return n
+
+
+def _repro_py_module_folders(
+    code_text: Sequence[str | None] | str | None,
+    script_path: str,
+    files: Sequence[str | None] | str | None,
+) -> list[str]:
+    """Port of ``R/reproducibility_check_python.R::.repro_py_module_folders()``.
+
+    The folders Python must look in to find the repository's own modules that a script
+    imports. Python only looks beside the script, so ``from maad import sound`` stopped
+    with "No module named 'maad'" while ``maad/`` is in the repository: 365 scripts in 23
+    papers (#568, item 10). For each imported name that is no standard module, the folder
+    holding a file or folder of that name, nearest to the script first. A folder is left
+    out when it would hide a standard module the script uses, such as one with its own
+    ``json.py``, since these folders come before the standard library. *files* are the
+    paths in the sandbox from its top; returns folders from the top.
+    """
+    txt = [t for t in _chr_list(code_text) if t is not None and not grepl(r"^\s*#", t)]
+    names1: list[str] = []
+    for m in regexec(r"^\s*import\s+([A-Za-z0-9_., ]+)", txt):
+        if len(m) > 1:
+            names1.extend(trimws(sub(r"\s+as\s+.*$", "", part)) for part in strsplit(m[1], ","))
+    names2 = [
+        m[1]
+        for m in regexec(r"^\s*from\s+([A-Za-z0-9_]+)[A-Za-z0-9_.]*\s+import\s", txt)
+        if len(m) > 1
+    ]
+    tops = _unique(sub(r"\..*$", "", n) for n in [*names1, *names2])
+    stdlib = set(_repro_py_stdlib_modules())
+    own = [t for t in tops if t not in stdlib]
+    file_list = [f.replace("\\", "/") for f in _chr_list(files) if f is not None]
+    if not own or not file_list:
+        return []
+    script_dir = _r_dirname((script_path or "").replace("\\", "/")) or ""
+    used_std = [t for t in tops if t in stdlib]
+
+    def hides(folder: str) -> bool:
+        prefix = "" if folder == "." else folder + "/"
+        names = {f"{prefix}{s}.py" for s in used_std}
+        return any(f in names for f in file_list) or any(
+            f.startswith(f"{prefix}{s}/") for s in used_std for f in file_list
+        )
+
+    out: list[str] = []
+    for nm in own:
+        hit = [f for f in file_list if grepl(f"(^|/){nm}(\\.py$|/)", f)]
+        if not hit:
+            continue
+        # the folder that holds the module, not one further down
+        parents: list[str] = []
+        for f in hit:
+            parts = f.split("/")
+            k = next(i for i, p in enumerate(parts) if p in (nm, f"{nm}.py"))
+            parents.append("." if k < 1 else "/".join(parts[:k]))
+        parents = sorted(_unique(parents), key=lambda p: -_repro_py_depth_shared(p, script_dir))
+        parents = [p for p in parents if not hides(p)]
+        if parents and parents[0] != script_dir:
+            out.append(parents[0])
+    return _unique(out)
+
+
+def _repro_py_get_ipython(txt: Sequence[str | None] | str | None) -> list[str | None]:
+    """Port of ``R/reproducibility_check_python.R::.repro_py_get_ipython()``.
+
+    A stand-in for ``get_ipython()``, which only exists inside IPython: without it a
+    notebook's ``if "google.colab" in str(get_ipython()):`` stops with a NameError. Its
+    methods (``run_line_magic``, ``system``) do nothing, as the commands are left out too.
+    Placed after leading comments (an encoding line must stay on top) and after ``from
+    __future__`` imports (which must come first).
+    """
+    lines = _chr_list(txt)
+    if not any(grepl(r"\bget_ipython\s*\(", lines)) or any(
+        grepl(r"\bget_ipython\s*=|def\s+get_ipython\b", lines)
+    ):
+        return lines
+    stub = (
+        'get_ipython = lambda: type("ipython", (), {"__getattr__": lambda self, name: '
+        "(lambda *a, **k: None)})()  # [reproducibility_check added]"
+    )
+    future = [i for i, g in enumerate(grepl(r"^\s*from\s+__future__\s+import", lines)) if g]
+    if future:
+        after = max(future) + 1
+    else:
+        # the leading lines that are blank or comments
+        after = 0
+        for g in grepl(r"^\s*(#.*)?$", lines):
+            if not g:
+                break
+            after += 1
+    return [*lines[:after], stub, *lines[after:]]
+
+
+_REPRO_DOCKER_DEFAULT_IMAGE_PY2 = "python:2.7-slim"
+
+
+def _repro_docker_image_py2() -> str | None:
+    """Port of ``R/reproducibility_check_python_docker.R::.repro_docker_image_py2()``.
+
+    The image that runs code written for Python 2 (#568): the official Python 2.7 image.
+    pip there installs the last version of each package that supports Python 2. The
+    option ``metacheck.docker_image_py2`` names another image; set it to ``False`` or
+    ``""`` to not run Python 2 code (it is then only named). ``None`` when there is none.
+    """
+    from metacheck.utils import get_option
+
+    img = get_option("metacheck.docker_image_py2", _REPRO_DOCKER_DEFAULT_IMAGE_PY2)
+    first = img[0] if isinstance(img, list | tuple) and img else img
+    if img is False or img is None or first is None or first is False or not str(first):
+        return None
+    return str(first)
+
+
+def _repro_py_pip_names() -> dict[str, str]:
+    """Port of ``R/reproducibility_check_python.R::.repro_py_pip_names()``.
+
+    Import names whose pip package has a different name. Python imports are
+    case-sensitive, so the keys are matched exactly. A name not listed here is installed
+    under its import name.
+    """
+    return {
+        "sklearn": "scikit-learn", "skimage": "scikit-image", "cv2": "opencv-python",
+        "PIL": "Pillow", "yaml": "PyYAML", "bs4": "beautifulsoup4",
+        "dateutil": "python-dateutil", "Bio": "biopython", "docx": "python-docx",
+        "pptx": "python-pptx", "umap": "umap-learn", "mpl_toolkits": "matplotlib",
+        "fitz": "PyMuPDF", "Crypto": "pycryptodome", "serial": "pyserial",
+        "dotenv": "python-dotenv", "community": "python-louvain", "wx": "wxPython",
+        "zmq": "pyzmq", "attr": "attrs", "jwt": "PyJWT", "OpenSSL": "pyOpenSSL",
+        "pywt": "PyWavelets", "ruamel": "ruamel.yaml", "osgeo": "GDAL",
+        "pkg_resources": "setuptools", "pylab": "matplotlib", "skbio": "scikit-bio",
+        "gi": "PyGObject", "git": "GitPython", "MySQLdb": "mysqlclient",
+        "psycopg2": "psycopg2-binary", "argon2": "argon2-cffi", "elftools": "pyelftools",
+        "paho": "paho-mqtt", "past": "future", "vcf": "PyVCF3",
+        "rapidjson": "python-rapidjson", "gitlab": "python-gitlab", "primer3": "primer3-py",
+        "hydra": "hydra-core", "skbuild": "scikit-build", "pytorch_grad_cam": "grad-cam",
+        "rest_framework": "djangorestframework",
+        "rest_framework_api_key": "djangorestframework-api-key",
+        "corsheaders": "django-cors-headers", "django_filters": "django-filter",
+        "allauth": "django-allauth", "dirtyfields": "django-dirtyfields",
+        "silk": "django-silk", "crum": "django-crum", "django_auth_ldap": "django-auth-ldap",
+        "logstash_async": "python-logstash-async",
+    }  # fmt: skip
+
+
+def _repro_py_pip_name(module: Sequence[str | None] | str | None) -> Any:
+    """Port of ``R/reproducibility_check_python.R::.repro_py_pip_name()``.
+
+    The pip name for each import name (only the top-level module counts, so
+    ``sklearn.linear_model`` gives ``scikit-learn``). A string gives a string, a sequence a
+    list.
+    """
+    mapping = _repro_py_pip_names()
+
+    def one(m: str | None) -> str | None:
+        if m is None:
+            return None
+        top = str(sub(r"\..*$", "", m))
+        return mapping.get(top, top)
+
+    if module is None or isinstance(module, str):
+        return one(module)
+    return [one(m) for m in _chr_list(module)]
