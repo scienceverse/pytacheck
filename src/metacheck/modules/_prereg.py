@@ -721,7 +721,8 @@ def osf_label_to_field(label: str) -> str:
     """
     from metacheck._r import gsub, trimws
 
-    key = _tolower(str(trimws(label)))
+    # U+FFFE/U+FFFF (non-characters) made tolower() stop the module (U111)
+    key = _tolower(str(trimws(str(label).replace("\ufffe", "").replace("\uffff", ""))))
     if key in OSF_LABEL_FIELD:
         return OSF_LABEL_FIELD[key]
     slug = str(gsub("[^a-z0-9]+", "_", key))
@@ -737,8 +738,6 @@ def _tolower(s: str) -> str:
     """
     if s.isascii():
         return s.lower()
-    # R's utf8towcs() rejects U+FFFE and U+FFFF, which stopped the module for a
-    # schema label containing them (U111); they are kept as they are
     return "".join(ch.lower()[:1] or ch for ch in s)
 
 
@@ -833,12 +832,16 @@ _AP_COLUMNS: tuple[tuple[str, str | None], ...] = (
     ("link", "ap_url"),
     ("title", "AP_title"),
     ("date_created", "AP_created"),
+    ("date_registered", "AP_registered"),
     ("existing_data_explanation", "AP_data"),
     ("research_questions", "AP_hypotheses"),
     ("design_dependent_variables", "AP_key_dv"),
     ("study_design_overview", "AP_conditions"),
     ("statistical_tests", "AP_analyses"),
     ("outliers_and_exclusions", "AP_outliers"),
+    # version 1.05 of AsPredicted's questions asks about secondary analyses
+    # where version 2.00 asks about outliers
+    ("exploratory_analyses", "AP_secondary"),
     ("sample_size", "AP_sample_size"),
     ("additional_comments", "AP_anything_else"),
 )
@@ -848,8 +851,8 @@ def ap_schema(table_ap: pd.DataFrame) -> pd.DataFrame:
     """Port of inst/modules/prereg_check.R::ap_schema().
 
     :func:`metacheck.archives.aspredicted.aspredicted_info` output in the
-    standard field names (an empty data frame for no rows). Fields missing
-    from the input are left out, as ``data.frame(x = NULL)`` does.
+    standard field names (an empty data frame for no rows). A column
+    ``aspredicted_info()`` did not give (an older cached result) is NA.
     """
     from metacheck._r import sub
 
@@ -869,7 +872,7 @@ def ap_schema(table_ap: pd.DataFrame) -> pd.DataFrame:
         elif source in table_ap.columns:
             values = [None if pd.isna(v) else v for v in table_ap[source].tolist()]
         else:
-            continue
+            values = [None] * n
         out[name] = pd.Series(values, dtype="string")
     return pd.DataFrame(out)
 
