@@ -1,0 +1,82 @@
+{
+  "id": "dryad_links.sharing_links",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dryad_url",
+      "dryad_doi"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://datadryad.org/stash/share/M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU",
+          "https://datadryad.org/stash/share/M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU",
+          "https://datadryad.org/stash/share/abc_D-1",
+          "datadryad.org/share/Xy-z_9",
+          "10.5061/dryad.j1fd7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://datadryad.org/stash/share/M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU",
+          "https://datadryad.org/stash/share/M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU",
+          "https://datadryad.org/stash/share/abc_D-1",
+          "datadryad.org/share/Xy-z_9",
+          "10.5061/dryad.j1fd7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "10.5061/dryad.j1fd7"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

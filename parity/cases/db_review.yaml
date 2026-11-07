@@ -367,7 +367,7 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.9999/C\", NA, \"10.9999/d\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.pubpeer.pubpeer_comments', ['10.9999/C', None, '10.9999/d'])"
 - "id": "pubpeer_comments.mock.na_id"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "feedback without an id is ignored and a DOI reported twice keeps its first feedback (R fails, or gives an NA DOI another work's comments)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "the result always has a url column; metacheck 0.4.3.7 leaves it out when no feedback has a url (it no longer fails on feedback without an id)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -376,7 +376,6 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(NA, \"10.9999/e\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('metacheck.db.pubpeer.pubpeer_comments', [None, '10.9999/e'])"
 - "id": "pubpeer_comments.mock.no_id_col"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "feedback without an id is ignored and a DOI reported twice keeps its first feedback (R fails, or gives an NA DOI another work's comments)"}
   "r": "identity"
   "py": "copy.copy"
   "args":

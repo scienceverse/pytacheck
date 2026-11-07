@@ -21,6 +21,5 @@
 "doi_lookup.mock.numvol_mixed": {"r": "ac5146cf65ca52a8", "py": "6c624b4af2066353", "diff": ["<R error, Python value>"]},
 "doi_lookup.mock.partialpage": {"r": "907248a5ed4c9a81", "py": "b57494d57184c9ed", "diff": ["first_page[]"]},
 "doi_resolves.mock.codes": {"r": "ebe99a57b5a296d6", "py": "5e16c15d300fabd6", "diff": ["[]"]},
-"pubpeer_comments.mock.na_id": {"r": "444ecc27d329b74c", "py": "34c994573901f3db", "diff": ["<root>", "total_comments[]", "url[]", "users[]"]},
-"pubpeer_comments.mock.no_id_col": {"r": "ac5146cf65ca52a8", "py": "667c41a8b9c4ab72", "diff": ["<R error, Python value>"]}
+"pubpeer_comments.mock.na_id": {"r": "7019d17a6dad3a6f", "py": "34c994573901f3db", "diff": ["<root>"]}
 }

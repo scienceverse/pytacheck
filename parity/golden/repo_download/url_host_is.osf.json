@@ -1,0 +1,21 @@
+{
+  "id": "url_host_is.osf",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "lgl",
+    "v": [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
