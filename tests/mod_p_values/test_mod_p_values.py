@@ -404,14 +404,15 @@ def test_report_tables_match_r() -> None:
     )
     imprecise, zero = mp_report_tables(paper, "stat_p_exact")
     assert list(imprecise["table"].columns) == ["P-Value", "Text"]
-    # U127: "p < .01" after the "* p < .05" note is listed (metacheck hides it)
-    assert imprecise["table"]["P-Value"].tolist() == ["p < .05 ", "p > .1", "p < .01"]
+    # U127: "p < .01" after the "* p < .05" note is listed (metacheck hides it); the match text
+    # is trimmed, as in metacheck 0.4.3.7
+    assert imprecise["table"]["P-Value"].tolist() == ["p < .05", "p > .1", "p < .01"]
     assert imprecise["table"]["Text"].tolist() == [
         "Bad p < .05 and p < .05 again.",
         "Zero p = .000 line two p > .1.",
         "Note * p < .05, p < .01.",
     ]
-    assert zero["table"]["P-Value"].tolist() == ["p = .000<br>"]
+    assert zero["table"]["P-Value"].tolist() == ["p = .000"]
     assert imprecise["colwidths"] == zero["colwidths"] == [0.1, 0.9]
     assert imprecise["maxrows"] == zero["maxrows"] == 2
 

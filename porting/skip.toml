@@ -60,7 +60,6 @@
 
 # R/repo-download.R -- the retry, redirect and rate-limit loop, which metacheck.http.request() does
 ".storage_backoff" = "min(2^attempt, 30) seconds between tries. metacheck.http.request() backs off as httr2 does by default (a random 1 to 2^attempt seconds, capped at 60); the maintainer decided on 2026-10-04 to keep one retry stack."
-".host_rate_limit_record" = "Records a host's rate-limit reset. metacheck.http keeps that memory (_record_reset(), host_reset_at()), and request() records it itself."
 ".host_rate_limit_remaining" = "Seconds until a recorded reset. metacheck.http.host_reset_at() is the same lookup; request() waits for it before sending."
 ".announce_rate_limit_wait" = "Says a wait over 5 s. metacheck.http.request() says it for every caller (_announce_wait())."
 ".storage_retry_after_factory" = "The retry-after callback of the storage retry: the confirmed wait, recorded and announced. metacheck.http.request() reads Retry-After and the RateLimit-Reset headers, records the reset and waits for it."
@@ -135,6 +134,18 @@
 "base::eval" = "metacheck's .spv_chart_html() evaluates the text of an SPSS fitted line with eval(parse(text = ...)), so any R expression is a fit. pytacheck draws a fit only when its text is arithmetic in x (numbers, x, + - * / ^, exp, log, sqrt) and evaluates it with a whitelisted `ast` walk (D63); the R expression parser stays only for scanning R code in code_check (codecheck/_rparse_tables.py)."
 "progress::progress_bar" = "The R5 class behind pb(). Its format tokens (:bar, :eta, :rate, :bytes, ...), bar width and refresh rules are not emulated: pb() keeps tick(), update(), message() and terminate() and draws with rich.progress on a terminal (metacheck.utils.ProgressBar)."
 "jsonlite::write_json (pretty layout of a bibr 12.0 file)" = "paper_write(schema_version = \"12.0\") is written with orjson, two-space indented, one array value per line, so the line layout differs from jsonlite's (inline I() arrays, 1e-05, <\\/); every value reads back equal (D64)."
+
+# R/reproducibility_check_docker.R and R/reproducibility_check.R -- pytacheck's own sandbox (D154, D156)
+".repro_docker_share" = "Opens the folders a container writes in to every user when the container user is not the host user. pytacheck runs the containers as the host user and opens nothing (D154, D156)."
+".repro_docker_bind" = "Builds R's bind-mount arguments; pytacheck's runner mounts the sandbox read-only with its own arguments (metacheck.repro.docker, D154)."
+".repro_docker_lib_volume_name" = "Names the Docker volume R keeps a run's R library in; pytacheck's library is a folder in the sandbox (D154)."
+".repro_docker_lib_mount" = "Mounts that Docker volume; pytacheck's library is a folder in the sandbox (D154)."
+".repro_docker_lib_remove" = "Removes that Docker volume; pytacheck's library goes with the sandbox (D154)."
+".repro_installed_version" = "R reads a package's version from its DESCRIPTION in the run's library; pytacheck reads it inside the R install script it writes (have_version() in metacheck.repro.recorded), where that library is."
+".report_pandoc_dir" = "Finds the Pandoc that Quarto bundles, so rmarkdown::render() can build the simple and checklist reports. pytacheck renders those pages itself with markdown-it-py (D133, no Pandoc), and its Quarto renderer calls quarto directly."
+".resp_body_stream_raw" = "Joins httr2's streamed 32 KB pieces once instead of copying them with c() (#584). httpx hands over the body in one piece, so there is no quadratic copy."
+".zip64_extra" = "metacheck's own reader of the Zip64 extra field; zipfile.ZipFile reads Zip64 sizes and offsets itself."
+".zip_member_from_buffer" = "Reads one member out of an already fetched buffer (local header, the missing part of the data, inflate, size and CRC check); zipfile does that over metacheck.archives.zip_peek's _RangeFile, which serves reads from the held tail and fetches what is missing."
 
 [skip_files]
 "R/app.R" = "Shiny app launchers (see [skip])."

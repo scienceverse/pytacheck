@@ -4,7 +4,7 @@
 "bibr12/paper_write.text.PMC4383902": &d64_u22
   kind: deliberate
   ref: D64
-  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); also doubles that 15 significant digits would change are written in full (U22; R: 0.704934775829315 for 0.7049347758293152)"
+  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); every value reads back equal"
 "bibr12/paper_write.text.preprint": *d64_u22
 "bibr12/paper_write.text.full": &d64
   kind: deliberate
@@ -56,59 +56,29 @@
 "bibr12_review/read.version.v12_0_1": *df
 "bibr12_review/read.version.v12_5_number": *df
 "bibr12_review/read.version.v12_array": *df
-"bibr12_review/read.legacy_no_bib": &legacy_no_bib
-  kind: r_bug_fixed
-  ref: U25
-  reason: "keys are matched exactly: a file without 'bib' has no references (R's $ reads its bib_match rows as bib)"
-"grobid12/.bibr12_utc.inputs": &utc
-  kind: r_bug_fixed
-  ref: U26
-  reason: ".bibr12_utc() keeps four-digit years ('0026-05-27T08:58:00Z', R: '26-05-27T08:58:00Z') and gives NA outside 0000-9999 (R: '-1-12-31T23:00:30Z')"
 "grobid12/.grobid_to_bibr.0956797615569889": &tei
   kind: r_bug_fixed
   ref: U16
   reason: "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.'), with Grobid's sentence tags unwrapped, body text squished (U27), reference DOIs broken by line breaks joined and URL hrefs printed only where their link is (U28)"
 "grobid12/.grobid_to_bibr.0956797617737129": *tei
 "grobid12/.grobid_to_bibr.203020": *tei
-"grobid12/.grobid_to_bibr.apis.hf.06d588": *tei
 "grobid12/.grobid_to_bibr.apis.hf.1181af": *tei
 "grobid12/.grobid_to_bibr.apis.hf.9c61e4": *tei
-"grobid12/.grobid_to_bibr.apis.hf.d2308a": *tei
-"grobid12/.grobid_to_bibr.apis.hf.d67d70": *tei
-"grobid12/.grobid_to_bibr.apis.tue.06d588": *tei
 "grobid12/.grobid_to_bibr.apis.tue.1181af": *tei
-"grobid12/.grobid_to_bibr.apis.tue.479883": *tei
-"grobid12/.grobid_to_bibr.apis.tue.4b4691": *tei
-"grobid12/.grobid_to_bibr.apis.tue.619fd9": *tei
 "grobid12/.grobid_to_bibr.apis.tue.9c61e4": *tei
-"grobid12/.grobid_to_bibr.apis.tue.d2308a": *tei
-"grobid12/.grobid_to_bibr.apis.tue.d67d70": *tei
-"grobid12/.grobid_to_bibr.debruine-child": *tei
 "grobid12/.grobid_to_bibr.debruine-fret": *tei
 "grobid12/.grobid_to_bibr.debruine-sex": *tei
-"grobid12/.grobid_to_bibr.debruine-tnl": *tei
-"grobid12/.grobid_to_bibr.demo": *tei
 "grobid12/.grobid_to_bibr.edges": *tei
 "grobid12/.grobid_to_bibr.preprint": *tei
 "grobid12/.grobid_to_bibr.published": *tei
-"grobid12/grobid_to_bibr.null_save.demo": *tei
 "grobid12/grobid_to_bibr.null_save.dir": *tei
 "grobid12/grobid_to_bibr.null_save.multiple_with_failure": *tei
-"grobid12/paper_table.upstream.affiliation": *tei
-"grobid12/paper_table.upstream.bib": *tei
 "grobid12/paper_table.upstream.eq": *tei
-"grobid12/paper_table.upstream.figure": *tei
-"grobid12/paper_table.upstream.footnote": *tei
-"grobid12/paper_table.upstream.section": *tei
-"grobid12/paper_table.upstream.table": *tei
 "grobid12/paper_table.upstream.text": *tei
 "grobid12/paper_table.upstream.url": *tei
 "grobid12/paper_table.upstream.xref": *tei
-"grobid12/read.v12.apis.tue.479883": *tei
-"grobid12/read.v12.demo": *tei
 "grobid12/read.v12.published": *tei
 "grobid12/write_read.0956797617737129": *tei
-"grobid12/write_read.demo": *tei
 "grobid12/write_read.edges": *tei
 "grobid12/write_read.preprint": *tei
 "grobid12/write_read.published": *tei
@@ -134,91 +104,38 @@
 "grobid12/written.edges": *d64_tei
 "grobid12/written.preprint": *d64_tei
 "grobid12/written.published": *d64_tei
-"grobid12_review/.grobid_to_bibr.review_inline": *tei
-"grobid12_review/.grobid_to_bibr.review_noapp": *tei
-"grobid12_review/.grobid_to_bibr.review_unicode": *tei
-"grobid12_review/write_read.review_inline": *tei
-"grobid12_review/write_read.review_noapp": *tei
-"grobid12_review/write_read.review_unicode": *tei
 "grobid12_review/written.review_inline": *d64_tei
 "grobid12_review/written.review_noapp": *d64_tei
-"grobid12_review/written.review_unicode": *tei
-"grobid12/.grobid_to_bibr.io.bib_page_from": &tei_io
+"grobid12/.grobid_to_bibr.io.edge_body": &tei_io
   kind: r_bug_fixed
   ref: U17
   reason: "TEI metacheck fails on or mis-reads: tables without rows, references without text, a page range with one end, an empty URL link text, nested divs repeating paragraphs and figure sections (U17), plus the U16 clean-up of numbers before a tag"
-"grobid12/.grobid_to_bibr.io.edge_body": *tei_io
 "grobid12/.grobid_to_bibr.io.figure_twice": *tei_io
-"grobid12/.grobid_to_bibr.io.refs_no_text": *tei_io
-"grobid12/.grobid_to_bibr.io.table_norows": *tei_io
-"grobid12/.grobid_to_bibr.io.tables_empty_first": *tei_io
-"grobid12/.grobid_to_bibr.io.tables_empty_second": *tei_io
-"grobid12/.grobid_to_bibr.io.tables_three_one_empty": *tei_io
-"grobid12/.grobid_to_bibr.io.url_empty": *tei_io
 "grobid12/paper_table.io.bib": *tei_io
 "grobid12/paper_table.io.eq": *tei_io
 "grobid12/paper_table.io.figure": *tei_io
 "grobid12/paper_table.io.footnote": *tei_io
-"grobid12/paper_table.io.info": *tei_io
 "grobid12/paper_table.io.section": *tei_io
 "grobid12/paper_table.io.table": *tei_io
 "grobid12/paper_table.io.text": *tei_io
 "grobid12/paper_table.io.url": *tei_io
 "grobid12/paper_table.io.xref": *tei_io
-"grobid12/module.all_p_values.0956797615569889": &module
+"grobid12/module.all_urls.demo": &module
   kind: r_bug_fixed
   ref: U16
   reason: "the module runs on the fixed 12.0 conversion (U16/U28: 'p = .152' where R prints 'p =0.152', link words and the statistics in them kept, sentences split), so its table text, ids or counts differ"
-"grobid12/module.all_p_values.demo": *module
-"grobid12/module.all_urls.demo": *module
 "grobid12/module.all_urls.preprint": *module
 "grobid12/module.all_urls.published": *module
-"grobid12/module.marginal.0956797615569889": &marginal
-  kind: r_bug_fixed
-  ref: U16
-  reason: "the module runs on the fixed 12.0 conversion (U16/U28), so its table text or ids differ; its guidance also cites the reference with R's person formatting (U3)"
-"grobid12/module.marginal.demo": *marginal
-"grobid12/module.marginal.preprint": *marginal
 "grobid12/module.open_practices.preprint": *module
 "grobid12/module.open_practices.published": *module
-"grobid12/module.ref_consistency.0956797615569889": *module
-"grobid12/module.ref_consistency.debruine": *module
-"grobid12/module.ref_consistency.preprint": *module
 "grobid12/module.ref_consistency.published": *module
 "grobid12/module.ref_summary.0956797615569889": *module
 "grobid12/module.ref_summary.debruine": *module
 "grobid12/module.ref_summary.preprint": *module
 "grobid12/module.ref_summary.published": *module
-"grobid12/module.stat_check.0956797615569889": *module
-"grobid12/module.stat_check.demo": *module
-"grobid12/module.stat_check.preprint": *module
-"grobid12/module.stat_check.published": *module
-"grobid12/module.stat_effect_size.0956797615569889": *module
-"grobid12/module.stat_effect_size.demo": *module
-"grobid12/module.stat_effect_size.preprint": *module
-"grobid12/module.stat_effect_size.published": *module
-"grobid12/module.stat_p_exact.0956797615569889": *module
-"grobid12/module.stat_p_exact.demo": *module
-"grobid12/module.stat_p_exact.preprint": *module
-"grobid12/module.stat_p_exact.published": *module
-"grobid12/module.stat_p_nonsig.0956797615569889": *module
-"grobid12/module.stat_p_nonsig.demo": *module
-"grobid12/module.stat_p_nonsig.preprint": *module
-"grobid12/module.stat_p_nonsig.published": *module
 "grobid12_review/module.all_p_values.review": *module
 "grobid12_review/module.all_urls.review": *module
-"grobid12_review/module.ref_consistency.review": *module
-"grobid12_review/module.ref_summary.review": *module
 "grobid12_review/module.stat_check.review": *module
-"grobid12_review/.grobid_to_bibr.error_message.url_empty": &url_empty
-  kind: r_bug_fixed
-  ref: U17
-  reason: "an empty URL link text no longer fails the conversion (R: gsub('', ...) 'zero-length pattern')"
-"grobid12_review/.grobid_to_bibr.review_header": &orcid
-  kind: r_bug_fixed
-  ref: U28
-  reason: "an author with several ORCIDs keeps the first (R's greedy '.*(' keeps the last)"
-"grobid12_review/write_read.review_header": *orcid
 "grobid12_review/written.review_header": &d64_orcid
   kind: deliberate
   ref: D64
@@ -229,14 +146,11 @@
   reason: "Grobid's <s> sentence tags are unwrapped, so segmented paragraphs are split into sentences (R keeps each paragraph as one row with 3-space runs, captions as 'First.Second.')"
 "grobid12_review/write_read.review_sentences": *sentences
 "grobid12_review/written.review_sentences": *sentences
-"grobid12_review/.grobid_to_bibr.review_url_na": &urls
+"grobid12_review/.grobid_to_bibr.review_urls": &urls
   kind: r_bug_fixed
   ref: U28
   reason: "each URL is printed only at its own link, once (R: 'https://https://osf.io/q2.io/q2' and link texts replaced in other rows and references); a link in words keeps them with the href after them ('osf https://osf.io/q2'), and a URL without a target leaves its rows alone (R: NA)"
-"grobid12_review/.grobid_to_bibr.review_urls": *urls
-"grobid12_review/write_read.review_url_na": *urls
 "grobid12_review/write_read.review_urls": *urls
-"grobid12_review/written.review_url_na": *urls
 "grobid12_review/written.review_urls": &d64_urls
   kind: deliberate
   ref: D64
@@ -244,25 +158,10 @@
 "bibr12_review/paper_write.text.edge_types": &d64_df_u22
   kind: deliberate
   ref: D64
-  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); also an empty df is no df (R writes '' and 'NULL', U24) and doubles that 15 significant digits would change are written in full (U22: R writes 3.14159265358979 for pi)"
+  reason: "orjson writes the file: one array value per line, 100000.0 and 1e-5, no '<\\/' (jsonlite: inline arrays, 100000, 1e-05); also an empty df is no df (R writes '' and 'NULL', U24)"
 "bibr12_review/paper_write.text.modified": *d64_df_u22
-"grobid12/.grobid_to_bibr.io.nonfatal_errors": &squish
-  kind: r_bug_fixed
-  ref: U27
-  reason: "12.0 body text is squished like captions, footnotes and bibr's own exports (R keeps runs of spaces: 'And an  undeclared prefix.')"
-"grobid12/.grobid_to_bibr.io.xlink_ns": *squish
 
 # 'ps' p-values (U204) ---------------------------------------------------------
-"bibr12/module.all_p_values.preprint": &u204_ps
-  kind: r_bug_fixed
-  ref: U204
-  reason: "'ps < .05', 'ps < .001' and the other 'ps' forms are p-values (8 more in the preprint); metacheck matches only p, p-value and P"
-"bibr12/module.all_p_values.mixed": *u204_ps
-"bibr12/module.stat_p_exact.preprint": *u204_ps
-"bibr12/module.stat_p_exact.mixed": *u204_ps
-"bibr12/module.stat_p_nonsig.preprint": *u204_ps
-"bibr12/module.stat_p_nonsig.mixed": *u204_ps
-"grobid12/module.all_p_values.preprint": *u204_ps
 
 # e-mail addresses are not URLs (U206) -------------------------------------------
 "bibr12/module.all_urls.preprint": &u206_email
@@ -270,3 +169,11 @@
   ref: U206
   reason: "e-mail addresses are not URLs: 'gmail.com' and the parts of 'name@university.edu' are not listed (metacheck lists each as a host name)"
 "bibr12/module.all_urls.mixed": *u206_email
+"bibr12_review/read.edge_numeric_id": &u281
+  kind: r_bug_fixed
+  ref: U281
+  reason: "a number is a paper_id: the file is read (metacheck refuses it as 'not bibr output (it has no paper_id)', warns, and reads nothing)"
+"bibr12_review/paper_validate.warnings.edge_numeric_id": *u281
+"bibr12_review/paper_validate.edge_numeric_id": *u281
+"bibr12_review/paper_write.text.edge_numeric_id": *u281
+"bibr12_review/paper_write.roundtrip.edge_numeric_id": *u281

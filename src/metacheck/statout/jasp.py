@@ -168,7 +168,10 @@ def _column_attrs(labels: list[tuple[Any, float]] | None, label: Any) -> dict[st
 
 
 def _frame_from_columns(
-    cols: list[Any], names: list[Any], col_attrs: list[dict[str, Any]] | None = None
+    cols: list[Any],
+    names: list[Any],
+    col_attrs: list[dict[str, Any]] | None = None,
+    n: int | None = None,
 ) -> pd.DataFrame:
     """``setNames(as.data.frame(cols), names)`` and the re-attached attributes.
 
@@ -176,15 +179,17 @@ def _frame_from_columns(
     missing values. R's ``data.frame()`` recycles it when its length divides
     the longest one and it has no attributes, repeating values the file does
     not hold, and otherwise stops ("arguments imply differing number of
-    rows"; UPSTREAM_ISSUES U145). Attributes go to ``df.attrs["col_attrs"]``.
+    rows"; UPSTREAM_ISSUES U145). The binary readers pass the data set's row count *n*, which
+    every column is padded to (metacheck 0.4.3.7's ``.pad_to()``), also when all of them are
+    short. Attributes go to ``df.attrs["col_attrs"]``.
     """
     import pandas as pd
 
     attrs = col_attrs if col_attrs is not None else [{} for _ in cols]
     lengths = [len(c) for c in cols]
-    if lengths and len(set(lengths)) > 1:
-        n = max(lengths)
-        cols = [c if len(c) == n else _pad(c, n) for c in cols]
+    if lengths:
+        target = max(lengths) if n is None else max(n, max(lengths))
+        cols = [c if len(c) == target else _pad(c, target) for c in cols]
     df = pd.DataFrame(dict(enumerate(cols))) if cols else pd.DataFrame()
     df.columns = list(names)
     from metacheck.datacheck._colattrs import ColAttrs
@@ -319,7 +324,7 @@ def _read_jasp_binary(files: list[str]) -> dict[str, Any]:
             names.append(name)
             types.append(mt)
     _check_field_names(names)
-    df = _frame_from_columns(cols, names, col_attrs)
+    df = _frame_from_columns(cols, names, col_attrs, int(nrow))
     columns = (
         pd.DataFrame(
             {

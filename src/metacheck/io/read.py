@@ -117,4 +117,9 @@ def read(
                 raise
             warnings.warn(f"Could not read {os.path.basename(p)}: {exc}", stacklevel=2)
     plist = PaperList(papers)
+    if len(plist) > 1:
+        # metacheck's paperlist() renames the papers that share an ID ("~2", ...; U208)
+        from metacheck.papers.ids import resolve
+
+        plist = resolve(plist)
     return plist[0] if len(plist) == 1 else plist

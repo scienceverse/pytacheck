@@ -182,16 +182,19 @@ rc_fake_install <- function(install_deps, ...) {
 rc_run_mocked <- function(name, ...) {
   ns <- "metacheck"
   fakes <- list(
-    repro_install_deps = function(install_deps, lib_dir, cran_to_main_lib = FALSE)
+    repro_install_deps = function(install_deps, lib_dir, cran_to_main_lib = FALSE,
+                                  deadline = NULL)
       rc_fake_install(install_deps),
     repro_install_deps_docker = function(install_deps, lib_dir, image = "", timeout = 600)
       rc_fake_install(install_deps),
     repro_docker_available = function() list(ok = TRUE, msg = ""),
     repro_run_scripts_docker = function(run_tbl, order, sandbox_root, lib_dir = NULL,
                                         image = "", timeout = 600, skip = character(0),
-                                        parses = NULL, failed_deps = character(0))
+                                        parses = NULL, failed_deps = character(0),
+                                        deadline = NULL, net = NULL)
       metacheck:::repro_run_scripts(run_tbl, order, lib_dir = lib_dir, timeout = timeout,
-                                    skip = skip, parses = parses, failed_deps = failed_deps)
+                                    skip = skip, parses = parses, failed_deps = failed_deps,
+                                    deadline = deadline)
   )
   old <- lapply(names(fakes), function(n) get(n, envir = asNamespace(ns)))
   names(old) <- names(fakes)

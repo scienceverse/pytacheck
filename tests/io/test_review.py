@@ -210,8 +210,8 @@ def test_list_files_skips_dotfiles_and_keeps_directory_string(tmp_path: Path) ->
     assert _list_files(str(tmp_path), r"\.pdf", recursive=True) == [f"{tmp_path}/sub/d.PDF"]
 
 
-def test_grobid_to_bibr_directory_of_dotfiles_only() -> None:
-    assert grobid_to_bibr(IO_FIXTURES / "dotonly") == []
+def test_grobid_to_bibr_directory_of_dotfiles_only(tmp_path: Path) -> None:
+    assert grobid_to_bibr(IO_FIXTURES / "dotonly", tmp_path) == []
     with pytest.raises(IndexError):
         grobid_to_bibr(IO_FIXTURES / "dotonly", save_path=None)
 
@@ -255,13 +255,16 @@ def test_format_bib_authors_partial_column_match() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_release_assets_without_rds_is_none() -> None:
+def test_release_assets_without_rds_has_no_rows() -> None:
+    # metacheck 0.4 (U18): a table without rows, as for no releases (0.3: NULL)
     with api(NORDS):
-        assert _papers_release_assets("scienceverse/nords") is None
+        out = _papers_release_assets("scienceverse/nords")
+    assert len(out) == 0
+    assert list(out.columns) == ["name", "tag", "size", "download_url"]
 
 
 def test_papers_available_without_assets_is_empty() -> None:
-    # metacheck: "arguments imply differing number of rows: 0, 1" (U18)
+    # U18: metacheck 0.3 failed with "arguments imply differing number of rows: 0, 1"
     for mock, repo in (
         (NORDS, "scienceverse/nords"),
         ("apis_papers_empty", "scienceverse/norealeases"),
@@ -273,7 +276,7 @@ def test_papers_available_without_assets_is_empty() -> None:
 
 
 def test_papers_load_without_assets() -> None:
-    # metacheck: "argument is of length zero" (U18)
+    # U18: metacheck 0.3 failed with "argument is of length zero"
     with api(NORDS), pytest.raises(ValueError, match="'misc' not found in releases"):
         papers_load("misc", "scienceverse/nords")
     with api("apis_papers_empty"), pytest.raises(ValueError, match="not found in releases"):
@@ -445,21 +448,23 @@ def test_read_list_drops_exact_twins_and_repeats(tmp_path: Path) -> None:
     names = [f"{d}/{n}" for n in ["Z.xml", "p.JSON", "p.xml", "q.json", "q.xml", "Z.xml"]]
     # setdiff(): only the exact twin of a lower-case ".json" goes, and each path is
     # read once; "p.JSON" is still read as JSON (grepl(ignore.case = TRUE))
-    assert read(names, schema_version=None).names == ["Z", "probe", "p", "probe"]
+    # (the second paper that has an ID gets "~2", as paperlist() renames it; U208)
+    with pytest.warns(UserWarning, match="probe~2"):
+        assert read(names, schema_version=None).names == ["Z", "probe", "p", "probe~2"]
 
 
 def test_read_dir_skips_any_unreadable_file(tmp_path: Path) -> None:
     from metacheck.io.read import read
 
     _tei_copies(tmp_path, ["b.xml"])
-    # a JSON file whose root is an array (R: "$ operator is invalid for atomic vectors")
+    # a JSON file whose root is an array (R: "is not bibr output (it has no paper_id)")
     (tmp_path / "a.json").write_text("[1, 2]")
     # D6: logged and skipped, with a warning that says why (as metacheck does
     # since 97612c7)
     with pytest.warns(UserWarning, match=r"^Could not read a\.json: "):
         p = read(tmp_path, schema_version=None)
     assert p.paper_id == "b"
-    with pytest.raises(AttributeError):
+    with pytest.raises(ValueError, match=r"a.json is not bibr output"):
         read(tmp_path / "a.json")  # a single file raises the real error (U21)
 
 

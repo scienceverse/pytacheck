@@ -15,6 +15,7 @@ import pandas as pd
 
 from metacheck._r.base import as_character
 from metacheck._r.regex import gsub
+from metacheck._save_path import NO_SAVE_PATH, require_save_path
 from metacheck._values import is_missing
 from metacheck.papers.model import Paper, PaperList
 from metacheck.papers.schema import coerce_table, records_to_frame
@@ -215,9 +216,20 @@ def read_bibr(file_path: str | PathLike[str], include_images: bool = False) -> P
     A file with a root ``schema_version`` (bibr export schema 11 and later)
     goes to the 12.x reader (:func:`metacheck.io.bibr12.read_bibr12`), which
     reads 12.x and raises metacheck's error for any other version; files
-    without one read exactly as before.
+    without one read exactly as before. A file without a ``paper_id`` at its
+    root is not bibr output and is refused.
     """
     data = orjson.loads(Path(file_path).read_bytes())
+    # a JSON file that is not a paper ("{}", the output of another tool) is no
+    # paper: every bibr export has a paper_id at its root (#499). A number is an
+    # id too (metacheck refuses it as "no paper_id"; U281).
+    pid = data.get("paper_id") if isinstance(data, Mapping) else None
+    numeric = isinstance(pid, int | float) and not isinstance(pid, bool)
+    if not numeric and (not isinstance(pid, str) or pid == ""):
+        raise ValueError(
+            f"{os.path.basename(file_path)} is not bibr output (it has no paper_id), "
+            "so it cannot be read as a paper"
+        )
     if isinstance(data, Mapping) and _field(data, "schema_version") is not None:
         from metacheck.io.bibr12 import _bibr12_from_json
 
@@ -273,17 +285,29 @@ def test_paper(text: Sequence[str] | None = None, url: Sequence[str] = ()) -> Pa
 
 
 def demofile(ext: str = "json") -> Path:
-    """Path to a version of the demo paper (``json``, ``pdf``, ``docx``, ``doc``, ``xml``, ``qmd``)."""
-    allowed = ("json", "pdf", "docx", "doc", "xml", "qmd")
+    """Path to a version of the demo paper (``json``, ``pdf``, ``docx``, ``doc``, ``xml``,
+    ``qmd``), or, for ``"repo"``, the folder of a demo repository: a small copy of
+    https://github.com/Lakens/stroop_effect_paper (data, code, codebook, README, licence and
+    ``renv.lock``), for functions that check a repository on your own computer."""
+    allowed = ("json", "pdf", "docx", "doc", "xml", "qmd", "repo")
     if ext not in allowed:
         raise ValueError(f"'arg' should be one of {', '.join(repr(a) for a in allowed)}")
-    ref = resources.files("metacheck.resources.demos").joinpath(f"to_err_is_human.{ext}")
-    return Path(str(ref))
+    demos = resources.files("metacheck.resources.demos")
+    if ext == "repo":
+        return Path(str(demos.joinpath("stroop_effect_paper")))
+    return Path(str(demos.joinpath(f"to_err_is_human.{ext}")))
 
 
-def demopaper() -> Paper:
-    """The demo paper "To Err is Human" (``demopaper()``)."""
-    return read_bibr(demofile("json"))
+def demopaper(paper: str = "to_err_is_human") -> Paper:
+    """A demo paper (``demopaper()``): ``"to_err_is_human"`` (the default) is a short paper
+    written to show metacheck's checks; ``"stroop_effect"`` is a small reproducible analysis
+    whose data and code are bundled as a demo repository (see ``demofile("repo")``); the paper is
+    its manuscript, converted with Grobid."""
+    allowed = ("to_err_is_human", "stroop_effect")
+    if paper not in allowed:
+        raise ValueError(f"'arg' should be one of {', '.join(repr(a) for a in allowed)}")
+    ref = resources.files("metacheck.resources.demos").joinpath(f"{paper}.json")
+    return read_bibr(Path(str(ref)))
 
 
 def _json_default(obj: Any) -> Any:
@@ -330,7 +354,7 @@ def paper_to_json(p: Paper) -> dict[str, Any]:
 def paper_write(
     paper: Paper | PaperList,
     file_name: str | Sequence[str] | None = None,
-    save_path: str | PathLike[str] = ".",
+    save_path: str | PathLike[str] = NO_SAVE_PATH,
     schema_version: str | None = "auto",
 ) -> Path | list[Path]:
     """``paper_write()``: save paper(s) as pretty-printed JSON; returns the path(s).
@@ -357,6 +381,7 @@ def paper_write(
     """
     if schema_version not in ("auto", None, "12.0"):
         raise ValueError('schema_version must be "auto", None or "12.0"')
+    require_save_path(save_path)  # there is no default folder
     save_dir = Path(save_path).resolve()
     save_dir.mkdir(parents=True, exist_ok=True)
     if isinstance(paper, PaperList):

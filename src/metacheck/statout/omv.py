@@ -137,7 +137,7 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
                 names.append(name)
                 types.append(mt)
         _check_field_names(names)
-        df = _frame_from_columns(cols, names, col_attrs)
+        df = _frame_from_columns(cols, names, col_attrs, int(nrow))
         analyses = _omv_analyses_summary(files)
     columns = (
         pd.DataFrame(

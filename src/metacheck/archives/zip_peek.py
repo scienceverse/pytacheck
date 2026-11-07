@@ -38,6 +38,7 @@ import zlib
 from collections.abc import Iterable, Sequence
 from contextvars import ContextVar
 from typing import TYPE_CHECKING, Any
+from urllib.parse import urlsplit
 
 from metacheck._r import grepl, gsub, strsplit, sub
 from metacheck._values import is_missing
@@ -185,6 +186,38 @@ def _content_range_total(resp: Any) -> float:
     return float(m.group(1)) if m else math.nan
 
 
+#: hosts whose firewall check was already warned about (R: ``.waf_challenge_warned``)
+_WAF_CHALLENGE_WARNED: set[str] = set()
+
+
+def _waf_challenge_check(resp: Any, url: str) -> bool:
+    """Port of R/zip-peek.R::.waf_challenge_check(): is *resp* an AWS WAF browser check?
+
+    A host behind an Amazon web firewall can answer a request with a browser
+    check instead of the file: HTTP 202, an empty body and the header
+    ``x-amzn-waf-action: challenge``, which only a browser running JavaScript
+    can pass. Such an answer gives no size, and a file of unknown size is left
+    out of the downloads without a word, so this warns once per host and
+    session, saying why.
+    """
+    action = resp.headers.get("x-amzn-waf-action")
+    if action is None or action.lower() != "challenge":
+        return False
+    try:
+        host = (urlsplit(url).hostname or "").lower() or None
+    except ValueError:
+        host = None
+    if host is not None and host not in _WAF_CHALLENGE_WARNED:
+        _WAF_CHALLENGE_WARNED.add(host)
+        warnings.warn(
+            f"{host}'s firewall answered with a browser check (AWS WAF challenge) "
+            "instead of the file, usually after many requests in a short time. "
+            "Its files cannot be sized or downloaded until it lifts; try again later.",
+            stacklevel=2,
+        )
+    return True
+
+
 def _head_size(url: str, skip_on_api_limit: bool = False) -> float:
     """Port of ``R/zip-peek.R::.head_size()``: the size from a HEAD request.
 
@@ -207,6 +240,8 @@ def _head_size(url: str, skip_on_api_limit: bool = False) -> float:
             skip_on_api_limit=skip_on_api_limit,
             is_transient=_size_probe_is_transient,
         )
+        if _waf_challenge_check(resp, url):
+            return math.nan
         status = int(resp.status_code)
         if status < 200 or status >= 300:
             if status != 403:
@@ -249,6 +284,8 @@ def _http_range_get(
     except Exception:
         _note_transient()
         raise
+    if _waf_challenge_check(resp, url):
+        return int(resp.status_code), math.nan, None
     status = int(resp.status_code)
     _note_transient(status)
     body = bytes(resp.content) if status == 206 else None

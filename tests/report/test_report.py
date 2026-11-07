@@ -428,6 +428,29 @@ def test_report_module_run_error(demo, test_module):
     assert mo[test_module("rp_chained")].summary_text == "The marginal table had 2 rows."
 
 
+def test_report_module_run_downloads_for_the_run(demo, monkeypatch):
+    # R's report_module_run(): with reproducibility_check executing the code, the first
+    # module that downloads fetches what the run needs too (metacheck.download_for_run)
+    from metacheck.utils import get_option
+
+    seen: list[object] = []
+
+    def fake_run(op, module, **kwargs):
+        seen.append(get_option("metacheck.download_for_run"))
+        return op
+
+    monkeypatch.setattr(report_pkg, "module_run", fake_run)
+    report_module_run(
+        demo, ["code_check", "reproducibility_check"], {"reproducibility_check": {"execute": True}}
+    )
+    assert seen == [True, True]
+    assert get_option("metacheck.download_for_run") is None
+    seen.clear()
+    report_module_run(demo, ["code_check", "reproducibility_check"])
+    report_module_run(demo, ["code_check"], {"reproducibility_check": {"execute": True}})
+    assert seen == [None, None, None]
+
+
 def test_report_qmd(demo, test_module):
     mo = report_module_run(demo, "marginal")
     report_text = report_qmd(mo, demo)

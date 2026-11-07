@@ -189,10 +189,11 @@ def test_function_guides_keep_drawable_expressions() -> None:
 
 
 def test_boxplot_without_complete_rows_is_left_out() -> None:
-    # U148: nothing to draw leaves the chart out (R's boxplot() stops the export)
+    # U148: nothing to draw is replaced by a note, as in metacheck 0.4.3.7 (before, R's
+    # boxplot() stopped the whole export)
     df = pd.DataFrame({"category": ["a", "b"], "value": [math.nan, math.nan]})
     df.attrs["spv_chart_type"] = "boxplot"
-    assert _spv_chart_html(df) == ""
+    assert _spv_chart_html(df) == "<p>(This chart could not be drawn.)</p>"
 
 
 def test_assemble_table_tolerates_missing_n_leaves() -> None:
@@ -217,3 +218,15 @@ def test_as_numeric_hex_floats() -> None:
     assert as_float("0x.8") == 0.5
     assert as_float("-0x1A") == -26.0
     assert as_float("0x") is None
+
+
+def test_data_frame_pads_every_column_to_the_row_count() -> None:
+    # U145, R's .pad_to(): each column is padded to rowCount, also when all of them are short
+    a = pd.array([1, 2], dtype="Int64")
+    b = pd.array([1.5, 2.5], dtype="Float64")
+    df = _frame_from_columns([a, b], ["a", "b"], None, 4)
+    assert len(df) == 4
+    assert df["a"].isna().tolist() == [False, False, True, True]
+    assert df["b"].isna().tolist() == [False, False, True, True]
+    # without a row count the longest column decides
+    assert len(_frame_from_columns([a, b], ["a", "b"])) == 2

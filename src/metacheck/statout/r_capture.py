@@ -10,7 +10,7 @@ file. The parent converts those records to the same table shape
 with the tables parsed from stdout.
 
 The object inspection has to happen *inside R*, so the child-side reducers
-(``.r_cap_htest()``, ``.r_cap_coef_matrix()``, ``.r_cap_anova()``,
+(``.r_cap_htest()``, ``.r_cap_coef_matrix()``, ``.r_cap_anova()``, ``.r_cap_effectsize()``,
 ``.r_call_fun_arg()``, ``.r_cap_by_fun()``, ``.r_capture_value()``) are kept
 as R source (:data:`_CHILD_R`) that is shipped to an ``Rscript`` subprocess \u2014
 the Python analogue of ``callr::r()``. The only change is the sidecar format:
@@ -52,6 +52,7 @@ _R_CAPTURE_CLASSES = (
     "summary.glm",
     "lm",
     "glm",
+    "effectsize_table",
 )
 
 # ---------------------------------------------------------------------------
@@ -122,9 +123,51 @@ _CHILD_FUNCTIONS: dict[str, str] = {
   if (!length(rows)) return(NULL)
   list(analysis = analysis, method = analysis, rows = rows)
 }""",
+    # An effectsize result (cohens_d(), repeated_measures_d(), hedges_g(), eta_squared(), ...)
+    # is a data.frame whose first column is named for the effect size ("d_z", "Cohens_d",
+    # "Eta2_partial") with its interval in "CI_low"/"CI_high". Those names are not in the
+    # vocabulary, so they are renamed to ones that are; a stored result is never printed, so
+    # without this it was not found at all (metacheck #549).
+    ".r_cap_effectsize": r"""function(x) {
+  df <- x
+  class(df) <- "data.frame"
+  if (!nrow(df) || !ncol(df)) return(NULL)
+  rename <- c(d_z = "d", d_rm = "d", d_av = "d", d_b = "d", d_d = "d",
+              d_r = "d", cohens_d = "d", hedges_g = "Hedges' g",
+              glass_delta = "Glass' delta", glass_delta_adjusted = "Glass' delta",
+              eta2 = "\u03B7\u00B2", eta2_partial = "partial eta squared",
+              omega2 = "\u03C9\u00B2", r = "r", odds_ratio = "odds ratio",
+              ci_low = "conf.low", ci_high = "conf.high")
+  cn <- names(df)
+  is_num <- vapply(df, is.numeric, logical(1)) & tolower(cn) != "ci"
+  if (!any(is_num)) return(NULL)
+  keys <- ifelse(tolower(cn) %in% names(rename), rename[tolower(cn)], cn)
+  # eta_squared() and the like name each row in a "Parameter" column
+  lab_col <- match("parameter", tolower(cn))
+  rows <- lapply(seq_len(nrow(df)), function(i) {
+    st <- list()
+    for (j in which(is_num)) {
+      v <- df[[j]][i]
+      if (!is.na(v)) st[[keys[j]]] <- unname(v)
+    }
+    if (!length(st)) return(NULL)
+    list(label = if (!is.na(lab_col)) as.character(df[[lab_col]][i]) else "",
+         stats = st)
+  })
+  rows <- Filter(Negate(is.null), rows)
+  if (!length(rows)) return(NULL)
+  an <- cn[which(is_num)[1]]
+  list(analysis = an, method = "", rows = rows)
+}""",
     ".r_call_fun_arg": r"""function(call_text) {
   if (is.null(call_text) || !nzchar(call_text)) return(NA_character_)
   cl <- tryCatch(str2lang(call_text), error = function(e) NULL)
+  # A stored result, means <- sapply(d, mean): the value is the right-hand
+  # side's, so that is the call to read; the assignment itself has no FUN
+  # (#549). R parses `->` as `<-`, and (means <- sapply(d, mean)) prints it.
+  while (is.call(cl) && length(cl) >= 2 &&
+         as.character(cl[[1]])[1] %in% c("<-", "=", "<<-", "("))
+    cl <- cl[[length(cl)]]
   if (is.null(cl) || !is.call(cl)) return(NA_character_)
   fname <- tryCatch(as.character(cl[[1]])[1], error = function(e) NA_character_)
   if (is.na(fname) || !nzchar(fname)) return(NA_character_)
@@ -142,8 +185,13 @@ _CHILD_FUNCTIONS: dict[str, str] = {
   hit <- pick(tryCatch(match.call(f, cl), error = function(e) NULL))
   if (!is.null(hit)) return(hit)
 
-  meths <- tryCatch(as.character(utils::methods(fname)),
-                    error = function(e) character(0))
+  # Only a generic has methods: methods() on any other function warns, e.g.
+  # "function 'library' appears not to be S3 generic", and that warning ended
+  # up in the output of most scripts.
+  is_generic <- !is.primitive(f) &&
+    any(grepl("UseMethod", deparse(body(f)), fixed = TRUE))
+  meths <- if (is_generic) tryCatch(suppressWarnings(as.character(utils::methods(fname))),
+                                    error = function(e) character(0)) else character(0)
   for (mn in meths) {
     short <- sub(paste0("^", fname, "\\."), "", mn)
     mf <- tryCatch(utils::getS3method(fname, short), error = function(e) NULL)
@@ -194,6 +242,8 @@ _CHILD_FUNCTIONS: dict[str, str] = {
   if (is.null(v)) return(NULL)
 
   if (inherits(v, "htest")) return(.r_cap_htest(v))
+
+  if (inherits(v, "effectsize_table")) return(.r_cap_effectsize(v))
 
   if (inherits(v, "summary.lm") || inherits(v, "summary.glm")) {
     an <- if (inherits(v, "summary.glm")) "glm" else "lm"
@@ -276,6 +326,20 @@ _JSON_R = r"""
 _RUNNER_R = r"""function(script, wd, capture_file, helpers) {
   setwd(wd)
   env <- globalenv()
+  # What a person's computer has and a check does not: a missing figure in a document, the
+  # data viewer, and fonts only Windows has.
+  options(knitr.graphics.error = FALSE)
+  # In an attached environment of their own, not the workspace, which a script that starts
+  # with rm(list = ls()) clears
+  stand_ins <- new.env()
+  assign("View", function(...) invisible(NULL), envir = stand_ins)
+  assign("windowsFonts", function(...) invisible(NULL), envir = stand_ins)
+  assign("windowsFont", function(...) "sans", envir = stand_ins)
+  # Nobody can answer: on Windows file.choose() opens a window and waits.
+  for (ask in c("file.choose", "choose.files", "choose.dir", "tk_choose.files", "tk_choose.dir"))
+    assign(ask, function(...) stop("file choice cancelled", call. = FALSE), envir = stand_ins)
+  att <- get("attach", envir = baseenv())
+  att(stand_ins, name = "metacheck:stand_ins", warn.conflicts = FALSE)
   for (nm in names(helpers)) assign(nm, helpers[[nm]], envir = env)
   captures <- list()
   on.exit(try(.mc_write_json(captures, capture_file), silent = TRUE), add = TRUE)
@@ -287,7 +351,8 @@ _RUNNER_R = r"""function(script, wd, capture_file, helpers) {
     e <- exprs[[i]]
     sr <- if (!is.null(srcrefs) && length(srcrefs) >= i) srcrefs[[i]] else NULL
     txt <- if (!is.null(sr)) as.character(sr) else deparse(e)
-    cat(paste0("> ", txt, collapse = "\n"), "\n", sep = "")
+    # not into a file the script sink()s to: a JAGS model written that way got these lines
+    if (sink.number() == 0) cat(paste0("> ", txt, collapse = "\n"), "\n", sep = "")
 
     res <- withVisible(eval(e, envir = env))
     if (res$visible) {
@@ -687,6 +752,16 @@ def _r_cap_anova(x: str, analysis: str, rscript: str | None = None) -> dict[str,
     Port of ``R/r-capture.R::.r_cap_anova()`` (runs in R).
     """
     return _r_eval_child(f".r_cap_anova({x}, {_r_string(analysis)})", rscript)  # type: ignore[no-any-return]
+
+
+def _r_cap_effectsize(x: str, rscript: str | None = None) -> dict[str, Any] | None:
+    """Reduce an ``effectsize_table`` expression *x* (evaluated in R).
+
+    Port of ``R/r-capture.R::.r_cap_effectsize()`` (runs in R): the effect-size and
+    interval columns take vocabulary names (``d_z`` -> ``d``, ``CI_low`` -> ``conf.low``),
+    the confidence level is left out and a ``Parameter`` column labels the rows.
+    """
+    return _r_eval_child(f".r_cap_effectsize({x})", rscript)  # type: ignore[no-any-return]
 
 
 def _r_call_fun_arg(call_text: str | None, rscript: str | None = None) -> str | None:

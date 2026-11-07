@@ -21,7 +21,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._values import as_float, field, is_missing
+from metacheck._values import as_float, field, field_or_value, is_missing
 
 __all__ = ["gitlab_links", "gitlab_pat", "gitlab_repo", "gitlab_tree_files"]
 
@@ -269,7 +269,7 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
     default_branch = field(meta, "default_branch")
     if default_branch is None:
         default_branch = "main"
-    license_key = _empty_or(field(field(meta, "license"), "key"))
+    license_key = _empty_or(field_or_value(field(meta, "license"), "key"))
 
     # 2. the file tree, 100 entries a page
     entries: list[Any] = []

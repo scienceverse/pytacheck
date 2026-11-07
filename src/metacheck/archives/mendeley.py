@@ -13,7 +13,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._values import field, is_missing
+from metacheck._values import field, field_or_value, is_missing
 
 __all__ = ["mendeley_info", "mendeley_links"]
 
@@ -163,9 +163,7 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
 
         obj["title"] = _field_cell(_empty_or(field(rec, "name"), None))
         # a plain-string `doi` is the DOI itself (metacheck's `rec$doi$id` fails on it: U34)
-        doi = field(rec, "doi")
-        if not isinstance(doi, str):
-            doi = field(doi, "id")
+        doi = field_or_value(field(rec, "doi"), "id")
         obj["doi"] = _field_cell(_empty_or(doi, None))
         obj["description"] = _field_cell(_empty_or(field(rec, "description"), None))
         obj["publication_date"] = _field_cell(_empty_or(field(rec, "publish_date"), None))
@@ -173,7 +171,12 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
         obj["authors"] = _obj_cell(authors)
         licence = field(rec, "data_licence")
         obj["license"] = _field_cell(
-            _empty_or(_empty_or(field(licence, "short_name"), field(licence, "full_name")), None)
+            _empty_or(
+                _empty_or(
+                    field_or_value(licence, "short_name"), field_or_value(licence, "full_name")
+                ),
+                None,
+            )
         )
         files = field(rec, "files")
         obj["files"] = _obj_cell(files if files is not None else [])

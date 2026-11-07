@@ -9,6 +9,7 @@ import pandas as pd
 import pytest
 
 from metacheck.statout.stat_output import (
+    _source_prefix,
     _stat_is_placeholder,
     _stat_result_ids,
     _stat_sanitize_id,
@@ -168,3 +169,11 @@ def test_stat_output_write(tmp_path: Path) -> None:
     assert stat_output_write(None, tmp_path / "x") is None
     assert stat_output_write([{"file": "a", "json": None, "long": None}], tmp_path / "y") is None
     assert not (tmp_path / "y").exists()
+
+
+def test_source_prefix_is_result_without_a_usable_source_file() -> None:
+    # R's .stat_source_prefix(): NULL, NA, empty and blank all give "result" (U138)
+    for missing in (None, pd.NA, float("nan"), "", "   "):
+        assert _source_prefix(missing) == "result"
+    assert _source_prefix("My File.jasp") == "my_file_jasp"
+    assert _source_prefix("_a_") == "a"

@@ -63,20 +63,21 @@ def test_code_expand_output_formats(tmp_path: Path, monkeypatch: pytest.MonkeyPa
         }
     )
     expected = {
-        "_code_expand_spv": ("modern.sps", "sub/code/modern.sps", "./code/modern.sps", 109.0),
-        "_code_expand_smcl": ("analysis.do", "NA/code/analysis.do", "./code/analysis.do", 274.0),
-        "_code_expand_mplus": (
-            "twolevel.inp",
-            "x/y/code/twolevel.inp",
-            "./code/twolevel.inp",
-            192.0,
-        ),
+        "_code_expand_spv": ("modern.sps", "sub/code/modern.sps", 109.0),
+        "_code_expand_smcl": ("analysis.do", "NA/code/analysis.do", 274.0),
+        "_code_expand_mplus": ("twolevel.inp", "x/y/code/twolevel.inp", 192.0),
     }
-    for fn, (name, path, loc, size) in expected.items():
+    for fn, (name, path, size) in expected.items():
         out = getattr(core, fn)(af, 10, 100, False)
         assert len(out) == 7, fn
         row = out.iloc[6]
-        assert (row["file_name"], row["file_path"], row["file_location"]) == (name, path, loc)
+        assert (row["file_name"], row["file_path"]) == (name, path)
+        # the files are the user's own: the code is recovered into the temporary folder, under
+        # the output file's checksum, not beside it (metacheck 0.4.3.7)
+        loc = Path(row["file_location"])
+        assert loc.parent.name == "code"
+        assert loc.parent.parent.parent.name == "metacheck-recovered-code"
+        assert loc.name == name
         assert pd.isna(row["file_url"])
         assert row["file_size"] == size
         assert row["data_type"] == "output"
@@ -116,11 +117,12 @@ x &lt;- read.csv(&quot;data.csv&quot;)</code></pre>
     assert out["file_name"].tolist() == ["report.html", "x.R", "report.R"]
     assert out["data_type"].tolist() == ["output", "code", "materials"]
     assert out["file_path"].iloc[2] == "docs/code/report.R"
-    # the recovered code goes to the temporary folder, not next to the page
+    # the user's own file is not written beside: the code is recovered into the temporary folder
+    # (metacheck 0.4.3.7)
     assert not (tmp_path / "code").exists()
-    loc = Path(out["file_location"].iloc[2])
-    assert "metacheck-recovered-code" in loc.parts
-    assert loc.read_text(encoding="utf-8").startswith("library(dplyr)")
+    recovered = Path(out["file_location"].iloc[2])
+    assert recovered.parent.parent.parent.name == "metacheck-recovered-code"
+    assert recovered.read_text(encoding="utf-8").startswith("library(dplyr)")
 
 
 def test_code_expand_no_candidates_returns_input() -> None:

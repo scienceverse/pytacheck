@@ -121,7 +121,12 @@ def test_genuine_output_and_syntax(tmp_path: Path) -> None:
     src = tmp_path / "twolevel.out"
     src.write_bytes((FIX / "twolevel.out").read_bytes())
     inp = _mplus_export_syntax(src)
-    assert Path(inp) == tmp_path / "code" / "twolevel.inp"  # joined with "/", as R does
+    # a file of the user's own is not written beside: the code goes to the temporary folder
+    # under the file's checksum (metacheck 0.4.3.7)
+    assert Path(inp).parent.parent.parent.name == "metacheck-recovered-code"
+    assert Path(inp).parent.name == "code"
+    assert Path(inp).name == "twolevel.inp"
+    assert not (tmp_path / "code").exists()
     assert Path(inp).read_text().splitlines()[0] == "TITLE: Two-level regression;"
     comp = tmp_path / "c.out"
     comp.write_bytes((FIX / "compiler.out").read_bytes())
