@@ -713,7 +713,7 @@ def stale_quarantine_entries(cases: list[Case], areas: list[str] | None = None) 
 
 #: the modules of the ``data`` extra without which some cases differ from R (with
 #: matplotlib and pypdf missing, none do)
-_EXTRA_MODULES = ("pyreadstat", "xlrd", "snowballstemmer", "striprtf")
+_EXTRA_MODULES = ("pyreadstat", "xlrd", "snowballstemmer")
 
 
 def environment_problems() -> list[str]:
