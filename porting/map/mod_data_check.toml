@@ -59,3 +59,8 @@
 # careless::longstring() / careless::irv() (a suggested package; ported natively)
 "careless::longstring" = "metacheck.modules._data_check:_longstring"
 "careless::irv" = "metacheck.modules._data_check:_irv"
+# metacheck 0.4.3.7 (4a61888)
+".dv_space_csv_findings" = "metacheck.modules._data_check:dv_space_csv_findings"
+".dv_rds_workspace_findings" = "metacheck.modules._data_check:dv_rds_workspace_findings"
+".dv_rds_workspace_summary_text" = "metacheck.modules._data_check:dv_rds_workspace_summary_text"
+".dv_space_csv_summary_text" = "metacheck.modules._data_check:dv_space_csv_summary_text"

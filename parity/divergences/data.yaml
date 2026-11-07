@@ -70,7 +70,7 @@
 "mod_psychds/psychds_check.compliant": &u112
   kind: r_bug_fixed
   ref: U112
-  reason: files already where Psych-DS wants them are not moved - dataset_description.json, CHANGES, LICENSE and ro-crate-metadata.json belong at the root (R moves them to analysis/, documentation/ or unknown/), and a valid .tsv data file name is not converted to CSV (R plans a conversion that writes the same name; metacheck keeps valid data names and judges misplacement against the final target since a24f1af0)
+  reason: files already where Psych-DS wants them are not moved - dataset_description.json, CHANGES, LICENSE and ro-crate-metadata.json belong at the root (R moves them to analysis/, documentation/ or unknown/), and a valid .tsv data file name is not converted to CSV (U259, R plans a conversion that writes the same name; metacheck keeps valid data names and judges misplacement against the final target since a24f1af0)
 "mod_psychds/psychds_check.compliant_raw": *u112
 "mod_psychds/psychds_check.multi": *u112
 "mod_psychds/psychds_check.test_paper": *u112
@@ -100,8 +100,8 @@
   reason: the files that belong at the dataset root stay there (U112); the summary row of the paper that owns the files is the same as R's since metacheck 203b6616
 "mod_psychds/psychds_check.no_type_col": &u113
   kind: r_bug_fixed
-  ref: U113
-  reason: a structure without a file name column, or with a file that has neither name nor path, is still planned (the file is listed as excluded); R stops the module (differing number of rows, subscript out of bounds) although psychds_file_plan() itself handles them since metacheck ebfbb278
+  ref: U260
+  reason: a structure without a file name column, or with a file that has neither name nor path, is still planned (the file is listed as excluded); R stops the module (differing number of rows, subscript out of bounds) although psychds_file_plan() itself handles them since metacheck ebfbb278 (U113, U260)
 "mod_psychds/psychds_check.no_name_col": *u113
 "mod_psychds/psychds_check.no_name_col_data": *u113
 "mod_psychds/psychds_check.path_na": *u113
