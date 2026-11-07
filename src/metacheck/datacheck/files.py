@@ -64,8 +64,7 @@ from metacheck._r.base import plural, slashed, trimws
 from metacheck._r.regex import gregexpr_all, grepl, gsub, regexec, strsplit, sub
 from metacheck._values import as_float, is_missing
 from metacheck.datacheck._files_registry import EXT_REGISTRY
-from metacheck.datacheck._strings import RAW_STRING, file_ext, tolower_checked
-from metacheck.fileinfo._strings import invalid_utf8
+from metacheck.datacheck._strings import RAW_STRING, file_ext
 
 __all__ = [
     "data_classify_files",
@@ -352,6 +351,33 @@ _KEYWORD_RULES = (
 )
 
 
+#: Text-document formats the "data" name keyword never turns into data (see
+#: :func:`data_classify_files`).
+_DOCUMENT_EXTS = frozenset({"doc", "docx", "odt", "pdf", "rtf"})
+
+_GIS_RX = (
+    r"\.(shp|shx|prj|cpg|sbn|sbx|gpkg|geojson|tfw|tifw|ovr|nc|grd|gri|bil|vrt|kml|kmz)$"
+    r"|\.aux\.xml$"
+)
+
+
+def _is_geotiff(path: Sequence[str | None]) -> list[bool]:
+    """Which ``.tif``/``.tiff`` files in a listing are GIS rasters rather than images.
+
+    Port of ``.is_geotiff()``: those in a folder that also holds a GIS file (a
+    shapefile part, a world file, a GDAL sidecar, another raster format). Judged
+    per folder, so a deposit's ``photos/`` folder keeps its images while its
+    ``maps/`` folder counts as data. When only base names are given, the whole
+    listing counts as one folder.
+    """
+    p = [None if x is None else _tolower(x.replace("\\", "/")) for x in path]
+    dirs = [None if x is None else _r_dirname(x) for x in p]
+    gis = grepl(_GIS_RX, p)
+    gis_dirs = {d for d, g in zip(dirs, gis, strict=True) if g}
+    tif = grepl(r"\.tiff?$", p)
+    return [bool(t) and d in gis_dirs for t, d in zip(tif, dirs, strict=True)]
+
+
 def _tok(pattern: str) -> str:
     return f"(^|[/_. -])({pattern})($|[/_. -])"
 
@@ -367,7 +393,9 @@ def data_classify_files(
     ``"code"``, ``"documentation"``, ``"materials"``, ``"output"`` or
     ``"unknown"`` per file.
     """
-    names = _as_list(file_name)
+    # a name whose bytes are not valid UTF-8 is classified from its Latin-1 reading,
+    # as R's .utf8_lines() does, so nothing below fails on it
+    names = _utf8_lines(_as_list(file_name))
     n = len(names)
     if n == 0:
         return []
@@ -378,7 +406,7 @@ def data_classify_files(
     locked = [f if f is not None else c for f, c in zip(fixed, cat, strict=True)]
 
     if file_path is not None:
-        paths = _as_list(file_path)
+        paths = _utf8_lines(_as_list(file_path))
         if len(paths) != n:  # R's ifelse() recycles the path vector
             paths = [paths[i % len(paths)] for i in range(n)] if paths else [None] * n
         path_for_kw = [
@@ -386,20 +414,37 @@ def data_classify_files(
         ]
     else:
         path_for_kw = list(names)
-    tolower_checked(path_for_kw)
     path_lc = [None if p is None else _tolower(p) for p in path_for_kw]
-    # R's regex engine refuses a string that is not valid UTF-8 (grepl() is FALSE);
-    # only names glibc can still convert get this far (tolower() raised for the rest)
-    r_invalid = [invalid_utf8(p) for p in path_lc]
 
     types = list(locked)
     claimed = [t is not None for t in locked]
     for rtype, pattern in _KEYWORD_RULES:
         hits = grepl(_tok(pattern), path_lc)
         for i, hit in enumerate(hits):
-            if hit and not r_invalid[i] and fixed[i] is None and not claimed[i]:
+            # A text document is almost never a data file, so "data" in its name or
+            # folder describes what it documents: "Data description.docx" is the
+            # deposit's README (#487), and a PDF in "Data/" is not a dataset. It falls
+            # through to the crosswalk below, which makes it documentation.
+            if rtype == "data" and ext[i] in _DOCUMENT_EXTS:
+                continue
+            if hit and fixed[i] is None and not claimed[i]:
                 types[i] = rtype
                 claimed[i] = True
+
+    # GeoTIFF: a .tif is a photograph or a raster dataset, and the crosswalk below
+    # would call it an image (materials). Next to GIS files it is the raster: a
+    # land-cover map beside the study's shapefiles (#488). A .tif a keyword rule
+    # already placed keeps its type.
+    is_tif = [e in ("tif", "tiff") and not c for e, c in zip(ext, claimed, strict=True)]
+    if any(is_tif):
+        for i, geo in enumerate(_is_geotiff(path_for_kw)):
+            if is_tif[i] and geo:
+                types[i] = "data"
+    # A GDAL sidecar ("map.tif.aux.xml") holds a raster's georeferencing and
+    # statistics; its ".xml" extension alone would make it code.
+    for i, aux in enumerate(grepl(r"\.aux\.xml$", path_lc)):
+        if aux:
+            types[i] = "data"
 
     coarse = _filetype(names)
     for i, t in enumerate(types):
@@ -413,8 +458,50 @@ def data_classify_files(
     for i, nm in enumerate(names):
         if nm is not None and _tolower(_r_basename(nm)) in _METADATA_JSON:
             types[i] = "documentation"
+    for i, nm in enumerate(names):
+        if nm is None:
+            continue
+        base_lc = _tolower(_r_basename(nm))
+        # A licence file without an extension (LICENSE, LICENCE, COPYING) is the
+        # deposit's licence, like LICENSE.md; with no extension nothing above
+        # recognised it, and it was "unknown".
+        if grepl(r"^(licen[sc]e|copying)$", base_lc):
+            types[i] = "documentation"
+        # A list of the packages a program needs (requirements.txt, Pipfile) belongs
+        # with the code that uses it; as a .txt it was classified as documentation.
+        if grepl(
+            r"^(requirements|constraints)([_.-][a-z0-9]+)*\.(txt|in)$|^pipfile(\.lock)?$", base_lc
+        ):
+            types[i] = "code"
     return [t if t is not None else "unknown" for t in types]
 
+
+def _is_r_package_service_file(path: str) -> bool:
+    """Configuration files of an R package's build, test and website services.
+
+    Port of ``.is_r_package_service_file()`` (see :func:`_is_r_package_file` for why
+    they are left out of its check).
+    """
+    base = _tolower(_r_basename(path))
+    return base in _R_PACKAGE_SERVICE_FILES or grepl(
+        r"(^|/)\.(github|circleci)/", path, ignore_case=True
+    )
+
+
+_R_PACKAGE_SERVICE_FILES = frozenset(
+    {
+        ".travis.yml",
+        "codecov.yml",
+        ".codecov.yml",
+        "appveyor.yml",
+        ".appveyor.yml",
+        ".gitlab-ci.yml",
+        "_pkgdown.yml",
+        ".covrignore",
+        ".rbuildignore",
+        ".lintr",
+    }
+)
 
 _PKG_SUBDIRS = ("R", "man", "tests", "vignettes", "data", "inst", "src")
 
@@ -469,6 +556,12 @@ def _is_r_package_file(file_path: Sequence[str | None] | str) -> list[bool]:
             continue
         outside = [i for i in range(n) if not is_member[i] and known[i]]
         outside = [i for i in outside if not _tolower(_r_basename(path[i])).endswith(".rproj")]
+        # The same holds for the configuration files of a package's build, test and
+        # website services (Travis, AppVeyor, CI workflows, codecov, pkgdown, ...):
+        # .yml files classify as "code" by extension, so a .travis.yml or codecov.yml
+        # next to a root-level package made the package look vendored and discarded
+        # all of its real files (#469). They stay in the file list.
+        outside = [i for i in outside if not _is_r_package_service_file(path[i])]
         types = data_classify_files(
             [_r_basename(path[i]) for i in outside], [path[i] for i in outside]
         )
@@ -477,6 +570,64 @@ def _is_r_package_file(file_path: Sequence[str | None] | str) -> list[bool]:
                 if owner[i] == pd_:
                     is_member[i] = False
     return is_member
+
+
+def _data_source_keys(
+    file_name: Sequence[str | None],
+    file_path: Sequence[str | None] | None = None,
+    repo: Sequence[str | None] | None = None,
+) -> list[str | None]:
+    """A name for each file that is unique within one data_check run (``.data_source_keys()``).
+
+    ``data_check`` keeps every table it reads, and every column and finding of
+    it, under this name (``source_file``), and ``codebook_check`` looks the tables
+    up by it. The file name alone is not unique: a measurement repository can
+    hold a ``log.csv`` in every scan folder. The name is the file name when no
+    other file has it, so nothing changes for most repositories; else the file's
+    path in the repository; and where even that repeats (the same path in two
+    repositories), the repository's name in front.
+    """
+
+    def repeated(x: Sequence[str | None]) -> list[bool]:
+        seen: set[str | None] = set()
+        dup: set[str | None] = set()
+        for v in x:
+            (dup if v in seen else seen).add(v)
+        return [v in dup for v in x]
+
+    key: list[str | None] = [None if is_missing(v) else str(v) for v in file_name]
+    if file_path is not None:
+        path = [None if is_missing(v) else str(v).replace("\\", "/") for v in file_path]
+        use = [r and p is not None and p != "" for r, p in zip(repeated(key), path, strict=True)]
+        key = [p if u else k for k, p, u in zip(key, path, use, strict=True)]
+    if repo is not None:
+        rp = [None if is_missing(v) else str(v) for v in repo]
+        use = [r and p is not None and p != "" for r, p in zip(repeated(key), rp, strict=True)]
+        key = [f"{p}: {k}" if u else k for k, p, u in zip(key, rp, use, strict=True)]
+    return _make_unique(key, " #")
+
+
+def _make_unique(names: Sequence[str | None], sep: str) -> list[str | None]:
+    """R ``make.unique(names, sep)``: later duplicates get ``sep`` and a counter."""
+    used = {n for n in names if n is not None}
+    seen: set[str | None] = set()
+    counter: dict[str, int] = {}
+    out: list[str | None] = []
+    for n in names:
+        if n is None or n not in seen:
+            seen.add(n)
+            out.append(n)
+            continue
+        i = counter.get(n, 0)
+        while True:
+            i += 1
+            cand = f"{n}{sep}{i}"
+            if cand not in used:
+                break
+        counter[n] = i
+        used.add(cand)
+        out.append(cand)
+    return out
 
 
 def _data_doc_role(file_name: Sequence[str | None] | str) -> list[str | None]:
@@ -499,7 +650,13 @@ def _data_doc_role(file_name: Sequence[str | None] | str) -> list[str | None]:
             role: str | None = "readme"
         elif low == "ro-crate-metadata.json" or grepl(r"^readme($|\.)", low):
             role = "readme"
-        elif grepl(r"^licen[sc]e($|\.)", low):
+        elif doc and grepl(r"^data(set)?[ _.-]?descriptions?($|[ _.-])", low):
+            # "Data description.docx" (title, creators, licence, folder layout and a
+            # description of every file) is the deposit's README under another name
+            # (#487). Only a documentation file gets the role, so a
+            # "data_description.csv" table is not affected.
+            role = "readme"
+        elif grepl(r"^(licen[sc]e|copying)($|\.)", low):
             role = "license"
         elif cat == "codebook" or ext == "qsf":
             role = "codebook"
@@ -853,6 +1010,10 @@ def _data_check_write_manifest(
     repo_urls = _col(files, "repo_url") or [None] * n
     names = _col(files, "file_name") or [None] * n
 
+    archive_url = _col(files, "archive_url") or [None] * n
+    in_archive = [not is_missing(u) and str(u) != "" for u in archive_url]
+    restricted = [_as_logical(v) is True for v in (_col(files, "file_restricted") or [None] * n)]
+
     reason: list[str | None] = [None] * n
     intentional: list[bool | None] = [None] * n
     for i in range(n):
@@ -873,8 +1034,8 @@ def _data_check_write_manifest(
         elif not want_b[i]:
             reason[i] = 'not a data/codebook/README file (use download = "all")'
             intentional[i] = True
-        elif not url:
-            reason[i], intentional[i] = "no download URL in the listing", False
+        elif restricted[i]:
+            reason[i], intentional[i] = "access restricted by the depositor", True
         elif key in over_key:
             from metacheck.report.blocks import _cap_num
 
@@ -882,11 +1043,15 @@ def _data_check_write_manifest(
                 f"exceeds max_file_size ({_cap_num(max_file_size)} MB): skipped by the per-file cap"
             )
             intentional[i] = True
+        elif key in fail_err:
+            reason[i] = "download failed: " + fail_err[key]
+            intentional[i] = False
+        elif not url and not in_archive[i]:
+            # A file inside an archive never has a URL of its own, so this says
+            # nothing about it: it is fetched through its archive.
+            reason[i], intentional[i] = "no download URL in the listing", False
         elif has_repo and repo_urls[i] in gated_urls:
             reason[i], intentional[i] = "repository refused by the size caps", True
-        elif key in fail_err:
-            reason[i] = "download failed after retries: " + fail_err[key]
-            intentional[i] = False
         else:
             reason[i], intentional[i] = "download failed", False
     status = [
