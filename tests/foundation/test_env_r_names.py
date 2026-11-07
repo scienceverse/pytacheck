@@ -24,8 +24,8 @@ SHARED = {
 }
 #: read by R, reviewed, and not in the table: the Shiny apps' usage folder; the Shiny apps'
 #: switch for running on someone's own computer (their keys are then not shared); the
-#: folder of modules installed with module_install(), whose Python counterpart comes with
-#: the port of R/module-install.R
+#: folder of modules installed with module_install(), which pytacheck replaces with packs
+#: (pack_install()); the folder they are installed in is METACHECK_DATA_DIR
 REVIEWED_OTHER = {"METACHECK_USAGE_DIR", "METACHECK_LOCAL", "METACHECK_MODULES_DIR"}
 #: read only by R's tests (FULL_TESTS: run the slow and online tests too)
 R_TEST_ONLY = {"METACHECK_API_URL", "METACHECK_BIBR12_EXPORTS", "METACHECK_FULL_TESTS"}

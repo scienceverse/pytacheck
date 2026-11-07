@@ -48,6 +48,16 @@ def test_inputs_that_are_not_papers_are_never_empty(value: object) -> None:
     assert not paper_is_empty(value)
 
 
+@pytest.mark.parametrize("table", ["text", "info", "bib", "xref"])
+def test_paper_table_of_an_empty_list_has_the_typed_columns_of_an_empty_paper(table: str) -> None:
+    # U79: it had no columns, so joins on paper_id and string functions on text stopped
+    got = pc.paper_table(pc.PaperList([]), table)
+    want = pc.paper_table(pc.paper(), table)
+    assert len(got) == 0
+    assert got.columns.tolist() == want.columns.tolist()
+    assert got.dtypes.equals(want.dtypes)
+
+
 def test_per_paper_table() -> None:
     papers = pc.PaperList([pc.test_paper(["a"]), pc.test_paper(["b"])])
     out = per_paper_table(papers, found=True, n=0)
