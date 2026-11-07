@@ -158,10 +158,10 @@ def osf_links(paper: Any) -> pd.DataFrame:
     slashes are stripped and duplicate rows dropped. The OSF URL is in the
     first (``href``) column.
     """
-    from metacheck.papers.tables import paper_table
+    from metacheck.archives import _paper_urls
     from metacheck.text.search import text_search
 
-    urls = paper_table(paper, "url").copy()
+    urls = _paper_urls(paper).copy()
     href: pd.Series[Any] | list[Any]
     if "href" in urls.columns:
         href = urls["href"]
@@ -836,6 +836,10 @@ def _osf_get_one_page(url: str) -> Any:
         err = _osf_status_error(resp.status_code)
         if err is not None:
             logger("osf_get_all_pages", {"url": url, "status": resp.status_code})
+            if resp.status_code == 429:
+                from metacheck.archives.api_keys import key_limit_reached
+
+                key_limit_reached("osf")
             return _osf_error_result(err)
         return _resp_body_json(resp)
     except Exception:

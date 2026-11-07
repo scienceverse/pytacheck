@@ -1,7 +1,7 @@
 """The METACHECK_* names that R metacheck reads are reviewed, and the table keeps to them.
 
-R reads ``METACHECK_LLM_CACHE_DIR``, ``METACHECK_LLM_MODEL`` and ``METACHECK_LLM_MAX_CALLS``
-with the same meaning as here, so those three are shared on purpose. Any other name R
+R reads ``METACHECK_LLM_CACHE_DIR``, ``METACHECK_LLM_MODEL``, ``METACHECK_LLM_MAX_CALLS`` and
+``METACHECK_STATE_DIR`` with the same meaning as here, so those four are shared on purpose. Any other name R
 starts to read fails this test until someone has looked at it: a new one could mean
 something else in R than in a table row of the same name.
 """
@@ -16,7 +16,12 @@ from metacheck._env import ENV_VARS
 GETENV = re.compile(r"""Sys\.getenv\(\s*["'](METACHECK_[A-Z0-9_]+)["']""")
 
 #: read by R's package code or apps, and in the table (same meaning)
-SHARED = {"METACHECK_LLM_CACHE_DIR", "METACHECK_LLM_MODEL", "METACHECK_LLM_MAX_CALLS"}
+SHARED = {
+    "METACHECK_LLM_CACHE_DIR",
+    "METACHECK_LLM_MODEL",
+    "METACHECK_LLM_MAX_CALLS",
+    "METACHECK_STATE_DIR",
+}
 #: read by R, reviewed, and not in the table: the Shiny apps' usage folder
 REVIEWED_OTHER = {"METACHECK_USAGE_DIR"}
 #: read only by R's tests
@@ -44,7 +49,7 @@ def _table_names() -> set[str]:
     return {name for var in ENV_VARS.values() for name in var.names}
 
 
-def test_the_names_shared_with_r_are_exactly_the_three_reviewed_ones(upstream_dir: Path) -> None:
+def test_the_names_shared_with_r_are_exactly_the_four_reviewed_ones(upstream_dir: Path) -> None:
     read_by_r = _names_read(upstream_dir / "R", (".R", ".r")) | _names_read(
         upstream_dir / "inst", (".R", ".r", ".Rmd")
     )

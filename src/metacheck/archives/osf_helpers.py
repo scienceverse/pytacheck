@@ -387,14 +387,21 @@ def _osf_headers(req: dict[str, Any] | None = None, pat: str | None = None) -> d
     *req* is a request spec as used by :func:`metacheck.http.batch_query`
     (``{"method", "url", "headers", ...}``); a new spec is returned with
     ``User-Agent: metacheck``, ``Accept: application/vnd.api+json`` and, when
-    a token is set (*pat*, default :func:`osf_pat`), ``Authorization: Bearer``.
+    a token is set (*pat*, default :func:`osf_pat`, left out when the OSF
+    refuses it), ``Authorization: Bearer``.
     Usable directly as ``batch_query(..., req_func=_osf_headers)``.
     """
     spec = dict(req or {})
     headers = dict(spec.get("headers") or {})
     headers["User-Agent"] = "metacheck"
     headers["Accept"] = "application/vnd.api+json"
-    token = osf_pat() if pat is None else pat
+    if pat is None:
+        # the token set by osf_pat(), left out when the OSF refuses it (see api_key_status())
+        from metacheck.archives.api_keys import key_use
+
+        token = key_use("osf", osf_pat(), _osf_key_check)
+    else:
+        token = pat
     if token:
         headers["Authorization"] = f"Bearer {token}"
     spec["headers"] = headers
@@ -418,6 +425,17 @@ def osf_pat(pat: str | None = None) -> str:
         raise ValueError("Set osf_pat with a single string containing your OSF token")
     options({"metacheck.osf.pat": pat})
     return pat
+
+
+def _osf_key_check(key: str) -> bool | None:
+    """A key the OSF refuses answers 401 even for a public preprint (the one
+    :func:`_osf_pat_validate` also uses)."""
+    from metacheck.archives.api_keys import key_check_request
+
+    return key_check_request(
+        "https://api.osf.io/v2/preprints/khbvy/",
+        {"Authorization": f"Bearer {key}", "Accept": "application/vnd.api+json"},
+    )
 
 
 def _osf_pat_validate(osf_pat: str | None = None) -> bool:
@@ -459,15 +477,30 @@ def _osf_pat_validate(osf_pat: str | None = None) -> bool:
         )
         return False
     sc_auth = status({"Authorization": f"Bearer {token}"})
+    from metacheck.archives.api_keys import key_problem_record, key_remember
+
     if sc_auth == 200:
+        # remembered, so _osf_headers() does not check the key a second time
+        key_remember("osf", token, True)
         return True
     if sc_auth in (401, 403):
-        warnings.warn(
-            "The current OSF_PAT blocks access to public files. Clearing OSF_PAT for this "
-            "session. Update or remove it in .Renviron.",
-            stacklevel=2,
-        )
-        os.environ["OSF_PAT"] = ""
+        # remembered, so _osf_headers() leaves this token out
+        key_remember("osf", token, False)
+        if token == os.environ.get("OSF_PAT", ""):
+            # unset PAT if invalid
+            key_problem_record("osf", "rejected", source="server")
+            warnings.warn(
+                "The current OSF_PAT blocks access to public files. Clearing OSF_PAT for this "
+                "session. Update or remove it in .Renviron.",
+                stacklevel=2,
+            )
+            os.environ["OSF_PAT"] = ""
+        else:
+            # A token given directly (such as one typed in the app) is not the one in the
+            # environment: clearing OSF_PAT here removed a working token for the session.
+            warnings.warn(
+                "This OSF token blocks access to public files, so it is not used.", stacklevel=2
+            )
     return False
 
 
@@ -570,8 +603,9 @@ def _osf_parse_response(
 
     *resp* is an HTTP response, or already-fetched records (a listing from
     :func:`~metacheck.archives.osf.osf_get_all_pages`). Error statuses give a
-    one-row table typed ``private`` (401/403), ``too many requests`` (429) or
-    ``unfound`` (others, with a warning). An empty listing gives ``None``.
+    one-row table typed ``private`` (401/403), ``too many requests`` (429),
+    ``unfound`` (others, with a warning), each with the reason in ``error`` (a
+    server error is typed ``error``). An empty listing gives ``None``.
     """
     ident = osf_id
     single = False
@@ -597,8 +631,34 @@ def _osf_parse_response(
         elif sc in (401, 403):
             return _frame({"osf_id": [ident], "osf_type": "private", "public": False}, 1)
         elif sc == 429:
-            warnings.warn("Too many requests", stacklevel=2)
-            return _frame({"osf_id": [ident], "osf_type": "too many requests"}, 1)
+            # The OSF sends no time at which its limit ends (100 requests per hour without
+            # a key, 10,000 per day with one), so an hour is assumed. `error` marks the row
+            # as a failed lookup, so repo_check reports it and the listing cache does not
+            # keep it (_repo_info_ok, #501).
+            from metacheck.archives.api_keys import key_limit_reached
+
+            limit = key_limit_reached("osf")
+            warnings.warn(limit, stacklevel=2)
+            return _frame(
+                {"osf_id": [ident], "osf_type": "too many requests", "error": limit}, 1
+            )
+        elif sc >= 500:
+            # The OSF API is down or overloaded: that says nothing about whether the project
+            # exists, so it is not reported as "could not be found" (#501).
+            who = "An OSF resource" if ident is None else ident
+            warnings.warn(
+                f"{who}: the OSF API did not answer (HTTP {sc}); the OSF may be down. "
+                "Try again later.",
+                stacklevel=2,
+            )
+            return _frame(
+                {
+                    "osf_id": [ident],
+                    "osf_type": "error",
+                    "error": f"the OSF API did not answer (HTTP {sc})",
+                },
+                1,
+            )
         else:
             who = "An OSF resource" if ident is None else ident
             if sc == 410:
@@ -613,7 +673,12 @@ def _osf_parse_response(
                     f"correctly{see}. A private project needs an OSF token; see ?osf_pat"
                 )
             warnings.warn(msg, stacklevel=2)
-            return _frame({"osf_id": [ident], "osf_type": "unfound"}, 1)
+            reason = (
+                "deleted or withdrawn from the OSF (HTTP 410)"
+                if sc == 410
+                else f"not found on the OSF (HTTP {sc})"
+            )
+            return _frame({"osf_id": [ident], "osf_type": "unfound", "error": reason}, 1)
 
     records = [all_data] if single else _records(all_data)
     if not records:

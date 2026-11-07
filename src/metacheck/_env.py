@@ -79,6 +79,9 @@ ENV_VARS: dict[str, EnvVar] = {
     "PRESET": EnvVar(("METACHECK_PRESET", "PYTACHECK_PRESET")),
     "R_PARSER": EnvVar(("METACHECK_R_PARSER", "PYTACHECK_R_PARSER")),
     "RSCRIPT": EnvVar(("METACHECK_RSCRIPT", "PYTACHECK_RSCRIPT")),
+    # the folder for what is shared between processes (key problems, ResearchBox's counter);
+    # R reads the same name with the same meaning, so there is no old name
+    "STATE_DIR": EnvVar(("METACHECK_STATE_DIR",), shared_with_r=True),
     "STORE_URL": EnvVar(("METACHECK_STORE_URL", "PYTACHECK_STORE_URL")),
     "VERBOSE": EnvVar(("METACHECK_VERBOSE", "PYTACHECK_VERBOSE")),
     # the hosted app: new since 0.4.0a1, so no old names
