@@ -119,15 +119,31 @@ def _is_listlike(v: Any) -> bool:
     return isinstance(v, list | tuple | np.ndarray | pd.Series)
 
 
+class _RList(list):  # type: ignore[type-arg]
+    """An R *list* of plain values, which jsonlite writes one element per line.
+
+    A plain Python list of values is an R vector, which jsonlite keeps on one line
+    (``["a", "b"]``); an R list (``as.list(x)``, ``list(x)``) is written as an array with one
+    line per element. This marks the second kind.
+    """
+
+
 def _flatten(x: Any) -> list[Any]:
     """R's ``unlist(x, use.names = FALSE)``: every leaf of nested lists, in order."""
     if x is None:
         return []
-    if isinstance(x, Mapping):
-        return [leaf for v in x.values() for leaf in _flatten(v)]
-    if _is_listlike(x):
-        return [leaf for v in list(x) for leaf in _flatten(v)]
-    return [x]
+
+    def leaves(v: Any) -> list[Any]:
+        # an NA inside a vector is an element (None at the top is R's NULL: no element)
+        if v is None:
+            return [None]
+        if isinstance(v, Mapping):
+            return [leaf for w in v.values() for leaf in leaves(w)]
+        if _is_listlike(v):
+            return [leaf for w in list(v) for leaf in leaves(w)]
+        return [v]
+
+    return leaves(x)
 
 
 def _chr(v: Any) -> str | None:
@@ -476,7 +492,7 @@ def _FAIR_repo_variable_measured(
     return out
 
 
-def _FAIR_repo_keywords(kw: Any) -> list[str] | None:
+def _FAIR_repo_keywords(kw: Any) -> _RList | None:
     """A keywords value as a flat list of strings (``.FAIR_repo_keywords()``).
 
     On a paper, ``paper.info["keywords"]`` can be a cell holding a list that holds the
@@ -489,7 +505,7 @@ def _FAIR_repo_keywords(kw: Any) -> list[str] | None:
         return None
     items = [_chr(v) for v in _flatten(kw)]
     out = [v for v in items if v is not None and v != ""]
-    return out or None
+    return _RList(out) if out else None
 
 
 def _FAIR_repo_is_web(x: Any) -> Any:
@@ -743,7 +759,7 @@ def _FAIR_repo_abstract_text(paper: Any, max_chars: int = 1500) -> str:
     return txt
 
 
-def _FAIR_repo_ddi_array(x: Any) -> list[str]:
+def _FAIR_repo_ddi_array(x: Any) -> _RList:
     """A one-element array, the shape of every DDI field in the RO-Crate.
 
     It holds "unknown" when the value is missing (``.FAIR_repo_ddi_array()``).
@@ -752,7 +768,7 @@ def _FAIR_repo_ddi_array(x: Any) -> list[str]:
     v = _chr(items[0]) if items else None
     if v is None or trimws(v) == "":
         v = _FAIR_repo_unknown
-    return [v]
+    return _RList([v])
 
 
 def _FAIR_repo_prereg_field(ops: Any, pid: str, field: str) -> str | None:
@@ -795,9 +811,9 @@ def _FAIR_repo_study_design_entity(ops: Any, pid: str, grp: str | None = None) -
     def get_f(field: str) -> str | None:
         return _FAIR_repo_prereg_field(ops, pid, field)
 
-    def if_found(field: str) -> list[str] | None:
+    def if_found(field: str) -> _RList | None:
         v = get_f(field)
-        return None if v is None else [v]
+        return None if v is None else _RList([v])
 
     label = _FAIR_repo_label(grp)
     return _compact(
@@ -1725,7 +1741,7 @@ def _FAIR_repo_rocrate_json(
                     "@type": "Grant",
                     "name": "Funding",
                     "description": fu.get("statement"),
-                    "identifier": awards if awards else None,
+                    "identifier": _RList(awards) if awards else None,
                     "funder": _ref([f"#funder-{k + 1}" for k in range(len(funders))])
                     if funder_entities
                     else None,
@@ -1898,7 +1914,8 @@ def _FAIR_repo_utf8(x: Any) -> Any:
     if isinstance(x, Mapping):
         return {k: _FAIR_repo_utf8(v) for k, v in x.items()}
     if isinstance(x, list):
-        return [_FAIR_repo_utf8(v) for v in x]
+        items = [_FAIR_repo_utf8(v) for v in x]
+        return _RList(items) if isinstance(x, _RList) else items
     if isinstance(x, tuple):
         return tuple(_FAIR_repo_utf8(v) for v in x)
     if isinstance(x, pd.DataFrame):
@@ -1947,7 +1964,9 @@ def _json_text(x: Any, level: int = 0) -> str:
         items = list(x)
         if not items:
             return "[]"
-        if all(v is None or isinstance(v, str | int | float | bool | np.generic) for v in items):
+        if not isinstance(x, _RList) and all(
+            v is None or isinstance(v, str | int | float | bool | np.generic) for v in items
+        ):
             # an R vector of values: jsonlite keeps it on one line
             return "[" + ", ".join(_json_text(v, level + 1) for v in items) + "]"
         body = ",\n".join(pad + _json_text(v, level + 1) for v in items)

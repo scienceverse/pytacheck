@@ -589,6 +589,7 @@ def fr_readme_title(written: Sequence[str] | str, fixture: str = "review_files")
 
 
 def fr_write_json(kind: str) -> dict[str, Any]:
+    rl = _md()._RList  # an R list of plain values (list("x")); a Python list is an R vector
     objs: dict[str, Any] = {
         "scalars": {
             "@id": "x",
@@ -613,11 +614,17 @@ def fr_write_json(kind: str) -> dict[str, Any]:
             "l": 22 / 7 * 1000,
         },
         "nested": {
-            "a": {"b": {"c": 1, "d": "x"}, "e": [1, 2, [3]]},
+            "a": {"b": {"c": 1, "d": "x"}, "e": [1, 2, rl([3])]},
             "f": [{"g": 1}, {"g": 2}],
         },
         "empty_containers": {"a": [], "b": {}, "c": [], "d": [[]], "e": ""},
-        "vectors": {"a": [1, 2, 3], "b": ["x", "y"], "c": "single", "d": ["x"], "e": [True, False]},
+        "vectors": {
+            "a": [1, 2, 3],
+            "b": ["x", "y"],
+            "c": "single",
+            "d": rl(["x"]),
+            "e": [True, False],
+        },
         "strings": {
             "tab": "a\tb",
             "quote": 'say "hi"',
@@ -635,7 +642,7 @@ def fr_write_json(kind: str) -> dict[str, Any]:
             "c": None,
             "d": [1.0, None],
             "e": ["x", None],
-            "f": [None],
+            "f": rl([None]),
         },
     }
     d = tempfile.mkdtemp(prefix="wj-")

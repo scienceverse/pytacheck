@@ -18,3 +18,16 @@
 #
 # No other difference is known yet. Once R's goldens exist, a case that differs for a reason of
 # metacheck (a bug fixed, a better rule) is marked here, one entry per case.
+
+# U293: .FAIR_repo_missing_columns()
+"fair/run.latin1_column":
+  kind: r_bug_fixed
+  ref: U293
+  reason: a column of a Latin-1 CSV is described once in dataset_description.json (R lists it a second time, at the end, with only its name and source file, because it compares the header's bytes with the UTF-8 name data_check read)
+
+# U112: psychds_check target paths (the repository's own dataset_description.json stays at the root)
+"fair/demo_repo.paper": &u112
+  kind: r_bug_fixed
+  ref: U112
+  reason: the demonstration repository's own dataset_description.json is not moved into data/ as a data file (R does, and then writes its own description at the root); it stays at the root and is kept, so the description holds the repository's text, not metacheck's, and the plan and the RO-Crate list one file less
+"fair/demo_repo.no_paper": *u112

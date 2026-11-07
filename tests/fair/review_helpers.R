@@ -311,7 +311,8 @@ fr_info <- function(kind) {
 # a vector of one blank
 fr_info_list <- function() {
   p <- ff_test_paper(list(keywords = list(c("a", "b")), title = "T"))
-  list(value = list(keywords = fr_fn("info")(p, "keywords"), title = fr_fn("info")(p, "title"),
+  # the list cell of R holds the vector pytacheck keeps in the cell: both sides give the vector
+  list(value = list(keywords = unlist(fr_fn("info")(p, "keywords")), title = fr_fn("info")(p, "title"),
                     keywords_kept = fr_fn("keywords")(fr_fn("info")(p, "keywords"))))
 }
 
