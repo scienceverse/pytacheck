@@ -1569,6 +1569,8 @@ def repro_run_order(
         return [[] for _ in range(n)]
 
     reads, writes, sources = io_col("reads"), io_col("writes"), io_col("sources")
+    paths = _chr_list(files["file_path"]) if "file_path" in files.columns else fname
+    source_refs = io_col("source_refs") if "source_refs" in files.columns else sources
 
     before: list[list[int]] = [[] for _ in range(n)]
 
@@ -1602,10 +1604,15 @@ def repro_run_order(
             by_base.setdefault(cast(str, base_name[j]), []).append(j)
         if norm_base[j] is not None and norm_base[j] != "":
             by_norm.setdefault(norm_base[j], []).append(j)
+    source_edges: list[tuple[str | None, str | None]] = []
     for i in range(n):
-        for s in sources[i]:
+        for k, s in enumerate(sources[i]):
             s = _tolower(s)
             js = _setdiff(by_base.get(s, []) if s is not None else [], [i])
+            # several files with this name: only the one the call names
+            if len(js) > 1:
+                ref = source_refs[i][k] if k < len(source_refs[i]) else None
+                js = _repro_sourced_file(js, ref, paths, i)
             if not js:
                 s_norm = _repro_normalize_basename(s)
                 js = _setdiff(
@@ -1617,6 +1624,7 @@ def repro_run_order(
                     js = []
             if js:
                 union_into(i, js)
+                source_edges.extend((fname[jj], fname[i]) for jj in js)
 
     by_name: dict[str, list[int]] = {}
     for j, f in enumerate(fname):
@@ -1696,7 +1704,28 @@ def repro_run_order(
     out.attrs["fuzzy_sources"] = _frame(
         {"from": ("string", [f[0] for f in fuzzy]), "to": ("string", [f[1] for f in fuzzy])}
     )
+    # every source() edge, exact and fuzzy: `from` is the sourced file, `to` the file
+    # that sources it (the module runs a sourced script only inside that one)
+    out.attrs["source_edges"] = _frame(
+        {
+            "from": ("string", [f[0] for f in source_edges]),
+            "to": ("string", [f[1] for f in source_edges]),
+        }
+    )
     return out
+
+
+def _repro_sourced_file(
+    cand: Sequence[int], ref: str | None, paths: Sequence[str | None], frm: int
+) -> list[int]:
+    """Port of R/reproducibility_check.R::.repro_sourced_file().
+
+    Which of several same-named files *cand* a ``source()`` reference *ref* in script
+    *frm* names (see :func:`_repro_path_named`).
+    """
+    if ref is None:
+        return []
+    return [cand[k] for k in _repro_path_named([paths[c] for c in cand], ref, paths[frm])]
 
 
 def _code_text_items(code_text_list: Any) -> tuple[list[str], list[Any]]:
@@ -2014,6 +2043,12 @@ def _adist(a: str, b: str) -> int:
     return prev[-1]
 
 
+#: The data formats a file can be shared in under the same name (``.repro_data_exts``).
+_REPRO_DATA_EXTS = (
+    "csv", "tsv", "txt", "dat", "tab", "xls", "xlsx", "ods", "rds", "rda", "rdata", "sav", "dta",
+)  # fmt: skip
+
+
 def repro_missing_inputs(
     refs: Any,
     plan: pd.DataFrame | None,
@@ -2024,10 +2059,12 @@ def repro_missing_inputs(
 
     Port of ``R/reproducibility_check.R::repro_missing_inputs()``. Each
     referenced basename is ``withheld_size`` (in *skipped*, the
-    download-skip records), ``in_repo_not_downloaded`` (listed in
-    *structure_df* without a local copy) or ``absent`` (with a similarly
-    named repository file in ``similar_to`` when one exists); references
-    that are present and downloaded are dropped. Columns ``basename``,
+    download-skip records), ``in_archive`` (listed only inside an archive),
+    ``in_repo_not_downloaded`` (listed in *structure_df* without a local copy)
+    or ``absent``, with a similar repository file in ``similar_to`` when one
+    exists: the same name in another data format, a name a few edits away, or
+    the one name that is this one with a piece added at its start or end.
+    References that are present and downloaded are dropped. Columns ``basename``,
     ``status``, ``detail`` and ``similar_to``.
     """
     del plan  # unused, as in metacheck
@@ -2058,28 +2095,65 @@ def repro_missing_inputs(
         else []
     )
     all_candidates: list[str | None] = _unique(struct_base)
+    # files listed from inside an archive have its name in front of their path
+    # ("data.zip/data/x.csv"); the archive is the path up to it (#520, item 2)
+    arch_re = r"^(.*?[^/]+\.(zip|tar|tgz|tar\.gz))/.*$"
+    struct_path = (
+        [None if x is None else x.replace("\\", "/") for x in _chr_list(structure_df["file_path"])]
+        if structure_df is not None and "file_path" in structure_df.columns
+        else [None] * len(struct_base)
+    )
+    struct_archive = [
+        None if x is None or not re.match(arch_re, x) else re.sub(arch_re, r"\1", x)
+        for x in struct_path
+    ]
 
     def find_similar(b: str | None) -> str | None:
         if len(all_candidates) == 0 or b is None:
             return None
-        stem = _file_path_sans_ext(b)
-        # all_candidates[cand_stems == stem & nzchar(stem)][[1]]: an NA candidate
-        # gives an NA index, which selects an NA element
-        if stem != "":
-            for c in all_candidates:
-                if c is None or _file_path_sans_ext(c) == stem:
+        ext = (_file_ext(b) or "").lower()
+        cand_ext = [None if c is None else (_file_ext(c) or "").lower() for c in all_candidates]
+        # the same name in another format counts only between data formats: x.csv and
+        # x.html sharing a name is a coincidence
+        key = _repro_name_key(b)
+        if key and ext in _REPRO_DATA_EXTS:
+            for c, ce in zip(all_candidates, cand_ext, strict=True):
+                if (
+                    c is not None
+                    and ce != ext
+                    and ce in _REPRO_DATA_EXTS
+                    and _repro_name_key(c) == key
+                ):
                     return c
+        # a small edit distance on the full basename, among files of the same extension
         max_dist = min(3, len(b) // 4)
-        if max_dist < 1:
+        if max_dist >= 1:
+            best: tuple[int, str] | None = None
+            for c, ce in zip(all_candidates, cand_ext, strict=True):
+                if c is None or ce != ext:
+                    continue
+                d = _adist(b, c)
+                if d <= max_dist and (best is None or d < best[0]):
+                    best = (d, c)
+            if best is not None:
+                return best[1]
+        # one name is the other with a piece added at its start or end, as a file
+        # numbered or dated before it was shared: Plants2024.txt for Plants.txt (#575)
+        if len(key) < 4:
             return None
-        best: tuple[int, str] | None = None
-        for c in all_candidates:
-            if c is None:
+        affix: list[tuple[int, str]] = []
+        for c, ce in zip(all_candidates, cand_ext, strict=True):
+            if c is None or ce != ext:
                 continue
-            d = _adist(b, c)
-            if d <= max_dist and (best is None or d < best[0]):
-                best = (d, c)
-        return None if best is None else best[1]
+            ck = _repro_name_key(c)
+            short, long = (ck, key) if len(ck) < len(key) else (key, ck)
+            if len(short) >= 4 and ck != key and (long.startswith(short) or long.endswith(short)):
+                affix.append((abs(len(ck) - len(key)), c))
+        if not affix:
+            return None
+        least = min(x for x, _ in affix)
+        best_c = [c for x, c in affix if x == least]
+        return best_c[0] if len(best_c) == 1 else None
 
     for b in ref_list:
         if b in skip_base:
@@ -2099,6 +2173,20 @@ def repro_missing_inputs(
                     "withheld_size",
                     "referenced file is in the repository but was not downloaded"
                     f"{mb}: over the size cap",
+                    None,
+                )
+            )
+            continue
+        # in the repository only inside an archive: the code runs on the package as it
+        # is, so it cannot read the file before someone unpacks it (#520)
+        in_arch = [i for i, x in enumerate(struct_base) if x == b]
+        if in_arch and all(struct_archive[i] is not None for i in in_arch):
+            archives = ", ".join(_unique(cast(str, struct_archive[i]) for i in in_arch))
+            rows.append(
+                (
+                    b,
+                    "in_archive",
+                    f"referenced file is only inside {archives}; unpack it so the code finds it",
                     None,
                 )
             )
@@ -2124,12 +2212,15 @@ def repro_missing_inputs(
                 rows.append((b, "present", "referenced file is available", None))
             continue
         similar = find_similar(b)
-        detail = (
-            "referenced file is not present in the repository, but a similarly-named "
-            f"file exists: {similar}"
-            if similar is not None
-            else "referenced file is not present in the repository"
-        )
+        if similar is None:
+            detail = "referenced file is not present in the repository"
+        elif (_file_ext(similar) or "").lower() != (_file_ext(b) or "").lower():
+            detail = f"the deposit holds {similar}, the code reads {b}"
+        else:
+            detail = (
+                "referenced file is not present in the repository, but a similarly-named "
+                f"file exists: {similar}"
+            )
         rows.append((b, "absent", detail, similar))
     rows = [r for r in rows if r[1] != "present"]
     return result()
