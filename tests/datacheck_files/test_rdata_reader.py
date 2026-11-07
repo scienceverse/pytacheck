@@ -290,3 +290,117 @@ def test_what_a_read_builds_goes_to_the_oldest_generation(
     assert seen == calls
     # once unfrozen, Python's own objects are in the oldest generation too
     assert rd._frozen_at_import == (0 if calls else at_import)
+
+
+# -----------------------------------------------------------------------------
+# columns of a formal (S4) class: .plain_s4_columns() (metacheck 0.4.3.7)
+# -----------------------------------------------------------------------------
+
+
+class _Xdr:
+    """A minimal writer of R's XDR serialization (version 3), enough for a data frame."""
+
+    def __init__(self) -> None:
+        self.b = bytearray(b"X\n")
+        for v in (3, 0x040500, 0x030500):
+            self.int(v)
+        self.int(5)
+        self.b += b"UTF-8"
+
+    def int(self, v: int) -> None:
+        self.b += struct.pack(">i", v)
+
+    def charsxp(self, s: str) -> None:
+        self.int(9 | (64 << 12))  # CHARSXP, ASCII
+        self.int(len(s))
+        self.b += s.encode("ascii")
+
+    def strsxp(self, values: list[str], attrs: dict[str, Any] | None = None) -> None:
+        self.int(16 | ((1 << 9) if attrs else 0))
+        self.int(len(values))
+        for v in values:
+            self.charsxp(v)
+        if attrs:
+            self.attributes(attrs)
+
+    def reals(
+        self, values: list[float], attrs: dict[str, Any] | None = None, s4: bool = False
+    ) -> None:
+        self.int(14 | ((1 << 9) if attrs else 0) | ((16 << 12) if s4 else 0))
+        self.int(len(values))
+        for v in values:
+            self.b += struct.pack(">d", v)
+        if attrs:
+            self.attributes(attrs)
+
+    def ints(self, values: list[int], attrs: dict[str, Any] | None = None) -> None:
+        self.int(13 | ((1 << 9) if attrs else 0))
+        self.int(len(values))
+        for v in values:
+            self.int(v)
+        if attrs:
+            self.attributes(attrs)
+
+    def attributes(self, attrs: dict[str, Any]) -> None:
+        for tag, write in attrs.items():
+            self.int(2 | (1 << 10))  # LISTSXP with a tag
+            self.int(1)  # SYMSXP
+            self.charsxp(tag)
+            write()
+        self.int(254)  # NILVALUE_SXP
+
+
+def _s4_frame(kind: str) -> bytes:
+    """A data.frame ``x`` (doubles) and ``p`` (a lubridate-like Period, or another column)."""
+    w = _Xdr()
+    w.int(19 | (1 << 9) | (1 << 8))  # VECSXP with attributes and the object bit
+    w.int(2)
+    w.reals([1.0, 2.0, 3.0])
+
+    def period_class() -> None:
+        w.strsxp(["Period"], {"package": lambda: w.strsxp(["lubridate"])})
+
+    if kind == "short":  # a column whose data part is not as long as the frame
+        w.reals([5.0], {"class": period_class}, s4=True)
+    elif kind == "nopackage":
+        w.reals([10.0, 20.0, 30.0], {"class": lambda: w.strsxp(["Odd"])}, s4=True)
+    else:
+        slots = {"year": lambda: w.reals([0.0, 0.0, 0.0]), "class": period_class}
+        w.reals([10.0, 20.0, 30.0], slots, s4=True)
+    w.attributes(
+        {
+            "names": lambda: w.strsxp(["x", "p"]),
+            "class": lambda: w.strsxp(["data.frame"]),
+            "row.names": lambda: w.ints([-(2**31), -3]),
+        }
+    )
+    return bytes(w.b)
+
+
+@pytest.mark.parametrize("reader", ["c", "python"])
+def test_s4_columns_are_read_as_their_plain_values(
+    reader: str, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    import gzip
+
+    if reader == "c" and rd._rdata_c is None:
+        pytest.skip("the C reader is not built")
+    monkeypatch.setenv("METACHECK_RDS_READER", reader)
+    path = tmp_path / "period.rds"
+    path.write_bytes(gzip.compress(_s4_frame("period")))
+    df = read_rds_head(str(path), math.inf)
+    assert df is not None
+    assert df["p"].tolist() == [10.0, 20.0, 30.0]
+    assert df.attrs["s4_converted"] == {"p": "Period, from the R package lubridate"}
+
+    path.write_bytes(gzip.compress(_s4_frame("short")))
+    df = read_rds_head(str(path), 2)
+    assert df is not None
+    assert len(df) == 2
+    assert df["p"].isna().all()  # not as many values as rows: NA
+    assert df.attrs["s4_converted"] == {"p": "Period, from the R package lubridate"}
+
+    path.write_bytes(gzip.compress(_s4_frame("nopackage")))
+    df = read_rds_head(str(path), math.inf)
+    assert df is not None
+    assert "s4_converted" not in df.attrs  # no package attribute: not an S4 instance
