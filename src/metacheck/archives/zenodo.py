@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
-from metacheck._values import field, is_missing
+from metacheck._values import field, field_or_value, is_missing
 from metacheck.archives._atomic import atomic_write
 from metacheck.archives._memo import session_memo
 
@@ -393,14 +393,12 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
 
         metadata = field(rec, "metadata")
         lic = field(metadata, "license")
-        if lic is not None and not isinstance(lic, dict | list):
-            # older records give the licence as a plain string ("cc-by"), which
-            # metacheck's `metadata$license$id` cannot read (U34)
-            license_value = lic
-        else:
-            license_value = _empty_or(
-                field(lic, "id"), _empty_or(field(lic, "title"), _empty_or(lic))
-            )
+        # older records give the licence as a plain string ("cc-by"), which
+        # metacheck's `metadata$license$id` cannot read (U34)
+        license_value = _empty_or(
+            field_or_value(lic, "id"),
+            _empty_or(field_or_value(lic, "title"), _empty_or(lic)),
+        )
         stats = field(rec, "stats")
         row = {
             "zenodo_id": zid,
@@ -430,15 +428,6 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
 # ---------------------------------------------------------------------------
 # downloads
 # ---------------------------------------------------------------------------
-
-
-def _r_num_str(x: float) -> str:
-    """``paste0()`` of ``round(x, 1)``."""
-    from metacheck._r import as_character, r_round
-
-    if x is None or (isinstance(x, float) and math.isnan(x)):
-        return "NA"
-    return as_character(float(r_round(x, 1))) or "NA"
 
 
 def _is_zip(name: list[Any]) -> list[bool]:
@@ -594,35 +583,16 @@ def _zenodo_download_one(
     n = len(files)
     # files omitted by the size caps stay in the table with downloaded = FALSE,
     # as metacheck documents (its code drops them: U36)
-    omitted = [False] * n
+    from metacheck.archives.dataverse import _omit_for_size
 
-    def omitting(i: int) -> None:
-        key = files["key"].iloc[i]
-        size = files["size"].iloc[i]
-        _tick(pb, f"- omitting {'NA' if is_missing(key) else key} ({_r_num_str(size / _MB)}MB)")
-        omitted[i] = True
-
-    # --- size filters (MB) ----
-    if _limit(max_file_size):
-        assert max_file_size is not None
-        for i, (s, u) in enumerate(zip(files["size"].tolist(), unzippable, strict=True)):
-            if not is_missing(s) and s > max_file_size * _MB and not u:
-                omitting(i)
-
-    # remove the largest files until the total fits (only whole transfers count)
-    if _limit(max_download_size):
-        assert max_download_size is not None
-        size_list = files["size"].tolist()
-        while True:
-            capped = [i for i, u in enumerate(unzippable) if not u and not omitted[i]]
-            if not capped:
-                break
-            total = sum(size_list[i] for i in capped if not is_missing(size_list[i]))
-            if not total > max_download_size * _MB:
-                break
-            present = [i for i in capped if not is_missing(size_list[i])]
-            max_file = max(present, key=lambda i: (size_list[i], -i))
-            omitting(max_file)
+    omitted = _omit_for_size(
+        [math.nan if is_missing(v) else float(v) for v in files["size"].tolist()],
+        files["key"].tolist(),
+        unzippable,
+        max_file_size,
+        max_download_size,
+        pb,
+    )
 
     target = ""  # no folder is made when every file is omitted
     if all(omitted):

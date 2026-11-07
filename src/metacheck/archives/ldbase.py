@@ -22,13 +22,12 @@ from __future__ import annotations
 import json
 import posixpath
 import re
-import warnings
 from typing import Any
-from urllib.parse import urlsplit
 
 import pandas as pd
 
 from metacheck._values import is_missing
+from metacheck.archives.zip_peek import _waf_challenge_check
 
 __all__ = ["ldbase_info", "ldbase_links"]
 
@@ -345,38 +344,6 @@ def _read_html(text: str | None) -> Any:
     if root is None:
         raise ValueError("Document is empty")
     return root
-
-
-#: hosts whose firewall check was already warned about (R: ``.waf_challenge_warned``)
-_WAF_CHALLENGE_WARNED: set[str] = set()
-
-
-def _waf_challenge_check(resp: Any, url: str) -> bool:
-    """Port of R/zip-peek.R::.waf_challenge_check(): is *resp* an AWS WAF browser check?
-
-    A host behind an Amazon web firewall can answer a request with a browser
-    check instead of the file: HTTP 202, an empty body and the header
-    ``x-amzn-waf-action: challenge``, which only a browser running JavaScript
-    can pass. Such an answer gives no size, and a file of unknown size is left
-    out of the downloads without a word, so this warns once per host and
-    session, saying why.
-    """
-    action = resp.headers.get("x-amzn-waf-action")
-    if action is None or action.lower() != "challenge":
-        return False
-    try:
-        host = (urlsplit(url).hostname or "").lower() or None
-    except ValueError:
-        host = None
-    if host is not None and host not in _WAF_CHALLENGE_WARNED:
-        _WAF_CHALLENGE_WARNED.add(host)
-        warnings.warn(
-            f"{host}'s firewall answered with a browser check (AWS WAF challenge) "
-            "instead of the file, usually after many requests in a short time. "
-            "Its files cannot be sized or downloaded until it lifts; try again later.",
-            stacklevel=2,
-        )
-    return True
 
 
 def _ldbase_page_meta(html: Any) -> dict[str, str | None]:

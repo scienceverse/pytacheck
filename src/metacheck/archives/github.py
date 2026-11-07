@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 
 from metacheck._r import slashed
-from metacheck._values import as_int, field, is_missing
+from metacheck._values import as_int, field, field_or_value, is_missing
 
 if TYPE_CHECKING:
     import httpx
@@ -879,7 +879,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
     default_branch = field(meta, "default_branch")
     if default_branch is None:
         default_branch = "main"
-    license_id = _empty_or(field(field(meta, "license"), "spdx_id"))
+    license_id = _empty_or(field_or_value(field(meta, "license"), "spdx_id"))
 
     # 2. the Git tree (recursive, one request)
     try:

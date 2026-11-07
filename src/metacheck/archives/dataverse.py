@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING, Any, cast
 import pandas as pd
 
 from metacheck._r import as_character, compile_r, grepl, gsub, plural, r_round, sub
-from metacheck._values import as_float, field, is_missing
+from metacheck._values import as_float, field, field_or_value, is_missing
 from metacheck.archives._atomic import atomic_write
 from metacheck.archives._memo import session_memo
 
@@ -819,6 +819,49 @@ def _omit_msg(key: Any, size: float) -> str:
     return f"- omitting {_paste(key)} ({_paste(r_round(size / 1024 / 1024, 1))}MB)"
 
 
+def _omit_for_size(
+    sizes: Sequence[float],
+    names: Sequence[Any],
+    exempt: Sequence[bool],
+    max_file_size: float | None,
+    max_download_size: float | None,
+    pb: Any,
+) -> list[bool]:
+    """Port of ``.omit_for_size()`` (R/repo-download.R): which files the size caps leave out.
+
+    Files over *max_file_size* MB go first, then the largest of the rest one by
+    one until the remaining ones fit *max_download_size* MB (a cap that is
+    ``None``, infinite or not positive is off). A file in *exempt* (a zip read
+    member by member) is never left out. Each omission is reported on *pb*.
+    The files stay in the caller's table with ``downloaded = False``, as
+    metacheck documents (its code drops them: U36).
+    """
+    from metacheck.archives import _tick
+
+    n = len(sizes)
+    omitted = [False] * n
+    if _cap_on(max_file_size):
+        assert max_file_size is not None
+        cap = max_file_size * _MB
+        for i in range(n):
+            if not math.isnan(sizes[i]) and sizes[i] > cap and not exempt[i]:
+                _tick(pb, _omit_msg(names[i], sizes[i]))
+                omitted[i] = True
+    if _cap_on(max_download_size):
+        assert max_download_size is not None
+        cap = max_download_size * _MB
+        while True:
+            capped = [i for i in range(n) if not exempt[i] and not omitted[i]]
+            if not capped or sum(sizes[i] for i in capped if not math.isnan(sizes[i])) <= cap:
+                break
+            biggest = max(
+                (i for i in capped if not math.isnan(sizes[i])), key=lambda i: (sizes[i], -i)
+            )
+            _tick(pb, _omit_msg(names[biggest], sizes[biggest]))
+            omitted[biggest] = True
+    return omitted
+
+
 def _fetch_file(
     url: str,
     headers: dict[str, str],
@@ -931,27 +974,9 @@ def _download_file_table(
         ]
 
     sizes = [math.nan if is_missing(v) else float(v) for v in files["size"].tolist()]
-    omitted = [False] * n
-    if _cap_on(max_file_size):
-        assert max_file_size is not None
-        cap = max_file_size * _MB
-        for i in range(n):
-            if not math.isnan(sizes[i]) and sizes[i] > cap and not unzippable[i]:
-                _tick(pb, _omit_msg(files["key"].iloc[i], sizes[i]))
-                omitted[i] = True
-
-    if _cap_on(max_download_size):
-        assert max_download_size is not None
-        cap = max_download_size * _MB
-        while True:
-            capped = [i for i in range(n) if not unzippable[i] and not omitted[i]]
-            if not capped or sum(sizes[i] for i in capped if not math.isnan(sizes[i])) <= cap:
-                break
-            max_file = max(
-                (i for i in capped if not math.isnan(sizes[i])), key=lambda i: (sizes[i], -i)
-            )
-            _tick(pb, _omit_msg(files["key"].iloc[max_file], sizes[max_file]))
-            omitted[max_file] = True
+    omitted = _omit_for_size(
+        sizes, files["key"].tolist(), unzippable, max_file_size, max_download_size, pb
+    )
 
     if all(omitted):
         _tick(pb, "- All files omitted due to size constraints")
@@ -1607,9 +1632,7 @@ def _dataverse_info(host: Any, doi: Any, pb: Any = None) -> pd.DataFrame:
         obj["authors"] = _list_cell(authors)
         # older installations give the licence as a plain string ("CC0"), which
         # metacheck's `license$name` cannot read (U34)
-        licence = field(version, "license")
-        if not isinstance(licence, str):
-            licence = field(licence, "name") if isinstance(licence, dict) else None
+        licence = field_or_value(field(version, "license"), "name")
         obj["license"] = _field_cell(_empty_or(licence, None))
         obj["files"] = _list_cell(files if files is not None else [])
         return pd.DataFrame(obj)
