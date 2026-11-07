@@ -624,11 +624,11 @@ expr_case(
     "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); "
     f"f(d) }})(function(d) {{ {_hidden_r}; old <- options(metacheck.repo_cache.dir = d); "
     "on.exit(options(old), add = TRUE); "
-    'res <- rbox_file_download("https://researchbox.org/801"); '
+    'res <- rbox_file_download("https://researchbox.org/801", cache = TRUE); '
     'res$file_location <- sub(".*/unzipped/", "", res$file_location); res })',
     f"lambda m: m.repo_cache({json.dumps(HIDDEN)}, lambda d: (lambda res: "
     'res.assign(file_location=[str(v).split("/unzipped/", 1)[-1] for v in '
-    'res["file_location"]]))(m.researchbox.rbox_file_download("https://researchbox.org/801")))',
+    'res["file_location"]]))(m.researchbox.rbox_file_download("https://researchbox.org/801", cache=True)))',
 )
 
 # NULL input: data.frame(<url> = NULL) has no columns
