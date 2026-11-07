@@ -206,6 +206,31 @@ def fair_cases() -> list[Case]:
             needs_r=True,
         )
     )
+    # Without the repository's own dataset_description.json (R moves it into data/, pytacheck
+    # keeps it where it is, U112) both write the description from the data: that one is compared.
+    cases.append(
+        make(
+            "demo_repo.no_description",
+            "parity_helpers",
+            "ff_run",
+            demo_path,
+            drop=["dataset_description.json"],
+            tier=DEMO_REASON,
+            needs_r=True,
+        )
+    )
+    cases.append(
+        make(
+            "demo_repo.no_description_paper",
+            "parity_helpers",
+            "ff_run",
+            demo_path,
+            paper=demo_paper,
+            drop=["dataset_description.json"],
+            tier=DEMO_REASON,
+            needs_r=True,
+        )
+    )
     for kind in (
         "no_output_dir",
         "not_a_folder",

@@ -249,6 +249,20 @@
   "needs_r": true
   "args":
     "x": {"$expr": {"r": "{source('tests/fair/parity_helpers.R'); ff_run(demofile('repo'))}", "py": "__import__('tests.fair.parity_helpers', fromlist=['x']).ff_run(str(pc.demofile('repo')))"}}
+- "id": "demo_repo.no_description"
+  "r": "identity"
+  "py": "tests.fair.parity_helpers.identity"
+  "tier": {"level": 1, "reason": "the demo repository of metacheck (demofile('repo'), a copy of a real repository with its paper), the same inputs the module tests use"}
+  "needs_r": true
+  "args":
+    "x": {"$expr": {"r": "{source('tests/fair/parity_helpers.R'); ff_run(demofile('repo'), drop = c(\"dataset_description.json\"))}", "py": "__import__('tests.fair.parity_helpers', fromlist=['x']).ff_run(str(pc.demofile('repo')), drop=['dataset_description.json'])"}}
+- "id": "demo_repo.no_description_paper"
+  "r": "identity"
+  "py": "tests.fair.parity_helpers.identity"
+  "tier": {"level": 1, "reason": "the demo repository of metacheck (demofile('repo'), a copy of a real repository with its paper), the same inputs the module tests use"}
+  "needs_r": true
+  "args":
+    "x": {"$expr": {"r": "{source('tests/fair/parity_helpers.R'); ff_run(demofile('repo'), paper = demopaper('stroop_effect'), drop = c(\"dataset_description.json\"))}", "py": "__import__('tests.fair.parity_helpers', fromlist=['x']).ff_run(str(pc.demofile('repo')), paper=pc.demopaper('stroop_effect'), drop=['dataset_description.json'])"}}
 - "id": "errors.no_output_dir"
   "r": "identity"
   "py": "tests.fair.parity_helpers.identity"
