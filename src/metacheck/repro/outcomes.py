@@ -604,7 +604,11 @@ def _repro_source_unknown(install_results: pd.DataFrame | None) -> list[str]:
     return _unique(
         pkg
         for pkg, installed, category in rows
-        if category == "source_unknown" and not is_missing(installed) and not installed
+        # a Python install result has no category (NA)
+        if not is_missing(category)
+        and category == "source_unknown"
+        and not is_missing(installed)
+        and not installed
     )
 
 

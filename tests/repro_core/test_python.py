@@ -13,6 +13,7 @@ import os
 import re
 import shutil
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
@@ -85,12 +86,34 @@ def test_dependencies_from_imports() -> None:
             "# import commented_out",
         ]
     )
-    # in the order of the imports; `from . import` and `__future__` are not packages
-    assert deps["package"].tolist() == ["numpy", "os", "sys", "sklearn", "pandas", "scipy"]
+    # in the order of the imports; `from . import` and `__future__` are not packages; the
+    # pip name is what is reported (`import sklearn` comes from `scikit-learn`)
+    assert deps["package"].tolist() == ["numpy", "os", "sys", "scikit-learn", "pandas", "scipy"]
     base = dict(zip(deps["package"], deps["base"], strict=True))
     assert base["os"] and base["sys"]
-    assert not base["numpy"] and not base["sklearn"]
+    assert not base["numpy"] and not base["scikit-learn"]
     assert set(deps.loc[~deps["base"], "source"]) == {"pypi"}
+    assert set(deps.loc[deps["base"], "source"]) == {"base"}
+
+
+def test_dependencies_report_the_pip_name_once() -> None:
+    deps = repro_dependencies_py(
+        [
+            "import yaml",
+            "import PIL.Image",
+            "import pywt",
+            "import sklearn",
+            "from sklearn import svm",
+        ]
+    )
+    assert deps["package"].tolist() == ["PyYAML", "Pillow", "PyWavelets", "scikit-learn"]
+
+
+def test_dependencies_python2_modules_are_base() -> None:
+    # they cannot be installed: importing one shows that the code is Python 2
+    deps = repro_dependencies_py(["import cPickle", "import urlparse", "import numpy"])
+    base = dict(zip(deps["package"], deps["base"], strict=True))
+    assert base == {"cPickle": True, "urlparse": True, "numpy": False}
     assert set(deps.loc[deps["base"], "source"]) == {"base"}
 
 
@@ -100,13 +123,30 @@ def test_dependencies_pooled_list_dedups() -> None:
 
 
 def test_dependencies_take_the_manifest_pin() -> None:
-    # the pin is matched by the PyPI name, which is not the module's for scikit-learn
+    # the pin is matched by the PEP 503 pip name, which is not the module's for scikit-learn
     deps = repro_dependencies_py(
-        ["import numpy", "import sklearn", "import yaml"],
-        manifest_text=["numpy==1.26.4", "Scikit_Learn>=1.3  # ML", "requests"],
+        ["import numpy", "import sklearn", "import yaml", "import scipy"],
+        manifest_text=["numpy==1.26.4", "scikit-learn>=1.3  # ML", "PYYAML==6.0", "Scipy_x"],
     )
     refs = dict(zip(deps["package"], _na(deps["ref"]), strict=True))
-    assert refs == {"numpy": "numpy==1.26.4", "sklearn": "Scikit_Learn>=1.3", "yaml": None}
+    assert refs == {
+        "numpy": "numpy==1.26.4",
+        "scikit-learn": "scikit-learn>=1.3",
+        "PyYAML": "PYYAML==6.0",
+        "scipy": None,
+    }
+    # an underscore is a hyphen, as pip reads names; metacheck matches lowercase only (D123)
+    deps = repro_dependencies_py(["import sklearn"], manifest_text=["Scikit_Learn>=1.3"])
+    assert _na(deps["ref"]) == ["Scikit_Learn>=1.3"]
+
+
+def test_pooled_dependencies_prefer_the_pinned_row() -> None:
+    deps = repro_dependencies_py(
+        {"a.py": ["import numpy"], "b.py": ["import numpy", "import os"]},
+        manifest_text=["numpy==1.26.4"],
+    )
+    assert deps["package"].tolist() == ["numpy", "os"]
+    assert _na(deps["ref"]) == ["numpy==1.26.4", None]
 
 
 def test_stdlib_list_covers_this_python() -> None:
@@ -119,7 +159,7 @@ def test_stdlib_list_covers_this_python() -> None:
 
 def test_requirement_uses_the_pypi_name() -> None:
     deps = repro_dependencies_py(["import sklearn", "import cv2", "import PIL", "import numpy"])
-    assert rpy._requirements(deps) == ["scikit-learn", "opencv-python-headless", "Pillow", "numpy"]
+    assert rpy._requirements(deps) == ["scikit-learn", "opencv-python", "Pillow", "numpy"]
 
 
 # manifests ---------------------------------------------------------------------------------
@@ -130,19 +170,23 @@ def test_manifest_requirements_txt() -> None:
         [
             "# analysis deps",
             "-r base.txt",
+            "-e .",
             "--index-url https://example.org/simple",
-            "numpy==1.26.4",
+            "numpy==1.26.4 --hash=sha256:abc",
             "pandas>=2 ; python_version >= '3.9'",
             "Scikit_Learn  # the ML bits",
+            "git+https://example.org/x/y.git#egg=y",
             "",
             "numpy==1.26.4",
         ]
     )
-    assert pins["package"].tolist() == ["numpy", "pandas", "scikit-learn"]
+    # lowercased; the name is the leading identifier of any line, as in metacheck
+    assert pins["package"].tolist() == ["numpy", "pandas", "scikit_learn", "git"]
     assert pins["requirement"].tolist() == [
         "numpy==1.26.4",
         "pandas>=2 ; python_version >= '3.9'",
         "Scikit_Learn",
+        "git+https://example.org/x/y.git#egg=y",
     ]
 
 
@@ -157,15 +201,58 @@ def test_manifest_pyproject() -> None:
             'python = "^3.10"',
             'scipy = "^1.11"',
             'statsmodels = {version = "0.14.1"}',
+            'pingouin = "~0.5.3"',
+            'seaborn = "*"',
+            "[tool.poetry.group.dev.dependencies]",
+            'pytest = "^7.0"',
         ]
     )
-    # the project's own name and version are not requirements (metacheck took every
-    # quoted string), and Poetry's caret is not pip syntax
-    assert pins["package"].tolist() == ["numpy", "pandas", "scipy", "statsmodels"]
+    # the project's own name and version are not requirements, and Poetry's versions are
+    # written as pip ranges
+    assert pins["package"].tolist() == [
+        "numpy",
+        "pandas",
+        "scipy",
+        "statsmodels",
+        "pingouin",
+        "seaborn",
+        "pytest",
+    ]
     req = dict(zip(pins["package"], pins["requirement"], strict=True))
     assert req["numpy"] == "numpy>=1.24"
-    assert req["scipy"] == "scipy"  # metacheck: scipy^1.11, which pip refuses
+    assert req["scipy"] == "scipy>=1.11,<2.0"
     assert req["statsmodels"] == "statsmodels==0.14.1"
+    assert req["pingouin"] == "pingouin>=0.5.3,<0.6"
+    assert req["seaborn"] == "seaborn"
+    assert req["pytest"] == "pytest>=7.0,<8.0"
+
+
+def test_manifest_pyproject_array_over_lines() -> None:
+    pins = _repro_py_manifest_pins(
+        ["[project]", "dependencies = [", '  "numpy>=1",  # array', '  "pandas",', "]"]
+    )
+    assert pins["requirement"].tolist() == ["numpy>=1", "pandas"]
+
+
+@pytest.mark.parametrize(
+    ("spec", "pip"),
+    [
+        ("^1.26", ">=1.26,<2.0"),
+        ("^0.3", ">=0.3,<0.4"),
+        ("^0.0.3", ">=0.0.3,<0.0.4"),
+        ("~1.11", ">=1.11,<1.12"),
+        ("~1", ">=1,<2.0"),
+        ("1.2.3", "==1.2.3"),
+        ("*", ""),
+        ("", ""),
+        (">=1.0", ">=1.0"),
+        ("~=1.2", "~=1.2"),
+        ("^x", ""),
+        ("abc", "==abc"),
+    ],
+)
+def test_poetry_to_pip(spec: str, pip: str) -> None:
+    assert rpy._poetry_to_pip(spec) == pip
 
 
 def test_manifest_broken_pyproject_is_empty() -> None:
@@ -177,10 +264,33 @@ def test_manifest_broken_pyproject_is_empty() -> None:
 
 
 def test_parses() -> None:
-    assert _repro_py_parses(_code("ok.py"))
-    assert not _repro_py_parses(["print 'python 2'"])
-    assert not _repro_py_parses(["def f(:"])
-    assert _repro_py_parses([])
+    res = _repro_py_parses(
+        {
+            "ok.py": _code("ok.py"),
+            "py2.py": ["print 'python 2'"],
+            "bad.py": ["def f(:"],
+            "empty.py": [],
+        }
+    )
+    assert res.to_dict() == {"ok.py": True, "py2.py": False, "bad.py": False, "empty.py": True}
+    # only a file that is Python 2 is marked, not any file that fails
+    assert res.attrs["python2"] == [False, True, False, False]
+    plain = _repro_py_parses([["x = 1"], ["def f(:"]])
+    assert plain.tolist() == [True, False]
+    assert "python2" not in plain.attrs
+
+
+def test_parses_marks_the_python2_forms() -> None:
+    res = _repro_py_parses(
+        [
+            ["exec 'x = 1'"],
+            ["try:", "    pass", "except ValueError, e:", "    pass"],
+            ["if 1:", "\tx = 1", "        y = 2"],
+            ["print('fine')"],
+        ]
+    )
+    assert res.tolist() == [False, False, False, True]
+    assert res.attrs["python2"] == [True, True, True, False]
 
 
 def test_defined_vars() -> None:
@@ -215,9 +325,17 @@ def test_classify_errors() -> None:
         False,
     )
     nomod = "Traceback ...\nModuleNotFoundError: No module named 'sklearn.linear_model'\n"
-    assert _classify_py_error(nomod, ["sklearn"])[1:] == ("dependency_unavailable", None, True)
+    # the pip name of the module is compared with the packages that failed to install
+    assert _classify_py_error(nomod, ["scikit-learn"])[1:] == ("dependency_unavailable", None, True)
+    assert _classify_py_error(nomod, ["sklearn"])[1] == "ModuleNotFoundError"
     assert _classify_py_error(nomod, [])[1] == "ModuleNotFoundError"
-    assert _classify_py_error("Segmentation fault\n", [])[1] == "runtime"
+    # Python 2 writes the name without quotes
+    py2 = "ImportError: No module named librosa"
+    assert _classify_py_error(py2, ["librosa"])[1] == "dependency_unavailable"
+    # a last line that is no `<Name>Error: ...` has no type (metacheck: NA), not "runtime"
+    assert _classify_py_error("Segmentation fault\n", [])[1] is None
+    assert _classify_py_error("ValueError\n", [])[1] is None
+    assert _classify_py_error("RuntimeError: deliberate\n", [])[1] == "RuntimeError"
 
 
 # file I/O, path rewrites, run order -------------------------------------------------------
@@ -387,9 +505,58 @@ def test_run_scripts_py_not_parsed_timeout_and_lib(python3: str, tmp_path: Path)
     assert row.loc["uses_lib.py", "outcome"] == "ran_ok"
     assert row.loc["uses_lib.py", "stdout"].strip() == "42"
     assert row.loc["slow.py", "outcome"] == "timed_out"
-    assert row.loc["slow.py", "error_type"] == "timeout"
+    # the process runner gives no type for a script that ran out of its own time (metacheck: NA)
+    assert pd.isna(row.loc["slow.py", "error_type"])
+    assert "timed out" in row.loc["slow.py", "error"]
+    assert row.loc["slow.py", "stdout"] == "" and row.loc["slow.py", "script_lines"] == []
     assert row.loc["py2.py", "outcome"] == "not_parsed"
     assert row.loc["nodep.py", "outcome"] == "dependency_unavailable"
+
+
+def test_run_scripts_py_deadline(python3: str, tmp_path: Path) -> None:
+    root = tmp_path / "sb"
+    root.mkdir()
+    code = {"slow.py": ["import time", "time.sleep(30)"], "later.py": ["print(1)"]}
+    tbl = repro_write_scripts(code, None, None, root, lang="Python")
+    out = repro_run_scripts_py(tbl, list(code), timeout=60, deadline=time.time() + 2)
+    row = out.set_index("file_name")
+    # stopped by the time left for all scripts, not its own limit; the next is not started
+    assert row.loc["slow.py", "outcome"] == "timed_out"
+    assert row.loc["slow.py", "error_type"] == "deadline"
+    assert row.loc["later.py", "outcome"] == "skipped_time_limit"
+    assert (
+        row.loc["later.py", "error"] == "not started: the time for all scripts together had run out"
+    )
+    gone = repro_run_scripts_py(tbl, list(code), deadline=time.time() - 1)
+    assert gone["outcome"].tolist() == ["skipped_time_limit", "skipped_time_limit"]
+
+
+def test_run_scripts_py_own_modules_and_environment(python3: str, tmp_path: Path) -> None:
+    root = tmp_path / "sb"
+    root.mkdir()
+    lib = tmp_path / "lib"
+    lib.mkdir()
+    (root / "mods").mkdir()
+    (root / "mods" / "mymod.py").write_text("VALUE = 7\n")
+    code = {
+        "run.py": [
+            "import os, mymod",
+            "print(mymod.VALUE)",
+            "print(os.environ['MPLBACKEND'], os.environ['QT_QPA_PLATFORM'])",
+            "print(os.environ['PYTHONPATH'].split(os.pathsep)[:2])",
+        ]
+    }
+    tbl = repro_write_scripts(code, None, None, root, lang="Python")
+    tbl["module_root"] = str(root)
+    tbl["module_folders"] = "mods"
+    out = repro_run_scripts_py(tbl, ["run.py"], lib_dir=lib, timeout=60)
+    row = out.set_index("file_name")
+    assert row.loc["run.py", "outcome"] == "ran_ok", row.loc["run.py", "stderr"]
+    lines = row.loc["run.py", "stdout"].split("\n")
+    assert lines[0] == "7"
+    assert lines[1] == "Agg offscreen"
+    # the repository's own modules first, then the library
+    assert lines[2] == str([f"{root}/mods", str(lib)])
 
 
 def test_run_scripts_py_needs_python(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -417,12 +584,40 @@ def test_install_deps_py_runs_pip_into_the_target(
     deps = repro_dependencies_py(["import sklearn", "import nopkg", "import os"])
     deps = deps[~deps["base"]].reset_index(drop=True)
     out = repro_install_deps_py(deps, tmp_path / "lib", python_bin="python3")
-    assert out["package"].tolist() == ["sklearn", "nopkg"]
+    calls = [c for c in calls if "pip" in c]
+    assert out["package"].tolist() == ["scikit-learn", "nopkg"]
     assert out["installed"].tolist() == [True, False]
     assert out["message"].tolist() == ["", "ERROR: No matching distribution"]
     assert [c[-1] for c in calls] == ["scikit-learn", "nopkg"]
     assert all(c[c.index("--target") + 1] == str(tmp_path / "lib") for c in calls)
+    assert all("--prefer-binary" in c for c in calls)
     assert len(repro_install_deps_py(deps.iloc[0:0], tmp_path / "lib")) == 0
+
+
+def test_install_deps_py_retries_a_pin_with_the_bare_name(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    calls: list[str] = []
+
+    class Done:
+        def __init__(self, rc: int, err: str) -> None:
+            self.returncode, self.stderr = rc, err
+
+    def fake_run(args: list[str], **kw: Any) -> Done:
+        if "pip" not in args:
+            return Done(0, "")
+        calls.append(args[-1])
+        return (
+            Done(1, "ERROR: No matching distribution\n") if args[-1] == "numpy==99" else Done(0, "")
+        )
+
+    monkeypatch.setattr(rpy.subprocess, "run", fake_run)
+    deps = repro_dependencies_py(["import numpy", "import pandas"], manifest_text=["numpy==99"])
+    out = repro_install_deps_py(deps, tmp_path / "lib", python_bin="python3")
+    # a pinned version that does not install is replaced by the current one
+    assert calls == ["numpy==99", "numpy", "pandas"]
+    assert out["installed"].tolist() == [True, True]
+    assert out["message"].tolist() == ["", ""]
 
 
 # the Docker backends (docker itself faked) ------------------------------------------------
@@ -449,7 +644,7 @@ def test_install_deps_py_docker(monkeypatch: pytest.MonkeyPatch, tmp_path: Path)
         compile(Path(sandbox, "install.py").read_text(), "install.py", "exec")
         Path(sandbox, ".install_results.jsonl").write_text(
             json.dumps({"package": "numpy", "installed": True, "message": ""}) + "\n"
-            '{"package": "sklearn", "installed": fal'  # cut off by the timeout
+            '{"package": "scikit-learn", "installed": fal'  # cut off by the timeout
         )
         return {"status": None, "timeout": True}
 
@@ -460,7 +655,7 @@ def test_install_deps_py_docker(monkeypatch: pytest.MonkeyPatch, tmp_path: Path)
     assert out["message"].tolist() == ["", "docker install timed out after 9s"]
     assert seen["reqs"] == [
         {"package": "numpy", "requirement": "numpy"},
-        {"package": "sklearn", "requirement": "scikit-learn"},
+        {"package": "scikit-learn", "requirement": "scikit-learn"},
     ]
     assert seen["stopped"]
     args = seen["args"]

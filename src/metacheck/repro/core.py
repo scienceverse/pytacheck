@@ -4188,6 +4188,26 @@ def _script_lines(path: str | None) -> list[str]:
         return []
 
 
+#: The error of a script the runners did not start (R's ``skipped_time_limit`` row).
+_NOT_STARTED = "not started: the time for all scripts together had run out"
+
+
+def _repro_script_limit(timeout: float, deadline: float | None) -> tuple[float, bool] | None:
+    """A script's time limit under the *deadline* of all scripts together.
+
+    The runners' ``left``/``cut_by_deadline`` of metacheck 0.4.3.7: ``None`` when that time
+    has run out (the script is not started), else the seconds the script may run and
+    whether the deadline, not its own *timeout*, sets them (#581).
+    """
+    left = _repro_time_left(deadline)
+    if left <= 0:
+        return None
+    if not math.isfinite(left):
+        return timeout, False
+    secs = math.ceil(left)
+    return min(timeout, secs), secs < timeout
+
+
 def repro_run_scripts(
     run_tbl: pd.DataFrame | None,
     order: Any,
@@ -4196,6 +4216,7 @@ def repro_run_scripts(
     skip: Sequence[str] | str = (),
     parses: Mapping[str, Any] | pd.Series | None = None,
     failed_deps: Sequence[str] | str = (),
+    deadline: float | None = None,
 ) -> pd.DataFrame:
     """Run the paper's scripts, in order, in isolated R subprocesses.
 
@@ -4204,11 +4225,14 @@ def repro_run_scripts(
     fresh ``Rscript`` process from its ``run_dir`` with *lib_dir* first on
     the library path and a per-script *timeout*; its statements are echoed
     and statistical result objects captured (``R/r-capture.R``). Scripts in
-    *skip* or failing to parse (*parses*) are not run. Returns
+    *skip* or failing to parse (*parses*) are not run. Once *deadline*
+    (``time.time()`` seconds, see :func:`_repro_deadline`) has passed, a
+    script is not started (``skipped_time_limit``), and a started script
+    stops at it (``error_type`` ``"deadline"``). Returns
     ``file_name``, ``outcome`` (``ran_ok``, ``errored``, ``timed_out``,
-    ``not_parsed``, ``skipped_missing_inputs``, ``dependency_unavailable``),
-    ``error``, ``error_type``, ``undefined_var``, ``stdout``, ``stderr``,
-    ``elapsed``, ``script_lines`` and ``captures``.
+    ``not_parsed``, ``skipped_missing_inputs``, ``dependency_unavailable``,
+    ``skipped_time_limit``), ``error``, ``error_type``, ``undefined_var``,
+    ``stdout``, ``stderr``, ``elapsed``, ``script_lines`` and ``captures``.
     """
     if run_tbl is None or len(run_tbl) == 0:
         return _run_frame([])
@@ -4237,8 +4261,17 @@ def repro_run_scripts(
             if pre is not None:
                 rows.append(pre)
                 continue
+            # Once the time for all scripts together has run out, a script is not
+            # started; a script that is started stops when that time runs out
+            limit = _repro_script_limit(timeout, deadline)
+            if limit is None:
+                rows.append(_run_row(fn, "skipped_time_limit", _NOT_STARTED))
+                continue
+            run_timeout, cut_by_deadline = limit
             exec_lines = _script_lines(paths[i])
-            _message("[repro]   -> running '", fn, "' (timeout ", as_character(timeout), "s) ...")
+            _message(
+                "[repro]   -> running '", fn, "' (timeout ", as_character(run_timeout), "s) ..."
+            )
             with tempfile.TemporaryDirectory(prefix="pytacheck_run_") as tmp:
                 out_file = os.path.join(tmp, "out.txt")
                 err_file = os.path.join(tmp, "err.txt")
@@ -4246,7 +4279,7 @@ def repro_run_scripts(
                 t0 = time.monotonic()
                 error: _RunError | None = None
                 try:
-                    _callr_run(paths[i], dirs[i], cap_file, lib, timeout, out_file, err_file)
+                    _callr_run(paths[i], dirs[i], cap_file, lib, run_timeout, out_file, err_file)
                 except _RunError as exc:
                     error = exc
                 elapsed = time.monotonic() - t0
@@ -4285,6 +4318,9 @@ def repro_run_scripts(
                     if dep_unavailable
                     else "errored"
                 )
+                # stopped by the time left for all scripts, not its own limit (#581)
+                if is_timeout and cut_by_deadline:
+                    etype = "deadline"
                 rows.append(
                     _run_row(fn, outc, msg, etype, undef_var, so, se, elapsed, exec_lines, captures)
                 )

@@ -20,11 +20,12 @@ from __future__ import annotations
 
 import ast
 import os
+import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
-import tomllib
 import warnings
 from collections.abc import Mapping, Sequence
 from typing import Any
@@ -90,46 +91,7 @@ _PY_STDLIB = frozenset(
     """.split()  # noqa: SIM905 - a word list, kept readable
 )
 
-#: The PyPI distribution of a module whose import name is not its own (``import sklearn``
-#: is ``pip install scikit-learn``; the ``sklearn`` distribution only fails). metacheck
-#: installs the import name.
-_PY_DIST_NAMES = {
-    "Bio": "biopython",
-    "Crypto": "pycryptodome",
-    "MySQLdb": "mysqlclient",
-    "OpenSSL": "pyOpenSSL",
-    "PIL": "Pillow",
-    "attr": "attrs",
-    "bs4": "beautifulsoup4",
-    "cv2": "opencv-python-headless",
-    "dateutil": "python-dateutil",
-    "docx": "python-docx",
-    "dotenv": "python-dotenv",
-    "fitz": "PyMuPDF",
-    "jwt": "PyJWT",
-    "magic": "python-magic",
-    "pptx": "python-pptx",
-    "serial": "pyserial",
-    "skimage": "scikit-image",
-    "sklearn": "scikit-learn",
-    "umap": "umap-learn",
-    "yaml": "PyYAML",
-    "zmq": "pyzmq",
-}
-
 _IDENT = r"[A-Za-z_][A-Za-z0-9_]*"
-
-
-def _canonical(name: str) -> str:
-    """A PyPI name as pip compares it (PEP 503: case and ``-_.`` runs do not matter)."""
-    from packaging.utils import canonicalize_name
-
-    return str(canonicalize_name(name))
-
-
-def _py_dist_name(module: str) -> str:
-    """The distribution ``pip install`` needs for the top-level module *module*."""
-    return _PY_DIST_NAMES.get(module, module)
 
 
 def _python(python_bin: str | None = None) -> str | None:
@@ -144,45 +106,108 @@ def _python(python_bin: str | None = None) -> str | None:
 # ---------------------------------------------------------------------------
 
 
-def _requirement_name(req: str) -> str | None:
-    """The distribution a requirement line names (``None`` when it names none)."""
-    from packaging.requirements import InvalidRequirement, Requirement
-
-    try:
-        return Requirement(req).name
-    except InvalidRequirement:
-        egg = regextract(r"#egg=([A-Za-z0-9][A-Za-z0-9._-]*)", req, perl=True)
-        return None if egg is None else egg[len("#egg=") :]
+def _unquote(x: str) -> list[str]:
+    """The quoted strings of *x*, without their quotes (``unquote()`` of ``.py_toml_requirements()``)."""
+    return [
+        re.sub(r"""^['"]|['"]$""", "", m.group(0))
+        for m in re.finditer(r"""(['"])((?:[^'"\\]|\\.)*)\1""", x)
+    ]
 
 
-def _poetry_requirement(name: str, spec: Any) -> str:
-    """A Poetry dependency as a pip requirement: a plain version constraint keeps its pin.
+def _poetry_to_pip(spec: str | None) -> str:
+    """Port of ``.poetry_to_pip()``: a Poetry version constraint as a pip one.
 
-    Poetry's caret, tilde and wildcard constraints are not pip's, so those install the
-    name only (metacheck passes ``numpy^1.26``, which pip refuses).
+    ``^1.26`` is ``>=1.26,<2.0``, ``^0.3`` ``>=0.3,<0.4``, ``~1.11`` ``>=1.11,<1.12``,
+    ``1.2.3`` ``==1.2.3``, ``*`` or nothing "" (any version); pip operators (``>=1.0``) are
+    kept.
     """
-    version = spec.get("version") if isinstance(spec, Mapping) else spec
-    v = trimws(version) if isinstance(version, str) else ""
-    if grepl(r"^[0-9]+(\.[0-9]+)*$", v):
-        return f"{name}=={v}"
-    if grepl(r"^(==|>=|<=|!=|~=|>|<)\s*[0-9]", v) and not grepl(r"[*^]", v):
-        return f"{name}{v}"
-    return name
+    if spec is None:
+        return ""
+    spec = str(trimws(spec))
+    if spec == "" or spec == "*":
+        return ""
+    if re.match(r"^[<>=!~]=|^[<>]", spec):
+        return spec
+    op = spec[0]
+    ver = spec[1:] if op in ("^", "~") else spec
+    parts: list[int] = []
+    for p in strsplit([ver], ".", fixed=True)[0] if ver else []:
+        if re.fullmatch(r"\s*[+-]?[0-9]+\s*", p or "") is None:
+            parts = []
+            break
+        parts.append(int(p or "0"))
+    if not parts:
+        # no parts, or one that is no integer (R: `!length(parts) || anyNA(parts)`)
+        return "" if op in ("^", "~") else f"=={spec}"
+    if op == "^":
+        # the first non-zero part may not change (only the last one given, if all zero)
+        i = next((k for k, v in enumerate(parts) if v != 0), len(parts) - 1) + 1
+    elif op == "~":
+        i = 2 if len(parts) >= 2 else 1
+    else:
+        return f"=={ver}"
+    upper = parts[:i]
+    upper[i - 1] += 1
+    if len(upper) < 2:
+        upper.append(0)
+    return f">={ver},<{'.'.join(str(u) for u in upper)}"
+
+
+def _py_toml_requirements(lines: Sequence[str]) -> list[str]:
+    """Port of ``.py_toml_requirements()``: the requirements a ``pyproject.toml`` declares.
+
+    The strings of ``[project]``'s ``dependencies = [...]`` array, and the ``name = "spec"``
+    / ``name = { version = "spec", ... }`` lines of ``[tool.poetry.dependencies]`` and of
+    ``[tool.poetry.group.<g>.dependencies]`` (not ``python``), read section by section from
+    *lines* (trimmed, without blank or comment lines).
+    """
+    out: list[str] = []
+    section = ""
+    in_array = False
+    for ln in lines:
+        if in_array:
+            out.extend(_unquote(re.sub(r"\s+#.*$", "", ln)))
+            if "]" in ln:
+                in_array = False
+            continue
+        if ln.startswith("["):
+            section = re.sub(r"^\[+\s*([^\]]*?)\s*\]+.*$", r"\1", ln)
+            continue
+        if section == "project" and re.match(r"^dependencies\s*=", ln):
+            rest = re.sub(r"^dependencies\s*=\s*", "", ln)
+            out.extend(_unquote(rest))
+            in_array = "]" not in rest
+        elif re.match(r"^tool\.poetry(\.group\.[^.]+)?\.dependencies$", section):
+            m = re.match(r"^([A-Za-z0-9_.-]+)\s*=\s*(.*)$", ln)
+            if m is None or m.group(1).lower() == "python":
+                continue
+            value = m.group(2)
+            spec: str | None
+            if value.startswith("{"):
+                v = re.search(r"""version\s*=\s*['"]([^'"]*)['"]""", value)
+                spec = v.group(1) if v else ""
+            else:
+                q = _unquote(value)
+                spec = q[0] if q else None
+            out.append(m.group(1) + _poetry_to_pip(spec))
+    return [str(trimws(x)) for x in out]
 
 
 def _repro_py_manifest_pins(manifest_text: Any) -> pd.DataFrame:
     """Per-package requirements from a ``requirements.txt`` or ``pyproject.toml``.
 
-    Port of ``.repro_py_manifest_pins()``: ``package`` (the canonical PyPI name) and
-    ``requirement`` (the text to give ``pip install``). A ``requirements.txt`` line keeps
-    its pin; comments, blank lines and option lines (``-r``, ``-e``, ``--hash``, ...) name
-    no package. A ``pyproject.toml`` is read with :mod:`tomllib`: ``[project]
-    dependencies`` and ``[tool.poetry.dependencies]`` (metacheck takes every quoted
-    string of the file, so ``name = "analysis"`` became a requirement too).
+    Port of ``.repro_py_manifest_pins()``: ``package`` (lowercased, as PyPI names are
+    case-insensitive) and ``requirement`` (the text to give ``pip install``). A
+    ``requirements.txt`` line keeps its pin; comments, blank lines and option lines
+    (``-r``, ``-e``, ``--...``) name no package, and an inline comment and per-requirement
+    options (``--hash=...``) are dropped. In a ``pyproject.toml`` only the dependency
+    declarations are read (:func:`_py_toml_requirements`); Poetry's ``^`` and ``~``
+    versions are written as pip ranges, a bare version as ``==``, and ``*`` as no version.
+    The name is the leading identifier of the requirement, before any version specifier,
+    extras, or an ``@`` / ``#egg=`` marker.
     """
-    rows: list[tuple[str, str]] = []
 
-    def result() -> pd.DataFrame:
+    def result(rows: list[tuple[str, str]]) -> pd.DataFrame:
         out = list(dict.fromkeys(rows))
         return _frame(
             {
@@ -191,39 +216,25 @@ def _repro_py_manifest_pins(manifest_text: Any) -> pd.DataFrame:
             }
         )
 
-    lines = [x for x in _chr_list(manifest_text) if x is not None]
-    if not lines:
-        return result()
-    stripped = [trimws(x) for x in lines]
-    is_toml = any(grepl(r"^\[(project|tool\.poetry)|^dependencies\s*=", stripped))
-    if is_toml:
-        try:
-            doc = tomllib.loads("\n".join(lines))
-        except tomllib.TOMLDecodeError:
-            return result()
-        project = doc.get("project")
-        deps = project.get("dependencies") if isinstance(project, Mapping) else None
-        for req in deps if isinstance(deps, list) else []:
-            name = _requirement_name(req) if isinstance(req, str) else None
-            if name is not None:
-                rows.append((_canonical(name), trimws(req)))
-        tool = doc.get("tool")
-        poetry = tool.get("poetry") if isinstance(tool, Mapping) else None
-        pdeps = poetry.get("dependencies") if isinstance(poetry, Mapping) else None
-        for name, spec in (pdeps or {}).items() if isinstance(pdeps, Mapping) else []:
-            if _canonical(name) != "python":
-                rows.append((_canonical(name), _poetry_requirement(name, spec)))
-        return result()
-
-    for line in stripped:
-        if line == "" or line.startswith(("#", "-")):
-            continue
-        # an inline comment and per-requirement options (--hash=...) are not pip install's
-        req = trimws(sub(r"\s+(#|--).*$", "", line, perl=True))
-        name = _requirement_name(req)
-        if name is not None:
-            rows.append((_canonical(name), req))
-    return result()
+    raw = [x for x in _chr_list(manifest_text) if x is not None]
+    if not raw:
+        return result([])
+    lines = [str(trimws(x)) for x in raw]
+    lines = [x for x in lines if x != "" and not x.startswith("#")]
+    if any(re.match(r"^\[(project|tool\.poetry)", x) for x in lines):
+        reqs = _py_toml_requirements(lines)
+    else:
+        # requirements.txt: drop option lines (-r/-e/--...), then each line's inline comment
+        # and per-requirement options (" --hash=...")
+        kept = [x for x in lines if not re.match(r"^(-r|-e|--)", x)]
+        kept = [re.sub(r"\s+#.*$", "", x) for x in kept]
+        reqs = [str(trimws(re.sub(r"\s+--\S.*$", "", x))) for x in kept]
+    rows: list[tuple[str, str]] = []
+    for req in reqs:
+        m = re.match(r"^([A-Za-z0-9][A-Za-z0-9._-]*)", req)
+        if req != "" and m:
+            rows.append((m.group(1).lower(), req))
+    return result(rows)
 
 
 def repro_dependencies_py(code_text: Any, manifest_text: Any = None) -> pd.DataFrame:
@@ -232,11 +243,12 @@ def repro_dependencies_py(code_text: Any, manifest_text: Any = None) -> pd.DataF
     Port of ``R/reproducibility_check_python.R::repro_dependencies_py()``. *code_text* is
     one file's code (a string or its lines) or a list (or mapping) of such, pooled across
     files; *manifest_text* the lines of the repository's ``requirements.txt`` or
-    ``pyproject.toml``, if it has one. Returns ``package`` (the top-level module
-    imported), ``source`` (``pypi``, or ``base`` for the standard library), ``ref`` (the
-    manifest's requirement for that package, else NA) and ``base``, one row per package.
-    A manifest entry matches an import by its PyPI name too (``scikit-learn`` is
-    ``import sklearn``).
+    ``pyproject.toml``, if it has one. Returns ``package`` (the pip name of the top-level
+    module imported: ``import sklearn`` comes from ``scikit-learn``, and the pip name is
+    what is installed and matched against the manifest's pins), ``source`` (``pypi``, or
+    ``base`` for the standard library and the modules of Python 2's, which cannot be
+    installed), ``ref`` (the manifest's requirement for that package, else NA) and
+    ``base``, one row per package.
     """
     from metacheck.repro.core import _is_file_list
 
@@ -272,22 +284,41 @@ def repro_dependencies_py(code_text: Any, manifest_text: Any = None) -> pd.DataF
     if not pkgs:
         return empty
     pins = _repro_py_manifest_pins(manifest_text)
-    pin_of = dict(zip(_col(pins, "package"), _col(pins, "requirement"), strict=True))
-    base = [p in _PY_STDLIB for p in pkgs]
-    ref: list[str | None] = []
-    for p, b in zip(pkgs, base, strict=True):
-        hit = None
-        if not b:
-            hit = pin_of.get(_canonical(_py_dist_name(p))) or pin_of.get(_canonical(p))
-        ref.append(hit)
-    return _deps_frame(pkgs, ["base" if b else "pypi" for b in base], ref, base)
+    # Matched by the PEP 503 name, as pip does (`scikit_learn` is `scikit-learn`); metacheck
+    # matches the lowercased name only (D123).
+    pin_of: dict[str, str] = {}
+    for p, r in zip(_col(pins, "package"), _col(pins, "requirement"), strict=True):
+        pin_of.setdefault(_pep503(str(p)), str(r))
+    base_pkgs = _PY_STDLIB | set(_repro_py2_modules())
+    is_base = [p in base_pkgs for p in pkgs]
+    # The import name is not always the name pip installs, so the pip name is what is
+    # reported, installed and matched against the manifest's pins.
+    pip_names = [p if b else str(_repro_py_pip_name(p)) for p, b in zip(pkgs, is_base, strict=True)]
+    ref = [None if b else pin_of.get(_pep503(p)) for p, b in zip(pip_names, is_base, strict=True)]
+    keep_i: list[int] = []
+    seen_p: set[str] = set()
+    for i, p in enumerate(pip_names):
+        if p not in seen_p:
+            seen_p.add(p)
+            keep_i.append(i)
+    return _deps_frame(
+        [pip_names[i] for i in keep_i],
+        ["base" if is_base[i] else "pypi" for i in keep_i],
+        [ref[i] for i in keep_i],
+        [is_base[i] for i in keep_i],
+    )
+
+
+def _pep503(name: str) -> str:
+    """A package name as PEP 503 normalises it: lowercase, runs of ``-_.`` as one ``-``."""
+    return re.sub(r"[-_.]+", "-", name).lower()
 
 
 def _py_requirement(package: str | None, ref: str | None) -> str:
     """What ``pip install`` gets for one dependency: the manifest's requirement, else its name."""
     if ref is not None and ref != "":
         return ref
-    return _py_dist_name(package or "")
+    return package or ""
 
 
 def _requirements(install_deps: pd.DataFrame) -> list[str]:
@@ -316,6 +347,18 @@ def _install_rows(
     )
 
 
+def _no_python_error(python_bin: str | None) -> RuntimeError:
+    return RuntimeError(
+        f"Python executable '{'python' if python_bin is None else python_bin}' "
+        "(or 'python3') was not found on PATH."
+    )
+
+
+def _timed_out_text(exe: str) -> str:
+    """processx's message for a command that ran out of time."""
+    return f"System command '{os.path.basename(exe)}' timed out"
+
+
 def repro_install_deps_py(
     install_deps: pd.DataFrame | None,
     lib_dir: str | os.PathLike[str],
@@ -326,26 +369,29 @@ def repro_install_deps_py(
 
     Port of ``R/reproducibility_check_python.R::repro_install_deps_py()``: one
     ``python -m pip install --target <lib_dir>`` per dependency (the manifest's pinned
-    requirement when there is one, else the PyPI name of the module), so the host's own
-    packages are not touched. Installing runs a package's own build code, unisolated: the
-    module calls this only with ``sandbox="process"``. Same columns as
+    requirement when there is one, else the pip name), so the host's own packages are not
+    touched. A pinned version that does not install is replaced by the current one (the
+    bare name). Installing runs a package's own build code, unisolated: the module calls
+    this only with ``sandbox="process"``. Same columns as
     :func:`~metacheck.repro.core.repro_install_deps`.
     """
     if install_deps is None or len(install_deps) == 0:
         return _install_frame([])
-    exe = _python(python_bin)
-    if exe is None:
-        raise RuntimeError(f"Python executable '{python_bin or 'python3'}' was not found on PATH.")
+    exe = _repro_find_python("python" if python_bin is None else python_bin)
+    if not exe:
+        raise _no_python_error(python_bin)
     lib = os.fspath(lib_dir)
     os.makedirs(lib, exist_ok=True)
-    reqs = _requirements(install_deps)
-    pip = [exe, "-m", "pip", "install", "--quiet", "--no-input", "--disable-pip-version-check"]
-    ok: list[bool] = []
-    msgs: list[str] = []
-    for req in reqs:
+    pkgs = _chr_list(install_deps["package"])
+    refs = _chr_list(install_deps["ref"]) if "ref" in install_deps.columns else [None] * len(pkgs)
+
+    def pip(req: str) -> tuple[bool, str]:
         try:
             res = subprocess.run(  # noqa: S603 - pip of the configured python
-                [*pip, "--no-cache-dir", "--target", lib, req],
+                [
+                    exe, "-m", "pip", "install", "--quiet", "--prefer-binary", "--no-input",
+                    "--disable-pip-version-check", "--target", lib, req,
+                ],
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
@@ -353,56 +399,65 @@ def repro_install_deps_py(
                 stdin=subprocess.DEVNULL,
                 timeout=timeout,
                 check=False,
-            )
-            good, msg = res.returncode == 0, trimws(res.stderr or "")
+            )  # fmt: skip
+            return res.returncode == 0, res.stderr or ""
         except subprocess.TimeoutExpired:
-            good, msg = False, f"pip install timed out after {as_character(timeout)}s"
+            return False, _timed_out_text(exe)
         except OSError as exc:
-            good, msg = False, str(exc)
+            return False, str(exc)
+
+    ok: list[bool] = []
+    msgs: list[str] = []
+    for pkg, ref in zip(pkgs, refs, strict=True):
+        req = _py_requirement(pkg, ref)
+        good, err = pip(req)
+        # a pinned version that does not install is replaced by the current one
+        if not good and req != (pkg or ""):
+            good, err = pip(pkg or "")
         ok.append(good)
-        msgs.append("" if good else msg)
-    return _install_rows(
-        _chr_list(install_deps["package"]), _chr_list(install_deps["source"]), ok, msgs
-    )
+        msgs.append("" if good else str(trimws(err)))
+    return _install_rows(pkgs, _chr_list(install_deps["source"]), ok, msgs)
 
 
 # ---------------------------------------------------------------------------
 # running the scripts
 # ---------------------------------------------------------------------------
 
-_PY_ERROR_PAT = r"^([A-Za-z_][A-Za-z0-9_.]*Error)(\s*:.*)?$"
-_PY_NAME_PAT = r"""name ['"]([^'"]+)['"] is not defined"""
-_PY_NOMOD_PAT = r"""No module named ['"]([^'"]+)['"]"""
+_PY_ERROR_PAT = r"^([A-Za-z_][A-Za-z0-9_.]*Error)\s*:.*$"
+_PY_NAME_PAT = r""".*name ['"]([^'"]+)['"] is not defined.*"""
+# with or without quotes: Python 2 writes "No module named librosa" (#568)
+_PY_NOMOD_PAT = r"""No module named ['"]?([A-Za-z0-9_.]+)['"]?"""
 
 
 def _classify_py_error(
-    stderr: str, failed_deps: Sequence[str] | str
-) -> tuple[str, str, str | None, bool]:
+    stderr: str, failed_deps: Sequence[str | None] | str
+) -> tuple[str, str | None, str | None, bool]:
     """``(error, error_type, undefined_var, dependency_unavailable)`` of a failed script.
 
-    The error is the traceback's last line (``NameError: name 'x' is not defined``). Its
-    type is ``undefined_variable`` for a ``NameError``, ``dependency_unavailable`` when
-    the module a ``No module named`` names (its top-level package) could not be installed,
-    else the exception's class name, or ``runtime`` (metacheck: NA) when the last line
-    names none.
+    The error is the traceback's last non-empty line (``NameError: name 'x' is not
+    defined``). Its type is ``undefined_variable`` for a ``NameError``,
+    ``dependency_unavailable`` when the pip name of the module a ``No module named`` names
+    (its top-level package) is among the packages that could not be installed, else the
+    exception's class name when the last line reads ``<Name>Error: ...``, else ``None``
+    (metacheck: NA).
     """
     lines = [x for x in stderr.split("\n") if trimws(x) != ""]
     last = lines[-1] if lines else stderr
-    m = regextract(_PY_ERROR_PAT, last, perl=True)
-    exc_type = sub(_PY_ERROR_PAT, r"\1", m, perl=True) if m is not None else None
+    m = re.match(_PY_ERROR_PAT, last)
+    exc_type = m.group(1) if m else None
     undef: str | None = None
     if exc_type == "NameError":
-        hit = regextract(_PY_NAME_PAT, last, perl=True)
-        undef = sub(_PY_NAME_PAT, r"\1", hit, perl=True) if hit is not None else None
-    nomod = regextract(_PY_NOMOD_PAT, stderr, perl=True)
-    missing = sub(_PY_NOMOD_PAT, r"\1", nomod, perl=True) if nomod is not None else None
-    dep_unavailable = missing is not None and missing.split(".")[0] in _chr_list(failed_deps)
+        hit = re.match(_PY_NAME_PAT, last)
+        undef = hit.group(1) if hit else None
+    nomod = re.search(_PY_NOMOD_PAT, stderr)
+    missing = nomod.group(1) if nomod else None
+    dep_unavailable = missing is not None and _repro_py_pip_name(missing) in _chr_list(failed_deps)
     if dep_unavailable:
-        etype = "dependency_unavailable"
+        etype: str | None = "dependency_unavailable"
     elif undef is not None:
         etype = "undefined_variable"
     else:
-        etype = exc_type or "runtime"
+        etype = exc_type
     return last, etype, undef, dep_unavailable
 
 
@@ -415,12 +470,26 @@ def _py_run_row(
     elapsed: float,
     exec_lines: list[str],
     timeout: float,
-    failed_deps: Sequence[str] | str,
+    failed_deps: Sequence[str | None] | str,
+    cut_by_deadline: bool = False,
 ) -> dict[str, Any]:
-    """The run-result row of one script, from its exit status and output (both backends)."""
+    """The run-result row of one script, from its exit status and output (the Docker backend)."""
     if timed_out:
-        msg = f"timed out after {as_character(timeout)}s"
-        return _run_row(fn, "timed_out", msg, "timeout", None, so, se, elapsed, exec_lines)
+        from metacheck.repro.outcomes import _repro_timeout_text
+
+        # stopped by the time left for all scripts, not its own limit (#581)
+        timeout_type = "deadline" if cut_by_deadline else "timeout"
+        return _run_row(
+            fn,
+            "timed_out",
+            _repro_timeout_text(timeout),
+            timeout_type,
+            None,
+            so,
+            se,
+            elapsed,
+            exec_lines,
+        )
     if returncode != 0:
         last, etype, undef, dep_unavailable = _classify_py_error(se, failed_deps)
         outcome = "dependency_unavailable" if dep_unavailable else "errored"
@@ -436,34 +505,47 @@ def repro_run_scripts_py(
     timeout: float = 600,
     skip: Sequence[str] | str = (),
     parses: Mapping[str, Any] | pd.Series | None = None,
-    failed_deps: Sequence[str] | str = (),
+    failed_deps: Sequence[str | None] | str = (),
+    deadline: float | None = None,
 ) -> pd.DataFrame:
     """Run the paper's Python scripts, in order, each in a ``python`` subprocess on this machine.
 
     Port of ``R/reproducibility_check_python.R::repro_run_scripts_py()``. Each script of
-    *run_tbl* (``file_name``, ``script_path``, ``run_dir``) runs whole from its
-    ``run_dir``, with *lib_dir* first on ``PYTHONPATH`` and a per-script *timeout*. A
-    subprocess isolates a crash, nothing else: the code can read, change and delete
-    anything this process can, and use the network. The module calls this only with
-    ``sandbox="process"``; :func:`~metacheck.repro.docker.repro_run_scripts_py_docker` is
-    the sandbox. Same columns and outcomes as
-    :func:`~metacheck.repro.core.repro_run_scripts`; ``captures`` is always ``None``.
+    *run_tbl* (``file_name``, ``script_path``, ``run_dir``, and ``module_folders`` with
+    ``module_root`` when the repository's own modules are to be found) runs whole from its
+    ``run_dir``, with a per-script *timeout*. ``PYTHONPATH`` holds the repository's own
+    module folders first, then *lib_dir*, then the old ``PYTHONPATH``; there is no screen
+    (``MPLBACKEND=Agg``, ``QT_QPA_PLATFORM=offscreen``). Once *deadline* (a ``time.time()``
+    value, for all scripts together) has passed a script is not started and is recorded
+    ``skipped_time_limit``; a script that is started stops when it passes. A subprocess
+    isolates a crash, nothing else: the code can read, change and delete anything this
+    process can, and use the network. The module calls this only with ``sandbox="process"``;
+    :func:`~metacheck.repro.docker.repro_run_scripts_py_docker` is the sandbox. Same columns
+    and outcomes as :func:`~metacheck.repro.core.repro_run_scripts`; ``captures`` is always
+    ``None``.
     """
+    from metacheck.repro.core import _NOT_STARTED, _repro_script_limit
+
     if run_tbl is None or len(run_tbl) == 0:
         return _run_frame([])
-    exe = _python(python_bin)
-    if exe is None:
-        raise RuntimeError(f"Python executable '{python_bin or 'python3'}' was not found on PATH.")
+    exe = _repro_find_python("python" if python_bin is None else python_bin)
+    if not exe:
+        raise _no_python_error(python_bin)
     from metacheck.utils import pb
 
     ordered = _ordered_names(run_tbl, order)
     names = _chr_list(run_tbl["file_name"])
     paths = _chr_list(run_tbl["script_path"])
     dirs = _chr_list(run_tbl["run_dir"])
-    env = dict(os.environ)
-    if lib_dir is not None and os.path.isdir(lib_dir):
-        old = env.get("PYTHONPATH", "")
-        env["PYTHONPATH"] = os.pathsep.join([os.fspath(lib_dir), *([old] if old else [])])
+    n = len(names)
+    folders = _chr_list(run_tbl["module_folders"]) if "module_folders" in run_tbl else [None] * n
+    roots = _chr_list(run_tbl["module_root"]) if "module_root" in run_tbl else [None] * n
+    old = os.environ.get("PYTHONPATH", "")
+    pythonpath = (
+        os.pathsep.join([os.fspath(lib_dir), *([old] if old else [])])
+        if lib_dir is not None and os.path.isdir(lib_dir)
+        else old
+    )
 
     bar = pb(len(ordered), ":what [:bar] :current/:total")
     rows: list[dict[str, Any]] = []
@@ -476,16 +558,35 @@ def repro_run_scripts_py(
             if pre is not None:
                 rows.append(pre)
                 continue
+            # Once the time for all scripts together has run out, a script is not started; a
+            # script that is started stops when that time runs out
+            limit = _repro_script_limit(timeout, deadline)
+            if limit is None:
+                rows.append(_run_row(fn, "skipped_time_limit", _NOT_STARTED))
+                continue
+            run_timeout, cut_by_deadline = limit
             exec_lines = _script_lines(paths[i])
             _message(
-                "[repro/py]   -> running '", fn, "' (timeout ", as_character(timeout), "s) ..."
+                "[repro/py]   -> running '", fn, "' (timeout ", as_character(run_timeout), "s) ..."
             )
+            # the repository's own modules first (see _repro_py_module_folders()); the folders
+            # count from the sandbox's top, which `module_root` names
+            own = (
+                [f"{roots[i]}/{f}" for f in (folders[i] or "").split("\n") if f != ""]
+                if folders[i] and roots[i]
+                else []
+            )
+            env = dict(os.environ)
+            env["PYTHONPATH"] = os.pathsep.join([*own, *([pythonpath] if pythonpath else [])])
+            env["MPLBACKEND"] = "Agg"
+            env["QT_QPA_PLATFORM"] = "offscreen"
             with tempfile.TemporaryDirectory(prefix="pytacheck_pyrun_") as tmp:
                 out_file = os.path.join(tmp, "out.txt")
                 err_file = os.path.join(tmp, "err.txt")
                 t0 = time.monotonic()
                 returncode: int | None = None
-                timed_out = False
+                condition: str | None = None
+                is_timeout = False
                 with open(out_file, "wb") as out, open(err_file, "wb") as err:
                     try:
                         proc = subprocess.run(  # noqa: S603 - the configured python
@@ -494,19 +595,46 @@ def repro_run_scripts_py(
                             stdout=out,
                             stderr=err,
                             stdin=subprocess.DEVNULL,
-                            timeout=timeout,
+                            timeout=run_timeout,
                             env=env,
                             check=False,
                         )
                         returncode = proc.returncode
                     except subprocess.TimeoutExpired:
-                        timed_out = True
+                        is_timeout, condition = True, _timed_out_text(exe)
+                    except OSError as exc:
+                        condition = str(exc)
                 elapsed = time.monotonic() - t0
-                so, se = _read_cap(out_file), _read_cap(err_file)
-            _message("[repro/py]   <- '", fn, "' done in ", as_character(round(elapsed, 1)), "s")
+                so, se = str(trimws(_read_cap(out_file))), str(trimws(_read_cap(err_file)))
+            secs = as_character(round(elapsed, 1))
+            if condition is not None:
+                _message(
+                    "[repro/py]   <- '", fn, "' done in ", secs, "s (",
+                    "timed out" if is_timeout else "condition/error", ")",
+                )  # fmt: skip
+                # no output and no script lines, as R's row for a stopped command
+                rows.append(
+                    _run_row(
+                        fn,
+                        "timed_out" if is_timeout else "errored",
+                        condition,
+                        # stopped by the time left for all scripts, not its own limit (#581)
+                        "deadline" if is_timeout and cut_by_deadline else None,
+                        None,
+                        "",
+                        "",
+                        elapsed,
+                    )
+                )
+                continue
+            _message(
+                "[repro/py]   <- '", fn, "' done in ", secs, "s (",
+                "ok" if returncode == 0 else "errored",
+                "; stdout ", str(len(so)), " chars, stderr ", str(len(se)), " chars)",
+            )  # fmt: skip
             rows.append(
                 _py_run_row(
-                    fn, returncode, timed_out, so, se, elapsed, exec_lines, timeout, failed_deps
+                    fn, returncode, False, so, se, elapsed, exec_lines, run_timeout, failed_deps
                 )
             )
     finally:
@@ -547,23 +675,62 @@ def _repro_py_defined_vars(code_text_list: Any) -> pd.DataFrame:
     return _frame({"file_name": ("string", fnames), "defines": ("object", defines)})
 
 
-def _repro_py_parses(code_text: Sequence[str | None]) -> bool:
-    """Whether a Python script parses (compiled to a syntax tree only; nothing is run).
+_PY2_WORDS = ("Missing parentheses in call to", "multiple exception types must be parenthesized")
 
-    metacheck has no static check for Python, so a syntax error (Python 2's ``print x``,
-    say) only shows when the script is run, as an error. The check uses this
-    interpreter's grammar.
+
+def _repro_py_parses(
+    code_text_list: Sequence[Sequence[str | None] | str | None] | Mapping[str, Any] | None,
+    python_bin: str | None = None,  # noqa: ARG001 - R starts this interpreter; ast runs in-process
+) -> pd.Series:
+    """Port of ``.repro_py_parses()``: whether each Python file parses.
+
+    The Python sibling of code_check's R parse check. Each file's code (a list of lines)
+    is read by Python's own parser, ``ast.parse()``, which reads the code without running
+    it and writes no files. Returns a boolean ``Series`` (indexed by file name when
+    *code_text_list* is a mapping), ``False`` for a file with a syntax error. When a file
+    fails because it is Python 2 code (a print or exec statement, ``except E, e:``, tabs
+    mixed with spaces; see :func:`_repro_py2_error` for how Python 3 words that),
+    ``Series.attrs["python2"]`` is a list of booleans marking which.
+
+    Python 3.14 reads Python 2's ``except E, e:`` as two exception types (PEP 758), so that
+    code parses there; the grammar of 3.13 still refuses it, and a file it refuses only for
+    that is Python 2. Research code written for 3.14's new form is far rarer than Python 2
+    code. metacheck starts the interpreter named by *python_bin* (or ``python3``) for this
+    and counts every file as parsing when there is none; the parser of the running process
+    is used here, so the check does not depend on one (and sees this process's grammar).
     """
-    src = "\n".join("" if x is None else x for x in code_text)
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")  # invalid escape sequences and the like
-        try:
-            ast.parse(src)
-        except (SyntaxError, ValueError):
-            return False
-        except (RecursionError, MemoryError):  # too deeply nested to check: let it run
-            return True
-    return True
+    if code_text_list is None:
+        code_text_list = []
+    if isinstance(code_text_list, Mapping):
+        names: list[Any] | None = list(code_text_list)
+        items = list(code_text_list.values())
+    else:
+        names, items = None, list(code_text_list)
+    parses: list[bool] = []
+    python2: list[bool] = []
+    for item in items:
+        lines = [item] if item is None or isinstance(item, str) else list(item)
+        src = "\n".join("NA" if x is None else x for x in lines)
+        ok, two = True, False
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")  # invalid escape sequences and the like
+            try:
+                ast.parse(src)
+                if sys.version_info >= (3, 14):
+                    try:
+                        ast.parse(src, feature_version=(3, 13))
+                    except SyntaxError as e3:
+                        if "except expressions without parentheses" in str(e3):
+                            ok, two = False, True
+            except Exception as e:  # a syntax error, a null byte, code too deeply nested
+                ok = False
+                two = isinstance(e, TabError) or any(w in str(e) for w in _PY2_WORDS)
+        parses.append(ok)
+        python2.append(two)
+    out = pd.Series(parses, index=names, dtype=bool)
+    if any(python2):
+        out.attrs["python2"] = python2
+    return out
 
 
 # ---------------------------------------------------------------------------

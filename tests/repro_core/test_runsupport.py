@@ -386,7 +386,7 @@ def test_py_get_ipython_adds_a_stand_in_only_when_needed_and_in_a_valid_place() 
     own = ["def get_ipython(): pass", "get_ipython()"]
     assert _repro_py_get_ipython(own) == own
     assert _repro_py_get_ipython([]) == []
-    assert _repro_py_parses(out) and _repro_py_parses(fut)
+    assert _repro_py_parses([out, fut]).all()
 
 
 def test_py_get_ipython_stand_in_works() -> None:
