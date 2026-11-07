@@ -91,6 +91,7 @@ def data_check_scale_values(
     valid_range: Any = None,
     n_max: int = 10,
     min_ground_truth_coverage: float = 0.5,
+    infer: bool = True,
 ) -> dict[str, Any]:
     """Flag values that fall outside a rating scale's valid range.
 
@@ -100,7 +101,8 @@ def data_check_scale_values(
     ``"typo:<intended>"`` or ``"unexplained"`` per value). Ground truth
     (*valid_values* / *valid_range*) is used only when it covers at least
     *min_ground_truth_coverage* of the data; otherwise the range is inferred
-    with ``.detect_likert_scale()``.
+    with ``.detect_likert_scale()``, or, with ``infer=False``, nothing is flagged for the column
+    (``codebook_check`` reports only values outside a range the authors documented).
     """
     none: dict[str, Any] = {
         "problem": False,
@@ -167,6 +169,8 @@ def data_check_scale_values(
             valid_set = None
             interval = False
 
+    if valid_set is None and not interval and infer is not True:
+        return none
     if valid_set is None and not interval:
         sc = _likert_scale(xv)
         if sc is None:

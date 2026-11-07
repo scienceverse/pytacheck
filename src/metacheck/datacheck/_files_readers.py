@@ -1198,7 +1198,15 @@ def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
     kwargs: dict[str, Any] = {"row_limit": limit, "disable_datetime_conversion": True}
     if limit == 0 and math.isfinite(n_rows):
         kwargs["metadataonly"] = True
-    df, meta = readers[ext](path, **kwargs)
+    try:
+        df, meta = readers[ext](path, **kwargs)
+    except Exception as e:
+        # .read_sav_any(): haven reads text in the encoding a .sav declares, and a file made on
+        # Windows can hold CP1252 text that is not valid in it ("Unable to convert string to the
+        # requested encoding"); such a file is read again as CP1252 (metacheck #523)
+        if ext != "sav" or "requested encoding" not in str(e):
+            raise
+        df, meta = readers[ext](path, encoding="CP1252", **kwargs)
     nrow = 0 if kwargs.get("metadataonly") else len(df)
     raw_names = list(meta.column_names)
     names = vec_as_names_unique(raw_names)

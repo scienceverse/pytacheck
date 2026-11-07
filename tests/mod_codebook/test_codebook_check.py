@@ -632,7 +632,9 @@ def test_embedded_haven_labels_are_harvested() -> None:
     # the .sav repeats the .dta's definitions exactly, so they are de-duplicated
     assert cv["codebook_variable"].tolist() == ["sex", "age", "q1"]
     assert set(cv["codebook_source"]) == {"labelled.dta"}
-    assert st(cc)["matched_n"] == 6
+    # a column with value labels but no variable label (q1) is not documented (metacheck
+    # 0.4.3.7: "4 of 8 data columns (50%) are documented")
+    assert st(cc)["matched_n"] == 4
 
 
 def test_embedded_jasp_and_jamovi_labels_are_harvested() -> None:

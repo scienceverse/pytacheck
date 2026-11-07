@@ -62,64 +62,20 @@
 "mod_reg_review/reg_check.review.refused.report": *u128_err
 
 # --- repo_check module (inst/modules/repo_check.R) --------------------------
-"mod_repo_check/repo_check.all_platforms": &u121
-  kind: r_bug_fixed
-  ref: U121
-  reason: files are de-duplicated per file (URL and path, or location); R's duplicated(file_url) & duplicated(file_path) also dropped a distinct DataONE readme.txt. The Dryad rows also carry repo_size (D93)
-"mod_repo_check/repo_check.all_platforms.paperlist": *u121
-"mod_repo_check/repo_check.all_platforms.report": *u121
-"mod_repo_check/repo_check.all_platforms.tables": *u121
-# D110 (metacheck d52b3fd: a zip's entries carry the archive's listed size)
-"mod_repo_check_review/repo_check.local.two_folders": &u121_local
-  kind: r_bug_fixed
-  ref: U121
-  reason: same-named files in two local folders are distinct files; R drops the second folder's copies (and the folder)
-"mod_repo_check_review/repo_check.local.two_folders.report": *u121_local
-"mod_repo_check_review/repo_check.local.several_folders.paperlist": *u121_local
-"mod_repo_check/repo_check.bibr12.paperlist": &u122_osf
-  kind: r_bug_fixed
-  ref: U122
-  reason: an OSF link OSF does not know is kept and flagged "invalid or inaccessible OSF link"; R stores a dplyr match() error, or drops it silently beside valid links
-"mod_repo_check_review/repo_check.osf_license.invalid": *u122_osf
 "mod_repo_check/repo_check.osf.registration2":
   kind: r_bug_fixed
   ref: U122
   reason: when following a registration to its source project fails, the registration is reported with its files and the error; R reports "no repositories found"
-"mod_repo_check/repo_check.figshare.share_link":
-  kind: r_bug_fixed
-  ref: U122
-  reason: a Figshare listing without doi/license has NA metadata; R's data.frame() error overwrites the share link's informative error
-"mod_repo_check/repo_check.dataone.nameless": &u122_nameless
-  kind: r_bug_fixed
-  ref: U122
-  reason: a listed file without a name is skipped by the naming check; R's check_file_naming() fails the module
-"mod_repo_check/repo_check.zenodo.nameless": *u122_nameless
-"mod_repo_check/repo_check.local.messy": &u123
-  kind: r_bug_fixed
-  ref: U123
-  reason: a local file file_category() cannot place takes its extension's type (when it has one) like an online file, so a local .tar.gz/.zip counts as an archive; R leaves it NA
-"mod_repo_check/repo_check.local.roster_extra": *u123
-"mod_repo_check/repo_check.local.edat_ok": *u123
-"mod_repo_check/repo_check.local.zip": *u123
-"mod_repo_check/repo_check.report.messy": *u123
-"mod_repo_check/repo_check.tables.messy": *u123
-"mod_repo_check_review/repo_check.local.edat_many": *u123
-"mod_repo_check_review/repo_check.local.unicode": *u123
-"mod_repo_check_review/repo_check.local.unicode.tables": *u123
 "mod_repo_check/repo_check.dspace.unfound": &u43_one
   kind: r_bug_fixed
   ref: U43
-  reason: a DSpace item its host does not know is flagged "invalid or inaccessible DSpace item" (gated_repos, and the Error column of the report's repository table); R's download function returns NULL and the repository is left unflagged
+  reason: a DSpace item its host does not know is flagged "invalid or inaccessible DSpace item" (gated_repos, and the Error column of the report's repository table); metacheck keeps it as an empty repository ("We found 1 empty repository", no flag)
 "mod_repo_check/repo_check.dspace7.unfound": *u43_one
+"mod_repo_check/repo_check.dspace.unfound_two": *u43_one
 "mod_repo_check/repo_check.dspace.found_and_unfound":
   kind: r_bug_fixed
   ref: U43
-  reason: an unknown DSpace item beside a found one is kept, flagged "invalid or inaccessible DSpace item" (an empty repository, so yellow); R leaves it unflagged and drops it with the repositories without files. The found item's licence is its dc.rights.license, not the access status in dc.rights (U227)
-"mod_repo_check_review/repo_check.module.empty_paper": &u79_rc
-  kind: r_bug_fixed
-  ref: U79
-  reason: an empty paper or paper list gives the "no repositories" result; R stops ("subscript out of bounds" from paper_id(paper)[[1]], or the link tables' missing href)
-"mod_repo_check_review/repo_check.module.empty_paperlist": *u79_rc
+  reason: an unknown DSpace item beside a found one is kept, flagged "invalid or inaccessible DSpace item" (an empty repository, so yellow); metacheck drops it with the repositories without files and counts one repository. The found item's licence is its dc.rights.license, not the access status in dc.rights (U227)
 
 # --- reproducibility check (R/reproducibility_check*.R, its module) ----------
 "repro_core/repro_run_scripts.nopkg_failed_dep": &u132

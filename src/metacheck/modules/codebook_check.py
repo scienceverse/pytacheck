@@ -291,6 +291,7 @@ def _codebook_check(
         haven_idx = []
     s_group = _vals(struct, "group")
     s_pid = _vals(struct, "paper_id")
+    s_src = _vals(struct, "source_file")
 
     # ── 3. parse codebook files (rules, then optional LLM) ───────────────────
     llm_model_used: Any = None
@@ -337,7 +338,9 @@ def _codebook_check(
                         llm_model_used = llm_model
 
     if haven_idx:
-        parsed_list += _harvest_labels(haven_idx, locs, s_group, s_pid, _extract_haven_labels)
+        parsed_list += _harvest_labels(
+            haven_idx, locs, s_group, s_pid, _extract_haven_labels, s_src
+        )
 
     if parsed_list:
         v = bind_rows(parsed_list)
@@ -577,7 +580,10 @@ def _codebook_check(
             declared = _codes_as_numeric(
                 _decode_value_labels(l_mv[i] if l_mv is not None else None)
             )
-            sv = data_check_scale_values(x, declared=declared, valid_values=valid)
+            # infer=False: when the documented codes explain less than half of the values (probably
+            # codes attached to the wrong column), the column is skipped rather than checked
+            # against a range guessed from the data (metacheck #480)
+            sv = data_check_scale_values(x, declared=declared, valid_values=valid, infer=False)
             if not is_true(sv.get("problem")):
                 continue
             values = list(sv.get("values") or [])
@@ -948,8 +954,13 @@ def _harvest_labels(
     s_group: list[Any] | None,
     s_pid: list[Any] | None,
     extract: Any,
+    s_src: list[Any] | None = None,
 ) -> list[Any]:
-    """Embedded variable / value labels of labelled data files (haven, JASP, jamovi)."""
+    """Embedded variable / value labels of labelled data files (haven, JASP, jamovi).
+
+    Named like data_check's tables: ``source_file`` is the file name, or its path where several
+    files share a name (``s_src``); the base name when the structure has no such column.
+    """
     import pandas as pd
 
     from metacheck.datacheck._columns_codebook import _import_data
@@ -976,7 +987,8 @@ def _harvest_labels(
             df = None
         if df is None:
             continue
-        res = extract(df, os.path.basename(p), group=file_group)
+        src = s_src[i] if s_src is not None else os.path.basename(p)
+        res = extract(df, src, group=file_group)
         if res is None:
             continue
         res = res.copy()
