@@ -55,7 +55,8 @@ _INSTALL = (
     "software on whoever runs the script without asking, which is at minimum disruptive (an "
     "unexpected install, network access, a package version the author never tested against) "
     "and at worst a security risk if it points at an untrusted repository. Document required "
-    "packages instead (a README, a `renv.lock`/`DESCRIPTION`)."
+    "packages instead (a README, or a list of them: an `renv.lock`/`DESCRIPTION` for R, a "
+    "`requirements.txt` for Python)."
 )
 _COMMENTS = (
     "Best programming practice is to add comments to code, to explain what the code does (to "
@@ -81,10 +82,10 @@ _COL_LABELS = {
 @module(
     title="Code Check",
     description="""
-        This module retrieves information from repositories checked by repo_check about code files (R, SAS, SPSS, Stata).
+        This module retrieves information from repositories checked by repo_check about code files (R, Python, SAS, SPSS, Stata, Mplus, MATLAB).
     """,
     details="""
-        The Code Check module checks R, Rmd, Qmd, SAS, SPSS, and Stata files, using regular expressions to check the code. The regular expression search will detect the number of comments, the lines at which libraries/imports are loaded, attempts to detect absolute paths to files, and lists files that are loaded, and checks if these files are in the repository. The module will return suggestions to improve the code if there are no comments, if libraries/imports are loaded in lines further than 4 lines apart, if files that are loaded are not in the repository, and if absolute file paths are found.
+        The Code Check module checks R (also R Markdown and Quarto), Python (also Jupyter notebooks), SAS, SPSS, Stata, Mplus, and MATLAB files, using regular expressions to check the code; JASP files are listed but not read. The language of a Quarto document or a notebook is read from the file itself (its engine or kernel), not from its extension. The regular expression search will detect the number of comments, the lines at which libraries/imports are loaded, attempts to detect absolute paths to files, `setwd()` and `install.packages()` calls, and lists files that are loaded, and checks if these files are in the repository; R code is also parsed. The module will return suggestions to improve the code if there are no comments, if libraries/imports are loaded in lines further than 4 lines apart, if files that are loaded are not in the repository, if absolute file paths, `setwd()` or `install.packages()` are found, and if R code cannot be parsed.
 
         The regular expressions can miss information in code files, or falsely detect parts of the code as a fixed file path. Libraries/imports might be loaded in one block, even if there are more than 3 intermittent lines. The package was validated internally on papers published in Psychological Science. There might be valid reasons why some loaded files can\u2019t be shared, but the module can\u2019t evaluate these reasons, and always gives a warning.
 
@@ -108,10 +109,13 @@ _COL_LABELS = {
         "download": "if TRUE (default), download the code files to be checked from online "
         "repositories so they are read locally. Set FALSE to stream each file from its URL "
         "instead.",
-        "max_file_size": "largest single file to download, in MB (default 100). Size caps are "
-        "an upfront, all-or-nothing gate per repository; set `Inf` for no cap.",
-        "max_download_size": "largest total download per repository, in MB (default 500). "
-        "Set `Inf` for no cap.",
+        "max_file_size": "largest single file to download, in MB (default 100). A file over this "
+        "is skipped on its own; the rest of the repository is still downloaded. Set `Inf` for "
+        "no cap.",
+        "max_download_size": "largest total download per repository, in MB (default 500), used "
+        "as a budget: files already in the cache count first, then the smallest missing files "
+        "are added until the next one would not fit. A file whose size cannot be found out is "
+        "skipped on its own. Set `Inf` for no cap.",
         "max_files_per_repo": "largest file COUNT a single repository may have before it is "
         "refused outright (default `Inf`, no cap) -- see [download_repo_files()]'s own "
         "parameter of the same name.",
@@ -165,12 +169,14 @@ def code_check(
     checked, and their download failure says that a key is missing.
     """
     from metacheck.codecheck.core import (
+        _code_env_pinned,
         _code_expand_html,
         _code_expand_mplus,
         _code_expand_smcl,
         _code_expand_spv,
         _code_expand_zip,
         _code_predownload,
+        _in_renv_folder,
         _repo_file_counts,
         _version_pin_scan,
         code_packages,
@@ -217,7 +223,7 @@ def code_check(
     all_files.attrs = {}
 
     def set_language(df: pd.DataFrame) -> pd.DataFrame:
-        df["language"] = pd.Series(file_languages(df), index=df.index, dtype="string")
+        df["language"] = pd.Series(_file_name_languages(df), index=df.index, dtype="string")
         return df
 
     set_language(all_files)
@@ -241,9 +247,6 @@ def code_check(
         failed_parts.append(all_files.attrs.get("failed"))
         all_files = all_files.copy()
         all_files.attrs = {}
-        # a notebook's or Quarto document's language is read from the copy
-        # just downloaded (UPSTREAM_ISSUES U86)
-        set_language(all_files)
 
     # rendered outputs whose code can be recovered (.spv, .smcl, .out, .html)
     # and unexpanded remote .zip archives
@@ -264,9 +267,21 @@ def code_check(
         )
     all_files.attrs = {}
 
+    # A notebook (.ipynb) or Quarto document (.qmd) declares its language INSIDE the file, which
+    # code_lang() above could not read from the bare file name: every notebook came out "Python"
+    # and every Quarto document "R", R notebooks and Python/Julia documents included. Read it
+    # again from the downloaded copy, so an R notebook is checked as R and a Julia notebook is not
+    # checked (or run by reproducibility_check) as Python (metacheck #480).
+    all_files = _language_from_copy(all_files)
+
     ## find relevant code files ----
     language = col(all_files, "language")
-    relevant = [lang in LISTED_LANGS for lang in language]
+    # renv's own files (renv/activate.R, renv/library/) are not the paper's code; see
+    # _in_renv_folder()
+    relevant = [
+        lang in LISTED_LANGS and not r
+        for lang, r in zip(language, _in_renv_folder(all_files), strict=True)
+    ]
     code_files = all_files.loc[relevant].reset_index(drop=True)
     code_langs = col(code_files, "language")
     lang_parts = [f"{sum(1 for x in code_langs if x == lang)} {lang}" for lang in LISTED_LANGS]
@@ -513,9 +528,8 @@ def code_check(
         )
 
     ## Reproducible environment (version pinning) ----
-    code_text_list = [
-        text for paper_texts in r_text_by_paper.values() for text in paper_texts.values()
-    ]
+    # the names stay the file names: a record pasted into a script is reported under its file
+    code_text_list = [pair for paper_texts in r_text_by_paper.values() for pair in paper_texts]
     version_pin, pin_locations = _version_pin_scan(
         all_files,
         code_text_list=code_text_list,
@@ -527,8 +541,9 @@ def code_check(
     )
     all_files = _splice_locations(all_files, pin_locations)
     report_version_pin, summary_version_pin, report_table_version_pin = version_pin_report(
-        version_pin
+        version_pin, col(code_files, "language")
     )
+    env_pinned = _code_env_pinned(version_pin, col(code_files, "language"))
 
     ## manifest: packages and failed downloads, one file per paper ----
     if manifest is not None:
@@ -574,7 +589,7 @@ def code_check(
         and not install_packages_issues
         and not library_issue
         and parse_issues == 0
-        and version_pin.get("pinned") is True
+        and env_pinned
     ):
         tl = "green"
     else:
@@ -604,7 +619,7 @@ def code_check(
             *([summary_setwd] if setwd_issues else []),
             *([summary_install_packages] if install_packages_issues else []),
             summary_library,
-            summary_version_pin,
+            *summary_version_pin,
         )
     )
 
@@ -625,37 +640,43 @@ def code_check(
 # ---------------------------------------------------------------------------
 
 
-def file_languages(df: pd.DataFrame) -> list[str | None]:
-    """The code language of each row of a file listing.
+def _file_name_languages(df: pd.DataFrame) -> list[str | None]:
+    """The code language of each row of a file listing, from its file name.
 
-    :func:`~metacheck.codecheck.code_lang` of the file name, except that the
-    language of a notebook (``.ipynb``) or Quarto document (``.qmd``) is read
-    from the row's local copy (``file_location``), the file the checks read.
-    R passes the file name, a path relative to the working directory, so a
-    Python-engine ``.qmd`` was purled as R and an R notebook checked as
-    Python (UPSTREAM_ISSUES U86). Without a local copy the default applies
-    (``"R"`` for ``.qmd``, ``"Python"`` for ``.ipynb``); a missing name has
-    no language.
+    :func:`~metacheck.codecheck.code_lang` of the bare name, which is what R does before the
+    files are downloaded: a notebook is ``"Python"`` and a Quarto document ``"R"`` until
+    :func:`_language_from_copy` reads the language the file declares.
     """
-    from metacheck.codecheck.core import _file_ext, _ipynb_lang, _qmd_lang, code_lang
+    from metacheck.codecheck.core import code_lang
+
+    return [None if n is None else code_lang(str(n)) for n in col(df, "file_name")]
+
+
+def _language_from_copy(df: pd.DataFrame) -> pd.DataFrame:
+    """The language of each notebook and Quarto document, read from its local copy.
+
+    ``code_lang(file_location)`` for the ``.ipynb`` and ``.qmd`` rows whose copy exists: an R
+    notebook is checked as R, and a Julia notebook is not checked (or run) as Python (metacheck
+    #480). Without a copy the provisional language of the file name stays.
+    """
+    import re
+
+    from metacheck.codecheck.core import code_lang
 
     names = col(df, "file_name")
     locs = col(df, "file_location")
-    out: list[str | None] = []
-    for name, loc in zip(names, locs, strict=True):
-        if name is None:
-            out.append(None)
+    langs = col(df, "language")
+    changed = False
+    for i, (name, loc) in enumerate(zip(names, locs, strict=True)):
+        if name is None or loc is None or str(loc) == "":
             continue
-        ext = _file_ext(str(name)).lower()
-        if ext not in ("qmd", "ipynb"):
-            out.append(code_lang(str(name)))
-            continue
-        local = str(loc) if loc is not None and str(loc) and os.path.isfile(str(loc)) else None
-        if ext == "qmd":
-            out.append(_qmd_lang(local) if local else "R")
-        else:
-            out.append(_ipynb_lang(local) if local else "Python")
-    return out
+        if re.search(r"\.(ipynb|qmd)$", str(name), re.IGNORECASE) and os.path.exists(str(loc)):
+            langs[i] = code_lang(str(loc))
+            changed = True
+    if changed:
+        df = df.copy()
+        df["language"] = pd.Series(langs, index=df.index, dtype="string")
+    return df
 
 
 def code_langs_of(df: pd.DataFrame, i: int) -> Any:
@@ -750,15 +771,20 @@ def _subtable(df: pd.DataFrame, rows: list[int], labels: dict[str, str]) -> pd.D
 
 def _files_table(code_files: pd.DataFrame) -> pd.DataFrame:
     """The report's table of code files, with links and formatted comment percentages."""
-    cols = [c for c in (*_COL_LABELS, "file_url") if c in code_files.columns]
+    cols = [c for c in (*_COL_LABELS, "file_url", "file_path") if c in code_files.columns]
     table = code_files.loc[:, cols].drop_duplicates().reset_index(drop=True)
-    # a listing without file_url (local files) shows plain names; R's
-    # link(NULL, file_name) fails the whole module (UPSTREAM_ISSUES U87)
-    if "file_url" in table.columns:
-        table["file_name"] = pd.Series(
-            link(col(table, "file_url"), col(table, "file_name")), dtype="string"
-        )
-        table = table.drop(columns="file_url")
+    # A file without a web address (a local folder) is shown by its path in the folder: link()
+    # gives NA without an address, which left the column empty, and a path tells apart same-named
+    # files (__init__.py in every package).
+    names = col(table, "file_name")
+    paths = col(table, "file_path") if "file_path" in table.columns else names
+    shown = [n if p is None or str(p) == "" else p for p, n in zip(paths, names, strict=True)]
+    urls = col(table, "file_url") if "file_url" in table.columns else [None] * len(table)
+    linked = link(urls, names)
+    table["file_name"] = pd.Series(
+        [s if lk is None else lk for lk, s in zip(linked, shown, strict=True)], dtype="string"
+    )
+    table = table.drop(columns=[c for c in ("file_url", "file_path") if c in table.columns])
     if "percentage_comment" in table.columns:
         table["percentage_comment"] = pd.Series(
             [

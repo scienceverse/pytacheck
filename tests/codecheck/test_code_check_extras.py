@@ -116,7 +116,11 @@ x &lt;- read.csv(&quot;data.csv&quot;)</code></pre>
     assert out["file_name"].tolist() == ["report.html", "x.R", "report.R"]
     assert out["data_type"].tolist() == ["output", "code", "materials"]
     assert out["file_path"].iloc[2] == "docs/code/report.R"
-    assert (tmp_path / "code" / "report.R").read_text(encoding="utf-8").startswith("library(dplyr)")
+    # the recovered code goes to the temporary folder, not next to the page
+    assert not (tmp_path / "code").exists()
+    loc = Path(out["file_location"].iloc[2])
+    assert "metacheck-recovered-code" in loc.parts
+    assert loc.read_text(encoding="utf-8").startswith("library(dplyr)")
 
 
 def test_code_expand_no_candidates_returns_input() -> None:
@@ -177,7 +181,7 @@ def test_code_version_pin_check(monkeypatch: pytest.MonkeyPatch) -> None:
         }
     )
     out = core._code_version_pin_check(
-        af, {"a.R": ["groundhog.library(c('a', 'b'), '2023-01-15')"]}
+        af, [("a.R", ["groundhog.library(c('a', 'b'), '2023-01-15')"])]
     )
     assert out["pinned"] is True
     assert out["mechanisms"] == ["renv.lock", "sessionInfo", "groundhog"]
@@ -195,7 +199,13 @@ def test_code_version_pin_check(monkeypatch: pytest.MonkeyPatch) -> None:
 
     empty = core._code_version_pin_check(None)
     assert empty["pinned"] is False
-    assert list(empty["renv_packages"].columns) == ["file_name", "package", "version", "source"]
+    assert list(empty["renv_packages"].columns) == [
+        "file_name",
+        "package",
+        "version",
+        "source",
+        "remote",
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -213,13 +223,16 @@ def test_code_read_url(respx_mock) -> None:  # type: ignore[no-untyped-def]
     respx_mock.get("https://example.org/b.R.gz").mock(
         return_value=httpx.Response(200, content=gzip.compress(b"z <- 3\n"))
     )
-    assert core.code_read("https://example.org/b.R.gz") == ["z <- 3"]
+    assert core.code_read("https://example.org/b.R.gz") == []
 
 
 def test_code_read_compressed_and_odd_files() -> None:
     enc = FIX / "encodings"
-    assert core.code_read(enc / "gzipped.R")[0] == "# Die Größe der Stichprobe"
-    assert core.code_read(enc / "newline_only.R") == []
+    # compressed code is not decompressed: no lines, flagged as binary
+    gz = core.code_read(enc / "gzipped.R")
+    assert gz == []
+    assert gz.binary == "compressed with gzip (as R saves data)"
+    assert core.code_read(enc / "newline_only.R") == [""]
     assert core.code_read(enc / "cr_only.R")[1].startswith("x <- read.csv")
     # invalid UTF-8: ICU's best guess is ISO-8859-1, so the valid "é" is mojibake
     assert core.code_read(enc / "invalid_utf8.R") == [
@@ -234,9 +247,9 @@ def test_notebook_and_quarto_languages() -> None:
     nb = FIX / "notebooks"
     assert core.code_lang(str(nb / "ir_language_info.ipynb")) == "R"
     assert core.code_lang(str(nb / "ir_kernel_name.ipynb")) == "R"
-    assert core.code_lang(str(nb / "julia.ipynb")) == "Python"
+    assert core.code_lang(str(nb / "julia.ipynb")) == "Julia"
     assert core.code_lang(str(nb / "lang_list.ipynb")) == "R"
-    assert core.code_lang(str(nb / "invalid.ipynb")) == "Python"
+    assert core.code_lang(str(nb / "invalid.ipynb")) is None
     qmd = FIX / "qmd"
     assert core.code_lang(str(qmd / "jupyter_python.qmd")) == "Python"
     assert core.code_lang(str(qmd / "kernelspec.qmd")) == "Python"
@@ -249,18 +262,19 @@ def test_notebook_and_quarto_languages() -> None:
 
 
 def test_malformed_front_matter_and_notebooks_fall_back(tmp_path: Path) -> None:
-    # U68: an empty, scalar or array front matter and a notebook that is not a
-    # JSON object fall back to the default / the first chunk's engine
+    # U68: an empty, scalar or array front matter falls back to the default / the first
+    # chunk's engine; a notebook that is not a JSON object, or has no readable language, has
+    # none (NA)
     cases = {
         "empty.qmd": ("---\n---\n```{python}\nx = 1\n```\n", "Python"),
         "empty_r.qmd": ("---\n---\n```{r}\nx <- 1\n```\n", "R"),
         "scalar.qmd": ("---\nhello\n---\n```{python}\nx = 1\n```\n", "Python"),
         "array.qmd": ("---\n- a\n- b\n---\n```{python}\nx = 1\n```\n", "Python"),
         "no_lang.qmd": ("---\njupyter: []\n---\n```{python}\n```\n", "Python"),
-        "string.ipynb": ('"hello"\n', "Python"),
-        "array.ipynb": ("[1, 2]\n", "Python"),
-        "meta_scalar.ipynb": ('{"metadata": 3}\n', "Python"),
-        "lang_empty.ipynb": ('{"metadata": {"kernelspec": {"language": []}}}\n', "Python"),
+        "string.ipynb": ('"hello"\n', None),
+        "array.ipynb": ("[1, 2]\n", None),
+        "meta_scalar.ipynb": ('{"metadata": 3}\n', None),
+        "lang_empty.ipynb": ('{"metadata": {"kernelspec": {"language": []}}}\n', None),
         "lang_list.ipynb": ('{"metadata": {"kernelspec": {"language": ["R"]}}}\n', "R"),
     }
     for name, (text, lang) in cases.items():
@@ -284,6 +298,7 @@ def test_code_extract_qmd_py() -> None:
 def test_code_extract_py_notebook_magics() -> None:
     assert core.code_extract_py(FIX / "notebooks" / "no_metadata.ipynb") == [
         "import os",
+        "  pass",  # an indented magic keeps its place as `pass`
         "y = 2",
         "",
         "",

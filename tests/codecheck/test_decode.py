@@ -2,11 +2,7 @@
 
 from __future__ import annotations
 
-import bz2
 import gzip
-import io
-import lzma
-import zipfile
 
 import pytest
 
@@ -63,16 +59,11 @@ def test_bytes_that_fit_no_encoding_are_shown_as_hex(monkeypatch: pytest.MonkeyP
     assert decode_lines(b"caf\xe9\x81\n") == ["caf<e9><81>"]
 
 
-def _zip(data: bytes) -> bytes:
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w") as zf:
-        zf.writestr("script.R", data)
-    return buf.getvalue()
-
-
-@pytest.mark.parametrize("pack", [gzip.compress, bz2.compress, lzma.compress, _zip])
-def test_compressed_files_are_read_decompressed(pack: object) -> None:
-    assert decode_lines(pack(b"x <- 1\n")) == ["x <- 1"]  # type: ignore[operator]
+def test_compressed_files_are_not_decompressed() -> None:
+    # code_read() no longer decompresses a file (R/code_check.R at metacheck 0.4.3.7): compressed
+    # data is not code, and code_read() returns no lines for it (see test_review.py)
+    lines = decode_lines(gzip.compress(b"x <- 1\n"))
+    assert "x <- 1" not in lines
 
 
 def test_corrupt_compressed_data_is_read_as_it_is() -> None:
