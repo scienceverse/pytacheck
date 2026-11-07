@@ -85,6 +85,7 @@
 "%empty_or%" = "(inline: `x if len(x) else y`)"
 
 # helpers standing in for R/package functions used by this area
+".osf_node_record" = "metacheck.archives.osf_metadata:_osf_node_record"
 [helpers]
 "rvest::html_text2" = "metacheck.archives.aspredicted:_html_text2"
 "httr2::url_parse" = "metacheck.archives.osf:_url_parse"
