@@ -701,7 +701,7 @@ def _osf_license_meta(repos: Repos, reg_pairs: list[tuple[Any, str]]) -> pd.Data
     from metacheck.archives.osf_metadata import _osf_license
 
     def lic_of(url: str) -> str | None:
-        osf_id = osf_check_id(url)[0]
+        osf_id = osf_check_id([url])[0]
         if osf_id is None:
             return None
         try:
