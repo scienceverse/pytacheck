@@ -6,12 +6,11 @@ from typing import Any
 
 from metacheck._r.frames import count
 from metacheck.module import module
+from metacheck.modules._empty import empty_input_result, paper_is_empty
 from metacheck.report import collapse_section, format_ref, scroll_table
 from metacheck.text import text_search
 
-# R's format_ref() (bibentry html style) of marg_ref with its authors given as person()
-# objects. metacheck passes them as one "Last, F., ..., & Last, F." string, which the
-# bibentry formatter mangles into "van Assen, M. MAL, Hartgerink &amp;, J. CH" (U3).
+# R's format_ref() (bibentry html style) of marg_ref, whose authors are person() objects.
 _MARG_REF = (
     "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019). "
     "&ldquo;The Prevalence of Marginally Significant Results in Psychology Over Time.&rdquo; "
@@ -46,16 +45,22 @@ _HANKINS = (
     author=["Daniel Lakens <D.Lakens@tue.nl>"],
 )
 def marginal(paper: Any) -> dict[str, Any]:
+    if paper_is_empty(paper):
+        return empty_input_result(paper)
     table = text_search(paper, _PATTERN)
     summary_table = count(table, "paper_id", name="marginal")
     n = len(table)
-    tl = "red" if n else "green"
+    # no such terms: nothing to check, so "na" (not applicable), not green
+    tl = "red" if n else "na"
+    none = "No effects were described with terms related to 'marginally significant'."
     summary_text = (
         f"You described {n} effect{'' if n == 1 else 's'} with terms related to "
         "'marginally significant'."
+        if n
+        else none
     )
-    if tl == "green":
-        report: Any = "No effects were described with terms related to 'marginally significant'."
+    if tl == "na":
+        report: Any = none
     else:
         report_text = (
             "You described effects with terms related to 'marginally significant'. If *p* values "

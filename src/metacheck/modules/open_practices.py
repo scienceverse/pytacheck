@@ -12,6 +12,7 @@ from metacheck._r.base import plural
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import grepl, gsub
 from metacheck.module import module
+from metacheck.modules._empty import empty_input_result, paper_is_empty
 from metacheck.modules._paper_type import NO_RESEARCH, skipped_type, type_name
 from metacheck.papers.model import Paper, PaperList
 from metacheck.text.search import text_search
@@ -44,6 +45,7 @@ _REPO_WORDS = (
     "datadryad",
     "kaggle",
     "mendeley",
+    "ldbase",
     "ukbiobank",
     "ukdataservice",
     "dataverse",
@@ -325,40 +327,30 @@ def _summarise(table: pd.DataFrame, in_repo: list[bool]) -> pd.DataFrame:
     return pd.DataFrame(cols)
 
 
-def _with_no_data(
-    summary_table: pd.DataFrame, no_data: dict[str, bool], paper_ids: list[str]
-) -> pd.DataFrame:
-    """*summary_table* with a ``no_data`` column, and a row for each paper that states it
-    has no data but has no flagged sentence (D83)."""
+def _all_papers(summary_table: pd.DataFrame, paper_ids: list[str]) -> pd.DataFrame:
+    """One row per paper: a paper without a flagged sentence has no ``TRUE`` and no statements.
+
+    metacheck joins the per-paper summary onto the paper ids (``data.frame(paper_id =
+    paper_ids)``), so a list with one such paper is not reported as a single paper,
+    and those papers count as "neither" (U106).
+    """
+    out = pd.DataFrame({"paper_id": pd.Series(paper_ids, dtype="string")}).merge(
+        summary_table, on="paper_id", how="left", sort=False
+    )
+    for col in ("data_open", "code_open", "materials_open", "prereg_open", "on_request"):
+        out[col] = out[col].astype("boolean").fillna(False)
+    return out.reset_index(drop=True)
+
+
+def _with_no_data(summary_table: pd.DataFrame, no_data: dict[str, bool]) -> pd.DataFrame:
+    """*summary_table* with a ``no_data`` column (D83)."""
     out = summary_table.copy()
     out.insert(
         6,
         "no_data",
         pd.Series([no_data.get(p, False) for p in out["paper_id"].tolist()], dtype="boolean"),
     )
-    have = set(out["paper_id"].tolist())
-    missing = [p for p in paper_ids if no_data.get(p) and p not in have]
-    if not missing:
-        return out
-    rows = pd.DataFrame(
-        {
-            c: pd.Series(
-                missing
-                if c == "paper_id"
-                else [True] * len(missing)
-                if c == "no_data"
-                else [None] * len(missing)
-                if c.endswith("_statements")
-                else [False] * len(missing),
-                dtype=out[c].dtype,
-            )
-            for c in out.columns
-        }
-    )
-    out = pd.concat([out, rows], ignore_index=True)
-    order = {p: i for i, p in enumerate(paper_ids)}
-    keys = out["paper_id"].map(lambda p: order.get(p, len(order)))
-    return out.iloc[keys.argsort(kind="stable").to_numpy()].reset_index(drop=True)
+    return out
 
 
 @module(
@@ -396,6 +388,8 @@ def open_practices(paper: Any) -> dict[str, Any]:
     """
     from metacheck.papers.tables import paper_id
 
+    if paper_is_empty(paper):
+        return empty_input_result(paper)
     frame = _search_frame(paper)
     repo = (_REPO_WORDS, False)
     avail = (_AVAILABILITY, False)
@@ -445,9 +439,9 @@ def open_practices(paper: Any) -> dict[str, Any]:
     texts = table["text"].tolist()
     in_repo = grepl(_IN_REPO, texts, ignore_case=True)
     summary_table = _summarise(table, in_repo)
-    # D83: the data availability statement says there are no data to share; such a
-    # paper has a row even when no sentence was flagged
-    summary_table = _with_no_data(summary_table, _no_data(frame, paper_ids), paper_ids)
+    summary_table = _all_papers(summary_table, paper_ids)
+    # D83: the data availability statement says there are no data to share
+    summary_table = _with_no_data(summary_table, _no_data(frame, paper_ids))
 
     skipped = {
         str(p.paper_id): kind
@@ -456,11 +450,8 @@ def open_practices(paper: Any) -> dict[str, Any]:
     }
 
     # traffic_light / summary_text ----
-    # branch on the number of papers (metacheck branches on the rows of
-    # summary_table, i.e. the papers with a flagged sentence, U106)
-    several = len(paper_ids) > 1
-    # one paper: the single-paper branch when it has a flagged sentence
-    single = not several and len(summary_table) == 1
+    several = len(summary_table) > 1
+    single = len(summary_table) == 1
     if several:
         tl = "info"
         found = dict(
