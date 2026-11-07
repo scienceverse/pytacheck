@@ -23,7 +23,7 @@ from tests.modsys.helpers import mod_src
 DEFAULT = [
     "prereg_check", "funding_check", "coi_check", "power", "repo_check", "code_check",
     "stat_check", "stat_p_exact", "stat_p_nonsig", "stat_effect_size", "marginal",
-    "ref_accuracy", "ref_replication", "ref_retraction", "ref_pubpeer", "ref_summary",
+    "ref_replication", "ref_retraction", "ref_pubpeer", "ref_summary",
 ]  # fmt: skip
 
 
@@ -276,10 +276,10 @@ def test_lookup_and_preset_list(lab) -> None:
     df = preset_list()
     assert list(df.columns) == ["ref", "description", "n_modules", "defined_in"]
     rows = {r.ref: r for r in df.itertuples()}
-    assert rows["metacheck::default"].n_modules == 16
+    assert rows["metacheck::default"].n_modules == 15
     assert rows["metacheck::default"].defined_in == "builtin"
     assert rows["lab::minimal"].n_modules == 2
-    assert rows["thesis"].n_modules == 17 and rows["thesis"].description == "mine"
+    assert rows["thesis"].n_modules == 16 and rows["thesis"].description == "mine"
 
 
 def test_preset_as_r(lab) -> None:
