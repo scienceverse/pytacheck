@@ -449,48 +449,6 @@ def cases() -> list[dict[str, Any]]:
     fx = f"{PY_HELPERS}.REPOS / "
     out += [
         helper_case(
-            "repo_tree_rows.mixed",
-            "e$repo_tree_rows(c('b/x.csv', 'A/y.R', 'README.md', 'a/z.txt', NA, '', "
-            "'b\\\\w.csv', 'b/sub/deep.csv', 'Zeta.txt', 'b/x.csv'))",
-            f"{PY_HELPERS}.tree_rows_r(['b/x.csv', 'A/y.R', 'README.md', 'a/z.txt', None, '', "
-            "'b\\\\w.csv', 'b/sub/deep.csv', 'Zeta.txt', 'b/x.csv'])",
-        ),
-        helper_case(
-            "repo_tree_rows.empty",
-            "e$repo_tree_rows(c(NA, ''))",
-            f"{PY_HELPERS}.tree_rows_r([None, ''])",
-        ),
-        helper_case(
-            "repo_tree_block.naming",
-            "e$repo_tree_block(data.frame(repo_url = c('r1', 'r1', 'r2', NA, 'r1'), "
-            "file_name = c('a.csv', 'README.md', 'x.R', 'y.csv', 'p.png'), "
-            "file_path = c('data/a.csv', 'README.md', 'x.R', 'y.csv', 'm/p.png'), "
-            "data_type = c('data', 'documentation', 'code', 'data', 'materials'), "
-            "doc_role = c(NA, 'readme', NA, NA, NA), group = c('ex1', NA, 'ex2', NA, 'ex1')), "
-            "data.frame(file_name = c('a.csv', 'x.R'), detail = c('Generic name', 'Bad')))",
-            f"{PY_H}.repo_tree_block(__import__('pandas').DataFrame("
-            "{'repo_url': ['r1', 'r1', 'r2', None, 'r1'], "
-            "'file_name': ['a.csv', 'README.md', 'x.R', 'y.csv', 'p.png'], "
-            "'file_path': ['data/a.csv', 'README.md', 'x.R', 'y.csv', 'm/p.png'], "
-            "'data_type': ['data', 'documentation', 'code', 'data', 'materials'], "
-            "'doc_role': [None, 'readme', None, None, None], "
-            "'group': ['ex1', None, 'ex2', None, 'ex1']}), "
-            "__import__('pandas').DataFrame({'file_name': ['a.csv', 'x.R'], "
-            "'detail': ['Generic name', 'Bad']}))",
-        ),
-        helper_case(
-            "repo_tree_block.plain",
-            "e$repo_tree_block(data.frame(repo_url = 'r', file_name = c('b.csv', 'a.csv')))",
-            f"{PY_H}.repo_tree_block(__import__('pandas').DataFrame("
-            "{'repo_url': ['r', 'r'], 'file_name': ['b.csv', 'a.csv']}))",
-        ),
-        helper_case(
-            "repo_tree_block.none",
-            "e$repo_tree_block(data.frame(repo_url = NA_character_, file_name = 'a.csv'))",
-            f"{PY_H}.repo_tree_block(__import__('pandas').DataFrame("
-            "{'repo_url': [None], 'file_name': ['a.csv']}))",
-        ),
-        helper_case(
             "dv_issue_cell.merge",
             "e$.dv_issue_cell(c('Personal info (values)', 'Whitespace', "
             "'Personal info (column name)', 'Mystery check'), c('Values look like emails; "
@@ -681,10 +639,7 @@ def review_cases() -> list[dict[str, Any]]:
         module_case("review.types_llm", "review_types", llm="basic", ignore=I64_TYPES),
         module_case("review.mix", "review_mix"),
         module_case("review.nodata_list", "review_nodata_list"),
-        # dv_report is an R character vector holding a scroll_table() chunk; its
-        # prose and table data are compared by review.broken_list.dv_report
-        module_case("review.broken_list", "review_broken_list", ignore=["dv_report"]),
-        module_case("review.broken_list.dv_report", "review_broken_list", tables="dc_dv_report"),
+        module_case("review.broken_list", "review_broken_list"),
         module_case("review.qualtrics", "review_qualtrics"),
         module_case("review_tables.qualtrics", "review_qualtrics", tables=True),
         module_case("review.int64", "review_int64", careless=True, ignore=I64_INT64),
@@ -737,19 +692,6 @@ def review_cases() -> list[dict[str, Any]]:
             "'file_name': ['noname.xlsx', 'gaps.xlsx', 'edge.fods'], "
             f"'file_location': [str({PX}'noname.xlsx'), str({PX}'gaps.xlsx'), "
             f"str({PX}'edge.fods')]}}))",
-        ),
-        # the tree pads its columns by R's display width (nchar(type = "width"))
-        helper_case(
-            "review.repo_tree_block.widths",
-            "e$repo_tree_block(data.frame(repo_url = 'r', file_name = c('a\\u00adb.csv', "
-            "'\\u65e5\\u672c.csv', 'x\\U0001F7F0.txt', 'tab\\there.R', 'e\\u0301.csv', "
-            "'\\U0001F600.png'), data_type = c('data', 'data', 'unknown', 'code', 'data', "
-            "'materials'), group = c('ex1', 'ex2', NA, 'ex1', 'ex1', NA)))",
-            f"{PY_H}.repo_tree_block(__import__('pandas').DataFrame({{'repo_url': ['r'] * 6, "
-            "'file_name': ['a\\u00adb.csv', '\\u65e5\\u672c.csv', 'x\\U0001F7F0.txt', "
-            "'tab\\there.R', 'e\\u0301.csv', '\\U0001F600.png'], 'data_type': ['data', "
-            "'data', 'unknown', 'code', 'data', 'materials'], 'group': ['ex1', 'ex2', None, "
-            "'ex1', 'ex1', None]}))",
         ),
         # module_run() of an empty paper and an empty paper list (UPSTREAM_ISSUES
         # U79: R stops in repo_check)

@@ -326,7 +326,7 @@ def norm_paths(out: Any) -> Any:
 
     Paths under the repository become relative to it (R runs from the
     repository root), a temporary copy's become ``<copy>/<dir>/...`` and files
-    unpacked from a local archive (U214) become ``<archives>/<sha1>/...``, on
+    unpacked from a local archive (U214) become ``<tempdir>/metacheck-archives/<md5>/...``, on
     every system.
     """
     import re
@@ -339,7 +339,7 @@ def norm_paths(out: Any) -> Any:
             if v is None or v is pd.NA
             else re.sub(
                 r"^.*[/\\]metacheck-archives(?:-[^/\\]*)?[/\\]([0-9a-f]+)[/\\]",
-                r"<archives>/\1/",
+                r"<tempdir>/metacheck-archives/\1/",
                 re.sub(
                     r"^.*/metacheck-repo-files/",
                     "<cache>/",
@@ -384,36 +384,12 @@ def dc_run_tables(name: str, **kwargs: Any) -> list[pd.DataFrame]:
     return report_tables(dc_run(name, **kwargs))
 
 
-def dc_dv_report(name: str, **kwargs: Any) -> dict[str, Any]:
-    """Parity: the prose and table data of the spreadsheet report of a run with
-    no readable table (R: the ``dv_report`` of its ``empty()`` return;
-    pytacheck ends the module's own report with it, U98)."""
-    from metacheck.report import ReportTable
-
-    rep = list(dc_run(name, **kwargs).report or [])
-    start = next((i for i, b in enumerate(rep) if b == "#### Spreadsheet Formatting"), len(rep))
-    rep = rep[start:]
-    return {
-        "text": [b for b in rep if isinstance(b, str)],
-        "tables": [b.data.reset_index(drop=True) for b in rep if isinstance(b, ReportTable)],
-    }
-
-
 def with_careless(fn: Any, *args: Any, **kwargs: Any) -> Any:
     """Call *fn* with the careless indices available (R: the vendored package loaded)."""
     from metacheck.utils import local_options
 
     with local_options({"pytacheck.careless": True}):
         return fn(*args, **kwargs)
-
-
-def tree_rows_r(paths: list[Any]) -> pd.DataFrame:
-    """``repo_tree_rows()`` with R's 1-based ``leaf_idx``."""
-    from metacheck.modules._data_check import repo_tree_rows
-
-    out = repo_tree_rows(paths)
-    out["leaf_idx"] = out["leaf_idx"] + 1
-    return out
 
 
 def q_datetime_fmt(x: list[Any]) -> list[str | None]:

@@ -130,46 +130,11 @@
 "datacheck_columns_review/.extract_rich_text.escapes.rtf": *u215
 "datacheck_columns_review/parse_codebook.escapes.rtf": *u215
 
-# U98: data_check's early return when no tabular file could be read
-"mod_data_check/data_check.nodata":
+# U217: the repository's UTF-16 table, read as data
+"mod_data_check_review/review.text":
   kind: r_bug_fixed
-  ref: U98
-  reason: with no readable table the module still returns its summary text, report, per-paper summary table and column table (spreadsheet findings go to findings), and a light that counts undownloaded data; R's empty() returns only the validation half (dv_summary_text/dv_report, which reach no report); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)
-"mod_data_check/data_check.nolocal_only": &u98
-  kind: r_bug_fixed
-  ref: U98
-  reason: with no readable table the module still returns its summary text, report, per-paper summary table and column table (spreadsheet findings go to findings), and a light that counts undownloaded data; R's empty() returns only the validation half (dv_summary_text/dv_report, which reach no report)
-"mod_data_check/data_check.nolocal_download_none": *u98
-"mod_data_check/data_check.nolocal_download_false": *u98
-"mod_data_check/data_check.txt_download_none": *u98
-"mod_data_check/data_check.download_skip_data": *u98
-"mod_data_check/data_check.download_none": *u98
-"mod_data_check/data_check.download_oversize": *u98
-"mod_data_check/data_check.download_gated": *u98
-"mod_data_check_review/review.nodata_list": *u98
-"mod_data_check_review/review.broken_list": *u98
-"mod_data_check_review/review.download_count_cap": *u98
-"mod_data_check_review/review.archives_download_none": *u98
-
-# U99: data_check counts
-"mod_data_check/data_check.rdata": &u99_u241
-  kind: r_bug_fixed
-  ref: U99
-  reason: '"extracted N columns from M of them" counts the files columns were extracted from; R also counts unreadable and workspace-only files; R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)'
-"mod_data_check_review/review.mixed_list": &u99
-  kind: r_bug_fixed
-  ref: U99
-  reason: '"extracted N columns from M of them" counts the files columns were extracted from; R also counts unreadable and workspace-only files'
-# (the spreadsheet findings with a count of one also take a singular verb: U82)
-"mod_data_check/data_check.spreadsheets": &u99_sheet
-  kind: "r_bug_fixed"
-  ref: "U99"
-  reason: "\"extracted N columns from M of them\" counts the files columns were extracted from; R also counts unreadable and workspace-only files (and U82: \"1 merged range ... breaks\", \"1 column is empty or has a blank header\"); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)"
-  r_text: [["\\b1 merged range \\(([^)]*)\\) break the", "1 merged range (\\1) breaks the", "regex"], ["1 column is empty or have a blank header", "1 column is empty or has a blank header"]]
-  xfail: true
-"mod_data_check/data_check.local.spreadsheets": *u99_sheet
-"mod_data_check/data_check.nontabular": *u99_u241
-"mod_data_check_review/review.text": *u99
+  ref: U217
+  reason: the repository's UTF-16 table (utf16_table.txt) is classified as data and read as 3 columns (Subject, Trial, RT), so the file and column counts, the summary and the tree differ; R keeps the name-based class (documentation) and reads no table
 
 # U100: data_check crashes
 "mod_data_check/data_check.nourl":
@@ -265,13 +230,6 @@
   kind: r_bug_fixed
   ref: U78
   reason: paper = NULL (documented as allowed) returns the "na" result with paper_id NA; R's empty_summary() calls .pid(), whose paper_id(NULL) stops
-
-# U79: data_check on an empty paper or paper list
-"mod_data_check_review/data_check.empty_paper": &u79_dc
-  kind: r_bug_fixed
-  ref: U79
-  reason: an empty paper or paper list gives the "na" result ("We found no files to analyse."); R's repo_check stops ("subscript out of bounds" from paper_id(paper)[[1]], or the link tables' missing href)
-"mod_data_check_review/data_check.empty_paperlist": *u79_dc
 
 # The delimited-file reader is pandas' C parser behind a small layer (datacheck/_files_delim.py),
 # not a port of data.table::fread() (the maintainer decided on 2026-10-04). Where the two differ:

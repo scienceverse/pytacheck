@@ -771,14 +771,6 @@ def test_bibr12_parity_golden_agrees_with_the_legacy_golden() -> None:
 # -----------------------------------------------------------------------------
 
 
-def test_repo_tree_rows_orders_folders_first() -> None:
-    rows = h.repo_tree_rows(["b.txt", "A/x.csv", "a/y.csv", None, ""])
-    assert rows["text"].tolist() == [
-        "├── A/", "│   └── x.csv", "├── a/", "│   └── y.csv", "└── b.txt",
-    ]  # fmt: skip
-    assert rows["leaf_idx"].tolist()[1] == 1
-
-
 def test_pad_uses_display_width() -> None:
     # formatC(x, width = -(9 + 2)) pads by display width: "📊 data" is 7
     # columns wide (an emoji is two), "❓ unknown" 10
@@ -869,21 +861,6 @@ def test_peek_zips_needs_a_single_true() -> None:
     names_one = set(with_one["structure"]["file_name"].tolist())
     assert "bundle.zip" not in names_true
     assert "bundle.zip" in names_one
-
-
-def test_repo_tree_rows_scales_linearly() -> None:
-    import time
-
-    paths = [f"data/sub{i % 20}/file{i}.csv" for i in range(4000)]
-    paths += [f"flat{i}.txt" for i in range(4000)]
-    # CPU time, not wall time: a busy CI host must not fail a complexity check
-    t = time.process_time()
-    rows = h.repo_tree_rows(paths)
-    assert time.process_time() - t < 1.5
-    assert len(rows) == 8021
-    # the 20 folders first (sub0, sub1, sub10, ...), then the flat files
-    assert rows["text"].tolist()[:2] == ["├── data/", "│   ├── sub0/"]
-    assert rows["text"].tolist()[-1] == "└── flat999.txt"
 
 
 def test_stats_frame_matches_bind_rows() -> None:

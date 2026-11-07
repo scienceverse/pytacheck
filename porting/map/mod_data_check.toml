@@ -22,10 +22,6 @@
 # closures inside data_check() (the generic ones -- .pid, pad, getf, empty,
 # label_of, utf8_repaired_of -- are private helpers of data_check.py:
 # _pid, _pad, _file_columns, _validate, _label_lookup, _utf8_lookup)
-".tree_type_icon" = "metacheck.modules._data_check:_tree_type_icon"
-".tree_type_label" = "metacheck.modules._data_check:_tree_type_label"
-"repo_tree_rows" = "metacheck.modules._data_check:repo_tree_rows"
-"repo_tree_block" = "metacheck.modules._data_check:repo_tree_block"
 "file_tabset" = "metacheck.modules._data_check:file_tabset"
 "desc_file_tabset" = "metacheck.modules._data_check:desc_file_tabset"
 "data_file_tabset" = "metacheck.modules._data_check:data_file_tabset"
