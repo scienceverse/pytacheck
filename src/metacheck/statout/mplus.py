@@ -24,7 +24,6 @@ from metacheck.statout.spv import (
     _file_path,
     _file_path_sans_ext,
     _html_page,
-    _r_dirname,
     _read_lines,
     _spv_html_escape,
     _spv_table_html,
@@ -548,9 +547,10 @@ def _mplus_export_syntax(
 ) -> str | None:
     """Port of R/mplus.R::.mplus_export_syntax().
 
-    Writes the ``INPUT INSTRUCTIONS`` block to ``<dir>/<code_dir_name>/<name>.inp``;
-    returns that path, or ``None`` when there is none (or the file is not
-    Mplus output).
+    Writes the ``INPUT INSTRUCTIONS`` block to ``<code_dir_name>/<name>.inp``, next to a
+    downloaded file or, for a file of the user's own, in the temporary folder
+    (``_recovered_code_dir()``); returns that path, or ``None`` when there is none (or the
+    file is not Mplus output).
     """
     out_path = os.fspath(out_path)
     if not os.path.exists(out_path):
@@ -566,7 +566,9 @@ def _mplus_export_syntax(
     syntax = _mplus_syntax_lines(lines)
     if syntax is None or syntax == "":
         return None
-    code_dir = _file_path(_r_dirname(out_path), code_dir_name)
+    from metacheck.report.html_output import _recovered_code_dir
+
+    code_dir = _recovered_code_dir(out_path, code_dir_name)
     os.makedirs(code_dir, exist_ok=True)
     out_file = _file_path(code_dir, _file_path_sans_ext(os.path.basename(out_path)) + ".inp")
     _write_lines(strsplit(syntax, "\n", fixed=True), out_file)

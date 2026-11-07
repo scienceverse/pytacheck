@@ -133,7 +133,6 @@
 "grobid12/module.ref_summary.debruine": *module
 "grobid12/module.ref_summary.preprint": *module
 "grobid12/module.ref_summary.published": *module
-"grobid12/module.stat_p_exact.0956797615569889": *module
 "grobid12_review/module.all_p_values.review": *module
 "grobid12_review/module.all_urls.review": *module
 "grobid12_review/module.stat_check.review": *module

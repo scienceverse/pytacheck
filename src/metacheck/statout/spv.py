@@ -2059,8 +2059,9 @@ def _spv_export_syntax(spv_path: str | os.PathLike[str], code_dir_name: str = "c
     """Port of R/spv.R::.spv_export_syntax().
 
     Writes the SPSS syntax recovered from a ``.spv`` file (consecutive repeats
-    collapsed) to ``<dir>/<code_dir_name>/<name>.sps``. Returns that path, or
-    ``None`` when the archive has no recoverable syntax.
+    collapsed) to ``<code_dir_name>/<name>.sps``, next to a downloaded file or, for a
+    file of the user's own, in the temporary folder (``_recovered_code_dir()``). Returns
+    that path, or ``None`` when the archive has no recoverable syntax.
     """
     spv_path = os.fspath(spv_path)
     if not os.path.exists(spv_path):
@@ -2085,7 +2086,9 @@ def _spv_export_syntax(spv_path: str | os.PathLike[str], code_dir_name: str = "c
     kept = [s for s, k in zip(syntaxes, keep, strict=True) if k and s is not None and s != ""]
     if not kept:
         return None
-    code_dir = _file_path(_r_dirname(spv_path), code_dir_name)
+    from metacheck.report.html_output import _recovered_code_dir
+
+    code_dir = _recovered_code_dir(spv_path, code_dir_name)
     os.makedirs(code_dir, exist_ok=True)
     out_path = _file_path(code_dir, _file_path_sans_ext(os.path.basename(spv_path)) + ".sps")
     _write_lines("\n\n".join(kept), out_path)
@@ -2358,10 +2361,10 @@ def _spv_chart_html(df: pd.DataFrame | None) -> str:
     try:
         svg = _svg_chart(df)
     except ValueError:
-        # nothing to draw (a box plot without a complete category/value
-        # row): the chart is left out; R's boxplot() stops the whole export
-        # (UPSTREAM_ISSUES U148)
-        return ""
+        # nothing to draw (a box plot without a complete category/value row): the chart is
+        # replaced by a note, as in metacheck 0.4.3.7 (R's boxplot() stopped the whole export;
+        # UPSTREAM_ISSUES U148)
+        return "<p>(This chart could not be drawn.)</p>"
     data_uri = "data:image/svg+xml;base64," + base64.b64encode(svg.encode("utf-8")).decode("ascii")
     return f'<img src="{data_uri}" alt="chart" style="max-width: 100%;">'
 

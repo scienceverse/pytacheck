@@ -58,7 +58,7 @@ IMG = 'gsub("data:image/[a-z+]+;base64,[A-Za-z0-9+/=]+", "data:IMG", x)'
 SYNTAX_R = (
     '{{d <- tempfile(); dir.create(d); file.copy(rpath("{p}"), d); '
     'p <- metacheck:::{fn}(file.path(d, basename("{p}"))); '
-    "if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}}"
+    "if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}}"
 )
 
 # ---------------------------------------------------------------- SPV
@@ -220,6 +220,7 @@ for fn, mod, name in [
     ("export_omv_html", "omv", "review.omv"),
     ("export_omv_html", "omv", "trailing_pct.omv"),
     ("export_omv_html", "omv", "empty_index.omv"),
+    ("export_omv_html", "omv", "badurl.omv"),
     ("export_jasp_html", "jasp", "review.jasp"),
 ]:
     expr_case(
@@ -227,16 +228,6 @@ for fn, mod, name in [
         EXPORT_R.format(fn=fn, p=f"{FX}/{name}", post="x"),
         f"{PH}.export_lines",
         {"fn": f"metacheck.statout.{mod}.{fn}", "path": f"{FX}/{name}"},
-    )
-for fn, mod, name in [("export_omv_html", "omv", "badurl.omv")]:
-    fn_case(
-        f"{fn}.{name.split('.')[0]}",
-        fn,
-        f"metacheck.statout.{mod}.{fn}",
-        {
-            "path": {"$file": f"{FX}/{name}"},
-            "out": {"$expr": {"r": "tempfile()", "py": "__import__('tempfile').mktemp()"}},
-        },
     )
 expr_case(
     "jasp_analyses_summary.review",
