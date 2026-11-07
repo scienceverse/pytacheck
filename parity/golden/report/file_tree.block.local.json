@@ -1,0 +1,58 @@
+{
+  "id": "file_tree.block.local",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "head",
+      "legend",
+      "label",
+      "lines"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "#### Data Tree"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Where the files sit within each repository. Each file is followed by how it was classified; junk files, hidden files and empty folders are marked."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**Repository: <dir>**"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "::: {style=\"max-height: 40em; overflow: auto;\"}",
+          "```",
+          "├── .git/                 junk: keep only on purpose (3 files)",
+          "├── code/",
+          "│   ├── __pycache__/      junk: remove (1 file)",
+          "│   └── analysis.R        💻 code",
+          "├── data/",
+          "│   └── raw/",
+          "│       └── raw data.csv  📊 data",
+          "├── docs/                 empty folder",
+          "│   └── empty/            empty folder",
+          "├── .DS_Store             junk: remove",
+          "├── .gitignore            hidden file",
+          "└── README.md             📄 readme",
+          "```",
+          ":::"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

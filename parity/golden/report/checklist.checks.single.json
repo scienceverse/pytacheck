@@ -1,0 +1,140 @@
+{
+  "id": "checklist.checks.single",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "status",
+      "title",
+      "section",
+      "found",
+      "todo",
+      "why",
+      "note",
+      "details",
+      "details_title",
+      "module",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "fix",
+          "improve",
+          "fine",
+          "na",
+          "fix",
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Red",
+          "Yellow",
+          "Green",
+          "Not applicable",
+          "Failed",
+          "Blue"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Something to fix.",
+          "Something.",
+          "Fine.",
+          "Nothing to check.",
+          "This module failed to run: an error",
+          "Part one.\n\nPart two."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The details.",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

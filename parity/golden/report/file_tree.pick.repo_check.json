@@ -1,0 +1,16 @@
+{
+  "id": "file_tree.pick.repo_check",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Where the files sit within each repository. Each file is followed by how it was classified; junk files, hidden files and empty folders are marked.",
+      "**Repository: my_study**",
+      "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── data/\n│   └── raw.csv  📊 data\n└── .DS_Store    junk: remove\n```\n:::"
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

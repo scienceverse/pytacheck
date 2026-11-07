@@ -1,0 +1,110 @@
+{
+  "id": "checklist.checks.tree",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "status",
+      "title",
+      "section",
+      "found",
+      "todo",
+      "why",
+      "note",
+      "details",
+      "details_title",
+      "module",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "improve",
+          "fine",
+          "fine"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check",
+          "Reproducibility Check",
+          "Other"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Some data files.",
+          "The code ran.",
+          "Fine."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "See the section [Reproducibility Check](#section-reproducibility_check) below for the details.",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The data files.",
+          "",
+          "Other details."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data_check",
+          "reproducibility_check",
+          "other"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
