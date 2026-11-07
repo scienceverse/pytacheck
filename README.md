@@ -4,6 +4,8 @@
 
 **Try it:** a preview app that runs on your own computer, installed with one command. See [docs/TRY.md](https://github.com/scienceverse/pytacheck/blob/main/docs/TRY.md).
 
+**Demo site:** `pytacheck site` serves a one-page website and a web interface (`/api`) for papers and data and code folders. See [docs/SITE.md](https://github.com/scienceverse/pytacheck/blob/main/docs/SITE.md).
+
 metacheck (Python) is a fast, Python-native port of ScienceVerse's
 [metacheck](https://github.com/scienceverse/metacheck) R package, designed to work
 hand in hand with [bibr](https://bibr.org). It follows metacheck's `dev` branch (for now

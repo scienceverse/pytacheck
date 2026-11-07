@@ -26,3 +26,20 @@ licences; they are listed in each package's metadata.
 src/metacheck/resources/data/tlds.txt lists the top-level domains of the ICANN
 section of the Public Suffix List (https://publicsuffix.org), which is licensed
 under the Mozilla Public License 2.0 (https://mozilla.org/MPL/2.0/).
+
+src/metacheck/web/site/ (the pages of `pytacheck site`) is ported from the website of
+metacheck's demo site on SURF Research Cloud (the `site/` folder of
+https://github.com/scienceverse/surf-research-cloud), by Daniel Lakens: its pages, style,
+texts and page script, rewritten against this package's web interface. They are used
+under the GNU Affero General Public License version 3, the licence of this package.
+Portions are copyright Daniel Lakens.
+
+It also serves two files that are not part of this package's own code:
+
+* fonts/Cabin.ttf, the Cabin typeface, with its licence in fonts/OFL-Cabin.txt. It is
+  licensed under the SIL Open Font License 1.1 (https://openfontlicense.org).
+* vendor/jszip.min.js, JSZip 3.10.1 (https://stuk.github.io/jszip/), with its licence in
+  vendor/LICENSE.markdown. JSZip is dual-licensed under the MIT License or the GNU General
+  Public License version 3; this package uses it under the MIT License. SHA-256 of
+  jszip.min.js: acc7e41455a80765b5fd9c7ee1b8078a6d160bbbca455aeae854de65c947d59e. SHA-256
+  of LICENSE.markdown: 566c953c6090b1218ca6217dd7359d45dde46581968586dc607d59a78af6a9c4.

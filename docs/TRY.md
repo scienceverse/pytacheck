@@ -4,6 +4,8 @@ This is a preview of metacheck in Python. It runs on your own computer: you give
 
 If you were sent a link to a hosted copy, you can open that link instead and install nothing. It runs the same app on a server.
 
+If you run a server for others, `pytacheck site` serves the demo website and its web interface: a paper or a data and code folder in, a report out. See [SITE.md](SITE.md).
+
 ## Install it
 
 **On a Mac or Linux.** Open Terminal and paste this line:

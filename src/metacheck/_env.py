@@ -112,6 +112,8 @@ ENV_VARS: dict[str, EnvVar] = {
     "R_ENGINE_RSCRIPT": EnvVar(("METACHECK_R_ENGINE_RSCRIPT",)),
     "API_ENGINE": EnvVar(("METACHECK_API_ENGINE",)),
     "APP_R_ENGINE": EnvVar(("METACHECK_APP_R_ENGINE",)),
+    # the demo site (pytacheck site): the PsyArXiv API it fetches preprints from. New, so no old name.
+    "PSYARXIV_API": EnvVar(("METACHECK_PSYARXIV_API",)),
 }
 
 #: the keys whose clash was logged (once per process and key), and what guards it

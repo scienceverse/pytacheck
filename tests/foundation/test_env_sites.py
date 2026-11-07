@@ -394,6 +394,13 @@ def _read_api_engine(ctx: Ctx) -> Any:
         return str(exc)
 
 
+def _read_psyarxiv_api(ctx: Ctx) -> Any:
+    """The PsyArXiv API address a demo site job fetches from."""
+    from metacheck.web.config import SiteConfig
+
+    return SiteConfig().psyarxiv_api
+
+
 def _read_app_r_engine(ctx: Ctx) -> Any:
     """Whether the local app offers the R engine, where R runs metacheck."""
     pytest.importorskip("gradio")
@@ -829,6 +836,13 @@ SITES: dict[str, Site] = {
         read=_read_app_r_engine,
         expect=lambda ctx, name: False,
         spaces=lambda ctx: True,
+    ),
+    "PSYARXIV_API": Site(
+        value=" https://staging.example.org/api/v1 ",
+        other="",  # no other name
+        read=_read_psyarxiv_api,
+        expect=lambda ctx, name: "https://staging.example.org/api/v1",
+        spaces=lambda ctx: "https://next.psyarxiv.org/api/v1",
     ),
 }
 

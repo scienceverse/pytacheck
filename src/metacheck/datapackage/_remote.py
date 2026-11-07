@@ -368,12 +368,13 @@ def _check_hop(url: str, kind: str) -> None:
 
 
 def _tokens(link: RepositoryLink) -> dict[str, str]:
-    """The headers that carry this computer's token for the host, if there is one."""
+    """The headers that carry the token for the host, if there is one: the one set for this
+    session (``api_keys_use()``, as a hosted job sets a visitor's own), else this computer's."""
     try:
         if link.kind == "github":
-            from metacheck.archives.github import _github_token
+            from metacheck.archives.api_keys import github_pat
 
-            token = _github_token() or ""
+            token = github_pat() or ""
             return {"Authorization": f"token {token}"} if token else {}
         if link.kind == "gitlab":
             from metacheck.archives.gitlab import gitlab_pat

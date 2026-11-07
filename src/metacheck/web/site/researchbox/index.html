@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metacheck: ResearchBox</title>
+  <meta name="description" content="Check a ResearchBox for best practices.">
+  <link rel="icon" href="/site/images/logo.png">
+  <link rel="stylesheet" href="/site/site.css">
+</head>
+<body data-page="researchbox">
+  <header class="masthead">
+    <a href="/"><img src="/site/images/logo.png" alt="Metacheck" width="72" height="83"></a>
+    <h1>Check a ResearchBox</h1>
+    <p class="subtitle">An Automated Tool to Check for Best Practices in Scientific Articles</p>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p>Enter the number, the address or the peer-review link of a ResearchBox. Metacheck looks at the data and code in the box and writes a report.</p>
+    </section>
+
+    <div class="columns one">
+      <section class="tool" id="tool-link">
+        <h2>ResearchBox</h2>
+        <label class="field">Number or address
+          <input type="text" class="link" placeholder="https://researchbox.org/1234" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="tick"><input type="checkbox" class="run-code"> Run the code in the box <span class="run-code-note note"></span></label>
+        <button type="button" class="go" disabled>Run Metacheck</button>
+        <div class="status" hidden></div>
+        <p class="note">If a box is refused, for example because it is too big, download it from ResearchBox and send it as a .zip file on the <a href="/">main page</a>.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p><a href="/">Back to Metacheck</a>. <span id="version"></span></p>
+  </footer>
+
+  <script src="/site/common.js"></script>
+  <script src="/site/linkcheck.js"></script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+/* Style of the Metacheck demo site (pytacheck site). Colours: the logo's green on a light
+   grey page. Font: Cabin (SIL Open Font License, fonts/OFL-Cabin.txt), served from this
+   server, so no visitor's browser contacts another site. Written mobile first. */
+
+@font-face {
+  font-family: "Cabin";
+  src: url("/site/fonts/Cabin.ttf") format("truetype");
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  --green: #2f6f1c;
+  --green-dark: #1e4a10;
+  --green-soft: #59935b;
+  --green-tint: #e3ecdf;
+  --page: #e9e8e5;
+  --card: #f4f3f1;
+  --field: #fbfbfa;
+  --line: #cfcdc8;
+  --text: #262624;
+  --muted: #5e5c58;
+  --red: #9b2c1f;
+  --red-tint: #f6e3df;
+  --gap: 16px;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--page); }
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+  font: 17px/1.55 "Cabin", "Gill Sans", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+}
+
+a { color: var(--green); text-underline-offset: 2px; }
+a:hover { color: var(--green-dark); }
+code, pre { font: 0.85em/1.5 "Cascadia Mono", Consolas, "DejaVu Sans Mono", monospace; }
+
+/* ---- title ---- */
+.masthead { max-width: 960px; margin: 0 auto; padding: 32px var(--gap) 0; text-align: center; }
+.masthead img { display: block; width: 72px; height: auto; margin: 0 auto 8px; }
+.masthead h1 { margin: 0; font-size: 2.3rem; line-height: 1.2; }
+.subtitle {
+  margin: 4px 0 0;
+  padding-bottom: 16px;
+  font-size: 1.1rem;
+  color: var(--muted);
+  border-bottom: 1px solid var(--green);
+}
+
+main { max-width: 1120px; margin: 0 auto; padding: 0 var(--gap); }
+
+.intro { max-width: 800px; margin: 24px auto 32px; }
+
+/* ---- the tools ---- */
+.columns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (min-width: 900px) {
+  .columns.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .columns.one { grid-template-columns: minmax(0, 520px); justify-content: center; }
+}
+
+.tool {
+  min-width: 0;
+  padding: 16px 18px 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--green);
+  border-radius: 4px;
+}
+.tool h2 { margin: 0 0 8px; font-size: 1.35rem; }
+.tool p { margin: 0 0 12px; }
+.note { font-size: 0.88rem; color: var(--muted); }
+.note.warn { color: var(--red); }
+
+/* ---- choosing a file ---- */
+.drop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 104px;
+  margin-bottom: 12px;
+  padding: 14px;
+  text-align: center;
+  background: var(--field);
+  border: 2px dashed var(--green-soft);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.drop:hover, .drop.over { background: var(--green-tint); border-color: var(--green); }
+.drop.chosen { border-style: solid; background: var(--green-tint); }
+.drop input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.drop-text { font-weight: 600; }
+.drop.folder { cursor: default; }
+.pick { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.pick label {
+  position: relative;
+  padding: 3px 12px;
+  color: var(--green);
+  background: #fff;
+  border: 1px solid var(--green);
+  border-radius: 3px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pick label:hover { color: #fff; background: var(--green); }
+.pick input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+
+.field { display: block; margin: 0 0 4px; font-size: 0.95rem; font-weight: 600; }
+.field input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 10px;
+  font: inherit;
+  font-weight: 400;
+  background: #fff;
+  border: 1px solid var(--green-soft);
+  border-radius: 3px;
+}
+.field input:focus { outline: 2px solid var(--green); }
+
+.tick { display: block; margin: 0 0 12px; font-size: 0.92rem; }
+.tick input { accent-color: var(--green); }
+
+/* ---- the list of checks ---- */
+.checks { margin: 0 0 12px; }
+.checks summary { cursor: pointer; font-weight: 600; color: var(--green); }
+.checks .count { font-weight: 400; color: var(--muted); }
+.check-list h3 { margin: 10px 0 2px; font-size: 0.95rem; }
+.check-list label { display: flex; gap: 8px; align-items: baseline; margin: 2px 0; font-size: 0.92rem; }
+.check-list input { accent-color: var(--green); }
+
+/* ---- buttons ---- */
+button.go, a.button {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  color: #fff;
+  background: var(--green);
+  border: 0;
+  border-radius: 3px;
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+button.go:hover, a.button:hover { color: #fff; background: var(--green-dark); }
+button.go:disabled { background: #a9b4a4; cursor: not-allowed; }
+a.button.plain { color: var(--green); background: #fff; border: 1px solid var(--green); }
+a.button.plain:hover { background: var(--green-tint); }
+
+/* ---- what a job is doing ---- */
+.status { margin-top: 14px; }
+.status .step { margin: 6px 0 0; font-size: 0.92rem; color: var(--muted); }
+.bar { height: 6px; overflow: hidden; background: var(--line); border-radius: 3px; }
+.bar > span { display: block; width: 0; height: 100%; background: var(--green); transition: width 0.4s; }
+.bar.unknown > span { width: 30%; animation: slide 1.4s ease-in-out infinite; }
+@keyframes slide { from { margin-left: -30%; } to { margin-left: 100%; } }
+.results { display: grid; gap: 8px; margin-top: 12px; }
+.error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  color: var(--red);
+  background: var(--red-tint);
+  border-left: 3px solid var(--red);
+  font-size: 0.92rem;
+}
+.error p { margin: 0 0 6px; }
+.error ul { margin: 0 0 8px; padding-left: 20px; }
+.error li { margin-bottom: 2px; }
+
+/* ---- below the tools ---- */
+.about { max-width: 800px; margin: 40px auto 0; }
+.about h2 { margin: 28px 0 6px; padding-bottom: 4px; font-size: 1.2rem; border-bottom: 1px solid var(--line); }
+pre {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+footer {
+  max-width: 800px;
+  margin: 40px auto 0;
+  padding: 16px var(--gap) 32px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  border-top: 1px solid var(--green);
+}

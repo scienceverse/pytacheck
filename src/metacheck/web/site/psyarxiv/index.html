@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metacheck: PsyArXiv</title>
+  <meta name="description" content="Check a PsyArXiv preprint for best practices.">
+  <link rel="icon" href="/site/images/logo.png">
+  <link rel="stylesheet" href="/site/site.css">
+</head>
+<body data-page="psyarxiv">
+  <header class="masthead">
+    <a href="/"><img src="/site/images/logo.png" alt="Metacheck" width="72" height="83"></a>
+    <h1>Check a PsyArXiv preprint</h1>
+    <p class="subtitle">An Automated Tool to Check for Best Practices in Scientific Articles</p>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p>Enter the link of a preprint on PsyArXiv. The server fetches the preprint's PDF, runs all the checks and writes a report.</p>
+    </section>
+
+    <div class="columns one">
+      <section class="tool" id="tool-link">
+        <h2>PsyArXiv</h2>
+        <label class="field">Link or id
+          <input type="text" class="link" placeholder="https://osf.io/preprints/psyarxiv/abcde" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="tick"><input type="checkbox" class="crossref"> Look up references on Crossref (the reference list is sent to Crossref)</label>
+        <label class="tick"><input type="checkbox" class="run-code"> Run the preprint's code <span class="run-code-note note"></span></label>
+        <button type="button" class="go" disabled>Run Metacheck</button>
+        <div class="status" hidden></div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p><a href="/">Back to Metacheck</a>. <span id="version"></span></p>
+  </footer>
+
+  <script src="/site/common.js"></script>
+  <script src="/site/linkcheck.js"></script>
+</body>
+</html>
