@@ -35,9 +35,17 @@ def test_convert_needs_documents(tmp_path: Path) -> None:
         convert(empty)
 
 
-def test_bad_method() -> None:
+def test_bad_method(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="'arg' should be one of"):
-        convert(pc.demofile("pdf"), method="pandoc")
+        convert(pc.demofile("pdf"), tmp_path, method="pandoc")
+
+
+def test_save_path_has_no_default() -> None:
+    """metacheck asks for the folder: there is no default, before any server is asked."""
+    with pytest.raises(TypeError, match='argument "save_path" is missing, with no default'):
+        convert(pc.demofile("pdf"))
+    with pytest.raises(TypeError, match="save_path"):
+        convert(pc.demofile("xml"))
 
 
 def test_xml_needs_no_server(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -48,7 +56,7 @@ def test_xml_needs_no_server(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
         raise AssertionError("no server is needed for XML")
 
     monkeypatch.setattr(conv, "_online", fail)
-    monkeypatch.setattr(conv, "_server_list", fail)
+    monkeypatch.setattr(conv, "_convert_servers", fail)
     obs = convert(pc.demofile("xml"), tmp_path)
     assert Path(obs).exists()
     assert isinstance(convert(pc.demofile("xml"), None), pc.Paper)
@@ -105,11 +113,10 @@ def test_pdf_grobid_keep_xml(tmp_path: Path, keep_xml: bool) -> None:
     assert Path(obs).exists()
     xml = obs[: -len(".json")] + ".xml"
     assert Path(xml).exists() is keep_xml
-    if keep_xml:
-        assert Path(obs).name == "to_err_is_human.json"
-    else:
-        # R converts a tempfile() XML, so the JSON is named after it
-        assert Path(obs).name.startswith("file")
+    # the XML is converted in a temporary folder of its own with keep_xml = FALSE, and named
+    # after the PDF there, so the paper ID and the JSON name are the PDF's
+    assert Path(obs).name == "to_err_is_human.json"
+    assert pc.read(obs).paper_id == "to_err_is_human"
     assert paper_validate(pc.read(obs))
 
 

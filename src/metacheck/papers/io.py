@@ -15,6 +15,7 @@ import pandas as pd
 
 from metacheck._r.base import as_character
 from metacheck._r.regex import gsub
+from metacheck._save_path import NO_SAVE_PATH, require_save_path
 from metacheck._values import is_missing
 from metacheck.papers.model import Paper, PaperList
 from metacheck.papers.schema import coerce_table, records_to_frame
@@ -215,9 +216,20 @@ def read_bibr(file_path: str | PathLike[str], include_images: bool = False) -> P
     A file with a root ``schema_version`` (bibr export schema 11 and later)
     goes to the 12.x reader (:func:`metacheck.io.bibr12.read_bibr12`), which
     reads 12.x and raises metacheck's error for any other version; files
-    without one read exactly as before.
+    without one read exactly as before. A file without a ``paper_id`` at its
+    root is not bibr output and is refused.
     """
     data = orjson.loads(Path(file_path).read_bytes())
+    # a JSON file that is not a paper ("{}", the output of another tool) is no
+    # paper: every bibr export has a paper_id at its root (#499). A number is an
+    # id too (metacheck refuses it as "no paper_id"; U281).
+    pid = data.get("paper_id") if isinstance(data, Mapping) else None
+    numeric = isinstance(pid, int | float) and not isinstance(pid, bool)
+    if not numeric and (not isinstance(pid, str) or pid == ""):
+        raise ValueError(
+            f"{os.path.basename(file_path)} is not bibr output (it has no paper_id), "
+            "so it cannot be read as a paper"
+        )
     if isinstance(data, Mapping) and _field(data, "schema_version") is not None:
         from metacheck.io.bibr12 import _bibr12_from_json
 
@@ -330,7 +342,7 @@ def paper_to_json(p: Paper) -> dict[str, Any]:
 def paper_write(
     paper: Paper | PaperList,
     file_name: str | Sequence[str] | None = None,
-    save_path: str | PathLike[str] = ".",
+    save_path: str | PathLike[str] = NO_SAVE_PATH,
     schema_version: str | None = "auto",
 ) -> Path | list[Path]:
     """``paper_write()``: save paper(s) as pretty-printed JSON; returns the path(s).
@@ -357,6 +369,7 @@ def paper_write(
     """
     if schema_version not in ("auto", None, "12.0"):
         raise ValueError('schema_version must be "auto", None or "12.0"')
+    require_save_path(save_path)  # there is no default folder
     save_dir = Path(save_path).resolve()
     save_dir.mkdir(parents=True, exist_ok=True)
     if isinstance(paper, PaperList):

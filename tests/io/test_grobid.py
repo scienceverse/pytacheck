@@ -207,15 +207,15 @@ def test_non_grobid_url_rejected(demo_pdf: Path) -> None:
         convert_grobid(demo_pdf, api_url="https://google.com")
 
 
-def test_bad_pdf(fixtures_dir: Path) -> None:
+def test_bad_pdf(fixtures_dir: Path, tmp_path: Path) -> None:
     filename = fixtures_dir / "problems" / "xml_with_pdf_extension.pdf"
     with api("apis"):
         with pytest.raises(RuntimeError):
-            convert_grobid(filename, api_url=GROBID_URL)
+            convert_grobid(filename, tmp_path, api_url=GROBID_URL)
         with pytest.raises(RuntimeError, match="Internal Server Error"):
-            convert_grobid(filename, api_url="https://grobidorg-grobid.hf.space")
+            convert_grobid(filename, tmp_path, api_url="https://grobidorg-grobid.hf.space")
         with pytest.raises(FileNotFoundError):
-            convert_grobid([filename, "wrongfile.pdf"], api_url=GROBID_URL)
+            convert_grobid([filename, "wrongfile.pdf"], tmp_path, api_url=GROBID_URL)
 
 
 def test_makes_missing_save_directory_single(demo_pdf: Path, tmp_path: Path) -> None:
