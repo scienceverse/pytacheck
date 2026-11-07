@@ -148,8 +148,13 @@ def test_xml_input(tmp_path: Path) -> None:
 
 
 def test_a_file_without_text_is_not_a_paper(tmp_path: Path) -> None:
+    # a JSON file without a paper_id is not bibr output (metacheck 0.4.3.7, #499)
+    other = tmp_path / "other.json"
+    other.write_text('{"a": 1}')
+    with pytest.raises(run.UserError, match="could not be read as a paper"):
+        run.check_paper(other, workdir=tmp_path)
     empty = tmp_path / "empty.json"
-    empty.write_text('{"a": 1}')
+    empty.write_text('{"paper_id": "empty", "schema_version": "12.0"}')
     with pytest.raises(run.UserError, match="No text was found in this file"):
         run.check_paper(empty, workdir=tmp_path)
     page = tmp_path / "page.xml"
@@ -161,8 +166,15 @@ def test_a_file_without_text_is_not_a_paper(tmp_path: Path) -> None:
 def test_no_text_in_a_pdf_is_worded_for_pdfs(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    empty = tmp_path / "empty.json"
-    empty.write_text('{"a": 1}')
+    # GROBID's TEI of a scanned PDF: a paper with no text
+    empty = tmp_path / "empty.tei.xml"
+    empty.write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<TEI xmlns="http://www.tei-c.org/ns/1.0">'
+        '<teiHeader><fileDesc><titleStmt><title level="a" type="main"></title></titleStmt>'
+        "<publicationStmt><publisher/></publicationStmt><sourceDesc><biblStruct><analytic/>"
+        "<monogr><imprint/></monogr></biblStruct></sourceDesc></fileDesc></teiHeader>"
+        "<text><body/><back/></text></TEI>\n"
+    )
     monkeypatch.setattr(run, "_convert_pdf", lambda _path, _work: empty)
     with pytest.raises(run.UserError, match="scanned image"):
         run.check_paper(_fake_pdf(tmp_path), workdir=tmp_path)
@@ -369,7 +381,7 @@ def test_buttons_return_the_page_parts(tmp_path: Path) -> None:
     assert results["visible"] is True
     assert status == "" and stop["visible"] is False
     assert checklist["visible"] is False  # the checklist is a data package's
-    assert "Ran 19 checks" in summary
+    assert "Ran 18 checks" in summary
     assert list(table.data["Status"]).count("Validated") == 5
     assert frame.startswith('<iframe title="Report" sandbox="allow-scripts')
     assert "srcdoc=" in frame

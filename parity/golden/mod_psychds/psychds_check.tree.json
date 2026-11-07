@@ -129,7 +129,7 @@
           {
             "t": "chr",
             "v": [
-              "documentation/R&D <final>.docx",
+              "documentation/R&D _final_.docx",
               "analysis/Beta.R",
               "analysis/alpha.R",
               "analysis/_setup.R",
@@ -137,7 +137,7 @@
               "analysis/10_fit.R",
               "analysis/2_fit.R",
               "README.md",
-              "README.md",
+              "documentation/old_README.md",
               "data/study-tude_data.csv",
               "documentation/Émile.txt",
               "documentation/emile.txt",
@@ -260,9 +260,9 @@
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"missing\", \n\"present\", \"present\", \"present\", \"missing\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Target Psych-DS Structure",
           "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
-          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── _setup.R <span style=\"color:#b9770e\">(move from _setup.R)<\/span>\n│   ├── 10_fit.R\n│   ├── 2_fit.R\n│   ├── alpha.R <span style=\"color:#b9770e\">(move from alpha.R)<\/span>\n│   ├── Beta.R <span style=\"color:#b9770e\">(move from Beta.R)<\/span>\n│   └── Zeta.py\n├── data/\n│   └── study-tude_data.csv <span style=\"color:#b9770e\">(move from étude.csv)<\/span>\n├── documentation/\n│   ├── emile.txt <span style=\"color:#b9770e\">(move from emile.txt)<\/span>\n│   ├── Émile.txt <span style=\"color:#b9770e\">(move from Émile.txt)<\/span>\n│   └── R&amp;D &lt;final&gt;.docx <span style=\"color:#b9770e\">(move from docs/R&amp;D &lt;final&gt;.docx)<\/span>\n├── materials/\n│   ├── Data\n│   └── data.bin\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n├── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n└── README.md\n<\/pre>",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── _setup.R <span style=\"color:#b9770e\">(move from _setup.R)<\/span>\n│   ├── 10_fit.R\n│   ├── 2_fit.R\n│   ├── alpha.R <span style=\"color:#b9770e\">(move from alpha.R)<\/span>\n│   ├── Beta.R <span style=\"color:#b9770e\">(move from Beta.R)<\/span>\n│   └── Zeta.py\n├── data/\n│   └── study-tude_data.csv <span style=\"color:#b9770e\">(move from étude.csv)<\/span>\n├── documentation/\n│   ├── emile.txt <span style=\"color:#b9770e\">(move from emile.txt)<\/span>\n│   ├── Émile.txt <span style=\"color:#b9770e\">(move from Émile.txt)<\/span>\n│   ├── old_README.md <span style=\"color:#b9770e\">(move from old/README.md)<\/span>\n│   └── R&amp;D _final_.docx <span style=\"color:#b9770e\">(move from docs/R&amp;D &lt;final&gt;.docx)<\/span>\n├── materials/\n│   ├── Data\n│   └── data.bin\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n├── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n└── README.md\n<\/pre>",
           "#### Suggestions",
-          "- **Add** dataset_description.json — Root metadata file describing the dataset (required).\n- **Move** `docs/R&D <final>.docx` → `documentation/R&D <final>.docx`.\n- **Move** `Beta.R` → `analysis/Beta.R`.\n- **Move** `alpha.R` → `analysis/alpha.R`.\n- **Move** `_setup.R` → `analysis/_setup.R`.\n- **Move** `old/README.md` → `README.md`.\n- ...and 3 more files to relocate.\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended)."
+          "- **Add** dataset_description.json — Root metadata file describing the dataset (required).\n- **Move** `docs/R&D <final>.docx` → `documentation/R&D _final_.docx`.\n- **Move** `Beta.R` → `analysis/Beta.R`.\n- **Move** `alpha.R` → `analysis/alpha.R`.\n- **Move** `_setup.R` → `analysis/_setup.R`.\n- **Move** `old/README.md` → `documentation/old_README.md`.\n- ...and 3 more files to relocate.\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended)."
         ]
       },
       {
@@ -346,6 +346,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

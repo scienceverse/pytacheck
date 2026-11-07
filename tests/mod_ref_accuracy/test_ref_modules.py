@@ -145,10 +145,13 @@ def test_ref_accuracy_no_references() -> None:
 def test_ref_accuracy_no_bib_match() -> None:
     paper = ra_demo(drop=["bib_match"])
     out = pc.module_run(paper, "ref_accuracy")
-    # U30: metacheck returns "error", which is not one of its traffic lights
-    assert out.traffic_light == "fail"
+    # U30: metacheck 0.3 returned "error", which is not one of its traffic lights;
+    # 0.4 says the references were not looked up (a fault of the setup, not the paper)
+    assert out.traffic_light == "na"
     assert out.table is None
-    assert "add_bib_match" in out.summary_text
+    assert out.summary_text == (
+        "The references were not looked up at Crossref, so their accuracy was not checked."
+    )
 
 
 def test_ref_accuracy_demo(demo: pc.Paper) -> None:
@@ -173,7 +176,7 @@ def test_ref_accuracy_demo(demo: pc.Paper) -> None:
     # U83: the guidance without metacheck's typos ("Such an incoherent", "ar an AI")
     prose = " ".join(b for b in out.report if isinstance(b, str))
     assert "Such an incoherence is most often an error in reading the reference" in prose
-    assert "it could be a mistake, or an AI generated reference." in prose
+    assert "it could be a mistake, or an AI-generated reference." in prose
     assert "incoherent is most" not in prose and " ar an " not in prose
 
 

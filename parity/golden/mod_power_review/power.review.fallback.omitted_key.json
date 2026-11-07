@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. For the statistical test, effect size metric and software, use one of the suggested values when it fits, and otherwise give the name as written in the text. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"A sensitivity power analysis indicated that 40 participants give 90% power for d = 0.8 with pwr.\"}]}],\"model\":\"test-model\",\"temperature\":0,\"seed\":8675309,\"max_completion_tokens\":4096,\"stream\":false,\"response_format\":{\"type\":\"json_schema\",\"json_schema\":{\"name\":\"structured_data\",\"schema\":{\"type\":\"object\",\"description\":\"\",\"properties\":{\"power_analyses\":{\"type\":\"array\",\"description\":\"Power analyses found in the text. Empty array if none.\",\"items\":{\"type\":\"object\",\"description\":\"\",\"properties\":{\"power_type\":{\"type\":\"string\",\"description\":\"The type of power analysis, one of 'apriori', 'sensitivity', 'posthoc' or 'unknown'. 'apriori' calculates the required sample size to achieve a desired power given an effect size, statistical test, and alpha level. 'sensitivity' estimates, given a sample size, which effect sizes a design has sufficient power to detect. 'posthoc' (observed/retrospective power) computes achieved power for an empirically observed effect size. Use 'unknown' if a power analysis is present but its type cannot be determined.\"},\"statistical_test\":{\"type\":[\"string\",\"null\"],\"description\":\"The statistical test used: one of 'paired t-test', 'unpaired t-test', 'one-sample t-test', '1-way ANOVA', '2-way ANOVA', '3-way ANOVA', 'MANOVA', 'regression', 'chi-square', 'correlation', or else the test's name as written in the text.\"},\"sample_size\":{\"type\":[\"number\",\"null\"],\"description\":\"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\"},\"alpha_level\":{\"type\":[\"number\",\"null\"],\"description\":\"The alpha threshold used to determine significance.\"},\"power\":{\"type\":[\"number\",\"null\"],\"description\":\"The statistical power, expressed as a number between 0 and 1.\"},\"effect_size\":{\"type\":[\"number\",\"null\"],\"description\":\"The numeric effect size used in or determined from the power analysis.\"},\"effect_size_metric\":{\"type\":[\"string\",\"null\"],\"description\":\"The effect size metric: one of 'Cohen's d', 'Hedges' g', 'Cohen's f', 'partial eta squared', 'eta squared', 'unstandardised' (for raw/non-standardized effects), or else the metric as written in the text.\"},\"software\":{\"type\":[\"string\",\"null\"],\"description\":\"The software used to conduct the power analysis, as named in the text (e.g. 'G*Power', 'pwr', 'simr', 'Superpower', 'PASS', 'POWSIM'), or 'simulation' for a simulation without named software.\"}},\"required\":[\"power_type\",\"statistical_test\",\"sample_size\",\"alpha_level\",\"power\",\"effect_size\",\"effect_size_metric\",\"software\"],\"additionalProperties\":false}}},\"required\":[\"power_analyses\"],\"additionalProperties\":false},\"strict\":true}}}\nExpected mock file: api.groq.com/openai/v1/chat/completions-6b69db-POST.*"
   ],
   "value": {
     "t": "module_output",
@@ -59,7 +59,9 @@
           "effect_size_metric",
           "effect_size_metric_other",
           "software",
+          "alpha_level",
           "complete",
+          "software_other",
           "power_id"
         ],
         "v": [
@@ -130,7 +132,7 @@
             ]
           },
           {
-            "t": "lgl",
+            "t": "chr",
             "v": [
               null
             ]
@@ -160,7 +162,7 @@
             ]
           },
           {
-            "t": "lgl",
+            "t": "chr",
             "v": [
               null
             ]
@@ -174,7 +176,19 @@
           {
             "t": "lgl",
             "v": [
-              true
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
             ]
           },
           {
@@ -190,8 +204,8 @@
         "v": [
           "We used the LLM model 'groq/test-model' to check the contents of 1 paragraph that contained words suggesting they might contain power analyses.",
           "(The provider does not support structured outputs for this schema; used prompt-based extraction instead.)",
-          "All essential information could be detected.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_type = \"sensitivity\", statistical_test = \"unpaired t-test\", \n    sample_size = 40L, power = 0.9, effect_size = 0.8, effect_size_metric = \"Cohen's d\", \n    software = \"pwr\"), row.names = c(NA, -1L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "Some essential information could not be detected: alpha_level",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_type = \"sensitivity\", statistical_test = \"unpaired t-test\", \n    sample_size = 40L, alpha_level = NA, power = 0.9, effect_size = 0.8, \n    effect_size_metric = \"Cohen's d\", software = \"pwr\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = \"A <strong>sensitivity<\/strong> <strong>power<\/strong> analysis indicated that 40 participants give 90% <strong>power<\/strong> for d = 0.8 with pwr.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
@@ -200,7 +214,7 @@
       {
         "t": "chr",
         "v": [
-          "green"
+          "red"
         ]
       },
       {
@@ -218,10 +232,12 @@
           "power_complete",
           "power_statistical_test",
           "power_sample_size",
+          "power_alpha_level",
           "power_power",
           "power_effect_size",
           "power_effect_size_metric",
-          "power_software"
+          "power_software",
+          "power_unchecked"
         ],
         "v": [
           {
@@ -239,7 +255,25 @@
           {
             "t": "int",
             "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -269,13 +303,7 @@
           {
             "t": "int",
             "v": [
-              1
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              1
+              0
             ]
           }
         ]
@@ -283,14 +311,16 @@
       {
         "t": "dbl",
         "v": [
+          0,
           0
         ],
         "names": [
-          "power_n"
+          "power_n",
+          "power_unchecked"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

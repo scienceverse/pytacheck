@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -103,6 +105,14 @@
               "dupclass.csv",
               "dupclass.csv",
               "dupclass.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
             ]
           },
           {
@@ -207,6 +217,14 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -336,14 +354,14 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/dupcl**",
-          "```\n└── data/\n    └── dupclass.csv  📊 data ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n└── data/\n    └── dupclass.csv  📊 data ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## dupclass.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(d = structure(18262:18273, class = c(\"IDate\", \n\"Date\")), d = 1:12, n = c(3L, 6L, 9L, 12L, 15L, 18L, 21L, 24L, \n27L, 30L, 33L, 36L)), row.names = c(NA, 12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## dupclass.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"d\", \"d\", \"n\"), Representation = c(\"datetime\", \n\"numeric\", \"numeric\"), Level = c(\"nominal\", \"ratio\", \"ratio\"), \n    Concept = c(\"date\", \"\", \"\"), Role = c(\"timestamp\", \"measure\", \n    \"measure\"), Unit = c(\"\", \"\", \"\"), Rows = c(12L, 12L, 12L), \n    \"% Missing\" = c(0, 0, 0), \"N Unique\" = c(12L, 12L, 12L), \n    Mean = c(NA, 6.5, 19.5), SD = c(NA, 3.606, 10.817), Min = c(NA, \n    1, 3), Max = c(NA, 12, 36)), row.names = c(NA, 3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 3 columns across 1 data file.",
           "#### Issues Identified",
           "1 file/column combination has at least one issue.",
@@ -583,6 +601,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -666,6 +685,12 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dupclass.csv"
             ]
           },
           {
@@ -785,6 +810,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

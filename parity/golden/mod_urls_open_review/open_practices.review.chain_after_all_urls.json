@@ -150,7 +150,7 @@
       {
         "t": "chr",
         "v": [
-          "1 papers shared both data and code, 0 only data, 0 only code, and 1 neither."
+          "1 papers shared both data and code, 0 only data, 0 only code, and 2 neither."
         ]
       },
       {
@@ -162,7 +162,7 @@
       {
         "t": "chr",
         "v": [
-          "1 papers shared both data and code, 0 only data, 0 only code, and 1 neither."
+          "1 papers shared both data and code, 0 only data, 0 only code, and 2 neither."
         ]
       },
       {
@@ -218,7 +218,7 @@
             "t": "lgl",
             "v": [
               false,
-              null,
+              false,
               false
             ]
           },
@@ -226,7 +226,7 @@
             "t": "lgl",
             "v": [
               false,
-              null,
+              false,
               false
             ]
           },
@@ -234,7 +234,7 @@
             "t": "lgl",
             "v": [
               false,
-              null,
+              false,
               true
             ]
           },
@@ -249,7 +249,10 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
                 "t": "chr",
@@ -270,7 +273,10 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
                 "t": "chr",
@@ -291,7 +297,10 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
                 "t": "chr",
@@ -312,7 +321,10 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
                 "t": "chr",
@@ -347,6 +359,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

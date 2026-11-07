@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 11,
+    "nrow": 12,
     "names": [
       "href",
       "text_id",
@@ -18,6 +18,7 @@
           "https://github.com/x/y/tree/main",
           "https://GitHub.com/Upper/Case",
           "https://gist.github.com/u/abc",
+          "https://github.com/onlyorg",
           "my-org/my.repo_v2",
           "foo/bar",
           "1/2",
@@ -34,6 +35,7 @@
           1,
           2,
           3,
+          4,
           1,
           2,
           2,
@@ -57,11 +59,12 @@
           "6c4258abe0fec3",
           "6c4258abe0fec3",
           "6c4258abe0fec3",
+          "6c4258abe0fec3",
           "6c4258abe0fec3"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

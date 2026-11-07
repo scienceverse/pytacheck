@@ -258,7 +258,7 @@
               "Age in years",
               "Gender of the participant",
               "Income in thousands",
-              null,
+              "Positive affect",
               null,
               null,
               null,
@@ -305,7 +305,7 @@
               "age",
               "gender",
               "income_thousands",
-              null,
+              "mood",
               null,
               null,
               null,
@@ -352,7 +352,7 @@
               "codebook.csv",
               "codebook.csv",
               "codebook.csv",
-              null,
+              "codebook.csv",
               null,
               null,
               null,
@@ -399,7 +399,7 @@
               "llm",
               "llm",
               "llm",
-              "unlabelled",
+              "labelled",
               "unlabelled",
               "unlabelled",
               "unlabelled",
@@ -446,7 +446,7 @@
               "llm",
               "llm",
               "llm",
-              null,
+              "rules",
               null,
               null,
               null,
@@ -868,7 +868,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 3 codebook/README/label sources and 42 data columns across 2 files.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"AQ01\", \"AQ02\", \"AQ03\", \"AQ04\", \"AQ05\", \n\"AQ06\", \"AQ07\", \"AQ08\", \"AQ09\", \"AQ10\", \"AQ11\", \"AQ12\", \"AQ_SUM\", \n\"bfi_1\", \"bfi_2\", \"bfi_3\", \"bfi_4\", \"bfi_5\", \"bfi_6\", \"id\", \"pss_1\", \n\"pss_10\", \"pss_2\", \"pss_3\", \"pss_4\", \"pss_5\", \"pss_6\", \"pss_7\", \n\"pss_8\", \"pss_9\", \"swls_1\", \"swls_2\", \"swls_3\", \"swls_4\", \"swls_5\"\n), Documented = c(\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\"), Label = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_), \"Codebook Variable\" = c(NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    Source = c(NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_), Status = c(\"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\")), row.names = c(1L, \n2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, \n16L, 17L, 18L, 19L, 22L, 24L, 25L, 26L, 27L, 28L, 29L, 30L, 31L, \n32L, 33L, 34L, 35L, 36L, 37L, 38L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"id\", \"mood\", \"age_years\", \"gender_code\", \n\"income_k\", \"mood\"), Documented = c(\"no\", \"no\", \"no\", \"yes\", \n\"yes\", \"yes\", \"yes\"), Label = c(NA, NA, NA, \"Age in years\", \"Gender of the participant\", \n\"Income in thousands\", \"Mood rating\"), \"Codebook Variable\" = c(NA, \nNA, NA, \"age\", \"gender\", \"income_thousands\", \"mood\"), Source = c(NA, \nNA, NA, \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook_b.csv | codebook.csv\"\n), Status = c(\"unlabelled\", \"unlabelled\", \"unlabelled\", \"llm\", \n\"llm\", \"llm\", \"labelled\")), row.names = c(20L, 21L, 23L, 39L, \n40L, 41L, 42L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"AQ01\", \"AQ02\", \"AQ03\", \"AQ04\", \"AQ05\", \n\"AQ06\", \"AQ07\", \"AQ08\", \"AQ09\", \"AQ10\", \"AQ11\", \"AQ12\", \"AQ_SUM\", \n\"bfi_1\", \"bfi_2\", \"bfi_3\", \"bfi_4\", \"bfi_5\", \"bfi_6\", \"id\", \"pss_1\", \n\"pss_10\", \"pss_2\", \"pss_3\", \"pss_4\", \"pss_5\", \"pss_6\", \"pss_7\", \n\"pss_8\", \"pss_9\", \"swls_1\", \"swls_2\", \"swls_3\", \"swls_4\", \"swls_5\"\n), Documented = c(\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\"), Label = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_), \"Codebook Variable\" = c(NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    Source = c(NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_), Status = c(\"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\")), row.names = c(1L, \n2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, \n16L, 17L, 18L, 19L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 30L, \n31L, 32L, 33L, 34L, 35L, 36L, 37L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"id\", \"age_years\", \"gender_code\", \n\"income_k\", \"mood\", \"mood\"), Documented = c(\"no\", \"no\", \"yes\", \n\"yes\", \"yes\", \"yes\", \"yes\"), Label = c(NA, NA, \"Age in years\", \n\"Gender of the participant\", \"Income in thousands\", \"Mood rating\", \n\"Positive affect\"), \"Codebook Variable\" = c(NA, NA, \"age\", \"gender\", \n\"income_thousands\", \"mood\", \"mood\"), Source = c(NA, NA, \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook_b.csv | codebook.csv\", \n\"codebook.csv\"), Status = c(\"unlabelled\", \"unlabelled\", \"llm\", \n\"llm\", \"llm\", \"labelled\", \"labelled\")), row.names = c(20L, 21L, \n38L, 39L, 40L, 41L, 42L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Documented but Unused Variables\n\n1 documented variable was not matched to any data column.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = \"participant_id\", Label = \"Participant number\", \n    Source = \"codebook.csv\"), row.names = 3L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "LLM model 'mock/cbc' reviewed ambiguous cases (parsed 0 files, matched 3 columns, merged 1 label)."
@@ -883,7 +883,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 6 variable definitions from codebook/README files.\n-  4 of 42 data columns (10%) are documented in a codebook; 38 are not."
+          "\n-  We parsed 7 variable definitions from codebook/README files.\n-  5 of 42 data columns (12%) are documented in a codebook; 37 are not."
         ]
       },
       {
@@ -926,7 +926,7 @@
             "t": "int",
             "v": [
               1,
-              3,
+              4,
               0
             ]
           },
@@ -934,7 +934,7 @@
             "t": "int",
             "v": [
               1,
-              2,
+              1,
               35
             ]
           },
@@ -942,7 +942,7 @@
             "t": "int",
             "v": [
               1,
-              3,
+              4,
               0
             ]
           },
@@ -958,7 +958,7 @@
             "t": "int",
             "v": [
               2,
-              4,
+              5,
               0
             ]
           },
@@ -1022,7 +1022,7 @@
       },
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 7,
         "names": [
           "codebook_variable",
           "label",
@@ -1044,7 +1044,8 @@
               "participant_id",
               "age",
               "gender",
-              "income_thousands"
+              "income_thousands",
+              "mood"
             ]
           },
           {
@@ -1055,7 +1056,8 @@
               "Participant number",
               "Age in years",
               "Gender of the participant",
-              "Income in thousands"
+              "Income in thousands",
+              "Positive affect"
             ]
           },
           {
@@ -1066,12 +1068,14 @@
               "codebook.csv",
               "codebook.csv",
               "codebook.csv",
+              "codebook.csv",
               "codebook.csv"
             ]
           },
           {
             "t": "chr",
             "v": [
+              "ex1",
               "ex1",
               "ex1",
               "ex1",
@@ -1088,16 +1092,6 @@
               null,
               null,
               null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
-              null,
-              null,
               null,
               null
             ]
@@ -1110,6 +1104,19 @@
               null,
               null,
               null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
               null
             ]
           },
@@ -1121,12 +1128,14 @@
               null,
               null,
               null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              "structured",
               "structured",
               "structured",
               "structured",
@@ -1140,6 +1149,7 @@
             "v": [
               "p1",
               "p1",
+              "p2",
               "p2",
               "p2",
               "p2",
@@ -1226,6 +1236,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -162,8 +162,9 @@ def test_duplicate_paper_ids_are_separate_papers() -> None:
 
 @pytest.mark.parametrize("module", ["funding_check", "funding_check_oi"])
 def test_empty_paperlist(module: str) -> None:
-    # U79: metacheck fails (text_search() of an empty list has no paper_id column);
-    # pytacheck's text_search() returns a typed empty table, so nothing is found
+    # U79: metacheck failed (text_search() of an empty list has no paper_id column);
+    # metacheck 0.4 answers an empty input with .empty_input_result()
     mo = pc.module_run(pc.PaperList([]), module)
-    assert mo.traffic_light == "red"
-    assert len(mo.table) == 0
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "There was no text to check."
+    assert len(mo.summary_table) == 0

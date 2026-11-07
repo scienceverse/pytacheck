@@ -5,7 +5,6 @@
   "warnings": [
     "spv: could not decode light-binary table: spv binary: needed 32 bytes at offset 300, only 1 available",
     "spv: could not decode light-binary table: spv binary: unsupported light-table version 2",
-    "spv: could not decode chart: non-numeric argument to mathematical function",
     "spv: could not decode chart: spv chart: no <point>, <interval>, or <schema> mark (out of this port's scope)"
   ],
   "value": {
@@ -88,7 +87,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t2_1_n_scales_age"
+                          "output_spv_t2_1_n_scales_age"
                         ]
                       },
                       {
@@ -154,7 +153,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t2_1_n_scales_score"
+                          "output_spv_t2_1_n_scales_score"
                         ]
                       },
                       {
@@ -220,7 +219,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t2_1_n_valid_n_listwise"
+                          "output_spv_t2_1_n_valid_n_listwise"
                         ]
                       },
                       {
@@ -286,7 +285,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t2_1_mean_scales_age"
+                          "output_spv_t2_1_mean_scales_age"
                         ]
                       },
                       {
@@ -352,7 +351,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t2_1_mean_scales_score"
+                          "output_spv_t2_1_mean_scales_score"
                         ]
                       },
                       {
@@ -418,7 +417,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t2_1_mean_valid_n_listwise"
+                          "output_spv_t2_1_mean_valid_n_listwise"
                         ]
                       },
                       {
@@ -484,7 +483,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t2_1_std_deviation_scales_age"
+                          "output_spv_t2_1_std_deviation_scales_age"
                         ]
                       },
                       {
@@ -550,7 +549,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t2_1_std_deviation_scales_score"
+                          "output_spv_t2_1_std_deviation_scales_score"
                         ]
                       },
                       {
@@ -601,7 +600,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t2_1_std_deviation_valid_n_listwise"
+                          "output_spv_t2_1_std_deviation_valid_n_listwise"
                         ]
                       },
                       {
@@ -688,7 +687,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t3_1_t_score"
+                          "output_spv_t3_1_t_score"
                         ]
                       },
                       {
@@ -739,7 +738,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t3_1_df_score"
+                          "output_spv_t3_1_df_score"
                         ]
                       },
                       {
@@ -790,7 +789,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t3_1_sig_2_tailed_score"
+                          "output_spv_t3_1_sig_2_tailed_score"
                         ]
                       },
                       {
@@ -841,7 +840,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t3_1_t_na"
+                          "output_spv_t3_1_t_na"
                         ]
                       },
                       {
@@ -892,7 +891,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t3_1_sig_2_tailed_na"
+                          "output_spv_t3_1_sig_2_tailed_na"
                         ]
                       },
                       {
@@ -958,13 +957,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_t4_r1"
+                          "output_spv_t4_1_r1"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t4_t_score"
+                          "output_spv_t4_1_t_score"
                         ]
                       },
                       {
@@ -1009,13 +1008,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_t4_r2"
+                          "output_spv_t4_1_r2"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t4_df_score"
+                          "output_spv_t4_1_df_score"
                         ]
                       },
                       {
@@ -1060,13 +1059,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_t4_r3"
+                          "output_spv_t4_1_r3"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t4_sig_2_tailed_score"
+                          "output_spv_t4_1_sig_2_tailed_score"
                         ]
                       },
                       {
@@ -1111,13 +1110,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_t4_r4"
+                          "output_spv_t4_1_r4"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t4_t_na"
+                          "output_spv_t4_1_t_na"
                         ]
                       },
                       {
@@ -1162,13 +1161,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_t4_r5"
+                          "output_spv_t4_1_r5"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "output_spv_output_spv_t4_sig_2_tailed_na"
+                          "output_spv_t4_1_sig_2_tailed_na"
                         ]
                       },
                       {
@@ -1209,6 +1208,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -296,7 +296,7 @@
               "2024-01-04T03:04:05.000001",
               "",
               "https://archive.org/details/osf-registrations-prspx-v1",
-              "indices first",
+              "",
               null,
               "150",
               null,
@@ -310,7 +310,7 @@
               null,
               "",
               "",
-              "additional comments",
+              "",
               "iv intro iv one iv two",
               "dv intro ide e.csv list(html = \"https://osf.io/h/e\", download = \"https://osf.io/d/e\") list(sha256 = \"shae\")",
               "cov a<br><br>cov b",
@@ -328,7 +328,7 @@
               "",
               "",
               "",
-              "partial match for datacompletion",
+              "",
               "",
               "",
               "p_two"
@@ -338,6 +338,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

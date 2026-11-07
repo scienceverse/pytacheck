@@ -1,6 +1,0 @@
-{
-"zenodo_file_download.mixed": {"r": "42404d032b6706fe", "py": "99c195420830ceb5", "diff": ["<root>"]},
-"zenodo_file_download.total_cap": {"r": "1b35c7fd6cd0283e", "py": "b55c611af9925473", "diff": ["<root>"]},
-"zenodo_file_download.zip_no_unzip": {"r": "c1ca39202623ddd1", "py": "054f64dc64ee1ffc", "diff": ["<root>"]},
-"zenodo_info.id_col_position.na": {"r": "ac5146cf65ca52a8", "py": "3bd3091ac28f495f", "diff": ["<R error, Python value>"]}
-}

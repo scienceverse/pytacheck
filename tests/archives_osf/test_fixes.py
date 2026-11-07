@@ -44,18 +44,35 @@ def test_osf_check_id_does_not_cut_words_to_ids() -> None:
         "https://osf.io/prereg/",
         "osf.io/registries",
         "https://osf.io/registries/osf/discover",
-        "https://osf.io/preprints/psyarxiv/abcde/download",
         "https://osf.io/averyveryverylongsegment",
+        # only a whole path segment counts: punctuation after the id is not a segment end
+        "osf.io/abcde.",
+        "osf.io/abcde_v2)",
     ]:
         with pytest.warns(UserWarning, match="not a valid OSF ID"):
             assert osf_check_id(url) is None, url
-    # an ID followed by punctuation, a slash or a version is still found
+    # an ID followed by a slash, a query or a version is still found
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        assert osf_check_id("osf.io/abcde.") == "abcde"
         assert osf_check_id("osf.io/abcde/files/") == "abcde"
-        assert osf_check_id("osf.io/abcde_v2)") == "abcde_v2"
         assert osf_check_id("https://osf.io/abcde/download") == "abcde"
+        # the id is the first id-shaped segment that is not a route name (metacheck 0.4.3.x)
+        assert osf_check_id("https://osf.io/preprints/psyarxiv/abcde/download") == "abcde"
+
+
+def test_osf_check_id_skips_route_names_and_registration_schemas() -> None:
+    # test-archive-osf.R, "osf_check_id skips route names and registration schemas (U51)"
+    x = [
+        "https://osf.io/j3gcx/files/",
+        "osf.io/prereg",
+        "https://osf.io/a5bmw/register/565fb3678c5e4a66b5582f67",
+        "https://osf.io/abcde/files/osfstorage/5f1e2d3c4b5a69788796a5b4",
+        "https://osf.io/abcde/?view_only=123",
+    ]
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        got = [osf_check_id(u) for u in x]
+    assert got == ["j3gcx", None, "a5bmw", "5f1e2d3c4b5a69788796a5b4", "abcde?view_only=123"]
 
 
 def test_versioned_guids_are_looked_up_as_guids() -> None:

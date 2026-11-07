@@ -1,0 +1,40 @@
+{
+  "id": "sheet_target.symbols",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "data/study-harvest_description-sheet2_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-harvest_description-sheet3_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-harvest_description-sheet4_data.csv"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

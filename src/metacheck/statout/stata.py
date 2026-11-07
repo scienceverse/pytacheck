@@ -23,7 +23,6 @@ from metacheck.statout.spv import (
     _file_path_sans_ext,
     _html_page,
     _make_unique,
-    _r_dirname,
     _read_lines,
     _spv_html_escape,
     _spv_table_html,
@@ -483,8 +482,10 @@ def _smcl_export_syntax(
 ) -> str | None:
     """Port of R/stata.R::.smcl_export_syntax().
 
-    Writes the echoed Stata commands to ``<dir>/<code_dir_name>/<name>.do``;
-    returns that path, or ``None`` when there are no command echoes.
+    Writes the echoed Stata commands to ``<code_dir_name>/<name>.do``, next to a downloaded
+    file or, for a file of the user's own, in the temporary folder
+    (``_recovered_code_dir()``); returns that path, or ``None`` when there are no command
+    echoes.
     """
     smcl_path = os.fspath(smcl_path)
     if not os.path.exists(smcl_path):
@@ -499,7 +500,9 @@ def _smcl_export_syntax(
     commands = [c["command"] for c in chunks if trimws(c["command"]) != ""]
     if not commands:
         return None
-    code_dir = _file_path(_r_dirname(smcl_path), code_dir_name)
+    from metacheck.report.html_output import _recovered_code_dir
+
+    code_dir = _recovered_code_dir(smcl_path, code_dir_name)
     os.makedirs(code_dir, exist_ok=True)
     out_path = _file_path(code_dir, _file_path_sans_ext(os.path.basename(smcl_path)) + ".do")
     _write_lines(commands, out_path)

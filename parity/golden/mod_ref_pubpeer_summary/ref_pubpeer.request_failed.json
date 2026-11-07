@@ -1,9 +1,77 @@
 {
   "id": "ref_pubpeer.request_failed",
-  "ok": false,
-  "error": "Running the module 'ref_pubpeer' produced errors: `x` and `y` must share the same src.",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.3.2",
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_pubpeer"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PubPeer Comments"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PubPeer could not be reached (the request failed), so the references were not checked for comments."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "fail"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PubPeer could not be reached (the request failed), so the references were not checked for comments."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "fail"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

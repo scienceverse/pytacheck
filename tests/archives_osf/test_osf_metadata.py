@@ -132,3 +132,30 @@ def test_write_readme_formats(tmp_path: Path) -> None:
     _osf_write_readme(meta, None, logs, str(tmp_path))
     text = (tmp_path / "README.md").read_text(encoding="utf-8")
     assert "2 activity log entries, 2019-01-02 to 2020-05-01" in text
+
+
+def test_osf_license_reads_a_registrations_licence_from_registrations() -> None:
+    # Reported 2026-10-15 (metacheck #486): /nodes/tp78a/ answers 404 for the registration
+    # 10.17605/OSF.IO/TP78A, and /registrations/tp78a/ holds its licence.
+    from metacheck.archives.osf_metadata import _osf_license
+    from metacheck.utils import get_option
+
+    api = str(get_option("metacheck.osf.api"))
+    body = (
+        '{"data":{"id":"tp78a","type":"registrations","embeds":{"license":'
+        '{"data":{"attributes":{"name":"CC-By Attribution 4.0 International"}}}}}}'
+    )
+    with respx.mock(assert_all_called=False) as router:
+        router.get(f"{api}/nodes/tp78a/", params={"embed": "license"}).respond(404)
+        router.get(f"{api}/registrations/tp78a/", params={"embed": "license"}).respond(
+            200, content=body.encode(), headers={"Content-Type": "application/vnd.api+json"}
+        )
+        assert _osf_license("tp78a") == "CC-By Attribution 4.0 International"
+        urls = [str(c.request.url).removeprefix(api) for c in router.calls]
+        assert urls == ["/nodes/tp78a/?embed=license", "/registrations/tp78a/?embed=license"]
+
+    # any other failure is not retried
+    with respx.mock(assert_all_called=False) as router:
+        router.route().respond(503)
+        assert _osf_license("tp78a") is None
+        assert len(router.calls) == 1

@@ -119,11 +119,11 @@
               null,
               "Sex",
               "Age in years",
-              "1",
+              null,
               null,
               "Sex",
               "Age in years",
-              "1"
+              null
             ]
           },
           {
@@ -132,11 +132,11 @@
               null,
               "sex",
               "age",
-              "q1",
+              null,
               null,
               "sex",
               "age",
-              "q1"
+              null
             ]
           },
           {
@@ -145,11 +145,11 @@
               null,
               "labelled.dta",
               "labelled.dta",
-              "labelled.dta",
+              null,
               null,
               "labelled.dta",
               "labelled.dta",
-              "labelled.dta"
+              null
             ]
           },
           {
@@ -158,11 +158,11 @@
               "unlabelled",
               "labelled",
               "labelled",
-              "labelled",
+              "unlabelled",
               "unlabelled",
               "labelled",
               "labelled",
-              "labelled"
+              "unlabelled"
             ]
           },
           {
@@ -171,11 +171,11 @@
               null,
               "rules",
               "rules",
-              "rules",
+              null,
               null,
               "rules",
               "rules",
-              "rules"
+              null
             ]
           },
           {
@@ -290,7 +290,9 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 2 codebook/README/label sources and 8 data columns across 2 files.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## labelled.dta\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"age\", \"q1\", \"sex\"), Documented = c(\"no\", \n\"yes\", \"yes\", \"yes\"), Label = c(NA, \"Age in years\", \"1\", \"Sex\"\n), \"Codebook Variable\" = c(NA, \"age\", \"q1\", \"sex\"), Source = c(NA, \n\"labelled.dta\", \"labelled.dta\", \"labelled.dta\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\")), row.names = c(1L, 3L, 5L, \n7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## labelled.sav\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"age\", \"q1\", \"sex\"), Documented = c(\"no\", \n\"yes\", \"yes\", \"yes\"), Label = c(NA, \"Age in years\", \"1\", \"Sex\"\n), \"Codebook Variable\" = c(NA, \"age\", \"q1\", \"sex\"), Source = c(NA, \n\"labelled.dta\", \"labelled.dta\", \"labelled.dta\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\")), row.names = c(2L, 4L, 6L, \n8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
+          "::: {.panel-tabset}\n\n## labelled.dta\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"q1\", \"age\", \"sex\"), Documented = c(\"no\", \n\"no\", \"yes\", \"yes\"), Label = c(NA, NA, \"Age in years\", \"Sex\"), \n    \"Codebook Variable\" = c(NA, NA, \"age\", \"sex\"), Source = c(NA, \n    NA, \"labelled.dta\", \"labelled.dta\"), Status = c(\"unlabelled\", \n    \"unlabelled\", \"labelled\", \"labelled\")), row.names = c(1L, \n3L, 5L, 7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## labelled.sav\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"q1\", \"age\", \"sex\"), Documented = c(\"no\", \n\"no\", \"yes\", \"yes\"), Label = c(NA, NA, \"Age in years\", \"Sex\"), \n    \"Codebook Variable\" = c(NA, NA, \"age\", \"sex\"), Source = c(NA, \n    NA, \"labelled.dta\", \"labelled.dta\"), Status = c(\"unlabelled\", \n    \"unlabelled\", \"labelled\", \"labelled\")), row.names = c(2L, \n4L, 6L, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "#### Documented but Unused Variables\n\n1 documented variable was not matched to any data column.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = \"q1\", Label = NA_character_, Source = \"labelled.dta\"), row.names = \"q1...3\", class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n"
         ]
       },
       {
@@ -302,7 +304,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 3 variable definitions from codebook/README files.\n-  6 of 8 data columns (75%) are documented in a codebook; 2 are not."
+          "\n-  We parsed 3 variable definitions from codebook/README files.\n-  4 of 8 data columns (50%) are documented in a codebook; 4 are not."
         ]
       },
       {
@@ -340,19 +342,19 @@
           {
             "t": "int",
             "v": [
-              6
+              4
             ]
           },
           {
             "t": "int",
             "v": [
-              2
+              4
             ]
           },
           {
             "t": "int",
             "v": [
-              6
+              4
             ]
           },
           {
@@ -370,7 +372,7 @@
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
@@ -440,7 +442,7 @@
             "v": [
               "Sex",
               "Age in years",
-              "1"
+              null
             ]
           },
           {
@@ -587,6 +589,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

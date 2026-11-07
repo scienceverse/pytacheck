@@ -1,9 +1,0 @@
-{
-"github_languages.review.error_body": {"r": "092762d705cfc505", "py": "d33e6a78120356d0", "diff": ["<root>"]},
-"github_languages.review.vector": {"r": "ac5146cf65ca52a8", "py": "9aa84aef67dd0807", "diff": ["<R error, Python value>"]},
-"github_links.review.empty_paperlist": {"r": "d5c39c58521a3a73", "py": "72af18b9fbfd130c", "diff": ["<root>"]},
-"gitlab_links.review.empty_paperlist": {"r": "d5c39c58521a3a73", "py": "72af18b9fbfd130c", "diff": ["<root>"]},
-"zenodo_file_download.review.all_too_big": {"r": "f86aa4d8b3f7fd3e", "py": "639f37b3fd645a33", "diff": ["<root>"]},
-"zenodo_file_download.review.ties": {"r": "70990fd18f7f6529", "py": "ac10bd94de56ed88", "diff": ["<root>"]},
-"zenodo_links.review.empty_paperlist": {"r": "119b443e932e7843", "py": "278871e4cf80eb46", "diff": ["<root>"]}
-}

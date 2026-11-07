@@ -838,6 +838,18 @@ _STATO_BY_CALL: dict[str, dict[str, str]] = {
     # verified STATO/metacheck term exists yet and which stay untyped nominal
     # labels (the guaranteed stato_type_column() fallback) rather than guessed.
     "kstestresult": {"statistic": "mcSTAT:kolmogorovSmirnovD"},
+    # Not seen in those two samples, but each class has one fixed meaning for
+    # "statistic" in scipy's own documentation, so a Python script that prints
+    # one (reproducibility_check runs Python code and reads its printed output
+    # with the same parser) is typed and can be compared with the paper:
+    # f_oneway() returns the one-way ANOVA F, pearsonr() Pearson's r, and
+    # chi2_contingency() the chi-squared statistic with its degrees of freedom
+    # as "dof". spearmanr() and kendalltau() are deliberately NOT listed: both
+    # return the same SignificanceResult class, so the class does not say which
+    # coefficient "statistic" is.
+    "f_onewayresult": {"statistic": "STATO:0000282"},
+    "pearsonrresult": {"statistic": "STATO:0000280"},
+    "chi2contingencyresult": {"statistic": "STATO:0000030", "dof": "STATO:0000069"},
 }
 
 

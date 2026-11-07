@@ -19,10 +19,10 @@ Conventions of the port:
   the ``get_*`` locators return **0-based** positions (R's ``grep()`` values
   minus one); an out-of-range position is ``NA`` when indexed, as in R, and
   :func:`rtransparent_funding` leaves it out of the statement;
-* R's ``if (!is.na(article[a + 1]))`` fails when several lines match a title
-  pattern (``the condition has length > 1``) and its ``c(a, a + 2)`` can point
-  past the end; here each title line gets its next line and nothing past the
-  end is returned (U103);
+* a title line gets its next line, and nothing past the end is returned
+  (metacheck's ``.title_lines_with_next()`` since 0.4.x; before, R's
+  ``if (!is.na(article[a + 1]))`` failed when several lines matched a title
+  pattern and its ``c(a, a + 2)`` could point past the end, U103);
 * for speed on paper lists, the module wraps the whole text column in an
   :class:`_Article` whose regex matches are computed once for all papers and
   shared by the per-paper views (every locator matches sentence by sentence,
@@ -497,8 +497,7 @@ def _synonyms() -> dict[str, tuple[str, ...]]:
         "C(?i)onflict(|s) of interest(|s) declaration(?-i)",
         "C(?i)onflicting interest(|s)(?-i)",
         "C(?i)onflicting interest(|s) declaration(?-i)",
-        # metacheck leaves out the (?-i), so later alternatives ignore case (U104)
-        "C(?i)onflicting financial intere(?-i)",
+        "C(?i)onflicting financial interest(|s)(?-i)",
         "C(?i)onflicting of interest(|s)(?-i)",
         "C(?i)onflits d'int(?-i)",
         "C(?i)onflictos de Inter(?-i)",
@@ -668,10 +667,11 @@ def _joined(words: Sequence[str], sep: str = _TXT, location: str = "end") -> str
 
 @cache
 def _pattern_where_refs() -> str:
-    # anchored at the start of the sentence: metacheck takes any sentence that
-    # contains "References" followed by the end or a capitalised word (U104)
+    # at the start of the sentence: any sentence with "References" near its end
+    # was taken as the start of the reference list (U104)
     next_sentence = "((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$"
-    return "^" + _encase([x + next_sentence for x in _syn("References")])
+    pats = ["^\\s*" + x.removeprefix("^") + next_sentence for x in _syn("References")]
+    return _encase(pats)
 
 
 def _where_refs_txt(article: Any) -> list[int]:
@@ -710,20 +710,21 @@ def _where_acknows_txt(article: Any) -> list[int]:
 def _title_with_next(art: _Article, a: list[int]) -> list[int]:
     """Each title line and the line after it (skipping one empty line).
 
-    metacheck's ``if (!is.na(article[a + 1]))`` stops when two or more lines
-    match ("the condition has length > 1"), failing the module, and returns
-    ``a + 2`` past the end of the article ("Funding NA", U103).
+    metacheck's ``.title_lines_with_next()`` leaves out a follow-up line past
+    the end of the article. A title followed by a missing (``NA``) line stops
+    the module ("missing value where TRUE/FALSE needed", U252); here that title
+    has no follow-up line.
     """
-    out: list[int] = []
+    n = len(art)
+    out = list(a)
     for i in a:
-        out.append(i)
         nxt = art.get(i + 1)
         if nxt is None:
             continue
         j = i + 2 if len(nxt) == 0 else i + 1
-        if art.get(j) is not None:
+        if j < n:
             out.append(j)
-    return _unique(out)
+    return sorted(set(out))
 
 
 @cache

@@ -134,9 +134,9 @@
               null,
               null,
               "sat_1",
-              "sat_2",
+              "sat_1",
               "sat_3",
-              "sat_4"
+              "sat_1"
             ]
           },
           {
@@ -159,10 +159,10 @@
               "unlabelled",
               "unlabelled",
               "unlabelled",
+              "llm",
+              "llm",
               "labelled",
-              "labelled",
-              "labelled",
-              "labelled"
+              "llm"
             ]
           },
           {
@@ -172,10 +172,10 @@
               null,
               null,
               null,
+              "llm",
+              "llm",
               "rules",
-              "rules",
-              "rules",
-              "rules"
+              "llm"
             ]
           },
           {
@@ -290,8 +290,10 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 1 codebook/README/label source and 8 data columns across 1 file.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"abc_99999999997\", \"abc_99999999998\", \n\"abc_99999999999\", \"id\", \"sat_1\", \"sat_2\", \"sat_3\", \"sat_4\"), \n    Documented = c(\"no\", \"no\", \"no\", \"no\", \"yes\", \"yes\", \"yes\", \n    \"yes\"), Label = c(NA, NA, NA, NA, \"\", \"\", \"Satisfaction with colleagues\", \n    \"\"), \"Codebook Variable\" = c(NA, NA, NA, NA, \"sat_1\", \"sat_2\", \n    \"sat_3\", \"sat_4\"), Source = c(NA, NA, NA, NA, \"codebook.csv\", \n    \"codebook.csv\", \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"labelled\", \"labelled\", \n    \"labelled\", \"labelled\")), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "LLM reviewed ambiguous cases (parsed 0 files, matched 0 columns, merged 0 labels)."
+          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"abc_99999999997\", \"abc_99999999998\", \n\"abc_99999999999\", \"id\", \"sat_1\", \"sat_2\", \"sat_3\", \"sat_4\"), \n    Documented = c(\"no\", \"no\", \"no\", \"no\", \"yes\", \"yes\", \"yes\", \n    \"yes\"), Label = c(NA, NA, NA, NA, \"\", \"\", \"Satisfaction with colleagues\", \n    \"\"), \"Codebook Variable\" = c(NA, NA, NA, NA, \"sat_1\", \"sat_1\", \n    \"sat_3\", \"sat_1\"), Source = c(NA, NA, NA, NA, \"codebook.csv\", \n    \"codebook.csv\", \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n    \"unlabelled\", \"unlabelled\", \"unlabelled\", \"llm\", \"llm\", \"labelled\", \n    \"llm\")), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "#### Documented but Unused Variables\n\n2 documented variables were not matched to any data column.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = c(\"sat_2\", \"sat_4\"), Label = c(\"\", \n\"\"), Source = c(\"codebook.csv\", \"codebook.csv\")), row.names = c(2L, \n4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "LLM model 'mock/cbc' reviewed ambiguous cases (parsed 0 files, matched 3 columns, merged 0 labels)."
         ]
       },
       {
@@ -371,7 +373,7 @@
           {
             "t": "int",
             "v": [
-              0
+              2
             ]
           },
           {
@@ -598,6 +600,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

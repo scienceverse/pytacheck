@@ -83,22 +83,6 @@ differences:
     ref: U206
     reason: "e-mail addresses are not URLs (metacheck lists 'gmail.com' and the parts of the other addresses: 17 rows, 15 here)"
   # module text -----------------------------------------------------------------
-  - module: coi_check_oi
-    input: "*"
-    field: table.header
-    match: values
-    kind: r_bug_fixed
-    ref: U80
-    reason: the table names the section the statement is in (metacheck leaves the header NA)
-  - module: marginal
-    input: "*"
-    field: report
-    match: wording
-    kind: r_bug_fixed
-    ref: U3
-    reason: >-
-      the report cites 'Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)';
-      metacheck's bibentry re-parse writes 'Hartgerink &amp;, J. CH'
   - module: [open_practices, ref_accuracy, ref_consistency]
     input: "*"
     field: report
@@ -108,121 +92,6 @@ differences:
     reason: >-
       typos in report text are corrected: 'recognized' (metacheck: 'reconized'),
       'Such an incoherence' ('incoherent'), 'likely' ('likley')
-  - module: [code_check, data_check]
-    input: [parse-errors, repos/careless]
-    field: report
-    match: wording
-    kind: r_bug_fixed
-    ref: U82
-    reason: >-
-      plurals agree with their counts: 'In 1 code file', '1 distinct respondent was
-      flagged' (metacheck: 'In 1 code files', '1 distinct respondent were flagged')
-  - module: stat_effect_size
-    input: "*"
-    field: summary_text
-    match: wording
-    kind: r_bug_fixed
-    ref: U125
-    reason: the missing-effect-size summary ends with a full stop
-  # references ------------------------------------------------------------------
-  - module: ref_accuracy
-    # the 12 papers without bib_match rows: a light that changes on another paper
-    # is not this fix
-    input: ["demos/to_err_is_human.xml", "formats/*.pdf.tei.xml", "problems/*", "debruine/*",
-            bibr12/PMC4383902.json]
-    field: traffic_light
-    match: values
-    kind: r_bug_fixed
-    ref: U30
-    reason: >-
-      a paper without bib_match rows (every Grobid conversion) gets the light 'fail';
-      metacheck gives 'error', which is not one of its lights
-  - module: ref_consistency
-    input: "*"
-    field: summary_table
-    match: values
-    kind: r_bug_fixed
-    ref: U115
-    reason: >-
-      summary_table always has n_missing and n_extra; metacheck adds each only when a row
-      is flagged, so its columns vary with the paper
-  - module: ref_consistency
-    input: bibr12/full.json
-    field: table
-    match: values
-    kind: r_bug_fixed
-    ref: U115
-    reason: the citation '[1]' whose bib_id is not in the bibliography is reported as missing
-  # repositories ----------------------------------------------------------------
-  - module: code_check
-    input: notebooks
-    field: [summary_text, report, "summary_table.*", "table.*"]
-    match: values
-    kind: r_bug_fixed
-    ref: U86
-    reason: >-
-      a notebook's language is read from its local copy, so the R notebook is checked as R
-      (dplyr, ggplot2 and its missing scores.csv are found); metacheck reads a path relative
-      to the working directory and checks it as Python
-  - module: data_check
-    input: [demo, notebooks, parse-errors]
-    field: [summary_text, report, summary_table, table]
-    match: values
-    kind: r_bug_fixed
-    ref: U98
-    reason: >-
-      with no readable data file data_check still returns its summary text, report,
-      per-paper summary table and column table; metacheck returns only the validation half
-  - module: codebook_check
-    input: [demo, notebooks, parse-errors]
-    field: table
-    match: values
-    kind: r_bug_fixed
-    ref: U98
-    reason: >-
-      codebook_check reports data_check's table, which with no readable data file is the
-      column table (U98) where metacheck's is the validation table
-  - module: data_check
-    input: repos/spreadsheets
-    field: summary_text
-    match: values
-    kind: r_bug_fixed
-    ref: U99
-    reason: the extracted-file count counts the files read (8); metacheck counts unreadable ones (9)
-  - module: repo_check
-    input: [demo, repos/basic]
-    field: [summary_text, summary_table.files_zip, table.file_type]
-    match: values
-    kind: r_bug_fixed
-    ref: U123
-    reason: >-
-      a local file whose extension has one type takes it (archive, image, config), so the
-      local archive counts in files_zip as an online one does; metacheck leaves file_type NA
-  - module: repo_check
-    input: demo
-    field: [report, summary_table.files_n, summary_table.files_code, summary_table.naming_issues, table]
-    match: values
-    kind: r_bug_fixed
-    ref: U214
-    reason: >-
-      data_check, which runs first on the same folder, extracts folder/Archive.zip into the
-      folder (Archive.zip.contents/), so metacheck's repo_check lists its 2 XML files as well
-      (32 files, 4 naming problems); pytacheck extracts a local archive outside the user's folder
-  - module: [all_p_values, stat_p_exact, stat_p_nonsig]
-    input:
-      - formats/preprint.pdf.tei.xml
-      - bibr12/preprint.json
-      - problems/0956797617737129.xml
-      - psychsci/0956797614527830.json
-      - psychsci/0956797614522816.json
-    field: [traffic_light, summary_text, report, summary_table.*, table]
-    match: values
-    kind: r_bug_fixed
-    ref: U204
-    reason: >-
-      'ps < .05', 'ps > .115' and the other 'ps' forms are p-values (8 more in the preprint, 7
-      in the two psychsci papers, 1 in 0956797617737129); metacheck matches only p, p-value
-      and P. Counted as imprecise, they turn stat_p_exact red on 3 of these papers
   # all_urls on bibr's links (D82) -------------------------------------------
   - module: all_urls
     input: "*"
@@ -264,18 +133,4 @@ differences:
       the paper's COI, funding and ethics statements are only in bibr's info table, not in
       the text: the expressions find nothing, so pytacheck uses bibr's statements
 
-floors:
-  - module: stat_p_exact
-    traffic_light: 0.85
-    kind: r_bug_fixed
-    ref: U204
-    reason: >-
-      3 of the 21 papers report several p-values as 'ps < .05': pytacheck counts them as
-      imprecise p-values (red), metacheck does not see them (green)
-  - module: ref_accuracy
-    traffic_light: 0.4
-    kind: r_bug_fixed
-    ref: U30
-    reason: >-
-      12 of the 21 papers have no bib_match rows: pytacheck's light is 'fail' where
-      metacheck's is 'error' (not one of its lights)
+floors: []  # every module agrees with metacheck on 90% of its inputs or more

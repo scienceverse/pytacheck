@@ -22,7 +22,8 @@ COMMENTED = ["# x <- 1", "# y <- 2"]
         ("```{r}", CODE),
         ("```{r, eval=FALSE}", COMMENTED),
         ("```{r, eval = F}", COMMENTED),
-        ("```{r label, purl=FALSE}", []),
+        # no code to purl: the same as a document without chunks, one empty line
+        ("```{r label, purl=FALSE}", [""]),
         ("```{r, error=TRUE}", ["try({", *CODE, "})"]),
         ("```{r, eval=FALSE, eval=TRUE}", CODE),  # a later option wins
         ("```{r, eval=TRUE, eval=FALSE}", COMMENTED),

@@ -1,0 +1,37 @@
+{
+  "id": "write_json.vectors",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "lines",
+      "size"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "{",
+          "  \"a\": [1, 2, 3],",
+          "  \"b\": [\"x\", \"y\"],",
+          "  \"c\": \"single\",",
+          "  \"d\": [",
+          "    \"x\"",
+          "  ],",
+          "  \"e\": [true, false]",
+          "}"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          101
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

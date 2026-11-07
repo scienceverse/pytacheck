@@ -32,16 +32,5 @@
 "stats.review.icase": {"r": "dc5d309982fd632f", "py": "9a2037ef41b8b74b", "diff": ["computed_p[]", "decision_error[]", "df2[]", "error[]", "id[]", "one_tailed_in_txt[]", "raw[]", "reported_p[]", "test_type[]", "test_value[]", "text[]"]},
 "stats.review.inf_df": {"r": "f14520f3e82013c4", "py": "d9e2380c52809ea8", "diff": ["computed_p[]", "decision_error[]", "df1[]", "df2[]", "error[]", "id[]", "raw[]", "reported_p[]", "test_type[]", "test_value[]", "text[]"]},
 "stats.review.pEqualAlphaSig_NA": {"r": "973554b1bb13bd5c", "py": "raises:ValueError", "diff": ["<R value, Python error>"]},
-"stats.review.pZeroError_NA": {"r": "9e09cb21826d0f91", "py": "raises:ValueError", "diff": ["<R value, Python error>"]},
-"stats.review.partial.AllP": {"r": "934c998c0a6a1f25", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.partial.OneTailedTe": {"r": "8dae6d6cd9271ef6", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.partial.alp": {"r": "77dcf48f86037746", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.partial.ambiguous": {"r": "29c6a97fc5d1e97e", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.partial.mess": {"r": "29c6a97fc5d1e97e", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.partial.s": {"r": "d7c1fc840b9044a7", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.partial.st": {"r": "52fbf6961ab34b5e", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.partial.twice": {"r": "29c6a97fc5d1e97e", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.partial.two_prefixes": {"r": "29c6a97fc5d1e97e", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.texts_rebound": {"r": "d47680d10341b9b9", "py": "raises:TypeError", "diff": ["<R value, Python error>"]},
-"stats.review.texts_rebound.none": {"r": "29c6a97fc5d1e97e", "py": "raises:TypeError", "diff": ["<R value, Python error>"]}
+"stats.review.pZeroError_NA": {"r": "9e09cb21826d0f91", "py": "raises:ValueError", "diff": ["<R value, Python error>"]}
 }

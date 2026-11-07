@@ -1,0 +1,256 @@
+{
+  "id": "decode_missing.strings",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-99"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-98"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-99"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "refused"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-98"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "not applicable"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-99"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-98"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-99"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "x"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-98"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "code",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

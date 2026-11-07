@@ -1,0 +1,40 @@
+{
+  "id": "sheet_target.other_target",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "data/study-x.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "documentation/x_description-Sheet2_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x_data.csv_description-S_data.csv"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

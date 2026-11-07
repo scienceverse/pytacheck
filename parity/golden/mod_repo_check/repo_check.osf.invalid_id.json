@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -111,11 +112,13 @@
       {
         "t": "chr",
         "v": [
-          "Double-check permissions on repositories with no detectable files.",
+          "#### Repositories that could not be checked",
+          "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
+          "- https://osf.io/abc: not a valid OSF link",
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://osf.io/abc' target='_blank'>osf.io/abc<\/a>\", \n    Platform = \"osf\", Error = \"ℹ In argument: `!osf_type %in% c(\\\"nodes\\\", \\\"files\\\", \\\"private\\\")`.<br>Caused by error in `match()`:<br>! 'match' requires vector arguments\", \n    \"All Files\" = 0L, \"Data Files\" = 0L, \"Code Files\" = 0L, READMEs = 0L, \n    Archives = 0L), row.names = c(NA, -1L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://osf.io/abc' target='_blank'>osf.io/abc<\/a>\", \n    Platform = \"osf\", Error = \"not a valid OSF link\", \"All Files\" = 0L, \n    \"Data Files\" = 0L, \"Code Files\" = 0L, READMEs = 0L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "",
-          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document."
+          "README files were found in all repositories."
         ]
       },
       {
@@ -127,7 +130,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 1 empty repository.\n-  We found 0 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs."
+          "\n-  We could not check 1 repository: https://osf.io/abc (not a valid OSF link).\n-  We found 0 files in 1 repository.\n-  We found 0 README files and 0 repositories without READMEs."
         ]
       },
       {
@@ -136,6 +139,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -150,6 +154,12 @@
             "t": "chr",
             "v": [
               "p_abc"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
             ]
           },
           {
@@ -232,7 +242,7 @@
           {
             "t": "chr",
             "v": [
-              "ℹ In argument: `!osf_type %in% c(\"nodes\", \"files\", \"private\")`.\nCaused by error in `match()`:\n! 'match' requires vector arguments"
+              "not a valid OSF link"
             ]
           }
         ]
@@ -303,6 +313,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -310,6 +348,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

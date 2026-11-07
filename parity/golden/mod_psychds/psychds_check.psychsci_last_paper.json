@@ -47,7 +47,8 @@
           "status",
           "convert",
           "original_target",
-          "referenced_by"
+          "referenced_by",
+          "paper_id"
         ],
         "v": [
           {
@@ -128,32 +129,47 @@
                 "t": "null"
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
           }
         ]
       },
       {
         "t": "chr",
         "v": [
+          "#### Paper 0956797613520608",
+          "We found no repository files to check for Psych-DS compliance.",
+          "#### Paper 0956797614522816",
+          "We found no repository files to check for Psych-DS compliance.",
+          "#### Paper 0956797614527830",
+          "We found no repository files to check for Psych-DS compliance.",
+          "#### Paper to_err_is_human",
           "This module checks the repository against the Psych-DS dataset standard. We examined 3 files across 1 study group.",
-          "#### Compliance Checklist",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"present\", \n\"present\", \"present\", \"missing\", \"missing\", \"missing\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
-          "#### Target Psych-DS Structure",
+          "##### Compliance Checklist",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"present\", \n\"present\", \"missing\", \"missing\", \"missing\", \"missing\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "##### Target Psych-DS Structure",
           "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
           "<pre style=\"line-height:1.4\">\n├── analysis/\n│   └── run.py <span style=\"color:#b9770e\">(move from code/run.py)<\/span>\n├── data/\n│   └── study-raw_data.csv <span style=\"color:#b9770e\">(move from data/raw.csv)<\/span>\n├── documentation/\n│   └── dataset_description.json <span style=\"color:#b9770e\">(move from dataset_description.json)<\/span>\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n└── <span style=\"color:#c0392b\">README  ← missing<\/span>\n<\/pre>",
-          "#### Suggestions",
-          "- **Move** `data/raw.csv` → `data/study-raw_data.csv`.\n- **Move** `dataset_description.json` → `documentation/dataset_description.json`.\n- **Move** `code/run.py` → `analysis/run.py`.\n- **Document** the 2 of 2 data columns without a codebook description (see codebook_check).\n- **Add** README — A README at the repository root (recommended).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended).\n- **Add** variable descriptions — Codebook descriptions for variables improve reuse (recommended; see codebook_check)."
+          "##### Suggestions",
+          "- **Add** describable variables (variableMeasured) — Data files must have extractable, typed columns to populate variableMeasured (required).\n- **Move** `data/raw.csv` → `data/study-raw_data.csv`.\n- **Move** `dataset_description.json` → `documentation/dataset_description.json`.\n- **Move** `code/run.py` → `analysis/run.py`.\n- **Add** README — A README at the repository root (recommended).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended).\n- **Add** variable descriptions — Codebook descriptions for variables improve reuse (recommended; see codebook_check)."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "green"
+          "info"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "This repository already contains the files required for a Psych-DS dataset."
+          "Of 4 papers, 0 already contain the files required for a Psych-DS dataset, 0 could be converted, 1 could not be converted yet, and 3 had no repository files to check."
         ]
       },
       {
@@ -178,48 +194,48 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
-              3,
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
               0,
               0,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
               0,
-              0
+              3
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
               0,
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              3,
-              0,
-              0,
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              3,
-              0,
-              0,
-              0
+              3
             ]
           }
         ]
@@ -243,6 +259,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

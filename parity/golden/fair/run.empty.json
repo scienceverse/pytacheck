@@ -1,0 +1,803 @@
+{
+  "id": "run.empty",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "files",
+      "md5",
+      "description",
+      "study_descriptions",
+      "rocrate",
+      "texts",
+      "scripts",
+      "result",
+      "filelog"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "CHANGES.md",
+          "README.md",
+          "logs/empty.<results>",
+          "logs/log.md",
+          "ro-crate-metadata.json"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "list",
+        "names": [
+          "@context",
+          "@graph"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://w3id.org/ro/crate/1.3/context"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "metacheck",
+                  "ddi",
+                  "populationOfConcern",
+                  "targetSampleSize",
+                  "obtainedDate",
+                  "eventType",
+                  "dataCollectionMethodology",
+                  "purpose"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://scienceverse.org/schema/metacheck/terms/"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://ddialliance.org/Specification/DDI-Lifecycle/3.3/"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ddi:PopulationOfConcern"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ddi:OverallTargetSampleSize"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ddi:DataCollectionDate"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ddi:EventType"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ddi:DataCollectionMethodology"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ddi:Purpose"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "@id",
+                  "@type",
+                  "conformsTo",
+                  "about"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ro-crate-metadata.json"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "CreativeWork"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "@id"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://w3id.org/ro/crate/1.3"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "@id"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "./"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@id",
+                  "@type",
+                  "name",
+                  "description",
+                  "author",
+                  "license",
+                  "dateCreated",
+                  "hasPart",
+                  "about"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "./"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Dataset"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "empty"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "A copy of these research files, reorganised by metacheck."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "unknown"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "unknown"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<date>"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "@id"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "logs/empty.<results>"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "@id"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "logs/log.md"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "@id"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "CHANGES.md"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "@id"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "README.md"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "@id"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "#study-design"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "@id"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "#lifecycle-collection"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "@id"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "#lifecycle-processing"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@id",
+                  "@type",
+                  "name",
+                  "encodingFormat"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "logs/empty.<results>"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "File"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "empty.<results>"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<results>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@id",
+                  "@type",
+                  "name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "logs/log.md"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "File"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "log.md"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@id",
+                  "@type",
+                  "name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "CHANGES.md"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "File"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "CHANGES.md"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@id",
+                  "@type",
+                  "name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "README.md"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "File"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "README.md"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@id",
+                  "@type",
+                  "name",
+                  "dataCollectionMethodology"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "#study-design"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ResearchProject"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Study design"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "unknown"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@id",
+                  "@type",
+                  "name",
+                  "eventType",
+                  "obtainedDate"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "#lifecycle-collection"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "CreateAction"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Data collection"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data collection"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "unknown"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@id",
+                  "@type",
+                  "name",
+                  "eventType",
+                  "description"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "#lifecycle-processing"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "CreateAction"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Data processing"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data processing"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "unknown"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "CHANGES.md",
+          "README.md"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<date> - Files reorganised by [metacheck](https://www.scienceverse.org/metacheck/): every file was moved to its place in the Psych-DS layout."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "# empty",
+              "",
+              "This folder is a copy of the research files, reorganised by [metacheck](https://www.scienceverse.org/metacheck/) on <date>. `ro-crate-metadata.json` holds the same information in machine-readable form, and `CHANGES.md` lists what metacheck changed.",
+              "",
+              "## Authors",
+              "",
+              "Not found.",
+              "",
+              "Contact: unknown",
+              "",
+              "## Licence",
+              "",
+              "unknown",
+              "",
+              "## Files",
+              "",
+              "The files follow the [Psych-DS](https://psych-ds.github.io/) layout: data in `data/`, named `study-<name>_data.csv`, analysis code in `analysis/`, materials in `materials/`, documentation in `documentation/`. Each data folder's `dataset_description.json` describes its variables.",
+              "",
+              "```",
+              "CHANGES.md",
+              "logs/",
+              "  empty.<results>",
+              "  log.md",
+              "README.md",
+              "ro-crate-metadata.json",
+              "```",
+              "",
+              "## File formats",
+              "",
+              "No files.",
+              "",
+              "## Still to be filled in",
+              "",
+              "metacheck could not find the following:",
+              "",
+              "- The title",
+              "- The authors",
+              "- The paper that uses these files",
+              "- The licence under which the data may be reused",
+              "- A contact person and email address",
+              "- When the data were collected",
+              "- How the data were collected",
+              "- How the data were processed into the shared data"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "list",
+        "names": [
+          "n_files_copied",
+          "n_studies",
+          "empty_plan",
+          "skipped",
+          "copy_failed",
+          "renamed",
+          "identical",
+          "scripts",
+          "plan",
+          "existed"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "planned",
+              "written"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "path",
+              "same_as"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "target_path",
+              "paths_changed",
+              "setwd_removed",
+              "setwd_paths",
+              "libraries_added"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

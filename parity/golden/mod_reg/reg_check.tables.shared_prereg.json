@@ -9,7 +9,7 @@
     "v": [
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 3,
         "names": [
           "dimension",
           "judgement",
@@ -21,18 +21,12 @@
             "v": [
               "Sample size",
               "Hypotheses",
-              "Exclusion criteria",
-              "Sample size",
-              "Hypotheses",
               "Exclusion criteria"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "deviation",
-              "consistent",
-              "unclear",
               "deviation",
               "consistent",
               "unclear"
@@ -43,9 +37,6 @@
             "v": [
               "Paper sample (120) exceeds preregistered sample (100).",
               "Consistent.",
-              "Cannot be assessed from the paper.",
-              "Paper sample (120) exceeds preregistered sample (100).",
-              "Consistent.",
               "Cannot be assessed from the paper."
             ]
           }
@@ -53,7 +44,7 @@
       },
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 3,
         "names": [
           "dimension",
           "paper_summary",
@@ -67,18 +58,12 @@
             "v": [
               "Sample size",
               "Hypotheses",
-              "Exclusion criteria",
-              "Sample size",
-              "Hypotheses",
               "Exclusion criteria"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "120 participants",
-              "H1: A > B",
-              "not described",
               "120 participants",
               "H1: A > B",
               "not described"
@@ -89,18 +74,12 @@
             "v": [
               "100 participants",
               "H1: A > B",
-              "exclude RT < 200 ms",
-              "100 participants",
-              "H1: A > B",
               "exclude RT < 200 ms"
             ]
           },
           {
             "t": "chr",
             "v": [
-              " quote",
-              " quote",
-              " quote",
               " quote",
               " quote",
               " quote"
@@ -111,7 +90,92 @@
             "v": [
               " quote",
               " quote",
+              " quote"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "judgement",
+          "explanation"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deviation",
+              "consistent",
+              "unclear"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Paper sample (120) exceeds preregistered sample (100).",
+              "Consistent.",
+              "Cannot be assessed from the paper."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "dimension",
+          "paper_summary",
+          "prereg_summary",
+          "paper_quotes",
+          "prereg_quotes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "120 participants",
+              "H1: A > B",
+              "not described"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "100 participants",
+              "H1: A > B",
+              "exclude RT < 200 ms"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               " quote",
+              " quote",
+              " quote"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               " quote",
               " quote",
               " quote"
@@ -209,6 +273,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

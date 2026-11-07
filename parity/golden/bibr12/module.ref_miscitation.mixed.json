@@ -2,7 +2,9 @@
   "id": "module.ref_miscitation.mixed",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "There was 1 warning in `dplyr::summarise()`.\nℹ In argument: `bib_id = min(bib_id)`.\nCaused by warning in `min()`:\n! no non-missing arguments to min; returning Inf"
+  ],
   "value": {
     "t": "module_output",
     "names": [
@@ -81,7 +83,7 @@
       {
         "t": "chr",
         "v": [
-          "green"
+          "na"
         ]
       },
       {
@@ -109,6 +111,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

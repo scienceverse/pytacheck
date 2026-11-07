@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 2,
         "names": [
           "paper_id",
           "bib_id",
@@ -49,31 +49,36 @@
           {
             "t": "chr",
             "v": [
+              "to_err_is_human",
               "to_err_is_human"
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              0,
+              2
             ]
           },
           {
             "t": "chr",
             "v": [
-              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586."
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
+              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              null
+              null,
+              "(Gino and Wiltermuth 2014)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional."
             ]
           }
         ]
@@ -81,8 +86,8 @@
       {
         "t": "chr",
         "v": [
-          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = 0L, type = \"extra\", contents = NA_character_, \n    reference = \"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "This module relies on Grobid correctly parsing the references. There are likely to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(0L, 2L), type = c(\"extra\", \"missing\"\n), contents = c(NA, \"(Gino and Wiltermuth 2014)\"), reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -104,6 +109,7 @@
           "paper_id",
           "n_bib",
           "n_xrefs",
+          "n_missing",
           "n_extra"
         ],
         "v": [
@@ -111,6 +117,12 @@
             "t": "chr",
             "v": [
               "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
             ]
           },
           {
@@ -141,6 +153,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

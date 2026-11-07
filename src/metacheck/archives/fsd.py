@@ -70,11 +70,11 @@ def fsd_links(paper: Any) -> pd.DataFrame:
     duplicate rows dropped.
     """
     from metacheck._r import grepl
+    from metacheck.archives import _paper_urls
     from metacheck.archives.dataone import _scan_links
     from metacheck.archives.dataverse import _collect_links
-    from metacheck.papers.tables import paper_table
 
-    urls = paper_table(paper, "url")
+    urls = _paper_urls(paper)
     if "href" in urls.columns:
         keep = [bool(v) for v in grepl(_FSD_URL_RX, urls["href"], ignore_case=True, perl=True)]
         found_href = urls[pd.Series(keep, index=urls.index, dtype=bool)]

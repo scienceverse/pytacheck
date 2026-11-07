@@ -103,14 +103,12 @@ def flora_originals(by: int = 1) -> list[str]:
 def rw_sample(by: int = 100) -> list[str]:
     """One RetractionWatch DOI per notice type plus every *by*-th DOI.
 
-    Sampled from the stored table, blank DOIs included, as R's ``rw()`` has
-    them: :func:`~metacheck.db.retractionwatch.retractionwatch` leaves them out
-    (U15), which would shift every *by*-th row and give R and Python different
-    papers.
+    Sampled from ``retractionwatch()``, which leaves out blank DOIs and trims the
+    rest (U15), as R's ``rw()`` does since 0.4.x.
     """
-    from metacheck.db.databases import load_database
+    from metacheck.db.retractionwatch import retractionwatch
 
-    d = load_database("retractionwatch")
+    d = retractionwatch()
     first = d.loc[~d["retractionwatch"].duplicated().to_numpy(dtype=bool), "doi"].tolist()
     return list(dict.fromkeys(first + d["doi"].iloc[::by].tolist()))
 

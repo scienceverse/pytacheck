@@ -3,14 +3,15 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "Too many requests"
+    "API rate limit exhausted: OSF's limit for requests without a key was reached. Please provide your own OSF key to continue (you can make one at https://osf.io/settings/tokens)"
   ],
   "value": {
     "t": "df",
     "nrow": 1,
     "names": [
       "osf_id",
-      "osf_type"
+      "osf_type",
+      "error"
     ],
     "v": [
       {
@@ -24,9 +25,15 @@
         "v": [
           "too many requests"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "API rate limit exhausted: OSF's limit for requests without a key was reached. Please provide your own OSF key to continue (you can make one at https://osf.io/settings/tokens)"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

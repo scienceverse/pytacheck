@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 3,
+    "nrow": 4,
     "names": [
       "folder",
       "dataverse_host",
@@ -27,12 +27,14 @@
         "v": [
           "10.7910_DVN_ABC123",
           "10.7910_DVN_ABC123",
+          "10.7910_DVN_ABC123",
           "10.7910_DVN_ABC123"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "dataverse.harvard.edu",
           "dataverse.harvard.edu",
           "dataverse.harvard.edu",
           "dataverse.harvard.edu"
@@ -43,6 +45,7 @@
         "v": [
           "10.7910/DVN/ABC123",
           "10.7910/DVN/ABC123",
+          "10.7910/DVN/ABC123",
           "10.7910/DVN/ABC123"
         ]
       },
@@ -51,7 +54,8 @@
         "v": [
           "999",
           "1000",
-          "1001"
+          "1001",
+          "1002"
         ]
       },
       {
@@ -59,7 +63,8 @@
         "v": [
           "data.csv",
           "codebook.pdf",
-          "fallback_name.txt"
+          "fallback_name.txt",
+          "huge.dat"
         ]
       },
       {
@@ -67,7 +72,8 @@
         "v": [
           "data.csv",
           "codebook.pdf",
-          "fallback_name.txt"
+          "fallback_name.txt",
+          null
         ]
       },
       {
@@ -75,7 +81,8 @@
         "v": [
           8,
           11,
-          5
+          5,
+          11534336
         ]
       },
       {
@@ -83,7 +90,8 @@
         "v": [
           8,
           11,
-          5
+          5,
+          null
         ]
       },
       {
@@ -91,6 +99,7 @@
         "v": [
           "344fd2323dd33d5c058b7cf27de029e8",
           "abc",
+          null,
           null
         ]
       },
@@ -98,6 +107,7 @@
         "t": "lgl",
         "v": [
           true,
+          null,
           null,
           null
         ]
@@ -107,7 +117,8 @@
         "v": [
           "https://dataverse.harvard.edu/api/access/datafile/999",
           "https://dataverse.harvard.edu/api/access/datafile/1000",
-          "https://dataverse.harvard.edu/api/access/datafile/1001"
+          "https://dataverse.harvard.edu/api/access/datafile/1001",
+          "https://dataverse.harvard.edu/api/access/datafile/1002"
         ]
       },
       {
@@ -115,7 +126,8 @@
         "v": [
           true,
           true,
-          true
+          true,
+          false
         ]
       },
       {
@@ -123,11 +135,12 @@
         "v": [
           null,
           null,
+          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

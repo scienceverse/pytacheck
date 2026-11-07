@@ -15,7 +15,14 @@
       "RB_license",
       "RB_public",
       "RB_authors",
-      "RB_abstract"
+      "RB_abstract",
+      "RB_title",
+      "RB_status",
+      "RB_paper_doi",
+      "RB_zenodo_doi",
+      "RB_paper_authors",
+      "RB_license_url",
+      "RB_last_modified"
     ],
     "v": [
       {
@@ -201,19 +208,61 @@
       {
         "t": "chr",
         "v": [
-          "All content posted to ResearchBox is under aCC By 4.0 License(all use is allowed as long as authorship of the content is attributed). When using content from ResearchBox please cite the original work, and provide a link to the URL for this box (https://researchbox.org/1150)."
+          "CC-BY-4.0"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "October 07, 2024"
+          "2024-10-07"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Zhiying Ren (zhiying.ren@duke.edu)\nRebecca Schaumberg (rlschaum@wharton.upenn.edu)\n\n\n$('.file_number').css('display','none');$('.file_name').css('display','none');\n\n\nSmart Features | Report a bug | Make a suggestion | Terms of Use | Privacy Policy | About"
+          "Zhiying Ren (zhiying.ren@duke.edu)\nRebecca Schaumberg (rlschaum@wharton.upenn.edu)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
         ]
       },
       {
@@ -224,6 +273,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -45,7 +45,7 @@
       },
       {
         "t": "df",
-        "nrow": 3,
+        "nrow": 2,
         "names": [
           "File",
           "Status",
@@ -56,7 +56,6 @@
             "t": "chr",
             "v": [
               "raw_data.csv",
-              "listed.csv",
               "resuls.csv"
             ]
           },
@@ -64,7 +63,6 @@
             "t": "chr",
             "v": [
               "absent",
-              "in_repo_not_downloaded",
               "absent"
             ]
           },
@@ -72,7 +70,6 @@
             "t": "chr",
             "v": [
               "referenced file is not present in the repository",
-              "referenced file is listed in the repository but was not downloaded",
               "referenced file is not present in the repository, but a similarly-named file exists: results.csv"
             ]
           }
@@ -80,6 +77,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

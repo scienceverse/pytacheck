@@ -1,0 +1,128 @@
+{
+  "id": "missing_scheme.pooled",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "@id",
+          "@type",
+          "name",
+          "description",
+          "hasDefinedTerm"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "#missingvalues"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "DefinedTermSet"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Missing-value scheme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Codes used across this paper's data to denote a missing response, pooled from every variable's declared missing-value codes."
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "@type",
+                  "termCode"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "DefinedTerm"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-99"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@type",
+                  "termCode"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "DefinedTerm"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-98"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "@type",
+                  "termCode",
+                  "name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "DefinedTerm"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-99"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "refused"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

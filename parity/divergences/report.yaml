@@ -1,57 +1,11 @@
-# Cases that differ from R at the pin (f1062b4) because pytacheck follows metacheck's dev
-# branch (f1062b4..d52b3fd) in the report lane: the report layout and report types (PR #463,
-# D115), psychds_file_plan() (029bf63, D116), codebook_check's experimental
-# scale/task identification behind extract_scales (029bf63, 7208868; D117) and
-# code_check's summary (7208868, D118). Format (see parity/cases.py): "<area>/<id>":
-# {kind, ref, reason[, r_text]}; the refs are placeholders, renumbered into D-entries of
-# docs/UPSTREAM_ISSUES.md when the port is merged.
-
-
-# D115 -------------------------------------------------------------------------
-"report/module_report.marginal.demo": &dx_report_2_6
-  kind: "deliberate"
-  ref: "D115"
-  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual; r_text also corrects U3 (the guidance cites \"Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)\" (metacheck: \"Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH\"))"
-  r_text: [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]
-"report/module_report.marginal.header0": *dx_report_2_6
-"report/module_report.marginal.header4": *dx_report_2_6
-"report/module_report.marginal.header_null": *dx_report_2_6
-"report/report.qmd.args": &dx_report_2_8
-  kind: deliberate
-  ref: D115
-  reason: "metacheck dev's report layout (PR #463): the summary lists each module as a linked row (<ul class=\"mc-summary\">), a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual, and the stylesheet changed; also U3: the guidance cites \"Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)\" (metacheck: \"Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH\")"
-"report/report.qmd.demo": *dx_report_2_8
-"report/report_qmd.demo.marginal": *dx_report_2_8
-"report_review/report_qmd.demo.real_modules": *dx_report_2_8
-"report_review/report_qmd.title_doi_fail_summary": *dx_report_2_8
-"report/report_qmd.test_paper.na_and_fail_only": &dx_report_2_9
-  kind: deliberate
-  ref: D115
-  reason: "metacheck dev's report layout (PR #463): the summary lists each module as a linked row (<ul class=\"mc-summary\">), a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual, and the stylesheet changed"
-"report_review/report.paperlist.bad_file": *dx_report_2_9
-"report_review/report.paperlist.length_one": *dx_report_2_9
-"report_review/report_qmd.na_title_blank_doi": *dx_report_2_9
-
-# D116 -------------------------------------------------------------------------
-
-# D117 -------------------------------------------------------------------------
-
-# D118 -------------------------------------------------------------------------
-"report/report_repository.default_modules":
-  kind: deliberate
-  ref: D118
-  reason: "code_check's summary names the files without comments and the files that load libraries in several places, and lists setwd()/install.packages() lines only when found (metacheck 7208868); R also says the study-group step got no answer for the files it sent to a model with LLM use off (U241)"
-"mod_code/code_check.mixed": &dx_report_5_14
-  kind: deliberate
-  ref: D118
-  reason: "code_check's summary names the files without comments and the files that load libraries in several places, and lists setwd()/install.packages() lines only when found (metacheck 7208868); also U82: one file with libraries at several places is \"In 1 code file\" (metacheck: \"In 1 code files\")"
-"mod_code/code_check.paperlist": *dx_report_5_14
-"mod_code/code_check.parse_errors": *dx_report_5_14
-"mod_code/code_check.psychsci": *dx_report_5_14
-"mod_code_review/code_check.gaps": *dx_report_5_14
-"mod_code_review/code_check.na_pid": *dx_report_5_14
-"mod_code_review/local_path.mixed_local_only": *dx_report_5_14
-"mod_code_review/local_path.parse_errors": *dx_report_5_14
+# Report cases (areas report and report_review) that differ from R at the pin (4a61888,
+# metacheck 0.4.3.7). Format (see parity/cases.py): "<area>/<id>": {kind, ref, reason[, r_text]},
+# the refs are D- and U-entries of docs/UPSTREAM_ISSUES.md.
+#
+# The report layout, the report types (checklist included) and the 0.4 fixes of U3, U7, U128 and
+# U129 are not differences any more: no case carries a mark for them. A module's own difference
+# (marginal's wording, code_check, data_check, repo_check, codebook_check) is not marked here: it
+# shows in the report cases that run the module until that module's lane settles it.
 
 # D131: a module that is not one of metacheck's own (the report tests' own modules) -------
 # metacheck 0.3.3.1+ links every module to a chapter of the online manual, a made-up
@@ -71,3 +25,37 @@
 "report_review/module_report.header_values": *dx_report_130
 "report_review/module_report.length_threshold": *dx_report_130
 "report_review/module_report.two_validations_four_authors": *dx_report_130
+"report/module_report.null_summary": *dx_report_130
+"report/module_report.bad_traffic_light": *dx_report_130
+"report/report_repository.stand_in": *dx_report_130
+"report_review/report_qmd.zero_row_info": *dx_report_130
+"report_review/report_qmd.demo.real_modules": *dx_report_130
+"report_review/report_qmd.no_doi_column": *dx_report_130
+"report_review/report_qmd.vector_summary": *dx_report_130
+# a module without details has no "How It Works" callout at all here: R's holds the link alone
+"report/module_report.no_details": &dx_report_131_alone
+  kind: deliberate
+  ref: D131
+  reason: "a module that is not one of metacheck's own has no chapter in the online manual, so a module with no details has no How It Works callout (metacheck writes a callout holding only the link to a chapter that does not exist)"
+  r_text: [["\\n\\n::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\nRead more in the \\[metacheck manual\\]\\(https://www\\.scienceverse\\.org/metacheck_book/chapters/mod-tests/[^)]*\\)\\.\\n\\n:::\\n", "", "regex"]]
+# reports that hold both kinds of module
+"report/report.qmd.demo": *dx_report_130
+"report/report.qmd.args": *dx_report_130
+"report/report_qmd.demo.all_sections": &dx_report_131_both
+  kind: deliberate
+  ref: D131
+  reason: "a module that is not one of metacheck's own has no chapter in the online manual, so no \"Read more\" link and, for a module with no details, no How It Works callout (metacheck links them to chapters that do not exist)"
+  r_text: [["\\n::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\nRead more in the \\[metacheck manual\\]\\(https://www\\.scienceverse\\.org/metacheck_book/chapters/mod-tests/[^)]*\\)\\.\\n\\n:::\\n", "", "regex"], ["Read more in the \\[metacheck manual\\]\\(https://www\\.scienceverse\\.org/metacheck_book/chapters/mod-tests/[^)]*\\)\\.\\n\\n", "", "regex"]]
+
+"report_review/report_qmd.na_title_blank_doi": *dx_report_131_both
+
+# U243, U244: metacheck bugs pytacheck fixes -------------------------------------------------
+"report_review/report_qmd.title_doi_fail_summary":
+  kind: r_bug_fixed
+  ref: U244
+  reason: "a title with %s keeps it (R fills the header's placeholders one after the other, so the title's %s gets the version and the DOI line is left as %s)"
+  r_text: [["100% title\\ with 0.4.3.7\"", "100% title\\ with %s\""], ["\n%s <!-- doi, if exists -->", "\nDOI: [10.1234/abc](https://doi.org/10.1234/abc) <!-- doi, if exists -->"]]
+"report_review/validate.duplicate_ids":
+  kind: r_bug_fixed
+  ref: U243
+  reason: "validate() makes one paper per distinct paper_id, so ids 1, 1, 2 give 4 rows joined back to gt (R makes a paper per row, metacheck renames the second 1 to 1~2 (U208) and the module's rows for it join to nothing: 6 rows)"

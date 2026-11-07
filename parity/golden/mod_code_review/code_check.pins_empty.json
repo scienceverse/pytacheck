@@ -193,13 +193,13 @@
           {
             "t": "int",
             "v": [
-              2
+              3
             ]
           },
           {
             "t": "chr",
             "v": [
-              "c, checkpoint"
+              "a, b, checkpoint"
             ]
           },
           {
@@ -244,7 +244,7 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = NA_character_, \"% Comments\" = \"25%\", \n    \"Missing Files\" = 0L, \"Absolute Paths\" = 0L, \"Code Between Libraries\" = NA_integer_), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = \"analysis.R\", \"% Comments\" = \"25%\", \n    \"Missing Files\" = 0L, \"Absolute Paths\" = 0L, \"Code Between Libraries\" = NA_integer_), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",
@@ -257,14 +257,14 @@
           "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
           "",
           "#### Package Installation (install.packages)",
-          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, or a list of them: an `renv.lock`/`DESCRIPTION` for R, a `requirements.txt` for Python). No `install.packages()` calls were found in any of the code files.",
           "",
           "#### Libraries / Imports",
           "Best programming practice is to load all required libraries/imports in one block near the top of the code. In all code files, libraries/imports were loaded in one block.",
           "#### Packages / Dependencies",
-          "The code files load 2 distinct packages/libraries: c, checkpoint. These are the names found in the source (no version information is available from static analysis).",
+          "The code files load 3 distinct packages/libraries: a, b, checkpoint. These are the names found in the source (no version information is available from static analysis).",
           "#### Reproducible Environment",
-          "The repository pins its analysis environment via an `renv.lock` file, a `groundhog` date-pin, a `checkpoint` date-pin. Declared R version: 4.4.0.",
+          "The repository pins its analysis environment via an `renv.lock` file, a `groundhog` date-pin, a `checkpoint` date-pin. Declared R version: 4.4.0. Dates the packages are pinned to: 2023-01-01, 2023-02-01.",
           "",
           "#### Parsable code",
           "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.",
@@ -357,7 +357,7 @@
           {
             "t": "int",
             "v": [
-              2
+              3
             ]
           },
           {
@@ -386,6 +386,10 @@
           "renv_files",
           "renv_packages",
           "sessioninfo_files",
+          "session_packages",
+          "pin_dates",
+          "python_files",
+          "python_pinned",
           "file_location"
         ],
         "v": [
@@ -422,9 +426,14 @@
               "file_name",
               "package",
               "version",
-              "source"
+              "source",
+              "remote"
             ],
             "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
               {
                 "t": "chr",
                 "v": []
@@ -448,6 +457,73 @@
             "v": []
           },
           {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source",
+              "remote"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "mechanism",
+              "date"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "groundhog",
+                  "checkpoint"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2023-01-01",
+                  "2023-02-01"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
             "t": "chr",
             "v": [
               "tests/mod_code/fixtures/review/pins/sub/renv.lock"
@@ -460,6 +536,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -10,7 +10,7 @@ metacheck caches at a temporary directory and switches courtesy delays off.
 Case code receives a namespace ``m`` with the archive modules (``m.dataone``,
 ``m.dspace7``, ``m.fourtu``, ``m.psycharchives``, ``m.researchbox``,
 ``m.reshare``, ``m.mendeley``, ``m.fsd``), ``m.pc`` (pytacheck), ``m.pd``
-(pandas), :func:`tmp`, :func:`offline` and :func:`repo_cache`.
+(pandas), :func:`tmp`, :func:`offline`, :func:`repo_cache` and :func:`with_options`.
 """
 
 from __future__ import annotations
@@ -55,6 +55,14 @@ def tmp(fn: Callable[[str], Any]) -> Any:
 def offline(fn: Callable[[], Any]) -> Any:
     """``fn()`` with ``online()`` reporting every host as unreachable."""
     with online_and_no_sleep(False):
+        return fn()
+
+
+def with_options(options: dict[str, Any], fn: Callable[[], Any]) -> Any:
+    """``fn()`` with the metacheck options *options* set (R: ``options()`` with ``on.exit()``)."""
+    from metacheck.utils import local_options
+
+    with local_options(options):
         return fn()
 
 
@@ -104,6 +112,7 @@ def _namespace() -> types.SimpleNamespace:
         tmp=tmp,
         offline=offline,
         repo_cache=repo_cache,
+        with_options=with_options,
     )
 
 

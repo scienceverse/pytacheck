@@ -1,0 +1,100 @@
+{
+  "id": "credit_slug.roles",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "writing-review-editing"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conceptualization"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data-curation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "writing-original-draft"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "software"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "formal-analysis"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "funding-acquisition"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "project-administration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "writing-review-editing"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

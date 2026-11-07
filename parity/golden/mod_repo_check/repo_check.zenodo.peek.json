@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -54,6 +55,7 @@
           "file_type",
           "archive_url",
           "archive_member",
+          "archive_format",
           "archive_size",
           "data_type",
           "doc_role",
@@ -192,6 +194,19 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "zip",
+              "zip",
+              "zip"
+            ]
+          },
+          {
             "t": "dbl",
             "v": [
               null,
@@ -266,7 +281,7 @@
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://zenodo.org/records/5559001\", \n\"https://zenodo.org/records/5559001\", \"https://zenodo.org/records/5559001\", \n\"https://zenodo.org/records/5559001\", \"https://zenodo.org/records/5559001\", \n\"https://zenodo.org/records/5559001\", \"https://zenodo.org/records/5559001\", \n\"https://zenodo.org/records/5559001\"), File = c(\"<a href='https://mock.example.org/zips/notzip.zip' target='_blank'>notzip.zip<\/a>\", \n\"<a href='https://zenodo.org/api/records/5559001/files/config.json/content' target='_blank'>config.json<\/a>\", \n\"<a href='https://zenodo.org/api/records/5559001/files/results.tar.gz/content' target='_blank'>results.tar.gz<\/a>\", \n\"<a href='https://zenodo.org/api/records/5559001/files/session1.edat2/content' target='_blank'>session1.edat2<\/a>\", \n\"<a href='https://zenodo.org/api/records/5559001/files/analysis.R/content' target='_blank'>analysis.R<\/a>\", \n\"a.png\", \"b.jpg\", \"readme.txt\"), Size = c(\"64 B\", \"120 B\", \"4.1 kB\", \n\"1 kB\", \"300 B\", \"72 B\", \"72 B\", \"8 B\"), Type = c(\"archive\", \n\"data\", \"archive\", NA, \"code\", \"image\", \"image\", \"text\")), row.names = c(NA, \n-8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
-          "#### Archive Files\n\nThe following files are not ZIP archives: results.tar.gz. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, or `.tar.gz`.",
+          "#### Archive Files\n\nThe following files are not ZIP archives: results.tar.gz. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, `.tar` or `.tar.gz`.",
           "#### Proprietary E-Prime Files\n\nThe repository contains 1 E-Prime file (session1.edat2). These are proprietary **binary** formats that only the E-Prime software can open, so metacheck does not download or read them and other researchers cannot reuse them directly. 1 of them has no matching plain-text export. Please also upload the E-Prime **.txt export** (File → Export in E-Prime) for each, so the trial-level data is readable without the proprietary software.",
           "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: notzip.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
@@ -294,6 +309,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -314,6 +330,12 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -513,6 +535,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -520,6 +570,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

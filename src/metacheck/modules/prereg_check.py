@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import warnings
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from contextvars import copy_context
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from metacheck._r import plural
@@ -51,18 +53,38 @@ def _unique(values: Iterable[Any]) -> list[Any]:
 
 
 def _no_prereg_summary(paper: Any) -> pd.DataFrame:
-    """``data.frame(paper_id = paper_id(paper), preregistration = 0)``.
+    """``.per_paper_table(paper, preregistration = 0)``."""
+    from metacheck.modules._empty import per_paper_table
 
-    An empty paper list gives a table without rows; metacheck's
-    ``data.frame()`` stops there ("arguments imply differing number of rows:
-    0, 1", U79).
+    out = per_paper_table(paper)
+    out["preregistration"] = pd.Series([0.0] * len(out), dtype="float64")
+    return out
+
+
+def _link_key(hrefs: Sequence[Any]) -> list[str | None]:
+    """Joins a registration to its papers: the OSF id, or the AsPredicted address.
+
+    The address without scheme, ``www.`` and case: http://, upper-case, view_only and
+    path links matched no paper (every paper counting 0), and a link given twice in a
+    paper counted its registration twice (U110).
     """
-    from metacheck.papers.tables import paper_id
+    import re
 
-    ids = paper_id(paper)
-    return pd.DataFrame(
-        {"paper_id": pd.Series(ids, dtype="string"), "preregistration": [0.0] * len(ids)}
-    )
+    from metacheck.archives.osf import osf_check_id
+
+    hrefs = list(hrefs)
+    with warnings.catch_warnings():  # suppressWarnings()
+        warnings.simplefilter("ignore")
+        ids = osf_check_id(hrefs) if hrefs else []
+    keys: list[str | None] = []
+    for href, osf_id in zip(hrefs, ids, strict=True):
+        if osf_id is not None:
+            keys.append("osf:" + re.sub(r"[?#/].*$", "", osf_id).lower())
+        elif href is None or (not isinstance(href, str) and pd.isna(href)):
+            keys.append(None)
+        else:
+            keys.append(re.sub(r"/+$", "", re.sub(r"^(https?://)?(www\.)?", "", str(href))).lower())
+    return keys
 
 
 def _rows_frame(rows: Sequence[Mapping[str, str | None]]) -> pd.DataFrame:
@@ -82,7 +104,7 @@ def _rows_frame(rows: Sequence[Mapping[str, str | None]]) -> pd.DataFrame:
         and make them easier to check.
     """,
     details="""
-        The Preregistration Check module identifies preregistrations on the OSF and AsPredicted based on links in the manuscript, retrieves the preregistration text, and organizes the information into a template. The module then uses regular expressions to identify text from AsPredicted, and the API to retrieve text from the OSF. The information in the preregistration is returned.
+        The Preregistration Check module identifies preregistrations on the OSF and AsPredicted based on links in the manuscript, retrieves the preregistration text, and organizes the information into a template. The module retrieves text from the OSF with its API, and from AsPredicted with ResearchBox's API when a ResearchBox key is set (see `rbox_token()`), or else from the preregistration's web page. The information in the preregistration is returned. An AsPredicted link that could not be read is named in the report, with the reason.
 
         The module can’t extract information from non-structured preregistration templates (i.e., where the preregistration is uploaded in a single text field) and it can’t retrieve information in preregistrations that are stored as text documents on the OSF.
 
@@ -90,12 +112,19 @@ def _rows_frame(rows: Sequence[Mapping[str, str | None]]) -> pd.DataFrame:
     """,
     keywords=["method"],
     requires=["network"],
+    params={
+        "paper": "a paper object or paperlist object",
+        "cache": (
+            "if TRUE, reuse a previously cached AsPredicted preregistration (see "
+            "`aspredicted_info()` and `repo_info_cache_clear()`) instead of asking again"
+        ),
+    },
     author=[
         "Daniel Lakens <D.Lakens@tue.nl>",
         "Lisa DeBruine <lisa.debruine@glasgow.ac.uk>",
     ],
 )
-def prereg_check(paper: Any) -> dict[str, Any]:
+def prereg_check(paper: Any, cache: bool = False) -> dict[str, Any]:
     """Port of inst/modules/prereg_check.R::prereg_check().
 
     Finds OSF and AsPredicted links, keeps the OSF links that are
@@ -104,10 +133,11 @@ def prereg_check(paper: Any) -> dict[str, Any]:
     registration). OSF links that cannot be read (private, embargoed,
     withdrawn, deleted) are reported by name.
     """
+    from metacheck.archives.api_keys import KEY_SERVICES, rbox_token
     from metacheck.archives.aspredicted import aspredicted_info, aspredicted_links
     from metacheck.archives.osf import osf_check_id, osf_get_all_pages, osf_links, osf_type
     from metacheck.modules import _prereg
-    from metacheck.utils import suppress_messages
+    from metacheck.utils import get_option, suppress_messages
 
     # table ----
     links_ap = aspredicted_links(paper)
@@ -128,8 +158,26 @@ def prereg_check(paper: Any) -> dict[str, Any]:
     table_ap = pd.DataFrame()
     if len(links_ap):
         with suppress_messages():  # R: suppressMessages(aspredicted_info(...))
-            table_ap = aspredicted_info(links_ap["href"].tolist())
-    ap_schema_table = _prereg.ap_schema(table_ap)
+            table_ap = aspredicted_info(links_ap["href"].tolist(), cache=cache)
+    # A preregistration that could not be read is named in the report with the
+    # reason, like an OSF registration that cannot be accessed
+    if "error" in table_ap.columns:
+        ap_failed = table_ap["error"].notna().to_numpy(dtype=bool)
+    else:
+        ap_failed = np.zeros(len(table_ap), dtype=bool)
+    inaccessible_ap = (
+        _unique(
+            f"{u} ({e})"
+            for u, e in zip(
+                table_ap["ap_url"].to_numpy()[ap_failed],
+                table_ap["error"].to_numpy()[ap_failed],
+                strict=True,
+            )
+        )
+        if ap_failed.any()
+        else []
+    )
+    ap_schema_table = _prereg.ap_schema(table_ap.loc[~ap_failed].reset_index(drop=True))
 
     ## OSF prereg ----
     osf_hrefs = links_osf["href"].tolist()
@@ -178,62 +226,90 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         return schema_bodies[url]
 
     ps: list[dict[str, str]] = []
-    # which papers link each registration (U110): by OSF id, not by link text
-    papers_of: list[list[Any]] = []
-    osf_papers: dict[Any, list[Any]] = {}
-    for pid, cid in zip(links_osf["paper_id"].tolist(), checked, strict=True):
-        if cid is not None and pid not in osf_papers.setdefault(cid, []):
-            osf_papers[cid].append(pid)
     for rid, reg_info in zip(reg_ids, reg_infos, strict=True):
         if len(reg_info) == 0:
             if getattr(reg_info, "osf_error", None) is not None:
-                # the paper's own links, not the API URL metacheck reports (U110)
-                inaccessible_regs.extend(
-                    href for href, cid in zip(osf_hrefs, checked, strict=True) if cid == rid
+                # the paper's own link, not the API URL metacheck reports (U110)
+                own = next(
+                    (h for h, cid in zip(osf_hrefs, checked, strict=True) if cid == rid), None
                 )
+                inaccessible_regs.append(own if own is not None else _REG_API % rid)
             continue
         extracted = _prereg.osf_prereg_extract(reg_info, fetch_schema)
         ps.append(_prereg.flatten_schema(extracted))
-        papers_of.append(osf_papers.get(rid, []))
 
-    # one row per AsPredicted preregistration: metacheck pastes every AsPredicted
-    # prereg of the call (of all papers) into one row, with "NA" for missing
-    # fields, whose joined link then matches no paper (U109)
+    # one row per AsPredicted preregistration (U109)
     ap_rows = _prereg.schema_rows(ap_schema_table)
-    ap_papers: dict[Any, list[Any]] = {}
-    for pid, href in zip(links_ap["paper_id"].tolist(), links_ap["href"].tolist(), strict=True):
-        if pid not in ap_papers.setdefault(href, []):
-            ap_papers[href].append(pid)
-    papers_of.extend(ap_papers.get(row.get("link"), []) for row in ap_rows)
 
     # make sure all items are not lists
     prereg_info = _rows_frame([*ps, *ap_rows])
     n_inacc = len(inaccessible_regs)
-    inaccessible_text = (
-        "The following registration link"
-        f"{plural(n_inacc)} could not be accessed and may be private, embargoed, or "
-        f"withdrawn: {', '.join(inaccessible_regs)}."
-    )
+    n_inacc_ap = len(inaccessible_ap)
+    # The sentences naming the links that could not be read
+    inaccessible_summary = []
+    inaccessible_text = []
+    if n_inacc > 0:
+        inaccessible_summary.append(
+            f"{n_inacc} registration link{plural(n_inacc)} could not be accessed "
+            "(private, embargoed, or withdrawn)."
+        )
+        inaccessible_text.append(
+            f"The following registration link{plural(n_inacc)} could not be accessed and may be "
+            f"private, embargoed, or withdrawn: {', '.join(inaccessible_regs)}."
+        )
+    if n_inacc_ap > 0:
+        inaccessible_summary.append(
+            f"{n_inacc_ap} AsPredicted link{plural(n_inacc_ap)} could not be read."
+        )
+        inaccessible_text.append(
+            f"The following AsPredicted link{plural(n_inacc_ap)} could not be read, for the "
+            f"reason given: {', '.join(inaccessible_ap)}."
+        )
+    # Without a ResearchBox API key AsPredicted's web pages are read, which stop
+    # after AsPredicted's captcha
+    no_key_text = None
+    if len(links_ap) > 0 and not rbox_token():
+        key_hint = (
+            'You can enter your own ResearchBox key under "Your own API keys"'
+            if get_option("metacheck.keys.shared")
+            else "Set a key with `rbox_token()`"
+        )
+        no_key_text = (
+            "These AsPredicted preregistrations were read from AsPredicted's web pages, "
+            "because no ResearchBox API key is set. AsPredicted asks for a captcha after "
+            f"several pages, after which no more are read. {key_hint} "
+            f"(make one at {KEY_SERVICES['researchbox'].url})."
+        )
 
-    ## every registration inaccessible, nothing else found ----
-    if len(prereg_info) == 0 and n_inacc > 0:
+    if len(prereg_info) == 0 and (n_inacc > 0 or n_inacc_ap > 0):
+        n_links = n_osf + len(links_ap)
         return {
             "traffic_light": "na",
             "summary_text": (
-                f"We found {n_osf} OSF link{plural(n_osf)}, but no accessible registrations. "
-                f"{n_inacc} registration link{plural(n_inacc)} could not be accessed "
-                "(private, embargoed, or withdrawn)."
+                f"We found {n_links} {'OSF or AsPredicted' if len(links_ap) > 0 else 'OSF'} "
+                f"link{plural(n_links)}, but no accessible registrations. "
+                + " ".join(inaccessible_summary)
             ),
             "na_replace": 0,
             "summary_table": _no_prereg_summary(paper),
-            "report": inaccessible_text,
+            "report": [*inaccessible_text, *([no_key_text] if no_key_text else [])],
         }
 
     if len(prereg_info):
-        # one row per registration and paper that links it: metacheck joins by
-        # link text, so http://, upper-case or view_only links matched no paper
-        # and a link given twice duplicated the registration (U110)
-        rows = [(i, pid) for i, pids in enumerate(papers_of) for pid in (pids or [None])]
+        # Joined by OSF id, or by the AsPredicted address without scheme, "www."
+        # and case (U110)
+        pairs = _unique(
+            zip(
+                [*links_ap["paper_id"].tolist(), *links_osf["paper_id"].tolist()],
+                _link_key([*links_ap["href"].tolist(), *links_osf["href"].tolist()]),
+                strict=True,
+            )
+        )
+        by_key: dict[Any, list[Any]] = {}
+        for pid, key in pairs:
+            by_key.setdefault(key, []).append(pid)
+        row_keys = _link_key(prereg_info["link"].tolist())
+        rows = [(i, pid) for i, key in enumerate(row_keys) for pid in (by_key.get(key) or [None])]
         prereg_info = prereg_info.iloc[[i for i, _ in rows]].reset_index(drop=True)
         if "paper_id" in prereg_info.columns:
             # a registration field called "paper_id" keeps its value (dplyr's suffix)
@@ -246,11 +322,8 @@ def prereg_check(paper: Any) -> dict[str, Any]:
     # summary_text ----
     n = len(prereg_info)
     summary_text = f"We found {n} preregistration{plural(n)}."
-    if n_inacc > 0:
-        summary_text += (
-            f" {n_inacc} registration link{plural(n_inacc)} could not be accessed "
-            "(private, embargoed, or withdrawn)."
-        )
+    if inaccessible_summary:
+        summary_text = " ".join([summary_text, *inaccessible_summary])
 
     # report ----
     has_sample_size = "sample_size" in prereg_info.columns
@@ -313,7 +386,8 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         summary_text,
         scroll_table(prereg_link_table),
         report_text,
-        inaccessible_text if n_inacc > 0 else None,
+        *inaccessible_text,
+        no_key_text,
         scroll_table(samplesize_table),
         *(full if isinstance(full, list) else [full]),
         collapse_section(guidance),

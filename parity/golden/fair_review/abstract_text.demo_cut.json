@@ -1,0 +1,22 @@
+{
+  "id": "abstract_text.demo_cut",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "This paper demonstrates some good and poor practices for use with the {metacheck…"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -14,7 +14,7 @@
     "v": [
       {
         "t": "df",
-        "nrow": 7,
+        "nrow": 6,
         "names": [
           "text",
           "pubpeer",
@@ -25,7 +25,6 @@
           {
             "t": "chr",
             "v": [
-              "Reference 0. https://doi.org/10.1002/bdm.586",
               "Reference 0. https://doi.org/10.1002/bdm.586",
               "Reference 1. https://doi.org/10.1371/journal.ppat.1000066",
               "Reference 2. https://doi.org/10.9999/pp.one",
@@ -39,7 +38,6 @@
             "v": [
               null,
               null,
-              null,
               "<a href='https://pubpeer.com/publications/PP.ONE' target='_blank'>Link<\/a>",
               null,
               null,
@@ -49,7 +47,6 @@
           {
             "t": "chr",
             "v": [
-              "replication",
               "replication",
               null,
               null,
@@ -61,7 +58,6 @@
           {
             "t": "chr",
             "v": [
-              null,
               null,
               "Retraction;Expression of concern",
               null,
@@ -95,6 +91,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

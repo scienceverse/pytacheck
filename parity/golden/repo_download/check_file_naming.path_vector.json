@@ -44,13 +44,13 @@
         "t": "chr",
         "v": [
           "contains a space",
-          "path-length-255 is 262 characters, over the 255-character budget",
-          "path-length-228 is 262 characters, over the 228-character budget",
-          "filename-length-50 is 262 characters, over the 50-character budget"
+          "The path is 262 characters, over the 255-character limit",
+          "The path is 262 characters, over the recommended 228, which leaves room for a download folder",
+          "The file name is 262 characters, over the recommended 50"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

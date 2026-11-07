@@ -276,22 +276,12 @@ dc_report_tables <- function(mo) {
 
 dc_run_tables <- function(name, ...) dc_report_tables(dc_run(name, ...))
 
-# The dv_report of the empty() return (a character vector: prose blocks plus
-# one scroll_table() chunk): its prose and the data of its tables.
-dc_dv_report <- function(name, ...) {
-  rep <- dc_run(name, ...)$dv_report
-  list(text = rep[!grepl("```{r}", rep, fixed = TRUE)],
-       tables = dc_report_tables(list(report = rep)))
-}
-
 # The data_check module file sourced into an environment (its internal
 # helpers), plus the closures defined inside data_check() itself.
 dc_env <- function() {
   e <- new.env(parent = asNamespace("metacheck"))
   sys.source(metacheck:::module_find("data_check"), envir = e)
-  inner <- c(".tree_type_icon", ".tree_type_label", "repo_tree_rows",
-             "repo_tree_block", "file_tabset", "desc_file_tabset",
-             "data_file_tabset")
+  inner <- c("file_tabset", "desc_file_tabset", "data_file_tabset")
   for (ex in as.list(body(e$data_check))[-1]) {
     if (is.call(ex) && identical(ex[[1]], as.name("<-")) && is.name(ex[[2]]) &&
         as.character(ex[[2]]) %in% inner) {

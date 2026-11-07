@@ -96,7 +96,7 @@
         "t": "chr",
         "v": [
           "We checked 2 references with DOIs. You cited 1 reference with comments in PubPeer.\n\nPubpeer is a platform for post-publication peer review. We have filtered out Pubpeer comments by 'Statcheck'. You can check out the comments by visiting the URLs below:",
-          ""
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = \"Reference 0. https://doi.org/10.9999/pp.nourl\", \n    Comments = 3, \"PubPeer Link\" = \"\"), row.names = c(NA, -1L\n), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
         ]
       },
       {
@@ -141,6 +141,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

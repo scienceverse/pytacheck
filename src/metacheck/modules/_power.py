@@ -7,6 +7,7 @@ metacheck's ``inst/modules/power.R``; they are ported here so that
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Any
 
 import pandas as pd
@@ -25,14 +26,13 @@ LLM_COLS = (
     "software",
 )
 
-_ENUM_COLS = ("power_type", "statistical_test", "effect_size_metric", "software")
-
 _STRUCTURED_PROMPT = (
     "Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field "
-    "when information is missing, do not invent values. Only use 'other' if a value not in the "
-    "enumerated options can be identified. A paragraph may contain no power analysis, or more "
-    "than one -- return one entry in power_analyses per power analysis actually described, and "
-    "an empty array if the paragraph only references a power analysis presented elsewhere, or "
+    "when information is missing, do not invent values. For the statistical test, effect size "
+    "metric and software, use one of the suggested values when it fits, and otherwise give the "
+    "name as written in the text. A paragraph may contain no power analysis, or more than one "
+    "-- return one entry in power_analyses per power analysis actually described, and an empty "
+    "array if the paragraph only references a power analysis presented elsewhere, or "
     "explicitly states that no power analysis was run."
 )
 
@@ -180,47 +180,30 @@ SCHEMA = r"""{
 def _power_type_spec() -> Any:
     """Port of ``.power_type_spec()`` (power.R): the ellmer type for structured extraction.
 
-    A single-field object (``power_analyses``: an array of power-analysis
-    objects); optional enum fields list ``NA`` among their values so that
-    providers accept a ``null`` answer for them.
+    A single-field object (``power_analyses``: an array of power-analysis objects). The four
+    category fields are free strings, not enums (#475): a provider validates the answer against
+    the schema, so a value outside an enum failed the whole call. The descriptions list the
+    values to prefer and :func:`_power_canonicalise` maps each answer onto them afterwards.
     """
-    from metacheck.llm.types import type_array, type_enum, type_number, type_object, type_string
+    from metacheck.llm.types import type_array, type_number, type_object, type_string
 
     return type_object(
         power_analyses=type_array(
             type_object(
-                power_type=type_enum(
-                    ["apriori", "sensitivity", "posthoc", "unknown"],
-                    description=(
-                        "The type of power analysis. 'apriori' calculates the required sample "
-                        "size to achieve a desired power given an effect size, statistical test, "
-                        "and alpha level. 'sensitivity' estimates, given a sample size, which "
-                        "effect sizes a design has sufficient power to detect. 'posthoc' "
-                        "(observed/retrospective power) computes achieved power for an "
-                        "empirically observed effect size. Use 'unknown' if a power analysis is "
-                        "present but its type cannot be determined."
-                    ),
+                power_type=type_string(
+                    "The type of power analysis, one of 'apriori', 'sensitivity', 'posthoc' or "
+                    "'unknown'. 'apriori' calculates the required sample size to achieve a "
+                    "desired power given an effect size, statistical test, and alpha level. "
+                    "'sensitivity' estimates, given a sample size, which effect sizes a design "
+                    "has sufficient power to detect. 'posthoc' (observed/retrospective power) "
+                    "computes achieved power for an empirically observed effect size. Use "
+                    "'unknown' if a power analysis is present but its type cannot be determined."
                 ),
-                statistical_test=type_enum(
-                    [
-                        "paired t-test",
-                        "unpaired t-test",
-                        "one-sample t-test",
-                        "1-way ANOVA",
-                        "2-way ANOVA",
-                        "3-way ANOVA",
-                        "MANOVA",
-                        "regression",
-                        "chi-square",
-                        "correlation",
-                        "other",
-                        None,
-                    ],
-                    description="The statistical test used.",
-                    required=False,
-                ),
-                statistical_test_other=type_string(
-                    "Free-text description if statistical_test is 'other'.",
+                statistical_test=type_string(
+                    "The statistical test used: one of 'paired t-test', 'unpaired t-test', "
+                    "'one-sample t-test', '1-way ANOVA', '2-way ANOVA', '3-way ANOVA', "
+                    "'MANOVA', 'regression', 'chi-square', 'correlation', or else the test's "
+                    "name as written in the text.",
                     required=False,
                 ),
                 sample_size=type_number(
@@ -240,49 +223,341 @@ def _power_type_spec() -> Any:
                     "The numeric effect size used in or determined from the power analysis.",
                     required=False,
                 ),
-                effect_size_metric=type_enum(
-                    [
-                        "Cohen's d",
-                        "Hedges' g",
-                        "Cohen's f",
-                        "partial eta squared",
-                        "eta squared",
-                        "unstandardised",
-                        "other",
-                        None,
-                    ],
-                    description=(
-                        "The effect size metric. Use 'unstandardised' for "
-                        "raw/non-standardized effects."
-                    ),
+                effect_size_metric=type_string(
+                    "The effect size metric: one of 'Cohen's d', 'Hedges' g', 'Cohen's f', "
+                    "'partial eta squared', 'eta squared', 'unstandardised' (for "
+                    "raw/non-standardized effects), or else the metric as written in the text.",
                     required=False,
                 ),
-                effect_size_metric_other=type_string(
-                    "Free-text description if effect_size_metric is 'other'.",
-                    required=False,
-                ),
-                software=type_enum(
-                    [
-                        "G*Power",
-                        "Superpower",
-                        "Pangea",
-                        "Morepower",
-                        "PASS",
-                        "pwr",
-                        "simr",
-                        "PowerUpR",
-                        "simulation",
-                        "InteractionPoweR",
-                        "pwrss",
-                        "other",
-                        None,
-                    ],
-                    description="The software used to conduct the power analysis.",
+                software=type_string(
+                    "The software used to conduct the power analysis, as named in the text "
+                    "(e.g. 'G*Power', 'pwr', 'simr', 'Superpower', 'PASS', 'POWSIM'), or "
+                    "'simulation' for a simulation without named software.",
                     required=False,
                 ),
             ),
             description="Power analyses found in the text. Empty array if none.",
         )
+    )
+
+
+# ---------------------------------------------------------------------------
+# known values: the LLM answers the four category fields in free text
+# ---------------------------------------------------------------------------
+# These rules map each answer onto the values the module reports. Each rule is a perl regular
+# expression matched against the lower-cased answer; the FIRST rule that matches decides, so a
+# more specific rule comes before a more general one (unpaired before paired, MANOVA before
+# ANOVA, partial eta squared before eta squared). An answer no rule matches becomes "other"
+# (power_type: "unknown"), with the answer kept in the column's ``*_other`` companion; "none",
+# "null" and "n/a" count as missing.
+
+_POWER_TYPE_RULES: tuple[tuple[str, str], ...] = (
+    ("apriori", r"a[- ]?priori|prospective"),
+    ("sensitivity", r"sensitivity|minim(al|um) detectable|smallest detectable"),
+    ("posthoc", r"post[- ]?hoc|observed|retrospective|a[- ]?posteriori|achieved"),
+)
+
+_T = r"(?=.*\bt(?:[- ]?tests?)?\b)"  # the answer names a t test
+_ANOVA = r"(?=.*(anova|analysis of variance))"
+_POWER_TEST_RULES: tuple[tuple[str, str], ...] = (
+    (
+        "unpaired t-test",
+        _T + r"(?=.*(unpaired|independent|two[- ]?samples?|between[- ]?(subjects?|groups?)|welch))",
+    ),
+    ("one-sample t-test", _T + r"(?=.*(one|1|single)[- ]?sample)"),
+    (
+        "paired t-test",
+        _T + r"(?=.*(paired|dependent|within[- ]?subjects?|repeated[- ]?measures?|matched))",
+    ),
+    ("MANOVA", r"\bmanova\b|multivariate analysis of variance"),
+    ("3-way ANOVA", _ANOVA + r"(?=.*((3|three)[- ]?way|\d+\s*[x×]\s*\d+\s*[x×]\s*\d+))"),
+    ("2-way ANOVA", _ANOVA + r"(?=.*((2|two)[- ]?way|\d+\s*[x×]\s*\d+))"),
+    ("1-way ANOVA", _ANOVA + r"(?=.*(1|one)[- ]?(way|factor))"),
+    ("regression", "regression"),
+    ("chi-square", r"chi[- ]?sq|χ"),
+    ("correlation", r"correlat|pearson|spearman|kendall"),
+)
+
+_POWER_ES_RULES: tuple[tuple[str, str], ...] = (
+    ("partial eta squared", r"partial\s*(eta|η)|η\s*_?\s*p\b|\beta[ _-]?p(\b|[ _-]?sq)"),
+    ("eta squared", r"\beta[ _-]?(sq|\^?2)|η"),
+    ("unstandardised", r"unstandardi[sz]ed|\braw\b"),
+    ("Hedges' g", r"hedges|^g$"),
+    # The apostrophe may be the typographic one a PDF gives. d_z, d_av and d_rm are forms of
+    # Cohen's d. A "standardized mean difference" is not mapped: Hedges' g is one too, so it
+    # stays "other".
+    ("Cohen's d", r"cohen['’]?s?\s*d([ _]?(z|av|rm))?(?![a-z])|^d([ _]?(z|av|rm))?$"),
+    # Cohen's f squared is a different metric, so it stays "other"
+    ("Cohen's f", r"cohen['’]?s?\s*f(?![a-z])(?!\s*(\^?2|²|sq))|^f$"),
+    # a plain mean difference is raw, a standardized one is not
+    ("unstandardised", r"(?<!standardized |standardised )mean difference"),
+)
+
+# Power analysis software. The R packages are those on CRAN whose title is about power analysis
+# or sample size (tools::CRAN_package_db(), 2026-10-17: 121 packages, less five whose name is a
+# common abbreviation or that are not about planning studies: CP, RCT, abima, CAISEr,
+# TrendInTrend), plus widely-used packages whose title does not say so (MBESS, faux, simglm,
+# paramtest, BUCSS, pmsampsize, simsem, SampleSizeProportions, pwrFDR, ssanv) and ones no longer
+# on CRAN or from Bioconductor that papers still cite (PowerUpR, powerlmm, mixedpower, powsimR,
+# PROPER, RNASeqPower). Matched by whole name, longest name first, so "pwrss" is not read as
+# "pwr" and "pass.lme" not as PASS.
+_POWER_SOFTWARE_PACKAGES: tuple[str, ...] = (
+    "anomo",
+    "anovapowersim",
+    "bayescount",
+    "BayesianPower",
+    "BayesPower",
+    "BBMBC",
+    "BetaPASS",
+    "bfpwr",
+    "cochranSize",
+    "CoRpower",
+    "CRTSize",
+    "DelayedEffect.Design",
+    "depower",
+    "designsize",
+    "easypower",
+    "EBASS",
+    "extraSuperpower",
+    "FDRsamplesize2",
+    "findn",
+    "fPASS",
+    "GenTwoArmsTrialSize",
+    "ggpower",
+    "H2x2Factorial",
+    "ICC.Sample.Size",
+    "InteractionPoweR",
+    "intrinsicKappa",
+    "irtpwr",
+    "JMdesign",
+    "kappaSize",
+    "longpower",
+    "lrstat",
+    "MedianaDesigner",
+    "metapower",
+    "MetSizeR",
+    "MIDN",
+    "mixpower",
+    "MKpower",
+    "mlmpower",
+    "mlpwr",
+    "mpower",
+    "MRMCsamplesize",
+    "mthapower",
+    "NPHMC",
+    "nphPower",
+    "npsurvSS",
+    "odr",
+    "pamm",
+    "pass.lme",
+    "PASSED",
+    "peppwR",
+    "phylosamp",
+    "PICOTsize",
+    "pmsesampling",
+    "POSSA",
+    "power.nb",
+    "power4mome",
+    "powerbrmsINLA",
+    "powerCompRisk",
+    "powerEQTL",
+    "powergrid",
+    "powerGWASinteraction",
+    "powerHE",
+    "powerLATE",
+    "powerMediation",
+    "powerNLSEM",
+    "powerpkg",
+    "powerPLS",
+    "powerSurvEpi",
+    "powertools",
+    "PowerTOST",
+    "powRICLPM",
+    "PowRPriori",
+    "presize",
+    "PSpower",
+    "pwr",
+    "pwr2ppl",
+    "pwr4exp",
+    "pwrAB",
+    "pwranova",
+    "pwrRasch",
+    "pwrss",
+    "rashnu",
+    "RCMsize",
+    "RDSsamplesize",
+    "rerandPower",
+    "RMSTpowerBoost",
+    "samplesize",
+    "SampleSize4ClinicalTrials",
+    "samplesize4surveys",
+    "samplesizeCMH",
+    "samplesizelogisticcasecontrol",
+    "SampleSizeMeans",
+    "SampleSizeR",
+    "samplex",
+    "semPower",
+    "simpowa",
+    "simpr.interaction",
+    "simr",
+    "SimTOST",
+    "smartsizer",
+    "sparrpowR",
+    "Spower",
+    "ssize.fdr",
+    "ssizeRNA",
+    "ssPilot",
+    "SSRMST",
+    "ssutil",
+    "SteppedPower",
+    "stepwedgepower",
+    "Superpower",
+    "survSNP",
+    "swdpwr",
+    "TrialSize",
+    "twoCoprimary",
+    "WebPower",
+    "WMWssp",
+    "MBESS",
+    "faux",
+    "simglm",
+    "paramtest",
+    "BUCSS",
+    "pmsampsize",
+    "simsem",
+    "SampleSizeProportions",
+    "pwrFDR",
+    "ssanv",
+    "PowerUpR",
+    "powerlmm",
+    "mixedpower",
+    "powsimR",
+    "PROPER",
+    "RNASeqPower",
+)
+
+_POWER_SOFTWARE_OTHER: tuple[tuple[str, str], ...] = (
+    # software that is not an R package, or written in other ways
+    ("G*Power", r"\bg\s*[*-]?\s*power\b"),
+    ("Superpower", r"\bsuper\s+power\b"),
+    ("Morepower", r"\bmore\s*power\b"),
+    ("Pangea", r"\bpangea\b"),
+    ("POWSIM", r"\bpowsim\b"),
+    ("PASS", r"\bpass\b|\bncss\b"),
+    ("nQuery", r"\bnquery\b"),
+    ("Optimal Design", r"\boptimal\s*design\b"),
+    ("GLIMMPSE", r"\bglimmpse\b"),
+    ("MLPowSim", r"\bmlpowsim\b"),
+    ("PINT", r"\bpint\b"),
+    ("jpower", r"\bjpower\b"),
+    ("jamovi", r"\bjamovi\b"),
+    ("JASP", r"\bjasp\b"),
+    ("SAS", r"\bsas\b|proc\s+power"),
+    ("Stata", r"\bstata\b"),
+    ("SPSS", r"\bspss\b"),
+    ("stats", r"\bpower\.(t|prop|anova)\.test\b"),
+    # last: any named tool above is more specific than "a simulation"
+    ("simulation", r"simulat|monte\s*carlo"),
+)
+
+
+def _power_software_rules() -> list[tuple[str, str]]:
+    """``.power_software_rules()``: package names (longest first), then the other tools."""
+    pkgs = sorted(_POWER_SOFTWARE_PACKAGES, key=lambda p: -len(p))  # stable, like order()
+    by_name = [(p, "(?<![a-z0-9.])" + p.lower().replace(".", "\\.") + "(?![a-z0-9])") for p in pkgs]
+    return [*by_name, *_POWER_SOFTWARE_OTHER]
+
+
+def _power_canonical(
+    x: list[str | None], rules: Sequence[tuple[str, str]], other: str = "other"
+) -> list[str | None]:
+    """``.power_canonical()``: the known value for each answer in *x*.
+
+    The name of the first rule whose pattern matches, *other* for an answer no rule matches,
+    ``None`` for a missing one.
+    """
+    from metacheck._r import grepl
+
+    lc = [None if v is None else v.strip(" \t\r\n").lower() for v in x]
+    out: list[str | None] = [None] * len(lc)
+    given = [v is not None and v != "" and v not in ("none", "null", "na", "n/a") for v in lc]
+    for i, g in enumerate(given):
+        if g:
+            out[i] = other
+    todo = list(given)
+    for name, pattern in rules:
+        hits = grepl(pattern, ["" if v is None else v for v in lc], perl=True)
+        for i, hit in enumerate(hits):
+            if todo[i] and hit:
+                out[i] = name
+                todo[i] = False
+    return out
+
+
+def _power_canonicalise(table: pd.DataFrame) -> pd.DataFrame:
+    """``.power_canonicalise()``: map a power table's category columns onto the known values.
+
+    For statistical_test, effect_size_metric and software, an answer that became "other" is
+    kept in the ``*_other`` column, so nothing the model wrote is lost (the prompt-based path
+    may already have filled ``*_other`` itself).
+    """
+    fields: list[tuple[str, Sequence[tuple[str, str]], str]] = [
+        ("power_type", _POWER_TYPE_RULES, "unknown"),
+        ("statistical_test", _POWER_TEST_RULES, "other"),
+        ("effect_size_metric", _POWER_ES_RULES, "other"),
+        ("software", _power_software_rules(), "other"),
+    ]
+    table = table.copy()
+    for col, rules, other in fields:
+        if col not in table.columns:
+            continue
+        raw = [None if is_missing(v) else _r_chr(v) for v in table[col].tolist()]
+        canon = _power_canonical(raw, rules, other)
+        if col != "power_type":
+            other_col = f"{col}_other"
+            if other_col in table.columns:
+                given = [None if is_missing(v) else _r_chr(v) for v in table[other_col].tolist()]
+            else:
+                given = [None] * len(raw)
+            for i, v in enumerate(raw):
+                if v is not None and v.strip(" \t\r\n").lower() == "other":
+                    raw[i] = None
+            kept = [
+                (g if g is not None else r) if c == "other" else None
+                for c, g, r in zip(canon, given, raw, strict=True)
+            ]
+            table[other_col] = pd.Series(kept, index=table.index, dtype="string")
+        table[col] = pd.Series(canon, index=table.index, dtype="string")
+    return table
+
+
+def _r_chr(v: Any) -> str:
+    """``as.character()`` of one value."""
+    from metacheck._r import as_character
+
+    return v if isinstance(v, str) else str(as_character(v))
+
+
+def _power_unchecked(table: pd.DataFrame, row_failed: list[bool]) -> pd.DataFrame:
+    """``.power_unchecked()``: the paragraphs the LLM could not check, per paper (#475).
+
+    A data frame of ``paper_id`` and ``power_unchecked``, one row per paper with at least one
+    such paragraph, sorted by paper_id. *table* is llm()'s result (one row per checked
+    paragraph when a call failed) and *row_failed* marks those rows.
+    """
+    from metacheck._r import r_sort_key
+
+    ids = table["paper_id"].tolist() if "paper_id" in table.columns else [None] * len(table)
+    counts: dict[str, int] = {}
+    for pid, failed in zip(ids, row_failed, strict=True):
+        if failed and not is_missing(pid):  # table() leaves out NA
+            counts[str(pid)] = counts.get(str(pid), 0) + 1
+    names = sorted(counts, key=r_sort_key)
+    return pd.DataFrame(
+        {
+            "paper_id": pd.Series(names, dtype="string"),
+            "power_unchecked": pd.Series([counts[n] for n in names], dtype="Int64"),
+        }
     )
 
 
@@ -303,14 +578,6 @@ def _complete(table: pd.DataFrame, cols: list[str]) -> pd.Series:
             if na:
                 flags[i] = False
     return pd.Series(flags, index=table.index, dtype="boolean")
-
-
-def _as_character(s: pd.Series) -> pd.Series:
-    """R ``as.character()`` of a factor/enum column."""
-    if isinstance(s.dtype, pd.StringDtype):
-        return s
-    vals = [None if is_missing(v) else str(v) for v in s.tolist()]
-    return pd.Series(vals, index=s.index, dtype="string")
 
 
 def _read_lines_url(url: str) -> str:
@@ -339,9 +606,9 @@ def _power_llm_extract(potential_power: pd.DataFrame, seed: Any) -> dict[str, An
     Extracts the power-analysis fields with provider-enforced structured
     output, falling back to prompt-instructed JSON + ``json_expand()`` when
     every structured call fails. Returns ``{"table", "model", "structured",
-    "failed"}``: ``table`` has one row per detected power analysis and a
+    "failed", "unchecked"}``: ``table`` has one row per detected power analysis and a
     ``complete`` column marking whether every :data:`LLM_COLS` field was
-    extracted.
+    extracted. ``unchecked`` counts the paragraphs the LLM could not check, per paper.
     """
     from metacheck.datacheck.files import _strip_llm_wrapper
     from metacheck.llm import llm, llm_model
@@ -371,11 +638,15 @@ def _power_llm_extract(potential_power: pd.DataFrame, seed: Any) -> dict[str, An
     )
 
     if not all_failed:
-        table = structured_result.copy()
-        # enum fields come back as factors: plain character, as json_expand() gives
-        for col in _ENUM_COLS:
-            if col in table.columns:
-                table[col] = _as_character(table[col])
+        # map the free-text category answers onto the known values
+        table = _power_canonicalise(structured_result)
+        # a row that failed (but not every row) has power_type NA and is dropped just
+        # below like an empty result; it is counted first (#475)
+        if ".error" in table.columns:
+            row_failed = [is_true(v) for v in table[".error"].tolist()]
+        else:
+            row_failed = [False] * len(table)
+        unchecked = _power_unchecked(table, row_failed)
         table = table.drop(columns=[c for c in (".error", ".error_msg") if c in table.columns])
         if "power_type" in table.columns:
             keep = [not na for na in _col_isna(table["power_type"])]
@@ -389,7 +660,13 @@ def _power_llm_extract(potential_power: pd.DataFrame, seed: Any) -> dict[str, An
                 # R: rep(NA, nrow(table)), a logical column
                 table[col] = pd.Series([pd.NA] * len(table), dtype="boolean")
         table["complete"] = _complete(table, llm_cols)
-        return {"table": table, "model": model, "structured": True, "failed": False}
+        return {
+            "table": table,
+            "model": model,
+            "structured": True,
+            "failed": False,
+            "unchecked": unchecked,
+        }
 
     # fallback: prompt-instructed JSON + json_expand() ----
     from metacheck.text.json_expand import json_expand
@@ -419,15 +696,15 @@ def _power_llm_extract(potential_power: pd.DataFrame, seed: Any) -> dict[str, An
     if "error" in table.columns:
         row_failed = [not na for na in _col_isna(table["error"])]
     else:
-        row_failed = [False]  # R: scalar FALSE, recycled
+        row_failed = [False] * n
+    unchecked = _power_unchecked(table, row_failed)
 
     if "power_type" in table.columns:
-        rf = row_failed if len(row_failed) == n else row_failed * n
+        # "none" is this schema's "no power analysis here": canonicalised, it becomes NA
+        table = _power_canonicalise(table)
         keep = [
-            (not na) and pt != "none" and not failed
-            for pt, na, failed in zip(
-                table["power_type"].tolist(), _col_isna(table["power_type"]), rf, strict=True
-            )
+            (not na) and not failed
+            for na, failed in zip(_col_isna(table["power_type"]), row_failed, strict=True)
         ]
         table = table.loc[keep].reset_index(drop=True)
     else:
@@ -439,4 +716,5 @@ def _power_llm_extract(potential_power: pd.DataFrame, seed: Any) -> dict[str, An
         "structured": False,
         # every row of this call failed (not just "nothing found")
         "failed": len(potential_power) > 0 and len(table) == 0 and all(row_failed),
+        "unchecked": unchecked,
     }

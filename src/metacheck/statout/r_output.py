@@ -210,9 +210,8 @@ def read_r_output(
         The captured console output: a list of lines, or a single string with
         embedded newlines.
     source_label
-        Optional label (e.g. the script name). Kept for API parity: R ignores
-        it in practice because a result's analysis falls back to its (``NA``)
-        title first.
+        Optional label (e.g. the script name): the analysis of a result without
+        a test title ("R output" without a label).
     code_lines
         Optional script source lines, used to recover the 1-based source
         ``line`` of each result from the echoed ``> `` statements.
@@ -573,10 +572,10 @@ def _r_output_oneline(
     """Parse ``<stat> <op> <value>`` fragments grouped under test titles.
 
     Port of ``R/r-output.R::.r_output_oneline()``. Results without a test
-    title take *source_label* (e.g. the script name) as their analysis, as
-    :func:`read_r_output` documents; metacheck's ``cur_title %||%
-    source_label`` never falls back from ``cur_title``'s ``NA``
-    (UPSTREAM_ISSUES U139).
+    title take *source_label* (e.g. the script name) as their analysis, or
+    "R output" without one, as :func:`read_r_output` documents; metacheck
+    0.4.3.7 fixed the ``cur_title %||% source_label`` that never fell back
+    from ``cur_title``'s ``NA`` (UPSTREAM_ISSUES U139).
     """
     pattern = _stat_pattern()
     rx = compile_r(pattern, perl=True)
@@ -618,11 +617,11 @@ def _r_output_oneline(
     return results
 
 
-def _label(x: Any) -> str | None:
-    """A label given as a string (``None`` for ``NULL``, ``NA`` or ``""``)."""
-    if x is None or not isinstance(x, str) or x == "":
-        return None
-    return x
+def _label(x: Any) -> str:
+    """The label of an untitled result: *x*, or "R output" for ``NULL`` or ``NA``."""
+    if x is None or x is pd.NA or (isinstance(x, float) and x != x):
+        return "R output"
+    return str(x)
 
 
 # ---------------------------------------------------------------------------

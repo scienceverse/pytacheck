@@ -1,0 +1,31 @@
+{
+  "id": "tree.nested",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "```",
+          "analysis/",
+          "  run.R",
+          "data/",
+          "  a.csv",
+          "  sub/",
+          "    b.csv",
+          "    c.csv",
+          "README.md",
+          "```"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

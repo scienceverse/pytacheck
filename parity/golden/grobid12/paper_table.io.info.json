@@ -9,12 +9,11 @@
     "ID x already defined [513]",
     "Namespace prefix xlink for href on ptr is not defined [201]",
     "Namespace prefix p on q is not defined [201]",
-    "Namespace prefix xlink for href on ptr is not defined [201]",
-    "There were 2 errors; use lastlog(1:2)"
+    "Namespace prefix xlink for href on ptr is not defined [201]"
   ],
   "value": {
     "t": "df",
-    "nrow": 15,
+    "nrow": 17,
     "names": [
       "title",
       "abstract",
@@ -55,6 +54,7 @@
       {
         "t": "chr",
         "v": [
+          "Page without to",
           "Byte order marks",
           "No namespace, CRLF",
           "Edge Cases: A Synthetic Paper",
@@ -68,6 +68,7 @@
           "Review fixture",
           "Review fixture",
           "Review fixture",
+          "Empty URL text",
           "Namespaces in text",
           "Edges of the 12.0 Conversion"
         ]
@@ -75,6 +76,7 @@
       {
         "t": "chr",
         "v": [
+          null,
           "﻿First sentence. Second one.",
           null,
           null,
@@ -88,6 +90,7 @@
           "An abstract sentence. Another one.",
           "An abstract sentence. Another one.",
           "An abstract sentence. Another one.",
+          null,
           "Abstract with a pointer. And x maths.",
           "First abstract paragraph. Second one."
         ]
@@ -96,6 +99,10 @@
         "t": "list",
         "names": null,
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -157,6 +164,10 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": [
               "grobid",
               "schema twelve"
@@ -167,6 +178,7 @@
       {
         "t": "chr",
         "v": [
+          null,
           null,
           null,
           "10.1234/edge.1",
@@ -181,25 +193,6 @@
           null,
           null,
           null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           null,
           null
         ]
@@ -209,24 +202,6 @@
         "v": [
           null,
           null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
           null,
           null,
           null,
@@ -261,24 +236,6 @@
           null,
           null,
           null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           null,
           null,
           null
@@ -289,24 +246,6 @@
         "v": [
           null,
           null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
           null,
           null,
           null,
@@ -341,24 +280,6 @@
           null,
           null,
           null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           null,
           null,
           null
@@ -369,24 +290,6 @@
         "v": [
           null,
           null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
           null,
           null,
           null,
@@ -421,24 +324,6 @@
           null,
           null,
           null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           null,
           null,
           null
@@ -449,24 +334,6 @@
         "v": [
           null,
           null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
           null,
           null,
           null,
@@ -501,24 +368,6 @@
           null,
           null,
           null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           null,
           null,
           null
@@ -529,24 +378,6 @@
         "v": [
           null,
           null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
           null,
           null,
           null,
@@ -581,24 +412,6 @@
           null,
           null,
           null,
-          null
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           null,
           null,
           null
@@ -621,6 +434,30 @@
           null,
           null,
           null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
           null
         ]
       },
@@ -641,12 +478,235 @@
           null,
           null,
           null,
+          null,
+          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bib_page_from.tei.xml",
           "bom_paragraphs.tei.xml",
           "crlf_nonamespace.tei.xml",
           "edge_body.tei.xml",
@@ -660,6 +720,7 @@
           "tables_empty_first.tei.xml",
           "tables_empty_second.tei.xml",
           "tables_three_one_empty.tei.xml",
+          "url_empty.tei.xml",
           "xlink_ns.tei.xml",
           "v12_edges.tei.xml"
         ]
@@ -667,6 +728,7 @@
       {
         "t": "chr",
         "v": [
+          "b2833616a314b7c300e46b01b2cd6a95a505a29a4761ee98a797e0a5d0bf2acd",
           "b25e12a728af0337ddd2c29ac8ad2aabeb98bfe22fc96ef9cdf3246d6aebaae5",
           "f8bd2a27f441e7fb00d7d744133d8987bfe901e83103b2bc023f77d20776ed9f",
           "c8501db2050d63047d7a7663ef56c69bad48be6437ee871354aa1d7c20628bb0",
@@ -680,6 +742,7 @@
           "8fb0f91b2d44d152b83fd1b7fab26c68d3ab3e19cf6c53adac1e553aad133930",
           "ff550784fa897c628b6218e20c9ae333f4ebc169abf3a7179c5440c23f05f5b5",
           "32d38e89030308f4c9333ebeda847599f4c5e413a1a3edce4dec64ae03d5c37e",
+          "8e6a1e7af80a7967c0777eed3cc6ca46cdca2370ce899106c6cd4c4ce22c07dd",
           "63aea3f630d63a93128e59ef34184755adbeabb8ef35d187f791c5cc8be6f8ce",
           "a50d7049e1ee5f8e6ca0568d71095cdc25445af54987a4b8ff28e9e424b1a0cf"
         ]
@@ -687,6 +750,8 @@
       {
         "t": "chr",
         "v": [
+          "tei",
+          "tei",
           "tei",
           "tei",
           "tei",
@@ -721,12 +786,15 @@
           "12.0",
           "12.0",
           "12.0",
+          "12.0",
+          "12.0",
           "12.0"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "b2833616a314b7c3",
           "b25e12a728af0337",
           "f8bd2a27f441e7fb",
           "c8501db2050d6304",
@@ -740,6 +808,7 @@
           "8fb0f91b2d44d152",
           "ff550784fa897c62",
           "32d38e89030308f4",
+          "8e6a1e7af80a7967",
           "63aea3f630d63a93",
           "a50d7049e1ee5f8e"
         ]
@@ -761,12 +830,15 @@
           null,
           null,
           null,
+          null,
+          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
+          "bib_page_from.tei",
           "bom_paragraphs.tei",
           "crlf_nonamespace.tei",
           "edge_body.tei",
@@ -780,12 +852,13 @@
           "tables_empty_first.tei",
           "tables_empty_second.tei",
           "tables_three_one_empty.tei",
+          "url_empty.tei",
           "xlink_ns.tei",
           "v12_edges.tei"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -10,6 +10,7 @@ import pytest
 import respx
 
 import metacheck as pc
+from metacheck.archives import gitlab
 from metacheck.archives.gitlab import (
     _gitlab_blob_sizes,
     _gitlab_config,
@@ -74,6 +75,8 @@ def test_gitlab_project_id() -> None:
 def test_gitlab_pat(monkeypatch: pytest.MonkeyPatch) -> None:
     assert gitlab_pat() == ""
     monkeypatch.setenv("GITLAB_PAT", "env-token")
+    # the key is checked once, with a request (tests/archives_gz/test_api_keys.py)
+    monkeypatch.setattr(gitlab, "_gitlab_key_check", lambda key: True)
     assert gitlab_pat() == "env-token"
     assert _gitlab_config()["PRIVATE-TOKEN"] == "env-token"
     assert gitlab_pat("set-token") == "set-token"

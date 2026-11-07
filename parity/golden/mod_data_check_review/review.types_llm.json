@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -157,6 +159,32 @@
               "types.csv",
               "types.csv",
               "types.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -495,6 +523,32 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -894,15 +948,15 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/types**",
-          "```\n└── data/\n    ├── dupnames.csv    📊 data ex1\n    ├── headeronly.csv  📊 data ex1\n    ├── long.csv        📊 data ex1\n    ├── types.csv       📊 data ex1\n    └── Upper.csv       📊 data ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n└── data/\n    ├── dupnames.csv    📊 data ex1\n    ├── headeronly.csv  📊 data ex1\n    ├── long.csv        📊 data ex1\n    ├── types.csv       📊 data ex1\n    └── Upper.csv       📊 data ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## Upper.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(B = c(1L, 2L, 3L, NA, 5L, 6L, 7L, 8L), a = c(2L, \nNA, 4L, 5L, 6L, 7L, 8L, 9L), \"_x\" = c(NA, NA, 1L, 2L, 3L, 4L, \n5L, 6L), Z1 = 4:11, été = 5:12), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## dupnames.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(x = c(1L, 4L, 7L), x = c(2L, 5L, 8L), y = c(3L, \n6L, 9L)), row.names = c(NA, 3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## long.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:100, cond = c(\"A\", \"B\", \"A\", \"B\", \"A\", \n\"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \n\"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \n\"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \n\"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \n\"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \n\"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \n\"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \n\"A\", \"B\", \"A\", \"B\"), value = c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, \n4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, \n12, 12.5, 13, 13.5, 14, 14.5, 15, 15.5, 16, 16.5, 17, 17.5, 18, \n18.5, 19, 19.5, 20, 20.5, 21, 21.5, 22, 22.5, 23, 23.5, 24, 24.5, \n25, 25.5, 26, 26.5, 27, 27.5, 28, 28.5, 29, 29.5, 30, 30.5, 31, \n31.5, 32, 32.5, 33, 33.5, 34, 34.5, 35, 35.5, 36, 36.5, 37, 37.5, \n38, 38.5, 39, 39.5, 40, 40.5, 41, 41.5, 42, 42.5, 43, 43.5, 44, \n44.5, 45, 45.5, 46, 46.5, 47, 47.5, 48, 48.5, 49, 49.5, 50)), row.names = c(NA, \n100L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n*Showing the first 100 of 120 rows.*\n\n## types.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:6, score = c(100000.5, 1e+05, 0.1, 0.333333333333333, \n2, 3), big = structure(c(4.94065645841247e-319, 9.88131291682493e-319, \n1.48219693752374e-318, 6.09957581967003e-313, 4.94065645841247e-324, \n9.88131291682493e-324), class = \"integer64\"), small = c(1e-04, \n0.00012345, 1e-10, 5, 2, 3), flag = c(TRUE, FALSE, TRUE, NA, \nTRUE, FALSE), when = structure(c(1577836800, 1577961000, 1578049200, \nNA, 1578225600, 1578268800), class = c(\"POSIXct\", \"POSIXt\"), tzone = \"UTC\"), \n    day = structure(c(18262L, 18263L, 18264L, 18265L, NA, 18267L\n    ), class = c(\"IDate\", \"Date\")), mixed = c(\"1\", \"a\", \"3\", \n    \"\", \"5\", \"6\"), txt = c(\"Apple\", \"apple\", \"banana\", \"Banana\", \n    \"cherry\", \"cherry\"), neg = c(-0.5, -1, 0, NA, 3, 4)), row.names = c(NA, \n6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 7 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## Upper.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"_x\", \"B\", \"a\", \"Z1\", \"été\"), Representation = c(\"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\"), Level = c(\"ratio\", \n\"ratio\", \"ratio\", \"ratio\", \"ratio\"), Concept = c(\"\", \"\", \"\", \n\"\", \"\"), Role = c(\"measure\", \"measure\", \"measure\", \"measure\", \n\"measure\"), Unit = c(\"\", \"\", \"\", \"\", \"\"), Rows = c(8L, 8L, 8L, \n8L, 8L), \"% Missing\" = c(25, 12.5, 12.5, 0, 0), \"N Unique\" = c(6L, \n7L, 7L, 8L, 8L), Mean = c(3.5, 4.571, 5.857, 7.5, 8.5), SD = c(1.871, \n2.637, 2.41, 2.449, 2.449), Min = c(1, 1, 2, 4, 5), Max = c(6, \n8, 9, 11, 12)), row.names = c(\"_x\", \"B\", \"a\", \"Z1\", \"été\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## types.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"day\", \"flag\", \"neg\", \"when\", \"big\", \n\"id\", \"mixed\", \"score\", \"small\", \"txt\"), Representation = c(\"datetime\", \n\"text\", \"numeric\", \"datetime\", \"numeric\", \"text\", \"text\", \"numeric\", \n\"numeric\", \"text\"), Level = c(\"nominal\", \"nominal\", \"ratio\", \n\"nominal\", \"ratio\", \"nominal\", \"\", \"ratio\", \"ratio\", \"nominal\"\n), Concept = c(\"date\", \"\", \"\", \"date\", \"\", \"id\", \"\", \"\", \"\", \n\"\"), Role = c(\"timestamp\", \"measure\", \"measure\", \"timestamp\", \n\"measure\", \"identifier\", \"measure\", \"measure\", \"measure\", \"measure\"\n), Unit = c(\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"), Rows = c(6L, \n6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L), \"% Missing\" = c(16.7, 16.7, \n16.7, 16.7, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(5L, 2L, 5L, 5L, \n6L, 6L, 6L, 6L, 6L, 5L), Mean = c(NA, NA, 1.1, NA, 20576231502.5, \nNA, NA, 33334.322, 1.667, NA), SD = c(NA, NA, 2.247, NA, 50400974070.402, \nNA, NA, 51639.206, 2.066, NA), Min = c(NA, NA, -1, NA, 1, NA, \nNA, 0.1, 0, NA), Max = c(NA, NA, 4, NA, 123456789012, NA, NA, \n100000.5, 5, NA)), row.names = c(\"day\", \"flag\", \"neg\", \"when\", \n\"big\", \"id...12\", \"mixed\", \"score\", \"small\", \"txt\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## long.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"cond\", \"id\", \"value\"), Representation = c(\"text\", \n\"text\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \"ratio\"), \n    Concept = c(\"condition\", \"id\", \"\"), Role = c(\"condition\", \n    \"identifier\", \"measure\"), Unit = c(\"\", \"\", \"\"), Rows = c(120L, \n    120L, 120L), \"% Missing\" = c(0, 0, 0), \"N Unique\" = c(2L, \n    120L, 120L), Mean = c(NA, NA, 30.25), SD = c(NA, NA, 17.393\n    ), Min = c(NA, NA, 0.5), Max = c(NA, NA, 60)), row.names = c(\"cond\", \n\"id...11\", \"value\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## dupnames.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"x\", \"x\", \"y\"), Representation = c(\"numeric\", \n\"numeric\", \"numeric\"), Level = c(\"ratio\", \"ratio\", \"ratio\"), \n    Concept = c(\"\", \"\", \"likert\"), Role = c(\"measure\", \"measure\", \n    \"measure\"), Unit = c(\"\", \"\", \"\"), Rows = c(3L, 3L, 3L), \"% Missing\" = c(0, \n    0, 0), \"N Unique\" = c(3L, 3L, 3L), Mean = c(4, 5, 6), SD = c(3, \n    3, 3), Min = c(1, 2, 3), Max = c(7, 8, 9)), row.names = c(\"...18\", \n\"...19\", \"...20\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "LLM model 'mock/dc' reviewed ambiguous cases (0 files, 1 column) and assigned study groups (1 study group detected).",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 21 columns across 4 data files.",
           "#### Issues Identified",
           "3 file/column combinations have at least one issue.",
@@ -1159,6 +1213,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -1302,6 +1357,16 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Upper.csv",
+              "dupnames.csv",
+              "headeronly.csv",
+              "long.csv",
+              "types.csv"
             ]
           },
           {
@@ -1997,6 +2062,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

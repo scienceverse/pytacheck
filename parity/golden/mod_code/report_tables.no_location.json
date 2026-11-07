@@ -21,9 +21,9 @@
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null
+              "analysis.R",
+              "analysis_no_comments.R",
+              "stata_latin1.do"
             ]
           },
           {
@@ -62,6 +62,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 41,
+    "nrow": 42,
     "names": [
       "test_type",
       "df1",
@@ -73,6 +73,7 @@
           "t",
           "F",
           "t",
+          "t",
           "t"
         ]
       },
@@ -118,6 +119,7 @@
           3,
           null,
           1,
+          null,
           null,
           null
         ]
@@ -165,6 +167,7 @@
           28,
           20,
           28,
+          28,
           28
         ]
       },
@@ -207,6 +210,7 @@
           "=",
           "<",
           ">",
+          "=",
           "=",
           "=",
           "=",
@@ -257,6 +261,7 @@
           2.2,
           4.35,
           2.2,
+          2.2,
           2.2
         ]
       },
@@ -300,6 +305,7 @@
           "ns",
           "<",
           "<",
+          "=",
           "=",
           "=",
           "=",
@@ -349,6 +355,7 @@
           0.03,
           0.05,
           0.036,
+          0.036,
           0.03
         ]
       },
@@ -394,6 +401,7 @@
           0.103826442883237,
           0.0362254847788378,
           0.050029738175427,
+          0.0362254847788378,
           0.0362254847788378,
           0.0362254847788378
         ]
@@ -441,6 +449,7 @@
           "t(28) = 2.20, p = .03",
           "F(1, 20) = 4.35, p = .05",
           "t(28) = 2.20, p = .036",
+          "t(28) = 2.20, p = .036",
           "t(28) = 2.2, p = .03"
         ]
       },
@@ -487,51 +496,6 @@
           true,
           false,
           false,
-          false
-        ]
-      },
-      {
-        "t": "lgl",
-        "v": [
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          true,
-          false,
-          false,
-          false,
-          false,
-          true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          true,
-          false,
-          false,
-          false,
-          false,
-          true,
-          false,
-          false,
-          true,
-          false,
-          false,
           false,
           false
         ]
@@ -545,6 +509,53 @@
           false,
           false,
           false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
           false,
           false,
           false,
@@ -562,6 +573,7 @@
           false,
           false,
           true,
+          false,
           false,
           false,
           false,
@@ -625,6 +637,7 @@
           0.67,
           0.67,
           0.33,
+          0.5,
           1
         ]
       },
@@ -671,6 +684,7 @@
           56,
           56,
           57,
+          60,
           64
         ]
       },
@@ -717,12 +731,14 @@
           0,
           0,
           0,
+          0,
           0
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
           0,
           0,
           0,
@@ -809,6 +825,7 @@
           "All of them: t(28) = 2.20, p = .03, F(1, 20) = 4.35, p = .05 and r(30) = .45, p = .01.",
           "All of them: t(28) = 2.20, p = .03, F(1, 20) = 4.35, p = .05 and r(30) = .45, p = .01.",
           "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001.",
+          "Range t(28) = 2.20, p = .036, with p = .05-.10 elsewhere.",
           "Recycled QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03."
         ]
       },
@@ -855,12 +872,14 @@
           "All of them: t(28) = 2.20, p = .03, F(1, 20) = 4.35, p = .05 and r(30) = .45, p = .01.",
           "All of them: t(28) = 2.20, p = .03, F(1, 20) = 4.35, p = .05 and r(30) = .45, p = .01.",
           "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001.",
+          "Range t(28) = 2.20, p = .036, with p = .05-.10 elsewhere.",
           "Recycled QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03."
         ]
       },
       {
         "t": "chr",
         "v": [
+          "6c4258abe0fec3",
           "6c4258abe0fec3",
           "6c4258abe0fec3",
           "6c4258abe0fec3",
@@ -947,6 +966,7 @@
           "Test",
           "Test",
           "Test",
+          "Test",
           "Test"
         ]
       },
@@ -993,11 +1013,12 @@
           "unknown",
           "unknown",
           "unknown",
+          "unknown",
           "unknown"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

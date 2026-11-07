@@ -27,7 +27,7 @@ import numpy as np
 import pandas as pd
 from pandas.api.extensions import ExtensionArray
 
-__all__ = ["as_float", "as_int", "as_str", "field", "is_missing", "is_true"]
+__all__ = ["as_float", "as_int", "as_str", "field", "field_or_value", "is_missing", "is_true"]
 
 _NA = pd.NA
 _NAT = pd.NaT
@@ -168,6 +168,22 @@ def as_str(x: Any) -> str | None:
     from metacheck._r.base import as_character
 
     return as_character(x)
+
+
+def field_or_value(x: Any, name: str) -> Any:
+    """Port of ``.field_or_value()`` (R/svutils-utils.R): one field of an API value that
+    some servers send as a plain string instead of an object.
+
+    An older Dataverse's or Zenodo's licence, Mendeley's DOI: the string itself, else
+    ``x[name]`` of an object (``None`` for an array, which R's unnamed list has no
+    names for). ``x$name`` stopped on a string with "$ operator is invalid for atomic
+    vectors", which aborted ``dataverse_info()`` for every dataset in the call (U34).
+    """
+    if isinstance(x, Mapping):
+        return field(x, name)
+    if isinstance(x, list | tuple):
+        return None
+    return x
 
 
 def field(obj: Any, *keys: str | int | np.integer[Any], default: Any = None) -> Any:

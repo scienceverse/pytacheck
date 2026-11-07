@@ -190,13 +190,13 @@ def _repo_basenames(all_files: pd.DataFrame) -> dict[Any, set[str]]:
 
 def analyse_files(
     checked_files: pd.DataFrame, all_files: pd.DataFrame
-) -> tuple[list[dict[str, Any]], dict[Any, dict[Any, list[str | None]]]]:
+) -> tuple[list[dict[str, Any]], dict[Any, list[tuple[Any, list[str | None]]]]]:
     """Run every code check on every file of *checked_files*.
 
     The loop of ``code_check()``: one dict of per-file results per row (in
     the order R sets them, so a file whose check failed half-way keeps the
     columns set before the error, plus ``error``), and the R code text of
-    each file keyed by ``paper_id`` then row. R's ``parse()`` of
+    each file as ``(file name, lines)`` pairs per ``paper_id``. R's ``parse()`` of
     every R file runs as one batch (one ``Rscript`` process with the R
     parser engine) rather than one per file.
     """
@@ -236,7 +236,7 @@ def analyse_files(
     bar = pb(n, ":what [:bar] :current/:total") if n else None
     rows: list[dict[str, Any]] = []
     lines_of: list[list[str | None] | None] = []
-    r_text_by_paper: dict[Any, dict[Any, list[str | None]]] = {}
+    r_text_by_paper: dict[Any, list[tuple[Any, list[str | None]]]] = {}
     to_parse: list[int] = []
     parse_texts: list[list[str]] = []
 
@@ -254,11 +254,11 @@ def analyse_files(
             row["error"] = _msg(exc)
             continue
         if langs[i] == "R":
-            # keyed by row, not by file name: R keeps only the last of two
-            # same-named files, and of the files of an NA paper id only the
-            # last one (UPSTREAM_ISSUES U89)
+            # appended, not set by file name: of two same-named R files only the last was
+            # kept, and a missing paper id (NA) was never found again, so only the last such
+            # file was scanned (UPSTREAM_ISSUES U89, fixed in metacheck 0.4.3.7)
             pid = pids[i] if has_pid else "_all"
-            r_text_by_paper.setdefault(pid, {})[i] = lines
+            r_text_by_paper.setdefault(pid, []).append((names[i], lines))
         row["parse_error"] = None
         row["parse_error_msg"] = None
         if langs[i] == "R":
@@ -386,7 +386,7 @@ def _num(values: list[Any]) -> list[float | None]:
 def summary_table(
     code_files: pd.DataFrame,
     all_files: pd.DataFrame,
-    r_text_by_paper: Mapping[Any, Mapping[Any, Any]],
+    r_text_by_paper: Mapping[Any, Any],
     version_pin: Mapping[str, Any],
     skip_on_api_limit: bool,
     max_files_per_repo: float,
@@ -401,7 +401,7 @@ def summary_table(
     (``.code_version_pin_check()`` per paper, when ``all_files`` has a
     ``paper_id`` column).
     """
-    from metacheck.codecheck.core import _code_version_pin_check, code_packages
+    from metacheck.codecheck.core import _code_env_pinned, _code_version_pin_check, code_packages
 
     if "paper_id" not in code_files.columns:
         raise KeyError("Can't select columns that don't exist.\n✖ Column `paper_id` doesn't exist.")
@@ -482,19 +482,28 @@ def summary_table(
             # per-paper check falls back to the defaults, UPSTREAM_ISSUES U88)
             res = _code_version_pin_check(
                 af.iloc[rows].reset_index(drop=True),
-                code_text_list=dict(r_text_by_paper.get(pid) or {}),
+                code_text_list=r_text_by_paper.get(pid) or [],
                 max_file_size=max_file_size,
                 max_download_size=max_download_size,
                 cache=cache,
                 skip_on_api_limit=skip_on_api_limit,
                 max_files_per_repo=max_files_per_repo,
             )
-            pinned[pid] = bool(res.get("pinned") is True)
+            # R advice for R code, Python advice for Python code: judged by the languages of this
+            # paper's code files
+            langs = [
+                lang
+                for lang, p in zip(
+                    col(code_files, "language"), col(code_files, "paper_id"), strict=True
+                )
+                if (None if p is None else str(as_character(p))) == pid
+            ]
+            pinned[pid] = _code_env_pinned(res, langs)
         out["code_version_pinned"] = [
             pinned.get(None if is_missing(p) else str(p), False) for p in out["paper_id"].tolist()
         ]
     else:
-        out["code_version_pinned"] = bool(version_pin.get("pinned") is True)
+        out["code_version_pinned"] = _code_env_pinned(version_pin, col(code_files, "language"))
     out["code_version_pinned"] = out["code_version_pinned"].astype(bool)
     return out
 
@@ -516,22 +525,64 @@ REPORT_NO_PIN = (
     "one of these, the exact R and package versions used for the analysis are not "
     "recoverable, and package versions may drift between when this analysis was run and any "
     "later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), "
-    "a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the "
-    "code — or, for Python code, a `requirements.txt` (not currently checked for by this "
-    "module, but still good practice to include)."
+    "a `sessionInfo()` text dump, or a `groundhog`/`checkpoint` date-pin alongside the code."
+)
+_SUMMARY_NO_PIN = (
+    "No pinned R/package environment (renv.lock, sessionInfo(), or "
+    "groundhog/checkpoint) was found. Consider adding a solution to improve "
+    "computational reproducibility."
+)
+_REPORT_NO_PY = (
+    "No list of the Python packages the code needs (a `requirements.txt`, `environment.yml`, "
+    "`Pipfile.lock`, `poetry.lock`, `uv.lock` or `pyproject.toml`) was found anywhere in the "
+    "repository. Without one, the package versions used for the analysis are not recoverable, "
+    "and they may drift between when this analysis was run and any later reproduction attempt. "
+    "Consider depositing a `requirements.txt` that lists each package with its version (for "
+    "example the output of `pip freeze`)."
+)
+_SUMMARY_NO_PY = (
+    "No list of Python package versions (requirements.txt or similar) was found. Consider "
+    "adding one to improve computational reproducibility."
 )
 
 
-def version_pin_report(version_pin: Mapping[str, Any]) -> tuple[str, str, pd.DataFrame | None]:
-    """The report text, summary line and table of ``code_check()``'s pinning section."""
+def version_pin_report(
+    version_pin: Mapping[str, Any], code_langs: Sequence[Any] = ()
+) -> tuple[str, list[str], pd.DataFrame | None]:
+    """The report text, summary lines and table of ``code_check()``'s pinning section.
+
+    R advice for R code, Python advice for Python code: the R part is shown when there is R code,
+    or when there is neither R nor Python code (as before); the Python part when there is Python
+    code.
+    """
+    show_r = "R" in code_langs or "Python" not in code_langs
+    report, summary, table = _r_pin_report(version_pin)
+    if not show_r:
+        report, summary, table = "", [], None
+    reports = [report] if show_r else []
+    if "Python" in code_langs:
+        if version_pin.get("python_pinned"):
+            files = list(version_pin.get("python_files") or [])
+            reports.append(
+                "The repository lists the Python packages the code needs in "
+                + ", ".join(f"`{f}`" for f in files)
+                + "."
+            )
+            summary = [
+                *summary,
+                "A list of Python packages was found ("
+                + ", ".join(_r_basename(str(f).replace("\\", "/")) for f in files)
+                + ").",
+            ]
+        else:
+            reports.append(_REPORT_NO_PY)
+            summary = [*summary, _SUMMARY_NO_PY]
+    return "\n\n".join(reports), summary, table
+
+
+def _r_pin_report(version_pin: Mapping[str, Any]) -> tuple[str, list[str], pd.DataFrame | None]:
     if not version_pin.get("pinned"):
-        return (
-            REPORT_NO_PIN,
-            "No pinned R/package environment (renv.lock, sessionInfo(), or "
-            "groundhog/checkpoint) was found. Consider adding a solution to improve "
-            "computational reproducibility.",
-            None,
-        )
+        return REPORT_NO_PIN, [_SUMMARY_NO_PIN], None
     mechanisms = list(version_pin.get("mechanisms") or [])
     found_txt = ", ".join(_MECH_LABELS.get(m, "NA") for m in mechanisms)
     r_versions = [str(v) for v in version_pin.get("r_versions") or []]
@@ -549,12 +600,26 @@ def version_pin_report(version_pin: Mapping[str, Any]) -> tuple[str, str, pd.Dat
         if n_pkgs > 0
         else ""
     )
-    report = f"The repository pins its analysis environment via {found_txt}.{rv_txt}{renv_txt}"
-    summary = f"A pinned R/package environment was found ({', '.join(mechanisms)})."
+    session_packages = version_pin.get("session_packages")
+    si_txt = ""
+    if session_packages is not None and len(session_packages) > 0:
+        # the same record is often pasted into several scripts
+        n_si = len(session_packages[["package", "version"]].drop_duplicates())
+        si_txt = f" The `sessionInfo()` record lists {n_si} package version{plural(n_si)}."
+    pin_dates = version_pin.get("pin_dates")
+    dates_txt = ""
+    if pin_dates is not None and len(pin_dates) > 0:
+        dates = sorted(set(pin_dates["date"].tolist()))
+        dates_txt = f" Date{plural(len(dates))} the packages are pinned to: {', '.join(dates)}."
+    report = (
+        f"The repository pins its analysis environment via {found_txt}.{rv_txt}{renv_txt}"
+        f"{si_txt}{dates_txt}"
+    )
+    summary = [f"A pinned R/package environment was found ({', '.join(mechanisms)})."]
     table = None
     if n_pkgs > 0:
         assert renv_packages is not None
-        table = renv_packages.copy()
+        table = renv_packages[["file_name", "package", "version", "source"]].copy()
         table.columns = ["Lockfile", "Package", "Version", "Source"]
     return report, summary, table
 

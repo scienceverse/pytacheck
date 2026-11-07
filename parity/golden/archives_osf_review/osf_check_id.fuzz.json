@@ -14,7 +14,7 @@
     "https://osf.io:abc/abcde is not a valid OSF ID",
     "http:// is not a valid OSF ID",
     "http:///abcde is not a valid OSF ID",
-    "osf.io/abcdeosf.io/fghij is not a valid OSF ID"
+    "https://osf.io/12345678901234567890123/ is not a valid OSF ID"
   ],
   "value": {
     "t": "chr",
@@ -44,7 +44,7 @@
       "abcde_v2",
       "abcde",
       "abcde_v3",
-      "prepr",
+      "abcde",
       "abcde",
       "abcde",
       "abcde",
@@ -72,12 +72,12 @@
       null,
       "abcde",
       "abcde?view_only===",
-      "files",
       "abcde",
-      null,
+      "abcde",
+      "fghij",
       "abcde",
       "123456789012345678901234",
-      "12345",
+      null,
       "abcde",
       "abcde?view_only=",
       "abcde",
@@ -87,6 +87,6 @@
       "abcde?view_only=5"
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

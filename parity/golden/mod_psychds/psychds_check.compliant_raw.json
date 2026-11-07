@@ -105,21 +105,21 @@
           {
             "t": "chr",
             "v": [
-              "data/study-study1taskstroopdata_data.csv",
+              "data/study-1_task-stroop_data.tsv",
               "data/eeg.npy",
               "analysis/dataset_description.json",
               "README.md",
               "unknown/LICENSE",
               "unknown/CHANGES",
-              "README.json",
+              "documentation/ro-crate-metadata.json",
               "analysis/analysis.R"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "move",
-              "move",
+              "present",
+              "present",
               "move",
               "present",
               "move",
@@ -194,9 +194,9 @@
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"present\", \n\"present\", \"present\", \"present\", \"present\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Target Psych-DS Structure",
           "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
-          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── analysis.R\n│   └── dataset_description.json <span style=\"color:#b9770e\">(move from dataset_description.json)<\/span>\n├── data/\n│   ├── eeg.npy <span style=\"color:#b9770e\">(move from data/eeg.npy)<\/span>\n│   └── study-study1taskstroopdata_data.csv <span style=\"color:#b9770e\">(move from data/study-1_task-stroop_data.tsv)<\/span>\n├── unknown/\n│   ├── CHANGES <span style=\"color:#b9770e\">(move from CHANGES)<\/span>\n│   └── LICENSE <span style=\"color:#b9770e\">(move from LICENSE)<\/span>\n├── README.json <span style=\"color:#b9770e\">(move from ro-crate-metadata.json)<\/span>\n└── README.md\n<\/pre>",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── analysis.R\n│   └── dataset_description.json <span style=\"color:#b9770e\">(move from dataset_description.json)<\/span>\n├── data/\n│   ├── eeg.npy\n│   └── study-1_task-stroop_data.tsv\n├── documentation/\n│   └── ro-crate-metadata.json <span style=\"color:#b9770e\">(move from ro-crate-metadata.json)<\/span>\n├── unknown/\n│   ├── CHANGES <span style=\"color:#b9770e\">(move from CHANGES)<\/span>\n│   └── LICENSE <span style=\"color:#b9770e\">(move from LICENSE)<\/span>\n└── README.md\n<\/pre>",
           "#### Suggestions",
-          "- **Move** `data/study-1_task-stroop_data.tsv` → `data/study-study1taskstroopdata_data.csv`.\n- **Move** `data/eeg.npy` → `data/eeg.npy`.\n- **Move** `dataset_description.json` → `analysis/dataset_description.json`.\n- **Move** `LICENSE` → `unknown/LICENSE`.\n- **Move** `CHANGES` → `unknown/CHANGES`.\n- ...and 1 more file to relocate."
+          "- **Move** `dataset_description.json` → `analysis/dataset_description.json`.\n- **Move** `LICENSE` → `unknown/LICENSE`.\n- **Move** `CHANGES` → `unknown/CHANGES`.\n- **Move** `ro-crate-metadata.json` → `documentation/ro-crate-metadata.json`."
         ]
       },
       {
@@ -256,7 +256,7 @@
           {
             "t": "int",
             "v": [
-              6
+              4
             ]
           }
         ]
@@ -280,6 +280,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

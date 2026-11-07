@@ -57,7 +57,7 @@ Within 12.x the schema only grows: a later minor version may add keys and enum v
 value it does not know as it is, and logs each new value once (`pytacheck.lastlog()`,
 label `bibr12_new_value`).
 
-`pc.paper_write(paper)` saves a paper read from a 12.0 export (or converted from
+`pc.paper_write(paper, save_path="json/")` saves a paper read from a 12.0 export (or converted from
 Grobid) as a bibr 12.0 file, byte for byte as metacheck's
 `paper_write(schema_version = "12.0")` writes it, keeping bibr as the producer and
 naming pytacheck as the converter (`schema_version="auto"`, the default; see

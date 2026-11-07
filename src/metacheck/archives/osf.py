@@ -158,10 +158,10 @@ def osf_links(paper: Any) -> pd.DataFrame:
     slashes are stripped and duplicate rows dropped. The OSF URL is in the
     first (``href``) column.
     """
-    from metacheck.papers.tables import paper_table
+    from metacheck.archives import _paper_urls
     from metacheck.text.search import text_search
 
-    urls = paper_table(paper, "url").copy()
+    urls = _paper_urls(paper).copy()
     href: pd.Series[Any] | list[Any]
     if "href" in urls.columns:
         href = urls["href"]
@@ -227,13 +227,9 @@ def _url_parse(url: str) -> tuple[str, list[tuple[str, str]]]:
     return unquote(path or "/"), params
 
 
-#: 5-letter OSF page names that follow a project ID in a URL (osf.io/<id>/files/).
-_OSF_ROUTES = frozenset({"files", "forks"})
-
-#: Path segments followed by a 24-character id that is not a file's: the old
-#: draft-registration page osf.io/<id>/register/<schema id> and the API's
-#: schemas/registrations/<schema id>.
-_SCHEMA_PARENTS = frozenset({"register", "registrations"})
+#: OSF page names that follow a project ID in a URL (osf.io/<id>/files/); five letters long
+#: ones are not IDs.
+_OSF_ROUTES = frozenset({"files", "forks", "links", "login", "about", "wiki"})
 
 
 def _osf_check_one(osf_id: Any) -> str | None:
@@ -250,37 +246,36 @@ def _osf_check_one(osf_id: Any) -> str | None:
             return ident
         if grepl(r"^[a-z0-9]{5}(_v\d+)?\?view_only=.+$", ident):
             return ident
-        if len(ident) == 24 and grepl("^[a-z0-9]+$", ident):
+        if grepl("^[a-f0-9]{24}$", ident):
             return ident
         path, query = _url_parse(ident)
-        last = path.split("/")
-        while len(last) > 1 and last[-1] == "":
-            last.pop()  # R's strsplit() drops the trailing empty piece
-        tail = last[-1]
-        # a project page such as osf.io/j3gcx/files/ ends in a route name, not
-        # an ID; a 24-character file ID is hexadecimal (an OSF object id), and
-        # the one after register/ is a registration schema, not a file
-        # (metacheck returns "files", or any 24-character segment: U51)
-        if grepl(r"^[a-z0-9]{5}(_v\d+)?$", tail) and tail not in _OSF_ROUTES:
+        segs = [x for x in path.split("/") if x]
+        last = segs[-1:]
+        # A 24-character last segment is a file id when it is hexadecimal and not a
+        # registration schema (osf.io/<id>/register/<schema>) (U51)
+        if (
+            last
+            and grepl("^[a-f0-9]{24}$", last[0])
+            and (segs[-2:][0] if len(segs) >= 2 else segs[0]) != "register"
+        ):
+            return last[0]
+        # The id is the first id-shaped segment that is not a route name: the last segment
+        # made osf.io/j3gcx/files/ the id "files" (U51)
+        cand = [x for x in segs if grepl(r"^[a-z0-9]{5}(_v\d+)?$", x) and x not in _OSF_ROUTES]
+        if cand:
+            found: str = cand[0]
             view_only = next((v for k, v in query if k == "view_only"), None)
             if view_only is not None:
-                tail = f"{tail}?view_only={view_only}"
-            return tail
-        if grepl("^[0-9a-f]{24}$", tail) and not (len(last) > 1 and last[-2] in _SCHEMA_PARENTS):
-            return tail
+                found = f"{found}?view_only={view_only}"
+            return found
         raise _UrlParseError("not an OSF ID")
     except _UrlParseError:
-        # an ID is 5 characters, not the start of a longer word: osf.io/prereg
-        # is not "prere" (metacheck takes the first five characters: U51)
-        matches = regextract_all(
-            r"(?<=osf\.io/)[a-z0-9]{5}(_v\d+)?(?![a-z0-9])[?/]?", ident, perl=True
-        )
-        # the first osf.io ID (metacheck coerces the list of matches with
-        # as.character(), so a URL with two is rejected: U51)
-        for m in matches:
-            id5: str = sub("[?/]$", "", m)
-            if len(id5) in (5, 8, 9) and id5 not in _OSF_ROUTES:
-                return id5
+        # a whole path segment only, and the first of several: any word after osf.io/ was
+        # cut to five characters ("prereg" gave "prere"), and two ids made this fail (U51)
+        matches = regextract_all(r"(?<=osf\.io/)[a-z0-9]{5}(_v\d+)?(?=[?/#]|$)", ident, perl=True)
+        id5 = [m for m in matches if m not in _OSF_ROUTES]
+        if id5 and len(id5[0]) in (5, 8, 9):
+            return str(id5[0])
         warnings.warn(f"{ident} is not a valid OSF ID", stacklevel=3)
         return None
 
@@ -836,6 +831,10 @@ def _osf_get_one_page(url: str) -> Any:
         err = _osf_status_error(resp.status_code)
         if err is not None:
             logger("osf_get_all_pages", {"url": url, "status": resp.status_code})
+            if resp.status_code == 429:
+                from metacheck.archives.api_keys import key_limit_reached
+
+                key_limit_reached("osf")
             return _osf_error_result(err)
         return _resp_body_json(resp)
     except Exception:

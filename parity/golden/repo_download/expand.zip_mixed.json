@@ -60,10 +60,10 @@
       {
         "t": "chr",
         "v": [
-          "<TMP>/mixed.zip.contents/analysis.R",
-          "<TMP>/mixed.zip.contents/README.txt",
-          "<TMP>/mixed.zip.contents/study.csv",
-          "<TMP>/mixed.zip.contents/sub/codebook.csv"
+          "<tempdir>/metacheck-archives/ad102d8d26539995745fec0b0199d1bd/analysis.R",
+          "<tempdir>/metacheck-archives/ad102d8d26539995745fec0b0199d1bd/README.txt",
+          "<tempdir>/metacheck-archives/ad102d8d26539995745fec0b0199d1bd/study.csv",
+          "<tempdir>/metacheck-archives/ad102d8d26539995745fec0b0199d1bd/sub/codebook.csv"
         ]
       },
       {
@@ -78,10 +78,10 @@
       {
         "t": "chr",
         "v": [
-          "archive",
-          "archive",
-          "archive",
-          "archive"
+          "code",
+          "text",
+          "data",
+          "data"
         ]
       },
       {
@@ -131,6 +131,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

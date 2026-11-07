@@ -155,6 +155,12 @@ def _read_data_dir(ctx: Ctx) -> Any:
     return data_dir()
 
 
+def _read_state_dir(ctx: Ctx) -> Any:
+    from metacheck.archives.api_keys import state_dir
+
+    return state_dir()
+
+
 def _read_config(ctx: Ctx) -> Any:
     from metacheck.config import config_files
 
@@ -269,7 +275,9 @@ def _read_llm_cache_dir(ctx: Ctx) -> Any:
     from metacheck.llm.cache import _llm_cache_dir
 
     ctx.monkeypatch.chdir(ctx.tmp_path)
-    return Path(_llm_cache_dir())
+    # the lasting folder: by default the replies last only for the session (a temp folder)
+    with utils.local_options({"metacheck.llm.cache": True}):
+        return Path(_llm_cache_dir())
 
 
 def _read_llm_workers(ctx: Ctx) -> Any:
@@ -539,6 +547,13 @@ SITES: dict[str, Site] = {
         read=_read_data_dir,
         expect=lambda ctx, name: ctx.tmp_path / "data-from-the-table",
         spaces=lambda ctx: ctx.platform("data"),
+    ),
+    "STATE_DIR": Site(
+        value="<tmp>/state-from-the-table",
+        other="",  # no other name
+        read=_read_state_dir,
+        expect=lambda ctx, name: ctx.tmp_path / "state-from-the-table",
+        spaces=lambda ctx: ctx.platform("state"),
     ),
     "EMAIL": Site(
         value="table@example.org",

@@ -26,19 +26,19 @@
       {
         "t": "chr",
         "v": [
-          "https://openalex.org/W4411461971"
+          "https://openalex.org/W4220832516"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://doi.org/10.4135/9781036212261"
+          "https://doi.org/10.1525/collabra.33267"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "389.95328"
+          "3145.6472"
         ]
       },
       {
@@ -50,7 +50,7 @@
       {
         "t": "chr",
         "v": [
-          "2023"
+          "2022"
         ]
       },
       {
@@ -62,25 +62,25 @@
       {
         "t": "chr",
         "v": [
-          null
+          "8"
         ]
       },
       {
         "t": "chr",
         "v": [
-          null
+          "1"
         ]
       },
       {
         "t": "chr",
         "v": [
-          null
+          "Collabra Psychology"
         ]
       },
       {
         "t": "chr",
         "v": [
-          ""
+          "Daniël Lakens"
         ]
       },
       {
@@ -109,6 +109,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

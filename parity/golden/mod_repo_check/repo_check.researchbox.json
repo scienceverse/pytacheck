@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "Download failed or resulted in an empty file: <tempdir>/pytacheck-parity-cache/.metacheck_repo_cache/researchbox.org_4377/archive.zip"
+    "Could not download https://researchbox.org/4377: download failed or resulted in an empty file (HTTP 404)"
   ],
   "value": {
     "t": "module_output",
@@ -21,6 +21,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -113,11 +114,13 @@
       {
         "t": "chr",
         "v": [
-          "Double-check permissions on repositories with no detectable files.",
+          "#### Repositories that could not be checked",
+          "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
+          "- https://researchbox.org/4377: ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)",
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://researchbox.org/4377' target='_blank'>researchbox.org/4377<\/a>\", \n    Platform = \"researchbox\", Error = \"no applicable method for 'filter' applied to an object of class \\\"NULL\\\"\", \n    \"All Files\" = 0L, \"Data Files\" = 0L, \"Code Files\" = 0L, READMEs = 0L, \n    Archives = 0L), row.names = c(NA, -1L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://researchbox.org/4377' target='_blank'>researchbox.org/4377<\/a>\", \n    Platform = \"researchbox\", Error = \"ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)\", \n    \"All Files\" = 0L, \"Data Files\" = 0L, \"Code Files\" = 0L, READMEs = 0L, \n    Archives = 0L), row.names = c(NA, -1L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "",
-          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document."
+          "README files were found in all repositories."
         ]
       },
       {
@@ -129,7 +132,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 1 empty repository.\n-  We found 0 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs."
+          "\n-  We could not check 1 repository: https://researchbox.org/4377 (ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)).\n-  We found 0 files in 1 repository.\n-  We found 0 README files and 0 repositories without READMEs."
         ]
       },
       {
@@ -138,6 +141,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -152,6 +156,12 @@
             "t": "chr",
             "v": [
               "p_researchbox"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
             ]
           },
           {
@@ -234,7 +244,7 @@
           {
             "t": "chr",
             "v": [
-              "no applicable method for 'filter' applied to an object of class \"NULL\""
+              "ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)"
             ]
           }
         ]
@@ -305,6 +315,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -312,6 +350,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -202,7 +202,6 @@ def test_expand_zip_and_tar_follow_r(tmp_path: Path) -> None:
                 "hostile.tar.gz/abs.csv",
                 "hostile.tar.gz/last.csv",
                 "hostile.tar.gz/ok/data.csv",
-                "hostile.tar.gz/rel_link.csv",
                 # on Windows "\\" separates folders
                 "hostile.tar.gz/sub/win.csv" if os.name == "nt" else "hostile.tar.gz/sub\\win.csv",
             ]

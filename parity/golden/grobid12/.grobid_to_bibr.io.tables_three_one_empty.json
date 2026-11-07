@@ -354,7 +354,7 @@
               "An abstract sentence.",
               "Another one.",
               "See Table 1 and Table 2.",
-              "Ref one.2020.",
+              "Ref one. 2020.",
               "Table 1: First table.",
               "Table 2: Second table.",
               "Table 3: Third table."
@@ -1479,7 +1479,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "0.3.3.2"
+                  "0.4.3.7"
                 ]
               },
               {
@@ -1551,6 +1551,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

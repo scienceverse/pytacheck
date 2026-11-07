@@ -1,0 +1,39 @@
+{
+  "id": "write_json.strings",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "lines",
+      "size"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "{",
+          "  \"tab\": \"a\\tb\",",
+          "  \"quote\": \"say \\\"hi\\\"\",",
+          "  \"back\": \"a\\\\b\",",
+          "  \"newline\": \"a\\nb\",",
+          "  \"unicode\": \"é ü 日本\",",
+          "  \"slash\": \"a/b\",",
+          "  \"ctrl\": \"a\\u0001b\",",
+          "  \"emoji\": \"😀\",",
+          "  \"empty\": \"\"",
+          "}"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          187
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -55,8 +55,9 @@ def test_psychds_file_plan_maps_each_file() -> None:
     ]
     by_name = plan.set_index("file_name")
     assert by_name["target_path"].to_dict() == {
-        # tabular data is converted to CSV, its original kept beside it
-        "raw/scores.xlsx": "data/study-scores_data.csv",
+        # tabular data is converted to CSV, its original kept beside it; a data file keeps the
+        # folders below those the study's other data files share (metacheck 0.4.3.7)
+        "raw/scores.xlsx": "data/raw/study-scores_data.csv",
         # a valid Psych-DS data file name stays
         "study-1_data.csv": "data/study-1_data.csv",
         # raw data keeps its own name
@@ -67,7 +68,7 @@ def test_psychds_file_plan_maps_each_file() -> None:
         "notes.xyz": "unknown/notes.xyz",
     }
     assert by_name.loc["raw/scores.xlsx", "convert"]
-    assert by_name.loc["raw/scores.xlsx", "original_target"] == "data/scores.xlsx"
+    assert by_name.loc["raw/scores.xlsx", "original_target"] == "data/raw/scores.xlsx"
     assert not by_name.loc["eeg.npy", "convert"]
     assert by_name["status"].tolist() == [
         "move",

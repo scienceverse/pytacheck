@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 24,
+        "nrow": 25,
         "names": [
           "paper_id",
           "text_id",
@@ -97,6 +97,7 @@
               "6c4258abe0fec3",
               "6c4258abe0fec3",
               "6c4258abe0fec3",
+              "6c4258abe0fec3",
               "6c4258abe0fec3"
             ]
           },
@@ -104,6 +105,7 @@
             "t": "int",
             "v": [
               1,
+              2,
               3,
               4,
               5,
@@ -148,6 +150,7 @@
               "t-test",
               "t-test",
               "t-test",
+              "t-test",
               "F-test",
               "F-test",
               "F-test",
@@ -162,6 +165,7 @@
             "t": "chr",
             "v": [
               "F(1, 20) = -4.10",
+              "t(40) = -2.9",
               "t(40) = 2.9",
               "t(40) = 2.9",
               "t(40) = 2.9",
@@ -191,6 +195,7 @@
             "t": "chr",
             "v": [
               "ηp² = .17",
+              "d = -0.45",
               "d ~ 0.45",
               "d ≠ 0.45",
               "d <= 0.45",
@@ -242,12 +247,14 @@
               0,
               0,
               0,
+              0,
               0
             ]
           },
           {
             "t": "dbl",
             "v": [
+              0,
               0,
               0,
               0,
@@ -278,6 +285,7 @@
             "t": "chr",
             "v": [
               "Neg F, F(1, 20) = -4.10, ηp² = .17.",
+              "Unicode minus, t(40) = −2.9, d = −0.45.",
               "Tilde d, t(40) = 2.9, d ~ 0.45.",
               "Not equal d, t(40) = 2.9, d ≠ 0.45.",
               "Le d, t(40) = 2.9, d <= 0.45.",
@@ -307,6 +315,7 @@
             "t": "chr",
             "v": [
               null,
+              "-0.45",
               null,
               null,
               "0.45",
@@ -336,6 +345,7 @@
             "t": "chr",
             "v": [
               null,
+              "d = -0.45",
               null,
               null,
               "d <= 0.45",
@@ -365,6 +375,7 @@
             "t": "chr",
             "v": [
               null,
+              "-2.9",
               null,
               null,
               "2.9",
@@ -394,6 +405,7 @@
             "t": "chr",
             "v": [
               null,
+              "40",
               null,
               null,
               "40",
@@ -423,6 +435,7 @@
             "t": "chr",
             "v": [
               null,
+              "0.452903909476958",
               null,
               null,
               "0.452903909476958",
@@ -452,6 +465,7 @@
             "t": "chr",
             "v": [
               null,
+              "0.64050285123411",
               null,
               null,
               "0.64050285123411",
@@ -481,6 +495,7 @@
             "t": "chr",
             "v": [
               null,
+              "0.894959429780133",
               null,
               null,
               "0.894959429780133",
@@ -510,6 +525,7 @@
             "t": "chr",
             "v": [
               null,
+              "0.894959429780133",
               null,
               null,
               "0.894959429780133",
@@ -539,6 +555,7 @@
             "t": "chr",
             "v": [
               null,
+              "2.10124962819747",
               null,
               null,
               "2.10124962819747",
@@ -568,6 +585,7 @@
             "t": "chr",
             "v": [
               null,
+              "n = 41",
               null,
               null,
               "n = 41",
@@ -597,6 +615,7 @@
             "t": "chr",
             "v": [
               null,
+              "match_under_assumptions",
               "indeterminate",
               "indeterminate",
               "match_under_assumptions",
@@ -626,6 +645,7 @@
             "t": "chr",
             "v": [
               null,
+              "paired_dz",
               "none",
               "none",
               "paired_dz",
@@ -655,6 +675,7 @@
             "t": "chr",
             "v": [
               null,
+              "Match under paired-samples dz assumption.",
               "No parseable d effect size found.",
               "No parseable d effect size found.",
               "Match under paired-samples dz assumption.",
@@ -699,6 +720,7 @@
               null,
               null,
               null,
+              null,
               "8.41",
               "4.1",
               "4.1",
@@ -713,6 +735,7 @@
             "t": "chr",
             "v": [
               "F(1, 20) = -4.10",
+              null,
               null,
               null,
               null,
@@ -757,6 +780,7 @@
               null,
               null,
               null,
+              null,
               "1",
               "1",
               "1",
@@ -771,6 +795,7 @@
             "t": "chr",
             "v": [
               "20",
+              null,
               null,
               null,
               null,
@@ -815,6 +840,7 @@
               null,
               null,
               null,
+              null,
               "0.173724437099773",
               "0.170124481327801",
               "0.170124481327801",
@@ -829,6 +855,7 @@
             "t": "chr",
             "v": [
               "0.123505976095618",
+              null,
               null,
               null,
               null,
@@ -873,6 +900,7 @@
               null,
               null,
               null,
+              null,
               "match_under_assumptions",
               "match_under_assumptions",
               "match_under_assumptions",
@@ -887,6 +915,7 @@
             "t": "chr",
             "v": [
               "partial_eta_squared",
+              null,
               null,
               null,
               null,
@@ -931,6 +960,7 @@
               null,
               null,
               null,
+              null,
               "Match under partial eta-squared formula from F and dfs.",
               "Match under partial eta-squared formula from F and dfs.",
               "Match under partial eta-squared formula from F and dfs.",
@@ -947,10 +977,10 @@
         "t": "chr",
         "v": [
           "All tests had effect sizes, but some effect sizes do not match the reported test statistic.",
-          "For t-tests with a reported d, coherence checks yielded 13 matches under assumptions, 1 no match, 2 indeterminate cases.",
+          "For t-tests with a reported d, coherence checks yielded 14 matches under assumptions, 1 no match, 2 indeterminate cases.",
           "For F-tests with a reported eta-squared effect size, coherence checks yielded 7 matches under assumptions, 1 indeterminate case.",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
-          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"Neg F, F(1, 20) = -4.10, ηp² = .17.\", \n\"Tilde d, t(40) = 2.9, d ~ 0.45.\", \"Not equal d, t(40) = 2.9, d ≠ 0.45.\", \n\"Le d, t(40) = 2.9, d <= 0.45.\", \"Double lt d, t(40) = 2.9, d << 0.45.\", \n\"Upper D, t(40) = 2.9, D = 0.45.\", \"D with df, t(40) = 2.9, d(40) = 0.45.\", \n\"Eta d, t(40) = 2.9, ηd = 0.45.\", \"Space paren, t (40) = 2.9, d = 0.45.\", \n\"Tight, t(40)=2.9,d=0.45.\", \"Thin space, t(40) = 2.9, d = 0.45.\", \n\"Cohen nbsp, t(40) = 2.9, Cohen's d = 0.45.\", \"Many, t(40) = 2.9, d = 0.45, t(40) = 3.1, d = 0.48, t(40) = 1.0, d = 0.15.\", \n\"Many, t(40) = 2.9, d = 0.45, t(40) = 3.1, d = 0.48, t(40) = 1.0, d = 0.15.\", \n\"Many, t(40) = 2.9, d = 0.45, t(40) = 3.1, d = 0.48, t(40) = 1.0, d = 0.15.\", \n\"Two t one F, t(40) = 2.9, F(1, 40) = 8.41, d = 0.45, ηp² = .17.\", \n\"Two t one F, t(40) = 2.9, F(1, 40) = 8.41, d = 0.45, ηp² = .17.\", \n\"Pct prefix, F(1, 20) = 4.10, 90% ηp² = .17.\", \"Semicolon es, F(1, 20) = 4.10, ηp² = .17; ω² = .12.\", \n\"Sci rhs, t(40) = 2.9 x 10^-1, d = 4.5 e-2.\", \"Bracket es, F(1, 20) = 4.10, ηp² = [.01, .40].\", \n\"Upper eta, F(1, 20) = 4.10, Ηp² = .17.\", \"Latin eta p, F(1, 20) = 4.10, eta_p^2 = .17.\", \n\"Partial word, F(1, 20) = 4.10, partial-eta2 = .17.\"), \"Effect Size\" = c(\"ηp² = .17\", \n\"d ~ 0.45\", \"d ≠ 0.45\", \"d <= 0.45\", \"d << 0.45\", \"D = 0.45\", \n\"d = 0.45\", \"ηd = 0.45\", \"d = 0.45\", \"d = 0.45\", \"d = 0.45\", \n\"d = 0.45\", \"d = 0.45\", \"d = 0.48\", \"d = 0.15\", \"d = 0.45\", \"ηp² = .17\", \n\"90% ηp² = .17\", \"ηp² = .17; ω² = .12\", \"d = 4.5 e-2\", \n\"ηp² = [.01, .40]\", \"Ηp² = .17\", \"eta_p^2 = .17\", \"partial-eta2 = .17\"\n), \"Reported Test\" = c(\"F(1, 20) = -4.10\", \"t(40) = 2.9\", \"t(40) = 2.9\", \n\"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \n\"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \n\"t(40) = 3.1\", \"t(40) = 1.0\", \"t(40) = 2.9\", \"F(1, 40) = 8.41\", \n\"F(1, 20) = 4.10\", \"F(1, 20) = 4.10\", \"t(40) = 2.9 x 10^-1\", \n\"F(1, 20) = 4.10\", \"F(1, 20) = 4.10\", \"F(1, 20) = 4.10\", \"F(1, 20) = 4.10\"\n), \"Test Type\" = c(\"F-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \n\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \n\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"F-test\", \"F-test\", \"F-test\", \n\"t-test\", \"F-test\", \"F-test\", \"F-test\", \"F-test\"), \"d Coherence\" = c(NA, \n\"indeterminate\", \"indeterminate\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \nNA, NA, NA, \"no_match\", NA, NA, NA, NA), \"d Assumption\" = c(NA, \n\"none\", \"none\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \n\"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \n\"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", NA, NA, NA, \n\"none\", NA, NA, NA, NA), \"d Coherence Note\" = c(NA, \"No parseable d effect size found.\", \n\"No parseable d effect size found.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \nNA, NA, NA, \"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \nNA, NA, NA, NA), \"eta Coherence\" = c(\"match_under_assumptions\", \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", NA, \"indeterminate\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\"\n), \"eta Assumption\" = c(\"partial_eta_squared\", NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"partial_eta_squared\", \n\"partial_eta_squared\", \"partial_eta_squared\", NA, \"none\", \"partial_eta_squared\", \n\"partial_eta_squared\", \"partial_eta_squared\"), \"eta Coherence Note\" = c(\"Match under partial eta-squared formula from F and dfs.\", \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \nNA, \"No parseable eta-squared effect size found.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\"\n)), row.names = c(NA, -24L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"Neg F, F(1, 20) = -4.10, ηp² = .17.\", \n\"Unicode minus, t(40) = −2.9, d = −0.45.\", \"Tilde d, t(40) = 2.9, d ~ 0.45.\", \n\"Not equal d, t(40) = 2.9, d ≠ 0.45.\", \"Le d, t(40) = 2.9, d <= 0.45.\", \n\"Double lt d, t(40) = 2.9, d << 0.45.\", \"Upper D, t(40) = 2.9, D = 0.45.\", \n\"D with df, t(40) = 2.9, d(40) = 0.45.\", \"Eta d, t(40) = 2.9, ηd = 0.45.\", \n\"Space paren, t (40) = 2.9, d = 0.45.\", \"Tight, t(40)=2.9,d=0.45.\", \n\"Thin space, t(40) = 2.9, d = 0.45.\", \"Cohen nbsp, t(40) = 2.9, Cohen's d = 0.45.\", \n\"Many, t(40) = 2.9, d = 0.45, t(40) = 3.1, d = 0.48, t(40) = 1.0, d = 0.15.\", \n\"Many, t(40) = 2.9, d = 0.45, t(40) = 3.1, d = 0.48, t(40) = 1.0, d = 0.15.\", \n\"Many, t(40) = 2.9, d = 0.45, t(40) = 3.1, d = 0.48, t(40) = 1.0, d = 0.15.\", \n\"Two t one F, t(40) = 2.9, F(1, 40) = 8.41, d = 0.45, ηp² = .17.\", \n\"Two t one F, t(40) = 2.9, F(1, 40) = 8.41, d = 0.45, ηp² = .17.\", \n\"Pct prefix, F(1, 20) = 4.10, 90% ηp² = .17.\", \"Semicolon es, F(1, 20) = 4.10, ηp² = .17; ω² = .12.\", \n\"Sci rhs, t(40) = 2.9 x 10^-1, d = 4.5 e-2.\", \"Bracket es, F(1, 20) = 4.10, ηp² = [.01, .40].\", \n\"Upper eta, F(1, 20) = 4.10, Ηp² = .17.\", \"Latin eta p, F(1, 20) = 4.10, eta_p^2 = .17.\", \n\"Partial word, F(1, 20) = 4.10, partial-eta2 = .17.\"), \"Effect Size\" = c(\"ηp² = .17\", \n\"d = -0.45\", \"d ~ 0.45\", \"d ≠ 0.45\", \"d <= 0.45\", \"d << 0.45\", \n\"D = 0.45\", \"d = 0.45\", \"ηd = 0.45\", \"d = 0.45\", \"d = 0.45\", \n\"d = 0.45\", \"d = 0.45\", \"d = 0.45\", \"d = 0.48\", \"d = 0.15\", \"d = 0.45\", \n\"ηp² = .17\", \"90% ηp² = .17\", \"ηp² = .17; ω² = .12\", \n\"d = 4.5 e-2\", \"ηp² = [.01, .40]\", \"Ηp² = .17\", \"eta_p^2 = .17\", \n\"partial-eta2 = .17\"), \"Reported Test\" = c(\"F(1, 20) = -4.10\", \n\"t(40) = -2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \n\"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \n\"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 2.9\", \"t(40) = 3.1\", \n\"t(40) = 1.0\", \"t(40) = 2.9\", \"F(1, 40) = 8.41\", \"F(1, 20) = 4.10\", \n\"F(1, 20) = 4.10\", \"t(40) = 2.9 x 10^-1\", \"F(1, 20) = 4.10\", \n\"F(1, 20) = 4.10\", \"F(1, 20) = 4.10\", \"F(1, 20) = 4.10\"), \"Test Type\" = c(\"F-test\", \n\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \n\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \n\"t-test\", \"t-test\", \"F-test\", \"F-test\", \"F-test\", \"t-test\", \"F-test\", \n\"F-test\", \"F-test\", \"F-test\"), \"d Coherence\" = c(NA, \"match_under_assumptions\", \n\"indeterminate\", \"indeterminate\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \nNA, NA, NA, \"no_match\", NA, NA, NA, NA), \"d Assumption\" = c(NA, \n\"paired_dz\", \"none\", \"none\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \n\"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \n\"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \nNA, NA, NA, \"none\", NA, NA, NA, NA), \"d Coherence Note\" = c(NA, \n\"Match under paired-samples dz assumption.\", \"No parseable d effect size found.\", \n\"No parseable d effect size found.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \nNA, NA, NA, \"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \nNA, NA, NA, NA), \"eta Coherence\" = c(\"match_under_assumptions\", \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \nNA, \"indeterminate\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\"), \"eta Assumption\" = c(\"partial_eta_squared\", \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \n\"partial_eta_squared\", \"partial_eta_squared\", \"partial_eta_squared\", \nNA, \"none\", \"partial_eta_squared\", \"partial_eta_squared\", \"partial_eta_squared\"\n), \"eta Coherence Note\" = c(\"Match under partial eta-squared formula from F and dfs.\", \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", NA, \n\"No parseable eta-squared effect size found.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\"\n)), row.names = c(NA, -25L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
         ]
       },
       {
@@ -985,7 +1015,7 @@
           {
             "t": "int",
             "v": [
-              16
+              17
             ]
           },
           {
@@ -1016,6 +1046,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

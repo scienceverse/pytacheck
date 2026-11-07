@@ -3714,7 +3714,6 @@
         "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).download_summary(__import__(\"metacheck.archives.osf\", fromlist=[\"_\"]).osf_file_download(\"ybm3c\", d, metadata=False, mode=\"select\"), d))"
   "compare": *id002
 - "id": "osf_file_download.select.empty"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U53", "reason": "a project with folders but no files gives a zero-row table (metacheck: 'replacement has 1 row, data has 0')"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -4092,7 +4091,6 @@
         "py": "lambda: __import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}, {\"type\": \"nodes\", \"attributes\": {\"title\": \"B\"}}]'))"
   "compare": *id001
 - "id": ".osf_parse_response.synthetic.folders_root_folder"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "fields are matched by exact name (R's $ takes a unique prefix: relationships$root reads root_folder)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -4213,7 +4211,6 @@
         "py": "lambda: __import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"titles\": \"A\", \"publicity\": true, \"registration_a\": 1, \"registration_b\": 2, \"preprint\": null}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf\"}}}, \"links\": {\"selfish\": \"x\"}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
   "compare": *id001
 - "id": ".osf_parse_response.synthetic_single.file_partial_root"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "fields are matched by exact name (R's $ takes a unique prefix: relationships$root reads root_folder)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":

@@ -26,7 +26,6 @@ _REPORT = {
     "na": "No bibliography entries were detected",
 }
 
-# metacheck's typo "likley" is fixed (U83)
 _CAVEAT = (
     "This module relies on Grobid correctly parsing the references. There are likely to be "
     "some false positives."
@@ -183,13 +182,16 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     xrefs = xrefs.reset_index(drop=True)
     text = text.loc[:, ["paper_id", "text_id", "text"]]
 
-    joined, from_xref = _full_join(bibs, xrefs, _KEYS)
-    # a citation is missing from the bibliography when it has no bib_id or its
-    # bib_id is not a reference; metacheck keeps only the first (U115)
-    missing = (joined["bib_id"].isna() | from_xref).to_numpy(dtype=bool)
-    keep = joined["contents"].isna().to_numpy(dtype=bool) | missing
+    # marked by the side each row comes from: a citation whose bib_id is not in the
+    # bibliography has a bib_id, so testing is.na(bib_id) never reported it (U115)
+    bibs = bibs.assign(_in_bib=pd.Series([True] * len(bibs), dtype="boolean"))
+    xrefs = xrefs.assign(_cited=pd.Series([True] * len(xrefs), dtype="boolean"))
+    joined, _ = _full_join(bibs, xrefs, _KEYS)
+    missing_all = joined["_in_bib"].isna().to_numpy(dtype=bool)
+    keep = joined["_cited"].isna().to_numpy(dtype=bool) | missing_all
     table = joined.loc[keep].reset_index(drop=True)
-    missing = missing[keep]
+    missing = missing_all[keep]
+    table = table.drop(columns=["_in_bib", "_cited"])
     table, text = _align_key(table, text, "text_id")
     table = table.merge(text, on=["paper_id", "text_id"], how="left", sort=False)
     table = table.drop(columns="text_id")
@@ -204,7 +206,7 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     is_missing = pd.Series(missing, index=table.index, dtype=bool)
     for name, flag in (
         ("n_missing", is_missing),
-        ("n_extra", table["contents"].isna() & ~is_missing),
+        ("n_extra", ~is_missing),
     ):
         summary_table[name] = _flag_counts(table, flag, summary_table["paper_id"])
 

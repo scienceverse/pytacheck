@@ -200,33 +200,36 @@ def _run_sessions(cmds: list[list[str]], env: Mapping[str, str], jobs: int) -> i
 def _tree_changes() -> set[str]:
     """``git status`` lines of the checkout and its submodules, outside the goldens
     and parity/_out (empty when git is not available)."""
-    try:
+
+    def status(cwd: Path, prefix: str, *extra: str) -> list[str]:
+        # -z: paths unquoted (git quotes a path with a space or non-ASCII character,
+        # which hid it from the prefix test below); a rename's old path follows it
         out = subprocess.run(
-            ["git", "status", "--porcelain", "--untracked-files=all", "--ignore-submodules=none"],
-            cwd=ROOT,
+            ["git", "status", "--porcelain", "-z", "--untracked-files=all", *extra],
+            cwd=cwd,
             capture_output=True,
             text=True,
             check=True,
         ).stdout
+        lines, items = [], iter(out.split("\0"))
+        for item in items:
+            if not item:
+                continue
+            lines.append(f"{item[:3]}{prefix}{item[3:]}")
+            if item[0] in "RC":
+                next(items, None)
+        return lines
+
+    try:
+        lines = status(ROOT, "", "--ignore-submodules=none")
         sub = ROOT / "upstream" / "metacheck"
         if (sub / ".git").exists():
-            out += "".join(
-                f"{line[:3]}upstream/metacheck/{line[3:]}\n"
-                for line in subprocess.run(
-                    ["git", "status", "--porcelain", "--untracked-files=all"],
-                    cwd=sub,
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ).stdout.splitlines()
-            )
+            lines += status(sub, "upstream/metacheck/")
     except (OSError, subprocess.CalledProcessError):
         return set()
     skip = ("parity/golden/", "parity/_out/")
     return {
-        line
-        for line in out.splitlines()
-        if line[3:] != "upstream/metacheck" and not line[3:].startswith(skip)
+        line for line in lines if line[3:] != "upstream/metacheck" and not line[3:].startswith(skip)
     }
 
 
@@ -710,7 +713,7 @@ def stale_quarantine_entries(cases: list[Case], areas: list[str] | None = None) 
 
 #: the modules of the ``data`` extra without which some cases differ from R (with
 #: matplotlib and pypdf missing, none do)
-_EXTRA_MODULES = ("pyreadstat", "xlrd", "snowballstemmer", "striprtf")
+_EXTRA_MODULES = ("pyreadstat", "xlrd", "snowballstemmer")
 
 
 def environment_problems() -> list[str]:

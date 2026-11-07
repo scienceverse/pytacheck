@@ -56,10 +56,6 @@
         "v": [
           "12345",
           "98765"
-        ],
-        "names": [
-          "https://zenodo.org/records/12345",
-          "https://doi.org/10.5281/zenodo.98765"
         ]
       },
       {
@@ -67,14 +63,10 @@
         "v": [
           "https://doi.org/10.5281/zenodo.12345",
           "https://doi.org/10.5281/zenodo.98765"
-        ],
-        "names": [
-          "https://zenodo.org/records/12345",
-          "https://doi.org/10.5281/zenodo.98765"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

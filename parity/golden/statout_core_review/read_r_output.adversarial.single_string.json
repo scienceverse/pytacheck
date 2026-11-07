@@ -910,7 +910,7 @@
           {
             "t": "chr",
             "v": [
-              null
+              "R output"
             ]
           },
           {
@@ -1140,7 +1140,7 @@
           {
             "t": "chr",
             "v": [
-              null
+              "R output"
             ]
           },
           {
@@ -1226,7 +1226,7 @@
           {
             "t": "chr",
             "v": [
-              null
+              "R output"
             ]
           },
           {
@@ -1370,7 +1370,7 @@
           {
             "t": "chr",
             "v": [
-              null
+              "R output"
             ]
           },
           {
@@ -1595,7 +1595,7 @@
           {
             "t": "chr",
             "v": [
-              null
+              "R output"
             ]
           },
           {
@@ -2085,7 +2085,7 @@
           {
             "t": "chr",
             "v": [
-              null
+              "R output"
             ]
           },
           {
@@ -3045,6 +3045,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

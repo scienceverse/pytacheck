@@ -2,9 +2,7 @@
   "id": "ref_miscitation.duplicate_doi",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Values from `bib_id` are not uniquely identified; output will contain\nlist-cols.\n• Use `values_fn = list` to suppress this warning.\n• Use `values_fn = {summary_fun}` to summarise duplicates.\n• Use the following dplyr code to identify duplicates.\n  {data} |>\n  dplyr::summarise(n = dplyr::n(), .by = c(paper_id, doi)) |>\n  dplyr::filter(n > 1L)"
-  ],
+  "warnings": [],
   "value": {
     "t": "module_output",
     "names": [
@@ -125,22 +123,15 @@
             ]
           },
           {
-            "t": "list",
-            "names": null,
+            "t": "int",
             "v": [
-              {
-                "t": "int",
-                "v": [
-                  0,
-                  1
-                ]
-              }
+              0
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

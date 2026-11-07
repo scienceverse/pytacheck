@@ -9,7 +9,7 @@
     "v": [
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 3,
         "names": [
           "bib_id",
           "type",
@@ -20,24 +20,32 @@
           {
             "t": "int",
             "v": [
-              null
+              2,
+              null,
+              1
             ]
           },
           {
             "t": "chr",
             "v": [
+              "missing",
+              "missing",
               "missing"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "(Ghost 2020)"
+              "(Gino and Wiltermuth 2014)",
+              "(Ghost 2020)",
+              "(Eagly 1999)"
             ]
           },
           {
             "t": "chr",
             "v": [
+              "Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.",
+              "Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.",
               "Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional."
             ]
           }
@@ -45,6 +53,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

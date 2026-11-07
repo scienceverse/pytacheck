@@ -659,8 +659,10 @@ def _psycharchives_file_lists(
             unfound = [u for _, failed in results for u in failed]
             info = bind_rows(file_lists)
             orig = pd.DataFrame({"pa_url": pd.Series(urls, dtype="string")})
-            if "pa_url" not in info.columns:
-                return None, unfound  # every URL failed (metacheck's join errors here: U43)
+            if len(info) == 0:
+                # every link failed, or none exposes a file: NULL, as for one failed link
+                # (metacheck's join stopped on a table without columns here: U43)
+                return None, unfound
             df = left_join(orig, info, by="pa_url")
             # R: unlist(lapply(file_lists, attr, "rights")) -- NULL (no attribute) if none
             for name in ("rights", "license", "doi"):

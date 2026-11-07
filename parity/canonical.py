@@ -295,8 +295,26 @@ def canonical(x: Any) -> dict[str, Any]:
     return encoded
 
 
+def _session_tempdirs() -> tuple[str, ...]:
+    """The session's temporary folder, R's ``tempdir()`` (metacheck's
+    ``_session_tempdir()``), once a case has made it, as it may be written (longest
+    first). R's goldens write R's ``tempdir()`` as ``<tempdir>``
+    (parity/r/run_cases.R)."""
+    import sys
+
+    made = getattr(sys.modules.get("metacheck.archives.download"), "_session_tempdir", None)
+    if made is None or not made.cache_info().currsize:
+        return ()
+    path = made()
+    found = dict.fromkeys(
+        s for f in (os.path.realpath(path), path) for s in (f, Path(f).as_posix())
+    )
+    return tuple(sorted(found, key=len, reverse=True))
+
+
 def portable(value: Any) -> Any:
-    """*value* (canonical JSON or a string) with the checkout directory written ``<repo>``."""
+    """*value* (canonical JSON or a string) with the checkout directory written ``<repo>``
+    and the session's temporary folder ``<tempdir>``."""
     if isinstance(value, str):
         return _portable_str(value)
     try:
@@ -305,15 +323,19 @@ def portable(value: Any) -> Any:
         return _portable_walk(value)
     if any(a in raw for a in _SPELLINGS.aliases_json):  # rare: judged string by string
         return _portable_walk(value)
-    if not any(a in raw for a, _ in _SPELLINGS.plain_json):
+    pairs = [*_SPELLINGS.plain_json, *((_in_json(t), b"<tempdir>") for t in _session_tempdirs())]
+    if not any(a in raw for a, _ in pairs):
         return value
-    for a, b in _SPELLINGS.plain_json:
+    for a, b in pairs:
         raw = raw.replace(a, b)
     return orjson.loads(raw)
 
 
 def _portable_str(value: str) -> str:
-    return _SPELLINGS.apply(value)
+    value = _SPELLINGS.apply(value)
+    for t in _session_tempdirs():
+        value = value.replace(t, "<tempdir>")
+    return value
 
 
 def _portable_walk(value: Any) -> Any:

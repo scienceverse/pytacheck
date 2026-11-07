@@ -161,6 +161,11 @@ false,
 true
 ],
 [
+"(^\\s*R(?i)eferences(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|^\\s*L(?i)iterature(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|^\\s*L(?i)iterature Cited(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|^\\s*N(?i)otes and References(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|^\\s*W(?i)orks Cited(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|^\\s*C(?i)itations(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|^\\s*B(?i)ibliography(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|^\\s*B(?i)ibliographic references(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|^\\s*R(?i)eferences and recommended reading(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$)",
+false,
+true
+],
+[
 "(^\\s*|(:|\\.)\\s*|[A-Z][a-zA-Z]+\\s*)(?:\\w+\\s+){0,4}([Ff]unded\\b|[Ss]elf-funded\\b|[Ff]inanced\\b|[Ss]upported\\b|[Ss]ponsored\\b|[Rr]esourced\\b|[Aa]ided\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(by\\b|from\\b|within\\b|under\\b)[a-zA-Z0-9\\s,()\\[\\]/:-]*(Foundation(|s)\\b|Institut(e|es|ution)\\b|Universit\\b|Universit(y|ies)\\b|Academ(y|ies)\\b|Ministr(y|ies)\\b|[Gg]overnment(|s)\\b|Council(|s)\\b|National\\b|NIH\\b|NSF\\b|HHMI\\b|Trust(|s)\\b|Association(|s)\\b|Societ(y|ies)\\b|College(|s)\\b|Commission(|s)\\b|Center(|s)\\b|[Oo]ffice(|s)\\b|[Pp]rogram(|s)\\b|[Aa]lliance(|s)\\b|[Aa]gency\\b)",
 false,
 true
@@ -262,11 +267,6 @@ false
 ],
 [
 "[\\.\\?\\!\\\"]$",
-false,
-false
-],
-[
-"\\*\\s*$",
 false,
 false
 ],
@@ -501,11 +501,6 @@ true,
 false
 ],
 [
-"^(R(?i)eferences(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|L(?i)iterature(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|L(?i)iterature Cited(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|N(?i)otes and References(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|W(?i)orks Cited(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|^C(?i)itations(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|B(?i)ibliography(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|B(?i)ibliographic references(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$|R(?i)eferences and recommended reading(?-i)((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$)",
-false,
-true
-],
-[
 "^(cohen.{0,3})?d(_?(z|s|av|rm))?$",
 false,
 false
@@ -577,11 +572,6 @@ false
 ],
 [
 "^[A-Z]",
-false,
-false
-],
-[
-"^[pP]\\s*<\\s*0?\\.0+[15]",
 false,
 false
 ],
@@ -936,7 +926,7 @@ true,
 false
 ],
 [
-"http|repositor|archive|\\bosf\\b|open science framework|researchbox|zenodo|github|figshare|datadryad|kaggle|mendeley|ukbiobank|ukdataservice|dataverse|clinicalstudydatarequest|ourworldindata",
+"http|repositor|archive|\\bosf\\b|open science framework|researchbox|zenodo|github|figshare|datadryad|kaggle|mendeley|ldbase|ukbiobank|ukdataservice|dataverse|clinicalstudydatarequest|ourworldindata",
 true,
 false
 ],
@@ -987,6 +977,11 @@ false
 ],
 [
 "kaggle",
+true,
+false
+],
+[
+"ldbase",
 true,
 false
 ],

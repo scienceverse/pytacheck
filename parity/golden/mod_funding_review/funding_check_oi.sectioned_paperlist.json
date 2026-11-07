@@ -69,7 +69,7 @@
         "t": "chr",
         "v": [
           "The following funding statement was detected:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"This work was supported by grant 1.\", \"Our study was funded by the ERC.\", \n\"Our study was funded by the ERC.\", \"Unrelated support for the theory in this paper.\", \n\"The authors declare no funding.\")), names = \"\", class = \"data.frame\", row.names = c(NA, \n-5L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"This work was supported by grant 1.\", \"Our study was funded by the ERC.\", \n\"Our study was funded by the ERC.\", \"Unrelated support for the theory in this paper.\", \n\"The authors declare no funding.\")), names = \"\", row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -116,6 +116,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

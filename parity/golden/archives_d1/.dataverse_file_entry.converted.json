@@ -1,0 +1,36 @@
+{
+  "id": ".dataverse_file_entry.converted",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "name",
+      "size",
+      "url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Study 1.sav"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1000
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://dv.example.org/api/access/datafile/2?format=original"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

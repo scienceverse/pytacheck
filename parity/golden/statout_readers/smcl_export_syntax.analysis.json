@@ -13,7 +13,7 @@
       {
         "t": "chr",
         "v": [
-          "/code/analysis.do"
+          "d0d14e61850eca599304a590fd45a799/code/analysis.do"
         ]
       },
       {
@@ -24,7 +24,7 @@
           "foreach v of varlist price mpg { quietly summarize `v' }",
           "logit foreign mpg, nolog",
           "tabulate rep78",
-          "display \"ababab A)       xy|  ab   |z    |-1.5x\"",
+          "display \"ababab AA       xy|  ab   |z    |-1.5x\"",
           "display \"only text, no table\"",
           "graph export \"figure1.png\", replace",
           "log close"
@@ -32,6 +32,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

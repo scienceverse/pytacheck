@@ -18,7 +18,7 @@
         "v": [
           {
             "t": "df",
-            "nrow": 2,
+            "nrow": 10,
             "names": [
               "P-Value",
               "Text"
@@ -27,15 +27,31 @@
               {
                 "t": "chr",
                 "v": [
+                  "ps < .025",
+                  "ps < .05",
+                  "ps > .115",
+                  "ps > .169",
+                  "ps > .131",
                   "p < .05",
-                  "p <.05"
+                  "ps < .05",
+                  "ps <.03",
+                  "p <.05",
+                  "p < .005"
                 ]
               },
               {
                 "t": "chr",
                 "v": [
+                  "This interaction occurred because participants in the basic condition had numerically longer fixations when categorizing pool scenes (M = 383 ms) compared with participants in the subordinate condition (M = 325 ms), t(26) = 1.598, p = .122; fixation durations for all other scenes were significant, ts > 2.370, ps < .025 (Table 1).",
+                  "In both the basic and subordinate conditions, each scene contained significantly fixated objects (ps < .05), which indicates that participants always accrued specific object information to complement the LSF gist.",
+                  "Similar numerical patterns were obtained for classrooms (basic: M = 1,204 ms; subordinate: M = 1,333 ms), pools (basic: M = 989 ms; subordinate: M = 1,266 ms), and roads (basic: M = 979 ms; subordinate: M = 1,016 ms), but they were not significant (ts < 1.629, ps > .115).",
+                  "In contrast, there was a similar numerical pattern but no significant difference for classrooms (basic: M = 3.57; subordinate: M = 4.34) and roads (basic: M = 2.69; subordinate: M = 3.09), ts < 1.415, ps > .169.",
+                  "In contrast, there were similar, but not significant, numerical patterns for classrooms (basic: M = 3.81°; subordinate: M = 4.31°) and pools (basic: M = 3.04°; subordinate: M = 3.63°), ts < 1.560, ps > .131, whereas for roads, there were longer saccades in the basic condition (M = 3.61°) than in the subordinate condition (M = 3.27°), t <1.",
                   "(Statistical significance was tested against a threshold of p < .05; bootstrapped models that provided 95% confidence intervals for the coefficients described below can be found in Table S2 in the Supplemental Material.)",
-                  "However, the T-participants did report thinking less about the best outcome for the group when completing the game (M = 2.75, SE = 0.34) than the T+ participants did (M = 4.00, SE = 0.41), β = -1.11 (SE = 0.50), p <.05."
+                  "Moreover, Model 2 showed that the relationship between the two factors tended to be markedly nonlinear, as indicated by significant regression coefficients for the three elements of a polynomial (Table 2), β = -6.56 (SE = 3.33), β = 18.28 (SE = 7.35), β = -13.11 (SE = 4.83), all ps < .05.",
+                  "By comparison, the T-participants' harvests tended to rank toward the top of these distributions and showed only inconsistent use of the social norms in adjusting subsequent harvests (Table 2), β = 10.14 (SE = 4.66), β = -23.73 (SE = 10.39), β = 15.66 (SE = 6.68), all ps <.03.",
+                  "However, the T-participants did report thinking less about the best outcome for the group when completing the game (M = 2.75, SE = 0.34) than the T+ participants did (M = 4.00, SE = 0.41), β = -1.11 (SE = 0.50), p <.05.",
+                  "Asterisks indicate a significant difference between conditions ( * * * p < .005)."
                 ]
               }
             ]
@@ -63,6 +79,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

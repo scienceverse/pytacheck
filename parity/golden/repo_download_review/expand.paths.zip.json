@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 0,
+    "nrow": 1,
     "names": [
       "repo_url",
       "file_name",
@@ -20,42 +20,60 @@
     "v": [
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "r"
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "b.csv"
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "paths.zip/a/b.csv"
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          null
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "<tempdir>/metacheck-archives/38a63f84519bd6bc3db2edac3c7fbb36/a/b.csv"
+        ]
       },
       {
         "t": "dbl",
-        "v": []
+        "v": [
+          817
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "data"
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          null
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "tabular"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

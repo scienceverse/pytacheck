@@ -168,7 +168,7 @@
               false,
               true,
               true,
-              false
+              true
             ]
           }
         ]
@@ -178,8 +178,7 @@
         "v": [
           "We did not detect open sharing of data, which could be because there is no data related to this article, or the repository is not recognized by our code. If there is data, please consider sharing it in a repository.",
           "Code was openly shared for this article, based on the following text:\n\n> The analysis code is available on GitHub at https://github.com/me/code.",
-          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> The data are available from the corresponding author on reasonable request.",
-          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Materials can be shared by request."
+          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> The data are available from the corresponding author on reasonable request.\n\n> Materials can be shared by request.\n\n> Analysis scripts are available ON REQUEST."
         ]
       },
       {
@@ -320,6 +319,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

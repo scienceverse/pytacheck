@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -106,6 +108,15 @@
               "trials.csv",
               "trials.csv",
               "trials.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -223,6 +234,15 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -367,15 +387,15 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/llmrp**",
-          "```\n├── data/\n│   └── trials.csv  📊 data          ex1\n├── notes.xyz       📖 documentation ex1\n└── README.md       📄 readme\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── data/\n│   └── trials.csv  📊 data          ex1\n├── notes.xyz       📖 documentation ex1\n└── README.md       📄 readme\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## trials.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(pp = 1:12, q3 = c(512L, 498L, 610L, 577L, 530L, \n489L, 505L, 620L, 480L, 555L, 590L, 470L), v7 = c(1L, 2L, 3L, \n1L, 2L, 3L, 1L, 2L, 3L, 1L, 2L, 3L), label = c(\"x1\", \"y2\", \"z3\", \n\"w4\", \"x1\", \"y2\", \"z3\", \"w4\", \"x1\", \"y2\", \"z3\", \"w4\")), row.names = c(NA, \n12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## trials.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"label\", \"pp\", \"q3\", \"v7\"), Representation = c(\"text\", \n\"text\", \"numeric\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \n\"ratio\", \"ratio\"), Concept = c(\"\", \"id\", \"reaction_time\", \"condition\"\n), Role = c(\"measure\", \"identifier\", \"measure\", \"measure\"), Unit = c(\"\", \n\"\", \"\", \"\"), Rows = c(12L, 12L, 12L, 12L), \"% Missing\" = c(0, \n0, 0, 0), \"N Unique\" = c(4L, 12L, 12L, 3L), Mean = c(NA, NA, \n536.333, 2), SD = c(NA, NA, 52.403, 0.853), Min = c(NA, NA, 470, \n1), Max = c(NA, NA, 620, 3)), row.names = c(\"label\", \"pp\", \"q3\", \n\"v7\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "LLM model 'mock/dc' reviewed ambiguous cases (1 file, 2 columns) and assigned study groups (1 study group detected).",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 4 columns across 1 data file.",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
@@ -597,6 +617,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -710,6 +731,14 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "trials.csv",
+              "notes.xyz"
             ]
           },
           {
@@ -851,6 +880,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

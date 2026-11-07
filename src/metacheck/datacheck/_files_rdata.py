@@ -1010,6 +1010,53 @@ def _flatten_matrix(col: RObject) -> list[str]:
     return out
 
 
+def _s4_class(col: Any) -> tuple[str, str] | None:
+    """``(class, package)`` of a column of a formal (S4) class, else ``None``.
+
+    An S4 instance's class attribute carries a ``package`` attribute (R sets it when the
+    object is made by ``new()``); an object of S4 type has no data part at all. The
+    deserialized object keeps no S4 bit, so these two are the test. The package is empty
+    where the class names none.
+    """
+    if not isinstance(col, RObject):
+        return None
+    cls = col.attrs.get("class")
+    pkg = cls.attrs.get("package") if isinstance(cls, RObject) else None
+    names = col.classes
+    if col.type == OBJSXP:
+        return (names[0] if names else "", "")
+    if pkg is None:
+        return None
+    pk = _strvec(pkg)
+    return (names[0] if names else "", (pk[0] or "") if pk else "")
+
+
+_S4_PLAIN = (LGLSXP, INTSXP, REALSXP, CPLXSXP, STRSXP, RAWSXP)
+
+
+def _plain_s4_columns(cols: list[Any], names: list[str | None], n: int) -> dict[str, str]:
+    """``.plain_s4_columns()``: each S4 column is replaced by its plain stored values.
+
+    A column of a formal class (lubridate's periods and durations) cannot be used without
+    the package that defines it. Its values without attributes stay when they are atomic and
+    as many as there are rows, else the column is ``NA``. Returns column name -> ``"Period,
+    from the R package lubridate"`` for the columns replaced; *cols* is changed in place.
+    """
+    conv: dict[str, str] = {}
+    for j, col in enumerate(cols):
+        found = _s4_class(col)
+        if found is None:
+            continue
+        cl, pkg = found
+        if col.type in _S4_PLAIN and col.value is not None and len(col.value) == n:
+            cols[j] = RObject(col.type, col.value)
+        else:
+            cols[j] = RObject(LGLSXP, np.full(n, NA_INTEGER, dtype=np.int32))
+        nm = names[j] if j < len(names) else None
+        conv["" if nm is None else nm] = f"{cl}, from the R package {pkg or 'that defines it'}"
+    return conv
+
+
 def r_frame_to_pandas(
     df: RObject, n_rows: float = math.inf, subset: bool = True, vctrs: bool = True
 ) -> pd.DataFrame:
@@ -1026,6 +1073,7 @@ def r_frame_to_pandas(
     names = _strvec(df.attr("names"))
     cols = list(df.value or [])
     names = (names + [""] * len(cols))[: len(cols)]
+    s4_converted = _plain_s4_columns(cols, names, n)
     keep = n if not math.isfinite(n_rows) else max(0, min(n, int(n_rows)))
     series = []
     per: list[dict[str, Any] | None] = []
@@ -1052,4 +1100,6 @@ def r_frame_to_pandas(
     col_attrs = ColAttrs(list(out.columns), per)
     if col_attrs.any():
         out.attrs["col_attrs"] = col_attrs
+    if s4_converted:
+        out.attrs["s4_converted"] = s4_converted
     return out

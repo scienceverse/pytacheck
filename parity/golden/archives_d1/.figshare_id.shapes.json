@@ -33,37 +33,8 @@
       "99",
       null,
       null
-    ],
-    "names": [
-      "18093368",
-      "https://figshare.com/articles/dataset/some_title/18093368",
-      "https://figshare.com/articles/18093368",
-      "https://doi.org/10.6084/m9.figshare.18093368",
-      "10.6084/m9.figshare.18093368.v1",
-      "https://ndownloader.figshare.com/files/12345",
-      "https://figshare.com/projects/some_project/133332",
-      "https://figshare.com/s/5e01cc0cae4cf3e2e14f",
-      "not-a-figshare-url",
-      "",
-      "https://figshare.com/articles/PxW_dataset/6934484",
-      "https://doi.org/10.26180/19095317.v1",
-      "https://doi.org/10.26188/14122688",
-      "https://doi.org/10.25375/uct.14618526.v1",
-      "https://tandf.figshare.com/articles/journal_contribution/Title/12345678",
-      "https://figshare.le.ac.uk/articles/dataset/x/21234567",
-      "https://figsh.com/articles/123",
-      "https://doi.org/10.6084/m9.figshare.c.1234567",
-      "https://doi.org/10.26180/19095317.v1.",
-      "https://doi.org/10.17633/rd.brunel.1234567",
-      " 18093368 ",
-      "https://FIGSHARE.COM/ARTICLES/DATASET/X/123",
-      "https://figshare.com/articles/dataset/some_title/18093368/2",
-      "https://ndownloader.figshare.com/files/12345?private_link=abc",
-      "https://sub.figshare.shef.ac.uk/articles/media/Name/99",
-      "https://doi.org/10.25375/19095317x",
-      null
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

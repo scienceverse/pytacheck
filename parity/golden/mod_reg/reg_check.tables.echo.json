@@ -161,7 +161,7 @@
             "t": "chr",
             "v": [
               "4902",
-              "template_name<br>AsPredicted<br><br>title<br>To err is human<br><br>id<br>by8i8v<br><br>date_created<br>2025/11/27 23:20 (PT)<br><br>research_questions<br>Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.<br><br>study_design_overview<br>Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.<br><br>sample_size<br>We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.<br><br>statistical_tests<br>We will perform an independent t-test on the number of mistakes in each group.<br><br>existing_data_explanation<br>No, no data have been collected for this study yet.<br><br>design_dependent_variables<br>We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.<br><br>outliers_and_exclusions<br>none are expected.<br><br>additional_comments<br>We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
+              "template_name<br>AsPredicted<br><br>title<br>To err is human<br><br>id<br>by8i8v<br><br>date_created<br>2025/11/27 23:20 (PT)<br><br>date_registered<br>2025-11-27<br><br>research_questions<br>Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.<br><br>study_design_overview<br>Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.<br><br>sample_size<br>We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.<br><br>statistical_tests<br>We will perform an independent t-test on the number of mistakes in each group.<br><br>existing_data_explanation<br>No, no data have been collected for this study yet.<br><br>design_dependent_variables<br>We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.<br><br>outliers_and_exclusions<br>none are expected.<br><br>additional_comments<br>We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
               "none"
             ]
           },
@@ -185,6 +185,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

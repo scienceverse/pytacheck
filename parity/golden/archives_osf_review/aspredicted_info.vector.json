@@ -17,9 +17,16 @@
       "AP_conditions",
       "AP_analyses",
       "AP_outliers",
+      "AP_secondary",
       "AP_sample_size",
       "AP_anything_else",
-      "AP_version"
+      "AP_version",
+      "AP_registered",
+      "AP_anonymous",
+      "AP_number",
+      "AP_status",
+      "AP_authors_count",
+      "AP_bundle"
     ],
     "v": [
       {
@@ -95,6 +102,13 @@
       {
         "t": "chr",
         "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
           "According to a power analysis, to detect a small to medium effect size with .80 statistical power and alpha error probability of .05, we need:\n(1) 158 participants in the above specified negative binomial regression test\n(2) 124 participants in the above specified Fisher's exact test\nTherefore, we aim to collect data from 158 children aged 8 to 13 to satisfy the power needs of the more demanding statistical test.",
           "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist."
         ]
@@ -112,9 +126,51 @@
           "2.00",
           "2.00"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021-06-08",
+          "2025-11-27"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

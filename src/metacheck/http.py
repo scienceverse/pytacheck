@@ -440,6 +440,7 @@ def request(
     sink: Callable[[httpx.Response], None] | None = None,
     resend_headers: bool = False,
     raise_errors: bool = False,
+    on_reset: Callable[[str, float], None] | None = None,
     **kwargs: Any,
 ) -> httpx.Response | None:
     """Send a request with metacheck's retry policy.
@@ -468,6 +469,9 @@ def request(
     or given up on is closed unread. *resend_headers* sends every redirect
     hop the original headers (an OSF or Zenodo token goes on to their storage
     hosts).
+
+    *on_reset* is called with the host and the epoch seconds of a reset the host
+    announces (a 429, or an exhausted bucket), as soon as it is learned.
 
     With *raise_errors* a connection failure on the last try raises its
     :mod:`httpx` exception, and a request that is not sent because the host is
@@ -522,6 +526,8 @@ def request(
                         response_reset = _parse_reset(resp)
                         if response_reset is not None:
                             _record_reset(host, response_reset)  # publish before releasing the slot
+                            if on_reset is not None:
+                                on_reset(host, response_reset)
         except (httpx.TransportError, httpx.TimeoutException):
             if attempt == max_tries or not retry_on_failure:
                 if raise_errors:

@@ -1,20 +1,7 @@
 {
-"repo_check.all_platforms": {"r": "d1c7d2b7e9ff3d1f", "py": "2ae46d4a4e75c9f4", "diff": ["report[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_text[]", "table"]},
-"repo_check.all_platforms.paperlist": {"r": "5f54a27a1bb0f8ee", "py": "247ef44abe05cd4d", "diff": ["report[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_text[]", "table"]},
-"repo_check.all_platforms.report": {"r": "6520fb718b23b06c", "py": "179fc02f88248559", "diff": ["[]"]},
-"repo_check.all_platforms.tables": {"r": "8a8444d097732638", "py": "beabeeabaa0d0c65", "diff": ["[]", "[].All Files[]", "[].READMEs[]"]},
-"repo_check.bibr12.paperlist": {"r": "4ebf9891e876a135", "py": "7779b776c991cc5c", "diff": ["gated_repos", "report[]", "summary_table.repo_n[]", "summary_text[]"]},
-"repo_check.dataone.nameless": {"r": "ac5146cf65ca52a8", "py": "9e860f54d28ced7c", "diff": ["<R error, Python value>"]},
-"repo_check.dspace.found_and_unfound": {"r": "e3ec4c05836c9b7f", "py": "a78e1852d3902f6c", "diff": ["gated_repos", "repo_metadata.paper_id[]", "report[]", "summary_table.repo_n[]", "summary_text[]", "traffic_light[]"]},
-"repo_check.dspace.unfound": {"r": "c09fa08fcb605a42", "py": "4c7052f972e0a574", "diff": ["gated_repos"]},
-"repo_check.dspace7.unfound": {"r": "2f61ef4d936f2af3", "py": "50d5e996024cab15", "diff": ["gated_repos"]},
-"repo_check.figshare.share_link": {"r": "0164a71841959ff7", "py": "b8d3fb146b54a38d", "diff": ["repo_metadata"]},
-"repo_check.local.edat_ok": {"r": "41416c4579fefc20", "py": "e06a075d5aa552d4", "diff": ["table.file_type[]"]},
-"repo_check.local.messy": {"r": "a61088775aa97232", "py": "16dbdc9f86154113", "diff": ["report[]", "summary_table.files_zip[]", "summary_text[]", "table.file_type[]"]},
-"repo_check.local.roster_extra": {"r": "27dfc83c7ebc9fa5", "py": "40c6f7a598fa486d", "diff": ["report[]", "summary_table.files_zip[]", "summary_text[]", "table.file_type[]"]},
-"repo_check.local.zip": {"r": "bacc8dd19343cb2f", "py": "b3d981f613dc6dba", "diff": ["report[]", "summary_table.files_zip[]", "summary_text[]", "table.file_type[]"]},
-"repo_check.osf.registration2": {"r": "74227ac366195b8c", "py": "38d0b399d6bea090", "diff": ["gated_repos", "group_no_evidence", "na_replace", "naming_issues", "repo_metadata", "report[]", "roster_check", "summary_table", "summary_table.files_code[]", "summary_table.files_data[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_table.files_zip[]", "summary_table.repo_n[]", "summary_text[]", "table", "traffic_light[]"]},
-"repo_check.report.messy": {"r": "49c2c63cb6676ae4", "py": "344369aa74834fe3", "diff": ["[]"]},
-"repo_check.tables.messy": {"r": "875e20495c96ce63", "py": "495cd0c328fd9efc", "diff": ["[].Archives[]", "[].Type[]"]},
-"repo_check.zenodo.nameless": {"r": "ac5146cf65ca52a8", "py": "5d4a7dc810c3ca1b", "diff": ["<R error, Python value>"]}
+"repo_check.dspace.found_and_unfound": {"r": "c79bf9aa8f5525b7", "py": "d4d5978d9e5e8c70", "diff": ["gated_repos", "repo_metadata.paper_id[]", "report[]", "summary_table.repo_n[]", "summary_table.repo_unchecked[]", "summary_text[]", "traffic_light[]"]},
+"repo_check.dspace.unfound": {"r": "41c6a6268e7481d4", "py": "d5f6885949ca75bb", "diff": ["gated_repos", "report[]", "summary_table.repo_unchecked[]", "summary_text[]"]},
+"repo_check.dspace.unfound_two": {"r": "fb1fbe300eb1c6ff", "py": "cf3a131f01e47670", "diff": ["gated_repos", "report[]", "summary_table.repo_unchecked[]", "summary_text[]"]},
+"repo_check.dspace7.unfound": {"r": "9c7702c3d8f0862d", "py": "af73fc34a1aab745", "diff": ["gated_repos", "report[]", "summary_table.repo_unchecked[]", "summary_text[]"]},
+"repo_check.osf.registration2": {"r": "8dab6936221ad9f7", "py": "afc9e430d327768d", "diff": ["gated_repos", "group_no_evidence", "na_replace", "naming_issues", "repo_metadata", "report[]", "roster_check", "summary_table", "summary_table.files_code[]", "summary_table.files_data[]", "summary_table.files_n[]", "summary_table.files_readme[]", "summary_table.files_zip[]", "summary_table.repo_n[]", "summary_text[]", "table", "traffic_light[]", "useless_files"]}
 }

@@ -11,9 +11,9 @@ from metacheck.db.pubpeer import _request_body, pubpeer_comments
 
 
 def test_request_body_matches_jsonlite() -> None:
-    # auto_unbox = TRUE: a single DOI is sent as a string, not an array
+    # I(): a single DOI is sent as an array too (auto_unbox sent a string, U14)
     assert _request_body([]) == '{"dois":[]}'
-    assert _request_body(["10.1/a"]) == '{"dois":"10.1/a"}'
+    assert _request_body(["10.1/a"]) == '{"dois":["10.1/a"]}'
     assert _request_body(["10.1/a", "10.1/b"]) == '{"dois":["10.1/a","10.1/b"]}'
 
 

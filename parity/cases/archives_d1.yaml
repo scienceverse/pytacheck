@@ -912,3 +912,66 @@
       "$expr":
         "r": "(function() { withr::local_envvar(DRYAD_CLIENT_ID = \"\", DRYAD_CLIENT_SECRET = \"\"); withr::local_options(metacheck.dryad.client_id = NULL, metacheck.dryad.client_secret = NULL); dryad_auth() })()"
         "py": "lambda m: m.dryad.dryad_auth() if not __import__('os').environ.get('DRYAD_CLIENT_ID') else None"
+- "id": ".dataverse_file_entry.plain"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dataverse_file_entry(list(label = \"analysis.R\", dataFile = list(id = 1, filename = \"analysis.R\", filesize = 120)), \"dv.example.org\")"
+        "py": "lambda m: m.dataverse._dataverse_file_entry({\"label\": \"analysis.R\", \"dataFile\": {\"id\": 1, \"filename\": \"analysis.R\", \"filesize\": 120}}, \"dv.example.org\")"
+- "id": ".dataverse_file_entry.converted"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dataverse_file_entry(list(label = \"Study 1.tab\", dataFile = list(id = 2, filename = \"Study 1.tab\", filesize = 900, originalFileFormat = \"application/x-spss-sav\", originalFileName = \"study1.sav\", originalFileSize = 1000)), \"dv.example.org\")"
+        "py": "lambda m: m.dataverse._dataverse_file_entry({\"label\": \"Study 1.tab\", \"dataFile\": {\"id\": 2, \"filename\": \"Study 1.tab\", \"filesize\": 900, \"originalFileFormat\": \"application/x-spss-sav\", \"originalFileName\": \"study1.sav\", \"originalFileSize\": 1000}}, \"dv.example.org\")"
+- "id": ".dataverse_file_entry.bare"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dataverse_file_entry(list(label = \"x.tab\", dataFile = list(id = 3, filename = \"x.tab\", filesize = 50, originalFileFormat = \"application/x-stata\", originalFileName = list(), originalFileSize = list())), \"dv.example.org\")"
+        "py": "lambda m: m.dataverse._dataverse_file_entry({\"label\": \"x.tab\", \"dataFile\": {\"id\": 3, \"filename\": \"x.tab\", \"filesize\": 50, \"originalFileFormat\": \"application/x-stata\", \"originalFileName\": [], \"originalFileSize\": []}}, \"dv.example.org\")"
+- "id": ".dataverse_file_entry.no_label"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dataverse_file_entry(list(dataFile = list(id = 4, filename = \"My data.tab\", filesize = 70, originalFileFormat = \"text/csv\", originalFileName = \"My data.csv\", originalFileSize = 80)), \"dv.example.org\")"
+        "py": "lambda m: m.dataverse._dataverse_file_entry({\"dataFile\": {\"id\": 4, \"filename\": \"My data.tab\", \"filesize\": 70, \"originalFileFormat\": \"text/csv\", \"originalFileName\": \"My data.csv\", \"originalFileSize\": 80}}, \"dv.example.org\")"
+- "id": ".dataverse_file_entry.no_id"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dataverse_file_entry(list(label = \"orphan.csv\", dataFile = list(filename = \"orphan.csv\", filesize = 5)), \"dv.example.org\")"
+        "py": "lambda m: m.dataverse._dataverse_file_entry({\"label\": \"orphan.csv\", \"dataFile\": {\"filename\": \"orphan.csv\", \"filesize\": 5}}, \"dv.example.org\")"
+- "id": ".dryad_share_token.vector"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dryad_share_token(c(\"https://datadryad.org/stash/share/M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU\", \"https://datadryad.org/share/abc_D-1\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://DATADRYAD.org/stash/SHARE/Xyz\", \"https://datadryad.org/stash/share/\"))"
+        "py": "lambda m: m.dryad._dryad_share_token([\"https://datadryad.org/stash/share/M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU\", \"https://datadryad.org/share/abc_D-1\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://DATADRYAD.org/stash/SHARE/Xyz\", \"https://datadryad.org/stash/share/\"])"
+- "id": "dryad_links.sharing_links"
+  "r": "dryad_links"
+  "py": "metacheck.archives.dryad.dryad_links"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Reviewers: https://datadryad.org/stash/share/abc_D-1 and later datadryad.org/share/Xy-z_9, or 10.5061/dryad.j1fd7."
+        - "Not a link: datadryad.org/share/"
+        "url":
+        - "https://datadryad.org/stash/share/M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU"
+        - "https://datadryad.org/stash/share/M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU/"
+  "compare":
+    "ignore":
+    - "paper_id"

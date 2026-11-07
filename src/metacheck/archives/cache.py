@@ -33,14 +33,16 @@ def _metacheck_cache_subdir(subdir: str, override: str | os.PathLike[str] | None
     """Port of R/cache.R::.metacheck_cache_subdir(): one named cache folder.
 
     *override* (a cache-specific option or environment variable) wins when
-    non-empty; otherwise the folder is ``<root>/<subdir>``. Created if needed;
-    returned as an absolute path with forward slashes.
+    non-empty; otherwise the folder is ``<root>/<subdir>``. Returned as an
+    absolute path with forward slashes. The folder is not created here:
+    looking up a location (:func:`metacheck_cache_info`, the ``*_cache_clear()``
+    functions) must not leave empty folders in the working directory; whatever
+    writes a cache entry creates it.
     """
     if override is not None and str(override) != "":
         path = Path(override)
     else:
         path = Path(_metacheck_cache_root()) / subdir
-    path.mkdir(parents=True, exist_ok=True)
     return os.path.realpath(path).replace("\\", "/")
 
 

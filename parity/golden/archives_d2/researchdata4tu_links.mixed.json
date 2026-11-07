@@ -79,18 +79,10 @@
           "16766929",
           "7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
           null
-        ],
-        "names": [
-          "https://doi.org/10.4121/16766929.v1",
-          "https://data.4tu.nl/articles/16766929",
-          "10.4121/16766929.v2",
-          "https://data.4tu.nl/articles/dataset/Wind/16766929/1/.",
-          "doi.org/10.4121/uuid:7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
-          "www.data.4tu.nl/datasets"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

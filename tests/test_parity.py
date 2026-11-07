@@ -445,6 +445,25 @@ def test_portable_paths() -> None:
     assert canonical([p + "\udcff"])["v"] == ["<repo>" + rel + "\udcff"]
 
 
+def test_portable_session_tempdir() -> None:
+    """The session's temporary folder (R's ``tempdir()``) is ``<tempdir>``, as R's
+    goldens write it, once a case has made it."""
+    from metacheck.archives.download import _session_tempdir
+
+    t = _session_tempdir()
+    f = f"{t}/metacheck-recovered-code/ab12/code/x.R"  # file.path(): "/" on Windows too
+    assert portable(f) == "<tempdir>/metacheck-recovered-code/ab12/code/x.R"
+    assert canonical({"file_location": [f]})["v"][0]["v"] == [
+        "<tempdir>/metacheck-recovered-code/ab12/code/x.R"
+    ]
+    # another temporary folder is not the session's
+    other = tempfile.mkdtemp(prefix="other-")
+    try:
+        assert portable(os.path.join(other, "x.R")) == os.path.join(other, "x.R")
+    finally:
+        os.rmdir(other)
+
+
 @pytest.mark.r
 def test_r_runner_ids_paths_and_yaml_floats(tmp_path: Path) -> None:
     """run_cases.R: deterministic test_paper() ids, placeholders for the checkout,

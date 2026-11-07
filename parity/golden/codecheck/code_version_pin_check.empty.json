@@ -12,6 +12,10 @@
       "renv_files",
       "renv_packages",
       "sessioninfo_files",
+      "session_packages",
+      "pin_dates",
+      "python_files",
+      "python_pinned",
       "file_location"
     ],
     "v": [
@@ -40,9 +44,14 @@
           "file_name",
           "package",
           "version",
-          "source"
+          "source",
+          "remote"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -66,11 +75,72 @@
         "v": []
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file_name",
+          "package",
+          "version",
+          "source",
+          "remote"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "mechanism",
+          "date"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
         "t": "chr",
         "v": []
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

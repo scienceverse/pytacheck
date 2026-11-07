@@ -66,9 +66,9 @@
               null,
               null,
               "sat_1",
-              "sat_2",
+              "sat_1",
               "sat_3",
-              "sat_4"
+              "sat_1"
             ]
           },
           {
@@ -91,16 +91,48 @@
               "unlabelled",
               "unlabelled",
               "unlabelled",
+              "llm",
+              "llm",
               "labelled",
-              "labelled",
-              "labelled",
-              "labelled"
+              "llm"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Variable",
+          "Label",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sat_2",
+              "sat_4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook.csv",
+              "codebook.csv"
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

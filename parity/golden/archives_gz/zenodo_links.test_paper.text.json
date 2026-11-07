@@ -86,15 +86,6 @@
           "12345",
           "777",
           "12345"
-        ],
-        "names": [
-          "https://zenodo.org/records/12345",
-          "https://zenodo.org/communities/x",
-          "HTTPS://DOI.ORG/10.5281/ZENODO.5",
-          "https://zenodo.org/records/12345",
-          "10.5281/zenodo.12345",
-          "https://zenodo.org/record/777",
-          "doi.org/10.5281/zenodo.12345"
         ]
       },
       {
@@ -107,19 +98,10 @@
           "https://doi.org/10.5281/zenodo.12345",
           "https://doi.org/10.5281/zenodo.777",
           "https://doi.org/10.5281/zenodo.12345"
-        ],
-        "names": [
-          "https://zenodo.org/records/12345",
-          "https://zenodo.org/communities/x",
-          "HTTPS://DOI.ORG/10.5281/ZENODO.5",
-          "https://zenodo.org/records/12345",
-          "10.5281/zenodo.12345",
-          "https://zenodo.org/record/777",
-          "doi.org/10.5281/zenodo.12345"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 3,
+        "nrow": 1,
         "names": [
           "paper_id",
           "text"
@@ -46,17 +46,13 @@
           {
             "t": "chr",
             "v": [
-              "6c4258abe0fec3",
-              "6c4258abe0fec3",
               "6c4258abe0fec3"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "This work was supported by grant 1.",
-              "Our study was funded by the ERC.",
-              "Unrelated support for the theory in this paper."
+              "Our study was funded by the ERC."
             ]
           }
         ]
@@ -65,7 +61,7 @@
         "t": "chr",
         "v": [
           "The following funding statement was detected:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"This work was supported by grant 1.\", \"Our study was funded by the ERC.\", \n\"Unrelated support for the theory in this paper.\")), names = \"\", class = \"data.frame\", row.names = c(NA, \n-3L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"Our study was funded by the ERC.\"), names = \"\", row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -110,6 +106,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

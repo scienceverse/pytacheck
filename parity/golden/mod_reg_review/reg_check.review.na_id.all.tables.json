@@ -19,25 +19,25 @@
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null
+              "deviation",
+              "consistent",
+              "unclear"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null
+              "Paper sample (120) exceeds preregistered sample (100).",
+              "Consistent.",
+              "Cannot be assessed from the paper."
             ]
           }
         ]
@@ -56,47 +56,47 @@
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null
+              "Sample size",
+              "Hypotheses",
+              "Exclusion criteria"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null
+              "120 participants",
+              "H1: A > B",
+              "not described"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null
+              "100 participants",
+              "H1: A > B",
+              "exclude RT < 200 ms"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null
+              " quote",
+              " quote",
+              " quote"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null
+              " quote",
+              " quote",
+              " quote"
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

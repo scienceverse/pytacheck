@@ -48,7 +48,7 @@
       {
         "t": "chr",
         "v": [
-          "<TMP>/comment.zip.contents/folder/results.csv"
+          "<tempdir>/metacheck-archives/9cec1dbdc895dd922bb2334f23ccb2c1/folder/results.csv"
         ]
       },
       {
@@ -60,7 +60,7 @@
       {
         "t": "chr",
         "v": [
-          "archive"
+          "data"
         ]
       },
       {
@@ -95,6 +95,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

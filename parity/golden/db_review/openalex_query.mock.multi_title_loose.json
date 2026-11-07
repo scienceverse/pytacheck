@@ -25,25 +25,25 @@
       {
         "t": "chr",
         "v": [
-          "https://openalex.org/W1"
+          "https://openalex.org/W2"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "https://doi.org/10.9999/w1"
+          "https://doi.org/10.9999/w2"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "99.5"
+          "123.4"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Synthetic Title One"
+          "synthetic title one"
         ]
       },
       {
@@ -79,13 +79,13 @@
       {
         "t": "chr",
         "v": [
-          "J A"
+          "J B"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "A B"
+          "X; NULL; Z"
         ]
       },
       {
@@ -102,6 +102,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

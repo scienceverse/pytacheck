@@ -288,7 +288,7 @@
         "v": [
           "We recommend checking the sentences below, and add any missing effect sizes.",
           "For t-tests with a reported d, coherence checks yielded 1 match under assumptions.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\"), names = \"\", row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
           "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A was bigger than B, t(124) = 1.23, p 0.013, d = 0.34.\", \n\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\"), \"Effect Size\" = c(\"d = 0.34\", \nNA), \"Reported Test\" = c(\"t(124) = 1.23\", \"F(1, 13) = 2.34\"), \n    \"Test Type\" = c(\"t-test\", \"F-test\"), \"d Coherence\" = c(\"match_under_assumptions\", \n    NA), \"d Assumption\" = c(\"independent_unequal_n_range\", NA\n    ), \"d Coherence Note\" = c(\"Match under independent-samples unequal-n range assumption (closest split n1 = 15, n2 = 111, N = 126).\", \n    NA), \"eta Coherence\" = c(NA, \"indeterminate\"), \"eta Assumption\" = c(NA, \n    \"none\"), \"eta Coherence Note\" = c(NA, \"No parseable eta-squared effect size found.\"\n    )), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
         ]
@@ -302,7 +302,7 @@
       {
         "t": "chr",
         "v": [
-          "We found 1 t-test and/or F-test where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes"
+          "We found 1 t-test and/or F-test where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes."
         ]
       },
       {
@@ -366,6 +366,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

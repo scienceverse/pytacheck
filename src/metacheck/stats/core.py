@@ -30,24 +30,30 @@ def stats(
     (without ``source``) followed by the columns of the matching sentence
     (``text``, ``paper_id``, ``header`` ...), or an empty DataFrame when
     nothing is found. A string or a sequence of strings gives statcheck's
-    columns followed by ``text``.
+    columns followed by ``text`` and ``text_id`` (the position of the string).
 
     Differs from metacheck (U4, D78): a sentence keeps its other results when
-    one of them cannot be checked (metacheck drops the whole sentence on the
-    first R warning or error, e.g. for an unrelated ``p = .05-.10``); the
+    statcheck stops on one of them (metacheck drops the whole sentence on the
+    first error, e.g. for ``t(20) = (2.1``; since 0.4.3.7 it mutes warnings,
+    so an unrelated ``p = .05-.10`` no longer drops a sentence); and the
     settings are ordinary keyword (or positional) arguments, so a misspelt
     or abbreviated name raises :class:`TypeError` (R matched unique prefixes)
-    and invalid values :class:`ValueError`; and strings are accepted
-    (metacheck fails on a character vector).
+    and invalid values :class:`ValueError`.
     """
     from metacheck.stats.statcheck import _statcheck_quiet
     from metacheck.text.search import text_search
 
+    # a character vector is searched as a text table, one row per string
+    # (metacheck 0.4.3.7; it stopped with "argument is of length zero", U4)
+    if isinstance(text, str):
+        text = [text]
+    if isinstance(text, (list, tuple)) and all(isinstance(t, str) or pd.isna(t) for t in text):
+        text = pd.DataFrame(
+            {"text": pd.Series(list(text), dtype="object"), "text_id": range(1, len(text) + 1)}
+        )
+
     # lines with stats must have at least one number
-    table = text_search(text, "[0-9]")
-    if not isinstance(table, pd.DataFrame):
-        # a string or a character vector: the matching strings
-        table = pd.DataFrame({"text": pd.Series(table, dtype="string")})
+    table: pd.DataFrame = text_search(text, "[0-9]")
 
     texts = [None if pd.isna(t) else str(t) for t in table["text"].tolist()]
     sources, columns = _statcheck_quiet(

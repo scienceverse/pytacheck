@@ -27,6 +27,7 @@ import metacheck as pc
 from metacheck.core.errors import PytacheckWarning
 from metacheck.module import module_find, module_run
 from metacheck.modules import _reproducibility as h
+from metacheck.modules import _reproducibility_exec as rx
 from metacheck.modules import reproducibility_check as rc
 from metacheck.presets import select
 from metacheck.repro import core, docker
@@ -298,28 +299,15 @@ def h_psychsci() -> list[str]:
 def test_execute_stops_at_a_sandbox_that_skipped_the_matching() -> None:
     # _execute() sends everything that is not "docker" to the host process; it must not be
     # reachable with a value _match_sandbox() did not vouch for
+    made: list[str] = []
     with pytest.raises(ValueError, match="unknown sandbox 'vm'"):
-        rc._execute(  # type: ignore[arg-type]
+        rx._execute(
             None,
-            [],
-            {"sandbox": "vm", "timeout": 1, "install_missing": False},
-            names=[],
-            code_text_list=None,
-            rewrite_list=None,
-            plan=None,
-            structure_df=None,
-            code_tbl=None,
-            version_pin=None,
-            deps=None,
-            install_deps=None,
-            io=None,
-            order_tbl=None,
-            runs_as_r=[],
-            file_unresolved=[],
-            sandbox_root=None,
-            keep_sandbox=False,
-            stat_output=[],
+            made,
+            {"sandbox": "vm", "timeout": 1, "install_missing": False, "run_state": {}},
+            {"file_names": [], "sandbox_root": None, "keep_sandbox": False},
         )
+    assert made == []  # it stopped before a sandbox was made
 
 
 # -- sandbox = "process": still there, loud, and it does not raise -------------------------------

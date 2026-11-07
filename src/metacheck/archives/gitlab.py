@@ -16,11 +16,12 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from typing import Any
 
 import pandas as pd
 
-from metacheck._values import as_float, field, is_missing
+from metacheck._values import as_float, field, field_or_value, is_missing
 
 __all__ = ["gitlab_links", "gitlab_pat", "gitlab_repo", "gitlab_tree_files"]
 
@@ -117,13 +118,47 @@ def _gitlab_config(headers: dict[str, str] | None = None) -> dict[str, str]:
     """
     out = dict(headers or {})
     out["User-Agent"] = "scienceverse/metacheck"
+    from metacheck.archives.api_keys import key_use
+
     try:
-        pat = gitlab_pat()
+        pat = key_use("gitlab", check=_gitlab_key_check)
     except Exception:
         pat = ""
     if pat:
         out["PRIVATE-TOKEN"] = pat
     return out
+
+
+def _gitlab_key_check(key: str) -> bool | None:
+    """A token GitLab refuses answers 401 even for a public project, such as GitLab's own
+    (project 278964, gitlab-org/gitlab)."""
+    from metacheck.archives.api_keys import key_check_request
+
+    return key_check_request("https://gitlab.com/api/v4/projects/278964", {"PRIVATE-TOKEN": key})
+
+
+def _gitlab_limit(resp: Any) -> str | None:
+    """The message for a response refused because GitLab's limit was reached (recorded, see
+    ``key_limit_reached``), or ``None`` for any other response (and for no response).
+
+    GitLab answers 429 with the end of the limit in ``RateLimit-Reset`` (seconds since 1970)
+    and the wait in ``Retry-After``.
+    """
+    import datetime as dt
+
+    from metacheck._values import as_int
+    from metacheck.archives.api_keys import key_limit_reached
+
+    if resp is None or resp.status_code != 429:
+        return None
+    reset = as_int(resp.headers.get("ratelimit-reset"))
+    wait = as_int(resp.headers.get("retry-after"))
+    until: Any = None
+    if reset is not None:
+        until = dt.datetime.fromtimestamp(reset, dt.UTC)
+    elif wait is not None:
+        until = dt.datetime.now(dt.UTC) + dt.timedelta(seconds=wait)
+    return key_limit_reached("gitlab", until)
 
 
 def gitlab_pat(pat: Any = None) -> Any:
@@ -197,7 +232,20 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
     # does not exist or cannot be seen, so no HEAD goes to gitlab.com first
     clean_repo = _gitlab_repo_path(repo)
     if clean_repo is None:
-        return _unset()
+        if _is_vector(repo) and len(_as_list(repo)) > 1:
+            # R: `!is.na(repo) && grepl(...)` on several addresses
+            raise ValueError(f"'length = {len(_as_list(repo))}' in coercion to 'logical(1)'")
+        # A single path segment ("gitlab.com/somegroup") is a user or group page, which lists
+        # projects but names none of them (the same case as a GitHub account address, #485).
+        item = _as_list(repo)[0] if _is_vector(repo) else repo
+        out = _unset()
+        if isinstance(item, str) and re.search(
+            r"^(?:https?://)?(?:www\.)?gitlab\.com/[A-Za-z0-9_.-]+/?[.,;:)]*$",
+            item.strip(),
+            re.IGNORECASE,
+        ):
+            out["reason"] = "links to a GitLab user or group, not to a specific repository"
+        return out
     proj_id = _gitlab_project_id(clean_repo)
 
     # 1. project metadata; license=true is needed for the licence object
@@ -209,6 +257,11 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
         )
     except Exception:
         meta_resp = None
+    limit = _gitlab_limit(meta_resp)
+    if limit is not None:
+        out = _unset()
+        out["reason"] = limit
+        return out
     if meta_resp is None or meta_resp.status_code != 200:
         return _unset()
 
@@ -216,7 +269,7 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
     default_branch = field(meta, "default_branch")
     if default_branch is None:
         default_branch = "main"
-    license_key = _empty_or(field(field(meta, "license"), "key"))
+    license_key = _empty_or(field_or_value(field(meta, "license"), "key"))
 
     # 2. the file tree, 100 entries a page
     entries: list[Any] = []
@@ -231,6 +284,17 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
             )
         except Exception:
             tree_resp = None
+        # a listing that GitLab's limit stopped part way is not listed at all, rather than
+        # listed with only its first pages
+        limit = _gitlab_limit(tree_resp)
+        if limit is not None:
+            return {
+                "gated": True,
+                "reason": limit,
+                "files": None,
+                "default_branch": default_branch,
+                "license": license_key,
+            }
         if tree_resp is None or tree_resp.status_code != 200:
             if page == 1:
                 return {

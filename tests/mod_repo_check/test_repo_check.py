@@ -24,11 +24,12 @@ BIBR12 = ROOT / "upstream" / "metacheck" / "tests" / "testthat" / "fixtures" / "
 NO_REPOS = (
     "We found no links to repositories on the Open Science Framework, Github, ResearchBox, "
     "DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, "
-    "or DataONE."
+    "DataONE, or LDbase."
 )
 SUMMARY_COLS = [
     "paper_id",
     "repo_n",
+    "repo_unchecked",
     "files_n",
     "files_data",
     "files_code",
@@ -111,6 +112,7 @@ def test_osf_no_files() -> None:
     assert summary_row(mo) == {
         "paper_id": paper.paper_id,
         "repo_n": 1,
+        "repo_unchecked": 0,
         "files_n": 0,
         "files_data": 0,
         "files_code": 0,
@@ -133,6 +135,7 @@ def test_no_code_files() -> None:
     assert summary_row(mo) == {
         "paper_id": paper.paper_id,
         "repo_n": 1,
+        "repo_unchecked": 0,
         "files_n": 2,
         "files_data": 0,
         "files_code": 0,
@@ -152,6 +155,7 @@ def test_osf() -> None:
     assert summary_row(mo) == {
         "paper_id": paper.paper_id,
         "repo_n": 1,
+        "repo_unchecked": 0,
         "files_n": 4,
         "files_data": 1,
         "files_code": 2,
@@ -428,7 +432,7 @@ def test_bibr12_paper_list_with_local_folder() -> None:
     # (R drops it silently beside the valid OSF link, U122)
     gated = mo["gated_repos"]
     assert gated["repo_url"].tolist() == ["https://osf.io/abcd"]
-    assert gated["repo_error"].tolist() == ["invalid or inaccessible OSF link"]
+    assert gated["repo_error"].tolist() == ["not a valid OSF link"]
 
 
 def test_green_tidy_folder() -> None:
@@ -580,7 +584,8 @@ def test_zip_peek_reads_a_zip_on_disk_and_carries_the_archive_size(
         return real(url, size=size) if url == str(path) else None
 
     monkeypatch.setattr(zp, "zip_peek", peek)
-    out = _peek_zips(files)
+    out, listed_tars = _peek_zips(files)
+    assert listed_tars == []
     assert seen == [
         (str(path), float(path.stat().st_size)),
         ("https://zenodo.org/r/remote.zip", 999.0),
@@ -611,7 +616,7 @@ def test_a_zip_inside_a_researchbox_is_listed_from_its_local_copy(
     monkeypatch.setattr(
         researchbox,
         "rbox_file_download",
-        lambda rb_url, pb=None: pd.DataFrame(
+        lambda rb_url, pb=None, **kwargs: pd.DataFrame(
             {
                 "rb_url": [box],
                 "name": ["ResearchBox 99999/inner.zip"],
@@ -649,7 +654,7 @@ def test_invalid_osf_link_is_flagged() -> None:
         assert mo.summary_table["repo_n"].tolist() == [n]
         gated = mo["gated_repos"]
         assert gated["repo_url"].tolist() == ["https://osf.io/abc"]
-        assert gated["repo_error"].tolist() == ["invalid or inaccessible OSF link"]
+        assert gated["repo_error"].tolist() == ["not a valid OSF link"]
 
 
 def test_failed_registration_source_keeps_the_registration() -> None:

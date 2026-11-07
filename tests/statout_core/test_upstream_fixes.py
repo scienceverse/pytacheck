@@ -11,14 +11,14 @@ from metacheck.statout.stat_tables import _ipynb_stat_line
 
 def test_oneline_results_take_the_source_label() -> None:
     # U139: an untitled one-line result is labelled with source_label (the
-    # script name), as read_r_output() documents; R's `cur_title %||% ...`
-    # never falls back from NA
+    # script name), as read_r_output() documents, and "R output" without one
+    # (fixed in metacheck 0.4.3.7; `cur_title %||% ...` never fell back from NA)
     got = _r_output_oneline(["t = 2.10, p = 0.048"], source_label="analysis.R")
     assert [r["analysis"] for r in got] == ["analysis.R"]
     assert got[0]["title"] is None
     titled = _r_output_oneline(["\tWelch Two Sample t-test", "t = 2.1, p = 0.04"], "a.R")
     assert titled[0]["analysis"] == "Welch Two Sample t-test"
-    assert _r_output_oneline(["t = 2.1"], source_label=None)[0]["analysis"] is None
+    assert _r_output_oneline(["t = 2.1"], source_label=None)[0]["analysis"] == "R output"
 
 
 def test_notebook_lines_without_a_result_class_have_an_empty_call_fn() -> None:

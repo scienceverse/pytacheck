@@ -136,11 +136,13 @@ def test_coi_psychsci(module: str, psychsci: pc.PaperList) -> None:
 
 @pytest.mark.parametrize("module", MODULES)
 def test_coi_empty_paper(module: str) -> None:
-    mo = pc.module_run(pc.test_paper([]), module)
-    assert mo.traffic_light == "red"
-    assert len(mo.table) == 0
-    assert "text" in mo.table.columns
-    assert mo.summary_table["coi_found"].tolist() == [False]
+    # an empty paper has nothing to check (metacheck 0.4: .empty_input_result())
+    paper = pc.test_paper([])
+    mo = pc.module_run(paper, module)
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "There was no text to check."
+    assert mo.summary_table["paper_id"].tolist() == [paper.paper_id]
+    assert list(mo.summary_table.columns) == ["paper_id"]
 
 
 def test_coi_check_oi_merges_section() -> None:

@@ -9,12 +9,11 @@
     "ID x already defined [513]",
     "Namespace prefix xlink for href on ptr is not defined [201]",
     "Namespace prefix p on q is not defined [201]",
-    "Namespace prefix xlink for href on ptr is not defined [201]",
-    "There were 2 errors; use lastlog(1:2)"
+    "Namespace prefix xlink for href on ptr is not defined [201]"
   ],
   "value": {
     "t": "df",
-    "nrow": 46,
+    "nrow": 49,
     "names": [
       "section_id",
       "header",
@@ -27,6 +26,8 @@
       {
         "t": "int",
         "v": [
+          1,
+          2,
           1,
           2,
           1,
@@ -62,6 +63,7 @@
           2,
           3,
           1,
+          1,
           2,
           1,
           2,
@@ -78,6 +80,8 @@
       {
         "t": "chr",
         "v": [
+          "Intro",
+          "References",
           "Abstract",
           "Intro",
           "Methods",
@@ -112,6 +116,7 @@
           "Abstract",
           "Results",
           "References",
+          "Methods",
           "Abstract",
           "Method ",
           "Abstract",
@@ -129,6 +134,9 @@
       {
         "t": "int",
         "v": [
+          1,
+          1,
+          1,
           1,
           1,
           1,
@@ -225,12 +233,17 @@
           null,
           null,
           null,
+          null,
+          null,
+          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
+          "intro",
+          "references",
           "abstract",
           "intro",
           "method",
@@ -265,6 +278,7 @@
           "abstract",
           "results",
           "references",
+          "method",
           "abstract",
           "method",
           "abstract",
@@ -282,6 +296,8 @@
       {
         "t": "chr",
         "v": [
+          "bib_page_from.tei",
+          "bib_page_from.tei",
           "bom_paragraphs.tei",
           "bom_paragraphs.tei",
           "crlf_nonamespace.tei",
@@ -316,6 +332,7 @@
           "tables_three_one_empty.tei",
           "tables_three_one_empty.tei",
           "tables_three_one_empty.tei",
+          "url_empty.tei",
           "xlink_ns.tei",
           "xlink_ns.tei",
           "v12_edges.tei",
@@ -332,6 +349,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

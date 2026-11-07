@@ -5,25 +5,5838 @@
   "warnings": [],
   "value": {
     "t": "list",
-    "names": [
-      "DOI",
-      "error"
-    ],
+    "names": null,
     "v": [
       {
-        "t": "chr",
+        "t": "list",
+        "names": [
+          "id",
+          "doi",
+          "title",
+          "display_name",
+          "publication_year",
+          "publication_date",
+          "ids",
+          "language",
+          "primary_location",
+          "type",
+          "indexed_in",
+          "open_access",
+          "authorships",
+          "institutions",
+          "countries_distinct_count",
+          "institutions_distinct_count",
+          "corresponding_author_ids",
+          "corresponding_institution_ids",
+          "apc_list",
+          "apc_paid",
+          "fwci",
+          "has_fulltext",
+          "cited_by_count",
+          "citation_normalized_percentile",
+          "cited_by_percentile_year",
+          "biblio",
+          "is_retracted",
+          "is_paratext",
+          "is_xpac",
+          "primary_topic",
+          "topics",
+          "keywords",
+          "concepts",
+          "mesh",
+          "locations_count",
+          "locations",
+          "best_oa_location",
+          "sustainable_development_goals",
+          "awards",
+          "funders",
+          "has_content",
+          "content_urls",
+          "referenced_works_count",
+          "referenced_works",
+          "related_works",
+          "abstract_inverted_index",
+          "counts_by_year",
+          "updated_date",
+          "created_date",
+          "abstract"
+        ],
         "v": [
-          "10.9999/not.recorded"
+          {
+            "t": "chr",
+            "v": [
+              "https://openalex.org/W2106303383"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2014
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2014-02-18"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "openalex",
+              "doi",
+              "mag",
+              "pmid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2106303383"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/0956797614520714"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2106303383"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://pubmed.ncbi.nlm.nih.gov/24549296"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "en"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "id",
+              "is_oa",
+              "landing_page_url",
+              "pdf_url",
+              "source",
+              "license",
+              "license_id",
+              "version",
+              "is_accepted",
+              "is_published",
+              "raw_source_name",
+              "raw_type"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "doi:10.1177/0956797614520714"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://doi.org/10.1177/0956797614520714"
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "issn_l",
+                  "issn",
+                  "is_oa",
+                  "is_in_doaj",
+                  "is_core",
+                  "host_organization",
+                  "host_organization_name",
+                  "host_organization_lineage",
+                  "host_organization_lineage_names",
+                  "type"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/S58854535"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Psychological Science"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "0956-7976"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "0956-7976"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "1467-9280"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/P4310320017"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "SAGE Publishing"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/P4310320017"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "SAGE Publishing"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "journal"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publishedVersion"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Psychological Science"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "journal-article"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "article"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "crossref"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "pubmed"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "is_oa",
+              "oa_status",
+              "oa_url",
+              "any_repository_has_fulltext"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "closed"
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "author_position",
+                  "author",
+                  "institutions",
+                  "countries",
+                  "is_corresponding",
+                  "raw_author_name",
+                  "raw_affiliation_strings",
+                  "affiliations"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "first"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name",
+                      "orcid"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/A5000930617"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Francesca Gino"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://orcid.org/0000-0002-9794-482X"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "display_name",
+                          "ror",
+                          "country_code",
+                          "type",
+                          "lineage"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "https://openalex.org/I136199984"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "Harvard University"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "https://ror.org/03vek6s52"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "US"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "education"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "https://openalex.org/I136199984"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "US"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Francesca Gino"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Harvard Business School, Harvard University"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "1Harvard Business School, Harvard University"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "raw_affiliation_string",
+                          "institution_ids"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "Harvard Business School, Harvard University"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "https://openalex.org/I136199984"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "raw_affiliation_string",
+                          "institution_ids"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "1Harvard Business School, Harvard University"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "https://openalex.org/I136199984"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "author_position",
+                  "author",
+                  "institutions",
+                  "countries",
+                  "is_corresponding",
+                  "raw_author_name",
+                  "raw_affiliation_strings",
+                  "affiliations"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "last"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name",
+                      "orcid"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/A5053065635"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Scott S. Wiltermuth"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://orcid.org/0000-0003-4560-7845"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "display_name",
+                          "ror",
+                          "country_code",
+                          "type",
+                          "lineage"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "https://openalex.org/I1174212"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "University of Southern California"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "https://ror.org/03taz7m60"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "US"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "education"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "https://openalex.org/I1174212"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "US"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Scott S. Wiltermuth"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Marshall School of Business, University of Southern California"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "#N# 2Marshall School of Business, University of Southern California"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "raw_affiliation_string",
+                          "institution_ids"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "Marshall School of Business, University of Southern California"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "https://openalex.org/I1174212"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "raw_affiliation_string",
+                          "institution_ids"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "#N# 2Marshall School of Business, University of Southern California"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "https://openalex.org/I1174212"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/A5000930617"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/I136199984"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "dbl",
+            "v": [
+              14.311
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              185
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "value",
+              "is_in_top_1_percent",
+              "is_in_top_10_percent"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  0.99165136
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "min",
+              "max"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  97
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  100
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "volume",
+              "issue",
+              "first_page",
+              "last_page"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "25"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "4"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "973"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "981"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "id",
+              "display_name",
+              "score",
+              "subfield",
+              "field",
+              "domain"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/T11079"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Creativity in Education and Neuroscience"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.999899983406067
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/subfields/3205"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Experimental and Cognitive Psychology"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/fields/32"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Psychology"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/domains/2"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Social Sciences"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score",
+                  "subfield",
+                  "field",
+                  "domain"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/T11079"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Creativity in Education and Neuroscience"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.999899983406067
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/subfields/3205"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Experimental and Cognitive Psychology"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/fields/32"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Psychology"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/domains/2"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Social Sciences"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score",
+                  "subfield",
+                  "field",
+                  "domain"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/T13219"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Mind wandering and attention"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.970000028610229
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/subfields/2805"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Cognitive Neuroscience"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/fields/28"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Neuroscience"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/domains/1"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Life Sciences"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score",
+                  "subfield",
+                  "field",
+                  "domain"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/T10042"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Neural and Behavioral Psychology Studies"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.967400014400482
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/subfields/2805"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Cognitive Neuroscience"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/fields/28"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Neuroscience"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/domains/1"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Life Sciences"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/dishonesty"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Dishonesty"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.940332770347595
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/creativity"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Creativity"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.897104978561401
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/psychology"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Psychology"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.76666933298111
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/moderation"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Moderation"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.572855293750763
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/social-psychology"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Social psychology"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.571181297302246
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/mediation"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Mediation"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.518908083438873
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/feeling"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Feeling"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.485880315303802
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/genius"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Genius"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.454645723104477
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/cognitive-psychology"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Cognitive psychology"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.323260366916656
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "display_name",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/keywords/developmental-psychology"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Developmental psychology"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.113742411136627
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C2778585151"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q5282225"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Dishonesty"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.940332770347595
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C11012388"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q170658"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Creativity"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.897104978561401
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C15744967"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q9418"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Psychology"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.76666933298111
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C93225998"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q1941972"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Moderation"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.572855293750763
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C77805123"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q161272"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Social psychology"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.571181297302246
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C179420905"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q223871"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Mediation"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.518908083438873
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C122980154"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q205555"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Feeling"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.485880315303802
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C118563197"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q185030"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Genius"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.454645723104477
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C180747234"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q23373"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Cognitive psychology"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.323260366916656
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C138496976"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q175002"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Developmental psychology"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.113742411136627
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C17744445"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q36442"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Political science"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "wikidata",
+                  "display_name",
+                  "level",
+                  "score"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://openalex.org/C199539241"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://www.wikidata.org/wiki/Q7748"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Law"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D000293"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Adolescent"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D000293"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Adolescent"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D000293"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Adolescent"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D000328"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Adult"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D000328"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Adult"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D000328"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Adult"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D003405"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Creativity"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D003405"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Creativity"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D003405"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Creativity"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D003657"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Decision Making"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D003657"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Decision Making"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D003657"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Decision Making"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D005260"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Female"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D005260"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Female"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D005260"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Female"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D006801"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Humans"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D006801"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Humans"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D006801"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Humans"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D008192"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Deception"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D008192"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Deception"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D008192"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Deception"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D008297"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Male"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D008297"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Male"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D008297"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Male"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D009014"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Morals"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D009014"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Morals"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D009014"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Morals"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D055815"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Young Adult"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D055815"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Young Adult"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "descriptor_ui",
+                  "descriptor_name",
+                  "qualifier_ui",
+                  "qualifier_name",
+                  "is_major_topic"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D055815"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Young Adult"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "is_oa",
+                  "landing_page_url",
+                  "pdf_url",
+                  "source",
+                  "license",
+                  "license_id",
+                  "version",
+                  "is_accepted",
+                  "is_published",
+                  "raw_source_name",
+                  "raw_type"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "doi:10.1177/0956797614520714"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://doi.org/10.1177/0956797614520714"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name",
+                      "issn_l",
+                      "issn",
+                      "is_oa",
+                      "is_in_doaj",
+                      "is_core",
+                      "host_organization",
+                      "host_organization_name",
+                      "host_organization_lineage",
+                      "host_organization_lineage_names",
+                      "type"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/S58854535"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Psychological Science"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "0956-7976"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "0956-7976"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "1467-9280"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "lgl",
+                        "v": [
+                          false
+                        ]
+                      },
+                      {
+                        "t": "lgl",
+                        "v": [
+                          false
+                        ]
+                      },
+                      {
+                        "t": "lgl",
+                        "v": [
+                          true
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/P4310320017"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "SAGE Publishing"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "https://openalex.org/P4310320017"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "SAGE Publishing"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "journal"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "publishedVersion"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Psychological Science"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "journal-article"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "is_oa",
+                  "landing_page_url",
+                  "pdf_url",
+                  "source",
+                  "license",
+                  "license_id",
+                  "version",
+                  "is_accepted",
+                  "is_published",
+                  "raw_source_name",
+                  "raw_type"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "pmid:24549296"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://pubmed.ncbi.nlm.nih.gov/24549296"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "display_name",
+                      "issn_l",
+                      "issn",
+                      "is_oa",
+                      "is_in_doaj",
+                      "is_core",
+                      "host_organization",
+                      "host_organization_name",
+                      "host_organization_lineage",
+                      "host_organization_lineage_names",
+                      "type"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/S4306525036"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "PubMed"
+                        ]
+                      },
+                      {
+                        "t": "null"
+                      },
+                      {
+                        "t": "null"
+                      },
+                      {
+                        "t": "lgl",
+                        "v": [
+                          false
+                        ]
+                      },
+                      {
+                        "t": "lgl",
+                        "v": [
+                          false
+                        ]
+                      },
+                      {
+                        "t": "lgl",
+                        "v": [
+                          false
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://openalex.org/I1299303238"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "National Institutes of Health"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "https://openalex.org/I1299303238"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": []
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "repository"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "publishedVersion"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Psychological science"
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": [
+              "pdf",
+              "grobid_xml"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "int",
+            "v": [
+              37
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W100217140"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W367711914"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W1573747990"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W1723899180"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W1736435475"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W1945085662"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W1971440513"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W1996372168"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2030947412"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2038669923"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2056688258"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2064625566"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2068304508"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2086438570"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2095930475"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2102205611"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2107719160"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2109200089"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2114385529"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2127784499"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2128974935"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2137983575"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2143078910"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2143563297"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2143815033"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2147784508"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2148905283"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2162052483"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2181854196"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2196042351"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2947714016"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W3121586804"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W3123620651"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W3134297495"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W3146361359"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W3160009597"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W4285719527"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W4387497383"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W3183948672"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W3173606202"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W3110381201"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2948807893"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2778153218"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2758277628"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W2748952813"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W1531601525"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://openalex.org/W1976243873"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "We",
+              "propose",
+              "that",
+              "dishonest",
+              "and",
+              "creative",
+              "behavior",
+              "have",
+              "something",
+              "in",
+              "common:",
+              "They",
+              "both",
+              "involve",
+              "breaking",
+              "rules.",
+              "Because",
+              "of",
+              "this",
+              "shared",
+              "feature,",
+              "creativity",
+              "may",
+              "lead",
+              "to",
+              "dishonesty",
+              "(as",
+              "shown",
+              "prior",
+              "work),",
+              "(the",
+              "hypothesis",
+              "we",
+              "tested",
+              "research).",
+              "In",
+              "five",
+              "experiments,",
+              "participants",
+              "had",
+              "the",
+              "opportunity",
+              "behave",
+              "dishonestly",
+              "by",
+              "overreporting",
+              "their",
+              "performance",
+              "on",
+              "various",
+              "tasks.",
+              "then",
+              "completed",
+              "one",
+              "or",
+              "more",
+              "tasks",
+              "designed",
+              "measure",
+              "creativity.",
+              "Those",
+              "who",
+              "cheated",
+              "were",
+              "subsequently",
+              "than",
+              "noncheaters,",
+              "even",
+              "when",
+              "accounted",
+              "for",
+              "individual",
+              "differences",
+              "ability",
+              "(Experiment",
+              "1).",
+              "Using",
+              "random",
+              "assignment,",
+              "confirmed",
+              "acting",
+              "leads",
+              "greater",
+              "subsequent",
+              "(Experiments",
+              "2",
+              "3).",
+              "The",
+              "link",
+              "between",
+              "is",
+              "explained",
+              "a",
+              "heightened",
+              "feeling",
+              "being",
+              "unconstrained",
+              "rules,",
+              "as",
+              "indicated",
+              "mediation",
+              "4)",
+              "moderation",
+              "5)."
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      99
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      4
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      31
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      111
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      117
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      137
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      5
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      78
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      90
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      6
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      7
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      8
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      9
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      28
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      41
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      88
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      106
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      10
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      11
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      61
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      12
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      133
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      13
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      14
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      15
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      16
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      17
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      125
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      18
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      42
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      19
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      20
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      21
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      36
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      105
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      118
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      22
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      33
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      23
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      34
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      24
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      35
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      51
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      69
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      103
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      25
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      32
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      116
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      26
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      27
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      29
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      30
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      37
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      38
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      39
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      83
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      97
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      40
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      43
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      44
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      45
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      46
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      47
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      48
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      49
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      50
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      52
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      53
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      101
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      54
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      121
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      128
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      132
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      55
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      56
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      89
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      57
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      58
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      59
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      60
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      62
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      63
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      64
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      65
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      66
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      77
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      67
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      108
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      68
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      70
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      71
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      72
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      73
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      74
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      75
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      76
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      79
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      80
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      81
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      82
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      84
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      85
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      86
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      87
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      91
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      92
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      135
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      139
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      93
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      94
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      95
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      96
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      98
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      100
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      102
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      104
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      107
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      109
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      110
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      112
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      113
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      114
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      115
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      119
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      120
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      122
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      123
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      124
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      126
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      127
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      129
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      130
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      131
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      134
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      136
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      138
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      140
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2025
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      6
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2024
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      6
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2023
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      17
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2022
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      30
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2021
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      24
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2020
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      23
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2019
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      17
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2018
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      16
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2017
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      17
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2016
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      9
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2015
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      16
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "year",
+                  "cited_by_count"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2014
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      4
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-11-06T03:46:38.306776"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2016-06-24T00:00:00"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We propose that dishonest and creative behavior have something in common: They both involve breaking rules. Because of this shared feature, creativity may lead to dishonesty (as shown in prior work), and dishonesty may lead to creativity (the hypothesis we tested in this research). In five experiments, participants had the opportunity to behave dishonestly by overreporting their performance on various tasks. They then completed one or more tasks designed to measure creativity. Those who cheated were subsequently more creative than noncheaters, even when we accounted for individual differences in their creative ability (Experiment 1). Using random assignment, we confirmed that acting dishonestly leads to greater creativity in subsequent tasks (Experiments 2 and 3). The link between dishonesty and creativity is explained by a heightened feeling of being unconstrained by rules, as indicated by both mediation (Experiment 4) and moderation (Experiment 5)."
+            ]
+          }
         ]
       },
       {
-        "t": "chr",
+        "t": "list",
+        "names": [
+          "DOI",
+          "error"
+        ],
         "v": [
-          "not found"
+          {
+            "t": "chr",
+            "v": [
+              "10.9999/not.recorded"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not found"
+            ]
+          }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

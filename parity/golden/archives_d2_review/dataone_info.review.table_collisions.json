@@ -7,7 +7,7 @@
   ],
   "value": {
     "t": "df",
-    "nrow": 5,
+    "nrow": 3,
     "names": [
       "u",
       "title",
@@ -27,8 +27,6 @@
         "t": "chr",
         "v": [
           "10.18739/A2GT5FG86",
-          "10.18739/A2GT5FG86",
-          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
           "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
           "10.18739/MISSING"
         ]
@@ -36,8 +34,6 @@
       {
         "t": "chr",
         "v": [
-          "mine",
-          "mine",
           "mine",
           "mine",
           "mine"
@@ -47,8 +43,6 @@
         "t": "chr",
         "v": [
           "10.18739/A2GT5FG86",
-          "10.18739/A2GT5FG86",
-          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
           "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
           "10.18739/MISSING"
         ]
@@ -56,8 +50,6 @@
       {
         "t": "chr",
         "v": [
-          "arcticdata.io",
-          "arcticdata.io",
           "arcticdata.io",
           "arcticdata.io",
           "arcticdata.io"
@@ -68,8 +60,6 @@
         "v": [
           "doi:10.18739/A2GT5FG86",
           "doi:10.18739/A2GT5FG86",
-          "doi:10.18739/A2GT5FG86",
-          "doi:10.18739/A2GT5FG86",
           "doi:10.18739/MISSING"
         ]
       },
@@ -78,8 +68,6 @@
         "v": [
           "Soil temperature, Utqiagvik, Alaska, 2015-2020",
           "Soil temperature, Utqiagvik, Alaska, 2015-2020",
-          "Soil temperature, Utqiagvik, Alaska, 2015-2020",
-          "Soil temperature, Utqiagvik, Alaska, 2015-2020",
           null
         ]
       },
@@ -88,16 +76,12 @@
         "v": [
           "doi:10.18739/A2GT5FG86",
           "doi:10.18739/A2GT5FG86",
-          "doi:10.18739/A2GT5FG86",
-          "doi:10.18739/A2GT5FG86",
           null
         ]
       },
       {
         "t": "chr",
         "v": [
-          "2021-03-04",
-          "2021-03-04",
           "2021-03-04",
           "2021-03-04",
           null
@@ -111,8 +95,8 @@
             "t": "chr",
             "v": [
               "Jane Doe",
-              "NA Smith",
-              "NA NA",
+              "Smith",
+              "National Snow and Ice Data Center",
               "Blank Org",
               null
             ]
@@ -121,28 +105,8 @@
             "t": "chr",
             "v": [
               "Jane Doe",
-              "NA Smith",
-              "NA NA",
-              "Blank Org",
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Jane Doe",
-              "NA Smith",
-              "NA NA",
-              "Blank Org",
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Jane Doe",
-              "NA Smith",
-              "NA NA",
+              "Smith",
+              "National Snow and Ice Data Center",
               "Blank Org",
               null
             ]
@@ -155,8 +119,6 @@
       {
         "t": "chr",
         "v": [
-          "This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.Cite the data.",
-          "This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.Cite the data.",
           "This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.Cite the data.",
           "This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.Cite the data.",
           null
@@ -347,186 +309,6 @@
             ]
           },
           {
-            "t": "list",
-            "names": null,
-            "v": [
-              {
-                "t": "list",
-                "names": [
-                  "key",
-                  "size",
-                  "pid"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "soil_temp.csv"
-                    ]
-                  },
-                  {
-                    "t": "dbl",
-                    "v": [
-                      20480
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "urn%3Auuid%3Aabc-123"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "key",
-                  "size",
-                  "pid"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "readme.txt"
-                    ]
-                  },
-                  {
-                    "t": "dbl",
-                    "v": [
-                      null
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      null
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "key",
-                  "size",
-                  "pid"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      null
-                    ]
-                  },
-                  {
-                    "t": "dbl",
-                    "v": [
-                      1000
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      null
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": [
-              {
-                "t": "list",
-                "names": [
-                  "key",
-                  "size",
-                  "pid"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "soil_temp.csv"
-                    ]
-                  },
-                  {
-                    "t": "dbl",
-                    "v": [
-                      20480
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "urn%3Auuid%3Aabc-123"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "key",
-                  "size",
-                  "pid"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "readme.txt"
-                    ]
-                  },
-                  {
-                    "t": "dbl",
-                    "v": [
-                      null
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      null
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "key",
-                  "size",
-                  "pid"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      null
-                    ]
-                  },
-                  {
-                    "t": "dbl",
-                    "v": [
-                      1000
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      null
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
             "t": "null"
           }
         ]
@@ -534,8 +316,6 @@
       {
         "t": "chr",
         "v": [
-          null,
-          null,
           null,
           null,
           "unfound"
@@ -543,6 +323,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

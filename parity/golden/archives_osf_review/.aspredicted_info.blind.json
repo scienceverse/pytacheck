@@ -17,9 +17,16 @@
       "AP_conditions",
       "AP_analyses",
       "AP_outliers",
+      "AP_secondary",
       "AP_sample_size",
       "AP_anything_else",
-      "AP_version"
+      "AP_version",
+      "AP_registered",
+      "AP_anonymous",
+      "AP_number",
+      "AP_status",
+      "AP_authors_count",
+      "AP_bundle"
     ],
     "v": [
       {
@@ -85,6 +92,12 @@
       {
         "t": "chr",
         "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
           "800 Mturkers."
         ]
       },
@@ -99,9 +112,45 @@
         "v": [
           "2.00"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021-06-14"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

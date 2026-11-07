@@ -13,7 +13,11 @@
       "target",
       "ambiguous",
       "n_candidates",
-      "is_call"
+      "is_call",
+      "name_in_code",
+      "name_in_deposit",
+      "in_join",
+      "in_here"
     ],
     "v": [
       {
@@ -64,9 +68,37 @@
           false,
           false
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "MATH.DTA"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "math.dta"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

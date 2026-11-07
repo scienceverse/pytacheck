@@ -61,6 +61,8 @@ from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList
 
 __all__ = [
+    "CHECK_COLUMNS",
+    "CHECK_STATUSES",
     "SECTION_LEVELS",
     "TRAFFIC_LIGHTS",
     "ModuleError",
@@ -85,6 +87,22 @@ __all__ = [
 
 SECTION_LEVELS = ("general", "intro", "method", "results", "discussion", "reference")
 TRAFFIC_LIGHTS = ("na", "fail", "info", "green", "yellow", "red")
+#: The results of a check in a module's ``checks`` table (the checklist report), in the
+#: order the report shows them: to fix, to improve, decide by hand, for information,
+#: fine, not applicable.
+CHECK_STATUSES = ("fix", "improve", "decide", "info", "fine", "na")
+#: The columns of a module's ``checks`` table; all but ``status`` and ``title`` are optional.
+CHECK_COLUMNS = (
+    "status",
+    "title",
+    "section",
+    "found",
+    "todo",
+    "why",
+    "note",
+    "details",
+    "details_title",
+)
 #: Capabilities a module can declare with ``requires=`` (``offline`` drops them).
 CAPABILITIES = ("network", "llm")
 _MODULE_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
@@ -752,7 +770,25 @@ def get_prev_outputs(module: str, item: str) -> Any:
 
 @dataclass
 class ModuleOutput:
-    """The result of :func:`module_run` (metacheck's ``metacheck_module_output``)."""
+    """The result of :func:`module_run` (metacheck's ``metacheck_module_output``).
+
+    Besides the standard fields a module returns whatever else it likes (kept in
+    ``extras``, read as attributes or with :meth:`get`). Four optional elements
+    are read by the checklist report (``report_type="checklist"``,
+    :func:`metacheck.report.checklist.checklist_html`):
+
+    * ``checks``: a table with one row per check (columns :data:`CHECK_COLUMNS`,
+      ``status`` one of :data:`CHECK_STATUSES`), the module's checks sorted by
+      result instead of one traffic light;
+    * ``checklist_section``: markdown for a section of its own, under the
+      module's title;
+    * ``intro``: a paragraph for the top of the report;
+    * ``logo``: the path of an image shown next to metacheck's logo.
+
+    A module that gives none of them is shown as a single check, from its
+    traffic light, summary text and report. ``brief=True`` keeps a module in a
+    brief report whatever its traffic light.
+    """
 
     module: str
     title: str
@@ -782,6 +818,16 @@ class ModuleOutput:
         "paper",
         "prev_outputs",
     )
+
+    @property
+    def checks(self) -> Any:
+        """The module's ``checks`` table for the checklist report (``None`` when it gave none)."""
+        return self.extras.get("checks")
+
+    @property
+    def checklist_section(self) -> Any:
+        """The module's own section of the checklist report (``None`` when it gave none)."""
+        return self.extras.get("checklist_section")
 
     def get(self, key: str, default: Any = None) -> Any:
         if key in self._FIELDS:

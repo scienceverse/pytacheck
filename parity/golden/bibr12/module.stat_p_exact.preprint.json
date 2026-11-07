@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 123,
+        "nrow": 131,
         "names": [
           "text",
           "text_id",
@@ -135,8 +135,16 @@
               "p = .01",
               "p = .58",
               "p = .04",
+              "ps < .053",
+              "ps < .10",
               "p = .13",
+              "ps < .003",
+              "ps < .001",
+              "ps < .05",
+              "ps < .04",
               "p = .30",
+              "ps < .001",
+              "ps < .001",
               "p < .001",
               "p = .07",
               "p < .001",
@@ -263,8 +271,16 @@
               315,
               315,
               316,
+              375,
               376,
+              376,
+              377,
+              378,
+              379,
               380,
+              380,
+              381,
+              382,
               399,
               399,
               399,
@@ -391,6 +407,14 @@
               56,
               56,
               56,
+              66,
+              66,
+              66,
+              66,
+              66,
+              66,
+              66,
+              66,
               66,
               66,
               69,
@@ -521,6 +545,14 @@
               23,
               28,
               28,
+              28,
+              28,
+              28,
+              28,
+              28,
+              28,
+              28,
+              28,
               30,
               30,
               30,
@@ -649,6 +681,14 @@
               23,
               27,
               27,
+              27,
+              27,
+              27,
+              27,
+              27,
+              27,
+              27,
+              27,
               28,
               28,
               28,
@@ -698,6 +738,14 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
               null,
               null,
               null,
@@ -948,6 +996,14 @@
               "preprint",
               "preprint",
               "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
               "preprint"
             ]
           },
@@ -1031,6 +1087,14 @@
               "Exploratory Analyses",
               "Exploratory Analyses",
               "Exploratory Analyses",
+              "Materials and Procedure",
+              "Materials and Procedure",
+              "Materials and Procedure",
+              "Materials and Procedure",
+              "Materials and Procedure",
+              "Materials and Procedure",
+              "Materials and Procedure",
+              "Materials and Procedure",
               "Materials and Procedure",
               "Materials and Procedure",
               "Preregistered Analyses",
@@ -1161,6 +1225,14 @@
               "results",
               "method",
               "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
               "results",
               "results",
               "results",
@@ -1287,8 +1359,16 @@
               "=",
               "=",
               "=",
+              "<",
+              "<",
               "=",
+              "<",
+              "<",
+              "<",
+              "<",
               "=",
+              "<",
+              "<",
               "<",
               "=",
               "<",
@@ -1415,8 +1495,16 @@
               0.01,
               0.58,
               0.04,
+              0.053,
+              0.1,
               0.13,
+              0.003,
+              0.001,
+              0.05,
+              0.04,
               0.3,
+              0.001,
+              0.001,
               0.001,
               0.07,
               0.001,
@@ -1543,8 +1631,16 @@
               "Nevertheless, turning towards the person as compared to the object led to higher malicious envy, ΔM = 0.12, SE = 0.05, t(97) = 2.48, p = .01, dZ = 0.25, but there was no effect for benign envy, ΔM = 0.04, SE = 0.06, t(97) = 0.56, p = .58, dZ = 0.06.",
               "Nevertheless, turning towards the person as compared to the object led to higher malicious envy, ΔM = 0.12, SE = 0.05, t(97) = 2.48, p = .01, dZ = 0.25, but there was no effect for benign envy, ΔM = 0.04, SE = 0.06, t(97) = 0.56, p = .58, dZ = 0.06.",
               "Finally, there was also a significant three-way interaction, F(2, 194) = 3.16, p = .04, ηG 2 = .001, again indicating that the results pattern differed in strength between the envy scales.",
+              "For females (n = 20), the selected picture in which the target expressed anger towards the person was rated at least marginally significantly higher on anger (M = 5.35, SE = 0.30) than any other emotion (Ms < 4.48, ps < .053).",
               "The picture in which the target expressed anger towards the bike was mostly rated at least marginally significantly higher on anger (M = 5.00, SE = 0.34) than any other emotion (Ms < 4.21, ps < .10), except for contempt (M = 4.30, SE = 0.39, p = .13).",
+              "The picture in which the target expressed anger towards the bike was mostly rated at least marginally significantly higher on anger (M = 5.00, SE = 0.34) than any other emotion (Ms < 4.21, ps < .10), except for contempt (M = 4.30, SE = 0.39, p = .13).",
+              "The picture in which the target expressed sadness towards the person was rated higher on sadness (M = 5.15, SE = 0.46) than any other emotion (Ms < 3.16, ps < .003).",
+              "And the picture in which the target expressed sadness towards the bike was rated higher on sadness (M = 5.60, SE = 0.37) than any other emotion (Ms < 3.21, ps < .001).",
+              "For males (n = 39), the selected picture in which the target expressed anger towards the person was rated higher on anger (M = 5.05, SE = 0.26) than any other emotion (Ms < 4.45, ps < .05).",
               "The picture in which the target expressed anger towards the bike was rated higher on anger (M = 4.67, SE = 0.31) than most other emotions (Ms < 3.83, ps < .04), except for sadness (M = 4.08, SE = 0.34, p = .30).",
+              "The picture in which the target expressed anger towards the bike was rated higher on anger (M = 4.67, SE = 0.31) than most other emotions (Ms < 3.83, ps < .04), except for sadness (M = 4.08, SE = 0.34, p = .30).",
+              "The picture in which the target expressed sadness towards the person was rated higher on sadness (M = 5.46, SE = 0.25) than any other emotion (Ms < 3.68, ps < .001).",
+              "And the picture in which the target expressed sadness towards the bike was rated higher on sadness (M = 6.10, SE = 0.18) than any other emotion (Ms < 3.37, ps < .001).",
               "The ANOVA resulted in main effects for Emotion, F(1, 493) = 157.40, p < .001, ηG 2 = .02, a marginally significant main effect for Turning, F(1, 493) = 3.35, p = .07, ηG 2 < .001, and a significant interaction for Emotion X Turning, F(1, 493) = 30.07, p < .001, ηG 2 = .002.",
               "The ANOVA resulted in main effects for Emotion, F(1, 493) = 157.40, p < .001, ηG 2 = .02, a marginally significant main effect for Turning, F(1, 493) = 3.35, p = .07, ηG 2 < .001, and a significant interaction for Emotion X Turning, F(1, 493) = 30.07, p < .001, ηG 2 = .002.",
               "The ANOVA resulted in main effects for Emotion, F(1, 493) = 157.40, p < .001, ηG 2 = .02, a marginally significant main effect for Turning, F(1, 493) = 3.35, p = .07, ηG 2 < .001, and a significant interaction for Emotion X Turning, F(1, 493) = 30.07, p < .001, ηG 2 = .002.",
@@ -1671,6 +1767,14 @@
               false,
               false,
               false,
+              true,
+              true,
+              false,
+              true,
+              false,
+              true,
+              true,
+              false,
               false,
               false,
               false,
@@ -1844,6 +1948,14 @@
               false,
               false,
               false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
               false
             ]
           }
@@ -1852,19 +1964,21 @@
       {
         "t": "chr",
         "v": [
-          "We found no imprecise *p* values or *p*-values of exactly zero out of 123 detected."
+          "Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, reproducibility, and re-use (e.g., in *p* value meta-analyses). Best practice is to report exact p-values with three decimal places (e.g., *p* = .032) unless *p* values are smaller than 0.001, in which case you can use *p* < .001.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = c(\"ps < .053\", \"ps < .10\", \"ps < .003\", \n\"ps < .05\", \"ps < .04\"), Text = c(\"For females (n = 20), the selected picture in which the target expressed anger towards the person was rated at least marginally significantly higher on anger (M = 5.35, SE = 0.30) than any other emotion (Ms < 4.48, ps < .053).\", \n\"The picture in which the target expressed anger towards the bike was mostly rated at least marginally significantly higher on anger (M = 5.00, SE = 0.34) than any other emotion (Ms < 4.21, ps < .10), except for contempt (M = 4.30, SE = 0.39, p = .13).\", \n\"The picture in which the target expressed sadness towards the person was rated higher on sadness (M = 5.15, SE = 0.46) than any other emotion (Ms < 3.16, ps < .003).\", \n\"For males (n = 39), the selected picture in which the target expressed anger towards the person was rated higher on anger (M = 5.05, SE = 0.26) than any other emotion (Ms < 4.45, ps < .05).\", \n\"The picture in which the target expressed anger towards the bike was rated higher on anger (M = 4.67, SE = 0.31) than most other emotions (Ms < 3.83, ps < .04), except for sadness (M = 4.08, SE = 0.34, p = .30).\"\n)), row.names = c(NA, -5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nThe APA manual states: Report exact *p* values (e.g., *p* = .031) to two or three decimal places. However, report *p* values less than .001 as *p* < .001. However, 2 decimals is too imprecise for many use-cases (e.g., a *p* value meta-analysis), so report *p* values with three digits.\n\nAmerican Psychological Association (2020). <em>Publication manual of the American Psychological Association<\/em>, 7 edition. American Psychological Association.\n\n:::\n"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "green"
+          "red"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We found no imprecise *p* values or *p*-values of exactly zero out of 123 detected."
+          "We found 5 imprecise *p* values out of 131 detected *p* values."
         ]
       },
       {
@@ -1883,9 +1997,9 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
-              0
+              5
             ]
           },
           {
@@ -1904,6 +2018,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

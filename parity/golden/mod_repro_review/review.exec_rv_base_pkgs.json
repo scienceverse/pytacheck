@@ -15,11 +15,14 @@
       "summary_text",
       "summary_table",
       "na_replace",
+      "brief",
       "run_results",
       "install_results",
+      "recorded_versions",
       "stat_output",
       "match_table",
       "modifications",
+      "checklist_section",
       "sandbox"
     ],
     "v": [
@@ -47,6 +50,7 @@
         "names": [
           "paper_id",
           "file_name",
+          "file_path",
           "parses",
           "run_order",
           "order_basis",
@@ -61,13 +65,25 @@
           "error_type",
           "undefined_var",
           "reads",
-          "writes"
+          "writes",
+          "names_corrected",
+          "used_by",
+          "not_analysis_why",
+          "paper_link",
+          "repo_name",
+          "reason"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
               "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.R"
             ]
           },
           {
@@ -103,7 +119,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -175,6 +191,42 @@
                 "v": []
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
           }
         ]
       },
@@ -186,11 +238,9 @@
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1L, File = \"ok.R\", \"Runs after\" = \"—\", \n    Basis = \"none\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "To run against the Psych-DS layout, 1 referenced data path would be rewritten to its new location.",
-          "#### Missing inputs",
-          "Every data file the code reads is either produced by an earlier script or present in the repository.",
+          "Every data path in the code works in the repository as deposited.",
           "#### Execution",
-          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 1 script: 1 ran without error, 0 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the repository, in the run order above, with a 60-second per-script timeout. Of 1 script: 1 ran without error, 0 errored, 0 timed out, 0 could not run because one of its own dependencies is unavailable, 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"ok.R\", Outcome = \"ran_ok\", Detail = \"\", \n    \"Time (s)\" = 0), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
           "::: {.callout-tip title=\"Output — ok.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"data.csv\")\n> t.test(dat$x ~ dat$g)\n\n\tWelch Two Sample t-test\n\ndata:  dat$x by dat$g\nt = -4.0415, df = 4.9592, p-value = 0.01008\nalternative hypothesis: true difference in means between group a and group b is not equal to 0\n95 percent confidence interval:\n -5.731711 -1.268289\nsample estimates:\nmean in group a mean in group b \n            2.0             5.5 \n````\n\n:::\n",
@@ -208,7 +258,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 1 R code file for reproducibility (each in an isolated subprocess).\n-  1 file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  1 of 1 script ran without error when executed.\n-  2 installable dependencies detected."
+          "\n-  We assessed AND ran 1 R code file for reproducibility (each in an isolated subprocess).\n-  1 of 1 script ran without error when executed.\n-  2 installable dependencies detected."
         ]
       },
       {
@@ -222,7 +272,21 @@
           "repro_deps",
           "repro_ran_ok",
           "repro_tests_reported",
-          "repro_tests_matched"
+          "repro_tests_matched",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
         ],
         "v": [
           {
@@ -272,12 +336,110 @@
             "v": [
               null
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0,
           0,
           0,
@@ -289,7 +451,27 @@
           "repro_runnable",
           "repro_missing_inputs",
           "repro_deps",
-          "repro_ran_ok"
+          "repro_ran_ok",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
@@ -305,7 +487,8 @@
           "stderr",
           "elapsed",
           "script_lines",
-          "captures"
+          "captures",
+          "reason"
         ],
         "v": [
           {
@@ -493,6 +676,12 @@
                 ]
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
           }
         ]
       },
@@ -569,6 +758,9 @@
             ]
           }
         ]
+      },
+      {
+        "t": "null"
       },
       {
         "t": "list",
@@ -1121,11 +1313,17 @@
       {
         "t": "chr",
         "v": [
+          "We ran the paper's 1 R script in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script.\n\n**1 of 1 script ran to the end**.\n\n| Script | Result | What happened |\n|---|---|---|\n| ok.R | Ran to the end |  |\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
           "<root>"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

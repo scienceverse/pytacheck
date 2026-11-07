@@ -1,9 +1,49 @@
 {
   "id": "github_languages.review.vector",
-  "ok": false,
-  "error": "Can't combine `..1$bytes` <double> and `..3$bytes` <character>.",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.3.2",
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "repo",
+      "language",
+      "bytes"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "rv/langmix",
+          "rv/langmix",
+          "rv/langmix",
+          "rv/langnone",
+          "rv/langerr"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "R",
+          "Big",
+          "C++",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          12345,
+          3000000000,
+          7,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

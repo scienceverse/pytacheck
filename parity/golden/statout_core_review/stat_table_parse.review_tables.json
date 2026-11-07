@@ -22,7 +22,7 @@
           },
           {
             "t": "df",
-            "nrow": 5,
+            "nrow": 2,
             "names": [
               "V1",
               "N",
@@ -34,9 +34,6 @@
                 "t": "chr",
                 "v": [
                   "x",
-                  null,
-                  null,
-                  "Note.",
                   "y"
                 ]
               },
@@ -44,9 +41,6 @@
                 "t": "chr",
                 "v": [
                   "10",
-                  null,
-                  null,
-                  null,
                   "12"
                 ]
               },
@@ -54,20 +48,14 @@
                 "t": "chr",
                 "v": [
                   "1.5",
-                  null,
-                  null,
-                  null,
-                  null
+                  ""
                 ]
               },
               {
                 "t": "chr",
                 "v": [
                   "0.2",
-                  null,
-                  null,
-                  null,
-                  null
+                  ""
                 ]
               }
             ]
@@ -547,6 +535,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

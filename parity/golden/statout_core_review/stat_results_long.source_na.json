@@ -40,17 +40,17 @@
       {
         "t": "chr",
         "v": [
-          "na_na_t1_x",
-          "na_na_t1_x",
-          "na_l3_1"
+          "result_t1_x",
+          "result_t1_x",
+          "result_l3_1"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "na_t1_r1_t",
-          "na_t1_r1_p",
-          "na_l3_1_r1_t"
+          "result_t1_r1_t",
+          "result_t1_r1_p",
+          "result_l3_1_r1_t"
         ]
       },
       {
@@ -119,6 +119,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

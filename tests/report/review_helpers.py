@@ -9,6 +9,8 @@ import warnings
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
 from tests.report.parity_helpers import _args, _mods, _unpath, rp_mask
 
 
@@ -37,14 +39,18 @@ def rv_report_list(
         return {
             "names": list(res.keys()),
             "failed": [v is None for v in res.values()],
-            "save_path": [
-                None if p is None else p.replace(d + "/", "", 1) for p in res.save_path.values()
-            ],
-            "files": listing,
+            "save_path": pd.Series(
+                [None if p is None else p.replace(d + "/", "", 1) for p in res.save_path.values()],
+                dtype="string",
+            ),
+            "files": pd.Series(listing, dtype="string"),
             "traffic_lights": [
-                None if r is None else [m.traffic_light for m in r.values()] for r in res.values()
+                pd.Series([None], dtype="string")
+                if r is None
+                else [m.traffic_light for m in r.values()]
+                for r in res.values()
             ],
-            "text": texts,
+            "text": pd.Series(texts, dtype="string"),
         }
     finally:
         shutil.rmtree(d, ignore_errors=True)

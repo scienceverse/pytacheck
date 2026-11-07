@@ -213,10 +213,10 @@
           {
             "t": "lgl",
             "v": [
-              false,
-              false,
               true,
-              false,
+              true,
+              true,
+              true,
               true,
               true,
               true,
@@ -230,11 +230,7 @@
         "v": [
           "We did not detect open sharing of data, which could be because there is no data related to this article, or the repository is not recognized by our code. If there is data, please consider sharing it in a repository.",
           "Code was openly shared for this article, based on the following text:\n\n> Scripts are available on request, see https://github.com/q.",
-          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Data are available upon reasonable request from the authors.",
-          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Code is available by request.",
-          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Code is available by request.",
-          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Materials are available on reasonable request.",
-          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Scripts are available on request, see https://github.com/q."
+          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Data are available On request.\n\n> Data are available on Request.\n\n> Data are available upon reasonable request from the authors.\n\n> Data are available upon Reasonable request.\n\n> Code is available by request.\n\n> Materials are available on reasonable request.\n\n> Scripts are available on request, see https://github.com/q."
         ]
       },
       {
@@ -378,6 +374,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -125,7 +126,7 @@
               "data",
               "readme",
               "code",
-              null
+              "text"
             ]
           },
           {
@@ -186,7 +187,7 @@
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='tests/mod_repo_check/fixtures/review/unicode' target='_blank'>tests/mod_repo_check/fixtures/review/unicode<\/a>\", \n    Platform = \"local\", \"All Files\" = 5L, \"Data Files\" = 2L, \n    \"Code Files\" = 1L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/review/unicode\", \n\"tests/mod_repo_check/fixtures/review/unicode\", \"tests/mod_repo_check/fixtures/review/unicode\", \n\"tests/mod_repo_check/fixtures/review/unicode\", \"tests/mod_repo_check/fixtures/review/unicode\"\n), File = c(\"données.csv\", \"Étude 1.csv\", \"README.md\", \"Übersicht.R\", \n\"日本語.txt\"), Size = c(\"4 B\", \"4 B\", \"10 B\", \"7 B\", \"5 B\"\n), Type = c(\"data\", \"data\", \"readme\", \"code\", NA)), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/review/unicode\", \n\"tests/mod_repo_check/fixtures/review/unicode\", \"tests/mod_repo_check/fixtures/review/unicode\", \n\"tests/mod_repo_check/fixtures/review/unicode\", \"tests/mod_repo_check/fixtures/review/unicode\"\n), File = c(\"données.csv\", \"Étude 1.csv\", \"README.md\", \"Übersicht.R\", \n\"日本語.txt\"), Size = c(\"4 B\", \"4 B\", \"10 B\", \"7 B\", \"5 B\"\n), Type = c(\"data\", \"data\", \"readme\", \"code\", \"text\")), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
           "#### File Naming",
           "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 9 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
@@ -213,6 +214,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -233,6 +235,12 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -464,6 +472,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -471,6 +507,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

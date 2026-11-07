@@ -203,7 +203,7 @@
           null,
           "results here and the update bias results in the Supple- mental Material available online",
           "both indices, r(68) = .58, p < .001 (see Fig",
-          "in the  Supplemental Material). Having found that participants",
+          "in the Supplemental Material). Having found that participants",
           null,
           "Supplemental Material,",
           null,
@@ -211,10 +211,10 @@
           "Fig",
           "in the Supplemental Material",
           "Fig",
-          "in the Supplemental Material). This  relationship was robust to controlling for the magnitude  of the optimistic learning bias for self, age, gender,  education, and income, partial r(70) = .29, p = .012 (see  the Supplemental Material",
-          "osf  .io/6b4ag",
+          "in the Supplemental Material). This relationship was robust to controlling for the magnitude of the optimistic learning bias for self, age, gender, education, and income, partial r(70) = .29, p = .012 (see the Supplemental Material",
+          "osf .io/6b4ag",
           "osf.io/a5bmw/register/565fb3678c5e4a66b5582f67;",
-          "osf  .io/zmf4c/register/564d31db8c5e4a7c9694b2be",
+          "osf .io/zmf4c/register/564d31db8c5e4a7c9694b2be",
           null,
           null,
           null,
@@ -557,6 +557,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -3,11 +3,46 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "Could not find downloadable files for: https://researchbox.org/99"
+    "Could not download https://researchbox.org/99: could not find downloadable files"
   ],
   "value": {
-    "t": "null"
+    "t": "df",
+    "nrow": 0,
+    "names": [
+      "rb_url",
+      "name",
+      "file_location",
+      "size",
+      "isdir",
+      "checksum_ok"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "dbl",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": []
+      }
+    ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

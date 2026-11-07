@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 66,
+    "nrow": 68,
     "names": [
       "p_comp",
       "reported_p",
@@ -88,6 +88,8 @@
           "=",
           "<",
           "=",
+          "=",
+          "=",
           "="
         ]
       },
@@ -158,6 +160,8 @@
           0.036,
           0.04,
           0.001,
+          0.036,
+          null,
           0.03,
           0.03
         ]
@@ -229,6 +233,8 @@
           3,
           2,
           3,
+          3,
+          2,
           2,
           2
         ]
@@ -300,6 +306,8 @@
           57,
           57,
           57,
+          60,
+          60,
           63,
           64
         ]
@@ -372,12 +380,16 @@
           0,
           0,
           0,
+          0,
+          0,
           0
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
+          0,
           0,
           0,
           0,
@@ -513,6 +525,8 @@
           "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001.",
           "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001.",
           "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001.",
+          "Range t(28) = 2.20, p = .036, with p = .05-.10 elsewhere.",
+          "Range t(28) = 2.20, p = .036, with p = .05-.10 elsewhere.",
           "Two comparators F(1, 20) =< 4.2, p = .03.",
           "Recycled QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03."
         ]
@@ -584,6 +598,8 @@
           "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001.",
           "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001.",
           "Partly APA: t(28) = 2.20, p = .036, and other results p = .04 and p < .001.",
+          "Range t(28) = 2.20, p = .036, with p = .05-.10 elsewhere.",
+          "Range t(28) = 2.20, p = .036, with p = .05-.10 elsewhere.",
           "Two comparators F(1, 20) =< 4.2, p = .03.",
           "Recycled QB(167.5) = 0.85, Nns and t(28) = 2.2, p = .03."
         ]
@@ -591,6 +607,8 @@
       {
         "t": "chr",
         "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
           "6c4258abe0fec3",
           "6c4258abe0fec3",
           "6c4258abe0fec3",
@@ -727,6 +745,8 @@
           "Test",
           "Test",
           "Test",
+          "Test",
+          "Test",
           "Test"
         ]
       },
@@ -798,11 +818,13 @@
           "unknown",
           "unknown",
           "unknown",
+          "unknown",
+          "unknown",
           "unknown"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

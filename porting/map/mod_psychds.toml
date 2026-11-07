@@ -16,3 +16,7 @@ psychds_file_plan = "metacheck.datacheck.psychds:psychds_file_plan"
 # (closures inside psychds_check() are ported alongside it: .pid -> _pid, scaffold
 #  inline; psychds_file_plan()'s keyword_slug -> _keyword_slug and
 #  target_of/same_dir_real_name are in metacheck.datacheck.psychds)
+# metacheck 0.4.3.7 (4a61888); the sub-folder logic of psychds_file_plan() is _plan_sub_dirs
+".plan_strip_archive" = "metacheck.datacheck.psychds:_plan_strip_archive"
+".plan_relative_paths" = "metacheck.datacheck.psychds:_plan_relative_paths"
+".plan_readme_folder" = "metacheck.datacheck.psychds:_plan_readme_folder"

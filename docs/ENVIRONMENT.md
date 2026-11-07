@@ -65,6 +65,7 @@ means the value is a key or token, which the package never logs.
 | `PRESET` | `METACHECK_PRESET`, `PYTACHECK_PRESET` | the config preset, then `metacheck::default` | `use(preset=)` in code comes first. Command line and API only. The preset's source names the variable read. |
 | `R_PARSER` | `METACHECK_R_PARSER`, `PYTACHECK_R_PARSER` | `r` if the reference R exists, else `python` | The `engine` argument comes first. |
 | `RSCRIPT` | `METACHECK_RSCRIPT`, `PYTACHECK_RSCRIPT` | `Rscript` on the `PATH` | The `rscript` argument comes first where a function has one. Some places use the path only if the file exists. |
+| `STATE_DIR` | `METACHECK_STATE_DIR` | the platform state folder | The folder for what processes of one user share: the record of API keys that were refused or reached their limit (`key_status.json`; no key is ever written to it) and ResearchBox's count of requests for boxes that could not be found. The option `metacheck.state.dir` comes first. R reads this name too (shared with R). No old name. |
 | `STORE_URL` | `METACHECK_STORE_URL`, `PYTACHECK_STORE_URL` | the built-in store URL | A mirror for the built-in store. The config records which variable set it. |
 | `VERBOSE` | `METACHECK_VERBOSE`, `PYTACHECK_VERBOSE` | on | `verbose(value)` in code comes first. `0`, `false` and `no` (any case) mean off. |
 | `APP_AUTH` | `METACHECK_APP_AUTH` | `tokens` | Hosted app: `tokens` or `proxy`. New since 0.4.0a1, so it has no old name. |
@@ -139,8 +140,8 @@ The package never reads these with another meaning.
 
 ### Names shared with R
 
-R metacheck reads `METACHECK_LLM_CACHE_DIR`, `METACHECK_LLM_MODEL` and
-`METACHECK_LLM_MAX_CALLS`, with the same meaning as here. It reads none of the other
+R metacheck reads `METACHECK_LLM_CACHE_DIR`, `METACHECK_LLM_MODEL`,
+`METACHECK_LLM_MAX_CALLS` and `METACHECK_STATE_DIR`, with the same meaning as here. It reads none of the other
 `METACHECK_` names of the table. Two of them, `METACHECK_EMAIL` and
 `METACHECK_LLM_CACHE_DIR`, were already read by this package before the table. A
 test checks the list of shared names against R's source.

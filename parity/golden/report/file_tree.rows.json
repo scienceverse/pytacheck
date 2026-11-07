@@ -1,0 +1,35 @@
+{
+  "id": "file_tree.rows",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "text",
+      "leaf_idx"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "├── data/",
+          "│   ├── clean.csv",
+          "│   └── raw.csv",
+          "└── README.md"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          3,
+          1,
+          2
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

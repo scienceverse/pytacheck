@@ -74,11 +74,10 @@ def test_dryad_doi_vectorised_and_edge_cases() -> None:
     assert _dryad_doi("https://datadryad.org/stash/dataset/doi%3A10.5061%2Fdryad.x1") == (
         "10.5061/dryad.x1"
     )
-    # R's URLdecode() arithmetic: "%4g" is a byte ("P"), a trailing bad escape is dropped
-    with pytest.warns(UserWarning, match="out-of-range"):
-        assert _dryad_doi("10.5061/dryad.q2%zz") == "10.5061/dryad.q2"
-    with pytest.raises(ValueError, match="embedded nul"), pytest.warns(UserWarning):
-        _dryad_doi("10.5061/dryad.a%zzb")
+    # a "%" that starts no hexadecimal code is kept as written, without a warning or
+    # an error (metacheck 0.4.3.x .url_decode(), U39); it ends the DOI
+    assert _dryad_doi("10.5061/dryad.q2%zz") == "10.5061/dryad.q2"
+    assert _dryad_doi("10.5061/dryad.a%zzb") == "10.5061/dryad.a"
 
 
 def test_dryad_links_bare_mentions_and_normalisation() -> None:
@@ -570,8 +569,15 @@ def test_dryad_doi_escapes_decoding_to_invalid_utf8_find_nothing() -> None:
 
 def test_dryad_links_on_an_empty_paper_list() -> None:
     out = dryad.dryad_links(pc.PaperList([]))
-    # href first, as in a non-empty table (text_search() of an empty paper list: U79)
-    assert out.columns.tolist() == ["href", "text_id", "paper_id", "dryad_url", "dryad_doi"]
+    # the columns of a non-empty table (text_search() of an empty paper list: U79)
+    assert out.columns.tolist() == [
+        "href",
+        "link_text",
+        "text_id",
+        "paper_id",
+        "dryad_url",
+        "dryad_doi",
+    ]
     assert len(out) == 0
 
 
@@ -710,9 +716,12 @@ def test_dryad_401_hint_names_the_missing_key() -> None:
     # another status, or a 401 from another host, gets no hint
     assert dryad._dryad_http_failure(url, 404) == "HTTP 404"
     assert dryad._dryad_http_failure("https://example.com/file/1", 401) == "HTTP 401"
-    # with a key set, a 401 has another cause
+    assert "Please provide your own Dryad key to continue" in dryad._dryad_401_hint(url, 401)
+    # with a key set, Dryad refused it
     dryad_pat("tok")
-    assert dryad._dryad_401_hint(url, 401) == ""
+    hint = dryad._dryad_401_hint(url, 401)
+    assert hint.startswith(" (Your Dryad key was rejected by Dryad")
+    assert "tok" not in hint
 
 
 def test_dryad_file_download_records_why_a_file_failed(serve: object, tmp_path: Path) -> None:
@@ -771,3 +780,99 @@ def test_dryad_info_says_once_that_downloads_need_a_key(
             _dryad_info("10.5061/dryad.x")
         assert said == []
         assert utils.get_option("metacheck.dryad_pat.notified") is True
+
+
+def test_a_stored_dryad_listing_from_before_the_paging_fix_is_fetched_again(
+    online: None, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    # metacheck #506
+    from metacheck.archives.info_cache import _repo_info_cache_put
+    from metacheck.utils import local_options
+
+    doi = "10.5061/dryad.m8j17"
+    url = f"https://doi.org/{doi}"
+    with local_options({"metacheck.repo_info_cache.dir": str(tmp_path)}):
+        # stored before 0.3.3.1: the first page of files only, no files_total
+        old = pd.DataFrame({"dryad_doi": [doi], "doi": [f"doi:{doi}"], "license": ["cc0"]})
+        _repo_info_cache_put("dryad", doi, old)
+        calls: list[str] = []
+
+        def fake(dryad_doi: str, pb: object = None) -> pd.DataFrame:
+            calls.append(dryad_doi)
+            return pd.DataFrame(
+                {
+                    "dryad_doi": [dryad_doi],
+                    "doi": [f"doi:{dryad_doi}"],
+                    "license": ["cc0"],
+                    "files_total": [22.0],
+                    "files_incomplete": [False],
+                }
+            )
+
+        monkeypatch.setattr(dryad, "_dryad_info", fake)
+        info = dryad_info(url, cache=True)
+        assert len(calls) == 1 and info["files_total"].tolist() == [22.0]
+        # the complete listing is stored, and reused
+        info = dryad_info(url, cache=True)
+        assert len(calls) == 1 and info["files_total"].tolist() == [22.0]
+        # a stored listing marked incomplete is fetched again too
+        _repo_info_cache_put("dryad", doi, old.assign(files_total=22.0, files_incomplete=True))
+        dryad_info(url, cache=True)
+        assert len(calls) == 2
+
+
+def test_a_dryad_sharing_link_is_followed_to_its_doi(
+    serve: object, online: None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Verified live 2026-10-16 (metacheck #484): a sharing link answers 302 to the landing
+    # page of the dataset, and an unknown token answers 404.
+    token = "M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU"
+    share = f"https://datadryad.org/stash/share/{token}"
+    expired = "https://datadryad.org/stash/share/NOTAREALTOKEN123"
+    assert dryad._dryad_share_token(
+        [share, "https://datadryad.org/share/abc_D-1", "https://doi.org/10.5061/dryad.j1fd7"]
+    ) == [token, "abc_D-1", None]
+    assert dryad._dryad_doi(share) is None
+
+    seen = serve(  # type: ignore[operator]
+        {
+            f"https://datadryad.org/share/{token}": httpx.Response(
+                302,
+                headers={
+                    "Location": "https://datadryad.org/landing/show?id=doi%3A10.5061%2Fdryad.t76hdr81n"
+                },
+            ),
+            "https://datadryad.org/share/NOTAREALTOKEN123": httpx.Response(404),
+        }
+    )
+    assert dryad._dryad_share_doi(share) == {"doi": "10.5061/dryad.t76hdr81n", "error": None}
+    # the redirect is read, not followed: one request to /share/
+    assert [str(r.url) for r in seen] == [f"https://datadryad.org/share/{token}"]
+    assert dryad._dryad_share_doi(expired)["error"] == "private or expired Dryad sharing link"
+    assert dryad._dryad_share_doi("https://doi.org/10.5061/dryad.j1fd7") == {
+        "doi": None,
+        "error": None,
+    }
+
+    # dryad_info() looks the dataset up by the resolved DOI, and keeps the reason for a link
+    # that leads nowhere
+    def fake(doi: str, pb: object = None) -> pd.DataFrame:
+        return pd.DataFrame({"dryad_doi": [doi], "doi": [f"doi:{doi}"], "license": ["cc0"]})
+
+    monkeypatch.setattr(dryad, "_dryad_info", fake)
+    info = dryad_info([share, expired])
+    assert info["dryad_doi"].tolist()[0] == "10.5061/dryad.t76hdr81n"
+    assert pd.isna(info["dryad_doi"].tolist()[1])
+    assert info["license"].tolist()[0] == "cc0" and pd.isna(info["license"].tolist()[1])
+    errors = info["error"].tolist()
+    assert pd.isna(errors[0]) and errors[1] == "private or expired Dryad sharing link"
+
+
+def test_dryad_links_finds_a_sharing_link_in_the_text() -> None:
+    paper = pc.test_paper(
+        "The data are at https://datadryad.org/stash/share/abc_D-1 and "
+        "https://doi.org/10.5061/dryad.j1fd7."
+    )
+    links = dryad.dryad_links(paper)
+    assert "https://datadryad.org/stash/share/abc_D-1" in links["dryad_url"].tolist()
+    assert "10.5061/dryad.j1fd7" in [d for d in links["dryad_doi"].tolist() if isinstance(d, str)]

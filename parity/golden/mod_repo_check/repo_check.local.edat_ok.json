@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -124,8 +125,8 @@
               "readme",
               null,
               null,
-              null,
-              null
+              "text",
+              "text"
             ]
           },
           {
@@ -186,7 +187,7 @@
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='tests/mod_repo_check/fixtures/edat_ok' target='_blank'>tests/mod_repo_check/fixtures/edat_ok<\/a>\", \n    Platform = \"local\", \"All Files\" = 5L, \"Data Files\" = 0L, \n    \"Code Files\" = 0L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/edat_ok\", \n\"tests/mod_repo_check/fixtures/edat_ok\", \"tests/mod_repo_check/fixtures/edat_ok\", \n\"tests/mod_repo_check/fixtures/edat_ok\", \"tests/mod_repo_check/fixtures/edat_ok\"\n), File = c(\"README.txt\", \"stroop.edat2\", \"Stroop.edat3\", \"stroop.TXT\", \n\"Stroop.txt\"), Size = c(\"9 B\", \"5 B\", \"5 B\", \"11 B\", \"11 B\"), \n    Type = c(\"readme\", NA, NA, NA, NA)), row.names = c(NA, -5L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/edat_ok\", \n\"tests/mod_repo_check/fixtures/edat_ok\", \"tests/mod_repo_check/fixtures/edat_ok\", \n\"tests/mod_repo_check/fixtures/edat_ok\", \"tests/mod_repo_check/fixtures/edat_ok\"\n), File = c(\"README.txt\", \"stroop.edat2\", \"Stroop.edat3\", \"stroop.TXT\", \n\"Stroop.txt\"), Size = c(\"9 B\", \"5 B\", \"5 B\", \"11 B\", \"11 B\"), \n    Type = c(\"readme\", NA, NA, \"text\", \"text\")), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
           "#### Proprietary E-Prime Files\n\nThe repository contains 1 E-Prime file (stroop.edat2). These are proprietary **binary** formats that only the E-Prime software can open, so metacheck does not download or read them and other researchers cannot reuse them directly. A matching .txt export was found for each, which is the readable form metacheck uses — good. Keep including the .txt export alongside any .edat file.",
           "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: Stroop.edat3. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
@@ -215,6 +216,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -235,6 +237,12 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -426,6 +434,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -433,6 +469,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

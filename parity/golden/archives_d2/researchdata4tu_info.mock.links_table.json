@@ -7,6 +7,10 @@
     "t": "df",
     "nrow": 2,
     "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
       "researchdata4tu_url",
       "researchdata4tu_id",
       "title",
@@ -18,6 +22,34 @@
       "files"
     ],
     "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://data.4tu.nl/articles/16766929",
+          "10.4121/16766929"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
       {
         "t": "chr",
         "v": [
@@ -205,6 +237,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -15,9 +15,21 @@
       "tibble",
       "stringr",
       "readr",
-      "forcats"
+      "forcats",
+      "data.table",
+      "lubridate",
+      "readxl",
+      "nlme",
+      "lme4",
+      "emmeans",
+      "lsmeans",
+      "MASS",
+      "ape",
+      "picante",
+      "shiny",
+      "vegan"
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
