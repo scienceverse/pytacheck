@@ -94,8 +94,10 @@ def rp_report_module_run(paper: Any, modules: Any, args: Any = None) -> dict[str
 
 
 def _unpath(text: str) -> str:
-    # the report writes a module's anchor from its lower-cased path
-    return re.sub(re.escape(str(MODULES)) + r"/([a-z_]+)\.py", r"\1", text, flags=re.I)
+    # the report writes a module's anchor from its lower-cased path; on Windows "\\"
+    # separates its folders
+    folders = r"[\\/]".join(re.escape(part) for part in re.split(r"[\\/]", str(MODULES)))
+    return re.sub(folders + r"[\\/]([a-z_]+)\.py", r"\1", text, flags=re.I)
 
 
 def rp_report_qmd(paper: Any, modules: Any, args: Any = None, qmd_paper: Any = "same") -> str:

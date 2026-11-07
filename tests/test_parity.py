@@ -451,7 +451,7 @@ def test_portable_session_tempdir() -> None:
     from metacheck.archives.download import _session_tempdir
 
     t = _session_tempdir()
-    f = os.path.join(t, "metacheck-recovered-code", "ab12", "code", "x.R")
+    f = f"{t}/metacheck-recovered-code/ab12/code/x.R"  # file.path(): "/" on Windows too
     assert portable(f) == "<tempdir>/metacheck-recovered-code/ab12/code/x.R"
     assert canonical({"file_location": [f]})["v"][0]["v"] == [
         "<tempdir>/metacheck-recovered-code/ab12/code/x.R"

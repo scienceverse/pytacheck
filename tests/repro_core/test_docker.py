@@ -693,8 +693,9 @@ def test_read_received_never_follows_a_link(tmp_path: Path) -> None:
     assert docker._read_received(str(tmp_path / "real")) == 999.0
     assert docker._read_received(str(tmp_path / "link")) is None
     assert docker._read_received(str(tmp_path / "absent")) is None
-    os.mkfifo(tmp_path / "pipe")
-    assert docker._read_received(str(tmp_path / "pipe")) is None  # not waited on
+    if hasattr(os, "mkfifo"):  # (not on Windows)
+        os.mkfifo(tmp_path / "pipe")
+        assert docker._read_received(str(tmp_path / "pipe")) is None  # not waited on
 
 
 class _Clock:
@@ -1094,7 +1095,8 @@ def test_install_deps_py_docker_driver_pins_failures_and_messages(
     ]
     assert out["via_archive"].tolist() == [False] * 4
     assert _na(out["category"]) == [None] * 4
-    assert seen["mode"] == 0o755
+    if os.name != "nt":  # Windows keeps only a read-only flag
+        assert seen["mode"] == 0o755
     assert seen["timeout"] == 3000
     driver = seen["driver"].split("\n")
     # 900 s per requirement at most; the pinned one is tried again by its bare name, and
