@@ -11,7 +11,9 @@ Routes, parameters and status codes follow the plumber API:
 ``POST /paper/cross-references``  in-text cross-references
 ``POST /paper/search``     ``text_search()`` (``pattern`` required; ``return``,
                            ``ignore.case``, ``fixed``, ``perl`` optional)
-``POST /paper/module``     run one module (``name``)
+``POST /paper/module``     run one module (``name``); ``key_github``, ``key_osf``, ``key_dryad``,
+                           ``key_researchbox``, ``key_gitlab`` and ``key_openalex`` are the sender's
+                           own keys, used for this request instead of the server's
 ``POST /paper/check``      metadata + several modules (``modules``, ``report``, ``engine``)
 ``POST /package/check``    a data package: ``file`` (a zip or tar) or ``link`` (a repository)
 ========================  ====================================================
@@ -73,6 +75,7 @@ LLM use is switched on with ``METACHECK_LLM_MODEL`` (default
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import contextvars
 import datetime as dt
 import hmac
@@ -82,9 +85,10 @@ import os
 import re
 import shutil
 import tempfile
+import threading
 import uuid
 import weakref
-from collections.abc import Callable, Mapping
+from collections.abc import AsyncIterator, Callable, Iterator, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -118,6 +122,52 @@ API_KEY_ENVS = env_names("API_KEY")
 API_KEY_ENV = API_KEY_ENVS[-1]
 MIN_API_KEY_LENGTH = 32
 _OPEN_PATH = "/health"
+
+
+class _KeyGate:
+    """Requests that carry their own API keys run alone; the others run side by side.
+
+    A sender's keys (``key_github``, ...) replace the server's for one request. The
+    options that hold them belong to the whole process, so a request with keys waits
+    until the running requests have finished, and no request starts while its keys
+    are set; plumber, which answers one request at a time, never had this problem.
+    """
+
+    def __init__(self) -> None:
+        self._cond = threading.Condition()
+        self._readers = 0
+        self._writer = False
+
+    @contextlib.contextmanager
+    def shared(self) -> Iterator[None]:
+        with self._cond:
+            self._cond.wait_for(lambda: not self._writer)
+            self._readers += 1
+        try:
+            yield
+        finally:
+            with self._cond:
+                self._readers -= 1
+                self._cond.notify_all()
+
+    @contextlib.contextmanager
+    def exclusive(self) -> Iterator[None]:
+        with self._cond:
+            self._cond.wait_for(lambda: not self._writer and self._readers == 0)
+            self._writer = True
+        try:
+            yield
+        finally:
+            with self._cond:
+                self._writer = False
+                self._cond.notify_all()
+
+
+def _request_keys(mp: dict[str, Any]) -> dict[str, str]:
+    """The sender's own keys of a form (``key_github``, ``key_osf``, ...), by service."""
+    from metacheck.archives.api_keys import KEY_SERVICES
+
+    return {s: str(mp[f"key_{s}"]) for s in KEY_SERVICES if f"key_{s}" in mp}
 
 
 class ApiError(Exception):
@@ -596,12 +646,15 @@ def create_app() -> FastAPI:
     from starlette.concurrency import run_in_threadpool
 
     from metacheck._version import __version__
+    from metacheck.archives.api_keys import api_keys_use
     from metacheck.module import run_session, use
+    from metacheck.utils import options
 
     key = api_key()
     engine_default = default_engine()
     _configure_llm()
     limit = max_checks()
+    gate = _KeyGate()
     semaphores: weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Semaphore] = (
         weakref.WeakKeyDictionary()
     )
@@ -613,7 +666,18 @@ def create_app() -> FastAPI:
             sem = semaphores[loop] = asyncio.Semaphore(limit)
         return sem
 
+    @contextlib.asynccontextmanager
+    async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        # the keys of a server are shared by its visitors: messages about them say so
+        # (plumber sets this for each /module request)
+        old = options({"metacheck.keys.shared": True})
+        try:
+            yield
+        finally:
+            options(old)
+
     app = FastAPI(
+        lifespan=lifespan,
         title="metacheck API (pytacheck)",
         description=(
             "API for analyzing academic papers. Upload bibr JSON (from the bibr extraction "
@@ -654,23 +718,37 @@ def create_app() -> FastAPI:
             )
         filename = getattr(upload, "filename", "") or ""
 
+        def run() -> Any:
+            if prevalidate is not None:
+                problem = prevalidate(fields)
+                if problem is not None:
+                    return _error(*problem)
+            try:
+                paper = _read_upload(data, filename, request_id)
+            except ApiError as exc:
+                return _error(exc.status, exc.message)
+            _UPLOAD.set((data, filename))
+            try:
+                result = handler(paper, fields, request_id)
+            except ApiError as exc:
+                return _error(exc.status, exc.message)
+            return result if hasattr(result, "status_code") else _json(result)
+
         def work() -> Any:
             # blocking: runs in a worker thread, never with local modules, in a run session
-            with use(allow_local=False), run_session():
-                if prevalidate is not None:
-                    problem = prevalidate(fields)
-                    if problem is not None:
-                        return _error(*problem)
+            keys = _request_keys(fields) if endpoint == "module" else {}
+            if not any(v.strip() for v in keys.values()):
+                with gate.shared(), use(allow_local=False), run_session():
+                    return run()
+            # the sender's own keys (key_github, ...) take the place of the server's for
+            # this request only: set as options, and restored when it ends. The request
+            # runs alone, as the options belong to the whole process (see _KeyGate).
+            with gate.exclusive(), use(allow_local=False), run_session():
+                restore = api_keys_use(keys, shared=True)
                 try:
-                    paper = _read_upload(data, filename, request_id)
-                except ApiError as exc:
-                    return _error(exc.status, exc.message)
-                _UPLOAD.set((data, filename))
-                try:
-                    result = handler(paper, fields, request_id)
-                except ApiError as exc:
-                    return _error(exc.status, exc.message)
-                return result if hasattr(result, "status_code") else _json(result)
+                    return run()
+                finally:
+                    options(restore)
 
         async with semaphore():
             return await run_in_threadpool(contextvars.copy_context().run, work)
