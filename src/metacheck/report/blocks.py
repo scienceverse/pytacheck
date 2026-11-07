@@ -36,7 +36,7 @@ __all__ = [
 #: The kinds of report :func:`report_type` names: how much a report shows
 #: (every module, or only what needs attention) times how it is rendered
 #: (interactive, or static with no script).
-REPORT_TYPES = ("full", "brief", "simple", "simple_brief")
+REPORT_TYPES = ("full", "brief", "simple", "simple_brief", "checklist")
 
 _report_type_state: dict[str, str] = {}
 
@@ -48,7 +48,7 @@ def _check_report_type(value: Any) -> str:
     rt = str(value).lower() if isinstance(value, str) else None
     if rt not in REPORT_TYPES:
         raise ValueError(
-            "The report_type must be one of 'full', 'brief', 'simple' or 'simple_brief'."
+            "The report_type must be one of 'full', 'brief', 'simple', 'simple_brief', or 'checklist'."
         )
     return rt
 
@@ -65,6 +65,30 @@ def report_type(report_type: str | Sequence[str] | None = None) -> str:
       failed, each with the specific things to fix, then how those modules
       were validated.
     * ``"simple_brief"``: the brief report as a static page.
+    * ``"checklist"``: the report laid out by check instead of by module:
+      every check of every module is sorted into to fix, to improve, decide
+      by hand, for information, fine and not applicable, and each check that
+      needs work says what was found and what to do on separate lines. It is
+      static too, in the colours and font of metacheck's website
+      (:func:`metacheck.report.checklist.checklist_html`).
+
+    A module gives its checks as a ``checks`` table in its output, one row per
+    check, with the columns ``status`` (``"fix"``, ``"improve"``, ``"decide"``
+    for deciding by hand, ``"info"``, ``"fine"`` or ``"na"`` for not
+    applicable), ``title``, ``found`` and ``todo`` (markdown), and optionally
+    ``why`` and ``note`` (markdown), ``section`` (a label shown next to the
+    title), ``details`` (markdown, for example a
+    :func:`~metacheck.report.blocks.scroll_table`) and ``details_title`` (the
+    line that unfolds it). A module without ``checks`` is shown as one check:
+    its traffic light gives the result (red: to fix, yellow: to improve, green:
+    fine), its summary text what was found and its report the folded details.
+    A module can also give ``intro`` (a paragraph shown at the top), ``logo``
+    (the path of an image shown next to metacheck's logo) and
+    ``checklist_section`` (markdown): a section of its own, under its title,
+    after the results and before "More detail", with its report folded at the
+    end; its check then links to that section instead of folding the report.
+    When ``data_check`` or ``repo_check`` ran, the repository's file tree
+    follows in a section "Files in the repository", shown open.
 
     With no argument, returns the current setting; with one, sets it for the
     session and returns it. :func:`~metacheck.report.report.report` and the
@@ -81,8 +105,8 @@ def report_type(report_type: str | Sequence[str] | None = None) -> str:
 
 
 def _report_is_static(report_type: str) -> bool:
-    """Port of ``.report_is_static()``: a report with no script (simple, simple_brief)."""
-    return report_type in ("simple", "simple_brief")
+    """Port of ``.report_is_static()``: a report with no script (simple, simple_brief, checklist)."""
+    return report_type in ("simple", "simple_brief", "checklist")
 
 
 def _report_is_brief(report_type: str) -> bool:

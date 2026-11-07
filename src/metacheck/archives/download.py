@@ -32,6 +32,7 @@ import atexit
 import functools
 import math
 import os
+import re
 import shutil
 import tempfile
 import time
@@ -177,15 +178,18 @@ def _repo_key(repo_url: Any) -> str:
     return key if key != "" else "unknown"
 
 
-def _repo_cache_subdir(repo_url: Any) -> str:
+def _repo_cache_subdir(repo_url: Any, cache: bool = True) -> str:
     """Port of ``R/repo-download.R::.repo_cache_subdir()``: a repository's cache folder.
 
     Keyed by a filesystem-safe encoding of the repository URL (scheme
     dropped, runs of other characters turned into ``_``), so different
     repositories never collide and the same one always resolves to the same
-    folder.
+    folder. With ``cache=False`` the folder is in the session's temporary
+    cache (:func:`_repo_session_dir`), which is removed when the process
+    ends: a lasting cache is kept only when the caller asks for it.
     """
-    return f"{_repo_cache_dir()}/{_repo_key(repo_url)}"
+    root = _repo_cache_dir() if cache is True else _repo_session_dir()
+    return f"{root}/{_repo_key(repo_url)}"
 
 
 def _file_path(*parts: str) -> str:
@@ -215,9 +219,13 @@ def _repo_cache_rel(repo_url: Any, file_path: Any) -> Any:
     return [_rel_one(key, p) for p in file_path]
 
 
-def _repo_cache_path(repo_url: Any, file_path: Any) -> Any:
-    """Port of ``R/repo-download.R::.repo_cache_path()``: a file's persistent cache path."""
-    root = _repo_cache_dir()
+def _repo_cache_path(repo_url: Any, file_path: Any, cache: bool = True) -> Any:
+    """Port of ``R/repo-download.R::.repo_cache_path()``: a file's cache path.
+
+    In the persistent cache, or with ``cache=False`` in the session's
+    temporary one (:func:`_repo_session_dir`), with the same layout.
+    """
+    root = _repo_cache_dir() if cache is True else _repo_session_dir()
     rel = _repo_cache_rel(repo_url, file_path)
     if isinstance(rel, list):
         return [_file_path(root, r) for r in rel]
@@ -339,10 +347,6 @@ def repo_cache_clear(repo_url: Any = None, quiet: bool = False) -> float:
     freed = float(sum(_dir_files_size(d) for d in targets))
     for d in targets:
         shutil.rmtree(d, ignore_errors=True)
-    # Recreate the (empty) root so later downloads have somewhere to write.
-    if repo_url is None:
-        os.makedirs(_repo_cache_dir(), exist_ok=True)
-
     if not quiet:
         human = _format_object_size(freed)
         if repo_url is None:
@@ -562,6 +566,7 @@ def _storage_request(
     spec: dict[str, Any] = {"method": method, "url": url, "headers": dict(headers or {})}
     if auth:
         spec = _auth_for_url(spec)
+        url = str(spec["url"])  # (an osf.io address may be sent to its file server)
 
     if url.lower().startswith("file:"):
         if throttle is not None:
@@ -593,7 +598,7 @@ def _storage_request(
                     is_transient=is_transient or _storage_is_transient,
                     throttle=throttle,
                     sink=read,
-                    resend_headers=bool(spec.get("unrestricted_auth")),
+                    on_reset=_host_rate_limit_record,
                     raise_errors=True,
                 )
         except http.RateLimited as e:
@@ -682,59 +687,129 @@ def _with_headers(spec: dict[str, Any], extra: Mapping[str, str]) -> dict[str, A
     return out
 
 
+def _url_host_is(url: Any, domains: str | Sequence[str]) -> bool:
+    """Port of ``R/repo-download.R::.url_host_is()``: is the host name of *url* one of
+    *domains*, or a subdomain of one (``files.osf.io`` for ``osf.io``)?
+
+    The host only: a key must not go to an address that merely mentions a service in its
+    path or query (a link shortener, a web archive), nor to ``osf.io.example.com``.
+    """
+    try:
+        host = (urlsplit(str(url)).hostname or "").lower()
+    except ValueError:
+        return False
+    if not host:
+        return False
+    names = [domains] if isinstance(domains, str) else list(domains)
+    return any(host == d.lower() or host.endswith("." + d.lower()) for d in names)
+
+
+def _osf_file_server_url(url: str, pat: str) -> str:
+    """Port of ``R/repo-download.R::.osf_file_server_url()``: the OSF file server a download
+    address on osf.io itself redirects to (``osf.io/download/<id>/`` to
+    ``files.osf.io/v1/resources/...``), asked for with the token and without following the
+    redirect, so that the download can go there directly with the token (see
+    :func:`_auth_for_url`). Any other address -- the file servers, the API, a redirect that
+    leaves the OSF, no redirect, or a failed request -- is returned as it is.
+    """
+    import httpx
+
+    from metacheck import http
+
+    host = (urlsplit(url).hostname or "").lower()
+    if host not in ("osf.io", "www.osf.io"):
+        return url
+    try:
+        resp = http.request(
+            "GET",
+            url,
+            headers={"Authorization": f"Bearer {pat}", "User-Agent": "metacheck"},
+            follow_redirects=False,
+            max_tries=1,
+            timeout=httpx.Timeout(60.0, connect=20.0),
+        )
+    except Exception:
+        return url
+    if resp is None or resp.status_code not in (301, 302, 303, 307, 308):
+        return url
+    location = resp.headers.get("location") or ""
+    try:
+        to = (urlsplit(location).hostname or "").lower()
+    except ValueError:
+        return url
+    return location if re.search(r"(^|\.)osf\.io$", to) else url
+
+
+def _host_rate_limit_record(host: str, reset: float) -> None:
+    """Port of the key part of ``R/repo-download.R::.host_rate_limit_record()``: a host whose
+    limit belongs to a key metacheck manages (Dryad, GitHub, GitLab, the OSF) has it recorded
+    as a key problem, shared with the other processes (see ``api_key_status()``). The reset
+    itself is remembered by :func:`metacheck.http.request`."""
+    import datetime as dt
+
+    from metacheck.archives.api_keys import key_problem_record, key_service_for_host
+
+    service = key_service_for_host(host)
+    if service is not None:
+        key_problem_record(service, "limit", dt.datetime.fromtimestamp(reset, dt.UTC))
+
+
 def _auth_for_url(req: Mapping[str, Any]) -> dict[str, Any]:
     """Port of ``R/repo-download.R::.auth_for_url()``: host authentication for a file request.
 
     *req* is a request spec (``{"method", "url", "headers", ...}``); a new one
-    is returned. OSF and Zenodo get their bearer token (kept across the
-    redirect to their storage hosts: ``unrestricted_auth``), Dataverse,
-    Figshare, Dryad and ReShare their own header functions, and
-    4TU.ResearchData its ``Authorization: token`` -- so a private file is
-    fetched instead of a sign-in page.
+    is returned. OSF and Zenodo get their bearer token, Dataverse, Figshare,
+    Dryad and ReShare their own header functions, and 4TU.ResearchData its
+    ``Authorization: token`` -- so a private file is fetched instead of a
+    sign-in page. The service is chosen by the address's host name only:
+    matching anywhere in the address sent a key to any host whose path or query
+    merely mentioned ``osf.io`` or ``zenodo.org``.
+
+    A download address on osf.io is sent straight to the file server it
+    redirects to, with the token (:func:`_osf_file_server_url`): the token is
+    not sent on to the cloud storage the file server redirects to, which refuses
+    a pre-signed address that also has an ``Authorization`` header (#508).
     """
     spec = dict(req)
     url = str(spec.get("url") or "")
-    host = (_host(url) or "").lower()
-    if host == "osf.io" or host.endswith(".osf.io"):
-        # the host, not the whole URL: a path or a look-alike host must not get the token
-        from metacheck.archives.osf_helpers import osf_pat
+    if _url_host_is(url, "osf.io"):
+        from metacheck.archives.api_keys import key_use
+        from metacheck.archives.osf_helpers import _osf_key_check
 
         try:
-            pat = osf_pat()
+            pat = key_use("osf", check=_osf_key_check)
         except Exception:
             pat = ""
         if pat:
+            spec["url"] = _osf_file_server_url(url, pat)
             spec = _with_headers(spec, {"Authorization": f"Bearer {pat}"})
-            spec["unrestricted_auth"] = True
-    elif grepl(r"zenodo\.org", url, ignore_case=True):
+    elif _url_host_is(url, "zenodo.org"):
         from metacheck.archives.zenodo_upload import zenodo_pat
 
-        sandbox = bool(grepl(r"sandbox\.zenodo\.org", url, ignore_case=True))
         try:
-            pat = zenodo_pat(sandbox=sandbox)
+            pat = zenodo_pat(sandbox=_url_host_is(url, "sandbox.zenodo.org"))
         except Exception:
             pat = ""
         if pat:
             spec = _with_headers(spec, {"Authorization": f"Bearer {pat}"})
-            spec["unrestricted_auth"] = True
     else:
-        from metacheck.archives.dataverse import _dataverse_headers, _dataverse_host_regex
+        from metacheck.archives.dataverse import _dataverse_headers, _dataverse_hosts
 
-        if grepl(_dataverse_host_regex(), url, ignore_case=True):
+        if _url_host_is(url, _dataverse_hosts()):
             spec = _dataverse_headers(spec)
-        elif grepl(r"figshare\.com", url, ignore_case=True):
+        elif _url_host_is(url, "figshare.com"):
             from metacheck.archives.figshare import _figshare_headers
 
             spec = _figshare_headers(spec)
-        elif grepl(r"datadryad\.org", url, ignore_case=True):
+        elif _url_host_is(url, "datadryad.org"):
             from metacheck.archives.dryad import _dryad_headers
 
             spec = _dryad_headers(spec)
-        elif grepl(r"reshare\.ukdataservice\.ac\.uk", url, ignore_case=True):
+        elif _url_host_is(url, "reshare.ukdataservice.ac.uk"):
             from metacheck.archives.reshare import _reshare_headers
 
             spec = _reshare_headers(spec)
-        elif grepl(r"data\.4tu\.nl", url, ignore_case=True):
+        elif _url_host_is(url, "data.4tu.nl"):
             from metacheck.archives.fourtu import _researchdata4tu_pat
 
             try:
@@ -884,13 +959,29 @@ def _download_one(
             return "not authorised (the OSF returned a sign-in page; see ?osf_pat)"
         if os.path.exists(dest) and (os.path.getsize(dest) > 0 or expected_bytes == 0):
             return None
+        if not os.path.exists(dest) and expected_bytes == 0:
+            # a file the listing says is empty is empty (metacheck #568)
+            open(dest, "wb").close()
+            return None
         # no file is left behind: the next run would take it as cached (metacheck
         # keeps the 0-byte file: U75)
         _unlink(dest)
         return "empty response"
     except Exception as e:
+        # read before the file goes: the response body was written to `dest`
+        guestbook = ""
+        if isinstance(e, _HttpError) and int(e.resp.status_code) == 400:
+            guestbook = _dataverse_guestbook_hint(_body_of(e.resp, dest))
         if os.path.exists(dest):
             _unlink(dest)
+        if isinstance(e, _HttpError) and expected_bytes == 0:
+            # a file the listing says is empty needs nothing from the host: GitHub answered
+            # "HTTP 501 Not Implemented" for empty files (metacheck #575)
+            try:
+                open(dest, "wb").close()
+                return None
+            except OSError:
+                pass
         if (
             skip_on_api_limit is True  # R: isTRUE(skip_on_api_limit), the argument only
             and isinstance(e, _HttpError)
@@ -904,8 +995,184 @@ def _download_one(
             from metacheck.archives.dryad import _dryad_401_hint
 
             first, nl, rest = str(e).partition("\n")
-            return f"{first}{_dryad_401_hint(url, int(e.resp.status_code))}{nl}{rest}"
+            hint = _dryad_401_hint(url, int(e.resp.status_code))
+            return f"{first}{hint}{nl}{rest}{guestbook}"
         return str(e)
+
+
+def _body_of(resp: Any, dest: str) -> Any:
+    """The response *resp* of a request that wrote its body to *dest*, with that body."""
+    import httpx
+
+    try:
+        with open(dest, "rb") as fh:
+            body = fh.read(1 << 20)
+    except OSError:
+        body = b""
+    return httpx.Response(int(resp.status_code), content=body, headers=dict(resp.headers))
+
+
+def _download_for_run() -> bool:
+    """Port of ``R/repo-download.R::.download_for_run()``: will the modules of this check run the
+    repository's code (``reproducibility_check`` with execute)?
+
+    ``report_module_run()`` and ``reproducibility_check()`` set the option
+    ``metacheck.download_for_run`` for the duration of the check, so the first module that
+    downloads (``code_check``, then ``data_check``) fetches what a run needs in the same call,
+    and no module asks a host for the same repository twice (metacheck #568).
+    """
+    from metacheck.utils import get_option
+
+    return get_option("metacheck.download_for_run") is True
+
+
+_MEDIA_RX = re.compile(
+    r"\.(png|jpe?g|gif|bmp|svg|eps|ps|ico|webp|heic|wav|mp3|flac|ogg|m4a|aac|mp4|avi|mov|mkv"
+    r"|wmv|webm|pdf|docx?|pptx?|odt|odp|key|pages)$",
+    re.IGNORECASE,
+)
+_WHOLE_ARCHIVE_RX = re.compile(r"github\.com|gitlab\.com|datadryad\.org", re.IGNORECASE)
+_RENV_RX = re.compile(r"(^|/)renv/", re.IGNORECASE)
+
+
+def _run_download_want(files: pd.DataFrame | None) -> list[bool]:
+    """Port of ``R/repo-download.R::.run_download_want()``: the files of a listing a run of the
+    code could need.
+
+    Every file, except images, sound, video and documents that hosts send one by one, since
+    there each such file is a request of its own and a script rarely reads one; a script that
+    names one gets it from ``reproducibility_check()`` before the run. From a host that
+    :func:`download_repo_files` fetches as one archive of the whole repository (GitHub, GitLab,
+    Dryad), every file is kept: its bytes arrive anyway (metacheck #568). renv's own library is
+    left out, as in ``code_check``. The size limits of :func:`download_repo_files` still apply.
+    """
+    if files is None or len(files) == 0:
+        return []
+    n = len(files)
+
+    def column(name: str) -> list[Any]:
+        return files[name].tolist() if name in files.columns else [None] * n
+
+    names, urls, paths = column("file_name"), column("repo_url"), column("file_path")
+    out: list[bool] = []
+    for name, url, path in zip(names, urls, paths, strict=True):
+        media = bool(_MEDIA_RX.search("" if is_missing(name) else str(name)))
+        whole = bool(_WHOLE_ARCHIVE_RX.search("" if is_missing(url) else str(url)))
+        where = str(name) if is_missing(path) or str(path) == "" else str(path)
+        if is_missing(path) and is_missing(name):
+            where = "NA"  # R: grepl() on NA is FALSE
+        in_renv = bool(_RENV_RX.search(where.replace("\\", "/")))
+        out.append((not media or whole) and not in_renv)
+    return out
+
+
+def _dataverse_guestbook_hint(resp: Any) -> str:
+    """Port of ``R/repo-download.R::.dataverse_guestbook_hint()``: a guestbook, if the response names one.
+
+    A Dataverse depositor can ask people to fill in a form (a guestbook) before downloading.
+    The listing does not say so; the host answers 400 with this message (verified live
+    2026-10-31, Harvard Dataverse datafile 3670464). The form asks for a person's details,
+    so metacheck does not submit it. ``""`` for any other answer.
+    """
+    from metacheck.archives.dataone import _resp_body_string
+
+    try:
+        txt = _resp_body_string(resp) or ""
+    except Exception:
+        txt = ""
+    if "Guestbook response" in txt:
+        return " (the depositor requires a guestbook form to be filled in before download)"
+    return ""
+
+
+def _download_capped(
+    url: str,
+    dest: str,
+    max_bytes: float = math.inf,
+    timeout_s: float = 120,
+    skip_on_api_limit: bool = False,
+) -> tuple[str | None, bool, int]:
+    """Port of ``R/repo-download.R::.download_capped()``: a file of unknown size, with a limit.
+
+    Stops the transfer once more than *max_bytes* have arrived (metacheck #583).
+    The bytes go to ``<dest>.part`` and the file is moved into place only when
+    complete. Returns ``(error, over_cap, bytes)``: ``error`` is ``None`` on
+    success, else the reason; a file over the limit has ``over_cap`` set and
+    ``bytes`` how many had arrived. A refusal is not retried.
+    """
+    from metacheck import http
+
+    _dir_create(os.path.dirname(dest))
+    part = f"{dest}.part"
+    timeout = _zip_timeout_for_size(timeout_s, max_bytes if math.isfinite(max_bytes) else math.nan)
+    state: dict[str, Any] = {"written": 0, "why": None, "over": False, "streamed": False}
+
+    def write(resp: Any) -> None:
+        if int(resp.status_code) >= 400:
+            return
+        state["streamed"] = True
+        deadline = time.monotonic() + timeout
+        with open(part, "wb") as con:
+            for chunk in resp.iter_bytes(chunk_size=512 * 1024):
+                http.check_interrupt()
+                if time.monotonic() > deadline:
+                    state["why"] = f"download exceeded the {math.ceil(timeout):d}s timeout"
+                    return
+                con.write(chunk)
+                state["written"] += len(chunk)
+                if math.isfinite(max_bytes) and state["written"] > max_bytes:
+                    state["over"] = True
+                    return
+
+    try:
+        is_file = url.lower().startswith("file:")
+        try:
+            resp = _storage_request(
+                "GET",
+                url,
+                skip_on_api_limit=skip_on_api_limit,
+                timeout=timeout,
+                path=part if is_file else None,
+                max_tries=1,
+                sink=None if is_file else write,
+            )
+        except _RateLimitSkipped:
+            return (
+                "API rate limit exhausted: known rate-limited host, skip_on_api_limit",
+                False,
+                0,
+            )
+        except _RequestError as e:
+            if is_file:  # a connection (not curl) is what metacheck opens a file:// URL with
+                return (
+                    "Failed to perform HTTP request.\n"
+                    "Caused by error in `open.connection()`:\n! cannot open the connection",
+                    False,
+                    0,
+                )
+            return str(e), False, 0
+        except Exception as e:
+            return str(e), False, 0
+        if int(resp.status_code) >= 400:
+            return f"HTTP {int(resp.status_code)}", False, 0
+        if is_file and os.path.exists(part):
+            state["written"] = os.path.getsize(part)
+            state["over"] = math.isfinite(max_bytes) and state["written"] > max_bytes
+        if state["over"]:
+            return "over the byte limit", True, int(state["written"])
+        if state["why"] is not None:
+            return str(state["why"]), False, 0
+        if _is_login_page(part):
+            return "not authorised (the OSF returned a sign-in page; see ?osf_pat)", False, 0
+        if not (os.path.exists(part) and os.path.getsize(part) > 0):
+            return "empty response", False, 0
+        try:
+            os.replace(part, dest)
+        except OSError:
+            return "could not move the download into place", False, 0
+        return None, False, 0
+    finally:
+        _unlink(part)
 
 
 def _parallel_one(url: Any, dest: str, expected: float, skip: bool) -> tuple[Any, Exception | None]:
@@ -1306,6 +1573,11 @@ def download_repo_files(
     index = files.index
     df = files.copy().reset_index(drop=True)
     n = len(df)
+    # Without a file_size column no size was looked up and every file was left out
+    # without a record (metacheck #583): an empty column for the call, removed again.
+    had_size = "file_size" in df.columns
+    if not had_size:
+        df["file_size"] = pd.Series([math.nan] * n, dtype="float64")
     if "file_location" not in df.columns:
         df["file_location"] = pd.Series([None] * n, dtype=object)
     else:
@@ -1336,6 +1608,17 @@ def download_repo_files(
     df[".cache_path"] = pd.Series(cache_paths, dtype=object)
 
     already = [os.path.exists(p) for p in cache_paths]
+    # An empty cached file of a file the listing says has bytes is a download that failed,
+    # so it is fetched again (metacheck #568).
+    for i, listed in enumerate(df["file_size"].tolist()):
+        if already[i]:
+            lv = _num(listed)
+            if not is_missing(lv) and lv > 0:
+                try:
+                    if os.path.getsize(cache_paths[i]) == 0:
+                        already[i] = False
+                except OSError:
+                    pass
     loc_col = int(df.columns.get_loc("file_location"))  # type: ignore[arg-type]
     for i in range(n):
         if already[i]:
@@ -1359,7 +1642,7 @@ def download_repo_files(
     def rows_for(repo: Any) -> list[int]:
         return [] if is_missing(repo) else rows_of.get(repo, [])
 
-    sizes_col = _col(df, "file_size")
+    sizes_col: list[Any] = _col(df, "file_size") or []
 
     # Known listing sizes and cached files need no request. Fetch the remaining
     # distinct URLs concurrently; duplicates share one probe without losing rows.
@@ -1389,6 +1672,7 @@ def download_repo_files(
 
     # -- archive members (repo_check's zip-peek expansion) --------------------
     if "archive_url" in df.columns:
+        from metacheck.archives.tar_peek import _tar_fetch_members
         from metacheck.archives.zip_peek import _whole_request_bytes, _zip_fetch_members
 
         arcs = _col(df, "archive_url") or [None] * n
@@ -1409,6 +1693,19 @@ def download_repo_files(
             for i, s, o in zip(idx, member_sizes, over, strict=True):
                 if o:
                     oversize_rows.append((repo_urls[i], file_names[i], s))
+            # A member without a size cannot be held to the caps, so it is not fetched;
+            # recorded so that the reason is not lost.
+            for i, s in zip(idx, member_sizes, strict=True):
+                if is_missing(s):
+                    failed_rows.append(
+                        (
+                            repo_urls[i],
+                            file_names[i],
+                            arc,
+                            paper_id(i),
+                            "the archive's list of contents gives no size for this file",
+                        )
+                    )
             cand = [
                 i
                 for i, s, o in zip(idx, member_sizes, over, strict=True)
@@ -1445,6 +1742,27 @@ def download_repo_files(
             arc_path = _safe_write_path(arc_path) or arc_path
             member_dest = _safe_write_path(f"{arc_path}.contents") or f"{arc_path}.contents"
             _dir_create(member_dest)
+            # A member saved by an earlier run is used as it is (metacheck #561): it is
+            # stored under ".contents", where `already` does not look.
+            from metacheck.archives.zip_peek import _safe_member_path
+
+            unsaved = []
+            for i in idx:
+                rel = _safe_member_path(str(members[i]))
+                target = None if rel is None else _file_path(member_dest, rel)
+                if target is not None and os.path.isfile(target):
+                    sz = _num(sizes_col[i])
+                    if (
+                        not is_missing(sz)
+                        and os.path.getsize(target) > 0
+                        and os.path.getsize(target) == sz
+                    ):
+                        df.iat[i, loc_col] = target
+                        continue
+                unsaved.append(i)
+            idx = unsaved
+            if not idx:
+                continue
             # The archive's own size, carried from repo_check's listing, saves the
             # peek a HEAD request in a new session. Within the budget the archive
             # may be downloaded once instead of fetched by range, when that is
@@ -1453,18 +1771,35 @@ def download_repo_files(
             # restarted run does not request it again.
             arc_sizes = _col(df, "archive_size")
             # why a member was not fetched is recorded in `failed` (#429)
+            # a member of a plain .tar (listed by downloading the archive whole, see
+            # tar_peek._tar_peek) comes from that session copy or one new download:
+            # a tar has no index to fetch members by byte range from
+            arc_formats = _col(df, "archive_format")
+            is_tar_arc = arc_formats is not None and arc_formats[idx[0]] == "tar"
+            fetched: pd.DataFrame | None
             try:
-                fetched = _zip_fetch_members(
-                    str(arc),
-                    names=[str(members[i]) for i in idx],
-                    dest=member_dest,
-                    cache=cache,
-                    skip_on_api_limit=skip_on_api_limit,
-                    max_whole_bytes=cap_bytes,
-                    archive_path=arc_path,
-                    request_bytes=_whole_request_bytes(arc),
-                    size=None if arc_sizes is None else arc_sizes[idx[0]],
-                )
+                if is_tar_arc:
+                    fetched = _tar_fetch_members(
+                        str(arc),
+                        names=[str(members[i]) for i in idx],
+                        dest=member_dest,
+                        archive_path=arc_path,
+                        size=None if arc_sizes is None else arc_sizes[idx[0]],
+                        max_whole_bytes=cap_bytes,
+                        skip_on_api_limit=skip_on_api_limit,
+                    )
+                else:
+                    fetched = _zip_fetch_members(
+                        str(arc),
+                        names=[str(members[i]) for i in idx],
+                        dest=member_dest,
+                        cache=cache,
+                        skip_on_api_limit=skip_on_api_limit,
+                        max_whole_bytes=cap_bytes,
+                        archive_path=arc_path,
+                        request_bytes=_whole_request_bytes(arc),
+                        size=None if arc_sizes is None else arc_sizes[idx[0]],
+                    )
             except Exception as e:
                 why: str | None = str(e)
                 fetched = None
@@ -1500,6 +1835,9 @@ def download_repo_files(
     has_url = [u is not None and str(u) != "" for u in file_urls]
     to_get: list[int] = []
 
+    # the byte limit of a file of unknown size (see below); absent for the others
+    byte_cap: dict[int, float] = {}
+
     # -- per-repository budget + per-file size filter -------------------------
     for repo in dict.fromkeys(repo_urls[i] for i in range(n) if has_url[i]):
         idx = [i for i in rows_for(repo) if has_url[i]]
@@ -1520,8 +1858,6 @@ def download_repo_files(
             continue
 
         is_cached = [already[i] for i in idx]
-        if sizes_col is None:
-            continue  # R: as.numeric(NULL) leaves no candidates
         sizes = [_num(sizes_col[i]) for i in idx]
         for k, s in enumerate(sizes):
             if not is_missing(s):
@@ -1543,9 +1879,9 @@ def download_repo_files(
             if over[k] and not is_cached[k]:
                 oversize_rows.append((repo, file_names[i], sizes[k]))
 
+        # Unknown-size files are not budgeted. A repository with no known-size file goes
+        # on too: its unknown-size files are downloaded with a limit below (metacheck #583).
         cand = [not o and not is_missing(s) for o, s in zip(over, sizes, strict=True)]
-        if not any(cand):
-            continue
         c_idx = [i for i, c in zip(idx, cand, strict=True) if c]
         c_size = [s for s, c in zip(sizes, cand, strict=True) if c]
         c_cached = [x for x, c in zip(is_cached, cand, strict=True) if c]
@@ -1561,6 +1897,32 @@ def download_repo_files(
                 take_missing.append(k)
                 used += c_size[k]
         to_get.extend(c_idx[k] for k in take_missing)
+
+        # A still-missing file whose size neither the listing nor the host gives is
+        # downloaded with a limit: the per-file cap, or what the budget has left if
+        # that is less. The transfer stops once the limit is passed and the file is
+        # reported as over the limit.
+        unknown_rows = [
+            i
+            for k, i in enumerate(idx)
+            if not over[k] and is_missing(sizes[k]) and not is_cached[k]
+        ]
+        if unknown_rows:
+            left = max(cap_bytes - used, 0.0)
+            lim = min(max_file_size * _MB if math.isfinite(max_file_size) else math.inf, left)
+            if lim > 0:
+                for i in unknown_rows:
+                    byte_cap[i] = lim
+                to_get.extend(unknown_rows)
+            else:
+                msg = (
+                    f"Repository {repo}: {len(unknown_rows)} file{plural(len(unknown_rows))} "
+                    "of unknown size not downloaded, because the "
+                    f"{_cap_num(max_download_size)} MB per-repository budget is spent. "
+                    "Raise `max_download_size` to include more."
+                )
+                _cap_report(msg)
+                gated_rows.append((repo, msg))
 
         taken = set(take_missing)
         omitted = [k for k in missing_order if k not in taken]
@@ -1782,8 +2144,10 @@ def download_repo_files(
                 zen = grepl(
                     r"zenodo\.org", [as_str(file_urls[i]) for i in remaining], ignore_case=True
                 )
+                # a file of unknown size is fetched one at a time with its byte limit
                 parallel_safe = [
-                    is_osfstorage(i) or bool(z) for i, z in zip(remaining, zen, strict=True)
+                    (is_osfstorage(i) or bool(z)) and i not in byte_cap
+                    for i, z in zip(remaining, zen, strict=True)
                 ]
                 remaining_parallel = [i for i, p in zip(remaining, parallel_safe, strict=True) if p]
                 remaining_seq = [i for i, p in zip(remaining, parallel_safe, strict=True) if not p]
@@ -1811,13 +2175,34 @@ def download_repo_files(
                         if pb is not None:
                             pb.tick()
                 for i in remaining_seq:
-                    err = _download_one(
-                        str(file_urls[i]),
-                        cache_now[i],
-                        skip_on_api_limit=skip_on_api_limit,
-                        expected_bytes=_num(sizes_col[i]) if sizes_col is not None else math.nan,
-                    )
-                    if err is None:
+                    over_cap, got_bytes = False, 0
+                    if i in byte_cap:
+                        err, over_cap, got_bytes = _download_capped(
+                            str(file_urls[i]),
+                            cache_now[i],
+                            max_bytes=byte_cap[i],
+                            skip_on_api_limit=skip_on_api_limit,
+                        )
+                    else:
+                        err = _download_one(
+                            str(file_urls[i]),
+                            cache_now[i],
+                            skip_on_api_limit=skip_on_api_limit,
+                            expected_bytes=_num(sizes_col[i])
+                            if sizes_col is not None
+                            else math.nan,
+                        )
+                    if over_cap:
+                        # a file of unknown size that passed its limit: reported as over
+                        # the limit, like a file whose listed size is over it
+                        oversize_rows.append((repo_urls[i], file_names[i], float(got_bytes)))
+                        _message(
+                            f"{as_str(file_names[i]) or 'NA'} in {as_str(repo_urls[i]) or 'NA'} "
+                            "had no known size and was larger than its "
+                            f"{_cap_num(_rround(byte_cap[i] / _MB))} MB limit, so it was not "
+                            "kept. Raise max_file_size (or max_download_size) to include it."
+                        )
+                    elif err is None:
                         df.iat[i, _loc(df)] = cache_now[i]
                     else:
                         fail(i, err)
@@ -1848,7 +2233,7 @@ def download_repo_files(
         )
         options({"metacheck.repo_cache.notified": True})
 
-    out = df.drop(columns=[".cache_path"])
+    out = df.drop(columns=[".cache_path"] if had_size else [".cache_path", "file_size"])
     out["file_location"] = pd.Series(
         [None if is_missing(v) else str(v) for v in out["file_location"].tolist()],
         dtype="string",

@@ -74,10 +74,13 @@ def test_several_urls_that_all_fail_give_none(serve: Serve) -> None:
             )
             is None
         )
+    # ResearchBox: no rows, and each box's reason in the "failed" attribute (U43)
     with pytest.warns(UserWarning):
-        assert (
-            rbox_file_download(["https://researchbox.org/1", "https://researchbox.org/2"]) is None
-        )
+        files = rbox_file_download(["https://researchbox.org/1", "https://researchbox.org/2"])
+    assert len(files) == 0
+    failed = files.attrs["failed"]
+    assert failed["rb_url"].tolist() == ["https://researchbox.org/1", "https://researchbox.org/2"]
+    assert failed["error"].tolist() == ["unfound", "unfound"]
 
 
 def test_rbox_empty_page_is_unfound(serve: Serve) -> None:

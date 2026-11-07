@@ -1,0 +1,160 @@
+{
+  "id": "checklist.checks.all_statuses",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "status",
+      "title",
+      "section",
+      "found",
+      "todo",
+      "why",
+      "note",
+      "details",
+      "details_title",
+      "module",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "fix",
+          "improve",
+          "decide",
+          "info",
+          "fine",
+          "na",
+          "fix",
+          "fine"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "No junk",
+          "Size",
+          "Pick one",
+          "Note",
+          "Names",
+          "ORCIDs",
+          "Bare",
+          "Plain"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2 Files",
+          "",
+          "1.1",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2 junk files.",
+          "1 MB.",
+          "Two options.",
+          "FYI.",
+          "All fine.",
+          "No ORCID.",
+          "",
+          "Ok."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Remove them.",
+          "Shrink it.",
+          "Choose.",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Junk confuses.",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "A note.",
+          "",
+          "",
+          "",
+          "Not needed.",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The junk table.",
+          "",
+          "Options.",
+          "FYI details.",
+          "The size table.",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Show the files",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "my_check",
+          "my_check",
+          "my_check",
+          "my_check",
+          "my_check",
+          "my_check",
+          "my_check",
+          "my_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

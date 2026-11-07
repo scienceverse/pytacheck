@@ -876,13 +876,13 @@ expr_case(
     "rbox_file_download.mock.cached",
     tmp_r(
         f"{rb_writes}; old <- options(metacheck.repo_cache.dir = d); on.exit(options(old), add = TRUE); "
-        'res <- rbox_file_download(c("https://researchbox.org/801", NA, "https://researchbox.org/801")); '
+        'res <- rbox_file_download(c("https://researchbox.org/801", NA, "https://researchbox.org/801"), cache = TRUE); '
         'res$file_location <- sub(".*/unzipped/", "", res$file_location); res'
     ),
     "lambda m: m.repo_cache("
     + json.dumps(RB_CACHE)
     + ', lambda d: (lambda res: res.assign(file_location=[None if m.pd.isna(v) else str(v).split("/unzipped/", 1)[-1] for v in res["file_location"]]))('
-    'm.researchbox.rbox_file_download(["https://researchbox.org/801", None, "https://researchbox.org/801"])))',
+    'm.researchbox.rbox_file_download(["https://researchbox.org/801", None, "https://researchbox.org/801"], cache=True)))',
 )
 
 # ================================================================= ReShare

@@ -1,0 +1,17 @@
+{
+  "id": "file_tree.block.study",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "#### Data Tree",
+      "Where the files sit within each repository. Each file is followed by how it was classified, and any file-naming issue found by repo_check; junk files, hidden files and empty folders are marked.",
+      "**Repository: my_study**",
+      "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── code/\n│   └── analysis.R  💻 code\n├── data/\n│   └── raw.csv     📊 data   no date\n└── README.md       📄 readme\n```\n:::"
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -92,9 +92,12 @@ def test_repair_unique() -> None:
 def test_parse_item_keeps_duplicate_names_and_zero_rows() -> None:
     item = {"DOI": "10.1/x", "link": [{"URL": "u1"}, {"URL": "u2"}]}
     df = _crossref_parse_item(item, ["DOI", "link"])
-    assert list(df.columns) == ["DOI", "link.URL", "link.URL"]
-    # nothing selected: a 0-row data frame
-    assert len(_crossref_parse_item(item, ["abstract"])) == 0
+    # a list of values is one text, joined with "; " (metacheck 0.4.3.x)
+    assert list(df.columns) == ["DOI", "link"]
+    assert df["link"].tolist() == ["u1; u2"]
+    # nothing selected: one row with a missing DOI (R: data.frame(DOI = NA))
+    none = _crossref_parse_item(item, ["abstract"])
+    assert list(none.columns) == ["DOI"] and len(none) == 1 and pd.isna(none["DOI"].iat[0])
     # a title of [null] is removed, not kept as NA
     assert list(_crossref_parse_item({"DOI": "d", "title": [None]}, ["DOI", "title"]).columns) == [
         "DOI"
@@ -106,11 +109,11 @@ def test_query_parse_repairs_names_before_selecting() -> None:
         {"DOI": "d", "score": 80, "editor": [{"given": "A"}, {"given": "B"}], "title": ["T"]},
     ]
     out = _crossref_query_parse(items, 50, ["DOI", "score", "title", "editor"])
-    # U13: the editors are a table like the authors (R spreads them over
-    # repeated editor.given columns, which the selection then drops)
+    # the editors are one text joined with "; " (metacheck 0.4.3.x)
     assert list(out.columns) == ["DOI", "score", "title", "editor"]
-    assert out["editor"].iat[0] == [{"given": "A"}, {"given": "B"}]
-    assert _crossref_query_parse(items, 50, ["nothing"]).shape == (0, 0)
+    assert out["editor"].iat[0] == "A; B"
+    # nothing selected: the one row has no selected column
+    assert _crossref_query_parse(items, 50, ["nothing"]).shape == (1, 0)
 
 
 # --- bind_rows() type checks -------------------------------------------------
@@ -133,7 +136,7 @@ def _works(message: dict) -> httpx.Response:
     return httpx.Response(200, json={"status": "ok", "message": message})
 
 
-def test_crossref_doi_drops_zero_row_results(online: None) -> None:
+def test_crossref_doi_keeps_a_row_for_a_doi_without_the_field(online: None) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         if "10.1234%2Fa" in str(request.url):
             return _works({"DOI": "10.1234/a", "abstract": "Abs"})
@@ -142,7 +145,9 @@ def test_crossref_doi_drops_zero_row_results(online: None) -> None:
     with respx.mock() as router:
         router.route(host="api.crossref.org").mock(side_effect=handler)
         out = crossref_doi(["10.1234/a", "10.1234/b"], select=["abstract"])
-    assert out["abstract"].tolist() == ["Abs"]
+    # a DOI without the selected field keeps a row with a missing value
+    # (R: data.frame(DOI = NA))
+    assert out["abstract"].iat[0] == "Abs" and pd.isna(out["abstract"].iat[1])
 
 
 def test_crossref_query_data_frame_uses_the_columns_it_has(online: None) -> None:
@@ -182,7 +187,7 @@ def test_crossref_query_ref_text_and_zero_rows(online: None) -> None:
             return_value=httpx.Response(200, json=body)
         )
         out = crossref_query("some reference", select=["nonexistent"])
-    assert out["error"].tolist() == ["replacement has 1 row, data has 0"]
+    assert "error" not in out.columns
 
 
 # --- doi.org ------------------------------------------------------------------
@@ -194,7 +199,7 @@ def test_doi_lookup_pastes_missing_names_as_empty() -> None:
         router.get("https://doi.org/10.1%2Fx").mock(return_value=httpx.Response(200, json=csl))
         out = doi_lookup("10.1/x")
     # U12: an organisation is named by its literal (R pastes "character(0)")
-    assert out["author"].tolist() == ["Solo, ; , Only; Org"]
+    assert out["author"].tolist() == ["Solo; , Only; Org"]
 
 
 def test_doi_resolves_compares_codes_like_r() -> None:
@@ -218,9 +223,10 @@ def test_openalex_abstract() -> None:
     assert _openalex_add_abstract(info)["abstract"] == "a b c b "
     # positions without words (an unnamed list) give ""
     assert _openalex_add_abstract({"abstract_inverted_index": [[0], [1]]})["abstract"] == ""
-    # U14: no positions at all is an empty abstract (R's order(NULL) fails)
-    for aii in ({}, [], {"a": []}):
-        assert _openalex_add_abstract({"abstract_inverted_index": aii})["abstract"] == ""
+    assert _openalex_add_abstract({"abstract_inverted_index": {"a": []}})["abstract"] == ""
+    # U14: no index at all adds no abstract (metacheck 0.4.3.x; R's order(NULL) failed)
+    for aii in ({}, []):
+        assert "abstract" not in _openalex_add_abstract({"abstract_inverted_index": aii})
 
 
 # --- PubPeer -----------------------------------------------------------------
@@ -244,7 +250,7 @@ def test_pubpeer_does_not_match_missing_ids_to_missing_dois() -> None:
             return_value=httpx.Response(200, json={"feedbacks": fb})
         )
         out = pubpeer_comments([None, "10.1/E"])
-    assert json.loads(route.calls[0].request.content) == {"dois": "10.1/e"}
+    assert json.loads(route.calls[0].request.content) == {"dois": ["10.1/e"]}
     assert out["doi"].tolist()[1] == "10.1/E"
     assert out["total_comments"].tolist() == [0, 1]
     assert sorted(out.columns) == ["doi", "total_comments", "url", "users"]

@@ -152,8 +152,37 @@ def test_captcha_stops_retrieval(monkeypatch: pytest.MonkeyPatch) -> None:
             )
     assert route.call_count == 1
     assert info["error"].iloc[0] == "captcha"
-    assert pd.isna(info["error"].iloc[1])
+    # no page is read after the captcha, and the preregistration says why
+    assert info["error"].iloc[1].endswith("web page not read: AsPredicted asked for a captcha")
     assert "AP_title" not in info.columns
+
+
+def test_after_the_captcha_the_api_is_still_asked_and_no_page_is_read(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # the loop used to stop at the captcha, and every later preregistration got no
+    # information
+    monkeypatch.setattr("metacheck.archives.api_keys.rbox_token", lambda *a: "test-token")
+    pages: list[str] = []
+
+    def api(ap_url: str) -> pd.DataFrame:
+        if "abcd2" in ap_url:
+            return pd.DataFrame({"ap_url": [ap_url], "AP_title": ["Read through the API"]})
+        return pd.DataFrame({"ap_url": [ap_url], "error": ["unfound"]})
+
+    def page(ap_url: str) -> pd.DataFrame:
+        pages.append(ap_url)
+        return pd.DataFrame({"ap_url": [ap_url], "error": ["captcha"]})
+
+    monkeypatch.setattr(aspredicted, "_aspredicted_info_api", api)
+    monkeypatch.setattr(aspredicted, "_aspredicted_info_page", page)
+    urls = [f"https://aspredicted.org/abcd{i}.pdf" for i in (1, 2, 3)]
+    info = aspredicted_info(urls, wait=0)
+    assert len(pages) == 1
+    assert info["error"].iloc[0] == "captcha"
+    assert info["AP_title"].iloc[1] == "Read through the API"
+    assert pd.isna(info["error"].iloc[1])
+    assert info["error"].iloc[2].endswith("web page not read: AsPredicted asked for a captcha")
 
 
 def test_http_error_is_the_pages_error() -> None:

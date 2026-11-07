@@ -28,13 +28,30 @@ def rp_stem(x: str) -> str:
     return re.sub(r"\.(R|py)$", "", os.path.basename(str(x)))
 
 
+def _static_table_cells(m: re.Match[str]) -> str:
+    # a validation table: R's kable pads its cells and styles them, here
+    # the cells are the same text
+    rows = re.findall(r"<tr.*?</tr>", m.group(0), flags=re.S)
+    cells = [re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", r, flags=re.S) for r in rows]
+    return "<TABLE " + " / ".join(" | ".join(c.strip() for c in row) for row in cells) + ">"
+
+
 def rp_mask(x: str) -> str:
     # tables are masked: R writes each as an R chunk, pytacheck as a raw HTML
     # block, with the tables' styles and script at the end of a .qmd (D75);
     # the scroll_table cases compare tables
+    # (R's setup chunk of report_qmd(): pytacheck writes no R chunks, D75)
+    x = re.sub(r"\n\n```\{r, include=FALSE\}\n[^`]*```\n\n", "\n\n", x)
     x = re.sub(r"\n```\{r\}.*?\n```\n", "\n<R-CHUNK>\n", x, flags=re.S)
     x = re.sub(r'\n```\{=html\}\n<div class="datatables.*?\n```\n', "\n<R-CHUNK>\n", x, flags=re.S)
+    # (a static report's tables: raw HTML blocks)
+    x = re.sub(
+        r'\n```\{=html\}\n<div class="dt-static-wrap".*?\n```\n', "\n<R-CHUNK>\n", x, flags=re.S
+    )
     x = re.sub(r"\n```\{=html\}\n<style>\n.*?\n</script>\n```\n\Z", "", x, flags=re.S)
+    x = re.sub(r'<table class="dt-static">.*?</table>', _static_table_cells, x, flags=re.S)
+    # a failed module's summary row links the module's file name, lower-cased and bare
+    x = re.sub(r"#[a-z0-9_-]*testsreportmodules([a-z_]+)(r|py)\b", r"#\1", x)
     return re.sub(r"(?m)^(\s*(?:version|report-created): ).*$", r"\1<masked>", x)
 
 
@@ -125,7 +142,7 @@ def rp_html_export(fixture: str) -> Any:
         lines = Path(p).read_text(encoding="utf-8").split("\n")
         if lines and lines[-1] == "":
             lines.pop()
-        return {"file": p.replace(d + "/", "", 1), "lines": lines}
+        return {"file": re.sub(r"^.*/metacheck-recovered-code/", "", p), "lines": lines}
     finally:
         shutil.rmtree(d, ignore_errors=True)
 

@@ -188,21 +188,43 @@ def _write_csv(df: pd.DataFrame, path: str) -> None:
             )
 
 
+def _osf_node_record(osf_id: str, query: str = "") -> Any:
+    """Port of R/archive-osf-metadata.R::.osf_node_record(): an OSF project's or registration's
+    own record.
+
+    A registration is not a node to the OSF API: ``/nodes/<id>/`` answers 404 for it, and its
+    record (licence included) is at ``/registrations/<id>/`` (metacheck #486, reported
+    2026-10-15 for registration tp78a). So ``/nodes/`` is asked first, which costs nothing
+    extra for a project, and ``/registrations/`` only after a 404. *query* is the query string,
+    e.g. ``"?embed=license"``. Returns the parsed ``data`` element, or ``None`` when it could
+    not be read.
+    """
+    from metacheck.archives.osf_helpers import _data_of, _resp_body_json
+
+    api = _api()
+    for kind in ("nodes", "registrations"):
+        resp = _get_request(f"{api}/{kind}/{osf_id}/{query}")
+        if resp is None:
+            return None
+        if resp.status_code == 200:
+            try:
+                return _data_of(_resp_body_json(resp))
+            except Exception:
+                return None
+        if resp.status_code != 404:
+            return None
+    return None
+
+
 def _osf_license(osf_id: str) -> str | None:
     """Port of R/archive-osf-metadata.R::.osf_license(): a project's licence name.
 
-    One request (``?embed=license``); ``None`` when no licence is set or the
-    project could not be read.
+    One request (``?embed=license``; a second, to ``/registrations/``, for a registration);
+    ``None`` when no licence is set or the record could not be read.
     """
-    from metacheck.archives.osf_helpers import _data_of, _get, _resp_body_json
+    from metacheck.archives.osf_helpers import _get
 
-    resp = _get_request(f"{_api()}/nodes/{osf_id}/?embed=license")
-    node = None
-    if resp is not None and resp.status_code == 200:
-        try:
-            node = _data_of(_resp_body_json(resp))
-        except Exception:
-            node = None
+    node = _osf_node_record(osf_id, "?embed=license")
     name = _get(node, "embeds", "license", "data", "attributes", "name")
     if isinstance(name, list):
         return cast("str | None", name[0] if name else None)
@@ -216,16 +238,10 @@ def _osf_node_metadata(osf_id: str) -> dict[str, Any]:
     tags, and the IDs of its registrations and forks, as a dict ready to be
     written as JSON.
     """
-    from metacheck.archives.osf_helpers import _data_of, _get, _resp_body_json
+    from metacheck.archives.osf_helpers import _get
 
     api = _api()
-    resp = _get_request(f"{api}/nodes/{osf_id}/?embed=license&embed=bibliographic_contributors")
-    node = None
-    if resp is not None and resp.status_code == 200:
-        try:
-            node = _data_of(_resp_body_json(resp))
-        except Exception:
-            node = None
+    node = _osf_node_record(osf_id, "?embed=license&embed=bibliographic_contributors")
     att = _get(node, "attributes") or {}
 
     contributors: list[dict[str, Any]] = []

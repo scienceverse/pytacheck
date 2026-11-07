@@ -108,6 +108,20 @@ def _no_session_memory() -> Iterator[None]:
 
 
 @pytest.fixture(autouse=True)
+def _key_state_in_tmp(tmp_path: Path) -> Iterator[None]:
+    """What metacheck keeps between sessions (key problems, ResearchBox's count of boxes it
+    could not find) goes to a folder of the test, and the keys checked in this process are
+    forgotten: one test's key never changes the next one's."""
+    from metacheck.archives import api_keys
+    from metacheck.utils import local_options
+
+    api_keys._CHECKED.clear()
+    with local_options({"metacheck.state.dir": str(tmp_path / "state")}):
+        yield
+    api_keys._CHECKED.clear()
+
+
+@pytest.fixture(autouse=True)
 def _concepts_as_metacheck(monkeypatch: pytest.MonkeyPatch) -> None:
     """data_check's concepts come from metacheck's rules/LLM tier, not the local
     classifier (a model download); tests/datacheck_concepts opts back in."""

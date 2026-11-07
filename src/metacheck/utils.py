@@ -262,18 +262,96 @@ def _normalize_path(path: str) -> str:
     return path
 
 
+_RESERVED_NAME = re.compile(r"^(con|prn|aux|nul|com[1-9]|lpt[1-9])([.].*)?$", re.IGNORECASE)
+_NOT_PORTABLE = re.compile('[<>:"|?*\x00-\x1f\x7f]')
+
+
+def _portable_name(x: Sequence[str | None]) -> list[str | None]:
+    """Port of R/utils.R::.portable_name(): file or folder names that every system can write.
+
+    A name that is fine on one operating system can stop a run on another: a
+    colon or ``*`` cannot be written on Windows, which also drops a final dot
+    or space and reserves names such as ``CON`` and ``NUL``. The same change is
+    made on every system, so a result does not depend on the computer it came
+    from. ``"."`` and ``".."`` are left for the caller, which refuses a path
+    that leaves its folder. A name with undecodable bytes (lone surrogates) is
+    read as Latin-1, as R does. ``None`` stays ``None``.
+    """
+    out: list[str | None] = []
+    for name in x:
+        if name is None:
+            out.append(None)
+            continue
+        if any("\udc80" <= c <= "\udcff" for c in name):
+            name = name.encode("utf-8", "surrogateescape").decode("latin-1")
+        if name in (".", ".."):
+            out.append(name)
+            continue
+        fixed = _NOT_PORTABLE.sub("_", name)
+        fixed = re.sub("[. ]+$", "", fixed)
+        if _RESERVED_NAME.match(fixed):
+            fixed = "_" + fixed
+        if name and not fixed:  # only dots or spaces: nothing left
+            fixed = "_"
+        out.append(fixed)
+    return out
+
+
+def _portable_path(path: Sequence[str | None]) -> list[str | None]:
+    """Port of R/utils.R::.portable_path(): :func:`_portable_name` for each part of relative paths."""
+    out: list[str | None] = []
+    for p in path:
+        if p is None:
+            out.append(None)
+            continue
+        parts = p.replace("\\", "/").split("/")
+        out.append("/".join(str(n) for n in _portable_name(parts)))
+    return out
+
+
+def _url_decode(x: Sequence[str | None]) -> list[str | None]:
+    """Port of R/utils.R::.url_decode(): decode ``%``-codes in each value.
+
+    A ``%`` that does not start a two-digit hexadecimal code (``"50%"``,
+    ``"a%2"``, ``"bad%zz.png"``) is kept as written (R's ``URLdecode()`` warned
+    and dropped characters or stopped). A value that cannot be decoded (``%00``
+    makes an embedded NUL) is returned as given. ``None`` stays ``None``. A
+    result may hold undecodable bytes (``"%FF"``) as lone surrogates.
+    """
+    out: list[str | None] = []
+    for s in x:
+        if s is None or "%" not in s:
+            out.append(s)
+            continue
+        kept = re.sub(r"%(?![0-9A-Fa-f]{2})", "%25", s)
+        raw = re.sub(
+            rb"%([0-9A-Fa-f]{2})",
+            lambda m: bytes([int(m.group(1), 16)]),
+            kept.encode("utf-8", "surrogateescape"),
+        )
+        out.append(s if b"\x00" in raw else raw.decode("utf-8", "surrogateescape"))
+    return out
+
+
 def _safe_write_path(path: str | None) -> str | None:
     """Port of R/utils.R::.safe_write_path(): shorten an over-long path.
 
     Over-long components (or, when the absolute path exceeds the platform
     limit, the longest components) are truncated and suffixed with a short
     hash of the original so the result stays unique; the leaf keeps its
-    extension. Warns when a path was shortened (or is still too long).
+    extension. Every part is first made portable (:func:`_portable_name`). Warns when a
+    path was shortened (or is still too long).
     """
     if path is None or is_missing(path) or not isinstance(path, str) or path == "":
         return path
 
     parts: list[str] = [p if p is not None else "NA" for p in strsplit(path, r"[/\\]")]
+    # every part is made portable; the drive of an absolute Windows path keeps its colon
+    portable = _portable_name(parts)
+    parts = [
+        p if i == 0 and re.match("^[A-Za-z]:$", p) else str(q)
+        for i, (p, q) in enumerate(zip(parts, portable, strict=True))
+    ]
     changed = False
 
     new_parts = []

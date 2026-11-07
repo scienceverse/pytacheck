@@ -67,3 +67,5 @@ credit_roles = "metacheck.db.orcid:credit_roles"
 check_orcid = "metacheck.db.orcid:check_orcid"
 get_orcid = "metacheck.db.orcid:get_orcid"
 orcid_person = "metacheck.db.orcid:orcid_person"
+# R/db-crossref.R: the OpenAlex key lives with the other keys (R/api-keys.R)
+openalex_key = "metacheck.archives.api_keys:openalex_key"

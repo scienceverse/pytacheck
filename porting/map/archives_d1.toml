@@ -66,6 +66,11 @@
 ".dataverse_verify_downloads" = "metacheck.archives.dataverse:_dataverse_verify_downloads"
 
 # data: the allowlists as module-level constants (R returns them from functions)
+# R/archive-dryad.R: sharing links (#484); R/archive-figshare.R: DOI lookup prefixes
+".dryad_share_token" = "metacheck.archives.dryad:_dryad_share_token"
+".dryad_share_doi" = "metacheck.archives.dryad:_dryad_share_doi"
+".figshare_doi_lookup_prefixes" = "metacheck.archives.figshare:_FIGSHARE_DOI_LOOKUP_PREFIXES"
+".figshare_doi_lookup_fallback_prefixes" = "metacheck.archives.figshare:_FIGSHARE_DOI_LOOKUP_FALLBACK_PREFIXES"
 [data]
 ".dryad_doi_prefixes()" = "metacheck.archives.dryad:DRYAD_DOI_PREFIXES"
 ".figshare_vanity_hosts()" = "metacheck.archives.figshare:FIGSHARE_VANITY_HOSTS"

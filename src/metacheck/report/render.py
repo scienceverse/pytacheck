@@ -637,7 +637,13 @@ def _emit_static_md(nodes: list[Any]) -> list[str]:
             title = attrs.kv.get("title")
             plain = _Attrs(attrs.id, attrs.classes, {})
             head = ["", f"**{title}**"] if title else []
-            out += ["", f"::: {_attr_text(plain)}", *head, "", *_emit_static_md(node.children)]
+            out += [
+                "",
+                f"::: {_attr_text(plain)}",
+                *head,
+                "",
+                *_emit_static_md(node.children),
+            ]
             out += ["", ":::", ""]
         elif "panel-tabset" in attrs.classes:
             pre, tabs = _split_tabs(node.children)
@@ -660,6 +666,42 @@ def static_markdown(text: str) -> str:
     ``codebook_file_tabset()`` write under ``report_type("simple")``.
     """
     return re.sub(r"\n{3,}", "\n\n", "\n".join(_emit_static_md(_parse_divs(text))))
+
+
+def _emit_fold(nodes: list[Any]) -> list[str]:
+    out: list[str] = []
+    for node in nodes:
+        if not isinstance(node, _Div):
+            out.append(node)
+            continue
+        attrs = node.attrs
+        callout = _callout_type(attrs)
+        if callout is not None and attrs.kv.get("title"):
+            out += [f"<details><summary>{attrs.kv['title']}</summary>", *_emit_fold(node.children)]
+            out.append("</details>")
+        elif callout is not None:
+            plain = _Attrs(attrs.id, attrs.classes, {})
+            out += [f"::: {_attr_text(plain)}", *_emit_fold(node.children), ":::"]
+        elif "panel-tabset" in attrs.classes:
+            pre, tabs = _split_tabs(node.children)
+            out += _emit_fold(pre)
+            for label, body in tabs:
+                out += ["", f"##### {label}", "", *_emit_fold(body)]
+        else:
+            out += [f"::: {_attr_text(attrs)}", *_emit_fold(node.children), ":::"]
+    return out
+
+
+def fold_markdown(text: str) -> str:
+    """Quarto-flavoured markdown as the checklist report writes it.
+
+    A callout with a title becomes a closed ``<details>`` box, whatever its
+    ``collapse`` (what ``collapse_section()`` writes under
+    ``report_type("checklist")``; a script is not needed to open it). Tabsets
+    become their tabs one after the other under ``#####`` headings, and any
+    other fenced div and the text between the divs stay as they are.
+    """
+    return "\n".join(_emit_fold(_parse_divs(text)))
 
 
 def _emit_gfm(nodes: list[Any]) -> list[str]:
@@ -780,12 +822,49 @@ def _inline_attrs(children: list[Any]) -> None:
             child.content = content
 
 
+_SPAN_ATTRS = re.compile(r"\{([^{}\n]*)\}")
+
+
+def _span_rule(state: Any, silent: bool) -> bool:
+    """Pandoc's bracketed spans: ``[text]{.class #id key=value}`` is a ``<span>``."""
+    src = state.src
+    if src[state.pos] != "[":
+        return False
+    label_end = state.md.helpers.parseLinkLabel(state, state.pos)
+    if label_end < 0:
+        return False
+    found = _SPAN_ATTRS.match(src, label_end + 1)
+    if found is None or found.end() > state.posMax:
+        return False
+    attrs = _parse_attrs(found.group(1))
+    if not (attrs.id or attrs.classes or attrs.kv):
+        return False
+    if not silent:
+        maximum = state.posMax
+        state.pos += 1
+        state.posMax = label_end
+        token = state.push("span_open", "span", 1)
+        if attrs.id:
+            token.attrSet("id", attrs.id)
+        if attrs.classes:
+            token.attrSet("class", " ".join(attrs.classes))
+        for key, value in attrs.kv.items():
+            if re.fullmatch(r"[\w-]+", key):
+                token.attrSet(key, value)
+        state.md.inline.tokenize(state)
+        state.push("span_close", "span", -1)
+        state.posMax = maximum
+    state.pos = found.end()
+    return True
+
+
 @cache
 def _markdown() -> Any:
     from markdown_it import MarkdownIt
 
     md = MarkdownIt("commonmark", {"html": True, "typographer": True})
     md.enable(["table", "strikethrough", "smartquotes"])
+    md.inline.ruler.before("link", "pytacheck_span", _span_rule)
     md.core.ruler.push("pytacheck_attrs", _attrs_rule)
     return md
 

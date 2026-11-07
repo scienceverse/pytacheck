@@ -1,0 +1,16 @@
+{
+  "id": "file_tree.report.drop",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Intro",
+      "#### Data Files",
+      "x"
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

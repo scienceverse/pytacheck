@@ -1,0 +1,160 @@
+{
+  "id": "rbox_files.api.801",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "rb_url",
+      "name",
+      "file_id",
+      "section",
+      "type",
+      "description",
+      "extension",
+      "size",
+      "md5"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://researchbox.org/801",
+          "https://researchbox.org/801",
+          "https://researchbox.org/801",
+          "https://researchbox.org/801",
+          "https://researchbox.org/801",
+          "https://researchbox.org/801",
+          "https://researchbox.org/801",
+          "https://researchbox.org/801",
+          "https://researchbox.org/801",
+          "https://researchbox.org/801"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Anonymized Data.csv",
+          "Anonymized Data.csv___CODEBOOK.csv",
+          "Participant Survey_Redacted.pdf",
+          "Informant Survey_Redacted.pdf",
+          "AsPredicted (for peer-review only) #50249.pdf",
+          "Emotional_Intelligence_Survey_-_Subject_Pool_-_Participants.qsf",
+          "Emotional_Intelligence_Survey_-_Subject_Pool_-_Informants.qsf",
+          "Code for Analysis.R",
+          "READ ME.rtf",
+          "Supplementary Materials 052923.docx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10",
+          "11",
+          "9",
+          "6",
+          "1",
+          "5",
+          "3",
+          "18",
+          "7",
+          "16"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Study 1",
+          "Study 1",
+          "Study 1",
+          "Study 1",
+          "Study 1",
+          "Study 1",
+          "Study 1",
+          "Study 1",
+          "Read Me",
+          "Supplement"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data",
+          "Codebook",
+          "Materials",
+          "Materials",
+          "Other",
+          "Materials",
+          "Materials",
+          "Code",
+          "Other",
+          "Other"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "csv",
+          "csv",
+          "pdf - Qualtrics survey for focal participants",
+          "pdf - Qualtrics survey for informants",
+          "Pre-registration",
+          "qsf - Qualtrics survey for focal participants",
+          "qsf - Qualtrics survey for informants",
+          "R Code",
+          "Read-me file",
+          "Supplemental Materials"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "csv",
+          "csv",
+          "pdf",
+          "pdf",
+          "pdf",
+          "qsf",
+          "qsf",
+          "r",
+          "rtf",
+          "docx"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3768991,
+          24559,
+          3344144,
+          89682,
+          188369,
+          515020,
+          91094,
+          325968,
+          2055,
+          941541
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "c18ac0a6eae3df592bacecaa11ad5214",
+          "89d0fdab0617508406a4cd39405621ed",
+          "02c4ccf1f47704246c37889e3d9121df",
+          "c3f0cc19ef5e082a46961fad7ae565c8",
+          "1c5abb663c95abde554e8f3718bd3701",
+          "62ad6780ab1d5194c389e17a228ce8ca",
+          "16c4099f1259e9ba140a57d1b74d1146",
+          "18a90ac793a15cf6e311760d98c40dfa",
+          "8f39ed91a2e31566545b0ce8341b99b8",
+          "95a4aa551b2e365be9645b9f6f3b7720"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

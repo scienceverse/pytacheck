@@ -244,6 +244,7 @@ def test_every_platformdirs_call_names_the_pytacheck_folder_except_the_shared_co
         "app/bibr.py",
         "app/run.py",
         "app/state.py",
+        "archives/api_keys.py",
         "config.py",
         "db/_utils.py",
         "io/corpus.py",
@@ -253,6 +254,8 @@ def test_every_platformdirs_call_names_the_pytacheck_folder_except_the_shared_co
         ("app/bibr.py", "user_config_dir", "pytacheck"),
         ("app/run.py", "user_cache_dir", "pytacheck"),
         ("app/state.py", "user_state_dir", "pytacheck"),
+        # the record of refused or exhausted API keys, shared by the processes of one user
+        ("archives/api_keys.py", "user_state_dir", "pytacheck"),
         ("config.py", "user_cache_dir", "pytacheck"),
         ("config.py", "user_config_dir", "pytacheck"),
         ("config.py", "user_data_dir", "pytacheck"),

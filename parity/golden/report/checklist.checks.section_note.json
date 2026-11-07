@@ -1,0 +1,90 @@
+{
+  "id": "checklist.checks.section_note",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "status",
+      "title",
+      "section",
+      "found",
+      "todo",
+      "why",
+      "note",
+      "details",
+      "details_title",
+      "module",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "fix"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Sectioned"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Look below."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "See the section [Sectioned](#section-sec) below for the details."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sec"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
