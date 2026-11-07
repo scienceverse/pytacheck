@@ -77,13 +77,13 @@
 "mod_code_review/local_path.mixed_local_only": *dx_report_5_14
 "mod_code_review/local_path.parse_errors": *dx_report_5_14
 
-# D130: a module that is not one of metacheck's own (the report tests' own modules) -------
+# D131: a module that is not one of metacheck's own (the report tests' own modules) -------
 # metacheck 0.3.3.1+ links every module to a chapter of the online manual, a made-up
 # mod-tests/report/modules/<file>.R.html for a module file of one's own; pytacheck links only
 # metacheck's own modules (report._module_chapter_link).
 "report/module_report.validation.hits": &dx_report_130
   kind: deliberate
-  ref: D130
+  ref: D131
   reason: "a module that is not one of metacheck's own has no chapter in the online manual, so no \"Read more\" link (metacheck links it to a chapter that does not exist)"
   r_text: [["Read more in the \\[metacheck manual\\]\\(https://www\\.scienceverse\\.org/metacheck_book/chapters/mod-tests/[^)]*\\)\\.\\n\\n", "", "regex"]]
 "report/module_report.validation.none": *dx_report_130

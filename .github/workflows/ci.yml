@@ -236,7 +236,9 @@ jobs:
           "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc; print(pc.module_run(pc.demopaper(), 'marginal'))"
           "$RUNNER_TEMP/wheel-env"/bin/python -c "import pytacheck as pc, metacheck as mc; assert mc.__version__ == pc.__version__"
       - name: Audit dependencies
-        run: uvx pip-audit --strict -r <(uv export --locked --no-hashes --no-dev --all-extras --no-emit-project)
+        # the export is resolved and pinned already: audit it as it stands. pip would
+        # resolve it again without uv.lock's overrides, and fail on gradio's pillow cap
+        run: uvx pip-audit --strict --no-deps --disable-pip -r <(uv export --locked --no-hashes --no-dev --all-extras --no-emit-project)
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist

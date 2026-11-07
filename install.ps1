@@ -263,7 +263,7 @@ function Install-Metacheck {
         function Install-App {
             $with = @()
             if ($withBibr) { $with = @('--with', 'bibr>=0.6.0') }
-            return (Invoke-Uv tool install @force --managed-python --python 3.12 @with $spec -c $constraints)
+            return (Invoke-Uv tool install @force --managed-python --python 3.12 @with $spec -c $constraints --overrides $constraints)
         }
 
         Say 'Installing metacheck (Python and the app, about 1 to 2 minutes the first time) ...'

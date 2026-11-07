@@ -15,7 +15,10 @@ the app. [docs/TRY.md](../docs/TRY.md) is the page for users.
 ## The constraints file
 
 `uv tool install` ignores `uv.lock`. The installer passes this file with `-c`
-instead, so a user gets the versions we tested.
+instead, so a user gets the versions we tested. It passes the file with
+`--overrides` too: a constraint cannot lift a dependency's own cap, and
+`uv.lock` overrides one (`override-dependencies` in `pyproject.toml`: gradio
+caps pillow below 13). The Hugging Face Space's `Dockerfile` does the same.
 
 One command makes the file. Run it from the repository root whenever
 `uv.lock` or the `app` or `llm` extra changes:

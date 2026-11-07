@@ -58,7 +58,10 @@ _P_PATTERN = (
 
 # A df-parenthetical: digits/commas/periods/whitespace, optionally with an
 # "N = <number>" qualifier (see the long comment in R/text-extractors.R).
-_DF_INNER = r"(?:[0-9,\.\s]+|[nN]\s*=\s*[0-9]+)*"
+# Atomic: the run cannot contain ")", so its longest match is the only one a
+# following "\)" accepts. Without the group a list that is not a df ("Items
+# (1, 4, 7, 10, 13, 16, 19, 22) were ...") backtracks exponentially (54 s).
+_DF_INNER = r"(?>(?:[0-9,\.\s]+|[nN]\s*=\s*[0-9]+)*)"
 _GREEK = "Ͱ-Ͽ"
 # Grobid writes a subscript as a word after a space ("g_av" as "g av"), which
 # metacheck read as a statistic "av" (U218, fixed upstream for #448). A

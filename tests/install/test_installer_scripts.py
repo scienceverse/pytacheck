@@ -302,6 +302,24 @@ def test_install_pins_uv_and_keeps_the_tool_on_a_second_run(tmp_path):
 
 
 @needs_sh
+def test_install_passes_the_constraints_as_overrides_too(tmp_path):
+    # a constraint cannot lift a dependency's cap (gradio's pillow<13), an override can;
+    # pinned to the lock's versions, the overrides install exactly what uv.lock holds
+    root, env = _fake_install_env(tmp_path)
+    result = subprocess.run(["sh", str(SH)], env=env, capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stderr
+    calls = (root / "calls").read_text()
+    constraints = env["METACHECK_CONSTRAINTS"]
+    assert f"-c {constraints} --overrides {constraints}" in calls
+
+
+def test_both_scripts_pass_the_constraints_as_overrides():
+    sh, ps1 = SH.read_text(), PS1.read_text()
+    assert sh.count('-c "$constraints" --overrides "$constraints"') == 2
+    assert "-c $constraints --overrides $constraints" in ps1
+
+
+@needs_sh
 def test_a_terminate_signal_stops_the_installer(tmp_path):
     root, env = _fake_install_env(tmp_path, FAKE_UV_SLEEP="3")
     proc = subprocess.Popen(

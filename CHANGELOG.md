@@ -12,9 +12,19 @@ package's. The R commit each release is compared against is in
 - **Changed:** the parity checks compare pytacheck with metacheck `dev` at 98105f6 (0.3.3.2) instead of f1062b4 (0.3.1, `dev` plus pull request #423). The pull request is merged, so the pin no longer names it. The R goldens are regenerated, and the marks and lock entries are settled against them: the marks that R's changes made stale (261 cases that now match R) are removed, the substitutions that no longer change R's text are dropped, and the marks that still hold are locked again.
 - **Fixed:** data_check's summary of trial-level files ends "... not listed as separate datasets. Nothing is deleted." as metacheck's does; the sentence about `convert_psychds()` is gone.
 - **Changed:** the Repository Check module's "How It Works" text carries metacheck's paragraph on API keys and its validation notice.
-- **Added:** D130 (the module-manual link of a module that is not one of metacheck's own) and U242 (metacheck 0.3.3.2 stops `reproducibility_check()` on a code table without a `file_name` column) in docs/UPSTREAM_ISSUES.md. U241 notes that metacheck fixed the same bug in the same commit.
+- **Added:** D131 (the module-manual link of a module that is not one of metacheck's own) and U242 (metacheck 0.3.3.2 stops `reproducibility_check()` on a code table without a `file_name` column) in docs/UPSTREAM_ISSUES.md. U241 notes that metacheck fixed the same bug in the same commit.
 - The test helpers pass `report()`'s `args` by name (metacheck 0.3.3.1 inserted `report_type` before it), `rv_serve` forgets the hosts a case found to ignore Range requests, the Crossref recordings are read from `api.crossref.org/works/`, and the replay fallback to the old `api.labs.crossref.org` folder is removed.
 - The prereg_check and reg_check cases (138) keep their goldens from the previous pin: the machine that regenerated the goldens could not reach AsPredicted. The dataone_info table-collisions case keeps its old golden for the same reason (R answers "dataone.org seems to be offline").
+
+### Fixed: extract_eq() hung on a long list of numbers in parentheses
+
+- **Fixed:** a sentence with a parenthesised list of numbers that is not a df ("Items (1, 4, 7, 10, 13, 16, 19, 22) were reverse-scored, alpha = .85.") made `extract_eq()`, and so every read of a paper, backtrack for a time that grew 16-fold with each number: 3 s for seven numbers, 54 s for eight. It now takes milliseconds, with the same statistics. metacheck stops at PCRE2's match limit on such a sentence and finds none of its statistics (D130).
+
+### Security: dependency updates for published advisories
+
+- **Changed:** `uv.lock` and `install/constraints-app.txt` take the releases that fix the 78 advisories `pip-audit` reports against the locked versions: aiohttp 3.14.5, brotli 1.2.1, certifi 2026.10.23, filelock 4.2.4, msgpack 1.2.4, pillow 13.0.0 and pypdf 6.21.4.
+- **Changed:** gradio (6.31 and earlier) caps pillow below 13, so `pyproject.toml` lifts the cap (`override-dependencies`), and `install.sh`, `install.ps1` and the Hugging Face Space's `Dockerfile` pass the constraints file with `--overrides` too, so the app gets pillow 13. `pip install "metacheck[app]"` still gets pillow 12 through gradio's cap.
+- **Changed:** CI's dependency audit reads the exported lock as it stands (`pip-audit --no-deps --disable-pip`). It used to resolve the export again with pip, which knows nothing of the override and failed on gradio's cap.
 
 ### Performance: a C reader of `.rds` and `.RData` files
 
