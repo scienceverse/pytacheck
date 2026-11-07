@@ -1441,14 +1441,14 @@ def _summary_table(
 
     unknown: dict[Any, int] = {}
     for pid, d in zip(rc.vals(all_files["paper_id"]), rc.vals(all_files["data_type"]), strict=True):
-        k = None if rc._na(pid) else pid
-        unknown[k] = unknown.get(k, 0) + (1 if (not rc._na(d) and d == "unknown") else 0)
+        key = None if rc._na(pid) else pid
+        unknown[key] = unknown.get(key, 0) + (1 if (not rc._na(d) and d == "unknown") else 0)
     naming = flags["naming_issues_by_paper"]
     bad: dict[Any, int] = {}
     if len(naming) > 0 and "paper_id" in naming.columns:
         for pid, s in zip(rc.vals(naming["paper_id"]), rc.vals(naming["severity"]), strict=True):
-            k = None if rc._na(pid) else pid
-            bad[k] = bad.get(k, 0) + (1 if s == "bad" else 0)
+            key = None if rc._na(pid) else pid
+            bad[key] = bad.get(key, 0) + (1 if s == "bad" else 0)
     elif len(naming) > 0:
         raise rc.RError("object 'paper_id' not found")
 

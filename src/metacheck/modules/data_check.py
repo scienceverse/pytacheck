@@ -299,7 +299,12 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         crosswalk, then format-locked extension overrides. For every file classified
         as tabular `data` that is available locally, the module reads the file head,
         describes each column with `data_col_facets()` and computes summary statistics
-        for numeric columns. Following DDI, a column is described by orthogonal facets
+        for numeric columns. Every sheet of a spreadsheet that holds a table is read:
+        a file with several such sheets has its columns under `source_file =
+        "file.xlsx [sheet]"`, and the `sheet` column names the sheet of any
+        spreadsheet with several sheets; a sheet of notes or a codebook is treated
+        as documentation when the file has another table.
+        Following DDI, a column is described by orthogonal facets
         rather than a single type: `representation` (numeric/text/datetime/code — how
         it is stored), `measurement_level` (Stevens: nominal/ordinal/interval/ratio),
         `concept` (what it measures: reaction_time/age/gender/likert/id/…), `role`
@@ -324,6 +329,15 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         `repo_check` from OSF/GitHub/etc. without a local copy (`file_location` is
         `NA`) are classified but not column-extracted; pass `local_path` to point at
         a downloaded copy of the repository.
+
+        For a paper whose repository is on Dryad, this means column extraction
+        never happens unless a Dryad API key is set: Dryad requires one to
+        download file bytes, even from a fully public dataset (dataset listing
+        and metadata do not need one). Without a key, every Dryad file stays
+        classified but un-downloaded, column_n is 0, and a warning naming Dryad
+        and `?dryad_pat`/`?dryad_auth` is included among the download failures.
+        A one-time session message is also shown (see repo_check) the first time
+        a Dryad dataset is encountered with no key set.
 
         <validation>This module has not been validated. All checks in the data_check module have unknown error rates. Carefully evaluate the output of this module. You can help improve this module by reporting an issue on GitHub.</validation>
     """,
