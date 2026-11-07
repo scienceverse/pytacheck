@@ -218,3 +218,15 @@ def test_as_numeric_hex_floats() -> None:
     assert as_float("0x.8") == 0.5
     assert as_float("-0x1A") == -26.0
     assert as_float("0x") is None
+
+
+def test_data_frame_pads_every_column_to_the_row_count() -> None:
+    # U145, R's .pad_to(): each column is padded to rowCount, also when all of them are short
+    a = pd.array([1, 2], dtype="Int64")
+    b = pd.array([1.5, 2.5], dtype="Float64")
+    df = _frame_from_columns([a, b], ["a", "b"], None, 4)
+    assert len(df) == 4
+    assert df["a"].isna().tolist() == [False, False, True, True]
+    assert df["b"].isna().tolist() == [False, False, True, True]
+    # without a row count the longest column decides
+    assert len(_frame_from_columns([a, b], ["a", "b"])) == 2
