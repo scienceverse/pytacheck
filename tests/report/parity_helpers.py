@@ -51,7 +51,7 @@ def rp_mask(x: str) -> str:
     x = re.sub(r"\n```\{=html\}\n<style>\n.*?\n</script>\n```\n\Z", "", x, flags=re.S)
     x = re.sub(r'<table class="dt-static">.*?</table>', _static_table_cells, x, flags=re.S)
     # a failed module's summary row links the module's file name, lower-cased and bare
-    x = re.sub(r"#[a-z0-9_]*testsreportmodules([a-z_]+)(r|py)\b", r"#\1", x)
+    x = re.sub(r"#[a-z0-9_-]*testsreportmodules([a-z_]+)(r|py)\b", r"#\1", x)
     return re.sub(r"(?m)^(\s*(?:version|report-created): ).*$", r"\1<masked>", x)
 
 

@@ -35,7 +35,7 @@ rp_mask <- function(x) {
   x <- gsub("(?s)\n```\\{r\\}.*?\n```\n", "\n<R-CHUNK>\n", x, perl = TRUE)
   x <- rp_static_table_cells(x)
   # a failed module's summary row links the module's file name, lower-cased and bare
-  x <- gsub("#[a-z0-9_]*testsreportmodules([a-z_]+)(r|py)\\b", "#\\1", x, perl = TRUE)
+  x <- gsub("#[a-z0-9_-]*testsreportmodules([a-z_]+)(r|py)\\b", "#\\1", x, perl = TRUE)
   gsub("(?m)^(\\s*(?:version|report-created): ).*$", "\\1<masked>", x, perl = TRUE)
 }
 
