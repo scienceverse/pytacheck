@@ -18,7 +18,7 @@
         "v": [
           {
             "t": "df",
-            "nrow": 2,
+            "nrow": 8,
             "names": [
               "P-Value",
               "Text"
@@ -27,6 +27,12 @@
               {
                 "t": "chr",
                 "v": [
+                  "ps < .053",
+                  "ps < .10",
+                  "ps < .003",
+                  "ps < .05",
+                  "ps < .04",
+                  "ps < .16",
                   "p < .05",
                   "p < .05"
                 ]
@@ -34,6 +40,12 @@
               {
                 "t": "chr",
                 "v": [
+                  "For females (n = 20), the selected picture in which the target expressed anger towards the person was rated at least marginally significantly higher on anger (M = 5.35, SE = 0.30) than any other emotion (Ms < 4.48, ps < .053).",
+                  "The picture in which the target expressed anger towards the bike was mostly rated at least marginally significantly higher on anger (M = 5.00, SE = 0.34) than any other emotion (Ms < 4.21, ps < .10), except for contempt (M = 4.30, SE = 0.39, p = .13).",
+                  "The picture in which the target expressed sadness towards the person was rated higher on sadness (M = 5.15, SE = 0.46) than any other emotion (Ms < 3.16, ps < .003).",
+                  "For males (n = 39), the selected picture in which the target expressed anger towards the person was rated higher on anger (M = 5.05, SE = 0.26) than any other emotion (Ms < 4.45, ps < .05).",
+                  "The picture in which the target expressed anger towards the bike was rated higher on anger (M = 4.67, SE = 0.31) than most other emotions (Ms < 3.83, ps < .04), except for sadness (M = 4.08, SE = 0.34, p = .30).",
+                  "Using the Shapiro-Wilk test of normality, we found that for both lists, the distributions of base rates did not significantly differ from normal distributions, ps < .16.",
                   "Asterisks indicate significant differences between conditions (p < .05).",
                   "The asterisk indicates that the difference between conditions was significant (p < .05)."
                 ]
@@ -63,6 +75,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

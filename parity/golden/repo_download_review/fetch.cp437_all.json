@@ -1,17 +1,94 @@
 {
   "id": "fetch.cp437_all",
-  "ok": false,
-  "error": "input string 1 is invalid",
-  "warnings": [
-    "unable to translate 'donn<82>es/' to a wide string",
-    "input string 1 is invalid",
-    "unable to translate 'donn<82>es/r<82>sum<82>.csv' to a wide string",
-    "input string 2 is invalid",
-    "unable to translate 'caf<82>.R' to a wide string",
-    "input string 3 is invalid",
-    "unable to translate 'donn<82>es/' to a wide string"
-  ],
-  "value": null,
-  "metacheck_version": "0.3.1",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "result",
+      "files",
+      "sizes"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "name",
+          "path",
+          "size",
+          "ok",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "données/résumé.csv",
+              "café.R",
+              "plain.csv",
+              "nul.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<TMP>/données/résumé.csv",
+              "<TMP>/café.R",
+              "<TMP>/plain.csv",
+              "<TMP>/_nul.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              817,
+              7,
+              817,
+              8
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "_nul.csv",
+          "café.R",
+          "données/résumé.csv",
+          "plain.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          7,
+          817,
+          817
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

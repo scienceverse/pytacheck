@@ -1272,6 +1272,94 @@
           \ = s)), logical(1))"
         "py": "[__import__('metacheck.archives.download', fromlist=['x'])._storage_is_transient(__import__('httpx').Response(s))\
           \ for s in [200, 206, 301, 403, 404, 429, 500, 501, 502, 503, 504]]"
+- "id": "url_host_is.osf"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "vapply(c(\"https://osf.io/download/abc/\", \"https://files.de-1.osf.io/v1/x\", \"https://web.archive.org/web/2020/https://osf.io/abc/\"\
+          , \"https://example.com/?u=osf.io\", \"https://osf.io.example.com/x\", \"https://notosf.io/x\"\
+          , \"https://OSF.IO/x\", \"not a url\"), function(u) metacheck:::.url_host_is(u, \"osf.io\"),\
+          \ logical(1), USE.NAMES = FALSE)"
+        "py": "[__import__('metacheck.archives.download', fromlist=['x'])._url_host_is(u, \"osf.io\")\
+          \ for u in [\"https://osf.io/download/abc/\", \"https://files.de-1.osf.io/v1/x\", \"https://web.archive.org/web/2020/https://osf.io/abc/\"\
+          , \"https://example.com/?u=osf.io\", \"https://osf.io.example.com/x\", \"https://notosf.io/x\"\
+          , \"https://OSF.IO/x\", \"not a url\"]]"
+- "id": "url_host_is.several_domains"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "vapply(c(\"https://dataverse.nl/api/x\", \"https://x.dataverse.nl/y\", \"https://nodataverse.nl/\"\
+          ), function(u) metacheck:::.url_host_is(u, c(\"dataverse.harvard.edu\", \"dataverse.nl\")),\
+          \ logical(1), USE.NAMES = FALSE)"
+        "py": "[__import__('metacheck.archives.download', fromlist=['x'])._url_host_is(u, [\"dataverse.harvard.edu\"\
+          , \"dataverse.nl\"]) for u in [\"https://dataverse.nl/api/x\", \"https://x.dataverse.nl/y\"\
+          , \"https://nodataverse.nl/\"]]"
+- "id": "dataverse_guestbook_hint.answers"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "vapply(c('{\"status\":\"ERROR\",\"message\":\"You may not download this file without the\
+          \ required Guestbook response for guestbookID 270.\"}', '{\"status\":\"ERROR\",\"message\":\"\
+          Bad request\"}', 'Guestbook response', 'guestbook response'), function(a) metacheck:::.dataverse_guestbook_hint(httr2::response(status_code\
+          \ = 400, body = charToRaw(a))), character(1), USE.NAMES = FALSE)"
+        "py": "[__import__('metacheck.archives.download', fromlist=['x'])._dataverse_guestbook_hint(__import__('httpx').Response(400,\
+          \ content=a.encode())) for a in ['{\"status\":\"ERROR\",\"message\":\"You may not download this\
+          \ file without the required Guestbook response for guestbookID 270.\"}', '{\"status\":\"ERROR\"\
+          ,\"message\":\"Bad request\"}', 'Guestbook response', 'guestbook response']]"
+- "id": "dataverse_guestbook_hint.empty_body"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.dataverse_guestbook_hint(httr2::response(status_code = 400))"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._dataverse_guestbook_hint(__import__('httpx').Response(400))"
+- "id": "run_download_want.media"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.run_download_want(data.frame(file_name = c(\"a.R\", \"x.csv\", \"model.stan\"\
+          , \"fig.png\", \"song.wav\", \"paper.pdf\", \"fig.png\", \"lib.R\"), file_path = c(\"a.R\",\
+          \ \"x.csv\", \"model.stan\", \"fig.png\", \"song.wav\", \"paper.pdf\", \"fig.png\", \"renv/library/lib.R\"\
+          ), repo_url = c(\"https://zenodo.org/records/1\", \"https://zenodo.org/records/1\", \"https://zenodo.org/records/1\"\
+          , \"https://zenodo.org/records/1\", \"https://zenodo.org/records/1\", \"https://zenodo.org/records/1\"\
+          , \"https://github.com/a/b\", \"https://zenodo.org/records/1\")))"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._run_download_want(__import__('pandas').DataFrame({'file_name':\
+          \ [\"a.R\", \"x.csv\", \"model.stan\", \"fig.png\", \"song.wav\", \"paper.pdf\", \"fig.png\"\
+          , \"lib.R\"], 'file_path': [\"a.R\", \"x.csv\", \"model.stan\", \"fig.png\", \"song.wav\", \"\
+          paper.pdf\", \"fig.png\", \"renv/library/lib.R\"], 'repo_url': [\"https://zenodo.org/records/1\"\
+          , \"https://zenodo.org/records/1\", \"https://zenodo.org/records/1\", \"https://zenodo.org/records/1\"\
+          , \"https://zenodo.org/records/1\", \"https://zenodo.org/records/1\", \"https://github.com/a/b\"\
+          , \"https://zenodo.org/records/1\"]}))"
+- "id": "run_download_want.no_path_column"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.run_download_want(data.frame(file_name = c(\"a.R\", \"b.png\", \"renv/x.R\"\
+          ), repo_url = c(\"https://zenodo.org/records/1\", \"https://zenodo.org/records/1\", \"https://gitlab.com/a/b\"\
+          )))"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._run_download_want(__import__('pandas').DataFrame({'file_name':\
+          \ ['a.R', 'b.png', 'renv/x.R'], 'repo_url': ['https://zenodo.org/records/1', 'https://zenodo.org/records/1',\
+          \ 'https://gitlab.com/a/b']}))"
+- "id": "run_download_want.empty"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.run_download_want(data.frame(file_name = character(0), repo_url = character(0)))"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._run_download_want(__import__('pandas').DataFrame({'file_name':\
+          \ [], 'repo_url': []}))"
 - "id": "rate_limit_wait.no_headers"
   "r": ".rate_limit_wait"
   "py": "metacheck.archives.download._rate_limit_wait"

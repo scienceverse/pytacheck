@@ -56,10 +56,6 @@
         "v": [
           "abc123",
           "XYZ"
-        ],
-        "names": [
-          "DATA.MENDELEY.COM/datasets/abc123/2",
-          "10.17632/XYZ.1"
         ]
       },
       {
@@ -67,14 +63,10 @@
         "v": [
           "https://doi.org/10.17632/abc123",
           "https://doi.org/10.17632/XYZ"
-        ],
-        "names": [
-          "DATA.MENDELEY.COM/datasets/abc123/2",
-          "10.17632/XYZ.1"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

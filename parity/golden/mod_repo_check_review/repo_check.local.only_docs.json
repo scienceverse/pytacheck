@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -117,7 +118,7 @@
           {
             "t": "chr",
             "v": [
-              "unknown",
+              "documentation",
               "documentation"
             ]
           },
@@ -152,24 +153,20 @@
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/review/only_docs\", \n\"tests/mod_repo_check/fixtures/review/only_docs\"), File = c(\"LICENSE\", \n\"README.md\"), Size = c(\"4 B\", \"7 B\"), Type = c(NA, \"readme\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
-          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: LICENSE. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
-          "#### File Naming",
-          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"LICENSE\", Rule = \"unclassifiable\", Severity = \"bad\", \n    Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
-          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"LICENSE\", Group = \"—\", Path = \"LICENSE\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**documentation** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"LICENSE\", \"README.md\"), Group = c(\"—\", \n\"—\"), Path = c(\"LICENSE\", \"README.md\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "green"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We found 2 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
+          "\n-  We found 2 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs."
         ]
       },
       {
@@ -178,6 +175,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -198,6 +196,12 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -233,13 +237,13 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -275,44 +279,29 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 0,
         "names": [
           "file_name",
           "rule",
           "severity",
-          "detail",
-          "paper_id"
+          "detail"
         ],
         "v": [
           {
             "t": "chr",
-            "v": [
-              "LICENSE"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "unclassifiable"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "bad"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "p_local"
-            ]
+            "v": []
           }
         ]
       },
@@ -354,6 +343,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -361,6 +378,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

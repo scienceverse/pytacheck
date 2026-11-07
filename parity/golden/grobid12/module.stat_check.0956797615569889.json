@@ -396,7 +396,7 @@
               "They also showed highly significant suppression-induced forgetting on the details measure-low group: M = 1.35, F(1, 6) = 11.631, p = .014, ηp² = .660; high group: M = 1.03, F(1, 6) = 27.222, p = .002, ηp² = .819.",
               "They also showed highly significant suppression-induced forgetting on the details measure-low group: M = 1.35, F(1, 6) = 11.631, p = .014, ηp² = .660; high group: M = 1.03, F(1, 6) = 27.222, p = .002, ηp² = .819.",
               "When we more closely matched depression symptoms by comparing the low-BDI-II PTSD group with the high-BDI-II control group, we observed a marginally significant group-by-condition interaction for the details measure, F(1, 16) = 4.032, p = .062, ηp² = .201.",
-              "In that analysis, the group difference in suppression-induced forgetting only approached significance, F(1, 30) = 3.869, p = .058, ηp² =.114. Foa, 1995)."
+              "In that analysis, the group difference in suppression-induced forgetting only approached significance, F(1, 30) = 3.869, p = .058, ηp² = .114. Foa, 1995)."
             ]
           },
           {
@@ -655,6 +655,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

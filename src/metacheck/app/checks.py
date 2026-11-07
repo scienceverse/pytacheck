@@ -21,8 +21,6 @@ FAST_OFFLINE: dict[str, str] = {
     "coi_check": "text search only",
     "ethics_check": "text search only",
     "open_practices": "text search only",
-    "ref_accuracy": "uses the reference matches in the paper file, no lookup; left out of a "
-    "paper that has none (only the bundled demo JSON has them)",
     "ref_replication": "uses a database that ships with the package",
     "ref_retraction": "uses a database that ships with the package",
     "ref_consistency": "compares citations with the reference list",
@@ -56,6 +54,8 @@ NEVER: dict[str, str] = {
     "reproducibility_check": "downloads data files",
     "reg_check": "needs a local RegCheck server",
     "causal_claims": "sends the title and abstract to an external text-classification server",
+    "ref_accuracy": "left out for now, as metacheck 0.4.1.5 left it out of its apps: on PDF "
+    "conversions most of what it flags are reading errors (still run by module_run())",
 }
 
 #: Fast and offline, so they would fit the default set, but left out because they add

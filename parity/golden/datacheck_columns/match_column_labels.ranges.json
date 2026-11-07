@@ -70,10 +70,10 @@
       {
         "t": "chr",
         "v": [
+          "Ratings",
+          "Ratings",
           null,
-          null,
-          null,
-          null,
+          "Qs",
           null,
           "Tens"
         ]
@@ -81,10 +81,10 @@
       {
         "t": "chr",
         "v": [
+          "V1",
+          "V3",
           null,
-          null,
-          null,
-          null,
+          "q2",
           null,
           "x10"
         ]
@@ -92,10 +92,10 @@
       {
         "t": "chr",
         "v": [
+          "cb",
+          "cb",
           null,
-          null,
-          null,
-          null,
+          "cb",
           null,
           "cb"
         ]
@@ -103,10 +103,10 @@
       {
         "t": "chr",
         "v": [
+          "labelled",
+          "labelled",
           "unlabelled",
-          "unlabelled",
-          "unlabelled",
-          "unlabelled",
+          "labelled",
           "unlabelled",
           "labelled"
         ]
@@ -114,10 +114,10 @@
       {
         "t": "chr",
         "v": [
+          "rules",
+          "rules",
           null,
-          null,
-          null,
-          null,
+          "rules",
           null,
           "rules"
         ]
@@ -179,6 +179,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

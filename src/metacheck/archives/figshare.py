@@ -22,7 +22,7 @@ from typing import Any, cast
 import pandas as pd
 
 from metacheck._r import compile_r, grepl, trimws
-from metacheck._values import field, is_missing
+from metacheck._values import field, field_or_value, is_missing
 from metacheck.archives.dataverse import (
     _as_numeric,
     _cell,
@@ -619,9 +619,7 @@ def _figshare_info(
         obj["authors"] = _list_cell(authors)
         # a plain-string licence is the licence name (metacheck's `license$name`
         # fails on it: U34)
-        licence = field(rec, "license")
-        if not isinstance(licence, str):
-            licence = field(licence, "name")
+        licence = field_or_value(field(rec, "license"), "name")
         obj["license"] = _field_cell(_empty_or(licence, None))
         obj["files"] = _list_cell(_article_files(rec, files, figshare_id, host))
         return pd.DataFrame(obj)

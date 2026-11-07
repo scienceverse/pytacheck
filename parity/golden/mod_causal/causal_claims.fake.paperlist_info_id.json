@@ -83,7 +83,8 @@
           "Metacheck's text matching algorithm did not identify sentences describing randomization. If random assignment was present, please clearly report this (e.g., participants were randomly assigned to...). If this was a non-randomized study, the journal article reporting standards (JARS) ask that you describe the following:",
           "- Procedures employed to help minimize potential bias due to nonrandomization (e.g., matching, propensity score matching).",
           "#### Causal Claims",
-          "No causal claims were observed in the title.",
+          "Causal claims were detected in the title.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(sentence = \"Heat causes thirst\", cause = \"Heat\", \n    effect = \"thirst\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, 1, 2, FALSE)\n```\n",
           "Causal claims were detected in the abstract.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(sentence = c(\"Light causes growth and color.\", \n\"Light causes growth and color.\"), cause = c(\"Light\", \"causes\"\n), effect = c(\"color.\", \"and\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, 1, 2, FALSE)\n```\n",
           "As no random assignment to conditions was detected in the text, carefully check if the sentences below are warranted, given the study design. If random assignment was present, please clearly report this.",
@@ -99,7 +100,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We identified no sentences describing randomization.\n-  No causal claims were observed in the title.\n-  Causal claims were detected in the abstract."
+          "\n-  We identified no sentences describing randomization.\n-  Causal claims were detected in the title.\n-  Causal claims were detected in the abstract."
         ]
       },
       {
@@ -134,6 +135,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

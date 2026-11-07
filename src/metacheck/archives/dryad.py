@@ -14,7 +14,6 @@ from __future__ import annotations
 import functools
 import math
 import os
-import re
 import threading
 import time
 import warnings
@@ -123,6 +122,8 @@ def dryad_links(paper: Any) -> pd.DataFrame:
     dryad_bare_regex = (
         "(?:https?://)?(?:www\\.)?datadryad\\.org/(?:stash/)?dataset[s]?/doi[:%]"
         "[A-Za-z0-9%._/-]*"
+        # a sharing link, resolved to its DOI by dryad_info() (#484)
+        "|(?:https?://)?(?:www\\.)?datadryad\\.org/(?:stash/)?share/[A-Za-z0-9_-]+"
         "|(?:https?://)?(?:doi\\.org/)?10\\.5061/dryad\\.[A-Za-z0-9]+"
         f"|(?:https?://)?(?:doi\\.org/)?(?:{alt})/[A-Za-z0-9]+"
     )
@@ -171,6 +172,63 @@ def _dryad_doi(dryad_url: Any) -> Any:
     return out[0] if scalar else out
 
 
+@functools.cache
+def _share_token_rx() -> Any:
+    return compile_r(
+        r"datadryad\.org/(?:stash/)?share/([A-Za-z0-9_-]+)", ignore_case=True, perl=True
+    )
+
+
+def _dryad_share_token(url: Any) -> Any:
+    """Port of R/archive-dryad.R::.dryad_share_token(): the token of a Dryad sharing link.
+
+    ``datadryad.org/stash/share/<token>`` or ``datadryad.org/share/<token>``; ``None`` for
+    anything else. A string gives a string, a sequence a list.
+    """
+    vals, scalar = _chr_values(url)
+    out: list[str | None] = []
+    for v in vals:
+        m = None if v is None else _share_token_rx().search(v)
+        out.append(None if m is None else cast("str", m.group(1)))
+    return out[0] if scalar else out
+
+
+def _dryad_share_doi(url: Any) -> dict[str, str | None]:
+    """Port of R/archive-dryad.R::.dryad_share_doi(): the DOI behind a Dryad sharing link (#484).
+
+    Authors link a sharing link, made for reviewers before publication, instead of the
+    dataset DOI; it keeps working after publication and redirects to the dataset's landing
+    page, whose address carries the DOI. One request to ``datadryad.org/share/<token>``,
+    without following the redirect. Returns ``{"doi", "error"}``: the DOI, or ``None`` with
+    the reason.
+    """
+    from metacheck import http
+
+    token = _dryad_share_token(url)
+    if token is None:
+        return {"doi": None, "error": None}
+    try:
+        resp = http.request(
+            "GET",
+            f"https://datadryad.org/share/{token}",
+            headers={"User-Agent": "metacheck"},
+            follow_redirects=False,
+            timeout=60.0,
+        )
+    except Exception:
+        resp = None
+    status = None if resp is None else resp.status_code
+    loc = None if resp is None else resp.headers.get("location")
+    doi = None if loc is None else _dryad_doi_one(loc)
+    if doi is not None:
+        error = None
+    elif status == 404:
+        error = "private or expired Dryad sharing link"
+    else:
+        error = "the Dryad sharing link could not be resolved"
+    return {"doi": doi, "error": error}
+
+
 def dryad_info(
     dryad_url: Any, id_col: int | str = 1, pb: Any = None, cache: bool = False
 ) -> pd.DataFrame:
@@ -185,7 +243,9 @@ def dryad_info(
     (the dataset's total size in bytes as Dryad reports it), ``files_total``
     (the number of files Dryad reports) and ``files_incomplete`` (fewer files
     could be listed than Dryad reports; a warning is given too) added, or
-    ``error``. An incomplete listing is not cached.
+    ``error``. An incomplete listing is not cached. A sharing link
+    (``datadryad.org/stash/share/...``) is followed to the dataset it leads to; one that
+    leads nowhere has its reason in ``error``, as a dataset that could not be found does.
     """
     from metacheck._r import bind_rows
     from metacheck.archives import _spinner, _tick
@@ -212,17 +272,48 @@ def dryad_info(
             ids["dryad_url"] = ids["dryad_url"].astype("string")
         ids = ids.drop_duplicates()
         ids = ids[ids["dryad_url"].notna().to_numpy()].reset_index(drop=True)
+
+        # A sharing link carries no DOI; ask Dryad where it leads (#484). One that leads
+        # nowhere keeps its reason, which repo_check reports.
+        share_error: dict[str, str] = {}
+        for k in range(len(ids)):
+            link = ids["dryad_url"].iloc[k]
+            if is_missing(ids["dryad_doi"].iloc[k]) and _dryad_share_token(link) is not None:
+                res = _dryad_share_doi(link)
+                ids.loc[ids.index[k], "dryad_doi"] = res["doi"]
+                if res["error"] is not None:
+                    share_error[link] = res["error"]
+
+        def add_share_error(d: pd.DataFrame) -> pd.DataFrame:
+            if not share_error:
+                return d
+            if "error" not in d.columns:
+                d["error"] = _string_series([None] * len(d))
+            errors = d["error"].tolist()
+            for i, link in enumerate(d["dryad_url"].tolist()):
+                if isinstance(link, str) and link in share_error:
+                    errors[i] = share_error[link]
+            d["error"] = _string_series(errors)
+            return d
+
         valid_dois = list(dict.fromkeys(v for v in ids["dryad_doi"].tolist() if not is_missing(v)))
 
         if not valid_dois:
             _tick(bar, "No valid Dryad links")
-            return left_join(table, ids, by="dryad_url")
+            return add_share_error(left_join(table, ids, by="dryad_url"))
 
         nv = len(valid_dois)
         _tick(bar, f"Starting Dryad retrieval for {nv} dataset{'' if nv == 1 else 's'}...")
         id_info = []
         for doi in valid_dois:
             cached = _repo_info_cache_get("dryad", doi) if cache is True else None
+            # A listing stored before the paging fix (0.3.3.1) has no `files_total`: it holds
+            # only Dryad's first page of 20 files, so it is not reused, and Dryad is asked
+            # again (metacheck #506). Neither is one marked incomplete.
+            if cached is not None and (
+                "files_total" not in cached.columns or _listing_incomplete(cached)
+            ):
+                cached = None
             if cached is not None:
                 id_info.append(cached)
                 continue
@@ -236,6 +327,7 @@ def dryad_info(
         info = bind_rows(id_info)
         data = left_join(table, ids, by="dryad_url")
         data = left_join(data, info, by="dryad_doi", suffix=("", ".dryad"))
+        data = add_share_error(data)
         _tick(bar, "...Dryad retrieval complete!")
         return data
 
@@ -425,16 +517,30 @@ def _dryad_401_hint(url: Any, status: Any) -> str:
 
     Dryad requires a key to download file bytes even from a public dataset,
     so a 401 from datadryad.org without one set almost always means that.
-    Appended to the ``HTTP 401`` failure; ``""`` for any other status, host,
-    or when a key is set.
+    With a key set, a 401 means Dryad refused the key (a token from
+    :func:`dryad_pat` lasts 10 hours): that is recorded, and named in the hint.
+    Appended to the ``HTTP 401`` failure; ``""`` for any other status or host.
     """
-    if status != 401 or not re.search(r"datadryad\.org", str(url), re.IGNORECASE):
+    from metacheck.archives.api_keys import (
+        KEY_SERVICES,
+        key_problem_message,
+        key_problem_record,
+        key_source,
+    )
+    from metacheck.archives.download import _url_host_is
+
+    if status != 401 or not _url_host_is(url, "datadryad.org"):
         return ""
     if _dryad_has_key():
-        return ""
+        # a key is set, so Dryad refused it: recorded, so the apps can ask visitors for
+        # their own key (see api_key_status())
+        source = key_source("dryad")
+        key_problem_record("dryad", "rejected", source=source)
+        return " (" + key_problem_message("dryad", "rejected", source=source) + ")"
     return (
         " (Dryad requires an API key to download file bytes, even from a public dataset -- "
-        "see ?dryad_pat)"
+        "see ?dryad_pat. Please provide your own Dryad key to continue (you can make one at "
+        f"{KEY_SERVICES['dryad'].url}))"
     )
 
 
@@ -561,9 +667,20 @@ def _dryad_headers(req: dict[str, Any]) -> dict[str, Any]:
     (a failed request); a refusal raises :class:`OAuthError`, which aborts
     the metadata lookups as in R.
     """
+    from metacheck.utils import get_option
+
     spec = dict(req)
     headers = dict(spec.get("headers") or {})
     headers["User-Agent"] = "metacheck"
+    # A token set in this session (a visitor's own) comes before the client id and secret
+    # of the environment (the server's key); client credentials set in this session with
+    # dryad_auth() still come first.
+    session_client = bool(get_option("metacheck.dryad.client_id") or "")
+    session_pat = get_option("metacheck.dryad.pat") or ""
+    if not session_client and session_pat:
+        headers["Authorization"] = f"Bearer {session_pat}"
+        spec["headers"] = headers
+        return spec
     try:
         client = _dryad_oauth_client()
     except Exception:

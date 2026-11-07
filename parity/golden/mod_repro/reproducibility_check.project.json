@@ -15,11 +15,14 @@
       "summary_text",
       "summary_table",
       "na_replace",
+      "brief",
       "run_results",
       "install_results",
+      "recorded_versions",
       "stat_output",
       "match_table",
-      "modifications"
+      "modifications",
+      "checklist_section"
     ],
     "v": [
       {
@@ -46,6 +49,7 @@
         "names": [
           "paper_id",
           "file_name",
+          "file_path",
           "parses",
           "run_order",
           "order_basis",
@@ -60,7 +64,13 @@
           "error_type",
           "undefined_var",
           "reads",
-          "writes"
+          "writes",
+          "names_corrected",
+          "used_by",
+          "not_analysis_why",
+          "paper_link",
+          "repo_name",
+          "reason"
         ],
         "v": [
           {
@@ -75,6 +85,13 @@
             "v": [
               "01_prep.R",
               "02_analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code/01_prep.R",
+              "code/02_analysis.R"
             ]
           },
           {
@@ -108,7 +125,7 @@
           {
             "t": "int",
             "v": [
-              1,
+              0,
               0
             ]
           },
@@ -202,6 +219,48 @@
                 "v": []
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "project",
+              "project"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
           }
         ]
       },
@@ -213,7 +272,7 @@
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:2, File = c(\"01_prep.R\", \"02_analysis.R\"\n), \"Runs after\" = c(\"—\", \"01_prep.R\"), Basis = c(\"numeric\", \n\"dependency\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "To run against the Psych-DS layout, 1 referenced data path would be rewritten to its new location.",
+          "Every data path in the code works in the repository as deposited.",
           "#### Missing inputs",
           "1 input file the code reads is not available. Files withheld only because of their size are distinguished from files absent from the repository — the former are a size-cap issue, not a reproducibility failure.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"not_shared.csv\", Status = \"absent\", Reason = \"referenced file is not present in the repository\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
@@ -243,7 +302,21 @@
           "repro_deps",
           "repro_ran_ok",
           "repro_tests_reported",
-          "repro_tests_matched"
+          "repro_tests_matched",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
         ],
         "v": [
           {
@@ -293,12 +366,110 @@
             "v": [
               null
             ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0,
           0,
           0,
@@ -310,8 +481,31 @@
           "repro_runnable",
           "repro_missing_inputs",
           "repro_deps",
-          "repro_ran_ok"
+          "repro_ran_ok",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
         ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "null"
       },
       {
         "t": "null"
@@ -349,13 +543,16 @@
           {
             "t": "chr",
             "v": [
-              "\"data/raw_data.csv\" -> \"data/study-rawdata_data.csv\""
+              "\"data/raw_data.csv\" -> \"data/raw_data.csv\""
             ]
           }
         ]
+      },
+      {
+        "t": "null"
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

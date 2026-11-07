@@ -35,17 +35,17 @@
       {
         "t": "chr",
         "v": [
-          "<TMP>/results.csv.gz.contents/results.csv"
+          "<tempdir>/metacheck-archives/9353257f94b6e666446af18e2c972526/results.csv"
         ]
       },
       {
         "t": "dbl",
         "v": [
-          0
+          1440
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

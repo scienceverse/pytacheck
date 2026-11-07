@@ -9,8 +9,11 @@
     "names": [
       "id",
       "answer",
+      "a.b",
       "a",
-      "b"
+      "b",
+      "a.c",
+      "_row"
     ],
     "v": [
       {
@@ -56,17 +59,38 @@
         ]
       },
       {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          2,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
         "t": "chr",
         "v": [
-          "1:2",
-          "1:2",
+          null,
+          null,
           "1:2",
           "3",
           null,
           null,
           "1",
-          "1:2",
-          "2:3",
+          null,
+          null,
           "list(x = 1)",
           "list(x = 2)",
           "integer(0)",
@@ -96,9 +120,51 @@
           null,
           null
         ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          2,
+          3,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "x",
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

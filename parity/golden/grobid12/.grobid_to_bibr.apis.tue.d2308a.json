@@ -425,8 +425,8 @@
               "We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
               "We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power.",
               "We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).",
-              "2 The code we used for this analysis is as follows. pwr::pwr.t.test(n = 50, power = 0.8, alternative = \"greater\") On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
-              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+              "2 The code we used for this analysis is as follows. pwr::pwr.t.test(n = 50, power = 0.8, alternative = \"greater\") On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d = 0.59.",
+              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p = 0.152.",
               "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).",
               "Since our data are simulated for demonstration purposes, of course they confirm our hypotheses.",
               "It seems automated tools can help prevent errors by providing researchers with feedback about potential mistakes, and researchers feel the app",
@@ -2066,7 +2066,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "0.3.1"
+                  "0.4.3.7"
                 ]
               },
               {
@@ -2138,6 +2138,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

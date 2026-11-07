@@ -1,0 +1,33 @@
+# FAIR_repo() cases (areas fair and fair_review) that differ from R at the pin. Format (see
+# parity/cases.py): "<area>/<id>": {kind, ref, reason[, r_text]}, the refs are D- and U-entries
+# of docs/UPSTREAM_ISSUES.md.
+#
+# D138 (the results of the checks are saved as logs/<folder>.json, metacheck writes an R data
+# file logs/<folder>.rds) is NOT marked here. The file name occurs in four places of a run's
+# output: the list of files, the RO-Crate (the @id, the name, the hasPart reference and the
+# encodingFormat of the entity), the README's folder tree and logs/ itself. A mark's r_text
+# applies to every string of R's golden, and a substitution must change R's golden and leave
+# everything else equal, so no list of substitutions is exact for all of them, and a stale or
+# partial one fails the case. The cases mask the file in the helpers instead
+# (tests/fair/parity_helpers.R and .py, ff_subs() and ff_mask_results()): "<folder>.rds" and
+# "<folder>.json" both become "<folder>.<results>" wherever the name occurs, and the RO-Crate's
+# encodingFormat of that entity (application/x-r-rds, application/json) becomes "<results>".
+# That also keeps the tier-1 demo repository cases (demo_repo.*) free of a mark: a tier-1 case
+# may only carry some kinds (TIER1_KINDS), and the difference is in the file format, not in the
+# checks.
+#
+# No other difference is known yet. Once R's goldens exist, a case that differs for a reason of
+# metacheck (a bug fixed, a better rule) is marked here, one entry per case.
+
+# U250: .FAIR_repo_missing_columns()
+"fair/run.latin1_column":
+  kind: r_bug_fixed
+  ref: U250
+  reason: a column of a Latin-1 CSV is described once in dataset_description.json (R lists it a second time, at the end, with only its name and source file, because it compares the header's bytes with the UTF-8 name data_check read)
+
+# U112: psychds_check target paths (the repository's own dataset_description.json stays at the root)
+"fair/demo_repo.paper": &u112
+  kind: r_bug_fixed
+  ref: U112
+  reason: the demonstration repository's own dataset_description.json is not moved into data/ as a data file (R does, and then writes its own description at the root); it stays at the root and is kept, so the description holds the repository's text, not metacheck's, and the plan and the RO-Crate list one file less
+"fair/demo_repo.no_paper": *u112

@@ -172,19 +172,23 @@ def test_request_body_threshold() -> None:
 
 
 def test_missing_sentences() -> None:
-    # R: all(trimws(sentence) == "") is NA -> if() fails
-    for sentence in ([None], [None, "  "]):
-        with pytest.raises(ValueError, match="missing value"):
-            causal_relations(sentence)
+    # metacheck 0.4.3.7 leaves missing sentences out (U84): only missing or blank ones
+    # give the empty table, without a request
+    with respx.mock(assert_all_called=False) as router:
+        for sentence in ([None], [None, "  "], [None, float("nan")]):
+            out = causal_relations(sentence)
+            assert out.empty
+            assert out.columns.tolist() == ["sentence", "causal", "cause", "effect"]
+        assert not router.calls
 
 
-def test_missing_sentence_is_sent_as_null() -> None:
+def test_missing_sentence_is_not_sent() -> None:
     payload = '["[{\\"causal\\": true, \\"relations\\": [{\\"cause\\": \\"a\\", \\"effect\\": \\"b\\"}]}]"]'
     with respx.mock(assert_all_called=False) as router:
-        _mock(router, {None: payload, "x": payload})
+        _mock(router, {"x": payload})
         out = causal_relations([None, "x"])
-    assert out["sentence"].isna().tolist() == [True, False]
-    assert out["cause"].tolist() == ["a", "a"]
+    assert out["sentence"].tolist() == ["x"]
+    assert out["cause"].tolist() == ["a"]
 
 
 def test_requests_use_the_shared_user_agent() -> None:

@@ -3,7 +3,6 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "spv: could not decode chart: non-numeric argument to mathematical function",
     "spv: could not decode chart: spv chart: no <point>, <interval>, or <schema> mark (out of this port's scope)"
   ],
   "value": {
@@ -28,11 +27,12 @@
       "<h2>Graph<\/h2><h3>Weight by Height<\/h3><img src=\"data:IMG\" alt=\"chart\" style=\"max-width: 100%;\">",
       "<h2>Frequencies<\/h2><img src=\"data:IMG\" alt=\"chart\" style=\"max-width: 100%;\">",
       "<h3>Box plot<\/h3><img src=\"data:IMG\" alt=\"chart\" style=\"max-width: 100%;\">",
+      "<h2>Examine<\/h2><img src=\"data:IMG\" alt=\"chart\" style=\"max-width: 100%;\">",
       "<\/body>",
       "<\/html>",
       ""
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

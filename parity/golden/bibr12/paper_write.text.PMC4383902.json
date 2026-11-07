@@ -2629,7 +2629,7 @@
       "        },",
       "        {",
       "          \"section_id\": 9,",
-      "          \"score\": 0.704934775829315,",
+      "          \"score\": 0.7049347758293152,",
       "          \"source\": \"model\"",
       "        },",
       "        {",
@@ -2689,7 +2689,7 @@
       "        },",
       "        {",
       "          \"section_id\": 21,",
-      "          \"score\": 0.520065307617188,",
+      "          \"score\": 0.5200653076171875,",
       "          \"source\": \"model\"",
       "        },",
       "        {",
@@ -2699,7 +2699,7 @@
       "        },",
       "        {",
       "          \"section_id\": 23,",
-      "          \"score\": 0.982143819332123,",
+      "          \"score\": 0.9821438193321228,",
       "          \"source\": \"model\"",
       "        },",
       "        {",
@@ -3283,8 +3283,8 @@
       "            ]",
       "          }",
       "        ],",
-      "        \"resolved_candidate_fraction\": 0.739130434782609,",
-      "        \"unique_linked_bib_fraction\": 0.941176470588235",
+      "        \"resolved_candidate_fraction\": 0.7391304347826086,",
+      "        \"unique_linked_bib_fraction\": 0.9411764705882353",
       "      },",
       "      \"reference_yield\": {",
       "        \"credible_source_starts\": 17,",
@@ -3529,6 +3529,6 @@
       "}"
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

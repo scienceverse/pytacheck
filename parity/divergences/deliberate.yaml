@@ -1,13 +1,6 @@
 # Cases in generated case files that differ from R on purpose. Format (see
 # parity/cases.py): "<area>/<id>": {kind, ref, reason}; kind is one of
 # parity.cases.DIVERGENCE_KINDS, ref the docs/UPSTREAM_ISSUES.md entry.
-"mod_codebook_review/codebook_check.rv_dupscale": &d14
-  kind: deliberate
-  ref: D14
-  reason: the OSD translations$en list repeats bfi_2 in R; pytacheck keeps one entry per name (a dict)
-"mod_codebook_review/codebook_check.llm.rv_dupscale": *d14
-"mod_codebook_review/codebook_check.llm_odd.rv_dupscale": *d14
-"mod_codebook_review/codebook_check.llm_odd_na.rv_dupscale": *d14
 # a sentence repeated word for word in a paper (V7; D60). stat_p_exact and stat_p_nonsig are
 # validated checks: this change awaits the maintainer's OK on the pull request (D60 in docs/UPSTREAM_ISSUES.md).
 "mod_p_values/all_p_values.duplicate_paragraph": &d60
@@ -46,16 +39,6 @@
 "stats_review/statcheck.review.AllPValues_2": *d78_flag
 "stats_review/stats.review.AllPValues_2": *d78_flag
 "stats_review/decision_error_test.review.pEqualAlphaSig_2": *d78_flag
-"stats_review/stats.review.partial.alp": &d78_args
-  kind: deliberate
-  ref: D78
-  reason: stats() takes statcheck's settings as Python keyword or positional arguments, so an abbreviated name or texts = raises TypeError; R matches unique prefixes and lets texts = replace the text
-"stats_review/stats.review.partial.AllP": *d78_args
-"stats_review/stats.review.partial.OneTailedTe": *d78_args
-"stats_review/stats.review.partial.st": *d78_args
-"stats_review/stats.review.partial.s": *d78_args
-"stats_review/stats.review.texts_rebound": *d78_args
-"stats_review/stats.review.texts_rebound.none": *d78_args
 # fields and columns are read by their exact name, and a scalar has no fields (D81): R's `$`
 # also takes a unique prefix of a name, and stops on a scalar
 "archives_d2/reshare_file_download.mock.no_caps":
@@ -116,6 +99,7 @@
 "mod_urls_open_review/all_urls.review.chain_twice": *d82
 "mod_urls_open_review/all_urls.review.list_with_empty": *d82
 "mod_urls_open_review/all_urls.review.demo_copy": *d82
+"mod_urls_open_review/all_urls.review.empty_list": *d82
 "bibr12/module.all_urls.PMC4383902": *d82
 "bibr12/module.all_urls.full": *d82
 "bibr12_review/module.all_urls.edge_types": *d82
@@ -128,6 +112,10 @@
   ref: D83
   reason: open_practices adds the summary_table column no_data (the data availability statement says there are no data) and reads bibr's data availability statement, also when it is not in the text
 "bibr12/module.open_practices.full": *d83
+"bibr12/module.open_practices.PMC4383902": *d83
+"bibr12/module.open_practices.mixed": *d83
+"grobid12/module.open_practices.0956797615569889": *d83
+"grobid12/module.open_practices.debruine": *d83
 "grobid12/module.open_practices.demo": *d83
 "mod_urls_open/open_practices.demo": *d83
 "mod_urls_open/open_practices.psychsci_single_2": *d83
@@ -140,7 +128,12 @@
 "mod_urls_open/open_practices.materials_prereg_only": *d83
 "mod_urls_open/open_practices.no_repo": *d83
 "mod_urls_open/open_practices.none": *d83
-"mod_urls_open/open_practices.empty_paper": *d83
+"mod_urls_open/open_practices.psychsci_single": *d83
+"mod_urls_open/open_practices.data_only": *d83
+"mod_urls_open/open_practices.on_request": *d83
+"mod_urls_open/open_practices.on_request_with_repo": *d83
+"mod_urls_open_review/open_practices.review.materials_only": *d83
+"mod_urls_open_review/open_practices.review.single_0956797615569889": *d83
 "mod_urls_open/open_practices.whitespace": *d83
 "mod_urls_open/open_practices.case_words": *d83
 "mod_urls_open/open_practices.paperlist": *d83
@@ -167,6 +160,7 @@
   reason: a paper the expressions found no statement in gets the statement bibr extracted (info.coi_statement, info.funding_statement, info.ethics_statement); full.json has them only there
 "bibr12/module.coi_check.mixed": *d84
 "bibr12/module.coi_check_oi.full": *d84
+"bibr12/module.coi_check_oi.mixed": *d84
 "bibr12/module.ethics_check.full": *d84
 "bibr12/module.ethics_check.mixed": *d84
 "bibr12/module.funding_check.full": *d84
@@ -174,7 +168,3 @@
 "bibr12/module.funding_check_oi.full": *d84
 "bibr12/module.funding_check_oi.mixed": *d84
 "mod_ethics_review/ethics_check.fixture_corpus": *d84
-"db/crossref_doi.replay.demo_bib":
-  kind: deliberate
-  ref: D88
-  reason: "crossref_doi() asks api.crossref.org (metacheck at the pin: api.labs.crossref.org; metacheck itself moved in d2e4bc5); its recorded 404 for 10.0000/0123456789 is plain text, so the error is 'HTTP 404' (the Labs mirror's JSON 404 said 'Not Found')"

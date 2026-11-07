@@ -49,7 +49,8 @@ def export_syntax(fn: str, path: str) -> Any:
         p = _fn(fn)(src)
         if p is None:
             return None
-        return {"path": p[len(d) :], "lines": _read_lines(p)}
+        # a file of the user's own is recovered into <tempdir>/metacheck-recovered-code/<md5>/code
+        return {"path": re.sub(r"^.*/metacheck-recovered-code/", "", p), "lines": _read_lines(p)}
 
 
 def spv_attrs(path: str) -> list[dict[str, Any]]:

@@ -177,8 +177,9 @@ def test_label_with_ffff() -> None:
     from metacheck.modules._prereg import osf_label_to_field
 
     # U111: R's utf8towcs() rejects U+FFFE/U+FFFF, which stopped the module;
-    # like other noncharacters they are kept
-    assert osf_label_to_field("Sample " + chr(0xFFFF)) == "sample"
+    # metacheck 0.4 removes them from the label (other noncharacters are kept)
+    assert osf_label_to_field("Sample " + chr(0xFFFF)) == "sample_size"
+    assert osf_label_to_field("Notes" + chr(0xFFFE)) == "notes"
     assert osf_label_to_field("Notes " + chr(0x1FFFF)) == "notes"
     assert osf_label_to_field("Ab" + chr(0xFDD0) + "C") == "ab_c"
     mo = run_prereg(papers=[{"url": ["https://osf.io/lblnc"], "id": "p"}], mock="local")

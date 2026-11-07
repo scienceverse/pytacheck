@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -127,6 +129,22 @@
               "survey.csv",
               "survey.csv",
               "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -335,6 +353,22 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -584,14 +618,14 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/clean**",
-          "```\n└── survey.csv  📊 data ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n└── survey.csv  📊 data ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(participant_id = 1:40, panas_1 = c(1L, 5L, 1L, \n5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, \n5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, \n5L, 1L, 5L, 1L, 5L), panas_2 = c(5L, 3L, 5L, 1L, 4L, 2L, 2L, \n5L, 2L, 5L, 1L, 1L, 4L, 4L, 1L, 3L, 5L, 4L, 4L, 2L, 1L, 1L, 1L, \n4L, 3L, 2L, 1L, 2L, 1L, 1L, 3L, 1L, 4L, 3L, 4L, 5L, 4L, 1L, 2L, \n3L), panas_3 = c(2L, 5L, 2L, 5L, 3L, 2L, 4L, 2L, 2L, 5L, 1L, \n5L, 1L, 4L, 3L, 3L, 5L, 2L, 4L, 5L, 2L, 4L, 1L, 5L, 4L, 2L, 4L, \n5L, 4L, 2L, 3L, 4L, 2L, 1L, 3L, 2L, 4L, 2L, 5L, 2L), panas_4 = c(3L, \n1L, 1L, 3L, 2L, 2L, 4L, 3L, 5L, 2L, 4L, 2L, 1L, 3L, 2L, 5L, 1L, \n4L, 2L, 4L, 3L, 4L, 5L, 4L, 1L, 3L, 2L, 5L, 3L, 2L, 1L, 1L, 4L, \n5L, 5L, 2L, 4L, 3L, 1L, 1L), panas_5 = c(2L, 4L, 2L, 4L, 2L, \n4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, \n4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, \n4L, 2L, 4L), panas_6 = c(4L, 5L, 4L, 4L, 4L, 3L, 1L, 2L, 5L, \n2L, 4L, 3L, 3L, 4L, 3L, 2L, 2L, 4L, 2L, 2L, 4L, 1L, 5L, 1L, 3L, \n1L, 5L, 5L, 2L, 4L, 4L, 2L, 2L, 1L, 3L, 5L, 1L, 5L, 1L, 1L), \n    panas_7 = c(3L, 3L, 3L, 5L, 3L, 2L, 3L, 5L, 1L, 1L, 3L, 2L, \n    1L, 5L, 2L, 4L, 2L, 3L, 2L, 1L, 1L, 5L, 3L, 4L, 1L, 4L, 5L, \n    4L, 5L, 4L, 2L, 1L, 1L, 2L, 4L, 4L, 5L, 2L, 1L, 1L), panas_8 = c(1L, \n    4L, 4L, 2L, 4L, 1L, 2L, 4L, 1L, 4L, 3L, 1L, 2L, 1L, 1L, 4L, \n    4L, 5L, 4L, 2L, 2L, 3L, 2L, 3L, 5L, 3L, 4L, 2L, 1L, 5L, 5L, \n    3L, 2L, 4L, 5L, 2L, 2L, 4L, 3L, 4L), panas_9 = c(5L, 2L, \n    4L, 2L, 5L, 1L, 1L, 2L, 5L, 4L, 5L, 5L, 5L, 5L, 2L, 5L, 4L, \n    5L, 3L, 3L, 4L, 3L, 5L, 5L, 5L, 1L, 4L, 3L, 3L, 4L, 1L, 2L, \n    1L, 2L, 1L, 5L, 3L, 1L, 2L, 5L), panas_10 = c(4L, 3L, 5L, \n    4L, 1L, 4L, 1L, 5L, 5L, 5L, 3L, 1L, 1L, 2L, 4L, 3L, 1L, 5L, \n    4L, 1L, 2L, 2L, 4L, 4L, 4L, 4L, 4L, 1L, 1L, 2L, 4L, 4L, 4L, \n    2L, 3L, 2L, 5L, 5L, 1L, 1L)), row.names = c(NA, 40L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"panas_1\", \"panas_10\", \"panas_2\", \"panas_3\", \n\"panas_4\", \"panas_5\", \"panas_6\", \"panas_7\", \"panas_8\", \"panas_9\", \n\"participant_id\"), Representation = c(\"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"text\"), Level = c(\"nominal\", \"ordinal\", \"ordinal\", \n\"ordinal\", \"ordinal\", \"nominal\", \"ordinal\", \"ordinal\", \"ordinal\", \n\"ordinal\", \"nominal\"), Concept = c(\"\", \"likert\", \"likert\", \"likert\", \n\"likert\", \"\", \"likert\", \"likert\", \"likert\", \"likert\", \"id\"), \n    Role = c(\"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \n    \"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \"identifier\"\n    ), Unit = c(\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"), \n    Rows = c(40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L, \n    40L), \"% Missing\" = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(2L, \n    5L, 5L, 5L, 5L, 2L, 5L, 5L, 5L, 5L, 40L), Mean = c(NA, 3.025, \n    2.75, 3.15, 2.825, NA, 2.975, 2.825, 2.95, 3.325, NA), SD = c(NA, \n    1.493, 1.481, 1.369, 1.394, NA, 1.423, 1.448, 1.339, 1.542, \n    NA), Min = c(NA, 1, 1, 1, 1, NA, 1, 1, 1, 1, NA), Max = c(NA, \n    5, 5, 5, 5, NA, 5, 5, 5, 5, NA)), row.names = c(\"panas_1\", \n\"panas_10\", \"panas_2\", \"panas_3\", \"panas_4\", \"panas_5\", \"panas_6\", \n\"panas_7\", \"panas_8\", \"panas_9\", \"participant_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 11 columns across 1 data file.",
           "#### Careless Responding",
           "No respondent was flagged for straightlining in the 1 file that could be screened.",
@@ -607,7 +641,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 11 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 11 columns and found no issues."
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 11 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1). We ran automated data-quality checks on 11 columns and found no issues."
         ]
       },
       {
@@ -813,6 +847,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -896,6 +931,12 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
             ]
           },
           {
@@ -1467,6 +1508,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

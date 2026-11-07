@@ -549,7 +549,7 @@ def test_a_paper_in_the_box_is_still_a_paper(tmp_path: Path) -> None:
     with client() as tc:
         box = dropped(tc, "paper.json", pc.demofile("json").read_bytes())
         out = shown(event(tc, box, "b3"))
-    assert "Ran 19 checks" in out["summary"]
+    assert "Ran 18 checks" in out["summary"]
     assert out["checklist"]["visible"] is False  # the checklist is a data package's
 
 

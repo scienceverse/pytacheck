@@ -96,11 +96,13 @@ def test_invalid_statcheck_arguments_raise() -> None:
 
 
 def test_character_vector_is_checked() -> None:
-    # U4: R fails ("argument is of length zero")
+    # U4: R failed before 0.4.3.7 ("argument is of length zero"); now it searches the strings
+    # as a text table
     table = stats(["t(20) = 4.23, p < .001", "no numbers", "t(20) = 4.23, p = .02"])
     assert table[VAR_RAW].tolist() == ["t(20) = 4.23, p < .001", "t(20) = 4.23, p = .02"]
     assert table["error"].tolist() == [False, True]
-    assert table.columns[-1] == "text"
+    assert table["text"].tolist() == ["t(20) = 4.23, p < .001", "t(20) = 4.23, p = .02"]
+    assert table["text_id"].tolist() == [1, 3]
     assert stats("t(20) = 4.23, p = .002")["reported_p"].tolist() == [0.002]
     assert stats(["no numbers"]).shape == (0, 0)
 

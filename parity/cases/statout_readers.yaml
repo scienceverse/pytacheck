@@ -158,7 +158,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/spv/modern.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/spv/modern.spv\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/spv/modern.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/spv/modern.spv\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -171,7 +171,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/spv/legacy.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/spv/legacy.spv\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/spv/legacy.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/spv/legacy.spv\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -184,7 +184,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/spv/logs_only.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/spv/logs_only.spv\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/spv/logs_only.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/spv/logs_only.spv\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -197,7 +197,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/spv/empty.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/spv/empty.spv\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/spv/empty.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/spv/empty.spv\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -756,7 +756,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/analysis.smcl\"), d); p <- metacheck:::.smcl_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/analysis.smcl\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/analysis.smcl\"), d); p <- metacheck:::.smcl_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/analysis.smcl\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -788,7 +788,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/nocommands.smcl\"), d); p <- metacheck:::.smcl_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/nocommands.smcl\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/nocommands.smcl\"), d); p <- metacheck:::.smcl_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/nocommands.smcl\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -984,7 +984,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/twolevel.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/twolevel.out\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/twolevel.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/twolevel.out\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -997,7 +997,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/adjacent.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/adjacent.out\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/adjacent.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/adjacent.out\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -1010,7 +1010,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/nosections.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/nosections.out\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/nosections.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/nosections.out\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -1023,7 +1023,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/compiler.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/compiler.out\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/text/compiler.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/text/compiler.out\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"

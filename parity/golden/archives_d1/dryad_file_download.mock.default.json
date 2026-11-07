@@ -3,11 +3,11 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "2 of 4 files from Dryad dataset 10.5061/dryad.j1fd7 did not arrive intact (e.g. README.md, nolink.txt). The returned table marks them downloaded = FALSE. Run again to retry."
+    "2 of 5 files from Dryad dataset 10.5061/dryad.j1fd7 did not arrive intact (e.g. README.md, nolink.txt). The returned table marks them downloaded = FALSE. Run again to retry."
   ],
   "value": {
     "t": "df",
-    "nrow": 4,
+    "nrow": 5,
     "names": [
       "folder",
       "dryad_doi",
@@ -29,12 +29,14 @@
           "10.5061_dryad.j1fd7",
           "10.5061_dryad.j1fd7",
           "10.5061_dryad.j1fd7",
+          "10.5061_dryad.j1fd7",
           "10.5061_dryad.j1fd7"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "10.5061/dryad.j1fd7",
           "10.5061/dryad.j1fd7",
           "10.5061/dryad.j1fd7",
           "10.5061/dryad.j1fd7",
@@ -46,6 +48,7 @@
         "v": [
           "111",
           "112",
+          "113",
           "114",
           "115"
         ]
@@ -55,6 +58,7 @@
         "v": [
           "data.csv",
           "README.md",
+          "big.bin",
           "sub/notes.txt",
           "nolink.txt"
         ]
@@ -64,6 +68,7 @@
         "v": [
           "data.csv",
           "README.md",
+          null,
           "sub/notes.txt",
           null
         ]
@@ -73,6 +78,7 @@
         "v": [
           8,
           21,
+          20971520,
           5,
           3
         ]
@@ -82,6 +88,7 @@
         "v": [
           8,
           21,
+          null,
           5,
           null
         ]
@@ -91,6 +98,7 @@
         "v": [
           "344fd2323dd33d5c058b7cf27de029e8",
           "0123456789abcdef0123456789abcdef",
+          null,
           "abc",
           null
         ]
@@ -101,6 +109,7 @@
           true,
           false,
           null,
+          null,
           null
         ]
       },
@@ -109,6 +118,7 @@
         "v": [
           "https://datadryad.org/api/v2/files/111/download",
           "https://datadryad.org/api/v2/files/112/download",
+          "https://datadryad.org/api/v2/files/113/download",
           "https://datadryad.org/api/v2/files/114/download",
           null
         ]
@@ -117,6 +127,7 @@
         "t": "lgl",
         "v": [
           true,
+          false,
           false,
           true,
           false
@@ -128,11 +139,12 @@
           null,
           null,
           null,
+          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

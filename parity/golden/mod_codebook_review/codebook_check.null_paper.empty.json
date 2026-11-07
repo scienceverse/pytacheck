@@ -1,9 +1,9 @@
 {
   "id": "codebook_check.null_paper.empty",
   "ok": false,
-  "error": "paper must be a paper or paperlist object.",
+  "error": "Running the module 'codebook_check' produced errors: paper must be a paper or paperlist object.",
   "warnings": [],
   "value": null,
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

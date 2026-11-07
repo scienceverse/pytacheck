@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -176,15 +177,15 @@
             "t": "chr",
             "v": [
               "codebook",
+              "image",
+              "image",
+              "image",
+              "text",
               null,
+              "text",
               null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
+              "text",
+              "archive",
               "data",
               "code",
               null,
@@ -292,16 +293,17 @@
         "t": "chr",
         "v": [
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='tests/mod_repo_check/fixtures/messy' target='_blank'>tests/mod_repo_check/fixtures/messy<\/a>\", \n    Platform = \"local\", \"All Files\" = 14L, \"Data Files\" = 1L, \n    \"Code Files\" = 1L, READMEs = 0L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='tests/mod_repo_check/fixtures/messy' target='_blank'>tests/mod_repo_check/fixtures/messy<\/a>\", \n    Platform = \"local\", \"All Files\" = 14L, \"Data Files\" = 1L, \n    \"Code Files\" = 1L, READMEs = 0L, Archives = 1L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\"), File = c(\"codebook.csv\", \n\"fig1.png\", \"fig10.png\", \"fig2.png\", \"LICENSE.txt\", \"task.edat\", \n\"task.txt\", \"merged.emrg2\", \"notes (final)!.docx\", \"results.tar.gz\", \n\"raw data.csv\", \"analysis.R\", \"stimuli.edat2\", \"weird.xyz123\"\n), Size = c(\"32 B\", \"4 B\", \"4 B\", \"4 B\", \"10 B\", \"5 B\", \"17 B\", \n\"5 B\", \"6 B\", \"4 B\", \"12 B\", \"30 B\", \"5 B\", \"5 B\"), Type = c(\"codebook\", \nNA, NA, NA, NA, NA, NA, NA, NA, NA, \"data\", \"code\", NA, NA)), row.names = c(NA, \n-14L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\", \"tests/mod_repo_check/fixtures/messy\", \n\"tests/mod_repo_check/fixtures/messy\"), File = c(\"codebook.csv\", \n\"fig1.png\", \"fig10.png\", \"fig2.png\", \"LICENSE.txt\", \"task.edat\", \n\"task.txt\", \"merged.emrg2\", \"notes (final)!.docx\", \"results.tar.gz\", \n\"raw data.csv\", \"analysis.R\", \"stimuli.edat2\", \"weird.xyz123\"\n), Size = c(\"32 B\", \"4 B\", \"4 B\", \"4 B\", \"10 B\", \"5 B\", \"17 B\", \n\"5 B\", \"6 B\", \"4 B\", \"12 B\", \"30 B\", \"5 B\", \"5 B\"), Type = c(\"codebook\", \n\"image\", \"image\", \"image\", \"text\", NA, \"text\", NA, \"text\", \"archive\", \n\"data\", \"code\", NA, NA)), row.names = c(NA, -14L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
+          "#### Archive Files\n\nThe following files are not ZIP archives: results.tar.gz. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, `.tar` or `.tar.gz`.",
           "#### Proprietary E-Prime Files\n\nThe repository contains 3 E-Prime files (task.edat, merged.emrg2, stimuli.edat2). These are proprietary **binary** formats that only the E-Prime software can open, so metacheck does not download or read them and other researchers cannot reuse them directly. 2 of them have no matching plain-text export. Please also upload the E-Prime **.txt export** (File → Export in E-Prime) for each, so the trial-level data is readable without the proprietary software.",
           "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: weird.xyz123. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### Study/Repository Mismatch\n\nThe studies named in the manuscript do not match how the repository's files are grouped: the repository separates out a study (ex3) not named in the manuscript. Check that every study has its own clearly-named folder or file prefix, and that the folder names match how the manuscript refers to each study.",
           "#### File Naming",
           "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 4 naming problems that should be fixed, and 2 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"notes (final)!.docx\", \"notes (final)!.docx\", \n\"raw data.csv\", \"weird.xyz123\", \"fig1.png\", \"fig2.png\"), Rule = c(\"spaces\", \n\"special-characters\", \"spaces\", \"unclassifiable\", \"zero-padding\", \n\"zero-padding\"), Severity = c(\"bad\", \"bad\", \"bad\", \"bad\", \"suggestion\", \n\"suggestion\"), Detail = c(\"contains a space\", \"contains a character other than letters, digits, underscore, or dash\", \n\"contains a space\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"notes (final)!.docx\", \"notes (final)!.docx\", \n\"raw data.csv\", \"weird.xyz123\", \"fig1.png\", \"fig2.png\"), Rule = c(\"spaces\", \n\"special-characters\", \"spaces\", \"unclassifiable\", \"zero-padding\", \n\"zero-padding\"), Severity = c(\"Required\", \"Required\", \"Required\", \n\"Required\", \"Suggestion\", \"Suggestion\"), Detail = c(\"contains a space\", \n\"contains a character other than letters, digits, underscore, or dash\", \n\"contains a space\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\", \n\"numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"analysis.R\", Group = \"ex2\", Path = \"study2/analysis.R\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"merged.emrg2\", \"raw data.csv\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"merged.emrg2\", \"Study 1/raw data.csv\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"codebook.csv\", \"LICENSE.txt\", \"notes (final)!.docx\"\n), Group = c(\"ex1\", \"—\", \"ex1\"), Path = c(\"docs/codebook.csv\", \n\"LICENSE.txt\", \"notes (final)!.docx\")), row.names = c(NA, -3L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (6 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"fig1.png\", \"fig10.png\", \"fig2.png\", \n\"task.edat\", \"task.txt\", \"stimuli.edat2\"), Group = c(\"ex1\", \"ex1\", \n\"ex1\", \"ex1\", \"ex1\", \"ex3\"), Path = c(\"fig1.png\", \"fig10.png\", \n\"fig2.png\", \"materials/task.edat\", \"materials/task.txt\", \"study3/stimuli.edat2\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**output** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"results.tar.gz\", Group = \"—\", Path = \"results.tar.gz\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"weird.xyz123\", Group = \"—\", Path = \"weird.xyz123\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -315,7 +317,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 14 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs.\n-  We found 3 proprietary E-Prime files.\n-  We could not classify 1 file.\n-  The manuscript's studies and the repository's file groups do not match.\n-  We found 4 file naming problems to fix."
+          "\n-  We found 14 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs.\n-  We found 1 archive file.\n-  We found 3 proprietary E-Prime files.\n-  We could not classify 1 file.\n-  The manuscript's studies and the repository's file groups do not match.\n-  We found 4 file naming problems to fix."
         ]
       },
       {
@@ -324,6 +326,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -344,6 +347,12 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -373,7 +382,7 @@
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
@@ -565,6 +574,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -572,6 +609,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

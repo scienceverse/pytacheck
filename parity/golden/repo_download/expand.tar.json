@@ -52,8 +52,8 @@
       {
         "t": "chr",
         "v": [
-          "<TMP>/archive.tar.gz.contents/proj/code.R",
-          "<TMP>/archive.tar.gz.contents/proj/data.csv"
+          "<tempdir>/metacheck-archives/e68ea73a02997e2f9a3f9b3e9cd90838/proj/code.R",
+          "<tempdir>/metacheck-archives/e68ea73a02997e2f9a3f9b3e9cd90838/proj/data.csv"
         ]
       },
       {
@@ -66,8 +66,8 @@
       {
         "t": "chr",
         "v": [
-          "archive",
-          "archive"
+          "code",
+          "data"
         ]
       },
       {
@@ -107,6 +107,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

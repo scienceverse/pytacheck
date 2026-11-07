@@ -1,9 +1,26 @@
 {
   "id": "json_expand.error.zero_rows",
-  "ok": false,
-  "error": "Join columns in `y` must be present in the data.\n✖ Problem with `.temp_id.`.",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.1",
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [
+      "id",
+      "answer"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

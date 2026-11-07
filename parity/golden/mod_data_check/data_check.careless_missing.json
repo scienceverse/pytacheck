@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -127,6 +129,22 @@
               "survey.csv",
               "survey.csv",
               "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -335,6 +353,22 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -584,17 +618,17 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/carel**",
-          "```\n└── data/\n    └── survey.csv  📊 data ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n└── data/\n    └── survey.csv  📊 data ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(participant_id = 1:52, panas_1 = c(2L, 4L, 2L, \n3L, 2L, 4L, 4L, 3L, 3L, 4L, 4L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 4L, \n2L, 4L, 2L, 2L, 2L, 2L, 3L, 2L, 2L, 3L, 3L, 3L, 2L, 4L, 2L, 4L, \n3L, 3L, 3L, 3L, 4L, 3L, 2L, 4L, 3L, 2L, 2L, 4L, 3L, 3L, 4L, 3L, \n2L), panas_2 = c(4L, 3L, 3L, 3L, 3L, 2L, 3L, 3L, 3L, 3L, 2L, \n4L, 4L, 3L, 4L, 4L, 3L, 4L, 4L, 2L, 2L, 2L, 2L, 4L, 3L, 4L, 2L, \n2L, 3L, 2L, 2L, 2L, 2L, 4L, 3L, 2L, 2L, 4L, 4L, 4L, 3L, 3L, 3L, \n4L, 3L, 3L, 4L, 4L, 4L, 2L, 3L, 4L), panas_3 = c(3L, 3L, 2L, \n4L, 4L, 3L, 4L, 3L, 2L, 3L, 2L, 4L, 4L, 2L, 3L, 2L, 4L, 3L, 4L, \n4L, 2L, 2L, 3L, 3L, 3L, 2L, 2L, 2L, 3L, 2L, 4L, 3L, 4L, 4L, 3L, \n4L, 4L, 2L, 2L, 3L, 3L, 2L, 3L, 4L, 4L, 4L, 4L, 4L, 2L, 4L, 3L, \n2L), panas_4 = c(2L, 4L, 3L, 2L, 4L, 2L, 3L, 2L, 3L, 3L, 3L, \n4L, 2L, 3L, 4L, 4L, 4L, 4L, 3L, 4L, 2L, 4L, 2L, 3L, 3L, 3L, 4L, \n2L, 2L, 2L, 4L, 4L, 2L, 2L, 3L, 3L, 3L, 4L, 3L, 2L, 4L, 2L, 3L, \n2L, 4L, 2L, 2L, 4L, 4L, 2L, 3L, 4L), panas_5 = c(2L, 2L, 2L, \n2L, 2L, 2L, 3L, 3L, 3L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 3L, 2L, 3L, \n3L, 3L, 3L, 2L, 2L, 4L, 2L, 3L, 2L, 2L, 4L, 2L, 4L, 2L, 3L, 3L, \n3L, 4L, 2L, 4L, 2L, 2L, 2L, 4L, 2L, 4L, 3L, 2L, 4L, 4L, 3L, 3L, \n2L), panas_6 = c(2L, 4L, 3L, 2L, 3L, 4L, 2L, 3L, 3L, 3L, 2L, \n2L, 2L, 2L, 3L, 2L, 2L, 4L, 3L, 4L, 2L, 4L, 3L, 2L, 2L, 3L, 4L, \n4L, 4L, 4L, 3L, 2L, 3L, 2L, 2L, 4L, 3L, 4L, 4L, 4L, 3L, 3L, 2L, \n4L, 4L, 2L, 3L, 2L, 4L, 4L, 3L, 4L), panas_7 = c(2L, 2L, 3L, \n2L, 2L, 4L, 3L, 4L, 2L, 4L, 2L, 4L, 4L, 3L, 2L, 3L, 2L, 2L, 4L, \n3L, 3L, 4L, 2L, 2L, 4L, 3L, 2L, 4L, 4L, 2L, 4L, 3L, 2L, 3L, 3L, \n3L, 2L, 3L, 2L, 2L, 2L, 3L, 3L, 2L, 4L, 3L, 4L, 4L, 4L, 2L, 3L, \n2L), panas_8 = c(4L, 2L, 2L, 2L, 3L, 2L, 3L, 4L, 2L, 4L, 2L, \n2L, 4L, 2L, 4L, 4L, 4L, 3L, 2L, 2L, 3L, 4L, 4L, 3L, 4L, 2L, 4L, \n4L, 4L, 4L, 2L, 2L, 4L, 4L, 2L, 2L, 2L, 2L, 2L, 4L, 4L, 2L, 3L, \n4L, 4L, 4L, 3L, 3L, 2L, 3L, 3L, 4L), panas_9 = c(4L, 3L, 3L, \n3L, 2L, 2L, 2L, 2L, 3L, 2L, 2L, 3L, 3L, 2L, 2L, 2L, 4L, 3L, 3L, \n2L, 3L, 4L, 4L, 2L, 3L, 2L, 2L, 3L, 2L, 2L, 2L, 2L, 3L, 3L, 4L, \n3L, 2L, 2L, 3L, 3L, 2L, 2L, 4L, 4L, 2L, 4L, 3L, 3L, 4L, 4L, 3L, \n2L), panas_10 = c(2L, 4L, 2L, 3L, 2L, 2L, 4L, 3L, 3L, 3L, 2L, \n4L, 4L, 4L, 3L, 3L, 3L, 2L, 4L, 4L, 2L, 4L, 4L, 2L, 3L, 2L, 3L, \n4L, 4L, 3L, 3L, 3L, 2L, 3L, 2L, 2L, 3L, 3L, 3L, 4L, 2L, 4L, 3L, \n4L, 4L, 4L, 3L, 3L, 2L, 4L, 3L, 4L)), row.names = c(NA, 52L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"panas_1\", \"panas_10\", \"panas_2\", \"panas_3\", \n\"panas_4\", \"panas_5\", \"panas_6\", \"panas_7\", \"panas_8\", \"panas_9\", \n\"participant_id\"), Representation = c(\"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"text\"), Level = c(\"ordinal\", \"ordinal\", \"ordinal\", \n\"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\", \n\"ordinal\", \"nominal\"), Concept = c(\"likert\", \"likert\", \"likert\", \n\"likert\", \"likert\", \"likert\", \"likert\", \"likert\", \"likert\", \"likert\", \n\"id\"), Role = c(\"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \n\"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \"identifier\"\n), Unit = c(\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"), Rows = c(52L, \n52L, 52L, 52L, 52L, 52L, 52L, 52L, 52L, 52L, 52L), \"% Missing\" = c(0, \n0, 0, 0, 0, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(3L, 3L, 3L, 3L, \n3L, 3L, 3L, 3L, 3L, 3L, 52L), Mean = c(2.885, 3.077, 3.058, 3.058, \n3, 2.712, 3, 2.885, 3.038, 2.75, NA), SD = c(0.784, 0.788, 0.802, \n0.826, 0.84, 0.75, 0.84, 0.832, 0.907, 0.764, NA), Min = c(2, \n2, 2, 2, 2, 2, 2, 2, 2, 2, NA), Max = c(4, 4, 4, 4, 4, 4, 4, \n4, 4, 4, NA)), row.names = c(\"panas_1\", \"panas_10\", \"panas_2\", \n\"panas_3\", \"panas_4\", \"panas_5\", \"panas_6\", \"panas_7\", \"panas_8\", \n\"panas_9\", \"participant_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 11 columns across 1 data file.",
           "#### Careless Responding",
-          "1 file contain survey data with an identifier, but careless-response checks were skipped because the `careless` package is not installed. Install it with `install.packages(\"careless\")` to screen for straightlining and other careless responding."
+          "1 file contains survey data with an identifier, but careless-response checks were skipped because the `careless` package is not installed. Install it with `install.packages(\"careless\")` to screen for straightlining and other careless responding."
         ]
       },
       {
@@ -606,7 +640,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 11 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 11 columns and found no issues."
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 11 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1). We ran automated data-quality checks on 11 columns and found no issues."
         ]
       },
       {
@@ -812,6 +846,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -895,6 +930,12 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
             ]
           },
           {
@@ -1598,6 +1639,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

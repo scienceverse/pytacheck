@@ -1,0 +1,8 @@
+---
+title: Quarto slides
+---
+
+```{r}
+scores <- read.csv("data/scores.csv")
+mean(scores$score)
+```

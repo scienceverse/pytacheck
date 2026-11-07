@@ -144,8 +144,8 @@
         "nrow": 2,
         "names": [
           "paper_id",
-          "miscite_10.1371/journal.pone.0090779",
-          "miscite_10.1016/j.jml.2012.11.001"
+          "miscite_10.1016/j.jml.2012.11.001",
+          "miscite_10.1371/journal.pone.0090779"
         ],
         "v": [
           {
@@ -159,20 +159,20 @@
             "t": "int",
             "v": [
               null,
-              0
+              1
             ]
           },
           {
             "t": "int",
             "v": [
               null,
-              1
+              0
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

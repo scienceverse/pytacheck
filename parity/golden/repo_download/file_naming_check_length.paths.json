@@ -33,14 +33,14 @@
       {
         "t": "chr",
         "v": [
-          "directory-length-100 is 120 characters, over the 100-character budget",
-          "filename-length-50 is 51 characters, over the 50-character budget",
-          "filename-length-50 is 101 characters, over the 50-character budget",
-          "filename-length-50 is 60 characters, over the 50-character budget"
+          "The folder path is 120 characters, over the recommended 100",
+          "The file name is 51 characters, over the recommended 50",
+          "The file name is 101 characters, over the recommended 50",
+          "The file name is 60 characters, over the recommended 50"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

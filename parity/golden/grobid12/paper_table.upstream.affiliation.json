@@ -46,9 +46,9 @@
           "Department of Psychology\n\t\t\t\t\t\t\t\tMcMaster University\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\tL8S 4K1\n\t\t\t\t\t\t\t\t\tHamilton\n\t\t\t\t\t\t\t\t\tOntario\n\t\t\t\t\t\t\t\t\tCanada",
           "Department of Psychology\n\t\t\t\t\t\t\t\tThe Perception Lab\n\t\t\t\t\t\t\t\tMcMaster University\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\tL8S 4K1\n\t\t\t\t\t\t\t\t\tHamilton\n\t\t\t\t\t\t\t\t\tOntario\n\t\t\t\t\t\t\t\t\tCanada",
           "Department of Differential Psychology and Psychological Assessment\n\t\t\t\t\t\t\t\tUniversity of Hamburg",
-          "Department of Social Psychology\n\t\t\t\t\t\t\t\tDifferential Psychology and Psychological Assessment\n\t\t\t\t\t\t\t\tUniversity of Amsterdam\n\t\t\t\t\t\t\t\tUniversity of Hamburg\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\tVon-Melle-Park5\n\t\t\t\t\t\t\t\t\t20146\n\t\t\t\t\t\t\t\t\tHamburg\n\t\t\t\t\t\t\t\t\tGermany",
+          "Department of Social Psychology\n\t\t\t\t\t\t\t\tDifferential Psychology and Psychological Assessment\n\t\t\t\t\t\t\t\tUniversity of Amsterdam\n\t\t\t\t\t\t\t\tUniversity of Hamburg\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\tVon-Melle-Park 5\n\t\t\t\t\t\t\t\t\t20146\n\t\t\t\t\t\t\t\t\tHamburg\n\t\t\t\t\t\t\t\t\tGermany",
           "Department of Differential Psychology and Psychological Assessment\n\t\t\t\t\t\t\t\tUniversity of Hamburg",
-          "Department of Social Psychology\n\t\t\t\t\t\t\t\tDepartment of Differential Psychology and Psychological Assessment\n\t\t\t\t\t\t\t\tUniversity of Amsterdam\n\t\t\t\t\t\t\t\tUniversity of Hamburg\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\tVon-Melle-Park5\n\t\t\t\t\t\t\t\t\t20146\n\t\t\t\t\t\t\t\t\tHamburg\n\t\t\t\t\t\t\t\t\tGermany",
+          "Department of Social Psychology\n\t\t\t\t\t\t\t\tDepartment of Differential Psychology and Psychological Assessment\n\t\t\t\t\t\t\t\tUniversity of Amsterdam\n\t\t\t\t\t\t\t\tUniversity of Hamburg\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\tVon-Melle-Park 5\n\t\t\t\t\t\t\t\t\t20146\n\t\t\t\t\t\t\t\t\tHamburg\n\t\t\t\t\t\t\t\t\tGermany",
           "Medical Research Council, Cognition and Brain Sciences Unit\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\tCambridge\n\t\t\t\t\t\t\t\t\tUnited Kingdom;",
           "Department of Experimental Psychology\n\t\t\t\t\t\t\t\tUniversity of Oxford",
           "Department of Psychology, City\n\t\t\t\t\t\t\t\tUniversity of London",
@@ -276,6 +276,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1,0 +1,58 @@
+{
+  "id": "sheet_target.notes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "documentation/study-harvest_description-README_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "documentation/study-harvest_description-Codebook_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "documentation/study-harvest_description-Notes_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-harvest_description-Variables_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "study-ex1/documentation/study-ex1_harvest_description-Datadictionary_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "study-ex1/documentation/study-ex1_harvest_description-Legend_data.csv"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

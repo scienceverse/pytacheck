@@ -3,11 +3,11 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "1 of 3 files from Figshare article 700002 did not arrive intact (e.g. a.bin). The returned table marks it downloaded = FALSE. Run again to retry."
+    "1 of 5 files from Figshare article 700002 did not arrive intact (e.g. a.bin). The returned table marks it downloaded = FALSE. Run again to retry."
   ],
   "value": {
     "t": "df",
-    "nrow": 3,
+    "nrow": 5,
     "names": [
       "folder",
       "figshare_id",
@@ -28,12 +28,16 @@
         "v": [
           "figshare_700002",
           "figshare_700002",
+          "figshare_700002",
+          "figshare_700002",
           "figshare_700002"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "700002",
+          "700002",
           "700002",
           "700002",
           "700002"
@@ -44,6 +48,8 @@
         "v": [
           "700201",
           "700202",
+          "700203",
+          "700204",
           "700205"
         ]
       },
@@ -52,6 +58,8 @@
         "v": [
           "a.bin",
           "b.bin",
+          "c.bin",
+          "d.bin",
           "e.csv"
         ]
       },
@@ -60,6 +68,8 @@
         "v": [
           null,
           "b.bin",
+          null,
+          null,
           "e.csv"
         ]
       },
@@ -68,6 +78,8 @@
         "v": [
           41943040,
           null,
+          62914560,
+          62914560,
           8
         ]
       },
@@ -76,6 +88,8 @@
         "v": [
           null,
           5,
+          null,
+          null,
           8
         ]
       },
@@ -84,12 +98,16 @@
         "v": [
           null,
           null,
+          null,
+          null,
           null
         ]
       },
       {
         "t": "lgl",
         "v": [
+          null,
+          null,
           null,
           null,
           null
@@ -100,6 +118,8 @@
         "v": [
           "https://ndownloader.figshare.com/files/700201",
           "https://ndownloader.figshare.com/files/700202",
+          "https://ndownloader.figshare.com/files/700203",
+          "https://ndownloader.figshare.com/files/700204",
           "https://ndownloader.figshare.com/files/700205"
         ]
       },
@@ -108,6 +128,8 @@
         "v": [
           false,
           true,
+          false,
+          false,
           true
         ]
       },
@@ -116,11 +138,13 @@
         "v": [
           null,
           null,
+          null,
+          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

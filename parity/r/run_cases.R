@@ -243,6 +243,7 @@ run_case <- function(case) {
 
 total <- 0
 failed <- 0
+unwritten <- 0
 # Goldens must not change from run to run or machine to machine. In every
 # string of a golden:
 # * the checkout directory is "<repo>" (parity/canonical.py writes the Python
@@ -256,6 +257,10 @@ failed <- 0
 .pc_stamp <- "[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:?[0-9]{2})?"
 
 portable_json <- function(json, started, finished) {
+  # A result can hold strings that are not valid UTF-8 (file names with stray
+  # bytes, which metacheck 0.4 checks instead of failing on): their bytes are
+  # written as R writes them in messages, "caf<82>.csv", so the JSON is text.
+  if (!validUTF8(json)) json <- iconv(json, "UTF-8", "UTF-8", sub = "byte")
   subs <- c(
     "<repo>" = root,
     "<tempdir>" = tempdir(),
@@ -316,7 +321,18 @@ for (f in files) {
     res <- run_case(case)
     finished <- Sys.time()
     if (!isTRUE(res$ok)) failed <- failed + 1
-    json <- portable_json(as.character(pc_to_json(res, pretty = TRUE)), started, finished)
+    # A result the harness cannot write stops only this case, not the session
+    # (and the cases after it in the file).
+    json <- tryCatch(
+      portable_json(as.character(pc_to_json(res, pretty = TRUE)), started, finished),
+      error = function(e) e
+    )
+    if (inherits(json, "error")) {
+      unwritten <- unwritten + 1
+      cat(sprintf("[HARNESS] %s/%s: the result could not be written: %s\n", area, case$id,
+                  conditionMessage(json)))
+      next
+    }
     writeLines(enc2utf8(json), file.path(outdir, paste0(case$id, ".json")),
                useBytes = TRUE)
     cat(sprintf("[%s] %s/%s%s\n", if (res$ok) "ok" else "ERR", area, case$id,
@@ -324,3 +340,7 @@ for (f in files) {
   }
 }
 cat(sprintf("%d cases, %d raised errors in R\n", total, failed))
+if (unwritten > 0) {
+  cat(sprintf("%d results could not be written\n", unwritten))
+  quit(status = 1)
+}

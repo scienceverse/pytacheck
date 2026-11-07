@@ -1,0 +1,21 @@
+{
+  "id": "readme_title.missing_file",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "cannot open file '<repo>/tests/fair/fixtures/review_files/readme.MD': No such file or directory"
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1534,7 +1534,7 @@
             udc82.R\"]"
 - "id": "invalid.check_file_naming"
   "r": "check_file_naming"
-  "py": "metacheck.fileinfo.naming.check_file_naming"
+  "py": "tests.repo_download._review_helpers.naming"
   "args":
     "file_name":
       "$expr":
@@ -1543,7 +1543,7 @@
           ]"
 - "id": "invalid.check_file_naming_path"
   "r": "check_file_naming"
-  "py": "metacheck.fileinfo.naming.check_file_naming"
+  "py": "tests.repo_download._review_helpers.naming"
   "args":
     "file_name": "ok.csv"
     "file_path":
@@ -1552,7 +1552,7 @@
         "py": "\"d\\udc82/ok.csv\""
 - "id": "invalid.check_file_naming_dir_only"
   "r": "check_file_naming"
-  "py": "metacheck.fileinfo.naming.check_file_naming"
+  "py": "tests.repo_download._review_helpers.naming"
   "args":
     "file_name":
       "$expr":

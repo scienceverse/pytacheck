@@ -4,9 +4,8 @@
   "error": null,
   "warnings": [
     "Repository https://osf.io/dlmixed holds 6 files, exceeding the 2-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it.",
-    "Repository https://osf.io/dlmixed holds 4 files, exceeding the 2-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it.",
     "Repository https://osf.io/dlmixed holds 6 files, exceeding the 2-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it.",
-    "Repository https://osf.io/dlmixed holds 4 files, exceeding the 2-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
+    "Repository https://osf.io/dlmixed holds 6 files, exceeding the 2-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
   ],
   "value": {
     "t": "module_output",
@@ -55,7 +54,24 @@
           "file_size",
           "language",
           "checked",
-          "error"
+          "parse_error",
+          "parse_error_msg",
+          "code_abs_path",
+          "absolute_paths",
+          "code_setwd",
+          "setwd_calls",
+          "code_install_packages",
+          "install_packages_calls",
+          "library_lines",
+          "library_max_between",
+          "packages_n",
+          "packages",
+          "comment_lines",
+          "code_lines",
+          "percentage_comment",
+          "has_docstring",
+          "loaded_files_missing",
+          "loaded_files_missing_names"
         ],
         "v": [
           {
@@ -159,12 +175,182 @@
             ]
           },
           {
+            "t": "lgl",
+            "v": [
+              false,
+              null,
+              false,
+              null,
+              null
+            ]
+          },
+          {
             "t": "chr",
             "v": [
-              "'file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.R' does not exist in current working directory ('<ROOT>').",
-              "'file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.do' does not exist in current working directory ('<ROOT>').",
-              "'file://<ROOT>/tests/mod_code/fixtures/mixed/report.Rmd' does not exist in current working directory ('<ROOT>').",
-              "'file://<ROOT>/tests/mod_code/fixtures/mixed/script.py' does not exist in current working directory ('<ROOT>').",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              0,
+              0,
+              1,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "C:/Users/lisa/project | C:/Users/lisa/project/raw.csv",
+              "",
+              "",
+              "/home/lisa/data/trials.csv",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0,
+              0,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "setwd(\"C:/Users/lisa/project\")",
+              "",
+              "",
+              "",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0,
+              0,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "install.packages(\"lme4\")",
+              "",
+              "",
+              "",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              0,
+              1,
+              2,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9,
+              null,
+              null,
+              1,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              0,
+              2,
+              2,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dplyr, ggplot2, lme4",
+              "",
+              "readr, tidyr",
+              "numpy, pandas",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              1,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11,
+              3,
+              3,
+              6,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.0833333333333333,
+              0.5,
+              0.25,
+              0,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              true,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              1,
+              0,
+              1,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "raw.csv, model_fit.rds",
+              "data.dta",
+              "",
+              "trials.csv",
               null
             ]
           }
@@ -174,27 +360,27 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.do' target='_blank'>analysis.do<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/report.Rmd' target='_blank'>report.Rmd<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/script.py' target='_blank'>script.py<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/results.jasp' target='_blank'>results.jasp<\/a>\"\n)), row.names = c(NA, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.do' target='_blank'>analysis.do<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/report.Rmd' target='_blank'>report.Rmd<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/script.py' target='_blank'>script.py<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/results.jasp' target='_blank'>results.jasp<\/a>\"\n), \"% Comments\" = c(\"8%\", \"50%\", \"25%\", \"0%\", \"\"), \"Missing Files\" = c(2L, \n1L, 0L, 1L, NA), \"Absolute Paths\" = c(2L, 0L, 0L, 1L, NA), \"Code Between Libraries\" = c(9L, \nNA, NA, 1L, NA)), row.names = c(NA, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
-          "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). None of the files found could be checked for comments.",
+          "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). Note: this percentage counts only `#` comments; 1 of these Python file is documented via docstrings (`\"\"\"...\"\"\"`), which are not counted as comments here since they are string literals, not comment syntax.",
           "#### Missing Files",
-          "All files loaded in the code were present in the repository.",
-          "",
+          "The scripts load files, but 3 scripts loaded 4 files that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"analysis.R\", \"analysis.do\", \"script.py\"\n), \"Missing Files\" = c(\"raw.csv, model_fit.rds\", \"data.dta\", \n\"trials.csv\")), row.names = c(1L, 2L, 4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Absolute Paths",
-          "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
-          "",
+          "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. The following absolute file paths were found in 2 code files. However, these may be false positives in code like `paste0(dir, '/file.csv')`. ",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"analysis.R\", \"script.py\"), \"Absolute paths found\" = c(\"C:/Users/lisa/project | C:/Users/lisa/project/raw.csv\", \n\"/home/lisa/data/trials.csv\")), row.names = c(1L, 4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Working Directory (setwd)",
-          "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
-          "",
+          "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. `setwd()` calls were found in 1 code file.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"analysis.R\", \"setwd() calls found\" = \"setwd(\\\"C:/Users/lisa/project\\\")\"), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Package Installation (install.packages)",
-          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.",
-          "",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, or a list of them: an `renv.lock`/`DESCRIPTION` for R, a `requirements.txt` for Python). `install.packages()` calls were found in 1 code file.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"analysis.R\", \"install.packages() calls found\" = \"install.packages(\\\"lme4\\\")\"), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Libraries / Imports",
-          "Best programming practice is to load all required libraries/imports in one block near the top of the code. In all code files, libraries/imports were loaded in one block.",
+          "Best programming practice is to load all required libraries/imports in one block near the top of the code. In 1 code file, libraries/imports were at multiple places (i.e., with more than 3 non-comment lines in between).",
           "#### Packages / Dependencies",
-          "No packages/libraries were detected as loaded in the code files. (This check reads R and Python imports; other languages are not scanned for packages.) Even when no imports are detected, it is good practice to record the exact package versions the analysis depended on — see \"Reproducible Environment\" below.",
+          "The code files load 7 distinct packages/libraries: dplyr, ggplot2, lme4, numpy, pandas, readr, tidyr. These are the names found in the source (no version information is available from static analysis).",
           "#### Reproducible Environment",
-          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the code — or, for Python code, a `requirements.txt` (not currently checked for by this module, but still good practice to include).",
+          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or a `groundhog`/`checkpoint` date-pin alongside the code.\n\nNo list of the Python packages the code needs (a `requirements.txt`, `environment.yml`, `Pipfile.lock`, `poetry.lock`, `uv.lock` or `pyproject.toml`) was found anywhere in the repository. Without one, the package versions used for the analysis are not recoverable, and they may drift between when this analysis was run and any later reproduction attempt. Consider depositing a `requirements.txt` that lists each package with its version (for example the output of `pip freeze`).",
           "",
           "#### Parsable code",
           "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.",
@@ -204,13 +390,13 @@
       {
         "t": "chr",
         "v": [
-          "na"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We found 2 R, 1 Python, 0 SAS, 0 SPSS, 1 Stata, 0 Mplus, 0 MATLAB, and 1 JASP code files. Repository https://osf.io/dlmixed holds 6 files, exceeding the 2-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it. Repository https://osf.io/dlmixed holds 4 files, exceeding the 2-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it.\n-  No code files could be checked for comments.\n-  All files loaded in the code were present in the repository.\n-  No absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  All libraries/imports were loaded in one block.\n-  No packages/libraries were detected in the code.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  No parsing issues of R-type files were found."
+          "\n-  We found 2 R, 1 Python, 0 SAS, 0 SPSS, 1 Stata, 0 Mplus, 0 MATLAB, and 1 JASP code files. Repository https://osf.io/dlmixed holds 6 files, exceeding the 2-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it.\n-  1 code file (script.py) had no comments.\n-  setwd() calls were found.\n-  install.packages() calls were found.\n-  Libraries/imports were loaded in multiple places in analysis.R.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility.\n-  No list of Python package versions (requirements.txt or similar) was found. Consider adding one to improve computational reproducibility."
         ]
       },
       {
@@ -251,36 +437,30 @@
           {
             "t": "int",
             "v": [
-              0
+              3
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              4
             ]
           },
           {
             "t": "dbl",
             "v": [
-              null
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
               0
             ]
           },
@@ -288,6 +468,12 @@
             "t": "int",
             "v": [
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
             ]
           },
           {
@@ -316,6 +502,10 @@
           "renv_files",
           "renv_packages",
           "sessioninfo_files",
+          "session_packages",
+          "pin_dates",
+          "python_files",
+          "python_pinned",
           "file_location"
         ],
         "v": [
@@ -344,9 +534,14 @@
               "file_name",
               "package",
               "version",
-              "source"
+              "source",
+              "remote"
             ],
             "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
               {
                 "t": "chr",
                 "v": []
@@ -370,6 +565,67 @@
             "v": []
           },
           {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source",
+              "remote"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "mechanism",
+              "date"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
             "t": "chr",
             "v": []
           }
@@ -377,6 +633,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

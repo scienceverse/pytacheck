@@ -2,14 +2,16 @@
   "id": "read.list.twins_and_repeats",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "1 paper shared a paper_id with an earlier paper and was renamed: probe~2"
+  ],
   "value": {
     "t": "paperlist",
     "names": [
       "Z",
       "probe",
       "p",
-      "probe"
+      "probe~2"
     ],
     "v": [
       {
@@ -2565,6 +2567,9 @@
           {
             "t": "chr",
             "v": [
+              "probe~2"
+            ],
+            "names": [
               "probe"
             ]
           },
@@ -4346,6 +4351,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

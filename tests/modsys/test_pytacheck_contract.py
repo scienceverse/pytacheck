@@ -309,6 +309,7 @@ def test_repo_info_cache_entries_written_by_0_4_0a1_are_hits(tmp_path: Path) -> 
     from metacheck.archives.info_cache import _repo_info_cache_get, _repo_info_cache_path
     from metacheck.utils import local_options
 
+    (tmp_path / "info").mkdir()  # a lookup does not make the folder (metacheck 0.4.3.7)
     with local_options({"metacheck.repo_info_cache.dir": str(tmp_path / "info")}):
         Path(_repo_info_cache_path("osf", "old")).write_bytes(
             b'{"format": "pytacheck.repo_info_cache", "version": 1, "value": 1}'
@@ -325,6 +326,7 @@ def test_repo_info_cache_entries_of_another_version_are_misses(tmp_path: Path) -
     from metacheck.archives.info_cache import _repo_info_cache_get, _repo_info_cache_path
     from metacheck.utils import local_options
 
+    (tmp_path / "info").mkdir()  # a lookup does not make the folder (metacheck 0.4.3.7)
     with local_options({"metacheck.repo_info_cache.dir": str(tmp_path / "info")}):
         for fmt in ("pytacheck.repo_info_cache", "metacheck.repo_info_cache"):
             Path(_repo_info_cache_path("osf", "old")).write_bytes(

@@ -2,19 +2,23 @@
   "id": "osf_check_id.realistic_non_ids",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "https://osf.io/prereg/ is not a valid OSF ID",
+    "https://osf.io/registries is not a valid OSF ID",
+    "osf.io/n7sfm. is not a valid OSF ID"
+  ],
   "value": {
     "t": "chr",
     "v": [
-      "565fb3678c5e4a66b5582f67",
-      "564d31db8c5e4a7c9694b2be",
-      "prere",
-      "regis",
-      "prepr",
+      "a5bmw",
+      "zmf4c",
+      null,
+      null,
+      "abcde",
       "6846ed88e49694cd45ab8375",
-      "n7sfm"
+      null
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

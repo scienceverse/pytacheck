@@ -12,7 +12,8 @@
       "file_path",
       "file_url",
       "file_location",
-      "file_size"
+      "file_size",
+      "recovered_from"
     ],
     "v": [
       {
@@ -57,7 +58,7 @@
           "tests/codecheck/fixtures/expand/analysis.smcl",
           "tests/codecheck/fixtures/expand/nocommands.smcl",
           "tests/codecheck/fixtures/expand/x.R",
-          "tests/codecheck/fixtures/expand/code/analysis.do"
+          "<tempdir>/metacheck-recovered-code/d0d14e61850eca599304a590fd45a799/code/analysis.do"
         ]
       },
       {
@@ -68,9 +69,18 @@
           1,
           274
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "sub/analysis.smcl"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

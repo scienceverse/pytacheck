@@ -2,7 +2,10 @@
   "id": "power.review.llm.no_wrapper",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. For the statistical test, effect size metric and software, use one of the suggested values when it fits, and otherwise give the name as written in the text. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"The a priori power analysis targeted 95% power with 44 participants.\"}]}],\"model\":\"test-model\",\"temperature\":0,\"seed\":8675309,\"max_completion_tokens\":4096,\"stream\":false,\"response_format\":{\"type\":\"json_schema\",\"json_schema\":{\"name\":\"structured_data\",\"schema\":{\"type\":\"object\",\"description\":\"\",\"properties\":{\"power_analyses\":{\"type\":\"array\",\"description\":\"Power analyses found in the text. Empty array if none.\",\"items\":{\"type\":\"object\",\"description\":\"\",\"properties\":{\"power_type\":{\"type\":\"string\",\"description\":\"The type of power analysis, one of 'apriori', 'sensitivity', 'posthoc' or 'unknown'. 'apriori' calculates the required sample size to achieve a desired power given an effect size, statistical test, and alpha level. 'sensitivity' estimates, given a sample size, which effect sizes a design has sufficient power to detect. 'posthoc' (observed/retrospective power) computes achieved power for an empirically observed effect size. Use 'unknown' if a power analysis is present but its type cannot be determined.\"},\"statistical_test\":{\"type\":[\"string\",\"null\"],\"description\":\"The statistical test used: one of 'paired t-test', 'unpaired t-test', 'one-sample t-test', '1-way ANOVA', '2-way ANOVA', '3-way ANOVA', 'MANOVA', 'regression', 'chi-square', 'correlation', or else the test's name as written in the text.\"},\"sample_size\":{\"type\":[\"number\",\"null\"],\"description\":\"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\"},\"alpha_level\":{\"type\":[\"number\",\"null\"],\"description\":\"The alpha threshold used to determine significance.\"},\"power\":{\"type\":[\"number\",\"null\"],\"description\":\"The statistical power, expressed as a number between 0 and 1.\"},\"effect_size\":{\"type\":[\"number\",\"null\"],\"description\":\"The numeric effect size used in or determined from the power analysis.\"},\"effect_size_metric\":{\"type\":[\"string\",\"null\"],\"description\":\"The effect size metric: one of 'Cohen's d', 'Hedges' g', 'Cohen's f', 'partial eta squared', 'eta squared', 'unstandardised' (for raw/non-standardized effects), or else the metric as written in the text.\"},\"software\":{\"type\":[\"string\",\"null\"],\"description\":\"The software used to conduct the power analysis, as named in the text (e.g. 'G*Power', 'pwr', 'simr', 'Superpower', 'PASS', 'POWSIM'), or 'simulation' for a simulation without named software.\"}},\"required\":[\"power_type\",\"statistical_test\",\"sample_size\",\"alpha_level\",\"power\",\"effect_size\",\"effect_size_metric\",\"software\"],\"additionalProperties\":false}}},\"required\":[\"power_analyses\"],\"additionalProperties\":false},\"strict\":true}}}\nExpected mock file: api.groq.com/openai/v1/chat/completions-f2bd37-POST.*",
+    "There were errors in the following rows: 1 \n  *  An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Identify and classify power analyses from exerpts of scientific manuscripts. Use null when information is missing, do not invent values. Only use 'other' if a value not in the enumerated options can be identified. There may be no power analysis in the text, or more than one. If the paragraph only references a power analysis implied to be presented elsewhere in the paper, or explicitly states that no power analysis was run, classify power_type as 'none'. Return an array of objects, as defined by the JSON schema below, in the same order as in the paragraphs, bracketed by ```json and ```.\\n\\n{\\n  \\\"$schema\\\": \\\"https://json-schema.org/draft/2020-12/schema\\\",\\n  \\\"$id\\\": \\\"https://scienceverse.org/schema/power.json\\\",\\n  \\\"title\\\": \\\"Power Analyses\\\",\\n  \\\"description\\\": \\\"A power analysis.\\\",\\n  \\\"type\\\": \\\"object\\\",\\n  \\\"properties\\\": {\\n    \\\"text\\\": {\\n      \\\"description\\\": \\\"The specific text that contains all of the information used to determine this object's properties.\\\",\\n      \\\"type\\\": [\\\"string\\\", \\\"null\\\"]\\n    },\\n\\n    \\\"power_type\\\": {\\n      \\\"description\\\": \\\"The type of power analysis. An 'apriori' power analysis is used to calculate the required sample size to achieve a desired level of statistical power given an effect size, statistical test, and alpha level. A 'sensitivity' analysis is used to estimate, given a sample size, which effect sizes a design has sufficient power (e.g., 80% or 90%) to detect, given a statistical test and alpha level. A 'posthoc' power analysis (also referred to as observed power, or retrospective power) uses an empirically observed effect size, and computes the achieved power for that empirically observed effect size, given a statistical test and alpha level.\\\",\\n      \\\"type\\\": [\\\"string\\\", \\\"null\\\"],\\n      \\\"enum\\\": [\\\"apriori\\\", \\\"sensitivity\\\", \\\"posthoc\\\", \\\"unknown\\\", \\\"none\\\", null]\\n    },\\n\\n    \\\"statistical_test\\\": {\\n      \\\"description\\\": \\\"The statistical test used. Use null if unclear.\\\",\\n      \\\"type\\\": [\\\"string\\\", \\\"null\\\"],\\n      \\\"enum\\\": [\\n        \\\"paired t-test\\\",\\n        \\\"unpaired t-test\\\",\\n        \\\"one-sample t-test\\\",\\n        \\\"1-way ANOVA\\\",\\n        \\\"2-way ANOVA\\\",\\n        \\\"3-way ANOVA\\\",\\n        \\\"MANOVA\\\",\\n        \\\"regression\\\",\\n        \\\"chi-square\\\",\\n        \\\"correlation\\\",\\n        \\\"other\\\",\\n        null\\n      ]\\n    },\\n\\n    \\\"statistical_test_other\\\": {\\n      \\\"description\\\": \\\"Free-text description if statistical_test is 'other', otherwise null.\\\",\\n      \\\"type\\\": [\\\"string\\\", \\\"null\\\"]\\n    },\\n\\n    \\\"sample_size\\\": {\\n      \\\"description\\\": \\\"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\\\",\\n      \\\"type\\\": [\\\"number\\\", \\\"null\\\"],\\n      \\\"minimum\\\": 0\\n    },\\n\\n    \\\"alpha_level\\\": {\\n      \\\"description\\\": \\\"The alpha threshold used to determine significance.\\\",\\n      \\\"type\\\": [\\\"number\\\", \\\"null\\\"],\\n      \\\"exclusiveMinimum\\\": 0,\\n      \\\"maximum\\\": 1\\n    },\\n\\n    \\\"power\\\": {\\n      \\\"description\\\" : \\\"The statistical power, expressed as a number between 0 and 1.\\\",\\n      \\\"type\\\": [\\\"number\\\", \\\"null\\\"],\\n      \\\"minimum\\\": 0,\\n      \\\"maximum\\\": 1\\n    },\\n\\n    \\\"effect_size\\\": {\\n      \\\"description\\\": \\\"The numeric effect size used in or determined from the power analysis.\\\",\\n      \\\"type\\\": [\\\"number\\\", \\\"null\\\"]\\n    },\\n\\n    \\\"effect_size_metric\\\": {\\n      \\\"description\\\": \\\"The effect size metric. Use 'unstandardised' for raw/non-standardized effects.\\\",\\n      \\\"type\\\": [\\\"string\\\", \\\"null\\\"],\\n      \\\"enum\\\": [\\n        \\\"Cohen's d\\\",\\n        \\\"Hedges' g\\\",\\n        \\\"Cohen's f\\\",\\n        \\\"partial eta squared\\\",\\n        \\\"eta squared\\\",\\n        \\\"unstandardised\\\",\\n        \\\"other\\\",\\n        null\\n      ]\\n    },\\n\\n    \\\"effect_size_metric_other\\\": {\\n      \\\"description\\\": \\\"Free-text description if effect_size_metric is 'other', otherwise null.\\\",\\n      \\\"type\\\": [\\\"string\\\", \\\"null\\\"]\\n    },\\n\\n    \\\"software\\\": {\\n      \\\"description\\\": \\\"The software used to conduct the power analysis.\\\",\\n      \\\"type\\\": [\\\"string\\\", \\\"null\\\"],\\n      \\\"enum\\\": [\\n        \\\"G*Power\\\",\\n        \\\"Superpower\\\",\\n        \\\"Pangea\\\",\\n        \\\"Morepower\\\",\\n        \\\"PASS\\\",\\n        \\\"pwr\\\",\\n        \\\"simr\\\",\\n        \\\"PowerUpR\\\",\\n        \\\"simulation\\\",\\n        \\\"InteractionPoweR\\\",\\n        \\\"pwrss\\\",\\n        \\\"other\\\",\\n        null\\n      ]\\n    }\\n  },\\n\\n  \\\"required\\\": [\\n    \\\"power_type\\\",\\n    \\\"statistical_test\\\",\\n    \\\"statistical_test_other\\\",\\n    \\\"sample_size\\\",\\n    \\\"alpha_level\\\",\\n    \\\"power\\\",\\n    \\\"effect_size\\\",\\n    \\\"effect_size_metric\\\",\\n    \\\"effect_size_metric_other\\\",\\n    \\\"software\\\"\\n  ],\\n\\n  \\\"additionalProperties\\\": false\\n}\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"The a priori power analysis targeted 95% power with 44 participants.\"}]}],\"model\":\"test-model\",\"temperature\":0,\"seed\":8675309,\"max_completion_tokens\":4096,\"stream\":false}\nExpected mock file: api.groq.com/openai/v1/chat/completions-4cc557-POST.*"
+  ],
   "value": {
     "t": "module_output",
     "names": [
@@ -47,17 +50,22 @@
           "paper_id",
           "header",
           "section_type",
+          "answer",
+          "error",
+          "error_msg",
+          "error.power",
           "power_type",
           "statistical_test",
-          "statistical_test_other",
           "sample_size",
           "alpha_level",
           "power",
           "effect_size",
           "effect_size_metric",
-          "effect_size_metric_other",
           "software",
-          "complete"
+          "complete",
+          "statistical_test_other",
+          "effect_size_metric_other",
+          "software_other"
         ],
         "v": [
           {
@@ -97,27 +105,11 @@
             "v": []
           },
           {
-            "t": "chr",
+            "t": "lgl",
             "v": []
           },
           {
             "t": "chr",
-            "v": []
-          },
-          {
-            "t": "dbl",
-            "v": []
-          },
-          {
-            "t": "dbl",
-            "v": []
-          },
-          {
-            "t": "dbl",
-            "v": []
-          },
-          {
-            "t": "dbl",
             "v": []
           },
           {
@@ -135,13 +127,49 @@
           {
             "t": "lgl",
             "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "No power analyses were detected.",
+          "The LLM check for power analyses failed to run; no results could be extracted. This is not the same as finding no power analyses -- please check manually or re-run the check.",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
         ]
       },
@@ -154,7 +182,7 @@
       {
         "t": "chr",
         "v": [
-          "No power analyses were detected."
+          "The LLM check for power analyses failed to run; no results could be extracted. This is not the same as finding no power analyses -- please check manually or re-run the check."
         ]
       },
       {
@@ -163,7 +191,8 @@
         "names": [
           "paper_id",
           "power_n",
-          "power_complete"
+          "power_complete",
+          "power_unchecked"
         ],
         "v": [
           {
@@ -183,20 +212,28 @@
             "v": [
               null
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
           0
         ],
         "names": [
-          "power_n"
+          "power_n",
+          "power_unchecked"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

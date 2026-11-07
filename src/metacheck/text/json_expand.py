@@ -61,10 +61,43 @@ def _rows(value: Any) -> list[dict[str, Any]]:
     elif isinstance(j, list) and any(isinstance(v, dict) for v in j):
         if not all(isinstance(v, dict) or v is None for v in j):
             return [{_ERROR: "not a list"}]
-        objects = [v or {} for v in j]  # an array of objects: one row each
+        # an array of objects: one row each, nested objects as columns "a.b"
+        objects = [v or {} for v in j]
+        nested = _object_paths(objects)
+        return [_flatten(obj, "", nested) for obj in objects]
     else:
         return [{_ERROR: "not a list"}]
     return [{k: _cell(v) for k, v in obj.items()} for obj in objects]
+
+
+def _object_paths(objects: list[dict[str, Any]], prefix: str = "") -> set[str]:
+    """The paths (``a``, ``a.b``) that hold a non-empty object in at least one of *objects*."""
+    paths: set[str] = set()
+    for obj in objects:
+        for k, v in obj.items():
+            if isinstance(v, dict) and v:
+                paths.add(prefix + k)
+                paths |= _object_paths([v], prefix + k + ".")
+    return paths
+
+
+def _flatten(obj: dict[str, Any], prefix: str, nested: set[str]) -> dict[str, Any]:
+    """One object as a row: a nested object is a column per key, named ``a.b`` (``jsonlite::flatten()``).
+
+    A ``null`` or ``{}`` where other rows have an object is no column of its own.
+    """
+    row: dict[str, Any] = {}
+    for k, v in obj.items():
+        path = prefix + k
+        if isinstance(v, dict) and v:
+            continue
+        if (v is None or v == {}) and path in nested:
+            continue
+        row[path] = _cell(v)
+    for k, v in obj.items():  # the flattened columns come after the others
+        if isinstance(v, dict) and v:
+            row.update(_flatten(v, prefix + k + ".", nested))
+    return row
 
 
 def _cell(v: Any) -> Any:

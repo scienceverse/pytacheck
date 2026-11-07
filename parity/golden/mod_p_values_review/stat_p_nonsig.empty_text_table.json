@@ -13,8 +13,7 @@
       "report",
       "traffic_light",
       "summary_text",
-      "summary_table",
-      "na_replace"
+      "summary_table"
     ],
     "v": [
       {
@@ -36,98 +35,31 @@
         ]
       },
       {
-        "t": "df",
-        "nrow": 0,
-        "names": [
-          "text_id",
-          "section_id",
-          "paragraph_id",
-          "text",
-          "formatted",
-          "paper_id",
-          "header",
-          "section_type",
-          "p_comp",
-          "p_value",
-          "significance",
-          "expanded"
-        ],
+        "t": "null"
+      },
+      {
+        "t": "chr",
         "v": [
-          {
-            "t": "int",
-            "v": []
-          },
-          {
-            "t": "dbl",
-            "v": []
-          },
-          {
-            "t": "dbl",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": []
-          },
-          {
-            "t": "dbl",
-            "v": []
-          },
-          {
-            "t": "lgl",
-            "v": []
-          },
-          {
-            "t": "lgl",
-            "v": []
-          }
+          "There was no text to check."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We detected no nonsignificant p values."
+          "na"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "green"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "We detected no nonsignificant p values."
+          "There was no text to check."
         ]
       },
       {
         "t": "df",
         "nrow": 1,
         "names": [
-          "paper_id",
-          "n_nonsignificant"
+          "paper_id"
         ],
         "v": [
           {
@@ -135,23 +67,11 @@
             "v": [
               "6c4258abe0fec3"
             ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0
-            ]
           }
-        ]
-      },
-      {
-        "t": "dbl",
-        "v": [
-          0
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

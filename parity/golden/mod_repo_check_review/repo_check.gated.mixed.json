@@ -22,6 +22,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -184,7 +185,11 @@
       {
         "t": "chr",
         "v": [
-          "Double-check permissions on repositories with no detectable files.",
+          "#### Repositories that could not be checked",
+          "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
+          "- https://osf.io/privn: private",
+          "- https://github.com/gzorg/bigrepo: GitHub repo tree truncated (>100 000 items); too large to list",
+          "- https://gitlab.com/gzorg/missing: invalid or inaccessible GitLab repository",
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://osf.io/privn' target='_blank'>osf.io/privn<\/a>\", \n\"<a href='https://github.com/gzorg/bigrepo' target='_blank'>github.com/gzorg/bigrepo<\/a>\", \n\"<a href='https://gitlab.com/gzorg/missing' target='_blank'>gitlab.com/gzorg/missing<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"github\", \"gitlab\"), Error = c(NA, \n\"private\", \"GitHub repo tree truncated (>100 000 items); too large to list\", \n\"invalid or inaccessible GitLab repository\"), \"All Files\" = c(4L, \n0L, 0L, 0L), \"Data Files\" = c(1L, 0L, 0L, 0L), \"Code Files\" = c(2L, \n0L, 0L, 0L), READMEs = c(0L, 0L, 0L, 0L), Archives = c(1L, 0L, \n0L, 0L)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
@@ -193,7 +198,7 @@
           "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: Archive.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
           "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Archive.zip\", Rule = \"unclassifiable\", \n    Severity = \"bad\", Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Archive.zip\", Rule = \"unclassifiable\", \n    Severity = \"Required\", Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"bad.R\", \"bad.Rmd\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"bad.R\", \"bad.Rmd\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"example2.csv\", Group = \"ex1\", Path = \"example2.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Archive.zip\", Group = \"—\", Path = \"Archive.zip\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -207,7 +212,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 3 empty repositories.\n-  We found 4 files in 4 repositories.\n-  We found 0 README files and 4 repositories without READMEs.\n-  We found 1 archive file.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
+          "\n-  We could not check 3 repositories: https://osf.io/privn (private); https://github.com/gzorg/bigrepo (GitHub repo tree truncated (>100 000 items); too large to list); https://gitlab.com/gzorg/missing (invalid or inaccessible GitLab repository).\n-  We found 4 files in 4 repositories.\n-  We found 0 README files and 1 repository without READMEs.\n-  We found 1 archive file.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
         ]
       },
       {
@@ -216,6 +221,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -236,6 +242,12 @@
             "t": "int",
             "v": [
               4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
             ]
           },
           {
@@ -451,6 +463,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -458,6 +498,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

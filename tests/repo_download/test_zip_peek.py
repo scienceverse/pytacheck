@@ -91,7 +91,7 @@ def test_zip_peek_lists_names_sizes_and_fetch_fields() -> None:
         router.route(url=URL).mock(side_effect=handler)
         cd = zip_peek(URL)
     assert cd is not None
-    assert list(cd.columns) == ["name", "size", "method", "csize", "offset", "crc"]
+    assert list(cd.columns) == ["name", "size", "method", "csize", "offset", "crc", "name_bytes"]
     assert cd["name"].tolist() == ["data.csv", "notes.txt"]
     assert cd["size"].tolist() == [1000.0, 6.0]
     assert cd["offset"].min() == 0
@@ -304,16 +304,26 @@ def test_expand_zip_keeps_data_drops_materials(tmp_path: Path) -> None:
 
 
 def test_expand_zip_reuses_extraction_and_filters_macosx(tmp_path: Path) -> None:
-    z = tmp_path / "mixed.zip"
+    from metacheck.utils import local_options
+
+    # a downloaded archive (in the repository cache) is extracted beside itself
+    z = tmp_path / "cache" / "repo" / "mixed.zip"
+    z.parent.mkdir(parents=True)
     shutil.copyfile(DATA / "mixed.zip", z)
-    rows = _expand_zip(z, _zip_row(z))
-    assert sorted(rows["file_name"]) == ["README.txt", "analysis.R", "codebook.csv", "study.csv"]
-    assert not any("__MACOSX" in p for p in rows["file_path"])
-    assert (tmp_path / "mixed.zip.contents" / "study.csv").exists()
-    # a second call reuses the extraction directory
-    (tmp_path / "mixed.zip.contents" / "extra.csv").write_text("a\n1\n")
-    again = _expand_zip(z, _zip_row(z))
-    assert "extra.csv" in again["file_name"].tolist()
+    with local_options({"metacheck.repo_cache.dir": str(tmp_path / "cache")}):
+        rows = _expand_zip(z, _zip_row(z))
+        assert sorted(rows["file_name"]) == [
+            "README.txt",
+            "analysis.R",
+            "codebook.csv",
+            "study.csv",
+        ]
+        assert not any("__MACOSX" in p for p in rows["file_path"])
+        assert (z.parent / "mixed.zip.contents" / "study.csv").exists()
+        # a second call reuses the extraction directory
+        (z.parent / "mixed.zip.contents" / "extra.csv").write_text("a\n1\n")
+        again = _expand_zip(z, _zip_row(z))
+        assert "extra.csv" in again["file_name"].tolist()
 
 
 def test_expand_zip_members_take_their_own_type(tmp_path: Path) -> None:
@@ -338,7 +348,7 @@ def test_finding_where_to_extract_does_not_create_the_repository_cache(
     shutil.copyfile(DATA / "mixed.zip", z)
     cache = tmp_path / "not-yet"
     with local_options({"metacheck.repo_cache.dir": str(cache)}):
-        zp._contents_dir(str(z))
+        zp._archive_dest(str(z))
     assert not cache.exists()
 
 
@@ -347,14 +357,10 @@ def test_local_archive_is_not_extracted_into_the_users_folder(
 ) -> None:
     # U214: metacheck extracts to <archive>.contents/ beside it, in the user's folder,
     # and the next run lists the extracted files too
-    import tempfile
-
+    from metacheck.archives.download import _session_tempdir
     from metacheck.utils import local_options
 
-    systmp = tmp_path / "systmp"
-    systmp.mkdir()
-    monkeypatch.setattr(tempfile, "gettempdir", lambda: str(systmp))
-    monkeypatch.setattr(tempfile, "tempdir", str(systmp))
+    systmp = Path(_session_tempdir())
     user = tmp_path / "user"
     user.mkdir()
     z = user / "mixed.zip"

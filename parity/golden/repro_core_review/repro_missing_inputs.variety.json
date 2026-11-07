@@ -60,10 +60,10 @@
           "referenced file is listed in the repository but was not downloaded",
           "referenced file is listed in the repository but was not downloaded",
           "referenced file is not present in the repository, but a similarly-named file exists: data.csv",
-          "referenced file is not present in the repository, but a similarly-named file exists: data_final.xlsx",
+          "the deposit holds data_final.xlsx, the code reads data_final.csv",
           "referenced file is not present in the repository, but a similarly-named file exists: data.csv",
           "referenced file is not present in the repository",
-          "referenced file is not present in the repository",
+          "referenced file is not present in the repository, but a similarly-named file exists: data.csv",
           "referenced file is in the repository but was not downloaded (0 MB): over the size cap"
         ]
       },
@@ -81,12 +81,12 @@
           "data_final.xlsx",
           "data.csv",
           null,
-          null,
+          "data.csv",
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

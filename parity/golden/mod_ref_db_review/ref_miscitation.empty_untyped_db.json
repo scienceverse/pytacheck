@@ -1,9 +1,114 @@
 {
   "id": "ref_miscitation.empty_untyped_db",
-  "ok": false,
-  "error": "Running the module 'ref_miscitation' produced errors: Can't join `x$doi` with `y$doi` due to incompatible types.",
-  "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.1",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "There was 1 warning in `dplyr::summarise()`.\nℹ In argument: `bib_id = min(bib_id)`.\nCaused by warning in `min()`:\n! no non-missing arguments to min; returning Inf"
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected no miscited papers"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "na"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected no miscited papers"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "synthetic"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

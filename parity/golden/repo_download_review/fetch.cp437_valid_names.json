@@ -2,14 +2,7 @@
   "id": "fetch.cp437_valid_names",
   "ok": true,
   "error": null,
-  "warnings": [
-    "unable to translate 'donn<82>es/' to a wide string",
-    "input string 1 is invalid",
-    "unable to translate 'donn<82>es/r<82>sum<82>.csv' to a wide string",
-    "input string 2 is invalid",
-    "unable to translate 'caf<82>.R' to a wide string",
-    "input string 3 is invalid"
-  ],
+  "warnings": [],
   "value": {
     "t": "list",
     "names": [
@@ -40,7 +33,7 @@
             "t": "chr",
             "v": [
               "<TMP>/plain.csv",
-              "<TMP>/nul.csv"
+              "<TMP>/_nul.csv"
             ]
           },
           {
@@ -69,7 +62,7 @@
       {
         "t": "chr",
         "v": [
-          "nul.csv",
+          "_nul.csv",
           "plain.csv"
         ]
       },
@@ -82,6 +75,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

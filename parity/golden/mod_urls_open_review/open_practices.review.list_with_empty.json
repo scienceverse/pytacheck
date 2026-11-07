@@ -144,20 +144,19 @@
       {
         "t": "chr",
         "v": [
-          "Data was openly shared for this article, based on the following text:\n\n> Data are available at https://osf.io/x.",
-          "We did not detect open sharing of code, which could be because there is no code related to this article, or the repository is not reconized by our code. If there is code, please consider sharing it in a repository."
+          "0 papers shared both data and code, 1 only data, 0 only code, and 2 neither."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "info"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Shared data detected."
+          "0 papers shared both data and code, 1 only data, 0 only code, and 2 neither."
         ]
       },
       {
@@ -204,24 +203,24 @@
             "t": "lgl",
             "v": [
               false,
-              null,
-              null
+              false,
+              false
             ]
           },
           {
             "t": "lgl",
             "v": [
               false,
-              null,
-              null
+              false,
+              false
             ]
           },
           {
             "t": "lgl",
             "v": [
               false,
-              null,
-              null
+              false,
+              false
             ]
           },
           {
@@ -235,10 +234,16 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           },
@@ -253,10 +258,16 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           },
@@ -271,10 +282,16 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           },
@@ -289,10 +306,16 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           }
@@ -321,6 +344,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

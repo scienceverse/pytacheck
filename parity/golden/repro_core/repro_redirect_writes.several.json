@@ -27,12 +27,12 @@
       {
         "t": "chr",
         "v": [
-          "save(a, b,\"{{REPRO_OUTPUT}}ab.RData\")",
+          "save(a, b, file = \"{{REPRO_OUTPUT}}ab.RData\")",
           "save.image(\"{{REPRO_OUTPUT}}ws.RData\")",
-          "write_csv(res,\"{{REPRO_OUTPUT}}res.csv\")",
-          "write_xlsx(list(a = d),\"{{REPRO_OUTPUT}}t.xlsx\")",
-          "fwrite(dt,\"{{REPRO_OUTPUT}}big.csv.gz\")",
-          "fwrite(dt,\"{{REPRO_OUTPUT}}write_6.tsv\")"
+          "write_csv(res, \"{{REPRO_OUTPUT}}res.csv\")",
+          "write_xlsx(list(a = d), \"{{REPRO_OUTPUT}}t.xlsx\")",
+          "fwrite(dt, \"{{REPRO_OUTPUT}}big.csv.gz\")",
+          "fwrite(dt, \"{{REPRO_OUTPUT}}write_6.tsv\")"
         ]
       },
       {
@@ -59,6 +59,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

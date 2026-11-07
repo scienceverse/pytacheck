@@ -496,7 +496,7 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_), \"% Comments\" = c(\"20%\", \"50%\", \"33%\", \"33%\", \n\"50%\", \"80%\", \"22%\", \"80%\"), \"Missing Files\" = c(0L, 1L, 0L, \n0L, 0L, 0L, 0L, 0L), \"Absolute Paths\" = c(0L, 1L, 0L, 0L, 0L, \n0L, 0L, 0L), \"Code Between Libraries\" = c(NA, NA, NA, NA, NA, \nNA, 5L, NA)), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"error-ok.qmd\", \"error.qmd\", \"error.R\", \n\"error.Rmd\", \"knit-error.Rmd\", \"ok.qmd\", \"ok.R\", \"ok.Rmd\"), \"% Comments\" = c(\"20%\", \n\"50%\", \"33%\", \"33%\", \"50%\", \"80%\", \"22%\", \"80%\"), \"Missing Files\" = c(0L, \n1L, 0L, 0L, 0L, 0L, 0L, 0L), \"Absolute Paths\" = c(0L, 1L, 0L, \n0L, 0L, 0L, 0L, 0L), \"Code Between Libraries\" = c(NA, NA, NA, \nNA, NA, NA, 5L, NA)), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",
@@ -509,14 +509,14 @@
           "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
           "",
           "#### Package Installation (install.packages)",
-          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, or a list of them: an `renv.lock`/`DESCRIPTION` for R, a `requirements.txt` for Python). No `install.packages()` calls were found in any of the code files.",
           "",
           "#### Libraries / Imports",
-          "Best programming practice is to load all required libraries/imports in one block near the top of the code. In 1 code files, libraries/imports were at multiple places (i.e., with more than 3 non-comment lines in between).",
+          "Best programming practice is to load all required libraries/imports in one block near the top of the code. In 1 code file, libraries/imports were at multiple places (i.e., with more than 3 non-comment lines in between).",
           "#### Packages / Dependencies",
           "The code files load 2 distinct packages/libraries: dplyr, tidyr. These are the names found in the source (no version information is available from static analysis).",
           "#### Reproducible Environment",
-          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the code — or, for Python code, a `requirements.txt` (not currently checked for by this module, but still good practice to include).",
+          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or a `groundhog`/`checkpoint` date-pin alongside the code.",
           "",
           "#### Parsable code",
           "We encountered parsing issues when trying to read in R-type code files. The following errors were found in 4 code files:",
@@ -532,7 +532,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 8 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  All your code files had comments.\n-  1 file loaded in the code was missing in the repository.\n-  Absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  Libraries/imports were loaded in multiple places.\n-  The code loaded 2 distinct packages.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  Parsing issues of R-type files were found."
+          "\n-  We found 8 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  All your code files had comments.\n-  Libraries/imports were loaded in multiple places in ok.R.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility."
         ]
       },
       {
@@ -638,6 +638,10 @@
           "renv_files",
           "renv_packages",
           "sessioninfo_files",
+          "session_packages",
+          "pin_dates",
+          "python_files",
+          "python_pinned",
           "file_location"
         ],
         "v": [
@@ -666,9 +670,14 @@
               "file_name",
               "package",
               "version",
-              "source"
+              "source",
+              "remote"
             ],
             "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
               {
                 "t": "chr",
                 "v": []
@@ -692,6 +701,67 @@
             "v": []
           },
           {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source",
+              "remote"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "mechanism",
+              "date"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
             "t": "chr",
             "v": []
           }
@@ -699,6 +769,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

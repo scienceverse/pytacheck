@@ -20,7 +20,18 @@
       {
         "t": "chr",
         "v": [
-          "Input is not valid JSON."
+          "Result \"r1\": value \"p\" is missing `value`.",
+          "Result \"r1\": value \"q\" is missing `value`.",
+          "Result \"r1\": value \"z\" is missing `value`.",
+          "A result is missing `result_id`.",
+          "Result \"?\" has no `values`.",
+          "A result is missing `result_id`.",
+          "Result \"\": value \"a\" is missing `value`.",
+          "An analysis entry is missing `analysis`.",
+          "An analysis entry has no `results`.",
+          "An analysis entry is missing `analysis`.",
+          "An analysis entry has no `results`.",
+          "An analysis entry has no `results`."
         ]
       },
       {
@@ -34,25 +45,25 @@
           {
             "t": "int",
             "v": [
-              1
+              12
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              4
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              4
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

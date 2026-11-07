@@ -1,0 +1,37 @@
+{
+  "id": "write_json.empty_containers",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "lines",
+      "size"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "{",
+          "  \"a\": [],",
+          "  \"b\": {},",
+          "  \"c\": [],",
+          "  \"d\": [",
+          "    []",
+          "  ],",
+          "  \"e\": \"\"",
+          "}"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          68
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

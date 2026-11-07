@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -106,6 +108,15 @@
               "study.csv",
               "study.csv",
               "study.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -223,6 +234,15 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -367,14 +387,14 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified.",
+          "Where the files sit within each repository. Each file is followed by how it was classified; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/abcde**",
-          "```\n├── analysis.R    💻 code\n├── README.md     📄 readme\n├── stimulus.png  📁 materials\n└── study.csv     📊 data\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── analysis.R    💻 code\n├── README.md     📄 readme\n├── stimulus.png  📁 materials\n└── study.csv     📊 data\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## study.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:20, age = c(23L, 35L, 41L, 29L, 30L, 22L, \n19L, 55L, 61L, 44L, 38L, 27L, 33L, 25L, 48L, 52L, 36L, 40L, 21L, \n26L), gender = c(\"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \n\"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \n\"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \n\"Female\"), score = c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, \n5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10)), row.names = c(NA, \n20L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## study.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"gender\", \"id\", \"score\"), Representation = c(\"numeric\", \n\"text\", \"text\", \"numeric\"), Level = c(\"ratio\", \"nominal\", \"nominal\", \n\"ratio\"), Concept = c(\"age\", \"gender\", \"id\", \"\"), Role = c(\"measure\", \n\"measure\", \"identifier\", \"measure\"), Unit = c(\"years\", \"\", \"\", \n\"\"), Rows = c(20L, 20L, 20L, 20L), \"% Missing\" = c(0, 0, 0, 0\n), \"N Unique\" = c(20L, 2L, 20L, 20L), Mean = c(35.25, NA, NA, \n5.25), SD = c(12.052, NA, NA, 2.958), Min = c(19, NA, NA, 0.5\n), Max = c(61, NA, NA, 10)), row.names = c(\"age\", \"gender\", \"id\", \n\"score\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 4 columns across 1 data file.",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
@@ -604,6 +624,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -723,6 +744,15 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "analysis.R",
+              "study.csv",
+              "stimulus.png"
             ]
           },
           {
@@ -898,6 +928,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

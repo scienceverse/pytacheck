@@ -56,25 +56,17 @@
         "v": [
           "knb.ecoinformatics.org",
           "knb.ecoinformatics.org"
-        ],
-        "names": [
-          "Knb.ecoinformatics.org/view/doi:10.5063/F1K",
-          "10.5063/KX."
         ]
       },
       {
         "t": "chr",
         "v": [
           "doi:10.5063/F1K",
-          "doi:10.5063/KX."
-        ],
-        "names": [
-          "Knb.ecoinformatics.org/view/doi:10.5063/F1K",
-          "10.5063/KX."
+          "doi:10.5063/KX"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

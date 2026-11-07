@@ -1,0 +1,97 @@
+{
+  "id": "rbox_search.api.happi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "rb_url",
+      "box_id",
+      "file_id",
+      "var_id",
+      "var_name",
+      "var_description",
+      "original_name",
+      "upload_time",
+      "formatted_reference"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://researchbox.org/9614",
+          "https://researchbox.org/9614",
+          "https://researchbox.org/8204"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          9614,
+          9614,
+          8204
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          8,
+          39
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          5,
+          42
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Happiness.Score",
+          "hedon_rating",
+          "GenSysJust6"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sentiment rating (from human annotators)",
+          "sentiment rating (i.e., Happiness Score) from Hedonometer",
+          "Please rate your level of agreement with the following statements. - Everyone (male or female) has a fair shot at wealth and happiness"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Hedonometer.csv",
+          "filtered_hedon_with_pos.csv",
+          "Data_Supplemental Study1.sav"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-09-23T10:11:50",
+          "2026-09-23T10:14:00",
+          "2026-07-13T13:43:57"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Lelia Glass, 'Bad things are sudden, good things are static: Explaining the negative collocation of \"get\"', <I>Language<\/I>",
+          "Lelia Glass, 'Bad things are sudden, good things are static: Explaining the negative collocation of \"get\"', <I>Language<\/I>",
+          ""
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -18,9 +18,9 @@ _URL = "https://pubpeer.com/v3/publications?devkey=PubPeerZotero"
 
 
 def _request_body(dois: list[str]) -> str:
-    """``jsonlite::toJSON(list(dois = dois), auto_unbox = TRUE)``: one DOI is unboxed."""
-    value: Any = dois[0] if len(dois) == 1 else dois
-    return json.dumps({"dois": value}, ensure_ascii=False, separators=(",", ":"))
+    """``toJSON(list(dois = I(dois)), auto_unbox = TRUE)``: always an array, one DOI too
+    (metacheck 3cd8c202: ``auto_unbox`` sent a single DOI as a string, U14)."""
+    return json.dumps({"dois": dois}, ensure_ascii=False, separators=(",", ":"))
 
 
 def _feedback_record(fb: Any) -> dict[str, Any]:

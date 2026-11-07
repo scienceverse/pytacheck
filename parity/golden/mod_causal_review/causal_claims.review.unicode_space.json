@@ -69,7 +69,7 @@
           "Journal Article Reporting Standards require details about randomization procedures, or how possible bias due to non-randomization is mitigated. This information is often not reported. Furthermore, researchers sometimes make causal claims that are not warranted, for example because there was no random assignment to conditions. This module checks how (non)randomization is reported, and checks for causal claims in the title and abstract. Researchers are asked to double check whether this information is reported completely and correctly.",
           "#### Randomization",
           "We identified 3 sentences describing randomization.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"Participants were randomly assigned to conditions.\", \n\"Participants were randomly assigned to arms.\", \"Pupils were randomly allocated to classes.\"\n)), names = \"\", class = \"data.frame\", row.names = c(NA, -3L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"Participants were randomly assigned to conditions.\", \n\"Participants were randomly assigned to arms.\", \"Pupils were randomly allocated to classes.\"\n)), names = \"\", row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
           "If this was a study that contained random assignment to conditions, the journal article reporting standards (JARS) ask that you describe the following:",
           "1. Random assignment method: Procedure used to generate the random assignment sequence, including details of any restriction (e.g., blocking, stratification)",
           "2. Random assignment concealment: Whether sequence was concealed until interventions were assigned",
@@ -85,7 +85,7 @@
       {
         "t": "chr",
         "v": [
-          "green"
+          "na"
         ]
       },
       {
@@ -124,6 +124,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

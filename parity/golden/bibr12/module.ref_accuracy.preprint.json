@@ -3668,7 +3668,7 @@
       {
         "t": "chr",
         "v": [
-          "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherent is most often an error in reading the reference from the PDF, but it could be a mistake, ar an AI generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
+          "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherence is most often an error in reading the reference from the PDF, but it could be a mistake, or an AI-generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
           "### Incoherent references\n",
           "The cited details of these references do not match the record their DOI points to.\n",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = \"Niewiadomski, R., & Pelachaud, C. (2007). Fuzzy similarity of facial expressions of embodied agents. In C. Pelachaud, J.-C. Martin, E. André, G. Chollet, K. Karpouzis, & D. Pelé (Eds.), Intelligent Virtual Agents (Vol. 4722, pp. 86–98). Springer. https://doi.org/10.1007/978-3-540-74997-4_9\", \n    \"What is wrong (cited → record)\" = \"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Intelligent Virtual Agents<\/span> &rarr; Lecture Notes in Computer Science\", \n    Record = \"<a href='https://doi.org/10.1007/978-3-540-74997-4_9' target='_blank'>10.1007/978-3-540-74997-4_9<\/a>\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)\n```\n",
@@ -3733,6 +3733,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

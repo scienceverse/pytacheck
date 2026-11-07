@@ -1,11 +1,72 @@
 {
   "id": "dataverse_links.review.invalid_utf8_error",
-  "ok": false,
-  "error": "input string 1 is invalid",
-  "warnings": [
-    "unable to translate '10.7910/DVN/X<ff>.' to a wide string"
-  ],
-  "value": null,
-  "metacheck_version": "0.3.1",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dataverse_url",
+      "dataverse_host",
+      "dataverse_doi"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF.",
+          "10.7910/DVN/X"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF.",
+          "10.7910/DVN/X"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.harvard.edu",
+          "dataverse.harvard.edu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "10.7910/DVN/X"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -163,6 +163,13 @@ def _summary_table(table: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
+def _full_join_unchecked(summary_table: pd.DataFrame, unchecked: pd.DataFrame) -> pd.DataFrame:
+    """``full_join(summary_table, unchecked, by = "paper_id")``, NA counts set to 0."""
+    out = summary_table.merge(unchecked, on="paper_id", how="outer", sort=False)
+    out["power_unchecked"] = out["power_unchecked"].fillna(0).astype("Int64")
+    return out
+
+
 @module(
     title="Power Analysis Check",
     description="""
@@ -207,6 +214,7 @@ def power(paper: Any, seed: Any = 8675309) -> dict[str, Any]:
     llm_cols = list(LLM_COLS)
     llm_failed = False
     tl: str | None = None
+    unchecked: pd.DataFrame | None = None  # paragraphs the LLM could not check (#475)
     report_text: list[str] = []
     n_potential = len(potential_power)
 
@@ -218,6 +226,7 @@ def power(paper: Any, seed: Any = 8675309) -> dict[str, Any]:
         llm_model_used = extraction["model"]
         table = extraction["table"]
         llm_failed = extraction.get("failed") is True
+        unchecked = extraction.get("unchecked")
 
         if llm_model_used is not None:
             report_text = [
@@ -315,10 +324,30 @@ def power(paper: Any, seed: Any = 8675309) -> dict[str, Any]:
             collapse_section(_GUIDANCE),
         ]
 
+    # paragraphs the LLM could not check ----
+    # Reported rather than dropped without a word (#475): a power analysis in such a paragraph
+    # is not counted, so the counts above are too low. When every paragraph failed, the summary
+    # already says the check failed. power_unchecked lets a corpus run find these papers.
+    if unchecked is not None:
+        # full_join: a paper whose every paragraph failed has no other row here
+        summary_table = _full_join_unchecked(summary_table, unchecked)
+        n_unchecked = int(unchecked["power_unchecked"].sum()) if len(unchecked) else 0
+        if n_unchecked > 0 and not llm_failed:
+            them = plural(n_unchecked, "it", "them")
+            msg = (
+                f"{n_unchecked} of {n_potential} paragraph{plural(n_potential)} could not be "
+                f"checked by the LLM, so power analyses in {them} are not counted. "
+                f"Re-run the check, or check {them} manually."
+            )
+            summary_text = f"{summary_text} {msg}"
+            report = [msg, *report]
+            if tl in ("green", "na"):
+                tl = "yellow"
+
     return {
         "table": table,
         "summary_table": summary_table,
-        "na_replace": {"power_n": 0},
+        "na_replace": {"power_n": 0, "power_unchecked": 0},
         "traffic_light": tl,
         "report": report,
         "summary_text": summary_text,

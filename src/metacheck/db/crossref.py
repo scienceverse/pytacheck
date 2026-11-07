@@ -566,34 +566,22 @@ def _parse_item(item: Mapping[str, Any], select: Sequence[str]) -> _Frame:
     authors = _author_records(field(item, "author"))
     item.pop("author", None)
 
-    # a JSON null is a missing value, not a field (metacheck's data.frame()
-    # failed: "differing number of rows: 1, 0"), a list of values (ISSN) is
-    # one "; "-separated value and a list of people (editor) a table like
-    # author (metacheck spread them over columns named by the deparsed
-    # values; U13); other lists of records keep metacheck's columns
-    to_select = []
-    people: dict[str, list[dict[str, Any]]] = {}
+    # A JSON null leaves a field of length zero, which stopped metacheck's data.frame()
+    # ("differing number of rows: 1, 0"), and a list-valued field gave deparsed column names;
+    # metacheck 0.4.3.7 leaves empty fields out and joins a list into one text (U13)
+    vals: list[tuple[str, Any]] = []
     for name in dict.fromkeys(select):
-        if name not in item or item[name] is None:
+        if name not in item or item[name] is None or _r_length(item[name]) == 0:
             continue
         v = item[name]
-        if isinstance(v, list | tuple):
-            if not v:
-                continue
-            if all(isinstance(e, Mapping) and ("family" in e or "given" in e) for e in v):
-                recs = _author_records(v)
-                if not recs:
-                    continue
-                people[name] = recs
-                item[name] = name  # a placeholder cell, replaced below
-            elif all(not isinstance(e, list | tuple | Mapping) for e in v):
-                item[name] = "; ".join(_paste_chr(e) for e in v)
-        to_select.append(name)
-    cols, nrow = _data_frame([(name, item[name]) for name in to_select])
-    cols = [(n, people[n]) if n in people else (n, v) for n, v in cols]
+        if isinstance(v, list | tuple | Mapping):
+            v = "; ".join(_paste_chr(e) for e in _unlist(v))
+        vals.append((name, v))
+    if vals:
+        cols, nrow = _data_frame(vals)
+    else:
+        cols, nrow = [("DOI", NA_character)], 1
     if "author" in select and authors:
-        if nrow == 0:
-            raise ValueError("replacement has 1 row, data has 0")
         cols = [*cols, ("author", authors)]
     return cols, nrow
 
@@ -606,7 +594,8 @@ def _crossref_parse_item(
     Titles and container titles are reduced to their first element, ``year``
     comes from the print issue date (else the published date), and authors
     become a table (``given``, ``family``, ``ORCID``) in an ``author`` cell.
-    Other list fields are spread over columns as ``data.frame()`` does.
+    A field holding a list (or several values) becomes one text joined with ``"; "``;
+    empty fields are left out, and when nothing is selected the row holds a missing DOI.
     """
     return _frame_df(_parse_item(item, list(select)))
 
@@ -745,6 +734,35 @@ def _ref_text(row: Mapping[str, Any]) -> str:
         elif not (is_missing(v) or v == ""):
             parts.append(_paste_chr(v))
     return "; ".join(parts)
+
+
+def _unlist(v: Any) -> list[Any]:
+    """The leaves of a parsed-JSON value, in order (``unlist()``), with booleans as numbers
+    when no leaf is text and some are numbers."""
+    leaves: list[Any] = []
+
+    def walk(x: Any) -> None:
+        if x is None:
+            return
+        if isinstance(x, Mapping):
+            for e in x.values():
+                walk(e)
+        elif isinstance(x, list | tuple):
+            for e in x:
+                walk(e)
+        elif isinstance(x, int) and not isinstance(x, bool) and abs(x) > 2147483647:
+            leaves.append(float(x))  # a JSON number beyond R's integer range is a double
+        else:
+            leaves.append(x)
+
+    walk(v)
+    if (
+        any(isinstance(e, bool) for e in leaves)
+        and any(isinstance(e, int | float) and not isinstance(e, bool) for e in leaves)
+        and not any(isinstance(e, str) for e in leaves)
+    ):
+        leaves = [int(e) if isinstance(e, bool) else e for e in leaves]
+    return leaves
 
 
 def _paste_chr(v: Any) -> str:
@@ -1049,7 +1067,9 @@ def _str_list(values: Sequence[Any]) -> list[str | None]:
 def _openalex_add_abstract(info: Any) -> Any:
     """Add ``abstract`` from ``abstract_inverted_index`` (port of ``.openalex_add_abstract()``)."""
     aii = field(info, "abstract_inverted_index")
-    if aii is None:
+    # an empty index ({}) has no words to put in order: no abstract is added (metacheck
+    # 3cd8c202, U14)
+    if aii is None or (isinstance(aii, Mapping | list | tuple) and len(aii) == 0):
         return info
     values = list(aii.values()) if isinstance(aii, Mapping) else aii
     if not isinstance(values, list):
@@ -1062,8 +1082,7 @@ def _openalex_add_abstract(info: Any) -> Any:
     )
     positions = unlist(values)
     if not positions:
-        # an empty index is an empty abstract (metacheck's order(NULL) failed,
-        # so the work was reported "not found"; U14)
+        # an index of empty position lists: an empty abstract
         out = dict(info)
         out["abstract"] = ""
         return out
@@ -1117,7 +1136,7 @@ def openalex_doi(doi: Any, select: Sequence[str] | None = None) -> Any:
             f"{url_encode(cleaned[i], reserved=True)}?mailto={email}"
             for i in valid_idx
         ]
-        resps = http.batch_query(urls, msg="Querying OpenAlex by DOI")
+        resps = http.batch_query(urls, msg="Querying OpenAlex by DOI", req_func=_openalex_headers)
 
     oa: list[Any] = [None] * len(values)
     for i, v in enumerate(values):
@@ -1129,7 +1148,11 @@ def openalex_doi(doi: Any, select: Sequence[str] | None = None) -> Any:
     for j, i in enumerate(valid_idx):
         resp = resps[j]
         value: Any = {"DOI": values[i], "error": "not found"}
-        if resp is not None and resp.status_code < 400:
+        failed = resp is None or resp.status_code >= 400
+        limit = _openalex_limit(resp) if failed else None
+        if limit is not None:
+            value = {"DOI": values[i], "error": limit}
+        elif resp is not None and resp.status_code < 400:
             try:
                 work = _openalex_add_abstract(resp_body_json(resp))
             except Exception:  # not JSON
@@ -1168,13 +1191,64 @@ def _unlist_named(x: Mapping[str, Any]) -> dict[str, str | None]:
     return out
 
 
+def _openalex_headers(req: dict[str, Any]) -> dict[str, Any]:
+    """Port of R/db-crossref.R::.openalex_headers(): add the OpenAlex key (see
+    :func:`metacheck.archives.api_keys.openalex_key`) to a request, when one is set and
+    OpenAlex has not refused it."""
+    from metacheck.archives.api_keys import key_use
+
+    spec = dict(req)
+    try:
+        key = key_use("openalex", check=_openalex_key_check)
+    except Exception:
+        key = ""
+    if key:
+        spec["headers"] = {**(spec.get("headers") or {}), "Authorization": f"Bearer {key}"}
+    return spec
+
+
+def _openalex_key_check(key: str) -> bool | None:
+    """A key OpenAlex refuses answers 401 even for a single work; a lookup by ID costs
+    nothing from the budget."""
+    from metacheck.archives.api_keys import key_check_request
+
+    return key_check_request(
+        "https://api.openalex.org/works/W2741809807?select=id", {"Authorization": f"Bearer {key}"}
+    )
+
+
+def _openalex_limit(resp: Any) -> str | None:
+    """The message for a response refused because OpenAlex's budget or speed limit was
+    reached (recorded, see ``key_limit_reached``), or ``None`` for any other response.
+    The daily budget starts again at midnight UTC."""
+    import datetime as dt
+
+    from metacheck._values import as_int
+    from metacheck.archives.api_keys import key_limit_reached
+
+    if resp is None or getattr(resp, "status_code", None) != 429:
+        return None
+    wait = as_int(resp.headers.get("retry-after"))
+    now = dt.datetime.now(dt.UTC)
+    if wait is not None:
+        until = now + dt.timedelta(seconds=wait)
+    else:
+        until = dt.datetime.combine(now.date() + dt.timedelta(days=1), dt.time(0), dt.UTC)
+    return key_limit_reached("openalex", until)
+
+
 def _openalex_request(url: str) -> Any:
     from metacheck import http
 
     # a plain req_perform(): no retry policy
-    resp = http.request("GET", url, headers={"Accept": "application/json"}, max_tries=1)
+    spec = _openalex_headers({"headers": {"Accept": "application/json"}})
+    resp = http.request("GET", url, headers=spec["headers"], max_tries=1)
     if resp is None:
         return "offline"
+    limit = _openalex_limit(resp)
+    if limit is not None:
+        _utils.message(limit)
+        return "limit"
     try:
         return resp_body_json(resp)
     except Exception:  # tryCatch(error = ) catches every error

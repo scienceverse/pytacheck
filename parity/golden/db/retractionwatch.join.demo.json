@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 2,
+    "nrow": 1,
     "names": [
       "bib_id",
       "doi",
@@ -16,33 +16,29 @@
       {
         "t": "int",
         "v": [
-          2,
-          3
+          2
         ]
       },
       {
         "t": "chr",
         "v": [
-          "10.1177/0956797614520714",
-          ""
+          "10.1177/0956797614520714"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "to_err_is_human",
           "to_err_is_human"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Retraction",
-          "Retraction;Expression of concern;Correction"
+          "Retraction"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

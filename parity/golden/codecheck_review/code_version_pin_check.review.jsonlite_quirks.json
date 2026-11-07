@@ -14,6 +14,10 @@
       "renv_files",
       "renv_packages",
       "sessioninfo_files",
+      "session_packages",
+      "pin_dates",
+      "python_files",
+      "python_pinned",
       "file_location"
     ],
     "v": [
@@ -54,7 +58,8 @@
           "file_name",
           "package",
           "version",
-          "source"
+          "source",
+          "remote"
         ],
         "v": [
           {
@@ -88,6 +93,14 @@
               null,
               "CRAN"
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
           }
         ]
       },
@@ -95,6 +108,73 @@
         "t": "chr",
         "v": [
           "SESSION-INFO.txt"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file_name",
+          "package",
+          "version",
+          "source",
+          "remote"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "mechanism",
+          "date"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "groundhog",
+              "checkpoint"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021-01-01",
+              "2020-02-02"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
         ]
       },
       {
@@ -112,6 +192,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

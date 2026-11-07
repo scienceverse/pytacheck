@@ -102,7 +102,7 @@
             "v": [
               null,
               "Positive affect",
-              "NA",
+              null,
               "Condition"
             ]
           },
@@ -111,7 +111,7 @@
             "v": [
               null,
               "mood",
-              "sleep_hours",
+              null,
               "grp"
             ]
           },
@@ -120,7 +120,7 @@
             "v": [
               null,
               "README.md",
-              "README.md",
+              null,
               "README.md"
             ]
           },
@@ -129,7 +129,7 @@
             "v": [
               "unlabelled",
               "labelled",
-              "ambiguous_experiment",
+              "unlabelled",
               "labelled"
             ]
           },
@@ -222,9 +222,9 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 1 codebook/README/label source and 4 data columns across 1 file.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"sleep_hours\", \"id\", \"grp\", \"mood\"), \n    Documented = c(\"conflict\", \"no\", \"yes\", \"yes\"), Label = c(\"NA\", \n    NA, \"Condition\", \"Positive affect\"), \"Codebook Variable\" = c(\"sleep_hours\", \n    NA, \"grp\", \"mood\"), Source = c(\"README.md\", NA, \"README.md\", \n    \"README.md\"), Status = c(\"ambiguous_experiment\", \"unlabelled\", \n    \"labelled\", \"labelled\")), row.names = c(NA, 4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Conflicting or Ambiguous Definitions\n\n1 matched column has more than one codebook definition, or a definition scoped to a different experiment. These are matched to a codebook but need manual resolution before the label can be trusted.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"s.csv\", Column = \"sleep_hours\", \"Conflicting Labels\" = \"NA\", \n    Sources = \"README.md\", Issue = \"ambiguous_experiment\"), row.names = 3L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"sleep_hours\", \"grp\", \"mood\"), \n    Documented = c(\"no\", \"no\", \"yes\", \"yes\"), Label = c(NA, NA, \n    \"Condition\", \"Positive affect\"), \"Codebook Variable\" = c(NA, \n    NA, \"grp\", \"mood\"), Source = c(NA, NA, \"README.md\", \"README.md\"\n    ), Status = c(\"unlabelled\", \"unlabelled\", \"labelled\", \"labelled\"\n    )), row.names = c(NA, 4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "#### Documented but Unused Variables\n\n1 documented variable was not matched to any data column.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = \"sleep_hours\", Label = NA_character_, \n    Source = \"README.md\"), row.names = 2L, llm_model = \"mock/rv\", class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "LLM model 'mock/rv' reviewed ambiguous cases (parsed 1 file, matched 0 columns, merged 0 labels)."
         ]
       },
@@ -237,7 +237,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 3 variable definitions from codebook/README files.\n-  3 of 4 data columns (75%) are documented in a codebook; 1 is not.\n-  1 matched column has a conflicting or ambiguous label that needs resolution."
+          "\n-  We parsed 3 variable definitions from codebook/README files.\n-  2 of 4 data columns (50%) are documented in a codebook; 2 are not."
         ]
       },
       {
@@ -275,13 +275,7 @@
           {
             "t": "int",
             "v": [
-              3
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              1
+              2
             ]
           },
           {
@@ -293,7 +287,13 @@
           {
             "t": "int",
             "v": [
-              1
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -305,7 +305,7 @@
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
@@ -486,6 +486,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

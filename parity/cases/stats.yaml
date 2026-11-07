@@ -47,7 +47,7 @@
         - "none"
   "compare": *id001
 - "id": "stats.synthetic"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -122,7 +122,7 @@
         - "Nothing here but 42 participants."
   "compare": *id001
 - "id": "stats.synthetic.OneTailedTxt"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -130,7 +130,7 @@
     "OneTailedTxt": !!bool "true"
   "compare": *id001
 - "id": "stats.synthetic.OneTailedTests"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -138,7 +138,7 @@
     "OneTailedTests": !!bool "true"
   "compare": *id001
 - "id": "stats.synthetic.pEqualAlphaSig"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -146,7 +146,7 @@
     "pEqualAlphaSig": !!bool "false"
   "compare": *id001
 - "id": "stats.synthetic.pZeroError"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -154,7 +154,7 @@
     "pZeroError": !!bool "false"
   "compare": *id001
 - "id": "stats.synthetic.alpha"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -162,7 +162,7 @@
     "alpha": !!float "0.01"
   "compare": *id001
 - "id": "stats.synthetic.AllPValues"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -170,7 +170,7 @@
     "AllPValues": !!bool "true"
   "compare": *id001
 - "id": "stats.synthetic.stat.t"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -178,7 +178,7 @@
     "stat": "t"
   "compare": *id001
 - "id": "stats.synthetic.stat.tF"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -236,14 +236,12 @@
     "text": *id003
     "AllPValues": !!bool "true"
 - "id": "stats.df.messages_arg"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "an argument statcheck() does not accept raises TypeError; R swallows the error of every statcheck() call and returns an empty table"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
     "text": *id003
     "messages": !!bool "true"
 - "id": "stats.df.unknown_arg"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "an argument statcheck() does not accept raises TypeError; R swallows the error of every statcheck() call and returns an empty table"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -259,7 +257,6 @@
         - "no numbers"
         - "at all"
 - "id": "stats.character.error"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() of a character vector checks the strings (R: 'argument is of length zero')"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -2534,7 +2531,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "stat_check.red.several"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops when statcheck stops on one of them (t(20) = (2.1, r = 1.00; R mutes warnings since 0.4.3.7, so p = .05-.10 no longer drops a sentence) and drops a Q result that borrowed another result's p-value (U5)"}
   "module": "stat_check"
   "args":
     "paper": *id002

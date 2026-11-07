@@ -15,11 +15,14 @@
       "summary_text",
       "summary_table",
       "na_replace",
+      "brief",
       "run_results",
       "install_results",
+      "recorded_versions",
       "stat_output",
       "match_table",
-      "modifications"
+      "modifications",
+      "checklist_section"
     ],
     "v": [
       {
@@ -46,6 +49,7 @@
         "names": [
           "paper_id",
           "file_name",
+          "file_path",
           "parses",
           "run_order",
           "order_basis",
@@ -60,13 +64,25 @@
           "error_type",
           "undefined_var",
           "reads",
-          "writes"
+          "writes",
+          "names_corrected",
+          "used_by",
+          "not_analysis_why",
+          "paper_link",
+          "repo_name",
+          "reason"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
               "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.R"
             ]
           },
           {
@@ -102,7 +118,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -174,6 +190,42 @@
                 "v": []
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
           }
         ]
       },
@@ -185,7 +237,7 @@
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1L, File = \"ok.R\", \"Runs after\" = \"—\", \n    Basis = \"none\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "To run against the Psych-DS layout, 1 referenced data path would be rewritten to its new location.",
+          "Every data path in the code works in the repository as deposited.",
           "#### Missing inputs",
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "*Executing the code is a separate, opt-in phase (run with `execute = TRUE`). This report describes what a run would involve; it did not run anything.*",
@@ -220,7 +272,21 @@
           "repro_deps",
           "repro_ran_ok",
           "repro_tests_reported",
-          "repro_tests_matched"
+          "repro_tests_matched",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
         ],
         "v": [
           {
@@ -270,12 +336,110 @@
             "v": [
               null
             ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0,
           0,
           0,
@@ -287,8 +451,31 @@
           "repro_runnable",
           "repro_missing_inputs",
           "repro_deps",
-          "repro_ran_ok"
+          "repro_ran_ok",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
         ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "null"
       },
       {
         "t": "null"
@@ -330,9 +517,12 @@
             ]
           }
         ]
+      },
+      {
+        "t": "null"
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

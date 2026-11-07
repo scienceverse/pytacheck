@@ -1,0 +1,112 @@
+{
+  "id": "checklist.checks.checks_unknown",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "status",
+      "title",
+      "section",
+      "found",
+      "todo",
+      "why",
+      "note",
+      "details",
+      "details_title",
+      "module",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "fix",
+          "info",
+          "improve"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Found A.",
+          "Found B.",
+          "Found C."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "my_check",
+          "my_check",
+          "my_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "my_check gave checks with an unknown status (great); they are shown for information"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -100,6 +102,13 @@
             "v": [
               "data.csv",
               "data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
             ]
           },
           {
@@ -191,6 +200,13 @@
             "v": [
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
             ]
           },
           {
@@ -305,14 +321,14 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/manif**",
-          "```\n├── analysis.R  💻 code          ex1\n├── data.csv    📊 data          ex1\n├── files.csv   📖 documentation ex1\n└── paper.pdf   📖 documentation ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── analysis.R  💻 code          ex1\n├── data.csv    📊 data          ex1\n├── files.csv   📖 documentation ex1\n└── paper.pdf   📖 documentation ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:3, y = c(2.5, 3.5, 1.5)), row.names = c(NA, \n3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"y\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(3L, \n3L), \"% Missing\" = c(0, 0), \"N Unique\" = c(3L, 3L), Mean = c(NA, \n2.5), SD = c(NA, 1), Min = c(NA, 1.5), Max = c(NA, 3.5)), row.names = c(\"id\", \n\"y\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 2 columns across 1 data file.",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
@@ -328,7 +344,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 4 files: 1 data, 1 code, 2 documentation.\n-  We found 1 tabular data file and extracted 2 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 4 files (the model request failed); they were grouped by the fallback rules instead. We ran automated data-quality checks on 2 columns and found no issues."
+          "\n-  We classified 4 files: 1 data, 1 code, 2 documentation.\n-  We found 1 tabular data file and extracted 2 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1). We ran automated data-quality checks on 2 columns and found no issues."
         ]
       },
       {
@@ -534,6 +550,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -665,6 +682,15 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "data.csv",
+              "files.csv",
+              "paper.pdf"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               true,
@@ -751,6 +777,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -109,12 +109,10 @@ def test_gitlab_tree_files_untyped_pathless_and_object_nodes(review: object) -> 
 def test_gitlab_tree_files_vector(review: object) -> None:
     from metacheck.archives.gitlab import gitlab_tree_files
 
-    out = gitlab_tree_files(["rv/glp", "https://gitlab.com/rv/glp"])
-    assert out["gated"] is True
-    assert out["reason"] == "invalid or inaccessible GitLab repository"
-    # one project at a time: several are invalid, whether or not each exists
-    # (metacheck d52b3fd; at the pin a missing one stopped with an error)
-    assert gitlab_tree_files(["rv/glp", "rv/nope"]) == out
+    # one project at a time: R's `!is.na(repo) && ...` stops on a vector (R >= 4.3)
+    for repos in (["rv/glp", "https://gitlab.com/rv/glp"], ["rv/glp", "rv/nope"]):
+        with pytest.raises(ValueError, match="'length = 2' in coercion to 'logical"):
+            gitlab_tree_files(repos)
 
 
 @pytest.mark.parametrize("module", ["gitlab", "zenodo_upload"])

@@ -22,10 +22,6 @@
 # closures inside data_check() (the generic ones -- .pid, pad, getf, empty,
 # label_of, utf8_repaired_of -- are private helpers of data_check.py:
 # _pid, _pad, _file_columns, _validate, _label_lookup, _utf8_lookup)
-".tree_type_icon" = "metacheck.modules._data_check:_tree_type_icon"
-".tree_type_label" = "metacheck.modules._data_check:_tree_type_label"
-"repo_tree_rows" = "metacheck.modules._data_check:repo_tree_rows"
-"repo_tree_block" = "metacheck.modules._data_check:repo_tree_block"
 "file_tabset" = "metacheck.modules._data_check:file_tabset"
 "desc_file_tabset" = "metacheck.modules._data_check:desc_file_tabset"
 "data_file_tabset" = "metacheck.modules._data_check:data_file_tabset"
@@ -63,3 +59,8 @@
 # careless::longstring() / careless::irv() (a suggested package; ported natively)
 "careless::longstring" = "metacheck.modules._data_check:_longstring"
 "careless::irv" = "metacheck.modules._data_check:_irv"
+# metacheck 0.4.3.7 (4a61888)
+".dv_space_csv_findings" = "metacheck.modules._data_check:dv_space_csv_findings"
+".dv_rds_workspace_findings" = "metacheck.modules._data_check:dv_rds_workspace_findings"
+".dv_rds_workspace_summary_text" = "metacheck.modules._data_check:dv_rds_workspace_summary_text"
+".dv_space_csv_summary_text" = "metacheck.modules._data_check:dv_space_csv_summary_text"

@@ -1,0 +1,26 @@
+{
+  "id": "file_tree.report.drop_end",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Intro"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Intro"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

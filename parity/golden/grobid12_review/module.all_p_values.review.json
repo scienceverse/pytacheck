@@ -61,8 +61,8 @@
             "t": "chr",
             "v": [
               "p < .001 ",
-              "p =.03",
-              "p =.036",
+              "p = .03",
+              "p = .036",
               "p =< .05 "
             ]
           },
@@ -161,7 +161,7 @@
       {
         "t": "chr",
         "v": [
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p < .001 \", \"p =.03\", \"p =.036\", \"p =< .05 \"\n), Sentence = c(\"Different text here with p < .001 and d ≈ 0.5 and r ≠ 0 and t(3) ~ 1 and x !\", \n\"Text with (A, 2001) and p =.03.\", \"We tested t(28) = 2.20, p =.036. See Fig.1 and Smith (2020).\", \n\"We found t(20) <> 2.10 and r ≤= .5, p =< .05 and F(1, 2) ==3.\"\n)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p < .001 \", \"p = .03\", \"p = .036\", \"p =< .05 \"\n), Sentence = c(\"Different text here with p < .001 and d ≈ 0.5 and r ≠ 0 and t(3) ~ 1 and x !\", \n\"Text with (A, 2001) and p = .03.\", \"We tested t(28) = 2.20, p = .036. See Fig 1 and Smith (2020).\", \n\"We found t(20) <> 2.10 and r ≤= .5, p =< .05 and F(1, 2) == 3.\"\n)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
           "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
         ]
       },
@@ -217,6 +217,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

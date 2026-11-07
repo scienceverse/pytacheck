@@ -78,7 +78,7 @@
             "t": "chr",
             "v": [
               null,
-              "On a scale from 1 (not salient) to 5 (very salient), the mean rated salience of the cues was 2.7 for set A, 2.9 for set B, and 2.4 for set C; on a scale from 1 (unpleasant) to 9 (pleasant), the mean rated emotional valence of the scenes was 3.5 for set A, 3.3 for set B, and 3.3 for set C; and on a scale from 1 (unarousing) to 9 (arousing), the mean arousal rating of the scenes was 4.8 for set A, 4.7 for set B, and 4.8 for set C. Assignment of  (Foa, 1995); IES-R = Impact of Event Scale-Revised (Weiss, 2007); BDI-II = Beck Depression Inventory-II (Beck, Steer, & Brown, 1996); STAI-T = Trait score on the State-Trait Anxiety Inventory (Spielberger, Gorsuch, Lushene, Vagg, & Jacobs, 1983); STAI-S = State score on the State-Trait Anxiety Inventory (Spielberger et al., 1982); TCAQ = Thought Control Ability Questionnaire (Luciano, Algarabel, Tomás, & Martínez, 2005); NART = National Adult Reading Test (Nelson, 1982)."
+              "On a scale from 1 (not salient) to 5 (very salient), the mean rated salience of the cues was 2.7 for set A, 2.9 for set B, and 2.4 for set C; on a scale from 1 (unpleasant) to 9 (pleasant), the mean rated emotional valence of the scenes was 3.5 for set A, 3.3 for set B, and 3.3 for set C; and on a scale from 1 (unarousing) to 9 (arousing), the mean arousal rating of the scenes was 4.8 for set A, 4.7 for set B, and 4.8 for set C. Assignment of (Foa, 1995); IES-R = Impact of Event Scale-Revised (Weiss, 2007); BDI-II = Beck Depression Inventory-II (Beck, Steer, & Brown, 1996); STAI-T = Trait score on the State-Trait Anxiety Inventory (Spielberger, Gorsuch, Lushene, Vagg, & Jacobs, 1983); STAI-S = State score on the State-Trait Anxiety Inventory (Spielberger et al., 1982); TCAQ = Thought Control Ability Questionnaire (Luciano, Algarabel, Tomás, & Martínez, 2005); NART = National Adult Reading Test (Nelson, 1982)."
             ]
           }
         ]
@@ -86,8 +86,8 @@
       {
         "t": "chr",
         "v": [
-          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(1L, NA), type = c(\"extra\", \"missing\"\n), contents = c(NA, \"(Spielberger et al., 1982)\"), reference = c(\"American Psychiatric Association. (2013). Diagnostic and sta- tistical manual of mental disorders, fifth edition. Arlington, VA: Author.\", \n\"On a scale from 1 (not salient) to 5 (very salient), the mean rated salience of the cues was 2.7 for set A, 2.9 for set B, and 2.4 for set C; on a scale from 1 (unpleasant) to 9 (pleasant), the mean rated emotional valence of the scenes was 3.5 for set A, 3.3 for set B, and 3.3 for set C; and on a scale from 1 (unarousing) to 9 (arousing), the mean arousal rating of the scenes was 4.8 for set A, 4.7 for set B, and 4.8 for set C. Assignment of  (Foa, 1995); IES-R = Impact of Event Scale-Revised (Weiss, 2007); BDI-II = Beck Depression Inventory-II (Beck, Steer, & Brown, 1996); STAI-T = Trait score on the State-Trait Anxiety Inventory (Spielberger, Gorsuch, Lushene, Vagg, & Jacobs, 1983); STAI-S = State score on the State-Trait Anxiety Inventory (Spielberger et al., 1982); TCAQ = Thought Control Ability Questionnaire (Luciano, Algarabel, Tomás, & Martínez, 2005); NART = National Adult Reading Test (Nelson, 1982).\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "This module relies on Grobid correctly parsing the references. There are likely to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(1L, NA), type = c(\"extra\", \"missing\"\n), contents = c(NA, \"(Spielberger et al., 1982)\"), reference = c(\"American Psychiatric Association. (2013). Diagnostic and sta- tistical manual of mental disorders, fifth edition. Arlington, VA: Author.\", \n\"On a scale from 1 (not salient) to 5 (very salient), the mean rated salience of the cues was 2.7 for set A, 2.9 for set B, and 2.4 for set C; on a scale from 1 (unpleasant) to 9 (pleasant), the mean rated emotional valence of the scenes was 3.5 for set A, 3.3 for set B, and 3.3 for set C; and on a scale from 1 (unarousing) to 9 (arousing), the mean arousal rating of the scenes was 4.8 for set A, 4.7 for set B, and 4.8 for set C. Assignment of (Foa, 1995); IES-R = Impact of Event Scale-Revised (Weiss, 2007); BDI-II = Beck Depression Inventory-II (Beck, Steer, & Brown, 1996); STAI-T = Trait score on the State-Trait Anxiety Inventory (Spielberger, Gorsuch, Lushene, Vagg, & Jacobs, 1983); STAI-S = State score on the State-Trait Anxiety Inventory (Spielberger et al., 1982); TCAQ = Thought Control Ability Questionnaire (Luciano, Algarabel, Tomás, & Martínez, 2005); NART = National Adult Reading Test (Nelson, 1982).\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -153,6 +153,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

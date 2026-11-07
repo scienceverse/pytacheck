@@ -43,6 +43,7 @@ import regex
 from metacheck._r.base import as_character as r_as_character
 from metacheck._r.base import plural
 from metacheck._r.regex import grepl, gsub, regexec, regextract, regextract_all, sub
+from metacheck._save_path import NO_SAVE_PATH, require_save_path
 from metacheck.io.xml import (
     _xml_find1_text,
     _xml_find_text,
@@ -1464,7 +1465,7 @@ def _list_files(path: PathLikeStr, pattern: str, recursive: bool = False) -> lis
 
 def grobid_to_bibr(
     xml_path: PathLikeStr | Sequence[PathLikeStr],
-    save_path: PathLikeStr | None = ".",
+    save_path: PathLikeStr | None = NO_SAVE_PATH,
     crossref_lookup: bool = False,
     schema_version: str | None = "12.0",
 ) -> Any:
@@ -1475,8 +1476,8 @@ def grobid_to_bibr(
     xml_path:
         A TEI XML file, a list of them, or a directory of ``.xml`` files.
     save_path:
-        Directory to save the JSON files in; ``None`` returns paper objects
-        instead.
+        Directory to save the JSON files in (there is no default folder); ``None``
+        returns paper objects instead.
     crossref_lookup:
         Whether to add a ``bib_match`` table from CrossRef.
     schema_version:
@@ -1500,6 +1501,7 @@ def grobid_to_bibr(
         not isinstance(schema_version, str) or schema_version != "12.0"
     ):
         raise ValueError('schema_version must be None or "12.0"')
+    require_save_path(save_path)  # there is no default folder
 
     if isinstance(xml_path, str | PathLike):
         paths: list[PathLikeStr] = [xml_path]
@@ -1603,8 +1605,8 @@ def _reason(status: int) -> str:
 
 def convert_grobid(
     file_path: PathLikeStr | Sequence[PathLikeStr],
-    save_path: PathLikeStr | Sequence[PathLikeStr] | None = ".",
-    api_url: str = "https://grobid.hti.ieis.tue.nl",
+    save_path: PathLikeStr | Sequence[PathLikeStr] | None = NO_SAVE_PATH,
+    api_url: str | None = None,
     start_page: int = -1,
     end_page: int = -1,
     consolidate_citations: int = 0,
@@ -1613,9 +1615,12 @@ def convert_grobid(
 ) -> Any:
     """Port of ``R/import-grobid.R::convert_grobid()``: convert PDF(s) to Grobid TEI XML.
 
-    Sends each PDF to a Grobid server (by default the GDPR-compliant server
-    of Eindhoven University of Technology) and saves the TEI XML. With
-    ``save_path=None`` the XML is read and a paper object returned (its
+    Sends each PDF to a Grobid server and saves the TEI XML. Without an
+    ``api_url`` the server is the GDPR-compliant one of Eindhoven University of
+    Technology (``https://grobid.hti.ieis.tue.nl``) or, when that does not answer, the
+    first Grobid server on this computer or in metacheck's online list that does.
+    There is no default ``save_path`` (a folder or file name).
+    With ``save_path=None`` the XML is read and a paper object returned (its
     source is the PDF: file name, SHA-256 and ``paper_id``; metacheck reads a
     randomly named temporary file). Several files (or a directory) give a list
     of XML paths, ``None`` for failures.
@@ -1627,12 +1632,21 @@ def convert_grobid(
     )
     if not all(Path(f).exists() for f in paths):
         raise FileNotFoundError("Files do not exist")
+    # no server given: the TU/e server, or else the first Grobid server of the online list that
+    # answers (see convert._convert_candidates())
+    if api_url is None:
+        from metacheck.io.convert import TUE_GROBID_URL, _grobid_first_alive
+
+        api_url = _grobid_first_alive(TUE_GROBID_URL)
 
     _grobid_isalive(api_url)
 
+    # before any file is sent to the server: there is no default folder
+    require_save_path(save_path)
+
     if len(paths) > 1:
         if save_path is None:
-            save_path = "."
+            raise ValueError("Converting several files needs a folder in `save_path`.")
         if isinstance(save_path, str | PathLike):
             Path(save_path).mkdir(exist_ok=True)
             save_paths: list[Any] = [os.fspath(save_path)] * len(paths)
@@ -1671,6 +1685,13 @@ def convert_grobid(
                 f"{sum(errors)} of {len(xmls)} files did not convert: \n{detail}", stacklevel=2
             )
             xmls = [None if e else x for x, e in zip(xmls, errors, strict=True)]
+        from metacheck.io.convert import _message
+
+        n_total = len(xmls)
+        _message(
+            f"{n_total - sum(errors)} out of {n_total} PDF file{plural(n_total)} "
+            "successfully converted to Grobid TEI XML."
+        )
         return xmls
 
     if Path(paths[0]).is_dir():

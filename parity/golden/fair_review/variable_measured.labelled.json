@@ -1,0 +1,516 @@
+{
+  "id": "variable_measured.labelled",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "description",
+              "metacheck:labelSource",
+              "metacheck:codebookVariable",
+              "measurementTechnique",
+              "metacheck:scale",
+              "metacheck:measurementLevel",
+              "metacheck:valueLabels",
+              "metacheck:codeList",
+              "metacheck:missingValues",
+              "minValue",
+              "maxValue",
+              "metacheck:statistics",
+              "metacheck:representation",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "q1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "First"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "codebook"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Q1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Scale A"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "source",
+                  "confidence"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Scale A"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "codebook"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "medium"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "ordinal"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "{\"1\":\"never\",\"5\":\"always\"}"
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "@type",
+                      "value",
+                      "name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "PropertyValue"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "1"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "never"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "@type",
+                      "value",
+                      "name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "PropertyValue"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "5"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "always"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "{\"-99\":\"refused\"}"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  5
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "mean"
+                ],
+                "v": [
+                  {
+                    "t": "dbl",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "numeric"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data/a.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "description",
+              "metacheck:labelSource",
+              "metacheck:codebookVariable",
+              "measurementTechnique",
+              "metacheck:scale",
+              "metacheck:measurementLevel",
+              "metacheck:question",
+              "metacheck:valueLabels",
+              "metacheck:codeList",
+              "metacheck:missingValues",
+              "minValue",
+              "maxValue",
+              "metacheck:statistics",
+              "metacheck:representation",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "q2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Second"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "llm"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Q2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Scale B"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "source",
+                  "confidence"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Scale B"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "codebook"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "high"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "ordinal"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "How often?"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "{\"1\":\"disagree\",\"5\":\"agree\"}"
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "@type",
+                      "value",
+                      "name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "PropertyValue"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "1"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "disagree"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "@type",
+                      "value",
+                      "name"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "PropertyValue"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "5"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "agree"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "[\"-99\"]"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  5
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "mean"
+                ],
+                "v": [
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2.5
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "numeric"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data/a.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "metacheck:representation",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "q3"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "text"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data/a.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "metacheck:measurementLevel",
+              "metacheck:representation",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "q0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "nominal"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "text"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data/a.csv"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

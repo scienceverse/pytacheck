@@ -91,7 +91,7 @@
       {
         "t": "chr",
         "v": [
-          "We checked 1 references with DOIs. No citations to articles in the FLoRA database were found."
+          "We checked 1 reference with DOIs. No citations to articles in the FLoRA database were found."
         ]
       },
       {
@@ -136,6 +136,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -54,7 +54,18 @@
           "error",
           "error_msg",
           "error.power",
-          "complete"
+          "power_type",
+          "statistical_test",
+          "sample_size",
+          "alpha_level",
+          "power",
+          "effect_size",
+          "effect_size_metric",
+          "software",
+          "complete",
+          "statistical_test_other",
+          "effect_size_metric_other",
+          "software_other"
         ],
         "v": [
           {
@@ -90,6 +101,38 @@
             "v": []
           },
           {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
             "t": "lgl",
             "v": []
           },
@@ -107,6 +150,18 @@
           },
           {
             "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           }
         ]
@@ -136,7 +191,8 @@
         "names": [
           "paper_id",
           "power_n",
-          "power_complete"
+          "power_complete",
+          "power_unchecked"
         ],
         "v": [
           {
@@ -156,20 +212,28 @@
             "v": [
               null
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
           0
         ],
         "names": [
-          "power_n"
+          "power_n",
+          "power_unchecked"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

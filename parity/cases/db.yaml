@@ -289,7 +289,6 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.7717/peerj.4375\", NA))); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.doi.doi_lookup', ['10.7717/peerj.4375', None])"
 - "id": "doi_lookup.replay.not_found"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "a DOI the service does not know gets its own NA row; R's return() inside tryCatch() makes the whole lookup NULL"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -342,7 +341,6 @@
     "ignore":
     - "authors"
 - "id": "datacite_doi.replay.not_found"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "a DOI the service does not know gets its own NA row; R's return() inside tryCatch() makes the whole lookup NULL"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -400,56 +398,56 @@
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.psychsci"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797613520608-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797613520608-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797613520608-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797613520608-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.book_chapter"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.cran"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.springer"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.jss"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json', 'rb').read())['message']"
 - "id": "crossref_parse_item.select"
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
     "item":
       "$expr":
-        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
-        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
     "select":
       "$chr":
       - "title"
@@ -515,7 +513,6 @@
         "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T\\\"], \\\"abstract\\\": \\\"<jats:p>Abs</jats:p>\\\", \\\"score\\\": 12.5, \\\"page\\\": \\\"1-10\\\", \\\"volume\\\": \\\"3\\\"}\")"
         "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T\"], \"abstract\": \"<jats:p>Abs</jats:p>\", \"score\": 12.5, \"page\": \"1-10\", \"volume\": \"3\"}')"
 - "id": "crossref_parse_item.synthetic.editor"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "editors are a table in one editor cell like the authors (R spreads them over editor.given/editor.family columns, repeated per editor)"}
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
@@ -529,7 +526,6 @@
       - "title"
       - "editor"
 - "id": "crossref_parse_item.synthetic.null_field"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "a JSON null in a selected field is NA (R's data.frame() fails: differing number of rows: 1, 0)"}
   "r": "metacheck:::.crossref_parse_item"
   "py": "metacheck.db.crossref._crossref_parse_item"
   "args":
@@ -912,7 +908,6 @@
     "doi":
     - null
 - "id": "openalex_doi.replay.fake"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "openalex_doi() returns one entry per DOI; R's return() inside tryCatch() returns only the unknown DOI's error"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -985,7 +980,6 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Sample Size Justification\")); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.crossref.openalex_query', 'Sample Size Justification')"
 - "id": "openalex_query.replay.no_source_loose"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U13", "reason": "candidates are ordered by relevance_score as numbers (R sorts the text, so 389.95 came before 3145.65)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1051,7 +1045,6 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c())); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.pubpeer.pubpeer_comments', [])"
 - "id": "openalex_doi.replay.unrecorded"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U12", "reason": "openalex_doi() returns one entry per DOI; R's return() inside tryCatch() returns only the unknown DOI's error"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1068,7 +1061,6 @@
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.9999/a\", \"10.9999/b\", \"10.9999/c\"))); x"
         "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('metacheck.db.pubpeer.pubpeer_comments', ['10.9999/a', '10.9999/b', '10.9999/c'])"
 - "id": "retractionwatch.summary"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U15", "reason": "the RetractionWatch row with a blank DOI is left out (in R it matches every reference without a DOI: 105 false matches for psychsci)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1077,7 +1069,6 @@
         "r": "local({x <- as.data.frame(retractionwatch()); list(nrow = nrow(x), names = names(x), nchar = unname(sapply(x, function(v) sum(nchar(v), na.rm = TRUE))), na = unname(sapply(x, function(v) sum(is.na(v)))), head = head(x, 25), middle = x[seq(2, nrow(x), by = 997), ], tail = tail(x, 25))})"
         "py": "(lambda x: {'nrow': len(x), 'names': list(x.columns), 'nchar': [int(x[c].str.len().sum()) for c in x.columns], 'na': [int(x[c].isna().sum()) for c in x.columns], 'head': x.head(25), 'middle': x.iloc[1::997], 'tail': x.tail(25)})(__import__('metacheck.db.retractionwatch', fromlist=['x']).retractionwatch())"
 - "id": "rw.summary"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U15", "reason": "the RetractionWatch row with a blank DOI is left out (in R it matches every reference without a DOI: 105 false matches for psychsci)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1110,7 +1101,6 @@
         "r": "readRDS(system.file(\"databases/miscite.Rds\", package = \"metacheck\"))"
         "py": "__import__('metacheck.db.databases', fromlist=['x']).miscite()"
 - "id": "retractionwatch.join.demo"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U15", "reason": "the RetractionWatch row with a blank DOI is left out (in R it matches every reference without a DOI: 105 false matches for psychsci)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1127,7 +1117,6 @@
         "r": "dplyr::inner_join(paper_table(demopaper(), \"bib\", c(\"bib_id\", \"doi\")), FLoRA(), by = c(doi = \"doi_o\"))"
         "py": "pc.paper_table(pc.demopaper(), 'bib', ['bib_id', 'doi']).merge(__import__('metacheck.db.replications', fromlist=['x']).FLoRA().rename(columns={'doi_o': 'doi'}), on='doi', how='inner')"
 - "id": "retractionwatch.join.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U15", "reason": "the RetractionWatch row with a blank DOI is left out (in R it matches every reference without a DOI: 105 false matches for psychsci)"}
   "r": "identity"
   "py": "copy.copy"
   "args":
@@ -1212,7 +1201,6 @@
   "args":
     "orcid": "0000-0002-0247-239x"
 - "id": "check_orcid.x_inside"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "a missing ORCiD or one with X before the check digit is not valid (FALSE); R fails on if (NA)"}
   "r": "check_orcid"
   "py": "metacheck.db.orcid.check_orcid"
   "args":
@@ -1223,7 +1211,6 @@
   "args":
     "orcid": ""
 - "id": "check_orcid.na"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U14", "reason": "a missing ORCiD or one with X before the check digit is not valid (FALSE); R fails on if (NA)"}
   "r": "check_orcid"
   "py": "metacheck.db.orcid.check_orcid"
   "args":

@@ -282,7 +282,7 @@
           null,
           "10.7910/DVN/X;",
           "10.7910/DVN/Q",
-          null,
+          "10.34894/ABC",
           "10.58099/x",
           "10.34894/ABC",
           null,
@@ -290,9 +290,9 @@
           "10.7910/DVN/GGDUND..v2",
           null,
           "10.18710/X",
-          null,
-          null,
-          null,
+          "10.34894/ABC",
+          "10.34894/ABC",
+          "10.34894/ABC//",
           null,
           null,
           "10.18710/X",
@@ -312,6 +312,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -145,6 +145,7 @@ def test_start_local_docker(monkeypatch: pytest.MonkeyPatch) -> None:
 
     def fake_popen(cmd: list[str], **kwargs: Any) -> FakeProc:
         started["cmd"] = cmd
+        started["env"] = kwargs.get("env")
         return FakeProc()
 
     monkeypatch.setattr(subprocess, "Popen", fake_popen)
@@ -152,22 +153,13 @@ def test_start_local_docker(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(rl, "_server_up", lambda url: True)
     rl.regcheck_start_local(model="llama3.2")
     assert started["cmd"] == ["/usr/bin/docker", "compose", "up", "--build", "--force-recreate"]
+    assert started["env"]["REGCHECK_PORT"] == "8000"
     rl.regcheck_stop_local()
-    # U14: metacheck ignores `port` with Docker; an override file publishes it
+    # U14: the compose file publishes the port in REGCHECK_PORT (metacheck ignored `port`)
     rl.regcheck_start_local(model="llama3.2", port=8123)
-    assert started["cmd"] == [
-        "/usr/bin/docker",
-        "compose",
-        "-f",
-        "docker-compose.yml",
-        "-f",
-        "docker-compose.port.yml",
-        "up",
-        "--build",
-        "--force-recreate",
-    ]
-    override = rl._regcheck_app_dir() / "docker-compose.port.yml"
-    assert '- "8123:8000"' in override.read_text(encoding="utf-8")
+    assert started["cmd"] == ["/usr/bin/docker", "compose", "up", "--build", "--force-recreate"]
+    assert started["env"]["REGCHECK_PORT"] == "8123"
+    assert not (rl._regcheck_app_dir() / "docker-compose.port.yml").exists()
     rl.regcheck_stop_local()
 
 

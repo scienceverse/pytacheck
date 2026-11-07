@@ -14,9 +14,8 @@
       "traffic_light",
       "summary_text",
       "summary_table",
+      "findings",
       "na_replace",
-      "dv_summary_text",
-      "dv_report",
       "structure",
       "previews",
       "gated_repos",
@@ -40,6 +39,91 @@
         "t": "chr",
         "v": [
           "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
+          "**Repository: https://osf.io/remot**",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── data/\n│   ├── a.csv  📊 data   ex1\n│   └── b.sav  📊 data   ex1\n└── readme.md  📄 readme\n```\n:::"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 3 files: 2 data, 1 documentation.\n-  We found 2 tabular data files and extracted 0 columns from 0 of them.\n-  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata).\n-  2 tabular data files could not be read because they were not downloaded. Set `download = \"data\"`, or pass `local_path` to point at a local copy, to analyse them. We found no readable tabular data files to validate."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n",
+          "flagged_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
         ]
       },
       {
@@ -76,86 +160,23 @@
         ]
       },
       {
-        "t": "chr",
-        "v": [
-          ""
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "na"
-        ]
-      },
-      {
-        "t": "null"
-      },
-      {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "paper_id",
-          "column_n",
-          "flagged_n",
-          "spreadsheet_file_n",
-          "spreadsheet_flagged_file_n"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "p1"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
-            ]
-          }
-        ]
-      },
-      {
         "t": "dbl",
         "v": [
+          0,
+          0,
           0,
           0,
           0,
           0
         ],
         "names": [
+          "data_file_n",
           "column_n",
+          "empty_col_n",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
         ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "We found no readable tabular data files to validate."
-        ]
-      },
-      {
-        "t": "null"
       },
       {
         "t": "df",
@@ -174,6 +195,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -290,6 +312,14 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "a.csv",
+              "b.sav",
+              "readme.md"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               true,
@@ -326,6 +356,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

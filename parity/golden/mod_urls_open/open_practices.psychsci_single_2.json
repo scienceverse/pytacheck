@@ -116,7 +116,8 @@
       {
         "t": "chr",
         "v": [
-          "Neither shared data nor code detected."
+          "We did not detect open sharing of data, which could be because there is no data related to this article, or the repository is not recognized by our code. If there is data, please consider sharing it in a repository.",
+          "We did not detect open sharing of code, which could be because there is no code related to this article, or the repository is not recognized by our code. If there is code, please consider sharing it in a repository."
         ]
       },
       {
@@ -168,19 +169,19 @@
           {
             "t": "lgl",
             "v": [
-              null
+              false
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null
+              false
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null
+              false
             ]
           },
           {
@@ -188,7 +189,10 @@
             "names": null,
             "v": [
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           },
@@ -197,7 +201,10 @@
             "names": null,
             "v": [
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           },
@@ -206,7 +213,10 @@
             "names": null,
             "v": [
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           },
@@ -215,7 +225,10 @@
             "names": null,
             "v": [
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           }
@@ -244,6 +257,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

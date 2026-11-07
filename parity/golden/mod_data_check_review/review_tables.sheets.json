@@ -1164,31 +1164,31 @@
           {
             "t": "chr",
             "v": [
-              null,
+              "(whole file)",
+              "(whole file)",
               "Sheet1",
-              null,
-              null,
+              "(whole file)",
               "...2",
               "Sheet",
+              "(whole file)",
               "Sheet",
-              null,
-              "Sheet",
-              null
+              "(whole file)",
+              "Sheet"
             ]
           },
           {
             "t": "chr",
             "v": [
               "<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span><br><span title='Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.'>⚠️ Un-inspectable (.xls) — Legacy <\/span>",
-              "<span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span>",
               "<span title='The column header is on row 2; above it is a partial label row (Survey export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.'>📋 Header not on first row — The column header is on row 2<\/span>",
+              "<span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span>",
               "<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>",
               "<span title='Column is empty: all 3 values are missing.'>⬜ Empty column — Column is empty: all 3 values are missing<\/span>",
               "<span title='1 fully empty row inside the data range.'>⬜ Empty rows — 1 fully empty row inside the data range<\/span>",
-              "<span title='2 columns are empty or have a blank header.'>⬜ Empty or unnamed columns — 2 columns are empty or have a blank header<\/span>",
               "<span title='This file reads as a table but is not a usable dataset (the file has no data rows or columns). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (the file ha...<\/span>",
-              "<span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span><br><span title='1 fully empty row inside the data range.'>⬜ Empty rows — 1 fully empty row inside the data range<\/span>",
-              "<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>"
+              "<span title='2 columns are empty or have a blank header.'>⬜ Empty or unnamed columns — 2 columns are empty or have a blank header<\/span>",
+              "<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>",
+              "<span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span title='1 fully empty row inside the data range.'>⬜ Empty rows — 1 fully empty row inside the data range<\/span>"
             ]
           }
         ]
@@ -1257,20 +1257,20 @@
               "This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
               "Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.",
               "The column header is on row 2; above it is a partial label row (Survey export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.",
-              "1 column is empty or have a blank header.",
+              "1 column is empty or has a blank header.",
               "This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
               "1 fully empty row inside the data range.",
               "This file reads as a table but is not a usable dataset (the file has no data rows or columns). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
               "2 columns are empty or have a blank header.",
               "This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
               "1 fully empty row inside the data range.",
-              "1 column is empty or have a blank header."
+              "1 column is empty or has a blank header."
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

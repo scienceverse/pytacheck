@@ -24,7 +24,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._json import loads
-from metacheck._values import as_str
+from metacheck._values import as_str, is_missing
 
 __all__ = ["causal_relations"]
 
@@ -286,14 +286,12 @@ def causal_relations(
     sentence, then cause and effect.
     """
     sentences = [sentence] if isinstance(sentence, str) or sentence is None else list(sentence)
-    # R: length(sentence) == 0 || all(trimws(sentence) == "") (NA makes all() NA)
-    blank = [
-        None if s is None else isinstance(s, str) and s.strip(" \t\r\n") == "" for s in sentences
-    ]
-    if len(sentences) == 0 or all(b is True for b in blank):
+    # missing sentences are not sent (metacheck 0.4.3.7, U84): an all-missing input is empty
+    sentences = [s for s in sentences if not is_missing(s)]
+    if len(sentences) == 0 or all(
+        isinstance(s, str) and s.strip(" \t\r\n") == "" for s in sentences
+    ):
         return _empty()
-    if False not in blank:
-        raise ValueError("missing value where TRUE/FALSE needed")
 
     if not all(s is None or isinstance(s, str) for s in sentences):
         raise TypeError("`sentence` must be a non-empty character vector.")

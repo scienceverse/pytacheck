@@ -146,8 +146,8 @@
         "names": [
           "paper_id",
           "miscite_10.1000/b",
-          "miscite_10.1000/a",
-          "miscite_10.1000/c"
+          "miscite_10.1000/c",
+          "miscite_10.1000/a"
         ],
         "v": [
           {
@@ -171,25 +171,25 @@
           {
             "t": "int",
             "v": [
-              0,
               null,
-              1,
-              0
+              null,
+              0,
+              null
             ]
           },
           {
             "t": "int",
             "v": [
-              null,
-              null,
               0,
-              null
+              null,
+              1,
+              0
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

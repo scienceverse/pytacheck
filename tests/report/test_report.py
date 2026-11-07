@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib
 import re
+import tempfile
 import warnings
 from pathlib import Path
 
@@ -179,11 +180,16 @@ def test_render_formats(tmp_path, demo):
     assert "{.red}" not in md and "{#" not in md
 
 
-def test_default_output_file(tmp_path, monkeypatch, demo):
-    monkeypatch.chdir(tmp_path)
+def test_default_output_file(tmp_path, monkeypatch, demo, capsys):
+    """Without a file name the report goes to the temporary folder, and a message says where."""
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
     rep = report(demo, "marginal", output_format="md")
-    assert rep.save_path == f"{demo.paper_id}_report.md"
-    assert (tmp_path / rep.save_path).exists()
+    assert rep.save_path == str(tmp_path / f"{demo.paper_id}_report.md")
+    assert (tmp_path / f"{demo.paper_id}_report.md").exists()
+    err = capsys.readouterr().err
+    assert "The report is in the temporary folder" in err
+    assert rep.save_path in err
+    assert "Give `output_file`" in err
 
 
 def test_default_modules_skip_unported(tmp_path, demo):
@@ -302,13 +308,13 @@ def test_module_report_howitworks_without_details(tmp_path):
 
 
 def test_module_report_undefined_traffic_light(tmp_path):
-    # U128: R's sprintf() with a NULL emoji drops the heading and prints the
-    # summary line of report_qmd() as "character(0)"
+    # U128 (fixed in metacheck 0.4): an undefined light has no emoji, and the heading
+    # keeps the blank where it would be
     path = tmp_path / "rp_blue.py"
     path.write_text(_BLUE, encoding="utf-8")
     op = module_run(pc.test_paper(["x"]), str(path))
-    assert module_report(op).startswith("### Blue Module {#blue-module .blue}\n\nBlue.")
-    assert module_report(op, header=0).startswith("Blue Module\n\nBlue.")
+    assert module_report(op).startswith("###  Blue Module {#blue-module .blue}\n\nBlue.")
+    assert module_report(op, header=0).startswith(" Blue Module\n\nBlue.")
     qmd = report_qmd(op, pc.test_paper(["x"]))
     assert '<li class="mc-summary-row blue"><span class="mc-summary-icon"></span>' in qmd
     assert '<a href="#blue-module">Blue Module</a>' in qmd
@@ -377,11 +383,9 @@ def test_module_report_details_wrapper(demo, test_module):
     # a report identical to the summary is dropped
     same = module_report(module_run(demo, test_module("rp_no_details")))
     assert same.count("All good.") == 1
-    # without a summary text the report is shown unwrapped (U129: R shows
-    # "..." and drops the report)
+    # without a summary text the summary line is "..." and the report is shown unwrapped
     null = module_report(module_run(demo, test_module("rp_null_summary")))
-    assert ".info}\n\nSome report text.\n\nMore report text.\n\n::: {.callout" in null
-    assert "..." not in null
+    assert ".info}\n\n...\n\nSome report text.\n\nMore report text.\n\n::: {.callout" in null
     assert "<details>" not in null
 
 
@@ -422,6 +426,29 @@ def test_report_module_run_error(demo, test_module):
     assert "produced errors: boom" in fail.report
     # the chain went on
     assert mo[test_module("rp_chained")].summary_text == "The marginal table had 2 rows."
+
+
+def test_report_module_run_downloads_for_the_run(demo, monkeypatch):
+    # R's report_module_run(): with reproducibility_check executing the code, the first
+    # module that downloads fetches what the run needs too (metacheck.download_for_run)
+    from metacheck.utils import get_option
+
+    seen: list[object] = []
+
+    def fake_run(op, module, **kwargs):
+        seen.append(get_option("metacheck.download_for_run"))
+        return op
+
+    monkeypatch.setattr(report_pkg, "module_run", fake_run)
+    report_module_run(
+        demo, ["code_check", "reproducibility_check"], {"reproducibility_check": {"execute": True}}
+    )
+    assert seen == [True, True]
+    assert get_option("metacheck.download_for_run") is None
+    seen.clear()
+    report_module_run(demo, ["code_check", "reproducibility_check"])
+    report_module_run(demo, ["code_check"], {"reproducibility_check": {"execute": True}})
+    assert seen == [None, None, None]
 
 
 def test_report_qmd(demo, test_module):
@@ -481,12 +508,14 @@ def test_report_repository(tmp_path, test_module):
 def test_report_repository_default_output(tmp_path, monkeypatch, test_module):
     folder = tmp_path / "data" / "study_a"
     folder.mkdir(parents=True)
-    monkeypatch.chdir(tmp_path)
+    out = tmp_path / "out"
+    out.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(out))
     rep = report_repository(
         str(folder) + "/", modules=[test_module("rp_repo")], output_format="qmd"
     )
-    assert rep.save_path == "study_a_report.qmd"
-    assert (tmp_path / "study_a_report.qmd").exists()
+    assert rep.save_path == str(out / "study_a_report.qmd")
+    assert (out / "study_a_report.qmd").exists()
 
 
 def test_report_list_str(tmp_path):

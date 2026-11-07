@@ -351,12 +351,12 @@
           {
             "t": "chr",
             "v": [
-              "First abstract sentence.   Second one cites [1].",
-              "We tested t(28) = 2.20, p =.036.   See Fig.1 and Smith (2020).",
+              "First abstract sentence. Second one cites [1].",
+              "We tested t(28) = 2.20, p = .036. See Fig 1 and Smith (2020).",
               "[1]",
               "Only sentence.",
-              "Data at https://osf.io/abc.   Nested italic (Smith, 2020) ref.",
-              "Thanks.   Really.",
+              "Data at https://osf.io/abc. Nested italic (Smith, 2020) ref.",
+              "Thanks. Really.",
               "Smith (2020). A. J.",
               "Fig 1. Segmented caption with [1].Second caption sentence.",
               "Segmented note.With https://n.org."
@@ -793,7 +793,7 @@
             "t": "chr",
             "v": [
               "[1]",
-              "Fig.1",
+              "Fig 1",
               "Smith (2020)",
               "[1]",
               "(Smith, 2020)",
@@ -814,22 +814,22 @@
           {
             "t": "int",
             "v": [
-              44,
-              39,
-              49,
+              42,
+              38,
+              48,
               0,
-              44,
+              42,
               30
             ]
           },
           {
             "t": "int",
             "v": [
-              47,
-              44,
-              61,
+              45,
+              43,
+              60,
               3,
-              57,
+              55,
               33
             ]
           }
@@ -1531,7 +1531,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "0.3.1"
+                  "0.4.3.7"
                 ]
               },
               {
@@ -1603,6 +1603,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -60,7 +60,7 @@
       "------------+-----------------------------------",
       "      Total |         69      100.00",
       "",
-      ". display \"ababab A)       xy|  ab   |z    |-1.5x\"",
+      ". display \"ababab AA       xy|  ab   |z    |-1.5x\"",
       "---+---",
       "            label    mid   ",
       "ababab AA       xy|  ab   |z    |-1.5x",
@@ -81,6 +81,6 @@
       ""
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

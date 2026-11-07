@@ -214,20 +214,21 @@ def test_walk_nodes_pngda(mock_api: respx.MockRouter) -> None:
 
 
 def test_links_on_an_empty_paper_list() -> None:
-    """R: osf_links(paperlist()) is 0 x 3 (with a warning), aspredicted_links() 0 x 0."""
+    """R 0.4.3.7: text_search() of an empty paper list is a typed empty table, so both
+    link finders give its four columns, without a warning (U79)."""
     import warnings
 
     from metacheck.archives.aspredicted import aspredicted_links
     from metacheck.archives.osf import osf_links
     from metacheck.papers import PaperList
 
-    with pytest.warns(UserWarning, match="uninitialised column: `href`"):
-        osf = osf_links(PaperList([]))
-    assert list(osf.columns) == ["href", "text_id", "paper_id"] and len(osf) == 0
     with warnings.catch_warnings():
         warnings.simplefilter("error")
+        osf = osf_links(PaperList([]))
         ap = aspredicted_links(PaperList([]))
-    assert ap.shape == (0, 0)
+    cols = ["href", "link_text", "text_id", "paper_id"]
+    assert list(osf.columns) == cols and len(osf) == 0
+    assert list(ap.columns) == cols and len(ap) == 0
 
 
 def test_metadata_json_numbers_as_jsonlite_writes_them() -> None:

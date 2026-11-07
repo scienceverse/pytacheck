@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -42,7 +43,7 @@
       },
       {
         "t": "df",
-        "nrow": 3,
+        "nrow": 6,
         "names": [
           "repo_name",
           "repo_url",
@@ -63,7 +64,10 @@
             "v": [
               "dup_a",
               "dup_a",
-              "dup_a"
+              "dup_a",
+              "dup_a",
+              "dup_b",
+              "dup_b"
             ]
           },
           {
@@ -71,20 +75,29 @@
             "v": [
               "tests/mod_repo_check/fixtures/review/dup_a",
               "tests/mod_repo_check/fixtures/review/dup_a",
-              "tests/mod_repo_check/fixtures/review/dup_a"
+              "tests/mod_repo_check/fixtures/review/dup_a",
+              "tests/mod_repo_check/fixtures/review/dup_a",
+              "tests/mod_repo_check/fixtures/review/dup_b",
+              "tests/mod_repo_check/fixtures/review/dup_b"
             ]
           },
           {
             "t": "chr",
             "v": [
               "data.csv",
+              "deep.csv",
               "only_a.R",
+              "README.md",
+              "data.csv",
               "README.md"
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
               null,
               null,
               null
@@ -94,15 +107,21 @@
             "t": "chr",
             "v": [
               "<repo>/tests/mod_repo_check/fixtures/review/dup_a/data.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/dup_a/nested/deep.csv",
               "<repo>/tests/mod_repo_check/fixtures/review/dup_a/only_a.R",
-              "<repo>/tests/mod_repo_check/fixtures/review/dup_a/README.md"
+              "<repo>/tests/mod_repo_check/fixtures/review/dup_a/README.md",
+              "<repo>/tests/mod_repo_check/fixtures/review/dup_b/data.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/dup_b/README.md"
             ]
           },
           {
             "t": "dbl",
             "v": [
               4,
+              4,
               7,
+              4,
+              4,
               4
             ]
           },
@@ -110,7 +129,10 @@
             "t": "chr",
             "v": [
               "data",
+              "data",
               "code",
+              "readme",
+              "data",
               "readme"
             ]
           },
@@ -118,7 +140,10 @@
             "t": "chr",
             "v": [
               "data.csv",
+              "nested/deep.csv",
               "only_a.R",
+              "README.md",
+              "data.csv",
               "README.md"
             ]
           },
@@ -126,7 +151,10 @@
             "t": "chr",
             "v": [
               "data",
+              "data",
               "code",
+              "documentation",
+              "data",
               "documentation"
             ]
           },
@@ -135,6 +163,9 @@
             "v": [
               null,
               null,
+              null,
+              "readme",
+              null,
               "readme"
             ]
           },
@@ -143,12 +174,18 @@
             "v": [
               "ex1",
               "ex1",
+              "ex1",
+              null,
+              "ex2",
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              "p_local",
+              "p_local",
+              "p_local",
               "p_local",
               "p_local",
               "p_local"
@@ -160,12 +197,12 @@
         "t": "chr",
         "v": [
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='tests/mod_repo_check/fixtures/review/dup_a' target='_blank'>tests/mod_repo_check/fixtures/review/dup_a<\/a>\", \n    Platform = \"local\", \"All Files\" = 3L, \"Data Files\" = 1L, \n    \"Code Files\" = 1L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='tests/mod_repo_check/fixtures/review/dup_a' target='_blank'>tests/mod_repo_check/fixtures/review/dup_a<\/a>\", \n\"<a href='tests/mod_repo_check/fixtures/review/dup_b' target='_blank'>tests/mod_repo_check/fixtures/review/dup_b<\/a>\"\n), Platform = c(\"local\", \"local\"), \"All Files\" = c(4L, 2L), \"Data Files\" = 2:1, \n    \"Code Files\" = 1:0, READMEs = c(1L, 1L), Archives = c(0L, \n    0L)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/review/dup_a\", \n\"tests/mod_repo_check/fixtures/review/dup_a\", \"tests/mod_repo_check/fixtures/review/dup_a\"\n), File = c(\"data.csv\", \"only_a.R\", \"README.md\"), Size = c(\"4 B\", \n\"7 B\", \"4 B\"), Type = c(\"data\", \"code\", \"readme\")), row.names = c(NA, \n-3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/review/dup_a\", \n\"tests/mod_repo_check/fixtures/review/dup_a\", \"tests/mod_repo_check/fixtures/review/dup_a\", \n\"tests/mod_repo_check/fixtures/review/dup_a\", \"tests/mod_repo_check/fixtures/review/dup_b\", \n\"tests/mod_repo_check/fixtures/review/dup_b\"), File = c(\"data.csv\", \n\"deep.csv\", \"only_a.R\", \"README.md\", \"data.csv\", \"README.md\"), \n    Size = c(\"4 B\", \"4 B\", \"7 B\", \"4 B\", \"4 B\", \"4 B\"), Type = c(\"data\", \n    \"data\", \"code\", \"readme\", \"data\", \"readme\")), row.names = c(NA, \n-6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
           "#### File Classification",
-          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"only_a.R\", Group = \"ex1\", Path = \"only_a.R\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"data.csv\", Group = \"ex1\", Path = \"data.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"only_a.R\", Group = \"ex1\", Path = \"only_a.R\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"data.csv\", \"deep.csv\", \"data.csv\"), \n    Group = c(\"ex1\", \"ex1\", \"ex2\"), Path = c(\"data.csv\", \"nested/deep.csv\", \n    \"data.csv\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README.md\", \"README.md\"), Group = c(\"—\", \n\"—\"), Path = c(\"README.md\", \"README.md\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
       },
       {
@@ -177,7 +214,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 3 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs."
+          "\n-  We found 6 files in 2 repositories.\n-  We found 2 README files and 0 repositories without READMEs."
         ]
       },
       {
@@ -186,6 +223,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -205,7 +243,19 @@
           {
             "t": "int",
             "v": [
-              1
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
             ]
           },
           {
@@ -223,13 +273,7 @@
           {
             "t": "int",
             "v": [
-              1
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              1
+              2
             ]
           },
           {
@@ -354,7 +398,8 @@
           {
             "t": "chr",
             "v": [
-              "ex1"
+              "ex1",
+              "ex2"
             ]
           },
           {
@@ -364,7 +409,8 @@
           {
             "t": "chr",
             "v": [
-              "ex1"
+              "ex1",
+              "ex2"
             ]
           },
           {
@@ -378,7 +424,35 @@
       {
         "t": "lgl",
         "v": [
-          true
+          false
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
         ]
       },
       {
@@ -389,6 +463,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

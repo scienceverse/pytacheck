@@ -53,9 +53,9 @@
       {
         "t": "chr",
         "v": [
-          "<TMP>/bzcrc.zip.contents/badcrc.csv",
-          "<TMP>/bzcrc.zip.contents/bz.csv",
-          "<TMP>/bzcrc.zip.contents/last.csv"
+          "<tempdir>/metacheck-archives/0b43517f1d3dbdab0bb9aff303acc45a/badcrc.csv",
+          "<tempdir>/metacheck-archives/0b43517f1d3dbdab0bb9aff303acc45a/bz.csv",
+          "<tempdir>/metacheck-archives/0b43517f1d3dbdab0bb9aff303acc45a/last.csv"
         ]
       },
       {
@@ -92,6 +92,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

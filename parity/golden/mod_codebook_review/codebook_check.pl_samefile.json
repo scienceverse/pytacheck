@@ -107,7 +107,7 @@
               "Age in years",
               "Sex of respondent",
               null,
-              null,
+              "Age in years",
               "Sex"
             ]
           },
@@ -117,7 +117,7 @@
               "age",
               "sex",
               null,
-              null,
+              "age",
               "sex"
             ]
           },
@@ -127,7 +127,7 @@
               "codebook.csv",
               "codebook.csv",
               null,
-              null,
+              "codebook.csv",
               "codebook.csv"
             ]
           },
@@ -137,7 +137,7 @@
               "labelled",
               "labelled",
               "unlabelled",
-              "unlabelled",
+              "labelled",
               "labelled"
             ]
           },
@@ -147,7 +147,7 @@
               "rules",
               "rules",
               null,
-              null,
+              "rules",
               "rules"
             ]
           },
@@ -239,21 +239,19 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 2 codebook/README/label sources and 5 data columns across 1 file.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\", \"age\", \"sex\", \"sex\"), \n    Documented = c(\"no\", \"no\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \n    NA, \"Age in years\", \"Sex of respondent\", \"Sex\"), \"Codebook Variable\" = c(NA, \n    NA, \"age\", \"sex\", \"sex\"), Source = c(NA, NA, \"codebook.csv\", \n    \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n    \"unlabelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "#### Scales",
-          "Scale naming from the manuscript needs an LLM (enable with `llm_use(TRUE)`); the dictionary rules matcher still names instruments whose abbreviation matches a known scale."
+          "::: {.panel-tabset}\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"age\", \"age\", \"sex\", \"sex\"), \n    Documented = c(\"no\", \"yes\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \n    \"Age in years\", \"Age in years\", \"Sex of respondent\", \"Sex\"\n    ), \"Codebook Variable\" = c(NA, \"age\", \"age\", \"sex\", \"sex\"\n    ), Source = c(NA, \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n    \"codebook.csv\"), Status = c(\"unlabelled\", \"labelled\", \"labelled\", \n    \"labelled\", \"labelled\")), row.names = c(NA, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "red"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 3 variable definitions from codebook/README files.\n-  3 of 5 data columns (60%) are documented in a codebook; 2 are not."
+          "\n-  We parsed 4 variable definitions from codebook/README files.\n-  4 of 5 data columns (80%) are documented in a codebook; 1 is not."
         ]
       },
       {
@@ -294,21 +292,21 @@
             "t": "int",
             "v": [
               2,
-              1
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0,
               2
             ]
           },
           {
             "t": "int",
             "v": [
-              2,
+              0,
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2
             ]
           },
           {
@@ -322,7 +320,7 @@
             "t": "int",
             "v": [
               2,
-              1
+              2
             ]
           },
           {
@@ -378,7 +376,7 @@
       },
       {
         "t": "df",
-        "nrow": 3,
+        "nrow": 4,
         "names": [
           "codebook_variable",
           "label",
@@ -397,6 +395,7 @@
             "v": [
               "age",
               "sex",
+              "age",
               "sex"
             ]
           },
@@ -405,12 +404,14 @@
             "v": [
               "Age in years",
               "Sex of respondent",
+              "Age in years",
               "Sex"
             ]
           },
           {
             "t": "chr",
             "v": [
+              "codebook.csv",
               "codebook.csv",
               "codebook.csv",
               "codebook.csv"
@@ -421,6 +422,7 @@
             "v": [
               "ex1",
               "ex1",
+              "ex1",
               "ex1"
             ]
           },
@@ -429,13 +431,6 @@
             "v": [
               null,
               null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
               null,
               null
             ]
@@ -445,6 +440,7 @@
             "v": [
               null,
               null,
+              null,
               null
             ]
           },
@@ -453,12 +449,23 @@
             "v": [
               null,
               null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "structured",
               "structured",
               "structured",
               "structured"
@@ -469,6 +476,7 @@
             "v": [
               "p1",
               "p1",
+              "p2",
               "p2"
             ]
           }
@@ -552,6 +560,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

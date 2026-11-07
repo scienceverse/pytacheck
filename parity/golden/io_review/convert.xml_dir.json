@@ -7,11 +7,12 @@
     "Namespace prefix xlink for href on ptr is not defined [201]",
     "Namespace prefix p on q is not defined [201]",
     "Namespace prefix xlink for href on ptr is not defined [201]",
-    "There were 5 errors; use lastlog(1:5)"
+    "There were 3 errors; use lastlog(1:3)"
   ],
   "value": {
     "t": "paperlist",
     "names": [
+      "bib_page_from.tei",
       "bom_paragraphs.tei",
       "crlf_nonamespace.tei",
       "edge_body.tei",
@@ -22,9 +23,496 @@
       "ref_token_literal.tei",
       "tables_empty_first.tei",
       "tables_empty_second.tei",
+      "url_empty.tei",
       "xlink_ns.tei"
     ],
     "v": [
+      {
+        "t": "paper",
+        "names": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bib_page_from.tei"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "title",
+              "keywords",
+              "doi",
+              "file_hash",
+              "input_format",
+              "file_name",
+              "bibr_version",
+              "paper_type",
+              "paper_type_confidence",
+              "oecd_l1",
+              "oecd_l2",
+              "oecd_confidence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Page without to"
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1c46c4fab7bfdfdd"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Unknown TEI XML"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<repo>/tests/io/fixtures/dir_case/bib_page_from.tei.xml"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "unknown"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Text.",
+                  "T. J, 5."
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "section_id",
+              "header",
+              "parent_section_id",
+              "section_type",
+              "classification_score"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Intro",
+                  "References"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "intro",
+                  "references"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "href",
+              "link_text",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "bib_type",
+              "doi",
+              "title",
+              "authors",
+              "editors",
+              "publisher",
+              "year",
+              "volume",
+              "issue",
+              "first_page",
+              "container",
+              "bib_id",
+              "year_suffix",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "article"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "T"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2001
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "J"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "xref_id",
+              "xref_type",
+              "contents",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "figure_id",
+              "section_id",
+              "image",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "table_id",
+              "section_id",
+              "html",
+              "contents",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text_id",
+              "grp_id",
+              "lhs",
+              "df",
+              "comp",
+              "rhs"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
       {
         "t": "paper",
         "names": [
@@ -1058,7 +1546,7 @@
                 "t": "chr",
                 "v": [
                   "Figure 1 shows the design.",
-                  "The effect was rp² = .05 and ηp² = .10 and ηG² = .2, with R²M = .3, χ 2 ( 12 ) = 4.5, r( 45) = .30, dz = 0.4 and BF10 =3.2.",
+                  "The effect was rp² = .05 and ηp² = .10 and ηG² = .2, with R²M = .3, χ 2 ( 12 ) = 4.5, r( 45) = .30, dz = 0.4 and BF10 = 3.2.",
                   "Prior work by J. K. Rowling (p. 45) and Smith (2020) found effects1. see also results reported earlier.",
                   "This one ends without a stop and continues in the next paragraph.",
                   "Data are at https://osf.io/abcde and https://github.com/a/b.",
@@ -1066,12 +1554,12 @@
                   "A second    sentence?",
                   "Yes!",
                   "\"Quoted.\"",
-                  "Then more Fig.1 and Table1 and no type.",
+                  "Then more Fig 1 and Table 1 and no type.",
                   "Participants (N = 40) were tested.",
                   "A second    sentence?",
                   "Yes!",
                   "\"Quoted.\"",
-                  "Then more Fig.1 and Table1 and no type.",
+                  "Then more Fig 1 and Table 1 and no type.",
                   "We used the U.S.A. sample e.g. with 5.5 x 10^-3 values.",
                   "A body abstract?",
                   "Strange but possible.",
@@ -1256,12 +1744,12 @@
                   null,
                   null,
                   null,
-                  "Then more <ref type=\"figure\" target=\"#fig_0\">Fig.1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
+                  "Then more <ref type=\"figure\" target=\"#fig_0\">Fig 1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table 1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
                   null,
                   null,
                   null,
                   null,
-                  "Then more <ref type=\"figure\" target=\"#fig_0\">Fig.1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
+                  "Then more <ref type=\"figure\" target=\"#fig_0\">Fig 1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table 1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
                   null,
                   null,
                   null,
@@ -1330,7 +1818,7 @@
                   null,
                   "Appendix B",
                   "Figure 1.",
-                  "Table1",
+                  "Table 1",
                   "",
                   "References"
                 ]
@@ -1646,10 +2134,10 @@
                 "v": [
                   "Smith (2020)",
                   "1",
-                  "Fig.1",
-                  "Table1",
-                  "Fig.1",
-                  "Table1",
+                  "Fig 1",
+                  "Table 1",
+                  "Fig 1",
+                  "Table 1",
                   "(Anon, n.d.)",
                   "(Book, 1999)"
                 ]
@@ -4032,7 +4520,7 @@
                   "See Table 1 and Table 2.",
                   "First table.",
                   "Second table.",
-                  "Ref one.2020."
+                  "Ref one. 2020."
                 ]
               },
               {
@@ -4598,7 +5086,7 @@
                   "See Table 1 and Table 2.",
                   "First table.",
                   "Second table.",
-                  "Ref one.2020."
+                  "Ref one. 2020."
                 ]
               },
               {
@@ -4995,6 +5483,394 @@
                   null,
                   null
                 ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text_id",
+              "grp_id",
+              "lhs",
+              "df",
+              "comp",
+              "rhs"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "paper",
+        "names": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "url_empty.tei"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "title",
+              "keywords",
+              "doi",
+              "file_hash",
+              "input_format",
+              "file_name",
+              "bibr_version",
+              "paper_type",
+              "paper_type_confidence",
+              "oecd_l1",
+              "oecd_l2",
+              "oecd_confidence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Empty URL text"
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "ab658ce4b06342eb"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Unknown TEI XML"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<repo>/tests/io/fixtures/dir_case/url_empty.tei.xml"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "unknown"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Materials are at  online."
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Materials are at <ref type=\"url\" target=\"https://osf.io/xyz\"/> online."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "section_id",
+              "header",
+              "parent_section_id",
+              "section_type",
+              "classification_score"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Methods"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "method"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "href",
+              "link_text",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://osf.io/xyz"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "bib_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "xref_id",
+              "xref_type",
+              "contents",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "figure_id",
+              "section_id",
+              "image",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "table_id",
+              "section_id",
+              "html",
+              "contents",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
               }
             ]
           },
@@ -5533,6 +6409,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

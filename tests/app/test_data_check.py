@@ -220,7 +220,7 @@ def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
     fns = _handlers()
     first = _demo(fns, "s1")
     assert first["results"]["visible"] is True and first["stop"]["visible"] is True
-    assert "Ran 19 checks" in first["summary"] and len(first["table"].data) == 19
+    assert "Ran 18 checks" in first["summary"] and len(first["table"].data) == 18
     assert first["status"] == ""
     assert "Data Check" not in first["frame"]
     # the steps stay on the page: the data check is the one still running
@@ -234,7 +234,7 @@ def test_the_click_ends_with_the_fast_results(fake: Fake) -> None:
     final = _named(list(steps)[-1])
     table = final["table"]
     assert table.data.iloc[-1, 0] == "Data Check" and table.data.iloc[-1, 2].startswith("Green")
-    assert len(table.data) == 20 and "Ran 20 checks" in final["summary"]
+    assert len(table.data) == 19 and "Ran 19 checks" in final["summary"]
     assert "The data check found 3 files." in final["frame"]
     assert final["panel"] == "" and final["status"] == "" and final["stop"]["visible"] is False
 
@@ -290,7 +290,7 @@ def test_the_same_button_works_again_and_a_new_check_ends_the_old_one(fake: Fake
     begun = time.monotonic()
     again = _demo(fns, "s4", data=False)  # the click returned before, so it can be pressed again
     assert time.monotonic() - begun < 30
-    assert again["panel"] == "" and "Ran 19 checks" in again["summary"]
+    assert again["panel"] == "" and "Ran 18 checks" in again["summary"]
     # the old check is over and draws nothing more: the new run's steps are not taken away
     assert list(old) == []
     assert _skipped(next(fns["follow"](SimpleNamespace(session_hash="s4")))[0])

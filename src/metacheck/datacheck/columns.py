@@ -980,8 +980,7 @@ def _which_max_nchar(labels: list[Any]) -> int | None:
 
 
 # "V1-V10", "V1-10", "Q3 – Q7", "1-5": a prefix, the first number, then the last
-# number with the prefix optionally repeated. (R's pattern has no second prefix,
-# so the "V1-V10" its own comment names is never expanded.)
+# number with the prefix optionally repeated (metacheck's U58 fix of the pattern).
 _RANGE_RE = re.compile(r"^([A-Za-z]*)\s*([0-9]+)\s*[-–]\s*(?:\1)?([0-9]+)$")
 _QSF_PARADATA_RE = r"_(First\.Click|Last\.Click|Page\.Submit|Click\.Count)$"
 
@@ -1058,8 +1057,9 @@ def match_column_labels(
     column name (paradata timing columns excluded).
 
     A column whose group is ``NA`` takes only unscoped definitions; when
-    there are none, group-scoped ones make it ``ambiguous_experiment`` (R
-    compares ``NA == group`` and labels such a column ``NA``). The result
+    there are none, group-scoped ones make it ``ambiguous_experiment``. A
+    definition without a label does not label the column (its value labels and
+    other properties are still carried). The result
     always has one row per column and all 14 columns: an absent
     ``paper_id`` / ``source_file`` / ``column_name`` is ``NA``, and ``None``
     or a zero-row *columns_df* gives zero rows (R fails on all of these).
@@ -1190,25 +1190,37 @@ def match_column_labels(
         def get(vals: list[Any] | None, rows: list[int | None]) -> list[Any]:
             return [None if r is None or vals is None else vals[r] for r in rows]
 
+        # A codebook row without a label (a .jasp/.omv column read with haven that
+        # has no variable label) does not label the column: it stays unlabelled
+        # here so a later source can label it. Its value labels and other
+        # properties still count (below). All-empty labels stopped codebook_check
+        # with "replacement has length zero" (metacheck #520).
+        def with_label(rows: list[int | None]) -> list[int | None]:
+            if cb_label is None:
+                return []
+            return [
+                r for r in rows
+                if r is not None and cb_label[r] is not None and (_chr(cb_label[r]) or "").strip()
+            ]  # fmt: skip
+
+        labelled_rows = with_label(applicable)
+        other_labelled = with_label(other_scoped)
+
         if not applicable:
-            if other_scoped:
+            if other_labelled:
                 status_out[i] = "ambiguous_experiment"
-                label_out[i] = _paste_unique(
-                    get(cb_label, other_scoped) if cb_label is not None else None
-                )
-                cbk_out[i] = _paste_unique(get(cb_var, other_scoped))
+                label_out[i] = _paste_unique(get(cb_label, other_labelled))
+                cbk_out[i] = _paste_unique(get(cb_var, other_labelled))
                 src_out[i] = _paste_unique(
-                    get(cb_src, other_scoped) if cb_src is not None else None
+                    get(cb_src, other_labelled) if cb_src is not None else None
                 )
             continue
-        if cb_label is None:  # R: label_out[i] <- NULL[1]
-            raise ValueError("replacement has length zero")
-        labels = get(cb_label, applicable)
+        labels = get(cb_label, labelled_rows)
         distinct = _unique(labels)
-        srcs = get(cb_src, applicable) if cb_src is not None else None
+        srcs = get(cb_src, labelled_rows) if cb_src is not None else None
         if len(distinct) > 1:
             haven_rows = (
-                [r for r in applicable if r is not None and cb_method is not None
+                [r for r in labelled_rows if r is not None and cb_method is not None
                  and cb_method[r] is not None and _chr(cb_method[r]) == "haven"]
                 if cb_method is not None else []
             )  # fmt: skip
@@ -1216,10 +1228,8 @@ def match_column_labels(
             if haven_rows:
                 hl = get(cb_label, haven_rows)  # type: ignore[arg-type]
                 w = _which_max_nchar(hl)
-                if w is None:
-                    raise ValueError("replacement has length zero")
                 status_out[i] = "labelled"
-                label_out[i] = hl[w]
+                label_out[i] = None if w is None else hl[w]
                 cbk_out[i] = get(cb_var, haven_rows[:1])[0]  # type: ignore[arg-type]
                 src_out[i] = _paste_unique(
                     get(cb_src, haven_rows) if cb_src is not None else None  # type: ignore[arg-type]
@@ -1227,22 +1237,20 @@ def match_column_labels(
                 method_out[i] = "haven_priority"
             elif len(set(norm_labels)) == 1:
                 w = _which_max_nchar(distinct)
-                if w is None:
-                    raise ValueError("replacement has length zero")
                 status_out[i] = "labelled"
-                label_out[i] = distinct[w]
-                cbk_out[i] = get(cb_var, applicable[:1])[0]
+                label_out[i] = None if w is None else distinct[w]
+                cbk_out[i] = get(cb_var, labelled_rows[:1])[0]
                 src_out[i] = _paste_unique(srcs)
                 method_out[i] = "merged_rules"
             else:
                 status_out[i] = "conflicting_definition"
                 label_out[i] = " | ".join("NA" if v is None else _chr(v) for v in distinct)  # type: ignore[misc]
-                cbk_out[i] = _paste_unique(get(cb_var, applicable))
+                cbk_out[i] = _paste_unique(get(cb_var, labelled_rows))
                 src_out[i] = _paste_unique(srcs)
-        else:
+        elif len(distinct) == 1:
             status_out[i] = "labelled"
             label_out[i] = distinct[0]
-            cbk_out[i] = get(cb_var, applicable[:1])[0]
+            cbk_out[i] = get(cb_var, labelled_rows[:1])[0]
             src_out[i] = _paste_unique(srcs)
         vl_out[i] = first_present(applicable, "value_labels")
         mv_out[i] = first_present(applicable, "missing_values")

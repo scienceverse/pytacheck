@@ -1,11 +1,11 @@
 {
   "id": "open_practices.review.no_text_col_match",
   "ok": false,
-  "error": "Running the module 'open_practices' produced errors: Assigned data `grepl(on_request, table$text)` must be compatible with existing data.",
+  "error": "Running the module 'open_practices' produced errors: Assigned data `grepl(on_request, table$text, ignore.case = TRUE)` must be compatible with existing data.",
   "warnings": [
     "Unknown or uninitialised column: `text`."
   ],
   "value": null,
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

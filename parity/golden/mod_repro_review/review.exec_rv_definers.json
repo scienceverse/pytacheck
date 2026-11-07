@@ -15,11 +15,14 @@
       "summary_text",
       "summary_table",
       "na_replace",
+      "brief",
       "run_results",
       "install_results",
+      "recorded_versions",
       "stat_output",
       "match_table",
       "modifications",
+      "checklist_section",
       "sandbox"
     ],
     "v": [
@@ -47,6 +50,7 @@
         "names": [
           "paper_id",
           "file_name",
+          "file_path",
           "parses",
           "run_order",
           "order_basis",
@@ -61,7 +65,13 @@
           "error_type",
           "undefined_var",
           "reads",
-          "writes"
+          "writes",
+          "names_corrected",
+          "used_by",
+          "not_analysis_why",
+          "paper_link",
+          "repo_name",
+          "reason"
         ],
         "v": [
           {
@@ -75,6 +85,19 @@
               "p1",
               "p1",
               "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "user.R",
+              "def_a.R",
+              "def_b.R",
+              "fn_user.R",
+              "setwd_var.R",
+              "quiet.R",
+              "msg_only.R",
+              "warn.R"
             ]
           },
           {
@@ -334,6 +357,84 @@
                 "v": []
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "undefined",
+              null,
+              null,
+              "undefined",
+              null,
+              null,
+              null,
+              null
+            ]
           }
         ]
       },
@@ -345,17 +446,15 @@
           "No ordering signal (no data dependency, `source()` call, or numeric filename prefix) distinguishes the run order of these files. They may need to run in a specific order that could not be determined automatically — check this before running.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:8, File = c(\"def_a.R\", \"def_b.R\", \"fn_user.R\", \n\"msg_only.R\", \"quiet.R\", \"setwd_var.R\", \"user.R\", \"warn.R\"), \n    \"Runs after\" = c(\"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \n    \"—\", \"—\"), Basis = c(\"none\", \"none\", \"none\", \"none\", \n    \"none\", \"none\", \"none\", \"none\")), row.names = c(NA, -8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "To run against the Psych-DS layout, 0 referenced data paths would be rewritten to their new locations.",
-          "#### Missing inputs",
-          "Every data file the code reads is either produced by an earlier script or present in the repository.",
+          "Every data path in the code works in the repository as deposited.",
           "#### Execution",
-          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 8 scripts: 6 ran without error, 2 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the repository, in the run order above, with a 60-second per-script timeout. Of 8 scripts: 6 ran without error, 2 errored, 0 timed out, 0 could not run because one of its own dependencies is unavailable, 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"def_a.R\", \"def_b.R\", \"fn_user.R\", \"msg_only.R\", \n\"quiet.R\", \"setwd_var.R\", \"user.R\", \"warn.R\"), Outcome = c(\"ran_ok\", \n\"ran_ok\", \"errored\", \"ran_ok\", \"ran_ok\", \"ran_ok\", \"errored\", \n\"ran_ok\"), Detail = c(\"\", \"\", \"undefined_variable\", \"\", \"\", \"\", \n\"undefined_variable\", \"\"), \"Time (s)\" = 0), row.names = c(NA, -8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "**Undefined-variable errors**",
           "**2 scripts failed on an undefined variable or function** (`object '...' not found` / `could not find function \"...\"`). This typically means the script expects a variable or function that another script defines — i.e. it is meant to be sourced into a larger session, not run on its own — or the symbol is simply never created. When another of the paper's own script files defines the same name, this is called out below as a likely sourcing/copy-paste gap. Each is counted as an error (red).",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"fn_user.R\", \"user.R\"), \"Missing variable\" = c(\"nonexistent_fun_xyz\", \n\"shared_x\"), \"Defined in\" = c(\"(not defined anywhere in the paper's code)\", \n\"def_a.R, def_b.R\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "**`setwd()` in the code**",
-          "**1 script calls `setwd()`.** This is bad practice: it hardcodes where the code must run (often an absolute path on the author's own machine) and breaks the moment the code is run anywhere else. To run the code we commented these calls out. Any such script that then ran is **reproducible only after ignoring a `setwd()` that should not have been in the code and needs to be fixed**.",
+          "**1 script calls `setwd()`.** This is bad practice: it hardcodes where the code must run (often an absolute path on the author's own machine) and breaks the moment the code is run anywhere else. To run the code we replaced these calls with a statement that does nothing. Any such script that then ran is **reproducible only after ignoring a `setwd()` that should not have been in the code and needs to be fixed**.",
           "Reproducible after removing `setwd()`: setwd_var.R.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"setwd_var.R\", \"setwd() removed\" = 1L, \n    \"Path(s) it set\" = \"(non-literal)\"), row.names = c(NA, -1L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
@@ -364,7 +463,7 @@
           "::: {.callout-tip title=\"Output — fn_user.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> y <- nonexistent_fun_xyz(1)\n````\n**Messages / errors (stderr):**\n````\nError in nonexistent_fun_xyz(1) : \n  could not find function \"nonexistent_fun_xyz\"\n````\n\n:::\n",
           "::: {.callout-tip title=\"Output — msg_only.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> message(\"hello from stderr\")\n````\n**Messages / errors (stderr):**\n````\nhello from stderr\n````\n\n:::\n",
           "::: {.callout-tip title=\"Output — quiet.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> x <- 1\n````\n\n:::\n",
-          "::: {.callout-tip title=\"Output — setwd_var.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> d <- \".\"\n> cat(\"ok\\n\")\nok\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — setwd_var.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> d <- \".\"\n> invisible(NULL)\n> cat(\"ok\\n\")\nok\n````\n\n:::\n",
           "::: {.callout-tip title=\"Output — user.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> print(shared_x)\n````\n**Messages / errors (stderr):**\n````\nError in eval(e, envir = env) : object 'shared_x' not found\n````\n\n:::\n",
           "::: {.callout-tip title=\"Output — warn.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> warning(\"careful\")\n> cat(\"done\\n\")\ndone\n````\n**Messages / errors (stderr):**\n````\nWarning message:\nIn eval(e, envir = env) : careful\n````\n\n:::\n"
         ]
@@ -378,7 +477,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 8 R code files for reproducibility (each in an isolated subprocess).\n-  8 files appear runnable so far (parses, inputs resolve, placeable in the run order).\n-  6 of 8 scripts ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed AND ran 8 R code files for reproducibility (each in an isolated subprocess).\n-  6 of 8 scripts ran without error when executed.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -392,7 +491,21 @@
           "repro_deps",
           "repro_ran_ok",
           "repro_tests_reported",
-          "repro_tests_matched"
+          "repro_tests_matched",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
         ],
         "v": [
           {
@@ -442,12 +555,110 @@
             "v": [
               null
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0,
           0,
           0,
@@ -459,7 +670,27 @@
           "repro_runnable",
           "repro_missing_inputs",
           "repro_deps",
-          "repro_ran_ok"
+          "repro_ran_ok",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
@@ -475,7 +706,8 @@
           "stderr",
           "elapsed",
           "script_lines",
-          "captures"
+          "captures",
+          "reason"
         ],
         "v": [
           {
@@ -551,7 +783,7 @@
               "> y <- nonexistent_fun_xyz(1)",
               "> message(\"hello from stderr\")",
               "> x <- 1",
-              "> d <- \".\"\n> cat(\"ok\\n\")\nok",
+              "> d <- \".\"\n> invisible(NULL)\n> cat(\"ok\\n\")\nok",
               "> print(shared_x)",
               "> warning(\"careful\")\n> cat(\"done\\n\")\ndone"
             ]
@@ -620,7 +852,7 @@
                 "t": "chr",
                 "v": [
                   "d <- \".\"",
-                  "# [reproducibility_check removed setwd] setwd(d)",
+                  "invisible(NULL)  # [reproducibility_check removed setwd] setwd(d)",
                   "cat(\"ok\\n\")"
                 ]
               },
@@ -684,8 +916,24 @@
                 "v": []
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "undefined",
+              null,
+              null,
+              null,
+              "undefined",
+              null
+            ]
           }
         ]
+      },
+      {
+        "t": "null"
       },
       {
         "t": "null"
@@ -722,11 +970,17 @@
       {
         "t": "chr",
         "v": [
+          "We ran the paper's 8 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**6 of 8 scripts ran to the end**: 2 stopped with an error.\n\n| Script | Result | What happened |\n|---|---|---|\n| def&#95;a.R | Ran to the end |  |\n| def&#95;b.R | Ran to the end |  |\n| fn&#95;user.R | Stopped with an error | <code>Error in nonexistent&#95;fun&#95;xyz(1) : could not find function \"nonexistent&#95;fun&#95;xyz\"<\/code> |\n| msg&#95;only.R | Ran to the end |  |\n| quiet.R | Ran to the end |  |\n| setwd&#95;var.R | Ran to the end |  |\n| user.R | Stopped with an error | <code>Error in eval(e, envir = env) : object 'shared&#95;x' not found<\/code> |\n| warn.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A script uses something it does not create or load itself.**\n\n- <code>fn&#95;user.R<\/code>\n- <code>user.R<\/code>\n\nUsually the object was still in your R session from earlier work, or another script made it.\n\n1. Restart R (in RStudio: Session > Restart R).\n2. Run each script from top to bottom, and fix what is missing.\n3. If a script needs results of another, save them to a file in the first script and read them in the second.\n4. Load every package with <code>library()<\/code> at the top.\n\n### Other problems in the files\n\n- setwd&#95;var.R calls setwd(), which ties the script to a folder on the author's computer. We replaced the call with one that does nothing so the script could run; it should be removed from the script.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
           "<root>"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

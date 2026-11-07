@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -106,6 +108,15 @@
               "clean_data.RData",
               "study.csv",
               "study.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -223,6 +234,15 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -367,14 +387,14 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/rdata**",
-          "```\n└── data/\n    ├── analysis_workspace.RData  📊 data ex1\n    ├── clean_data.RData          📊 data ex1\n    └── study.csv                 📊 data ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n└── data/\n    ├── analysis_workspace.RData  📊 data ex1\n    ├── clean_data.RData          📊 data ex1\n    └── study.csv                 📊 data ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## clean_data.RData\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:5, score = c(1.5, 2.5, 3.5, 4.5, 5.5)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## study.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:5, x = c(0.1, 0.4, 0.2, 0.8, 0.5)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## clean_data.RData\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"score\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(5L, \n5L), \"% Missing\" = c(0, 0), \"N Unique\" = c(5L, 5L), Mean = c(NA, \n3.5), SD = c(NA, 1.581), Min = c(NA, 1.5), Max = c(NA, 5.5)), row.names = c(\"id...1\", \n\"score\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## study.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"x\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(5L, \n5L), \"% Missing\" = c(0, 0), \"N Unique\" = c(5L, 5L), Mean = c(NA, \n0.4), SD = c(NA, 0.274), Min = c(NA, 0.1), Max = c(NA, 0.8)), row.names = c(\"id...2\", \n\"x\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 4 columns across 2 data files.",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
@@ -390,7 +410,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 3 files: 3 data.\n-  We found 3 tabular data files and extracted 4 columns from 3 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 3 files (the model request failed); they were grouped by the fallback rules instead.\n-  1 R workspace file (`.RData`/`.rda`) contains no reusable tabular data — only fitted models or saved session objects. Such files need R (and the exact packages used) to open and are not machine-readable. Share the underlying data as CSV (or a documented `.sav`/`.dta`) with a codebook so it can be reused without R: analysis_workspace.RData. We ran automated data-quality checks on 4 columns and found no issues."
+          "\n-  We classified 3 files: 3 data.\n-  We found 3 tabular data files and extracted 4 columns from 2 of them.\n-  We grouped the files into 1 study group (ex1).\n-  1 R workspace file (`.RData`/`.rda`) contains no reusable tabular data — only fitted models or saved session objects. Such files need R (and the exact packages used) to open and are not machine-readable. Share the underlying data as CSV (or a documented `.sav`/`.dta`) with a codebook so it can be reused without R: analysis_workspace.RData. We ran automated data-quality checks on 4 columns and found no issues."
         ]
       },
       {
@@ -596,6 +616,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -709,6 +730,14 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis_workspace.RData",
+              "clean_data.RData",
+              "study.csv"
             ]
           },
           {
@@ -831,6 +860,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

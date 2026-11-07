@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 4,
+        "nrow": 5,
         "names": [
           "paper_id",
           "bib_id",
@@ -52,7 +52,8 @@
               "to_err_is_human",
               "to_err_is_human",
               "to_err_is_human",
-              "to_err_is_human"
+              "to_err_is_human",
+              "demo"
             ]
           },
           {
@@ -61,7 +62,8 @@
               0,
               1,
               3,
-              4
+              4,
+              1
             ]
           },
           {
@@ -70,15 +72,7 @@
               "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
               "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
               "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
-              "Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
-              null,
+              "Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789.",
               null
             ]
           },
@@ -88,7 +82,18 @@
               null,
               null,
               null,
-              null
+              null,
+              "[1]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "It replicated prior work [1], t(28) = 3.42, see Table 1 and data."
             ]
           }
         ]
@@ -96,8 +101,8 @@
       {
         "t": "chr",
         "v": [
-          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(0L, 1L, 3L, 4L), type = c(\"extra\", \n\"extra\", \"extra\", \"extra\"), contents = c(NA_character_, NA_character_, \nNA_character_, NA_character_), reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Eagly, Alice H., and Wendy Wood. 1999. \\\"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\\\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.\", \n\"Lakens, Daniël. 2018. \\\"Equivalence Testing for Psychological Research.\\\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.\", \n\"Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\"\n)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "This module relies on Grobid correctly parsing the references. There are likely to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(0L, 1L, 3L, 4L, 1L), type = c(\"extra\", \n\"extra\", \"extra\", \"extra\", \"missing\"), contents = c(NA, NA, NA, \nNA, \"[1]\"), reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Eagly, Alice H., and Wendy Wood. 1999. \\\"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\\\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.\", \n\"Lakens, Daniël. 2018. \\\"Equivalence Testing for Psychological Research.\\\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.\", \n\"Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\", \n\"It replicated prior work [1], t(28) = 3.42, see Table 1 and data.\"\n)), row.names = c(NA, -5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -119,6 +124,7 @@
           "paper_id",
           "n_bib",
           "n_xrefs",
+          "n_missing",
           "n_extra"
         ],
         "v": [
@@ -147,7 +153,15 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
+            "v": [
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
             "v": [
               4,
               0,
@@ -164,6 +178,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

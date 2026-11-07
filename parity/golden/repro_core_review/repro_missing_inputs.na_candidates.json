@@ -32,21 +32,21 @@
       {
         "t": "chr",
         "v": [
+          "the deposit holds zzz.xlsx, the code reads zzz.csv",
           "referenced file is not present in the repository",
-          "referenced file is not present in the repository",
-          "referenced file is not present in the repository"
+          "referenced file is not present in the repository, but a similarly-named file exists: abcdefgx.csv"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "zzz.xlsx",
           null,
-          null,
-          null
+          "abcdefgx.csv"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

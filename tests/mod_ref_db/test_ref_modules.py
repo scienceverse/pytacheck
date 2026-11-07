@@ -62,7 +62,7 @@ def test_ref_miscitation_all_matched_papers_reported(demo: pc.Paper) -> None:
 
 def test_ref_miscitation_default_db(demo: pc.Paper) -> None:
     out = module_run(demo, "ref_miscitation")
-    assert out.traffic_light == "green"
+    assert out.traffic_light == "na"  # nothing to check (metacheck 0.4), not green
     assert out.report == "We detected no miscited papers"
     assert list(out.table.columns) == [
         "paper_id",
@@ -354,10 +354,10 @@ def test_does_not_mutate_paper(name: str) -> None:
 @pytest.mark.parametrize("name", REF_MODULES)
 def test_test_paper(name: str) -> None:
     out = module_run(pc.test_paper(["No references here."]), name)
+    assert out.traffic_light == "na"
     if name == "ref_miscitation":
-        assert out.traffic_light == "green"
+        assert out.summary_text == "We detected no miscited papers"
     else:
-        assert out.traffic_light == "na"
         assert out.summary_text == "We found no references with DOIs"
 
 
@@ -403,7 +403,7 @@ def test_ref_miscitation_nan_db_matches_nothing() -> None:
     paper = ref_paper([None, "10.1000/x"], cites=[0, 1, 0])
     db = pd.DataFrame({"doi": [float("nan")], "reftext": ["r"], "warning": ["w"]})
     out = module_run(paper, "ref_miscitation", db=db)
-    assert out.traffic_light == "green"
+    assert out.traffic_light == "na"
     assert out.summary_table.columns.tolist() == ["paper_id"]
     assert db["doi"].dtype == "float64"  # the input is not modified
 
@@ -411,12 +411,15 @@ def test_ref_miscitation_nan_db_matches_nothing() -> None:
 @pytest.mark.parametrize(
     "doi", [pd.Series([], dtype="float64"), pd.Series([1.0]), pd.Series([1], dtype="Int64")]
 )
-def test_ref_miscitation_incompatible_db_doi(doi: pd.Series) -> None:
-    # dplyr: "Can't join `x$doi` with `y$doi` due to incompatible types."
+def test_ref_miscitation_non_text_db_doi(doi: pd.Series) -> None:
+    # metacheck 0.4 compares the DOIs as lower-case text (U157), so a numeric or integer
+    # column is read as text and matches nothing (0.3: "Can't join `x$doi` with `y$doi`
+    # due to incompatible types.")
     paper = ref_paper(["10.1000/x"], cites=[0])
     db = pd.DataFrame({"doi": doi, "reftext": ["r"] * len(doi), "warning": ["w"] * len(doi)})
-    with pytest.raises(pc.ModuleError, match="incompatible types"):
-        module_run(paper, "ref_miscitation", db=db)
+    out = module_run(paper, "ref_miscitation", db=db)
+    assert out.traffic_light == "na"
+    assert len(out.table) == 0
 
 
 def test_ref_miscitation_factor_db() -> None:

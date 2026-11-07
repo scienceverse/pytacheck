@@ -43,8 +43,12 @@ def test_private_rbox_info(apis: object) -> None:
     # using `in` because RB keeps subtly changing formats
     assert info["rb_url"].iloc[0] == url
     assert "Are Empathic People Better Adjusted" in info["RB_target"].iloc[0]
-    assert "CC By 4.0" in info["RB_license"].iloc[0]
-    assert info["RB_public"].iloc[0] == "June 09, 2023"
+    # in the same form as from the API (SPDX identifier, ISO date)
+    assert info["RB_license"].iloc[0] == "CC-BY-4.0"
+    assert info["RB_public"].iloc[0] == "2023-06-09"
+    # only the API gives these
+    assert pd.isna(info["RB_title"].iloc[0])
+    assert pd.isna(info["RB_paper_doi"].iloc[0])
     assert "Joyce He" in info["RB_authors"].iloc[0]
     assert "Stéphane Côté" in info["RB_authors"].iloc[0]
     assert "Are individuals adept at perceiving other" in info["RB_abstract"].iloc[0]
@@ -56,7 +60,7 @@ def test_private_rbox_info(apis: object) -> None:
     rb_url = "https://researchbox.org/1150&PEER_REVIEW_passcode=MJUAAS"
     info = _rbox_info(rb_url)
     assert info["rb_url"].iloc[0] == rb_url
-    assert info["RB_public"].iloc[0] == "October 07, 2024"
+    assert info["RB_public"].iloc[0] == "2024-10-07"
 
 
 def test_rbox_info(apis: object) -> None:
@@ -64,7 +68,7 @@ def test_rbox_info(apis: object) -> None:
     links = rbox_links(paper)
     info = rbox_info(links, "href")
     assert info["href"].tolist() == links["href"].tolist()
-    assert info["RB_public"].tolist() == ["November 28, 2025", "February 15, 2026"]
+    assert info["RB_public"].tolist() == ["2025-11-28", "2026-02-15"]
 
 
 # --------------------------------------------------------------------------- more
@@ -106,7 +110,10 @@ def test_unfound_box_warns(mock_api: object) -> None:
         info = _rbox_info("https://researchbox.org/404")
     assert list(info.columns) == ["rb_url", "error"]
     with pytest.warns(UserWarning, match="could not be found"):
-        assert rbox_file_download("https://researchbox.org/404") is None
+        files = rbox_file_download("https://researchbox.org/404")
+    # no rows, and the box's reason in the "failed" attribute
+    assert len(files) == 0
+    assert files.attrs["failed"]["error"].tolist() == ["unfound"]
 
 
 def test_box_without_download_tokens(mock_api: object) -> None:
@@ -115,9 +122,11 @@ def test_box_without_download_tokens(mock_api: object) -> None:
     assert files["name"].tolist() == ["data.csv", "code.R"]
     assert files["file_id"].isna().all()  # no checkboxes to pair with
     assert pd.isna(info["reference"].iloc[0])
-    assert info["RB_public"].iloc[0] == "January 01, 2024"
-    with pytest.warns(UserWarning, match="Could not find downloadable files"):
-        assert rbox_file_download("https://researchbox.org/99") is None
+    assert info["RB_public"].iloc[0] == "2024-01-01"
+    with pytest.warns(UserWarning, match="could not find downloadable files"):
+        files = rbox_file_download("https://researchbox.org/99")
+    assert len(files) == 0
+    assert files.attrs["failed"]["error"].tolist() == ["could not find downloadable files"]
 
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -177,5 +186,7 @@ def test_file_download_failure_warns(
             "https://researchbox.org/download_files.php": httpx.Response(500, content=b""),
         }
     )
-    with pytest.warns(UserWarning, match="Download failed or resulted in an empty file"):
-        assert rbox_file_download("https://researchbox.org/6018") is None
+    with pytest.warns(UserWarning, match="download failed or resulted in an empty file"):
+        files = rbox_file_download("https://researchbox.org/6018")
+    assert len(files) == 0
+    assert "HTTP 500" in files.attrs["failed"]["error"].iloc[0]

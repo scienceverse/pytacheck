@@ -249,8 +249,29 @@ def test_same_name_different_content_both_kept(paper: pc.Paper, area_fixtures: P
         [str(s / "mirror_a" / "analysis.R"), str(s / "mirror_b" / "analysis.R")],
     )
     mo = module_run(chain(paper, code_tbl, None, PLAN), "reproducibility_check")
-    assert mo.table["file_name"].tolist() == ["analysis.R", "analysis.R"]
+    # each gets a name of its own, from the folder it is in (metacheck #568)
+    assert mo.table["file_name"].tolist() == ["1/analysis.R", "2/analysis.R"]
     assert "Duplicate files" not in report_text(mo)
+
+
+def test_same_named_scripts_that_differ_keep_their_own_rows(
+    paper: pc.Paper, tmp_path: Path, repro_fixture: Any
+) -> None:
+    """static analysis: same-named scripts that differ each keep a row, and a name that
+    occurs once stays as it is (#568)"""
+    for name, code in (("one.R", "x <- 1"), ("two.R", "x <- 2"), ("other.R", "x <- 3")):
+        (tmp_path / name).write_text(code + "\n")
+    code_tbl = code_tbl_row(
+        paper,
+        ["a.R", "a.R", "b.R"],
+        [str(tmp_path / "one.R"), str(tmp_path / "two.R"), str(tmp_path / "other.R")],
+    )
+    code_tbl["file_path"] = ["x/a.R", "y/a.R", "z/b.R"]
+    mo = module_run(
+        chain(paper, code_tbl, data_structure(paper, repro_fixture)), "reproducibility_check"
+    )
+    assert mo.table["file_name"].tolist() == ["x/a.R", "y/a.R", "b.R"]
+    assert mo.table["file_path"].tolist() == ["x/a.R", "y/a.R", "z/b.R"]
 
 
 def test_non_r_content_and_jags_are_not_parse_errors(paper: pc.Paper, area_fixtures: Path) -> None:
@@ -471,8 +492,12 @@ def test_module_metadata() -> None:
         "sandbox",
         "docker_use_declared_version",
         "install_missing",
+        "recorded_versions",
+        "install_timeout",
         "cran_install_main",
         "timeout",
+        "total_timeout",
+        "internet",
         "keep_sandbox",
         "cache",
         "download",
@@ -486,6 +511,8 @@ def test_module_metadata() -> None:
         "results_dir",
     ]
     assert sig.parameters["timeout"].default == 600
+    assert sig.parameters["total_timeout"].default == 3600
+    assert sig.parameters["install_missing"].default is None
     assert sig.parameters["download"].default == "data"
 
 
@@ -758,26 +785,36 @@ def test_docker_sandbox_mocked(
     assert seen["image"] == "rocker/r-ver:4.1.2"
 
 
-def test_docker_redirects_writes_to_the_containers_output(
-    paper: pc.Paper, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch
+def test_docker_writes_stay_in_place_or_go_to_a_relative_output(
+    paper: pc.Paper, tmp_path: Path, repro_fixture: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    # the container sees the sandbox at /sandbox; metacheck writes the host's path (U239)
+    # A write stays where the code puts it; one to the author's computer goes to
+    # output/ from the folder the script runs in, a path the container has too
+    # (metacheck 0.4.x; before, it was the host's path there: U239).
     from metacheck.repro import docker
 
+    script = tmp_path / "writes.R"
+    script.write_text(
+        'x <- data.frame(a = 1)\nwrite.csv(x, "local.csv")\n'
+        'write.csv(x, "/home/author/out/t.csv")\n'
+    )
     seen: dict[str, str] = {}
 
     def fake_run_docker(run_tbl: pd.DataFrame, order: Any, **kw: Any) -> pd.DataFrame:
         seen["script"] = Path(run_tbl["script_path"].iloc[0]).read_text(encoding="utf-8")
-        return _run_frame([{"fn": "writes_then_reads.R", "outcome": "ran_ok"}])
+        return _run_frame([{"fn": "writes.R", "outcome": "ran_ok"}])
 
     monkeypatch.setattr(docker, "repro_docker_available", lambda: {"ok": True, "msg": ""})
     monkeypatch.setattr(docker, "repro_run_scripts_docker", fake_run_docker)
+    code_tbl = code_tbl_row(paper, "writes.R", str(script))
     module_run(
-        exec_chain(paper, "writes_then_reads.R", repro_fixture),
+        chain(paper, code_tbl, data_structure(paper, repro_fixture), PLAN),
         "reproducibility_check",
         execute=True,
     )
-    assert 'write.csv(summ,"/sandbox/output/intermediate.csv", row.names = FALSE)' in seen["script"]
+    assert 'write.csv(x, "local.csv")' in seen["script"]
+    assert '"output/t.csv"' in seen["script"]
+    assert "/sandbox/" not in seen["script"] and str(tmp_path) not in seen["script"]
 
 
 def test_batch_runs_papers_concurrently(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -785,10 +822,11 @@ def test_batch_runs_papers_concurrently(tmp_path: Path, monkeypatch: pytest.Monk
     ids = pc.paper_id(papers)
     lights = dict(zip(ids, ["green", "red", "yellow"], strict=True))
 
-    def fake_worker(paper1: Any, args: Any, limits: Any) -> Any:
+    def fake_worker(paper1: Any, args: Any, opts: Any) -> Any:
         pid = paper1.paper_id
         assert args["execute"] is True and "workers" not in args
-        assert set(limits) == {"cpus", "memory_gb"}
+        # the caller's options go to each worker, the resource limits among them (#474)
+        assert set(opts["metacheck.docker_resource_limits"]) == {"cpus", "memory_gb"}
         if pid == ids[2]:
             raise RuntimeError("container crashed")
         return ModuleOutput(

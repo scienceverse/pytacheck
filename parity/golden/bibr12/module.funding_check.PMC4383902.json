@@ -61,7 +61,7 @@
         "t": "chr",
         "v": [
           "The following funding statement was detected:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"If you want your article to be archived in Europe PMC, and the work is funded by one of the Europe PMC funders, then all of those four options are open to you. However if the work is not funded by one of the Europe PMC funders, then the simplest way to ensure your article is archived in PMCi is to publish your work in a journal that deposits 100% of its content into the archive. However, all the public grant data submitted by the funders can also be searched and browsed in the Grant Lookup Tool, and, more recently, are also available via a public RESTful API. Funding for open access charge: Wellcome Trust [098231].\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"If you want your article to be archived in Europe PMC, and the work is funded by one of the Europe PMC funders, then all of those four options are open to you. However if the work is not funded by one of the Europe PMC funders, then the simplest way to ensure your article is archived in PMCi is to publish your work in a journal that deposits 100% of its content into the archive. However, all the public grant data submitted by the funders can also be searched and browsed in the Grant Lookup Tool, and, more recently, are also available via a public RESTful API. Funding for open access charge: Wellcome Trust [098231].\"), names = \"\", row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -106,6 +106,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

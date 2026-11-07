@@ -48,7 +48,7 @@
       {
         "t": "chr",
         "v": [
-          "<TMP>/stimuli.zip.contents/readme.txt"
+          "<tempdir>/metacheck-archives/cf7a4c50436b22bd71484a7f4aea4d43/readme.txt"
         ]
       },
       {
@@ -60,7 +60,7 @@
       {
         "t": "chr",
         "v": [
-          "archive"
+          "text"
         ]
       },
       {
@@ -95,6 +95,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

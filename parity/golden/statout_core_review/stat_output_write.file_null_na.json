@@ -28,8 +28,8 @@
           "      \"analysis\": \"A\",",
           "      \"results\": [",
           "        {",
-          "          \"result_id\": \"na_t1_r1\",",
-          "          \"test_id\": \"na_na_t1_x\",",
+          "          \"result_id\": \"result_t1_r1\",",
+          "          \"test_id\": \"result_t1_x\",",
           "          \"row_label\": \"x\",",
           "          \"values\": {",
           "            \"t\": {",
@@ -50,8 +50,8 @@
           "      \"analysis\": \"B\",",
           "      \"results\": [",
           "        {",
-          "          \"result_id\": \"na_l3_1_r1\",",
-          "          \"test_id\": \"na_l3_1\",",
+          "          \"result_id\": \"result_l3_1_r1\",",
+          "          \"test_id\": \"result_l3_1\",",
           "          \"row_label\": \"\",",
           "          \"values\": {",
           "            \"t\": {",
@@ -82,7 +82,7 @@
           "      \"results\": [",
           "        {",
           "          \"result_id\": \"result_t1_r1\",",
-          "          \"test_id\": \"result_result_t1_x\",",
+          "          \"test_id\": \"result_t1_x\",",
           "          \"row_label\": \"x\",",
           "          \"values\": {",
           "            \"t\": {",
@@ -122,6 +122,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

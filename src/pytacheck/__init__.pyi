@@ -8,6 +8,10 @@ from metacheck import __all__ as __all__
 from metacheck._r.base import plural as plural
 from metacheck._version import UPSTREAM as UPSTREAM
 from metacheck._version import __version__ as __version__
+from metacheck.archives.api_keys import api_key_status as api_key_status
+from metacheck.archives.api_keys import api_keys_use as api_keys_use
+from metacheck.archives.api_keys import github_pat as github_pat
+from metacheck.archives.api_keys import openalex_key as openalex_key
 from metacheck.archives.aspredicted import aspredicted_info as aspredicted_info
 from metacheck.archives.aspredicted import aspredicted_links as aspredicted_links
 from metacheck.archives.cache import metacheck_cache_info as metacheck_cache_info
@@ -49,8 +53,9 @@ from metacheck.archives.gitlab import gitlab_links as gitlab_links
 from metacheck.archives.gitlab import gitlab_pat as gitlab_pat
 from metacheck.archives.gitlab import gitlab_repo as gitlab_repo
 from metacheck.archives.gitlab import gitlab_tree_files as gitlab_tree_files
-from metacheck.archives.info_cache import repo_info_cache as repo_info_cache
 from metacheck.archives.info_cache import repo_info_cache_clear as repo_info_cache_clear
+from metacheck.archives.ldbase import ldbase_info as ldbase_info
+from metacheck.archives.ldbase import ldbase_links as ldbase_links
 from metacheck.archives.local import local_files as local_files
 from metacheck.archives.mendeley import mendeley_info as mendeley_info
 from metacheck.archives.mendeley import mendeley_links as mendeley_links
@@ -73,8 +78,11 @@ from metacheck.archives.psycharchives import (
 from metacheck.archives.psycharchives import psycharchives_info as psycharchives_info
 from metacheck.archives.psycharchives import psycharchives_links as psycharchives_links
 from metacheck.archives.researchbox import rbox_file_download as rbox_file_download
+from metacheck.archives.researchbox import rbox_files as rbox_files
 from metacheck.archives.researchbox import rbox_info as rbox_info
 from metacheck.archives.researchbox import rbox_links as rbox_links
+from metacheck.archives.researchbox import rbox_search as rbox_search
+from metacheck.archives.researchbox import rbox_token as rbox_token
 from metacheck.archives.reshare import reshare_file_download as reshare_file_download
 from metacheck.archives.reshare import reshare_info as reshare_info
 from metacheck.archives.reshare import reshare_links as reshare_links
@@ -176,6 +184,7 @@ from metacheck.db.retractionwatch import retractionwatch as retractionwatch
 from metacheck.db.retractionwatch import rw as rw
 from metacheck.db.retractionwatch import rw_date as rw_date
 from metacheck.db.retractionwatch import rw_update as rw_update
+from metacheck.fair.repo import FAIR_repo as FAIR_repo
 from metacheck.fileinfo.category import file_category as file_category
 from metacheck.fileinfo.category import filetype as filetype
 from metacheck.fileinfo.naming import check_file_naming as check_file_naming
@@ -260,6 +269,7 @@ from metacheck.report.blocks import link as link
 from metacheck.report.blocks import report_table as report_table
 from metacheck.report.blocks import report_type as report_type
 from metacheck.report.blocks import scroll_table as scroll_table
+from metacheck.report.checklist import checklist_html as checklist_html
 from metacheck.report.emojis import emojis as emojis
 from metacheck.report.report import module_report as module_report
 from metacheck.report.report import report as report
@@ -278,7 +288,12 @@ from metacheck.repro.core import repro_run_scripts as repro_run_scripts
 from metacheck.repro.core import repro_write_scripts as repro_write_scripts
 from metacheck.repro.docker import repro_docker_available as repro_docker_available
 from metacheck.repro.docker import repro_install_deps_docker as repro_install_deps_docker
+from metacheck.repro.docker import repro_install_deps_py_docker as repro_install_deps_py_docker
 from metacheck.repro.docker import repro_run_scripts_docker as repro_run_scripts_docker
+from metacheck.repro.docker import repro_run_scripts_py_docker as repro_run_scripts_py_docker
+from metacheck.repro.python import repro_dependencies_py as repro_dependencies_py
+from metacheck.repro.python import repro_install_deps_py as repro_install_deps_py
+from metacheck.repro.python import repro_run_scripts_py as repro_run_scripts_py
 from metacheck.statout.jasp import export_jasp_html as export_jasp_html
 from metacheck.statout.jasp import import_jasp as import_jasp
 from metacheck.statout.match_reported import match_reported_output as match_reported_output

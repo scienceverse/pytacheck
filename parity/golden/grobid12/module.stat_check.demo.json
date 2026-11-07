@@ -123,7 +123,7 @@
             "t": "chr",
             "v": [
               "t(97.7) = 2.9, p = 0.005",
-              "t(97.2) = -1.96, p =0.152"
+              "t(97.2) = -1.96, p = 0.152"
             ]
           },
           {
@@ -157,8 +157,8 @@
           {
             "t": "chr",
             "v": [
-              "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
-              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152."
+              "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d = 0.59.",
+              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p = 0.152."
             ]
           },
           {
@@ -223,7 +223,7 @@
         "t": "chr",
         "v": [
           "We detected possible errors in test statistics. Note that as the accuracy of statcheck has only been validated for *t*-tests and *F*-tests. As Metacheck only uses validated modules, we only provide statcheck results for *t* tests and *F*-tests.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = \"t(97.2) = -1.96, p =0.152\", \"Recomputed p\" = 0.05286, \n    Sentence = \"On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.\"), row.names = 2L, class = c(\"statcheck\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"10em\", NA, NA, NA), 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = \"t(97.2) = -1.96, p = 0.152\", \"Recomputed p\" = 0.05286, \n    Sentence = \"On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p = 0.152.\"), row.names = 2L, class = c(\"statcheck\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"10em\", NA, NA, NA), 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific research on the validity of statcheck, and it's usefulness to prevent statistical reporting errors, see:\n\nNuijten M, van Assen M, Hartgerink C, Epskamp S, Wicherts J (2017). &ldquo;The validity of the tool &quot;statcheck&quot; in discovering statistical reporting inconsistencies.&rdquo; <a href=\"https://doi.org/10.31234/osf.io/tcxaja\">doi:10.31234/osf.io/tcxaja<\/a>, Preprint.\n\nNuijten M, Wicherts J (2023). &ldquo;The effectiveness of implementing statcheck in the peer review process to avoid statistical reporting errors.&rdquo; <a href=\"https://doi.org/10.31234/osf.io/bxau9\">doi:10.31234/osf.io/bxau9<\/a>, Preprint.\n\n:::\n"
         ]
       },
@@ -283,6 +283,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

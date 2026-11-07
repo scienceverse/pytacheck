@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 3,
+    "nrow": 2,
     "names": [
       "repo_url",
       "file_name",
@@ -22,14 +22,12 @@
         "t": "chr",
         "v": [
           "r",
-          "r",
           "r"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "abs_link.csv",
           "first.csv",
           "last.csv"
         ]
@@ -37,7 +35,6 @@
       {
         "t": "chr",
         "v": [
-          "abslink.tar.gz/abs_link.csv",
           "abslink.tar.gz/first.csv",
           "abslink.tar.gz/last.csv"
         ]
@@ -46,22 +43,19 @@
         "t": "chr",
         "v": [
           null,
-          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
-          "<TMP>/abslink.tar.gz.contents/abs_link.csv",
-          "<TMP>/abslink.tar.gz.contents/first.csv",
-          "<TMP>/abslink.tar.gz.contents/last.csv"
+          "<tempdir>/metacheck-archives/f5b1954c08757257c347be7c35239fd2/first.csv",
+          "<tempdir>/metacheck-archives/f5b1954c08757257c347be7c35239fd2/last.csv"
         ]
       },
       {
         "t": "dbl",
         "v": [
-          null,
           817,
           817
         ]
@@ -70,14 +64,12 @@
         "t": "chr",
         "v": [
           "data",
-          "data",
           "data"
         ]
       },
       {
         "t": "chr",
         "v": [
-          null,
           null,
           null
         ]
@@ -86,12 +78,11 @@
         "t": "chr",
         "v": [
           "tabular",
-          "tabular",
           "tabular"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

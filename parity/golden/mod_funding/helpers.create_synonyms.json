@@ -412,7 +412,7 @@
           "[Pp]ublications",
           "[Rr]eports",
           "[Pp]rograms",
-          "[Pp]papers",
+          "[Pp]apers",
           "[Mm]anuscripts",
           "[Aa]nalyses",
           "[Ii]nvestigations"
@@ -790,7 +790,7 @@
       {
         "t": "chr",
         "v": [
-          "Ffoundation(|s)",
+          "Foundation(|s)",
           "Institut(e|es|ution)",
           "Universit",
           "Universit(y|ies)",
@@ -817,7 +817,7 @@
       {
         "t": "chr",
         "v": [
-          "Ffoundation(|s)",
+          "Foundation(|s)",
           "Institut(e|es|ution)",
           "Universit",
           "Universit(y|ies)",
@@ -852,12 +852,12 @@
         "t": "chr",
         "v": [
           "R(?i)eferences(?-i)",
-          "L(?i)terature(?-i)",
+          "L(?i)iterature(?-i)",
           "L(?i)iterature Cited(?-i)",
           "N(?i)otes and References(?-i)",
           "W(?i)orks Cited(?-i)",
           "^C(?i)itations(?-i)",
-          "B(?i)ibliograpy(?-i)",
+          "B(?i)ibliography(?-i)",
           "B(?i)ibliographic references(?-i)",
           "R(?i)eferences and recommended reading(?-i)"
         ]
@@ -954,7 +954,7 @@
           "C(?i)onflict(|s) of interest(|s) declaration(?-i)",
           "C(?i)onflicting interest(|s)(?-i)",
           "C(?i)onflicting interest(|s) declaration(?-i)",
-          "C(?i)onflicting financial intere",
+          "C(?i)onflicting financial interest(|s)(?-i)",
           "C(?i)onflicting of interest(|s)(?-i)",
           "C(?i)onflits d'int(?-i)",
           "C(?i)onflictos de Inter(?-i)",
@@ -1183,6 +1183,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

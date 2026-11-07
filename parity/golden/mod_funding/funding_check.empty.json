@@ -13,8 +13,7 @@
       "report",
       "traffic_light",
       "summary_text",
-      "summary_table",
-      "na_replace"
+      "summary_table"
     ],
     "v": [
       {
@@ -36,47 +35,31 @@
         ]
       },
       {
-        "t": "df",
-        "nrow": 0,
-        "names": [
-          "paper_id",
-          "text"
-        ],
+        "t": "null"
+      },
+      {
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          }
+          "There was no text to check."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "No funding statement was detected. Consider adding one."
+          "na"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "red"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "No funding statement was detected."
+          "There was no text to check."
         ]
       },
       {
         "t": "df",
         "nrow": 1,
         "names": [
-          "paper_id",
-          "funding_found"
+          "paper_id"
         ],
         "v": [
           {
@@ -84,23 +67,11 @@
             "v": [
               "6c4258abe0fec3"
             ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
           }
-        ]
-      },
-      {
-        "t": "lgl",
-        "v": [
-          false
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

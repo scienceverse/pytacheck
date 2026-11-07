@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -118,6 +120,19 @@
               "study.csv",
               "study.csv",
               "study.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -287,6 +302,19 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -491,18 +519,18 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/trial**",
-          "```\n└── data/\n    ├── demographics.csv  📊 data ex1\n    ├── sub-01.csv        📊 data ex1\n    └── sub-02.csv        📊 data ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n└── data/\n    ├── demographics.csv  📊 data ex1\n    ├── sub-01.csv        📊 data ex1\n    └── sub-02.csv        📊 data ex1\n```\n:::",
           "**Repository: https://osf.io/manif**",
-          "```\n├── analysis.R  💻 code          ex2\n├── data.csv    📊 data          ex2\n├── files.csv   📖 documentation ex2\n└── paper.pdf   📖 documentation ex2\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── analysis.R  💻 code          ex2\n├── data.csv    📊 data          ex2\n├── files.csv   📖 documentation ex2\n└── paper.pdf   📖 documentation ex2\n```\n:::",
           "**Repository: https://osf.io/abcde**",
-          "```\n├── data/\n│   └── study.csv     📊 data      ex3\n├── materials/\n│   └── stimulus.png  📁 materials ex3\n├── analysis.R        💻 code      ex3\n└── README.md         📄 readme\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── data/\n│   └── study.csv     📊 data      ex3\n├── materials/\n│   └── stimulus.png  📁 materials ex3\n├── analysis.R        💻 code      ex3\n└── README.md         📄 readme\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## demographics.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:4, age = c(21L, 34L, 28L, 45L)), row.names = c(NA, \n4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:3, y = c(2.5, 3.5, 1.5)), row.names = c(NA, \n3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## study.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:20, age = c(23L, 35L, 41L, 29L, 30L, 22L, \n19L, 55L, 61L, 44L, 38L, 27L, 33L, 25L, 48L, 52L, 36L, 40L, 21L, \n26L), gender = c(\"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \n\"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \n\"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \n\"Female\"), score = c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, \n5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10)), row.names = c(NA, \n20L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## demographics.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\"), Representation = c(\"numeric\", \n\"text\"), Level = c(\"ratio\", \"nominal\"), Concept = c(\"age\", \"id\"\n), Role = c(\"measure\", \"identifier\"), Unit = c(\"years\", \"\"), \n    Rows = c(4L, 4L), \"% Missing\" = c(0, 0), \"N Unique\" = c(4L, \n    4L), Mean = c(32, NA), SD = c(10.165, NA), Min = c(21, NA\n    ), Max = c(45, NA)), row.names = c(\"age...1\", \"id...4\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## study.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"gender\", \"id\", \"score\"), Representation = c(\"numeric\", \n\"text\", \"text\", \"numeric\"), Level = c(\"ratio\", \"nominal\", \"nominal\", \n\"ratio\"), Concept = c(\"age\", \"gender\", \"id\", \"\"), Role = c(\"measure\", \n\"measure\", \"identifier\", \"measure\"), Unit = c(\"years\", \"\", \"\", \n\"\"), Rows = c(20L, 20L, 20L, 20L), \"% Missing\" = c(0, 0, 0, 0\n), \"N Unique\" = c(20L, 2L, 20L, 20L), Mean = c(35.25, NA, NA, \n5.25), SD = c(12.052, NA, NA, 2.958), Min = c(19, NA, NA, 0.5\n), Max = c(61, NA, NA, 10)), row.names = c(\"age...2\", \"gender\", \n\"id...6\", \"score\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"y\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(3L, \n3L), \"% Missing\" = c(0, 0), \"N Unique\" = c(3L, 3L), Mean = c(NA, \n2.5), SD = c(NA, 1), Min = c(NA, 1.5), Max = c(NA, 3.5)), row.names = c(\"id...5\", \n\"y\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 8 columns across 3 data files.",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
@@ -518,7 +546,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 11 files: 5 data, 2 code, 3 documentation, 1 materials.\n-  We found 3 tabular data files and extracted 8 columns from 3 of them.\n-  We grouped the files into 3 study groups (ex1, ex2, ex3), plus 1 collection-level file (README/ro-crate metadata).\n-  2 trial-level data files (E-Prime / Inquisit / jsPsych / Behaverse) were recognised. These are per-participant records of a behavioural task, so they are not listed as separate datasets — convert_psychds() merges them per instrument into Behaverse `paradata/<instrument>.json` (one file per instrument, all participants). Nothing is deleted. We ran automated data-quality checks on 8 columns and found no issues. We detected demographic columns for Age, Gender."
+          "\n-  We classified 11 files: 5 data, 2 code, 3 documentation, 1 materials.\n-  We found 3 tabular data files and extracted 8 columns from 3 of them.\n-  We grouped the files into 3 study groups (ex1, ex2, ex3), plus 1 collection-level file (README/ro-crate metadata).\n-  2 trial-level data files (E-Prime / Inquisit / jsPsych / Behaverse) were recognised. These are per-participant records of a behavioural task, so they are not listed as separate datasets. Nothing is deleted. We ran automated data-quality checks on 8 columns and found no issues. We detected demographic columns for Age, Gender."
         ]
       },
       {
@@ -736,6 +764,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -969,6 +998,22 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "demographics.csv",
+              "sub-01.csv",
+              "sub-02.csv",
+              "manifest: analysis.R",
+              "data.csv",
+              "files.csv",
+              "paper.pdf",
+              "README.md",
+              "basic: analysis.R",
+              "study.csv",
+              "stimulus.png"
             ]
           },
           {
@@ -1214,6 +1259,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

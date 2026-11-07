@@ -106,13 +106,13 @@
             "t": "chr",
             "v": [
               "analysis/a.R",
-              "analysis/a.R",
-              "analysis/b.R",
+              "analysis/old/a.R",
+              "analysis/old/b.R",
               "analysis/b.R",
               "data/study-m_data.csv",
               "data/study-m_data.csv",
               "README.md",
-              "README.MD"
+              "documentation/docs_readme.MD"
             ]
           },
           {
@@ -194,11 +194,9 @@
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"missing\", \n\"present\", \"present\", \"present\", \"missing\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Target Psych-DS Structure",
           "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
-          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── a.R\n│   └── b.R <span style=\"color:#b9770e\">(move from old/b.R)<\/span>\n├── data/\n│   └── study-m_data.csv <span style=\"color:#b9770e\">(move from data/m.csv)<\/span>\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n├── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n├── README.md\n└── README.MD <span style=\"color:#b9770e\">(move from docs/readme.MD)<\/span>\n<\/pre>",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── old/\n│   │   ├── a.R <span style=\"color:#b9770e\">(move from old/a.R)<\/span>\n│   │   └── b.R <span style=\"color:#b9770e\">(move from old/b.R)<\/span>\n│   ├── a.R\n│   └── b.R\n├── data/\n│   └── study-m_data.csv <span style=\"color:#b9770e\">(move from data/m.csv)<\/span>\n├── documentation/\n│   └── docs_readme.MD <span style=\"color:#b9770e\">(move from docs/readme.MD)<\/span>\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n├── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n└── README.md\n<\/pre>",
           "#### Suggestions",
-          "- **Add** dataset_description.json — Root metadata file describing the dataset (required).\n- **Move** `old/a.R` → `analysis/a.R`.\n- **Move** `old/b.R` → `analysis/b.R`.\n- **Move** `data/m.csv` → `data/study-m_data.csv`.\n- **Move** `data/m.xlsx` → `data/study-m_data.csv`.\n- **Move** `docs/readme.MD` → `README.MD`.\n- **Document** the 3 of 4 data columns without a codebook description (see codebook_check).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended).",
-          "You can generate a Psych-DS-compliant copy of this repository — with the moves above applied and a `dataset_description.json` built from the extracted variables — using `metacheck::convert_psychds(paper, output_dir)`.",
-          "To also produce a human-readable codebook of the extracted variables (a labelled data frame plus a ready-to-run R Markdown document for the `codebook` package), use `metacheck::convert_codebook(paper, output_dir)`."
+          "- **Add** dataset_description.json — Root metadata file describing the dataset (required).\n- **Move** `old/a.R` → `analysis/old/a.R`.\n- **Move** `old/b.R` → `analysis/old/b.R`.\n- **Move** `data/m.csv` → `data/study-m_data.csv`.\n- **Move** `data/m.xlsx` → `data/study-m_data.csv`.\n- **Move** `docs/readme.MD` → `documentation/docs_readme.MD`.\n- **Document** the 3 of 4 data columns without a codebook description (see codebook_check).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended)."
         ]
       },
       {
@@ -282,6 +280,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

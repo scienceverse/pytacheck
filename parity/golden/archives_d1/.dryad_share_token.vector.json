@@ -1,0 +1,18 @@
+{
+  "id": ".dryad_share_token.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU",
+      "abc_D-1",
+      null,
+      "Xyz",
+      null
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -22,6 +22,7 @@ import numpy as np
 import pandas as pd
 
 from metacheck.module import module
+from metacheck.modules._empty import empty_input_result, paper_is_empty
 
 REFERENCES = (
     "Serghiou, S., Contopoulos-Ioannidis, D. G., Boyack, K. W., Riedel, N., Wallach, J. D., "
@@ -122,6 +123,8 @@ def funding_check(paper: Any) -> dict[str, Any]:
     from metacheck.modules._statements import with_bibr_statements
     from metacheck.text import text_search
 
+    if paper_is_empty(paper):
+        return empty_input_result(paper)
     sentences = text_search(paper)
     table = _funding_table(sentences.loc[:, ["paper_id", "text"]])
     # D84: a paper the expressions found nothing in gets bibr's statement

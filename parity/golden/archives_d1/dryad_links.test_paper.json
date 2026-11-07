@@ -115,24 +115,10 @@
           "10.15146/r3",
           "10.5061/dryad.upper",
           "10.5061/dryad.j1fd7"
-        ],
-        "names": [
-          "https://doi.org/10.5061/dryad.j1fd7",
-          "https://doi.org/10.5061/dryad.j1fd7",
-          "https://datadryad.org/stash/dataset/doi:10.5061/dryad.abc12",
-          "https://doi.org/10.6075/J0W37TTW",
-          "https://example.org/datadryad.org",
-          "datadryad.org/stash/dataset/doi:10.5061/dryad.xyz/.",
-          "10.25338/B8N33J",
-          "10.7941/D18907",
-          "https://datadryad.org/dataset/doi%3A10.5061%2Fdryad.enc",
-          "www.datadryad.org/datasets/doi:10.15146/R3.",
-          "10.5061/DRYAD.UPPER",
-          "10.5061/dryad.j1fd7"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

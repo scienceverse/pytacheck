@@ -14,9 +14,8 @@
       "traffic_light",
       "summary_text",
       "summary_table",
+      "findings",
       "na_replace",
-      "dv_summary_text",
-      "dv_report",
       "structure",
       "previews",
       "gated_repos",
@@ -40,6 +39,104 @@
         "t": "chr",
         "v": [
           "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
+          "**Repository: https://osf.io/nod01**",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── code/\n│   └── analysis.R  💻 code          ex1\n├── paper.pdf       📖 documentation ex1\n└── README.md       📄 readme\n```\n:::",
+          "**Repository: https://osf.io/brok2**",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n└── broken.xlsx  📊 data ex2\n```\n:::",
+          "#### Spreadsheet Formatting",
+          "We examined 1 spreadsheet file in the repository; 1 has at least one formatting issue.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"broken.xlsx\", Sheet = NA_character_, Issue = \"Unreadable\", \n    Detail = \"The file could not be parsed as a .xlsx workbook.\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "Spreadsheet formatting such as colour, merged cells, and blank rows/columns is not preserved when data are read programmatically or exported to CSV. Store data as a plain rectangular table (one header row, one column per variable, no colour-encoded meaning) so it is machine-readable."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 4 files: 1 data, 1 code, 2 documentation.\n-  We found 1 tabular data file and extracted 0 columns from 1 of them.\n-  We grouped the files into 2 study groups (ex1, ex2), plus 1 collection-level file (README/ro-crate metadata). We found no readable tabular data files to validate. 1 of 1 spreadsheet file has at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n",
+          "flagged_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p2"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          }
         ]
       },
       {
@@ -86,96 +183,22 @@
         ]
       },
       {
-        "t": "chr",
-        "v": [
-          ""
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "yellow"
-        ]
-      },
-      {
-        "t": "null"
-      },
-      {
-        "t": "df",
-        "nrow": 2,
-        "names": [
-          "paper_id",
-          "column_n",
-          "flagged_n",
-          "spreadsheet_file_n",
-          "spreadsheet_flagged_file_n"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "p1",
-              "p2"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0,
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0,
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              1,
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              1,
-              0
-            ]
-          }
-        ]
-      },
-      {
         "t": "dbl",
         "v": [
+          0,
+          0,
           0,
           0,
           0,
           0
         ],
         "names": [
+          "data_file_n",
           "column_n",
+          "empty_col_n",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "We found no readable tabular data files to validate. 1 of 1 spreadsheet file has at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "#### Spreadsheet Formatting",
-          "We examined 1 spreadsheet file in the repository; 1 has at least one formatting issue.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"broken.xlsx\", Sheet = NA_character_, Issue = \"Unreadable\", \n    Detail = \"The file could not be parsed as a .xlsx workbook.\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
-          "Spreadsheet formatting such as colour, merged cells, and blank rows/columns is not preserved when data are read programmatically or exported to CSV. Store data as a plain rectangular table (one header row, one column per variable, no colour-encoded meaning) so it is machine-readable."
         ]
       },
       {
@@ -195,6 +218,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -326,6 +350,15 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "analysis.R",
+              "paper.pdf",
+              "broken.xlsx"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               true,
@@ -364,6 +397,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

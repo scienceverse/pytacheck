@@ -65,7 +65,7 @@
       "      \"literal\": null,",
       "      \"email\": null,",
       "      \"corresponding\": false,",
-      "      \"orcid\": \"https://orcid.org/0000-0002-2345-6789\",",
+      "      \"orcid\": \"https://orcid.org/0000-0001-2345-6789\",",
       "      \"role\": [],",
       "      \"credit_roles\": []",
       "    },",
@@ -148,6 +148,6 @@
       "}"
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -147,30 +147,30 @@
           {
             "t": "chr",
             "v": [
-              "p < .05 ",
               "p < .05",
-              "p < .05 ",
               "p < .05",
-              "p < .05 ",
               "p < .05",
-              "p < .05 ",
               "p < .05",
-              "p < .05 ",
               "p < .05",
-              "p < .05 ",
               "p < .05",
-              "p < .05 ",
-              "p < .05 ",
               "p < .05",
-              "p < .05 ",
+              "p < .05",
+              "p < .05",
+              "p < .05",
+              "p < .05",
+              "p < .05",
+              "p < .05",
+              "p < .05",
+              "p < .05",
+              "p < .05",
               "p\t<\t.01",
-              "p < .05 ",
+              "p < .05",
               "p < .01",
-              "p < .05 ",
+              "p < .05",
               "p < .01",
-              "p < .05 ",
+              "p < .05",
               "p < .01",
-              "p < .05 ",
+              "p < .05",
               "p < .01"
             ]
           },
@@ -387,7 +387,7 @@
           {
             "t": "lgl",
             "v": [
-              false,
+              true,
               false,
               true,
               true,
@@ -395,20 +395,20 @@
               true,
               true,
               true,
+              true,
               false,
+              true,
+              true,
+              true,
+              true,
               false,
               true,
               true,
               true,
               false,
-              false,
-              false,
-              false,
-              false,
-              false,
               true,
               true,
-              false,
+              true,
               false,
               true,
               true
@@ -450,7 +450,7 @@
         "t": "chr",
         "v": [
           "Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, reproducibility, and re-use (e.g., in *p* value meta-analyses). Best practice is to report exact p-values with three decimal places (e.g., *p* = .032) unless *p* values are smaller than 0.001, in which case you can use *p* < .001.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = c(\"p < .05 \", \"p < .05\", \"p < .05 \", \n\"p < .05\", \"p < .05 \", \"p < .05\", \"p < .05 \", \"p < .05\", \"p < .05 \", \n\"p < .05 \", \"p < .01\", \"p < .05 \", \"p < .01\"), Text = c(\"NBSP p < .05 (* p < .05).\", \n\"NBSP p < .05 (* p < .05).\", \"Figure space p < .05 (* p < .05).\", \n\"Figure space p < .05 (* p < .05).\", \"Narrow NBSP p < .05 (* p < .05).\", \n\"Narrow NBSP p < .05 (* p < .05).\", \"Separator p < .05 (*\\034p < .05).\", \n\"Separator p < .05 (*\\034p < .05).\", \"Unit separator p < .05 (*\\037p<\\037.01).\", \n\"NEL p < .05 (*\\u0085p < .01).\", \"NEL p < .05 (*\\u0085p < .01).\", \n\"Zero width p < .05 (*​p < .01).\", \"Zero width p < .05 (*​p < .01).\"\n)), row.names = c(NA, -13L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = c(\"p < .05\", \"p < .05\", \"p < .05\", \n\"p < .05\", \"p < .05\", \"p < .05\", \"p < .05\", \"p < .05\", \"p < .05\", \n\"p\\t<\\t.01\", \"p < .05\", \"p < .05\", \"p < .01\", \"p < .05\", \"p < .05\", \n\"p < .01\"), Text = c(\"Thin p < .05 (* p < .05).\", \"NBSP p < .05 (* p < .05).\", \n\"Figure space p < .05 (* p < .05).\", \"Narrow NBSP p < .05 (* p < .05).\", \n\"Ideographic p < .05 (* p < .05).\", \"Separator p < .05 (*\\034p < .05).\", \n\"Unit separator p < .05 (*\\037p<\\037.01).\", \"Newline p < .05 (* p < .05).\", \n\"Tab p < .05 (* p < .01).\", \"Tab p < .05 (* p < .01).\", \"VT p < .05 (* p < .01).\", \n\"NEL p < .05 (*\\u0085p < .01).\", \"NEL p < .05 (*\\u0085p < .01).\", \n\"Line sep p < .05 (* p < .01).\", \"Zero width p < .05 (*​p < .01).\", \n\"Zero width p < .05 (*​p < .01).\")), row.names = c(NA, -16L\n), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nThe APA manual states: Report exact *p* values (e.g., *p* = .031) to two or three decimal places. However, report *p* values less than .001 as *p* < .001. However, 2 decimals is too imprecise for many use-cases (e.g., a *p* value meta-analysis), so report *p* values with three digits.\n\nAmerican Psychological Association (2020). <em>Publication manual of the American Psychological Association<\/em>, 7 edition. American Psychological Association.\n\n:::\n"
         ]
       },
@@ -463,7 +463,7 @@
       {
         "t": "chr",
         "v": [
-          "We found 13 imprecise *p* values out of 25 detected *p* values."
+          "We found 16 imprecise *p* values out of 25 detected *p* values."
         ]
       },
       {
@@ -484,7 +484,7 @@
           {
             "t": "int",
             "v": [
-              13
+              20
             ]
           },
           {
@@ -503,6 +503,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

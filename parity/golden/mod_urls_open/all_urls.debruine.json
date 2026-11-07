@@ -62,7 +62,7 @@
               "https://royalsocietypublishing.org",
               "https://royalsocietypublishing.org",
               "https://royalsocietypublishing.org",
-              "http://dx.doi",
+              "http://dx.doi.org/10.1098/rspb.2004.3003",
               "http://www.journals.royalsoc",
               "ac.uk"
             ]
@@ -144,9 +144,9 @@
               null,
               "If we confine attention to the non-self morphs, there was still no signif icant difference and those faces that elicited trust were actually rated slightly less attractive than Downloaded from <ref type=\"url\" target=\"https://royalsocietypublishing.org/\">https://royalsocietypublishing.org/<\/ref> on 24 July 2025 An additional set of control subjects saw the same face stimuli as the experimental subjects.",
               null,
-              "B (2004) Downloaded from https://royalsocietypublishing.org/ on 24 July2025<\/p> <\/note>",
+              "B (2004) Downloaded from https://royalsocietypublishing.org/ on 24 July 2025<\/p> <\/note>",
               null,
-              "B (2005) Downloaded from https://royalsocietypublishing.org/ on 24 July2025<\/p> <\/note>",
+              "B (2005) Downloaded from https://royalsocietypublishing.org/ on 24 July 2025<\/p> <\/note>",
               "<note place=\"foot\" xml:id=\"foot_1\">   <p>The supplementary Electronic Appendix is available at http://dx.doi. org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.<\/p> <\/note>",
               "<note place=\"foot\" xml:id=\"foot_1\">   <p>The supplementary Electronic Appendix is available at http://dx.doi. org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.<\/p> <\/note>",
               "<note place=\"foot\" xml:id=\"foot_1\">   <p>The supplementary Electronic Appendix is available at http://dx.doi. org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.<\/p> <\/note>"
@@ -256,6 +256,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -72,7 +72,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "repo_url",
           "file_name",
@@ -83,23 +83,33 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://example.org/rp"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "b.csv"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://srv.example.org/paths.zip"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              null
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "the archive's list of contents gives no size for this file"
+            ]
           }
         ]
       },
@@ -119,6 +129,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -162,11 +162,17 @@ def _entry_backend(entry: dict[str, Any]) -> str | None:
 def _list_services() -> list[tuple[str, str]] | None:
     """The bibr entries of metacheck's public server list, as (address, backend); ``None``
     if it cannot be read. An entry this version cannot talk to is left out."""
-    from metacheck.io.convert import _server_list
+    from metacheck import http
+    from metacheck.io.convert import SERVERS_URL
 
+    # read here, not with convert()'s _convert_servers(): that gives [] for a list it
+    # cannot read, and the app tells an unreadable list from one without bibr
     try:
-        servers = _server_list()
+        resp = http.request("GET", SERVERS_URL)
+        servers = resp.json() if resp is not None and resp.status_code == 200 else None
     except Exception:
+        return None
+    if not isinstance(servers, list):
         return None
     found = []
     for s in servers:

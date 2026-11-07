@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 3,
         "names": [
           "paper_id",
           "bib_id",
@@ -49,30 +49,40 @@
           {
             "t": "chr",
             "v": [
+              "a",
+              "b",
               "b"
             ]
           },
           {
             "t": "int",
             "v": [
+              2,
+              2,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              "(Gino and Wiltermuth 2014)",
+              "(Gino and Wiltermuth 2014)",
               "(Ghost)"
             ]
           },
           {
             "t": "chr",
             "v": [
+              "Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.",
+              "Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.",
               "Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional."
             ]
           }
@@ -81,8 +91,8 @@
       {
         "t": "chr",
         "v": [
-          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = NA_integer_, type = \"missing\", contents = \"(Ghost)\", \n    reference = \"Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "This module relies on Grobid correctly parsing the references. There are likely to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(2L, 2L, NA), type = c(\"missing\", \"missing\", \n\"missing\"), contents = c(\"(Gino and Wiltermuth 2014)\", \"(Gino and Wiltermuth 2014)\", \n\"(Ghost)\"), reference = c(\"Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.\", \n\"Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.\", \n\"Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.\"\n)), row.names = c(NA, -3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -104,7 +114,8 @@
           "paper_id",
           "n_bib",
           "n_xrefs",
-          "n_missing"
+          "n_missing",
+          "n_extra"
         ],
         "v": [
           {
@@ -129,10 +140,17 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "int",
             "v": [
               0,
-              1
+              0
             ]
           }
         ]
@@ -145,6 +163,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

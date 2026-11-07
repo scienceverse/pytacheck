@@ -124,6 +124,22 @@ def test_apply_reasoning_defaults_to_low(restore_llm_options: None) -> None:
     assert core._llm_apply_reasoning({}, "groq/llama") == {"params_list": {}, "api_args": {}}
 
 
+def test_apply_reasoning_switches_qwen3_off_on_ollama_v1_too(restore_llm_options: None) -> None:
+    # #494: the structured path uses Ollama's /v1 endpoint, which ignores `think`
+    # but honours reasoning_effort = "none"
+    options({"metacheck.llm_reasoning": "low"})
+    out = core._llm_apply_reasoning({}, "ollama/qwen3.5:4b")
+    assert out["params_list"] == {"think": False}
+    assert out["api_args"] == {"reasoning_effort": "none"}
+    # an explicit reasoning_effort wins
+    out = core._llm_apply_reasoning({}, "ollama/qwen3.5:4b", {"reasoning_effort": "low"})
+    assert out["api_args"] == {"reasoning_effort": "low"}
+    # high reasoning leaves the model alone
+    L.llm_reasoning("high")
+    out = core._llm_apply_reasoning({}, "ollama/qwen3.5:4b")
+    assert out == {"params_list": {}, "api_args": {}}
+
+
 # ---------------------------------------------------------------------------
 # vllm
 # ---------------------------------------------------------------------------

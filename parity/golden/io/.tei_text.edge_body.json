@@ -21,7 +21,7 @@
         "t": "chr",
         "v": [
           "Figure 1 shows the design.",
-          "The effect was rp² = .05 and ηp² = .10 and ηG² = .2, with R²M = .3, χ 2 ( 12 ) = 4.5, r( 45) = .30, dz = 0.4 and BF10 =3.2.",
+          "The effect was rp² = .05 and ηp² = .10 and ηG² = .2, with R²M = .3, χ 2 ( 12 ) = 4.5, r( 45) = .30, dz = 0.4 and BF10 = 3.2.",
           "Prior work by J. K. Rowling (p. 45) and Smith (2020) found effects1. see also results reported earlier.",
           "This one ends without a stop and continues in the next paragraph.",
           "Data are at https://osf.io/abcde and the GitHub repo.",
@@ -29,12 +29,12 @@
           "A second    sentence?",
           "Yes!",
           "\"Quoted.\"",
-          "Then more Fig.1 and Table1 and no type.",
+          "Then more Fig 1 and Table 1 and no type.",
           "Participants (N = 40) were tested.",
           "A second    sentence?",
           "Yes!",
           "\"Quoted.\"",
-          "Then more Fig.1 and Table1 and no type.",
+          "Then more Fig 1 and Table 1 and no type.",
           "Results and Discussion",
           "We used the U.S.A. sample e.g. with 5.5 x 10^-3 values.",
           "A body abstract?",
@@ -217,7 +217,7 @@
           "<head>Appendix B<\/head>",
           "<head>Figure 1.<\/head>",
           "<head>Figure 1.<\/head>",
-          "<head>Table1<\/head>",
+          "<head>Table 1<\/head>",
           ""
         ]
       },
@@ -267,12 +267,12 @@
           null,
           null,
           null,
-          "Then more <ref type=\"figure\" target=\"#fig_0\">Fig.1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
+          "Then more <ref type=\"figure\" target=\"#fig_0\">Fig 1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table 1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
           null,
           null,
           null,
           null,
-          "Then more <ref type=\"figure\" target=\"#fig_0\">Fig.1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
+          "Then more <ref type=\"figure\" target=\"#fig_0\">Fig 1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table 1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
           "<head>Results and Discussion<\/head>",
           null,
           null,
@@ -291,6 +291,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

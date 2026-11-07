@@ -21,7 +21,6 @@
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"]}
 - "id": "stat_p_exact.real_single"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The sentences read from the TEI differ (io fix: 'p = .27', metacheck 'p =.27'; 'see Fig. 3a' is not replaced by the supplement URL), which also lets one more 'p < .001' be found."}
   "module": "stat_p_exact"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}
@@ -45,7 +44,6 @@
           - "Line p =\n.03 and p\n< .04."
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_exact.unicode_star"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "The unstarred p-value before a '(* p < .05)' note is flagged; metacheck's whole-sentence star test hid it."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -78,7 +76,6 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ------------------------------------------------------------------ comparators
 - "id": "stat_p_exact.comparators"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "'p == .03' is exact, not imprecise; 'p == .000', 'p =< 0' and 'p < 0.0' are reported as zero."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -101,7 +98,6 @@
           - "Tiny p < 1.0 x 10^-400 here."
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_nonsig.comparators"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "'p == .03' is significant (metacheck counts '==' as non-significant)."}
   "module": "stat_p_nonsig"
   "args":
     "paper":
@@ -121,7 +117,6 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ----------------------------------------------------------------- star notes
 - "id": "stat_p_exact.star_variants"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "The unstarred 'p < .05' before a '*p < .01' note is flagged; only the starred p-value is a table note."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -327,7 +322,6 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('No difference p > .05 here.', 'Fine p = .012 here.', 'Also p = .3.')), 'stat_p_nonsig')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['No difference p > .05 here.', 'Fine p = .012 here.', 'Also p = .3.']), 'stat_p_nonsig')"}}
 - "id": "module_report.stat_p_nonsig.paperlist"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "3 more non-significant p-values ('ps > .115' and two more): 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
@@ -341,7 +335,6 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(demopaper(), 'all_p_values')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.demopaper(), 'all_p_values')"}}
 - "id": "report_tables.all_p_values.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more p-values: 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":
@@ -363,19 +356,16 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(demopaper(), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.demopaper(), 'stat_p_exact')"}}
 - "id": "report_tables.stat_p_exact.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more imprecise p-values such as 'ps < .05': 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), 'stat_p_exact')"}}
 - "id": "report_tables.stat_p_exact.real"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "6 more imprecise p-values such as 'ps < .05': 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml')), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml']), 'stat_p_exact')"}}
 - "id": "report_tables.stat_p_exact.synthetic"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "'p < .01' after a '* p < .05' note is listed, and 'p < .05' twice in one sentence is listed once."}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":
@@ -386,7 +376,6 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(demopaper(), 'stat_p_nonsig')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.demopaper(), 'stat_p_nonsig')"}}
 - "id": "report_tables.stat_p_nonsig.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "3 more non-significant p-values: 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":

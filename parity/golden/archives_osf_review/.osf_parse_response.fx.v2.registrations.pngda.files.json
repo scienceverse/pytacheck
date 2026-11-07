@@ -10,7 +10,8 @@
     "nrow": 1,
     "names": [
       "osf_id",
-      "osf_type"
+      "osf_type",
+      "error"
     ],
     "v": [
       {
@@ -24,9 +25,15 @@
         "v": [
           "unfound"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "not found on the OSF (HTTP 404)"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -22,6 +22,17 @@
     "src/metacheck/report/report.py",
     "src/metacheck/report/render.py",
 ]
+# report_type("checklist"): every check sorted by its result (metacheck 0.4)
+"R/report-checklist.R" = ["src/metacheck/report/checklist.py"]
+"inst/templates/_report_checklist.Rmd" = [
+    "src/metacheck/report/templates/_report_checklist.Rmd",
+    "src/metacheck/report/checklist.py",
+]
+"inst/app/www/images/logo.png" = ["src/metacheck/report/assets/logo.png"]
+"inst/app/www/fonts/Cabin.ttf" = ["src/metacheck/report/assets/Cabin.ttf"]
+"R/file-tree.R" = ["src/metacheck/report/file_tree.py"]
+# only the rendering parts of the repository app's report (the app itself is not ported)
+"inst/app/shiny_app_repocheck/brief_report.R" = ["src/metacheck/report/file_tree.py"]
 "R/validate.R" = ["src/metacheck/validate.py"]
 "R/emojis.R" = ["src/metacheck/report/emojis.py"]
 "data-raw/emojis.R" = ["src/metacheck/report/emojis.py"]
@@ -41,11 +52,49 @@ report_table = "metacheck.report.blocks:report_table"
 report_type = "metacheck.report.blocks:report_type"
 ".report_is_static" = "metacheck.report.blocks:_report_is_static"
 ".report_is_brief" = "metacheck.report.blocks:_report_is_brief"
+".report_how_it_works" = "metacheck.report.report:_how_it_works_parts"
+".report_temp_message" = "metacheck.report.report:_report_temp_message"
+".report_checklist_qmd" = "metacheck.report.checklist:checklist_qmd"
+".checklist_results" = "metacheck.report.checklist:CHECKLIST_RESULTS"
+".checklist_light_status" = "metacheck.report.checklist:_LIGHT_STATUS"
+".checklist_checks" = "metacheck.report.checklist:checklist_checks"
+".checklist_has_section" = "metacheck.report.checklist:_has_section"
+".checklist_section_id" = "metacheck.report.checklist:_section_id"
+".checklist_module_sections" = "metacheck.report.checklist:_module_sections"
+".checklist_file_tree" = "metacheck.report.checklist:_file_tree_section"
+".checklist_fold" = "metacheck.report.checklist:_fold"
+".checklist_block" = "metacheck.report.checklist:_block"
+".checklist_row" = "metacheck.report.checklist:_row"
+".checklist_counts" = "metacheck.report.checklist:_counts"
+".checklist_data_uri" = "metacheck.report.checklist:_file_uri"
+".tree_type_icon" = "metacheck.report.file_tree:tree_type_icon"
+".tree_type_label" = "metacheck.report.file_tree:tree_type_label"
+".file_tree_rows" = "metacheck.report.file_tree:file_tree_rows"
+".file_tree_entries" = "metacheck.report.file_tree:file_tree_entries"
+".file_tree_block" = "metacheck.report.file_tree:file_tree_block"
+".file_tree_report_range" = "metacheck.report.file_tree:file_tree_report_range"
+".file_tree_from_report" = "metacheck.report.file_tree:file_tree_from_report"
+".file_tree_drop_from_report" = "metacheck.report.file_tree:file_tree_drop_from_report"
+".file_tree" = "metacheck.report.file_tree:file_tree"
+".brief_file_tree" = "metacheck.report.file_tree:brief_file_tree"
+".brief_insert_after_summary" = "metacheck.report.file_tree:brief_insert_after_summary"
 ".report_flagged_bullets" = "metacheck.report.brief:flagged_bullets"
 ".report_validation_table" = "metacheck.report.brief:validation_table"
+".report_extract_tables" = "metacheck.report.brief:_report_extract_tables"
+".report_merge_tables" = "metacheck.report.brief:_report_merge_tables"
+".report_group_table" = "metacheck.report.brief:_report_group_table"
+".report_find_callout" = "metacheck.report.brief:_report_find_callout"
+".report_file_findings_by_file" = "metacheck.report.brief:_report_file_findings_by_file"
+".report_file_finding_bullets" = "metacheck.report.brief:_report_file_finding_bullets"
+# the static table of a simple, brief or checklist report: DataTable._static_html() (a raw HTML block,
+# so the list-marker escape of metacheck's version, for Pandoc reading the cells as markdown, is not needed)
+".report_table_static" = "metacheck.report.render:DataTable"
+".report_move" = "metacheck.report.report:_report_move"
 ".cap_num" = "metacheck.report.blocks:_cap_num"
 ".html_sniff_kind" = "metacheck.report.html_output:_html_sniff_kind"
 ".html_export_r_source" = "metacheck.report.html_output:_html_export_r_source"
+".recovered_code_dir" = "metacheck.report.html_output:_recovered_code_dir"
+".in_download_folder" = "metacheck.report.html_output:_in_download_folder"
 accuracy = "metacheck.validate:accuracy"
 validate = "metacheck.validate:validate"
 emojis = "metacheck.report.emojis:emojis"

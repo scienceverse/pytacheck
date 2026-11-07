@@ -153,7 +153,7 @@
               "https://aspredicted.org/by8i8v.pdf",
               "2025/11/27 23:20 (PT)",
               null,
-              null,
+              "2025-11-27",
               null,
               null,
               "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.",
@@ -184,6 +184,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

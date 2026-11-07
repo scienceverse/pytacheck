@@ -116,19 +116,19 @@
       {
         "t": "chr",
         "v": [
-          "Neither shared data nor code detected."
+          "0 papers shared both data and code, 0 only data, 0 only code, and 4 neither."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "red"
+          "info"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Neither shared data nor code detected."
+          "0 papers shared both data and code, 0 only data, 0 only code, and 4 neither."
         ]
       },
       {
@@ -177,28 +177,28 @@
           {
             "t": "lgl",
             "v": [
-              null,
-              null,
-              null,
-              null
+              false,
+              false,
+              false,
+              false
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null,
-              null,
-              null,
-              null
+              false,
+              false,
+              false,
+              false
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null,
-              null,
-              null,
-              null
+              false,
+              false,
+              false,
+              false
             ]
           },
           {
@@ -206,16 +206,28 @@
             "names": null,
             "v": [
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           },
@@ -224,16 +236,28 @@
             "names": null,
             "v": [
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           },
@@ -242,16 +266,28 @@
             "names": null,
             "v": [
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           },
@@ -260,16 +296,28 @@
             "names": null,
             "v": [
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               }
             ]
           }
@@ -298,6 +346,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

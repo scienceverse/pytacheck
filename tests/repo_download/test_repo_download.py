@@ -177,26 +177,82 @@ def test_na_size_falls_back_to_head_probe(tmp_path: Path, monkeypatch: pytest.Mo
     assert len(dl.attrs["oversize_skipped"]) == 2
 
 
-def test_unknown_size_is_excluded_not_gating(
+def test_unknown_size_is_downloaded_with_a_limit_not_gating(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    # An unknown-size file cannot be budgeted in advance. It used to be left out without
+    # any record (metacheck #583); it is downloaded with the per-file limit, and the
+    # repository is not gated.
     files = make_dl_files(tmp_path)
     files["file_size"] = math.nan
     monkeypatch.setattr(dlm, "_remote_size", lambda url: math.nan)
     dl = download_repo_files(files, max_file_size=100, max_download_size=500)
-    assert located(dl) == 0
+    assert located(dl) == 2
     assert len(dl.attrs["gated"]) == 0
 
 
 def test_real_size_probe_on_file_urls(tmp_path: Path) -> None:
-    # a file:// answer has status 0, which is not a 2xx answer, so neither the
-    # HEAD nor the ranged GET gives a size (as in metacheck, whose .head_size()
-    # reads only a 2xx answer): the files are left out, not gated
+    # a file:// answer has status 0, which is not a 2xx answer, so neither the HEAD nor the
+    # ranged GET gives a size (as in metacheck, whose .head_size() reads only a 2xx
+    # answer): the files are downloaded with a limit, not left out and not gated
     files = make_dl_files(tmp_path)
     files["file_size"] = math.nan
     dl = download_repo_files(files, max_file_size=100, max_download_size=500)
-    assert located(dl) == 0
+    assert located(dl) == 2
     assert len(dl.attrs["gated"]) == 0
+
+
+def test_a_file_of_unknown_size_is_downloaded_with_a_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, messages: list[str]
+) -> None:
+    # metacheck #583: the host gives no size either
+    monkeypatch.setattr(dlm, "_remote_size", lambda *a, **k: math.nan)
+
+    # no file_size column at all: it was left out with no record
+    files = make_dl_files(tmp_path, (500, 600))
+    files = files.drop(columns=["file_size"])
+    dl = download_repo_files(files)
+    assert all(os.path.exists(p) for p in dl["file_location"])
+    assert "file_size" not in dl.columns  # the column is not added
+
+    # over its limit: stopped, reported as over the limit, nothing left behind
+    files = make_dl_files(tmp_path, (5000,))
+    files["file_size"] = math.nan
+    dl = download_repo_files(files, max_file_size=0.001)
+    assert any("had no known size and was larger than" in m for m in messages)
+    assert pd.isna(dl["file_location"].iloc[0])
+    ov = dl.attrs["oversize_skipped"]
+    assert len(ov) == 1
+    assert ov["file_size"].iloc[0] > 0.001 * 1024 * 1024
+    session = Path(get_option("metacheck.repo_cache.session_dir"))
+    assert not list(session.rglob("*.part"))
+
+    # no budget left: not downloaded, with a record
+    files = make_dl_files(tmp_path, (500,))
+    files["file_size"] = math.nan
+    dl = download_repo_files(files, max_download_size=0)
+    assert pd.isna(dl["file_location"].iloc[0])
+    assert "unknown size not downloaded" in dl.attrs["gated"]["message"].iloc[0]
+
+
+def test_a_file_the_listing_says_is_empty_is_written_when_the_host_refuses_it(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # metacheck #575, item 5: GitHub answered "HTTP 501 Not Implemented" for the empty
+    # data/*/.dummy files of a repository
+    def refuse(*a: Any, **k: Any) -> Any:
+        raise dlm._HttpError(httpx.Response(501))
+
+    monkeypatch.setattr(dlm, "_storage_request", refuse)
+    assert (
+        _download_one("https://example.org/.dummy", str(tmp_path / ".dummy"), expected_bytes=0)
+        is None
+    )
+    assert (tmp_path / ".dummy").stat().st_size == 0
+    # a file with bytes is still a failed download
+    err = _download_one("https://example.org/x.csv", str(tmp_path / "x.csv"), expected_bytes=10)
+    assert err is not None
+    assert not (tmp_path / "x.csv").exists()
 
 
 def test_failed_downloads_are_reported(tmp_path: Path, messages: list[str]) -> None:
@@ -290,7 +346,8 @@ def test_repo_cache_clear_everything(tmp_path: Path, messages: list[str]) -> Non
         freed = repo_cache_clear()
         assert freed > 0
         assert messages[-1].startswith("Cleared the repository file cache (")
-        assert Path(repo_cache_dir()).is_dir()
+        # the root is not recreated: the downloads create their own folders
+        assert not Path(repo_cache_dir()).is_dir()
         assert repo_cache_size() == 0
 
 
@@ -870,6 +927,60 @@ def test_download_one_statuses_and_login_page(tmp_path: Path) -> None:
         )
 
 
+def test_run_download_want_leaves_out_media_from_hosts_that_send_files_one_by_one() -> None:
+    # metacheck #568
+    names = ["a.R", "x.csv", "model.stan", "fig.png", "song.wav", "paper.pdf", "fig.png", "lib.R"]
+    files = pd.DataFrame(
+        {
+            "file_name": names,
+            "file_path": [*names[:7], "renv/library/lib.R"],
+            "repo_url": ["https://zenodo.org/records/1"] * 6
+            + ["https://github.com/a/b", "https://zenodo.org/records/1"],
+        }
+    )
+    assert dlm._run_download_want(files) == [True, True, True, False, False, False, True, False]
+    assert dlm._run_download_want(files.iloc[:0]) == []
+    assert dlm._run_download_want(None) == []
+
+
+def test_download_for_run_follows_the_option() -> None:
+    assert dlm._download_for_run() is False
+    with local_options({"metacheck.download_for_run": True}):
+        assert dlm._download_for_run() is True
+    with local_options({"metacheck.download_for_run": "yes"}):
+        assert dlm._download_for_run() is False
+
+
+def test_dataverse_guestbook_hint_names_a_guestbook_and_nothing_else() -> None:
+    def answer(txt: str) -> httpx.Response:
+        return httpx.Response(400, content=txt.encode())
+
+    assert "guestbook form" in dlm._dataverse_guestbook_hint(
+        answer(
+            '{"status":"ERROR","message":"You may not download this file without the '
+            'required Guestbook response for guestbookID 270."}'
+        )
+    )
+    assert dlm._dataverse_guestbook_hint(answer('{"status":"ERROR","message":"Bad request"}')) == ""
+    assert dlm._dataverse_guestbook_hint(httpx.Response(400)) == ""
+
+
+def test_a_download_refused_for_a_guestbook_says_so(tmp_path: Path) -> None:
+    url = "https://dataverse.example.org/api/access/datafile/1"
+    body = b'{"status":"ERROR","message":"... required Guestbook response for guestbookID 1."}'
+    with respx.mock(assert_all_called=False) as router:
+        router.get(url).mock(return_value=httpx.Response(400, content=body))
+        err = _download_one(url, str(tmp_path / "a.csv"))
+        assert err is not None
+        assert err.startswith("HTTP 400 Bad Request.")
+        assert err.endswith(
+            "(the depositor requires a guestbook form to be filled in before download)"
+        )
+        router.get(url).mock(return_value=httpx.Response(400, content=b"nope"))
+        assert _download_one(url, str(tmp_path / "b.csv")) == "HTTP 400 Bad Request."
+    assert not (tmp_path / "a.csv").exists()
+
+
 def test_is_login_page(tmp_path: Path) -> None:
     assert _is_login_page(str(DATA / "login.html")) is True
     assert _is_login_page(str(DATA / "page.html")) is False
@@ -877,11 +988,20 @@ def test_is_login_page(tmp_path: Path) -> None:
     assert _is_login_page(str(tmp_path / "missing.html")) is False
 
 
-def test_auth_for_url_hosts(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.fixture
+def osf_key_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The OSF key check answers "accepted" and the file-server lookup leaves an address alone."""
+    from metacheck.archives import osf_helpers
+
+    monkeypatch.setattr(osf_helpers, "_osf_key_check", lambda key: True)
+    monkeypatch.setattr(dlm, "_osf_file_server_url", lambda url, pat: url)
+
+
+def test_auth_for_url_hosts(monkeypatch: pytest.MonkeyPatch, osf_key_ok: None) -> None:
     monkeypatch.setenv("OSF_PAT", "osf-token")
     spec = _auth_for_url({"method": "GET", "url": "https://osf.io/download/abcde/", "headers": {}})
     assert spec["headers"]["Authorization"] == "Bearer osf-token"
-    assert spec["unrestricted_auth"] is True
+    assert "unrestricted_auth" not in spec
     monkeypatch.delenv("OSF_PAT")
     with local_options({"metacheck.osf.pat": None}):
         spec = _auth_for_url(
@@ -907,13 +1027,50 @@ def test_auth_for_url_hosts(monkeypatch: pytest.MonkeyPatch) -> None:
         "https://notosf.io/d.csv",
     ],
 )
-def test_the_osf_token_goes_to_osf_hosts_only(monkeypatch: pytest.MonkeyPatch, url: str) -> None:
+def test_the_osf_token_goes_to_osf_hosts_only(
+    monkeypatch: pytest.MonkeyPatch, osf_key_ok: None, url: str
+) -> None:
     monkeypatch.setenv("OSF_PAT", "osf-token")
     spec = _auth_for_url({"method": "GET", "url": url, "headers": {}})
     assert "Authorization" not in spec["headers"] and "unrestricted_auth" not in spec
     for host in ("osf.io", "files.osf.io", "files.de-1.osf.io", "api.osf.io"):
         spec = _auth_for_url({"method": "GET", "url": f"https://{host}/x", "headers": {}})
         assert spec["headers"]["Authorization"] == "Bearer osf-token"
+
+
+def test_an_osf_download_address_goes_straight_to_the_file_server(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from metacheck.archives import osf_helpers
+
+    monkeypatch.setenv("OSF_PAT", "osf-token")
+    monkeypatch.setattr(osf_helpers, "_osf_key_check", lambda key: True)
+    with respx.mock(assert_all_called=True) as router:
+        route = router.get("https://osf.io/download/abcde/").mock(
+            return_value=httpx.Response(
+                302, headers={"Location": "https://files.de-1.osf.io/v1/resources/x/abcde"}
+            )
+        )
+        spec = _auth_for_url(
+            {"method": "GET", "url": "https://osf.io/download/abcde/", "headers": {}}
+        )
+    assert route.calls[0].request.headers["Authorization"] == "Bearer osf-token"
+    assert spec["url"] == "https://files.de-1.osf.io/v1/resources/x/abcde"
+    assert spec["headers"]["Authorization"] == "Bearer osf-token"
+    # a redirect that leaves the OSF, no redirect, and a failed request leave the address alone
+    for response in (
+        httpx.Response(302, headers={"Location": "https://cloud.example/blob?sig=1"}),
+        httpx.Response(200, content=b"x"),
+        httpx.Response(500),
+    ):
+        with respx.mock() as router:
+            router.get("https://osf.io/download/abcde/").mock(return_value=response)
+            assert (
+                dlm._osf_file_server_url("https://osf.io/download/abcde/", "osf-token")
+                == "https://osf.io/download/abcde/"
+            )
+    # the file servers and the API are not asked
+    assert dlm._osf_file_server_url("https://files.osf.io/v1/x", "t") == "https://files.osf.io/v1/x"
 
 
 def test_unrestricted_auth_keeps_token_across_redirect(
@@ -996,8 +1153,11 @@ def test_download_zip_to_cache_extracts_selected_rows(tmp_path: Path) -> None:
         out = _download_zip_to_cache(
             files, [0, 1, 2, 3], "https://api.github.com/repos/o/r/zipball", strip_dir=True
         )
-    assert out["file_location"].tolist()[:2] == files[".cache_path"].tolist()[:2]
-    assert out["file_location"].isna().tolist()[2:] == [True, True]  # not in the zip / empty member
+    cache = files[".cache_path"].tolist()
+    # an empty member is an empty file, as the archive states (metacheck #575, item 5)
+    assert out["file_location"].tolist() == [cache[0], cache[1], None, cache[3]]
+    assert Path(cache[3]).read_bytes() == b""
+    assert not Path(cache[2]).exists()  # not in the zip
     assert Path(out["file_location"].iloc[1]).read_bytes() == b"x <- 1\n"
     assert files["file_location"].isna().all()  # input untouched
 

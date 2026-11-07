@@ -19,7 +19,10 @@ import contextlib
 import importlib
 import sys
 from collections.abc import Callable, Iterator
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 # public name -> defining module
 _EXPORTS: dict[str, str] = {
@@ -39,7 +42,6 @@ _EXPORTS: dict[str, str] = {
     "osf_preprint_list": "metacheck.archives.osf",
     "osf_type": "metacheck.archives.osf",
     "osf_user_projects": "metacheck.archives.osf_helpers",
-    "repo_info_cache": "metacheck.archives.info_cache",
     "repo_info_cache_clear": "metacheck.archives.info_cache",
     "zip_peek_cache_clear": "metacheck.archives.zip_peek_cache",
 }
@@ -70,6 +72,21 @@ def _message(*parts: Any) -> None:
 
     if verbose():
         print("".join("NA" if p is None else str(p) for p in parts), file=sys.stderr)
+
+
+def _paper_urls(paper: Any) -> pd.DataFrame:
+    """``paper_table(paper, "url")``, typed also for an empty paper list.
+
+    metacheck 0.4.3.7 gives an empty paper list the same typed, empty tables as an empty
+    paper (U79), so the link finders see ``href``, ``link_text``, ``text_id`` and
+    ``paper_id`` on it; the table of an empty list used to have no columns at all.
+    """
+    from metacheck.papers.tables import empty_paper_table, paper_table
+
+    urls = paper_table(paper, "url")
+    if "href" not in urls.columns and len(urls) == 0:
+        return empty_paper_table("url")
+    return urls
 
 
 def _tick(pb: Any, what: str) -> None:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import shutil
 from pathlib import Path
 
@@ -45,10 +46,29 @@ def test_html_export_r_source_classic(tmp_path, html_fixture):
     src = tmp_path / "knit_classic.html"
     shutil.copy(html_fixture("knit_classic.html"), src)
     out = _html_export_r_source(src)
-    assert out == str(tmp_path / "code" / "knit_classic.R")
+    # a file of the user's own: the code goes to the temporary folder, under the
+    # file's checksum, and the user's folder is not changed
+    digest = hashlib.md5(src.read_bytes(), usedforsecurity=False).hexdigest()
+    assert out is not None
+    assert Path(out).as_posix().endswith(f"/metacheck-recovered-code/{digest}/code/knit_classic.R")
+    assert not (tmp_path / "code").exists()
     assert Path(out).read_text(encoding="utf-8") == (
         'library(dplyr)\ndat <- read.csv("data.csv")\n\nsummary(dat$x > 2)\n'
     )
+
+
+def test_html_export_r_source_beside_a_downloaded_file(html_fixture):
+    from metacheck.archives.download import _repo_session_dir
+
+    folder = Path(_repo_session_dir()) / "osf_x"
+    folder.mkdir(parents=True, exist_ok=True)
+    src = folder / "knit_classic.html"
+    shutil.copy(html_fixture("knit_classic.html"), src)
+    try:
+        out = _html_export_r_source(src)
+        assert out == str(folder / "code" / "knit_classic.R")
+    finally:
+        shutil.rmtree(folder, ignore_errors=True)
 
 
 def test_html_export_r_source_quarto(tmp_path, html_fixture):

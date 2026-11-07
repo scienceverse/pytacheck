@@ -509,7 +509,7 @@ class _Sites:
         self.rl = rl
         self._cache: dict[tuple[Any, ...], np.ndarray] = {}
         self._flat: dict[str | None, tuple[list[float], np.ndarray]] = {}
-        self._rounded: dict[tuple[str | None, int], np.ndarray] = {}
+        self._raw: dict[str | None, np.ndarray] = {}
         self._has: dict[str, np.ndarray] = {}
         self._minmax: dict[str | None, tuple[np.ndarray, np.ndarray]] = {}
 
@@ -536,13 +536,12 @@ class _Sites:
             self._flat[fam] = got
         return got
 
-    def _rounded_of(self, fam: str | None, dec: int) -> tuple[np.ndarray, np.ndarray]:
+    def _values_of(self, fam: str | None) -> tuple[np.ndarray, np.ndarray]:
         vals, site = self._flat_of(fam)
-        key = (fam, dec)
-        rv = self._rounded.get(key)
+        rv = self._raw.get(fam)
         if rv is None:
-            rv = np.asarray([r_round(v, dec) for v in vals], dtype=float)
-            self._rounded[key] = rv
+            rv = np.asarray(vals, dtype=float)
+            self._raw[fam] = rv
         return rv, site
 
     def has_family(self, fam: str) -> np.ndarray:
@@ -554,12 +553,18 @@ class _Sites:
             self._has[fam] = got
         return got
 
-    def _exact(self, fam: str | None, dec: int, value: float, tol: float) -> np.ndarray:
-        rv, site = self._rounded_of(fam, dec)
+    def _exact(self, fam: str | None, value: float, tol: float) -> np.ndarray:
+        """Sites with a value of family *fam* within *tol* of *value*, both ends included.
+
+        An output value matches when it is within half a unit of the reported last decimal (a
+        mean of exactly 13.625 reported as 13.63 is found; rounding it first with R's round(),
+        which rounds half to even, gave 13.62 only; metacheck 0.4.3.7). The small extra margin
+        absorbs floating-point error in ``x - value``."""
+        rv, site = self._values_of(fam)
         out = np.zeros(len(self.names), dtype=bool)
         if len(rv):
             with np.errstate(invalid="ignore", over="ignore"):
-                hit = np.abs(rv - value) < tol
+                hit = np.abs(rv - value) <= tol * (1 + 1e-9)
             out[site[hit]] = True
         return out
 
@@ -595,10 +600,10 @@ class _Sites:
             # 10.0**dec overflows beyond 1e308 (a reported "p = 1e-310" has
             # 310 decimals, U143); the tolerance is then a subnormal or 0
             tol = 0.5 / (10.0**dec) if dec <= 308 else 0.5 * 10.0**-dec
-            got = self._exact(fam, dec, value, tol)
+            got = self._exact(fam, value, tol)
             fallback = _FALLBACK_FAMILY.get(fam) if fam is not None else None
             if fallback is not None:
-                got = got | (~self.has_family(fam) & self._exact(fallback, dec, value, tol))
+                got = got | (~self.has_family(fam) & self._exact(fallback, value, tol))
         self._cache[key] = got
         return got
 
@@ -935,7 +940,9 @@ def _build_sites(out_long: pd.DataFrame) -> _Sites:
     tid = _col_values(out_long, "test_id")
     if tid is not None:
         tid_keep = [as_str(tid[i]) for i in keep]
-        site_keys: list[str | None] = list(tid_keep)
+        # a site named "" cannot be looked up in R (by_site[[""]] stopped, U142): it is called
+        # "\x01empty" there, which also decides where it sorts among the sites
+        site_keys: list[str | None] = ["\x01empty" if t == "" else t for t in tid_keep]
     else:
         tid_keep = None
         site_keys = [f"{_paste_chr(k_sf[j])}{_paste_chr(k_an[j])}" for j in range(len(keep))]

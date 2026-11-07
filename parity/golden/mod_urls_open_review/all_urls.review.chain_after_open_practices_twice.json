@@ -173,27 +173,27 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "lgl",
             "v": [
-              0,
-              0,
-              0
+              false,
+              false,
+              false
             ]
           },
           {
-            "t": "dbl",
+            "t": "lgl",
             "v": [
-              0,
-              0,
-              0
+              false,
+              false,
+              false
             ]
           },
           {
-            "t": "dbl",
+            "t": "lgl",
             "v": [
-              0,
-              0,
-              1
+              false,
+              false,
+              true
             ]
           },
           {
@@ -207,12 +207,15 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               }
             ]
@@ -228,12 +231,15 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               }
             ]
@@ -243,13 +249,16 @@
             "names": null,
             "v": [
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
                 "t": "chr",
@@ -264,60 +273,63 @@
             "names": null,
             "v": [
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               }
             ]
           },
           {
-            "t": "dbl",
+            "t": "lgl",
             "v": [
-              1,
-              0,
-              0
+              true,
+              false,
+              false
             ]
           },
           {
-            "t": "dbl",
+            "t": "lgl",
             "v": [
-              1,
-              0,
-              0
+              true,
+              false,
+              false
             ]
           },
           {
-            "t": "dbl",
+            "t": "lgl",
             "v": [
-              0,
-              0,
-              0
+              false,
+              false,
+              false
             ]
           },
           {
-            "t": "dbl",
+            "t": "lgl",
             "v": [
-              0,
-              0,
-              0
+              false,
+              false,
+              false
             ]
           },
           {
-            "t": "dbl",
+            "t": "lgl",
             "v": [
-              0,
-              0,
-              1
+              false,
+              false,
+              true
             ]
           },
           {
@@ -331,12 +343,15 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               }
             ]
@@ -352,12 +367,15 @@
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               }
             ]
@@ -367,13 +385,16 @@
             "names": null,
             "v": [
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
                 "t": "chr",
@@ -388,18 +409,21 @@
             "names": null,
             "v": [
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               },
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  null
+                ]
               },
               {
-                "t": "dbl",
+                "t": "chr",
                 "v": [
-                  0
+                  null
                 ]
               }
             ]
@@ -422,6 +446,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

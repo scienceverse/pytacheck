@@ -2,10 +2,7 @@
   "id": "codebook_check.llm.tables.rv_maxitem",
   "ok": true,
   "error": null,
-  "warnings": [
-    "no non-missing arguments to max; returning -Inf",
-    "no non-missing arguments to max; returning -Inf"
-  ],
+  "warnings": [],
   "value": {
     "t": "list",
     "names": null,
@@ -69,9 +66,9 @@
               null,
               null,
               "sat_1",
-              "sat_2",
+              "sat_1",
               "sat_3",
-              "sat_4"
+              "sat_1"
             ]
           },
           {
@@ -94,10 +91,10 @@
               "unlabelled",
               "unlabelled",
               "unlabelled",
+              "llm",
+              "llm",
               "labelled",
-              "labelled",
-              "labelled",
-              "labelled"
+              "llm"
             ]
           }
         ]
@@ -106,68 +103,36 @@
         "t": "df",
         "nrow": 2,
         "names": [
-          "File",
-          "Abbrev",
-          "Columns",
-          "Max item",
-          "Scale",
-          "Confidence",
+          "Variable",
+          "Label",
           "Source"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
-              "s.csv",
-              "s.csv"
+              "sat_2",
+              "sat_4"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "ABC",
-              "SAT"
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              3,
-              4
+              "",
+              ""
             ]
           },
           {
             "t": "chr",
             "v": [
-              "-Inf",
-              "4"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Alphabet Scale",
-              "Job Satisfaction Scale"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "medium",
-              "low"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "manuscript",
-              "manuscript"
+              "codebook.csv",
+              "codebook.csv"
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

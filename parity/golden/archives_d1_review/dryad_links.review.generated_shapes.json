@@ -151,30 +151,10 @@
           "10.7941/d18907",
           "10.15146/r3xq19",
           null
-        ],
-        "names": [
-          "doi:datadryad.org/stash/dataset/doi: ",
-          "http://10.5061/DRYAD.J1FD7",
-          "doi:10.5068/D14671)",
-          "https://dx.doi.org/10.6078/x_y;",
-          " datadryad.org/datasets/doi%3A\n",
-          "http://10.72721/abc;",
-          "HTTPS://datadryad.org/datasets/doi%3A",
-          "https://dx.doi.org/10.5061/dryad.j1fd7\n",
-          "10.5061/DRYAD.J1FD7.",
-          "datadryad.org/dataset/doi:.",
-          "https://10.5068/D14671",
-          "10.5061/dryad.abc",
-          "10.5061/dryad.j1fd7",
-          "https://datadryad.org/stash/dataset/doi:10.5061/dryad.j1fd7",
-          "https://doi.org/10.5061/dryad.abc",
-          "10.7941/D18907",
-          "doi.org/10.15146/R3XQ19",
-          "https://www.datadryad.org/dataset/doi:10.5061/dryad."
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

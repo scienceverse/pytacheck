@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING, Any, cast
 import pandas as pd
 
 from metacheck._r import as_character, compile_r, grepl, gsub, plural, r_round, sub
-from metacheck._values import as_float, field, is_missing
+from metacheck._values import as_float, field, field_or_value, is_missing
 from metacheck.archives._atomic import atomic_write
 from metacheck.archives._memo import session_memo
 
@@ -408,38 +408,16 @@ def _paste(x: Any) -> str:
 
 
 def _url_decode(url: str) -> str:
-    """R ``utils::URLdecode()`` for one string.
+    """``.url_decode()`` (R/utils.R) for one string: ``%``-codes decoded.
 
-    Every ``%`` consumes the next two bytes, decoded with R's arithmetic (so a
-    non-hex pair can still give a byte); an out-of-range value becomes a NUL
-    byte with R's warning. Trailing NULs are dropped by ``rawToChar()``, an
-    embedded one is R's error.
+    A ``%`` that starts no two-digit hexadecimal code is kept as written (R's
+    ``utils::URLdecode()`` dropped characters or stopped); a value that cannot
+    be decoded (``%00``) is returned as given. See
+    :func:`metacheck.utils._url_decode`.
     """
-    raw = url.encode("utf-8", errors="surrogateescape")
-    out = bytearray()
-    i = 0
-    warned = False
-    while i < len(raw):
-        if raw[i] != 0x25:
-            out.append(raw[i])
-            i += 1
-            continue
-        pair = [raw[i + k] if i + k < len(raw) else 0 for k in (1, 2)]
-        pair = [c - 32 if c > 96 else c for c in pair]
-        pair = [c - 7 if c > 57 else c for c in pair]
-        val = (pair[0] - 48) * 16 + (pair[1] - 48)
-        if not 0 <= val <= 255:
-            val = 0
-            warned = True
-        out.append(val)
-        i += 3
-    if warned:
-        warnings.warn("out-of-range values treated as 0 in coercion to raw", stacklevel=3)
-    data = bytes(out).rstrip(b"\x00")
-    if b"\x00" in data:
-        shown = data.decode("utf-8", errors="replace").replace("\x00", "\\0")
-        raise ValueError(f"embedded nul in string: '{shown}'")
-    return data.decode("utf-8", errors="surrogateescape")
+    from metacheck.utils import _url_decode as decode
+
+    return str(decode([url])[0])
 
 
 def _invalid_utf8(s: str | None) -> bool:
@@ -670,10 +648,10 @@ def _collect_links(parts: Sequence[pd.DataFrame]) -> pd.DataFrame:
 
 
 def _url_rows(paper: Any, pattern: str, ignore_case: bool = True) -> pd.DataFrame:
-    """``paper_table(paper, "url") |> dplyr::filter(grepl(pattern, href, ignore.case))``."""
-    from metacheck.papers.tables import paper_table
+    """``_paper_urls(paper) |> dplyr::filter(grepl(pattern, href, ignore.case))``."""
+    from metacheck.archives import _paper_urls
 
-    urls = paper_table(paper, "url")
+    urls = _paper_urls(paper)
     if "href" not in urls.columns:
         # an empty paper list gives a table without columns: R's `href` is then
         # the (NULL) local variable and grepl() a logical(0) filter
@@ -841,6 +819,49 @@ def _omit_msg(key: Any, size: float) -> str:
     return f"- omitting {_paste(key)} ({_paste(r_round(size / 1024 / 1024, 1))}MB)"
 
 
+def _omit_for_size(
+    sizes: Sequence[float],
+    names: Sequence[Any],
+    exempt: Sequence[bool],
+    max_file_size: float | None,
+    max_download_size: float | None,
+    pb: Any,
+) -> list[bool]:
+    """Port of ``.omit_for_size()`` (R/repo-download.R): which files the size caps leave out.
+
+    Files over *max_file_size* MB go first, then the largest of the rest one by
+    one until the remaining ones fit *max_download_size* MB (a cap that is
+    ``None``, infinite or not positive is off). A file in *exempt* (a zip read
+    member by member) is never left out. Each omission is reported on *pb*.
+    The files stay in the caller's table with ``downloaded = False``, as
+    metacheck documents (its code drops them: U36).
+    """
+    from metacheck.archives import _tick
+
+    n = len(sizes)
+    omitted = [False] * n
+    if _cap_on(max_file_size):
+        assert max_file_size is not None
+        cap = max_file_size * _MB
+        for i in range(n):
+            if not math.isnan(sizes[i]) and sizes[i] > cap and not exempt[i]:
+                _tick(pb, _omit_msg(names[i], sizes[i]))
+                omitted[i] = True
+    if _cap_on(max_download_size):
+        assert max_download_size is not None
+        cap = max_download_size * _MB
+        while True:
+            capped = [i for i in range(n) if not exempt[i] and not omitted[i]]
+            if not capped or sum(sizes[i] for i in capped if not math.isnan(sizes[i])) <= cap:
+                break
+            biggest = max(
+                (i for i in capped if not math.isnan(sizes[i])), key=lambda i: (sizes[i], -i)
+            )
+            _tick(pb, _omit_msg(names[biggest], sizes[biggest]))
+            omitted[biggest] = True
+    return omitted
+
+
 def _fetch_file(
     url: str,
     headers: dict[str, str],
@@ -953,27 +974,9 @@ def _download_file_table(
         ]
 
     sizes = [math.nan if is_missing(v) else float(v) for v in files["size"].tolist()]
-    omitted = [False] * n
-    if _cap_on(max_file_size):
-        assert max_file_size is not None
-        cap = max_file_size * _MB
-        for i in range(n):
-            if not math.isnan(sizes[i]) and sizes[i] > cap and not unzippable[i]:
-                _tick(pb, _omit_msg(files["key"].iloc[i], sizes[i]))
-                omitted[i] = True
-
-    if _cap_on(max_download_size):
-        assert max_download_size is not None
-        cap = max_download_size * _MB
-        while True:
-            capped = [i for i in range(n) if not unzippable[i] and not omitted[i]]
-            if not capped or sum(sizes[i] for i in capped if not math.isnan(sizes[i])) <= cap:
-                break
-            max_file = max(
-                (i for i in capped if not math.isnan(sizes[i])), key=lambda i: (sizes[i], -i)
-            )
-            _tick(pb, _omit_msg(files["key"].iloc[max_file], sizes[max_file]))
-            omitted[max_file] = True
+    omitted = _omit_for_size(
+        sizes, files["key"].tolist(), unzippable, max_file_size, max_download_size, pb
+    )
 
     if all(omitted):
         _tick(pb, "- All files omitted due to size constraints")
@@ -1349,7 +1352,9 @@ def _host_rx() -> Any:
     return compile_r(f"(?:{_dataverse_host_regex()})(?![A-Za-z0-9-])", ignore_case=True, perl=True)
 
 
-_DOI_PARAM = r"""persistentId=doi:([^&\s"']+)"""
+_DOI_PARAM = r"""persistentId=doi(?::|%3A)([^&\s"']+)"""
+_HDL_PARAM = r"""persistentId=hdl(?::|%3A)([^&\s"']+)"""
+_HAS_PID = r"persistentId=(doi|hdl)(:|%3A)"
 _BARE_DOI = r"(10\.\d+/[A-Za-z0-9/._-]+)"
 
 
@@ -1380,29 +1385,42 @@ def _dataverse_parse(url: Any) -> pd.DataFrame:
             m = rx.search(u)  # type: ignore[arg-type]
             host[i] = m.group(0).lower() if m else None
 
+    def decode(raw: str) -> tuple[str | None, bool]:
+        """The URL-decoded value, and whether it was refused (a NUL, invalid UTF-8)."""
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                d = _url_decode(raw)
+        except ValueError:  # an embedded NUL
+            return None, True
+        if _invalid_utf8(d):
+            return None, True
+        return d, False
+
     doi_rx = compile_r(_DOI_PARAM, ignore_case=True, perl=True)
+    hdl_rx = compile_r(_HDL_PARAM, ignore_case=True, perl=True)
+    pid_rx = compile_r(_HAS_PID, ignore_case=True, perl=True)
     doi: list[str | None] = []
     bad = [False] * n
     for i, u in enumerate(urls):
-        m = doi_rx.search(u) if u is not None else None
         d = None
-        if m:
-            try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
-                    d = _url_decode(m.group(1))
-            except ValueError:  # an embedded NUL
-                d = None
-                bad[i] = True
-            if _invalid_utf8(d):
-                d = None
-                bad[i] = True
+        if u is not None:
+            m = doi_rx.search(u)
+            if m:
+                d, bad[i] = decode(m.group(1))
+            if d is None:
+                # a dataset with a Handle is kept with its "hdl:" label (#476)
+                hm = hdl_rx.search(u)
+                if hm:
+                    h, _ = decode(hm.group(1))
+                    d = None if h is None else f"hdl:{h}"
         doi.append(d)
 
-    if any(d is None and h and not b for d, h, b in zip(doi, has_url, bad, strict=True)):
+    has_pid = [u is not None and pid_rx.search(u) is not None for u in urls]
+    if any(d is None and h and not p for d, h, p in zip(doi, has_url, has_pid, strict=True)):
         bare_rx = compile_r(_BARE_DOI, perl=True)
         for i, u in enumerate(urls):
-            if doi[i] is None and has_url[i] and not bad[i]:
+            if doi[i] is None and has_url[i] and not has_pid[i]:
                 m = bare_rx.search(u)  # type: ignore[arg-type]
                 doi[i] = m.group(1) if m else None
 
@@ -1614,9 +1632,7 @@ def _dataverse_info(host: Any, doi: Any, pb: Any = None) -> pd.DataFrame:
         obj["authors"] = _list_cell(authors)
         # older installations give the licence as a plain string ("CC0"), which
         # metacheck's `license$name` cannot read (U34)
-        licence = field(version, "license")
-        if not isinstance(licence, str):
-            licence = field(licence, "name") if isinstance(licence, dict) else None
+        licence = field_or_value(field(version, "license"), "name")
         obj["license"] = _field_cell(_empty_or(licence, None))
         obj["files"] = _list_cell(files if files is not None else [])
         return pd.DataFrame(obj)
@@ -1636,11 +1652,20 @@ def _dataverse_headers(req: dict[str, Any]) -> dict[str, Any]:
         host = urlsplit(str(req.get("url"))).hostname
     except ValueError:
         host = None
+    from metacheck.archives.api_keys import key_check_request, key_use
+
     spec = dict(req)
     headers = dict(spec.get("headers") or {})
     headers["User-Agent"] = "metacheck"
+
+    # A key the installation refuses answers 401 ("Bad API key") even for a public
+    # dataset, so each installation's key is checked once per process and left out
+    # when refused
+    def check(key: str) -> bool | None:
+        return key_check_request(f"https://{host}/api/users/:me", {"X-Dataverse-key": key})
+
     try:
-        pat = _dataverse_pat(host)
+        pat = key_use("dataverse", _dataverse_pat(host), check, ident=f"Dataverse {host}")
     except Exception:
         pat = ""
     if pat:
@@ -1693,6 +1718,43 @@ _FILE_COLUMNS = (
     "downloaded",
     "extracted",
 )
+
+
+def _dataverse_file_entry(x: Any, host: str) -> dict[str, Any]:
+    """Port of ``.dataverse_file_entry()``: the name, size and download URL of a listing entry.
+
+    A tabular file Dataverse converted on upload (an SPSS .sav, a Stata .dta or a
+    .csv made into a .tab; the listing then gives ``originalFileFormat``) is taken
+    as it was uploaded: ``/api/access/datafile/<id>`` sends the converted .tab,
+    while the listing's checksum is the original's, so every such file failed the
+    checksum and was reported as damaged (metacheck #582). With
+    ``?format=original`` Dataverse sends the original, which matches the checksum
+    and keeps an SPSS file's value labels. Its name is the listed name with the
+    original's extension (``originalFileName`` as a fallback), its size
+    ``originalFileSize``.
+    """
+    df = field(x, "dataFile")
+    if df is None:
+        df = {}
+    file_id = field(df, "id")
+    name = _empty_or(_empty_or(field(x, "label"), field(df, "filename")), None)
+    size = _as_numeric(_empty_or(field(df, "filesize"), None))
+    url = None if _is_empty(file_id) else f"https://{host}/api/access/datafile/{_json_chr(file_id)}"
+    orig_format = _empty_or(field(df, "originalFileFormat"), None)
+    if isinstance(orig_format, str) and orig_format != "" and url is not None:
+        orig_name = _empty_or(field(df, "originalFileName"), None)
+        m = re.search(r"\.([^\W_]+)$", orig_name) if isinstance(orig_name, str) else None
+        orig_ext = m.group(1) if m else ""
+        if isinstance(name, str) and orig_ext != "":
+            stem = re.sub(r"^(.*[^.])\.[^\W_]+$", r"\1", name, flags=re.DOTALL)
+            name = f"{stem}.{orig_ext}"
+        elif isinstance(orig_name, str):
+            name = orig_name
+        # the converted file's size does not describe the original: unknown when the
+        # listing does not give the original's
+        size = _as_numeric(_empty_or(field(df, "originalFileSize"), None))
+        url = f"{url}?format=original"
+    return {"name": name, "size": size, "url": url}
 
 
 def dataverse_file_download(
@@ -1769,18 +1831,16 @@ def dataverse_file_download(
             if df is None:
                 df = {}
             file_id = field(df, "id")
+            # a file Dataverse converted (a .tab made from a .sav) as it was uploaded (#582)
+            fe = _dataverse_file_entry(x, h)
             rows.append(
                 {
                     "id": _json_chr(_empty_or(file_id, None)),
-                    "key": _empty_or(_empty_or(field(x, "label"), field(df, "filename")), None),
-                    "size": _as_numeric(_empty_or(field(df, "filesize"), None)),
+                    "key": fe["name"],
+                    "size": fe["size"],
                     "checksum": _empty_or(field(df, "checksum", "value"), None),
                     "checksum_type": _lower(_empty_or(field(df, "checksum", "type"), None)),
-                    "self": (
-                        f"https://{h}/api/access/datafile/{_json_chr(file_id)}"
-                        if not _is_empty(file_id)
-                        else None
-                    ),
+                    "self": fe["url"],
                 }
             )
         files = _file_frame(rows, typed=True)

@@ -1,0 +1,70 @@
+{
+  "id": "lang_id.names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "#language-r"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "#language-python"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "#language-c-"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "#language-stata-17-0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "#language-jupyter-notebook"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "#language-r-markdown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "#language-"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "#language-julia-1-9"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

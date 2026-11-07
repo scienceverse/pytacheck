@@ -1,9 +1,120 @@
 {
   "id": "dataverse_file_download.review.empty_body_error",
-  "ok": false,
-  "error": "Can't retrieve empty body.",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.1",
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "folder",
+      "dataverse_host",
+      "dataverse_doi",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.7910_DVN_EMPTY",
+          "10.7910_DVN_EMPTY"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.harvard.edu",
+          "dataverse.harvard.edu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.7910/DVN/EMPTY",
+          "10.7910/DVN/EMPTY"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2004",
+          "2003"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.csv",
+          "empty.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.csv",
+          "empty.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://dataverse.harvard.edu/api/access/datafile/2004",
+          "https://dataverse.harvard.edu/api/access/datafile/2003"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

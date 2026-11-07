@@ -172,8 +172,8 @@ def test_plan_table_targets() -> None:
     ]
     row = table.set_index("file_name")
     # converted (tabular, not CSV): _data.csv target plus the original alongside
-    assert row.loc["Data Raw.xlsx", "target_path"] == "data/study-DataRaw_data.csv"
-    assert row.loc["Data Raw.xlsx", "original_target"] == "data/Data Raw.xlsx"
+    assert row.loc["Data Raw.xlsx", "target_path"] == "data/raw/study-DataRaw_data.csv"
+    assert row.loc["Data Raw.xlsx", "original_target"] == "data/raw/Data Raw.xlsx"
     assert bool(row.loc["survey.sav", "convert"])
     # raw data keeps its own name and is in place (U112: R compared against the
     # _data.csv target and suggested "Move data/eeg.npy -> data/eeg.npy")
@@ -192,7 +192,8 @@ def test_multi_study_layout() -> None:
     out = ps.run_chain("multi")
     targets = dict(zip(out.table["current_path"], out.table["target_path"], strict=True))
     assert targets["README.md"] == "README.md"
-    assert targets["study1/README.txt"] == "study-ex1/README.txt"
+    # a README in a subfolder describes that folder: documentation/<folder>_<name>
+    assert targets["study1/README.txt"] == "study-ex1/documentation/study1_README.txt"
     assert targets["study2/s2.xlsx"] == "study-ex2/data/study-s2_data.csv"
     assert targets["LICENSE"] == "LICENSE"
     # U112: collection-level metadata stays at the root (R: analysis/ for a
@@ -229,15 +230,16 @@ def test_paper_list_summary_is_per_paper() -> None:
     ]
     assert st["required_met"].tolist() == [3, 0, 0, 0]
     assert st["misplaced_n"].tolist() == [2, 0, 0, 0]
-    # U113: files of two papers are counted per paper (R: one pooled row)
+    # files of two papers are counted per paper (metacheck 203b6616; U113)
     st = ps.run_chain("psychsci_two_papers").summary_table.set_index("paper_id")
     assert st.loc["0956797613520608"].tolist() == [3, 0, 2, 1, 0]
     assert st.loc["to_err_is_human"].tolist() == [2, 1, 0, 3, 2]
     assert st.loc["0956797614522816"].tolist() == [0, 0, 0, 0, 0]
-    # U113: files that all belong to the list's last paper are counted for that
-    # paper (R credits the first paper with them)
+    # files that all belong to the list's last paper are counted for that paper, with the
+    # columns of its own (metacheck 203b6616); the paper has none, so the columns are not
+    # describable
     st = ps.run_chain("psychsci_last_paper").summary_table.set_index("paper_id")
-    assert st.loc["to_err_is_human"].tolist() == [3, 0, 0, 3, 2]
+    assert st.loc["to_err_is_human"].tolist() == [2, 1, 0, 3, 2]
     assert st.loc["0956797613520608"].tolist() == [0, 0, 0, 0, 0]
 
 

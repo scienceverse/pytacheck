@@ -21,6 +21,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -173,8 +174,11 @@
       {
         "t": "chr",
         "v": [
+          "#### Repositories that could not be checked",
+          "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
+          "- https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE: unfound",
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123' target='_blank'>dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123<\/a>\", \n    Platform = \"dataverse\", \"All Files\" = 4L, \"Data Files\" = 2L, \n    \"Code Files\" = 0L, READMEs = 0L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123' target='_blank'>dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123<\/a>\", \n\"<a href='https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE' target='_blank'>dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE<\/a>\"\n), Platform = c(\"dataverse\", \"dataverse\"), Error = c(NA, \"unfound\"\n), \"All Files\" = c(4L, 0L), \"Data Files\" = c(2L, 0L), \"Code Files\" = c(0L, \n0L), READMEs = c(0L, 0L), Archives = c(0L, 0L)), row.names = c(NA, \n-2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \n\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \n\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \n\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\"\n), File = c(\"<a href='https://dataverse.harvard.edu/api/access/datafile/999' target='_blank'>data.csv<\/a>\", \n\"<a href='https://dataverse.harvard.edu/api/access/datafile/1000' target='_blank'>codebook.pdf<\/a>\", \n\"<a href='https://dataverse.harvard.edu/api/access/datafile/1001' target='_blank'>fallback_name.txt<\/a>\", \n\"<a href='https://dataverse.harvard.edu/api/access/datafile/1002' target='_blank'>huge.dat<\/a>\"\n), Size = c(\"8 B\", \"11 B\", \"5 B\", \"11.5 MB\"), Type = c(\"data\", \n\"text\", \"text\", \"data\")), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
@@ -191,7 +195,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 4 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs."
+          "\n-  We could not check 1 repository: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE (unfound).\n-  We found 4 files in 2 repositories.\n-  We found 0 README files and 1 repository without READMEs."
         ]
       },
       {
@@ -200,6 +204,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -214,6 +219,12 @@
             "t": "chr",
             "v": [
               "p_dataverse"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
             ]
           },
           {
@@ -274,7 +285,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "repo_url",
           "repo_type",
@@ -283,15 +294,21 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "dataverse"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "unfound"
+            ]
           }
         ]
       },
@@ -358,7 +375,7 @@
             "t": "chr",
             "v": [
               "p_dataverse",
-              null
+              "p_dataverse"
             ]
           }
         ]
@@ -408,6 +425,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -415,6 +460,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

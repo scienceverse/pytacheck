@@ -74,7 +74,7 @@
             "v": [
               "ran_ok",
               "ran_ok",
-              "errored"
+              "ran_ok"
             ]
           },
           {
@@ -82,7 +82,7 @@
             "v": [
               "",
               "",
-              "undefined_variable"
+              ""
             ]
           },
           {
@@ -100,32 +100,25 @@
         "nrow": 1,
         "names": [
           "File",
-          "Missing variable",
-          "Defined in"
+          "library() calls added"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
-              "undef_user.R"
+              "needs_stringr.R"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "helper_value"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "undef_definer.R"
+              "library(stringr)"
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

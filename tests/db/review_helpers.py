@@ -21,8 +21,8 @@ APIS = (
 
 
 def work_files() -> list[Path]:
-    """Recorded ``api.labs.crossref.org/works/<doi>`` bodies that hold a work."""
-    d = APIS / "api.labs.crossref.org" / "works"
+    """Recorded ``api.crossref.org/works/<doi>`` bodies that hold a work."""
+    d = APIS / "api.crossref.org" / "works"
     out = []
     for f in sorted(d.glob("*.json"), key=lambda p: p.name.encode("utf-8")):
         msg = orjson.loads(f.read_bytes()).get("message")

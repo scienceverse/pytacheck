@@ -101,6 +101,72 @@ def test_module_and_check(client: TestClient, demo_json: bytes) -> None:
     assert isinstance(check["metacheck_version"], str)
 
 
+def _spy_module(seen: list) -> object:
+    """A module_find() whose function records the key options it runs under."""
+    from types import SimpleNamespace
+
+    from metacheck.utils import get_option
+
+    def func(_paper: object) -> dict:
+        seen.append(
+            {
+                "github": get_option("metacheck.github.pat"),
+                "osf": get_option("metacheck.osf.pat"),
+                "shared": get_option("metacheck.keys.shared"),
+            }
+        )
+        return {"traffic_light": "na"}
+
+    return lambda _name, *a, **k: SimpleNamespace(func=func)
+
+
+def test_module_uses_the_senders_own_keys_for_that_request_only(
+    client: TestClient, demo_json: bytes, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from metacheck.utils import get_option, options
+
+    old = options({"metacheck.github.pat": None, "metacheck.osf.pat": "server-osf"})
+    seen: list = []
+    try:
+        monkeypatch.setattr("metacheck.module.module_find", _spy_module(seen))
+        data = {"name": "marginal", "key_github": " my-gh ", "key_osf": ""}
+        r = client.post("/paper/module", files=upload(demo_json), data=data)
+        assert r.status_code == 200
+        # the sender's key replaces the server's; an empty field keeps the server's
+        assert seen[0] == {"github": "my-gh", "osf": "server-osf", "shared": True}
+        # and it is gone when the request ends
+        assert get_option("metacheck.github.pat") is None
+        assert get_option("metacheck.osf.pat") == "server-osf"
+        r = client.post("/paper/module", files=upload(demo_json), data={"name": "marginal"})
+        assert r.status_code == 200
+        assert seen[1]["github"] is None
+    finally:
+        options(old)
+
+
+def test_a_net_client_may_send_content_type_before_content_disposition(
+    client: TestClient, demo_json: bytes
+) -> None:
+    # .NET's MultipartFormDataContent writes a part's Content-Type first (#498)
+    boundary = "----NetBoundary"
+    head = (
+        f"--{boundary}\r\nContent-Type: application/json\r\n"
+        f'Content-Disposition: form-data; name="file"; filename="paper.json"\r\n\r\n'
+    )
+    tail = (
+        f"\r\n--{boundary}\r\nContent-Type: text/plain\r\n"
+        f'Content-Disposition: form-data; name="name"\r\n\r\nmarginal'
+        f"\r\n--{boundary}--\r\n"
+    )
+    r = client.post(
+        "/paper/module",
+        content=head.encode() + demo_json + tail.encode(),
+        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
+    )
+    assert r.status_code == 200, r.text
+    assert "traffic_light" in r.json()
+
+
 def test_upload_validation(client: TestClient, demo_json: bytes) -> None:
     assert client.post("/paper/authors").status_code == 400
     too_many = client.post(

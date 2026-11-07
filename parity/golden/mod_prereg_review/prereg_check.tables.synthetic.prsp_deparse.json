@@ -132,7 +132,7 @@
               "1e+05 3 2 4 2.5",
               "character(0) a c(\"b\", \"c\")",
               "3:1 x -1:1",
-              "list(a = NULL, b = c(NA, NA)) c(NA, 1)",
+              "",
               "",
               "",
               "1<br><br>5<br><br>3<br><br>7<br><br>2<br><br>6<br><br>4<br><br>8",
@@ -211,6 +211,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

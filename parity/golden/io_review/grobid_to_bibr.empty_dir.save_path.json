@@ -1,11 +1,9 @@
 {
   "id": "grobid_to_bibr.empty_dir.save_path",
-  "ok": true,
-  "error": null,
+  "ok": false,
+  "error": "argument \"save_path\" is missing, with no default",
   "warnings": [],
-  "value": {
-    "t": "null"
-  },
-  "metacheck_version": "0.3.1",
+  "value": null,
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

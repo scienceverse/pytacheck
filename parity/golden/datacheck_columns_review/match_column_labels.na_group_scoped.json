@@ -54,35 +54,35 @@
       {
         "t": "chr",
         "v": [
-          "Age | NA",
+          "Age",
           "Sex"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "age | NA",
+          "age",
           "sex"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "a | NA",
+          "a",
           "c"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "conflicting_definition",
+          "labelled",
           "ambiguous_experiment"
         ]
       },
       {
         "t": "chr",
         "v": [
-          null,
+          "rules",
           null
         ]
       },
@@ -123,6 +123,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -5,6 +5,7 @@
 "R/archive-zenodo.R" = ["src/metacheck/archives/zenodo.py"]
 "R/archive-zenodo-upload.R" = ["src/metacheck/archives/zenodo_upload.py"]
 "data/file_types.rda" = ["src/metacheck/fileinfo/types.py", "src/metacheck/archives/github.py"]
+"R/api-keys.R" = ["src/metacheck/archives/api_keys.py"]
 
 [functions]
 "github_links" = "metacheck.archives.github:github_links"
@@ -49,6 +50,31 @@
 ".zenodo_regex_escape" = "metacheck.archives.zenodo_upload:_zenodo_regex_escape"
 
 # helpers standing in for R/package functions used by this area
+# R/api-keys.R
+".key_service_for_host" = "metacheck.archives.api_keys:key_service_for_host"
+".key_get" = "metacheck.archives.api_keys:key_get"
+".key_source" = "metacheck.archives.api_keys:key_source"
+".metacheck_state_dir" = "metacheck.archives.api_keys:state_dir"
+".key_status_path" = "metacheck.archives.api_keys:_status_path"
+".key_status_read" = "metacheck.archives.api_keys:_status_read"
+".key_status_write" = "metacheck.archives.api_keys:_status_write"
+".key_problem_record" = "metacheck.archives.api_keys:key_problem_record"
+".key_problem_clear" = "metacheck.archives.api_keys:key_problem_clear"
+".key_problem" = "metacheck.archives.api_keys:key_problem"
+".key_problem_message" = "metacheck.archives.api_keys:key_problem_message"
+".key_limit_reached" = "metacheck.archives.api_keys:key_limit_reached"
+".key_use" = "metacheck.archives.api_keys:key_use"
+".key_check_request" = "metacheck.archives.api_keys:key_check_request"
+"api_key_status" = "metacheck.archives.api_keys:api_key_status"
+"api_keys_use" = "metacheck.archives.api_keys:api_keys_use"
+"github_pat" = "metacheck.archives.api_keys:github_pat"
+".github_limit" = "metacheck.archives.github:_github_limit"
+".github_key_check" = "metacheck.archives.github:_github_key_check"
+".gitlab_limit" = "metacheck.archives.gitlab:_gitlab_limit"
+".gitlab_key_check" = "metacheck.archives.gitlab:_gitlab_key_check"
+".url_hrefs" = "metacheck.archives:_paper_urls"
+".github_crawl" = "metacheck.archives.github:github_tree_files"
+".field_or_value" = "metacheck._values:field_or_value"
 [helpers]
 "httr2::req_perform (req_error(is_error = FALSE), no retry)" = "metacheck.archives.github:_perform"
 "httr2::resp_body_json" = "metacheck.archives.github:_body_json"

@@ -1,9 +1,9 @@
 {
   "id": "psychds_check.paper_none_empty",
   "ok": false,
-  "error": "paper must be a paper or paperlist object.",
+  "error": "Running the module 'psychds_check' produced errors: paper must be a paper or paperlist object.",
   "warnings": [],
   "value": null,
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

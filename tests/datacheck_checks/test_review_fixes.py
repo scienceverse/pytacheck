@@ -190,13 +190,26 @@ def test_utf8_bom_connection() -> None:
 @pytest.mark.parametrize(
     ("name", "expected"),
     [
-        ("jspsych_bom_blank.csv", True),
+        # only the first line is read (metacheck #477), and here it is blank after the BOM
+        ("jspsych_bom_blank.csv", False),
         ("behaverse_latin1.csv", False),
         ("jspsych_latin1_body.csv", True),
     ],
 )
 def test_trial_level_sniff_encoding(name: str, expected: bool) -> None:
     assert C._bh_is_trial_level_file(str(DATA / name)) is expected
+
+
+def test_trial_level_sniff_reads_only_the_first_line(tmp_path: Path) -> None:
+    header = "trial_type,rt,trial_index," + ",".join("A" * 250 for _ in range(3000))
+    path = tmp_path / "wide.csv"
+    path.write_text(header + "\n1,2,3\n", encoding="utf-8")
+    assert C._bh_is_trial_level_file(str(path)) is True
+    # a quoted name that holds a comma is one name
+    path.write_text('"trial_type,rt",x\n1,2\n', encoding="utf-8")
+    assert C._bh_is_trial_level_file(str(path)) is False
+    path.write_bytes(b"")
+    assert C._bh_is_trial_level_file(str(path)) is False
 
 
 def test_trial_level_sniff_accepts_a_single_path_vector() -> None:

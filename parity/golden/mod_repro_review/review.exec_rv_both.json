@@ -15,11 +15,14 @@
       "summary_text",
       "summary_table",
       "na_replace",
+      "brief",
       "run_results",
       "install_results",
+      "recorded_versions",
       "stat_output",
       "match_table",
       "modifications",
+      "checklist_section",
       "sandbox"
     ],
     "v": [
@@ -47,6 +50,7 @@
         "names": [
           "paper_id",
           "file_name",
+          "file_path",
           "parses",
           "run_order",
           "order_basis",
@@ -61,7 +65,13 @@
           "error_type",
           "undefined_var",
           "reads",
-          "writes"
+          "writes",
+          "names_corrected",
+          "used_by",
+          "not_analysis_why",
+          "paper_link",
+          "repo_name",
+          "reason"
         ],
         "v": [
           {
@@ -70,6 +80,14 @@
               "p1",
               "p1",
               "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "undef_user.R",
+              "undef_definer.R",
+              "needs_stringr.R"
             ]
           },
           {
@@ -163,7 +181,7 @@
           {
             "t": "chr",
             "v": [
-              "errored",
+              "ran_ok",
               "ran_ok",
               "ran_ok"
             ]
@@ -171,7 +189,7 @@
           {
             "t": "chr",
             "v": [
-              "undefined_variable",
+              null,
               null,
               null
             ]
@@ -179,7 +197,7 @@
           {
             "t": "chr",
             "v": [
-              "helper_value",
+              null,
               null,
               null
             ]
@@ -218,6 +236,54 @@
                 "t": "chr",
                 "v": []
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
             ]
           }
         ]
@@ -230,31 +296,30 @@
           "No ordering signal (no data dependency, `source()` call, or numeric filename prefix) distinguishes the run order of these files. They may need to run in a specific order that could not be determined automatically — check this before running.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:3, File = c(\"needs_stringr.R\", \"undef_definer.R\", \n\"undef_user.R\"), \"Runs after\" = c(\"—\", \"—\", \"undef_definer.R\"\n), Basis = c(\"none\", \"none\", \"dependency\")), row.names = c(NA, \n-3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "To run against the Psych-DS layout, 0 referenced data paths would be rewritten to their new locations.",
-          "#### Missing inputs",
-          "Every data file the code reads is either produced by an earlier script or present in the repository.",
+          "Every data path in the code works in the repository as deposited.",
           "#### Execution",
-          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 3 scripts: 2 ran without error, 1 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions. \n\n*a script hit an `object '...' not found` error, indicating it expected a variable another script defines. We inferred which script supplies it and re-ordered so that script runs first; a script hit a `could not find function \"...\"` error that resolved to exactly one package (`library(stringr)`); we injected the corresponding `library()` call, and re-ran once. The outcomes above are from that corrected run.*",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"needs_stringr.R\", \"undef_definer.R\", \n\"undef_user.R\"), Outcome = c(\"ran_ok\", \"ran_ok\", \"errored\"), \n    Detail = c(\"\", \"\", \"undefined_variable\"), \"Time (s)\" = 0), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
-          "**Undefined-variable errors**",
-          "**1 script failed on an undefined variable or function** (`object '...' not found` / `could not find function \"...\"`). This typically means the script expects a variable or function that another script defines — i.e. it is meant to be sourced into a larger session, not run on its own — or the symbol is simply never created. When another of the paper's own script files defines the same name, this is called out below as a likely sourcing/copy-paste gap. Each is counted as an error (red).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"undef_user.R\", \"Missing variable\" = \"helper_value\", \n    \"Defined in\" = \"undef_definer.R\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the repository, in the run order above, with a 60-second per-script timeout. Of 3 scripts: 3 ran without error, 0 errored, 0 timed out, 0 could not run because one of its own dependencies is unavailable, 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions. **1 script uses an object or function that only another script defines**, so in the second run that script was loaded first, in the same session: `undef_user.R` after `undef_definer.R`. Such a script should `source()` the other itself, since it does not run on its own. \n\n*a script hit an `object '...' not found` error, indicating it expected a variable another script defines. We inferred which script supplies it and re-ordered so that script runs first; a script hit a `could not find function \"...\"` error; we added the `library()` calls it needs (see below), and re-ran once. The outcomes above are from that corrected run.*",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"needs_stringr.R\", \"undef_definer.R\", \n\"undef_user.R\"), Outcome = c(\"ran_ok\", \"ran_ok\", \"ran_ok\"), Detail = c(\"\", \n\"\", \"\"), \"Time (s)\" = 0), row.names = c(NA, -3L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "**`library()` calls added**",
+          "**1 script uses functions from packages it does not load itself.** The packages are usually loaded in another script of the project, which only helps when the scripts run in one R session in the right order. To run it we added the `library()` calls below at the top. Any such script that then ran is **reproducible only after adding `library()` calls it should make itself**.",
+          "Reproducible after adding `library()` calls: needs_stringr.R.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"needs_stringr.R\", \"library() calls added\" = \"library(stringr)\"), row.names = \"needs_stringr.R\", class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
-          "::: {.callout-tip title=\"Output — needs_stringr.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> library(stringr)\n> x <- c(\"apple\", \"banana\")\n> print(str_detect(x, \"an\"))\n[1] FALSE  TRUE\n````\n**Messages / errors (stderr):**\n````\nWarning message:\nIn .S3methods(generic.function, class, envir, all.names = all.names,  :\n  function 'library' appears not to be S3 generic; found functions that look like S3 methods\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — needs_stringr.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> library(stringr)\n> x <- c(\"apple\", \"banana\")\n> print(str_detect(x, \"an\"))\n[1] FALSE  TRUE\n````\n\n:::\n",
           "::: {.callout-tip title=\"Output — undef_definer.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> helper_value <- 42\n> print(helper_value)\n[1] 42\n````\n\n:::\n",
-          "::: {.callout-tip title=\"Output — undef_user.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> print(helper_value)\n````\n**Messages / errors (stderr):**\n````\nError in eval(e, envir = env) : object 'helper_value' not found\n````\n\n:::\n"
+          "::: {.callout-tip title=\"Output — undef_user.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> local({ .old <- setwd(\".\"); on.exit(setwd(.old)); source(\"undef_definer.R\", local = globalenv()) })\n[1] 42\n> print(helper_value)\n[1] 42\n````\n\n:::\n"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "red"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 3 R code files for reproducibility (each in an isolated subprocess).\n-  3 files appear runnable so far (parses, inputs resolve, placeable in the run order).\n-  2 of 3 scripts ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed AND ran 3 R code files for reproducibility (each in an isolated subprocess).\n-  3 of 3 scripts ran without error when executed.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -268,7 +333,21 @@
           "repro_deps",
           "repro_ran_ok",
           "repro_tests_reported",
-          "repro_tests_matched"
+          "repro_tests_matched",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
         ],
         "v": [
           {
@@ -304,7 +383,7 @@
           {
             "t": "int",
             "v": [
-              2
+              3
             ]
           },
           {
@@ -317,6 +396,90 @@
             "t": "int",
             "v": [
               null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           }
         ]
@@ -328,6 +491,20 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -335,7 +512,27 @@
           "repro_runnable",
           "repro_missing_inputs",
           "repro_deps",
-          "repro_ran_ok"
+          "repro_ran_ok",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
@@ -351,7 +548,8 @@
           "stderr",
           "elapsed",
           "script_lines",
-          "captures"
+          "captures",
+          "reason"
         ],
         "v": [
           {
@@ -367,7 +565,7 @@
             "v": [
               "ran_ok",
               "ran_ok",
-              "errored"
+              "ran_ok"
             ]
           },
           {
@@ -375,7 +573,7 @@
             "v": [
               "",
               "",
-              "! in callr subprocess.\nCaused by error in `eval(e, envir = env)`:\n! object 'helper_value' not found"
+              ""
             ]
           },
           {
@@ -383,7 +581,7 @@
             "v": [
               null,
               null,
-              "undefined_variable"
+              null
             ]
           },
           {
@@ -391,7 +589,7 @@
             "v": [
               null,
               null,
-              "helper_value"
+              null
             ]
           },
           {
@@ -399,15 +597,15 @@
             "v": [
               "> library(stringr)\n> x <- c(\"apple\", \"banana\")\n> print(str_detect(x, \"an\"))\n[1] FALSE  TRUE",
               "> helper_value <- 42\n> print(helper_value)\n[1] 42",
-              "> print(helper_value)"
+              "> local({ .old <- setwd(\".\"); on.exit(setwd(.old)); source(\"undef_definer.R\", local = globalenv()) })\n[1] 42\n> print(helper_value)\n[1] 42"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Warning message:\nIn .S3methods(generic.function, class, envir, all.names = all.names,  :\n  function 'library' appears not to be S3 generic; found functions that look like S3 methods",
               "",
-              "Error in eval(e, envir = env) : object 'helper_value' not found"
+              "",
+              ""
             ]
           },
           {
@@ -440,6 +638,7 @@
               {
                 "t": "chr",
                 "v": [
+                  "local({ .old <- setwd(\".\"); on.exit(setwd(.old)); source(\"undef_definer.R\", local = globalenv()) })  # [reproducibility_check: load the script that defines what this one uses]",
                   "print(helper_value)"
                 ]
               }
@@ -465,8 +664,19 @@
                 "v": []
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
           }
         ]
+      },
+      {
+        "t": "null"
       },
       {
         "t": "null"
@@ -479,7 +689,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 2,
         "names": [
           "file_name",
           "change_type",
@@ -489,21 +699,30 @@
           {
             "t": "chr",
             "v": [
-              "needs_stringr.R"
+              "needs_stringr.R",
+              "undef_user.R"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "library_injected"
+              "library_injected",
+              "loaded_first"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "library(stringr)"
+              "library(stringr)",
+              "undef_definer.R"
             ]
           }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We ran the paper's 3 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**3 of 3 scripts ran to the end**.\n\n| Script | Result | What happened |\n|---|---|---|\n| needs&#95;stringr.R | Ran to the end |  |\n| undef&#95;definer.R | Ran to the end |  |\n| undef&#95;user.R | Ran to the end |  |\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -514,6 +733,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

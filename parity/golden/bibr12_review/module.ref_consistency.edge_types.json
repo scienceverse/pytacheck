@@ -73,7 +73,7 @@
       {
         "t": "chr",
         "v": [
-          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
+          "This module relies on Grobid correctly parsing the references. There are likely to be some false positives.",
           ""
         ]
       },
@@ -95,7 +95,9 @@
         "names": [
           "paper_id",
           "n_bib",
-          "n_xrefs"
+          "n_xrefs",
+          "n_missing",
+          "n_extra"
         ],
         "v": [
           {
@@ -107,13 +109,25 @@
           {
             "t": "int",
             "v": [
-              3
+              2
             ]
           },
           {
             "t": "int",
             "v": [
               2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           }
         ]
@@ -126,6 +140,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

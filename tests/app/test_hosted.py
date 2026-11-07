@@ -410,7 +410,7 @@ def test_a_run_leaves_nothing_behind(client: TestClient) -> None:
     path = _upload(client, " " * 11)  # whitespace, so that the JSON stays valid
     assert Path(path).exists()
     events = _join(client, _fn_index(client), path, "h1")
-    assert "Ran 19 checks" in events
+    assert "Ran 18 checks" in events
     assert "data:text/html" in events  # the report comes with the page, not from a file
     assert not Path(path).exists()
     assert client.get("/report/h1/paper_report.html").status_code == 404

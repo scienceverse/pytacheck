@@ -8,6 +8,7 @@ import pandas as pd
 
 from metacheck._r import grepl, gsub, plural
 from metacheck.module import module
+from metacheck.modules._empty import empty_input_result, paper_is_empty
 from metacheck.report import collapse_section, format_ref, scroll_table
 from metacheck.text import text_search
 
@@ -249,6 +250,8 @@ def causal_claims(paper: Any) -> dict[str, Any]:
     # grepl("random", text, ignore.case = TRUE): text_search() matches the raw
     # text, but whitespace normalisation and unique() cannot change whether a
     # row contains "random", so one search of the whole table is enough.
+    if paper_is_empty(paper):
+        return empty_input_result(paper)
     sentences = text_search(paper)
 
     # randomisation ----
@@ -330,7 +333,7 @@ def causal_claims(paper: Any) -> dict[str, Any]:
         # causal language without / with random assignment
         tl = "yellow" if n_random == 0 else "green"
     else:
-        tl = "green"  # no causal language
+        tl = "na"  # no causal language: nothing to check
 
     # report ----
     report = [

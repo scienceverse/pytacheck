@@ -19,6 +19,9 @@
           "script_path",
           "run_dir",
           "setwd_removed",
+          "env_calls_replaced",
+          "slashes_fixed",
+          "setwd_folder_removed",
           "setwd_paths",
           "family_replaced",
           "family_detail",
@@ -62,6 +65,33 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
             "t": "chr",
             "v": [
               "C:/x",
@@ -91,7 +121,7 @@
           {
             "t": "chr",
             "v": [
-              "",
+              null,
               null,
               null,
               "stats"
@@ -106,18 +136,18 @@
           {
             "t": "chr",
             "v": [
-              "# [reproducibility_check removed setwd] setwd(\"C:/x\")",
+              "invisible(NULL)  # [reproducibility_check removed setwd] setwd(\"C:/x\")",
               "NA",
-              "  # [reproducibility_check removed setwd] setwd(dir)",
+              "  invisible(NULL)  # [reproducibility_check removed setwd] setwd(dir)",
               "x <- 1; setwd(\"y\")"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "d <- read.csv(\"C:\\data\\a\\1.csv\")",
-              "# [reproducibility_check removed setwd] setwd(\"/z\")",
-              "write.csv(\"<root>/output/d.csv\", \"o.csv\")",
+              "d <- read.csv(\"C_/data/a/1.csv\")",
+              "invisible(NULL)  # [reproducibility_check removed setwd] setwd(\"/z\")",
+              "write.csv(\"output/d.csv\", \"o.csv\")",
               ""
             ]
           },
@@ -151,6 +181,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

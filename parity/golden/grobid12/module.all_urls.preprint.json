@@ -173,13 +173,13 @@
             "t": "chr",
             "v": [
               "The Current Research",
-              "Study1",
-              "Study1",
+              "Study 1",
+              "Study 1",
               "Results",
-              "Study2",
-              "Study2",
-              "Study3",
-              "Study3",
+              "Study 2",
+              "Study 2",
+              "Study 3",
+              "Study 3",
               null,
               null,
               null,
@@ -250,6 +250,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

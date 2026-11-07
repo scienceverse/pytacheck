@@ -3,7 +3,6 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "spv: could not decode chart: non-numeric argument to mathematical function",
     "spv: could not decode chart: spv chart: no <point>, <interval>, or <schema> mark (out of this port's scope)"
   ],
   "value": {
@@ -226,9 +225,84 @@
             ]
           }
         ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Examine"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "category",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Low",
+                  "Low",
+                  "High",
+                  "High",
+                  "3",
+                  "NaN"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.5,
+                  0.75,
+                  1.25,
+                  1.5,
+                  2,
+                  2.5
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "GRAPH /SCATTERPLOT(BIVAR)=height WITH weight."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

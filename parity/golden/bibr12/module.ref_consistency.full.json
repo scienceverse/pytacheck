@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "paper_id",
           "bib_id",
@@ -48,31 +48,41 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "demo"
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              1
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              null
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "[1]"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "It replicated prior work [1], t(28) = 3.42, see Table 1 and data."
+            ]
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
-          ""
+          "This module relies on Grobid correctly parsing the references. There are likely to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = 1L, type = \"missing\", contents = \"[1]\", \n    reference = \"It replicated prior work [1], t(28) = 3.42, see Table 1 and data.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -93,7 +103,9 @@
         "names": [
           "paper_id",
           "n_bib",
-          "n_xrefs"
+          "n_xrefs",
+          "n_missing",
+          "n_extra"
         ],
         "v": [
           {
@@ -113,6 +125,18 @@
             "v": [
               1
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
           }
         ]
       },
@@ -124,6 +148,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

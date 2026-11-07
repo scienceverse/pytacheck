@@ -1,0 +1,58 @@
+{
+  "id": "join_path.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a.png"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "docs/b.png"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a/c/d.png"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x/y.png"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "docs/sub/z.png"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "docs/abs.png"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

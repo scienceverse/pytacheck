@@ -20,6 +20,7 @@ import numpy as np
 import pandas as pd
 
 from metacheck.module import module
+from metacheck.modules._empty import empty_input_result, paper_is_empty
 from metacheck.report import collapse_section, format_ref, scroll_table
 
 # R: format_ref(aczel2018) / format_ref(murphy2025), rendered by R's bibentry html style.
@@ -88,6 +89,9 @@ def stat_p_nonsig(paper: Any) -> dict[str, Any]:
     from metacheck.text.expand import text_expand
     from metacheck.text.extract import extract_p_values
 
+    if paper_is_empty(paper):
+        return empty_input_result(paper)
+
     # detailed table of results ----
     table = extract_p_values(paper)
 
@@ -122,10 +126,11 @@ def stat_p_nonsig(paper: Any) -> dict[str, Any]:
 
     # traffic light ----
     # possible values: na, info, red, yellow, green, fail
-    tl = "yellow" if int(summary_table["n_nonsignificant"].sum()) > 0 else "green"
+    # no nonsignificant p values: nothing to check, so "na", not green
+    tl = "yellow" if int(summary_table["n_nonsignificant"].sum()) > 0 else "na"
 
     report: Any
-    if tl == "green":
+    if tl == "na":
         report = "We detected no nonsignificant p values."
         summary_text = report
     else:

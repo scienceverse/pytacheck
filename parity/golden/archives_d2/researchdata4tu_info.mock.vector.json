@@ -7,7 +7,7 @@
   ],
   "value": {
     "t": "df",
-    "nrow": 6,
+    "nrow": 5,
     "names": [
       "researchdata4tu_url",
       "researchdata4tu_id",
@@ -28,8 +28,7 @@
           "10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd",
           "99999999",
           "nope",
-          "16766929",
-          "https://doi.org/10.4121/16766929.v1"
+          "16766929"
         ]
       },
       {
@@ -39,7 +38,6 @@
           "ce413614-1c82-4e81-90c0-323aa7d2fabd",
           "99999999",
           null,
-          "16766929",
           "16766929"
         ]
       },
@@ -50,7 +48,6 @@
           "A uuid-only dataset",
           null,
           null,
-          "Wind tunnel measurements",
           "Wind tunnel measurements"
         ]
       },
@@ -61,7 +58,6 @@
           "10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd",
           null,
           null,
-          "10.4121/16766929.v1",
           "10.4121/16766929.v1"
         ]
       },
@@ -72,7 +68,6 @@
           null,
           null,
           null,
-          "2021-10-12T10:00:00",
           "2021-10-12T10:00:00"
         ]
       },
@@ -83,7 +78,6 @@
           null,
           null,
           null,
-          "2022-01-01T00:00:00",
           "2022-01-01T00:00:00"
         ]
       },
@@ -114,13 +108,6 @@
               "Ada Author",
               "Bob Builder"
             ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Ada Author",
-              "Bob Builder"
-            ]
           }
         ]
       },
@@ -131,7 +118,6 @@
           null,
           null,
           null,
-          "CC BY 4.0",
           "CC BY 4.0"
         ]
       },
@@ -150,7 +136,8 @@
                   "name",
                   "size",
                   "download_url",
-                  "computed_md5"
+                  "computed_md5",
+                  "path"
                 ],
                 "v": [
                   {
@@ -181,6 +168,12 @@
                     "t": "chr",
                     "v": [
                       "86621499bc8a27bdf497a6dedc2c545d"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
                     ]
                   }
                 ]
@@ -209,7 +202,8 @@
                   "name",
                   "size",
                   "download_url",
-                  "computed_md5"
+                  "computed_md5",
+                  "path"
                 ],
                 "v": [
                   {
@@ -241,53 +235,11 @@
                     "v": [
                       "86621499bc8a27bdf497a6dedc2c545d"
                     ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": [
-              {
-                "t": "list",
-                "names": [
-                  "id",
-                  "name",
-                  "size",
-                  "download_url",
-                  "computed_md5"
-                ],
-                "v": [
-                  {
-                    "t": "int",
-                    "v": [
-                      501
-                    ]
                   },
                   {
                     "t": "chr",
                     "v": [
                       "readme.txt"
-                    ]
-                  },
-                  {
-                    "t": "int",
-                    "v": [
-                      11
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "https://data.4tu.nl/file/7f866e02/f501"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "86621499bc8a27bdf497a6dedc2c545d"
                     ]
                   }
                 ]
@@ -303,12 +255,11 @@
           null,
           "unfound",
           null,
-          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

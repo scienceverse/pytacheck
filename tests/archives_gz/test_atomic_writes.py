@@ -9,6 +9,7 @@ import shutil
 import tarfile
 import time
 import zipfile
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +26,17 @@ URL = "https://files.example.test/a.csv"
 
 class _Stop(BaseException):
     """What the app's Stop button raises: not an ``Exception``."""
+
+
+@pytest.fixture(autouse=True)
+def _archives_are_downloaded_files(tmp_path: Path) -> Iterator[None]:
+    """An archive is extracted beside itself only when metacheck downloaded it (it is in the
+    repository cache); the user's own archive is extracted into the session's temporary
+    folder (U214). These tests keep their archives in the test's folder: make it the cache."""
+    from metacheck.utils import local_options
+
+    with local_options({"metacheck.repo_cache.dir": str(tmp_path)}):
+        yield
 
 
 def _leftovers(folder: Path) -> list[str]:
@@ -132,9 +144,9 @@ def test_an_interrupted_gz_extraction_leaves_nothing_to_reuse(
     monkeypatch.setattr(zp, "_open_compressed", lambda p, e: _Con())
     with pytest.raises(_Stop):
         zp._expand_compressed(str(gz), row)
-    contents = tmp_path / "d.csv.gz.contents"
-    assert not (contents / "d.csv").exists()
-    assert os.listdir(contents) == []
+    # the file is written beside the folder and moved in when complete: a stop leaves
+    # neither a partial file to reuse nor the folder it was written in
+    assert os.listdir(tmp_path) == ["d.csv.gz"]
 
 
 def _zip(path: Path, members: dict[str, bytes], method: int = zipfile.ZIP_STORED) -> None:

@@ -2,16 +2,13 @@
   "id": ".bh_is_trial_level_file.review.behaverse_latin1.csv",
   "ok": true,
   "error": null,
-  "warnings": [
-    "invalid input found on input connection '<repo>/tests/datacheck_checks/data/behaverse_latin1.csv'",
-    "incomplete final line found by readTableHeader on '<repo>/tests/datacheck_checks/data/behaverse_latin1.csv'"
-  ],
+  "warnings": [],
   "value": {
     "t": "lgl",
     "v": [
       false
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

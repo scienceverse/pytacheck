@@ -1,0 +1,2 @@
+# fixtures whose line ends, byte order marks and encodings are part of the test
+tests/fair/fixtures/** -text

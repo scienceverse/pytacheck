@@ -265,7 +265,8 @@ def test_text_search_of_a_paper_list() -> None:
         cases.search("paperlist-excl", new, old, pat, exclude=True)
     for pat in ["ethic", ["a", "b"]]:
         for ret in RETURNS:
-            cases.search("empty-list", PaperList([]), PaperList([]), pat, return_=ret)
+            # an empty list is searched as an empty paper (U79, fixed in metacheck 0.4)
+            cases.search("empty-list", PaperList([]), pc.paper(), pat, return_=ret)
     cases.search("plain-list", list(new)[:3], list(old)[:3], "ethic")
     for fn, legacy in [(X.extract_eq, LX.extract_eq), (X.extract_urls, LX.extract_urls)]:
         cases.check("paperlist", fn, legacy, new, old)

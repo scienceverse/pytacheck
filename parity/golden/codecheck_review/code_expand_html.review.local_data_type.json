@@ -13,7 +13,8 @@
       "file_url",
       "file_location",
       "file_size",
-      "data_type"
+      "data_type",
+      "recovered_from"
     ],
     "v": [
       {
@@ -72,8 +73,8 @@
           "tests/codecheck/fixtures/expand/stata_log.html",
           "tests/codecheck/fixtures/expand/plain.html",
           "tests/codecheck/fixtures/expand/empty.html",
-          "tests/codecheck/fixtures/expand/code/knit_classic.R",
-          "tests/codecheck/fixtures/expand/code/knit_quarto.R"
+          "<tempdir>/metacheck-recovered-code/ca950693fafa7ded7262757fe7521621/code/knit_classic.R",
+          "<tempdir>/metacheck-recovered-code/e7e7efbbb5edf21da4f43aaa63938d0d/code/knit_quarto.R"
         ]
       },
       {
@@ -99,9 +100,21 @@
           "other",
           "other"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          "sub/knit_classic.html",
+          "sub/knit_quarto.html"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 15,
+        "nrow": 13,
         "names": [
           "text_id",
           "section_id",
@@ -59,8 +59,6 @@
             "v": [
               2,
               3,
-              4,
-              5,
               6,
               7,
               15,
@@ -89,8 +87,6 @@
               0,
               0,
               0,
-              0,
-              0,
               0
             ]
           },
@@ -109,8 +105,6 @@
               0,
               0,
               0,
-              0,
-              0,
               0
             ]
           },
@@ -119,8 +113,6 @@
             "v": [
               "The script_files are available at https://github.com/a/b.",
               "Our re-analysis is available at https://osf.io/r.",
-              "Our reanalysis is available at https://osf.io/r.",
-              "The R2 values are available at https://osf.io/r.",
               "R's scripts are available at osf.",
               "We used (R) and the output is available at osf.",
               "Available in the supplementary figure at osf.",
@@ -139,8 +131,6 @@
             "v": [
               "The script_files are available at https://github.com/a/b.",
               "Our re-analysis is available at https://osf.io/r.",
-              "Our reanalysis is available at https://osf.io/r.",
-              "The R2 values are available at https://osf.io/r.",
               "R's scripts are available at osf.",
               "We used (R) and the output is available at osf.",
               "Available in the supplementary figure at osf.",
@@ -157,8 +147,6 @@
           {
             "t": "chr",
             "v": [
-              "6c4258abe0fec3",
-              "6c4258abe0fec3",
               "6c4258abe0fec3",
               "6c4258abe0fec3",
               "6c4258abe0fec3",
@@ -189,16 +177,12 @@
               "Test",
               "Test",
               "Test",
-              "Test",
-              "Test",
               "Test"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "unknown",
-              "unknown",
               "unknown",
               "unknown",
               "unknown",
@@ -222,8 +206,6 @@
               false,
               false,
               false,
-              false,
-              false,
               true,
               true,
               true,
@@ -237,8 +219,6 @@
           {
             "t": "lgl",
             "v": [
-              true,
-              true,
               true,
               true,
               true,
@@ -261,8 +241,6 @@
               false,
               false,
               false,
-              false,
-              false,
               true,
               false,
               false,
@@ -289,16 +267,12 @@
               false,
               false,
               false,
-              false,
-              false,
               false
             ]
           },
           {
             "t": "lgl",
             "v": [
-              false,
-              false,
               false,
               false,
               false,
@@ -320,7 +294,7 @@
         "t": "chr",
         "v": [
           "Data was openly shared for this article, based on the following text:\n\n> Our metadata are online at the repository.\n\n> The database is accessible at https://example.org.\n\n> The dataset can be found on Dataverse.\n\n> Data are available (OSF).",
-          "Code was openly shared for this article, based on the following text:\n\n> The script_files are available at https://github.com/a/b.\n\n> Our re-analysis is available at https://osf.io/r.\n\n> Our reanalysis is available at https://osf.io/r.\n\n> The R2 values are available at https://osf.io/r.\n\n> R's scripts are available at osf.\n\n> We used (R) and the output is available at osf.\n\n> The Python-based pipeline is on GitHub, see there.\n\n> Code is available at OSF.io."
+          "Code was openly shared for this article, based on the following text:\n\n> The script_files are available at https://github.com/a/b.\n\n> Our re-analysis is available at https://osf.io/r.\n\n> R's scripts are available at osf.\n\n> We used (R) and the output is available at osf.\n\n> The Python-based pipeline is on GitHub, see there.\n\n> Code is available at OSF.io."
         ]
       },
       {
@@ -411,8 +385,6 @@
                 "v": [
                   "The script_files are available at https://github.com/a/b.",
                   "Our re-analysis is available at https://osf.io/r.",
-                  "Our reanalysis is available at https://osf.io/r.",
-                  "The R2 values are available at https://osf.io/r.",
                   "R's scripts are available at osf.",
                   "We used (R) and the output is available at osf.",
                   "The Python-based pipeline is on GitHub, see there.",
@@ -472,6 +444,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -17,9 +17,16 @@
       "AP_conditions",
       "AP_analyses",
       "AP_outliers",
+      "AP_secondary",
       "AP_sample_size",
       "AP_anything_else",
-      "AP_version"
+      "AP_version",
+      "AP_registered",
+      "AP_anonymous",
+      "AP_number",
+      "AP_status",
+      "AP_authors_count",
+      "AP_bundle"
     ],
     "v": [
       {
@@ -73,7 +80,7 @@
       {
         "t": "chr",
         "v": [
-          "For the extraction of the SSVEP signal from the EEG data see 3) Dependent Measure\n\nANOVA (3 within factors)\n- 4 Core Knowledge Domänen (action, number, continuity, physics)\n- 2 Outcomes (expected, unexpected)\n- 2 Freq (alpha, theta)\n\nHypothesis:\n1. Main Effect Outcome: Higher Amplitudes for unexpected opposed to expected outcomes\n2. Outcome*Frequency interaction (possibly): Functional differentiation between Theta (higher for unexpected) and Alpha (higher [less supression] for expected).\n\n\n6) Any secondary analyses?\n3. Explorative: Different strength in effects for the 4 core knowledge domains? (effect of cognition or stimulus material?)\n4. Explorative: temporal characteristics of the SSVEP Amplitude (similar to the temporal characteristics found in ERP Studies? Frequency Specific?)\n\n\n7) How many observations will be collected or what will determine sample size?\nNo need to justify decision, but be precise about exactly how the number will be determined.\nNine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range.\n\n8) Anything else you would like to pre-register?\n(e.g., data exclusions, variables collected for exploratory purposes, unusual analyses planned?)\nThere are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less\n\n\nVersion of AsPredicted Questions: 1.05\n\n\nReport a bug | Make a suggestion | Terms of use | Help | About\n\n\nset_java_cookie('last_page','/ve2qn.pdf','0.041666666666667');reset_footer();"
+          "For the extraction of the SSVEP signal from the EEG data see 3) Dependent Measure\n\nANOVA (3 within factors)\n- 4 Core Knowledge Domänen (action, number, continuity, physics)\n- 2 Outcomes (expected, unexpected)\n- 2 Freq (alpha, theta)\n\nHypothesis:\n1. Main Effect Outcome: Higher Amplitudes for unexpected opposed to expected outcomes\n2. Outcome*Frequency interaction (possibly): Functional differentiation between Theta (higher for unexpected) and Alpha (higher [less supression] for expected)."
         ]
       },
       {
@@ -85,13 +92,19 @@
       {
         "t": "chr",
         "v": [
-          "Nine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range.\n\n8) Anything else you would like to pre-register?\n(e.g., data exclusions, variables collected for exploratory purposes, unusual analyses planned?)\nThere are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less\n\n\nVersion of AsPredicted Questions: 1.05\n\n\nReport a bug | Make a suggestion | Terms of use | Help | About\n\n\nset_java_cookie('last_page','/ve2qn.pdf','0.041666666666667');reset_footer();"
+          "3. Explorative: Different strength in effects for the 4 core knowledge domains? (effect of cognition or stimulus material?)\n4. Explorative: temporal characteristics of the SSVEP Amplitude (similar to the temporal characteristics found in ERP Studies? Frequency Specific?)"
         ]
       },
       {
         "t": "chr",
         "v": [
-          null
+          "Nine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "There are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less"
         ]
       },
       {
@@ -99,9 +112,45 @@
         "v": [
           "1.05"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2017-08-18"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

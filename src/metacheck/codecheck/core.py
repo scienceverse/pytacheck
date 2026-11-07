@@ -20,7 +20,8 @@ from __future__ import annotations
 import math
 import os
 import re
-from collections.abc import Iterable, Sequence
+import urllib.parse
+from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any, cast
 
@@ -156,6 +157,15 @@ _URL = re.compile(r"^((http|ftp)s?|sftp)://")
 
 
 def _fetch_url(url: str) -> bytes:
+    if url.startswith("file://"):
+        # libcurl reads a file: URL (file:///folder/file.R) from the disk
+        local = Path(urllib.parse.unquote(url[len("file://") :]))
+        try:
+            return local.read_bytes()
+        except OSError:
+            raise FileNotFoundError(
+                f"Couldn't open file {local}:\nFailed reading the given file"
+            ) from None
     from metacheck import http
 
     resp = http.request("GET", url)
@@ -165,6 +175,70 @@ def _fetch_url(url: str) -> bytes:
     return bytes(resp.content)
 
 
+class _CodeLines(list):  # type: ignore[type-arg]
+    """The lines of a file that is not text: no lines, and ``binary`` says what it is.
+
+    R marks the empty result with ``attr(, "binary")``.
+    """
+
+    def __init__(self, binary: str) -> None:
+        super().__init__()
+        self.binary = binary
+
+
+def _binary_kind_raw(b: bytes) -> str | None:
+    """What bytes are when they are not text, from the first ones.
+
+    Port of ``R/code_check.R::.binary_kind_raw()``: saved R data compressed with gzip, bzip2 or xz,
+    or zero bytes, which text does not have; ``None`` for text, UTF-16 included (a byte order
+    mark, or zero bytes in every other place). Authors save data under names ending in ``.R``; a
+    109 MB one was read as code for more than 35 minutes (metacheck #568).
+    """
+    b = b[:4096]
+    if not b:
+        return None
+    if b[:2] == b"\x1f\x8b":
+        return "compressed with gzip (as R saves data)"
+    # bzip2: "BZh", the block size 1-9, then the block's own mark, so a script starting with
+    # "BZh" is not taken for one
+    if (
+        len(b) >= 10
+        and b[:3] == b"BZh"
+        and b[3:4] in tuple(bytes([c]) for c in b"123456789")
+        and b[4:10] == bytes([0x31, 0x41, 0x59, 0x26, 0x53, 0x59])
+    ):
+        return "compressed with bzip2"
+    if b[:5] == bytes([0xFD, 0x37, 0x7A, 0x58, 0x5A]):
+        return "compressed with xz"
+    if 0 not in b:
+        return None
+    # UTF-16 or UTF-32 text: a byte order mark, or the zero bytes in every other place
+    if b[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        return None
+    n = len(b) - len(b) % 2
+    if n >= 4:
+        odd = [b[i] == 0 for i in range(0, n, 2)]
+        even = [b[i] == 0 for i in range(1, n, 2)]
+        m_odd, m_even = sum(odd) / len(odd), sum(even) / len(even)
+        if (m_odd > 0.9 and m_even < 0.1) or (m_even > 0.9 and m_odd < 0.1):
+            return None
+    # R data saved without compression has zero bytes, as other binary files do
+    return "binary"
+
+
+def _curl_error_for(path: str) -> str:
+    """What R's ``curl::curl_fetch_memory()`` says about a path that is not a file.
+
+    ``code_read()`` treats a path that does not exist as a URL (libcurl's wording, for a path
+    without a scheme): no host for one that starts with a slash, else the first part as a host name
+    that cannot be resolved.
+    """
+    if path.startswith("/"):
+        return "URL using bad/illegal format or missing URL:\nURL rejected: No host present"
+    host = re.split(r"[/:?#]", path, maxsplit=1)[0]
+    return f"Could not resolve hostname [{host}]:\nCould not resolve host: {host}"
+
+
 def code_read(file_path: str | os.PathLike[str]) -> list[str]:
     """Read code from a file or URL, one element per line.
 
@@ -172,7 +246,9 @@ def code_read(file_path: str | os.PathLike[str]) -> list[str]:
     :func:`metacheck.codecheck._decode.decode_lines` (a byte order mark, UTF-8,
     else chardet's guess or Windows-1252; D74), not by R's readr/vroom
     pipeline; bytes that fit no encoding are shown as ``<xx>``. A 0-byte file
-    gives an empty list.
+    gives an empty list, and so does a file that is not text (compressed R
+    data, zero bytes; see :func:`_binary_kind_raw`), whose result has a
+    ``binary`` attribute saying what it is.
     """
     from metacheck.codecheck._decode import decode_lines
 
@@ -184,16 +260,25 @@ def code_read(file_path: str | os.PathLike[str]) -> list[str]:
             raise ValueError(f"'length = {len(values)}' in coercion to 'logical(1)'")
         file_path = values[0]
     path = os.fspath(file_path)
-    if _URL.search(path):
-        return decode_lines(_fetch_url(path))
-    local = Path(path).expanduser()
-    if not local.exists():
-        raise FileNotFoundError(f"'{path}' does not exist.")
-    if local.is_file() and local.stat().st_size == 0:
+    if _URL.search(path) or path.startswith("file://"):
+        raw = _fetch_url(path)
+    else:
+        local = Path(path).expanduser()
+        if not local.exists():
+            raise FileNotFoundError(_curl_error_for(path))
+        if local.is_file() and local.stat().st_size == 0:
+            return []
+        if local.is_dir():
+            raise IsADirectoryError(f"Cannot read file '{path}': it is a directory")
+        raw = local.read_bytes()
+    if not raw:
         return []
-    if local.is_dir():
-        raise IsADirectoryError(f"Cannot read file '{path}': it is a directory")
-    return decode_lines(local.read_bytes())
+    # not text, such as R data saved under a name ending in .R: no lines, marked, instead of
+    # decoding and scanning megabytes of it as code (metacheck #568)
+    binary = _binary_kind_raw(raw)
+    if binary is not None:
+        return _CodeLines(binary)
+    return decode_lines(raw)
 
 
 def _try_code_read(file_name: str) -> list[str] | None:
@@ -214,27 +299,58 @@ def _file_ext(x: str) -> str:
     return m.group(1) if m else ""
 
 
-def _ipynb_lang(file_name: Any) -> str:
-    """The kernel language of a Jupyter notebook: ``"R"`` or ``"Python"``.
+def _kernel_language(lang: str | None) -> str | None:
+    """metacheck's label for a Jupyter kernel's (or Quarto engine's) declared language.
 
-    Port of ``R/code_check.R::.ipynb_lang()``.
+    Port of ``R/code_check.R::.kernel_language()``: ``"R"`` (``r``, or ``ir``, the IRkernel's
+    name), ``"Python"``, ``"Julia"``, ``"MATLAB"``, ``"SAS"``, ``"Stata"``, otherwise the
+    language's own name in title case; ``None`` for an empty value.
+    """
+    lang = trimws(lang or "").lower()
+    if not lang:
+        return None
+    if lang in ("r", "ir"):
+        return "R"
+    if re.match(r"(i?python|py)", lang):
+        return "Python"
+    if lang.startswith("julia"):
+        return "Julia"
+    if lang in ("matlab", "octave"):
+        return "MATLAB"
+    if lang == "sas":
+        return "SAS"
+    if lang.startswith("stata"):
+        return "Stata"
+    return lang[:1].upper() + lang[1:]  # tools::toTitleCase(), for a one-word name
+
+
+def _ipynb_lang(file_name: Any) -> str | None:
+    """The kernel language of a Jupyter notebook: ``"R"``, ``"Python"``, another language, or ``None``.
+
+    Port of ``R/code_check.R::.ipynb_lang()``. A notebook that is not on disk is ``"Python"``
+    provisionally (``code_check()`` first calls this on bare file names, before downloading, and a
+    notebook must count as code to be downloaded at all); one that is on disk gets the language it
+    declares, never ``"Python"`` by default, since a Julia notebook labelled Python would be
+    syntax-checked and run as Python (metacheck #480). ``None`` when it declares no language or
+    cannot be read.
     """
     if not isinstance(file_name, str) or not os.path.exists(file_name):
         return "Python"
     txt = _try_code_read(file_name)
     if not txt:
-        return "Python"
+        return None
     nb = _json_load("\n".join(txt))
     if nb is None:
-        return "Python"
-    # a notebook that is not a JSON object (or whose metadata is malformed)
-    # falls back to the default; R's `$` errors escape (UPSTREAM_ISSUES U68)
+        return None
+    # a notebook that is not a JSON object (or whose metadata is malformed) gives no language
+    # instead of stopping code_check ("$ operator is invalid", UPSTREAM_ISSUES U68)
     meta = field(nb, "metadata")
     lang = field(meta, "kernelspec", "language")
     if lang is None:
         lang = field(meta, "language_info", "name")
-    lang_s = (_first_chr(lang) or "").lower()
-    return "R" if lang_s in ("r", "ir") else "Python"
+    if lang is None:
+        lang = field(meta, "kernelspec", "name")
+    return _kernel_language(_first_chr(lang) or "")
 
 
 def _first_chr(x: Any) -> str | None:
@@ -335,8 +451,8 @@ def _yaml_load(text: str) -> Any:
         return None
 
 
-def _qmd_lang(file_name: Any) -> str:
-    """The engine language of a Quarto document: ``"R"`` or ``"Python"``.
+def _qmd_lang(file_name: Any) -> str | None:
+    """The engine language of a Quarto document: ``"R"``, ``"Python"`` or another language.
 
     Port of ``R/code_check.R::.qmd_lang()``.
     """
@@ -369,16 +485,20 @@ def _qmd_lang(file_name: Any) -> str:
             first = _first_chr(value)
             yaml_lang = first.lower() if first is not None else None
     if yaml_lang is not None:
-        if yaml_lang.startswith("py"):
-            return "Python"
-        if yaml_lang in ("r", "ir"):
-            return "R"
+        # bare Jupyter kernel names ("python3", "ir", "julia-1.9") as well as language names
+        # are seen; an engine other than R or Python (Julia) is returned as itself, so it is
+        # never purled or run as R (metacheck #480)
+        declared = _kernel_language(yaml_lang)
+        if declared is not None:
+            return declared
 
     chunk = next((t for t in txt if grepl(r"^```+\s*\{[a-zA-Z]+", t, perl=True)), None)
     if chunk is not None:
         lang = regextract(r"(?<=\{)[a-zA-Z]+", chunk, perl=True)
         if lang is not None and lang.lower().startswith("py"):
             return "Python"
+        if lang is not None and lang.lower() == "julia":
+            return "Julia"
     return "R"
 
 
@@ -430,6 +550,34 @@ def _col(df: pd.DataFrame, name: str, default: Any = None) -> list[Any]:
     if name in df.columns:
         return df[name].tolist()
     return [default] * len(df)
+
+
+def _in_folder(files: pd.DataFrame, folder: str) -> list[bool]:
+    """Whether each file is in a folder of this name, at any depth.
+
+    Port of ``R/code_check.R::.in_folder()``. The folder is in ``file_path``; ``file_name`` holds
+    the base name only, so it is used just when a row has no ``file_path``.
+    """
+    if len(files) == 0:
+        return []
+    paths = _col(files, "file_path")
+    names = _col(files, "file_name")
+    where = [n if is_missing(p) or str(p) == "" else p for p, n in zip(paths, names, strict=True)]
+    rx = re.compile(f"(^|/){re.escape(folder)}/", re.IGNORECASE)
+    return [not is_missing(w) and rx.search(str(w).replace("\\", "/")) is not None for w in where]
+
+
+def _in_renv_folder(files: pd.DataFrame) -> list[bool]:
+    """Whether each file of a listing is in a ``renv/`` folder.
+
+    Port of ``R/code_check.R::.in_renv_folder()``. Files there were written by the renv package,
+    not by the authors: ``renv/activate.R`` (run by the project's ``.Rprofile`` to set up its
+    package library) and, when the folder is shared in full, ``renv/library/`` with the R files of
+    every installed package. ``code_check`` and ``reproducibility_check`` leave them out, so they
+    are not counted, checked or run as the paper's code (metacheck #548). ``renv.lock`` sits next
+    to the folder, not in it, so it is still found as a version pin.
+    """
+    return _in_folder(files, "renv")
 
 
 def _empty_loc(values: list[Any]) -> list[bool]:
@@ -515,6 +663,14 @@ def _code_predownload(
     is_ext = grepl(r"\.(spv|smcl|out|html?)$", names, ignore_case=True)
     language = _col(all_files, "language")
     is_candidate = [e or (lg in langs) for e, lg in zip(is_ext, language, strict=True)]
+    # When the code will run, this first download also fetches what the run needs (data, models,
+    # configuration), so no host is asked for the repository twice (see _download_for_run())
+    from metacheck.archives.download import _download_for_run, _run_download_want
+
+    if _download_for_run():
+        is_candidate = [
+            c or r for c, r in zip(is_candidate, _run_download_want(all_files), strict=True)
+        ]
     file_url = _col(all_files, "file_url")
     archive_url = _col(all_files, "archive_url")
     archive_member = _col(all_files, "archive_member")
@@ -524,10 +680,18 @@ def _code_predownload(
             _has_value(file_url), _has_value(archive_url), archive_member, strict=True
         )
     ]
+    # renv's own files are left out of code_check, so they are not downloaded either: a shared
+    # renv/library/ would otherwise spend the repository's download budget before the paper's own
+    # code
+    in_renv = _in_renv_folder(all_files)
     need = [
-        c and e and t
-        for c, e, t in zip(
-            is_candidate, _empty_loc(_col(all_files, "file_location")), has_target, strict=True
+        c and not r and e and t
+        for c, r, e, t in zip(
+            is_candidate,
+            in_renv,
+            _empty_loc(_col(all_files, "file_location")),
+            has_target,
+            strict=True,
         )
     ]
     if not any(need):
@@ -604,6 +768,12 @@ def _synthetic_row(files: pd.DataFrame, i: int, path: str) -> pd.DataFrame:
     name = os.path.basename(path)
     row["file_name"] = name
     row["file_path"] = _r_file_path(base_dir, "code", name)
+    # the output file it came from (FAIR_repo() keeps the code, and says so)
+    if "file_path" in files.columns:
+        fp0 = files["file_path"].iloc[i]
+        row["recovered_from"] = pd.Series([None if is_missing(fp0) else str(fp0)], dtype="string")
+    else:
+        row["recovered_from"] = pd.Series([str(files["file_name"].iloc[i])], dtype="string")
     row["file_location"] = path
     row["file_url"] = pd.Series([None], dtype=object)
     row["file_size"] = float(os.path.getsize(path))
@@ -743,7 +913,16 @@ def _code_expand_html(
     and any sniffed page (``"rmd"`` or ``"stata"``) is re-typed
     ``data_type = "output"`` when that column exists.
     """
-    is_html = grepl(r"\.html?$", _col(all_files, "file_name"), ignore_case=True)
+    # not the help pages and vignettes of the packages in a shared renv/library/: renv's own files
+    # are left out of code_check (see _in_renv_folder())
+    is_html = [
+        h and not r
+        for h, r in zip(
+            grepl(r"\.html?$", _col(all_files, "file_name"), ignore_case=True),
+            _in_renv_folder(all_files),
+            strict=True,
+        )
+    ]
     if not any(is_html):
         return all_files
     from metacheck.report import html_output
@@ -857,7 +1036,12 @@ def _code_expand_zip(
         if peek is None or len(peek) == 0:
             continue
         members = peek["name"].tolist()
-        is_code = [lang is not None for lang in _as_lang_list(code_lang(members))]
+        # renv's own files are left out of code_check, so they are not fetched
+        in_renv = _in_renv_folder(pd.DataFrame({"file_path": pd.Series(members, dtype=object)}))
+        is_code = [
+            lang is not None and not r
+            for lang, r in zip(_as_lang_list(code_lang(members)), in_renv, strict=True)
+        ]
         if not any(is_code):
             continue
         if "file_path" in all_files.columns:
@@ -866,7 +1050,7 @@ def _code_expand_zip(
         else:
             base = str(names[i])
         # .repo_cache_path() is outside R's tryCatch(); the fetch is inside
-        dest = _repo_cache_path(_col(all_files, "repo_url")[i], f"{base}.contents")
+        dest = _repo_cache_path(_col(all_files, "repo_url")[i], f"{base}.contents", cache=cache)
         try:
             fetched = _zip_fetch_members(
                 url,
@@ -930,9 +1114,21 @@ def code_extract_r(
     """
     from metacheck.codecheck._chunks import extract_r
 
-    out = extract_r(_text_arg(file_path, text), documentation=int(documentation))
+    source = _text_arg(file_path, text)
+    # A numeric or logical YAML chunk label ("#| label: 3") is read by knitr as a number and used
+    # as a position ("subscript out of bounds"), so the whole file was skipped; quoted, it is the
+    # chunk's name (UPSTREAM_ISSUES U153, fixed in metacheck 0.4.3.7)
+    source = [
+        s
+        if s is None
+        else re.sub(r"^(\s*#\|\s*label:\s*)([0-9][0-9.]*|TRUE|FALSE|true|false)\s*$", r"\1'\2'", s)
+        for s in source
+    ]
+    out = extract_r(source, documentation=int(documentation))
     if save_path is None:
-        return out
+        # a document with text but without chunks is purled to a file of one empty line, which
+        # code_read() now reads as that one line (strsplit() of "\n"); no text, an empty file
+        return out or ([""] if source else [])
     _write_lines(out, save_path)
     return os.fspath(save_path)
 
@@ -945,33 +1141,91 @@ def code_extract_py(
     """Extract the source of a Jupyter notebook's code cells.
 
     Port of ``R/code_check.R::code_extract_py()``: code cells in document
-    order, each followed by a blank line; markdown/raw cells, IPython magics
-    (``%...``) and shell escapes (``!...``) are dropped. Works for any kernel
-    (see :func:`code_lang`). Returns the lines, or *save_path* after writing.
+    order, each followed by a blank line; markdown/raw cells and the commands
+    of the notebook's kernel are dropped (see :func:`_code_notebook_parts`).
+    Works for any kernel (see :func:`code_lang`). Returns the lines, or
+    *save_path* after writing.
     """
-    lines = _text_arg(file_path, text)
-    nb = _json_load("\n".join("NA" if t is None else t for t in lines))
-    cells = field(nb, "cells")
-    out: list[str] = []
-    if cells is not None and _r_length(cells) > 0:
-        for cl in _r_elements(cells):
-            if field(cl, "cell_type") != "code":
-                continue
-            src = field(cl, "source")
-            if src is None or _r_length(src) == 0:
-                continue
-            joined = "".join(r_unlist_chr(src))
-            cell_lines = [s for piece in strsplit([joined], "\n") for s in piece]
-            keep = grepl(r"^\s*[%!]", cell_lines)
-            cell_lines = [s for s, k in zip(cell_lines, keep, strict=True) if not k]
-            if not cell_lines:
-                continue
-            out.extend(cell_lines)
-            out.append("")
+    out = _code_notebook_parts(_text_arg(file_path, text))[0]
     if save_path is None:
         return out
     _write_lines(out, save_path)
     return os.fspath(save_path)
+
+
+def _code_notebook_parts(text: Sequence[str | None]) -> tuple[list[str], list[str]]:
+    """A notebook's code, and the commands left out of it, from its JSON text.
+
+    Port of ``R/code_check.R::.code_notebook_parts()``. Commands are IPython magics (``%cd ..``)
+    and shell escapes (``!pip install x``), which are not Python and would otherwise be scanned as
+    though they were. An R-kernel notebook has no such commands, and ``  %>% filter()`` and ``!x``
+    are code there.
+    """
+    nb = _json_load("\n".join("NA" if t is None else t for t in text))
+    cells = field(nb, "cells")
+    if cells is None or _r_length(cells) == 0:
+        return [], []
+    kernel = field(nb, "metadata", "kernelspec")
+    is_r = (_first_chr(field(kernel, "language")) or "").lower() == "r" or (
+        _first_chr(field(kernel, "name")) or ""
+    ).lower() in ("ir", "r")
+    lines: list[str] = []
+    removed: list[str] = []
+    for cl in _r_elements(cells):
+        if field(cl, "cell_type") != "code":
+            continue
+        src = field(cl, "source")
+        if src is None or _r_length(src) == 0:
+            continue
+        joined = "".join(r_unlist_chr(src))
+        cell_lines = [s for piece in strsplit([joined], "\n") for s in piece]
+        kept: list[str]
+        gone: list[str]
+        if is_r:
+            kept, gone = cell_lines, []
+        else:
+            kept, gone = _code_notebook_cell(cell_lines)
+        if kept:
+            kept = [*kept, ""]  # blank line marks the cell boundary
+        lines.extend(kept)
+        removed.extend(gone)
+    return lines, removed
+
+
+def _code_notebook_cell(lines: list[str]) -> tuple[list[str], list[str]]:
+    """One notebook cell of a non-R kernel without its commands.
+
+    Port of ``R/code_check.R::.code_notebook_cell()``. A cell that starts with ``%%bash`` and the
+    like is not Python at all, so the whole cell goes; ``%%time`` and the like only wrap Python. An
+    indented command becomes ``pass``, since removing the only line of an ``if`` block would leave
+    code that does not parse. Also removed: the commands IPython accepts without a ``%``
+    (``cd folder``), and ``name?`` for help.
+    """
+    first = next((s for s in lines if trimws(s) != ""), None)
+    if (
+        first is not None
+        and re.match(r"\s*%%", first)
+        and not re.match(r"\s*%%(time|timeit|capture|prun)\b", first)
+    ):
+        return [], [trimws(first)]
+    is_cmd = [
+        bool(
+            re.match(r"\s*[%!?]", s)
+            or re.match(r"\s*cd(\s+[^=(\s].*)?$", s)
+            or re.match(r"\s*[A-Za-z_][A-Za-z0-9_.]*\?{1,2}\s*$", s)
+        )
+        for s in lines
+    ]
+    indented = [c and bool(re.match(r"\s", s)) for c, s in zip(is_cmd, lines, strict=True)]
+    removed = [trimws(s) for s, c in zip(lines, is_cmd, strict=True) if c]
+    out: list[str] = []
+    for s, c, ind in zip(lines, is_cmd, indented, strict=True):
+        if ind:
+            m = re.match(r"(\s*)", s)
+            out.append((m.group(1) if m else "") + "pass")
+        elif not c:
+            out.append(s)
+    return out, removed
 
 
 def _r_length(x: Any) -> int:
@@ -1500,6 +1754,10 @@ def code_library_lines(
     )
 
 
+# the function around the call that loads a package, in lapply(pkgs, function(x) library(x, ...))
+_FN_WRAP = r"(?:function\s*\([^)]*\)|\\\s*\([^)]*\))?\s*\{?\s*(?:suppress\w+\s*\(\s*)?"
+
+
 def _empty_packages() -> pd.DataFrame:
     return pd.DataFrame(
         {
@@ -1619,9 +1877,11 @@ def code_library_names(
             # a bare word is a package name for library()/require() unless the
             # call sets character.only = TRUE; requireNamespace() always
             # evaluates its argument, so a bare word there is a variable
+            # not when a point comes before the name: groundhog.library(c("a", "b"), date) was read
+            # as library(c), so a package called "c" was installed (it has its own search, below)
             for fn in ("library", "require", "requireNamespace"):
                 for call in regextract_all(
-                    rf"\b{fn}\s*\(\s*([A-Za-z0-9._'\"]+)([^)]*)", L, perl=True
+                    rf"(?<![\w.]){fn}\s*\(\s*([A-Za-z0-9._'\"]+)([^)]*)", L, perl=True
                 ):
                     parts = regexec(rf"^{fn}\s*\(\s*([A-Za-z0-9._'\"]+)(.*)$", call, perl=True)
                     bare_is_name = fn != "requireNamespace" and not grepl(
@@ -1629,15 +1889,19 @@ def code_library_names(
                     )
                     add(arg_packages(parts[1], bare_is_name), fn, ln)
             # lapply(pkgs, library, character.only = TRUE) and the same with
-            # sapply/vapply/walk/map and require
+            # sapply/vapply/walk/map and require; also through a function of its own,
+            # lapply(pkgs, function(x) library(x, character.only = T)), which left tmap
+            # uninstalled in 10.1002/pan3.10736 (metacheck #568)
             for call in regextract_all(
                 r"\b(?:lapply|sapply|vapply|walk|map)\s*\(\s*([.A-Za-z][.A-Za-z0-9_]*)"
-                r"\s*,\s*(?:FUN\s*=\s*)?(library|require)\b",
+                r"\s*,\s*(?:FUN\s*=\s*)?" + _FN_WRAP + r"(library|require)\b",
                 L,
                 perl=True,
             ):
                 parts = regexec(
-                    r"\(\s*([.A-Za-z][.A-Za-z0-9_]*)\s*,\s*(?:FUN\s*=\s*)?(library|require)\b",
+                    r"\(\s*([.A-Za-z][.A-Za-z0-9_]*)\s*,\s*(?:FUN\s*=\s*)?"
+                    + _FN_WRAP
+                    + r"(library|require)\b",
                     call,
                     perl=True,
                 )
@@ -1665,7 +1929,11 @@ def code_library_names(
                 arg = sub(r"^c\s*\((.*)\)$", r"\1", trimws(arg))
                 toks = strsplit(arg, r"\s*,\s*")
                 add([p for t in toks for p in arg_packages(t, False)], "install", ln)
-            ns = regextract_all(r"\b([A-Za-z][A-Za-z0-9._]*):{2,3}", L, perl=True)
+            # pkg::fun / pkg:::fun namespace-qualified calls (all on the line), but not the source
+            # in groundhog.library("github::user/repo", date)
+            ns = regextract_all(
+                r"\b(?!(?:github|gitlab)::[\w.-]+/)([A-Za-z][A-Za-z0-9._]*):{2,3}", L, perl=True
+            )
             if ns:
                 add(sub(":{2,3}$", "", ns), "namespace", ln)
         else:
@@ -1677,6 +1945,25 @@ def code_library_names(
                 parts = strsplit(im, r"\s*,\s*")
                 top = sub(r"\..*$", "", sub(r"\s+as\s+.*$", "", trimws(parts)))
                 add(top, "import", ln)
+
+    # groundhog.library() loads its first argument: a name in quotes or not, a GitHub "user/repo",
+    # c(...), which may run over several lines, or a variable holding these. In the form
+    # groundhog.library("library(a); library(b)", date) the argument is a piece of code, which the
+    # library() search above has read.
+    if lang == "R":
+        joined = "\n".join("NA" if s is None else s for s in lines)
+        gpat = r"(?<![\w.])groundhog\.library\s*\(\s*(?:pkg\s*=\s*)?(?:c\s*\([^)]*\)|[^,)]+)"
+        positions = gregexpr_all(gpat, joined, perl=True)
+        calls = regextract_all(gpat, joined, perl=True)
+        for (start, _length), call in zip(positions, calls, strict=True):
+            arg = str(sub(r"(?s)^.*?\(\s*(?:pkg\s*=\s*)?", "", call, perl=True))
+            arg = str(sub(r"(?s)^c\s*\((.*)\)$", r"\1", trimws(arg), perl=True))
+            toks = [trimws(t) for t in arg.split(",")]
+            pkgs: list[str] = []
+            for tok in toks:
+                pkgs.extend(variables[tok] if tok in variables else arg_packages(tok, True))
+            ln = joined[: start - 1].count("\n") + 1
+            add([sub(r"@.*$", "", sub(r"^.*/", "", p)) for p in pkgs], "groundhog", ln)
 
     if not pkgs_out:
         return _empty_packages()
@@ -1719,9 +2006,234 @@ _CHECKPOINT = r"checkpoint(?:::checkpoint)?\s*\(\s*[\"'](\d{4}-\d{2}-\d{2})[\"']
 _R_VERSION = r"R version ([0-9]+\.[0-9]+\.[0-9]+)"
 
 
+_PACKAGE_COLS = ("file_name", "package", "version", "source", "remote")
+
+
 def _empty_renv_packages() -> pd.DataFrame:
-    return pd.DataFrame(
-        {c: pd.Series([], dtype="string") for c in ("file_name", "package", "version", "source")}
+    return pd.DataFrame({c: pd.Series([], dtype="string") for c in _PACKAGE_COLS})
+
+
+def _empty_pin_dates() -> pd.DataFrame:
+    return pd.DataFrame({c: pd.Series([], dtype="string") for c in ("mechanism", "date")})
+
+
+# the packages that are part of R itself: rownames(installed.packages(priority = "base"))
+_BASE_PACKAGES = frozenset(
+    [
+        "base",
+        "compiler",
+        "datasets",
+        "graphics",
+        "grDevices",
+        "grid",
+        "methods",
+        "parallel",
+        "splines",
+        "stats",
+        "stats4",
+        "tcltk",
+        "tools",
+        "utils",
+    ]
+)
+
+
+def _code_renv_remote(p: Any) -> str | None:
+    """Where an ``renv.lock`` entry says a package came from GitHub: ``user/repo@ref``.
+
+    Port of ``R/code_check.R::.code_renv_remote()``: with the exact commit when the file records
+    it. ``None`` for any other package.
+    """
+    user = field(p, "RemoteUsername")
+    repo = field(p, "RemoteRepo")
+    if user is None or repo is None:
+        return None
+    ref = field(p, "RemoteSha")
+    if ref is None:
+        ref = field(p, "RemoteRef")
+    out = f"{_r_as_character1(user)}/{_r_as_character1(repo)}"
+    return out if ref is None else f"{out}@{_r_as_character1(ref)}"
+
+
+def _code_session_packages(txt: Sequence[str | None]) -> pd.DataFrame:
+    """The package versions a ``sessionInfo()`` or ``session_info()`` record lists.
+
+    Port of ``R/code_check.R::.code_session_packages()``. Reads the two forms R writes.
+    ``sessionInfo()`` lists ``name_version`` items under "other attached packages:" and "loaded
+    via a namespace", on lines starting with an index such as ``[1]``.
+    ``sessioninfo::session_info()`` and ``devtools::session_info()`` write a table with a header
+    row starting ``package * version date``. Text that has neither heading gives no rows, so a
+    README that mentions an R version is not taken for a list of packages. A ``## `` or ``> ``
+    before each line, as in a knitted document, is ignored. Packages that are part of R itself
+    (``stats``, ``compiler``) are left out. Returns the columns ``package``, ``version``,
+    ``source`` (``GitHub``, ``Bioconductor``, ``Local``, ``Repository``, or ``NA`` for
+    ``sessionInfo()``, which does not say) and ``remote`` (``user/repo@ref`` for GitHub, else
+    ``NA``).
+    """
+    cols = ("package", "version", "source", "remote")
+    lines = [None if t is None else str(sub(r"^\s*(?:#+|>)\s?", "", t, perl=True)) for t in txt]
+    n = len(lines)
+    rows: list[tuple[str, str, str | None, str | None]] = []
+
+    item_pat = r"(?<![A-Za-z0-9._])([A-Za-z][A-Za-z0-9.]*)_([0-9]+(?:[.-][0-9]+)+)"
+    heads = [
+        i
+        for i, t in enumerate(lines)
+        if t is not None and grepl(r"^\s*(other attached packages|loaded via a namespace)", t)
+    ]
+    for h in heads:
+        j = h + 1
+        while j < n and lines[j] is not None and grepl(r"^\s*\[[0-9]+\]", lines[j]):
+            for item in regextract_all(item_pat, lines[j], perl=True):
+                pkg, _, ver = str(item).partition("_")
+                rows.append((pkg, ver, None, None))
+            j += 1
+
+    # The flag columns (`P`, `V`, `!`) come before the name, and `*` after it.
+    row_pat = (
+        r"^\s*(?:[A-Z!]+\s+)?([A-Za-z][A-Za-z0-9.]*)\s+(?:\*\s+)?"
+        r"([0-9]+(?:[.-][0-9]+)+)\s+\d{4}-\d{2}-\d{2}\s+"
+        r"(?:\[[0-9?]+\]\s+)?(.*)$"
+    )
+    heads = [
+        i
+        for i, t in enumerate(lines)
+        if t is not None
+        and grepl(r"^\s*(?:!\s+)?package\s+\*?\s*(?:loadedversion|version)\s+date", t, perl=True)
+    ]
+    for h in heads:
+        j = h + 1
+        while j < n and lines[j] is not None and grepl(row_pat, lines[j], perl=True):
+            p = regexec(row_pat, lines[j], perl=True)
+            src = str(trimws(p[3]))
+            is_gh = bool(grepl(r"^git ?hub", src, ignore_case=True))
+            if is_gh:
+                source = "GitHub"
+            elif grepl(r"^bioc", src, ignore_case=True):
+                source = "Bioconductor"
+            elif grepl(r"^local", src, ignore_case=True):
+                source = "Local"
+            else:
+                source = "Repository"
+            remote = (
+                str(sub(r"^.*\(([^)]+)\).*$", r"\1", src))
+                if is_gh and grepl(r"\(([^)]+)\)", src)
+                else None
+            )
+            rows.append((p[1], p[2], source, remote))
+            j += 1
+
+    frame = pd.DataFrame(rows, columns=list(cols)).astype("string")
+    frame = frame[~frame["package"].isin(_BASE_PACKAGES)]
+    frame = frame.drop_duplicates(subset=["package", "version"])
+    return frame.reset_index(drop=True)
+
+
+def _code_pin_dates(code_text: Sequence[str | None]) -> pd.DataFrame:
+    """The dates one script passes to ``groundhog.library()`` and ``checkpoint()``.
+
+    Port of ``R/code_check.R::.code_pin_dates()``, as a frame ``mechanism``, ``date``. The date is
+    written in the call, or held in a variable the script assigns it to: ``day <- "2023-01-01"``
+    followed by ``groundhog.library(pkgs, day)`` was not seen before. Comments are removed first,
+    because the date decides which versions are installed.
+    """
+    import datetime
+
+    from metacheck.statout.r_output import _repro_split_args
+
+    if not code_text:
+        return _empty_pin_dates()
+    stripped = code_remove_comments(list(code_text), "R")
+    if not stripped:
+        return _empty_pin_dates()
+    joined = "\n".join("NA" if s is None else s for s in stripped)
+    variables = _code_char_vector_vars(stripped)
+    date_pat = r"\d{4}-\d{2}-\d{2}"
+    # An argument list, with up to two levels of brackets inside it: c("a", "b") and a piece of
+    # code in a string, "library(a)".
+    args_pat = r"((?:[^()]++|\((?:[^()]++|\([^()]*+\))*+\))*+)"
+
+    def dates_of(call_pat: str, date_arg: str, position: int) -> list[str]:
+        pat = rf"(?<![\w.]){call_pat}\s*\({args_pat}\)"
+        found: list[str] = []
+        for call in regextract_all(pat, joined, perl=True):
+            args_txt = str(sub(r"(?s)^[^(]*\((.*)\)$", r"\1", call, perl=True))
+            literal = regextract(rf"[\"']{date_pat}[\"']", args_txt, perl=True)
+            if literal is not None:
+                found.append(re.sub(r"[\"']", "", literal))
+                continue
+            args = [str(trimws(a["text"])) for a in _repro_split_args(args_txt)]
+            name_pat = rf"^(?:{date_arg})\s*=\s*"
+            named = [bool(grepl(name_pat, a, perl=True)) for a in args]
+            if any(named):
+                arg = str(sub(name_pat, "", args[named.index(True)], perl=True))
+            elif len(args) >= position:
+                arg = args[position - 1]
+            else:
+                arg = ""
+            value = variables.get(arg)
+            if value is not None and len(value) == 1:
+                found.append(value[0])
+        good = []
+        for d in found:
+            if re.fullmatch(date_pat, d):
+                try:
+                    datetime.datetime.strptime(d, "%Y-%m-%d")
+                except ValueError:
+                    continue
+                good.append(d)
+        return good
+
+    gh = dates_of(r"groundhog\.library", "date", 2)
+    cp = dates_of(r"(?:checkpoint::)?(?:create_|use_)?checkpoint", "snapshot_date|snapshotDate", 1)
+    out = pd.DataFrame(
+        {
+            "mechanism": pd.Series(
+                ["groundhog"] * len(gh) + ["checkpoint"] * len(cp), dtype="string"
+            ),
+            "date": pd.Series([*gh, *cp], dtype="string"),
+        }
+    )
+    return out.drop_duplicates().reset_index(drop=True)
+
+
+def _named_texts(code_text_list: Any) -> list[tuple[str | None, Any]]:
+    """The scripts of *code_text_list* as ``(file name, lines)`` pairs.
+
+    The list is a dict (its keys are the names when they are text), a list of
+    ``(name, lines)`` pairs, or a list of line vectors (no names).
+    """
+    if code_text_list is None:
+        return []
+    if isinstance(code_text_list, Mapping):
+        return [(k if isinstance(k, str) else None, v) for k, v in code_text_list.items()]
+    out: list[tuple[str | None, Any]] = []
+    for item in code_text_list:
+        if isinstance(item, tuple) and len(item) == 2 and not isinstance(item[0], list):
+            out.append((item[0], item[1]))
+        else:
+            out.append((None, item))
+    return out
+
+
+def _bind_packages(a: pd.DataFrame, b: pd.DataFrame) -> pd.DataFrame:
+    return pd.concat([a, b], ignore_index=True).astype("string")
+
+
+def _code_env_pinned(version_pin: Mapping[str, Any], langs: Sequence[Any]) -> bool:
+    """Whether the code's environment is written down, per language.
+
+    Port of ``R/code_check.R::.code_env_pinned()``: R code needs one of the R mechanisms of
+    :func:`_code_version_pin_check` (``pinned``), Python code a list of Python packages
+    (``python_pinned``). Code in neither language is judged by the R mechanisms, as before Python
+    was checked.
+    """
+    has_r = "R" in langs
+    has_py = "Python" in langs
+    if not has_r and not has_py:
+        return version_pin.get("pinned") is True
+    return (not has_r or version_pin.get("pinned") is True) and (
+        not has_py or version_pin.get("python_pinned") is True
     )
 
 
@@ -1746,10 +2258,20 @@ def _code_version_pin_check(
     files (R version and locked packages), ``sessionInfo()`` dumps (files
     named like ``session_info`` and READMEs), and ``groundhog``/
     ``checkpoint`` date-pinning calls in *code_text_list* (a list or dict of
-    code line vectors). Returns a dict with ``pinned``, ``mechanisms``,
-    ``r_versions``, ``renv_files``, ``renv_packages`` (a frame),
-    ``sessioninfo_files`` and ``file_location`` (a Series of the candidate
-    files' local paths, indexed by file name).
+    code line vectors, or a list of ``(file name, lines)`` pairs, whose names
+    say where a ``sessionInfo()`` record pasted into a script was found).
+    Returns a dict with ``pinned``, ``mechanisms``, ``r_versions``,
+    ``renv_files``, ``renv_packages`` (a frame ``file_name``, ``package``,
+    ``version``, ``source``, ``remote``), ``sessioninfo_files``,
+    ``session_packages`` (the same columns: the package versions the
+    ``sessionInfo()``/``session_info()`` records list), ``pin_dates`` (a frame
+    ``mechanism`` (``groundhog`` or ``checkpoint``), ``date``),
+    ``python_files`` (the file names of Python package lists:
+    ``requirements*.txt``, ``environment.yml``, ``Pipfile(.lock)``,
+    ``poetry.lock``, ``uv.lock``, ``pyproject.toml``), ``python_pinned``
+    (whether any was found; ``pinned`` stays about R only) and
+    ``file_location`` (a Series of the candidate files' local paths, indexed by
+    file name).
     """
     return _version_pin_scan(
         all_files,
@@ -1787,6 +2309,10 @@ def _version_pin_scan(
         "renv_files": [],
         "renv_packages": _empty_renv_packages(),
         "sessioninfo_files": [],
+        "session_packages": _empty_renv_packages(),
+        "pin_dates": _empty_pin_dates(),
+        "python_files": [],
+        "python_pinned": False,
         "file_location": pd.Series([], dtype=object),
     }
     positions: dict[int, Any] = {}
@@ -1853,12 +2379,11 @@ def _version_pin_scan(
                         "package": _json_scalar(field(p, "Package")),
                         "version": _json_scalar(field(p, "Version")),
                         "source": _json_scalar(field(p, "Source")),
+                        "remote": _code_renv_remote(p),
                     }
                     for p in _r_elements(pkgs)
                 ]
-                frames.append(
-                    pd.DataFrame(recs, columns=["file_name", "package", "version", "source"])
-                )
+                frames.append(pd.DataFrame(recs, columns=list(_PACKAGE_COLS)))
         if frames:
             out["renv_packages"] = pd.concat(
                 [out["renv_packages"], *frames], ignore_index=True
@@ -1868,8 +2393,13 @@ def _version_pin_scan(
 
     # sessionInfo() dumps
     is_si = grepl(r"session[_-]?info", base_nm, ignore_case=True)
-    is_readme = grepl(r"^readme", base_nm, ignore_case=True)
-    si_mask = [a or b for a, b in zip(is_si, is_readme, strict=True)]
+    # Names that START with a README name only ("read.me.txt" too, metacheck #487), not every name
+    # a README is: each candidate may be downloaded.
+    is_readme = grepl(r"^read[ _.-]?me", base_nm, ignore_case=True)
+    # revdep/ holds a package's tests of other packages; its README names the R version of those
+    # tests, not of the analysis (found in real repositories)
+    in_revdep = _in_folder(all_files, "revdep")
+    si_mask = [(a or b) and not r for a, b, r in zip(is_si, is_readme, in_revdep, strict=True)]
     if any(si_mask):
         rows = fetch(si_mask)
         for fname, loc in zip(_col(rows, "file_name"), _col(rows, "file_location"), strict=True):
@@ -1882,29 +2412,68 @@ def _version_pin_scan(
             hit = next((t for t in txt if grepl(_R_VERSION, t, perl=True)), None)
             if hit is not None:
                 version = regextract(_R_VERSION, hit, perl=True)
-                out["sessioninfo_files"].append(fname)
                 out["r_versions"].append(sub("^R version ", "", version))
-        if out["sessioninfo_files"]:
-            out["mechanisms"].append("sessionInfo")
+            si_pkgs = _code_session_packages(txt)
+            if len(si_pkgs) > 0:
+                si_pkgs.insert(0, "file_name", pd.Series([fname] * len(si_pkgs), dtype="string"))
+                out["session_packages"] = _bind_packages(out["session_packages"], si_pkgs)
+            if hit is not None or len(si_pkgs) > 0:
+                out["sessioninfo_files"].append(fname)
 
-    # groundhog / checkpoint
-    texts = code_text_list.values() if isinstance(code_text_list, dict) else (code_text_list or [])
-    has_gh = has_cp = False
-    for txt in texts:
-        values = _as_chr(txt) or []
-        if not values:
+    # A record pasted into a script, usually as comments. Only with a list of packages: a comment
+    # that names an R version does not say what was used.
+    texts = _named_texts(code_text_list)
+    for fn, lines_i in texts:
+        txt = [
+            piece
+            for t in (_as_chr(lines_i) or [])
+            for piece in strsplit(t or "NA", "\n", fixed=True)
+        ]
+        if not txt:
+            continue  # an empty script
+        si_pkgs = _code_session_packages(txt)
+        if len(si_pkgs) == 0:
             continue
-        joined = "\n".join("NA" if v is None else v for v in values)
-        if not has_gh and grepl(_GROUNDHOG, joined, perl=True):
-            has_gh = True
-        if not has_cp and grepl(_CHECKPOINT, joined, perl=True):
-            has_cp = True
-        if has_gh and has_cp:
-            break
-    if has_gh:
+        si_pkgs.insert(0, "file_name", pd.Series([fn] * len(si_pkgs), dtype="string"))
+        out["session_packages"] = _bind_packages(out["session_packages"], si_pkgs)
+        out["sessioninfo_files"].append(fn)
+        # comments, or a record without comment signs; not code such as print("R version 4.2.0")
+        rv_hit = next(
+            (
+                t
+                for t in txt
+                if grepl(r"^\s*(?:#.*|version\s+)?R version [0-9]+\.[0-9]+\.[0-9]+", t, perl=True)
+            ),
+            None,
+        )
+        if rv_hit is not None:
+            version = regextract(r"R version [0-9]+\.[0-9]+\.[0-9]+", rv_hit, perl=True)
+            out["r_versions"].append(sub("^R version ", "", version))
+    if out["sessioninfo_files"]:
+        out["mechanisms"].append("sessionInfo")
+
+    # groundhog / checkpoint date-pinning calls: the pinning CALL itself, with a date-shaped
+    # argument -- library(groundhog) / library(checkpoint) alone is not evidence anything was
+    # pinned
+    dates = [_code_pin_dates(_as_chr(lines_i) or []) for _, lines_i in texts]
+    pin_dates = pd.concat([out["pin_dates"], *dates], ignore_index=True).astype("string")
+    out["pin_dates"] = pin_dates.drop_duplicates().reset_index(drop=True)
+    mechs = set(out["pin_dates"]["mechanism"].tolist())
+    if "groundhog" in mechs:
         out["mechanisms"].append("groundhog")
-    if has_cp:
+    if "checkpoint" in mechs:
         out["mechanisms"].append("checkpoint")
+
+    # Python package lists, by file name only: the files pip, conda, pipenv, poetry and uv write
+    py_re = (
+        r"^(requirements|constraints)([_.-][a-z0-9]+)*\.(txt|in)$|"
+        r"^pipfile(\.lock)?$|^poetry\.lock$|^uv\.lock$|"
+        r"^environment\.ya?ml$|^conda[_.-]?lock\.ya?ml$|^pyproject\.toml$"
+    )
+    out["python_files"] = [
+        n for n, h in zip(names, grepl(py_re, base_nm, ignore_case=True), strict=True) if h
+    ]
+    out["python_pinned"] = len(out["python_files"]) > 0
 
     out["mechanisms"] = list(dict.fromkeys(out["mechanisms"]))
     out["r_versions"] = list(dict.fromkeys(out["r_versions"]))
@@ -1913,6 +2482,71 @@ def _version_pin_scan(
         [loc for _, loc in locations], index=[n for n, _ in locations], dtype=object
     )
     return out, positions
+
+
+def _code_open_calls(
+    code_text: Sequence[str | None], call_regex: str, max_lines: int = 20
+) -> tuple[list[str], list[int]]:
+    """Calls that go on over the next lines.
+
+    Port of ``R/code_check.R::.code_open_calls()``: a call matched by *call_regex* (ending in the
+    call's opening parenthesis) whose closing parenthesis is on a later line, as in ``read.csv(``
+    with ``"./data.csv")`` on the next line: the line-by-line search for file names saw the call
+    without its file name, and the file name without its call (metacheck #568). Quotes and
+    brackets are counted; a call not closed within *max_lines* lines is left out. Returns the text
+    of each such call from its name to its closing parenthesis, and the (1-based) numbers of the
+    lines after the first that the calls take.
+    """
+    calls: list[str] = []
+    taken: list[int] = []
+    text = ["" if t is None else t for t in code_text]
+    n = len(text)
+    if n < 2:
+        return calls, taken
+    hits = [i for i, h in enumerate(grepl(call_regex, text, perl=True), start=1) if h]
+    for i in (h for h in hits if h < n):
+        starts = gregexpr_all(call_regex, text[i - 1], perl=True)
+        for start, length in starts:
+            first = start + length - 1  # the "("
+            depth = 0
+            in_str: str | None = None
+            closed = False
+            j = i
+            pieces: list[str] = []
+            while j <= min(n, i + max_lines - 1) and not closed:
+                line = text[j - 1]
+                frm = first if j == i else 1
+                chars = line[frm - 1 :]
+                p = 0
+                while p < len(chars):
+                    p += 1
+                    ch = chars[p - 1]
+                    if in_str is not None:
+                        if ch == "\\":
+                            p += 1
+                        elif ch == in_str:
+                            in_str = None
+                    elif ch in ("'", '"'):
+                        in_str = ch
+                    elif ch in "([{":
+                        depth += 1
+                    elif ch in ")]}":
+                        depth -= 1
+                        if depth == 0:
+                            closed = True
+                            break
+                if j == i:
+                    pieces.append(line[start - 1 :])
+                elif closed:
+                    pieces.append(line[:p])
+                else:
+                    pieces.append(line)
+                if not closed:
+                    j += 1
+            if closed and j > i:
+                calls.append(" ".join(pieces))
+                taken.extend(range(i + 1, j + 1))
+    return calls, list(dict.fromkeys(taken))
 
 
 # ---------------------------------------------------------------------------
@@ -2029,6 +2663,10 @@ def code_file_refs(
         pattern = f"{pattern}|{_WRITE_REGEX[lang]}"
     load_hits = grepl(pattern, lines, perl=True)
     load_lines = [s for s, h in zip(lines, load_hits, strict=True) if h]
+    # A call whose file name is on a line after it, as in `read.csv(` and then `"./data.csv")`, is
+    # searched as a whole too (metacheck #568)
+    if lang in ("R", "Python"):
+        load_lines = [*load_lines, *_code_open_calls(lines, pattern)[0]]
     found = [m for ms in regextract_all(_QUOTED_FILE, load_lines, perl=True) for m in ms]
     loaded = list(gsub("^['\"]|['\"]$", "", found))
     spec = grepl(_FORMAT_SPEC, loaded, perl=True)

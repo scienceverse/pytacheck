@@ -77,13 +77,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "partial_r_l3_3_r1"
+                          "partial_r_a_r1"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "partial_r_l3_3"
+                          "partial_r_a"
                         ]
                       },
                       {
@@ -198,7 +198,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "partial_r_partial_r_b"
+                          "partial_r_b"
                         ]
                       },
                       {
@@ -284,7 +284,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "partial_r_partial_r_result_2"
+                          "partial_r_result_2"
                         ]
                       },
                       {
@@ -345,92 +345,6 @@
               {
                 "t": "chr",
                 "v": [
-                  "D"
-                ]
-              },
-              {
-                "t": "list",
-                "names": null,
-                "v": [
-                  {
-                    "t": "list",
-                    "names": [
-                      "result_id",
-                      "test_id",
-                      "row_label",
-                      "values"
-                    ],
-                    "v": [
-                      {
-                        "t": "chr",
-                        "v": [
-                          "partial_r_t5_r1"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          "partial_r_partial_r_t5"
-                        ]
-                      },
-                      {
-                        "t": "chr",
-                        "v": [
-                          ""
-                        ]
-                      },
-                      {
-                        "t": "list",
-                        "names": [
-                          "t"
-                        ],
-                        "v": [
-                          {
-                            "t": "list",
-                            "names": [
-                              "value",
-                              "stato_label",
-                              "stato_iri"
-                            ],
-                            "v": [
-                              {
-                                "t": "dbl",
-                                "v": [
-                                  3
-                                ]
-                              },
-                              {
-                                "t": "chr",
-                                "v": [
-                                  "t-statistic"
-                                ]
-                              },
-                              {
-                                "t": "chr",
-                                "v": [
-                                  "http://purl.obolibrary.org/obo/STATO_0000176"
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "t": "list",
-            "names": [
-              "analysis",
-              "results"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
                   "E"
                 ]
               },
@@ -456,7 +370,7 @@
                       {
                         "t": "chr",
                         "v": [
-                          "partial_r_partial_r_e"
+                          "partial_r_e"
                         ]
                       },
                       {
@@ -683,6 +597,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -14,9 +14,8 @@
       "traffic_light",
       "summary_text",
       "summary_table",
+      "findings",
       "na_replace",
-      "dv_summary_text",
-      "dv_report",
       "structure",
       "previews",
       "gated_repos",
@@ -40,6 +39,91 @@
         "t": "chr",
         "v": [
           "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
+          "**Repository: https://osf.io/capped**",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── data/\n│   └── study.csv     📊 data      ex1\n├── materials/\n│   └── stimulus.png  📁 materials ex1\n├── analysis.R        💻 code      ex1\n└── README.md         📄 readme\n```\n:::"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 4 files: 1 data, 1 code, 1 documentation, 1 materials.\n-  We found 1 tabular data file and extracted 0 columns from 0 of them.\n-  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata).\n-  1 tabular data file could not be read because it was not downloaded. This can happen for private repositories or failed downloads; you can also pass `local_path` to point at a local copy.\n-  Repository https://osf.io/capped exceeds the 0.0 MB per-repository budget: downloaded the smallest files up to the cap, 2 files omitted. Raise `max_download_size` to include more. We found no readable tabular data files to validate."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n",
+          "flagged_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
         ]
       },
       {
@@ -76,86 +160,23 @@
         ]
       },
       {
-        "t": "chr",
-        "v": [
-          ""
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "na"
-        ]
-      },
-      {
-        "t": "null"
-      },
-      {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "paper_id",
-          "column_n",
-          "flagged_n",
-          "spreadsheet_file_n",
-          "spreadsheet_flagged_file_n"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "p1"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
-            ]
-          }
-        ]
-      },
-      {
         "t": "dbl",
         "v": [
+          0,
+          0,
           0,
           0,
           0,
           0
         ],
         "names": [
+          "data_file_n",
           "column_n",
+          "empty_col_n",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
         ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "We found no readable tabular data files to validate."
-        ]
-      },
-      {
-        "t": "null"
       },
       {
         "t": "df",
@@ -174,6 +195,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -305,6 +327,15 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "analysis.R",
+              "study.csv",
+              "stimulus.png"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               true,
@@ -343,6 +374,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

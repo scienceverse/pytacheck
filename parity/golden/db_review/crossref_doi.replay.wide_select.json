@@ -8,7 +8,9 @@
     "nrow": 6,
     "names": [
       "DOI",
-      "error"
+      "ISSN",
+      "title",
+      "author"
     ],
     "v": [
       {
@@ -25,16 +27,192 @@
       {
         "t": "chr",
         "v": [
-          "arguments imply differing number of rows: 1, 0",
-          "arguments imply differing number of rows: 1, 0",
-          "arguments imply differing number of rows: 1, 0",
-          "arguments imply differing number of rows: 1, 0",
-          "arguments imply differing number of rows: 1, 0",
-          "arguments imply differing number of rows: 1, 0"
+          "0894-3257; 1099-0771",
+          "0046-2772; 1099-0992",
+          "1935-990X; 0003-066X",
+          "0956-7976; 1467-9280",
+          "0302-9743; 1611-3349",
+          "0001-6918"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Arbitrary social comparison, malicious envy, and generosity",
+          "Performing high‐powered studies efficiently with sequential analyses",
+          "The origins of sex differences in human behavior: Evolved dispositions versus social roles.",
+          "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+          "Fuzzy Similarity of Facial Expressions of Embodied Agents",
+          "The automatic orienting of attention to goal-relevant stimuli"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Adiel",
+                  "Marina",
+                  "Ilana"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Moyal",
+                  "Motsenok",
+                  "Ritov"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0001-6620-3175",
+                  "https://orcid.org/0000-0002-1532-9461",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Daniël"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lakens"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Alice H.",
+                  "Wendy"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Eagly",
+                  "Wood"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Francesca",
+                  "Scott S."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gino",
+                  "Wiltermuth"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Radosław",
+                  "Catherine"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Niewiadomski",
+                  "Pelachaud"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Julia",
+                  "Jan",
+                  "Agnes",
+                  "Stefaan",
+                  "Geert"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Vogt",
+                  "De Houwer",
+                  "Moors",
+                  "Van Damme",
+                  "Crombez"
+                ]
+              }
+            ]
+          }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

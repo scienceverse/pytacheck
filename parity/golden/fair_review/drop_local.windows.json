@@ -1,0 +1,23 @@
+{
+  "id": "drop_local.windows",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "proj\\a.R and proj/b.R",
+          "none"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -23,7 +23,6 @@ from metacheck.archives.info_cache import (
     _repo_info_cache_put,
     _repo_info_list_ok,
     _repo_info_ok,
-    repo_info_cache,
     repo_info_cache_clear,
 )
 from metacheck.utils import local_options
@@ -33,9 +32,10 @@ def test_cache_root_and_subdir(tmp_path: Path) -> None:
     with local_options({"metacheck.cache.dir": str(tmp_path)}):
         assert _metacheck_cache_root() == str(tmp_path)
         sub = _metacheck_cache_subdir(".metacheck_x")
-        assert os.path.isdir(sub) and sub.endswith("/.metacheck_x")
+        # looking up a location creates no folder (what writes an entry creates it)
+        assert sub.endswith("/.metacheck_x") and not os.path.exists(sub)
         over = _metacheck_cache_subdir(".metacheck_x", override=str(tmp_path / "elsewhere"))
-        assert over.endswith("/elsewhere") and os.path.isdir(over)
+        assert over.endswith("/elsewhere") and not os.path.exists(over)
         assert _metacheck_cache_subdir(".metacheck_y", override="").endswith("/.metacheck_y")
 
 
@@ -73,16 +73,6 @@ def test_metacheck_cache_info(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -
         info = metacheck_cache_info()
     assert info["cache"].tolist() == ["repo_files", "repo_info", "llm"]
     assert list(info.columns) == ["cache", "path", "size_mb"]
-
-
-def test_repo_info_cache_toggle() -> None:
-    assert repo_info_cache() is False
-    with local_options({"metacheck.repo_info.cache": None}):
-        assert repo_info_cache(True) is True
-        assert repo_info_cache() is True
-        assert repo_info_cache(False) is False
-        with pytest.raises(ValueError, match="TRUE or FALSE"):
-            repo_info_cache("yes")  # type: ignore[arg-type]
 
 
 def test_repo_info_cache_roundtrip(tmp_path: Path) -> None:

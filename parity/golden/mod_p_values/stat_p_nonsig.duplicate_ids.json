@@ -2,7 +2,9 @@
   "id": "stat_p_nonsig.duplicate_ids",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "1 paper shared a paper_id with an earlier paper and was renamed: 6c4258abe0fec3~2"
+  ],
   "value": {
     "t": "module_output",
     "names": [
@@ -37,7 +39,7 @@
       },
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 3,
         "names": [
           "text_id",
           "section_id",
@@ -58,9 +60,6 @@
             "v": [
               1,
               1,
-              1,
-              1,
-              2,
               2
             ]
           },
@@ -69,9 +68,6 @@
             "v": [
               0,
               0,
-              0,
-              0,
-              0,
               0
             ]
           },
@@ -80,9 +76,6 @@
             "v": [
               0,
               0,
-              0,
-              0,
-              0,
               0
             ]
           },
@@ -90,10 +83,7 @@
             "t": "chr",
             "v": [
               "p = .20",
-              "p = .20",
               "p = .30 ",
-              "p = .30 ",
-              "p < .10 ",
               "p < .10 "
             ]
           },
@@ -101,10 +91,7 @@
             "t": "chr",
             "v": [
               "No difference was found (p = .20).",
-              "No difference was found (p = .20).",
               "A second paper found p = .30 here.",
-              "A second paper found p = .30 here.",
-              "And p < .10 there.",
               "And p < .10 there."
             ]
           },
@@ -112,9 +99,11 @@
             "t": "chr",
             "v": [
               "6c4258abe0fec3",
-              "6c4258abe0fec3",
-              "6c4258abe0fec3",
-              "6c4258abe0fec3",
+              "6c4258abe0fec3~2",
+              "6c4258abe0fec3~2"
+            ],
+            "names": [
+              "",
               "6c4258abe0fec3",
               "6c4258abe0fec3"
             ]
@@ -122,9 +111,6 @@
           {
             "t": "chr",
             "v": [
-              "Test",
-              "Test",
-              "Test",
               "Test",
               "Test",
               "Test"
@@ -135,9 +121,6 @@
             "v": [
               "unknown",
               "unknown",
-              "unknown",
-              "unknown",
-              "unknown",
               "unknown"
             ]
           },
@@ -146,9 +129,6 @@
             "v": [
               "=",
               "=",
-              "=",
-              "=",
-              "<",
               "<"
             ]
           },
@@ -156,10 +136,7 @@
             "t": "dbl",
             "v": [
               0.2,
-              0.2,
               0.3,
-              0.3,
-              0.1,
               0.1
             ]
           },
@@ -168,21 +145,15 @@
             "v": [
               "nonsignificant",
               "nonsignificant",
-              "nonsignificant",
-              "nonsignificant",
-              "nonsignificant",
               "nonsignificant"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "No difference was found (p = .20). A second paper found p = .30 here.",
-              "No difference was found (p = .20). A second paper found p = .30 here.",
-              "No difference was found (p = .20). A second paper found p = .30 here.",
-              "No difference was found (p = .20). A second paper found p = .30 here.",
-              "The other test was imprecise (p < .05). And p < .10 there.",
-              "The other test was imprecise (p < .05). And p < .10 there."
+              "No difference was found (p = .20).",
+              "A second paper found p = .30 here.",
+              "And p < .10 there."
             ]
           }
         ]
@@ -190,7 +161,7 @@
       {
         "t": "chr",
         "v": [
-          "Meta-scientific research has shown nonsignificant p values are commonly misinterpreted. It is incorrect to infer that there is 'no effect', 'no difference', or that groups are 'the same' after p > 0.05.\n\nIt is possible that there is a true non-zero effect, but that the study did not detect it. Make sure your inference acknowledges that it is possible that there is a non-zero effect. It is correct to include the effect is 'not significantly' different, although this just restates that p > 0.05.\n\nMetacheck does not yet analyze automatically whether sentences which include non-significant p-values are correct, but we recommend manually checking the sentences below for possible misinterpreted non-significant p values.\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p = .20\", \"p = .20\", \"p = .30 \", \"p = .30 \", \n\"p < .10 \", \"p < .10 \"), Sentence = c(\"No difference was found (p = .20). A second paper found p = .30 here.\", \n\"No difference was found (p = .20). A second paper found p = .30 here.\", \n\"No difference was found (p = .20). A second paper found p = .30 here.\", \n\"No difference was found (p = .20). A second paper found p = .30 here.\", \n\"The other test was imprecise (p < .05). And p < .10 there.\", \n\"The other test was imprecise (p < .05). And p < .10 there.\")), row.names = c(NA, \n-6L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 10, FALSE)\n```\n\n\n::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of misinterpretations of non-significant results is high, see:\n\nAczel B, Palfi B, Szollosi A, Kovacs M, Szaszi B, Szecsi P, Zrubka M, Gronau Q, van den Bergh D, Wagenmakers E (2018). &ldquo;Quantifying Support for the Null Hypothesis in Psychology: An Empirical Investigation.&rdquo; <em>Advances in Methods and Practices in Psychological Science<\/em>, <b>1<\/b>(3), 357&ndash;366. <a href=\"https://doi.org/10.1177/2515245918773742\">doi:10.1177/2515245918773742<\/a>.\n\nMurphy S, Merz R, Reimann L, Fernández A (2025). &ldquo;Nonsignificance misinterpreted as an effect’s absence in psychology: Prevalence and temporal analyses.&rdquo; <em>Royal Society Open Science<\/em>, <b>12<\/b>(3), 242167. <a href=\"https://doi.org/10.1098/rsos.242167\">doi:10.1098/rsos.242167<\/a>.\n\nFor educational material on preventing the misinterpretation of p values, see [Improving Your Statistical Inferences](https://lakens.github.io/statistical_inferences/01-pvalue.html#sec-misconception1).\n\n:::\n"
+          "Meta-scientific research has shown nonsignificant p values are commonly misinterpreted. It is incorrect to infer that there is 'no effect', 'no difference', or that groups are 'the same' after p > 0.05.\n\nIt is possible that there is a true non-zero effect, but that the study did not detect it. Make sure your inference acknowledges that it is possible that there is a non-zero effect. It is correct to include the effect is 'not significantly' different, although this just restates that p > 0.05.\n\nMetacheck does not yet analyze automatically whether sentences which include non-significant p-values are correct, but we recommend manually checking the sentences below for possible misinterpreted non-significant p values.\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p = .20\", \"p = .30 \", \"p < .10 \"), Sentence = c(\"No difference was found (p = .20).\", \n\"A second paper found p = .30 here.\", \"And p < .10 there.\")), row.names = c(NA, \n-3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 10, FALSE)\n```\n\n\n::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of misinterpretations of non-significant results is high, see:\n\nAczel B, Palfi B, Szollosi A, Kovacs M, Szaszi B, Szecsi P, Zrubka M, Gronau Q, van den Bergh D, Wagenmakers E (2018). &ldquo;Quantifying Support for the Null Hypothesis in Psychology: An Empirical Investigation.&rdquo; <em>Advances in Methods and Practices in Psychological Science<\/em>, <b>1<\/b>(3), 357&ndash;366. <a href=\"https://doi.org/10.1177/2515245918773742\">doi:10.1177/2515245918773742<\/a>.\n\nMurphy S, Merz R, Reimann L, Fernández A (2025). &ldquo;Nonsignificance misinterpreted as an effect’s absence in psychology: Prevalence and temporal analyses.&rdquo; <em>Royal Society Open Science<\/em>, <b>12<\/b>(3), 242167. <a href=\"https://doi.org/10.1098/rsos.242167\">doi:10.1098/rsos.242167<\/a>.\n\nFor educational material on preventing the misinterpretation of p values, see [Improving Your Statistical Inferences](https://lakens.github.io/statistical_inferences/01-pvalue.html#sec-misconception1).\n\n:::\n"
         ]
       },
       {
@@ -202,7 +173,7 @@
       {
         "t": "chr",
         "v": [
-          "We found 6 non-significant p values that should be checked for appropriate interpretation."
+          "We found 3 non-significant p values that should be checked for appropriate interpretation."
         ]
       },
       {
@@ -217,14 +188,14 @@
             "t": "chr",
             "v": [
               "6c4258abe0fec3",
-              "6c4258abe0fec3"
+              "6c4258abe0fec3~2"
             ]
           },
           {
             "t": "int",
             "v": [
-              6,
-              6
+              1,
+              2
             ]
           }
         ]
@@ -237,6 +208,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -364,11 +364,12 @@ def test_paper_order_follows_paper_list(fixtures_dir) -> None:
 
 
 def test_nan_eta_is_indeterminate() -> None:
-    # U126: 0/0 implied eta; metacheck's `if (any(NA))` stops the module
+    # U126: 0/0 implied eta; metacheck 0.3's `if (any(NA))` stopped the module,
+    # 0.4 gives "indeterminate"
     out = _run("F(0, 0) = 1.00, ηp² = 0.50.")
     assert out.table["eta_coherence"].tolist() == ["indeterminate"]
     assert out.table["eta_coherence_note"].tolist() == [
-        "The implied effect size is undefined for these degrees of freedom."
+        "The F-test's degrees of freedom do not give an eta-squared."
     ]
 
 
@@ -410,11 +411,12 @@ def test_nan_eta_is_indeterminate() -> None:
             "Match under partial eta-squared formula from F and dfs.",
         ),
         # U125: the note on both eta-squared and partial eta-squared is kept
+        # (in front of the result, as metacheck 0.4 does)
         (
             "F(1, 20) = 5.00, η2 = .15; ηp2 = .20.",
             "match_under_assumptions",
-            "Match under partial eta-squared formula from F and dfs. Both eta-squared and "
-            "partial eta-squared reported; coherence evaluated only for partial eta-squared.",
+            "Both eta-squared and partial eta-squared reported; coherence evaluated only "
+            "for partial eta-squared. Match under partial eta-squared formula from F and dfs.",
         ),
     ],
 )

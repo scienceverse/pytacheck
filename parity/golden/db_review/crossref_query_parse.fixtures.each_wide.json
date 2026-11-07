@@ -12,7 +12,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -26,6 +29,24 @@
             "v": [
               147.56873
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1047-3211; 1460-2199"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://academic.oup.com/cercor/article-pdf/19/6/1239/17301694/bhn181.pdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2008; 11; 19"
+            ]
           }
         ]
       },
@@ -34,7 +55,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -48,6 +73,30 @@
             "v": [
               130.809
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0014-4819; 1432-1106"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://link.springer.com/content/pdf/10.1007/BF00248742.pdf; application/pdf; vor; text-mining; http://link.springer.com/article/10.1007/BF00248742/fulltext.html; text/html; vor; text-mining; http://link.springer.com/content/pdf/10.1007/BF00248742; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1988; 1; 1; 1988-01-01T00:00:00Z; 567993600000; tdm; 0; http://www.springer.com/tdm"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1988"
+            ]
           }
         ]
       },
@@ -56,7 +105,8 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "issued"
         ],
         "v": [
           {
@@ -70,6 +120,12 @@
             "v": [
               21.84393
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020; 3; 16"
+            ]
           }
         ]
       },
@@ -78,7 +134,40 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "issued"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.22533/at.ed.6632101038"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              17.606548
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021; 3; 2"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "DOI",
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -92,6 +181,30 @@
             "v": [
               121.98983
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1388-2457"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://api.elsevier.com/content/article/PII:S1388245709000303?httpAccept=text/xml; text/xml; vor; text-mining; https://api.elsevier.com/content/article/PII:S1388245709000303?httpAccept=text/plain; text/plain; vor; text-mining"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2009; 4; 1; 2009-04-01T00:00:00Z; 1.238544e+12; tdm; 0; https://www.elsevier.com/tdm/userlicense/1.0/; 2009; 4; 1; 2009-04-01T00:00:00Z; 1.238544e+12; tdm; 0; https://www.elsevier.com/legal/tdmrep-license"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2009; 4"
+            ]
           }
         ]
       },
@@ -100,7 +213,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -114,6 +231,30 @@
             "v": [
               100.030396
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1364-6613"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://api.elsevier.com/content/article/PII:S1364661304001846?httpAccept=text/xml; text/xml; vor; text-mining; https://api.elsevier.com/content/article/PII:S1364661304001846?httpAccept=text/plain; text/plain; vor; text-mining"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2004; 9; 1; 2004-09-01T00:00:00Z; 1093996800000; tdm; 0; https://www.elsevier.com/tdm/userlicense/1.0/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2004; 9"
+            ]
           }
         ]
       },
@@ -122,7 +263,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -136,6 +281,30 @@
             "v": [
               96.73683
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0896-6273"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://api.elsevier.com/content/article/PII:S0896627304008463?httpAccept=text/xml; text/xml; vor; text-mining; https://api.elsevier.com/content/article/PII:S0896627304008463?httpAccept=text/plain; text/plain; vor; text-mining"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2005; 1; 1; 2005-01-01T00:00:00Z; 1104537600000; tdm; 0; https://www.elsevier.com/tdm/userlicense/1.0/; 2013; 7; 17; 2013-07-17T00:00:00Z; 1374019200000; vor; 3119; https://www.elsevier.com/open-access/userlicense/1.0/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2005; 1"
+            ]
           }
         ]
       },
@@ -144,7 +313,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -158,6 +331,30 @@
             "v": [
               130.58028
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0168-0102"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://api.elsevier.com/content/article/PII:0168010295009507?httpAccept=text/xml; text/xml; vor; text-mining; https://api.elsevier.com/content/article/PII:0168010295009507?httpAccept=text/plain; text/plain; vor; text-mining"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1995; 10; 1; 1995-10-01T00:00:00Z; 812505600000; tdm; 0; https://www.elsevier.com/tdm/userlicense/1.0/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1995; 10"
+            ]
           }
         ]
       },
@@ -166,7 +363,8 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "issued"
         ],
         "v": [
           {
@@ -180,6 +378,12 @@
             "v": [
               100.602165
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1993; 7; 29"
+            ]
           }
         ]
       },
@@ -188,7 +392,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -202,6 +410,30 @@
             "v": [
               71.0658
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1948-5506; 1948-5514"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://journals.sagepub.com/doi/pdf/10.1177/1948550617697177; application/pdf; vor; text-mining; https://journals.sagepub.com/doi/full-xml/10.1177/1948550617697177; application/xml; vor; text-mining; https://journals.sagepub.com/doi/pdf/10.1177/1948550617697177; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2017; 5; 1; 2017-05-01T00:00:00Z; 1493596800000; tdm; 0; https://journals.sagepub.com/page/policies/text-and-data-mining-license"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2017; 5"
+            ]
           }
         ]
       },
@@ -210,7 +442,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -224,6 +460,30 @@
             "v": [
               114.67317
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2833-373X"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://www.tandfonline.com/doi/pdf/10.1080/2833373X.2024.2376046; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024; 7; 22; 2024-07-22T00:00:00Z; 1721606400000; vor; 0; http://creativecommons.org/licenses/by/4.0/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024; 7; 22"
+            ]
           }
         ]
       },
@@ -232,7 +492,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -246,6 +510,30 @@
             "v": [
               76.77081
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0962-8436; 1471-2970"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://royalsocietypublishing.org/doi/pdf/10.1098/rstb.2008.0156; application/pdf; vor; text-mining; https://royalsocietypublishing.org/doi/full-xml/10.1098/rstb.2008.0156; application/xml; vor; text-mining; https://royalsocietypublishing.org/doi/pdf/10.1098/rstb.2008.0156; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2008; 10; 1; 2008-10-01T00:00:00Z; 1222819200000; tdm; 0; https://royalsociety.org/journals/ethics-policies/data-sharing-mining/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2008; 10"
+            ]
           }
         ]
       },
@@ -254,7 +542,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -268,6 +560,30 @@
             "v": [
               115.67183
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0014-4819; 1432-1106"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://link.springer.com/content/pdf/10.1007/BF00230027.pdf; application/pdf; vor; text-mining; http://link.springer.com/article/10.1007/BF00230027/fulltext.html; text/html; vor; text-mining; http://link.springer.com/content/pdf/10.1007/BF00230027; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1992; 10; 1; 1992-10-01T00:00:00Z; 717897600000; tdm; 0; http://www.springer.com/tdm"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1992; 10"
+            ]
           }
         ]
       },
@@ -276,7 +592,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -290,6 +610,30 @@
             "v": [
               124.133194
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956-7976; 1467-9280"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://journals.sagepub.com/doi/pdf/10.1177/0956797614520714; application/pdf; vor; text-mining; https://journals.sagepub.com/doi/full-xml/10.1177/0956797614520714; application/xml; vor; text-mining; https://journals.sagepub.com/doi/pdf/10.1177/0956797614520714; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2014; 2; 18; 2014-02-18T00:00:00Z; 1392681600000; tdm; 0; https://journals.sagepub.com/page/policies/text-and-data-mining-license"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2014; 2; 18"
+            ]
           }
         ]
       },
@@ -298,7 +642,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -312,6 +660,30 @@
             "v": [
               113.33658
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0896-6273"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://api.elsevier.com/content/article/PII:S0896627303008389?httpAccept=text/xml; text/xml; vor; text-mining; https://api.elsevier.com/content/article/PII:S0896627303008389?httpAccept=text/plain; text/plain; vor; text-mining"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2004; 1; 1; 2004-01-01T00:00:00Z; 1072915200000; tdm; 0; https://www.elsevier.com/tdm/userlicense/1.0/; 2013; 7; 17; 2013-07-17T00:00:00Z; 1374019200000; vor; 3485; https://www.elsevier.com/open-access/userlicense/1.0/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2004; 1"
+            ]
           }
         ]
       },
@@ -320,7 +692,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -334,6 +710,30 @@
             "v": [
               136.47302
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0953-816X; 1460-9568"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://api.wiley.com/onlinelibrary/tdm/v1/articles/10.1046%2Fj.1460-9568.2001.01385.x; unspecified; vor; text-mining; http://onlinelibrary.wiley.com/wol1/doi/10.1046/j.1460-9568.2001.01385.x/fullpdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2015; 9; 1; 2015-09-01T00:00:00Z; 1441065600000; tdm; 5356; http://doi.wiley.com/10.1002/tdm_license_1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2001; 1"
+            ]
           }
         ]
       },
@@ -342,7 +742,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -356,6 +759,24 @@
             "v": [
               130.7778
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1047-3211; 1460-2199"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://academic.oup.com/cercor/article-pdf/20/9/2252/831476/bhp291.pdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2010; 1; 4"
+            ]
           }
         ]
       },
@@ -364,7 +785,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -378,6 +802,24 @@
             "v": [
               169.04784
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1047-3211; 1460-2199"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://academic.oup.com/cercor/article-pdf/18/9/2046/1016302/bhm239.pdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2007; 12; 28"
+            ]
           }
         ]
       },
@@ -386,7 +828,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -400,6 +845,24 @@
             "v": [
               105.86002
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0022-3077; 1522-1598"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://www.physiology.org/doi/pdf/10.1152/jn.1998.80.6.2870; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1998; 12; 1"
+            ]
           }
         ]
       },
@@ -408,7 +871,12 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "funder",
+          "issued"
         ],
         "v": [
           {
@@ -422,6 +890,36 @@
             "v": [
               62.074394
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2515-2459; 2515-2467"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://journals.sagepub.com/doi/pdf/10.1177/2515245918770963; application/pdf; vor; text-mining; https://journals.sagepub.com/doi/full-xml/10.1177/2515245918770963; application/xml; vor; text-mining; https://journals.sagepub.com/doi/pdf/10.1177/2515245918770963; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018; 6; 1; 2018-06-01T00:00:00Z; 1527811200000; tdm; 0; https://journals.sagepub.com/page/policies/text-and-data-mining-license"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.13039/501100003246; Nederlandse Organisatie voor Wetenschappelijk Onderzoek; publisher; 452-17-013; 452-17-013; 10.13039/501100003246; DOI; publisher"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018; 6"
+            ]
           }
         ]
       },
@@ -430,7 +928,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -444,6 +945,24 @@
             "v": [
               80.36001
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0962-8452; 1471-2954"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://royalsocietypublishing.org/doi/pdf/10.1098/rspb.2002.2034; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2002; 7; 7"
+            ]
           }
         ]
       },
@@ -452,7 +971,8 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "issued"
         ],
         "v": [
           {
@@ -466,6 +986,12 @@
             "v": [
               70.38829
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020; 8; 19"
+            ]
           }
         ]
       },
@@ -474,7 +1000,12 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "funder",
+          "issued"
         ],
         "v": [
           {
@@ -488,6 +1019,36 @@
             "v": [
               75.73313
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2515-2459; 2515-2467"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://journals.sagepub.com/doi/pdf/10.1177/2515245918770963; application/pdf; vor; text-mining; https://journals.sagepub.com/doi/full-xml/10.1177/2515245918770963; application/xml; vor; text-mining; https://journals.sagepub.com/doi/pdf/10.1177/2515245918770963; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018; 6; 1; 2018-06-01T00:00:00Z; 1527811200000; tdm; 0; https://journals.sagepub.com/page/policies/text-and-data-mining-license"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.13039/501100003246; Nederlandse Organisatie voor Wetenschappelijk Onderzoek; publisher; 452-17-013; 452-17-013; 10.13039/501100003246; DOI; publisher"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018; 6"
+            ]
           }
         ]
       },
@@ -496,7 +1057,12 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "funder",
+          "issued"
         ],
         "v": [
           {
@@ -510,6 +1076,36 @@
             "v": [
               64.75775
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2515-2459; 2515-2467"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://journals.sagepub.com/doi/pdf/10.1177/2515245918770963; application/pdf; vor; text-mining; https://journals.sagepub.com/doi/full-xml/10.1177/2515245918770963; application/xml; vor; text-mining; https://journals.sagepub.com/doi/pdf/10.1177/2515245918770963; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018; 6; 1; 2018-06-01T00:00:00Z; 1527811200000; tdm; 0; https://journals.sagepub.com/page/policies/text-and-data-mining-license"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.13039/501100003246; Nederlandse Organisatie voor Wetenschappelijk Onderzoek; publisher; 452-17-013; 452-17-013; 10.13039/501100003246; DOI; publisher"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018; 6"
+            ]
           }
         ]
       },
@@ -518,7 +1114,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -532,6 +1131,24 @@
             "v": [
               100.12454
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0006-8950; 1460-2156"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://academic.oup.com/brain/article-pdf/119/2/593/1084858/119-2-593.pdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1996"
+            ]
           }
         ]
       },
@@ -540,7 +1157,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -554,6 +1174,24 @@
             "v": [
               89.01723
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0898-929X; 1530-8898"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://direct.mit.edu/jocn/article-pdf/21/7/1229/1937789/jocn.2009.21189.pdf; application/pdf; vor; syndication; http://direct.mit.edu/jocn/article-pdf/21/7/1229/1937789/jocn.2009.21189.pdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2009; 7; 1"
+            ]
           }
         ]
       },
@@ -562,7 +1200,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -576,6 +1217,24 @@
             "v": [
               16.812752
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1079-5006; 1758-535X"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://academic.oup.com/biomedgerontology/article-pdf/57/8/B291/9732938/B291.pdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2002; 8; 1"
+            ]
           }
         ]
       },
@@ -584,7 +1243,8 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "issued"
         ],
         "v": [
           {
@@ -598,6 +1258,12 @@
             "v": [
               72.99166
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1993; 7; 29"
+            ]
           }
         ]
       },
@@ -606,7 +1272,8 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "issued"
         ],
         "v": [
           {
@@ -620,6 +1287,12 @@
             "v": [
               28.518091
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2013; 8; 28"
+            ]
           }
         ]
       },
@@ -628,7 +1301,8 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "issued"
         ],
         "v": [
           {
@@ -642,6 +1316,12 @@
             "v": [
               65.53186
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1993; 7; 29"
+            ]
           }
         ]
       },
@@ -650,7 +1330,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -664,6 +1347,24 @@
             "v": [
               111.11768
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0006-8950; 1460-2156"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://academic.oup.com/brain/article-pdf/110/3/747/1191525/110-3-747.pdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1987"
+            ]
           }
         ]
       },
@@ -672,7 +1373,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -686,6 +1390,24 @@
             "v": [
               120.075745
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1935-990X; 0003-066X"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://psycnet.apa.org/journals/amp/54/6/408.pdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1999; 6"
+            ]
           }
         ]
       },
@@ -694,7 +1416,8 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "issued"
         ],
         "v": [
           {
@@ -708,6 +1431,12 @@
             "v": [
               70.38829
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020; 8; 19"
+            ]
           }
         ]
       },
@@ -716,7 +1445,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -730,6 +1463,30 @@
             "v": [
               130.2286
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0926-6410"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://api.elsevier.com/content/article/PII:S0926641005001643?httpAccept=text/xml; text/xml; vor; text-mining; https://api.elsevier.com/content/article/PII:S0926641005001643?httpAccept=text/plain; text/plain; vor; text-mining"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2005; 9; 1; 2005-09-01T00:00:00Z; 1125532800000; tdm; 0; https://www.elsevier.com/tdm/userlicense/1.0/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2005; 9"
+            ]
           }
         ]
       },
@@ -738,7 +1495,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -752,6 +1513,30 @@
             "v": [
               43.307137
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0962-8452; 1471-2954"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://royalsocietypublishing.org/doi/pdf/10.1098/rspb.2004.3003; application/pdf; vor; text-mining; https://royalsocietypublishing.org/doi/full-xml/10.1098/rspb.2004.3003; application/xml; vor; text-mining; https://royalsocietypublishing.org/rspb/article-pdf/272/1566/919/584458/rspb.2004.3003.pdf; application/pdf; vor; syndication; https://royalsocietypublishing.org/rspb/article-pdf/272/1566/919/584458/rspb.2004.3003.pdf; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2005; 5; 7; 2005-05-07T00:00:00Z; 1.115424e+12; tdm; 0; https://royalsociety.org/journals/ethics-policies/data-sharing-mining/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2005; 5; 7"
+            ]
           }
         ]
       },
@@ -760,7 +1545,10 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "issued"
         ],
         "v": [
           {
@@ -774,6 +1562,24 @@
             "v": [
               116.52006
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0962-8452; 1471-2954"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://royalsocietypublishing.org/doi/pdf/10.1098/rspb.1998.0266; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1998; 1; 7"
+            ]
           }
         ]
       },
@@ -812,7 +1618,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -826,6 +1636,30 @@
             "v": [
               118.05617
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2833-373X"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://www.tandfonline.com/doi/pdf/10.1080/2833373X.2024.2376046; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024; 7; 22; 2024-07-22T00:00:00Z; 1721606400000; vor; 0; http://creativecommons.org/licenses/by/4.0/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024; 7; 22"
+            ]
           }
         ]
       },
@@ -834,7 +1668,11 @@
         "nrow": 1,
         "names": [
           "DOI",
-          "score"
+          "score",
+          "ISSN",
+          "link",
+          "license",
+          "issued"
         ],
         "v": [
           {
@@ -848,11 +1686,35 @@
             "v": [
               47.566208
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0140-525X; 1469-1825"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/S0140525X13002793; unspecified; vor; similarity-checking"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2014; 4; 29; 2014-04-29T00:00:00Z; 1398729600000; unspecified; 28; https://www.cambridge.org/core/terms"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2014; 4"
+            ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -289,7 +289,15 @@ def test_ap_schema() -> None:
         }
     )
     out = pr.ap_schema(table)
-    assert list(out.columns) == ["template_name", "id", "link", "title", "sample_size"]
+    # a column aspredicted_info() did not give (an older cached result) is NA
+    assert list(out.columns) == [
+        "template_name", "id", "link", "title", "date_created", "date_registered",
+        "existing_data_explanation", "research_questions", "design_dependent_variables",
+        "study_design_overview", "statistical_tests", "outliers_and_exclusions",
+        "exploratory_analyses", "sample_size", "additional_comments",
+    ]  # fmt: skip
+    assert out["date_registered"].isna().tolist() == [True, True]
+    assert out["sample_size"].tolist() == ["10", "20"]
     assert out["id"].tolist() == ["nq4xa3", "by8i8v"]
     assert pr.frame_schema(out)["title"] == "One\n\nNA"
     assert pr.ap_schema(table.iloc[0:0]).shape == (0, 0)

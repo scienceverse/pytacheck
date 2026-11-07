@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 2,
+    "nrow": 5,
     "names": [
       "folder",
       "figshare_id",
@@ -25,6 +25,9 @@
         "t": "chr",
         "v": [
           "figshare_700002",
+          "figshare_700002",
+          "figshare_700002",
+          "figshare_700002",
           "figshare_700002"
         ]
       },
@@ -32,47 +35,68 @@
         "t": "chr",
         "v": [
           "700002",
+          "700002",
+          "700002",
+          "700002",
           "700002"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "700201",
           "700202",
+          "700203",
+          "700204",
           "700205"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "a.bin",
           "b.bin",
+          "c.bin",
+          "d.bin",
           "e.csv"
         ]
       },
       {
         "t": "chr",
         "v": [
+          null,
           "b.bin",
+          null,
+          null,
           "e.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          41943040,
+          null,
+          62914560,
+          62914560,
+          8
         ]
       },
       {
         "t": "dbl",
         "v": [
           null,
-          8
-        ]
-      },
-      {
-        "t": "dbl",
-        "v": [
           5,
+          null,
+          null,
           8
         ]
       },
       {
         "t": "chr",
         "v": [
+          null,
+          null,
+          null,
           null,
           null
         ]
@@ -81,20 +105,29 @@
         "t": "lgl",
         "v": [
           null,
+          null,
+          null,
+          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
+          "https://ndownloader.figshare.com/files/700201",
           "https://ndownloader.figshare.com/files/700202",
+          "https://ndownloader.figshare.com/files/700203",
+          "https://ndownloader.figshare.com/files/700204",
           "https://ndownloader.figshare.com/files/700205"
         ]
       },
       {
         "t": "lgl",
         "v": [
+          false,
           true,
+          false,
+          false,
           true
         ]
       },
@@ -102,11 +135,14 @@
         "t": "int",
         "v": [
           null,
+          null,
+          null,
+          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -3,7 +3,8 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "Download failed or resulted in an empty file: <tempdir>/pytacheck-parity-cache/.metacheck_repo_cache/researchbox.org_4377/archive.zip"
+    "Repository https://github.com/Lak- was not listed: links to a GitHub account, not to a specific repository.",
+    "Could not download https://researchbox.org/4377: download failed or resulted in an empty file (HTTP 404)"
   ],
   "value": {
     "t": "module_output",
@@ -21,6 +22,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -113,11 +115,17 @@
       {
         "t": "chr",
         "v": [
-          "Double-check permissions on repositories with no detectable files.",
+          "#### Repositories that could not be checked",
+          "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
+          "- https://osf.io/48ncu: An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
+          "- https://osf.io/5tbm9: An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
+          "- https://osf.io/629bx: An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
+          "- https://github.com/Lak-: links to a GitHub account, not to a specific repository",
+          "- https://researchbox.org/4377: ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)",
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/48ncu' target='_blank'>osf.io/48ncu<\/a>\", \n\"<a href='https://osf.io/5tbm9' target='_blank'>osf.io/5tbm9<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://researchbox.org/4377' target='_blank'>researchbox.org/4377<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\", \"researchbox\"), Error = c(\"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n\"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n\"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n\"no applicable method for 'filter' applied to an object of class \\\"NULL\\\"\"\n), \"All Files\" = c(0L, 0L, 0L, 0L), \"Data Files\" = c(0L, 0L, \n0L, 0L), \"Code Files\" = c(0L, 0L, 0L, 0L), READMEs = c(0L, 0L, \n0L, 0L), Archives = c(0L, 0L, 0L, 0L)), row.names = c(NA, -4L\n), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/48ncu' target='_blank'>osf.io/48ncu<\/a>\", \n\"<a href='https://osf.io/5tbm9' target='_blank'>osf.io/5tbm9<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://github.com/Lak-' target='_blank'>github.com/Lak-<\/a>\", \n\"<a href='https://researchbox.org/4377' target='_blank'>researchbox.org/4377<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\", \"github\", \"researchbox\"), \n    Error = c(\"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n    \"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n    \"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n    \"links to a GitHub account, not to a specific repository\", \n    \"ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)\"\n    ), \"All Files\" = c(0L, 0L, 0L, 0L, 0L), \"Data Files\" = c(0L, \n    0L, 0L, 0L, 0L), \"Code Files\" = c(0L, 0L, 0L, 0L, 0L), READMEs = c(0L, \n    0L, 0L, 0L, 0L), Archives = c(0L, 0L, 0L, 0L, 0L)), row.names = c(NA, \n-5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "",
-          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document."
+          "README files were found in all repositories."
         ]
       },
       {
@@ -129,7 +137,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 4 empty repositories.\n-  We found 0 files in 4 repositories.\n-  We found 0 README files and 4 repositories without READMEs."
+          "\n-  We could not check 5 repositories: https://osf.io/48ncu (An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*); https://osf.io/5tbm9 (An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*); https://osf.io/629bx (An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*); https://github.com/Lak- (links to a GitHub account, not to a specific repository); https://researchbox.org/4377 (ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)).\n-  We found 0 files in 5 repositories.\n-  We found 0 README files and 0 repositories without READMEs."
         ]
       },
       {
@@ -138,6 +146,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -157,7 +166,13 @@
           {
             "t": "int",
             "v": [
-              4
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
             ]
           },
           {
@@ -212,7 +227,7 @@
       },
       {
         "t": "df",
-        "nrow": 4,
+        "nrow": 5,
         "names": [
           "repo_url",
           "repo_type",
@@ -225,6 +240,7 @@
               "https://osf.io/48ncu",
               "https://osf.io/5tbm9",
               "https://osf.io/629bx",
+              "https://github.com/Lak-",
               "https://researchbox.org/4377"
             ]
           },
@@ -234,6 +250,7 @@
               "osf",
               "osf",
               "osf",
+              "github",
               "researchbox"
             ]
           },
@@ -243,7 +260,8 @@
               "An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
               "An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
               "An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
-              "no applicable method for 'filter' applied to an object of class \"NULL\""
+              "links to a GitHub account, not to a specific repository",
+              "ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)"
             ]
           }
         ]
@@ -278,12 +296,57 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "repo_url",
           "doi",
           "license",
           "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/Lak-"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
         ],
         "v": [
           {
@@ -305,15 +368,6 @@
         ]
       },
       {
-        "t": "null"
-      },
-      {
-        "t": "lgl",
-        "v": [
-          false
-        ]
-      },
-      {
         "t": "dbl",
         "v": [
           0
@@ -321,6 +375,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

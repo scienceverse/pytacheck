@@ -584,13 +584,6 @@ def _label_pairs(labs: Any) -> list[tuple[Any, Any]]:
     return [tuple(p) for p in labs]  # type: ignore[misc]
 
 
-def _is_value_labels(x: Any) -> bool:
-    """Is *x* a haven ``labels`` attribute (a mapping or ``(label, code)`` pairs)?"""
-    if isinstance(x, Mapping | pd.Series):
-        return True
-    return isinstance(x, list) and bool(x) and all(isinstance(p, tuple) and len(p) == 2 for p in x)
-
-
 def _column_attrs(col: Any, attrs: Mapping[str, Any] | None = None) -> Mapping[str, Any]:
     if attrs is not None:
         return attrs
@@ -965,18 +958,6 @@ def _extract_structured_codebook(
     )
 
 
-def _attr(attrs: Mapping[str, Any], which: str) -> Any:
-    """R ``attr(x, which)``: exact name first, else a unique partial match.
-
-    So ``attr(x, "label")`` of a column with value ``labels`` but no variable
-    label returns the value labels (metacheck then uses the first code).
-    """
-    if which in attrs:
-        return attrs[which]
-    hits = [k for k in attrs if isinstance(k, str) and k.startswith(which)]
-    return attrs[hits[0]] if len(hits) == 1 else None
-
-
 def _col_attrs(df: pd.DataFrame, j: int) -> Mapping[str, Any]:
     """The R attributes of column *j* (``df.attrs["col_attrs"]`` or ``Series.attrs``)."""
     from metacheck.datacheck._colattrs import col_attrs_at
@@ -1008,8 +989,10 @@ def _extract_haven_labels(
     mvs: list[str | None] = []
     for nm in names:
         a = _col_attrs(df, first_j[nm])
-        lbl = _attr(a, "label")
-        lv = [p[1] for p in _label_pairs(lbl)] if _is_value_labels(lbl) else _vec(lbl)
+        # exact: attr(x, "label") partially matches "labels", so a column with value
+        # labels but no variable label got its first code as label (U145)
+        lbl = a.get("label")
+        lv = _vec(lbl)
         labels.append(None if lbl is None or not lv else trimws(_chr(lv[0])))
         res = _haven_value_labels(None, a)
         vls.append(res["value_labels"])

@@ -22,9 +22,10 @@ from metacheck.io.bibr_convert import (
     convert_bibr,
     format_bib_authors,
 )
-from tests.io.conftest import api, json_response
+from tests.io.conftest import GROBID_URL, api, json_response
 
 SCIVRS_URL = "https://platform.metacheck.app"
+SURF_URL = "https://metacheckserve.metacheck.src.surf-hosted.nl/api"
 SELFHOSTED_URL = "http://localhost:8000"
 HOSTED_URL = "https://bibr.example"
 TOKEN = "bibr_pat_0123456789abcdef"  # a made-up personal token
@@ -110,6 +111,8 @@ class Recorder:
         self.status_url = status_url
         self.paper = paper
         self.polls = 0
+        self.surf_health: dict[str, Any] = {"status": "ok", "bibr": True}
+        self.surf_status = 200
 
     @property
     def posts(self) -> list[str]:
@@ -124,6 +127,14 @@ class Recorder:
             self.fields = _form_fields(request)
         if path == "/ready":
             return httpx.Response(200, json={"status": "ready"})
+        if path == "/api/health":  # metacheck's API on SURF Research Cloud
+            return httpx.Response(200, json=self.surf_health)
+        if path == "/api/convert":
+            if self.surf_status != 200:
+                return httpx.Response(self.surf_status, json={"error": "bibr failed on this PDF"})
+            return httpx.Response(
+                200, content=b'{"paper_id":"input","source":{"file_name":"input.pdf"}}'
+            )
         if "/papers/" in path:
             return self._rc(request, path)
         if url.endswith("/jobs"):
@@ -297,10 +308,18 @@ def test_scivrs_job_failure_and_timeout(
 def test_auto_detects_backend(
     server: Recorder, pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    # no key set -> selfhosted (no auth needed)
+    # no key and no address -> metacheck's API on SURF Research Cloud
     monkeypatch.setenv("SCIVRS_API_KEY", "")
     convert_bibr(pdf, tmp_path)
+    assert server.urls[-1] == f"{SURF_URL}/convert"
+
+    # an address -> selfhosted (no auth needed), from the argument or BIBR_API_URL
+    convert_bibr(pdf, tmp_path, api_url=SELFHOSTED_URL)
     assert server.urls[-1].startswith(SELFHOSTED_URL)
+    monkeypatch.setenv("BIBR_API_URL", SELFHOSTED_URL)
+    convert_bibr(pdf, tmp_path)
+    assert server.urls[-1].startswith(SELFHOSTED_URL)
+    monkeypatch.delenv("BIBR_API_URL")
 
     # SCIVRS_API_KEY set -> scivrs
     monkeypatch.setenv("SCIVRS_API_KEY", "sv_test")
@@ -311,6 +330,80 @@ def test_auto_detects_backend(
     monkeypatch.setenv("SCIVRS_API_KEY", "")
     convert_bibr(pdf, tmp_path, api_key="sv_explicit")
     assert server.urls[-1].startswith(SCIVRS_URL)
+
+
+# the "surf" backend: metacheck's API on SURF Research Cloud -------------------------------
+
+
+def test_surf_converts_a_pdf_and_puts_the_file_name_back(
+    server: Recorder, pdf: Path, tmp_path: Path
+) -> None:
+    out = convert_bibr(pdf, tmp_path, backend="surf")
+    assert server.urls == [f"{SURF_URL}/convert"]
+    assert out == f"{tmp_path}/to_err_is_human.json"
+    # the server saves every upload as input.pdf
+    assert json.loads(Path(out).read_bytes())["source"]["file_name"] == "to_err_is_human.pdf"
+    assert "authorization" not in server.headers[0]
+
+
+def test_surf_address_from_the_environment(
+    server: Recorder, pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("SURF_API_URL", "https://surf.example/api")
+    convert_bibr(pdf, tmp_path, backend="surf")
+    assert server.urls[-1] == "https://surf.example/api/convert"
+    monkeypatch.setenv("SURF_API_URL", "")  # empty is unset
+    convert_bibr(pdf, tmp_path, backend="surf")
+    assert server.urls[-1] == f"{SURF_URL}/convert"
+
+
+def test_surf_converts_only_pdf_files(server: Recorder, tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match=r"converts only PDF files, not to_err_is_human.docx"):
+        convert_bibr(pc.demofile("docx"), tmp_path, backend="surf")
+    assert server.urls == []
+
+
+def test_surf_ignores_figures_and_pages_with_a_warning(
+    server: Recorder, pdf: Path, tmp_path: Path
+) -> None:
+    with pytest.warns(UserWarning, match="converts whole PDFs without figures"):
+        convert_bibr(pdf, tmp_path, backend="surf", include_figures=True)
+    with pytest.warns(UserWarning, match="include_figures, start_page and end_page"):
+        convert_bibr(pdf, tmp_path, backend="surf", start_page=2)
+    assert server.fields == {}
+
+
+def test_surf_failure_names_the_status_and_the_reason(pdf: Path, tmp_path: Path) -> None:
+    rec = Recorder()
+    rec.surf_status = 422
+    with _serve(rec):
+        with pytest.raises(
+            RuntimeError,
+            match=r"The SURF API could not convert to_err_is_human.pdf \(HTTP 422\): bibr failed",
+        ):
+            convert_bibr(pdf, tmp_path, backend="surf")
+
+
+def test_surf_isalive() -> None:
+    from metacheck.io.bibr_convert import _surf_isalive
+
+    def health(body: Any, status: int = 200) -> Any:
+        return api(routes={("GET", f"{SURF_URL}/health"): json_response(body, status)})
+
+    with health({"status": "ok", "bibr": True}):
+        assert _surf_isalive() is True
+    # its own Grobid converts when bibr is not ready
+    with health({"status": "ok", "bibr": False, "grobid": "local"}):
+        assert _surf_isalive() is True
+    with health({"status": "ok", "bibr": False}):
+        assert _surf_isalive(error=False) is False
+        with pytest.raises(RuntimeError, match="its bibr is not ready and it has no GROBID"):
+            _surf_isalive()
+    with health({"status": "starting", "bibr": True}):
+        assert _surf_isalive(error=False) is False
+    with health({"status": "ok"}, status=503):
+        with pytest.raises(RuntimeError, match=r"cannot convert PDFs at the moment \(HTTP 503\)"):
+            _surf_isalive()
 
 
 # the "bibr" backend: bibr serve RC's job API, also bibr-gate's ------------------------------
@@ -1018,7 +1111,7 @@ def test_convert_uses_the_bibr_url_without_probing(
         raise AssertionError("BIBR_URL is used as given: no server list, no probe")
 
     monkeypatch.setattr(conv, "_online", fail)
-    monkeypatch.setattr(conv, "_server_list", fail)
+    monkeypatch.setattr(conv, "_convert_servers", fail)
     monkeypatch.setenv("BIBR_URL", HOSTED_URL)
     monkeypatch.setenv("BIBR_API_KEY", TOKEN)
     for method in ("auto", "bibr"):
@@ -1064,11 +1157,14 @@ def test_convert_finds_a_local_bibr_serve(
     pdf: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """An anonymous RC /ready says only {"status": "ready"}: enough to be found."""
+    import metacheck.io.convert as conv
     from metacheck.io.convert import convert
 
+    monkeypatch.setattr(conv, "_BIBR_WORKING", True)  # convert() asks for a bibr only then
     monkeypatch.delenv("SCIVRS_API_KEY", raising=False)
     rec = Recorder()
     routes = {
+        ("GET", f"{GROBID_URL}/api/isalive"): lambda _r: httpx.Response(503),  # TU/e is down
         ("GET", f"{SELFHOSTED_URL}/ready"): rec,
         ("POST", f"{SELFHOSTED_URL}/papers/extract"): rec,
     }
@@ -1083,11 +1179,14 @@ def test_convert_local_bibr_serve_is_not_the_platform(
 ) -> None:
     """A platform user (SCIVRS_API_KEY) with a bibr serve on this machine: the server that
     was found takes the synchronous request, not the platform's /jobs queue (405 on bibr)."""
+    import metacheck.io.convert as conv
     from metacheck.io.convert import convert
 
+    monkeypatch.setattr(conv, "_BIBR_WORKING", True)
     monkeypatch.setenv("SCIVRS_API_KEY", "sv_test")
     rec = Recorder()
     routes = {
+        ("GET", f"{GROBID_URL}/api/isalive"): lambda _r: httpx.Response(503),  # TU/e is down
         ("GET", f"{SELFHOSTED_URL}/ready"): rec,
         ("POST", f"{SELFHOSTED_URL}/papers/extract"): rec,
     }
@@ -1101,7 +1200,8 @@ def test_convert_local_bibr_serve_is_not_the_platform(
     local = re.compile(r"http://localhost:8000/.*")
     with api("apis", routes={("GET", local): rec, ("POST", local): rec}):
         convert(pdf, tmp_path, backend="bibr")
-    assert rec.urls[1] == f"{SELFHOSTED_URL}/papers/jobs"
+    # (a backend given is used as given: no probing of the server first)
+    assert rec.urls[0] == f"{SELFHOSTED_URL}/papers/jobs"
 
 
 def test_convert_ignores_bibr_api_url(
@@ -1109,12 +1209,15 @@ def test_convert_ignores_bibr_api_url(
 ) -> None:
     """BIBR_API_URL (set for bibr's own notebooks) must not steer convert(): a LAN address
     with a key would be refused, and the message would name BIBR_URL."""
+    import metacheck.io.convert as conv
     from metacheck.io.convert import convert
 
+    monkeypatch.setattr(conv, "_BIBR_WORKING", True)
     monkeypatch.setenv("BIBR_API_URL", "http://192.168.1.20:8000")
     monkeypatch.setenv("BIBR_API_KEY", TOKEN)
     rec = Recorder()
     routes = {
+        ("GET", f"{GROBID_URL}/api/isalive"): lambda _r: httpx.Response(503),  # TU/e is down
         ("GET", f"{SELFHOSTED_URL}/ready"): rec,
         ("POST", f"{SELFHOSTED_URL}/papers/extract"): rec,
     }

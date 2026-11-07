@@ -272,7 +272,7 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = NA_character_, \"% Comments\" = \"50%\", \n    \"Missing Files\" = 0L, \"Absolute Paths\" = 0L, \"Code Between Libraries\" = NA_integer_), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = \"good.R\", \"% Comments\" = \"50%\", \n    \"Missing Files\" = 0L, \"Absolute Paths\" = 0L, \"Code Between Libraries\" = NA_integer_), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",
@@ -285,7 +285,7 @@
           "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
           "",
           "#### Package Installation (install.packages)",
-          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, or a list of them: an `renv.lock`/`DESCRIPTION` for R, a `requirements.txt` for Python). No `install.packages()` calls were found in any of the code files.",
           "",
           "#### Libraries / Imports",
           "Best programming practice is to load all required libraries/imports in one block near the top of the code. In all code files, libraries/imports were loaded in one block.",
@@ -308,7 +308,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 1 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code file.\n-  All your code files had comments.\n-  All files loaded in the code were present in the repository.\n-  No absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  All libraries/imports were loaded in one block.\n-  No packages/libraries were detected in the code.\n-  A pinned R/package environment was found (renv.lock).\n-  No parsing issues of R-type files were found."
+          "\n-  We found 1 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code file.\n-  All your code files had comments.\n-  All libraries/imports were loaded in one block.\n-  A pinned R/package environment was found (renv.lock)."
         ]
       },
       {
@@ -414,6 +414,10 @@
           "renv_files",
           "renv_packages",
           "sessioninfo_files",
+          "session_packages",
+          "pin_dates",
+          "python_files",
+          "python_pinned",
           "file_location"
         ],
         "v": [
@@ -448,9 +452,14 @@
               "file_name",
               "package",
               "version",
-              "source"
+              "source",
+              "remote"
             ],
             "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
               {
                 "t": "chr",
                 "v": []
@@ -474,6 +483,67 @@
             "v": []
           },
           {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source",
+              "remote"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "mechanism",
+              "date"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
             "t": "chr",
             "v": [
               "<ROOT>/tests/mod_code/fixtures/review/local_clean/renv.lock"
@@ -486,6 +556,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

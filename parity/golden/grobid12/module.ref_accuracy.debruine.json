@@ -40,19 +40,19 @@
       {
         "t": "chr",
         "v": [
-          "We found no bib_match entries. You may need to add them with `add_bib_match()`."
+          "The references were not looked up at Crossref, so their accuracy was not checked."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "error"
+          "na"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We found no bib_match entries. You may need to add them with `add_bib_match()`."
+          "The references were not looked up at Crossref, so their accuracy was not checked."
         ]
       },
       {
@@ -75,6 +75,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

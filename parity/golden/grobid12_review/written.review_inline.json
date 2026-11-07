@@ -57,7 +57,7 @@
       "      \"formatted\": null",
       "    },",
       "    {",
-      "      \"text\": \"Before after the note, with \\\"quotes\\\", a back\\\\slash, a tab x and DEL  and NEL   and LS   and 😀 emoji (Doe, 2019).\",",
+      "      \"text\": \"Before after the note, with \\\"quotes\\\", a back\\\\slash, a tab x and DEL  and NEL and LS and 😀 emoji (Doe, 2019).\",",
       "      \"text_id\": 2,",
       "      \"paragraph_id\": 2,",
       "      \"section_id\": 2,",
@@ -81,7 +81,7 @@
       "      \"formatted\": null",
       "    },",
       "    {",
-      "      \"text\": \"Figure1 Nested outer.\",",
+      "      \"text\": \"Figure 1 Nested outer.\",",
       "      \"text_id\": 5,",
       "      \"paragraph_id\": 5,",
       "      \"section_id\": null,",
@@ -193,7 +193,7 @@
       "      \"section_id\": null,",
       "      \"text_id\": 5,",
       "      \"image\": null,",
-      "      \"caption\": \"Figure1 Nested outer.\",",
+      "      \"caption\": \"Figure 1 Nested outer.\",",
       "      \"page_number\": null",
       "    },",
       "    {",
@@ -269,6 +269,6 @@
       "}"
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

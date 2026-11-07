@@ -7,7 +7,9 @@ are in ``parity/cases/codecheck_review.yaml``.
 
 from __future__ import annotations
 
+import bz2
 import gzip
+import lzma
 import math
 import shutil
 from pathlib import Path
@@ -97,16 +99,35 @@ def test_notebook_file_with_bom() -> None:
 
 
 # ---------------------------------------------------------------------------
-# code_read(): a compressed UTF-16 file is decompressed before re-encoding
+# code_read(): UTF-16 is re-encoded, compressed data is not code
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(("bom", "codec"), [(b"\xff\xfe", "utf-16-le"), (b"\xfe\xff", "utf-16-be")])
-def test_code_read_gzip_utf16(tmp_path: Path, bom: bytes, codec: str) -> None:
+def test_code_read_utf16(tmp_path: Path, bom: bytes, codec: str) -> None:
     text = "x <- 1\r\ny <- 'caf\u00e9'\r\n# \u65e5\u672c\r\n"
     path = tmp_path / "a.R"
-    path.write_bytes(gzip.compress(bom + text.encode(codec)))
+    path.write_bytes(bom + text.encode(codec))
     assert core.code_read(str(path)) == ["x <- 1", "y <- 'caf\u00e9'", "# \u65e5\u672c"]
+
+
+@pytest.mark.parametrize(
+    ("data", "kind"),
+    [
+        (gzip.compress(b"x <- 1\n", mtime=0), "compressed with gzip (as R saves data)"),
+        (bz2.compress(b"x <- 1\n"), "compressed with bzip2"),
+        (lzma.compress(b"x <- 1\n"), "compressed with xz"),
+        (b"RDX3\n\x00\x00\x00\x02", "binary"),
+    ],
+)
+def test_code_read_binary_is_not_code(tmp_path: Path, data: bytes, kind: str) -> None:
+    # data saved under a name ending in .R: no lines (it is not decompressed, a 109 MB one was
+    # once read as code for 35 minutes), and the result says what it is
+    path = tmp_path / "data.R"
+    path.write_bytes(data)
+    lines = core.code_read(str(path))
+    assert lines == []
+    assert lines.binary == kind
 
 
 # ---------------------------------------------------------------------------
@@ -189,7 +210,7 @@ def test_code_expand_zip_reads_a_zip_on_disk(
         zf.writestr("data.csv", "a\n1\n")
     monkeypatch.setattr(
         "metacheck.archives.download._repo_cache_path",
-        lambda repo, fp: str(tmp_path / "cache" / fp),
+        lambda repo, fp, cache=True: str(tmp_path / "cache" / fp),
     )
     af = pd.DataFrame(
         {
@@ -231,7 +252,7 @@ def test_code_expand_zip_mocked(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("metacheck.archives.zip_peek.zip_peek", peek)
     monkeypatch.setattr("metacheck.archives.zip_peek._zip_fetch_members", fetch)
     monkeypatch.setattr(
-        "metacheck.archives.download._repo_cache_path", lambda repo, fp: f"/cache/{fp}"
+        "metacheck.archives.download._repo_cache_path", lambda repo, fp, cache=True: f"/cache/{fp}"
     )
     af = pd.DataFrame(
         {

@@ -60,7 +60,7 @@
       {
         "t": "int",
         "v": [
-          35,
+          36,
           168,
           280,
           14,
@@ -567,13 +567,13 @@
         "t": "chr",
         "v": [
           "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
-          "Table1 Percentage of men and women who chose the self-morph from a choice of five child faces in response to the following questions",
+          "Table 1 Percentage of men and women who chose the self-morph from a choice of five child faces in response to the following questions",
           "Table 1. Comparison of the Demographic and Clinical Characteristics of the Posttraumatic Stress Disorder (PTSD) and Control Groups",
           "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
           "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
           "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
           "Table 1: The average number of mistakes and usefulness score for the control and experimental conditions.",
-          "Table1 Percentage of men and women who chose the self-morph from a choice of five child faces in response to the following questions"
+          "Table 1 Percentage of men and women who chose the self-morph from a choice of five child faces in response to the following questions"
         ]
       },
       {
@@ -604,6 +604,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.1",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
