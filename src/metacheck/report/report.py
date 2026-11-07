@@ -642,14 +642,24 @@ class _SummaryRow:
     items: str  # the summary when it is a markdown list (else "")
     todo: list[str]  # a brief report's to-do items
 
-    def html(self, link: bool) -> str:
-        """The row as metacheck writes it: raw HTML, then its lists as markdown."""
+    def html(self, link: bool, rendered: bool = True) -> str:
+        """The row as metacheck writes it: raw HTML, then its lists as markdown.
+
+        *rendered* turns the markdown of its title and text into HTML, for the pages
+        pytacheck renders itself (raw HTML is not read as markdown there); a qmd keeps
+        them as written, as metacheck's does, and Quarto renders them.
+        """
         from metacheck.report.render import _render_inline
 
-        title = _render_inline(self.title)
+        title = _render_inline(self.title) if rendered else self.title
         if link:
             title = f'<a href="#{self.slug}">{title}</a>'
-        text = _render_inline(self.text.replace("\n", " ")) if self.text else ""
+        if not self.text:
+            text = ""
+        elif rendered:
+            text = _render_inline(self.text.replace("\n", " "))
+        else:
+            text = self.text
         row = (
             f'<li class="mc-summary-row {self.tl}"><span class="mc-summary-icon">{self.symbol}'
             f'</span><span class="mc-summary-body"><span class="mc-summary-title">{title}</span>'
@@ -716,9 +726,9 @@ class _ReportParts:
     def static(self) -> bool:
         return _report_is_static(self.report_type)
 
-    def summary(self) -> str:
+    def summary(self, rendered: bool = True) -> str:
         """The summary in metacheck's markup (raw HTML rows; qmd and HTML pages)."""
-        rows = [r.html(link=not self.brief) for r in self.rows]
+        rows = [r.html(link=not self.brief, rendered=rendered) for r in self.rows]
         if self.brief and not rows:
             rows = [_NOTHING_FLAGGED]
         return '## Summary\n\n<ul class="mc-summary">\n\n{}\n\n</ul>\n\n'.format("\n\n".join(rows))
@@ -778,7 +788,7 @@ class _ReportParts:
         return head.replace("toc: true", "toc: false", 1)
 
     def text(self, table: Callable[[ReportTable], str]) -> str:
-        parts = [self.head(), self.summary(), self.body_text(table)]
+        parts = [self.head(), self.summary(rendered=False), self.body_text(table)]
         # R pastes its closing div (empty unless the template is static) and a last
         # newline, each after a blank line
         closing_div = "\n\n</div>\n" if self.static else ""  # closes <div class="mc-page">

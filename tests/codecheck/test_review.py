@@ -114,7 +114,7 @@ def test_code_read_utf16(tmp_path: Path, bom: bytes, codec: str) -> None:
 @pytest.mark.parametrize(
     ("data", "kind"),
     [
-        (gzip.compress(b"x <- 1\n"), "compressed with gzip (as R saves data)"),
+        (gzip.compress(b"x <- 1\n", mtime=0), "compressed with gzip (as R saves data)"),
         (bz2.compress(b"x <- 1\n"), "compressed with bzip2"),
         (lzma.compress(b"x <- 1\n"), "compressed with xz"),
         (b"RDX3\n\x00\x00\x00\x02", "binary"),
