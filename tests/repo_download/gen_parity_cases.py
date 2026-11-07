@@ -371,6 +371,7 @@ def download_cases() -> list[dict[str, Any]]:
             },
         }
     )
+    cases.extend(_new_helper_cases())
     for cid, headers, offset in (
         ("no_headers", {}, None),
         ("not_exhausted", {"ratelimit-remaining": "5", "ratelimit-reset": "99999999999"}, None),
@@ -624,6 +625,105 @@ def _str(dumper: yaml.SafeDumper, value: str) -> yaml.ScalarNode:
 
 
 _Dumper.add_representer(str, _str)
+
+
+def _expr_case(case_id: str, r: str, py: str) -> dict[str, Any]:
+    """A case comparing one R expression with one Python expression."""
+    return {
+        "id": case_id,
+        "r": "identity",
+        "py": "tests.repo_download._parity_helpers.identity",
+        "args": {"x": {"$expr": {"r": r, "py": py}}},
+    }
+
+
+def _new_helper_cases() -> list[dict[str, Any]]:
+    """Helpers added in metacheck 0.4.3.x: host matching, guestbooks, downloads for a run."""
+    dl = "__import__('metacheck.archives.download', fromlist=['x'])"
+    urls = [
+        "https://osf.io/download/abc/",
+        "https://files.de-1.osf.io/v1/x",
+        "https://web.archive.org/web/2020/https://osf.io/abc/",
+        "https://example.com/?u=osf.io",
+        "https://osf.io.example.com/x",
+        "https://notosf.io/x",
+        "https://OSF.IO/x",
+        "not a url",
+    ]
+    r_urls = "c(" + ", ".join('"' + u + '"' for u in urls) + ")"
+    py_urls = "[" + ", ".join('"' + u + '"' for u in urls) + "]"
+    answers = [
+        '{"status":"ERROR","message":"You may not download this file without the required Guestbook response for guestbookID 270."}',
+        '{"status":"ERROR","message":"Bad request"}',
+        "Guestbook response",
+        "guestbook response",
+    ]
+    r_answers = "c(" + ", ".join("'" + a + "'" for a in answers) + ")"
+    py_answers = "[" + ", ".join(repr(a) for a in answers) + "]"
+    names = ["a.R", "x.csv", "model.stan", "fig.png", "song.wav", "paper.pdf", "fig.png", "lib.R"]
+    paths = [*names[:7], "renv/library/lib.R"]
+    repos = ["https://zenodo.org/records/1"] * 6 + [
+        "https://github.com/a/b",
+        "https://zenodo.org/records/1",
+    ]
+
+    def r_chr(v: list[str]) -> str:
+        return "c(" + ", ".join('"' + x + '"' for x in v) + ")"
+
+    def py_chr(v: list[str]) -> str:
+        return "[" + ", ".join('"' + x + '"' for x in v) + "]"
+
+    return [
+        _expr_case(
+            "url_host_is.osf",
+            f'vapply({r_urls}, function(u) metacheck:::.url_host_is(u, "osf.io"), logical(1), USE.NAMES = FALSE)',
+            f'[{dl}._url_host_is(u, "osf.io") for u in {py_urls}]',
+        ),
+        _expr_case(
+            "url_host_is.several_domains",
+            'vapply(c("https://dataverse.nl/api/x", "https://x.dataverse.nl/y", "https://nodataverse.nl/"), '
+            'function(u) metacheck:::.url_host_is(u, c("dataverse.harvard.edu", "dataverse.nl")), '
+            "logical(1), USE.NAMES = FALSE)",
+            f'[{dl}._url_host_is(u, ["dataverse.harvard.edu", "dataverse.nl"]) for u in '
+            '["https://dataverse.nl/api/x", "https://x.dataverse.nl/y", "https://nodataverse.nl/"]]',
+        ),
+        _expr_case(
+            "dataverse_guestbook_hint.answers",
+            f"vapply({r_answers}, function(a) metacheck:::.dataverse_guestbook_hint("
+            "httr2::response(status_code = 400, body = charToRaw(a))), character(1), USE.NAMES = FALSE)",
+            f"[{dl}._dataverse_guestbook_hint(__import__('httpx').Response(400, content=a.encode())) "
+            f"for a in {py_answers}]",
+        ),
+        _expr_case(
+            "dataverse_guestbook_hint.empty_body",
+            "metacheck:::.dataverse_guestbook_hint(httr2::response(status_code = 400))",
+            f"{dl}._dataverse_guestbook_hint(__import__('httpx').Response(400))",
+        ),
+        _expr_case(
+            "run_download_want.media",
+            f"metacheck:::.run_download_want(data.frame(file_name = {r_chr(names)}, "
+            f"file_path = {r_chr(paths)}, repo_url = {r_chr(repos)}))",
+            f"{dl}._run_download_want(__import__('pandas').DataFrame("
+            f"{{'file_name': {py_chr(names)}, 'file_path': {py_chr(paths)}, "
+            f"'repo_url': {py_chr(repos)}}}))",
+        ),
+        _expr_case(
+            "run_download_want.no_path_column",
+            'metacheck:::.run_download_want(data.frame(file_name = c("a.R", "b.png", "renv/x.R"), '
+            'repo_url = c("https://zenodo.org/records/1", "https://zenodo.org/records/1", '
+            '"https://gitlab.com/a/b")))',
+            f"{dl}._run_download_want(__import__('pandas').DataFrame("
+            "{'file_name': ['a.R', 'b.png', 'renv/x.R'], "
+            "'repo_url': ['https://zenodo.org/records/1', 'https://zenodo.org/records/1', "
+            "'https://gitlab.com/a/b']}))",
+        ),
+        _expr_case(
+            "run_download_want.empty",
+            "metacheck:::.run_download_want(data.frame(file_name = character(0), repo_url = character(0)))",
+            f"{dl}._run_download_want(__import__('pandas').DataFrame("
+            "{'file_name': [], 'repo_url': []}))",
+        ),
+    ]
 
 
 def main() -> None:

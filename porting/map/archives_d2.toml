@@ -18,6 +18,8 @@
 "R/archive-reshare.R" = ["src/metacheck/archives/reshare.py", "src/metacheck/archives/dataverse.py", "src/metacheck/archives/psycharchives.py"]
 "R/archive-mendeley.R" = ["src/metacheck/archives/mendeley.py", "src/metacheck/archives/reshare.py", "src/metacheck/archives/psycharchives.py"]
 "R/archive-fsd.R" = ["src/metacheck/archives/fsd.py", "src/metacheck/archives/psycharchives.py"]
+"R/archive-ldbase.R" = ["src/metacheck/archives/ldbase.py"]
+"R/archive-aspredicted.R" = ["src/metacheck/archives/aspredicted.py"]
 
 [functions]
 # R/archive-dataone.R
@@ -85,6 +87,21 @@
 ".fsd_ddi_xml" = "metacheck.archives.fsd:_fsd_ddi_xml"
 
 # data: the allowlists as module-level constants (R returns them from functions)
+# R/archive-ldbase.R
+"ldbase_links" = "metacheck.archives.ldbase:ldbase_links"
+".ldbase_regex" = "metacheck.archives.ldbase:_ldbase_regex"
+".ldbase_type" = "metacheck.archives.ldbase:_ldbase_type"
+".ldbase_page_url" = "metacheck.archives.ldbase:_ldbase_page_url"
+"ldbase_info" = "metacheck.archives.ldbase:ldbase_info"
+".ldbase_info" = "metacheck.archives.ldbase:_ldbase_info"
+".ldbase_get" = "metacheck.archives.ldbase:_ldbase_get"
+".ldbase_page_meta" = "metacheck.archives.ldbase:_ldbase_page_meta"
+".ldbase_project_items" = "metacheck.archives.ldbase:_ldbase_project_items"
+".ldbase_item_files" = "metacheck.archives.ldbase:_ldbase_item_files"
+# R/archive-aspredicted.R, R/archive-dspace7.R, R/archive-researchbox.R
+".aspredicted_warn_if_no_key" = "metacheck.archives.aspredicted:_warn_if_no_key"
+".dspace7_on_known_host" = "metacheck.archives.dspace7:_on_known_host"
+".rbox_unfound_path" = "metacheck.archives.researchbox:_unfound_path"
 [data]
 ".dataone_hosts()" = "metacheck.archives.dataone:DATAONE_HOSTS"
 ".dspace7_hosts()" = "metacheck.archives.dspace7:DSPACE7_HOSTS"

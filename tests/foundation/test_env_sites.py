@@ -155,6 +155,12 @@ def _read_data_dir(ctx: Ctx) -> Any:
     return data_dir()
 
 
+def _read_state_dir(ctx: Ctx) -> Any:
+    from metacheck.archives.api_keys import state_dir
+
+    return state_dir()
+
+
 def _read_config(ctx: Ctx) -> Any:
     from metacheck.config import config_files
 
@@ -539,6 +545,13 @@ SITES: dict[str, Site] = {
         read=_read_data_dir,
         expect=lambda ctx, name: ctx.tmp_path / "data-from-the-table",
         spaces=lambda ctx: ctx.platform("data"),
+    ),
+    "STATE_DIR": Site(
+        value="<tmp>/state-from-the-table",
+        other="",  # no other name
+        read=_read_state_dir,
+        expect=lambda ctx, name: ctx.tmp_path / "state-from-the-table",
+        spaces=lambda ctx: ctx.platform("state"),
     ),
     "EMAIL": Site(
         value="table@example.org",

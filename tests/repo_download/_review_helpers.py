@@ -25,6 +25,8 @@ from typing import Any
 
 import pandas as pd
 
+from metacheck.archives.download import _session_tempdir
+
 HERE = Path(__file__).resolve().parent
 DATA = HERE / "data"
 
@@ -361,7 +363,9 @@ def expand(fn: str, fixture: str, skip_types: Any = "materials") -> Any:
         out = getattr(zip_peek, fn)(f, row, skip_types=skip_types)
         out["file_location"] = pd.Series(
             [
-                None if v is None or v is pd.NA else str(v).replace(d, "<TMP>")
+                None
+                if v is None or v is pd.NA
+                else str(v).replace(d, "<TMP>").replace(_session_tempdir(), "<tempdir>")
                 for v in out["file_location"]
             ],
             dtype="string",
@@ -383,3 +387,10 @@ def filetype(x: Any) -> Any:
     out = ft(x)
     out.index = pd.Index([_bytes_text(v) for v in out.index], dtype=object)
     return out
+
+
+def naming(file_name: Any, file_path: Any = None) -> Any:
+    """``check_file_naming()`` with a stray byte spelled ``<82>``, as R's goldens spell it."""
+    from metacheck.fileinfo.naming import check_file_naming
+
+    return _df_bytes(check_file_naming(file_name, file_path))

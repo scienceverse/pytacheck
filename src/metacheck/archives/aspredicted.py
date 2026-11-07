@@ -1,20 +1,23 @@
 """AsPredicted pre-registrations (port of ``R/archive-aspredicted.R``).
 
 :func:`aspredicted_links` finds AsPredicted links in papers;
-:func:`aspredicted_info` fetches each pre-registration page and splits it into
-its standard questions (``AP_title``, ``AP_authors``, ``AP_hypotheses``...).
+:func:`aspredicted_info` reads each pre-registration, through ResearchBox's API when a
+key is set (:func:`metacheck.archives.api_keys.rbox_token`) and from its web page
+otherwise, and splits it into its standard questions (``AP_title``, ``AP_authors``,
+``AP_hypotheses``...).
 Page text is extracted with a port of ``rvest::html_text2()``
 (:func:`_html_text2`), so line breaks fall where they do in R.
 """
 
 from __future__ import annotations
 
+import re
 import warnings
 from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
-from metacheck._r import gsub, strsplit, trimws
+from metacheck._r import gsub, trimws
 from metacheck._values import is_missing
 
 if TYPE_CHECKING:
@@ -30,9 +33,9 @@ def aspredicted_links(paper: Any) -> pd.DataFrame:
     mentions ``aspredicted.org``.
     """
     from metacheck._r import grepl
-    from metacheck.papers.tables import paper_table
+    from metacheck.archives import _paper_urls
 
-    urls = paper_table(paper, "url")
+    urls = _paper_urls(paper)
     if "href" not in urls.columns:
         # R: filter(grepl(..., href)) on the 0 x 0 url table of an empty paper
         # list sees `href <- NULL` and keeps the empty table
@@ -45,21 +48,52 @@ def aspredicted_links(paper: Any) -> pd.DataFrame:
     return urls[keep].reset_index(drop=True)
 
 
-def aspredicted_info(ap_url: Any, id_col: int | str = 1, wait: float = 1) -> pd.DataFrame:
-    """Port of R/archive-aspredicted.R::aspredicted_info(): AsPredicted page contents.
+def aspredicted_info(
+    ap_url: Any, id_col: int | str = 1, wait: float = 1, cache: bool = False
+) -> pd.DataFrame:
+    """Port of R/archive-aspredicted.R::aspredicted_info(): AsPredicted preregistrations.
 
     *ap_url* is a URL, a sequence of URLs, or a table whose *id_col* (R-style
     1-based position, or a name) holds them, e.g. from
-    :func:`aspredicted_links`. Pages are fetched one at a time, *wait*
-    seconds apart; retrieval stops at the first CAPTCHA page. Returns the
-    input rows with the page's sections added.
+    :func:`aspredicted_links`. Returns the input rows with the preregistration's
+    answers added.
+
+    With a ResearchBox API key set (see :func:`metacheck.archives.api_keys.rbox_token`)
+    each preregistration is read through ResearchBox's API, which serves
+    AsPredicted's public preregistrations, with one request each. Without a key,
+    or when the API fails, the preregistration's web page on AsPredicted is read
+    instead (*wait* seconds after each page); AsPredicted asks for a captcha after
+    several pages, and no page is read after that.
+
+    Both routes give the same columns. Each answer is placed by the wording of its
+    question, so both versions of AsPredicted's questions found so far (1.05 and
+    2.00) are read: version 1.05 asks about secondary analyses (``AP_secondary``)
+    where version 2.00 asks about outliers (``AP_outliers``). An answer to a
+    question that is not recognised is added to ``AP_anything_else``, after its
+    question. ``AP_created`` is the time of registration as AsPredicted shows it
+    (``"2021/06/14 02:17 (PT)"``) and ``AP_registered`` its date. ``AP_number``,
+    ``AP_status``, ``AP_authors_count`` and ``AP_bundle`` (the numbers of the
+    preregistrations registered together with this one) come from the API only, and
+    are ``NA`` when the web page was read; from the API ``AP_authors`` gives each
+    author's name and university, without the e-mail address of the web page.
+
+    A link that names no preregistration, such as AsPredicted's home page, is not
+    looked up: its row has an ``error``. With *cache* a preregistration looked up
+    before is not asked for again (see ``repo_info_cache_clear()``).
     """
     from metacheck import http, utils
-    from metacheck._r import as_character
+    from metacheck._r import as_character, bind_rows
     from metacheck.archives import _message
+    from metacheck.archives.api_keys import rbox_token
+    from metacheck.archives.info_cache import (
+        _repo_info_cache_get,
+        _repo_info_cache_put,
+        _repo_info_ok,
+    )
     from metacheck.utils import left_join
 
-    if not utils.online("aspredicted.org"):
+    # aspredicted.org is only needed when its pages are read
+    if not rbox_token() and not utils.online("aspredicted.org"):
         raise RuntimeError("AsPredicted.org seems to be offline")
 
     if isinstance(ap_url, pd.DataFrame):
@@ -87,19 +121,31 @@ def aspredicted_info(ap_url: Any, id_col: int | str = 1, wait: float = 1) -> pd.
 
     n = len(valid_ids)
     _message(f"Starting AsPredicted retrieval for {n} file{'' if n == 1 else 's'}...")
-    frames: list[pd.DataFrame] = []
-    for url in valid_ids:
-        ap = _aspredicted_info(url)
-        frames.append(ap)
-        http.sleep(wait)
-        if (
-            "error" in ap.columns
-            and not is_missing(ap["error"].iloc[0])
-            and ap["error"].iloc[0] == "captcha"
-        ):
-            break
+    _warn_if_no_key()
 
-    from metacheck._r import bind_rows
+    # After AsPredicted's captcha no further page is read, but the API is still asked for
+    # the remaining preregistrations: this loop used to stop at the captcha, and every
+    # later preregistration got no information.
+    frames: list[pd.DataFrame] = []
+    captcha = False
+    for url in valid_ids:
+        ap_id = _ap_id(url)
+        cached = _repo_info_cache_get("aspredicted", ap_id) if cache is True and ap_id else None
+        if cached is not None:
+            # cached by identifier, so a different link to it gets its own url
+            hit = cached.copy()
+            hit["ap_url"] = pd.Series([url], dtype="string", index=hit.index)
+            frames.append(hit)
+            continue
+        ap = _aspredicted_info(url, page=not captcha)
+        if "error" in ap.columns and "captcha" in str(ap["error"].iloc[0] or ""):
+            captcha = True
+        if ap.attrs.get("route") == "page":
+            http.sleep(wait)
+        ap.attrs.pop("route", None)
+        if cache is True and ap_id and _repo_info_ok(ap):
+            _repo_info_cache_put("aspredicted", ap_id, ap)
+        frames.append(ap)
 
     info = bind_rows(frames)
     ids = pd.DataFrame({"ap_url": pd.Series(valid_ids, dtype="string")})
@@ -109,42 +155,369 @@ def aspredicted_info(ap_url: Any, id_col: int | str = 1, wait: float = 1) -> pd.
     return data
 
 
-#: The page's section headings, in order (R: ``sections``).
-_SECTIONS: list[tuple[str, str]] = [
-    ("AP_authors", "Author(s)"),
-    ("AP_created", "Pre-registered on"),
-    ("AP_data", "1) Have any data been collected for this study already?"),
+def _warn_if_no_key() -> None:
+    """A message, once per session, that without a ResearchBox API key the
+    preregistrations are read from AsPredicted's web pages, which stop after
+    AsPredicted's captcha (reset with ``options({"metacheck.aspredicted_key.notified": None})``)."""
+    from metacheck.archives import _message
+    from metacheck.archives.api_keys import KEY_SERVICES, rbox_token
+    from metacheck.utils import get_option, options
+
+    if get_option("metacheck.aspredicted_key.notified") is True or rbox_token():
+        return
+    _message(
+        "No ResearchBox API key is set, so AsPredicted preregistrations are read "
+        "from AsPredicted's web pages. AsPredicted asks for a captcha after "
+        "several pages, after which no more are read. Set a key with "
+        f"rbox_token() (make one at {KEY_SERVICES['researchbox'].url})."
+    )
+    options({"metacheck.aspredicted_key.notified": True})
+
+
+def _aspredicted_info(ap_url: str, page: bool = True) -> pd.DataFrame:
+    """Port of R/archive-aspredicted.R::.aspredicted_info(): one preregistration.
+
+    Uses ResearchBox's API when a key is set, and reads the preregistration's web
+    page otherwise or when the API fails. ``page=False`` does not read the page
+    when the API fails (after AsPredicted asked for a captcha). The attribute
+    ``attrs["route"]`` is ``"api"`` or ``"page"`` when that was asked.
+    """
+    from metacheck.archives import _message
+    from metacheck.archives.api_keys import rbox_token
+
+    _message(f"* Retrieving info from {ap_url}...")
+    path = _ap_path(ap_url)
+    if path is None or not path:
+        error = "the link names no AsPredicted preregistration"
+        warnings.warn(f"{ap_url} error: {error}", stacklevel=2)
+        return _error_row(ap_url, error)
+
+    api_error: str | None = None
+    if rbox_token():
+        info = _aspredicted_info_api(ap_url)
+        if "error" not in info.columns:
+            info.attrs["route"] = "api"
+            return info
+        api_error = str(info["error"].iloc[0])
+        _message(
+            f"- ResearchBox API: {api_error}", "; reading the web page instead" if page else ""
+        )
+
+    if not page:
+        if api_error == "unfound":
+            api_error = "ResearchBox's API does not have it, or it is not public"
+        prefix = f"{api_error}; " if api_error is not None else ""
+        return _error_row(ap_url, f"{prefix}web page not read: AsPredicted asked for a captcha")
+
+    info = _aspredicted_info_page(ap_url)
+    # Both failed: the API's reason first, so a refusal a later run will get past keeps
+    # its "API rate limit exhausted: " start. "unfound" from the API may be a
+    # preregistration that is not public, which the page tells.
+    if api_error is not None and api_error != "unfound" and "error" in info.columns:
+        info["error"] = pd.Series(
+            [f"{api_error}; web page: {info['error'].iloc[0]}"], dtype="string", index=info.index
+        )
+    info.attrs["route"] = "page"
+    return info
+
+
+def _error_row(ap_url: str, error: str) -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "ap_url": pd.Series([ap_url], dtype="string"),
+            "error": pd.Series([error], dtype="string"),
+        }
+    )
+
+
+_AP_RX = re.compile(r"^(https?://)?(www\.)?aspredicted\.org(/|$)", re.IGNORECASE)
+
+
+def _ap_path(ap_url: Any) -> str | None:
+    """The part of an AsPredicted link after ``aspredicted.org/`` (``""`` for the home
+    page), or ``None`` for a link that is not to aspredicted.org."""
+    if is_missing(ap_url):
+        return None
+    x = str(ap_url).strip(" \t\r\n")
+    if not _AP_RX.search(x):
+        return None
+    return re.sub(r"/+$", "", _AP_RX.sub("", x, count=1))
+
+
+def _ap_id(ap_url: Any) -> str | None:
+    """The identifier ResearchBox's API takes for an AsPredicted link, or ``None``.
+
+    The links found in papers are a PDF's short name (``ve2qn.pdf``,
+    ``3pc3-6tw7.pdf``), a share code (``Y2F_6B7``) or a ``blind.php?x=`` link; the
+    API refuses the blind link itself but takes the code after ``x=``. Any other
+    link is not sent, as each identifier the API cannot find counts toward a block
+    of the key (see ``_AP_UNFOUND_LIMIT``).
+    """
+    path = _ap_path(ap_url)
+    if path is None:
+        return None
+    path = re.sub(r"^blind\.php\?x=", "", path, flags=re.IGNORECASE)
+    return path if re.fullmatch(r"[A-Za-z0-9_-]+(\.pdf)?", path) else None
+
+
+#: ResearchBox blocks the key for an hour after 5 different AsPredicted identifiers
+#: within 24 hours that it cannot find or that are not public, and for a day after 10.
+#: Each such identifier is recorded for 24 hours in metacheck's state folder, so jobs with
+#: the same key share the count. An identifier recorded is not sent again, and from this
+#: many identifiers on, none is sent; the web page is read instead.
+_AP_UNFOUND_LIMIT = 4
+
+
+def _ap_unfound_path() -> str:
+    from metacheck.archives.api_keys import state_dir
+
+    return str(state_dir() / "aspredicted_unfound_ids.json")
+
+
+def _ap_unfound_ids() -> list[dict[str, Any]]:
+    """The identifiers recorded in the last 24 hours, with the time (epoch seconds) of each."""
+    import json
+    import time
+
+    try:
+        with open(_ap_unfound_path(), encoding="utf-8") as fh:
+            rows = json.load(fh)
+    except (OSError, ValueError):
+        return []
+    if not isinstance(rows, list):
+        return []
+    now = time.time()
+    return [
+        r
+        for r in rows
+        if isinstance(r, dict)
+        and isinstance(r.get("id"), str)
+        and isinstance(r.get("time"), int | float)
+        and now - r["time"] < 24 * 3600
+    ]
+
+
+def _ap_unfound_add(ap_id: str) -> None:
+    import json
+    import os
+    import time
+
+    from metacheck.archives._atomic import atomic_write
+
+    path = _ap_unfound_path()
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        rows = [*_ap_unfound_ids(), {"id": ap_id, "time": time.time()}]
+        with atomic_write(path) as fh:
+            fh.write(json.dumps(rows).encode("utf-8"))
+    except OSError:
+        pass
+
+
+#: Words that identify each question of AsPredicted's versions 1.05 and 2.00, in their
+#: wording on the web page and in the API (lower case)
+_AP_QUESTIONS: dict[str, str] = {
+    "AP_data": "have any data been collected",
+    "AP_hypotheses": "main question being asked",
+    "AP_key_dv": "describe the key dependent variable",
+    "AP_conditions": "how many and which conditions",
+    "AP_analyses": "specify exactly which analyses",
+    "AP_outliers": "describe exactly how outliers",
+    "AP_secondary": "any secondary analyses",
+    "AP_sample_size": "how many observations will be collected",
+    "AP_anything_else": "anything else you would like to pre-register",
+}
+
+
+def _ap_api_time(x: Any) -> str | None:
+    """``"06/14/2021 02:17 AM"`` from the API as the web page writes it,
+    ``"2021/06/14 02:17 (PT)"``: the same time, in AsPredicted's time zone (Pacific time).
+    Anything else is returned unchanged."""
+    if not isinstance(x, str) or not x:
+        return None
+    m = re.fullmatch(r"([0-9]{2})/([0-9]{2})/([0-9]{4}) ([0-9]{1,2}):([0-9]{2}) ([AP]M)", x.strip())
+    if m is None:
+        return x
+    hour = int(m.group(4)) % 12 + (12 if m.group(6) == "PM" else 0)
+    return f"{m.group(3)}/{m.group(1)}/{m.group(2)} {hour:02d}:{m.group(5)} (PT)"
+
+
+def _ap_iso_date(x: str | None) -> str | None:
+    """``"2021/06/14 02:17 (PT)"`` as ``"2021-06-14"``, or ``None``."""
+    m = re.match(r"([0-9]{4})/([0-9]{2})/([0-9]{2})", x or "")
+    return f"{m.group(1)}-{m.group(2)}-{m.group(3)}" if m else None
+
+
+def _ap_anonymous_authors(n: int | None) -> str:
+    """The authors line the web page shows for an anonymous preregistration."""
+    count = "one author" if n == 1 else f"{'NA' if n is None else n} authors"
+    return (
+        "This pre-registration is currently anonymous to enable blind peer-review.\n"
+        f"It has {count}."
+    )
+
+
+def _field(x: Any) -> str | None:
+    """The API's value for a field as text; ``""`` and ``null`` are how it reports a
+    field it does not have."""
+    if x is None or isinstance(x, list | dict) or x == "":
+        return None
+    if isinstance(x, float) and x.is_integer():
+        return str(int(x))
+    return str(x)
+
+
+def _aspredicted_info_api(ap_url: str) -> pd.DataFrame:
+    """A preregistration from ResearchBox's API (one request).
+
+    Returns the same columns as :func:`_aspredicted_info_page`; on failure only
+    ``ap_url`` and ``error``.
+    """
+    from metacheck._r import gsub
+    from metacheck.archives.researchbox import _rbox_api, _rbox_plain_text
+
+    ap_id = _ap_id(ap_url)
+    if ap_id is None:
+        return _error_row(ap_url, "unfound")
+    # see _AP_UNFOUND_LIMIT
+    unfound = list(dict.fromkeys(r["id"] for r in _ap_unfound_ids()))
+    if ap_id in unfound:
+        return _error_row(ap_url, "unfound")
+    if len(unfound) >= _AP_UNFOUND_LIMIT:
+        return _error_row(
+            ap_url,
+            f"not sent: ResearchBox could not find {len(unfound)} AsPredicted "
+            "preregistrations asked for in the last 24 hours; it blocks the key after 5, so "
+            "no other preregistration is sent to the API until then",
+        )
+
+    res = _rbox_api("get_aspredicted", id=ap_id, format="json")
+    if not res["ok"]:
+        if res["error"] == "unfound":
+            _ap_unfound_add(ap_id)
+        return _error_row(ap_url, str(res["error"]))
+
+    b = res["body"] if isinstance(res["body"], dict) else {}
+    row: dict[str, Any] = {"ap_url": ap_url, "AP_title": _field(b.get("title"))}
+    count = b.get("authors_count")
+    n_authors = (
+        int(count) if isinstance(count, int | float) and not isinstance(count, bool) else None
+    )
+    authors = b.get("authors")
+    if b.get("anonymous") is True:
+        row["AP_authors"] = _ap_anonymous_authors(n_authors)
+    elif isinstance(authors, list) and authors:
+        lines = []
+        for a in authors:
+            a = a if isinstance(a, dict) else {}
+            name = f"{a.get('first') or ''} {a.get('last') or ''}".strip(" \t\r\n")
+            uni = a.get("uni") or ""
+            lines.append(gsub(r"[ \t\r\n\f\v]+", " ", name + (f" ({uni})" if uni else "")))
+        row["AP_authors"] = "\n".join(lines)
+    else:
+        row["AP_authors"] = None
+    row["AP_created"] = _ap_api_time(b.get("registration_time"))
+
+    # Each answer is placed by its question's wording; the numbers differ between versions
+    # (question 6 is about outliers in 2.00 and secondary analyses in 1.05). A question not
+    # recognised is kept with its answer.
+    answers: dict[str, str | None] = dict.fromkeys(_AP_QUESTIONS)
+    other: list[str] = []
+    questions = b.get("questions")
+    for qa in questions if isinstance(questions, list) else []:
+        qa = qa if isinstance(qa, dict) else {}
+        q = _rbox_plain_text(_field(qa.get("question"))) or ""
+        a_raw = qa.get("answer")
+        a = "" if a_raw is None else re.sub(r"\r\n?", "\n", str(a_raw)).strip(" \t\r\n")
+        hit = [name for name, words in _AP_QUESTIONS.items() if words in q.lower()]
+        if not hit:
+            other.append(f"{q}\n{a}")
+        elif answers[hit[0]] is None:
+            answers[hit[0]] = a
+        else:
+            answers[hit[0]] = f"{answers[hit[0]]}\n\n{a}"
+    if other:
+        kept = [answers["AP_anything_else"]] if answers["AP_anything_else"] is not None else []
+        answers["AP_anything_else"] = "\n\n".join([*kept, *other])
+    row.update(answers)
+
+    row["AP_version"] = _field(b.get("question_version"))
+    row["AP_registered"] = _ap_iso_date(row["AP_created"])
+    row["AP_anonymous"] = None if b.get("anonymous") is None else b.get("anonymous") is True
+    row["AP_number"] = _field(b.get("a_id"))
+    row["AP_status"] = _field(b.get("status"))
+    row["AP_authors_count"] = n_authors
+    bundle = b.get("bundle_a_ids")
+    row["AP_bundle"] = (
+        ", ".join(_field(i) or "NA" for i in bundle)
+        if isinstance(bundle, list) and bundle
+        else None
+    )
+    return _frame(row)
+
+
+def _frame(row: dict[str, Any]) -> pd.DataFrame:
+    """A one-row table: logical and integer columns typed, the rest character."""
+    cols: dict[str, pd.Series] = {}
+    for k, v in row.items():
+        if k == "AP_anonymous":
+            cols[k] = pd.Series([v], dtype="boolean")
+        elif k == "AP_authors_count":
+            cols[k] = pd.Series([v], dtype="Int64")
+        else:
+            cols[k] = pd.Series([v], dtype="string")
+    return pd.DataFrame(cols)
+
+
+#: The page's section headings, in the wording of version 2.00 and, where it differs, of
+#: version 1.05 (question 6, and the examples under question 8)
+_SECTIONS: list[tuple[str, tuple[str, ...]]] = [
+    ("AP_authors", ("Author(s)",)),
+    ("AP_created", ("Pre-registered on",)),
+    ("AP_data", ("1) Have any data been collected for this study already?",)),
     (
         "AP_hypotheses",
-        "2) What's the main question being asked or hypothesis being tested in this study?",
+        ("2) What's the main question being asked or hypothesis being tested in this study?",),
     ),
     (
         "AP_key_dv",
-        "3) Describe the key dependent variable(s) specifying how they will be measured.",
+        ("3) Describe the key dependent variable(s) specifying how they will be measured.",),
     ),
-    ("AP_conditions", "4) How many and which conditions will participants be assigned to?"),
+    ("AP_conditions", ("4) How many and which conditions will participants be assigned to?",)),
     (
         "AP_analyses",
-        "5) Specify exactly which analyses you will conduct to examine the main "
-        "question/hypothesis.",
+        (
+            "5) Specify exactly which analyses you will conduct to examine the main "
+            "question/hypothesis.",
+        ),
     ),
     (
         "AP_outliers",
-        "6) Describe exactly how outliers will be defined and handled, and your precise rule(s) "
-        "for excluding observations.",
+        (
+            "6) Describe exactly how outliers will be defined and handled, and your precise "
+            "rule(s) for excluding observations.",
+        ),
     ),
+    ("AP_secondary", ("6) Any secondary analyses?",)),
     (
         "AP_sample_size",
-        "7) How many observations will be collected or what will determine sample size?\nNo need "
-        "to justify decision, but be precise about exactly how the number will be determined.",
+        (
+            "7) How many observations will be collected or what will determine sample size?\n"
+            "No need to justify decision, but be precise about exactly how the number will be "
+            "determined.",
+        ),
     ),
     (
         "AP_anything_else",
-        "8) Anything else you would like to pre-register?\n(e.g., secondary analyses, variables "
-        "collected for exploratory purposes, unusual analyses planned?)",
+        (
+            "8) Anything else you would like to pre-register?\n(e.g., secondary analyses, "
+            "variables collected for exploratory purposes, unusual analyses planned?)",
+            "8) Anything else you would like to pre-register?\n(e.g., data exclusions, "
+            "variables collected for exploratory purposes, unusual analyses planned?)",
+        ),
     ),
-    ("AP_version", "Version of AsPredicted Questions: "),
-    ("bug", "Report a bug"),
+    ("AP_version", ("Version of AsPredicted Questions: ",)),
+    ("bug", ("Report a bug",)),
 ]
 
 _USER_AGENT = (
@@ -153,16 +526,14 @@ _USER_AGENT = (
 )
 
 
-def _aspredicted_info(ap_url: str) -> pd.DataFrame:
-    """Port of R/archive-aspredicted.R::.aspredicted_info(): fetch and parse one page.
+def _aspredicted_info_page(ap_url: str) -> pd.DataFrame:
+    """A preregistration read from its web page on AsPredicted.
 
-    A non-200 status gives an ``error`` column (the status description) and a
-    warning; a CAPTCHA page gives ``error = "captcha"``.
+    A failed connection or any status but 200 gives an ``error`` column (and a
+    warning); a captcha page gives ``error = "captcha"``.
     """
     from metacheck import http
-    from metacheck.archives import _message
 
-    _message(f"* Retrieving info from {ap_url}...")
     resp = http.request(
         "GET",
         ap_url,
@@ -174,46 +545,66 @@ def _aspredicted_info(ap_url: str) -> pd.DataFrame:
         max_tries=1,
     )
     if resp is None:
-        raise RuntimeError(f"Failed to perform HTTP request: {ap_url}")
+        error = "the connection failed"
+        warnings.warn(f"{ap_url} error: {error}", stacklevel=2)
+        return _error_row(ap_url, error)
     # any status but 200 (a 404 for a withdrawn page too) is this page's error;
-    # metacheck raises on 4xx/5xx before its own check, aborting every URL (U54)
+    # metacheck used to raise on 4xx/5xx before its own check, aborting every URL (U54)
     if resp.status_code != 200:
         warnings.warn(f"{ap_url} error: {resp.reason_phrase}", stacklevel=2)
-        return pd.DataFrame(
-            {
-                "ap_url": pd.Series([ap_url], dtype="string"),
-                "error": pd.Series([resp.reason_phrase], dtype="string"),
-            }
-        )
+        return _error_row(ap_url, resp.reason_phrase)
     return _aspredicted_parse(resp.text, ap_url)
 
 
 def _aspredicted_parse(html_text: str, ap_url: str) -> pd.DataFrame:
-    """The parsing half of ``.aspredicted_info()``: page HTML -> one-row table."""
+    """The parsing half of ``.aspredicted_info_page()``: page HTML -> one-row table."""
     from lxml import html as lxml_html
 
     doc = lxml_html.document_fromstring(html_text)
     bodies = cast("list[lxml_html.HtmlElement]", doc.xpath("//body"))
     body = _html_text2(bodies[0]) if bodies else ""
-    row: dict[str, Any] = {"ap_url": ap_url}
     if "CLICK after solving captcha" in body:
         warnings.warn("Log in to AsPredicted to bypass the CAPTCHA", stacklevel=3)
-        row["error"] = "captcha"
-        return pd.DataFrame({k: pd.Series([v], dtype="string") for k, v in row.items()})
+        return _error_row(ap_url, "captcha")
 
+    row: dict[str, Any] = {"ap_url": ap_url}
     title = cast("list[lxml_html.HtmlElement]", doc.xpath("//h3//b//i"))
     row["AP_title"] = title[0].text_content() if title else None
-    for i in range(11):
-        name, start = _SECTIONS[i]
-        end = _SECTIONS[i + 1][1]
-        pieces = strsplit(body, start, fixed=True)
-        if len(pieces) < 2:
+
+    # Where each heading starts and ends (None when the page does not have it). Each
+    # section is cut at the first later heading the page has: a section used to be cut only
+    # at the next heading in the list, so on a version 1.05 page, which has no outlier
+    # question, the analyses took in questions 6 to 8 and the page's scripts, and the
+    # outliers were NA.
+    found: dict[str, tuple[int, int] | None] = {}
+    for name, alternatives in _SECTIONS:
+        found[name] = None
+        for heading in alternatives:
+            pos = body.find(heading)
+            if pos >= 0:
+                found[name] = (pos, pos + len(heading))
+                break
+    starts = [f[0] for f in found.values() if f is not None]
+    for name, _ in _SECTIONS:
+        if name == "bug":
+            continue
+        span = found[name]
+        if span is None:
             row[name] = None
             continue
-        after = pieces[1]
-        answer = strsplit(after, end, fixed=True)
-        row[name] = trimws(answer[0]) if answer and answer[0] is not None else None
-    return pd.DataFrame({k: pd.Series([v], dtype="string") for k, v in row.items()})
+        later = [s for s in starts if s > span[0]]
+        end = min(later) if later else len(body)
+        row[name] = trimws(body[span[1] : end])
+
+    row["AP_registered"] = _ap_iso_date(row["AP_created"])
+    row["AP_anonymous"] = (
+        None if row["AP_authors"] is None else "currently anonymous" in row["AP_authors"]
+    )
+    row["AP_number"] = None
+    row["AP_status"] = None
+    row["AP_authors_count"] = None
+    row["AP_bundle"] = None
+    return _frame(row)
 
 
 # ---------------------------------------------------------------------------

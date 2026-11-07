@@ -25,7 +25,6 @@ All requests go through the storage retry policy and host authentication of
 
 from __future__ import annotations
 
-import atexit
 import contextlib
 import io
 import math
@@ -42,7 +41,7 @@ from typing import TYPE_CHECKING, Any
 
 from metacheck._r import grepl, gsub, strsplit, sub
 from metacheck._values import is_missing
-from metacheck.archives._atomic import atomic_write, staged_dir
+from metacheck.archives._atomic import atomic_write
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -726,6 +725,9 @@ def _entry_table(infos: Sequence[zipfile.ZipInfo]) -> pd.DataFrame:
             "csize": pd.Series([known(i.compress_size) for _, i in kept], dtype="float64"),
             "offset": pd.Series([known(i.header_offset) for _, i in kept], dtype="float64"),
             "crc": pd.Series([float(i.CRC) for _, i in kept], dtype="float64"),
+            "name_bytes": pd.Series(
+                [float(_zip_stored_name_len(i)) for _, i in kept], dtype="float64"
+            ),
         }
     )
 
@@ -893,7 +895,9 @@ def _safe_member_path(name: str) -> str | None:
     rel = sub("^([A-Za-z]:)?/+", "", rel)
     if any(part == ".." for part in strsplit(rel, "/", fixed=True)):
         return None
-    return str(rel)
+    from metacheck.utils import _portable_path
+
+    return str(_portable_path([str(rel)])[0])
 
 
 # -- byte ranges and whole archives ----------------------------------------------
@@ -920,6 +924,16 @@ _REQUEST_BYTES = 1048576.0
 
 def _name_bytes(name: Any) -> int:
     return len(str(name).encode("utf-8", "surrogateescape"))
+
+
+def _stored_name_bytes(cd: pd.DataFrame) -> list[int]:
+    """Each listed name's stored length: the ``name_bytes`` column, else the UTF-8 length."""
+    if "name_bytes" in cd.columns:
+        return [
+            int(v) if not is_missing(v) else _name_bytes(n)
+            for v, n in zip(cd["name_bytes"].tolist(), cd["name"].tolist(), strict=True)
+        ]
+    return [_name_bytes(v) for v in cd["name"].tolist()]
 
 
 def _range_plan(
@@ -976,7 +990,7 @@ def _zip_whole_size(cd: pd.DataFrame) -> float:
     csizes = [_num(v) for v in cd["csize"].tolist()]
     if not offsets or any(math.isnan(v) for v in offsets + csizes):
         return math.nan
-    names = [_name_bytes(v) for v in cd["name"].tolist()]
+    names = _stored_name_bytes(cd)
     data_end = max(o + 30 + nb + c for o, nb, c in zip(offsets, names, csizes, strict=True))
     zip64 = 76 if data_end >= _ZIP64 or len(cd) >= 65535 else 0  # its own end records
     return data_end + sum(46 + nb for nb in names) + 22 + zip64
@@ -1187,6 +1201,7 @@ def _zip_fetch_members(
 
     n = len(want)
     member_names = want["name"].tolist()
+    stored_len = _stored_name_bytes(want)
     sizes = [_num(v) for v in want["size"].tolist()]
     crcs = [_num(v) for v in want["crc"].tolist()]
     offsets = [_num(v) for v in want["offset"].tolist()]
@@ -1260,7 +1275,7 @@ def _zip_fetch_members(
         tail_start, held_total = _held_tail(url)
         need = [i for i in todo if not offsets[i] >= tail_start]  # the rest is in hand
         spans = [
-            (i, offsets[i], offsets[i] + 30 + _name_bytes(member_names[i]) + csizes[i] - 1)
+            (i, offsets[i], offsets[i] + 30 + stored_len[i] + csizes[i] - 1)
             for i in need
             if math.isfinite(offsets[i]) and math.isfinite(csizes[i]) and csizes[i] > 0
         ]
@@ -1484,12 +1499,7 @@ def _archive_rows(
     types = data_classify_files(base)
     roles = _data_doc_role(base)
     fmt = data_format([_tolower(e) for e in _file_ext(loc)])
-    skip = set(_chr_list(skip_types))
-    keep = [
-        (t in ("data", "code") or (t == "documentation" and r in ("codebook", "readme")))
-        and t not in skip
-        for t, r in zip(types, roles, strict=True)
-    ]
+    keep = _archive_keep(rel, skip_types)
     if not any(keep):
         return empty
 
@@ -1547,6 +1557,13 @@ def _zip_raw_name(info: Any) -> bytes:
     return raw.split(b"\x00", 1)[0]
 
 
+def _zip_stored_name_len(info: Any) -> int:
+    """The name's length as stored in the archive, with any NUL bytes it holds
+    (``name_bytes``: the central directory's own length field)."""
+    name: str = info.orig_filename
+    return len(name.encode("utf-8" if info.flag_bits & 0x800 else "cp437"))
+
+
 def _zip_names(zf: Any) -> list[str]:
     """Member names as text (see :func:`_decode_zip_name`)."""
     return [_zip_name(info) for info in zf.infolist()]
@@ -1577,7 +1594,7 @@ def _r_member_path(raw: bytes, windows: bool = os.name == "nt") -> bytes:
     return raw
 
 
-def _unzip_all(zip_path: str, exdir: str) -> None:
+def _unzip_all(zip_path: str, exdir: str, members: set[str] | None = None) -> None:
     """``utils::unzip(zip_path, exdir = exdir)``: extract a zip below *exdir*.
 
     Member names are used byte for byte (a backslash is part of the file name,
@@ -1587,13 +1604,14 @@ def _unzip_all(zip_path: str, exdir: str) -> None:
     ends the extraction. A member :mod:`zipfile` cannot read (a compression
     method it lacks, a damaged local header) is skipped with a warning, and
     the CRC of the data itself is not checked, as R's unzip does not check it.
+    With *members*, only the members of those names (``unzip(files = ...)``).
     """
-    import shutil
-
     ex = os.fsencode(exdir)
     os.makedirs(ex, exist_ok=True)
     with zipfile.ZipFile(zip_path) as zf:
         for info in zf.infolist():
+            if members is not None and _zip_name(info) not in members:
+                continue
             # a CP437 name is written as UTF-8, so the files on disk have
             # readable names (R writes the raw bytes: U76)
             name = _zip_name(info).encode("utf-8", "surrogateescape")
@@ -1629,114 +1647,239 @@ def _unzip_all(zip_path: str, exdir: str) -> None:
                 shutil.copyfileobj(src, fout)
 
 
-_LOCAL_CONTENTS: dict[tuple[str, int, int], str] = {}
-_local_contents_lock = threading.Lock()
+def _in_download_folder(path: str) -> bool:
+    """Port of ``R/zip-peek.R::.in_download_folder()``: is *path* a file metacheck downloaded?
 
-
-def _local_contents_root() -> str:
-    """``metacheck-archives`` in the temporary folder, where local archives are extracted.
-
-    The same folder in every session, so the extracted files' locations do not
-    change from run to run. When it belongs to someone else (a shared ``/tmp``)
-    or is open to other users, a private folder of this session is used instead,
-    removed when the session ends. On Windows the temporary folder is the
-    user's own, and its permissions are not POSIX modes, so only its being a
-    folder is checked.
+    In the repository cache, or in this session's download folder when the
+    cache is off (:func:`~metacheck.archives.download._repo_session_dir`).
+    metacheck writes next to such a file (an unpacked archive, code recovered
+    from an output file); any other file is the user's own, and nothing is
+    written into its folder.
     """
-    import stat
-    import tempfile
+    from metacheck.archives.download import _repo_cache_location, _session_tempdir
+    from metacheck.utils import get_option
 
-    root = os.path.join(tempfile.gettempdir(), "metacheck-archives")
-    try:
-        os.makedirs(root, mode=0o700, exist_ok=True)
-        st = os.lstat(root)
-        if os.name == "nt":
-            private = True
-        else:
-            private = st.st_uid == os.getuid() and not st.st_mode & 0o022
-        if stat.S_ISDIR(st.st_mode) and private:
-            return root
-    except OSError:
-        pass
-    root = tempfile.mkdtemp(prefix="metacheck-archives-")
-    atexit.register(shutil.rmtree, root, ignore_errors=True)
-    return root
+    session = get_option("metacheck.repo_cache.session_dir")
+    if session is None or session == "":
+        session = os.path.join(_session_tempdir(), "metacheck-repo-files")
+    roots = [os.path.realpath(str(r)) for r in (session, _repo_cache_location())]
+    norm = os.path.realpath(path)
+    if os.name == "nt":
+        roots = [r.lower() for r in roots]
+        norm = norm.lower()
+    return any(norm.startswith(r.rstrip(os.sep) + os.sep) for r in roots)
 
 
-def _file_sha1(path: str) -> str:
+def _file_md5(path: str) -> str:
+    """``unname(tools::md5sum(path))``."""
     import hashlib
 
-    h = hashlib.sha1(usedforsecurity=False)
+    h = hashlib.md5(usedforsecurity=False)
     with open(path, "rb") as fh:
         while chunk := fh.read(1 << 20):
             h.update(chunk)
     return h.hexdigest()
 
 
-def _contents_dir(archive_path: str) -> str:
-    """Where an on-disk archive is extracted (R: ``<archive>.contents/`` beside it).
+def _archive_dest(path: str) -> str:
+    """Port of ``R/zip-peek.R::.archive_dest()``: the folder an archive is extracted into.
 
-    Beside it for an archive metacheck downloaded (in the repository cache or
-    the temporary folder), as R does. Any other archive -- one in a user's
-    ``local_path`` -- is extracted to :func:`_local_contents_root`, in a
-    folder named by the archive's SHA-1 (an edited archive is extracted
-    afresh): R writes into the user's folder, and the next run then lists the
-    extracted files as well as the archive's members, so every member is
-    reported twice (U214).
+    A downloaded archive (in the repository cache, or this session's download
+    folder when the cache is off) is extracted beside itself, to
+    ``<archive>.contents``, which a later run reuses. Any other archive is the
+    user's own (``local_path``): extracting beside it wrote into the user's
+    folder, and the next run listed the extracted files as files of their own
+    and extracted the archive again, so every file counted twice (U214). It is
+    extracted into the session's temporary folder instead, under the archive's
+    checksum. A folder of the user's that is itself in the temporary folder
+    (an upload unpacked there, a test) is the user's too.
     """
-    import tempfile
+    from metacheck.archives.download import _session_tempdir
 
-    from metacheck.archives.download import _repo_cache_location
+    if _in_download_folder(path):
+        return f"{path}.contents"
+    return os.path.join(_session_tempdir(), "metacheck-archives", _file_md5(os.path.realpath(path)))
 
-    real = os.path.realpath(archive_path)
-    for root in (_repo_cache_location(), tempfile.gettempdir()):  # neither is created here
-        base = os.path.realpath(root)
-        if real.startswith(base.rstrip(os.sep) + os.sep):
-            return f"{archive_path}.contents"
-    st = os.stat(real)
-    key = (real, st.st_size, st.st_mtime_ns)
-    with _local_contents_lock:
-        folder = _LOCAL_CONTENTS.get(key)
-        if folder is None:
-            folder = os.path.join(_local_contents_root(), _file_sha1(real))
-            _LOCAL_CONTENTS[key] = folder
-    return os.path.join(folder, f"{os.path.basename(real)}.contents")
+
+def _archive_keep(name: Sequence[str | None], skip_types: Any) -> list[bool]:
+    """Port of ``R/zip-peek.R::.archive_keep()``: which inner files of an archive are kept.
+
+    Data and code, and documentation that is a codebook or README; never a type
+    in *skip_types*, never a file that does not belong in a repository
+    (:func:`~metacheck.archives._useless.useless_file_kind`). Names are
+    classified by base name, all together (so a GeoTIFF sees the GIS files
+    beside it). Applied to an archive's listing before unpacking (#472): a
+    file that would be dropped right after is never written.
+    """
+    from metacheck.archives._useless import is_useless_file
+    from metacheck.datacheck.files import _data_doc_role, data_classify_files
+
+    if len(name) == 0:
+        return []
+    path = [gsub(r"\\", "/", n) if n is not None else None for n in name]
+    base = [os.path.basename(str(p)) for p in path]
+    types = data_classify_files(base)
+    roles = _data_doc_role(base)
+    skip = set(_chr_list(skip_types))
+    useless = is_useless_file(path)
+    return [
+        (t in ("data", "code") or (t == "documentation" and r in ("codebook", "readme")))
+        and t not in skip
+        and not re.search("(^|/)__MACOSX/", str(p))
+        and not u
+        for t, r, p, u in zip(types, roles, path, useless, strict=True)
+    ]
+
+
+def _climbs(name: str) -> bool:
+    """Does a member name have a ``..`` folder part (a backslash separates folders on Windows only)?"""
+    return ".." in re.split(r"[/\\]" if os.name == "nt" else "/", name)
+
+
+def _move_extracted(part: str, dest: str, members: Sequence[str]) -> None:
+    """Port of ``R/zip-peek.R::.move_extracted()``: move extracted members from *part* into *dest*.
+
+    Extracting straight into *dest* left a half-written file there when the
+    run was stopped, which the next run reused as complete (U203); a member
+    that was not extracted is simply not moved. *part* is removed.
+    """
+    for m in members:
+        if _climbs(m):  # a name that climbs out of its folder is never moved
+            continue
+        src = f"{part}/{m}"  # (not os.path.join: an absolute name would replace *part*)
+        if not os.path.isfile(src):
+            continue
+        to = f"{dest}/{m}"
+        os.makedirs(os.path.dirname(to), exist_ok=True)
+        os.replace(src, to)
+    shutil.rmtree(part, ignore_errors=True)
+
+
+def _with_oversize(
+    rows: pd.DataFrame,
+    archive_row: pd.DataFrame,
+    label: str,
+    name: Sequence[str],
+    file_size: Sequence[float],
+) -> pd.DataFrame:
+    """Port of ``R/zip-peek.R::.with_oversize()``: *rows* plus a row per inner file not unpacked.
+
+    A file larger than the per-file limit (#472) has no local copy
+    (``file_location`` ``NA``), the way a file too large to download is
+    listed. The same files are attached as ``attrs["oversize"]`` (``file_name``,
+    ``file_size`` in bytes, ``NaN`` when unknown), which ``data_check`` adds to
+    its record of files over the limit.
+    """
+    import pandas as pd
+
+    if len(name) == 0:
+        return rows
+    from metacheck.datacheck.files import _data_doc_role, data_classify_files, data_format
+
+    n = len(name)
+    extra = archive_row.iloc[[0] * n].reset_index(drop=True)
+    base = [os.path.basename(x) for x in name]
+    extra["file_name"] = pd.Series(base, dtype="string")
+    extra["file_path"] = pd.Series([f"{label}/{x}" for x in name], dtype="string")
+    extra["file_location"] = pd.Series([None] * n, dtype="string")
+    extra["file_size"] = pd.Series([float(s) for s in file_size], dtype="float64")
+    if "data_type" in extra.columns:
+        extra["data_type"] = pd.Series(data_classify_files(base), dtype="string")
+    if "doc_role" in extra.columns:
+        extra["doc_role"] = pd.Series(_data_doc_role(base), dtype="string")
+    if "data_format" in extra.columns:
+        extra["data_format"] = pd.Series(
+            data_format([_tolower(e) for e in _file_ext(list(name))]), dtype="string"
+        )
+    if "file_url" in extra.columns:
+        extra["file_url"] = pd.Series([None] * n, dtype="string")
+    if "file_type" in extra.columns:
+        extra["file_type"] = pd.Series(_ext_type(base), dtype="string")
+    out = pd.concat([rows, extra], ignore_index=True) if len(rows) else extra
+    out.attrs["oversize"] = pd.DataFrame(
+        {
+            "file_name": pd.Series(base, dtype="string"),
+            "file_size": pd.Series([float(s) for s in file_size], dtype="float64"),
+        }
+    )
+    return out
 
 
 def _expand_zip(
-    zip_path: Any, zip_row: pd.DataFrame, skip_types: Any = "materials"
+    zip_path: Any,
+    zip_row: pd.DataFrame,
+    skip_types: Any = "materials",
+    max_bytes: float = math.inf,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_zip()``: rows for the data files inside a zip.
 
-    Extracts the zip once to ``<zip>.contents/`` (reused when it exists; see
-    :func:`_contents_dir`) and returns :func:`_archive_rows` for it, inheriting
-    *zip_row*'s columns; a 0-row frame when the zip is missing, unreadable or holds
-    nothing worth keeping.
-    """
-    import zipfile
+    Extracts the zip once to :func:`_archive_dest` (``<zip>.contents/`` for a
+    downloaded zip, reused when it exists) and returns :func:`_archive_rows`
+    for it, inheriting *zip_row*'s columns; a 0-row frame when the zip is
+    missing, unreadable or holds nothing worth keeping.
 
+    Only the members that will be kept (:func:`_archive_keep`) and are no
+    larger than *max_bytes* are unpacked (#472); the listing gives each
+    member's size before anything is written. A member over the limit is
+    reported in ``attrs["oversize"]``, like a file too large to download, and
+    a copy left by an earlier run is removed, so the cache never holds more
+    than the limits.
+    """
     empty = zip_row.iloc[0:0].copy()
     if _missing_path(zip_path):
         return empty
     zip_path = str(zip_path)
-    dest = _contents_dir(zip_path)
+    dest = _archive_dest(zip_path)
     try:
         with zipfile.ZipFile(zip_path) as zf:
-            n_entries = len(zf.infolist())
+            infos = zf.infolist()
     except Exception:
         return empty
-    if n_entries == 0:
+    entries = [(_zip_name(i), float(i.file_size)) for i in infos]
+    entries = [(n, s) for n, s in entries if not n.endswith("/")]
+    if not infos or not entries:
         return empty
-    if not os.path.isdir(dest):
+    names = [n for n, _ in entries]
+    sizes = [s for _, s in entries]
+    keep = _archive_keep(names, skip_types)
+    over = [k and s > max_bytes for k, s in zip(keep, sizes, strict=True)]
+    for n, o in zip(names, over, strict=True):
+        if o:
+            _unlink(dest, n)
+    want = [n for n, k, o in zip(names, keep, over, strict=True) if k and not o]
+    missing = [n for n in want if not os.path.exists(f"{dest}/{n}")]
+    if missing:
+        part = f"{dest}.part"
+        shutil.rmtree(part, ignore_errors=True)
         try:
-            with staged_dir(dest) as stage:  # dest appears only once the extraction ended
-                _unzip_all(zip_path, stage)
+            _unzip_all(zip_path, part, members=set(missing))
         except Exception:  # noqa: S110 - R: tryCatch(unzip(...), error = NULL)
             pass
-    return _archive_rows(dest, zip_row, os.path.basename(zip_path), skip_types)
+        except BaseException:  # a stop: the half-written folder is not left in the cache
+            shutil.rmtree(part, ignore_errors=True)
+            raise
+        os.makedirs(dest, exist_ok=True)
+        _move_extracted(part, dest, missing)
+    label = os.path.basename(zip_path)
+    rows = _archive_rows(dest, zip_row, label, skip_types) if want else empty
+    return _with_oversize(
+        rows,
+        zip_row,
+        label,
+        [n for n, o in zip(names, over, strict=True) if o],
+        [s for s, o in zip(sizes, over, strict=True) if o],
+    )
 
 
-def _untar_all(tar_path: str, exdir: str) -> None:
+def _unlink(dest: str, name: str) -> None:
+    """Remove the copy of an archive member in *dest* (never one that climbs out of it)."""
+    if _climbs(name):
+        return
+    with contextlib.suppress(OSError):
+        os.unlink(f"{dest}/{name}")
+
+
+def _untar_all(tar_path: str, exdir: str, members: set[str] | None = None) -> None:
     """``utils::untar(tar_path, exdir = exdir)`` as metacheck runs it (GNU ``tar -xf``).
 
     Member by member, as GNU tar does: a member whose name has a ``..``
@@ -1744,7 +1887,7 @@ def _untar_all(tar_path: str, exdir: str) -> None:
     removed, and a member that cannot be extracted does not stop the others.
     Unlike GNU tar, links that point outside *exdir* are not extracted
     (:mod:`tarfile`'s ``data`` filter): an archive from a repository must not
-    write outside the cache.
+    write outside the cache. With *members*, only those members.
     """
     import tarfile
 
@@ -1753,6 +1896,8 @@ def _untar_all(tar_path: str, exdir: str) -> None:
         for member in tf:
             if ".." in member.name.split("/"):
                 continue
+            if members is not None and member.name not in members:
+                continue
             try:
                 tf.extract(member, exdir, filter="data")
             except Exception:  # noqa: S112 - GNU tar reports the member and goes on
@@ -1760,35 +1905,88 @@ def _untar_all(tar_path: str, exdir: str) -> None:
 
 
 def _expand_tar(
-    tar_path: Any, tar_row: pd.DataFrame, skip_types: Any = "materials"
+    tar_path: Any,
+    tar_row: pd.DataFrame,
+    skip_types: Any = "materials",
+    max_bytes: float = math.inf,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_tar()``: rows for the data files inside a tarball.
 
     The mirror of :func:`_expand_zip` for ``.tar``/``.tar.gz``/``.tgz``/
-    ``.tar.bz2``/``.tar.xz`` archives (extracted to ``<tar>.contents/``). An
-    unreadable tar gives a 0-row frame.
+    ``.tar.bz2``/``.tar.xz`` archives. Peeking is impossible for a tar (no
+    tail index), so the caller must have downloaded it first. An unreadable
+    tar gives a 0-row frame.
+
+    As in :func:`_expand_zip`, only members that will be kept and are no
+    larger than *max_bytes* are unpacked (#472). A plain ``.tar`` gives each
+    member's size from its headers before anything is written; a compressed
+    tar gives only names without reading it all, so its kept members are
+    unpacked and any over the limit removed again straight away.
     """
     import tarfile
+
+    from metacheck.archives.tar_peek import _tar_list_file
 
     empty = tar_row.iloc[0:0].copy()
     if _missing_path(tar_path):
         return empty
     tar_path = str(tar_path)
-    dest = _contents_dir(tar_path)
+    dest = _archive_dest(tar_path)
     try:
         with tarfile.open(tar_path, "r:*") as tf:
-            n_entries = len(tf.getnames())
+            members = [m for m in tf.getmembers() if not m.isdir()]
     except Exception:
         return empty
-    if n_entries == 0:
+    if not members:
         return empty
-    if not os.path.isdir(dest):
+    names = [m.name for m in members]
+    plain = bool(re.search(r"[.]tar$", tar_path, re.IGNORECASE))
+    listing = _tar_list_file(tar_path) if plain else None
+    if listing is None:
+        sizes = [math.nan] * len(members)
+    else:
+        # the sizes of a plain tar come from its headers (a link has none)
+        by_member = dict(zip(listing["member"].tolist(), listing["size"].tolist(), strict=True))
+        sizes = [float(by_member.get(n, math.nan)) for n in names]
+    keep = _archive_keep(names, skip_types)
+    over = [k and not math.isnan(s) and s > max_bytes for k, s in zip(keep, sizes, strict=True)]
+    for n, o in zip(names, over, strict=True):
+        if o:
+            _unlink(dest, n)
+    want = [n for n, k, o in zip(names, keep, over, strict=True) if k and not o]
+    missing = [n for n in want if not os.path.exists(f"{dest}/{n}")]
+    if missing:
+        part = f"{dest}.part"
+        shutil.rmtree(part, ignore_errors=True)
         try:
-            with staged_dir(dest) as stage:  # dest appears only once the extraction ended
-                _untar_all(tar_path, stage)
+            _untar_all(tar_path, part, members=set(missing))
         except Exception:  # noqa: S110 - R: tryCatch(untar(...), error = NULL)
             pass
-    return _archive_rows(dest, tar_row, os.path.basename(tar_path), skip_types)
+        except BaseException:  # a stop: the half-written folder is not left in the cache
+            shutil.rmtree(part, ignore_errors=True)
+            raise
+        os.makedirs(dest, exist_ok=True)
+        _move_extracted(part, dest, missing)
+    # sizes only known once unpacked (compressed tar)
+    for i, n in enumerate(names):
+        got = f"{dest}/{n}"
+        if n in want and os.path.isfile(got) and os.path.getsize(got) > max_bytes:
+            sizes[i] = float(os.path.getsize(got))
+            over[i] = True
+            _unlink(dest, n)
+    label = os.path.basename(tar_path)
+    rows = (
+        _archive_rows(dest, tar_row, label, skip_types)
+        if any(k and not o for k, o in zip(keep, over, strict=True))
+        else empty
+    )
+    return _with_oversize(
+        rows,
+        tar_row,
+        label,
+        [n for n, o in zip(names, over, strict=True) if o],
+        [s for s, o in zip(sizes, over, strict=True) if o],
+    )
 
 
 def _open_compressed(path: str, ext: str) -> Any:
@@ -1816,13 +2014,25 @@ def _open_compressed(path: str, ext: str) -> Any:
 
 
 def _expand_compressed(
-    gz_path: Any, gz_row: pd.DataFrame, skip_types: Any = "materials"
+    gz_path: Any,
+    gz_row: pd.DataFrame,
+    skip_types: Any = "materials",
+    max_bytes: float = math.inf,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_compressed()``: a single-file ``.gz``/``.bz2``/``.xz``.
 
     Decompresses the one file inside to ``<file>.contents/<name without the
     compression suffix>`` (``results.csv.gz`` -> ``results.csv``) and returns
     :func:`_archive_rows` for it; a 0-row frame when it cannot be read.
+
+    Decompressed only when the inner file will be kept (:func:`_archive_keep`,
+    by its name), and only up to *max_bytes* (#472): the download limits are
+    checked on the compressed size, and a 74 MB ``go.txt.gz`` became a 1.2 GB
+    copy. The uncompressed size is not stored in the file, so decompression
+    stops once the limit is passed, the partial copy is deleted, and the file
+    is reported in ``attrs["oversize"]`` (size ``NaN``, since only "more than
+    the limit" is known). A copy over the limit left by an earlier run is
+    removed.
     """
     empty = gz_row.iloc[0:0].copy()
     if _missing_path(gz_path):
@@ -1831,24 +2041,52 @@ def _expand_compressed(
     ext = _tolower(_file_ext([gz_path])[0])
     if ext not in ("gz", "bz2", "xz"):
         return empty
-    dest = _contents_dir(gz_path)
+    dest = _archive_dest(gz_path)
     inner_name = sub("[.](gz|bz2|xz)$", "", os.path.basename(gz_path), ignore_case=True)
-    out = f"{dest}/{inner_name}"
+    if not _archive_keep([inner_name], skip_types)[0]:
+        return empty
+    out = os.path.join(dest, inner_name)
+    if os.path.exists(out) and os.path.getsize(out) > max_bytes:
+        _unlink(dest, inner_name)
+    label = os.path.basename(gz_path)
     if not os.path.exists(out):
+        # written beside `dest` and moved in when complete: a decompression that
+        # was stopped left a partial file, reused as complete (U203)
+        part = f"{dest}.part"
+        shutil.rmtree(part, ignore_errors=True)
+        os.makedirs(part, exist_ok=True)
+        status = "ok"
         try:
-            os.makedirs(dest, exist_ok=True)
-            with _open_compressed(gz_path, ext) as con, atomic_write(out) as oc:
+            written = 0
+            with (
+                _open_compressed(gz_path, ext) as con,
+                open(os.path.join(part, inner_name), "wb") as oc,
+            ):
                 while True:
                     chunk = con.read(1048576)
                     if not chunk:
                         break
+                    written += len(chunk)
+                    if written > max_bytes:
+                        status = "over"
+                        break
                     oc.write(chunk)
         except Exception:
+            status = "failed"
+        except BaseException:  # a stop: the half-written folder is not left in the cache
+            shutil.rmtree(part, ignore_errors=True)
+            raise
+        if status != "ok":
+            shutil.rmtree(part, ignore_errors=True)
+            if status == "over":
+                return _with_oversize(empty, gz_row, label, [inner_name], [math.nan])
             return empty
+        os.makedirs(dest, exist_ok=True)
+        _move_extracted(part, dest, [inner_name])
     # the file is closed before its size is read (metacheck reads it before the
     # last buffer is flushed, so the size is rounded down to the block size,
     # 0 for a small file: U69)
-    return _archive_rows(dest, gz_row, os.path.basename(gz_path), skip_types)
+    return _archive_rows(dest, gz_row, label, skip_types)
 
 
 # -- zip_decision() ------------------------------------------------------------

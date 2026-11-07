@@ -541,15 +541,15 @@ def test_crossref_parse_item_authors_and_year() -> None:
         {"family": "Solo", "given": None, "ORCID": None},
         {"family": "B", "given": "A.", "ORCID": "o"},
     ]
-    # U13: a JSON null is NA (R: "differing number of rows: 1, 0"); a list of
-    # values is one value; a list of people is a table like author
+    # U13/U12: a JSON null is dropped; a list of values, or of people, is one value
+    # joined with "; " (metacheck 0.4.3.x)
     row = cr._crossref_parse_item(
         {"DOI": "x", "volume": None, "ISSN": ["1", "2"], "editor": [{"given": "E", "family": "F"}]},
         select=["DOI", "volume", "ISSN", "editor"],
     )
     assert list(row.columns) == ["DOI", "ISSN", "editor"]
     assert row["ISSN"].iat[0] == "1; 2"
-    assert row["editor"].iat[0] == [{"given": "E", "family": "F"}]
+    assert row["editor"].iat[0] == "E; F"
 
 
 def test_crossref_query_offline_data_frame_shape(monkeypatch: pytest.MonkeyPatch) -> None:

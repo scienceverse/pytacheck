@@ -1,0 +1,9 @@
+{
+  "id": "rbox_search.api.limit_zero",
+  "ok": false,
+  "error": "limit must be a number of at least 1 (or Inf)",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

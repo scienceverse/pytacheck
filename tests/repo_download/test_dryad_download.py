@@ -158,6 +158,9 @@ def test_a_dryad_401_without_a_key_says_why(tmp_path: Path) -> None:
         )
         assert errs[0] is not None and errs[0].startswith("HTTP 401 (Dryad requires an API key")
         assert errs[1] == "HTTP 401"
-        # with a key set, a 401 has another cause
+        # with a key set, Dryad refused the key: said so (a visitor's own key is not recorded)
         with local_options({"metacheck.dryad.pat": "tok"}):
-            assert _download_one(dryad_url, str(tmp_path / "e")) == "HTTP 401 Unauthorized."
+            err = _download_one(dryad_url, str(tmp_path / "e"))
+        assert err is not None
+        assert err.startswith("HTTP 401 Unauthorized. (Your Dryad key was rejected")
+        assert "tok" not in err

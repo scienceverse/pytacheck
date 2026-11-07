@@ -913,7 +913,7 @@
     "x":
       "$expr":
         "r": "(function(x) list(attr(x, \"rights\"), attr(x, \"doi\")))(psycharchives_file_download(c(\"https://hdl.handle.net/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\")))"
-        "py": "lambda m: (lambda x: [m.pd.Series(x.attrs[\"rights\"]), m.pd.Series(x.attrs[\"doi\"])])(m.psycharchives.psycharchives_file_download([\"https://hdl.handle.net/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\"]))"
+        "py": "lambda m: (lambda x: [None, None] if x is None else [m.pd.Series(x.attrs[\"rights\"]), m.pd.Series(x.attrs[\"doi\"])])(m.psycharchives.psycharchives_file_download([\"https://hdl.handle.net/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\"]))"
   "mock_dir": "tests/archives_d2/mocks"
 - "id": "psycharchives_file_download.mock.restricted"
   "r": "identity"
@@ -1124,8 +1124,8 @@
   "args":
     "x":
       "$expr":
-        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { p <- file.path(d, \"researchbox.org_801/unzipped/data/x.csv\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"a,b\", p); p <- file.path(d, \"researchbox.org_801/unzipped/README.md\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"hi\", p); p <- file.path(d, \"researchbox.org_801/unzipped/run.sh\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"echo\", p); p <- file.path(d, \"researchbox.org_801/unzipped/Zeta.R\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"1\", p); p <- file.path(d, \"researchbox.org_801/unzipped/noext\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"\", p); old <- options(metacheck.repo_cache.dir = d); on.exit(options(old), add = TRUE); res <- rbox_file_download(c(\"https://researchbox.org/801\", NA, \"https://researchbox.org/801\")); res$file_location <- sub(\".*/unzipped/\", \"\", res$file_location); res })"
-        "py": "lambda m: m.repo_cache({\"researchbox.org_801/unzipped/data/x.csv\": \"a,b\", \"researchbox.org_801/unzipped/README.md\": \"hi\", \"researchbox.org_801/unzipped/run.sh\": \"echo\", \"researchbox.org_801/unzipped/Zeta.R\": \"1\", \"researchbox.org_801/unzipped/noext\": \"\"}, lambda d: (lambda res: res.assign(file_location=[None if m.pd.isna(v) else str(v).split(\"/unzipped/\", 1)[-1] for v in res[\"file_location\"]]))(m.researchbox.rbox_file_download([\"https://researchbox.org/801\", None, \"https://researchbox.org/801\"])))"
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { p <- file.path(d, \"researchbox.org_801/unzipped/data/x.csv\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"a,b\", p); p <- file.path(d, \"researchbox.org_801/unzipped/README.md\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"hi\", p); p <- file.path(d, \"researchbox.org_801/unzipped/run.sh\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"echo\", p); p <- file.path(d, \"researchbox.org_801/unzipped/Zeta.R\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"1\", p); p <- file.path(d, \"researchbox.org_801/unzipped/noext\"); dir.create(dirname(p), recursive = TRUE, showWarnings = FALSE); writeLines(\"\", p); old <- options(metacheck.repo_cache.dir = d); on.exit(options(old), add = TRUE); res <- rbox_file_download(c(\"https://researchbox.org/801\", NA, \"https://researchbox.org/801\"), cache = TRUE); res$file_location <- sub(\".*/unzipped/\", \"\", res$file_location); res })"
+        "py": "lambda m: m.repo_cache({\"researchbox.org_801/unzipped/data/x.csv\": \"a,b\", \"researchbox.org_801/unzipped/README.md\": \"hi\", \"researchbox.org_801/unzipped/run.sh\": \"echo\", \"researchbox.org_801/unzipped/Zeta.R\": \"1\", \"researchbox.org_801/unzipped/noext\": \"\"}, lambda d: (lambda res: res.assign(file_location=[None if m.pd.isna(v) else str(v).split(\"/unzipped/\", 1)[-1] for v in res[\"file_location\"]]))(m.researchbox.rbox_file_download([\"https://researchbox.org/801\", None, \"https://researchbox.org/801\"], cache=True)))"
   "mock_dir": "tests/archives_d2/mocks"
 - "id": ".reshare_id.shapes"
   "r": "metacheck:::.reshare_id"
@@ -1619,3 +1619,66 @@
         "r": "testthat::with_mocked_bindings(fsd_info(\"FSD2653\"), online = function(...) FALSE, .package = \"metacheck\")"
         "py": "lambda m: m.offline(lambda: m.fsd.fsd_info(\"FSD2653\"))"
   "mock_dir": "tests/archives_d2/mocks"
+- "id": ".rbox_info.api.801"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); metacheck:::.rbox_info(\"https://researchbox.org/801\") }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox._rbox_info(\"https://researchbox.org/801\")))"
+  "mock_dir": "apis"
+- "id": "rbox_files.api.801"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_files(\"https://researchbox.org/801\") }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_files(\"https://researchbox.org/801\")))"
+  "mock_dir": "apis"
+- "id": "rbox_files.api.no_key"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_files(\"https://researchbox.org/801\") }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_files(\"https://researchbox.org/801\")))"
+  "mock_dir": "apis"
+- "id": "rbox_search.api.happi"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_search(\"happi*\", limit = 3) }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_search(\"happi*\", limit=3)))"
+  "mock_dir": "apis"
+- "id": "rbox_search.api.no_key"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_search(\"happi*\") }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_search(\"happi*\")))"
+  "mock_dir": "apis"
+- "id": "rbox_search.api.limit_zero"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_search(\"happi*\", limit = 0) }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_search(\"happi*\", limit=0)))"
+  "mock_dir": "apis"
+- "id": "rbox_search.api.not_a_string"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings((function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { old <- options(metacheck.researchbox.token = \"test-token\", metacheck.state.dir = d, metacheck.repo_cache.session_dir = d); on.exit(options(old), add = TRUE); rbox_search(1) }), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.tmp(lambda d: m.with_options({\"metacheck.researchbox.token\": \"test-token\", \"metacheck.state.dir\": d, \"metacheck.repo_cache.session_dir\": d}, lambda: m.researchbox.rbox_search(1)))"
+  "mock_dir": "apis"

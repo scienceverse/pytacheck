@@ -58,6 +58,7 @@ def test_the_table_has_the_twins_and_the_exceptions_the_spec_lists() -> None:
         "LLM_CACHE_DIR",
         "LLM_MAX_CALLS",
         "LLM_MODEL",
+        "STATE_DIR",
     }
     assert set(SECRETS) == {"API_KEY", "GITHUB_TOKEN", "APP_TOKENS"}
     names = [n for var in ENV_VARS.values() for n in var.names]

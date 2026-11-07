@@ -119,7 +119,9 @@ def _zip_peek_cache_put(url: str, value: Any) -> Any:
     with contextlib.suppress(Exception):
         # the URL itself is not stored: it can carry a token
         data = orjson.dumps({"format": _FORMAT, "version": _VERSION, "value": _encode(value)})
-        with atomic_write(_zip_peek_cache_path(url)) as fh:
+        path = _zip_peek_cache_path(url)
+        os.makedirs(os.path.dirname(path), exist_ok=True)  # R: dir.create() at each write
+        with atomic_write(path) as fh:
             fh.write(data)
     return value
 

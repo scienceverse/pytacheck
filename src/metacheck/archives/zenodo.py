@@ -56,10 +56,10 @@ def zenodo_links(paper: Any) -> pd.DataFrame:
     (the record's DOI URL) are added.
     """
     from metacheck._r import bind_rows, grepl, sub
-    from metacheck.papers.tables import paper_table
+    from metacheck.archives import _paper_urls
     from metacheck.text.search import text_search
 
-    urls = paper_table(paper, "url")
+    urls = _paper_urls(paper)
     if "href" not in urls.columns:
         # an empty paper list has a url table without columns (R: `href` is NULL)
         urls = pd.DataFrame({"href": pd.Series([], dtype="string")})
@@ -152,7 +152,7 @@ def zenodo_info(
     ``zenodo_id`` and the record's metadata (``title``, ``doi``,
     ``license``, ``files``...). With *cache*, records already looked up are
     read from the on-disk listing cache (see
-    :func:`~metacheck.archives.info_cache.repo_info_cache`).
+    :func:`~metacheck.archives.info_cache.repo_info_cache_clear`).
     """
     from metacheck import utils
     from metacheck.archives import _spinner

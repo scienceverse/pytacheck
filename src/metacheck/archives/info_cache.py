@@ -1,7 +1,7 @@
 """On-disk cache of repository LISTING results (port of ``R/repo-info-cache.R``).
 
-Off by default; :func:`repo_info_cache` turns it on. When on, the archive
-``*_info()`` functions store each repository's listing (metadata + file list)
+Off by default; the ``cache`` argument of the archive ``*_info()`` functions
+turns it on. When on, they store each repository's listing (metadata + file list)
 and reuse it on a later call instead of re-querying the host, so restarting
 an interrupted corpus run does not re-spend a host's API quota.
 
@@ -22,7 +22,7 @@ from typing import Any
 from metacheck._r import as_character, gsub
 from metacheck._values import is_missing
 
-__all__ = ["repo_info_cache", "repo_info_cache_clear"]
+__all__ = ["repo_info_cache_clear"]
 
 _SUFFIX = ".json"
 _LEGACY_SUFFIX = ".pkl"  # older pytacheck versions; removed by clear(), never read
@@ -33,27 +33,18 @@ _OLD_FORMAT = "pytacheck.repo_info_cache"
 _VERSION = 1
 
 
-def repo_info_cache(enabled: bool | None = None) -> bool:
-    """Port of R/repo-info-cache.R::repo_info_cache(): get or set whether listings are cached."""
-    from metacheck.utils import get_option, options
-
-    if enabled is None:
-        return get_option("metacheck.repo_info.cache", False) is True
-    if not isinstance(enabled, bool):
-        raise ValueError("Set repo_info_cache with TRUE or FALSE")
-    options({"metacheck.repo_info.cache": enabled})
-    return enabled
-
-
 def repo_info_cache_clear() -> int:
     """Port of R/repo-info-cache.R::repo_info_cache_clear(): delete all cached listings.
 
     Returns the number of entries removed.
     """
     root = Path(_repo_info_cache_dir())
-    files = [
-        f for f in root.iterdir() if f.is_file() and f.name.endswith((_SUFFIX, _LEGACY_SUFFIX))
-    ]
+    # the folder is not created by a lookup (CRAN: nothing is written unasked)
+    files = (
+        [f for f in root.iterdir() if f.is_file() and f.name.endswith((_SUFFIX, _LEGACY_SUFFIX))]
+        if root.is_dir()
+        else []
+    )
     for f in files:
         f.unlink(missing_ok=True)
     return len(files)
@@ -123,6 +114,7 @@ def _repo_info_cache_put(host: str, id: Any, value: Any) -> Any:
         path = _repo_info_cache_path(host, id)
         from metacheck.archives._atomic import atomic_write
 
+        os.makedirs(os.path.dirname(path), exist_ok=True)  # R: dir.create() at each write
         with atomic_write(path) as fh:
             fh.write(data)
     return value

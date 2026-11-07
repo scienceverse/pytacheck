@@ -17,6 +17,8 @@ from typing import Any
 
 import pandas as pd
 
+from metacheck.archives.download import _session_tempdir
+
 HERE = Path(__file__).resolve().parent
 DATA = HERE / "data"
 
@@ -68,7 +70,9 @@ def expand(fn: str, fixture: str, skip_types: Any = "materials", minimal: bool =
         if "file_location" in out.columns:
             out["file_location"] = pd.Series(
                 [
-                    None if v is None or v is pd.NA else str(v).replace(d, "<TMP>")
+                    None
+                    if v is None or v is pd.NA
+                    else str(v).replace(d, "<TMP>").replace(_session_tempdir(), "<tempdir>")
                     for v in out["file_location"].tolist()
                 ],
                 dtype="string",
