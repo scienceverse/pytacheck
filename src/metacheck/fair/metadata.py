@@ -1915,7 +1915,8 @@ def _FAIR_repo_utf8(x: Any) -> Any:
 def _json_text(x: Any, level: int = 0) -> str:
     """A value as pretty JSON, the way ``jsonlite::toJSON(auto_unbox, pretty, digits = 4)`` shows it.
 
-    Two spaces per level, one array element per line; a number as jsonlite writes it; a
+    Two spaces per level; an array of plain values on one line, any other array one element per
+    line (as jsonlite shows a vector and a list); a number as jsonlite writes it; a
     missing value ``null``.
     """
     if isinstance(x, np.generic):
@@ -1946,6 +1947,9 @@ def _json_text(x: Any, level: int = 0) -> str:
         items = list(x)
         if not items:
             return "[]"
+        if all(v is None or isinstance(v, str | int | float | bool | np.generic) for v in items):
+            # an R vector of values: jsonlite keeps it on one line
+            return "[" + ", ".join(_json_text(v, level + 1) for v in items) + "]"
         body = ",\n".join(pad + _json_text(v, level + 1) for v in items)
         return "[\n" + body + "\n" + end + "]"
     return json.dumps(str(x), ensure_ascii=False)
