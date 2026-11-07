@@ -118,7 +118,8 @@ def test_write_scripts_comments_out_setwd(tmp_path: Path) -> None:
     assert out["setwd_removed"].tolist() == [1]
     assert "/Users/author/project" in out["setwd_paths"].iloc[0]
     written = Path(out["script_path"].iloc[0]).read_text().splitlines()
-    assert written[0].startswith("# [reproducibility_check removed setwd]")
+    # a statement that does nothing, not a comment, so a block keeps a body (#480)
+    assert written[0].startswith("invisible(NULL)  # [reproducibility_check removed setwd]")
 
 
 def test_write_scripts_redirects_writes(tmp_path: Path) -> None:
@@ -299,6 +300,9 @@ def test_install_deps_empty(tmp_path: Path) -> None:
         "message",
         "via_archive",
         "category",
+        "version_recorded",
+        "version_installed",
+        "version_note",
     ]
 
 
@@ -413,7 +417,7 @@ def test_cran_archive_installs_latest(monkeypatch: pytest.MonkeyPatch) -> None:
             return_value=httpx.Response(200, text=listing)
         )
         res = core._repro_cran_archive_install("pkg", "/main", "/throwaway")
-    assert res == {"ok": True, "msg": "", "version": "0.10"}
+    assert res == {"ok": True, "msg": "", "version": "0.10", "version_installed": None}
     assert seen["install_lib"] == "/main"
 
 

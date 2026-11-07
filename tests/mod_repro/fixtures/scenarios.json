@@ -841,6 +841,194 @@
     ]
    }
   },
+  "functions_and_tests": {
+   "code": {
+    "file_name": [
+     "fn_main.R",
+     "fn_helpers.R",
+     "tests/testthat/test-helpers.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/fn_main.R",
+     "tests/mod_repro/fixtures/scripts/fn_helpers.R",
+     "tests/mod_repro/fixtures/scripts/tests/testthat/test-helpers.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "fn_main.R",
+     "fn_helpers.R",
+     "tests/testthat/test-helpers.R",
+     "data.csv"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/fn_main.R",
+     "tests/mod_repro/fixtures/scripts/fn_helpers.R",
+     "tests/mod_repro/fixtures/scripts/tests/testthat/test-helpers.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "starts_app": {
+   "code": {
+    "file_name": [
+     "app.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/app.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     "shiny"
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "file_choice": {
+   "code": {
+    "file_name": [
+     "choose_file.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/choose_file.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "py_software": {
+   "code": {
+    "file_name": [
+     "analysis.py",
+     "tests/check_rows.py",
+     "setup.py",
+     "serve.py"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/py/analysis.py",
+     "tests/mod_repro/fixtures/scripts/py/tests/check_rows.py",
+     "tests/mod_repro/fixtures/scripts/py/setup.py",
+     "tests/mod_repro/fixtures/scripts/py/serve.py"
+    ],
+    "file_url": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "Python",
+     "Python",
+     "Python",
+     "Python"
+    ],
+    "packages": [
+     "",
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
   "stata_no_data": {
    "code": {
     "file_name": [
@@ -1992,6 +2180,94 @@
     "file_location": [
      "upstream/metacheck/tests/testthat/fixtures/repro/data.csv",
      "tests/mod_repro/fixtures/outputs/sample.jasp"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_lib_repair": {
+   "code": {
+    "file_name": [
+     "lib_setup.R",
+     "lib_user.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/lib_setup.R",
+     "tests/mod_repro/fixtures/scripts/lib_user.R"
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_total_timeout": {
+   "code": {
+    "file_name": [
+     "sleep.R",
+     "sleep_b.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/sleep.R",
+     "tests/mod_repro/fixtures/scripts/sleep_b.R"
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
     ]
    },
    "plan": {

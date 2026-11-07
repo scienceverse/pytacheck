@@ -185,6 +185,49 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         ),
         "plan": PLAN,
     },
+    # -- files that are not run on their own (metacheck #568) ---------------------
+    # a file that only defines functions (used by the script that sources it), and a
+    # package test, which is not part of the analysis
+    "functions_and_tests": {
+        "code": code(
+            r("fn_main.R", S + "fn_main.R"),
+            r("fn_helpers.R", S + "fn_helpers.R"),
+            r("tests/testthat/test-helpers.R", S + "tests/testthat/test-helpers.R"),
+        ),
+        "structure": table(
+            file_name=["fn_main.R", "fn_helpers.R", "tests/testthat/test-helpers.R", "data.csv"],
+            file_location=[
+                S + "fn_main.R",
+                S + "fn_helpers.R",
+                S + "tests/testthat/test-helpers.R",
+                U + "data.csv",
+            ],
+        ),
+        "plan": PLAN,
+    },
+    # a script that starts an app waits for a person
+    "starts_app": {
+        "code": code(r("app.R", S + "app.R", packages="shiny")),
+        "structure": DATA,
+        "plan": PLAN,
+    },
+    # file.choose() filled in with the deposit's one data file
+    "file_choice": {
+        "code": code(r("choose_file.R", S + "choose_file.R")),
+        "structure": DATA,
+        "plan": PLAN,
+    },
+    # Python: an analysis, a package test, setup.py and a server
+    "py_software": {
+        "code": code(
+            r("analysis.py", S + "py/analysis.py", language="Python"),
+            r("tests/check_rows.py", S + "py/tests/check_rows.py", language="Python"),
+            r("setup.py", S + "py/setup.py", language="Python"),
+            r("serve.py", S + "py/serve.py", language="Python"),
+        ),
+        "structure": DATA,
+        "plan": PLAN,
+    },
     # -- SPSS / Stata / other languages -------------------------------------------
     "stata_no_data": {
         "code": code({"file_name": "analysis.do", "file_location": None, "language": "Stata"}),
@@ -368,6 +411,19 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         ),
         "plan": PLAN,
     },
+    # a script that fails on a function of a package another script loads runs once
+    # more with that library() call added (metacheck 0.4.x)
+    "exec_lib_repair": {
+        "code": code(r("lib_setup.R", S + "lib_setup.R"), r("lib_user.R", S + "lib_user.R")),
+        "structure": DATA,
+        "plan": PLAN,
+    },
+    # total_timeout runs out during the first script: it is stopped, the second not started
+    "exec_total_timeout": {
+        "code": code(r("sleep.R", S + "sleep.R"), r("sleep_b.R", S + "sleep_b.R")),
+        "structure": DATA,
+        "plan": PLAN,
+    },
 }
 
 EXEC_IGNORE: list[str] = []
@@ -447,6 +503,15 @@ for name in SCENARIOS:
             name,
             "execute = TRUE, timeout = 10, keep_sandbox = TRUE",
             "execute=True, timeout=10, keep_sandbox=True" + PROCESS_PY,
+            compare={"ignore": [*EXEC_IGNORE, "run_results.stdout", "run_results.stderr"]},
+        )
+        continue
+    if name == "exec_total_timeout":
+        add(
+            f"reproducibility_check.{name}",
+            name,
+            "execute = TRUE, timeout = 60, total_timeout = 8, keep_sandbox = TRUE",
+            "execute=True, timeout=60, total_timeout=8, keep_sandbox=True" + PROCESS_PY,
             compare={"ignore": [*EXEC_IGNORE, "run_results.stdout", "run_results.stderr"]},
         )
         continue
