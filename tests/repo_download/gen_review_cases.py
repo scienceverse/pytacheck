@@ -815,7 +815,7 @@ def main() -> None:
         {
             "id": "invalid.check_file_naming",
             "r": "check_file_naming",
-            "py": "metacheck.fileinfo.naming.check_file_naming",
+            "py": "tests.repo_download._review_helpers.naming",
             "args": {"file_name": {"$expr": {"r": bad_r, "py": bad_py}}},
         }
     )
@@ -823,7 +823,7 @@ def main() -> None:
         {
             "id": "invalid.check_file_naming_path",
             "r": "check_file_naming",
-            "py": "metacheck.fileinfo.naming.check_file_naming",
+            "py": "tests.repo_download._review_helpers.naming",
             "args": {
                 "file_name": "ok.csv",
                 "file_path": {"$expr": {"r": '"d\\x82/ok.csv"', "py": '"d\\udc82/ok.csv"'}},
@@ -834,7 +834,7 @@ def main() -> None:
         {
             "id": "invalid.check_file_naming_dir_only",
             "r": "check_file_naming",
-            "py": "metacheck.fileinfo.naming.check_file_naming",
+            "py": "tests.repo_download._review_helpers.naming",
             "args": {
                 "file_name": {"$expr": {"r": '"d\\x82/ok.csv"', "py": '"d\\udc82/ok.csv"'}},
                 "file_path": "d/ok.csv",

@@ -387,3 +387,10 @@ def filetype(x: Any) -> Any:
     out = ft(x)
     out.index = pd.Index([_bytes_text(v) for v in out.index], dtype=object)
     return out
+
+
+def naming(file_name: Any, file_path: Any = None) -> Any:
+    """``check_file_naming()`` with a stray byte spelled ``<82>``, as R's goldens spell it."""
+    from metacheck.fileinfo.naming import check_file_naming
+
+    return _df_bytes(check_file_naming(file_name, file_path))

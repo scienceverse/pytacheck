@@ -359,26 +359,10 @@
   kind: r_bug_fixed
   ref: U76
   reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
-"repo_download_review/invalid.file_category":
-  kind: r_bug_fixed
-  ref: U76
-  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
-"repo_download_review/invalid.filetype":
-  kind: r_bug_fixed
-  ref: U76
-  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
-"repo_download_review/invalid.check_file_naming":
-  kind: r_bug_fixed
-  ref: U76
-  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
-"repo_download_review/invalid.check_file_naming_path":
-  kind: r_bug_fixed
-  ref: U76
-  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
 "repo_download_review/invalid.is_readable_archive":
   kind: r_bug_fixed
   ref: U76
-  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+  reason: "a name with an undecodable byte is still read as an archive (metacheck 0.4.3.7 answers FALSE with a warning for \"a<82>.zip\" and \"c<82>.tar.gz\")"
 # U79
 "archives_d1_review/dryad_links.review.empty_paperlist":
   kind: type_detail
