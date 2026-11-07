@@ -5,128 +5,32 @@
 # entry.
 
 # causal_claims -------------------------------------------------------------------
-"mod_causal/causal_claims.random_several":
-  kind: r_bug_fixed
-  ref: U85
-  reason: '"Trials were presented in random order after participants were randomized." counts; the "random order" exclusion no longer drops the whole sentence'
-"mod_causal/causal_claims.title_na":
-  kind: r_bug_fixed
-  ref: U84
-  reason: a missing (NA) title is skipped; metacheck stops with "missing value where TRUE/FALSE needed"
-"mod_causal/causal_claims.paperlist_no_abstract_untitled": &u85_list_random_order
-  kind: r_bug_fixed
-  ref: U85
-  reason: '"Trials were presented in random order after participants were randomized." counts in the list''s pl_several paper (7 sentences, metacheck 6)'
-"mod_causal/causal_claims.fake.paperlist_no_abstract": *u85_list_random_order
 "mod_causal/causal_claims.fake.paperlist_duplicate":
   kind: r_bug_fixed
   ref: U84
   reason: the paper list's causal title is found, and a sentence shared by two papers counts once for each (metacheck 2, 2)
-"mod_causal/causal_claims.fake.paperlist_info_id":
-  kind: r_bug_fixed
-  ref: U84
-  reason: the causal title of a paper in a list is found (metacheck never classifies list titles)
-"mod_causal_review/causal_claims.review.pattern_quirks":
-  kind: r_bug_fixed
-  ref: U85
-  reason: British "Randomisation" and "randomly assigned ... random intercepts/effects" count, "not randomized" does not (10 sentences, metacheck 8)
-"mod_causal_review/causal_claims.review.paperlist_empty_member_untitled": &u85_empty_member_random_order
-  kind: r_bug_fixed
-  ref: U85
-  reason: '"Trials were presented in random order after participants were randomized." counts (6 sentences, metacheck 5)'
-"mod_causal_review/causal_claims.review.fake.paperlist_empty_member_random": *u85_empty_member_random_order
 "mod_causal_review/causal_claims.review.fake.dup_same_paper":
   kind: r_bug_fixed
   ref: U84
   reason: a sentence repeated twice in the abstract counts its relation twice, not four times (join by text)
-"mod_causal_review/causal_claims.review.fake.paperlist_single":
-  kind: r_bug_fixed
-  ref: U84
-  reason: the causal title of the only paper in a list is found (yellow; metacheck never classifies list titles)
-"mod_causal_review/causal_claims.review.error.title_na":
-  kind: r_bug_fixed
-  ref: U84
-  reason: a missing (NA) title is skipped; metacheck stops with "missing value where TRUE/FALSE needed"
 "mod_causal_review/causal_claims.review.fake.report.full":
   kind: r_bug_fixed
   ref: U85
   reason: '"... in random order after participants were randomized." counts as describing randomization (7 sentences, metacheck 6); the tables are raw HTML blocks, not R chunks (D75)'
 
 # ethics_check --------------------------------------------------------------------
-"mod_ethics/ethics_check.duplicates":
-  kind: r_bug_fixed
-  ref: U102
-  reason: the report quotes "The IRB approved the protocol." once, not once per row
-"mod_ethics/ethics_check.paperlist_empty_member":
-  kind: r_bug_fixed
-  ref: U102
-  reason: the paper with an empty info table is summarised under its own ID, so the two-paper list gets the paper-list summary ("1 of 2 papers ...") and no single-paper report
-"mod_ethics/ethics_check.duplicate_ids":
-  kind: r_bug_fixed
-  ref: U208
-  reason: papers that share an ID are summarised as separate papers (d1 and d1~2); metacheck stops ("factor level [2] is duplicated")
-"mod_ethics/ethics_check.empty_paper":
-  kind: r_bug_fixed
-  ref: U102
-  reason: paper() (an empty info table) is summarised under its own ID ("na"); metacheck stops ("invalid subscript type 'list'", also U79)
 "mod_ethics_review/ethics_check.no_text_column_ethics_match": &u102_no_text
   kind: r_bug_fixed
   ref: U102
   reason: a text table without a `text` column has no sentences ("na"); metacheck searches its first column and stops with an opaque error
 "mod_ethics_review/ethics_check.no_text_column_live_match": *u102_no_text
-"mod_ethics_review/ethics_check.no_info_member_with_text": &u102_no_info
-  kind: r_bug_fixed
-  ref: U102
-  reason: the paper without an info row keeps its ID (p1) instead of an NA paper_id, and is summarised; the list gets the paper-list summary
-"mod_ethics_review/ethics_check.direct_no_info_member_with_text": *u102_no_info
-"mod_ethics_review/ethics_check.no_info_single_with_text":
-  kind: r_bug_fixed
-  ref: U102
-  reason: a paper without an info row is summarised under its own ID; metacheck stops ("invalid subscript type 'list'")
-"mod_ethics_review/ethics_check.duplicated_sections": &u102_quote
-  kind: r_bug_fixed
-  ref: U102
-  reason: the report quotes each ethics statement once (metacheck repeats a sentence found at several rows)
-"mod_ethics_review/ethics_check.direct_duplicated_sections": *u102_quote
-"mod_ethics_review/ethics_check.approved_no_need_repeated": *u102_quote
 
 # funding_check -------------------------------------------------------------------
-"mod_funding/helpers.patterns": &u104_patterns
+"mod_funding_review/rtransparent_funding.boundaries": &u299_na_next
   kind: r_bug_fixed
-  ref: U104
-  reason: pattern typos fixed ("Foundation", "[Pp]apers", "Literature", "Bibliography", the missing (?-i) in conflict_title) and the reference locator is anchored at the sentence start
-"mod_funding/helpers.create_synonyms": *u104_patterns
-"mod_funding/locate.titles.refs_next":
-  kind: r_bug_fixed
-  ref: U104
-  reason: '"Literature:" is a reference heading (metacheck''s "L(?i)terature" never matches), and the last heading is taken'
-"mod_funding/locate.titles.funding_blank_last": &u103_past_end
-  kind: r_bug_fixed
-  ref: U103
-  reason: a title's follow-up line past the end of the article is not returned (metacheck returns it, pasted as "NA")
-"mod_funding/rtransparent_funding.articles": *u103_past_end
-"mod_funding/rtransparent_funding.na_index": *u103_past_end
-"mod_funding/funding_check.na_index": *u103_past_end
-"mod_funding_review/rtransparent_funding.boundaries": *u103_past_end
-"mod_funding_review/locate.boundary.acknow_1_blank_na": *u103_past_end
-"mod_funding/locate.error.fund_2": &u103_several
-  kind: r_bug_fixed
-  ref: U103
-  reason: several title lines each give the title and its next line; metacheck stops ("the condition has length > 1")
-"mod_funding/locate.error.financial_1": *u103_several
-"mod_funding/locate.error.grant_1": *u103_several
-"mod_funding/locate.error.acknow_1": *u103_several
-"mod_funding/locate.error.where_acknows": *u103_several
-"mod_funding/rtransparent_funding.error": *u103_several
-"mod_funding/funding_check.error": *u103_several
-"mod_funding/funding_check_oi.sectioned_none":
-  kind: r_bug_fixed
-  ref: U105
-  reason: the sentence in the "acknowledgment" section is favoured (metacheck lists only "acknowledgement", which is not its section type), so the intro and discussion sentences are left out
-"mod_funding_review/funding_check_oi.sectioned_acknowledgement":
-  kind: r_bug_fixed
-  ref: U105
-  reason: sentences in "acknowledgment" sections are favoured as well as "acknowledgement" ones, so "The authors declare no funding." is kept
+  ref: U299
+  reason: "a title line followed by a missing (NA) line has no follow-up line (R's .title_lines_with_next() stops with \"missing value where TRUE/FALSE needed\", because nchar(NA) is NA in its if())"
+"mod_funding_review/locate.boundary.funding_title_na_next": *u299_na_next
 "mod_funding_review/negate_absence_1.match_limit":
   kind: c_quirk
   ref: D17
@@ -146,98 +50,14 @@
   kind: r_bug_fixed
   ref: U119
   reason: one row per reference (11, metacheck 17 through the k x k PubPeer join, U118)
-"mod_ref_pubpeer_summary/ref_summary.mixed.chain_all": &u119_rows
-  kind: r_bug_fixed
-  ref: U119
-  reason: one row per reference; several rows of an earlier module for a reference are combined instead of repeating the reference
-"mod_ref_pubpeer_summary/ref_summary.mixed.chain_all.report_table": *u119_rows
-"mod_ref_pubpeer_summary_review/ref_summary.rep_no_type": *u119_rows
-"mod_ref_pubpeer_summary_review/ref_summary.acc_dup": *u119_rows
-"mod_ref_pubpeer_summary_review/ref_summary.acc_dup.report_table": *u119_rows
-"mod_ref_pubpeer_summary/ref_summary.psychsci.chain_all": &u119_nomatch
-  kind: r_bug_fixed
-  ref: U119
-  reason: references without a CrossRef match (no_match TRUE, every *_mismatch FALSE) say "no match"; metacheck's filter drops them first and leaves NA
-"mod_ref_pubpeer_summary/ref_summary.psychsci.chain_accuracy": *u119_nomatch
-"mod_ref_pubpeer_summary/ref_summary.accuracy.all_false": *u119_nomatch
-"mod_ref_pubpeer_summary/ref_summary.accuracy.no_no_match_col":
-  kind: r_bug_fixed
-  ref: U119
-  reason: an accuracy table without a no_match column is summarised (no "no match" labels); metacheck fails with an empty error message
 
 # ref_accuracy --------------------------------------------------------------------
-"mod_ref_accuracy_review/ref_accuracy.xml_fixtures": &u30_light
-  kind: r_bug_fixed
-  ref: U30
-  reason: papers without bib_match rows get the "fail" light; metacheck returns "error", which is not a traffic light
-"mod_ref_accuracy_review/ref_accuracy.problems_203020": *u30_light
-"mod_ref_accuracy_review/ref_accuracy.bibr_golden": *u30_light
 
 # ref_consistency -----------------------------------------------------------------
-"mod_ref_accuracy_review/ref_consistency.na_with_xrefs": &u115_missing
-  kind: r_bug_fixed
-  ref: U115
-  reason: a citation whose xref_id is not a bib_id of the paper is reported as missing from the bibliography; metacheck reports only citations without an xref_id
-"mod_ref_accuracy_review/ref_consistency.report_tables.na_with_xrefs": *u115_missing
-"mod_ref_accuracy_review/ref_consistency.single_reference": *u115_missing
-"mod_ref_accuracy_review/ref_consistency.report_tables.single_reference": *u115_missing
-"mod_ref_accuracy_review/ref_consistency.paperlist.all_empty_bib": *u115_missing
-"mod_ref_accuracy_review/ref_consistency.contents_na": &u115_type
-  kind: r_bug_fixed
-  ref: U115
-  reason: a citation (xref) without contents whose xref_id is not a bib_id is "missing" from the bibliography, not an "extra" reference
-"mod_ref_accuracy_review/ref_consistency.report_tables.contents_na": *u115_type
 
 # power ---------------------------------------------------------------------------
-"mod_power_review/power.review.fallback.omitted_key": &u108_complete
-  kind: r_bug_fixed
-  ref: U108
-  reason: a field that no fallback reply gave (alpha_level) is not extracted, so the analysis is incomplete (red); metacheck's any_of() skips the missing column and reports it complete (green)
-"mod_power_review/power.review.fallback.empty_mixed": *u108_complete
-"mod_power_review/power.review.llm.no_key": &u108_cols
-  kind: r_bug_fixed
-  ref: U108
-  reason: the fallback table always has every extracted field (NA when no reply gave it), as the structured path has
-"mod_power_review/power.review.fallback.all_fail": *u108_cols
-"mod_power_review/power.review.fallback.garbled": *u108_cols
-"mod_power_review/power.review.fallback.empty": *u108_cols
 
 # prereg_check --------------------------------------------------------------------
-"mod_prereg/prereg_check.aspredicted_only":
-  kind: r_bug_fixed
-  ref: U109
-  reason: an AsPredicted-only paper is checked; metacheck stops on osf_type(character(0)) ("argument is of length zero")
-"mod_prereg/prereg_check.aspredicted.multiple": &u109_ap_rows
-  kind: r_bug_fixed
-  ref: U109
-  reason: each AsPredicted preregistration is its own row, counted for the paper that links it; metacheck pastes them into one row whose link matches no paper
-"mod_prereg/prereg_check.aspredicted.blind": *u109_ap_rows
-"mod_prereg/prereg_check.aspredicted.paperlist": *u109_ap_rows
-"mod_prereg_review/prereg_check.tables.aspredicted": *u109_ap_rows
-"mod_prereg_review/prereg_check.ap.with_fetch_fails":
-  kind: r_bug_fixed
-  ref: U109
-  reason: missing AsPredicted fields stay missing (metacheck pastes "NA"), and a failed fetch is reported by the paper's link, not the API URL (U110)
-"mod_prereg/prereg_check.fetch_fails": &u110_link
-  kind: r_bug_fixed
-  ref: U110
-  reason: a registration that fails to fetch is reported by the paper's link (https://osf.io/8c3kb), not by the API URL
-"mod_prereg/prereg_check.inaccessible.mixed": *u110_link
-"mod_prereg/prereg_check.report.mixed": *u110_link
-"mod_prereg_review/prereg_check.inaccessible.all_kinds": *u110_link
-"mod_prereg_review/prereg_check.inaccessible.paperlist": *u110_link
-"mod_prereg/prereg_check.duplicate_links": &u110_dup
-  kind: r_bug_fixed
-  ref: U110
-  reason: a registration linked twice by a paper is one preregistration; metacheck's left_join() duplicates the row
-"mod_prereg_review/prereg_check.ap.same_link_twice": *u110_dup
-"mod_prereg/prereg_check.unjoined_links": &u110_join
-  kind: r_bug_fixed
-  ref: U110
-  reason: registrations are joined to papers by OSF id, so http://, upper-case and view_only links count for their paper; metacheck's join by link text leaves paper_id NA
-"mod_prereg_review/prereg_check.unjoined.paperlist": *u110_join
-"mod_prereg_review/prereg_check.synthetic.view_only": *u110_join
-"mod_prereg_review/prereg_check.synthetic.view_only.paperlist": *u110_join
 "mod_prereg_review/prereg_check.synthetic.paper_id_field":
   kind: r_bug_fixed
   ref: U110
@@ -245,14 +65,8 @@
 "mod_prereg/prereg_check.synthetic.prsp": &u111_prsp
   kind: r_bug_fixed
   ref: U111
-  reason: prsp() reads response keys exactly (metacheck's $ gives "84-56" for a missing "84-5", another question's answer) and names uploaded files instead of deparsing list(html = ...)
+  reason: prsp() names uploaded files instead of deparsing them (list(html = ...), c("idf", "idg")); the exact response-key reading is metacheck's now (U111, 0.4.x)
 "mod_prereg_review/prereg_check.tables.synthetic": *u111_prsp
-"mod_prereg_review/prereg_check.synthetic.prsp_deparse": *u111_prsp
-"mod_prereg_review/prereg_check.tables.synthetic.prsp_deparse": *u111_prsp
-"mod_prereg_review/prereg_check.synthetic.label_nonchar":
-  kind: r_bug_fixed
-  ref: U111
-  reason: a schema label containing U+FFFF is lower-cased like any other; R's tolower() stops the module ("invalid input ... in 'utf8towcs'")
 
 # prose typos, output columns and TEI text (U83, U115, U16) ------------------
 # U83: metacheck's typos in report prose are fixed ("likley"); the U83 cases
@@ -260,13 +74,10 @@
 # in prose.yaml). Cases of the io lane's generated files (bibr12, grobid12) that
 # run these modules are listed here because the module change, not the
 # conversion, makes them differ.
-"mod_ref_accuracy_review/ref_consistency.double_key": &u83_likley
+"bibr12/module.ref_consistency.preprint": &u83_likley
   kind: r_bug_fixed
   ref: U83
   reason: "the caveat says 'likely' (metacheck: 'likley'); summary_table always has n_missing and n_extra (U115; metacheck drops a count column when no row has it), and duplicated bib_match rows no longer repeat a reference (U114)"
-"mod_ref_accuracy_review/ref_consistency.xref_type_na": *u83_likley
-"mod_ref_accuracy_review/ref_consistency.duplicate_match": *u83_likley
-"bibr12/module.ref_consistency.preprint": *u83_likley
 "bibr12/module.ref_consistency.PMC4383902": *u83_likley
 "bibr12/module.ref_consistency.full":
   kind: r_bug_fixed
@@ -340,62 +151,15 @@
   reason: an empty paper list gives the module's empty result ("na", a summary table without rows); metacheck stops
 "mod_ethics_review/ethics_check.direct_empty_list": *u79_empty_list
 "mod_power_review/power.review.empty_paperlist": *u79_empty_list
-"mod_prereg_review/prereg_check.empty_paperlist": *u79_empty_list
-"mod_reg/reg_check.module.empty_paperlist": *u79_empty_list
 
 # reg_check: a light for a check that could not run (U30) --------------------------
 # When every RegCheck comparison fails, reg_check's light is "fail" (what report()
 # gives a module that fails); metacheck returns "error", which is not a traffic light.
 # r_text turns R's light into "fail" (no other value of these goldens is "error"),
 # so the rest of each result stays compared with R.
-"mod_reg/reg_check.all_fail": &u30_reg_fail
-  kind: r_bug_fixed
-  ref: U30
-  reason: every RegCheck comparison failed, so the check could not run and the light is "fail"; metacheck's "error" is not a traffic light
-  r_text: [["^error$", "fail", regex]]
-"mod_reg/reg_check.empty_result": *u30_reg_fail
-"mod_reg/reg_check.paperlist.all_fail": *u30_reg_fail
-"mod_reg/reg_check.unknown_client": *u30_reg_fail
-"mod_reg/reg_check.groq_no_token": *u30_reg_fail
-"mod_reg/reg_check.empty_text": *u30_reg_fail
-"mod_reg/reg_check.connfail": *u30_reg_fail
-"mod_reg/reg_check.unauthorized": *u30_reg_fail
-"mod_reg_review/reg_check.review.chained.duplicates_all_fail": *u30_reg_fail
-"mod_reg_review/reg_check.review.ghost_paper_id.paperlist": *u30_reg_fail
-"mod_reg_review/reg_check.review.ambiguous_client": *u30_reg_fail
-"mod_reg_review/reg_check.review.http.404": *u30_reg_fail
-"mod_reg_review/reg_check.review.http.500": *u30_reg_fail
-"mod_reg_review/reg_check.review.http.422": *u30_reg_fail
-"mod_reg_review/reg_check.review.http.401": *u30_reg_fail
-"mod_reg_review/reg_check.review.http.401_groq": *u30_reg_fail
-"mod_reg_review/reg_check.review.http.pollfail": *u30_reg_fail
-"mod_reg_review/reg_check.review.http.pollfail_nostatus": *u30_reg_fail
-"mod_reg_review/reg_check.review.http.poll503": *u30_reg_fail
-"mod_reg_review/reg_check.review.http.success_null": *u30_reg_fail
-"mod_reg_review/reg_check.review.refused": *u30_reg_fail
 
 # repeated paper IDs in a list (F6; U208) ----------------------------------------------
 "mod_urls_open/open_practices.duplicate_ids":
   kind: r_bug_fixed
   ref: U208
   reason: two papers that share an ID are summarised as two papers (the second one as ID~2); metacheck stops ("factor level [2] is duplicated")
-"mod_funding_review/funding_check.duplicate_ids":
-  kind: r_bug_fixed
-  ref: U208
-  reason: papers that share an ID are searched as separate papers (the second as ID~2), so each gets its own statement row; metacheck pools them into one row
-"mod_p_values/all_p_values.duplicate_ids": &u204_p_values
-  kind: r_bug_fixed
-  ref: U208
-  reason: papers that share an ID are searched as separate papers, each with its own p-values; metacheck pools their sentences, so its sentence-table join repeats each paper's p-values (8 rows here, 4 in pytacheck)
-"mod_p_values/stat_p_exact.duplicate_ids": *u204_p_values
-"mod_p_values/stat_p_nonsig.duplicate_ids": *u204_p_values
-"mod_effect_size/stat_effect_size.duplicate_ids":
-  kind: r_bug_fixed
-  ref: U208
-  reason: papers that share an ID are checked as separate papers, each with its own tests and summary row; metacheck pools their sentences, so a test of one paper is matched with the effect sizes of the other
-"mod_marginal/marginal.duplicate_ids":
-  kind: r_bug_fixed
-  ref: U208
-  reason: papers that share an ID are searched as separate papers, each with its own count; metacheck pools them (3 and 3 here, 2 and 1 in pytacheck); the guidance cites 'Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)' (U3)
-  r_text: [["Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019)", "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"]]
-  xfail: true

@@ -5,7 +5,6 @@
   "module": "all_p_values"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "all_p_values.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more p-values in two papers: 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "module": "all_p_values"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
@@ -43,7 +42,6 @@
   "module": "stat_p_exact"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "stat_p_exact.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more p-values in two papers, 'ps < .05' among them imprecise: 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "module": "stat_p_exact"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
@@ -58,7 +56,6 @@
     "paper": {"$test_paper": {"text": ["The p = .0123"]}}
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_exact.green_several"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "'p == .000' is flagged as reported as zero (metacheck checks only '=')."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -117,7 +114,6 @@
           - "Zero p-value example (p = .000)"
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_exact.stars"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "A '* p < .05' note hides only the starred p-value, not every imprecise p-value of its sentence."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -130,7 +126,6 @@
           - "A real imprecise value, P < .05."
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_p_exact.duplicates"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U127", "reason": "The same p-value twice in one sentence is listed once ('p < .05' and 'p < .05 ' were two rows)."}
   "module": "stat_p_exact"
   "args":
     "paper":
@@ -159,7 +154,6 @@
   "module": "stat_p_nonsig"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "stat_p_nonsig.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "3 more non-significant p-values ('ps > .115', 'ps > .169', 'ps > .131'): 'ps < .05' and the other 'ps' forms are p-values (metacheck matches only p, p-value and P)"}
   "module": "stat_p_nonsig"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
