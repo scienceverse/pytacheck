@@ -11,11 +11,8 @@
   kind: r_bug_fixed
   ref: U148
   reason: the SPSS Notes table's template cell renders as 3, so it adds 2 statistics (38, R 36)
-"mod_repro_review/review.rv_no_file_name_col":
-  kind: deliberate
-  ref: D119
-  reason: Python rows of a code table without a file_name column name no file to assess, as R rows do, so there is no code to assess (at the pin they were reported as other code; metacheck d3b8594 takes them for Python files with no names)
-"mod_repro_review/tables.rv_no_file_name_col":
+"mod_repro_review/review.rv_no_file_name_col": &u242
   kind: r_bug_fixed
   ref: U242
-  reason: a code table without a file_name column has no files to assess, so there is no code to assess; metacheck 0.3.3.2 stops the module ("argument is of length zero") in the report's table chunks (the review.rv_no_file_name_col case, D119, reaches the same result without the error)
+  reason: a code table without a file_name column has no files to assess, so there is no code to assess; metacheck 0.4.3.7 stops the module ("replacement has 0 rows, data has 1")
+"mod_repro_review/tables.rv_no_file_name_col": *u242
