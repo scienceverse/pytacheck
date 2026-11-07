@@ -328,7 +328,6 @@
 "report/report_module_run.paperlist": *u3_marg_ref
 "report_review/report_module_run.unknown_module_in_chain": *u3_marg_ref
 "report_review/report_module_run.same_module_twice": *u3_marg_ref
-"repro_core/capture_module_tables.roundtrip.demo": *u3_marg_ref
 
 # empty paper lists (U79) ---------------------------------------------------------
 # An empty paper list gives the module's empty result (a summary table without
