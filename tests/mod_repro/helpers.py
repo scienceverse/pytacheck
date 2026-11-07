@@ -289,6 +289,8 @@ def rc_run_mocked(name: str, **kwargs: Any) -> Any:
         skip: Any = (),
         parses: Any = None,
         failed_deps: Any = (),
+        deadline: Any = None,
+        net: Any = None,
     ) -> Any:
         return core.repro_run_scripts(
             run_tbl,
@@ -298,6 +300,7 @@ def rc_run_mocked(name: str, **kwargs: Any) -> Any:
             skip=skip,
             parses=parses,
             failed_deps=failed_deps,
+            deadline=deadline,
         )
 
     with (

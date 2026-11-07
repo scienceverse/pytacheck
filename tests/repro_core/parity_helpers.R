@@ -125,7 +125,12 @@ rc_docker_install_script <- function(install_deps) {
       suppressWarnings(repro_install_deps_docker(install_deps, tempfile(), timeout = 1)),
       writeLines = function(text, con, ...) { captured <<- text; invisible() },
       .package = "base"),
-    run = function(...) stop("docker is not started in this case"),
+    # the library volume is looked up first (`docker volume inspect`); say it is there
+    run = function(command, args = character(0), ...) {
+      if (identical(args[1], "volume")) return(list(status = 0L, stdout = "", stderr = ""))
+      stop("docker is not started in this case")
+    },
+    process = list(new = function(...) stop("docker is not started in this case")),
     .package = "processx")
   captured
 }

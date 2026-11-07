@@ -77,10 +77,15 @@ def test_run_order_never_matches_empty_or_na_basenames() -> None:
 
 
 def test_run_order_source_with_several_exact_hits() -> None:
+    # several files of the name: only the one the call's path names (metacheck 0.4.x)
     files = files_df(["s1/x.R", "s2/x.R", "main.R"], sources=[[], [], ["x.R"]])
     out = core.repro_run_order(files)
-    assert out["depends_on"].tolist() == ["", "", "s1/x.R, s2/x.R"]
+    assert out["depends_on"].tolist() == ["", "", ""]
     assert len(out.attrs["fuzzy_sources"]) == 0
+    files["source_refs"] = [[], [], ["s2/x.R"]]
+    out = core.repro_run_order(files)
+    assert out["depends_on"].tolist() == ["", "", "s2/x.R"]
+    assert out.attrs["source_edges"].to_dict("list") == {"from": ["s2/x.R"], "to": ["main.R"]}
 
 
 # -- repro_write_scripts() / repro_materialize_layout() ---------------------------
@@ -147,13 +152,14 @@ def test_run_scripts_resolves_relative_paths_like_callr(monkeypatch: pytest.Monk
 
 
 def test_missing_inputs_na_candidate_blocks_the_near_miss() -> None:
-    sd = pd.DataFrame({"file_name": [None, "zzz.xlsx"], "file_location": [None, None]})
-    out = core.repro_missing_inputs(["zzz.csv"], None, sd)
-    assert out["status"].tolist() == ["absent"]
-    assert out["similar_to"].isna().all()
-    sd2 = pd.DataFrame({"file_name": ["zzz.xlsx", None], "file_location": [None, None]})
-    out2 = core.repro_missing_inputs(["zzz.csv"], None, sd2)
-    assert out2["similar_to"].tolist() == ["zzz.xlsx"]
+    # a file without a name is no candidate (metacheck 0.4.x: the same name in another
+    # data format is found wherever it is listed)
+    for names in ([None, "zzz.xlsx"], ["zzz.xlsx", None]):
+        sd = pd.DataFrame({"file_name": names, "file_location": [None, None]})
+        out = core.repro_missing_inputs(["zzz.csv"], None, sd)
+        assert out["status"].tolist() == ["absent"]
+        assert out["similar_to"].tolist() == ["zzz.xlsx"]
+        assert out["detail"].tolist() == ["the deposit holds zzz.xlsx, the code reads zzz.csv"]
 
 
 # -- JAGS models, docker helpers ------------------------------------------------------
@@ -168,9 +174,9 @@ def test_resource_args_with_missing_limits() -> None:
     from metacheck.utils import local_options
 
     with local_options({"metacheck.docker_resource_limits": {"memory_gb": 8}}):
-        assert docker._repro_docker_resource_args() == ["--cpus", "--memory", "8g"]
+        assert docker._repro_docker_resource_args()[2:] == ["--cpus", "--memory", "8g"]
     with local_options({"metacheck.docker_resource_limits": {"cpus": 1.5}}):
-        assert docker._repro_docker_resource_args() == ["--cpus", "1.5", "--memory", "g"]
+        assert docker._repro_docker_resource_args()[2:] == ["--cpus", "1.5", "--memory", "g"]
 
 
 # -- module tables ----------------------------------------------------------------------

@@ -479,7 +479,7 @@ def report_module_run(
     ``METACHECK_CHECK_MUTATION=1`` such an edit raises
     :class:`~metacheck.core.errors.StaleDocumentError` before the next module.
     """
-    from metacheck.utils import pb
+    from metacheck.utils import local_options, pb
 
     modules = [modules] if isinstance(modules, str | os.PathLike) else list(modules)
     if not modules:
@@ -487,8 +487,17 @@ def report_module_run(
         raise ValueError("No modules to run: `modules` is empty")
     args = args or {}
     bar = pb(len(modules), ":what [:bar] :current/:total :elapsedfull")
+    # When the code will run, the first module that downloads fetches what the run needs
+    # as well, so no host is asked for the repository twice (R's report_module_run();
+    # metacheck.archives.download._download_for_run())
+    for_run = (
+        {"metacheck.download_for_run": True}
+        if "reproducibility_check" in modules
+        and (args.get("reproducibility_check") or {}).get("execute") is True
+        else {}
+    )
     # a trusted scope: each paper's Doc is built once for all the modules
-    with trusted_scope():
+    with trusted_scope(), local_options(for_run):
         try:
             bar.tick(0, tokens={"what": "Running modules"})
             op: Any = paper
