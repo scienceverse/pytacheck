@@ -1292,6 +1292,10 @@ def rbox_file_download(
             for k, u in enumerate(unique_rb):
                 tbl = box_lists[boxes.index(box[k])].copy()
                 failed = box_lists[boxes.index(box[k])].attrs.get("failed", _failed_frame()).copy()
+                # (a table's attributes are not combined: the failed table is one of them,
+                # and pandas compares attributes when it concatenates)
+                tbl.attrs = {}
+                failed.attrs = {}
                 tbl["rb_url"] = pd.Series([u] * len(tbl), dtype="string", index=tbl.index)
                 if len(failed) > 0:
                     failed["rb_url"] = pd.Series(
