@@ -109,10 +109,6 @@
   ref: U14
   reason: pubpeer_comments() always returns the url and users columns, so feedback without a url is reported (R's table lacks the column and the module fails)
 # U158
-"text_extract/extract_urls.psychsci":
-  kind: r_bug_fixed
-  ref: U158
-  reason: "\"et al.Premotor\" (et al. glued to the next word) is not a URL"
 "mod_urls_open/all_urls.psychsci":
   kind: r_bug_fixed
   ref: U158
@@ -126,10 +122,6 @@
   kind: deliberate
   ref: D76
   reason: nested arrays and objects are their leaves joined by ";" in order (R deparses them, 1:2, c("a", "b"), a matrix by column)
-"text_extract/json_expand.records.mismatch":
-  kind: deliberate
-  ref: D76
-  reason: an array of objects is one row per object whatever their values (jsonlite's simplification failed and R gave "parsing error")
 "text_extract/json_expand.parser":
   kind: deliberate
   ref: D76
@@ -153,4 +145,4 @@
 "text_extract_review/json_expand.review.dates":
   kind: deliberate
   ref: D76
-  reason: '{"$date": ...} is an ordinary object, flattened to its value (jsonlite makes it a POSIXct)'
+  reason: '{"$date": ...} is an ordinary object, a column of its own in an array of objects and its value elsewhere (jsonlite makes it a POSIXct)'

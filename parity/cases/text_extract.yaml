@@ -155,7 +155,6 @@
         - "The p-value is 0.03."
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_p_values.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "7 more p-values: 'ps < .05', 'ps <.03', 'ps > .115' and the other 'ps' forms (metacheck matches only p, p-value and P)"}
   "r": "extract_p_values"
   "py": "metacheck.text.extract.extract_p_values"
   "args":
@@ -166,7 +165,6 @@
   "args":
     "paper": 1
 - "id": "extract_p_values.chr"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U150", "reason": "extract_p_values() of strings returns their p-values (R: '$ operator is invalid for atomic vectors')"}
   "r": "extract_p_values"
   "py": "metacheck.text.extract.extract_p_values"
   "args":
@@ -228,7 +226,6 @@
         - "(..., Hedges's g = 0.32, ...)"
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.tricky"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U205", "reason": "'r(98) = −.32' (Unicode minus) is a statistic, its rhs '-.32'; metacheck matches only the ASCII hyphen"}
   "r": "extract_eq"
   "py": "metacheck.text.extract.extract_eq"
   "args":
@@ -252,7 +249,6 @@
         - "t(1,2,3) = 5 and F(1, 2) (3) = 4"
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "each sentence of a paper in a list keeps its own grp_id, the one it has when the paper is searched alone (R restarts at 1 whenever its search order moves to another paper, so different sentences of a paper share grp_id 1 or 2)"}
   "r": "extract_eq"
   "py": "metacheck.text.extract.extract_eq"
   "args":
@@ -265,7 +261,6 @@
       "$df":
         "text": ["t = 2.1"]
 - "id": "extract_eq.df.no_paper_id_error"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "a table without paper_id works (R fails on NA comparisons once there are two equations)"}
   "r": "extract_eq"
   "py": "metacheck.text.extract.extract_eq"
   "args":
@@ -278,7 +273,6 @@
   "args":
     "paper": 1
 - "id": "extract_eq.chr"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U150", "reason": "extract_eq() of strings returns their equations (R: a bind_rows() error)"}
   "r": "extract_eq"
   "py": "metacheck.text.extract.extract_eq"
   "args":
@@ -358,7 +352,6 @@
         "paper_id": ["a", "a", "a"]
         "text_id": [1, 2, 3]
 - "id": "extract_tests.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "a paper list gives each paper's 116 tests once, with their sentences (R: 348 = every test once per paper id, sentence NA)"}
   "r": "extract_tests"
   "py": "metacheck.text.extract_tests.extract_tests"
   "args":
@@ -646,7 +639,7 @@
         - '{"a": {"b": "x\"y", "c": "é", "b c": [1, "a"], "if": [3, 2], "_z": [null, null]}}'
         - '{"a": [[[1,2],[3,4]],[[5,6],[7,8]]], "b": [1, "NA"], "c": ["Inf", null], "d": [true, 2]}'
 - "id": "json_expand.records"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \"_row\" key is an ordinary column (jsonlite makes it the row names, dropping the column and changing row counts or failing); nested values are flattened with \";\" (D76)"}
+  "known_divergence": {"kind": "deliberate", "ref": "D76", "reason": "nested arrays are their leaves joined by \";\" and an empty object is missing (R deparses them: 1:2, list(x = 1), NULL, c(1, NA)); R leaves some flattened number columns as text"}
   "r": "json_expand"
   "py": "metacheck.text.json_expand.json_expand"
   "args":
@@ -663,7 +656,7 @@
         - '[{"a":[]},{"a":[1]}]'
         - '[{"a":1},{"a":2,"_row":"x"},null]'
 - "id": "json_expand.row_names"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \"_row\" key is an ordinary column (jsonlite makes it the row names, dropping the column and changing row counts or failing)"}
+  "known_divergence": {"kind": "deliberate", "ref": "D76", "reason": "nested arrays are their leaves joined by \";\" and an empty object is missing (R deparses them: 1:2, list(x = 1), NULL, c(1, NA)); R leaves some flattened number columns as text"}
   "r": "json_expand"
   "py": "metacheck.text.json_expand.json_expand"
   "args":
@@ -791,7 +784,6 @@
         "id": [1]
         "answer": ['{"":1}']
 - "id": "json_expand.error.zero_rows"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a table without rows is returned unchanged (R: 'Join columns in `y` must be present in the data')"}
   "r": "json_expand"
   "py": "metacheck.text.json_expand.json_expand"
   "args":

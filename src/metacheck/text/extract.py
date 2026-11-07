@@ -227,15 +227,21 @@ def _sort_key(x: Any) -> tuple[int, Any]:
 
 
 def _strings_table(paper: Any) -> Any:
-    """A string or a sequence of strings as a text table (other input unchanged)."""
+    """A string or a sequence of strings as a text table, one row per string (other input unchanged).
+
+    The strings are numbered ``text_id`` 1, 2, ... (``data.frame(text = paper,
+    text_id = seq_along(paper))``).
+    """
     if isinstance(paper, str):
-        return pd.DataFrame({"text": pd.Series([paper], dtype="string")})
+        paper = [paper]
     if isinstance(paper, list | tuple) and all(isinstance(x, str) for x in paper):
-        return pd.DataFrame({"text": pd.Series(list(paper), dtype="string")})
+        return pd.DataFrame(
+            {
+                "text": pd.Series(list(paper), dtype="string"),
+                "text_id": pd.Series(range(1, len(paper) + 1), dtype="Int64"),
+            }
+        )
     return paper
-
-
-_ROW = ".pytacheck_row."
 
 
 def extract_eq(paper: Any) -> pd.DataFrame:
@@ -243,19 +249,12 @@ def extract_eq(paper: Any) -> pd.DataFrame:
 
     This is metacheck's canonical extractor for reported statistics: one row
     per ``name (df) <op> value`` fragment, with the columns ``text_id``,
-    ``grp_id`` (the sentence group, numbered per paper in search order), ``lhs``, ``df``
-    (e.g. ``"(2, 57)"`` or ``NA``), ``comp``, ``rhs`` and ``paper_id``,
-    sorted by ``paper_id``, ``text_id`` and ``grp_id``. *paper* can also be a
-    text table or strings (``text_id`` and ``paper_id`` are then ``NA`` when
-    the table has none).
-
-    Differs from metacheck (U10, U150): in a paper list each sentence of a
-    paper has its own ``grp_id``, the one it gets when the paper is searched
-    alone (metacheck restarted the count whenever its search order moved to
-    another paper, so different sentences shared a ``grp_id``); a table without
-    ``paper_id`` or ``text_id`` works (metacheck failed on ``NA`` comparisons
-    once there were two equations); and strings are accepted (metacheck
-    fails).
+    ``grp_id`` (the sentence group: the rank of the sentence's ``text_id``
+    within its paper), ``lhs``, ``df`` (e.g. ``"(2, 57)"`` or ``NA``), ``comp``,
+    ``rhs`` and ``paper_id``, sorted by ``paper_id``, ``text_id`` and
+    ``grp_id``. *paper* can also be a text table or strings (numbered
+    ``text_id`` 1, 2, ...; ``text_id`` and ``paper_id`` are ``NA`` when a table
+    has none).
     """
     table = _strings_table(paper)
     if isinstance(table, pd.DataFrame):
@@ -290,14 +289,11 @@ def eq_table(doc: Doc) -> pd.DataFrame:
         doc.take_series("text_id", source),
         doc.take_series("paper_id", source),
         [None if is_missing(pids[i]) else pids[i] for i in source],
-        source,
     )
 
 
 def _eq_of_table(table: pd.DataFrame) -> pd.DataFrame:
     """:func:`extract_eq` of a table without a ``text`` column, searched as metacheck does."""
-    # the source row of each match, to tell sentences apart without text_id
-    table = table.assign(**{_ROW: range(len(table))})
     eq = text_search(table, list(_OPERATORS))
     eq = text_search(eq, _EQ_PATTERN, return_="match", perl=True, ignore_case=True)
     if not isinstance(eq, pd.DataFrame):  # pragma: no cover - strings became a table
@@ -309,7 +305,6 @@ def _eq_of_table(table: pd.DataFrame) -> pd.DataFrame:
         eq["text_id"].reset_index(drop=True),
         eq["paper_id"].reset_index(drop=True),
         [None if is_missing(v) else v for v in eq["paper_id"].tolist()],
-        eq[_ROW].tolist(),
     )
 
 
@@ -318,9 +313,8 @@ def _eq_frame(
     text_id: pd.Series,
     paper_id: pd.Series,
     paper_ids: list[Any],
-    rows: list[Any],
 ) -> pd.DataFrame:
-    """The eq table of the statistics *texts*, found in rows *rows* of papers *paper_ids*."""
+    """The eq table of the statistics *texts*, found in sentences *text_id* of papers *paper_ids*."""
     df_rx = compile_r(r"(?:\([^)]*\))", perl=True)
     dfs: list[str | None] = []
     for i, t in enumerate(texts):
@@ -348,22 +342,22 @@ def _eq_frame(
     rhs = gsub(f"^{_MINUS_SIGN}\\s?", "-", rhs, perl=True)
     rhs = gsub(_MINUS_SIGN, "-", rhs, fixed=True)
 
-    # set group equal to sentence for now: the matches of one source sentence
-    # share a group, numbered per paper in search order (metacheck's numbering
-    # for a single paper). Differs from metacheck (U10): a paper's count goes
-    # on where it left off when a paper list's search order moves between
-    # papers (metacheck restarted at 1 each time, so different sentences of a
-    # paper shared a grp_id), and sentences are told apart by their row, so a
-    # table without text_id or paper_id works (metacheck fails on NA
-    # comparisons)
-    grp: list[float] = []
-    count: dict[Any, int] = {}
-    last_row: dict[Any, Any] = {}
-    for pid, row in zip(paper_ids, rows, strict=True):
-        if pid not in last_row or last_row[pid] != row:
-            count[pid] = count.get(pid, 0) + 1
-            last_row[pid] = row
-        grp.append(float(count[pid]))
+    # set group equal to sentence for now: each sentence is numbered within its
+    # own paper, by the rank of its text_id among the paper's text_ids (a missing
+    # one last); 0.4.x, metacheck U10
+    tid_list = text_id.tolist()
+    ranks: dict[Any, dict[Any, int]] = {}
+    by_paper: dict[Any, list[Any]] = {}
+    for pid, tid in zip(paper_ids, tid_list, strict=True):
+        by_paper.setdefault(pid, []).append(None if is_missing(tid) else tid)
+    for pid, tids in by_paper.items():
+        present = sorted({t for t in tids if t is not None})
+        order = present + ([None] if None in tids else [])
+        ranks[pid] = {t: i + 1 for i, t in enumerate(order)}
+    grp: list[float] = [
+        float(ranks[pid][None if is_missing(tid) else tid])
+        for pid, tid in zip(paper_ids, tid_list, strict=True)
+    ]
 
     out = pd.DataFrame(
         {
