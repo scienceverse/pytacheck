@@ -1,0 +1,35 @@
+{
+  "id": "setwd.none",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "n",
+      "paths"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "x <- 1",
+          "y <- 2"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,162 @@
+{
+  "id": "variable_measured.categorical",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "metacheck:measurementLevel",
+              "valuePattern",
+              "metacheck:representation",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "cond"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "nominal"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "ctrl|treat"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "text"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data/a.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "metacheck:measurementLevel",
+              "valuePattern",
+              "metacheck:representation",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "wave"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "ordinal"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "low|high"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "text"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data/a.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "metacheck:measurementLevel",
+              "metacheck:representation",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "code"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "nominal"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "numeric"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data/a.csv"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

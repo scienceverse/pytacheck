@@ -1,0 +1,129 @@
+{
+  "id": "run.existing_keep",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "files",
+      "md5",
+      "description",
+      "study_descriptions",
+      "rocrate",
+      "texts",
+      "scripts",
+      "result",
+      "filelog"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "mine.txt"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "mine.txt"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b260098afc93a054427d63c4de6be6a1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "list",
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "list",
+        "names": [
+          "n_files_copied",
+          "n_studies",
+          "empty_plan",
+          "skipped",
+          "copy_failed",
+          "renamed",
+          "identical",
+          "scripts",
+          "plan",
+          "existed"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

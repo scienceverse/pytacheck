@@ -1,0 +1,212 @@
+{
+  "id": "variable_measured.numeric_and_empty",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "metacheck:measurementLevel",
+              "minValue",
+              "maxValue",
+              "metacheck:statistics",
+              "metacheck:representation",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "age"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "ratio"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  18
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  65
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "n",
+                  "n_missing",
+                  "mean",
+                  "sd",
+                  "median"
+                ],
+                "v": [
+                  {
+                    "t": "dbl",
+                    "v": [
+                      100
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      35.5
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      10.25
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      34
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "numeric"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "study-a/data/a.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "description",
+              "metacheck:quality",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "empty_col"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Empty column (no observed values in the shared data)."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "empty"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "study-a/data/a.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "@type",
+              "name",
+              "metacheck:measurementLevel",
+              "valuePattern",
+              "metacheck:representation",
+              "metacheck:sourceFile"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "PropertyValue"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "grp"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "nominal"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a|b"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "text"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "study-a/data/a.csv"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

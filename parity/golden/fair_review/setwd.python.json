@@ -1,0 +1,42 @@
+{
+  "id": "setwd.python",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "n",
+      "paths"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "import os",
+          "pass  # [metacheck FAIR_repo removed os.chdir] os.chdir('/home/me/proj')",
+          "pass  # [metacheck FAIR_repo removed os.chdir] os.chdir(os.path.dirname(__file__))",
+          "pass  # [metacheck FAIR_repo removed os.chdir] chdir(\"data\")",
+          "os.chdir(tmp)",
+          "setwd(\"x\")"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/home/me/proj",
+          "data"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

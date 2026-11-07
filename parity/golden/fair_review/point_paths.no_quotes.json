@@ -1,0 +1,30 @@
+{
+  "id": "point_paths.no_quotes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "n"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "x <- table.csv",
+          "y <- 1"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

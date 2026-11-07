@@ -1,0 +1,46 @@
+{
+  "id": "setwd.r_lines",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "n",
+      "paths"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "library(x)",
+          "invisible(NULL)  # [metacheck FAIR_repo removed setwd] setwd(\"C:/Users/me/proj\")",
+          "invisible(NULL)  # [metacheck FAIR_repo removed setwd] setwd('data')",
+          "invisible(NULL)  # [metacheck FAIR_repo removed setwd] setwd(dirname(rstudioapi::getActiveDocumentContext()$path))",
+          "setwd(tempdir())",
+          "setwd(old)",
+          "invisible(NULL)  # [metacheck FAIR_repo removed setwd] base::setwd(\"~/x\")",
+          "  invisible(NULL)  # [metacheck FAIR_repo removed setwd] setwd()",
+          "x <- 1"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "C:/Users/me/proj",
+          "data",
+          "~/x"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "point_paths.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "n"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "write.csv(x, \"outputs/table.csv\")",
+          "d <- read.csv('data/raw.csv')",
+          "out <- \"outputs/table.csv\"",
+          "x <- \"outputs/table.csv\""
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
