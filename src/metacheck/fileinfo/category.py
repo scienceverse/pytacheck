@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
 import pandas as pd
@@ -16,11 +16,13 @@ import pandas as pd
 from metacheck._r import grepl
 from metacheck._values import is_missing
 
-__all__ = ["file_category", "filetype"]
+__all__ = ["file_category", "filetype", "is_readme_name"]
 
 # -- patterns (R string literals translated to regexes) ------------------------
 
 _README_RX = "read[ _-]?me"
+# the dotted form "read.me.txt" (#487) only as a whole word
+_README_DOTTED_RX = "(^|[^A-Za-z])read\\.me([^A-Za-z]|$)"
 # The five `is_codebook` name branches of file_category(), as one alternation
 # (grepl(a) | grepl(b) == grepl("a|b")). Every branch is a two-word compound;
 # see the long comment in R/file_category.R for why.
@@ -81,13 +83,15 @@ def _tolower(s: str) -> str:
     return "".join(lc if len(lc := c.lower()) == 1 else lc[0] for c in s)
 
 
-def _grepl(pattern: str, x: list[str | None], ignore_case: bool = False) -> list[bool]:
+def _grepl(
+    pattern: str, x: Sequence[str | None], ignore_case: bool = False, perl: bool = False
+) -> list[bool]:
     """``grepl()`` (``FALSE`` for ``NA``).
 
     A name with bytes that are not valid UTF-8 is matched too (R's ``grepl()``
     is ``FALSE`` for it, so metacheck classifies it as nothing: U76).
     """
-    return [bool(h) for h in grepl(pattern, x, ignore_case=ignore_case)]
+    return [bool(h) for h in grepl(pattern, list(x), ignore_case=ignore_case, perl=perl)]
 
 
 def _last_ext(name: str) -> str:
@@ -209,7 +213,7 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
         else:
             sure_class.append(None)
 
-    is_readme = _grepl(_README_RX, nm, ignore_case=True)
+    is_readme = is_readme_name(nm)
     is_codebook = _grepl(_CODEBOOK_RX, nm, ignore_case=True)
     if cat_col is not None:
         is_codebook = [b or c == "codebook" for b, c in zip(is_codebook, cat, strict=True)]
@@ -225,6 +229,19 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
             out.append(sure)
     df["file_category"] = pd.Series(out, dtype="string", index=df.index)
     return df
+
+
+def is_readme_name(x: Sequence[str | None]) -> list[bool]:
+    """Whether each file name names a README (port of ``.is_readme_name()``).
+
+    "README", "Read_me", "READ ME" and "DataReadMe" match anywhere in the
+    name; the dotted form "read.me.txt" (#487) only as a whole word, so
+    "spread.means.csv" is not a README. The one rule ``file_category``,
+    ``repo_check`` and ``code_check`` all use.
+    """
+    a = _grepl(_README_RX, x, ignore_case=True)
+    b = _grepl(_README_DOTTED_RX, x, ignore_case=True, perl=True)
+    return [p or q for p, q in zip(a, b, strict=True)]
 
 
 # -- filetype() ----------------------------------------------------------------

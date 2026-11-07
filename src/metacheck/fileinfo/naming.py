@@ -205,6 +205,16 @@ def _file_naming_check_padding(file_names: Any) -> pd.DataFrame:
 # -- path lengths --------------------------------------------------------------
 
 
+_LENGTH_DETAIL = {
+    "path-length-255": "The path is {} characters, over the 255-character limit",
+    "path-length-228": (
+        "The path is {} characters, over the recommended 228, which leaves room for a download folder"
+    ),
+    "directory-length-100": "The folder path is {} characters, over the recommended 100",
+    "filename-length-50": "The file name is {} characters, over the recommended 50",
+}
+
+
 def _length_rows(file_path: list[str | None]) -> list[Row]:
     paths = [None if p is None else p.replace("\\", "/") for p in file_path]
     dir_part = [_r_dirname(p) for p in paths]
@@ -225,13 +235,9 @@ def _length_rows(file_path: list[str | None]) -> list[Row]:
             return
         for p, h, a in zip(paths, hit, actual, strict=True):
             if h is None:  # x[NA] is NA
-                rows.append(
-                    (None, rule, f"{rule} is NA characters, over the {budget}-character budget")
-                )
+                rows.append((None, rule, _LENGTH_DETAIL[rule].format("NA")))
             elif h:
-                rows.append(
-                    (p, rule, f"{rule} is {a:d} characters, over the {budget}-character budget")
-                )
+                rows.append((p, rule, _LENGTH_DETAIL[rule].format(a)))
 
     n_path = nchar(paths)
     add_rows(n_path, "path-length-255", 255)
@@ -249,7 +255,9 @@ def _file_naming_check_length(file_path: Any) -> pd.DataFrame:
     prefix (``path-length-228``), 100 for the directory part
     (``directory-length-100``) and 50 for the file name
     (``filename-length-50``). Backslashes count as separators. Returns
-    ``file_name`` (the path), ``rule``, ``detail``, grouped by rule.
+    ``file_name`` (the path), ``rule``, ``detail``, grouped by rule. As in R, a
+    missing path raises ``ValueError`` unless another path breaks every budget
+    (``check_file_naming`` leaves missing paths out first).
     """
     return _frame(_length_rows(_chr_list(file_path)), ["file_name", "rule", "detail"])
 
@@ -291,10 +299,9 @@ def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = No
     Notes
     -----
     ``"bad"`` rules: spaces, special characters, diacritics,
-    ``data_type == "unknown"`` and the hard 255-character path limit. ``"suggestion"`` rules: unpadded sibling numbering and the
-    228/100/50-character budgets. As in R, a missing path raises
-    ``ValueError("missing value where TRUE/FALSE needed")`` unless another
-    path breaks every length budget.
+    ``data_type == "unknown"`` and the hard 255-character path limit. ``"suggestion"``
+    rules: unpadded sibling numbering and the 228/100/50-character budgets. A file
+    without a name or a path has nothing to check and is left out.
     """
     names = _chr_list(file_name)
     n = len(names)
@@ -303,9 +310,11 @@ def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = No
     paths = names if file_path is None else _chr_list(file_path)
     data_types = _rep_len(data_type, n)
 
-    rows = _check_rows(names, data_types)
-    rows += _padding_rows(names)
-    rows += _length_rows(paths)
+    # a file without a name (a platform listing can have one) has nothing to check
+    keep = [i for i, nm in enumerate(names) if nm is not None]
+    rows = _check_rows([names[i] for i in keep], [data_types[i] for i in keep])
+    rows += _padding_rows([nm for nm in names if nm is not None])
+    rows += _length_rows([p for p in paths if p is not None])
     return _frame(
         [(f, rule, FILE_NAMING_SEVERITY.get(rule), detail) for f, rule, detail in rows],
         _COLUMNS,
