@@ -7,7 +7,6 @@ from typing import Any
 from metacheck.archives.aspredicted import aspredicted_info as aspredicted_info
 from metacheck.archives.aspredicted import aspredicted_links as aspredicted_links
 from metacheck.archives.cache import metacheck_cache_info as metacheck_cache_info
-from metacheck.archives.info_cache import repo_info_cache as repo_info_cache
 from metacheck.archives.info_cache import repo_info_cache_clear as repo_info_cache_clear
 from metacheck.archives.local import local_files as local_files
 from metacheck.archives.osf import osf_api_check as osf_api_check

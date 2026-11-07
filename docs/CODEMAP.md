@@ -166,7 +166,7 @@ modules is covered in [MODULES.md](MODULES.md).
 | `funding_check`<br>Funding Check | `inst/modules/funding_check.R` | [modules/funding_check.py](../src/metacheck/modules/funding_check.py)<br>[modules/_funding.py](../src/metacheck/modules/_funding.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, D84, U79, U103, U208 |
 | `funding_check_oi`<br>Funding Check (Overinclusive) | `inst/modules/funding_check_oi.R` | [modules/funding_check_oi.py](../src/metacheck/modules/funding_check_oi.py)<br>[modules/funding_check.py](../src/metacheck/modules/funding_check.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, D84, U79, U105 |
 | `license_check`<br>License | Python only | [modules/license_check.py](../src/metacheck/modules/license_check.py) | — | — | experimental | — |
-| `marginal`<br>Marginal Significance | `inst/modules/marginal.R` | [modules/marginal.py](../src/metacheck/modules/marginal.py) | — | bibr12, grobid12, mod_marginal | validated | U3, U16, U208 |
+| `marginal`<br>Marginal Significance | `inst/modules/marginal.R` | [modules/marginal.py](../src/metacheck/modules/marginal.py) | — | bibr12, grobid12, mod_marginal | validated | U3, U208 |
 | `open_practices`<br>Open Practices Check | `inst/modules/open_practices.R` | [modules/open_practices.py](../src/metacheck/modules/open_practices.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D83, U16, U79, U83, U106, U107, U208 |
 | `power`<br>Power Analysis Check | `inst/modules/power.R` | [modules/power.py](../src/metacheck/modules/power.py)<br>[modules/_power.py](../src/metacheck/modules/_power.py) | [tests/mod_power](../tests/mod_power) | mod_power, bibr12, grobid12 | validated | U16 |
 | `prereg_check`<br>Preregistration Check | `inst/modules/prereg_check.R` | [modules/prereg_check.py](../src/metacheck/modules/prereg_check.py)<br>[modules/_prereg.py](../src/metacheck/modules/_prereg.py) | [tests/mod_prereg](../tests/mod_prereg) | mod_prereg | experimental | — |
@@ -586,7 +586,7 @@ Python: [text/extract_tests.py](../src/metacheck/text/extract_tests.py). Tests: 
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `extract_tests()` | [`metacheck.text.extract_tests:extract_tests`](../src/metacheck/text/extract_tests.py) | yes | U10 |  |
+| `extract_tests()` | [`metacheck.text.extract_tests:extract_tests`](../src/metacheck/text/extract_tests.py) | yes | — |  |
 
 ### `R/fair-repo.R`
 
@@ -636,9 +636,9 @@ Python: [io/grobid.py](../src/metacheck/io/grobid.py). Tests: [tests/grobid12](.
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `convert_grobid()` | [`metacheck.io.grobid:convert_grobid`](../src/metacheck/io/grobid.py) | yes | U16 |  |
+| `convert_grobid()` | [`metacheck.io.grobid:convert_grobid`](../src/metacheck/io/grobid.py) | yes | — |  |
 | `grobid_to_bibr()` | [`metacheck.io.grobid:grobid_to_bibr`](../src/metacheck/io/grobid.py) | yes | U16, U17 |  |
-| `.grobid_to_bibr()` | [`metacheck.io.grobid:_grobid_to_bibr`](../src/metacheck/io/grobid.py) | yes | U16, U17, U27, U28 |  |
+| `.grobid_to_bibr()` | [`metacheck.io.grobid:_grobid_to_bibr`](../src/metacheck/io/grobid.py) | yes | U16, U17, U28 |  |
 
 ### `R/import-papers.R`
 
@@ -646,7 +646,7 @@ Python: [io/corpus.py](../src/metacheck/io/corpus.py). Tests: [tests/io](../test
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `papers_available()` | [`metacheck.io.corpus:papers_available`](../src/metacheck/io/corpus.py) | yes | U18 |  |
+| `papers_available()` | [`metacheck.io.corpus:papers_available`](../src/metacheck/io/corpus.py) | yes | — |  |
 | `papers_load()` | [`metacheck.io.corpus:papers_load`](../src/metacheck/io/corpus.py) | yes | — |  |
 | `papers_remove()` | [`metacheck.io.corpus:papers_remove`](../src/metacheck/io/corpus.py) | yes | — |  |
 | `papers_metadata()` | [`metacheck.io.corpus:papers_metadata`](../src/metacheck/io/corpus.py) | yes | — |  |
@@ -657,7 +657,7 @@ Python: [papers/io.py](../src/metacheck/papers/io.py), [io/read.py](../src/metac
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `read()` | [`metacheck.io.read:read`](../src/metacheck/io/read.py) | yes | U16, U24, U25 |  |
+| `read()` | [`metacheck.io.read:read`](../src/metacheck/io/read.py) | yes | U16, U24, U281 |  |
 | `.read_bibr()` | [`metacheck.papers.io:read_bibr`](../src/metacheck/papers/io.py) | yes | — | Python name differs: `read_bibr`. |
 
 ### `R/jasp.R`
@@ -755,7 +755,7 @@ Python: [papers/io.py](../src/metacheck/papers/io.py), [papers/validate.py](../s
 | `paper()` | [`metacheck.papers.io:paper`](../src/metacheck/papers/io.py) | yes | — |  |
 | `paperlist()` | [`metacheck.papers.model:PaperList`](../src/metacheck/papers/model.py) | — | — | Python name differs: `PaperList`. |
 | `test_paper()` | [`metacheck.papers.io:test_paper`](../src/metacheck/papers/io.py) | yes | — |  |
-| `paper_validate()` | [`metacheck.papers.validate:paper_validate`](../src/metacheck/papers/validate.py) | yes | — |  |
+| `paper_validate()` | [`metacheck.papers.validate:paper_validate`](../src/metacheck/papers/validate.py) | yes | U281 |  |
 | `print.scivrs_paper()` | — | — | — | S3 method. Not ported by design: S3 print method. Covered by Paper.__repr__ (same text). |
 | `print.scivrs_paperlist()` | — | — | — | S3 method. Not ported by design: S3 print method. Covered by PaperList.__repr__; paper_table(papers, 'info', ['title', 'doi']) is the table R prints. |
 | `[.scivrs_paperlist()` | [`metacheck.papers.model:PaperList.__getitem__`](../src/metacheck/papers/model.py) | — | — | S3 method. |
@@ -983,9 +983,9 @@ Python: [text/extract.py](../src/metacheck/text/extract.py). Tests: [tests/text_
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `extract_urls()` | [`metacheck.text.extract:extract_urls`](../src/metacheck/text/extract.py) | yes | U158 |  |
-| `extract_p_values()` | [`metacheck.text.extract:extract_p_values`](../src/metacheck/text/extract.py) | yes | U150, U204 |  |
-| `extract_eq()` | [`metacheck.text.extract:extract_eq`](../src/metacheck/text/extract.py) | yes | U10, U150, U205 |  |
+| `extract_urls()` | [`metacheck.text.extract:extract_urls`](../src/metacheck/text/extract.py) | yes | — |  |
+| `extract_p_values()` | [`metacheck.text.extract:extract_p_values`](../src/metacheck/text/extract.py) | yes | — |  |
+| `extract_eq()` | [`metacheck.text.extract:extract_eq`](../src/metacheck/text/extract.py) | yes | — |  |
 
 ### `R/text-json_expand.R`
 
@@ -993,7 +993,7 @@ Python: [text/json_expand.py](../src/metacheck/text/json_expand.py). Tests: [tes
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `json_expand()` | [`metacheck.text.json_expand:json_expand`](../src/metacheck/text/json_expand.py) | yes | D76, U9, U151 |  |
+| `json_expand()` | [`metacheck.text.json_expand:json_expand`](../src/metacheck/text/json_expand.py) | yes | D76, U151 |  |
 
 ### `R/text_expand.R`
 
@@ -1190,7 +1190,7 @@ optional ones are in extras (for example `metacheck[data]`).
 | `inst/databases` (Retraction Watch, FLoRA, miscitations, as `.Rds`) | [`resources/databases`](../src/metacheck/resources/databases), as gzipped JSON, read by [`db/databases.py`](../src/metacheck/db/databases.py) |
 | `inst/demos` (the "To err is human" demo paper) | [`resources/demos`](../src/metacheck/resources/demos) (`demopaper()`, `demofile()`) |
 | `inst/schema` (paper JSON schemas, power array) | [`resources/schema`](../src/metacheck/resources/schema) |
-| `inst/extdata` (`sample.jasp` and `sample.omv` for the examples, and `stroop_effect_paper`, the small repository of `demopaper("stroop_effect")`) | the two output files are test fixtures ([`tests/mod_repro/fixtures/outputs`](../tests/mod_repro/fixtures/outputs)); the `stroop_effect` demo is not ported yet |
+| `inst/extdata` (`sample.jasp` and `sample.omv` for the examples, and `stroop_effect_paper`, the small repository of `demopaper("stroop_effect")`) | the two output files are test fixtures ([`tests/mod_repro/fixtures/outputs`](../tests/mod_repro/fixtures/outputs)); `stroop_effect_paper` is [`resources/demos/stroop_effect_paper`](../src/metacheck/resources/demos/stroop_effect_paper) (`demofile("repo")`), and the paper is `resources/demos/stroop_effect.json` (`demopaper("stroop_effect")`) |
 | `inst/modules` (code and roxygen documentation of each module) | [`modules/`](../src/metacheck/modules); the roxygen title, description, details, keywords, authors and `<validation>` text are the arguments of the `@module` decorator in each file |
 | `inst/templates/_module.R` | [`resources/templates/module.py.tmpl`](../src/metacheck/resources/templates/module.py.tmpl) and the pack templates beside it (`pack_new()`) |
 | `inst/templates/_report.qmd` | [`report/templates`](../src/metacheck/report/templates) |

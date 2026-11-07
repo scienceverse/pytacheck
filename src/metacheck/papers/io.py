@@ -285,17 +285,29 @@ def test_paper(text: Sequence[str] | None = None, url: Sequence[str] = ()) -> Pa
 
 
 def demofile(ext: str = "json") -> Path:
-    """Path to a version of the demo paper (``json``, ``pdf``, ``docx``, ``doc``, ``xml``, ``qmd``)."""
-    allowed = ("json", "pdf", "docx", "doc", "xml", "qmd")
+    """Path to a version of the demo paper (``json``, ``pdf``, ``docx``, ``doc``, ``xml``,
+    ``qmd``), or, for ``"repo"``, the folder of a demo repository: a small copy of
+    https://github.com/Lakens/stroop_effect_paper (data, code, codebook, README, licence and
+    ``renv.lock``), for functions that check a repository on your own computer."""
+    allowed = ("json", "pdf", "docx", "doc", "xml", "qmd", "repo")
     if ext not in allowed:
         raise ValueError(f"'arg' should be one of {', '.join(repr(a) for a in allowed)}")
-    ref = resources.files("metacheck.resources.demos").joinpath(f"to_err_is_human.{ext}")
-    return Path(str(ref))
+    demos = resources.files("metacheck.resources.demos")
+    if ext == "repo":
+        return Path(str(demos.joinpath("stroop_effect_paper")))
+    return Path(str(demos.joinpath(f"to_err_is_human.{ext}")))
 
 
-def demopaper() -> Paper:
-    """The demo paper "To Err is Human" (``demopaper()``)."""
-    return read_bibr(demofile("json"))
+def demopaper(paper: str = "to_err_is_human") -> Paper:
+    """A demo paper (``demopaper()``): ``"to_err_is_human"`` (the default) is a short paper
+    written to show metacheck's checks; ``"stroop_effect"`` is a small reproducible analysis
+    whose data and code are bundled as a demo repository (see ``demofile("repo")``); the paper is
+    its manuscript, converted with Grobid."""
+    allowed = ("to_err_is_human", "stroop_effect")
+    if paper not in allowed:
+        raise ValueError(f"'arg' should be one of {', '.join(repr(a) for a in allowed)}")
+    ref = resources.files("metacheck.resources.demos").joinpath(f"{paper}.json")
+    return read_bibr(Path(str(ref)))
 
 
 def _json_default(obj: Any) -> Any:
