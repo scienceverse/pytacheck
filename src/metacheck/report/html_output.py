@@ -107,6 +107,40 @@ def _file_path_sans_ext(name: str) -> str:
     return str(sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", name))
 
 
+def _in_download_folder(path: str) -> bool:
+    """Port of ``.in_download_folder()``: whether metacheck downloaded the file.
+
+    That is, whether it is in the repository cache or this session's download
+    folder. metacheck writes next to such a file (code recovered from an output
+    file); any other file is the user's own and its folder is not changed.
+    """
+    from metacheck.archives.download import _repo_cache_location, _repo_session_dir
+
+    roots = [os.path.realpath(_repo_session_dir()), os.path.realpath(_repo_cache_location())]
+    norm = os.path.realpath(path)
+    return any(norm.startswith(root.rstrip(os.sep) + os.sep) for root in roots)
+
+
+def _recovered_code_dir(path: str, code_dir_name: str = "code") -> str:
+    """Port of ``.recovered_code_dir()``: the folder code recovered from an output file goes to.
+
+    A ``code_dir_name`` folder next to a downloaded file, which a later run
+    reuses; for a file of the user's own, a folder of that name in the
+    temporary folder (removed when the process ends), under the file's
+    checksum, so the user's folder is not changed.
+    """
+    import hashlib
+
+    from metacheck.archives.download import _repo_session_dir
+
+    if _in_download_folder(path):
+        return os.path.join(os.path.dirname(path) or ".", code_dir_name)
+    with open(path, "rb") as fh:
+        digest = hashlib.md5(fh.read(), usedforsecurity=False).hexdigest()
+    tempdir = os.path.dirname(_repo_session_dir())  # the session's temporary folder
+    return os.path.join(tempdir, "metacheck-recovered-code", digest, code_dir_name)
+
+
 def _html_export_r_source(
     html_path: str | os.PathLike[str], code_dir_name: str = "code"
 ) -> str | None:
@@ -114,7 +148,9 @@ def _html_export_r_source(
 
     Every input chunk (``<pre class="r"><code>`` and the syntax-highlighted
     ``<pre class="sourceCode r"><code>``) is written, separated by blank
-    lines, to ``<dir>/<code_dir_name>/<name>.R``. Returns that path, or
+    lines, to ``<code_dir_name>/<name>.R`` next to the file when metacheck downloaded it, else
+    in the temporary folder (see :func:`_recovered_code_dir`; the user's folder is
+    not changed). Returns that path, or
     ``None`` when the document cannot be read or has no R chunk.
     """
     import lxml.html
@@ -145,7 +181,7 @@ def _html_export_r_source(
     chunk_text = [t for t in chunk_text if t.strip(" \t\r\n")]
     if not chunk_text:
         return None
-    code_dir = os.path.join(os.path.dirname(html_path) or ".", code_dir_name)
+    code_dir = _recovered_code_dir(html_path, code_dir_name)
     Path(code_dir).mkdir(parents=True, exist_ok=True)
     out_path = os.path.join(code_dir, _file_path_sans_ext(os.path.basename(html_path)) + ".R")
     # written beside *out_path* and moved into place, so a process reading the

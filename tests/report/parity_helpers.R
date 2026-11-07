@@ -9,10 +9,33 @@ rp_mod <- function(m) {
 
 rp_stem <- function(x) sub("\\.(R|py)$", "", basename(x))
 
+# a validation table: kable pads its cells and styles them, pytacheck writes
+# them bare; the cells are the same text
+rp_static_table_cells <- function(x) {
+  m <- gregexpr("(?s)<table class=\"dt-static\">.*?</table>", x, perl = TRUE)
+  regmatches(x, m) <- lapply(regmatches(x, m), function(tabs) {
+    vapply(tabs, function(tab) {
+      rows <- regmatches(tab, gregexpr("(?s)<tr.*?</tr>", tab, perl = TRUE))[[1]]
+      cells <- vapply(rows, function(r) {
+        cs <- regmatches(r, gregexpr("(?s)<t[hd][^>]*>.*?</t[hd]>", r, perl = TRUE))[[1]]
+        paste(trimws(gsub("(?s)^<t[hd][^>]*>|</t[hd]>$", "", cs, perl = TRUE)), collapse = " | ")
+      }, character(1), USE.NAMES = FALSE)
+      paste0("<TABLE ", paste(cells, collapse = " / "), ">")
+    }, character(1), USE.NAMES = FALSE)
+  })
+  x
+}
+
 # mask what legitimately differs: R code chunks (tables as deparsed R data),
 # the report date and the version
 rp_mask <- function(x) {
+  # report_qmd() sets the report type for the R chunks in a setup chunk
+  # (metacheck 0.4); pytacheck writes no R chunks (D75)
+  x <- gsub("\n\n```\\{r, include=FALSE\\}\n[^`]*```\n\n", "\n\n", x, perl = TRUE)
   x <- gsub("(?s)\n```\\{r\\}.*?\n```\n", "\n<R-CHUNK>\n", x, perl = TRUE)
+  x <- rp_static_table_cells(x)
+  # a failed module's summary row links the module's file name, lower-cased and bare
+  x <- gsub("#[a-z0-9_-]*testsreportmodules([a-z_]+)(r|py)\\b", "#\\1", x, perl = TRUE)
   gsub("(?m)^(\\s*(?:version|report-created): ).*$", "\\1<masked>", x, perl = TRUE)
 }
 
@@ -66,7 +89,8 @@ rp_html_export <- function(fixture) {
   file.copy(file.path("tests", "report", "fixtures", "html", fixture), d)
   p <- metacheck:::.html_export_r_source(file.path(d, fixture))
   if (is.na(p)) return(NA)
-  list(file = sub(paste0(d, "/"), "", p, fixed = TRUE), lines = readLines(p))
+  # the code goes to <tempdir>/metacheck-recovered-code/<md5>/<code dir>/<file>
+  list(file = sub("^.*/metacheck-recovered-code/", "", p), lines = readLines(p))
 }
 
 rp_report_repository <- function(folder, modules, args = list()) {
