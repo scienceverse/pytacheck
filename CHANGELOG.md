@@ -14,7 +14,8 @@ package's. The R commit each release is compared against is in
 - **Changed:** the Repository Check module's "How It Works" text carries metacheck's paragraph on API keys and its validation notice.
 - **Added:** D131 (the module-manual link of a module that is not one of metacheck's own) and U242 (metacheck 0.3.3.2 stops `reproducibility_check()` on a code table without a `file_name` column) in docs/UPSTREAM_ISSUES.md. U241 notes that metacheck fixed the same bug in the same commit.
 - The test helpers pass `report()`'s `args` by name (metacheck 0.3.3.1 inserted `report_type` before it), `rv_serve` forgets the hosts a case found to ignore Range requests, the Crossref recordings are read from `api.crossref.org/works/`, and the replay fallback to the old `api.labs.crossref.org` folder is removed.
-- The prereg_check and reg_check cases (138) keep their goldens from the previous pin: the machine that regenerated the goldens could not reach AsPredicted. The dataone_info table-collisions case keeps its old golden for the same reason (R answers "dataone.org seems to be offline").
+- The prereg_check and reg_check goldens (138 cases), the dataone_info table-collisions golden and the accuracy report's R outputs are regenerated too, by the Parity workflow. Eight report marks of these cases are removed (metacheck 0.3.3.2 links the module's manual chapter and drops the inner `<div>` itself, D115), three are locked again, and four entries of `parity/accuracy/expected.yaml` that no longer explain anything are removed (D117, D118, U218, U241: metacheck now does the same).
+- **Added:** the Parity workflow uploads the goldens it regenerates as a patch (artifact `regenerated-goldens`), so a machine without the R reference can take them over with `git apply --binary`.
 
 ### Fixed: extract_eq() hung on a long list of numbers in parentheses
 
@@ -23,6 +24,7 @@ package's. The R commit each release is compared against is in
 ### Security: dependency updates for published advisories
 
 - **Changed:** `uv.lock` and `install/constraints-app.txt` take the releases that fix the 78 advisories `pip-audit` reports against the locked versions: aiohttp 3.14.5, brotli 1.2.1, certifi 2026.10.23, filelock 4.2.4, msgpack 1.2.4, pillow 13.0.0 and pypdf 6.21.4.
+- **Changed:** `uv.lock` and `install/constraints-app.txt` take pyasn1 0.6.5, for 4 advisories published after those updates.
 - **Changed:** gradio (6.31 and earlier) caps pillow below 13, so `pyproject.toml` lifts the cap (`override-dependencies`), and `install.sh`, `install.ps1` and the Hugging Face Space's `Dockerfile` pass the constraints file with `--overrides` too, so the app gets pillow 13. `pip install "metacheck[app]"` still gets pillow 12 through gradio's cap.
 - **Changed:** CI's dependency audit reads the exported lock as it stands (`pip-audit --no-deps --disable-pip`). It used to resolve the export again with pip, which knows nothing of the override and failed on gradio's cap.
 

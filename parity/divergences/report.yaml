@@ -8,30 +8,6 @@
 
 
 # D115 -------------------------------------------------------------------------
-"mod_prereg/prereg_check.report.demo": &dx_report_2_2
-  kind: deliberate
-  ref: D115
-  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual"
-  r_text: [["<summary>View detailed feedback</summary><div>", "<summary>View detailed feedback</summary>"], ["</div></details>", "</details>"], ["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-prereg-check.html).\n\n\\g<2>", "regex"]]
-"mod_prereg_review/prereg_check.report.no_sample_size": *dx_report_2_2
-"mod_prereg/prereg_check.report.inaccessible": &dx_report_2_3
-  kind: deliberate
-  ref: D115
-  reason: "metacheck dev's module report (PR #463): How It Works links the module's chapter of the metacheck manual"
-  r_text: [["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-prereg-check.html).\n\n\\g<2>", "regex"]]
-"mod_prereg/prereg_check.report.no_links": *dx_report_2_3
-"mod_reg/reg_check.report.demo": &dx_report_2_4
-  kind: deliberate
-  ref: D115
-  reason: "metacheck dev's module report (PR #463): a module's details have no inner <div>, How It Works links the module's chapter of the metacheck manual"
-  r_text: [["<summary>View detailed feedback</summary><div>", "<summary>View detailed feedback</summary>"], ["</div></details>", "</details>"], ["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-reg-check.html).\n\n\\g<2>", "regex"]]
-"mod_reg_review/reg_check.review.http.success.report": *dx_report_2_4
-"mod_reg_review/reg_check.review.na_id.first.report": *dx_report_2_4
-"mod_reg/reg_check.report.no_links":
-  kind: deliberate
-  ref: D115
-  reason: "metacheck dev's module report (PR #463): How It Works links the module's chapter of the metacheck manual"
-  r_text: [["(::: \\{\\.callout-note title=\"How It Works\" collapse=\"true\"\\}\\n\\n(?:(?!\\n:::\\n)[\\s\\S])*?\\n)(:::\\n)", "\\g<1>Read more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-reg-check.html).\n\n\\g<2>", "regex"]]
 "report/module_report.marginal.demo": &dx_report_2_6
   kind: "deliberate"
   ref: "D115"
