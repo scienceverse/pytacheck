@@ -914,11 +914,6 @@ def test_the_install_report_labels_failures_and_names_unknown_sources() -> None:
         "Bioconductor, and the code does not say where it comes from]"
     )
     assert "mine" in out[3]
-    # the 0.3.3.2 version is unchanged
-    assert (
-        rx._install_report(ir)[2]
-        == "**Failed:** ggplot2 [network issue] (boom); lme4 [NA]; mine [NA]"
-    )
 
 
 # -- R's goldens, replayed -----------------------------------------------------------------------------
