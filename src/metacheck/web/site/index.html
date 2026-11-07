@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metacheck</title>
+  <meta name="description" content="Check a scientific article or a data and code folder for best practices.">
+  <link rel="icon" href="/site/images/logo.png">
+  <link rel="stylesheet" href="/site/site.css">
+</head>
+<body>
+  <header class="masthead">
+    <img src="/site/images/logo.png" alt="" width="72" height="83">
+    <h1>Metacheck</h1>
+    <p class="subtitle">An Automated Tool to Check for Best Practices in Scientific Articles</p>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p>Metacheck reads a scientific article and points out where it can be improved. It looks at the reported statistics, the power analysis, the ethics statement and the references. It can also look through the data and code that belong to a paper.</p>
+      <p>Choose a paper or a repository below. You get a report you can read in your browser and save.</p>
+    </section>
+
+    <div class="columns two">
+      <section class="tool" id="tool-paper">
+        <h2>Run Metacheck on a Paper</h2>
+        <p>Choose the paper as a PDF. You can also send bibr JSON or GROBID XML.</p>
+        <label class="drop">
+          <input type="file" accept=".pdf,.json,.xml,application/pdf,application/json,text/xml">
+          <span class="drop-text">Drop a paper here, or click to choose a file</span>
+        </label>
+        <details class="checks" open>
+          <summary>Checks <span class="count"></span></summary>
+          <div class="check-list"><p class="note">Loading the list of checks…</p></div>
+        </details>
+        <label class="tick"><input type="checkbox" class="crossref"> Look up references on Crossref (the reference list is sent to Crossref)</label>
+        <label class="tick"><input type="checkbox" class="run-code"> Run the paper's code <span class="run-code-note note"></span></label>
+        <button type="button" class="go" disabled>Run Metacheck</button>
+        <div class="status" hidden></div>
+      </section>
+
+      <section class="tool" id="tool-repository">
+        <h2>Run Metacheck on a Repository</h2>
+        <p>Choose the data and code folder of a paper, or paste the link of an online repository.</p>
+        <div class="drop folder">
+          <span class="drop-text">Drop a folder or a .zip file here</span>
+          <div class="pick">
+            <label>Choose a folder<input type="file" class="pick-folder" webkitdirectory multiple></label>
+            <label>Choose a .zip file<input type="file" class="pick-zip" accept=".zip,application/zip"></label>
+          </div>
+        </div>
+        <label class="field">Or the link of a repository
+          <input type="url" class="repo-url" placeholder="https://github.com/user/repository" autocomplete="off" spellcheck="false">
+        </label>
+        <p class="note">GitHub, GitLab, OSF and Zenodo links work. A folder is packed into a .zip in your browser. Up to 500 MB and 20,000 files.</p>
+        <label class="tick"><input type="checkbox" class="run-code"> Run the code in the folder <span class="run-code-note note"></span></label>
+        <button type="button" class="go" disabled>Run Metacheck</button>
+        <div class="status" hidden></div>
+      </section>
+    </div>
+
+    <div class="about">
+      <h2>More checks</h2>
+      <p><a href="/researchbox/">Check a ResearchBox</a> by its number. <a href="/psyarxiv/">Check a PsyArXiv preprint</a> by its link.</p>
+
+      <h2>What happens to your files</h2>
+      <p>Your files go to this server and nowhere else, apart from the services named below. Each check runs in its own process. When it is done, the upload is deleted. The report is deleted one hour after it is ready. The pages make no request to other sites, and they keep no cookies.</p>
+      <p id="converter-note">A PDF is converted to text before it is checked.</p>
+      <p>Some checks call other services: the Crossref lookup, the retraction and PubPeer checks, and the link of an online repository. They send only what they need, such as a DOI.</p>
+
+      <h2>Use it from your own code</h2>
+      <p>Everything on this page is also a web interface that a script can use. This sends a paper and saves the report:</p>
+      <pre><code id="curl-example">curl -F file=@paper.pdf /api/report -o report.html</code></pre>
+      <p>The same interface can queue a job and poll it. See the documentation of this server for the list of fields.</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>Metacheck, a Python port of the <a href="https://github.com/scienceverse/metacheck">metacheck</a> R package. <span id="version"></span></p>
+    <p>Fonts: Cabin (OFL). Folder packing: JSZip (MIT).</p>
+  </footer>
+
+  <script src="/site/vendor/jszip.min.js"></script>
+  <script src="/site/common.js"></script>
+  <script src="/site/site.js"></script>
+</body>
+</html>
