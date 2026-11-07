@@ -12,6 +12,9 @@ rp_stem <- function(x) sub("\\.(R|py)$", "", basename(x))
 # mask what legitimately differs: R code chunks (tables as deparsed R data),
 # the report date and the version
 rp_mask <- function(x) {
+  # report_qmd() sets the report type for the R chunks in a setup chunk
+  # (metacheck 0.4); pytacheck writes no R chunks (D75)
+  x <- gsub("\n\n```\\{r, include=FALSE\\}\n[^`]*```\n\n", "\n\n", x, perl = TRUE)
   x <- gsub("(?s)\n```\\{r\\}.*?\n```\n", "\n<R-CHUNK>\n", x, perl = TRUE)
   gsub("(?m)^(\\s*(?:version|report-created): ).*$", "\\1<masked>", x, perl = TRUE)
 }

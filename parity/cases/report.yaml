@@ -384,3 +384,200 @@
   "py": "metacheck.report.html_output._html_export_r_source"
   "args":
     "html_path": "no/such/file.html"
+
+# --- the checklist report and the file tree (metacheck 0.4: R/report-checklist.R, R/file-tree.R) ---
+- "id": "checklist.checks.checks"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_checks('checks')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_checks('checks')"}}
+- "id": "checklist.checks.checks_unknown"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_checks('checks_unknown')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_checks('checks_unknown')"}}
+- "id": "checklist.checks.single"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_checks('single')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_checks('single')"}}
+- "id": "checklist.checks.empty"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_checks('empty')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_checks('empty')"}}
+- "id": "checklist.checks.all_statuses"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_checks('all_statuses')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_checks('all_statuses')"}}
+- "id": "checklist.checks.section_note"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_checks('section_note')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_checks('section_note')"}}
+- "id": "checklist.checks.tree"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_checks('tree')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_checks('tree')"}}
+- "id": "checklist.qmd.checks"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('checks', 'plain')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('checks', 'plain')"}}
+- "id": "checklist.qmd.single"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('single', 'plain')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('single', 'plain')"}}
+- "id": "checklist.qmd.empty"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('empty', 'plain')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('empty', 'plain')"}}
+- "id": "checklist.qmd.all_statuses"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('all_statuses', 'plain')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('all_statuses', 'plain')"}}
+- "id": "checklist.qmd.full_doi"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('full', 'doi')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('full', 'doi')"}}
+- "id": "checklist.qmd.full_none"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('full', 'none')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('full', 'none')"}}
+- "id": "checklist.qmd.multi_titled"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('multi', 'titled')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('multi', 'titled')"}}
+- "id": "checklist.qmd.tree"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('tree', 'plain')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('tree', 'plain')"}}
+- "id": "checklist.qmd.no_tree"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('no_tree', 'plain')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('no_tree', 'plain')"}}
+- "id": "checklist.qmd.section_note"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('section_note', 'plain')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('section_note', 'plain')"}}
+- "id": "checklist.qmd.fold"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_qmd('fold', 'plain')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_qmd('fold', 'plain')"}}
+- "id": "checklist.report_qmd.full"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_report_qmd('full', 'titled')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_report_qmd('full', 'titled')"}}
+- "id": "checklist.report_qmd.tree"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_report_qmd('tree', 'plain')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_report_qmd('tree', 'plain')"}}
+- "id": "file_tree.rows"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_rows(c('data/raw.csv', 'README.md', 'data/clean.csv', NA, ''))}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_rows(['data/raw.csv', 'README.md', 'data/clean.csv', None, ''])"}}
+- "id": "file_tree.rows_empty"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_rows(character(0))}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_rows([])"}}
+- "id": "file_tree.rows_dirs"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_rows(c('b.csv', 'a_empty', 'z_data/x.csv'), c(FALSE, TRUE, FALSE))}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_rows(['b.csv', 'a_empty', 'z_data/x.csv'], [False, True, False])"}}
+- "id": "file_tree.block.study"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('study')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('study')"}}
+- "id": "file_tree.block.link"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('link')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('link')"}}
+- "id": "file_tree.block.server"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('server')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('server')"}}
+- "id": "file_tree.block.link_slash"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('link_slash')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('link_slash')"}}
+- "id": "file_tree.block.no_files"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('no_files')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('no_files')"}}
+- "id": "file_tree.block.zero_rows"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('zero_rows')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('zero_rows')"}}
+- "id": "file_tree.block.no_paths"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('no_paths')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('no_paths')"}}
+- "id": "file_tree.block.local"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_local()}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_local()"}}
+- "id": "file_tree.report.from"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_report('from')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_report('from')"}}
+- "id": "file_tree.report.from_none"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_report('from_none')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_report('from_none')"}}
+- "id": "file_tree.report.drop"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_report('drop')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_report('drop')"}}
+- "id": "file_tree.report.drop_end"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_report('drop_end')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_report('drop_end')"}}
+- "id": "file_tree.report.drop_none"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_report('drop_none')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_report('drop_none')"}}
+- "id": "file_tree.pick.data_check"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_pick('data_check')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_pick('data_check')"}}
+- "id": "file_tree.pick.repo_check"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_pick('repo_check')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_pick('repo_check')"}}
+- "id": "file_tree.pick.none"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_pick('none')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_pick('none')"}}
