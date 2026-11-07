@@ -2240,7 +2240,13 @@ def data_read_head(
         elif ext in ("jasp", "omv"):
             df = readers.read_jasp_omv(path, ext, n_rows)
         elif ext == "rds":
-            df = readers.read_rds_head(path, n_rows)
+            # made with save(), not saveRDS(): readRDS() refuses it ("unknown input
+            # format"), load() opens it (Lakens/tue_datamanager_check#5, item 3)
+            df = (
+                _read_rdata_isolated(path, n_rows)
+                if _rds_is_workspace(path)
+                else readers.read_rds_head(path, n_rows)
+            )
         elif ext in ("rda", "rdata"):
             df = _read_rdata_isolated(path, n_rows)
         else:
@@ -2252,6 +2258,98 @@ def data_read_head(
             raise
         warnings.warn(f"Could not read {_r_basename(path)}: {msg}", stacklevel=2)
         return None
+
+
+def _rds_is_workspace(path: str | os.PathLike[str]) -> bool:
+    """Whether an ``.rds`` file is really an R workspace (``.rds_is_workspace()``).
+
+    Made with ``save()`` rather than ``saveRDS()``: after decompressing (gzip,
+    bzip2, xz or none) it starts with ``RDX`` / ``RDA`` / ``RDB`` and a format
+    version, where a ``saveRDS()`` file starts with ``X\\n`` or ``A\\n``
+    (Lakens/tue_datamanager_check#5, item 3).
+    """
+    import bz2
+    import gzip
+    import lzma
+
+    try:
+        with open(path, "rb") as fh:
+            head = fh.read(6)
+        opener: Any = (
+            gzip.open
+            if head[:2] == b"\x1f\x8b"
+            else bz2.open
+            if head[:3] == b"BZh"
+            else lzma.open
+            if head[:6] == b"\xfd7zXZ\x00"
+            else open
+        )
+        with opener(path, "rb") as fh:
+            magic = fh.read(4)
+    except (OSError, EOFError, lzma.LZMAError):
+        return False
+    return len(magic) == 4 and re.fullmatch(rb"RD[XAB][23]", magic) is not None
+
+
+def _csv_is_space_separated(path: str | os.PathLike[str] | None) -> bool:
+    """Does a ``.csv`` look separated by spaces rather than commas (``.csv_is_space_separated()``)?
+
+    ``_sniff_delimiter()`` never considers a space, so such a file reads as one
+    column of text and none of its columns are checked. This only decides
+    whether to warn the author; the file is not re-read with spaces as the
+    separator, which could misread a one-column file of phrases ("red house").
+    It is therefore strict: the first lines (up to 6, comments and blank lines
+    skipped) hold none of the delimiters ``_sniff_delimiter()`` knows, each
+    splits on spaces into the same number (>= 3) of fields, and at least one
+    value below the first line is a number.
+    """
+    if path is None or not os.path.exists(path):
+        return False
+    try:
+        with open(path, "rb") as fh:
+            raw = fh.read(65536)
+    except OSError:
+        return False
+    text = raw.decode("utf-8", "surrogateescape")
+    lines = _utf8_lines(_split_text_lines(text)[:20])
+    stripped = [(ln or "").strip(" \t\r\n") for ln in lines]
+    kept = [ln for ln in stripped if ln != "" and not ln.startswith("#")][:6]
+    if len(kept) < 2 or any(re.search(r"[,;\t|]", ln) for ln in kept):
+        return False
+    fields = [re.split(" +", ln) for ln in kept]
+    n = [len(f) for f in fields]
+    if n[0] < 3 or any(k != n[0] for k in n):
+        return False
+    nums = [as_float(v) for f in fields[1:] for v in f]
+    return any(v is not None and not math.isnan(v) for v in nums)
+
+
+def _data_file_sheets(path: str | os.PathLike[str]) -> list[str] | None:
+    """The sheets of a spreadsheet (``.xlsx``, ``.xls``, ``.ods``, ``.fods``), else ``None``.
+
+    ``None`` too for a file that cannot be read (``.data_file_sheets()``).
+    """
+    from metacheck.datacheck import _files_readers as readers
+
+    path = str(path)
+    ext = _tolower(_file_ext(path) or "")
+    try:
+        if ext in ("xlsx", "xls"):
+            book = readers._XlsBook(path) if ext == "xls" else readers._XlsxBook(path)
+            return [str(s) for s in book.sheet_names]
+        if ext in ("ods", "fods"):
+            return readers.ods_sheet_names(path)
+    except Exception:
+        return None
+    return None
+
+
+def _sheet_is_notes(sheet: Sequence[str | None]) -> list[bool]:
+    """Whether a sheet's name says it holds notes or a codebook rather than data."""
+    return grepl(
+        r"^(read ?me|notes?|legend|info(rmation)?|meta ?data|about|description|code ?book|(data )?dictionary)$",
+        [None if s is None else s.strip(" \t\r\n").lower() for s in sheet],
+    )
 
 
 def _read_rdata_isolated(path: str | os.PathLike[str], n_rows: float = 5) -> pd.DataFrame | None:

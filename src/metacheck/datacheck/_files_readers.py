@@ -825,7 +825,8 @@ def _ods_rows(sheet: Any, start_row: int, stop_row: int) -> list[list[Any]]:
     return rows[: size + 1]
 
 
-def _ods_strings(path: str, start_row: int, stop_row: int, flat: bool) -> list[list[str]]:
+def _ods_tables(path: str, flat: bool) -> list[Any]:
+    """The ``table:table`` elements (sheets) of an OpenDocument spreadsheet."""
     from lxml import etree
 
     if flat:
@@ -836,9 +837,33 @@ def _ods_strings(path: str, start_row: int, stop_row: int, flat: bool) -> list[l
     body = root.find(f"{{{_OFFICE_NS}}}body")
     if body is None:
         raise ValueError(f"{path} is not a correct ODS file")
-    sheet = body.find(f"{{{_OFFICE_NS}}}spreadsheet/{_t('table')}")
-    if sheet is None:
+    return list(body.findall(f"{{{_OFFICE_NS}}}spreadsheet/{_t('table')}"))
+
+
+def ods_sheet_names(path: str | os.PathLike[str]) -> list[str]:
+    """``readODS::list_ods_sheets()``: the sheet names of an ``.ods`` / ``.fods`` file."""
+    path = str(path)
+    tables = _ods_tables(path, path.lower().endswith(".fods"))
+    return [t.get(_t("name")) or "" for t in tables]
+
+
+def _ods_strings(
+    path: str, start_row: int, stop_row: int, flat: bool, sheet_arg: str | int | None = None
+) -> list[list[str]]:
+    tables = _ods_tables(path, flat)
+    if not tables:
         return []
+    if sheet_arg is None:
+        sheet = tables[0]
+    elif isinstance(sheet_arg, str):
+        names = [t.get(_t("name")) or "" for t in tables]
+        if sheet_arg not in names:
+            raise ValueError(f"Sheet '{sheet_arg}' not found")
+        sheet = tables[names.index(sheet_arg)]
+    else:
+        if sheet_arg < 1 or sheet_arg > len(tables):
+            raise ValueError("`sheet` is out of range")
+        sheet = tables[int(sheet_arg) - 1]
     rows = _ods_rows(sheet, start_row, stop_row)
     width = max((len(r) for r in rows), default=0)
     if width * len(rows) == 0:
@@ -853,12 +878,14 @@ def read_ods(
     skip: int = 0,
     n_max: float = math.inf,
     name_repair: str = "unique",
+    sheet: str | int | None = None,
 ) -> pd.DataFrame:
-    """``readODS::read_ods(path, sheet = 1)`` (``col_types = NA`` keeps text)."""
+    """``readODS::read_ods(path, sheet = sheet)`` (the first sheet by default;
+    ``col_types = NA`` keeps text)."""
     path = str(path)
     flat = path.lower().endswith(".fods")
     stop_row = -1 if not math.isfinite(n_max) else int(n_max) + 1
-    grid = _ods_strings(path, skip + 1, stop_row, flat)
+    grid = _ods_strings(path, skip + 1, stop_row, flat, sheet)
     if not grid:
         return pd.DataFrame()
     if len(grid) == 1 and col_names:
@@ -1017,7 +1044,7 @@ def read_sheet_head(
         if excel:
             df = read_excel(path, sheet=sheet if sheet is not None else 1, n_max=nmax)
         else:
-            df = read_ods(path, n_max=nmax)
+            df = read_ods(path, n_max=nmax, sheet=sheet)
     if df is not None and is_qualtrics(df):
         df = strip_qualtrics(df)
     if df is not None and df.shape[1] > 1:
@@ -1035,7 +1062,12 @@ def read_sheet_head(
                     )
                 else:
                     raw = read_ods(
-                        path, col_names=False, n_max=6, col_types=math.nan, name_repair="minimal"
+                        path,
+                        col_names=False,
+                        n_max=6,
+                        col_types=math.nan,
+                        name_repair="minimal",
+                        sheet=sheet,
                     )
         except Exception:
             raw = None
@@ -1052,7 +1084,7 @@ def read_sheet_head(
                                 path, sheet=sheet if sheet is not None else 1, skip=k, n_max=nmax2
                             )
                         else:
-                            reread = read_ods(path, skip=k, n_max=nmax2)
+                            reread = read_ods(path, skip=k, n_max=nmax2, sheet=sheet)
                 except Exception:
                     reread = None
                 df = reread if reread is not None and reread.shape[1] > 0 else prom["df"]
