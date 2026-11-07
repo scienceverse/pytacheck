@@ -1629,11 +1629,20 @@ def _dataverse_headers(req: dict[str, Any]) -> dict[str, Any]:
         host = urlsplit(str(req.get("url"))).hostname
     except ValueError:
         host = None
+    from metacheck.archives.api_keys import key_check_request, key_use
+
     spec = dict(req)
     headers = dict(spec.get("headers") or {})
     headers["User-Agent"] = "metacheck"
+
+    # A key the installation refuses answers 401 ("Bad API key") even for a public
+    # dataset, so each installation's key is checked once per process and left out
+    # when refused
+    def check(key: str) -> bool | None:
+        return key_check_request(f"https://{host}/api/users/:me", {"X-Dataverse-key": key})
+
     try:
-        pat = _dataverse_pat(host)
+        pat = key_use("dataverse", _dataverse_pat(host), check, ident=f"Dataverse {host}")
     except Exception:
         pat = ""
     if pat:

@@ -165,6 +165,9 @@ def test_dataverse_info_on_its_own_links_for_an_unfound_doi(serve: Any, online: 
 
 def test_dataverse_pat_per_host(monkeypatch: pytest.MonkeyPatch) -> None:
     from metacheck import utils
+    from metacheck.archives import api_keys
+
+    monkeypatch.setattr(api_keys, "key_check_request", lambda url, headers: True)
 
     monkeypatch.setenv("DATAVERSE_PAT_DATAVERSE_HARVARD_EDU", "")
     monkeypatch.setenv("DATAVERSE_PAT_DATAVERSE_NL", "")
@@ -705,3 +708,51 @@ def test_info_queries_a_dataset_once_when_two_urls_name_it(
     info = dataverse.dataverse_info(links)
     assert calls == ["dataverse.harvard.edu 10.7910/DVN/SVVULN"]
     assert info["title"].tolist() == ["T", "T"]
+
+
+def test_a_file_dataverse_converted_is_taken_as_it_was_uploaded() -> None:
+    # the listing's checksum is the original's, and /api/access/datafile/<id> sends the
+    # converted .tab, so every such file failed the checksum (metacheck #582)
+    from metacheck.archives.dataverse import _dataverse_file_entry
+
+    plain = {
+        "label": "analysis.R",
+        "dataFile": {"id": 1, "filename": "analysis.R", "filesize": 120},
+    }
+    e = _dataverse_file_entry(plain, "dv.example.org")
+    assert e["name"] == "analysis.R"
+    assert e["size"] == 120
+    assert e["url"] == "https://dv.example.org/api/access/datafile/1"
+
+    conv = {
+        "label": "Study 1.tab",
+        "dataFile": {
+            "id": 2,
+            "filename": "Study 1.tab",
+            "filesize": 900,
+            "originalFileFormat": "application/x-spss-sav",
+            "originalFileName": "study1.sav",
+            "originalFileSize": 1000,
+        },
+    }
+    e = _dataverse_file_entry(conv, "dv.example.org")
+    assert e["name"] == "Study 1.sav"  # the listed name, the original's extension
+    assert e["size"] == 1000  # the original's size
+    assert e["url"] == "https://dv.example.org/api/access/datafile/2?format=original"
+
+    # converted, but the original's name and size are not given
+    bare = {
+        "label": "x.tab",
+        "dataFile": {
+            "id": 3,
+            "filename": "x.tab",
+            "filesize": 50,
+            "originalFileFormat": "application/x-stata",
+            "originalFileName": [],
+            "originalFileSize": [],
+        },
+    }
+    e = _dataverse_file_entry(bare, "dv.example.org")
+    assert e["name"] == "x.tab"
+    assert pd.isna(e["size"])  # not the converted file's size
+    assert e["url"].endswith("format=original")

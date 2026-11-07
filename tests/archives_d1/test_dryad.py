@@ -716,9 +716,12 @@ def test_dryad_401_hint_names_the_missing_key() -> None:
     # another status, or a 401 from another host, gets no hint
     assert dryad._dryad_http_failure(url, 404) == "HTTP 404"
     assert dryad._dryad_http_failure("https://example.com/file/1", 401) == "HTTP 401"
-    # with a key set, a 401 has another cause
+    assert "Please provide your own Dryad key to continue" in dryad._dryad_401_hint(url, 401)
+    # with a key set, Dryad refused it
     dryad_pat("tok")
-    assert dryad._dryad_401_hint(url, 401) == ""
+    hint = dryad._dryad_401_hint(url, 401)
+    assert hint.startswith(" (Your Dryad key was rejected by Dryad")
+    assert "tok" not in hint
 
 
 def test_dryad_file_download_records_why_a_file_failed(serve: object, tmp_path: Path) -> None:

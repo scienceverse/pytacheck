@@ -32,6 +32,7 @@ import atexit
 import functools
 import math
 import os
+import re
 import shutil
 import tempfile
 import time
@@ -565,6 +566,7 @@ def _storage_request(
     spec: dict[str, Any] = {"method": method, "url": url, "headers": dict(headers or {})}
     if auth:
         spec = _auth_for_url(spec)
+        url = str(spec["url"])  # (an osf.io address may be sent to its file server)
 
     if url.lower().startswith("file:"):
         if throttle is not None:
@@ -596,7 +598,7 @@ def _storage_request(
                     is_transient=is_transient or _storage_is_transient,
                     throttle=throttle,
                     sink=read,
-                    resend_headers=bool(spec.get("unrestricted_auth")),
+                    on_reset=_host_rate_limit_record,
                     raise_errors=True,
                 )
         except http.RateLimited as e:
@@ -685,59 +687,129 @@ def _with_headers(spec: dict[str, Any], extra: Mapping[str, str]) -> dict[str, A
     return out
 
 
+def _url_host_is(url: Any, domains: str | Sequence[str]) -> bool:
+    """Port of ``R/repo-download.R::.url_host_is()``: is the host name of *url* one of
+    *domains*, or a subdomain of one (``files.osf.io`` for ``osf.io``)?
+
+    The host only: a key must not go to an address that merely mentions a service in its
+    path or query (a link shortener, a web archive), nor to ``osf.io.example.com``.
+    """
+    try:
+        host = (urlsplit(str(url)).hostname or "").lower()
+    except ValueError:
+        return False
+    if not host:
+        return False
+    names = [domains] if isinstance(domains, str) else list(domains)
+    return any(host == d.lower() or host.endswith("." + d.lower()) for d in names)
+
+
+def _osf_file_server_url(url: str, pat: str) -> str:
+    """Port of ``R/repo-download.R::.osf_file_server_url()``: the OSF file server a download
+    address on osf.io itself redirects to (``osf.io/download/<id>/`` to
+    ``files.osf.io/v1/resources/...``), asked for with the token and without following the
+    redirect, so that the download can go there directly with the token (see
+    :func:`_auth_for_url`). Any other address -- the file servers, the API, a redirect that
+    leaves the OSF, no redirect, or a failed request -- is returned as it is.
+    """
+    import httpx
+
+    from metacheck import http
+
+    host = (urlsplit(url).hostname or "").lower()
+    if host not in ("osf.io", "www.osf.io"):
+        return url
+    try:
+        resp = http.request(
+            "GET",
+            url,
+            headers={"Authorization": f"Bearer {pat}", "User-Agent": "metacheck"},
+            follow_redirects=False,
+            max_tries=1,
+            timeout=httpx.Timeout(60.0, connect=20.0),
+        )
+    except Exception:
+        return url
+    if resp is None or resp.status_code not in (301, 302, 303, 307, 308):
+        return url
+    location = resp.headers.get("location") or ""
+    try:
+        to = (urlsplit(location).hostname or "").lower()
+    except ValueError:
+        return url
+    return location if re.search(r"(^|\.)osf\.io$", to) else url
+
+
+def _host_rate_limit_record(host: str, reset: float) -> None:
+    """Port of the key part of ``R/repo-download.R::.host_rate_limit_record()``: a host whose
+    limit belongs to a key metacheck manages (Dryad, GitHub, GitLab, the OSF) has it recorded
+    as a key problem, shared with the other processes (see ``api_key_status()``). The reset
+    itself is remembered by :func:`metacheck.http.request`."""
+    import datetime as dt
+
+    from metacheck.archives.api_keys import key_problem_record, key_service_for_host
+
+    service = key_service_for_host(host)
+    if service is not None:
+        key_problem_record(service, "limit", dt.datetime.fromtimestamp(reset, dt.UTC))
+
+
 def _auth_for_url(req: Mapping[str, Any]) -> dict[str, Any]:
     """Port of ``R/repo-download.R::.auth_for_url()``: host authentication for a file request.
 
     *req* is a request spec (``{"method", "url", "headers", ...}``); a new one
-    is returned. OSF and Zenodo get their bearer token (kept across the
-    redirect to their storage hosts: ``unrestricted_auth``), Dataverse,
-    Figshare, Dryad and ReShare their own header functions, and
-    4TU.ResearchData its ``Authorization: token`` -- so a private file is
-    fetched instead of a sign-in page.
+    is returned. OSF and Zenodo get their bearer token, Dataverse, Figshare,
+    Dryad and ReShare their own header functions, and 4TU.ResearchData its
+    ``Authorization: token`` -- so a private file is fetched instead of a
+    sign-in page. The service is chosen by the address's host name only:
+    matching anywhere in the address sent a key to any host whose path or query
+    merely mentioned ``osf.io`` or ``zenodo.org``.
+
+    A download address on osf.io is sent straight to the file server it
+    redirects to, with the token (:func:`_osf_file_server_url`): the token is
+    not sent on to the cloud storage the file server redirects to, which refuses
+    a pre-signed address that also has an ``Authorization`` header (#508).
     """
     spec = dict(req)
     url = str(spec.get("url") or "")
-    host = (_host(url) or "").lower()
-    if host == "osf.io" or host.endswith(".osf.io"):
-        # the host, not the whole URL: a path or a look-alike host must not get the token
-        from metacheck.archives.osf_helpers import osf_pat
+    if _url_host_is(url, "osf.io"):
+        from metacheck.archives.api_keys import key_use
+        from metacheck.archives.osf_helpers import _osf_key_check
 
         try:
-            pat = osf_pat()
+            pat = key_use("osf", check=_osf_key_check)
         except Exception:
             pat = ""
         if pat:
+            spec["url"] = _osf_file_server_url(url, pat)
             spec = _with_headers(spec, {"Authorization": f"Bearer {pat}"})
-            spec["unrestricted_auth"] = True
-    elif grepl(r"zenodo\.org", url, ignore_case=True):
+    elif _url_host_is(url, "zenodo.org"):
         from metacheck.archives.zenodo_upload import zenodo_pat
 
-        sandbox = bool(grepl(r"sandbox\.zenodo\.org", url, ignore_case=True))
         try:
-            pat = zenodo_pat(sandbox=sandbox)
+            pat = zenodo_pat(sandbox=_url_host_is(url, "sandbox.zenodo.org"))
         except Exception:
             pat = ""
         if pat:
             spec = _with_headers(spec, {"Authorization": f"Bearer {pat}"})
-            spec["unrestricted_auth"] = True
     else:
-        from metacheck.archives.dataverse import _dataverse_headers, _dataverse_host_regex
+        from metacheck.archives.dataverse import _dataverse_headers, _dataverse_hosts
 
-        if grepl(_dataverse_host_regex(), url, ignore_case=True):
+        if _url_host_is(url, _dataverse_hosts()):
             spec = _dataverse_headers(spec)
-        elif grepl(r"figshare\.com", url, ignore_case=True):
+        elif _url_host_is(url, "figshare.com"):
             from metacheck.archives.figshare import _figshare_headers
 
             spec = _figshare_headers(spec)
-        elif grepl(r"datadryad\.org", url, ignore_case=True):
+        elif _url_host_is(url, "datadryad.org"):
             from metacheck.archives.dryad import _dryad_headers
 
             spec = _dryad_headers(spec)
-        elif grepl(r"reshare\.ukdataservice\.ac\.uk", url, ignore_case=True):
+        elif _url_host_is(url, "reshare.ukdataservice.ac.uk"):
             from metacheck.archives.reshare import _reshare_headers
 
             spec = _reshare_headers(spec)
-        elif grepl(r"data\.4tu\.nl", url, ignore_case=True):
+        elif _url_host_is(url, "data.4tu.nl"):
             from metacheck.archives.fourtu import _researchdata4tu_pat
 
             try:

@@ -14,7 +14,6 @@ from __future__ import annotations
 import functools
 import math
 import os
-import re
 import threading
 import time
 import warnings
@@ -425,16 +424,30 @@ def _dryad_401_hint(url: Any, status: Any) -> str:
 
     Dryad requires a key to download file bytes even from a public dataset,
     so a 401 from datadryad.org without one set almost always means that.
-    Appended to the ``HTTP 401`` failure; ``""`` for any other status, host,
-    or when a key is set.
+    With a key set, a 401 means Dryad refused the key (a token from
+    :func:`dryad_pat` lasts 10 hours): that is recorded, and named in the hint.
+    Appended to the ``HTTP 401`` failure; ``""`` for any other status or host.
     """
-    if status != 401 or not re.search(r"datadryad\.org", str(url), re.IGNORECASE):
+    from metacheck.archives.api_keys import (
+        KEY_SERVICES,
+        key_problem_message,
+        key_problem_record,
+        key_source,
+    )
+    from metacheck.archives.download import _url_host_is
+
+    if status != 401 or not _url_host_is(url, "datadryad.org"):
         return ""
     if _dryad_has_key():
-        return ""
+        # a key is set, so Dryad refused it: recorded, so the apps can ask visitors for
+        # their own key (see api_key_status())
+        source = key_source("dryad")
+        key_problem_record("dryad", "rejected", source=source)
+        return " (" + key_problem_message("dryad", "rejected", source=source) + ")"
     return (
         " (Dryad requires an API key to download file bytes, even from a public dataset -- "
-        "see ?dryad_pat)"
+        "see ?dryad_pat. Please provide your own Dryad key to continue (you can make one at "
+        f"{KEY_SERVICES['dryad'].url}))"
     )
 
 
@@ -561,9 +574,20 @@ def _dryad_headers(req: dict[str, Any]) -> dict[str, Any]:
     (a failed request); a refusal raises :class:`OAuthError`, which aborts
     the metadata lookups as in R.
     """
+    from metacheck.utils import get_option
+
     spec = dict(req)
     headers = dict(spec.get("headers") or {})
     headers["User-Agent"] = "metacheck"
+    # A token set in this session (a visitor's own) comes before the client id and secret
+    # of the environment (the server's key); client credentials set in this session with
+    # dryad_auth() still come first.
+    session_client = bool(get_option("metacheck.dryad.client_id") or "")
+    session_pat = get_option("metacheck.dryad.pat") or ""
+    if not session_client and session_pat:
+        headers["Authorization"] = f"Bearer {session_pat}"
+        spec["headers"] = headers
+        return spec
     try:
         client = _dryad_oauth_client()
     except Exception:

@@ -934,11 +934,20 @@ def test_is_login_page(tmp_path: Path) -> None:
     assert _is_login_page(str(tmp_path / "missing.html")) is False
 
 
-def test_auth_for_url_hosts(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.fixture
+def osf_key_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The OSF key check answers "accepted" and the file-server lookup leaves an address alone."""
+    from metacheck.archives import osf_helpers
+
+    monkeypatch.setattr(osf_helpers, "_osf_key_check", lambda key: True)
+    monkeypatch.setattr(dlm, "_osf_file_server_url", lambda url, pat: url)
+
+
+def test_auth_for_url_hosts(monkeypatch: pytest.MonkeyPatch, osf_key_ok: None) -> None:
     monkeypatch.setenv("OSF_PAT", "osf-token")
     spec = _auth_for_url({"method": "GET", "url": "https://osf.io/download/abcde/", "headers": {}})
     assert spec["headers"]["Authorization"] == "Bearer osf-token"
-    assert spec["unrestricted_auth"] is True
+    assert "unrestricted_auth" not in spec
     monkeypatch.delenv("OSF_PAT")
     with local_options({"metacheck.osf.pat": None}):
         spec = _auth_for_url(
@@ -964,13 +973,50 @@ def test_auth_for_url_hosts(monkeypatch: pytest.MonkeyPatch) -> None:
         "https://notosf.io/d.csv",
     ],
 )
-def test_the_osf_token_goes_to_osf_hosts_only(monkeypatch: pytest.MonkeyPatch, url: str) -> None:
+def test_the_osf_token_goes_to_osf_hosts_only(
+    monkeypatch: pytest.MonkeyPatch, osf_key_ok: None, url: str
+) -> None:
     monkeypatch.setenv("OSF_PAT", "osf-token")
     spec = _auth_for_url({"method": "GET", "url": url, "headers": {}})
     assert "Authorization" not in spec["headers"] and "unrestricted_auth" not in spec
     for host in ("osf.io", "files.osf.io", "files.de-1.osf.io", "api.osf.io"):
         spec = _auth_for_url({"method": "GET", "url": f"https://{host}/x", "headers": {}})
         assert spec["headers"]["Authorization"] == "Bearer osf-token"
+
+
+def test_an_osf_download_address_goes_straight_to_the_file_server(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from metacheck.archives import osf_helpers
+
+    monkeypatch.setenv("OSF_PAT", "osf-token")
+    monkeypatch.setattr(osf_helpers, "_osf_key_check", lambda key: True)
+    with respx.mock(assert_all_called=True) as router:
+        route = router.get("https://osf.io/download/abcde/").mock(
+            return_value=httpx.Response(
+                302, headers={"Location": "https://files.de-1.osf.io/v1/resources/x/abcde"}
+            )
+        )
+        spec = _auth_for_url(
+            {"method": "GET", "url": "https://osf.io/download/abcde/", "headers": {}}
+        )
+    assert route.calls[0].request.headers["Authorization"] == "Bearer osf-token"
+    assert spec["url"] == "https://files.de-1.osf.io/v1/resources/x/abcde"
+    assert spec["headers"]["Authorization"] == "Bearer osf-token"
+    # a redirect that leaves the OSF, no redirect, and a failed request leave the address alone
+    for response in (
+        httpx.Response(302, headers={"Location": "https://cloud.example/blob?sig=1"}),
+        httpx.Response(200, content=b"x"),
+        httpx.Response(500),
+    ):
+        with respx.mock() as router:
+            router.get("https://osf.io/download/abcde/").mock(return_value=response)
+            assert (
+                dlm._osf_file_server_url("https://osf.io/download/abcde/", "osf-token")
+                == "https://osf.io/download/abcde/"
+            )
+    # the file servers and the API are not asked
+    assert dlm._osf_file_server_url("https://files.osf.io/v1/x", "t") == "https://files.osf.io/v1/x"
 
 
 def test_unrestricted_auth_keeps_token_across_redirect(
