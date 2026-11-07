@@ -1,0 +1,38 @@
+{
+  "id": "reused_by_group.two_groups",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "b",
+          "c"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "study-a/data/x.csv",
+              "study-a/data/y.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "study-a/data/x.csv"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,52 @@
+{
+  "id": "sheet_target.names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "data/study-harvest_description-datasheet_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-harvest_description-Sheet1_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-harvest_description-2021_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-harvest_description-Rsum_data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "study-ex1/data/study-ex1_harvest_description-Wave2_data.csv"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

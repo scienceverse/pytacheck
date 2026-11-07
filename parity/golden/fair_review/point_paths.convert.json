@@ -1,0 +1,30 @@
+{
+  "id": "point_paths.convert",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "n"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "d <- readxl::read_excel(\"documentation/original/trial.xlsx\")",
+          "x <- \"documentation/original/trial.xlsx\""
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

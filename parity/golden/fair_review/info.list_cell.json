@@ -1,0 +1,63 @@
+{
+  "id": "info.list_cell",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "keywords",
+          "title",
+          "keywords_kept"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "b"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "T"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "b"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

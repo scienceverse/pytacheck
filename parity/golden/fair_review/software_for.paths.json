@@ -1,0 +1,82 @@
+{
+  "id": "software_for.paths",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "IBM SPSS Statistics"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Microsoft Excel or LibreOffice Calc"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "IBM SPSS Statistics"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Stata"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "IBM SPSS Statistics"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "IBM SPSS Statistics"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

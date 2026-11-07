@@ -1,0 +1,39 @@
+{
+  "id": "setwd.string_parse",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "n",
+      "paths"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "x <- \"",
+          "setwd('a')",
+          "\"",
+          "invisible(NULL)  # [metacheck FAIR_repo removed setwd] setwd(\"b\")"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "b"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "still_unknown.nothing",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "- The title",
+          "- The authors",
+          "- The paper that uses these files",
+          "- The licence under which the data may be reused",
+          "- A contact person and email address",
+          "- When the data were collected",
+          "- How the data were collected",
+          "- How the data were processed into the shared data"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

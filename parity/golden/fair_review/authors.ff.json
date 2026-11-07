@@ -1,0 +1,90 @@
+{
+  "id": "authors.ff",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "name",
+          "orcid",
+          "email",
+          "corresponding",
+          "affiliation",
+          "id",
+          "credit"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Ann Smith",
+              "Bob Jones"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://orcid.org/0000-0001-2345-6789",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ann@x.org",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TU/e",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://orcid.org/0000-0001-2345-6789",
+              "#author-2"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Conceptualization",
+                  "Writing - original draft"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

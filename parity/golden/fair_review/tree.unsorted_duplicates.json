@@ -1,0 +1,28 @@
+{
+  "id": "tree.unsorted_duplicates",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "```",
+          "a/",
+          "  x.R",
+          "b/",
+          "  y.R",
+          "z",
+          "```"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
