@@ -423,7 +423,9 @@ def key_problem_message(
         whose = f"Your {s.label} key"
     elif src == "server":
         whose = (
-            f"The {s.label} key provided by metacheck" if shared else f"The {s.label} key in {s.env}"
+            f"The {s.label} key provided by metacheck"
+            if shared
+            else f"The {s.label} key in {s.env}"
         )
     else:
         whose = f"{s.label}'s limit for requests without a key"
@@ -507,10 +509,12 @@ def key_use(
                 stacklevel=3,
             )
         elif ok is False:
-            warnings.warn(
-                f"The {name} key was rejected; continuing without the key.", stacklevel=3
-            )
-        elif ok is True and known and (_status_read().get(service) or {}).get("problem") == "rejected":
+            warnings.warn(f"The {name} key was rejected; continuing without the key.", stacklevel=3)
+        elif (
+            ok is True
+            and known
+            and (_status_read().get(service) or {}).get("problem") == "rejected"
+        ):
             key_problem_clear(service)
     return "" if ok is False else value
 

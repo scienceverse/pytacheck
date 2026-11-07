@@ -177,26 +177,82 @@ def test_na_size_falls_back_to_head_probe(tmp_path: Path, monkeypatch: pytest.Mo
     assert len(dl.attrs["oversize_skipped"]) == 2
 
 
-def test_unknown_size_is_excluded_not_gating(
+def test_unknown_size_is_downloaded_with_a_limit_not_gating(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    # An unknown-size file cannot be budgeted in advance. It used to be left out without
+    # any record (metacheck #583); it is downloaded with the per-file limit, and the
+    # repository is not gated.
     files = make_dl_files(tmp_path)
     files["file_size"] = math.nan
     monkeypatch.setattr(dlm, "_remote_size", lambda url: math.nan)
     dl = download_repo_files(files, max_file_size=100, max_download_size=500)
-    assert located(dl) == 0
+    assert located(dl) == 2
     assert len(dl.attrs["gated"]) == 0
 
 
 def test_real_size_probe_on_file_urls(tmp_path: Path) -> None:
-    # a file:// answer has status 0, which is not a 2xx answer, so neither the
-    # HEAD nor the ranged GET gives a size (as in metacheck, whose .head_size()
-    # reads only a 2xx answer): the files are left out, not gated
+    # a file:// answer has status 0, which is not a 2xx answer, so neither the HEAD nor the
+    # ranged GET gives a size (as in metacheck, whose .head_size() reads only a 2xx
+    # answer): the files are downloaded with a limit, not left out and not gated
     files = make_dl_files(tmp_path)
     files["file_size"] = math.nan
     dl = download_repo_files(files, max_file_size=100, max_download_size=500)
-    assert located(dl) == 0
+    assert located(dl) == 2
     assert len(dl.attrs["gated"]) == 0
+
+
+def test_a_file_of_unknown_size_is_downloaded_with_a_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, messages: list[str]
+) -> None:
+    # metacheck #583: the host gives no size either
+    monkeypatch.setattr(dlm, "_remote_size", lambda *a, **k: math.nan)
+
+    # no file_size column at all: it was left out with no record
+    files = make_dl_files(tmp_path, (500, 600))
+    files = files.drop(columns=["file_size"])
+    dl = download_repo_files(files)
+    assert all(os.path.exists(p) for p in dl["file_location"])
+    assert "file_size" not in dl.columns  # the column is not added
+
+    # over its limit: stopped, reported as over the limit, nothing left behind
+    files = make_dl_files(tmp_path, (5000,))
+    files["file_size"] = math.nan
+    dl = download_repo_files(files, max_file_size=0.001)
+    assert any("had no known size and was larger than" in m for m in messages)
+    assert pd.isna(dl["file_location"].iloc[0])
+    ov = dl.attrs["oversize_skipped"]
+    assert len(ov) == 1
+    assert ov["file_size"].iloc[0] > 0.001 * 1024 * 1024
+    session = Path(get_option("metacheck.repo_cache.session_dir"))
+    assert not list(session.rglob("*.part"))
+
+    # no budget left: not downloaded, with a record
+    files = make_dl_files(tmp_path, (500,))
+    files["file_size"] = math.nan
+    dl = download_repo_files(files, max_download_size=0)
+    assert pd.isna(dl["file_location"].iloc[0])
+    assert "unknown size not downloaded" in dl.attrs["gated"]["message"].iloc[0]
+
+
+def test_a_file_the_listing_says_is_empty_is_written_when_the_host_refuses_it(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # metacheck #575, item 5: GitHub answered "HTTP 501 Not Implemented" for the empty
+    # data/*/.dummy files of a repository
+    def refuse(*a: Any, **k: Any) -> Any:
+        raise dlm._HttpError(httpx.Response(501))
+
+    monkeypatch.setattr(dlm, "_storage_request", refuse)
+    assert (
+        _download_one("https://example.org/.dummy", str(tmp_path / ".dummy"), expected_bytes=0)
+        is None
+    )
+    assert (tmp_path / ".dummy").stat().st_size == 0
+    # a file with bytes is still a failed download
+    err = _download_one("https://example.org/x.csv", str(tmp_path / "x.csv"), expected_bytes=10)
+    assert err is not None
+    assert not (tmp_path / "x.csv").exists()
 
 
 def test_failed_downloads_are_reported(tmp_path: Path, messages: list[str]) -> None:
@@ -290,7 +346,8 @@ def test_repo_cache_clear_everything(tmp_path: Path, messages: list[str]) -> Non
         freed = repo_cache_clear()
         assert freed > 0
         assert messages[-1].startswith("Cleared the repository file cache (")
-        assert Path(repo_cache_dir()).is_dir()
+        # the root is not recreated: the downloads create their own folders
+        assert not Path(repo_cache_dir()).is_dir()
         assert repo_cache_size() == 0
 
 

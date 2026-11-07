@@ -1688,6 +1688,43 @@ _FILE_COLUMNS = (
 )
 
 
+def _dataverse_file_entry(x: Any, host: str) -> dict[str, Any]:
+    """Port of ``.dataverse_file_entry()``: the name, size and download URL of a listing entry.
+
+    A tabular file Dataverse converted on upload (an SPSS .sav, a Stata .dta or a
+    .csv made into a .tab; the listing then gives ``originalFileFormat``) is taken
+    as it was uploaded: ``/api/access/datafile/<id>`` sends the converted .tab,
+    while the listing's checksum is the original's, so every such file failed the
+    checksum and was reported as damaged (metacheck #582). With
+    ``?format=original`` Dataverse sends the original, which matches the checksum
+    and keeps an SPSS file's value labels. Its name is the listed name with the
+    original's extension (``originalFileName`` as a fallback), its size
+    ``originalFileSize``.
+    """
+    df = field(x, "dataFile")
+    if df is None:
+        df = {}
+    file_id = field(df, "id")
+    name = _empty_or(_empty_or(field(x, "label"), field(df, "filename")), None)
+    size = _as_numeric(_empty_or(field(df, "filesize"), None))
+    url = None if _is_empty(file_id) else f"https://{host}/api/access/datafile/{_json_chr(file_id)}"
+    orig_format = _empty_or(field(df, "originalFileFormat"), None)
+    if isinstance(orig_format, str) and orig_format != "" and url is not None:
+        orig_name = _empty_or(field(df, "originalFileName"), None)
+        m = re.search(r"\.([^\W_]+)$", orig_name) if isinstance(orig_name, str) else None
+        orig_ext = m.group(1) if m else ""
+        if isinstance(name, str) and orig_ext != "":
+            stem = re.sub(r"^(.*[^.])\.[^\W_]+$", r"\1", name, flags=re.DOTALL)
+            name = f"{stem}.{orig_ext}"
+        elif isinstance(orig_name, str):
+            name = orig_name
+        # the converted file's size does not describe the original: unknown when the
+        # listing does not give the original's
+        size = _as_numeric(_empty_or(field(df, "originalFileSize"), None))
+        url = f"{url}?format=original"
+    return {"name": name, "size": size, "url": url}
+
+
 def dataverse_file_download(
     host: Any,
     doi: Any,
@@ -1762,18 +1799,16 @@ def dataverse_file_download(
             if df is None:
                 df = {}
             file_id = field(df, "id")
+            # a file Dataverse converted (a .tab made from a .sav) as it was uploaded (#582)
+            fe = _dataverse_file_entry(x, h)
             rows.append(
                 {
                     "id": _json_chr(_empty_or(file_id, None)),
-                    "key": _empty_or(_empty_or(field(x, "label"), field(df, "filename")), None),
-                    "size": _as_numeric(_empty_or(field(df, "filesize"), None)),
+                    "key": fe["name"],
+                    "size": fe["size"],
                     "checksum": _empty_or(field(df, "checksum", "value"), None),
                     "checksum_type": _lower(_empty_or(field(df, "checksum", "type"), None)),
-                    "self": (
-                        f"https://{h}/api/access/datafile/{_json_chr(file_id)}"
-                        if not _is_empty(file_id)
-                        else None
-                    ),
+                    "self": fe["url"],
                 }
             )
         files = _file_frame(rows, typed=True)

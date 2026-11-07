@@ -384,7 +384,8 @@ def _account_links(paper: Any) -> pd.DataFrame:
     pattern = r"^(?:https?://)?(?:www\.)?github\.com/(?:orgs/)?[A-Za-z0-9-]+/?[.,;:)]*$"
     hit = urls.loc[grepl(pattern, urls["href"], ignore_case=True, perl=True)]
     hit = hit.loc[[_github_account_name(u) is not None for u in hit["href"]]]
-    return hit[["href", "text_id", "paper_id"]]
+    out: pd.DataFrame = hit[["href", "text_id", "paper_id"]]
+    return out
 
 
 def _n_href_rows(paper: Any) -> int:
@@ -462,7 +463,23 @@ def _github_repo_name(repo: Any) -> str | None:
 
 #: GitHub's own pages at the depth of an account page are not accounts
 _SITE_PAGES = frozenset(
-    ["about", "features", "topics", "explore", "marketplace", "pricing", "sponsors", "settings", "login", "join", "trending", "collections", "search", "enterprise", "orgs"]
+    [
+        "about",
+        "features",
+        "topics",
+        "explore",
+        "marketplace",
+        "pricing",
+        "sponsors",
+        "settings",
+        "login",
+        "join",
+        "trending",
+        "collections",
+        "search",
+        "enterprise",
+        "orgs",
+    ]
 )
 _ACCOUNT_URL = r"^(?:https?://)?(?:www\.)?github\.com/(?:orgs/)?([A-Za-z0-9-]+)/?[.,;:)]*$"
 

@@ -726,7 +726,7 @@ def _entry_table(infos: Sequence[zipfile.ZipInfo]) -> pd.DataFrame:
             "offset": pd.Series([known(i.header_offset) for _, i in kept], dtype="float64"),
             "crc": pd.Series([float(i.CRC) for _, i in kept], dtype="float64"),
             "name_bytes": pd.Series(
-                [float(len(_zip_raw_name(i))) for _, i in kept], dtype="float64"
+                [float(_zip_stored_name_len(i)) for _, i in kept], dtype="float64"
             ),
         }
     )
@@ -1557,6 +1557,13 @@ def _zip_raw_name(info: Any) -> bytes:
     return raw.split(b"\x00", 1)[0]
 
 
+def _zip_stored_name_len(info: Any) -> int:
+    """The name's length as stored in the archive, with any NUL bytes it holds
+    (``name_bytes``: the central directory's own length field)."""
+    name: str = info.orig_filename
+    return len(name.encode("utf-8" if info.flag_bits & 0x800 else "cp437"))
+
+
 def _zip_names(zf: Any) -> list[str]:
     """Member names as text (see :func:`_decode_zip_name`)."""
     return [_zip_name(info) for info in zf.infolist()]
@@ -1848,6 +1855,9 @@ def _expand_zip(
             _unzip_all(zip_path, part, members=set(missing))
         except Exception:  # noqa: S110 - R: tryCatch(unzip(...), error = NULL)
             pass
+        except BaseException:  # a stop: the half-written folder is not left in the cache
+            shutil.rmtree(part, ignore_errors=True)
+            raise
         os.makedirs(dest, exist_ok=True)
         _move_extracted(part, dest, missing)
     label = os.path.basename(zip_path)
@@ -1952,6 +1962,9 @@ def _expand_tar(
             _untar_all(tar_path, part, members=set(missing))
         except Exception:  # noqa: S110 - R: tryCatch(untar(...), error = NULL)
             pass
+        except BaseException:  # a stop: the half-written folder is not left in the cache
+            shutil.rmtree(part, ignore_errors=True)
+            raise
         os.makedirs(dest, exist_ok=True)
         _move_extracted(part, dest, missing)
     # sizes only known once unpacked (compressed tar)
@@ -2060,6 +2073,9 @@ def _expand_compressed(
                     oc.write(chunk)
         except Exception:
             status = "failed"
+        except BaseException:  # a stop: the half-written folder is not left in the cache
+            shutil.rmtree(part, ignore_errors=True)
+            raise
         if status != "ok":
             shutil.rmtree(part, ignore_errors=True)
             if status == "over":

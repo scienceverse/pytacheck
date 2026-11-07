@@ -639,9 +639,7 @@ def _osf_parse_response(
 
             limit = key_limit_reached("osf")
             warnings.warn(limit, stacklevel=2)
-            return _frame(
-                {"osf_id": [ident], "osf_type": "too many requests", "error": limit}, 1
-            )
+            return _frame({"osf_id": [ident], "osf_type": "too many requests", "error": limit}, 1)
         elif sc >= 500:
             # The OSF API is down or overloaded: that says nothing about whether the project
             # exists, so it is not reported as "could not be found" (#501).

@@ -887,6 +887,10 @@ def _download_one(
             return "not authorised (the OSF returned a sign-in page; see ?osf_pat)"
         if os.path.exists(dest) and (os.path.getsize(dest) > 0 or expected_bytes == 0):
             return None
+        if not os.path.exists(dest) and expected_bytes == 0:
+            # a file the listing says is empty is empty (metacheck #568)
+            open(dest, "wb").close()
+            return None
         # no file is left behind: the next run would take it as cached (metacheck
         # keeps the 0-byte file: U75)
         _unlink(dest)
@@ -894,6 +898,14 @@ def _download_one(
     except Exception as e:
         if os.path.exists(dest):
             _unlink(dest)
+        if isinstance(e, _HttpError) and expected_bytes == 0:
+            # a file the listing says is empty needs nothing from the host: GitHub answered
+            # "HTTP 501 Not Implemented" for empty files (metacheck #575)
+            try:
+                open(dest, "wb").close()
+                return None
+            except OSError:
+                pass
         if (
             skip_on_api_limit is True  # R: isTRUE(skip_on_api_limit), the argument only
             and isinstance(e, _HttpError)
@@ -909,6 +921,96 @@ def _download_one(
             first, nl, rest = str(e).partition("\n")
             return f"{first}{_dryad_401_hint(url, int(e.resp.status_code))}{nl}{rest}"
         return str(e)
+
+
+def _download_capped(
+    url: str,
+    dest: str,
+    max_bytes: float = math.inf,
+    timeout_s: float = 120,
+    skip_on_api_limit: bool = False,
+) -> tuple[str | None, bool, int]:
+    """Port of ``R/repo-download.R::.download_capped()``: a file of unknown size, with a limit.
+
+    Stops the transfer once more than *max_bytes* have arrived (metacheck #583).
+    The bytes go to ``<dest>.part`` and the file is moved into place only when
+    complete. Returns ``(error, over_cap, bytes)``: ``error`` is ``None`` on
+    success, else the reason; a file over the limit has ``over_cap`` set and
+    ``bytes`` how many had arrived. A refusal is not retried.
+    """
+    from metacheck import http
+
+    _dir_create(os.path.dirname(dest))
+    part = f"{dest}.part"
+    timeout = _zip_timeout_for_size(timeout_s, max_bytes if math.isfinite(max_bytes) else math.nan)
+    state: dict[str, Any] = {"written": 0, "why": None, "over": False, "streamed": False}
+
+    def write(resp: Any) -> None:
+        if int(resp.status_code) >= 400:
+            return
+        state["streamed"] = True
+        deadline = time.monotonic() + timeout
+        with open(part, "wb") as con:
+            for chunk in resp.iter_bytes(chunk_size=512 * 1024):
+                http.check_interrupt()
+                if time.monotonic() > deadline:
+                    state["why"] = f"download exceeded the {math.ceil(timeout):d}s timeout"
+                    return
+                con.write(chunk)
+                state["written"] += len(chunk)
+                if math.isfinite(max_bytes) and state["written"] > max_bytes:
+                    state["over"] = True
+                    return
+
+    try:
+        is_file = url.lower().startswith("file:")
+        try:
+            resp = _storage_request(
+                "GET",
+                url,
+                skip_on_api_limit=skip_on_api_limit,
+                timeout=timeout,
+                path=part if is_file else None,
+                max_tries=1,
+                sink=None if is_file else write,
+            )
+        except _RateLimitSkipped:
+            return (
+                "API rate limit exhausted: known rate-limited host, skip_on_api_limit",
+                False,
+                0,
+            )
+        except _RequestError as e:
+            if is_file:  # a connection (not curl) is what metacheck opens a file:// URL with
+                return (
+                    "Failed to perform HTTP request.\n"
+                    "Caused by error in `open.connection()`:\n! cannot open the connection",
+                    False,
+                    0,
+                )
+            return str(e), False, 0
+        except Exception as e:
+            return str(e), False, 0
+        if int(resp.status_code) >= 400:
+            return f"HTTP {int(resp.status_code)}", False, 0
+        if is_file and os.path.exists(part):
+            state["written"] = os.path.getsize(part)
+            state["over"] = math.isfinite(max_bytes) and state["written"] > max_bytes
+        if state["over"]:
+            return "over the byte limit", True, int(state["written"])
+        if state["why"] is not None:
+            return str(state["why"]), False, 0
+        if _is_login_page(part):
+            return "not authorised (the OSF returned a sign-in page; see ?osf_pat)", False, 0
+        if not (os.path.exists(part) and os.path.getsize(part) > 0):
+            return "empty response", False, 0
+        try:
+            os.replace(part, dest)
+        except OSError:
+            return "could not move the download into place", False, 0
+        return None, False, 0
+    finally:
+        _unlink(part)
 
 
 def _parallel_one(url: Any, dest: str, expected: float, skip: bool) -> tuple[Any, Exception | None]:
@@ -1309,6 +1411,11 @@ def download_repo_files(
     index = files.index
     df = files.copy().reset_index(drop=True)
     n = len(df)
+    # Without a file_size column no size was looked up and every file was left out
+    # without a record (metacheck #583): an empty column for the call, removed again.
+    had_size = "file_size" in df.columns
+    if not had_size:
+        df["file_size"] = pd.Series([math.nan] * n, dtype="float64")
     if "file_location" not in df.columns:
         df["file_location"] = pd.Series([None] * n, dtype=object)
     else:
@@ -1339,6 +1446,17 @@ def download_repo_files(
     df[".cache_path"] = pd.Series(cache_paths, dtype=object)
 
     already = [os.path.exists(p) for p in cache_paths]
+    # An empty cached file of a file the listing says has bytes is a download that failed,
+    # so it is fetched again (metacheck #568).
+    for i, listed in enumerate(df["file_size"].tolist()):
+        if already[i]:
+            lv = _num(listed)
+            if not is_missing(lv) and lv > 0:
+                try:
+                    if os.path.getsize(cache_paths[i]) == 0:
+                        already[i] = False
+                except OSError:
+                    pass
     loc_col = int(df.columns.get_loc("file_location"))  # type: ignore[arg-type]
     for i in range(n):
         if already[i]:
@@ -1362,7 +1480,7 @@ def download_repo_files(
     def rows_for(repo: Any) -> list[int]:
         return [] if is_missing(repo) else rows_of.get(repo, [])
 
-    sizes_col = _col(df, "file_size")
+    sizes_col: list[Any] = _col(df, "file_size") or []
 
     # Known listing sizes and cached files need no request. Fetch the remaining
     # distinct URLs concurrently; duplicates share one probe without losing rows.
@@ -1413,6 +1531,19 @@ def download_repo_files(
             for i, s, o in zip(idx, member_sizes, over, strict=True):
                 if o:
                     oversize_rows.append((repo_urls[i], file_names[i], s))
+            # A member without a size cannot be held to the caps, so it is not fetched;
+            # recorded so that the reason is not lost.
+            for i, s in zip(idx, member_sizes, strict=True):
+                if is_missing(s):
+                    failed_rows.append(
+                        (
+                            repo_urls[i],
+                            file_names[i],
+                            arc,
+                            paper_id(i),
+                            "the archive's list of contents gives no size for this file",
+                        )
+                    )
             cand = [
                 i
                 for i, s, o in zip(idx, member_sizes, over, strict=True)
@@ -1449,6 +1580,27 @@ def download_repo_files(
             arc_path = _safe_write_path(arc_path) or arc_path
             member_dest = _safe_write_path(f"{arc_path}.contents") or f"{arc_path}.contents"
             _dir_create(member_dest)
+            # A member saved by an earlier run is used as it is (metacheck #561): it is
+            # stored under ".contents", where `already` does not look.
+            from metacheck.archives.zip_peek import _safe_member_path
+
+            unsaved = []
+            for i in idx:
+                rel = _safe_member_path(str(members[i]))
+                target = None if rel is None else _file_path(member_dest, rel)
+                if target is not None and os.path.isfile(target):
+                    sz = _num(sizes_col[i])
+                    if (
+                        not is_missing(sz)
+                        and os.path.getsize(target) > 0
+                        and os.path.getsize(target) == sz
+                    ):
+                        df.iat[i, loc_col] = target
+                        continue
+                unsaved.append(i)
+            idx = unsaved
+            if not idx:
+                continue
             # The archive's own size, carried from repo_check's listing, saves the
             # peek a HEAD request in a new session. Within the budget the archive
             # may be downloaded once instead of fetched by range, when that is
@@ -1521,6 +1673,9 @@ def download_repo_files(
     has_url = [u is not None and str(u) != "" for u in file_urls]
     to_get: list[int] = []
 
+    # the byte limit of a file of unknown size (see below); absent for the others
+    byte_cap: dict[int, float] = {}
+
     # -- per-repository budget + per-file size filter -------------------------
     for repo in dict.fromkeys(repo_urls[i] for i in range(n) if has_url[i]):
         idx = [i for i in rows_for(repo) if has_url[i]]
@@ -1541,8 +1696,6 @@ def download_repo_files(
             continue
 
         is_cached = [already[i] for i in idx]
-        if sizes_col is None:
-            continue  # R: as.numeric(NULL) leaves no candidates
         sizes = [_num(sizes_col[i]) for i in idx]
         for k, s in enumerate(sizes):
             if not is_missing(s):
@@ -1564,9 +1717,9 @@ def download_repo_files(
             if over[k] and not is_cached[k]:
                 oversize_rows.append((repo, file_names[i], sizes[k]))
 
+        # Unknown-size files are not budgeted. A repository with no known-size file goes
+        # on too: its unknown-size files are downloaded with a limit below (metacheck #583).
         cand = [not o and not is_missing(s) for o, s in zip(over, sizes, strict=True)]
-        if not any(cand):
-            continue
         c_idx = [i for i, c in zip(idx, cand, strict=True) if c]
         c_size = [s for s, c in zip(sizes, cand, strict=True) if c]
         c_cached = [x for x, c in zip(is_cached, cand, strict=True) if c]
@@ -1582,6 +1735,32 @@ def download_repo_files(
                 take_missing.append(k)
                 used += c_size[k]
         to_get.extend(c_idx[k] for k in take_missing)
+
+        # A still-missing file whose size neither the listing nor the host gives is
+        # downloaded with a limit: the per-file cap, or what the budget has left if
+        # that is less. The transfer stops once the limit is passed and the file is
+        # reported as over the limit.
+        unknown_rows = [
+            i
+            for k, i in enumerate(idx)
+            if not over[k] and is_missing(sizes[k]) and not is_cached[k]
+        ]
+        if unknown_rows:
+            left = max(cap_bytes - used, 0.0)
+            lim = min(max_file_size * _MB if math.isfinite(max_file_size) else math.inf, left)
+            if lim > 0:
+                for i in unknown_rows:
+                    byte_cap[i] = lim
+                to_get.extend(unknown_rows)
+            else:
+                msg = (
+                    f"Repository {repo}: {len(unknown_rows)} file{plural(len(unknown_rows))} "
+                    "of unknown size not downloaded, because the "
+                    f"{_cap_num(max_download_size)} MB per-repository budget is spent. "
+                    "Raise `max_download_size` to include more."
+                )
+                _cap_report(msg)
+                gated_rows.append((repo, msg))
 
         taken = set(take_missing)
         omitted = [k for k in missing_order if k not in taken]
@@ -1803,8 +1982,10 @@ def download_repo_files(
                 zen = grepl(
                     r"zenodo\.org", [as_str(file_urls[i]) for i in remaining], ignore_case=True
                 )
+                # a file of unknown size is fetched one at a time with its byte limit
                 parallel_safe = [
-                    is_osfstorage(i) or bool(z) for i, z in zip(remaining, zen, strict=True)
+                    (is_osfstorage(i) or bool(z)) and i not in byte_cap
+                    for i, z in zip(remaining, zen, strict=True)
                 ]
                 remaining_parallel = [i for i, p in zip(remaining, parallel_safe, strict=True) if p]
                 remaining_seq = [i for i, p in zip(remaining, parallel_safe, strict=True) if not p]
@@ -1832,13 +2013,34 @@ def download_repo_files(
                         if pb is not None:
                             pb.tick()
                 for i in remaining_seq:
-                    err = _download_one(
-                        str(file_urls[i]),
-                        cache_now[i],
-                        skip_on_api_limit=skip_on_api_limit,
-                        expected_bytes=_num(sizes_col[i]) if sizes_col is not None else math.nan,
-                    )
-                    if err is None:
+                    over_cap, got_bytes = False, 0
+                    if i in byte_cap:
+                        err, over_cap, got_bytes = _download_capped(
+                            str(file_urls[i]),
+                            cache_now[i],
+                            max_bytes=byte_cap[i],
+                            skip_on_api_limit=skip_on_api_limit,
+                        )
+                    else:
+                        err = _download_one(
+                            str(file_urls[i]),
+                            cache_now[i],
+                            skip_on_api_limit=skip_on_api_limit,
+                            expected_bytes=_num(sizes_col[i])
+                            if sizes_col is not None
+                            else math.nan,
+                        )
+                    if over_cap:
+                        # a file of unknown size that passed its limit: reported as over
+                        # the limit, like a file whose listed size is over it
+                        oversize_rows.append((repo_urls[i], file_names[i], float(got_bytes)))
+                        _message(
+                            f"{as_str(file_names[i]) or 'NA'} in {as_str(repo_urls[i]) or 'NA'} "
+                            "had no known size and was larger than its "
+                            f"{_cap_num(_rround(byte_cap[i] / _MB))} MB limit, so it was not "
+                            "kept. Raise max_file_size (or max_download_size) to include it."
+                        )
+                    elif err is None:
                         df.iat[i, _loc(df)] = cache_now[i]
                     else:
                         fail(i, err)
@@ -1869,7 +2071,7 @@ def download_repo_files(
         )
         options({"metacheck.repo_cache.notified": True})
 
-    out = df.drop(columns=[".cache_path"])
+    out = df.drop(columns=[".cache_path"] if had_size else [".cache_path", "file_size"])
     out["file_location"] = pd.Series(
         [None if is_missing(v) else str(v) for v in out["file_location"].tolist()],
         dtype="string",
