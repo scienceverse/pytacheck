@@ -247,6 +247,11 @@ def _llm_apply_reasoning(
     if is_ollama and (is_qwen3 or "deepseek-r1" in m):
         if effort in ("low", "none") and params_out.get("think") is None:
             params_out["think"] = False
+        # Structured calls use Ollama's OpenAI-compatible /v1 endpoint, which ignores `think`
+        # but honours reasoning_effort = "none" (#494); the native /api/chat path used for
+        # free-text calls does not send api_args.
+        if effort in ("low", "none") and args_out.get("reasoning_effort") is None:
+            args_out["reasoning_effort"] = "none"
         return out
     if is_qwen3 and args_out.get("reasoning_effort") is None:
         args_out["reasoning_effort"] = "none" if effort in ("low", "none") else "default"
@@ -1002,7 +1007,12 @@ def llm(
 
     from metacheck._r import plural, trimws
     from metacheck.llm import _backend as backend
-    from metacheck.llm.cache import _llm_cache_get, _llm_cache_key, _llm_cache_put, llm_cache
+    from metacheck.llm.cache import (
+        _llm_cache_enabled,
+        _llm_cache_get,
+        _llm_cache_key,
+        _llm_cache_put,
+    )
     from metacheck.llm.types import as_type, convert_from_type
 
     if not llm_use():
@@ -1055,7 +1065,7 @@ def llm(
     label = phase if phase else ("Extracting data" if structured else "Querying LLM")
     label = f"{label} ({model})"
     started = time.monotonic()
-    use_cache = llm_cache()
+    use_cache = _llm_cache_enabled()
 
     def one(i: int, ut: str | None) -> Any:
         key = (

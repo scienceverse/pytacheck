@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -17,12 +18,14 @@ from tests.llm.support import Asked
 
 
 @pytest.fixture
-def cache_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+def cache_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
+    """The lasting cache folder (``llm_cache(TRUE)``), in a temp dir."""
     d = tmp_path / "llmcache"
     d.mkdir()
     monkeypatch.setenv("METACHECK_LLM_CACHE_DIR", str(d))
     monkeypatch.delenv("PYTACHECK_LLM_CACHE_DIR", raising=False)
-    return d
+    with local_options({"metacheck.llm.cache": True}):
+        yield d
 
 
 def test_llm_cache_toggles_and_validates() -> None:
@@ -35,7 +38,28 @@ def test_llm_cache_toggles_and_validates() -> None:
         with pytest.raises(ValueError, match="TRUE or FALSE"):
             L.llm_cache("yes")  # type: ignore[arg-type]
     with local_options({"metacheck.llm.cache": None}):
-        assert L.llm_cache() is True  # the default
+        assert L.llm_cache() is False  # the default: replies last only for the session
+
+
+def test_default_cache_is_a_session_folder_in_the_temp_dir(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setenv("METACHECK_LLM_CACHE_DIR", str(tmp_path / "lasting"))
+    with local_options({"metacheck.llm.cache": None}):
+        d = Path(C._llm_cache_dir())
+        assert d.is_dir()
+        assert d.name.startswith("metacheck-llm-cache-")
+        assert tmp_path not in d.parents
+        assert C._llm_cache_enabled() is True
+        key = C._llm_cache_key("hi", "sys", None, "m", {})
+        C._llm_cache_put(key, "kept for the session")
+        assert C._llm_cache_get(key) is not None
+        assert L.llm_cache_clear() == 1
+    with local_options({"metacheck.llm.cache": True}):
+        assert Path(C._llm_cache_dir()) == (tmp_path / "lasting").resolve()
+        assert C._llm_cache_get(key) is None  # the session's replies are not the lasting ones
+    with local_options({"metacheck.llm.cache": False}):
+        assert C._llm_cache_enabled() is False
 
 
 def test_cache_key_is_stable_and_sensitive() -> None:
@@ -85,6 +109,13 @@ def test_unreadable_cache_entry_is_a_miss(cache_dir: Path) -> None:
     assert C._llm_cache_get("cafe") is None
 
 
+@pytest.fixture
+def lasting() -> Iterator[None]:
+    with local_options({"metacheck.llm.cache": True}):
+        yield
+
+
+@pytest.mark.usefixtures("lasting")
 def test_cache_dir_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setenv("METACHECK_LLM_CACHE_DIR", str(tmp_path / "m"))
     monkeypatch.delenv("PYTACHECK_LLM_CACHE_DIR", raising=False)
@@ -97,6 +128,7 @@ def test_cache_dir_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         assert Path(C._llm_cache_dir()) == (tmp_path / "root" / ".metacheck_llm_cache").resolve()
 
 
+@pytest.mark.usefixtures("lasting")
 def test_cache_dir_env_with_both_names_set_logs_only_a_debug_record(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path, caplog: pytest.LogCaptureFixture
 ) -> None:
@@ -179,8 +211,8 @@ def test_errors_are_never_cached(llm_on: Path, monkeypatch: pytest.MonkeyPatch) 
 def test_a_cache_hit_needs_no_sdk_and_no_key(llm_on: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     key = C._llm_cache_key("hello", "A number?", None, "groq/test-model",
                            {"temperature": 0.0, "max_tokens": 4096}, {})  # fmt: skip
-    C._llm_cache_put(key, "TRUE")
     monkeypatch.setattr(_backend, "complete", Asked())  # asked nothing: no reply to give
     with local_options({"metacheck.llm.cache": True}):
+        C._llm_cache_put(key, "TRUE")
         out = L.llm("hello", "A number?", model="groq/test-model")
     assert out["answer"].tolist() == ["TRUE"]

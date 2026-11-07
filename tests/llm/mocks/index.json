@@ -717,6 +717,21 @@
    }
   },
   {
+   "key": "ad7911778b04a61f",
+   "file": "api.groq.com/openai/v1/chat/completions-c25fdb-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Is this a number? Answer TRUE or FALSE",
+    "user": "FALSE",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
    "key": "468f88beec2a0859",
    "file": "api.groq.com/openai/v1/chat/completions-cea654-POST.json",
    "request": {
@@ -739,6 +754,21 @@
     "model": "test-model",
     "system": "Sys",
     "user": "too long",
+    "schema": null,
+    "params": {
+     "temperature": 0,
+     "max_tokens": 4096
+    }
+   }
+  },
+  {
+   "key": "29a8cc3ca9c25494",
+   "file": "api.groq.com/openai/v1/chat/completions-e219b0-POST.json",
+   "request": {
+    "endpoint": "api.groq.com/openai/v1/chat/completions",
+    "model": "test-model",
+    "system": "Is this a number? Answer TRUE or FALSE",
+    "user": "TRUE",
     "schema": null,
     "params": {
      "temperature": 0,

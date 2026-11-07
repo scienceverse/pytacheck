@@ -242,3 +242,7 @@ raw("vllm.test/v1/models", {"object": "list", "data": [{"id": "GLM-5", "object":
 # ---- type_from_schema(): raw JSON reaches .unnest_result() ------------------------------
 w("f957d3", '{"a": 2, "tags": ["x", "y"]}')  # schema two
 w("8234bb", '{"a": 1, "tags": ["z"]}')  # schema one
+
+# ---- logical text: R sends "TRUE" and "FALSE" since it fixed U19 (0.4.3.7) ---------------------
+w("e219b0", "FALSE")  # llm.input.logical: "Is this a number? Answer TRUE or FALSE" / TRUE
+w("c25fdb", "FALSE")  # llm.input.logical: the same question / FALSE
