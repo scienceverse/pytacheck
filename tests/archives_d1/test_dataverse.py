@@ -461,9 +461,10 @@ def test_figshare_dois_are_not_dataverse_links() -> None:
 def test_url_decode_matches_r() -> None:
     assert _url_decode("a%2Fb%3a") == "a/b:"
     assert _url_decode("a+b") == "a+b"
-    assert _url_decode("%4g") == "P"
-    with pytest.warns(UserWarning):
-        assert _url_decode("abc%") == "abc"
+    # a "%" that starts no two-digit hexadecimal code is kept as written (U39)
+    assert _url_decode("%4g") == "%4g"
+    assert _url_decode("abc%") == "abc%"
+    assert _url_decode("a%2") == "a%2"
 
 
 def test_dataverse_info_found_and_offline(mock_api: Any, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -520,15 +521,15 @@ def test_dataverse_verify_downloads_only_hashes_md5(tmp_path: Path) -> None:
 
 
 def test_dataverse_parse_invalid_utf8_escape_is_no_doi() -> None:
-    # U39: a persistentId decoding to invalid UTF-8 is no DOI; metacheck's
-    # string functions then abort the call for every URL
+    # U39: a persistentId decoding to invalid UTF-8 is no DOI, and the call goes on for the
+    # other URLs; "%00" cannot be decoded, so the value is kept as written
     urls = [
         "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/Y",
         "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF",
         "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/Z%00Q",
     ]
     out = _dataverse_parse(urls)
-    assert out["doi"].fillna("NA").tolist() == ["10.7910/DVN/Y", "NA", "NA"]
+    assert out["doi"].fillna("NA").tolist() == ["10.7910/DVN/Y", "NA", "10.7910/DVN/Z%00Q"]
     assert out["host"].tolist() == ["dataverse.harvard.edu"] * 3
     # valid multi-byte escapes decode normally
     out = _dataverse_parse(
@@ -543,6 +544,7 @@ def test_links_on_an_empty_paper_list() -> None:
     out = dataverse_links(pc.PaperList([]))
     assert out.columns.tolist() == [
         "href",
+        "link_text",
         "text_id",
         "paper_id",
         "dataverse_url",

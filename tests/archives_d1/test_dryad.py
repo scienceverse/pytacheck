@@ -74,11 +74,10 @@ def test_dryad_doi_vectorised_and_edge_cases() -> None:
     assert _dryad_doi("https://datadryad.org/stash/dataset/doi%3A10.5061%2Fdryad.x1") == (
         "10.5061/dryad.x1"
     )
-    # R's URLdecode() arithmetic: "%4g" is a byte ("P"), a trailing bad escape is dropped
-    with pytest.warns(UserWarning, match="out-of-range"):
-        assert _dryad_doi("10.5061/dryad.q2%zz") == "10.5061/dryad.q2"
-    with pytest.raises(ValueError, match="embedded nul"), pytest.warns(UserWarning):
-        _dryad_doi("10.5061/dryad.a%zzb")
+    # a "%" that starts no hexadecimal code is kept as written, without a warning or
+    # an error (metacheck 0.4.3.x .url_decode(), U39); it ends the DOI
+    assert _dryad_doi("10.5061/dryad.q2%zz") == "10.5061/dryad.q2"
+    assert _dryad_doi("10.5061/dryad.a%zzb") == "10.5061/dryad.a"
 
 
 def test_dryad_links_bare_mentions_and_normalisation() -> None:
@@ -570,8 +569,15 @@ def test_dryad_doi_escapes_decoding_to_invalid_utf8_find_nothing() -> None:
 
 def test_dryad_links_on_an_empty_paper_list() -> None:
     out = dryad.dryad_links(pc.PaperList([]))
-    # href first, as in a non-empty table (text_search() of an empty paper list: U79)
-    assert out.columns.tolist() == ["href", "text_id", "paper_id", "dryad_url", "dryad_doi"]
+    # the columns of a non-empty table (text_search() of an empty paper list: U79)
+    assert out.columns.tolist() == [
+        "href",
+        "link_text",
+        "text_id",
+        "paper_id",
+        "dryad_url",
+        "dryad_doi",
+    ]
     assert len(out) == 0
 
 

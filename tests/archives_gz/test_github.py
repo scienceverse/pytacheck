@@ -81,6 +81,8 @@ def test_github_config(monkeypatch: pytest.MonkeyPatch) -> None:
     assert "Authorization" not in h
 
     monkeypatch.setitem(github._TOKEN_CACHE, "token", "abc")
+    # the key is checked once, with a request (tests/archives_gz/test_api_keys.py)
+    monkeypatch.setattr(github, "_github_key_check", lambda key: True)
     assert _github_config({"X": "1"}) == {
         "X": "1",
         "Accept": "application/vnd.github.v3+json",

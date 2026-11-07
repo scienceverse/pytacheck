@@ -10,6 +10,7 @@ from collections.abc import Iterator
 from typing import Any
 
 import httpx
+import pandas as pd
 import pytest
 import respx
 
@@ -84,9 +85,13 @@ def test_github_languages_error_body_is_no_languages(gh: respx.MockRouter) -> No
     gh.get(f"{api}/o/b/languages").mock(
         return_value=httpx.Response(200, json={"R": 1200, "Python": 30}, headers=JSON)
     )
-    assert github_languages("o/a") is None
+    # an error answer gives one row without a language, as a repository with none does
+    none = github_languages("o/a")
+    assert none["repo"].tolist() == ["o/a"]
+    assert pd.isna(none["language"].iloc[0]) and pd.isna(none["bytes"].iloc[0])
     both = github_languages(["o/a", "o/b"])
-    assert both["language"].tolist() == ["R", "Python"]
+    assert both["repo"].tolist() == ["o/a", "o/b", "o/b"]
+    assert both["language"].tolist()[1:] == ["R", "Python"]
 
 
 def test_zenodo_string_license() -> None:
@@ -111,14 +116,15 @@ def test_zenodo_string_license() -> None:
 
 @pytest.mark.parametrize("fn", ["github_links", "gitlab_links", "zenodo_links"])
 def test_links_of_an_empty_paper_list(fn: str) -> None:
-    # U79: the url table of an empty paper list has no columns; the (empty) link
-    # table still has href (R's github_links()/gitlab_links() have none, so
-    # repo_check() stops; pytacheck's zenodo_links() indexed it)
+    # U79: text_search() of an empty paper list is a typed empty table (metacheck 0.4.3.x),
+    # so the (empty) link table has the columns of a non-empty one: github_links() and
+    # gitlab_links() select href, text_id and paper_id; zenodo_links() keeps link_text
     import metacheck as pc
 
     links = getattr(pc, fn)(pc.PaperList([]))
     assert len(links) == 0
-    assert list(links.columns[:3]) == ["href", "text_id", "paper_id"]
+    cols = ["href", "link_text"] if fn == "zenodo_links" else ["href"]
+    assert list(links.columns[: len(cols) + 2]) == [*cols, "text_id", "paper_id"]
     assert str(links["href"].dtype) == "string"
 
 

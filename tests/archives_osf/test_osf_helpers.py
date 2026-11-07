@@ -38,6 +38,8 @@ def test_osf_headers(monkeypatch: pytest.MonkeyPatch) -> None:
     assert obs["url"] == API
 
     monkeypatch.setenv("OSF_PAT", "NOPTAREALPAT")
+    # the token is checked once, with a request (tests/archives_gz/test_api_keys.py)
+    monkeypatch.setattr("metacheck.archives.osf_helpers._osf_key_check", lambda key: True)
     obs = _osf_headers({})
     assert obs["headers"]["Authorization"] == "Bearer NOPTAREALPAT"
 
