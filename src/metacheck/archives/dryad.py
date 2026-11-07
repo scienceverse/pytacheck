@@ -307,6 +307,13 @@ def dryad_info(
         id_info = []
         for doi in valid_dois:
             cached = _repo_info_cache_get("dryad", doi) if cache is True else None
+            # A listing stored before the paging fix (0.3.3.1) has no `files_total`: it holds
+            # only Dryad's first page of 20 files, so it is not reused, and Dryad is asked
+            # again (metacheck #506). Neither is one marked incomplete.
+            if cached is not None and (
+                "files_total" not in cached.columns or _listing_incomplete(cached)
+            ):
+                cached = None
             if cached is not None:
                 id_info.append(cached)
                 continue

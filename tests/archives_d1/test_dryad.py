@@ -782,6 +782,45 @@ def test_dryad_info_says_once_that_downloads_need_a_key(
         assert utils.get_option("metacheck.dryad_pat.notified") is True
 
 
+def test_a_stored_dryad_listing_from_before_the_paging_fix_is_fetched_again(
+    online: None, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    # metacheck #506
+    from metacheck.archives.info_cache import _repo_info_cache_put
+    from metacheck.utils import local_options
+
+    doi = "10.5061/dryad.m8j17"
+    url = f"https://doi.org/{doi}"
+    with local_options({"metacheck.repo_info_cache.dir": str(tmp_path)}):
+        # stored before 0.3.3.1: the first page of files only, no files_total
+        old = pd.DataFrame({"dryad_doi": [doi], "doi": [f"doi:{doi}"], "license": ["cc0"]})
+        _repo_info_cache_put("dryad", doi, old)
+        calls: list[str] = []
+
+        def fake(dryad_doi: str, pb: object = None) -> pd.DataFrame:
+            calls.append(dryad_doi)
+            return pd.DataFrame(
+                {
+                    "dryad_doi": [dryad_doi],
+                    "doi": [f"doi:{dryad_doi}"],
+                    "license": ["cc0"],
+                    "files_total": [22.0],
+                    "files_incomplete": [False],
+                }
+            )
+
+        monkeypatch.setattr(dryad, "_dryad_info", fake)
+        info = dryad_info(url, cache=True)
+        assert len(calls) == 1 and info["files_total"].tolist() == [22.0]
+        # the complete listing is stored, and reused
+        info = dryad_info(url, cache=True)
+        assert len(calls) == 1 and info["files_total"].tolist() == [22.0]
+        # a stored listing marked incomplete is fetched again too
+        _repo_info_cache_put("dryad", doi, old.assign(files_total=22.0, files_incomplete=True))
+        dryad_info(url, cache=True)
+        assert len(calls) == 2
+
+
 def test_a_dryad_sharing_link_is_followed_to_its_doi(
     serve: object, online: None, monkeypatch: pytest.MonkeyPatch
 ) -> None:
