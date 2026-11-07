@@ -1113,7 +1113,9 @@ def _download(
                         add = pd.DataFrame(
                             {
                                 "repo_url": pd.Series([repo_of[0]] * len(ov), dtype="string"),
-                                "file_name": ov["file_name"].astype("string").reset_index(drop=True),
+                                "file_name": ov["file_name"]
+                                .astype("string")
+                                .reset_index(drop=True),
                                 "file_size": ov["file_size"].reset_index(drop=True),
                             }
                         )
@@ -1409,11 +1411,11 @@ def _extract(
                 continue
 
             # Compare against every other file in the repo, not itself.
-            other_files = [
-                nm for nm, k in zip(names, keys, strict=True) if k is None or k != skey
-            ]
+            other_files = [nm for nm, k in zip(names, keys, strict=True) if k is None or k != skey]
 
-            def prepare_table(d: pd.DataFrame, other_files: list[Any] = other_files) -> dict[str, Any]:
+            def prepare_table(
+                d: pd.DataFrame, other_files: list[Any] = other_files
+            ) -> dict[str, Any]:
                 """What one table (a file, or one sheet of a spreadsheet) is, before its
                 columns are extracted."""
                 if data_is_manifest(d, other_files):
@@ -1458,9 +1460,7 @@ def _extract(
                     prepared.append(
                         {"manifest": False} if d2 is None or d2.shape[1] == 0 else prepare_table(d2)
                     )
-                is_table = [
-                    is_true((p.get("usable") or {}).get("usable")) for p in prepared
-                ]
+                is_table = [is_true((p.get("usable") or {}).get("usable")) for p in prepared]
                 notes = _sheet_is_notes(sheets)
                 is_doc = [
                     bool(nt)
@@ -1470,7 +1470,9 @@ def _extract(
                     )
                     for nt, p in zip(notes, prepared, strict=True)
                 ]
-                keep = [k for k, (t, d) in enumerate(zip(is_table, is_doc, strict=True)) if t and not d]
+                keep = [
+                    k for k, (t, d) in enumerate(zip(is_table, is_doc, strict=True)) if t and not d
+                ]
                 if not keep:
                     keep = [k for k, t in enumerate(is_table) if t][:1]
                 if not keep:
@@ -1487,9 +1489,7 @@ def _extract(
             # A file with one table keeps its own name; each table of a file with several is
             # named "file [sheet]", as the codebook sheets of a spreadsheet are, so columns
             # with one name on two sheets stay apart.
-            table_keys = (
-                [f"{skey} [{sh}]" for sh in table_sheets] if len(tables) > 1 else [skey]
-            )
+            table_keys = [f"{skey} [{sh}]" for sh in table_sheets] if len(tables) > 1 else [skey]
             for tb, tkey in zip(tables, table_keys, strict=True):
                 previews[tkey] = tb["df"]
                 scale_blocks[tkey] = tb["blocks"]

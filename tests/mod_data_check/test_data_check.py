@@ -591,8 +591,8 @@ def test_output_elements_and_structure_columns() -> None:
                 "tabular_usable", "non_tabular_reason"):  # fmt: skip
         assert col in mo.structure.columns
     assert list(mo.previews) == ["study.csv"]
-    assert list(mo.table.columns[:6]) == [
-        "paper_id", "repo_url", "source_file", "group", "column_name", "representation",
+    assert list(mo.table.columns[:7]) == [
+        "paper_id", "repo_url", "source_file", "sheet", "group", "column_name", "representation",
     ]  # fmt: skip
     assert "ambiguous" not in mo.table.columns and "is_numeric" not in mo.table.columns
     assert mo.summary_table.columns.tolist()[:4] == [

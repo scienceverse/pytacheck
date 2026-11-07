@@ -782,7 +782,7 @@ def _column_text(col: pd.Series) -> Iterator[str]:
 
 
 class RNull:
-    """R's ``NULL`` inside a list: jsonlite writes it as ``{}``."""
+    """R's ``NULL`` inside a list: written as ``null`` (``null = "null"``; it was ``{}``)."""
 
     _instance: RNull | None = None
 
@@ -801,17 +801,15 @@ R_NULL = RNull()
 def _jsonable(x: Any) -> Any:
     """*x* with the values ``json.dumps()`` cannot write replaced, as jsonlite writes them.
 
-    ``None`` and ``pd.NA`` (R's ``NA``) and non-finite numbers give ``None``
-    (``null``), :data:`R_NULL` gives ``{}``, numpy scalars give Python ones, a
-    double with no fraction (below 1e17) is written as an integer, and any
-    other object as its text. metacheck writes with jsonlite's ``digits = 4``,
-    which turns ``0.000012345`` into ``0``; here a fraction keeps its
-    shortest round-trip form.
+    ``None`` and ``pd.NA`` (R's ``NA``), :data:`R_NULL` (R's ``NULL``) and
+    non-finite numbers give ``None`` (``null``), numpy scalars give Python
+    ones, a double with no fraction (below 1e17) is written as an integer, and
+    any other object as its text. metacheck 0.4.3.7 writes with
+    ``null = "null", digits = NA`` (U62): a null stays ``null`` and a fraction
+    keeps its precision, as here (its shortest round-trip form).
     """
-    if x is None or x is pd.NA:
+    if x is None or x is pd.NA or isinstance(x, RNull):
         return None
-    if isinstance(x, RNull):
-        return {}
     if isinstance(x, dict):
         return {str(k): _jsonable(v) for k, v in x.items()}
     if isinstance(x, list | tuple):
@@ -836,9 +834,9 @@ def manifest_merge(path: str | os.PathLike[str], patch: dict[str, Any]) -> str:
     :data:`R_NULL` value -- R's ``NULL`` -- removes the key; ``None`` is R's
     ``NA`` and is written as ``null``) and writes it back in jsonlite's
     layout (two-space indent). JSON ``null`` values already in the file stay
-    ``null`` (metacheck re-reads them as ``NULL`` and rewrites them as ``{}``:
-    every re-merge turns a null into an empty object), and numbers keep their
-    full precision.
+    ``null`` (as is a ``NULL`` inside a list), and numbers keep their full
+    precision (metacheck 0.4.3.7; before, every re-merge turned a null into
+    ``{}`` and ``0.000012345`` into ``0``).
     """
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -2346,9 +2344,11 @@ def _data_file_sheets(path: str | os.PathLike[str]) -> list[str] | None:
 
 def _sheet_is_notes(sheet: Sequence[str | None]) -> list[bool]:
     """Whether a sheet's name says it holds notes or a codebook rather than data."""
-    return grepl(
-        r"^(read ?me|notes?|legend|info(rmation)?|meta ?data|about|description|code ?book|(data )?dictionary)$",
-        [None if s is None else s.strip(" \t\r\n").lower() for s in sheet],
+    return list(
+        grepl(
+            r"^(read ?me|notes?|legend|info(rmation)?|meta ?data|about|description|code ?book|(data )?dictionary)$",
+            [None if s is None else s.strip(" \t\r\n").lower() for s in sheet],
+        )
     )
 
 

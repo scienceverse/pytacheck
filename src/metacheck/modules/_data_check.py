@@ -16,7 +16,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r import grepl, plural, r_round, r_sort_key, strsplit, sub
+from metacheck._r import grepl, plural, r_round, r_sort_key, sub
 from metacheck._values import as_float
 
 # -----------------------------------------------------------------------------
