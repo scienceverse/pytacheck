@@ -189,10 +189,11 @@ def test_function_guides_keep_drawable_expressions() -> None:
 
 
 def test_boxplot_without_complete_rows_is_left_out() -> None:
-    # U148: nothing to draw leaves the chart out (R's boxplot() stops the export)
+    # U148: nothing to draw is replaced by a note, as in metacheck 0.4.3.7 (before, R's
+    # boxplot() stopped the whole export)
     df = pd.DataFrame({"category": ["a", "b"], "value": [math.nan, math.nan]})
     df.attrs["spv_chart_type"] = "boxplot"
-    assert _spv_chart_html(df) == ""
+    assert _spv_chart_html(df) == "<p>(This chart could not be drawn.)</p>"
 
 
 def test_assemble_table_tolerates_missing_n_leaves() -> None:

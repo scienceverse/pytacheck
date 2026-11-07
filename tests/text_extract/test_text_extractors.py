@@ -319,16 +319,16 @@ def test_extract_eq_no_numeric_lhs(psychsci) -> None:
     assert not any(grepl("^[0-9]$", eq["lhs"].tolist()))
 
 
-def test_extract_eq_grp_id_follows_search_order() -> None:
-    # "=" sentences are found first, then "<" ones, so grp_id numbers them in that order
+def test_extract_eq_grp_id_is_the_text_id_rank() -> None:
+    # "=" sentences are found first, then "<" ones, but grp_id is the rank of the
+    # sentence's text_id within its paper (metacheck 0.4, U10)
     eq = extract_eq(pc.test_paper(["p < .05", "t = 2.1", "p < .01, t = 3"]))
     assert eq["text_id"].tolist() == [1, 2, 3, 3]
-    assert eq["grp_id"].tolist() == [3.0, 1.0, 2.0, 2.0]
+    assert eq["grp_id"].tolist() == [1.0, 2.0, 3.0, 3.0]
 
 
 def test_extract_eq_paper_list_grp_id_per_paper(psychsci) -> None:
-    # U10: R restarts the count at 1 whenever its search order moves to another
-    # paper, so different sentences of one paper shared a grp_id
+    # U10: each paper's sentences are numbered within the paper
     papers = []
     for pid, texts in [
         ("b", ["a < 2 and b = 3", "c = 4", "d > 5, e = 6", "f \u2264 7"]),
@@ -341,7 +341,7 @@ def test_extract_eq_paper_list_grp_id_per_paper(psychsci) -> None:
     eq = extract_eq(pc.PaperList(papers))
     b = eq.loc[eq["paper_id"] == "B"]
     assert b["text_id"].tolist() == [1, 2]
-    assert b["grp_id"].tolist() == [2.0, 1.0]  # R: [1, 1]
+    assert b["grp_id"].tolist() == [1.0, 2.0]
     # a paper's grp_ids are the ones it gets when searched alone
     for p in papers:
         alone = extract_eq(p).reset_index(drop=True)
@@ -358,14 +358,18 @@ def test_extract_eq_paper_list_grp_id_per_paper(psychsci) -> None:
 
 
 def test_extract_eq_missing_paper_id_and_text_id() -> None:
-    # U10: R fails on NA comparisons once there are two equations
+    # U10: sentences without a text_id share one group (R 0.3 failed on NA comparisons)
     one = extract_eq(pd.DataFrame({"text": ["t = 2.1"]}))
     assert one["lhs"].tolist() == ["t"]
     two = extract_eq(pd.DataFrame({"text": ["t = 2.1, p = .04", "F = 3"]}))
     assert two["lhs"].tolist() == ["t", "p", "F"]
-    assert two["grp_id"].tolist() == [1.0, 1.0, 2.0]
+    assert two["grp_id"].tolist() == [1.0, 1.0, 1.0]
     na_ids = pd.DataFrame({"text": ["t = 2.1, p = .04", "F = 3"], "text_id": [None, None]})
-    assert extract_eq(na_ids)["grp_id"].tolist() == [1.0, 1.0, 2.0]
+    assert extract_eq(na_ids)["grp_id"].tolist() == [1.0, 1.0, 1.0]
+    with_ids = pd.DataFrame({"text": ["t = 2.1, p = .04", "F = 3"], "text_id": [5, 2]})
+    ranked = extract_eq(with_ids)
+    assert ranked["lhs"].tolist() == ["F", "t", "p"]
+    assert ranked["grp_id"].tolist() == [1.0, 2.0, 2.0]
 
 
 def test_extractors_accept_strings() -> None:

@@ -139,9 +139,9 @@ def test_html_is_decoded_in_its_declared_encoding() -> None:
 def test_rows_without_content_are_dropped() -> None:
     first = parse_html_tables(DATA / "review_tables.html")[0]
     df = first["data"]
-    # the <tr><td></td></tr> rows have no content and are dropped (R's
-    # df[NA, ] turns them into rows of NAs, U141); the note row stays
-    assert df["V1"].tolist() == ["x", "Note.", "y"]
+    # the <tr><td></td></tr> rows have no content and are dropped, and so is the note row,
+    # as in metacheck 0.4.3.7 (short rows are padded with "", not NA; U141)
+    assert df["V1"].tolist() == ["x", "y"]
     assert not df.isna().all(axis=1).any()
     doc = _read_html_file(str(DATA / "review_tables.html"))
     assert _xml_text(doc.xpath("//h2")[0]) == "T2 colspans"

@@ -1,16 +1,19 @@
 """``convert()``: one entry point for Grobid/bibr document conversion (``R/import-convert.R``).
 
 Both bibr and Grobid convert PDFs; only bibr converts DOC/DOCX; Grobid TEI
-XML files are converted with ``grobid_to_bibr()``. With ``method="auto"``
-a local Grobid (``localhost:8070``) or bibr (``localhost:8000``) server is
-preferred, then the first live server of metacheck's online priority list.
-A bibr server named in ``BIBR_URL`` (with ``BIBR_API_KEY``) comes before all of
-those, for ``method="auto"`` and ``method="bibr"`` (pytacheck's addition; D59).
+XML files are converted with ``grobid_to_bibr()``. With ``method="auto"`` the
+servers are tried in this order: metacheck's API on SURF Research Cloud (PDF
+only), the TU/e Grobid server, a Grobid on this computer (``localhost:8070``;
+a bibr on ``localhost:8000`` only while :data:`BIBR_WORKING`), then the other
+servers of metacheck's online list. A bibr server named in ``BIBR_URL`` (with
+``BIBR_API_KEY``) comes before all of those, for ``method="auto"`` and
+``method="bibr"`` (pytacheck's addition; D59).
 """
 
 from __future__ import annotations
 
 import os
+import shutil
 import tempfile
 from collections.abc import Sequence
 from os import PathLike
@@ -18,13 +21,20 @@ from pathlib import Path
 from typing import Any
 
 from metacheck._r.regex import grepl, sub
+from metacheck._save_path import NO_SAVE_PATH, require_save_path
 
-__all__ = ["convert"]
+__all__ = ["BIBR_WORKING", "convert"]
 
 PathLikeStr = str | PathLike[str]
 
 _METHODS = ("auto", "bibr", "grobid", "xml")
 SERVERS_URL = "https://www.scienceverse.org/metacheck/convert.json"
+#: the TU/e Grobid server, tried right after metacheck's server on SURF
+TUE_GROBID_URL = "https://grobid.hti.ieis.tue.nl"
+#: whether convert() looks for a bibr server on its own (a local bibr, and the bibr servers of
+#: the online list); ``False`` while bibr does not work (metacheck's ``.bibr_working``). A
+#: server named in ``BIBR_URL`` is still used.
+BIBR_WORKING = False
 
 
 def _message(msg: str) -> None:
@@ -36,41 +46,69 @@ def _message(msg: str) -> None:
         Console(stderr=True).print(msg, markup=False, highlight=False)
 
 
-def _server_list() -> list[dict[str, Any]]:
-    from metacheck import http
-
-    resp = http.request("GET", SERVERS_URL)
-    if resp is None or resp.status_code != 200:
-        raise ConnectionError("No local grobid or bibr detected, online versions not available")
-    servers: list[dict[str, Any]] = resp.json()
-    return servers
-
-
 def _online(url: str) -> bool:
     from metacheck.utils import online
 
     return bool(online(url))
 
 
-def _tempfile(fileext: str) -> str:
-    """R's ``tempfile(fileext = ...)``: a fresh path in the temp directory (not created)."""
-    import secrets
+def _convert_servers() -> list[dict[str, Any]]:
+    """The online list of conversion servers (``.convert_servers()``); ``[]`` when it cannot
+    be read."""
+    from metacheck import http
 
-    return os.path.join(tempfile.gettempdir(), f"file{secrets.token_hex(6)}{fileext}")
+    if not _online(SERVERS_URL):
+        return []
+    try:
+        resp = http.request("GET", SERVERS_URL)
+        if resp is None or resp.status_code != 200:
+            return []
+        servers = resp.json()
+    except Exception:
+        return []
+    return [s for s in servers if isinstance(s, dict)] if isinstance(servers, list) else []
 
 
-def _unlink(paths: Any) -> None:
-    """R's ``unlink()``: remove files (``NA`` / missing ones are ignored, directories kept)."""
-    if paths is None:
-        return
-    for p in [paths] if isinstance(paths, str | PathLike) else list(paths):
-        if p is not None and Path(p).is_file():
-            Path(p).unlink(missing_ok=True)
+def _same_url(a: Any, b: Any) -> bool:
+    return str(a).rstrip("/") == str(b).rstrip("/")
+
+
+def _convert_candidates() -> list[dict[str, Any]]:
+    """The servers convert() tries after metacheck's server on SURF, in order
+    (``.convert_candidates()``): the TU/e Grobid server (even when the online list cannot be
+    read), a Grobid and a bibr on this computer, then the other servers of the online list."""
+    online_list = _convert_servers()
+    tue = [s for s in online_list if _same_url(s.get("url"), TUE_GROBID_URL)]
+    if not tue:
+        tue = [{"id": "TUE grobid", "service": "grobid", "url": TUE_GROBID_URL}]
+    local = [
+        {"id": "local grobid", "service": "grobid", "url": "http://localhost:8070"},
+        {"id": "local bibr", "service": "bibr", "url": "http://localhost:8000"},
+    ]
+    rest = [s for s in online_list if not _same_url(s.get("url"), TUE_GROBID_URL)]
+    return [tue[0], *local, *rest]
+
+
+def grobid_first_alive(default: str) -> str:
+    """The Grobid server ``convert_grobid()`` uses when none is given (``.grobid_first_alive()``):
+    the first Grobid server of :func:`_convert_candidates` that answers (TU/e, this computer,
+    Hugging Face; metacheck's server on SURF returns paper JSON, not Grobid's XML), else
+    *default*, so the caller's own check reports why."""
+    from metacheck.io.grobid import _grobid_isalive
+
+    for s in _convert_candidates():
+        if s.get("service") != "grobid":
+            continue
+        _message(f"Checking {s.get('id')}")
+        if _grobid_isalive(s["url"], error=False):
+            _message(f"Using {s.get('id')}")
+            return str(s["url"])
+    return default
 
 
 def convert(
     file_path: PathLikeStr | Sequence[PathLikeStr],
-    save_path: PathLikeStr = ".",
+    save_path: PathLikeStr = NO_SAVE_PATH,
     method: str = "auto",
     crossref_lookup: bool = False,
     keep_xml: bool = True,
@@ -83,7 +121,7 @@ def convert(
     file_path:
         A document, a list of documents, or a directory of documents.
     save_path:
-        Directory to save the JSON file(s) in.
+        Directory to save the JSON file(s) in. There is no default folder.
     method:
         ``"auto"``, ``"bibr"``, ``"grobid"`` or ``"xml"``. XML input always
         uses ``"xml"`` (``grobid_to_bibr()``), DOC/DOCX-only input
@@ -94,16 +132,21 @@ def convert(
         With Grobid, whether to keep the intermediate XML files.
     **kwargs:
         Passed on to ``convert_bibr()`` / ``convert_grobid()`` (``api_url``,
-        ``api_key``, ``start_page``, ...). With ``BIBR_URL`` set (and no
-        ``api_url`` or other ``backend`` passed), ``method="auto"`` and
-        ``method="bibr"`` use that server through ``convert_bibr(backend="bibr")``;
-        ``BIBR_API_URL`` does not steer ``convert()``.
+        ``api_key``, ``start_page``, ...). A server, key or backend given here is
+        used as given. With ``BIBR_URL`` set (and no ``api_url`` or other ``backend``
+        passed), ``method="auto"`` and ``method="bibr"`` use that server through
+        ``convert_bibr(backend="bibr")``; ``BIBR_API_URL`` does not steer ``convert()``.
 
     Returns
     -------
     The path(s) to the JSON file(s).
     """
-    from metacheck.io.bibr_convert import _bibr_isalive, _bibr_steering_url, convert_bibr
+    from metacheck.io.bibr_convert import (
+        _bibr_isalive,
+        _bibr_steering_url,
+        _surf_isalive,
+        convert_bibr,
+    )
     from metacheck.io.grobid import _grobid_isalive, convert_grobid, grobid_to_bibr
 
     args: dict[str, Any] = dict(kwargs)
@@ -130,6 +173,8 @@ def convert(
         method = "bibr"
     else:
         raise ValueError("No PDF, XML, DOC or DOCX files detected.")
+    # before any file is sent to a server: there is no default folder
+    require_save_path(save_path)
 
     from metacheck.utils import match_arg
 
@@ -145,43 +190,60 @@ def convert(
             args["api_url"] = configured
             args["backend"] = "bibr"
 
-    # auto-detect method: local grobid > local bibr > online priority list
-    if method == "auto":
-        grobid_local_url = "http://localhost:8070"
-        bibr_local_url = "http://localhost:8000"
-        if _grobid_isalive(grobid_local_url, error=False):
-            _message("Using local grobid")
-            method = "grobid"
-            args["api_url"] = grobid_local_url
-        elif _bibr_isalive(bibr_local_url, None, error=False):
-            _message("Using local bibr")
-            method = "bibr"
-            args["api_url"] = bibr_local_url
-            # a bibr serve, whatever SCIVRS_API_KEY says: the platform's job queue is not there
-            if args.get("backend") in (None, "auto"):
-                args["backend"] = "selfhosted"
+    # choose a server: metacheck's API on SURF Research Cloud, the TU/e Grobid server, a Grobid
+    # (then a bibr) on this computer, then the other servers of the online list. A server, key
+    # or backend given in `...` is used as given.
+    given = (
+        args.get("api_url") is not None
+        or args.get("api_key") is not None
+        or args.get("backend") is not None
+    )
 
-    # XML is converted locally: no server is needed (metacheck still looks one
-    # up, so converting XML fails offline; U18)
-    if method != "xml" and (method == "auto" or args.get("api_url") is None):
-        if not _online(SERVERS_URL):
-            raise ConnectionError("No local grobid or bibr detected, online versions not available")
-        for s in _server_list():
+    # SURF converts PDFs, not DOC or DOCX files; it returns the paper JSON whichever method was
+    # asked for
+    surf = method != "xml" and not docs and not given and _surf_isalive(error=False)
+    if surf:
+        _message("Using the SURF API")
+        method = "bibr"
+        args["backend"] = "surf"
+
+    # a server given with method "auto": Grobid when it answers as one, else bibr
+    if given and method == "auto":
+        api_url = args.get("api_url")
+        method = (
+            "grobid" if api_url is not None and _grobid_isalive(api_url, error=False) else "bibr"
+        )
+
+    # XML is converted locally, so no server is looked up for it (offline, the lookup stopped an
+    # XML conversion; U18)
+    if not surf and not given and method != "xml":
+        for s in _convert_candidates():
+            # skip if the server doesn't match a set method
             if method not in (s.get("service"), "auto"):
+                continue
+            # a bibr server is not asked while bibr does not work (BIBR_WORKING)
+            if s.get("service") == "bibr" and not BIBR_WORKING:
                 continue
             _message(f"Checking {s.get('id')}")
             if s.get("service") == "grobid":
                 up = _grobid_isalive(s["url"], error=False)
             else:
-                api_key = args.get("api_key")
-                if api_key is None:  # args$api_key %||% Sys.getenv("SCIVRS_API_KEY")
-                    api_key = os.environ.get("SCIVRS_API_KEY", "")
-                up = _bibr_isalive(s["url"], api_key, error=False)
+                up = _bibr_isalive(s["url"], os.environ.get("SCIVRS_API_KEY", ""), error=False)
             if up:
                 _message(f"Using {s.get('id')}")
-                method = s["service"]
+                method = str(s["service"])
                 args["api_url"] = s["url"]
+                if s.get("id") == "local bibr":
+                    # a bibr serve, whatever SCIVRS_API_KEY says: the platform's job queue is
+                    # not there
+                    args["backend"] = "selfhosted"
                 break
+        if method == "auto" or (method == "grobid" and args.get("api_url") is None):
+            raise ConnectionError(
+                "No conversion server answers: not metacheck's server on SURF, "
+                "the TU/e GROBID server, a GROBID on this computer "
+                "(http://localhost:8070), or the servers of the online list."
+            )
 
     args["file_path"] = file_path
     args["save_path"] = save_path
@@ -189,22 +251,22 @@ def convert(
     if method == "xml":
         return grobid_to_bibr(file_path, save_path, crossref_lookup)
     if method == "grobid":
-        # on.exit(unlink(tmp_xml)) with keep_xml = FALSE: removes whatever
-        # tmp_xml names when the function exits (the converted XML file(s))
-        cleanup: Any = None
+        # keep_xml = FALSE: a temporary folder, in which convert_grobid() names each XML file
+        # after its PDF (the paper ID and JSON file name come from the XML file name); removed
+        # when the function exits (on.exit(unlink(tmp_dir, recursive = TRUE)))
+        tmp_dir: str | None = None
         if keep_xml:
             args["save_path"] = sub(r"\.json$", r"\.xml", os.fspath(save_path))
         else:
-            cleanup = _tempfile(".xml")  # R's tempfile(): a name, not a file
-            args["save_path"] = cleanup
+            tmp_dir = tempfile.mkdtemp(prefix="grobid")
+            args["save_path"] = tmp_dir
         try:
             grobid_args = ("file_path", "save_path", "api_url", "start_page", "end_page")
             tmp_xml = convert_grobid(**{k: v for k, v in args.items() if k in grobid_args})
-            if cleanup is not None:
-                cleanup = tmp_xml
             return grobid_to_bibr(tmp_xml, save_path, crossref_lookup)
         finally:
-            _unlink(cleanup)
+            if tmp_dir is not None:
+                shutil.rmtree(tmp_dir, ignore_errors=True)
     # bibr. R passes the *names* of the valid arguments to convert_bibr()
     # (`do.call(convert_bibr, valid_args)`), which cannot work; the arguments
     # themselves are passed here.

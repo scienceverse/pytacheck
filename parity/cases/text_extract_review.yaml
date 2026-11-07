@@ -47,7 +47,6 @@
         "text_id": [1, 2, 3]
         "paper_id": ["x", "x", "x"]
 - "id": "extract_p_values.review.unicode_space"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U204", "reason": "'p = 1.5×10^-3' is read as 0.0015 (metacheck stops at the mantissa: p = 1.5)"}
   "r": "extract_p_values"
   "py": "metacheck.text.extract.extract_p_values"
   "args":
@@ -99,7 +98,6 @@
         "text": ["1 = 2", "3 < 4 and 5 > 6"]
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.review.text_id_na_error"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "rows without text_id are grouped by their source sentence (R fails on NA comparisons)"}
   "r": "extract_eq"
   "py": "metacheck.text.extract.extract_eq"
   "args":
@@ -108,7 +106,6 @@
         "text": ["t = 2.1", "F = 3"]
         "paper_id": ["a", "a"]
 - "id": "extract_eq.review.paperlist_ids"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "each sentence of a paper in a list keeps its own grp_id (R restarts at 1 whenever its search order moves to another paper: both of paper B's sentences get grp_id 1)"}
   "r": "extract_eq"
   "py": "metacheck.text.extract.extract_eq"
   "args":
@@ -127,7 +124,6 @@
         "text_id": [1, 2, 3]
         "paper_id": ["x", "x", "x"]
 - "id": "extract_eq.review.unicode"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U205", "reason": "'M = −0.5' (Unicode minus) is a statistic, its rhs '-0.5'; metacheck matches only the ASCII hyphen"}
   "r": "extract_eq"
   "py": "metacheck.text.extract.extract_eq"
   "args":
@@ -225,7 +221,6 @@
         "r": "local({p <- test_paper(c('first sentence')); p$paper_id <- 'eqp'; p$eq <- data.frame(text_id = c(1L, 1L), lhs = c('t', 'p'), comp = c('=', '<'), rhs = c('1.5', '.03')); p})"
         "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([1, 1], dtype='Int64'), 'lhs': ['t', 'p'], 'comp': ['=', '<'], 'rhs': ['1.5', '.03']})), p)[2])(pc.test_paper(['first sentence']))"
 - "id": "extract_tests.review.paperlist"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "a paper list gives each paper's tests once (R repeats every test once per paper id)"}
   "r": "extract_tests"
   "py": "metacheck.text.extract_tests.extract_tests"
   "args":
@@ -323,7 +318,7 @@
         - '{"a": {"$date": true}, "b": {"$date": "2020-01-01T00:00:00Z", "x": 1}}'
 # U9: a `_row` of nested objects with NA cells (jsonlite's rn[is.na(rn)] <- ...)
 - "id": "json_expand.review.row_names_nested_na"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U9", "reason": "a \"_row\" key holding nested objects is an ordinary column (jsonlite's row-name NA replacement mangled it and changed the row count)"}
+  "known_divergence": {"kind": "deliberate", "ref": "D76", "reason": "nested arrays are their leaves joined by \";\" and an empty object is missing (R deparses them: 1:2, list(x = 1), NULL, c(1, NA)); R leaves some flattened number columns as text"}
   "r": "json_expand"
   "py": "metacheck.text.json_expand.json_expand"
   "args":

@@ -4,6 +4,11 @@
   "r": "demopaper"
   "py": "metacheck.demopaper"
   "args": {}
+- "id": "demopaper.stroop_effect"
+  "r": "demopaper"
+  "py": "metacheck.demopaper"
+  "args":
+    "paper": "stroop_effect"
 - "id": "read.golden_bibr_10_2"
   "r": "read"
   "py": "metacheck.read"

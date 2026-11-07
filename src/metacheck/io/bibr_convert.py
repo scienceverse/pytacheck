@@ -1,8 +1,9 @@
 """Remote bibr conversion client (port of ``R/import-bibr.R``).
 
 ``convert_bibr()`` sends documents (PDF, DOC, DOCX) to a bibr extraction
-server and saves the returned bibr JSON. Three kinds of server are spoken to:
+server and saves the returned bibr JSON. These kinds of server are spoken to:
 
+* ``"surf"``: metacheck's API on SURF Research Cloud (one ``POST /convert``, PDF only, no key);
 * ``"scivrs"``: the Scienceverse platform (its own ``/jobs`` queue, API key);
 * ``"selfhosted"``: one synchronous ``POST /papers/extract`` to ``bibr serve``;
 * ``"bibr"``: the job API of ``bibr serve`` (``POST /papers/jobs``, then
@@ -33,17 +34,22 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import quote, urlsplit, urlunsplit
 
+import orjson
 import pandas as pd
 
 from metacheck._r.base import as_character, trimws
 from metacheck._r.regex import grepl, gsub, strsplit
+from metacheck._save_path import NO_SAVE_PATH, require_save_path
 from metacheck.log import logger
 
 __all__ = ["BibrRequestError", "convert_bibr", "format_bib_authors"]
 
 PathLikeStr = str | PathLike[str]
 
-_BACKENDS = ("auto", "scivrs", "selfhosted", "bibr")
+_BACKENDS = ("auto", "surf", "scivrs", "selfhosted", "bibr")
+
+#: metacheck's API on SURF Research Cloud (``SURF_API_URL`` overrides it)
+SURF_API_URL = "https://metacheckserve.metacheck.src.surf-hosted.nl/api"
 
 #: environment variables of the ``"bibr"`` backend (``BIBR_API_URL`` is the name bibr's own
 #: example clients read; ``BIBR_URL`` wins when both are set). Only ``BIBR_URL`` steers the
@@ -624,7 +630,7 @@ def _bibr_request_bibr(
 
 def convert_bibr(
     file_path: PathLikeStr | Sequence[PathLikeStr],
-    save_path: PathLikeStr = ".",
+    save_path: PathLikeStr = NO_SAVE_PATH,
     backend: str = "auto",
     api_key: str | None = None,
     api_url: str | None = None,
@@ -639,8 +645,14 @@ def convert_bibr(
 ) -> Any:
     """Port of ``R/import-bibr.R::convert_bibr()``: convert documents with a bibr server.
 
+    There is no default ``save_path`` (the folder to write the JSON to).
+
     ``backend`` names the kind of server:
 
+    * ``"surf"``: metacheck's API on SURF Research Cloud (``SURF_API_URL`` or
+      ``https://metacheckserve.metacheck.src.surf-hosted.nl/api``), which needs no key and
+      converts PDF files only (at most 50 MB), always whole and without figures, so
+      ``include_figures``, ``start_page`` and ``end_page`` do not apply;
     * ``"scivrs"``: the Scienceverse platform (its ``/jobs`` queue, ``api_key`` or
       ``SCIVRS_API_KEY``; default ``https://platform.metacheck.app``);
     * ``"selfhosted"``: one synchronous ``POST /papers/extract`` to a ``bibr serve``
@@ -656,7 +668,8 @@ def convert_bibr(
     ``backend="auto"`` uses ``"bibr"`` when ``BIBR_URL`` is set and no ``api_url`` is given,
     or when ``BIBR_API_KEY`` is the only key there is (no ``api_key`` argument, no
     ``SCIVRS_API_KEY``); else ``"scivrs"`` when an API key is given or ``SCIVRS_API_KEY``
-    is set; else ``"selfhosted"``. ``BIBR_API_URL`` alone does not pick a backend.
+    is set; else ``"selfhosted"`` when an ``api_url`` is given or ``BIBR_API_URL`` is set;
+    else ``"surf"``. ``BIBR_API_URL`` alone does not pick the ``"bibr"`` backend.
 
     A 429 answer (``"bibr"`` and ``"selfhosted"``) is retried after its ``Retry-After``
     seconds, up to ``max_retries`` times and never waiting more than ``max_retry_wait``
@@ -671,9 +684,18 @@ def convert_bibr(
     a 401 or 403 (a token every later file would be refused with) stops a list at once.
     """
     backend = _match_arg(backend, _BACKENDS)
+    # before any file is sent to a server: there is no default folder
+    require_save_path(save_path)
     env_key = os.environ.get("SCIVRS_API_KEY", "")
     if backend == "auto":
         backend = _auto_backend(api_key, api_url, env_key)
+
+    if backend == "surf" and (include_figures is True or start_page > 1 or math.isfinite(end_page)):
+        warnings.warn(
+            "The SURF API converts whole PDFs without figures; "
+            "include_figures, start_page and end_page are not used.",
+            stacklevel=2,
+        )
 
     if backend == "scivrs" and api_key is None:
         api_key = env_key
@@ -686,7 +708,9 @@ def convert_bibr(
         api_key = _env(BIBR_KEY_ENV) or None
 
     if api_url is None:
-        if backend == "scivrs":
+        if backend == "surf":
+            api_url = _surf_api_url()
+        elif backend == "scivrs":
             api_url = "https://platform.metacheck.app"
         elif backend == "bibr":
             api_url = _bibr_env_url() or _BIBR_DEFAULT_URL
@@ -746,7 +770,9 @@ def convert_bibr(
     zb_start: float | None = start_page - 1 if start_page > 1 else None
     zb_end: float | None = end_page - 1 if math.isfinite(end_page) else None
 
-    if backend == "scivrs":
+    if backend == "surf":
+        contents = _bibr_request_surf(paths[0], api_url, timeout)
+    elif backend == "scivrs":
         contents = _bibr_request_scivrs(
             paths[0],
             api_url,
@@ -795,7 +821,10 @@ def _auto_backend(api_key: str | None, api_url: str | None, env_key: str) -> str
         _bibr_steering_url() or (api_key is None and not env_key and _env(BIBR_KEY_ENV))
     ):
         return "bibr"
-    return "scivrs" if api_key is not None or env_key else "selfhosted"
+    if api_key is not None or env_key:
+        return "scivrs"
+    # a bibr address means a self-hosted bibr (as convert() passes for a local bibr); otherwise SURF
+    return "selfhosted" if api_url is not None or _env("BIBR_API_URL") else "surf"
 
 
 def _form(
@@ -920,6 +949,100 @@ def _bibr_request_selfhosted(
         msg = _status_desc(resp.status_code) or "NA"
         raise RuntimeError(f"Bibr request failed with status code: {resp.status_code}\n{msg}")
     return bytes(resp.content)
+
+
+def _surf_api_url() -> str:
+    """The address of metacheck's API on SURF Research Cloud (``.surf_api_url()``): the
+    ``SURF_API_URL`` environment variable, when it is not empty."""
+    return os.environ.get("SURF_API_URL", "") or SURF_API_URL
+
+
+def _surf_isalive(api_url: str | None = None, error: bool = True) -> bool:
+    """Port of ``R/import-bibr.R::.surf_isalive()``: can metacheck's API on SURF Research
+    Cloud convert PDFs?
+
+    Its ``/health`` endpoint answers with ``status`` ``"ok"``, ``bibr`` true when the server's
+    bibr is ready, and ``grobid`` ``"local"`` when the server has a Grobid of its own. Its
+    ``/convert`` uses that Grobid when bibr is not ready or fails, so the server can convert a
+    PDF when either one is there.
+    """
+    from metacheck import http
+
+    if api_url is None:
+        api_url = _surf_api_url()
+    failure = None
+    try:
+        resp = http.request(
+            "GET",
+            _url_append(api_url, "health"),
+            max_tries=3,
+            retry_statuses=(429, 503),
+            timeout=15,
+        )
+    except Exception as exc:
+        resp, failure = None, str(exc)
+    if resp is None:
+        if error:
+            raise ConnectionError(
+                "Connection to the SURF API failed. Please check your connection or the URL: "
+                f"{api_url} ({failure or 'Could not connect to server'})"
+            )
+        return False
+
+    status = resp.status_code
+    body = _json_object(resp)
+    ready = (
+        status == 200
+        and body.get("status") == "ok"
+        and (body.get("bibr") is True or body.get("grobid") == "local")
+    )
+    if not ready and error:
+        why = (
+            f" (HTTP {status})"
+            if status != 200
+            else " (its bibr is not ready and it has no GROBID of its own)"
+        )
+        raise RuntimeError(f"The SURF API on {api_url} cannot convert PDFs at the moment{why}")
+    return ready
+
+
+def _bibr_request_surf(file_path: str, api_url: str, timeout: float = 600) -> bytes:
+    """Port of ``R/import-bibr.R::.bibr_request_surf()``: convert a PDF with metacheck's API on
+    SURF Research Cloud.
+
+    One call to ``/convert``, which answers once bibr is done. A refused or failed conversion
+    answers with JSON holding the reason in ``error`` (400 bad upload, 413 too large, 422 bibr
+    failed, 429 too many requests, 503 queue full).
+    """
+    from metacheck import http
+
+    name = Path(file_path).name
+    if not grepl(r"(?i)\.pdf$", file_path):
+        raise ValueError(
+            f"The SURF API converts only PDF files, not {name}; "
+            'use backend = "scivrs" or "selfhosted" for DOC and DOCX files.'
+        )
+    resp = http.request(
+        "POST",
+        _url_append(api_url, "convert"),
+        max_tries=1,
+        files=[("file", (name, Path(file_path).read_bytes()))],
+        timeout=timeout,
+    )
+    if resp is None:
+        raise ConnectionError(f"Failed to perform HTTP request to {api_url}")
+    status = resp.status_code
+    if status != 200:
+        msg = _json_object(resp).get("error")
+        if msg is None:
+            msg = _status_desc(status) or "NA"
+        logger("convert_bibr", {"file": name, "error": msg})
+        raise RuntimeError(f"The SURF API could not convert {name} (HTTP {status}): {msg}")
+
+    # the server saves every upload as input.pdf, so bibr reports that name; put the real one
+    # back
+    real_name = orjson.dumps(name)
+    return bytes(resp.content).replace(b'"file_name":"input.pdf"', b'"file_name":' + real_name, 1)
 
 
 def _bibr_save_result(contents: bytes, file_path: PathLikeStr, save_path: PathLikeStr) -> str:

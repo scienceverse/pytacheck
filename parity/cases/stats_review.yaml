@@ -448,7 +448,6 @@
         - !!int "3"
     "AllP": !!bool "true"
 - "id": "stats.review.partial.ambiguous"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -497,7 +496,6 @@
         - !!int "3"
     "s": "t"
 - "id": "stats.review.partial.mess"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -510,7 +508,6 @@
         - !!int "3"
     "mess": !!bool "true"
 - "id": "stats.review.partial.twice"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":
@@ -524,7 +521,6 @@
     "alpha": !!float "0.1"
     "alp": !!float "0.2"
 - "id": "stats.review.partial.two_prefixes"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "metacheck.stats.stats"
   "args":

@@ -66,14 +66,14 @@ def _release_assets_frame(rows: list[tuple[str, str, Any, str]]) -> pd.DataFrame
     )
 
 
-def _papers_release_assets(repo: str = DEFAULT_REPO) -> pd.DataFrame | None:
+def _papers_release_assets(repo: str = DEFAULT_REPO) -> pd.DataFrame:
     """Port of ``R/import-papers.R::.papers_release_assets()``.
 
     One row per ``.rds`` asset of the repository's releases (``name``,
     ``tag``, ``size``, ``download_url``). Release tags follow a
     ``{corpus}-{date}`` convention; when a corpus family was re-released,
-    only its most recently published release is kept. ``None`` when no
-    release has an ``.rds`` asset (R returns ``NULL``).
+    only its most recently published release is kept. A table without rows when
+    no release has an ``.rds`` asset (metacheck 0.3 returned ``NULL``; U18).
     """
     from metacheck import http
 
@@ -110,8 +110,6 @@ def _papers_release_assets(repo: str = DEFAULT_REPO) -> pd.DataFrame | None:
             a for a in rel.get("assets") or [] if str(a.get("name", "")).lower().endswith(".rds")
         ]
         rows.extend((a["name"], rel["tag_name"], a["size"], a["browser_download_url"]) for a in rds)
-    if not rows:
-        return None
     return _release_assets_frame(rows)
 
 
@@ -123,10 +121,6 @@ def papers_available(repo: str = DEFAULT_REPO) -> pd.DataFrame:
     """
     assets = _papers_release_assets(repo)
     cache_dir = _papers_cache_dir()
-    # a repository without corpora gives an empty table (metacheck fails with
-    # "arguments imply differing number of rows: 0, 1"; U18)
-    if assets is None:
-        assets = _release_assets_frame([])
     names = [_file_path_sans_ext(n) for n in assets["name"]]
     return pd.DataFrame(
         {
@@ -163,9 +157,6 @@ def papers_load(
         return _read_rds(cache_path)
 
     assets = _papers_release_assets(repo)
-    if assets is None:
-        # no .rds asset: "not found" (metacheck: "argument is of length zero"; U18)
-        assets = _release_assets_frame([])
     names = [_file_path_sans_ext(n) for n in assets["name"]]
     hits = [i for i, n in enumerate(names) if n == name]
     if not hits:

@@ -125,6 +125,12 @@ _CHILD_FUNCTIONS: dict[str, str] = {
     ".r_call_fun_arg": r"""function(call_text) {
   if (is.null(call_text) || !nzchar(call_text)) return(NA_character_)
   cl <- tryCatch(str2lang(call_text), error = function(e) NULL)
+  # A stored result, means <- sapply(d, mean): the value is the right-hand
+  # side's, so that is the call to read; the assignment itself has no FUN
+  # (#549). R parses `->` as `<-`, and (means <- sapply(d, mean)) prints it.
+  while (is.call(cl) && length(cl) >= 2 &&
+         as.character(cl[[1]])[1] %in% c("<-", "=", "<<-", "("))
+    cl <- cl[[length(cl)]]
   if (is.null(cl) || !is.call(cl)) return(NA_character_)
   fname <- tryCatch(as.character(cl[[1]])[1], error = function(e) NA_character_)
   if (is.na(fname) || !nzchar(fname)) return(NA_character_)
@@ -142,8 +148,13 @@ _CHILD_FUNCTIONS: dict[str, str] = {
   hit <- pick(tryCatch(match.call(f, cl), error = function(e) NULL))
   if (!is.null(hit)) return(hit)
 
-  meths <- tryCatch(as.character(utils::methods(fname)),
-                    error = function(e) character(0))
+  # Only a generic has methods: methods() on any other function warns, e.g.
+  # "function 'library' appears not to be S3 generic", and that warning ended
+  # up in the output of most scripts.
+  is_generic <- !is.primitive(f) &&
+    any(grepl("UseMethod", deparse(body(f)), fixed = TRUE))
+  meths <- if (is_generic) tryCatch(suppressWarnings(as.character(utils::methods(fname))),
+                                    error = function(e) character(0)) else character(0)
   for (mn in meths) {
     short <- sub(paste0("^", fname, "\\."), "", mn)
     mf <- tryCatch(utils::getS3method(fname, short), error = function(e) NULL)
@@ -276,6 +287,20 @@ _JSON_R = r"""
 _RUNNER_R = r"""function(script, wd, capture_file, helpers) {
   setwd(wd)
   env <- globalenv()
+  # What a person's computer has and a check does not: a missing figure in a document, the
+  # data viewer, and fonts only Windows has.
+  options(knitr.graphics.error = FALSE)
+  # In an attached environment of their own, not the workspace, which a script that starts
+  # with rm(list = ls()) clears
+  stand_ins <- new.env()
+  assign("View", function(...) invisible(NULL), envir = stand_ins)
+  assign("windowsFonts", function(...) invisible(NULL), envir = stand_ins)
+  assign("windowsFont", function(...) "sans", envir = stand_ins)
+  # Nobody can answer: on Windows file.choose() opens a window and waits.
+  for (ask in c("file.choose", "choose.files", "choose.dir", "tk_choose.files", "tk_choose.dir"))
+    assign(ask, function(...) stop("file choice cancelled", call. = FALSE), envir = stand_ins)
+  att <- get("attach", envir = baseenv())
+  att(stand_ins, name = "metacheck:stand_ins", warn.conflicts = FALSE)
   for (nm in names(helpers)) assign(nm, helpers[[nm]], envir = env)
   captures <- list()
   on.exit(try(.mc_write_json(captures, capture_file), silent = TRUE), add = TRUE)
@@ -287,7 +312,8 @@ _RUNNER_R = r"""function(script, wd, capture_file, helpers) {
     e <- exprs[[i]]
     sr <- if (!is.null(srcrefs) && length(srcrefs) >= i) srcrefs[[i]] else NULL
     txt <- if (!is.null(sr)) as.character(sr) else deparse(e)
-    cat(paste0("> ", txt, collapse = "\n"), "\n", sep = "")
+    # not into a file the script sink()s to: a JAGS model written that way got these lines
+    if (sink.number() == 0) cat(paste0("> ", txt, collapse = "\n"), "\n", sep = "")
 
     res <- withVisible(eval(e, envir = env))
     if (res$visible) {

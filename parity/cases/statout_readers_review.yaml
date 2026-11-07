@@ -184,7 +184,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/review/spv_strings.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/review/spv_strings.spv\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/review/spv_strings.spv\"), d); p <- metacheck:::.spv_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/review/spv_strings.spv\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -453,15 +453,18 @@
     "fn": "metacheck.statout.jasp.export_jasp_html"
     "path": "tests/statout_readers/fixtures/review/review.jasp"
 - "id": "export_omv_html.badurl"
-  "r": "export_omv_html"
-  "py": "metacheck.statout.omv.export_omv_html"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.export_lines"
   "args":
-    "path":
-      "$file": "tests/statout_readers/fixtures/review/badurl.omv"
-    "out":
+    "x":
       "$expr":
-        "r": "tempfile()"
-        "py": "__import__('tempfile').mktemp()"
+        "r": "{f <- tempfile(fileext = \".html\"); metacheck::export_omv_html(rpath(\"tests/statout_readers/fixtures/review/badurl.omv\"), f); x <- readLines(f, warn = FALSE); x}"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "fn": "metacheck.statout.omv.export_omv_html"
+    "path": "tests/statout_readers/fixtures/review/badurl.omv"
 - "id": "jasp_analyses_summary.review"
   "r": "identity"
   "py": "tests.statout_readers.parity_helpers.jasp_summary"
@@ -521,7 +524,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/review/tricky.smcl\"), d); p <- metacheck:::.smcl_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/review/tricky.smcl\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/review/tricky.smcl\"), d); p <- metacheck:::.smcl_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/review/tricky.smcl\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
@@ -615,7 +618,7 @@
   "args":
     "x":
       "$expr":
-        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/review/tricky.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/review/tricky.out\"))); if (is.na(p)) NULL else list(path = substring(p, nchar(d) + 1), lines = readLines(p, warn = FALSE))}"
+        "r": "{d <- tempfile(); dir.create(d); file.copy(rpath(\"tests/statout_readers/fixtures/review/tricky.out\"), d); p <- metacheck:::.mplus_export_syntax(file.path(d, basename(\"tests/statout_readers/fixtures/review/tricky.out\"))); if (is.na(p)) NULL else list(path = sub('^.*/metacheck-recovered-code/', '', p), lines = readLines(p, warn = FALSE))}"
         "py": "None"
   "py_drop":
   - "x"
