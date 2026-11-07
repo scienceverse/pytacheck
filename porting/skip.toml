@@ -60,7 +60,6 @@
 
 # R/repo-download.R -- the retry, redirect and rate-limit loop, which metacheck.http.request() does
 ".storage_backoff" = "min(2^attempt, 30) seconds between tries. metacheck.http.request() backs off as httr2 does by default (a random 1 to 2^attempt seconds, capped at 60); the maintainer decided on 2026-10-04 to keep one retry stack."
-".host_rate_limit_record" = "Records a host's rate-limit reset. metacheck.http keeps that memory (_record_reset(), host_reset_at()), and request() records it itself."
 ".host_rate_limit_remaining" = "Seconds until a recorded reset. metacheck.http.host_reset_at() is the same lookup; request() waits for it before sending."
 ".announce_rate_limit_wait" = "Says a wait over 5 s. metacheck.http.request() says it for every caller (_announce_wait())."
 ".storage_retry_after_factory" = "The retry-after callback of the storage retry: the confirmed wait, recorded and announced. metacheck.http.request() reads Retry-After and the RateLimit-Reset headers, records the reset and waits for it."
@@ -144,6 +143,9 @@
 ".repro_docker_lib_remove" = "Removes that Docker volume; pytacheck's library goes with the sandbox (D154)."
 ".repro_installed_version" = "R reads a package's version from its DESCRIPTION in the run's library; pytacheck reads it inside the R install script it writes (have_version() in metacheck.repro.recorded), where that library is."
 ".report_pandoc_dir" = "Finds the Pandoc that Quarto bundles, so rmarkdown::render() can build the simple and checklist reports. pytacheck renders those pages itself with markdown-it-py (D133, no Pandoc), and its Quarto renderer calls quarto directly."
+".resp_body_stream_raw" = "Joins httr2's streamed 32 KB pieces once instead of copying them with c() (#584). httpx hands over the body in one piece, so there is no quadratic copy."
+".zip64_extra" = "metacheck's own reader of the Zip64 extra field; zipfile.ZipFile reads Zip64 sizes and offsets itself."
+".zip_member_from_buffer" = "Reads one member out of an already fetched buffer (local header, the missing part of the data, inflate, size and CRC check); zipfile does that over metacheck.archives.zip_peek's _RangeFile, which serves reads from the held tail and fetches what is missing."
 
 [skip_files]
 "R/app.R" = "Shiny app launchers (see [skip])."

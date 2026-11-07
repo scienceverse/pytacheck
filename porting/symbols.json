@@ -568,7 +568,8 @@
  ".all_omitted_table": {
   "file": "R/repo-download.R",
   "line": 230,
-  "python": "metacheck.archives.download:_all_omitted_table"
+  "ported": true,
+  "python": "metacheck.archives.dataverse:_download_file_table"
  },
  ".announce_rate_limit_wait": {
   "file": "R/repo-download.R",
@@ -1101,7 +1102,8 @@
  ".copy_into_place": {
   "file": "R/repo-download.R",
   "line": 1325,
-  "python": "metacheck.archives.download:_copy_into_place"
+  "ported": true,
+  "python": "metacheck.archives._atomic:atomic_write"
  },
  ".count_fields": {
   "file": "R/data_check_helpers.R",
@@ -1883,7 +1885,8 @@
  ".field_or_value": {
   "file": "R/svutils-utils.R",
   "line": 50,
-  "python": "metacheck.utils:_field_or_value"
+  "ported": true,
+  "python": "metacheck._values:field_or_value"
  },
  ".figshare_article_files": {
   "file": "R/archive-figshare.R",
@@ -2129,7 +2132,8 @@
  ".github_crawl": {
   "file": "R/archive-github.R",
   "line": 511,
-  "python": "metacheck.archives.github:_github_crawl"
+  "ported": true,
+  "python": "metacheck.archives.github:github_tree_files"
  },
  ".github_key_check": {
   "file": "R/archive-github.R",
@@ -2344,7 +2348,8 @@
  ".inner_file_type": {
   "file": "R/zip-peek.R",
   "line": 1523,
-  "python": "metacheck.archives.zip_peek:_inner_file_type"
+  "ported": true,
+  "python": "metacheck.archives.zip_peek:_ext_type"
  },
  ".ipynb_is_noise": {
   "file": "R/stat-tables.R",
@@ -3149,7 +3154,8 @@
  ".omit_for_size": {
   "file": "R/repo-download.R",
   "line": 194,
-  "python": "metacheck.archives.download:_omit_for_size"
+  "ported": true,
+  "python": "metacheck.archives.dataverse:_omit_for_size"
  },
  ".omv_analyses_summary": {
   "file": "R/omv.R",
@@ -5700,7 +5706,8 @@
  ".resp_bytes": {
   "file": "R/repo-download.R",
   "line": 222,
-  "python": "metacheck.archives.download:_resp_bytes"
+  "ported": true,
+  "python": "metacheck.archives.dataverse:_fetch_file_status"
  },
  ".resp_content_length": {
   "file": "R/zip-peek.R",
@@ -6800,7 +6807,8 @@
  ".url_hrefs": {
   "file": "R/archive-github.R",
   "line": 5,
-  "python": "metacheck.archives.github:_url_hrefs"
+  "ported": true,
+  "python": "metacheck.archives:_paper_urls"
  },
  ".useless_file_kind": {
   "file": "R/file-naming.R",
@@ -6844,6 +6852,7 @@
  ".waf_challenge_check": {
   "file": "R/zip-peek.R",
   "line": 97,
+  "ported": true,
   "python": "metacheck.archives.zip_peek:_waf_challenge_check"
  },
  ".wait_out_known_rate_limit": {
@@ -7000,7 +7009,8 @@
  ".zip_drop_dirs": {
   "file": "R/zip-peek.R",
   "line": 813,
-  "python": "metacheck.archives.zip_peek:_zip_drop_dirs"
+  "ported": true,
+  "python": "metacheck.archives.zip_peek:zip_peek"
  },
  ".zip_extract_members": {
   "file": "R/zip-peek.R",
@@ -9141,12 +9151,6 @@
   "line": 98,
   "ported": true,
   "python": "metacheck.archives.download:repo_cache_size"
- },
- "repo_info_cache": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "metacheck.archives.info_cache:repo_info_cache"
  },
  "repo_info_cache_clear": {
   "file": "R/repo-info-cache.R",
