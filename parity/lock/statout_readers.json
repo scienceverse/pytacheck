@@ -3,7 +3,6 @@
 "import_spv.charts": {"r": "4241bfc2fc660d14", "py": "2077021c48a83a3d", "diff": ["[].data"]},
 "import_spv.modern": {"r": "682775a24a7d0787", "py": "a9ea01a9a4122d7f", "diff": ["[].data.value[]"]},
 "jasp_analyses_summary.flat": {"r": "b9b9388785087ffb", "py": "d988b1c4eae19734", "diff": ["[]"]},
-"smcl_export_syntax.analysis": {"r": "a314d1f5ee9e98e0", "py": "d9fe06e3c29021d3", "diff": ["lines[]"]},
 "spv_decode_light_table.0000000004": {"r": "1720cd667c4645e0", "py": "3dc6a7719579fb68", "diff": ["value[]"]},
 "spv_decode_light_table.0000000005": {"r": "231c9079e0fe4fcc", "py": "346457eb490b62a6", "diff": ["value[]"]}
 }

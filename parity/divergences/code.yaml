@@ -199,19 +199,14 @@
   ref: D63
   reason: only a fitted-curve text that is arithmetic in x is listed and drawn; R keeps any expression its parser accepts (TRUE, a * x, if/function/assignment, x %% 2) as a legend entry
 "statout_readers_review/import_spv.attrs.spv_charts_ok": *d63_fits
-"statout_readers_review/export_omv_html.badurl": &u148_img
+"statout_readers_review/url_decode.vector": &u148_img
   kind: r_bug_fixed
   ref: U148
-  reason: every occurrence of a plot is inlined (R's sub() inlines only the first) and a malformed %-escape is kept (R's URLdecode() makes a NUL and fails)
-"statout_readers_review/url_decode.vector": *u148_img
+  reason: a malformed %-escape is kept (R's URLdecode() makes a NUL and fails)
 "statout_readers/import_spv.charts": &u144
   kind: r_bug_fixed
   ref: U144
   reason: a case of the case-data box plot with a missing category is dropped, like one with a missing value; R (which decodes the plot since 0.4.3.7) lists it with the category 'NaN'
-"statout_readers/smcl_export_syntax.analysis": &u146
-  kind: r_bug_fixed
-  ref: U146
-  reason: SMCL {c 0xNN} is hexadecimal ({c 0x41} is A; R reads decimal, ")"), {c -(}/{c )-} render braces, and an unusable {dup} count is left out instead of NA
 "statout_readers_review/smcl_command_chunks.vector":
   kind: r_bug_fixed
   ref: U140
