@@ -69,7 +69,8 @@ rp_html_export <- function(fixture) {
   file.copy(file.path("tests", "report", "fixtures", "html", fixture), d)
   p <- metacheck:::.html_export_r_source(file.path(d, fixture))
   if (is.na(p)) return(NA)
-  list(file = sub(paste0(d, "/"), "", p, fixed = TRUE), lines = readLines(p))
+  # the code goes to <tempdir>/metacheck-recovered-code/<md5>/<code dir>/<file>
+  list(file = sub("^.*/metacheck-recovered-code/", "", p), lines = readLines(p))
 }
 
 rp_report_repository <- function(folder, modules, args = list()) {

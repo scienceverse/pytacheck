@@ -131,7 +131,7 @@ def rp_html_export(fixture: str) -> Any:
         lines = Path(p).read_text(encoding="utf-8").split("\n")
         if lines and lines[-1] == "":
             lines.pop()
-        return {"file": p.replace(d + "/", "", 1), "lines": lines}
+        return {"file": re.sub(r"^.*/metacheck-recovered-code/", "", p), "lines": lines}
     finally:
         shutil.rmtree(d, ignore_errors=True)
 
