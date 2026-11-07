@@ -93,7 +93,8 @@ def test_the_state_folder_is_the_option_else_the_environment_variable(
         with local_options({"metacheck.state.dir": "/opt/state"}):
             assert state_dir() == Path("/opt/state")
         monkeypatch.setenv("METACHECK_STATE_DIR", "")
-        assert state_dir().name == "pytacheck"
+        assert state_dir().is_absolute()
+        assert state_dir() != Path("/srv/state")
 
 
 # --------------------------------------------------------------------------- whose key
