@@ -30,9 +30,9 @@ def aspredicted_links(paper: Any) -> pd.DataFrame:
     mentions ``aspredicted.org``.
     """
     from metacheck._r import grepl
-    from metacheck.papers.tables import paper_table
+    from metacheck.archives import _paper_urls
 
-    urls = paper_table(paper, "url")
+    urls = _paper_urls(paper)
     if "href" not in urls.columns:
         # R: filter(grepl(..., href)) on the 0 x 0 url table of an empty paper
         # list sees `href <- NULL` and keeps the empty table

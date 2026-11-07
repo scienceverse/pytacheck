@@ -202,27 +202,30 @@ def _info_value(x: Any) -> Any:
     return paste_unlist(x, collapse="; ")
 
 
-def _paste_author(a: Any) -> list[str]:
-    """``paste(a$family, a$given, sep = ", ")``.
+def _author_name(a: Any) -> str:
+    """One author as ``family, given`` (``vapply(..., character(1))`` in R).
 
-    A zero-length argument (``NULL``) counts as ``""`` next to a non-empty
-    one (``"Solo, "``); when both are empty the result is ``character(0)``.
+    An organisation has a ``name`` or ``literal`` instead of ``family``; a missing part is
+    ``""`` and the comma is left out without a given name (metacheck 0.4.3.7).
     """
-    parts = []
-    for key in ("family", "given"):
-        v = field(a, key)
-        vals = [] if v is None else (unlist(v) if isinstance(v, list | dict) else [v])
-        parts.append(vals)
-    n = max(len(p) for p in parts)
-    if n == 0:
-        return []
-    return [
-        ", ".join(
-            "" if not p else ("NA" if (s := as_character(p[k % len(p)])) is None else s)
-            for p in parts
-        )
-        for k in range(n)
-    ]
+    def part(*keys: str) -> str:
+        for key in keys:
+            v = field(a, key)
+            if v is None:
+                continue
+            if isinstance(v, list | dict):
+                if len(v) != 1:
+                    raise ValueError(
+                        f"values must be length 1,\n but FUN(X[[i]]) result is length {len(v)}"
+                    )
+                v = unlist(v)[0]
+            s = as_character(v)
+            return "NA" if s is None else s
+        return ""
+
+    fam = part("family", "name", "literal")
+    giv = part("given")
+    return f"{fam}, {giv}" if giv else fam
 
 
 def _lookup_row(bd: Any) -> dict[str, Any]:
@@ -245,18 +248,7 @@ def _lookup_row(bd: Any) -> dict[str, Any]:
         authors = ""
     else:
         items = list(author_list.values()) if isinstance(author_list, Mapping) else author_list
-        pasted = [_paste_author(a) for a in (items if isinstance(items, list) else [items])]
-        # an author without family/given (an organisation) is written by its
-        # CSL name/literal; metacheck pasted "character(0)" into the string (U12)
-        names = []
-        for a, p in zip(items if isinstance(items, list) else [items], pasted, strict=True):
-            if not p:
-                org = a.get("name") or a.get("literal") if isinstance(a, Mapping) else None
-                if isinstance(org, str) and org:
-                    names.append(org)
-            else:
-                names.append(p[0] if len(p) == 1 else _deparse_chr(p))
-        authors = "; ".join(names)
+        authors = "; ".join(_author_name(a) for a in (items if isinstance(items, list) else [items]))
 
     def get(key: str) -> Any:
         return bd.get(key) if isinstance(bd, Mapping) else None
@@ -306,12 +298,6 @@ def _typed_value(key: str, v: Any) -> Any:
         except ValueError:
             return NA_real
     return v if isinstance(v, str) else as_character(v)
-
-
-def _deparse_chr(values: list[str]) -> str:
-    from metacheck.db.crossref import _deparse_chr_vector
-
-    return _deparse_chr_vector(values)
 
 
 def doi_lookup(doi: Any) -> pd.DataFrame | None:

@@ -408,38 +408,16 @@ def _paste(x: Any) -> str:
 
 
 def _url_decode(url: str) -> str:
-    """R ``utils::URLdecode()`` for one string.
+    """``.url_decode()`` (R/utils.R) for one string: ``%``-codes decoded.
 
-    Every ``%`` consumes the next two bytes, decoded with R's arithmetic (so a
-    non-hex pair can still give a byte); an out-of-range value becomes a NUL
-    byte with R's warning. Trailing NULs are dropped by ``rawToChar()``, an
-    embedded one is R's error.
+    A ``%`` that starts no two-digit hexadecimal code is kept as written (R's
+    ``utils::URLdecode()`` dropped characters or stopped); a value that cannot
+    be decoded (``%00``) is returned as given. See
+    :func:`metacheck.utils._url_decode`.
     """
-    raw = url.encode("utf-8", errors="surrogateescape")
-    out = bytearray()
-    i = 0
-    warned = False
-    while i < len(raw):
-        if raw[i] != 0x25:
-            out.append(raw[i])
-            i += 1
-            continue
-        pair = [raw[i + k] if i + k < len(raw) else 0 for k in (1, 2)]
-        pair = [c - 32 if c > 96 else c for c in pair]
-        pair = [c - 7 if c > 57 else c for c in pair]
-        val = (pair[0] - 48) * 16 + (pair[1] - 48)
-        if not 0 <= val <= 255:
-            val = 0
-            warned = True
-        out.append(val)
-        i += 3
-    if warned:
-        warnings.warn("out-of-range values treated as 0 in coercion to raw", stacklevel=3)
-    data = bytes(out).rstrip(b"\x00")
-    if b"\x00" in data:
-        shown = data.decode("utf-8", errors="replace").replace("\x00", "\\0")
-        raise ValueError(f"embedded nul in string: '{shown}'")
-    return data.decode("utf-8", errors="surrogateescape")
+    from metacheck.utils import _url_decode as decode
+
+    return str(decode([url])[0])
 
 
 def _invalid_utf8(s: str | None) -> bool:
@@ -670,10 +648,10 @@ def _collect_links(parts: Sequence[pd.DataFrame]) -> pd.DataFrame:
 
 
 def _url_rows(paper: Any, pattern: str, ignore_case: bool = True) -> pd.DataFrame:
-    """``paper_table(paper, "url") |> dplyr::filter(grepl(pattern, href, ignore.case))``."""
-    from metacheck.papers.tables import paper_table
+    """``_paper_urls(paper) |> dplyr::filter(grepl(pattern, href, ignore.case))``."""
+    from metacheck.archives import _paper_urls
 
-    urls = paper_table(paper, "url")
+    urls = _paper_urls(paper)
     if "href" not in urls.columns:
         # an empty paper list gives a table without columns: R's `href` is then
         # the (NULL) local variable and grepl() a logical(0) filter
@@ -1349,7 +1327,9 @@ def _host_rx() -> Any:
     return compile_r(f"(?:{_dataverse_host_regex()})(?![A-Za-z0-9-])", ignore_case=True, perl=True)
 
 
-_DOI_PARAM = r"""persistentId=doi:([^&\s"']+)"""
+_DOI_PARAM = r"""persistentId=doi(?::|%3A)([^&\s"']+)"""
+_HDL_PARAM = r"""persistentId=hdl(?::|%3A)([^&\s"']+)"""
+_HAS_PID = r"persistentId=(doi|hdl)(:|%3A)"
 _BARE_DOI = r"(10\.\d+/[A-Za-z0-9/._-]+)"
 
 
@@ -1380,29 +1360,42 @@ def _dataverse_parse(url: Any) -> pd.DataFrame:
             m = rx.search(u)  # type: ignore[arg-type]
             host[i] = m.group(0).lower() if m else None
 
+    def decode(raw: str) -> tuple[str | None, bool]:
+        """The URL-decoded value, and whether it was refused (a NUL, invalid UTF-8)."""
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                d = _url_decode(raw)
+        except ValueError:  # an embedded NUL
+            return None, True
+        if _invalid_utf8(d):
+            return None, True
+        return d, False
+
     doi_rx = compile_r(_DOI_PARAM, ignore_case=True, perl=True)
+    hdl_rx = compile_r(_HDL_PARAM, ignore_case=True, perl=True)
+    pid_rx = compile_r(_HAS_PID, ignore_case=True, perl=True)
     doi: list[str | None] = []
     bad = [False] * n
     for i, u in enumerate(urls):
-        m = doi_rx.search(u) if u is not None else None
         d = None
-        if m:
-            try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
-                    d = _url_decode(m.group(1))
-            except ValueError:  # an embedded NUL
-                d = None
-                bad[i] = True
-            if _invalid_utf8(d):
-                d = None
-                bad[i] = True
+        if u is not None:
+            m = doi_rx.search(u)
+            if m:
+                d, bad[i] = decode(m.group(1))
+            if d is None:
+                # a dataset with a Handle is kept with its "hdl:" label (#476)
+                hm = hdl_rx.search(u)
+                if hm:
+                    h, _ = decode(hm.group(1))
+                    d = None if h is None else f"hdl:{h}"
         doi.append(d)
 
-    if any(d is None and h and not b for d, h, b in zip(doi, has_url, bad, strict=True)):
+    has_pid = [u is not None and pid_rx.search(u) is not None for u in urls]
+    if any(d is None and h and not p for d, h, p in zip(doi, has_url, has_pid, strict=True)):
         bare_rx = compile_r(_BARE_DOI, perl=True)
         for i, u in enumerate(urls):
-            if doi[i] is None and has_url[i] and not bad[i]:
+            if doi[i] is None and has_url[i] and not has_pid[i]:
                 m = bare_rx.search(u)  # type: ignore[arg-type]
                 doi[i] = m.group(1) if m else None
 

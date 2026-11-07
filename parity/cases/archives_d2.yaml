@@ -913,7 +913,7 @@
     "x":
       "$expr":
         "r": "(function(x) list(attr(x, \"rights\"), attr(x, \"doi\")))(psycharchives_file_download(c(\"https://hdl.handle.net/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\")))"
-        "py": "lambda m: (lambda x: [m.pd.Series(x.attrs[\"rights\"]), m.pd.Series(x.attrs[\"doi\"])])(m.psycharchives.psycharchives_file_download([\"https://hdl.handle.net/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\"]))"
+        "py": "lambda m: (lambda x: [None, None] if x is None else [m.pd.Series(x.attrs[\"rights\"]), m.pd.Series(x.attrs[\"doi\"])])(m.psycharchives.psycharchives_file_download([\"https://hdl.handle.net/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\"]))"
   "mock_dir": "tests/archives_d2/mocks"
 - "id": "psycharchives_file_download.mock.restricted"
   "r": "identity"
