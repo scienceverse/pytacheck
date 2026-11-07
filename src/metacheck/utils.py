@@ -305,6 +305,8 @@ def _portable_path(path: Sequence[str | None]) -> list[str | None]:
             out.append(None)
             continue
         parts = p.replace("\\", "/").split("/")
+        if parts[-1] == "":  # R's strsplit() gives no empty part after a final "/"
+            parts.pop()
         out.append("/".join(str(n) for n in _portable_name(parts)))
     return out
 

@@ -180,7 +180,7 @@ modules is covered in [MODULES.md](MODULES.md).
 | `ref_summary`<br>Summarise References | `inst/modules/ref_summary.R` | [modules/ref_summary.py](../src/metacheck/modules/ref_summary.py) | [tests/mod_ref_pubpeer_summary](../tests/mod_ref_pubpeer_summary) | mod_ref_pubpeer_summary, bibr12, grobid12 | experimental | U16, U119 |
 | `reg_check`<br>RegCheck Preregistration Comparison | `inst/modules/reg_check.R` | [modules/reg_check.py](../src/metacheck/modules/reg_check.py) | [tests/mod_reg](../tests/mod_reg) | mod_reg | experimental | U79 |
 | `repo_check`<br>Repository Check | `inst/modules/repo_check.R` | [modules/repo_check.py](../src/metacheck/modules/repo_check.py)<br>[modules/_repo_check.py](../src/metacheck/modules/_repo_check.py) | [tests/mod_repo_check](../tests/mod_repo_check) | mod_repo_check | experimental | U79 |
-| `reproducibility_check`<br>Reproducibility Check | `inst/modules/reproducibility_check.R` | [modules/reproducibility_check.py](../src/metacheck/modules/reproducibility_check.py)<br>[modules/_reproducibility.py](../src/metacheck/modules/_reproducibility.py)<br>[modules/_reproducibility_py.py](../src/metacheck/modules/_reproducibility_py.py) | [tests/mod_repro](../tests/mod_repro) | mod_repro | experimental | D119 |
+| `reproducibility_check`<br>Reproducibility Check | `inst/modules/reproducibility_check.R` | [modules/reproducibility_check.py](../src/metacheck/modules/reproducibility_check.py)<br>[modules/_reproducibility.py](../src/metacheck/modules/_reproducibility.py)<br>[modules/_reproducibility_py.py](../src/metacheck/modules/_reproducibility_py.py)<br>[modules/_reproducibility_exec.py](../src/metacheck/modules/_reproducibility_exec.py) | [tests/mod_repro](../tests/mod_repro) | mod_repro | experimental | — |
 | `stat_check`<br>StatCheck | `inst/modules/stat_check.R` | [modules/stat_check.py](../src/metacheck/modules/stat_check.py) | [tests/stats](../tests/stats) | stats, bibr12, grobid12 | experimental | U4, U16 |
 | `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U16, U79, U125, U126, U205, U208, U218 |
 | `stat_p_exact`<br>Exact P-Values | `inst/modules/stat_p_exact.R` | [modules/stat_p_exact.py](../src/metacheck/modules/stat_p_exact.py) | [tests/mod_p_values](../tests/mod_p_values) | mod_p_values, bibr12, grobid12 | validated | D60, U16, U127, U204, U208 |
@@ -841,16 +841,16 @@ Python: [report/report.py](../src/metacheck/report/report.py). Tests: [tests/rep
 
 ### `R/reproducibility_check.R`
 
-Python: [repro/core.py](../src/metacheck/repro/core.py). Tests: [tests/repro_core](../tests/repro_core).
+Python: [repro/core.py](../src/metacheck/repro/core.py), [repro/layout.py](../src/metacheck/repro/layout.py), [repro/outcomes.py](../src/metacheck/repro/outcomes.py), [repro/recorded.py](../src/metacheck/repro/recorded.py), [repro/runsupport.py](../src/metacheck/repro/runsupport.py). Tests: [tests/repro_core](../tests/repro_core).
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
 | `repro_dependencies()` | [`metacheck.repro.core:repro_dependencies`](../src/metacheck/repro/core.py) | yes | — |  |
-| `repro_rewrite_paths()` | [`metacheck.repro.core:repro_rewrite_paths`](../src/metacheck/repro/core.py) | yes | U133 |  |
+| `repro_rewrite_paths()` | [`metacheck.repro.core:repro_rewrite_paths`](../src/metacheck/repro/core.py) | yes | — |  |
 | `repro_run_order()` | [`metacheck.repro.core:repro_run_order`](../src/metacheck/repro/core.py) | yes | — |  |
 | `repro_file_io()` | [`metacheck.repro.core:repro_file_io`](../src/metacheck/repro/core.py) | yes | — |  |
 | `repro_defined_vars()` | [`metacheck.repro.core:repro_defined_vars`](../src/metacheck/repro/core.py) | yes | — |  |
-| `repro_missing_inputs()` | [`metacheck.repro.core:repro_missing_inputs`](../src/metacheck/repro/core.py) | yes | U135 |  |
+| `repro_missing_inputs()` | [`metacheck.repro.core:repro_missing_inputs`](../src/metacheck/repro/core.py) | yes | — |  |
 | `repro_materialize_layout()` | [`metacheck.repro.core:repro_materialize_layout`](../src/metacheck/repro/core.py) | — | — |  |
 | `repro_write_scripts()` | [`metacheck.repro.core:repro_write_scripts`](../src/metacheck/repro/core.py) | — | — |  |
 | `repro_install_deps()` | [`metacheck.repro.core:repro_install_deps`](../src/metacheck/repro/core.py) | yes | — |  |

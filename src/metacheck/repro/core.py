@@ -56,6 +56,8 @@ from metacheck._r.regex import (
     sub,
 )
 from metacheck._values import as_float, as_str, is_missing
+from metacheck.utils import _portable_name as _utils_portable_name
+from metacheck.utils import _portable_path as _utils_portable_path
 
 __all__ = [
     "MaterialisedRoot",
@@ -2371,34 +2373,13 @@ def _dir_create(path: str) -> None:
 
 
 def _portable_name(x: str | None) -> str | None:
-    """Port of R/utils.R::.portable_name() for one part of a path.
-
-    A name usable on every operating system: ``<>:"|?*`` and control characters become
-    ``_``, a final dot or space is dropped, a name Windows reserves (``CON``, ``NUL``,
-    ...) gets a leading ``_``, and a name of only dots or spaces becomes ``_``. ``.``
-    and ``..`` are left for the caller.
-    """
-    if x is None:
-        return None
-    if x in (".", ".."):
-        return x
-    out = re.sub(r'[<>:"|?*\x00-\x1f\x7f]', "_", x)
-    out = re.sub(r"[. ]+$", "", out)
-    if re.match(r"^(con|prn|aux|nul|com[1-9]|lpt[1-9])([.].*)?$", out, re.IGNORECASE):
-        out = "_" + out
-    if x != "" and out == "":
-        out = "_"
-    return out
+    """:func:`metacheck.utils._portable_name` of one part of a path."""
+    return _utils_portable_name([x])[0]
 
 
 def _portable_path(path: str | None) -> str | None:
-    """Port of R/utils.R::.portable_path(): :func:`_portable_name` of each part."""
-    if path is None:
-        return None
-    parts = path.replace("\\", "/").split("/")
-    if parts and parts[-1] == "":
-        parts.pop()
-    return "/".join(str(_portable_name(p)) for p in parts)
+    """:func:`metacheck.utils._portable_path` of one path."""
+    return _utils_portable_path([path])[0]
 
 
 _LFS_HEAD = "version https://git-lfs.github.com/spec/"
