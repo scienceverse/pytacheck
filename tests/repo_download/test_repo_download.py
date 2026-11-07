@@ -1153,8 +1153,11 @@ def test_download_zip_to_cache_extracts_selected_rows(tmp_path: Path) -> None:
         out = _download_zip_to_cache(
             files, [0, 1, 2, 3], "https://api.github.com/repos/o/r/zipball", strip_dir=True
         )
-    assert out["file_location"].tolist()[:2] == files[".cache_path"].tolist()[:2]
-    assert out["file_location"].isna().tolist()[2:] == [True, True]  # not in the zip / empty member
+    cache = files[".cache_path"].tolist()
+    # an empty member is an empty file, as the archive states (metacheck #575, item 5)
+    assert out["file_location"].tolist() == [cache[0], cache[1], None, cache[3]]
+    assert Path(cache[3]).read_bytes() == b""
+    assert not Path(cache[2]).exists()  # not in the zip
     assert Path(out["file_location"].iloc[1]).read_bytes() == b"x <- 1\n"
     assert files["file_location"].isna().all()  # input untouched
 

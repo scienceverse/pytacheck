@@ -63,7 +63,6 @@
 ".metacheck_cache_subdir" = "metacheck.archives.cache:_metacheck_cache_subdir"
 ".metacheck_dir_size" = "metacheck.archives.cache:_metacheck_dir_size"
 "metacheck_cache_info" = "metacheck.archives.cache:metacheck_cache_info"
-"repo_info_cache" = "metacheck.archives.info_cache:repo_info_cache"
 "repo_info_cache_clear" = "metacheck.archives.info_cache:repo_info_cache_clear"
 ".repo_info_cache_dir" = "metacheck.archives.info_cache:_repo_info_cache_dir"
 ".repo_info_cache_key" = "metacheck.archives.info_cache:_repo_info_cache_key"

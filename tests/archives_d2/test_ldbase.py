@@ -24,10 +24,10 @@ from metacheck.archives.ldbase import (
     _ldbase_project_items,
     _ldbase_type,
     _read_html,
-    _waf_challenge_check,
     ldbase_info,
     ldbase_links,
 )
+from metacheck.archives.zip_peek import _WAF_CHALLENGE_WARNED, _waf_challenge_check
 
 Serve = Callable[[dict[str, httpx.Response]], list[httpx.Request]]
 
@@ -339,13 +339,13 @@ def test_info_not_a_ldbase_link_is_unfound(online: None) -> None:
 
 
 def test_info_firewall_check_is_the_links_error(serve: Serve, online: None) -> None:
-    ld._WAF_CHALLENGE_WARNED.clear()
+    _WAF_CHALLENGE_WARNED.clear()
     serve({DATASET: httpx.Response(202, headers={"x-amzn-waf-action": "challenge"})})
     with pytest.warns(UserWarning, match="firewall answered with a browser check"):
         info = ldbase_info(DATASET)
     assert info["error"].tolist() == ["firewall browser check (AWS WAF challenge); try again later"]
     assert info["ldbase_type"].tolist() == ["datasets"]
-    ld._WAF_CHALLENGE_WARNED.clear()
+    _WAF_CHALLENGE_WARNED.clear()
 
 
 def test_info_of_nothing_is_an_empty_table(online: None) -> None:
@@ -425,7 +425,7 @@ def test_ldbase_pages_are_asked_for_with_html_and_a_throttle(serve: Serve, onlin
 
 
 def test_waf_challenge_recognised_and_warns_once_per_host() -> None:
-    ld._WAF_CHALLENGE_WARNED.clear()
+    _WAF_CHALLENGE_WARNED.clear()
     url = "https://ldbase.org/system/files/x.csv"
     challenge = httpx.Response(202, headers={"x-amzn-waf-action": "challenge"})
     with pytest.warns(UserWarning, match="firewall answered with a browser check"):
@@ -435,7 +435,7 @@ def test_waf_challenge_recognised_and_warns_once_per_host() -> None:
         assert _waf_challenge_check(challenge, url) is True
     ok = httpx.Response(206)
     assert _waf_challenge_check(ok, url) is False
-    ld._WAF_CHALLENGE_WARNED.clear()
+    _WAF_CHALLENGE_WARNED.clear()
 
 
 # --------------------------------------------------------------------------- live (opt-in)

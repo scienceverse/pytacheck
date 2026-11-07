@@ -1451,7 +1451,9 @@ def _download_zip_to_cache(
                         data = src.read()
                 except Exception:  # noqa: S112 - R: an entry unzip() could not extract
                     continue
-                if not data:
+                # an empty member is an empty file, as the archive itself states
+                # (metacheck #575, item 5)
+                if not data and info.file_size != 0:
                     continue
                 try:
                     os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
