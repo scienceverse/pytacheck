@@ -40,6 +40,15 @@ def rc_mask(x: str) -> str:
     x = re.sub(r"data:[A-Za-z/+.-]+;base64,[A-Za-z0-9+/=]+", "data:<masked>", x)
     x = re.sub(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", "<date>", x)
     x = re.sub(r"Metacheck [0-9][0-9.]*( \(pytacheck [^)]*\))?", "Metacheck <version>", x)
+    # a module file of one's own has no chapter in the manual: metacheck's "How X works" box
+    # holding only the link to a made-up chapter is not written here (D131)
+    x = re.sub(
+        r"<details><summary>How [^<\n]* works</summary>\n\n::: \{\.fold\}\n\n"
+        r"Read more in the \[metacheck manual\]\(https://www\.scienceverse\.org/metacheck_book/chapters/"
+        r"mod-tests/[^)]*\)\.\n\n:::\n\n</details>\n\n",
+        "",
+        x,
+    )
     # a module's own description is its module's to compare, not the report's
     x = re.sub(
         r"(<details><summary>How [^<\n]* works</summary>\n\n::: \{\.fold\}\n\n).*?(\n\n:::\n\n</details>)",

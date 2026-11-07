@@ -16,6 +16,11 @@ rc_mask <- function(x) {
   x <- gsub("data:[A-Za-z/+.-]+;base64,[A-Za-z0-9+/=]+", "data:<masked>", x, perl = TRUE)
   x <- gsub("[0-9]{4}-[0-9]{2}-[0-9]{2}", "<date>", x, perl = TRUE)
   x <- gsub("Metacheck [0-9][0-9.]*( \\(pytacheck [^)]*\\))?", "Metacheck <version>", x, perl = TRUE)
+  # a module file of one's own has no chapter in the manual: metacheck's "How X works" box
+  # holding only the link to a made-up chapter is not written here (D131)
+  x <- gsub(paste0("<details><summary>How [^<\n]* works</summary>\n\n::: \\{\\.fold\\}\n\n",
+                   "Read more in the \\[metacheck manual\\]\\(https://www\\.scienceverse\\.org/metacheck_book/chapters/",
+                   "mod-tests/[^)]*\\)\\.\n\n:::\n\n</details>\n\n"), "", x, perl = TRUE)
   # a module's own description is its module's to compare, not the report's
   x <- gsub("(?s)(<details><summary>How [^<\n]* works</summary>\n\n::: \\{\\.fold\\}\n\n).*?(\n\n:::\n\n</details>)",
             "\\1<HOW-IT-WORKS>\\2", x, perl = TRUE)
