@@ -782,6 +782,7 @@
  ".binary_kind_raw": {
   "file": "R/code_check.R",
   "line": 8,
+  "ported": true,
   "python": "metacheck.codecheck.core:_binary_kind_raw"
  },
  ".bound": {
@@ -925,6 +926,7 @@
  ".code_env_pinned": {
   "file": "R/code_check.R",
   "line": 2455,
+  "ported": true,
   "python": "metacheck.codecheck.core:_code_env_pinned"
  },
  ".code_expand_html": {
@@ -966,21 +968,25 @@
  ".code_notebook_cell": {
   "file": "R/code_check.R",
   "line": 953,
+  "ported": true,
   "python": "metacheck.codecheck.core:_code_notebook_cell"
  },
  ".code_notebook_parts": {
   "file": "R/code_check.R",
   "line": 923,
+  "ported": true,
   "python": "metacheck.codecheck.core:_code_notebook_parts"
  },
  ".code_open_calls": {
   "file": "R/code_check.R",
   "line": 2479,
+  "ported": true,
   "python": "metacheck.codecheck.core:_code_open_calls"
  },
  ".code_pin_dates": {
   "file": "R/code_check.R",
   "line": 2405,
+  "ported": true,
   "python": "metacheck.codecheck.core:_code_pin_dates"
  },
  ".code_pos_in_string": {
@@ -998,11 +1004,13 @@
  ".code_renv_remote": {
   "file": "R/code_check.R",
   "line": 2323,
+  "ported": true,
   "python": "metacheck.codecheck.core:_code_renv_remote"
  },
  ".code_session_packages": {
   "file": "R/code_check.R",
   "line": 2346,
+  "ported": true,
   "python": "metacheck.codecheck.core:_code_session_packages"
  },
  ".code_strip_inline_comment": {
@@ -1137,6 +1145,7 @@
  ".csv_is_space_separated": {
   "file": "R/data_check_helpers.R",
   "line": 2152,
+  "ported": true,
   "python": "metacheck.datacheck.files:_csv_is_space_separated"
  },
  ".data_check_write_manifest": {
@@ -1160,7 +1169,8 @@
  ".data_file_sheets": {
   "file": "R/data_check_helpers.R",
   "line": 2708,
-  "python": "metacheck.datacheck.columns:_data_file_sheets"
+  "ported": true,
+  "python": "metacheck.datacheck.files:_data_file_sheets"
  },
  ".data_group_check_roster": {
   "file": "R/data_check_helpers.R",
@@ -1207,6 +1217,7 @@
  ".data_source_keys": {
   "file": "R/data_check_helpers.R",
   "line": 847,
+  "ported": true,
   "python": "metacheck.datacheck.files:_data_source_keys"
  },
  ".dataone_host": {
@@ -1734,6 +1745,18 @@
   "ported": true,
   "python": "metacheck.modules._data_check:dv_qualtrics_summary"
  },
+ ".dv_rds_workspace_findings": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.modules._data_check:dv_rds_workspace_findings"
+ },
+ ".dv_rds_workspace_summary_text": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.modules._data_check:dv_rds_workspace_summary_text"
+ },
  ".dv_scale_n_items": {
   "file": "",
   "line": 0,
@@ -1745,6 +1768,18 @@
   "line": 0,
   "ported": true,
   "python": "metacheck.modules._data_check:DV_SHORT_SCALE_MAX"
+ },
+ ".dv_space_csv_findings": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.modules._data_check:dv_space_csv_findings"
+ },
+ ".dv_space_csv_summary_text": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "metacheck.modules._data_check:dv_space_csv_summary_text"
  },
  ".dv_spreadsheet_exts": {
   "file": "",
@@ -2332,11 +2367,13 @@
  ".in_folder": {
   "file": "R/code_check.R",
   "line": 333,
+  "ported": true,
   "python": "metacheck.codecheck.core:_in_folder"
  },
  ".in_renv_folder": {
   "file": "R/code_check.R",
   "line": 330,
+  "ported": true,
   "python": "metacheck.codecheck.core:_in_renv_folder"
  },
  ".infer_group": {
@@ -2420,6 +2457,7 @@
  ".is_geotiff": {
   "file": "R/data_check_helpers.R",
   "line": 534,
+  "ported": true,
   "python": "metacheck.datacheck.files:_is_geotiff"
  },
  ".is_junk_above_header": {
@@ -2479,6 +2517,7 @@
  ".is_r_package_service_file": {
   "file": "R/data_check_helpers.R",
   "line": 694,
+  "ported": true,
   "python": "metacheck.datacheck.files:_is_r_package_service_file"
  },
  ".is_readable_archive": {
@@ -2625,6 +2664,7 @@
  ".kernel_language": {
   "file": "R/code_check.R",
   "line": 156,
+  "ported": true,
   "python": "metacheck.codecheck.core:_kernel_language"
  },
  ".key_check_request": {
@@ -3652,16 +3692,19 @@
  ".plan_readme_folder": {
   "file": "R/psychds-file-plan.R",
   "line": 350,
+  "ported": true,
   "python": "metacheck.datacheck.psychds:_plan_readme_folder"
  },
  ".plan_relative_paths": {
   "file": "R/psychds-file-plan.R",
   "line": 369,
+  "ported": true,
   "python": "metacheck.datacheck.psychds:_plan_relative_paths"
  },
  ".plan_strip_archive": {
   "file": "R/psychds-file-plan.R",
   "line": 384,
+  "ported": true,
   "python": "metacheck.datacheck.psychds:_plan_strip_archive"
  },
  ".poetry_to_pip": {
@@ -4079,7 +4122,8 @@
  ".rds_is_workspace": {
   "file": "R/data_check_helpers.R",
   "line": 2658,
-  "python": "metacheck.datacheck.columns:_rds_is_workspace"
+  "ported": true,
+  "python": "metacheck.datacheck.files:_rds_is_workspace"
  },
  ".read_bibr": {
   "file": "R/import-read.R",
@@ -4120,7 +4164,8 @@
  ".read_sav_any": {
   "file": "R/data_check_helpers.R",
   "line": 2425,
-  "python": "metacheck.datacheck.files:_read_sav_any"
+  "ported": true,
+  "python": "metacheck.datacheck._files_readers:read_stat_file"
  },
  ".recompose_eq": {
   "file": "R/match-reported.R",
@@ -5922,7 +5967,8 @@
  ".sheet_is_notes": {
   "file": "R/data_check_helpers.R",
   "line": 2720,
-  "python": "metacheck.datacheck.columns:_sheet_is_notes"
+  "ported": true,
+  "python": "metacheck.datacheck.files:_sheet_is_notes"
  },
  ".sites_share_variable": {
   "file": "R/match-reported.R",
@@ -6823,7 +6869,8 @@
  ".utf16_as_utf8": {
   "file": "R/data_check_helpers.R",
   "line": 2384,
-  "python": "metacheck.datacheck.files:_utf16_as_utf8"
+  "ported": true,
+  "python": "metacheck.datacheck._files_delim:read_delim"
  },
  ".utf8_lines": {
   "file": "R/data_check_helpers.R",
@@ -9157,18 +9204,6 @@
   "line": 46,
   "ported": true,
   "python": "metacheck.archives.info_cache:repo_info_cache_clear"
- },
- "repo_tree_block": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "metacheck.modules._data_check:repo_tree_block"
- },
- "repo_tree_rows": {
-  "file": "",
-  "line": 0,
-  "ported": true,
-  "python": "metacheck.modules._data_check:repo_tree_rows"
  },
  "report": {
   "file": "R/report.R",

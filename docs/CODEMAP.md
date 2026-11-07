@@ -156,11 +156,11 @@ modules is covered in [MODULES.md](MODULES.md).
 | `all_urls`<br>List All URLs | `inst/modules/all_urls.R` | [modules/all_urls.py](../src/metacheck/modules/all_urls.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D82, U16, U77, U79, U158, U206 |
 | `author_check`<br>Author Information | Python only | [modules/author_check.py](../src/metacheck/modules/author_check.py) | — | — | experimental | — |
 | `causal_claims`<br>Randomization and Causal Claims | `inst/modules/causal_claims.R` | [modules/causal_claims.py](../src/metacheck/modules/causal_claims.py) | [tests/mod_causal](../tests/mod_causal) | mod_causal | experimental | U79, U84, U85 |
-| `code_check`<br>Code Check | `inst/modules/code_check.R` | [modules/code_check.py](../src/metacheck/modules/code_check.py)<br>[modules/_code_check.py](../src/metacheck/modules/_code_check.py) | [tests/mod_code](../tests/mod_code) | mod_code | experimental | D118, U79, U86, U87, U89 |
-| `codebook_check`<br>Codebook Check | `inst/modules/codebook_check.R` | [modules/codebook_check.py](../src/metacheck/modules/codebook_check.py)<br>[modules/_codebook.py](../src/metacheck/modules/_codebook.py) | [tests/mod_codebook](../tests/mod_codebook) | mod_codebook | experimental | U91 |
+| `code_check`<br>Code Check | `inst/modules/code_check.R` | [modules/code_check.py](../src/metacheck/modules/code_check.py)<br>[modules/_code_check.py](../src/metacheck/modules/_code_check.py) | [tests/mod_code](../tests/mod_code) | mod_code | experimental | — |
+| `codebook_check`<br>Codebook Check | `inst/modules/codebook_check.R` | [modules/codebook_check.py](../src/metacheck/modules/codebook_check.py)<br>[modules/_codebook.py](../src/metacheck/modules/_codebook.py) | [tests/mod_codebook](../tests/mod_codebook) | mod_codebook | experimental | — |
 | `coi_check`<br>COI Check | `inst/modules/coi_check.R` | [modules/coi_check.py](../src/metacheck/modules/coi_check.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | D84, U95, U97 |
 | `coi_check_oi`<br>COI Check Overinclusive | `inst/modules/coi_check_oi.R` | [modules/coi_check_oi.py](../src/metacheck/modules/coi_check_oi.py) | [tests/mod_coi](../tests/mod_coi) | mod_coi, bibr12, grobid12 | experimental | D29, D84, U80 |
-| `data_check`<br>Data Check | `inst/modules/data_check.R` | [modules/data_check.py](../src/metacheck/modules/data_check.py)<br>[modules/_data_check.py](../src/metacheck/modules/_data_check.py) | [tests/mod_data_check](../tests/mod_data_check) | mod_data_check | experimental | U79 |
+| `data_check`<br>Data Check | `inst/modules/data_check.R` | [modules/data_check.py](../src/metacheck/modules/data_check.py)<br>[modules/_data_check.py](../src/metacheck/modules/_data_check.py) | [tests/mod_data_check](../tests/mod_data_check) | mod_data_check | experimental | — |
 | `ethics_check`<br>Ethics Approval Check | `inst/modules/ethics_check.R` | [modules/ethics_check.py](../src/metacheck/modules/ethics_check.py) | [tests/mod_ethics](../tests/mod_ethics) | mod_ethics, bibr12, grobid12 | experimental | D84, U79, U102, U208 |
 | `figure_table_refs`<br>Figure and Table References | Python only | [modules/figure_table_refs.py](../src/metacheck/modules/figure_table_refs.py) | — | — | experimental | — |
 | `funding_check`<br>Funding Check | `inst/modules/funding_check.R` | [modules/funding_check.py](../src/metacheck/modules/funding_check.py)<br>[modules/_funding.py](../src/metacheck/modules/_funding.py) | [tests/mod_funding](../tests/mod_funding) | mod_funding, bibr12, grobid12 | experimental | D29, D84, U79, U103, U208 |
@@ -170,7 +170,7 @@ modules is covered in [MODULES.md](MODULES.md).
 | `open_practices`<br>Open Practices Check | `inst/modules/open_practices.R` | [modules/open_practices.py](../src/metacheck/modules/open_practices.py) | [tests/mod_urls_open](../tests/mod_urls_open) | mod_urls_open, bibr12, grobid12 | experimental | D83, U16, U79, U83, U106, U107, U208 |
 | `power`<br>Power Analysis Check | `inst/modules/power.R` | [modules/power.py](../src/metacheck/modules/power.py)<br>[modules/_power.py](../src/metacheck/modules/_power.py) | [tests/mod_power](../tests/mod_power) | mod_power, bibr12, grobid12 | validated | U16 |
 | `prereg_check`<br>Preregistration Check | `inst/modules/prereg_check.R` | [modules/prereg_check.py](../src/metacheck/modules/prereg_check.py)<br>[modules/_prereg.py](../src/metacheck/modules/_prereg.py) | [tests/mod_prereg](../tests/mod_prereg) | mod_prereg | experimental | — |
-| `psychds_check`<br>Psych-DS Check | `inst/modules/psychds_check.R` | [modules/psychds_check.py](../src/metacheck/modules/psychds_check.py) | [tests/mod_psychds](../tests/mod_psychds) | mod_psychds | experimental | U78, U112, U113 |
+| `psychds_check`<br>Psych-DS Check | `inst/modules/psychds_check.R` | [modules/psychds_check.py](../src/metacheck/modules/psychds_check.py) | [tests/mod_psychds](../tests/mod_psychds) | mod_psychds | experimental | U78, U112, U113, U260 |
 | `ref_accuracy`<br>Reference Accuracy | `inst/modules/ref_accuracy.R` | [modules/ref_accuracy.py](../src/metacheck/modules/ref_accuracy.py) | [tests/mod_ref_accuracy](../tests/mod_ref_accuracy)<br>[tests/bibr12](../tests/bibr12) | mod_ref_accuracy, bibr12, grobid12 | experimental | U30, U83, U114 |
 | `ref_consistency`<br>Reference Consistency | `inst/modules/ref_consistency.R` | [modules/ref_consistency.py](../src/metacheck/modules/ref_consistency.py) | [tests/mod_ref_accuracy](../tests/mod_ref_accuracy)<br>[tests/bibr12](../tests/bibr12) | mod_ref_accuracy, bibr12, grobid12 | experimental | U16, U83, U115 |
 | `ref_miscitation`<br>Miscitation | `inst/modules/ref_miscitation.R` | [modules/ref_miscitation.py](../src/metacheck/modules/ref_miscitation.py) | [tests/mod_ref_db](../tests/mod_ref_db) | mod_ref_db, bibr12, grobid12 | experimental | U79, U117, U157 |
@@ -179,7 +179,7 @@ modules is covered in [MODULES.md](MODULES.md).
 | `ref_retraction`<br>RetractionWatch | `inst/modules/ref_retraction.R` | [modules/ref_retraction.py](../src/metacheck/modules/ref_retraction.py) | [tests/mod_ref_db](../tests/mod_ref_db) | mod_ref_db, bibr12, grobid12 | experimental | U79, U82, U157 |
 | `ref_summary`<br>Summarise References | `inst/modules/ref_summary.R` | [modules/ref_summary.py](../src/metacheck/modules/ref_summary.py) | [tests/mod_ref_pubpeer_summary](../tests/mod_ref_pubpeer_summary) | mod_ref_pubpeer_summary, bibr12, grobid12 | experimental | U16, U119 |
 | `reg_check`<br>RegCheck Preregistration Comparison | `inst/modules/reg_check.R` | [modules/reg_check.py](../src/metacheck/modules/reg_check.py) | [tests/mod_reg](../tests/mod_reg) | mod_reg | experimental | U79 |
-| `repo_check`<br>Repository Check | `inst/modules/repo_check.R` | [modules/repo_check.py](../src/metacheck/modules/repo_check.py)<br>[modules/_repo_check.py](../src/metacheck/modules/_repo_check.py) | [tests/mod_repo_check](../tests/mod_repo_check) | mod_repo_check | experimental | U79 |
+| `repo_check`<br>Repository Check | `inst/modules/repo_check.R` | [modules/repo_check.py](../src/metacheck/modules/repo_check.py)<br>[modules/_repo_check.py](../src/metacheck/modules/_repo_check.py) | [tests/mod_repo_check](../tests/mod_repo_check) | mod_repo_check | experimental | — |
 | `reproducibility_check`<br>Reproducibility Check | `inst/modules/reproducibility_check.R` | [modules/reproducibility_check.py](../src/metacheck/modules/reproducibility_check.py)<br>[modules/_reproducibility.py](../src/metacheck/modules/_reproducibility.py)<br>[modules/_reproducibility_py.py](../src/metacheck/modules/_reproducibility_py.py)<br>[modules/_reproducibility_exec.py](../src/metacheck/modules/_reproducibility_exec.py) | [tests/mod_repro](../tests/mod_repro) | mod_repro | experimental | — |
 | `stat_check`<br>StatCheck | `inst/modules/stat_check.R` | [modules/stat_check.py](../src/metacheck/modules/stat_check.py) | [tests/stats](../tests/stats) | stats, bibr12, grobid12 | experimental | U4, U16 |
 | `stat_effect_size`<br>Effect Sizes in t-tests and F-tests | `inst/modules/stat_effect_size.R` | [modules/stat_effect_size.py](../src/metacheck/modules/stat_effect_size.py) | [tests/mod_effect_size](../tests/mod_effect_size) | mod_effect_size, bibr12, grobid12 | validated | U16, U79, U125, U126, U205, U208, U218 |
@@ -452,17 +452,17 @@ Python: [codecheck/core.py](../src/metacheck/codecheck/core.py), [codecheck/_dec
 
 | R function | Python | Parity | Differences | Notes |
 |---|---|---|---|---|
-| `code_read()` | [`metacheck.codecheck.core:code_read`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
-| `code_lang()` | [`metacheck.codecheck.core:code_lang`](../src/metacheck/codecheck/core.py) | yes | U68 |  |
-| `code_extract_r()` | [`metacheck.codecheck.core:code_extract_r`](../src/metacheck/codecheck/core.py) | yes | D80, U153 |  |
+| `code_read()` | [`metacheck.codecheck.core:code_read`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_lang()` | [`metacheck.codecheck.core:code_lang`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_extract_r()` | [`metacheck.codecheck.core:code_extract_r`](../src/metacheck/codecheck/core.py) | yes | D80 |  |
 | `code_extract_py()` | [`metacheck.codecheck.core:code_extract_py`](../src/metacheck/codecheck/core.py) | yes | D81 |  |
 | `code_extract_qmd_py()` | [`metacheck.codecheck.core:code_extract_qmd_py`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_parse_r()` | [`metacheck.codecheck.core:code_parse_r`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_abs_path()` | [`metacheck.codecheck.core:code_abs_path`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_setwd()` | [`metacheck.codecheck.core:code_setwd`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_install_packages()` | [`metacheck.codecheck.core:code_install_packages`](../src/metacheck/codecheck/core.py) | yes | — |  |
-| `code_remove_comments()` | [`metacheck.codecheck.core:code_remove_comments`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
-| `code_line_stats()` | [`metacheck.codecheck.core:code_line_stats`](../src/metacheck/codecheck/core.py) | yes | D74 |  |
+| `code_remove_comments()` | [`metacheck.codecheck.core:code_remove_comments`](../src/metacheck/codecheck/core.py) | yes | — |  |
+| `code_line_stats()` | [`metacheck.codecheck.core:code_line_stats`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_library_lines()` | [`metacheck.codecheck.core:code_library_lines`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_library_names()` | [`metacheck.codecheck.core:code_library_names`](../src/metacheck/codecheck/core.py) | yes | — |  |
 | `code_packages()` | [`metacheck.codecheck.core:code_packages`](../src/metacheck/codecheck/core.py) | yes | — |  |
@@ -480,16 +480,16 @@ Python: [datacheck/checks.py](../src/metacheck/datacheck/checks.py), [datacheck/
 | `manifest_merge()` | [`metacheck.datacheck.files:manifest_merge`](../src/metacheck/datacheck/files.py) | — | — |  |
 | `data_group_llm()` | [`metacheck.datacheck.files:data_group_llm`](../src/metacheck/datacheck/files.py) | yes | — |  |
 | `data_study_roster()` | [`metacheck.datacheck.files:data_study_roster`](../src/metacheck/datacheck/files.py) | yes | — |  |
-| `text_peek()` | [`metacheck.datacheck.files:text_peek`](../src/metacheck/datacheck/files.py) | yes | U63 |  |
-| `txt_classify_content()` | [`metacheck.datacheck.files:txt_classify_content`](../src/metacheck/datacheck/files.py) | yes | U63, U217 |  |
-| `data_read_head()` | [`metacheck.datacheck.files:data_read_head`](../src/metacheck/datacheck/files.py) | yes | D10, D70, U216, U217 |  |
+| `text_peek()` | [`metacheck.datacheck.files:text_peek`](../src/metacheck/datacheck/files.py) | yes | — |  |
+| `txt_classify_content()` | [`metacheck.datacheck.files:txt_classify_content`](../src/metacheck/datacheck/files.py) | yes | U217 |  |
+| `data_read_head()` | [`metacheck.datacheck.files:data_read_head`](../src/metacheck/datacheck/files.py) | yes | D70, U216 |  |
 | `data_col_type()` | [`metacheck.datacheck.columns:data_col_type`](../src/metacheck/datacheck/columns.py) | yes | — |  |
 | `data_col_stats()` | [`metacheck.datacheck.columns:data_col_stats`](../src/metacheck/datacheck/columns.py) | yes | — |  |
-| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | D81, U64, U215 |  |
+| `parse_codebook()` | [`metacheck.datacheck.columns:parse_codebook`](../src/metacheck/datacheck/_columns_codebook.py) | yes | D81 |  |
 | `parse_qsf()` | [`metacheck.datacheck.columns:parse_qsf`](../src/metacheck/datacheck/_columns_qsf.py) | yes | D81 |  |
 | `match_column_labels()` | [`metacheck.datacheck.columns:match_column_labels`](../src/metacheck/datacheck/columns.py) | yes | U58 |  |
-| `data_check_scale_values()` | [`metacheck.datacheck.checks:data_check_scale_values`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55, U59 |  |
-| `data_check_outliers()` | [`metacheck.datacheck.checks:data_check_outliers`](../src/metacheck/datacheck/_checks_quality.py) | yes | U55 |  |
+| `data_check_scale_values()` | [`metacheck.datacheck.checks:data_check_scale_values`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
+| `data_check_outliers()` | [`metacheck.datacheck.checks:data_check_outliers`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
 | `data_check_constant()` | [`metacheck.datacheck.checks:data_check_constant`](../src/metacheck/datacheck/_checks_quality.py) | yes | D77 |  |
 | `data_check_empty()` | [`metacheck.datacheck.checks:data_check_empty`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
 | `data_check_design_name()` | [`metacheck.datacheck.checks:data_check_design_name`](../src/metacheck/datacheck/_checks_quality.py) | yes | — |  |
