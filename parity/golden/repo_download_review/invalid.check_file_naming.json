@@ -1,11 +1,72 @@
 {
   "id": "invalid.check_file_naming",
-  "ok": false,
-  "error": "input string 1 is invalid",
-  "warnings": [
-    "unable to translate 'caf<82>.csv' to a wide string"
-  ],
-  "value": null,
-  "metacheck_version": "0.3.3.2",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "file_name",
+      "rule",
+      "severity",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "caf<82>.csv",
+          "caf<82>.csv",
+          "READ<82>ME.txt",
+          "READ<82>ME.txt",
+          "code<82>book.csv",
+          "code<82>book.csv",
+          "x<82>.R",
+          "x<82>.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "special-characters",
+          "diacritics",
+          "special-characters",
+          "diacritics",
+          "special-characters",
+          "diacritics",
+          "special-characters",
+          "diacritics"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains non-ASCII characters (e.g. accented letters)",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains non-ASCII characters (e.g. accented letters)",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains non-ASCII characters (e.g. accented letters)",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains non-ASCII characters (e.g. accented letters)"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
