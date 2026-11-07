@@ -21,13 +21,14 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r import bind_rows, grepl, plural, r_sort_key, sub
+from metacheck.fileinfo.category import is_readme_name
 from metacheck.module import module
 from metacheck.modules import _repo_check as rc
 
 _NO_REPOS = (
     "We found no links to repositories on the Open Science Framework, Github, ResearchBox, "
     "DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, "
-    "or DataONE."
+    "DataONE, or LDbase."
 )
 
 _README_REPORT = (
@@ -41,7 +42,7 @@ _ZIP_REPORT = (
     "#### Archive Files\n\nThe following files are not ZIP archives: {}. We recommend the "
     "`.zip` format for archives: only ZIP stores its file listing in a way that lets a tool "
     "inspect the contents without downloading the whole archive, so a `.zip` is more "
-    "discoverable and re-usable than a `.7z`, `.rar`, or `.tar.gz`."
+    "discoverable and re-usable than a `.7z`, `.rar`, `.tar` or `.tar.gz`."
 )
 
 _EDAT_REPORT = (
@@ -121,7 +122,7 @@ _NAMING_SEVERITY_LABEL = {"bad": "Required", "suggestion": "Suggestion"}
     title="Repository Check",
     description="This module retrieves information from repositories.",
     details="""
-        The Repository Check module lists files on the OSF, GitHub, ResearchBox, DSpace (PsychArchives and other legacy- and DSpace 7-based installations), Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, and DataONE (Arctic Data Center, KNB, and other member nodes) based on links in the manuscript.
+        The Repository Check module lists files on the OSF, GitHub, ResearchBox, DSpace (PsychArchives and other legacy- and DSpace 7-based installations), Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, DataONE (Arctic Data Center, KNB, and other member nodes), and LDbase based on links in the manuscript.
 
         Listing a repository's files never requires an API key, but some hosts
         answer faster or more completely with one: OSF allows 100 requests/hour
@@ -158,18 +159,24 @@ _NAMING_SEVERITY_LABEL = {"bad": "Required", "suggestion": "Suggestion"}
         "downloading it (one Range request per archive, see [zip_peek()]) and list its "
         "contents in place of the archive row. Set FALSE to leave archives as single opaque "
         "entries and make no per-archive request. Only `.zip` can be inspected this way; "
-        "other archive formats have no tail index.",
+        "other archive formats have no tail index. A plain (uncompressed) `.tar` of known "
+        "size up to 50 MB is listed too, by downloading it once; its files are later taken "
+        "from that copy.",
         "osf_license": "if TRUE, make one extra lightweight API request (`?embed=license`, "
-        "not the full four-call project-metadata lookup) per distinct OSF project linked, to "
-        "include OSF's licence in `repo_metadata`. FALSE (the default) skips this, since it "
+        "not the full four-call project-metadata lookup) per OSF project, to include OSF's "
+        "licence in `repo_metadata`. A cited registration is looked up as the project it was "
+        "registered from, which is where its files are listed from; when that project is "
+        "closed or has no licence, the registration's own licence is used. FALSE (the "
+        "default) skips this, since it "
         "is one additional request per OSF project on top of what this module otherwise "
         "makes -- meaningful added latency across a large corpus. Every other supported "
         "repository platform (Dryad, Zenodo, Dataverse, Figshare, ReShare, GitHub, GitLab, "
         "PsychArchives) already fetches its own licence as part of a request this module "
         "makes anyway, so `repo_metadata` has their licence populated regardless of this "
-        "parameter.",
+        "parameter. ResearchBox's licence costs one extra request per downloaded box, which "
+        "is always made.",
         "cache": "if TRUE, reuse a previously cached Dryad/Zenodo listing (see "
-        "[repo_info_cache()]) instead of re-querying the host's API for a repository already "
+        "[repo_info_cache_clear()]) instead of re-querying the host's API for a repository already "
         "looked up. FALSE (the default) always queries fresh. This is a SEPARATE cache from "
         "the downloaded-file-bytes cache ([repo_cache_dir()]) -- listing a repository and "
         "downloading its files are different costs. Worth enabling for a corpus build likely "
@@ -329,8 +336,12 @@ def _repo_check(
     repo_metadata = bind_rows(meta_parts).reset_index(drop=True)
 
     all_files, is_readme = _prepare_files(all_files, repos)
+    listed_tars: list[str] = []
     if peek_zips is True and len(all_files) > 0:
-        all_files = _peek_zips(all_files, cache, skip_on_api_limit)
+        all_files, listed_tars = _peek_zips(all_files, cache, skip_on_api_limit)
+
+    # files that do not belong in a repository ----
+    all_files, useless_files = _split_useless(all_files)
 
     # preliminary classification + study grouping ----
     all_files, roster_check, group_no_evidence = _classify(all_files, model, params, paper)
@@ -348,9 +359,14 @@ def _repo_check(
 
     repo_sum = _summarise_repos(repos.df, all_files)
 
-    report, summary, flags = _report(all_files, repo_sum, is_readme, roster_check)
+    report, summary, flags = _report(
+        all_files, repo_sum, is_readme, roster_check, useless_files, listed_tars
+    )
 
     # traffic_light ----
+    # Files that do not belong in a repository (useless_files) are something to
+    # fix: red for a "problem" kind (TU/e's data managers require them removed
+    # before a package is archived), yellow for a "suggestion" kind.
     green = (
         flags["zip_n"] == 0
         and flags["repo_no_readme"] == 0
@@ -358,8 +374,10 @@ def _repo_check(
         and not flags["roster"]
         and flags["n_naming_bad"] == 0
         and flags["n_closed_unreachable"] == 0
+        and flags["n_unchecked"] == 0
+        and flags["n_useless_suggestion"] == 0
     )
-    tl = "green" if green else "yellow"
+    tl = "red" if flags["n_useless_problem"] > 0 else "green" if green else "yellow"
 
     summary_table = _summary_table(repo_sum, all_files, flags, roster_check)
     summary_text = "".join(f"\n-  {s}" for s in summary)
@@ -377,6 +395,9 @@ def _repo_check(
         "repo_metadata": repo_metadata,
         "roster_check": roster_check,
         "group_no_evidence": group_no_evidence,
+        # Files that do not belong in a repository, left out of `table`: repo_url,
+        # file_path, kind and severity ("problem" or "suggestion")
+        "useless_files": useless_files,
         "na_replace": 0,
         "traffic_light": tl,
         "report": report,
@@ -397,38 +418,21 @@ def _online_listings(
     osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
     osf_paper_id = osf_ids[0] if osf_ids else first_pid()
 
-    osf_meta = rc.meta_frame()
-    if osf_license is True and osf_urls:
-        osf_meta = _osf_license_meta(osf_urls)
-    osf_files = rc.list_osf(repos, osf_urls, osf_paper_id, bar, cache)
+    osf_files, osf_meta = rc.list_osf(repos, osf_urls, osf_paper_id, bar, cache, osf_license)
 
     github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
     gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
-    rb_files = rc.list_researchbox(repos, repos.urls("researchbox"), bar)
+    rb_files, rb_meta = rc.list_researchbox(repos, repos.urls("researchbox"), bar, cache)
     pa_files, pa_meta = rc.list_dspace(repos, repos.urls("dspace"), bar, cache)
     dspace7_files, dspace7_meta = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
     listings = _api_listings(repos, cache, bar)
+    ldbase_files, ldbase_meta = rc.list_ldbase(repos, repos.urls("ldbase"), bar, cache)
     files = [osf_files, github_files, gitlab_files, rb_files, pa_files, dspace7_files]
-    meta = [osf_meta, github_meta, gitlab_meta, pa_meta, dspace7_meta]
-    return files + [f for f, _ in listings.values()], meta + [m for _, m in listings.values()]
-
-
-def _osf_license_meta(osf_urls: list[str]) -> pd.DataFrame:
-    """The ``osf_license = TRUE`` lookup: one ``?embed=license`` request per project."""
-    from metacheck.archives.osf import osf_check_id
-    from metacheck.archives.osf_metadata import _osf_license
-
-    ids = osf_check_id(osf_urls)
-    licenses: list[str | None] = []
-    for osf_id in ids:
-        if osf_id is None:
-            licenses.append(None)
-            continue
-        try:
-            licenses.append(_osf_license(osf_id))
-        except Exception:
-            licenses.append(None)
-    return rc.meta_frame(osf_urls, rc.NA_SCALAR, licenses)
+    meta = [osf_meta, github_meta, gitlab_meta, rb_meta, pa_meta, dspace7_meta]
+    return (
+        files + [f for f, _ in listings.values()] + [ldbase_files],
+        meta + [m for _, m in listings.values()] + [ldbase_meta],
+    )
 
 
 def _api_listings(
@@ -454,7 +458,6 @@ def _api_listings(
         lambda: zenodo.zenodo_info(urls, pb=bar, cache=cache),
         "zenodo_url",
         rc.zenodo_row,
-        col_chr=True,
     )
     dv = repos.urls("dataverse")
     out["dataverse"] = rc._api_listing(
@@ -501,12 +504,10 @@ def _prepare_files(all_files: pd.DataFrame, repos: rc.Repos) -> tuple[pd.DataFra
     if len(all_files) > 0:
         # a file listed twice (one record linked as a URL and as a DOI, or a
         # folder given twice) is kept once: a remote file is identified by its
-        # file_url and file_path, a local one by its location. R tests
-        # duplicated(file_url) & duplicated(file_path) each on its own, so a
-        # file whose URL and path each occurred before, in different rows, was
-        # dropped as well: every local file (no file_url) whose relative path
-        # another listed file shares, e.g. data.csv in a second folder
-        # (UPSTREAM_ISSUES U121)
+        # file_url and file_path, a local one by its location. metacheck tested
+        # duplicated(file_url) & duplicated(file_path) each on its own until 0.4,
+        # which dropped a file whose URL and path each occurred before, in
+        # different rows (UPSTREAM_ISSUES U121)
         key = "file_path" if "file_path" in all_files.columns else "file_name"
         n = len(all_files)
         urls = rc.vals(all_files["file_url"]) if "file_url" in all_files.columns else [None] * n
@@ -522,9 +523,9 @@ def _prepare_files(all_files: pd.DataFrame, repos: rc.Repos) -> tuple[pd.DataFra
 
         def ident(i: int) -> tuple[Any, ...]:
             path = None if rc._na(paths[i]) else paths[i]
-            if not rc._na(urls[i]) and urls[i] != "":
+            if not rc._na(urls[i]):
                 return ("url", urls[i], path)
-            if not rc._na(locs[i]) and locs[i] != "":
+            if not rc._na(locs[i]):
                 return ("location", locs[i])
             return ("path", None if rc._na(repo_urls[i]) else repo_urls[i], path)
 
@@ -563,10 +564,7 @@ def _prepare_files(all_files: pd.DataFrame, repos: rc.Repos) -> tuple[pd.DataFra
             dtype="string",
         )
         all_files = _drop_r_packages(all_files)
-        is_readme = [
-            bool(v)
-            for v in grepl("readme|read[_ ]me", rc.vals(all_files["file_name"]), ignore_case=True)
-        ]
+        is_readme = is_readme_name(rc.vals(all_files["file_name"]))
         if "file_type" not in all_files.columns:
             all_files["file_type"] = pd.Series([None] * len(all_files), dtype="string")
         ftype = rc.vals(all_files["file_type"])
@@ -630,8 +628,15 @@ def _as_logical(x: Any) -> bool | None:
 
 def _peek_zips(
     all_files: pd.DataFrame, cache: bool = False, skip_on_api_limit: bool = False
-) -> pd.DataFrame:
+) -> tuple[pd.DataFrame, list[str]]:
     """Replace each listable ``.zip`` row by the archive's entries (one Range request each).
+
+    A plain ``.tar`` has no index either, but its headers are not compressed,
+    so one of up to 50 MB is downloaded once, whole, and listed from that copy
+    (``_tar_peek()``, metacheck #487); the download step later takes its members
+    from the same copy. Returns the table and the names of the tars that were
+    listed: a listed tar is still not as reusable as a zip, so the report's
+    archive advice keeps naming it.
 
     *cache* and *skip_on_api_limit* go to :func:`~metacheck.archives.zip_peek.zip_peek`,
     with the size the listing gave (which saves a HEAD request). A zip already
@@ -640,6 +645,7 @@ def _peek_zips(
     is listed from the file, with no request: peeking at the web page only
     earned a 406. Only rows with a ``file_url`` are expanded, as before.
     """
+    from metacheck.archives.tar_peek import _tar_peek
     from metacheck.archives.zip_peek import _is_zip, _zip_local_source, zip_peek
     from metacheck.fileinfo.types import file_types
 
@@ -648,8 +654,13 @@ def _peek_zips(
     is_zip = [
         bool(z) and not rc._na(u) and u != "" for z, u in zip(_is_zip(names), urls, strict=True)
     ]
-    if not any(is_zip):
-        return all_files
+    is_tar = [
+        bool(t) and not rc._na(u) and u != ""
+        for t, u in zip(grepl("[.]tar$", names, ignore_case=True), urls, strict=True)
+    ]
+    is_any = [z or t for z, t in zip(is_zip, is_tar, strict=True)]
+    if not any(is_any):
+        return all_files, []
     local = _zip_local_source(all_files)
     sources = [u if loc is None else loc for u, loc in zip(urls, local, strict=True)]
     sizes = (
@@ -664,27 +675,35 @@ def _peek_zips(
 
     expanded: list[pd.DataFrame] = []
     consumed: list[int] = []
-    zpb = make_pb(sum(is_zip), "Reading zip contents [:bar] :current/:total")
+    zpb = make_pb(sum(is_any), "Reading archive contents [:bar] :current/:total")
     try:
-        for i in [k for k, z in enumerate(is_zip) if z]:
+        for i in [k for k, z in enumerate(is_any) if z]:
             try:
-                peek = zip_peek(
-                    sources[i], cache=cache, skip_on_api_limit=skip_on_api_limit, size=sizes[i]
-                )
+                if is_tar[i]:
+                    peek = _tar_peek(
+                        sources[i], size=sizes[i], cache=cache, skip_on_api_limit=skip_on_api_limit
+                    )
+                else:
+                    peek = zip_peek(
+                        sources[i], cache=cache, skip_on_api_limit=skip_on_api_limit, size=sizes[i]
+                    )
             except Exception:
                 peek = None
             with contextlib.suppress(Exception):  # a progress display must never break a run
                 zpb.tick()
             if peek is not None and len(peek) > 0:
-                expanded.append(_zip_rows(all_files, i, names[i], sources[i], peek, first_type))
+                expanded.append(
+                    _zip_rows(all_files, i, names[i], sources[i], peek, first_type, is_tar[i])
+                )
                 consumed.append(i)
     finally:
         with contextlib.suppress(Exception):
             zpb.terminate()
+    listed_tars = [names[i] for i in consumed if is_tar[i]]
     if not consumed:
-        return all_files
+        return all_files, listed_tars
     kept = all_files.drop(index=consumed)
-    return bind_rows([kept, bind_rows(expanded)]).reset_index(drop=True)
+    return bind_rows([kept, bind_rows(expanded)]).reset_index(drop=True), listed_tars
 
 
 def _zip_rows(
@@ -694,6 +713,7 @@ def _zip_rows(
     archive_url: Any,
     peek: pd.DataFrame,
     first_type: Mapping[Any, Any],
+    is_tar: bool = False,
 ) -> pd.DataFrame:
     """Row *i* of *all_files* (a ``.zip``) repeated for each entry *peek* lists.
 
@@ -714,7 +734,12 @@ def _zip_rows(
     rows["file_size"] = pd.Series([rc._as_num(v) for v in rc.vals(peek["size"])], dtype="float64")
     rows["file_url"] = pd.Series([None] * n, dtype="string")
     rows["archive_url"] = pd.Series([archive_url] * n, dtype="string")
-    rows["archive_member"] = pd.Series(members, dtype="string")
+    # a tar member is taken by its name exactly as stored; `archive_format` tells
+    # download_repo_files() which way to fetch it, since an archive's URL need not
+    # end in .tar
+    stored = [str(n) for n in rc.vals(peek["member"])] if is_tar else members
+    rows["archive_member"] = pd.Series(stored, dtype="string")
+    rows["archive_format"] = pd.Series(["tar" if is_tar else "zip"] * n, dtype="string")
     size = rc._as_num(all_files["file_size"].iloc[i]) if "file_size" in all_files.columns else None
     rows["archive_size"] = pd.Series([size] * n, dtype="float64")
     if "file_location" in rows.columns:
@@ -771,6 +796,33 @@ def _classify(
             group_no_evidence = grp.attrs.get("no_evidence") is True
     all_files["group"] = pd.Series([None if rc._na(g) else g for g in group], dtype="string")
     return all_files, roster_check, group_no_evidence
+
+
+def _split_useless(all_files: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Leave out the files software creates by itself (``.useless_file_kind()``).
+
+    Operating-system files such as ``__MACOSX/`` and ``.DS_Store``, RStudio's
+    ``.Rproj.user/``, Jupyter checkpoints, compiled Python files, open-document
+    lock files, editor backups, temporary files, ``.Rhistory``, and as
+    suggestions version-control folders and editor settings. Left out after
+    zips are opened, so they are never counted, classified or flagged for
+    naming; listed in the report and returned as ``useless_files``.
+    """
+    from metacheck.archives._useless import useless_file_kind, useless_file_severity
+
+    columns = ["repo_url", "file_path", "kind", "severity"]
+    if len(all_files) == 0:
+        return all_files, pd.DataFrame({c: pd.Series([], dtype="string") for c in columns})
+    paths = rc.vals(all_files["file_path"])
+    names = rc.vals(all_files["file_name"])
+    kind = useless_file_kind([n if rc._na(p) else p for p, n in zip(paths, names, strict=True)])
+    hit = [k is not None for k in kind]
+    cols = [c for c in ("paper_id", "repo_url", "file_path") if c in all_files.columns]
+    useless = rc.take(all_files.loc[:, cols], hit).reset_index(drop=True)
+    kinds = [k for k in kind if k is not None]
+    useless["kind"] = pd.Series(kinds, dtype="string")
+    useless["severity"] = pd.Series(useless_file_severity(kinds), dtype="string")
+    return rc.take(all_files, [not h for h in hit]).reset_index(drop=True), useless
 
 
 def _summarise_repos(repos: pd.DataFrame, all_files: pd.DataFrame) -> pd.DataFrame:
@@ -859,6 +911,8 @@ def _report(
     repos: pd.DataFrame,
     is_readme: list[bool],
     roster_check: Any,
+    useless_files: pd.DataFrame,
+    listed_tars: Sequence[str] = (),
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
     from metacheck.report.blocks import collapse_section, link, scroll_table
@@ -870,8 +924,32 @@ def _report(
         f"{plural(n_repos, 'repository', 'repositories')}."
     )
 
+    # repositories that could not be checked: a repository with a recorded
+    # failure and no files (the OSF API down, a record that was not found, a
+    # private link) was never listed. It is not "empty", and nothing is known
+    # about its README (metacheck #501). It is named, with its reason.
+    unchecked = (repos["repo_error"].notna() & (repos["files_n"] == 0)).to_numpy(dtype=bool)
+    n_unchecked = int(unchecked.sum())
+    summary_unchecked = None
+    report_unchecked: list[str] = []
+    if n_unchecked > 0:
+        un_urls = [u for u, k in zip(rc.vals(repos["repo_url"]), unchecked, strict=True) if k]
+        un_why = [e for e, k in zip(rc.vals(repos["repo_error"]), unchecked, strict=True) if k]
+        listing = "; ".join(f"{_na_str(u)} ({e})" for u, e in zip(un_urls, un_why, strict=True))
+        summary_unchecked = (
+            f"We could not check {n_unchecked} "
+            f"{plural(n_unchecked, 'repository', 'repositories')}: {listing}."
+        )
+        report_unchecked = [
+            "#### Repositories that could not be checked",
+            "These repositories are linked in the paper, but their contents could not be "
+            "retrieved, so nothing below describes them. When the reason is that the platform "
+            "did not answer, running the check again later may work.",
+            *(f"- {_na_str(u)}: {e}" for u, e in zip(un_urls, un_why, strict=True)),
+        ]
+
     # empty repos
-    repo_no_files = int((repos["files_n"] == 0).sum())
+    repo_no_files = int(((repos["files_n"] == 0).to_numpy(dtype=bool) & ~unchecked).sum())
     summary_repo = report_repo = None
     if repo_no_files > 0:
         summary_repo = (
@@ -881,7 +959,8 @@ def _report(
 
     # missing READMEs
     readme_n = sum(is_readme)
-    repo_no_readme = int((repos["files_readme"] == 0).sum())
+    # only repositories that were listed (see `unchecked` above)
+    repo_no_readme = int(((repos["files_readme"] == 0).to_numpy(dtype=bool) & ~unchecked).sum())
     summary_readme = (
         f"We found {readme_n} README file{plural(readme_n)} and {repo_no_readme} "
         f"{plural(repo_no_readme, 'repository', 'repositories')} without READMEs."
@@ -895,18 +974,17 @@ def _report(
 
     # zip files
     zip_n = int(repos["files_zip"].sum())
-    summary_zip = report_zip = None
+    summary_zip = None
+    # A plain .tar listed by the peek (by downloading it) is no longer an archive
+    # row, but the advice still applies to it, so it is named here too.
+    zip_files = [n for n, t in zip(names, ftypes, strict=True) if not rc._na(t) and t == "archive"]
+    nonzip = [
+        n
+        for n, z in zip(zip_files, grepl("[.]zip$", zip_files, ignore_case=True), strict=True)
+        if not z
+    ] + list(listed_tars)
+    report_zip = _ZIP_REPORT.format(", ".join(_na_str(n) for n in nonzip)) if nonzip else None
     if zip_n > 0:
-        zip_files = [
-            n for n, t in zip(names, ftypes, strict=True) if not rc._na(t) and t == "archive"
-        ]
-        nonzip = [
-            n
-            for n, z in zip(zip_files, grepl("[.]zip$", zip_files, ignore_case=True), strict=True)
-            if not z
-        ]
-        if nonzip:
-            report_zip = _ZIP_REPORT.format(", ".join(_na_str(n) for n in nonzip))
         summary_zip = f"We found {zip_n} archive file{plural(zip_n)}."
 
     # proprietary E-Prime binary files
@@ -1084,6 +1162,9 @@ def _report(
                 "suggestion."
             )
 
+    # files that do not belong in a repository
+    useless = _useless_text(useless_files)
+
     # classification dropdown
     report_classification: list[Any] = []
     class_mask = [not rc._na(d) for d in dtypes]
@@ -1142,6 +1223,7 @@ def _report(
         repo_tbl = repo_tbl.drop(columns="Error")
 
     blocks: tuple[Any, ...] = (
+        *report_unchecked,
         report_repo,
         "#### Repositories" if len(repo_tbl) else None,
         scroll_table(repo_tbl, maxrows=10),
@@ -1155,6 +1237,7 @@ def _report(
         report_unknown,
         report_roster,
         *report_naming,
+        *useless["report"],
         *report_classification,
     )
     report: list[Any] = [b for b in blocks if b is not None]
@@ -1162,6 +1245,7 @@ def _report(
     summary = [
         s
         for s in (
+            summary_unchecked,
             summary_repo,
             summary_files,
             summary_readme,
@@ -1172,6 +1256,7 @@ def _report(
             summary_unknown,
             summary_roster,
             summary_naming,
+            *useless["summary"],
         )
         if s is not None
     ]
@@ -1182,9 +1267,97 @@ def _report(
         "roster": report_roster is not None,
         "n_naming_bad": n_naming_bad,
         "n_closed_unreachable": len(unreachable),
+        "n_unchecked": n_unchecked,
+        "unchecked": unchecked,
+        "n_useless_problem": useless["n_problem"],
+        "n_useless_suggestion": useless["n_suggestion"],
         "naming_issues_by_paper": naming_by_paper,
     }
     return report, summary, flags
+
+
+_USELESS_REMOVE = (
+    "*Remove these:* "
+    "*Operating system* files: macOS adds a `__MACOSX` folder and a `._` copy of "
+    "every file it puts in a zip, and `.DS_Store` files to folders; Windows "
+    "adds `Thumbs.db` and `desktop.ini`. On a Mac, create zips from the "
+    "command line with `zip -r -X`, or remove them afterwards with "
+    '`zip -d archive.zip "__MACOSX/*" "*.DS_Store"`. '
+    "*RStudio session files* (`.Rproj.user/`) hold open tabs and unsaved "
+    "edits; *R history* (`.Rhistory`) lists the commands typed in a session "
+    "and can hold file paths and passwords; *Jupyter checkpoints* "
+    "(`.ipynb_checkpoints/`) are automatic copies of notebooks; *compiled "
+    "Python files* (`__pycache__/`, `.pyc`) are recreated when the code runs; "
+    "*open-document lock files* (`~$...docx`, `.~lock...#`) are left while a "
+    "document is open; *editor backups* (`file~`, `.bak`, `.swp`) and "
+    "*temporary files* (`.tmp`, `.temp`) are copies a program made by itself."
+)
+_USELESS_KEEP = (
+    "*Keep only on purpose:* *version control* folders (`.git`, `.svn`, `.hg`) "
+    "hold the project's history, which can include earlier versions of files "
+    "and data that was later removed; *editor settings* (`.idea`, `.vscode`) "
+    "can hold paths on your own computer. "
+    "A `.gitignore` based on GitHub's templates "
+    "(https://github.com/github/gitignore) keeps them out of a repository."
+)
+
+
+def _kinds_of(kinds: Sequence[str]) -> str:
+    """``table(kind)`` as ``"kind (n), kind (n)"`` (names in R's collation)."""
+    counts: dict[str, int] = {}
+    for k in kinds:
+        counts[k] = counts.get(k, 0) + 1
+    return ", ".join(f"{k} ({counts[k]})" for k in sorted(counts, key=r_sort_key))
+
+
+def _useless_text(useless_files: pd.DataFrame) -> dict[str, Any]:
+    """The summary lines and report of the files left out as not belonging in a repository.
+
+    A "problem" kind turns the light red (these files must be removed before a
+    package is archived); a "suggestion" kind (version control, editor
+    settings, which can be kept on purpose) turns it yellow.
+    """
+    from metacheck.report.blocks import scroll_table
+
+    kinds = list(rc.vals(useless_files["kind"]))
+    sev = rc.vals(useless_files["severity"])
+    n = len(kinds)
+    problem = [k for k, v in zip(kinds, sev, strict=True) if v == "problem"]
+    suggestion = [k for k, v in zip(kinds, sev, strict=True) if v != "problem"]
+    n_p, n_s = len(problem), len(suggestion)
+    summary: list[str] = []
+    if n_p > 0:
+        summary.append(
+            f"We left out {n_p} file{plural(n_p)} that do{'es' if n_p == 1 else ''} not belong in "
+            f"a repository: {_kinds_of(problem)}. Remove {plural(n_p, 'it', 'them')} from the "
+            "repository."
+        )
+    if n_s > 0:
+        pron = plural(n_s, "it", "them")
+        summary.append(
+            f"We left out {n_s} file{plural(n_s)} of {_kinds_of(suggestion)}. Keep {pron} only "
+            f"if you mean to share {pron}."
+        )
+    report: list[Any] = []
+    if n > 0:
+        table = pd.DataFrame(
+            {
+                "Repository": useless_files["repo_url"].astype("string"),
+                "File": useless_files["file_path"].astype("string"),
+                "Kind": useless_files["kind"].astype("string"),
+            }
+        )
+        report = [
+            "#### Files that do not belong in the repository",
+            f"We left out {n} file{plural(n)} that software creates by itself, not the "
+            f"authors: {_kinds_of(kinds)}. They hold nothing a reader can use, but they clutter "
+            "the repository, and software can mistake them for real files (for example a `._` "
+            "copy of a `.csv` for data).",
+            _USELESS_REMOVE,
+            _USELESS_KEEP,
+            scroll_table(table, maxrows=10),
+        ]
+    return {"summary": summary, "report": report, "n_problem": n_p, "n_suggestion": n_s}
 
 
 def _as_blocks(x: Any) -> list[Any]:
@@ -1255,10 +1428,14 @@ def _summary_table(
     """One row per paper: repository and file counts, unknown files, naming problems."""
     counts = ["files_n", "files_data", "files_code", "files_readme", "files_zip"]
     rows: dict[Any, dict[str, int]] = {}
-    for rec in repos.loc[:, ["paper_id", *counts]].itertuples(index=False):
+    unchecked = flags["unchecked"]
+    for k, rec in enumerate(repos.loc[:, ["paper_id", *counts]].itertuples(index=False)):
         pid = None if rc._na(rec[0]) else rec[0]
-        row = rows.setdefault(pid, {"repo_n": 0, **dict.fromkeys(counts, 0)})
+        row = rows.setdefault(pid, {"repo_n": 0, "repo_unchecked": 0, **dict.fromkeys(counts, 0)})
         row["repo_n"] += 1
+        # repositories linked but not retrieved (metacheck #501), so "repo_n = 0" and
+        # "a repository could not be checked" are told apart
+        row["repo_unchecked"] += int(unchecked[k])
         for c, v in zip(counts, rec[1:], strict=True):
             row[c] += int(v)
 
@@ -1281,6 +1458,7 @@ def _summary_table(
         {
             "paper_id": pd.Series(pids, dtype="string"),
             "repo_n": pd.Series([rows[p]["repo_n"] for p in pids], dtype="Int64"),
+            "repo_unchecked": pd.Series([rows[p]["repo_unchecked"] for p in pids], dtype="Int64"),
             **{c: pd.Series([rows[p][c] for p in pids], dtype="Int64") for c in counts},
             "files_unknown": pd.Series([unknown.get(p, 0) for p in pids], dtype="Int64"),
             "naming_issues": pd.Series([bad.get(p, 0) for p in pids], dtype="Int64"),

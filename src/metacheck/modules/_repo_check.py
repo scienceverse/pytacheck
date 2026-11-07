@@ -284,6 +284,7 @@ REPO_TYPES = (
     "dspace7",
     "mendeley",
     "dataone",
+    "ldbase",
 )
 
 _FIGSHARE_SHARE = "private share link (figshare.com/s/...) cannot be resolved without a browser"
@@ -310,6 +311,15 @@ class Repos:
             errors = self.df["repo_error"].copy()
             errors[np.asarray(mask, dtype=bool)] = message
             self.df = self.df.assign(repo_error=errors)
+
+    def fill_errors(self, reasons: Mapping[Any, str]) -> None:
+        """Set ``repo_error`` from *reasons* (url -> message) where none is recorded yet."""
+        current = vals(self.df["repo_error"])
+        new = [
+            reasons[u] if _na(c) and u in reasons else c
+            for u, c in zip(vals(self.df["repo_url"]), current, strict=True)
+        ]
+        self.df = self.df.assign(repo_error=pd.Series(new, dtype="string", index=self.df.index))
 
     def flag_unflagged(self, urls: Sequence[Any], message: str) -> None:
         """The error handler of the OSF / DSpace blocks: flag URLs without an error yet.
@@ -360,6 +370,7 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     from metacheck.archives.fourtu import researchdata4tu_links
     from metacheck.archives.github import github_links
     from metacheck.archives.gitlab import gitlab_links
+    from metacheck.archives.ldbase import ldbase_links
     from metacheck.archives.mendeley import mendeley_links
     from metacheck.archives.osf import osf_links
     from metacheck.archives.psycharchives import dspace_links
@@ -386,6 +397,7 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
         "researchdata4tu": researchdata4tu_links(paper),
         "mendeley": mendeley_links(paper),
         "dataone": dataone_links(paper),
+        "ldbase": ldbase_links(paper),
     }
     parts = []
     for repo_type in REPO_TYPES:
@@ -404,6 +416,11 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
         )
     repos = bind_rows(parts).drop_duplicates().reset_index(drop=True)
     repos = repos.rename(columns={"href": "repo_url"})
+    # The punctuation that ends a sentence is not part of an address: taken along
+    # ("https://doi.org/10.5063/f1mc8x92."), it made one repository into two, each
+    # listing the same files, or one that could not be found.
+    repos["repo_url"] = pd.Series(sub(r"[.,;:]+$", "", vals(repos["repo_url"])), dtype="string")
+    repos = repos.drop_duplicates().reset_index(drop=True)
     repos["repo_error"] = pd.Series([None] * len(repos), dtype="string")
     return repos, found["figshare"]
 
@@ -440,6 +457,9 @@ _FILE_COLS = ("repo_url", "file_name", "file_path", "file_url", "file_location",
 #: (Dryad's storageSize); download_repo_files() sizes a whole-repository
 #: archive with it rather than by summing the rows it is given
 _REPO_SIZE = "repo_size"
+#: whether a file is listed but served only on request (Dataverse); download_repo_files()
+#: does not ask for such a file
+_RESTRICTED = "file_restricted"
 
 
 def _typed_files(rows: dict[str, list[Any]]) -> pd.DataFrame:
@@ -453,6 +473,7 @@ def _typed_files(rows: dict[str, list[Any]]) -> pd.DataFrame:
             ("file_location", rows["file_location"], "string"),
             ("file_size", rows["file_size"], "float64"),
             (_REPO_SIZE, rows.get(_REPO_SIZE), "float64"),
+            (_RESTRICTED, rows.get(_RESTRICTED), "boolean"),
         ]
     )
 
@@ -506,8 +527,8 @@ def _file_rows(
     per-file data frames (a zero-column table when no record has files).
     """
     rows: dict[str, list[Any]] = {k: [] for k in _FILE_COLS}
-    repo_sizes: list[Any] = []
-    has_repo_size = False
+    extras: dict[str, list[Any]] = {_REPO_SIZE: [], _RESTRICTED: []}
+    has_extra: dict[str, bool] = {_REPO_SIZE: False, _RESTRICTED: False}
     any_rows = False
     others = [c for c in info.columns if c != "files"]
     columns = {c: info[c].tolist() for c in others}
@@ -531,13 +552,15 @@ def _file_rows(
             row.setdefault("repo_url", repo_url)
             for k in _FILE_COLS:
                 rows[k].append(row.get(k))
-            repo_sizes.append(row.get(_REPO_SIZE))
-            has_repo_size = has_repo_size or _REPO_SIZE in row
+            for k in extras:
+                extras[k].append(row.get(k))
+                has_extra[k] = has_extra[k] or k in row
             any_rows = True
     if not any_rows:
         return pd.DataFrame()
-    if has_repo_size:
-        rows[_REPO_SIZE] = repo_sizes
+    for k, present in has_extra.items():
+        if present:
+            rows[k] = extras[k]
     return _typed_files(rows)
 
 
@@ -601,15 +624,15 @@ def _osf_file_frame(files: pd.DataFrame, repo_url: list[Any]) -> pd.DataFrame:
 
 
 def _osf_files(info: pd.DataFrame) -> pd.DataFrame:
-    """The listed files that are not marked private (``public`` ``FALSE``).
+    """The listed files that are not marked private (``public`` ``FALSE``), per row.
 
-    R's ``filter(kind == "file", !isFALSE(public))`` tests the whole
-    ``public`` column at once, which excludes anything only when the listing
-    is a single private row (UPSTREAM_ISSUES U123).
+    ``filter(kind == "file", !(public %in% FALSE))``; metacheck tested the
+    whole column at once until 0.4 (``!isFALSE(public)``), which left a
+    private file out only when it was the listing's one row (U123).
     """
     if "public" not in info.columns:
         raise RError(
-            "ℹ In argument: `!isFALSE(public)`.\nCaused by error:\n! object 'public' not found"
+            "ℹ In argument: `!(public %in% FALSE)`.\nCaused by error:\n! object 'public' not found"
         )
     kind = vals(info["kind"])
     public = vals(info["public"])
@@ -642,15 +665,76 @@ def _osf_listing(urls: list[str], pb: Any, cache: bool) -> pd.DataFrame:
 
 
 def list_osf(
-    repos: Repos, osf_urls: list[str], osf_paper_id: Any, pb: Any, cache: bool
+    repos: Repos,
+    osf_urls: list[str],
+    osf_paper_id: Any,
+    pb: Any,
+    cache: bool,
+    osf_license: bool = False,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """The OSF block: list files, follow registrations to their source projects.
+
+    Returns the files and, with *osf_license*, the licence of each OSF
+    repository left in ``repos`` (one ``?embed=license`` request each).
+    """
+    osf_files_df = placeholder()
+    reg_pairs: list[tuple[Any, str]] = []
+    if osf_urls:
+        osf_files_df = _list_osf_files(repos, osf_urls, osf_paper_id, pb, cache, reg_pairs)
+    meta = meta_frame()
+    if osf_license is True:
+        meta = _osf_license_meta(repos, reg_pairs)
+    return osf_files_df, meta
+
+
+def _osf_license_meta(repos: Repos, reg_pairs: list[tuple[Any, str]]) -> pd.DataFrame:
+    """The licence of each OSF repository left in *repos* (``osf_license = TRUE``).
+
+    Done after the registration -> source project resolution (metacheck #486): a
+    cited registration has been replaced there by the project it was registered
+    from, which is where the files are listed from, so that project's licence is
+    the one asked for, and its metadata row joins to the paper. A source project
+    that is closed or has no licence set takes its registration's licence, which
+    covers the same files.
+    """
+    from metacheck.archives.osf import osf_check_id
+    from metacheck.archives.osf_metadata import _osf_license
+
+    def lic_of(url: str) -> str | None:
+        osf_id = osf_check_id(url)[0]
+        if osf_id is None:
+            return None
+        try:
+            return _osf_license(osf_id)  # type: ignore[no-any-return]
+        except Exception:
+            return None
+
+    mask = (repos.df["repo_type"] == "osf").fillna(False).to_numpy(dtype=bool)
+    urls = [u for u in unique(repos.df["repo_url"][mask].tolist()) if u is not None]
+    licenses: list[str | None] = []
+    for url in urls:
+        lic = lic_of(url)
+        for reg in [name for name, parent in reg_pairs if parent == url]:
+            if lic is not None:
+                break
+            lic = lic_of(reg)
+        licenses.append(lic)
+    if not urls:
+        return meta_frame()
+    return meta_frame(urls, NA_SCALAR, licenses)
+
+
+def _list_osf_files(
+    repos: Repos,
+    osf_urls: list[str],
+    osf_paper_id: Any,
+    pb: Any,
+    cache: bool,
+    reg_pairs: list[tuple[Any, str]],
 ) -> pd.DataFrame:
-    """The OSF block: list files, follow registrations to their source projects."""
     from metacheck._r import bind_rows
 
     osf_files_df = placeholder()
-    if not osf_urls:
-        return osf_files_df
-    reg_pairs: list[tuple[Any, str]] = []
     try:
         osf_info_df = _quiet(lambda: _osf_listing(osf_urls, pb, cache))
 
@@ -680,24 +764,41 @@ def list_osf(
             file_repo_url = [reg_map.get(u, u) for u in vals(file_list["repo_name"])]
             osf_files_df = _osf_file_frame(file_list, file_repo_url)
 
+        # A link the OSF could not look up ("unfound", "error", "too many
+        # requests") is kept, with its reason, instead of being removed with the
+        # registrations (metacheck #501): during an OSF outage every OSF link was
+        # dropped, so the paper read as linking no repository at all.
+        failed_types = ("unfound", "error", "too many requests")
+        # a link whose id is not a valid OSF id gets no osf_type (U122)
+        invalid = {u for t, u in zip(otypes, ourls, strict=True) if _na(t) and u in set(osf_urls)}
+        repos.fill_errors(dict.fromkeys(invalid, "not a valid OSF link"))
+        if "osf_type" in osf_info_df.columns:
+            from metacheck.utils import _col_chr
+
+            failed_rows = [
+                i
+                for i, (t, u) in enumerate(zip(otypes, ourls, strict=True))
+                if t in failed_types and u in set(osf_urls)
+            ]
+            if failed_rows:
+                why = _col_chr(osf_info_df, "error")
+                reasons: dict[Any, str] = {}
+                for i in failed_rows:
+                    reasons.setdefault(ourls[i], why[i] or "the OSF could not look this link up")
+                repos.fill_errors(reasons)
+
         # registrations (and anything that is not a node/file) are never the
-        # storage location. A link OSF does not know stays, flagged: R drops
-        # it silently beside valid links, and without any valid link its
-        # filter() finds metacheck's osf_type() function and stores "'match'
-        # requires vector arguments" as the error (UPSTREAM_ISSUES U122)
+        # storage location
         to_remove = [
             u
             for t, u in zip(otypes, ourls, strict=True)
-            if not _na(t) and t not in ("nodes", "files", "private")
+            if not _na(t) and t not in ("nodes", "files", "private", *failed_types)
         ]
         repos.keep([not v for v in r_in(vals(repos.df["repo_url"]), to_remove)])
 
         private = [u for t, u in zip(otypes, ourls, strict=True) if t == "private"]
         if private:
             repos.flag(private, "private")
-        unknown = [u for t, u in zip(otypes, ourls, strict=True) if _na(t) and not _na(u)]
-        if unknown:
-            repos.flag(unknown, "invalid or inaccessible OSF link")
 
         # follow registrations back to their origin project
         parent_urls_all = unique(p for _, p in reg_pairs)
@@ -879,17 +980,38 @@ def _filter_not_dir(df: pd.DataFrame) -> pd.DataFrame:
     return take(df, keep)
 
 
-def list_researchbox(repos: Repos, urls: list[str], pb: Any) -> pd.DataFrame:
-    """The ResearchBox block (the box is downloaded and unzipped to list it)."""
-    from metacheck.archives.researchbox import rbox_file_download
+def list_researchbox(
+    repos: Repos, urls: list[str], pb: Any, cache: bool = False
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """The ResearchBox block (the box is downloaded and unzipped to list it).
+
+    Returns the files and the licence of each box that was downloaded (one
+    ``box_meta`` request per box; a box that could not be downloaded is not
+    asked about again). ResearchBox puts every box under CC BY 4.0, but names
+    it in each box's metadata since 2026-10.
+    """
+    from metacheck.archives.researchbox import _rbox_license, rbox_file_download
 
     files_df = placeholder()
+    meta = meta_frame()
     if not urls:
-        return files_df
+        return files_df, meta
     try:
-        rb = rbox_file_download(urls, pb=pb)
+        rb = rbox_file_download(urls, pb=pb, cache=cache)
         if rb is None:
             raise RError("no applicable method for 'filter' applied to an object of class \"NULL\"")
+        # Each box that could not be retrieved (refused, removed, ResearchBox's
+        # hourly limit) gets its own reason. Only a failure of every box was
+        # reported before; one failed box among several lost its files silently.
+        failed = rb.attrs.get("failed")
+        if failed is not None and len(failed) > 0:
+            reasons: dict[Any, str] = {}
+            for u, e, n in zip(
+                vals(failed["rb_url"]), vals(failed["error"]), vals(failed["name"]), strict=True
+            ):
+                if _na(n):
+                    reasons.setdefault(u, f"ResearchBox did not serve the box: {e}")
+            repos.fill_errors(reasons)
         rb = _filter_not_dir(rb)
         names = _col(rb, "name")
         files_df = r_frame(
@@ -905,7 +1027,22 @@ def list_researchbox(repos: Repos, urls: list[str], pb: Any) -> pd.DataFrame:
         )
     except Exception as e:
         repos.flag(urls, condition_message(e))
-    return files_df
+
+    errored = [
+        u
+        for u, e in zip(vals(repos.df["repo_url"]), vals(repos.df["repo_error"]), strict=True)
+        if not _na(e)
+    ]
+    rb_ok = setdiff(urls, errored)
+    if rb_ok:
+        licenses: list[str | None] = []
+        for u in rb_ok:
+            try:
+                licenses.append(_rbox_license(u, cache=cache))
+            except Exception:
+                licenses.append(None)
+        meta = meta_frame(rb_ok, NA_SCALAR, licenses)
+    return files_df, meta
 
 
 def _named_lookup(named: Mapping[str, Any] | None, keys: Sequence[str]) -> list[Any] | None:
@@ -1025,28 +1162,37 @@ def list_dspace7(repos: Repos, urls: list[str], pb: Any) -> tuple[pd.DataFrame, 
 # -- data repositories with a JSON file list ------------------------------------
 
 
-def _meta_from(info: pd.DataFrame, url_col: str, col_chr: bool = False) -> pd.DataFrame:
-    """``data.frame(repo_url = <url_col>, doi, license)`` of an ``*_info()`` table."""
-    if col_chr:
-        from metacheck.utils import _col_chr
+def _meta_from(info: pd.DataFrame, url_col: str) -> pd.DataFrame:
+    """``meta_rows()``: ``data.frame(repo_url = <url_col>, doi, license)`` of an ``*_info()`` table.
 
-        return meta_frame(_col_chr(info, url_col), _col_chr(info, "doi"), _col_chr(info, "license"))
+    A missing column (a listing without doi or license, such as the table of
+    links that all failed) is ``NA``; a bare ``as.character(NULL)`` would make
+    ``data.frame()`` fail and the block report that for every link in place of
+    each link's real reason (metacheck #476; UPSTREAM_ISSUES U122).
+    """
+    from metacheck.utils import _col_chr
 
-    def chr_col(name: str) -> list[Any]:
-        # a missing column (a listing without doi or license, such as a
-        # Figshare private share link's) is NA; R's data.frame() refuses the
-        # zero-length as.character(NULL) and the whole platform block fails
-        # (UPSTREAM_ISSUES U122)
-        values = _col(info, name)
-        return [None] * len(info) if values is None else [_as_chr(v) for v in values]
+    return meta_frame(_col_chr(info, url_col), _col_chr(info, "doi"), _col_chr(info, "license"))
 
-    return r_frame(
-        [
-            ("repo_url", chr_col(url_col), "string"),
-            ("doi", chr_col("doi"), "string"),
-            ("license", chr_col("license"), "string"),
-        ]
-    )
+
+def link_errors(repos: Repos, info: pd.DataFrame, url_col: str) -> None:
+    """``link_errors()``: each link's own reason from an ``*_info()`` table.
+
+    "unfound", "parse_error" and the like are written to ``repo_error``, so a
+    link that could not be looked up is reported in ``gated_repos`` rather than
+    dropped without a word (metacheck #476). A reason already recorded is kept.
+    """
+    from metacheck.utils import _col_chr
+
+    err = _col_chr(info, "error")
+    urls = _col_chr(info, url_col)
+    pairs = [(u, e) for u, e in zip(urls, err, strict=True) if e is not None]
+    if not pairs:
+        return
+    first: dict[Any, str] = {}
+    for u, e in pairs:
+        first.setdefault(u, e)
+    repos.fill_errors(first)
 
 
 def _api_listing(
@@ -1055,10 +1201,9 @@ def _api_listing(
     info_fn: Callable[[], pd.DataFrame],
     url_col: str,
     row_fn: Callable[[dict[str, Any], Any], dict[str, Any]],
-    col_chr: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The shared shape of the Zenodo, Dataverse, Figshare, Dryad, ReShare,
-    4TU.ResearchData, Mendeley Data and DataONE blocks."""
+    4TU.ResearchData, Mendeley Data, DataONE and LDbase blocks."""
     files_df = placeholder()
     meta = meta_frame()
     if not urls:
@@ -1066,13 +1211,64 @@ def _api_listing(
     try:
         info = info_fn()
         if len(info) > 0:
-            meta = _meta_from(info, url_col, col_chr)
+            meta = _meta_from(info, url_col)
+            link_errors(repos, info, url_col)
         if len(info) > 0 and "files" in info.columns:
             listed = _file_rows(info, url_col, row_fn)
             files_df = _typed_listing(listed)
+            if "file_restricted" in files_df.columns and not any(
+                v is True for v in vals(files_df["file_restricted"])
+            ):
+                files_df = files_df.drop(columns="file_restricted")
     except Exception as e:
         # an informative error already recorded (e.g. a Figshare private share
         # link) is kept
+        repos.flag_unflagged(urls, condition_message(e))
+    return files_df, meta
+
+
+def list_ldbase(
+    repos: Repos, urls: list[str], pb: Any, cache: bool
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """The LDbase block: no API, ``ldbase_info()`` reads the public pages.
+
+    A project lists every item in its hierarchy, each item's file in a folder
+    named after the item. Pages give no file sizes; ``download_repo_files()``
+    asks the host for them when it needs them.
+    """
+    from metacheck._r import bind_rows
+    from metacheck.archives.ldbase import ldbase_info
+
+    files_df = placeholder()
+    meta = meta_frame()
+    if not urls:
+        return files_df, meta
+    try:
+        info = _quiet(lambda: ldbase_info(urls, pb=pb, cache=cache))
+        if len(info) > 0:
+            meta = _meta_from(info, "ldbase_url")
+            link_errors(repos, info, "ldbase_url")
+        if len(info) > 0 and "files" in info.columns:
+            parts = []
+            url_col = vals(info["ldbase_url"])
+            for i, files_i in enumerate(info["files"].tolist()):
+                if not isinstance(files_i, pd.DataFrame) or len(files_i) == 0:
+                    continue
+                n = len(files_i)
+                parts.append(
+                    r_frame(
+                        [
+                            ("repo_url", _as_chr(url_col[i]), "string"),
+                            ("file_name", vals(files_i["file_name"]), "string"),
+                            ("file_path", vals(files_i["file_path"]), "string"),
+                            ("file_url", vals(files_i["file_url"]), "string"),
+                            ("file_location", [None] * n, "string"),
+                            ("file_size", [None] * n, "float64"),
+                        ]
+                    )
+                )
+            files_df = _typed_listing(bind_rows(parts) if parts else pd.DataFrame())
+    except Exception as e:
         repos.flag_unflagged(urls, condition_message(e))
     return files_df, meta
 
@@ -1105,18 +1301,18 @@ def zenodo_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
 
 
 def dataverse_row(record: dict[str, Any], f: Any) -> dict[str, Any]:
-    df = dollar(f, "dataFile")
-    if df is None:
-        df = {}
-    fid = dollar(df, "id")
-    file_url = None
-    if not (fid is None or (isinstance(fid, list | tuple) and len(fid) == 0)):
-        if "dataverse_host" not in record:
-            raise RError("subscript out of bounds")  # R: .dv_info$dataverse_host[[i]] of NULL
-        host = _as_chr(record["dataverse_host"])
-        file_url = f"https://{'NA' if host is None else host}/api/access/datafile/{_as_chr(fid)}"
-    name = empty_or(empty_or(dollar(f, "label"), dollar(df, "filename")), None)
-    return _row(name, file_url, dollar(df, "filesize"))
+    from metacheck.archives.dataverse import _dataverse_file_entry
+
+    if "dataverse_host" not in record:
+        raise RError("subscript out of bounds")  # R: .dv_info$dataverse_host[[i]] of NULL
+    host = _as_chr(record["dataverse_host"])
+    # name, size and URL; a file Dataverse converted on upload (a .tab made from
+    # a .sav) as it was uploaded (metacheck #582), the same as dataverse_file_download()
+    fe = _dataverse_file_entry(f, "NA" if host is None else host)
+    row = _row(fe["name"], fe["url"], fe["size"])
+    # a restricted file is listed but served only on request (the host answers 403)
+    row[_RESTRICTED] = dollar(f, "restricted") is True
+    return row
 
 
 def figshare_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
