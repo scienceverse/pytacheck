@@ -2,10 +2,12 @@
   "id": "validate.duplicate_ids",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "1 paper shared a paper_id with an earlier paper and was renamed: 1~2"
+  ],
   "value": {
     "t": "df",
-    "nrow": 4,
+    "nrow": 6,
     "names": [
       "paper_id",
       "text",
@@ -21,6 +23,8 @@
           "1",
           "1",
           "2",
+          "1~2",
+          "1~2",
           "zzz"
         ]
       },
@@ -30,6 +34,8 @@
           "It was significant.",
           "Another significant one.",
           "No.",
+          "It was significant.",
+          "Another significant one.",
           "an extra row"
         ]
       },
@@ -39,6 +45,8 @@
           19,
           24,
           4,
+          null,
+          null,
           null
         ]
       },
@@ -48,6 +56,8 @@
           true,
           true,
           false,
+          true,
+          true,
           null
         ]
       },
@@ -57,6 +67,8 @@
           19,
           24,
           3,
+          19,
+          24,
           0
         ]
       },
@@ -66,11 +78,13 @@
           true,
           true,
           false,
+          null,
+          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

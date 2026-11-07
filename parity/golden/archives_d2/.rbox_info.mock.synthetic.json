@@ -15,7 +15,14 @@
       "RB_license",
       "RB_public",
       "RB_authors",
-      "RB_abstract"
+      "RB_abstract",
+      "RB_title",
+      "RB_status",
+      "RB_paper_doi",
+      "RB_zenodo_doi",
+      "RB_paper_authors",
+      "RB_license_url",
+      "RB_last_modified"
     ],
     "v": [
       {
@@ -75,13 +82,13 @@
       {
         "t": "chr",
         "v": [
-          "CC BY 4.0"
+          "CC-BY-4.0"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "January 01, 2024"
+          "2024-01-01"
         ]
       },
       {
@@ -95,9 +102,51 @@
         "v": [
           "Nothing to see."
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

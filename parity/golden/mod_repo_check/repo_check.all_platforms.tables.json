@@ -5,7 +5,7 @@
   "warnings": [
     "Repository https://github.com/gzorg/bigrepo was not listed: GitHub repo tree truncated (>100 000 items); too large to list.",
     "Repository https://gitlab.com/gzorg/missing was not listed: invalid or inaccessible GitLab repository.",
-    "Download failed or resulted in an empty file: <tempdir>/pytacheck-parity-cache/.metacheck_repo_cache/researchbox.org_4377/archive.zip",
+    "Could not download https://researchbox.org/4377: download failed or resulted in an empty file (HTTP 404)",
     "10.7910/DVN/NOPE could not be found on dataverse.harvard.edu",
     "10.5061/dryad.missing could not be found on Dryad"
   ],
@@ -15,7 +15,7 @@
     "v": [
       {
         "t": "df",
-        "nrow": 25,
+        "nrow": 27,
         "names": [
           "Repository",
           "Platform",
@@ -44,9 +44,11 @@
               "<a href='https://zenodo.org/records/5550005' target='_blank'>zenodo.org/records/5550005<\/a>",
               "<a href='https://zenodo.org/records/5559001' target='_blank'>zenodo.org/records/5559001<\/a>",
               "<a href='https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123' target='_blank'>dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123<\/a>",
+              "<a href='https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE' target='_blank'>dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE<\/a>",
               "<a href='https://doi.org/10.6084/m9.figshare.18093368.v1' target='_blank'>doi.org/10.6084/m9.figshare.18093368.v1<\/a>",
               "<a href='https://figshare.com/s/5e01cc0cae4cf3e2e14f' target='_blank'>figshare.com/s/5e01cc0cae4cf3e2e14f<\/a>",
               "<a href='https://doi.org/10.5061/dryad.j1fd7' target='_blank'>doi.org/10.5061/dryad.j1fd7<\/a>",
+              "<a href='https://doi.org/10.5061/dryad.missing' target='_blank'>doi.org/10.5061/dryad.missing<\/a>",
               "<a href='https://doi.org/10.5255/UKDA-SN-854001' target='_blank'>doi.org/10.5255/UKDA-SN-854001<\/a>",
               "<a href='https://doi.org/10.4121/16766929.v1' target='_blank'>doi.org/10.4121/16766929.v1<\/a>",
               "<a href='https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5' target='_blank'>repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5<\/a>",
@@ -74,8 +76,10 @@
               "zenodo",
               "zenodo",
               "dataverse",
+              "dataverse",
               "figshare",
               "figshare",
+              "dryad",
               "dryad",
               "reshare",
               "researchdata4tu",
@@ -97,16 +101,18 @@
               null,
               null,
               "invalid or inaccessible GitLab repository",
-              "no applicable method for 'filter' applied to an object of class \"NULL\"",
+              "ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)",
               "restricted access",
               "restricted access",
               null,
               null,
               null,
               null,
+              "unfound",
               null,
               "private share link (figshare.com/s/...) cannot be resolved without a browser",
               null,
+              "unfound",
               null,
               null,
               null,
@@ -134,14 +140,16 @@
               2,
               8,
               4,
+              0,
               4,
               0,
               5,
+              0,
               4,
               1,
               4,
               1,
-              2,
+              3,
               4,
               0,
               3
@@ -164,9 +172,11 @@
               0,
               1,
               2,
+              0,
               2,
               0,
               1,
+              0,
               1,
               0,
               2,
@@ -199,6 +209,8 @@
               0,
               0,
               0,
+              0,
+              0,
               1,
               0,
               0,
@@ -224,14 +236,16 @@
               1,
               0,
               0,
-              1,
               0,
               1,
               0,
               1,
               0,
               0,
+              1,
               0,
+              0,
+              1,
               0,
               0,
               0
@@ -262,6 +276,8 @@
               0,
               0,
               0,
+              0,
+              0,
               1,
               0,
               1
@@ -271,7 +287,7 @@
       },
       {
         "t": "df",
-        "nrow": 156,
+        "nrow": 157,
         "names": [
           "Repository",
           "File",
@@ -435,6 +451,7 @@
               "https://data.mendeley.com/datasets/vjtxybrc28",
               "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY",
               "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY",
+              "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY",
               "https://zenodo.org/records/5559001",
               "https://zenodo.org/records/5559001",
               "https://zenodo.org/records/5559001"
@@ -595,6 +612,7 @@
               "<a href='https://data.4tu.nl/file/7f866e02/f501' target='_blank'>readme.txt<\/a>",
               "<a href='https://data.mendeley.com/x/survey.csv' target='_blank'>survey.csv<\/a>",
               "<a href='https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3Aabc-123' target='_blank'>soil_temp.csv<\/a>",
+              "readme.txt",
               "nameless",
               "a.png",
               "b.jpg",
@@ -757,6 +775,7 @@
               "—",
               "20.5 kB",
               "—",
+              "—",
               "72 B",
               "72 B",
               "8 B"
@@ -917,6 +936,7 @@
               "readme",
               "data",
               "data",
+              "readme",
               null,
               "image",
               "image",
@@ -927,7 +947,7 @@
       },
       {
         "t": "df",
-        "nrow": 12,
+        "nrow": 11,
         "names": [
           "File",
           "Rule",
@@ -942,7 +962,6 @@
               "Archive.zip",
               "Archive.zip",
               "study 1.csv",
-              "LICENSE",
               "archive.tar.gz",
               "weird.file-name",
               "trial data.csv",
@@ -959,7 +978,6 @@
               "unclassifiable",
               "unclassifiable",
               "spaces",
-              "unclassifiable",
               "unclassifiable",
               "unclassifiable",
               "spaces",
@@ -982,7 +1000,6 @@
               "Required",
               "Required",
               "Required",
-              "Required",
               "Required"
             ]
           },
@@ -993,7 +1010,6 @@
               "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "contains a space",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "contains a space",
@@ -1143,7 +1159,7 @@
       },
       {
         "t": "df",
-        "nrow": 112,
+        "nrow": 114,
         "names": [
           "File",
           "Group",
@@ -1154,6 +1170,7 @@
             "t": "chr",
             "v": [
               "README.md",
+              "LICENSE",
               "README.md",
               "f001.txt",
               "f002.txt",
@@ -1264,12 +1281,14 @@
               "notes.txt",
               "gone.txt",
               "readme.txt",
+              "readme.txt",
               "readme.txt"
             ]
           },
           {
             "t": "chr",
             "v": [
+              "—",
               "—",
               "—",
               "ex5",
@@ -1381,6 +1400,7 @@
               "ex14",
               "ex14",
               "—",
+              "—",
               "—"
             ]
           },
@@ -1388,6 +1408,7 @@
             "t": "chr",
             "v": [
               "README.md",
+              "LICENSE",
               "README.md",
               "f001.txt",
               "f002.txt",
@@ -1498,6 +1519,7 @@
               "notes.txt",
               "gone.txt",
               "readme.txt",
+              "readme.txt",
               "stimuli.zip/readme.txt"
             ]
           }
@@ -1575,7 +1597,7 @@
       },
       {
         "t": "df",
-        "nrow": 10,
+        "nrow": 9,
         "names": [
           "File",
           "Group",
@@ -1588,7 +1610,6 @@
               "Archive.zip",
               "Archive.zip",
               "Archive.zip",
-              "LICENSE",
               "archive.tar.gz",
               "weird.file-name",
               "noext",
@@ -1603,7 +1624,6 @@
               "ex1",
               "ex2",
               "ex2",
-              "—",
               "ex3",
               "ex3",
               "ex7",
@@ -1618,7 +1638,6 @@
               "Archive.zip",
               "Archive.zip",
               "Archive.zip",
-              "LICENSE",
               "archive.tar.gz",
               "weird.file-name",
               "noext",
@@ -1631,6 +1650,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

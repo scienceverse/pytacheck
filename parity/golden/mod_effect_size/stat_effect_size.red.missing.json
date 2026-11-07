@@ -287,7 +287,7 @@
         "t": "chr",
         "v": [
           "We recommend checking the sentences below, and add any missing effect sizes.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"A was bigger than B, t(124) = 1.23, p 0.013.\", \n\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\")), names = \"\", class = \"data.frame\", row.names = c(NA, \n-2L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"A was bigger than B, t(124) = 1.23, p 0.013.\", \n\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\")), names = \"\", row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
           "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A was bigger than B, t(124) = 1.23, p 0.013.\", \n\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\"), \"Effect Size\" = c(NA_character_, \nNA_character_), \"Reported Test\" = c(\"t(124) = 1.23\", \"F(1, 13) = 2.34\"\n), \"Test Type\" = c(\"t-test\", \"F-test\"), \"d Coherence\" = c(\"indeterminate\", \nNA), \"d Assumption\" = c(\"none\", NA), \"d Coherence Note\" = c(\"No parseable d effect size found.\", \nNA), \"eta Coherence\" = c(NA, \"indeterminate\"), \"eta Assumption\" = c(NA, \n\"none\"), \"eta Coherence Note\" = c(NA, \"No parseable eta-squared effect size found.\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
         ]
@@ -301,7 +301,7 @@
       {
         "t": "chr",
         "v": [
-          "We found 2 t-tests and/or F-tests where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes"
+          "We found 2 t-tests and/or F-tests where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes."
         ]
       },
       {
@@ -355,6 +355,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

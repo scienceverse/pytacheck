@@ -26,7 +26,10 @@
       "mannwhitneyuresult",
       "wilcoxonresult",
       "kruskalresult",
-      "kstestresult"
+      "kstestresult",
+      "f_onewayresult",
+      "pearsonrresult",
+      "chi2contingencyresult"
     ],
     "v": [
       {
@@ -497,9 +500,74 @@
             ]
           }
         ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000282"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000280"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "names",
+          "values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic",
+              "dof"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO:0000030",
+              "STATO:0000069"
+            ]
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -36,7 +36,7 @@
       },
       {
         "t": "df",
-        "nrow": 4,
+        "nrow": 3,
         "names": [
           "paper_id",
           "bib_id",
@@ -51,7 +51,6 @@
             "v": [
               "synthetic",
               "synthetic",
-              "synthetic",
               "synthetic"
             ]
           },
@@ -60,8 +59,7 @@
             "v": [
               0,
               1,
-              2,
-              0
+              2
             ]
           },
           {
@@ -69,8 +67,7 @@
             "v": [
               "10.1000/a",
               "10.1000/b",
-              "10.1000/c",
-              "10.1000/a"
+              "10.1000/c"
             ]
           },
           {
@@ -78,8 +75,7 @@
             "v": [
               "Body sentence 1 cites 0.",
               null,
-              "Body sentence 4 cites 2.",
-              "Body sentence 5 cites 0."
+              null
             ]
           },
           {
@@ -87,8 +83,7 @@
             "v": [
               "Ref A",
               "Ref B",
-              "Ref C",
-              "Ref A"
+              "Ref C"
             ]
           },
           {
@@ -96,8 +91,7 @@
             "v": [
               "Warn A",
               "Warn B",
-              "Warn C",
-              "Warn A"
+              "Warn C"
             ]
           }
         ]
@@ -105,9 +99,9 @@
       {
         "t": "chr",
         "v": [
-          "**10.1000/a**\n\nRef A\n\nWarn A\n\n*2 Instances:*\n\n> Body sentence 1 cites 0.\n\n> Body sentence 5 cites 0.",
+          "**10.1000/a**\n\nRef A\n\nWarn A\n\n*1 Instance:*\n\n> Body sentence 1 cites 0.",
           "**10.1000/b**\n\nRef B\n\nWarn B\n\n*1 Instance:*\n\n> NA",
-          "**10.1000/c**\n\nRef C\n\nWarn C\n\n*1 Instance:*\n\n> Body sentence 4 cites 2."
+          "**10.1000/c**\n\nRef C\n\nWarn C\n\n*1 Instance:*\n\n> NA"
         ]
       },
       {
@@ -119,7 +113,7 @@
       {
         "t": "chr",
         "v": [
-          "We found 4 citations to papers that are commonly miscited."
+          "We found 3 citations to papers that are commonly miscited."
         ]
       },
       {
@@ -160,6 +154,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

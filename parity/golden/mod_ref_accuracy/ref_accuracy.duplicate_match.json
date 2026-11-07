@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 19,
+        "nrow": 5,
         "names": [
           "paper_id",
           "bib_id",
@@ -71,20 +71,6 @@
               "to_err_is_human",
               "to_err_is_human",
               "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
-              "to_err_is_human",
               "to_err_is_human"
             ]
           },
@@ -94,20 +80,6 @@
               0,
               1,
               2,
-              2,
-              2,
-              2,
-              2,
-              2,
-              2,
-              2,
-              3,
-              3,
-              3,
-              3,
-              3,
-              3,
-              3,
               3,
               4
             ]
@@ -118,20 +90,6 @@
               "10.32614/10.5281/zenodo.2669586",
               "10.1037/0003-066x.54.6.408",
               "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
               "",
               "10.0000/0123456789"
             ]
@@ -142,20 +100,6 @@
               "Faux: Simulation for Factorial Designs",
               "The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles",
               "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Equivalence Testing for Psychological Research",
-              "Equivalence Testing for Psychological Research",
-              "Equivalence Testing for Psychological Research",
-              "Equivalence Testing for Psychological Research",
-              "Equivalence Testing for Psychological Research",
-              "Equivalence Testing for Psychological Research",
-              "Equivalence Testing for Psychological Research",
               "Equivalence Testing for Psychological Research",
               "Human Error Is a Symptom of a Poor Design"
             ]
@@ -166,20 +110,6 @@
               2025,
               1999,
               2014,
-              2014,
-              2014,
-              2014,
-              2014,
-              2014,
-              2014,
-              2014,
-              2018,
-              2018,
-              2018,
-              2018,
-              2018,
-              2018,
-              2018,
               2018,
               2021
             ]
@@ -190,20 +120,6 @@
               "Debruine, Lisa",
               "Eagly, Alice H; Wood, Wendy",
               "Gino, Francesca; Wiltermuth, Scott S",
-              "Gino, Francesca; Wiltermuth, Scott S",
-              "Gino, Francesca; Wiltermuth, Scott S",
-              "Gino, Francesca; Wiltermuth, Scott S",
-              "Gino, Francesca; Wiltermuth, Scott S",
-              "Gino, Francesca; Wiltermuth, Scott S",
-              "Gino, Francesca; Wiltermuth, Scott S",
-              "Gino, Francesca; Wiltermuth, Scott S",
-              "Lakens, Daniël",
-              "Lakens, Daniël",
-              "Lakens, Daniël",
-              "Lakens, Daniël",
-              "Lakens, Daniël",
-              "Lakens, Daniël",
-              "Lakens, Daniël",
               "Lakens, Daniël",
               "Smith, F"
             ]
@@ -214,20 +130,6 @@
               null,
               "American Psychologist",
               "Psychological Review",
-              "Psychological Review",
-              "Psychological Review",
-              "Psychological Review",
-              "Psychological Review",
-              "Psychological Review",
-              "Psychological Review",
-              "Psychological Review",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
               "Psychological Science",
               "Journal of Journals"
             ]
@@ -238,20 +140,6 @@
               null,
               "10.1037/0003-066x.54.6.408",
               "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/0956797614520714",
-              "10.1177/2515245918770963",
-              "10.1177/2515245918770963",
-              "10.1177/2515245918770963",
-              "10.1177/2515245918770963",
-              "10.1177/2515245918770963",
-              "10.1177/2515245918770963",
-              "10.1177/2515245918770963",
               "10.1177/2515245918770963",
               null
             ]
@@ -262,20 +150,6 @@
               null,
               "The origins of sex differences in human behavior: Evolved dispositions versus social roles.",
               "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Equivalence Testing for Psychological Research: A Tutorial",
-              "Equivalence Testing for Psychological Research: A Tutorial",
-              "Equivalence Testing for Psychological Research: A Tutorial",
-              "Equivalence Testing for Psychological Research: A Tutorial",
-              "Equivalence Testing for Psychological Research: A Tutorial",
-              "Equivalence Testing for Psychological Research: A Tutorial",
-              "Equivalence Testing for Psychological Research: A Tutorial",
               "Equivalence Testing for Psychological Research: A Tutorial",
               null
             ]
@@ -286,20 +160,6 @@
               null,
               1999,
               2014,
-              2014,
-              2014,
-              2014,
-              2014,
-              2014,
-              2014,
-              2014,
-              2018,
-              2018,
-              2018,
-              2018,
-              2018,
-              2018,
-              2018,
               2018,
               null
             ]
@@ -361,356 +221,6 @@
               },
               {
                 "t": "df",
-                "nrow": 2,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Francesca",
-                      "Scott S."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Gino",
-                      "Wiltermuth"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 2,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Francesca",
-                      "Scott S."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Gino",
-                      "Wiltermuth"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 2,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Francesca",
-                      "Scott S."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Gino",
-                      "Wiltermuth"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 2,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Francesca",
-                      "Scott S."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Gino",
-                      "Wiltermuth"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 2,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Francesca",
-                      "Scott S."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Gino",
-                      "Wiltermuth"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 2,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Francesca",
-                      "Scott S."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Gino",
-                      "Wiltermuth"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 2,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Francesca",
-                      "Scott S."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Gino",
-                      "Wiltermuth"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 3,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Daniël",
-                      "Anne M.",
-                      "Peder M."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Lakens",
-                      "Scheel",
-                      "Isager"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 3,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Daniël",
-                      "Anne M.",
-                      "Peder M."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Lakens",
-                      "Scheel",
-                      "Isager"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 3,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Daniël",
-                      "Anne M.",
-                      "Peder M."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Lakens",
-                      "Scheel",
-                      "Isager"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 3,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Daniël",
-                      "Anne M.",
-                      "Peder M."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Lakens",
-                      "Scheel",
-                      "Isager"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 3,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Daniël",
-                      "Anne M.",
-                      "Peder M."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Lakens",
-                      "Scheel",
-                      "Isager"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 3,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Daniël",
-                      "Anne M.",
-                      "Peder M."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Lakens",
-                      "Scheel",
-                      "Isager"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
-                "nrow": 3,
-                "names": [
-                  "given",
-                  "family"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Daniël",
-                      "Anne M.",
-                      "Peder M."
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Lakens",
-                      "Scheel",
-                      "Isager"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "df",
                 "nrow": 3,
                 "names": [
                   "given",
@@ -746,20 +256,6 @@
               null,
               "American Psychologist",
               "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Psychological Science",
-              "Advances in Methods and Practices in Psychological Science",
-              "Advances in Methods and Practices in Psychological Science",
-              "Advances in Methods and Practices in Psychological Science",
-              "Advances in Methods and Practices in Psychological Science",
-              "Advances in Methods and Practices in Psychological Science",
-              "Advances in Methods and Practices in Psychological Science",
-              "Advances in Methods and Practices in Psychological Science",
               "Advances in Methods and Practices in Psychological Science",
               null
             ]
@@ -770,20 +266,6 @@
               "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
               "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
               "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
-              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
-              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
-              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
-              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
-              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
-              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
-              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
-              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
-              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
-              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
-              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
-              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
-              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
-              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
               "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
               "Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
             ]
@@ -794,20 +276,6 @@
               null,
               null,
               null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              61.7559,
-              61.7559,
-              61.7559,
-              61.7559,
-              61.7559,
-              61.7559,
-              61.7559,
               61.7559,
               null
             ]
@@ -816,20 +284,6 @@
             "t": "lgl",
             "v": [
               null,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
               false,
               false,
               false,
@@ -843,20 +297,6 @@
               false,
               false,
               false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
               false
             ]
           },
@@ -866,17 +306,13 @@
               false,
               false,
               true,
-              true,
-              true,
-              true,
-              true,
-              true,
-              true,
-              true,
               false,
-              false,
-              false,
-              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
               false,
               false,
               false,
@@ -890,44 +326,6 @@
               false,
               false,
               false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              true,
-              true,
-              true,
-              true,
-              true,
-              true,
-              true,
               true,
               false
             ]
@@ -938,20 +336,6 @@
               "unresolved",
               "provided",
               "provided",
-              "provided",
-              "provided",
-              "provided",
-              "provided",
-              "provided",
-              "provided",
-              "provided",
-              "crossref",
-              "crossref",
-              "crossref",
-              "crossref",
-              "crossref",
-              "crossref",
-              "crossref",
               "crossref",
               "unresolved"
             ]
@@ -963,20 +347,6 @@
               false,
               false,
               false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
               true
             ]
           },
@@ -986,20 +356,6 @@
               true,
               false,
               true,
-              true,
-              true,
-              true,
-              true,
-              true,
-              true,
-              true,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
               false,
               true
             ]
@@ -1007,20 +363,6 @@
           {
             "t": "lgl",
             "v": [
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
               false,
               false,
               false,
@@ -1033,10 +375,10 @@
       {
         "t": "chr",
         "v": [
-          "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherent is most often an error in reading the reference from the PDF, but it could be a mistake, ar an AI generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
+          "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherence is most often an error in reading the reference from the PDF, but it could be a mistake, or an AI-generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
           "### Incoherent references\n",
           "The cited details of these references do not match the record their DOI points to.\n",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\"\n), \"What is wrong (cited → record)\" = c(\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.32614/10.5281/zenodo.2669586<\/span> could not be found in CrossRef\", \n\"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Psychological Review<\/span> &rarr; Psychological Science\", \n\"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Psychological Review<\/span> &rarr; Psychological Science\", \n\"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Psychological Review<\/span> &rarr; Psychological Science\", \n\"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Psychological Review<\/span> &rarr; Psychological Science\", \n\"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Psychological Review<\/span> &rarr; Psychological Science\", \n\"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Psychological Review<\/span> &rarr; Psychological Science\", \n\"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Psychological Review<\/span> &rarr; Psychological Science\", \n\"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Psychological Review<\/span> &rarr; Psychological Science\", \n\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.0000/0123456789<\/span> could not be found in CrossRef\"\n), Record = c(\"<a href='https://doi.org/10.32614/10.5281/zenodo.2669586' target='_blank'>10.32614/10.5281/zenodo.2669586<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.0000/0123456789' target='_blank'>10.0000/0123456789<\/a>\"\n)), row.names = c(NA, -10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)\n```\n"
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\"\n), \"What is wrong (cited → record)\" = c(\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.32614/10.5281/zenodo.2669586<\/span> could not be found in CrossRef\", \n\"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Psychological Review<\/span> &rarr; Psychological Science\", \n\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.0000/0123456789<\/span> could not be found in CrossRef\"\n), Record = c(\"<a href='https://doi.org/10.32614/10.5281/zenodo.2669586' target='_blank'>10.32614/10.5281/zenodo.2669586<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.0000/0123456789' target='_blank'>10.0000/0123456789<\/a>\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)\n```\n"
         ]
       },
       {
@@ -1048,7 +390,7 @@
       {
         "t": "chr",
         "v": [
-          "We checked the 11 references that supplied a DOI against the record that DOI points to, and found 10 incoherent references to check for parsing errors or mistakes. 0 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing)."
+          "We checked the 4 references that supplied a DOI against the record that DOI points to, and found 3 incoherent references to check for parsing errors or mistakes. 0 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing)."
         ]
       },
       {
@@ -1070,13 +412,13 @@
           {
             "t": "int",
             "v": [
-              11
+              4
             ]
           },
           {
             "t": "int",
             "v": [
-              10
+              3
             ]
           },
           {
@@ -1095,6 +437,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 6,
+    "nrow": 5,
     "names": [
       "text_id",
       "grp_id",
@@ -27,7 +27,6 @@
           1,
           2,
           3,
-          3,
           4,
           4
         ]
@@ -38,7 +37,6 @@
           1,
           2,
           4,
-          4,
           6,
           6
         ]
@@ -48,8 +46,7 @@
         "v": [
           "F=16.86 df1=1 df2=30 p=<0.001",
           "b=7.24 SE=1.76 t=4.11 p=<0.001",
-          "b=17.15 t=15.25",
-          "SE=1.13",
+          "b=17.15 SE=1.13 t=15.25",
           "t=-9.56 df=30 p=<0.001",
           "r=-0.87"
         ]
@@ -59,8 +56,7 @@
         "v": [
           4,
           4,
-          2,
-          1,
+          3,
           3,
           1
         ]
@@ -70,8 +66,7 @@
         "v": [
           4,
           4,
-          2,
-          0,
+          3,
           3,
           0
         ]
@@ -82,7 +77,6 @@
           true,
           true,
           true,
-          false,
           true,
           false
         ]
@@ -92,8 +86,7 @@
         "v": [
           "F=16.86, df1=1, df2=30, p=<0.001",
           "b=7.24, SE=1.76, t=4.11, p=<0.001",
-          "b=17.15, t=15.25",
-          null,
+          "b=17.15, SE=1.13, t=15.25",
           "t=-9.56, df=30, p=<0.001",
           null
         ]
@@ -104,7 +97,6 @@
           "",
           "",
           "",
-          null,
           "",
           null
         ]
@@ -115,7 +107,6 @@
           "model_chain.R",
           "model_chain.R",
           "model_chain.R",
-          null,
           "model_chain.R",
           null
         ]
@@ -126,7 +117,6 @@
           null,
           null,
           "Coefficients",
-          null,
           "Pearson's product-moment correlation",
           null
         ]
@@ -137,7 +127,6 @@
           "full",
           "full",
           "full",
-          "none",
           "full",
           "none"
         ]
@@ -147,14 +136,13 @@
         "v": [
           true,
           true,
-          false,
-          false,
+          true,
           true,
           true
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

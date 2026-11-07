@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -160,6 +162,33 @@
               "xl_numhdr.xlsx",
               "xl_sheets.xlsx",
               "xl_sheets.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "first",
+              "first"
             ]
           },
           {
@@ -511,6 +540,33 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -925,21 +981,21 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/sheet**",
-          "```\n├── readxl_type-me.xls   📊 data    ex1\n├── title.ods            📊 data    ex1\n├── typed.ods            📊 data    ex1\n├── written.fods         ❓ unknown\n├── xl_bools.xlsx        📊 data    ex1\n├── xl_dates.xlsx        📊 data    ex1\n├── xl_gaps.xlsx         📊 data    ex1\n├── xl_header_only.xlsx  📊 data    ex1\n├── xl_mixed.xlsx        📊 data    ex1\n├── xl_numhdr.xlsx       📊 data    ex1\n├── xl_sheets.xlsx       📊 data    ex1\n└── xl_title.xlsx        📊 data    ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── readxl_type-me.xls   📊 data    ex1\n├── title.ods            📊 data    ex1\n├── typed.ods            📊 data    ex1\n├── written.fods         ❓ unknown\n├── xl_bools.xlsx        📊 data    ex1\n├── xl_dates.xlsx        📊 data    ex1\n├── xl_gaps.xlsx         📊 data    ex1\n├── xl_header_only.xlsx  📊 data    ex1\n├── xl_mixed.xlsx        📊 data    ex1\n├── xl_numhdr.xlsx       📊 data    ex1\n├── xl_sheets.xlsx       📊 data    ex1\n└── xl_title.xlsx        📊 data    ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## title.ods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(1, 2), score = c(5, 7)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## typed.ods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(1, 2, 3), score = c(2.5, NA, 4), pct = c(0.5, \n0.25, NA), ok = c(TRUE, FALSE, NA), day = structure(c(18262, \n18293, NA), class = \"Date\"), note = c(\"hi\", \"NA\", \"x\")), row.names = c(NA, \n3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## xl_dates.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(d = structure(c(-2208988800, -2203891200), class = c(\"POSIXct\", \n\"POSIXt\"), tzone = \"UTC\"), dt = structure(c(946684799, 946684800\n), class = c(\"POSIXct\", \"POSIXt\"), tzone = \"UTC\"), mix = c(43956, \n10)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## xl_gaps.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(a = c(1, NA, 4), ...2 = c(NA, NA, NA), c = c(3, \nNA, 6)), row.names = c(NA, 3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## xl_mixed.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(a = c(\"1\", \"2.5\", \"t\", NA), b = c(\"x\", \"3\", \"TRUE\", \nNA), c = c(43831, 5, NA, NA)), row.names = c(NA, 4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## xl_numhdr.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"1\" = 1, \"2.5\" = 2, \"TRUE\" = 3), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## xl_sheets.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(only = 1, first = 2), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 10 columns with at least one missing value. 1 column is empty (no values in any row); store data without empty columns.",
           "::: {.panel-tabset}\n\n## xl_gaps.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"...2\", \"a\", \"c\"), Representation = c(\"empty\", \n\"numeric\", \"numeric\"), Level = c(\"\", \"nominal\", \"nominal\"), Concept = c(\"\", \n\"\", \"\"), Role = c(\"measure\", \"measure\", \"measure\"), Unit = c(\"\", \n\"\", \"\"), Rows = c(3L, 3L, 3L), \"% Missing\" = c(100, 33.3, 33.3\n), \"N Unique\" = c(0L, 2L, 2L), Mean = c(NA_real_, NA_real_, NA_real_\n), SD = c(NA_real_, NA_real_, NA_real_), Min = c(NA_real_, NA_real_, \nNA_real_), Max = c(NA_real_, NA_real_, NA_real_)), row.names = c(\"...1\", \n\"a...3\", \"c...4\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## xl_mixed.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"c\", \"a\", \"b\"), Representation = c(\"numeric\", \n\"text\", \"text\"), Level = c(\"nominal\", \"\", \"nominal\"), Concept = c(\"\", \n\"\", \"\"), Role = c(\"measure\", \"measure\", \"measure\"), Unit = c(\"\", \n\"\", \"\"), Rows = c(4L, 4L, 4L), \"% Missing\" = c(50, 25, 25), \"N Unique\" = c(2L, \n3L, 3L), Mean = c(NA_real_, NA_real_, NA_real_), SD = c(NA_real_, \nNA_real_, NA_real_), Min = c(NA_real_, NA_real_, NA_real_), Max = c(NA_real_, \nNA_real_, NA_real_)), row.names = c(\"c...2\", \"a...9\", \"b\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## typed.ods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"day\", \"ok\", \"pct\", \"score\", \"id\", \n\"note\"), Representation = c(\"text\", \"text\", \"numeric\", \"numeric\", \n\"text\", \"text\"), Level = c(\"nominal\", \"nominal\", \"nominal\", \"nominal\", \n\"nominal\", \"nominal\"), Concept = c(\"date\", \"\", \"\", \"\", \"id\", \n\"\"), Role = c(\"measure\", \"measure\", \"measure\", \"measure\", \"identifier\", \n\"measure\"), Unit = c(\"\", \"\", \"\", \"\", \"\", \"\"), Rows = c(3L, 3L, \n3L, 3L, 3L, 3L), \"% Missing\" = c(33.3, 33.3, 33.3, 33.3, 0, 0\n), \"N Unique\" = c(2L, 2L, 2L, 2L, 3L, 3L), Mean = c(NA_real_, \nNA_real_, NA_real_, NA_real_, NA_real_, NA_real_), SD = c(NA_real_, \nNA_real_, NA_real_, NA_real_, NA_real_, NA_real_), Min = c(NA_real_, \nNA_real_, NA_real_, NA_real_, NA_real_, NA_real_), Max = c(NA_real_, \nNA_real_, NA_real_, NA_real_, NA_real_, NA_real_)), row.names = c(\"day\", \n\"ok\", \"pct\", \"score...8\", \"id...18\", \"note\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## xl_numhdr.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"1\", \"2.5\", \"TRUE\"), Representation = c(\"numeric\", \n\"numeric\", \"numeric\"), Level = c(\"ratio\", \"ratio\", \"ratio\"), \n    Concept = c(\"\", \"\", \"\"), Role = c(\"measure\", \"measure\", \"measure\"\n    ), Unit = c(\"\", \"\", \"\"), Rows = c(1L, 1L, 1L), \"% Missing\" = c(0, \n    0, 0), \"N Unique\" = c(1L, 1L, 1L), Mean = c(NA_real_, NA_real_, \n    NA_real_), SD = c(NA_real_, NA_real_, NA_real_), Min = c(NA_real_, \n    NA_real_, NA_real_), Max = c(NA_real_, NA_real_, NA_real_\n    )), row.names = c(\"1\", \"2.5\", \"TRUE\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## xl_dates.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"d\", \"dt\", \"mix\"), Representation = c(\"text\", \n\"text\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \"nominal\"\n), Concept = c(\"\", \"\", \"\"), Role = c(\"measure\", \"measure\", \"measure\"\n), Unit = c(\"\", \"\", \"\"), Rows = c(2L, 2L, 2L), \"% Missing\" = c(0, \n0, 0), \"N Unique\" = c(2L, 2L, 2L), Mean = c(NA_real_, NA_real_, \nNA_real_), SD = c(NA_real_, NA_real_, NA_real_), Min = c(NA_real_, \nNA_real_, NA_real_), Max = c(NA_real_, NA_real_, NA_real_)), row.names = c(\"d\", \n\"dt\", \"mix\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## xl_sheets.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"first\", \"only\"), Representation = c(\"numeric\", \n\"numeric\"), Level = c(\"ratio\", \"ratio\"), Concept = c(\"\", \"\"), \n    Role = c(\"measure\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(1L, \n    1L), \"% Missing\" = c(0, 0), \"N Unique\" = c(1L, 1L), Mean = c(NA_real_, \n    NA_real_), SD = c(NA_real_, NA_real_), Min = c(NA_real_, \n    NA_real_), Max = c(NA_real_, NA_real_)), row.names = c(\"first\", \n\"only\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## title.ods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"score\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"nominal\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(2L, \n2L), \"% Missing\" = c(0, 0), \"N Unique\" = c(2L, 2L), Mean = c(NA_real_, \nNA_real_), SD = c(NA_real_, NA_real_), Min = c(NA_real_, NA_real_\n), Max = c(NA_real_, NA_real_)), row.names = c(\"id...17\", \"score...22\"\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 22 columns across 7 data files.",
           "#### Issues Identified",
           "10 file/column combinations have at least one issue.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"readxl_type-me.xls\", \"title.ods\", \"title.ods\", \n\"xl_bools.xlsx\", \"xl_gaps.xlsx\", \"xl_gaps.xlsx\", \"xl_header_only.xlsx\", \n\"xl_header_only.xlsx\", \"xl_title.xlsx\", \"xl_title.xlsx\"), Column = c(NA, \n\"Sheet1\", NA, NA, \"...2\", \"Sheet\", \"Sheet\", NA, \"Sheet\", NA), \n    Issues = c(\"<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span><br><span title='Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.'>⚠️ Un-inspectable (.xls) — Legacy <\/span>\", \n    \"<span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span>\", \n    \"<span title='The column header is on row 2; above it is a partial label row (Survey export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.'>📋 Header not on first row — The column header is on row 2<\/span>\", \n    \"<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>\", \n    \"<span title='Column is empty: all 3 values are missing.'>⬜ Empty column — Column is empty: all 3 values are missing<\/span>\", \n    \"<span title='1 fully empty row inside the data range.'>⬜ Empty rows — 1 fully empty row inside the data range<\/span>\", \n    \"<span title='2 columns are empty or have a blank header.'>⬜ Empty or unnamed columns — 2 columns are empty or have a blank header<\/span>\", \n    \"<span title='This file reads as a table but is not a usable dataset (the file has no data rows or columns). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (the file ha...<\/span>\", \n    \"<span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span><br><span title='1 fully empty row inside the data range.'>⬜ Empty rows — 1 fully empty row inside the data range<\/span>\", \n    \"<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>\"\n    )), row.names = c(NA, -10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"readxl_type-me.xls\", \"title.ods\", \"title.ods\", \n\"xl_bools.xlsx\", \"xl_gaps.xlsx\", \"xl_gaps.xlsx\", \"xl_header_only.xlsx\", \n\"xl_header_only.xlsx\", \"xl_title.xlsx\", \"xl_title.xlsx\"), Column = c(\"(whole file)\", \n\"(whole file)\", \"Sheet1\", \"(whole file)\", \"...2\", \"Sheet\", \"(whole file)\", \n\"Sheet\", \"(whole file)\", \"Sheet\"), Issues = c(\"<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span><br><span title='Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.'>⚠️ Un-inspectable (.xls) — Legacy <\/span>\", \n\"<span title='The column header is on row 2; above it is a partial label row (Survey export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.'>📋 Header not on first row — The column header is on row 2<\/span>\", \n\"<span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span>\", \n\"<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>\", \n\"<span title='Column is empty: all 3 values are missing.'>⬜ Empty column — Column is empty: all 3 values are missing<\/span>\", \n\"<span title='1 fully empty row inside the data range.'>⬜ Empty rows — 1 fully empty row inside the data range<\/span>\", \n\"<span title='This file reads as a table but is not a usable dataset (the file has no data rows or columns). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (the file ha...<\/span>\", \n\"<span title='2 columns are empty or have a blank header.'>⬜ Empty or unnamed columns — 2 columns are empty or have a blank header<\/span>\", \n\"<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>\", \n\"<span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span title='1 fully empty row inside the data range.'>⬜ Empty rows — 1 fully empty row inside the data range<\/span>\"\n)), row.names = c(NA, -10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
           "#### Spreadsheet Formatting",
           "We examined 12 spreadsheet files in the repository; 6 have at least one formatting issue.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"readxl_type-me.xls\", \"readxl_type-me.xls\", \n\"title.ods\", \"title.ods\", \"xl_bools.xlsx\", \"xl_gaps.xlsx\", \"xl_header_only.xlsx\", \n\"xl_header_only.xlsx\", \"xl_title.xlsx\", \"xl_title.xlsx\", \"xl_title.xlsx\"\n), Sheet = c(NA, NA, NA, \"Sheet1\", NA, \"Sheet\", NA, \"Sheet\", \nNA, \"Sheet\", \"Sheet\"), Issue = c(\"Not a rectangular dataset\", \n\"Un-inspectable (.xls)\", \"Header not on first row\", \"Empty or unnamed columns\", \n\"Not a rectangular dataset\", \"Empty rows\", \"Not a rectangular dataset\", \n\"Empty or unnamed columns\", \"Not a rectangular dataset\", \"Empty rows\", \n\"Empty or unnamed columns\"), Detail = c(\"This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.\", \n\"The column header is on row 2; above it is a partial label row (Survey export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.\", \n\"1 column is empty or have a blank header.\", \"This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"1 fully empty row inside the data range.\", \"This file reads as a table but is not a usable dataset (the file has no data rows or columns). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"2 columns are empty or have a blank header.\", \"This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"1 fully empty row inside the data range.\", \"1 column is empty or have a blank header.\"\n)), row.names = c(NA, -11L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"readxl_type-me.xls\", \"readxl_type-me.xls\", \n\"title.ods\", \"title.ods\", \"xl_bools.xlsx\", \"xl_gaps.xlsx\", \"xl_header_only.xlsx\", \n\"xl_header_only.xlsx\", \"xl_title.xlsx\", \"xl_title.xlsx\", \"xl_title.xlsx\"\n), Sheet = c(NA, NA, NA, \"Sheet1\", NA, \"Sheet\", NA, \"Sheet\", \nNA, \"Sheet\", \"Sheet\"), Issue = c(\"Not a rectangular dataset\", \n\"Un-inspectable (.xls)\", \"Header not on first row\", \"Empty or unnamed columns\", \n\"Not a rectangular dataset\", \"Empty rows\", \"Not a rectangular dataset\", \n\"Empty or unnamed columns\", \"Not a rectangular dataset\", \"Empty rows\", \n\"Empty or unnamed columns\"), Detail = c(\"This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.\", \n\"The column header is on row 2; above it is a partial label row (Survey export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.\", \n\"1 column is empty or has a blank header.\", \"This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"1 fully empty row inside the data range.\", \"This file reads as a table but is not a usable dataset (the file has no data rows or columns). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"2 columns are empty or have a blank header.\", \"This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"1 fully empty row inside the data range.\", \"1 column is empty or has a blank header.\"\n)), row.names = c(NA, -11L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
           "Spreadsheet formatting such as colour, merged cells, and blank rows/columns is not preserved when data are read programmatically or exported to CSV. Store data as a plain rectangular table (one header row, one column per variable, no colour-encoded meaning) so it is machine-readable.",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
@@ -1122,14 +1178,14 @@
               "This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
               "Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.",
               "The column header is on row 2; above it is a partial label row (Survey export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.",
-              "1 column is empty or have a blank header.",
+              "1 column is empty or has a blank header.",
               "This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
               "1 fully empty row inside the data range.",
               "This file reads as a table but is not a usable dataset (the file has no data rows or columns). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
               "2 columns are empty or have a blank header.",
               "This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
               "1 fully empty row inside the data range.",
-              "1 column is empty or have a blank header."
+              "1 column is empty or has a blank header."
             ]
           }
         ]
@@ -1233,6 +1289,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -1481,6 +1538,23 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "readxl_type-me.xls",
+              "title.ods",
+              "typed.ods",
+              "written.fods",
+              "xl_bools.xlsx",
+              "xl_dates.xlsx",
+              "xl_gaps.xlsx",
+              "xl_header_only.xlsx",
+              "xl_mixed.xlsx",
+              "xl_numhdr.xlsx",
+              "xl_sheets.xlsx",
+              "xl_title.xlsx"
             ]
           },
           {
@@ -1808,6 +1882,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

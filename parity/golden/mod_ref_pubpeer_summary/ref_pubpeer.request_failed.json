@@ -1,9 +1,9 @@
 {
   "id": "ref_pubpeer.request_failed",
   "ok": false,
-  "error": "Running the module 'ref_pubpeer' produced errors: `x` and `y` must share the same src.",
+  "error": "Running the module 'ref_pubpeer' produced errors: POST https://pubpeer.com/v3/publications?devkey=PubPeerZotero {\"dois\":[\"10.9999/pp.fail\"]}",
   "warnings": [],
   "value": null,
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -28,8 +28,8 @@
               "id",
               "sat_1",
               "sat_2",
-              "sat_3",
-              "sat_4"
+              "sat_4",
+              "sat_3"
             ]
           },
           {
@@ -39,9 +39,9 @@
               "no",
               "no",
               "no",
-              "yes",
-              "yes",
-              "yes",
+              "no",
+              "no",
+              "no",
               "yes"
             ]
           },
@@ -52,10 +52,10 @@
               null,
               null,
               null,
-              "",
-              "",
-              "Satisfaction with colleagues",
-              ""
+              null,
+              null,
+              null,
+              "Satisfaction with colleagues"
             ]
           },
           {
@@ -65,10 +65,10 @@
               null,
               null,
               null,
-              "sat_1",
-              "sat_2",
-              "sat_3",
-              "sat_4"
+              null,
+              null,
+              null,
+              "sat_3"
             ]
           },
           {
@@ -78,9 +78,9 @@
               null,
               null,
               null,
-              "codebook.csv",
-              "codebook.csv",
-              "codebook.csv",
+              null,
+              null,
+              null,
               "codebook.csv"
             ]
           },
@@ -91,16 +91,51 @@
               "unlabelled",
               "unlabelled",
               "unlabelled",
-              "labelled",
-              "labelled",
-              "labelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
               "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "Variable",
+          "Label",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sat_1",
+              "sat_2",
+              "sat_4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

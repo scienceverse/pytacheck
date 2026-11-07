@@ -3,11 +3,11 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "2 of 3 files from Figshare article 18093368 did not arrive intact (e.g. readme.txt, missing.csv). The returned table marks them downloaded = FALSE. Run again to retry."
+    "2 of 4 files from Figshare article 18093368 did not arrive intact (e.g. readme.txt, missing.csv). The returned table marks them downloaded = FALSE. Run again to retry."
   ],
   "value": {
     "t": "df",
-    "nrow": 3,
+    "nrow": 4,
     "names": [
       "folder",
       "figshare_id",
@@ -28,12 +28,14 @@
         "v": [
           "figshare_18093368",
           "figshare_18093368",
+          "figshare_18093368",
           "figshare_18093368"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "18093368",
           "18093368",
           "18093368",
           "18093368"
@@ -44,6 +46,7 @@
         "v": [
           "555",
           "556",
+          "557",
           "558"
         ]
       },
@@ -52,6 +55,7 @@
         "v": [
           "data.csv",
           "readme.txt",
+          "video.mp4",
           "missing.csv"
         ]
       },
@@ -60,6 +64,7 @@
         "v": [
           "data.csv",
           "readme.txt",
+          null,
           null
         ]
       },
@@ -68,6 +73,7 @@
         "v": [
           8,
           22,
+          52428800,
           4
         ]
       },
@@ -76,6 +82,7 @@
         "v": [
           8,
           21,
+          null,
           null
         ]
       },
@@ -84,6 +91,7 @@
         "v": [
           "344fd2323dd33d5c058b7cf27de029e8",
           "380fc7c25eed1ca3428a9952cdbc006c",
+          "",
           ""
         ]
       },
@@ -91,6 +99,7 @@
         "t": "lgl",
         "v": [
           true,
+          null,
           null,
           null
         ]
@@ -100,6 +109,7 @@
         "v": [
           "https://ndownloader.figshare.com/files/555",
           "https://ndownloader.figshare.com/files/556",
+          "https://ndownloader.figshare.com/files/557",
           "https://ndownloader.figshare.com/files/558"
         ]
       },
@@ -107,6 +117,7 @@
         "t": "lgl",
         "v": [
           true,
+          false,
           false,
           false
         ]
@@ -116,11 +127,12 @@
         "v": [
           null,
           null,
+          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

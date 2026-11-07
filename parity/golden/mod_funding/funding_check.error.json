@@ -1,9 +1,111 @@
 {
   "id": "funding_check.error",
-  "ok": false,
-  "error": "Running the module 'funding_check' produced errors: In argument: `text = rtransparent_funding(text)`.",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.3.2",
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "funding_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Funding Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Funding Funding:"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The following funding statement was detected:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"Funding Funding:\"), names = \"\", row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A funding statement was detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "funding_found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

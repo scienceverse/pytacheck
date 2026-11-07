@@ -22,6 +22,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -116,7 +117,7 @@
         "v": [
           "Double-check permissions on repositories with no detectable files.",
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://www.psycharchives.org/handle/20.500.12034/99991' target='_blank'>www.psycharchives.org/handle/20.500.12034/99991<\/a>\", \n\"<a href='https://www.psycharchives.org/handle/20.500.12034/99992' target='_blank'>www.psycharchives.org/handle/20.500.12034/99992<\/a>\"\n), Platform = c(\"dspace\", \"dspace\"), Error = c(\"Join columns in `y` must be present in the data.<br>✖ Problem with `pa_url`.\", \n\"Join columns in `y` must be present in the data.<br>✖ Problem with `pa_url`.\"\n), \"All Files\" = c(0L, 0L), \"Data Files\" = c(0L, 0L), \"Code Files\" = c(0L, \n0L), READMEs = c(0L, 0L), Archives = c(0L, 0L)), row.names = c(NA, \n-2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://www.psycharchives.org/handle/20.500.12034/99991' target='_blank'>www.psycharchives.org/handle/20.500.12034/99991<\/a>\", \n\"<a href='https://www.psycharchives.org/handle/20.500.12034/99992' target='_blank'>www.psycharchives.org/handle/20.500.12034/99992<\/a>\"\n), Platform = c(\"dspace\", \"dspace\"), \"All Files\" = c(0L, 0L), \n    \"Data Files\" = c(0L, 0L), \"Code Files\" = c(0L, 0L), READMEs = c(0L, \n    0L), Archives = c(0L, 0L)), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "",
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document."
         ]
@@ -139,6 +140,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -204,6 +206,12 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
@@ -213,7 +221,7 @@
       },
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 0,
         "names": [
           "repo_url",
           "repo_type",
@@ -222,24 +230,15 @@
         "v": [
           {
             "t": "chr",
-            "v": [
-              "https://www.psycharchives.org/handle/20.500.12034/99991",
-              "https://www.psycharchives.org/handle/20.500.12034/99992"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "dspace",
-              "dspace"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "Join columns in `y` must be present in the data.\n✖ Problem with `pa_url`.",
-              "Join columns in `y` must be present in the data.\n✖ Problem with `pa_url`."
-            ]
+            "v": []
           }
         ]
       },
@@ -309,6 +308,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -316,6 +343,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

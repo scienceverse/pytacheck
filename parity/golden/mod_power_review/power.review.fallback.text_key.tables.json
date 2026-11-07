@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Identify power analyses from excerpts of scientific manuscripts. Use null/omit a field when information is missing, do not invent values. For the statistical test, effect size metric and software, use one of the suggested values when it fits, and otherwise give the name as written in the text. A paragraph may contain no power analysis, or more than one -- return one entry in power_analyses per power analysis actually described, and an empty array if the paragraph only references a power analysis presented elsewhere, or explicitly states that no power analysis was run.\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Two power analyses were run: an a priori analysis (n = 60, 80% power, r = 0.6) and a sensitivity analysis (n = 60, alpha = .05, 90% power) for our correlation.\"}]}],\"model\":\"test-model\",\"temperature\":0,\"seed\":8675309,\"max_completion_tokens\":4096,\"stream\":false,\"response_format\":{\"type\":\"json_schema\",\"json_schema\":{\"name\":\"structured_data\",\"schema\":{\"type\":\"object\",\"description\":\"\",\"properties\":{\"power_analyses\":{\"type\":\"array\",\"description\":\"Power analyses found in the text. Empty array if none.\",\"items\":{\"type\":\"object\",\"description\":\"\",\"properties\":{\"power_type\":{\"type\":\"string\",\"description\":\"The type of power analysis, one of 'apriori', 'sensitivity', 'posthoc' or 'unknown'. 'apriori' calculates the required sample size to achieve a desired power given an effect size, statistical test, and alpha level. 'sensitivity' estimates, given a sample size, which effect sizes a design has sufficient power to detect. 'posthoc' (observed/retrospective power) computes achieved power for an empirically observed effect size. Use 'unknown' if a power analysis is present but its type cannot be determined.\"},\"statistical_test\":{\"type\":[\"string\",\"null\"],\"description\":\"The statistical test used: one of 'paired t-test', 'unpaired t-test', 'one-sample t-test', '1-way ANOVA', '2-way ANOVA', '3-way ANOVA', 'MANOVA', 'regression', 'chi-square', 'correlation', or else the test's name as written in the text.\"},\"sample_size\":{\"type\":[\"number\",\"null\"],\"description\":\"The sample size determined by or used in the power analysis. Give the total number if this is expressed as number per group.\"},\"alpha_level\":{\"type\":[\"number\",\"null\"],\"description\":\"The alpha threshold used to determine significance.\"},\"power\":{\"type\":[\"number\",\"null\"],\"description\":\"The statistical power, expressed as a number between 0 and 1.\"},\"effect_size\":{\"type\":[\"number\",\"null\"],\"description\":\"The numeric effect size used in or determined from the power analysis.\"},\"effect_size_metric\":{\"type\":[\"string\",\"null\"],\"description\":\"The effect size metric: one of 'Cohen's d', 'Hedges' g', 'Cohen's f', 'partial eta squared', 'eta squared', 'unstandardised' (for raw/non-standardized effects), or else the metric as written in the text.\"},\"software\":{\"type\":[\"string\",\"null\"],\"description\":\"The software used to conduct the power analysis, as named in the text (e.g. 'G*Power', 'pwr', 'simr', 'Superpower', 'PASS', 'POWSIM'), or 'simulation' for a simulation without named software.\"}},\"required\":[\"power_type\",\"statistical_test\",\"sample_size\",\"alpha_level\",\"power\",\"effect_size\",\"effect_size_metric\",\"software\"],\"additionalProperties\":false}}},\"required\":[\"power_analyses\"],\"additionalProperties\":false},\"strict\":true}}}\nExpected mock file: api.groq.com/openai/v1/chat/completions-f40254-POST.*"
   ],
   "value": {
     "t": "list",
@@ -81,7 +81,7 @@
             ]
           },
           {
-            "t": "lgl",
+            "t": "chr",
             "v": [
               null,
               null
@@ -113,6 +113,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

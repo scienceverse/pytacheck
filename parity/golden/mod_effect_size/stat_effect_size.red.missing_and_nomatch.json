@@ -379,7 +379,7 @@
           "We recommend checking the sentences below, and add any missing effect sizes.",
           "For t-tests with a reported d, coherence checks yielded 2 no matches.",
           "For F-tests with a reported eta-squared effect size, coherence checks yielded 1 no match.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"t(12) = 2.2, p = .04.\", \"F(2, 30) = 4.50.\")), names = \"\", class = \"data.frame\", row.names = c(NA, \n-2L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"t(12) = 2.2, p = .04.\", \"F(2, 30) = 4.50.\")), names = \"\", row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
           "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"t(20) = 1.00, d = 3.00.\", \"t(20) = 1.00, d = 3.00, and F(1, 13) = 2.34, ηp² = 0.35.\", \n\"t(20) = 1.00, d = 3.00, and F(1, 13) = 2.34, ηp² = 0.35.\", \n\"t(12) = 2.2, p = .04.\", \"F(2, 30) = 4.50.\"), \"Effect Size\" = c(\"d = 3.00\", \n\"d = 3.00\", \"ηp² = 0.35\", NA, NA), \"Reported Test\" = c(\"t(20) = 1.00\", \n\"t(20) = 1.00\", \"F(1, 13) = 2.34\", \"t(12) = 2.2\", \"F(2, 30) = 4.50\"\n), \"Test Type\" = c(\"t-test\", \"t-test\", \"F-test\", \"t-test\", \"F-test\"\n), \"d Coherence\" = c(\"no_match\", \"no_match\", NA, \"indeterminate\", \nNA), \"d Assumption\" = c(\"none\", \"none\", NA, \"none\", NA), \"d Coherence Note\" = c(\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \nNA, \"No parseable d effect size found.\", NA), \"eta Coherence\" = c(NA, \nNA, \"no_match\", NA, \"indeterminate\"), \"eta Assumption\" = c(NA, \nNA, \"partial_eta_squared\", NA, \"none\"), \"eta Coherence Note\" = c(NA, \nNA, \"No match under partial eta-squared formula from F and dfs. Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \nNA, \"No parseable eta-squared effect size found.\")), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
         ]
@@ -393,7 +393,7 @@
       {
         "t": "chr",
         "v": [
-          "We found 2 t-tests and/or F-tests where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes"
+          "We found 2 t-tests and/or F-tests where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes."
         ]
       },
       {
@@ -447,6 +447,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

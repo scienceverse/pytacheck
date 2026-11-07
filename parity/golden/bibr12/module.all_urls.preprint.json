@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 17,
+        "nrow": 15,
         "names": [
           "text",
           "text_id",
@@ -60,8 +60,6 @@
               "https://aspredicted.org/3tq2y.pdf",
               "https://aspredicted.org/i9vw6.pdf",
               "https://aspredicted.org/ej26f.pdf",
-              "lange.jens",
-              "outlook.com",
               "https://osf.io/n9uvj",
               "AsPredicted.org",
               "https://aspredicted.org/3tq2y.pdf",
@@ -82,8 +80,6 @@
               9,
               9,
               9,
-              14,
-              14,
               135,
               146,
               146,
@@ -104,8 +100,6 @@
               2,
               2,
               2,
-              4,
-              4,
               25,
               26,
               26,
@@ -122,8 +116,6 @@
               5,
               5,
               5,
-              6,
-              6,
               6,
               6,
               6,
@@ -148,8 +140,6 @@
               1,
               1,
               1,
-              2,
-              2,
               11,
               12,
               12,
@@ -163,8 +153,6 @@
           {
             "t": "chr",
             "v": [
-              null,
-              null,
               null,
               null,
               null,
@@ -199,8 +187,6 @@
               "preprint",
               "preprint",
               "preprint",
-              "preprint",
-              "preprint",
               "preprint"
             ]
           },
@@ -210,8 +196,6 @@
               "manuscript before copyediting in press at Emotion",
               "manuscript before copyediting in press at Emotion",
               "manuscript before copyediting in press at Emotion",
-              "Abstract",
-              "Abstract",
               "Abstract",
               "Abstract",
               "Abstract",
@@ -232,8 +216,6 @@
               "unknown",
               "unknown",
               "unknown",
-              "abstract",
-              "abstract",
               "abstract",
               "abstract",
               "abstract",
@@ -282,7 +264,7 @@
           {
             "t": "int",
             "v": [
-              17
+              15
             ]
           }
         ]
@@ -295,6 +277,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

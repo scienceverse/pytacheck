@@ -15,8 +15,8 @@
       {
         "t": "chr",
         "v": [
-          null,
-          null,
+          "<SESSION>/example.org_repo-a/a.csv",
+          "<SESSION>/example.org_repo-a/b.csv",
           null
         ]
       },
@@ -63,7 +63,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "repo_url",
           "file_name",
@@ -74,28 +74,38 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://example.org/repo-a"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "c.csv"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "file://<DATA>/missing.csv"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              null
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "Failed to perform HTTP request.\nCaused by error in `open.connection()`:\n! cannot open the connection"
+            ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

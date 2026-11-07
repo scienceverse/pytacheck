@@ -396,7 +396,7 @@
       },
       {
         "t": "df",
-        "nrow": 37,
+        "nrow": 38,
         "names": [
           "text",
           "text_id",
@@ -423,8 +423,8 @@
               "We subsequently coded all manuscripts for mistakes, and counted the total number of mistakes.",
               "We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had.",
               "We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
-              "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
-              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+              "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d = 0.59.",
+              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p = 0.152.",
               "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).",
               "Since our data are simulated for demonstration purposes, of course they confirm our hypotheses.",
               "It seems automated tools can help prevent errors by providing researchers with feedback about potential mistakes, and researchers feel the app",
@@ -433,7 +433,8 @@
               "The authors declare a conflict of interest.",
               "We really want to see this project succeed and help researchers make their papers better.",
               "We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power.",
-              "We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).2",
+              "We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).",
+              "2",
               "The code we used for this analysis is as follows.",
               "pwr::pwr.t.test(n = 50, power = 0.8, alternative = \"greater\") is useful.",
               "We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts.",
@@ -487,7 +488,8 @@
               34,
               35,
               36,
-              37
+              37,
+              38
             ]
           },
           {
@@ -517,6 +519,7 @@
               10,
               10,
               11,
+              12,
               12,
               13,
               14,
@@ -563,6 +566,7 @@
               9,
               9,
               9,
+              9,
               10,
               10,
               10,
@@ -613,12 +617,14 @@
               null,
               null,
               null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
               null,
               null,
               null,
@@ -873,11 +879,11 @@
           {
             "t": "int",
             "v": [
-              29,
               30,
               31,
               32,
-              33
+              33,
+              34
             ]
           },
           {
@@ -1244,8 +1250,8 @@
           {
             "t": "int",
             "v": [
-              34,
-              36
+              35,
+              37
             ]
           },
           {
@@ -1306,7 +1312,7 @@
           {
             "t": "int",
             "v": [
-              35
+              36
             ]
           },
           {
@@ -1413,8 +1419,8 @@
               16,
               17,
               24,
-              27,
-              27
+              28,
+              28
             ]
           },
           {
@@ -1465,10 +1471,10 @@
               2,
               2,
               2,
-              5,
               3,
               4,
-              4
+              5,
+              5
             ]
           },
           {
@@ -1655,7 +1661,7 @@
           {
             "t": "int",
             "v": [
-              37
+              38
             ]
           }
         ]
@@ -2065,7 +2071,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "0.3.3.2"
+                  "0.4.3.7"
                 ]
               },
               {
@@ -2137,6 +2143,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

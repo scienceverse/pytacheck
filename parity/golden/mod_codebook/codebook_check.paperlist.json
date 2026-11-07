@@ -106,7 +106,7 @@
             "v": [
               "Participant id",
               "Age in years",
-              null,
+              "Participant id",
               "Positive affect",
               null
             ]
@@ -116,7 +116,7 @@
             "v": [
               "id",
               "age",
-              null,
+              "id",
               "mood",
               null
             ]
@@ -126,7 +126,7 @@
             "v": [
               "codebook_a.csv",
               "codebook_a.csv",
-              null,
+              "codebook_b.csv",
               "codebook_b.csv",
               null
             ]
@@ -136,7 +136,7 @@
             "v": [
               "labelled",
               "labelled",
-              "unlabelled",
+              "labelled",
               "labelled",
               "unlabelled"
             ]
@@ -146,7 +146,7 @@
             "v": [
               "rules",
               "rules",
-              null,
+              "rules",
               "rules",
               null
             ]
@@ -239,7 +239,7 @@
           "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
           "We examined 2 codebook/README/label sources and 5 data columns across 2 files.",
           "#### Column Documentation",
-          "::: {.panel-tabset}\n\n## b.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"anx\", \"id\", \"mood\"), Documented = c(\"no\", \n\"no\", \"yes\"), Label = c(NA, NA, \"Positive affect\"), \"Codebook Variable\" = c(NA, \nNA, \"mood\"), Source = c(NA, NA, \"codebook_b.csv\"), Status = c(\"unlabelled\", \n\"unlabelled\", \"labelled\")), row.names = c(1L, 2L, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## a.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\"), Documented = c(\"yes\", \n\"yes\"), Label = c(\"Age in years\", \"Participant id\"), \"Codebook Variable\" = c(\"age\", \n\"id\"), Source = c(\"codebook_a.csv\", \"codebook_a.csv\"), Status = c(\"labelled\", \n\"labelled\")), row.names = 3:4, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "::: {.panel-tabset}\n\n## b.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"anx\", \"id\", \"mood\"), Documented = c(\"no\", \n\"yes\", \"yes\"), Label = c(NA, \"Participant id\", \"Positive affect\"\n), \"Codebook Variable\" = c(NA, \"id\", \"mood\"), Source = c(NA, \n\"codebook_b.csv\", \"codebook_b.csv\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\")), row.names = c(1L, 4L, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## a.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"age\", \"id\"), Documented = c(\"yes\", \n\"yes\"), Label = c(\"Age in years\", \"Participant id\"), \"Codebook Variable\" = c(\"age\", \n\"id\"), Source = c(\"codebook_a.csv\", \"codebook_a.csv\"), Status = c(\"labelled\", \n\"labelled\")), row.names = 2:3, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
           "#### Documented but Unused Variables\n\n1 documented variable was not matched to any data column.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Variable = \"income\", Label = \"Annual income\", \n    Source = \"codebook_a.csv\"), row.names = 3L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n"
         ]
@@ -247,13 +247,13 @@
       {
         "t": "chr",
         "v": [
-          "red"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We parsed 4 variable definitions from codebook/README files.\n-  3 of 5 data columns (60%) are documented in a codebook; 2 are not."
+          "\n-  We parsed 5 variable definitions from codebook/README files.\n-  4 of 5 data columns (80%) are documented in a codebook; 1 is not."
         ]
       },
       {
@@ -294,21 +294,21 @@
             "t": "int",
             "v": [
               2,
-              1
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0,
               2
             ]
           },
           {
             "t": "int",
             "v": [
-              2,
+              0,
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2
             ]
           },
           {
@@ -322,7 +322,7 @@
             "t": "int",
             "v": [
               3,
-              1
+              2
             ]
           },
           {
@@ -378,7 +378,7 @@
       },
       {
         "t": "df",
-        "nrow": 4,
+        "nrow": 5,
         "names": [
           "codebook_variable",
           "label",
@@ -398,7 +398,8 @@
               "age",
               "id",
               "income",
-              "mood"
+              "mood",
+              "id"
             ]
           },
           {
@@ -407,7 +408,8 @@
               "Age in years",
               "Participant id",
               "Annual income",
-              "Positive affect"
+              "Positive affect",
+              "Participant id"
             ]
           },
           {
@@ -416,12 +418,14 @@
               "codebook_a.csv",
               "codebook_a.csv",
               "codebook_a.csv",
+              "codebook_b.csv",
               "codebook_b.csv"
             ]
           },
           {
             "t": "chr",
             "v": [
+              "ex1",
               "ex1",
               "ex1",
               "ex1",
@@ -434,14 +438,6 @@
               null,
               null,
               null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
               null,
               null
             ]
@@ -452,6 +448,17 @@
               null,
               null,
               null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
               null
             ]
           },
@@ -461,12 +468,14 @@
               null,
               null,
               null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              "structured",
               "structured",
               "structured",
               "structured",
@@ -479,6 +488,7 @@
               "p1",
               "p1",
               "p1",
+              "p2",
               "p2"
             ]
           }
@@ -562,6 +572,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

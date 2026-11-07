@@ -18,7 +18,7 @@
         "v": [
           {
             "t": "df",
-            "nrow": 2,
+            "nrow": 3,
             "names": [
               "P-Value",
               "Text"
@@ -27,15 +27,17 @@
               {
                 "t": "chr",
                 "v": [
-                  "p < .05 ",
-                  "p > .1"
+                  "p < .05",
+                  "p > .1",
+                  "p < .01"
                 ]
               },
               {
                 "t": "chr",
                 "v": [
                   "Bad p < .05 and p < .05 again.",
-                  "Zero p = .000 line two p > .1."
+                  "Zero p = .000 line two p > .1.",
+                  "Note * p < .05, p < .01."
                 ]
               }
             ]
@@ -81,7 +83,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "p = .000<br>"
+                  "p = .000"
                 ]
               },
               {
@@ -115,6 +117,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

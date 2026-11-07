@@ -40,7 +40,7 @@
       {
         "t": "chr",
         "v": [
-          "We found no links to repositories on the Open Science Framework, Github, ResearchBox, DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, or DataONE."
+          "We found no links to repositories on the Open Science Framework, Github, ResearchBox, DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, DataONE, or LDbase."
         ]
       },
       {
@@ -52,7 +52,7 @@
       {
         "t": "chr",
         "v": [
-          "We found no links to repositories on the Open Science Framework, Github, ResearchBox, DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, or DataONE."
+          "We found no links to repositories on the Open Science Framework, Github, ResearchBox, DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, DataONE, or LDbase."
         ]
       },
       {
@@ -114,6 +114,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

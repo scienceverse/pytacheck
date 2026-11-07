@@ -18,7 +18,7 @@
         "v": [
           {
             "t": "df",
-            "nrow": 17,
+            "nrow": 20,
             "names": [
               "Text",
               "Sentence"
@@ -38,12 +38,15 @@
                   "p = .151",
                   "p = .070",
                   "p = .058",
+                  "ps > .115",
                   "p = .055",
                   "p = .068",
+                  "ps > .169",
                   "p = .203",
                   "p = .288",
                   "p = .299",
-                  "p = .094"
+                  "p = .094",
+                  "ps > .131"
                 ]
               },
               {
@@ -60,12 +63,15 @@
                   "There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. 6), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.",
                   "During these normal viewing conditions, there was a strong trend of judgment on RT, F(1, 26) = 3.568, p = .070, ηp² = .121, with basic categorization needing less time (1,062 ms) than subordinate categorization (1,272 ms).",
                   "There was a main effect of stimuli type, F(2.084, 54.188) = 7.080, p = .002, ηp² = .214 (Ms = 1,269, 1,128, 1,273, and 998 ms for classrooms, pools, restaurants, and roads, respectively) as well as a trend for an interaction, F(3, 78) = 2.596, p = .058, ηp² = .091, which was due to restaurants taking significantly longer to categorize at the subordinate level (M = 1,471 ms) than at the basic level (M = 1,075 ms), t(26) = 3.00, p = .006.",
+                  "Similar numerical patterns were obtained for classrooms (basic: M = 1,204 ms; subordinate: M = 1,333 ms), pools (basic: M = 989 ms; subordinate: M = 1,266 ms), and roads (basic: M = 979 ms; subordinate: M = 1,016 ms), but they were not significant (ts < 1.629, ps > .115).",
                   "There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.",
                   "There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.",
+                  "In contrast, there was a similar numerical pattern but no significant difference for classrooms (basic: M = 3.57; subordinate: M = 4.34) and roads (basic: M = 2.69; subordinate: M = 3.09), ts < 1.415, ps > .169.",
                   "For initial saccade latency, there was no main effect of judgment, F(1, 26) = 1.708, p = .203, ηp² = .062, or stimuli type, nor was there an interaction between the two for initial saccade latency (Fs < 1).",
                   "There was no interaction, F(3, 78) = 1.276, p = .288, ηp² = .047.",
                   "No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p < .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094.",
-                  "No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p < .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094."
+                  "No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p < .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094.",
+                  "In contrast, there were similar, but not significant, numerical patterns for classrooms (basic: M = 3.81°; subordinate: M = 4.31°) and pools (basic: M = 3.04°; subordinate: M = 3.63°), ts < 1.560, ps > .131, whereas for roads, there were longer saccades in the basic condition (M = 3.61°) than in the subordinate condition (M = 3.27°), t <1."
                 ]
               }
             ]
@@ -93,6 +99,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

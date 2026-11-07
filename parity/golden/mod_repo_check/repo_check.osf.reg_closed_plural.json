@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -220,7 +221,10 @@
       {
         "t": "chr",
         "v": [
-          "Double-check permissions on repositories with no detectable files.",
+          "#### Repositories that could not be checked",
+          "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
+          "- https://osf.io/parc2: closed registration source",
+          "- https://osf.io/parc6: closed registration source",
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/parc1' target='_blank'>osf.io/parc1<\/a>\", \n\"<a href='https://osf.io/parc2' target='_blank'>osf.io/parc2<\/a>\", \n\"<a href='https://osf.io/parc5' target='_blank'>osf.io/parc5<\/a>\", \n\"<a href='https://osf.io/parc6' target='_blank'>osf.io/parc6<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\", \"osf\"), Error = c(\"closed registration source (files retrieved from registration: https://osf.io/regc1)\", \n\"closed registration source\", \"closed registration source (files retrieved from registration: https://osf.io/regc5)\", \n\"closed registration source\"), \"All Files\" = c(4L, 0L, 3L, 0L\n), \"Data Files\" = c(1L, 0L, 1L, 0L), \"Code Files\" = c(2L, 0L, \n1L, 0L), READMEs = c(0L, 0L, 0L, 0L), Archives = c(1L, 0L, 1L, \n0L)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
@@ -245,7 +249,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 2 empty repositories.\n-  We found 7 files in 4 repositories.\n-  We found 0 README files and 4 repositories without READMEs.\n-  We found 2 archive files.\n-  We found 2 registration-linked OSF projects that are closed with no files reachable anywhere.\n-  We found 2 registration-linked OSF projects that are closed; their files were retrieved from the OSF registration instead.\n-  We could not classify 2 files.\n-  We found 2 file naming problems to fix."
+          "\n-  We could not check 2 repositories: https://osf.io/parc2 (closed registration source); https://osf.io/parc6 (closed registration source).\n-  We found 7 files in 4 repositories.\n-  We found 0 README files and 2 repositories without READMEs.\n-  We found 2 archive files.\n-  We found 2 registration-linked OSF projects that are closed with no files reachable anywhere.\n-  We found 2 registration-linked OSF projects that are closed; their files were retrieved from the OSF registration instead.\n-  We could not classify 2 files.\n-  We found 2 file naming problems to fix."
         ]
       },
       {
@@ -254,6 +258,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -274,6 +279,12 @@
             "t": "int",
             "v": [
               4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
             ]
           },
           {
@@ -487,6 +498,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -494,6 +533,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

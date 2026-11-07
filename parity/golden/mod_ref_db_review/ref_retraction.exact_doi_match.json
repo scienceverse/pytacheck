@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "paper_id",
           "bib_id",
@@ -48,42 +48,53 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "synthetic"
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              0
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "10.1371/JOURNAL.PPAT.1000066"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "Reference 0. https://doi.org/10.1371/JOURNAL.PPAT.1000066"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "Retraction;Expression of concern"
+            ]
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We checked 3 references with DOIs. No citations to articles in the RetractionWatch database were found."
+          "We checked 3 references with DOIs. You cited 1 article in the RetractionWatch database.\n\nCheck if you are aware of the retraction, correction, or expression of concern for each reference, and consider whether it still supports your claims.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = \"Reference 0. https://doi.org/10.1371/JOURNAL.PPAT.1000066\", \n    \"RW Type\" = \"Retraction;Expression of concern\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "na"
+          "info"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "No citations to articles in the RetractionWatch database were found."
+          "You cited 1 article in the RetractionWatch database."
         ]
       },
       {
@@ -101,9 +112,9 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
-              0
+              1
             ]
           }
         ]
@@ -116,6 +127,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

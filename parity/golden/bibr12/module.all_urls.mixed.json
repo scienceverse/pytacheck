@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 24,
+        "nrow": 22,
         "names": [
           "text",
           "text_id",
@@ -67,8 +67,6 @@
               "https://aspredicted.org/3tq2y.pdf",
               "https://aspredicted.org/i9vw6.pdf",
               "https://aspredicted.org/ej26f.pdf",
-              "lange.jens",
-              "outlook.com",
               "https://osf.io/n9uvj",
               "AsPredicted.org",
               "https://aspredicted.org/3tq2y.pdf",
@@ -96,8 +94,6 @@
               9,
               9,
               9,
-              14,
-              14,
               135,
               146,
               146,
@@ -125,8 +121,6 @@
               2,
               2,
               2,
-              4,
-              4,
               25,
               26,
               26,
@@ -150,8 +144,6 @@
               5,
               5,
               5,
-              6,
-              6,
               6,
               6,
               6,
@@ -183,8 +175,6 @@
               1,
               1,
               1,
-              2,
-              2,
               11,
               12,
               12,
@@ -204,8 +194,6 @@
               "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
               "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
               "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
-              null,
-              null,
               null,
               null,
               null,
@@ -248,8 +236,6 @@
               "preprint",
               "preprint",
               "preprint",
-              "preprint",
-              "preprint",
               "preprint"
             ]
           },
@@ -266,8 +252,6 @@
               "manuscript before copyediting in press at Emotion",
               "manuscript before copyediting in press at Emotion",
               "manuscript before copyediting in press at Emotion",
-              "Abstract",
-              "Abstract",
               "Abstract",
               "Abstract",
               "Abstract",
@@ -295,8 +279,6 @@
               "unknown",
               "unknown",
               "unknown",
-              "abstract",
-              "abstract",
               "abstract",
               "abstract",
               "abstract",
@@ -349,7 +331,7 @@
             "v": [
               7,
               0,
-              17
+              15
             ]
           }
         ]
@@ -362,6 +344,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

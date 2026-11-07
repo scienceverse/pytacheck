@@ -12,7 +12,8 @@
       "file_path",
       "file_url",
       "file_location",
-      "file_size"
+      "file_size",
+      "recovered_from"
     ],
     "v": [
       {
@@ -52,7 +53,7 @@
         "v": [
           "tests/codecheck/fixtures/expand/knit_classic.html",
           "tests/codecheck/fixtures/expand/stata_log.html",
-          "tests/codecheck/fixtures/expand/code/knit_classic.R"
+          "<tempdir>/metacheck-recovered-code/ca950693fafa7ded7262757fe7521621/code/knit_classic.R"
         ]
       },
       {
@@ -62,9 +63,17 @@
           1,
           63
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "sub/knit_classic.html"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

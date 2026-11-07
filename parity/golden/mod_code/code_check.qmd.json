@@ -161,9 +161,9 @@
           {
             "t": "chr",
             "v": [
-              "R",
-              "R",
               "Python",
+              "R",
+              "R",
               "Python",
               "Python",
               "R"
@@ -183,9 +183,9 @@
           {
             "t": "lgl",
             "v": [
-              false,
-              false,
               null,
+              false,
+              false,
               null,
               null,
               false
@@ -271,9 +271,9 @@
           {
             "t": "int",
             "v": [
-              0,
               1,
-              0,
+              1,
+              2,
               3,
               1,
               2
@@ -284,7 +284,7 @@
             "v": [
               null,
               null,
-              null,
+              1,
               1,
               null,
               1
@@ -293,9 +293,9 @@
           {
             "t": "int",
             "v": [
-              0,
               1,
-              0,
+              1,
+              2,
               3,
               1,
               2
@@ -304,9 +304,9 @@
           {
             "t": "chr",
             "v": [
-              "",
+              "pandas",
               "dplyr",
-              "",
+              "dplyr, ggplot2",
               "numpy, pandas, scipy",
               "pandas",
               "dplyr, ggplot2"
@@ -315,7 +315,7 @@
           {
             "t": "int",
             "v": [
-              1,
+              0,
               0,
               0,
               2,
@@ -326,7 +326,7 @@
           {
             "t": "int",
             "v": [
-              0,
+              1,
               1,
               4,
               8,
@@ -337,7 +337,7 @@
           {
             "t": "dbl",
             "v": [
-              1,
+              0,
               0,
               0,
               0.25,
@@ -348,9 +348,9 @@
           {
             "t": "lgl",
             "v": [
-              null,
-              null,
               false,
+              null,
+              null,
               false,
               false,
               null
@@ -361,7 +361,7 @@
             "v": [
               0,
               0,
-              0,
+              1,
               1,
               0,
               1
@@ -372,7 +372,7 @@
             "v": [
               "",
               "",
-              "",
+              "scores.csv",
               "trials.csv",
               "",
               "scores.csv"
@@ -384,12 +384,12 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    \"% Comments\" = c(\"100%\", \"0%\", \"0%\", \"25%\", \"0%\", \"0%\"), \n    \"Missing Files\" = c(0L, 0L, 0L, 1L, 0L, 1L), \"Absolute Paths\" = c(0L, \n    0L, 0L, 0L, 0L, 0L), \"Code Between Libraries\" = c(NA, NA, \n    NA, 1L, NA, 1L)), row.names = c(NA, 6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"py_engine.qmd\", \"r_engine.qmd\", \n\"notebook_r.ipynb\", \"notebook_python.ipynb\", \"py_engine.qmd\", \n\"notebook_r.ipynb\"), \"% Comments\" = c(\"0%\", \"0%\", \"0%\", \"25%\", \n\"0%\", \"0%\"), \"Missing Files\" = c(0L, 0L, 1L, 1L, 0L, 1L), \"Absolute Paths\" = c(0L, \n0L, 0L, 0L, 0L, 0L), \"Code Between Libraries\" = c(NA, NA, 1L, \n1L, NA, 1L)), row.names = c(NA, 6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code).",
           "#### Missing Files",
-          "The scripts load files, but 2 scripts loaded 2 files that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"notebook_python.ipynb\", \"upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb\"\n), \"Missing Files\" = c(\"trials.csv\", \"scores.csv\")), row.names = c(4L, \n6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "The scripts load files, but 3 scripts loaded 3 files that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"notebook_r.ipynb\", \"notebook_python.ipynb\", \n\"upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb\"\n), \"Missing Files\" = c(\"scores.csv\", \"trials.csv\", \"scores.csv\"\n)), row.names = c(3L, 4L, 6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Absolute Paths",
           "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
           "",
@@ -397,14 +397,14 @@
           "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
           "",
           "#### Package Installation (install.packages)",
-          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, or a list of them: an `renv.lock`/`DESCRIPTION` for R, a `requirements.txt` for Python). No `install.packages()` calls were found in any of the code files.",
           "",
           "#### Libraries / Imports",
           "Best programming practice is to load all required libraries/imports in one block near the top of the code. In all code files, libraries/imports were loaded in one block.",
           "#### Packages / Dependencies",
           "The code files load 5 distinct packages/libraries: dplyr, ggplot2, numpy, pandas, scipy. These are the names found in the source (no version information is available from static analysis).",
           "#### Reproducible Environment",
-          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the code — or, for Python code, a `requirements.txt` (not currently checked for by this module, but still good practice to include).",
+          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or a `groundhog`/`checkpoint` date-pin alongside the code.\n\nNo list of the Python packages the code needs (a `requirements.txt`, `environment.yml`, `Pipfile.lock`, `poetry.lock`, `uv.lock` or `pyproject.toml`) was found anywhere in the repository. Without one, the package versions used for the analysis are not recoverable, and they may drift between when this analysis was run and any later reproduction attempt. Consider depositing a `requirements.txt` that lists each package with its version (for example the output of `pip freeze`).",
           "",
           "#### Parsable code",
           "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.",
@@ -420,7 +420,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 3 R, 3 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  4 code files (r_engine.qmd, notebook_r.ipynb, tests/mod_code/fixtures/qmd/py_engine.qmd, upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb) had no comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility."
+          "\n-  We found 3 R, 3 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  5 code files (py_engine.qmd, r_engine.qmd, notebook_r.ipynb, tests/mod_code/fixtures/qmd/py_engine.qmd, upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb) had no comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility.\n-  No list of Python package versions (requirements.txt or similar) was found. Consider adding one to improve computational reproducibility."
         ]
       },
       {
@@ -479,7 +479,7 @@
           {
             "t": "int",
             "v": [
-              2
+              3
             ]
           },
           {
@@ -526,6 +526,10 @@
           "renv_files",
           "renv_packages",
           "sessioninfo_files",
+          "session_packages",
+          "pin_dates",
+          "python_files",
+          "python_pinned",
           "file_location"
         ],
         "v": [
@@ -554,9 +558,14 @@
               "file_name",
               "package",
               "version",
-              "source"
+              "source",
+              "remote"
             ],
             "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
               {
                 "t": "chr",
                 "v": []
@@ -580,6 +589,67 @@
             "v": []
           },
           {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source",
+              "remote"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "mechanism",
+              "date"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
             "t": "chr",
             "v": []
           }
@@ -587,6 +657,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

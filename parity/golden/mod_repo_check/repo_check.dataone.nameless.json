@@ -1,9 +1,439 @@
 {
   "id": "repo_check.dataone.nameless",
-  "ok": false,
-  "error": "Running the module 'repo_check' produced errors: missing value where TRUE/FALSE needed",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.3.2",
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "useless_files",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "A2GT5FG86",
+              "A2GT5FG86",
+              "A2GT5FG86"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
+              "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
+              "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "soil_temp.csv",
+              "readme.txt",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "soil_temp.csv",
+              "readme.txt",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aabc-123",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              20480,
+              null,
+              1000
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "readme",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "documentation",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "readme",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_dataone_nameless",
+              "p_dataone_nameless",
+              "p_dataone_nameless"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86' target='_blank'>arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86<\/a>\", \n    Platform = \"dataone\", \"All Files\" = 2L, \"Data Files\" = 1L, \n    \"Code Files\" = 0L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86\", \n\"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86\", \n\"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86\"), \n    File = c(\"<a href='https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aabc-123' target='_blank'>soil_temp.csv<\/a>\", \n    \"readme.txt\", NA), Size = c(\"20.5 kB\", \"—\", \"1 kB\"), Type = c(\"data\", \n    \"readme\", NA)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "README files were found in all repositories.",
+          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: NA. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"soil_temp.csv\", Group = \"ex1\", Path = \"soil_temp.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"readme.txt\", Group = \"—\", Path = \"readme.txt\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = NA_character_, Group = \"—\", Path = NA_character_), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 2 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We could not classify 1 file."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "repo_unchecked",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_dataone_nameless"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "doi:10.18739/A2GT5FG86"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.Cite the data."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_dataone_nameless"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

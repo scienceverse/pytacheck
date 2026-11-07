@@ -2,32 +2,25 @@
   "id": "peek.cp437.zip",
   "ok": true,
   "error": null,
-  "warnings": [
-    "unable to translate 'donn<82>es/' to a wide string",
-    "input string 1 is invalid",
-    "unable to translate 'donn<82>es/r<82>sum<82>.csv' to a wide string",
-    "input string 2 is invalid",
-    "unable to translate 'caf<82>.R' to a wide string",
-    "input string 3 is invalid"
-  ],
+  "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 5,
+    "nrow": 4,
     "names": [
       "name",
       "size",
       "method",
       "csize",
       "offset",
-      "crc"
+      "crc",
+      "name_bytes"
     ],
     "v": [
       {
         "t": "chr",
         "v": [
-          "donn<82>es/",
-          "donn<82>es/r<82>sum<82>.csv",
-          "caf<82>.R",
+          "données/résumé.csv",
+          "café.R",
           "plain.csv",
           "nul.csv"
         ]
@@ -35,7 +28,6 @@
       {
         "t": "dbl",
         "v": [
-          0,
           817,
           7,
           817,
@@ -45,7 +37,6 @@
       {
         "t": "dbl",
         "v": [
-          0,
           8,
           8,
           8,
@@ -55,7 +46,6 @@
       {
         "t": "dbl",
         "v": [
-          0,
           407,
           9,
           407,
@@ -65,7 +55,6 @@
       {
         "t": "dbl",
         "v": [
-          0,
           38,
           493,
           538,
@@ -75,15 +64,23 @@
       {
         "t": "dbl",
         "v": [
-          0,
           3490621840,
           1829490220,
           3490621840,
           177670011
         ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          18,
+          6,
+          9,
+          8
+        ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

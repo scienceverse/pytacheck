@@ -61,27 +61,7 @@
         ],
         "v": [
           {
-            "t": "list",
-            "names": [
-              "codes",
-              "labels"
-            ],
-            "v": [
-              {
-                "t": "dbl",
-                "v": [
-                  1,
-                  2
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "A",
-                  "B"
-                ]
-              }
-            ]
+            "t": "null"
           },
           {
             "t": "dbl",
@@ -101,6 +81,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

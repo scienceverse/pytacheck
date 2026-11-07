@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -139,6 +141,26 @@
               "survey.csv",
               "survey.csv",
               "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -399,6 +421,26 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -708,14 +750,14 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/twosc**",
-          "```\n└── data/\n    └── survey.csv  📊 data ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n└── data/\n    └── survey.csv  📊 data ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(participant_id = 1:42, panas_1 = c(5L, 1L, 5L, \n1L, 4L, 5L, 1L, 2L, 3L, 1L, 3L, 2L, 3L, 1L, 1L, 4L, 3L, 1L, 5L, \n3L, 1L, 5L, 5L, 2L, 2L, 3L, 4L, 3L, 1L, 1L, 5L, 1L, 2L, 4L, 5L, \n5L, 4L, 2L, 5L, 5L, 3L, 1L), panas_2 = c(2L, 4L, 4L, 4L, 4L, \n1L, 2L, 2L, 3L, 5L, 3L, 5L, 5L, 1L, 5L, 1L, 2L, 1L, 5L, 4L, 1L, \n1L, 5L, 3L, 1L, 2L, 5L, 3L, 1L, 4L, 1L, 2L, 1L, 4L, 4L, 1L, 4L, \n1L, 5L, 4L, 3L, 5L), panas_3 = c(3L, 5L, 4L, 5L, 5L, 1L, 5L, \n2L, 3L, 3L, 1L, 1L, 3L, 5L, 3L, 3L, 1L, 4L, 2L, 2L, 5L, 4L, 3L, \n1L, 1L, 3L, 5L, 4L, 4L, 2L, 5L, 1L, 5L, 4L, 5L, 3L, 2L, 1L, 3L, \n5L, 3L, 1L), panas_4 = c(1L, 4L, 2L, 2L, 4L, 5L, 2L, 4L, 5L, \n4L, 3L, 5L, 3L, 5L, 2L, 2L, 3L, 5L, 2L, 4L, 3L, 2L, 2L, 5L, 4L, \n4L, 3L, 3L, 3L, 1L, 1L, 3L, 5L, 3L, 2L, 4L, 3L, 3L, 3L, 2L, 3L, \n5L), panas_5 = c(2L, 4L, 1L, 4L, 2L, 3L, 1L, 1L, 1L, 4L, 5L, \n2L, 2L, 3L, 2L, 3L, 5L, 3L, 4L, 3L, 5L, 5L, 4L, 5L, 2L, 2L, 4L, \n4L, 2L, 1L, 5L, 3L, 4L, 5L, 2L, 5L, 4L, 5L, 4L, 2L, 3L, 1L), \n    panas_6 = c(4L, 1L, 1L, 2L, 4L, 5L, 2L, 3L, 2L, 5L, 3L, 2L, \n    5L, 1L, 1L, 5L, 4L, 5L, 3L, 2L, 3L, 3L, 3L, 1L, 5L, 2L, 3L, \n    3L, 5L, 5L, 4L, 4L, 4L, 5L, 3L, 2L, 1L, 5L, 3L, 3L, 3L, 5L\n    ), panas_7 = c(5L, 1L, 3L, 4L, 4L, 3L, 3L, 2L, 1L, 1L, 1L, \n    1L, 3L, 3L, 4L, 5L, 5L, 4L, 5L, 2L, 4L, 4L, 4L, 3L, 2L, 1L, \n    5L, 3L, 2L, 4L, 2L, 3L, 5L, 5L, 3L, 4L, 3L, 1L, 3L, 2L, 3L, \n    1L), panas_8 = c(3L, 4L, 1L, 5L, 2L, 1L, 5L, 2L, 3L, 2L, \n    5L, 5L, 4L, 4L, 2L, 4L, 2L, 1L, 4L, 1L, 1L, 2L, 4L, 2L, 4L, \n    5L, 1L, 5L, 2L, 3L, 1L, 3L, 1L, 2L, 3L, 4L, 2L, 3L, 5L, 1L, \n    3L, 5L), rse_1 = c(5L, 2L, 4L, 4L, 4L, 3L, 4L, 2L, 5L, 2L, \n    5L, 4L, 5L, 5L, 5L, 1L, 1L, 2L, 1L, 4L, 4L, 3L, 2L, 3L, 5L, \n    3L, 5L, 2L, 4L, 1L, 3L, 4L, 1L, 2L, 5L, 2L, 1L, 1L, 1L, 1L, \n    3L, 1L), rse_2 = c(5L, 2L, 5L, 3L, 4L, 4L, 1L, 3L, 4L, 4L, \n    2L, 1L, 4L, 1L, 5L, 2L, 5L, 2L, 2L, 3L, 1L, 2L, 2L, 5L, 3L, \n    2L, 4L, 1L, 5L, 3L, 4L, 4L, 3L, 5L, 5L, 2L, 4L, 1L, 3L, 2L, \n    3L, 5L), rse_3 = c(1L, 3L, 3L, 5L, 4L, 2L, 2L, 1L, 5L, 4L, \n    2L, 5L, 1L, 2L, 2L, 5L, 5L, 3L, 4L, 5L, 4L, 4L, 1L, 5L, 4L, \n    1L, 1L, 2L, 5L, 5L, 5L, 2L, 5L, 3L, 4L, 4L, 3L, 2L, 3L, 5L, \n    3L, 1L), rse_4 = c(1L, 1L, 4L, 2L, 4L, 3L, 1L, 4L, 2L, 4L, \n    1L, 4L, 5L, 3L, 5L, 5L, 4L, 2L, 4L, 4L, 4L, 3L, 2L, 3L, 5L, \n    1L, 5L, 3L, 1L, 3L, 2L, 5L, 2L, 4L, 5L, 2L, 2L, 3L, 2L, 1L, \n    3L, 5L), rse_5 = c(5L, 2L, 2L, 2L, 4L, 4L, 2L, 1L, 2L, 3L, \n    1L, 1L, 4L, 4L, 4L, 4L, 5L, 3L, 3L, 1L, 5L, 3L, 1L, 2L, 2L, \n    3L, 3L, 5L, 2L, 2L, 5L, 3L, 3L, 2L, 1L, 5L, 1L, 5L, 5L, 4L, \n    3L, 1L), rse_6 = c(1L, 1L, 2L, 3L, 4L, 2L, 1L, 1L, 3L, 1L, \n    2L, 3L, 4L, 5L, 2L, 3L, 5L, 2L, 3L, 5L, 5L, 5L, 5L, 2L, 1L, \n    2L, 2L, 4L, 4L, 3L, 1L, 1L, 1L, 1L, 3L, 5L, 2L, 2L, 4L, 4L, \n    3L, 5L)), row.names = c(NA, 42L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"panas_1\", \"panas_2\", \"panas_3\", \"panas_4\", \n\"panas_5\", \"panas_6\", \"panas_7\", \"panas_8\", \"participant_id\", \n\"rse_1\", \"rse_2\", \"rse_3\", \"rse_4\", \"rse_5\", \"rse_6\"), Representation = c(\"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"text\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"numeric\"), Level = c(\"ordinal\", \"ordinal\", \"ordinal\", \n\"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\", \"nominal\", \n\"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\"\n), Concept = c(\"likert\", \"likert\", \"likert\", \"likert\", \"likert\", \n\"likert\", \"likert\", \"likert\", \"id\", \"likert\", \"likert\", \"likert\", \n\"likert\", \"likert\", \"likert\"), Role = c(\"measure\", \"measure\", \n\"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \n\"identifier\", \"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \n\"measure\"), Unit = c(\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \n\"\", \"\", \"\", \"\", \"\"), Rows = c(42L, 42L, 42L, 42L, 42L, 42L, 42L, \n42L, 42L, 42L, 42L, 42L, 42L, 42L, 42L), \"% Missing\" = c(0, 0, \n0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(5L, 5L, \n5L, 5L, 5L, 5L, 5L, 5L, 42L, 5L, 5L, 5L, 5L, 5L, 5L), Mean = c(2.929, \n2.952, 3.119, 3.19, 3.143, 3.214, 3.024, 2.905, NA, 2.976, 3.119, \n3.238, 3.071, 2.929, 2.81), SD = c(1.583, 1.561, 1.485, 1.215, \n1.389, 1.389, 1.352, 1.445, NA, 1.506, 1.383, 1.478, 1.386, 1.404, \n1.452), Min = c(1, 1, 1, 1, 1, 1, 1, 1, NA, 1, 1, 1, 1, 1, 1), \n    Max = c(5, 5, 5, 5, 5, 5, 5, 5, NA, 5, 5, 5, 5, 5, 5)), row.names = c(\"panas_1\", \n\"panas_2\", \"panas_3\", \"panas_4\", \"panas_5\", \"panas_6\", \"panas_7\", \n\"panas_8\", \"participant_id\", \"rse_1\", \"rse_2\", \"rse_3\", \"rse_4\", \n\"rse_5\", \"rse_6\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 15 columns across 1 data file.",
           "#### Careless Responding",
           "2 distinct respondents were flagged for **straightlining**: giving the same answer for at least 80% of the items in a multi-item scale of 5 items or more. One respondent can be flagged in several scales; the table below is **one row per person**, and the *Longest run* column gives the run that triggered the strongest flag, so you can check it against the raw data.",
@@ -967,6 +1009,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -1050,6 +1093,12 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
             ]
           },
           {
@@ -1835,6 +1884,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

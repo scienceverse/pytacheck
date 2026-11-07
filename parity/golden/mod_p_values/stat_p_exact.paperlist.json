@@ -93,7 +93,7 @@
               "p < .05",
               "p = .031",
               "p = .000",
-              "p > .1 ",
+              "p > .1",
               "p = 0.00",
               "p = .012"
             ]
@@ -203,7 +203,7 @@
         "t": "chr",
         "v": [
           "Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, reproducibility, and re-use (e.g., in *p* value meta-analyses). Best practice is to report exact p-values with three decimal places (e.g., *p* = .032) unless *p* values are smaller than 0.001, in which case you can use *p* < .001.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = c(\"p < .05\", \"p > .1 \"), Text = c(\"Result p < .05.\", \n\"Both p > .1 and p = 0.00.\")), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = c(\"p < .05\", \"p > .1\"), Text = c(\"Result p < .05.\", \n\"Both p > .1 and p = 0.00.\")), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nThe APA manual states: Report exact *p* values (e.g., *p* = .031) to two or three decimal places. However, report *p* values less than .001 as *p* < .001. However, 2 decimals is too imprecise for many use-cases (e.g., a *p* value meta-analysis), so report *p* values with three digits.\n\nAmerican Psychological Association (2020). <em>Publication manual of the American Psychological Association<\/em>, 7 edition. American Psychological Association.\n\n:::\n",
           "*P* values are never exactly zero. A *p* value of .000 is a rounding artifact — the actual value is simply smaller than the reported precision. Very small *p* values should be reported as *p* < .001 rather than *p* = .000.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = c(\"p = .000\", \"p = 0.00\"), Text = c(\"Zero p = .000.\", \n\"Both p > .1 and p = 0.00.\")), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
@@ -271,6 +271,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

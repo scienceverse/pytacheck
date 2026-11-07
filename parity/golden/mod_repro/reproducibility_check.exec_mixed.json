@@ -15,11 +15,14 @@
       "summary_text",
       "summary_table",
       "na_replace",
+      "brief",
       "run_results",
       "install_results",
+      "recorded_versions",
       "stat_output",
       "match_table",
       "modifications",
+      "checklist_section",
       "sandbox"
     ],
     "v": [
@@ -47,6 +50,7 @@
         "names": [
           "paper_id",
           "file_name",
+          "file_path",
           "parses",
           "run_order",
           "order_basis",
@@ -61,7 +65,13 @@
           "error_type",
           "undefined_var",
           "reads",
-          "writes"
+          "writes",
+          "names_corrected",
+          "used_by",
+          "not_analysis_why",
+          "paper_link",
+          "repo_name",
+          "reason"
         ],
         "v": [
           {
@@ -72,6 +82,16 @@
               "p1",
               "p1",
               "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "writes_then_reads.R",
+              "reads_written.R",
+              "missing_input.R",
+              "parse_error.R",
+              "json_dump.R"
             ]
           },
           {
@@ -127,7 +147,7 @@
           {
             "t": "int",
             "v": [
-              1,
+              0,
               0,
               0,
               0,
@@ -188,18 +208,18 @@
             "t": "chr",
             "v": [
               "ran_ok",
+              "ran_ok",
               "errored",
-              "skipped_missing_inputs",
               "not_parsed",
-              "not_parsed"
+              "not_r_content"
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              "runtime",
               null,
+              "runtime",
               null,
               null
             ]
@@ -273,6 +293,66 @@
                 "v": []
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "file",
+              "syntax",
+              null
+            ]
           }
         ]
       },
@@ -284,21 +364,21 @@
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:5, File = c(\"json_dump.R\", \"missing_input.R\", \n\"parse_error.R\", \"writes_then_reads.R\", \"reads_written.R\"), \"Runs after\" = c(\"—\", \n\"—\", \"—\", \"—\", \"writes_then_reads.R\"), Basis = c(\"none\", \n\"none\", \"none\", \"none\", \"dependency\")), row.names = c(NA, -5L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "To run against the Psych-DS layout, 1 referenced data path would be rewritten to its new location.",
-          "#### Missing inputs",
-          "1 input file the code reads is not available. Files withheld only because of their size are distinguished from files absent from the repository — the former are a size-cap issue, not a reproducibility failure.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"not_in_repo.csv\", Status = \"absent\", Reason = \"referenced file is not present in the repository\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "Every data path in the code works in the repository as deposited.",
+          "#### Files the deposit does not hold",
+          "The scripts that did not run through read 1 data file that is not in the deposit, and no script of the deposit writes: `not_in_repo.csv`.",
           "#### Parsing",
           "1 R file did not parse and cannot be run (see code_check for the errors).",
           "#### Non-R content detected",
           "1 file that failed to parse is not actually R content (a JSON/HTML/XML dump saved with an R-type extension) -- this is informational, not a reproducibility defect.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"json_dump.R\", Detected = \"not_r_content\", \n    Detail = \"file content does not appear to be R (detected: JSON)\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Execution",
-          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 5 scripts: 1 ran without error, 1 errored, 0 timed out, 1 was skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 2 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"json_dump.R\", \"missing_input.R\", \"parse_error.R\", \n\"writes_then_reads.R\", \"reads_written.R\"), Outcome = c(\"not_parsed\", \n\"skipped_missing_inputs\", \"not_parsed\", \"ran_ok\", \"errored\"), \n    Detail = c(\"\", \"\", \"\", \"\", \"runtime\"), \"Time (s)\" = 0), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the repository, in the run order above, with a 60-second per-script timeout. Of 4 scripts: 2 ran without error, 1 errored, 0 timed out, 0 could not run because one of its own dependencies is unavailable, 1 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"json_dump.R\", \"missing_input.R\", \"parse_error.R\", \n\"writes_then_reads.R\", \"reads_written.R\"), Outcome = c(\"not_r_content\", \n\"errored\", \"not_parsed\", \"ran_ok\", \"ran_ok\"), Detail = c(\"\", \n\"runtime\", \"\", \"\", \"\"), \"Time (s)\" = 0), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
-          "::: {.callout-tip title=\"Output — writes_then_reads.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"data.csv\")\n> summ <- data.frame(mean_x = mean(dat$x))\n> write.csv(summ,\"<root>/output/intermediate.csv\", row.names = FALSE)\n````\n\n:::\n",
-          "::: {.callout-tip title=\"Output — reads_written.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> summ <- read.csv(\"intermediate.csv\")\n````\n**Messages / errors (stderr):**\n````\nError in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\nIn file(file, \"rt\") :\n  cannot open file 'intermediate.csv': No such file or directory\n````\n\n:::\n"
+          "::: {.callout-tip title=\"Output — missing_input.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"not_in_repo.csv\")\n````\n**Messages / errors (stderr):**\n````\nError in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\nIn file(file, \"rt\") :\n  cannot open file 'not_in_repo.csv': No such file or directory\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — writes_then_reads.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"data.csv\")\n> summ <- data.frame(mean_x = mean(dat$x))\n> write.csv(summ, \"intermediate.csv\", row.names = FALSE)\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — reads_written.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> summ <- read.csv(\"intermediate.csv\")\n> print(summ$mean_x)\n[1] 4\n````\n\n:::\n"
         ]
       },
       {
@@ -310,7 +390,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 5 R code files for reproducibility (each in an isolated subprocess).\n-  2 files appear runnable so far (parses, inputs resolve, placeable in the run order).\n-  1 of 5 scripts ran without error when executed.\n-  1 referenced input unavailable (0 withheld due to size).\n-  0 installable dependencies detected."
+          "\n-  We assessed AND ran 5 R code files for reproducibility (each in an isolated subprocess).\n-  2 of 5 scripts ran without error when executed.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -324,7 +404,21 @@
           "repro_deps",
           "repro_ran_ok",
           "repro_tests_reported",
-          "repro_tests_matched"
+          "repro_tests_matched",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
         ],
         "v": [
           {
@@ -360,19 +454,103 @@
           {
             "t": "int",
             "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               1
             ]
           },
           {
             "t": "int",
             "v": [
-              null
+              0
             ]
           },
           {
             "t": "int",
             "v": [
-              null
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           }
         ]
@@ -384,6 +562,20 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -391,7 +583,27 @@
           "repro_runnable",
           "repro_missing_inputs",
           "repro_deps",
-          "repro_ran_ok"
+          "repro_ran_ok",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
@@ -407,7 +619,8 @@
           "stderr",
           "elapsed",
           "script_lines",
-          "captures"
+          "captures",
+          "reason"
         ],
         "v": [
           {
@@ -423,31 +636,31 @@
           {
             "t": "chr",
             "v": [
-              "not_parsed",
-              "skipped_missing_inputs",
+              "not_r_content",
+              "errored",
               "not_parsed",
               "ran_ok",
-              "errored"
+              "ran_ok"
             ]
           },
           {
             "t": "chr",
             "v": [
               "",
+              "! in callr subprocess.\nCaused by error in `file(file, \"rt\")`:\n! cannot open the connection",
               "",
               "",
-              "",
-              "! in callr subprocess.\nCaused by error in `file(file, \"rt\")`:\n! cannot open the connection"
+              ""
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
+              "runtime",
               null,
               null,
-              null,
-              "runtime"
+              null
             ]
           },
           {
@@ -464,20 +677,20 @@
             "t": "chr",
             "v": [
               "",
+              "> dat <- read.csv(\"not_in_repo.csv\")",
               "",
-              "",
-              "> dat <- read.csv(\"data.csv\")\n> summ <- data.frame(mean_x = mean(dat$x))\n> write.csv(summ,\"<root>/output/intermediate.csv\", row.names = FALSE)",
-              "> summ <- read.csv(\"intermediate.csv\")"
+              "> dat <- read.csv(\"data.csv\")\n> summ <- data.frame(mean_x = mean(dat$x))\n> write.csv(summ, \"intermediate.csv\", row.names = FALSE)",
+              "> summ <- read.csv(\"intermediate.csv\")\n> print(summ$mean_x)\n[1] 4"
             ]
           },
           {
             "t": "chr",
             "v": [
               "",
+              "Error in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\nIn file(file, \"rt\") :\n  cannot open file 'not_in_repo.csv': No such file or directory",
               "",
               "",
-              "",
-              "Error in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\nIn file(file, \"rt\") :\n  cannot open file 'intermediate.csv': No such file or directory"
+              ""
             ]
           },
           {
@@ -500,7 +713,10 @@
               },
               {
                 "t": "chr",
-                "v": []
+                "v": [
+                  "dat <- read.csv(\"not_in_repo.csv\")",
+                  "summary(dat)"
+                ]
               },
               {
                 "t": "chr",
@@ -511,7 +727,7 @@
                 "v": [
                   "dat <- read.csv(\"data.csv\")",
                   "summ <- data.frame(mean_x = mean(dat$x))",
-                  "write.csv(summ,\"<root>/output/intermediate.csv\", row.names = FALSE)"
+                  "write.csv(summ, \"intermediate.csv\", row.names = FALSE)"
                 ]
               },
               {
@@ -531,7 +747,9 @@
                 "t": "null"
               },
               {
-                "t": "null"
+                "t": "list",
+                "names": null,
+                "v": []
               },
               {
                 "t": "null"
@@ -547,8 +765,21 @@
                 "v": []
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "file",
+              "syntax",
+              null,
+              null
+            ]
           }
         ]
+      },
+      {
+        "t": "null"
       },
       {
         "t": "null"
@@ -591,11 +822,17 @@
       {
         "t": "chr",
         "v": [
+          "We ran the paper's 4 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**2 of 4 scripts ran to the end**: 1 stopped with an error, 1 was not run.\n\n| Script | Result | What happened |\n|---|---|---|\n| json&#95;dump.R | Not run | It is not R code that can run on its own. |\n| missing&#95;input.R | Stopped with an error | <code>Error in file(file, \"rt\") : cannot open the connection<\/code> |\n| parse&#95;error.R | Not run | R cannot read the script: it contains a syntax error. |\n| writes&#95;then&#95;reads.R | Ran to the end |  |\n| reads&#95;written.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**Files are missing from your deposit.**\n\n- <code>missing&#95;input.R<\/code> reads <code>not&#95;in&#95;repo.csv<\/code>.\n\nThe script stops at the line that reads the file.\n\n1. Find the file on your computer.\n2. Add it to the deposit, in the folder where the script looks for it.\n3. If you cannot share it, for example for privacy reasons, say so in the README, and explain where readers can get it and where to put it.\n\n**R or Python could not read a script, because of a mistake in the code itself.**\n\n- <code>parse&#95;error.R<\/code>\n\nRun each script once in a fresh session before you deposit it; the error message shows the line to fix.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
           "<root>"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

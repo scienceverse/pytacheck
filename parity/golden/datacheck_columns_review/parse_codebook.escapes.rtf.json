@@ -6,9 +6,13 @@
   "value": {
     "t": "chr",
     "v": [
-      "Times; Riched20; age: Age in years sex: 1 = m e9le; 2 = f ?male brace and and backslash next bold text hyphen nbsp"
+      "age: Age in years",
+      "sex: 1 = méle; 2 = fémale",
+      "brace { and } and \\ backslash",
+      "next",
+      "bold texthyphen nbsp"
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1,9 +1,50 @@
 {
   "id": "llm.input.logical",
-  "ok": false,
-  "error": "Can't join `x$text` with `y$text` due to incompatible types.\nℹ `x$text` is a <logical>.\nℹ `y$text` is a <character>.",
-  "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.3.2",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "There were errors in the following rows: 1, 2 \n  *  An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Is this a number? Answer TRUE or FALSE\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"TRUE\"}]}],\"model\":\"test-model\",\"temperature\":0,\"max_completion_tokens\":4096,\"stream\":false}\nExpected mock file: api.groq.com/openai/v1/chat/completions-e219b0-POST.*There were errors in the following rows: 1, 2 \n  *  An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Is this a number? Answer TRUE or FALSE\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"FALSE\"}]}],\"model\":\"test-model\",\"temperature\":0,\"max_completion_tokens\":4096,\"stream\":false}\nExpected mock file: api.groq.com/openai/v1/chat/completions-c25fdb-POST.*"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text",
+      "answer",
+      "error",
+      "error_msg"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Is this a number? Answer TRUE or FALSE\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"TRUE\"}]}],\"model\":\"test-model\",\"temperature\":0,\"max_completion_tokens\":4096,\"stream\":false}\nExpected mock file: api.groq.com/openai/v1/chat/completions-e219b0-POST.*",
+          "An unexpected request was made:\nPOST https://api.groq.com/openai/v1/chat/completions {\"messages\":[{\"role\":\"system\",\"content\":\"Is this a number? Answer TRUE or FALSE\"},{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"FALSE\"}]}],\"model\":\"test-model\",\"temperature\":0,\"max_completion_tokens\":4096,\"stream\":false}\nExpected mock file: api.groq.com/openai/v1/chat/completions-c25fdb-POST.*"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

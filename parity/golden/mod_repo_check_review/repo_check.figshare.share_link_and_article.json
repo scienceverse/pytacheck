@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -171,12 +172,14 @@
       {
         "t": "chr",
         "v": [
-          "Double-check permissions on repositories with no detectable files.",
+          "#### Repositories that could not be checked",
+          "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
+          "- https://figshare.com/s/5e01cc0cae4cf3e2e14f: private share link (figshare.com/s/...) cannot be resolved without a browser",
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://figshare.com/s/5e01cc0cae4cf3e2e14f' target='_blank'>figshare.com/s/5e01cc0cae4cf3e2e14f<\/a>\", \n\"<a href='https://doi.org/10.6084/m9.figshare.18093368.v1' target='_blank'>doi.org/10.6084/m9.figshare.18093368.v1<\/a>\"\n), Platform = c(\"figshare\", \"figshare\"), Error = c(\"private share link (figshare.com/s/...) cannot be resolved without a browser\", \nNA), \"All Files\" = c(0L, 4L), \"Data Files\" = c(0L, 2L), \"Code Files\" = c(0L, \n0L), READMEs = 0:1, Archives = c(0L, 0L)), row.names = c(NA, \n-2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://doi.org/10.6084/m9.figshare.18093368.v1\", \n\"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \n\"https://doi.org/10.6084/m9.figshare.18093368.v1\"), File = c(\"<a href='https://ndownloader.figshare.com/files/555' target='_blank'>data.csv<\/a>\", \n\"<a href='https://ndownloader.figshare.com/files/556' target='_blank'>readme.txt<\/a>\", \n\"<a href='https://ndownloader.figshare.com/files/557' target='_blank'>video.mp4<\/a>\", \n\"<a href='https://ndownloader.figshare.com/files/558' target='_blank'>missing.csv<\/a>\"\n), Size = c(\"8 B\", \"22 B\", \"52.4 MB\", \"4 B\"), Type = c(\"data\", \n\"readme\", \"video\", \"data\")), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
-          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
+          "README files were found in all repositories.",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"data.csv\", \"missing.csv\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"data.csv\", \"missing.csv\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"readme.txt\", Group = \"—\", Path = \"readme.txt\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"video.mp4\", Group = \"ex1\", Path = \"video.mp4\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -190,7 +193,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 1 empty repository.\n-  We found 4 files in 2 repositories.\n-  We found 1 README file and 1 repository without READMEs."
+          "\n-  We could not check 1 repository: https://figshare.com/s/5e01cc0cae4cf3e2e14f (private share link (figshare.com/s/...) cannot be resolved without a browser).\n-  We found 4 files in 2 repositories.\n-  We found 1 README file and 0 repositories without READMEs."
         ]
       },
       {
@@ -199,6 +202,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -219,6 +223,12 @@
             "t": "int",
             "v": [
               2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
             ]
           },
           {
@@ -413,6 +423,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -420,6 +458,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

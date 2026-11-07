@@ -23,8 +23,8 @@
             "t": "chr",
             "v": [
               "id",
-              "age",
               "q1",
+              "age",
               "sex"
             ]
           },
@@ -32,7 +32,7 @@
             "t": "chr",
             "v": [
               "no",
-              "yes",
+              "no",
               "yes",
               "yes"
             ]
@@ -41,8 +41,8 @@
             "t": "chr",
             "v": [
               null,
+              null,
               "Age in years",
-              "1",
               "Sex"
             ]
           },
@@ -50,8 +50,8 @@
             "t": "chr",
             "v": [
               null,
+              null,
               "age",
-              "q1",
               "sex"
             ]
           },
@@ -59,7 +59,7 @@
             "t": "chr",
             "v": [
               null,
-              "labelled.dta",
+              null,
               "labelled.dta",
               "labelled.dta"
             ]
@@ -68,7 +68,7 @@
             "t": "chr",
             "v": [
               "unlabelled",
-              "labelled",
+              "unlabelled",
               "labelled",
               "labelled"
             ]
@@ -91,8 +91,8 @@
             "t": "chr",
             "v": [
               "id",
-              "age",
               "q1",
+              "age",
               "sex"
             ]
           },
@@ -100,7 +100,7 @@
             "t": "chr",
             "v": [
               "no",
-              "yes",
+              "no",
               "yes",
               "yes"
             ]
@@ -109,8 +109,8 @@
             "t": "chr",
             "v": [
               null,
+              null,
               "Age in years",
-              "1",
               "Sex"
             ]
           },
@@ -118,8 +118,8 @@
             "t": "chr",
             "v": [
               null,
+              null,
               "age",
-              "q1",
               "sex"
             ]
           },
@@ -127,7 +127,7 @@
             "t": "chr",
             "v": [
               null,
-              "labelled.dta",
+              null,
               "labelled.dta",
               "labelled.dta"
             ]
@@ -136,15 +136,44 @@
             "t": "chr",
             "v": [
               "unlabelled",
-              "labelled",
+              "unlabelled",
               "labelled",
               "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Variable",
+          "Label",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "q1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "labelled.dta"
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

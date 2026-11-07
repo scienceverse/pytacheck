@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -142,6 +144,27 @@
               "survey.csv",
               "survey.csv",
               "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -415,6 +438,27 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -739,14 +783,14 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/qual2**",
-          "```\n└── survey.csv  📊 data ex1\n```",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n└── survey.csv  📊 data ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(StartDate = structure(c(1646211660, 1646265600, \n1646384580, 1646471040, 1646557500, 1646643960, 1646730420, 1646816880, \n1646092800, 1646212200, 1646298660, 1646385120, 1646471580, 1646558040\n), class = c(\"POSIXct\", \"POSIXt\"), tzone = \"UTC\"), EndDate = structure(c(1646211690, \n1646265900, 1646385180, 1646471650, 1646553600, 1646644590, 1646731060, \n1646817530, 1646126400, 1646212870, 1646299340, 1646385810, 1646472280, \n1646558750), class = c(\"POSIXct\", \"POSIXt\"), tzone = \"UTC\"), \n    Status = c(\"IP Address\", \"IP Address\", \"Survey Preview\", \n    \"IP Address\", \"IP Address\", \"IP Address\", \"Spam\", \"IP Address\", \n    \"IP Address\", \"IP Address\", \"IP Address\", \"IP Address\", \"IP Address\", \n    \"IP Address\"), Progress = c(100L, 100L, 100L, 75L, 100L, \n    100L, 100L, 100L, 100L, 100L, 75L, NA, 100L, 100L), Finished = c(TRUE, \n    TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, \n    TRUE, TRUE, TRUE), RecordedDate = structure(c(1646211660, \n    1646265600, 1646384580, 1646471040, 1646557500, 1646643960, \n    1646730420, 1646816880, 1646092800, 1646212200, 1646298660, \n    1646385120, 1646471580, 1646558040), class = c(\"POSIXct\", \n    \"POSIXt\"), tzone = \"UTC\"), ResponseId = c(\"R_0000104729\", \n    \"R_0000209458\", \"R_0000314187\", \"R_0000418916\", \"R_0000523645\", \n    \"R_0000628374\", \"R_0000733103\", \"R_0000837832\", \"R_0000942561\", \n    \"R_0001047290\", \"R_0001152019\", \"R_0001256748\", \"R_0001361477\", \n    \"R_0001466206\"), RecipientEmail = c(\"p1@example.org\", \"p2@example.org\", \n    \"p3@example.org\", \"p4@example.org\", \"p5@example.org\", \"p6@example.org\", \n    \"p7@example.org\", \"p8@example.org\", \"p9@example.org\", \"p10@example.org\", \n    \"p11@example.org\", \"p12@example.org\", \"p13@example.org\", \n    \"p14@example.org\"), ExternalReference = c(\"PANEL001\", \"PANEL002\", \n    \"PANEL003\", \"PANEL004\", \"PANEL005\", \"PANEL006\", \"PANEL007\", \n    \"PANEL008\", \"PANEL009\", \"PANEL010\", \"PANEL011\", \"PANEL012\", \n    \"PANEL013\", \"PANEL014\"), RecipientFirstName = c(\"Name1\", \n    \"Name2\", \"Name3\", \"Name4\", \"Name5\", \"Name6\", \"Name7\", \"Name8\", \n    \"Name9\", \"Name10\", \"Name11\", \"Name12\", \"Name13\", \"Name14\"\n    ), q_1 = c(3L, 1L, 1L, 1L, 2L, 1L, 4L, 5L, 3L, 5L, 4L, 2L, \n    4L, 1L), q_2 = c(2L, 3L, 1L, 5L, 5L, 2L, 2L, 2L, 1L, 2L, \n    5L, 2L, 3L, 5L), q_3 = c(4L, 5L, 4L, 4L, 1L, 1L, 5L, 1L, \n    5L, 4L, 4L, 1L, 4L, 4L), q_4 = c(1L, 1L, 4L, 1L, 5L, 5L, \n    1L, 5L, 1L, 5L, 3L, 5L, 3L, 2L), q_5 = c(1L, 5L, 1L, 5L, \n    5L, 2L, 5L, 5L, 5L, 4L, 3L, 3L, 5L, 3L), q_6 = c(5L, 2L, \n    2L, 1L, 4L, 3L, 3L, 2L, 1L, 3L, 2L, 5L, 1L, 2L)), row.names = c(NA, \n14L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 1 column with at least one missing value.",
           "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"Progress\", \"EndDate\", \"ExternalReference\", \n\"Finished\", \"RecipientEmail\", \"RecipientFirstName\", \"RecordedDate\", \n\"ResponseId\", \"StartDate\", \"Status\", \"q_1\", \"q_2\", \"q_3\", \"q_4\", \n\"q_5\", \"q_6\"), Representation = c(\"numeric\", \"datetime\", \"text\", \n\"text\", \"text\", \"text\", \"datetime\", \"text\", \"datetime\", \"text\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\"\n), Level = c(\"nominal\", \"nominal\", \"nominal\", \"nominal\", \"nominal\", \n\"nominal\", \"nominal\", \"nominal\", \"nominal\", \"nominal\", \"ordinal\", \n\"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\"), Concept = c(\"qualtrics_progress\", \n\"qualtrics_end\", \"qualtrics_externalref\", \"qualtrics_finished\", \n\"qualtrics_email\", \"qualtrics_recipient\", \"qualtrics_recorded\", \n\"qualtrics_responseid\", \"qualtrics_start\", \"qualtrics_status\", \n\"likert\", \"likert\", \"likert\", \"likert\", \"likert\", \"likert\"), \n    Role = c(\"measure\", \"timestamp\", \"measure\", \"measure\", \"measure\", \n    \"measure\", \"timestamp\", \"identifier\", \"timestamp\", \"measure\", \n    \"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \"measure\"\n    ), Unit = c(\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \n    \"\", \"\", \"\", \"\"), Rows = c(14L, 14L, 14L, 14L, 14L, 14L, 14L, \n    14L, 14L, 14L, 14L, 14L, 14L, 14L, 14L, 14L), \"% Missing\" = c(7.1, \n    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(2L, \n    14L, 14L, 2L, 14L, 14L, 14L, 14L, 14L, 3L, 5L, 4L, 3L, 5L, \n    5L, 5L), Mean = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \n    2.643, 2.857, 3.357, 3, 3.714, 2.571), SD = c(NA, NA, NA, \n    NA, NA, NA, NA, NA, NA, NA, 1.55, 1.512, 1.598, 1.797, 1.541, \n    1.342), Min = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, \n    1, 1, 1, 1, 1), Max = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, \n    NA, 5, 5, 5, 5, 5, 5)), row.names = c(\"Progress\", \"EndDate\", \n\"ExternalReference\", \"Finished\", \"RecipientEmail\", \"RecipientFirstName\", \n\"RecordedDate\", \"ResponseId\", \"StartDate\", \"Status\", \"q_1\", \"q_2\", \n\"q_3\", \"q_4\", \"q_5\", \"q_6\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 16 columns across 1 data file.",
           "#### Issues Identified",
           "2 file/column combinations have at least one issue.\n\n**About the personal-information flags.** These are pattern matches, not confirmed disclosures, and they are tuned to over-report rather than miss something. Expect false positives:\n\n- **Column names** are matched against identifying words in English and other European languages (`email`, `telefoonnummer`, `geboortedatum`, ...). A column called `phone_number` flags whether or not it holds one, and an empty or already-anonymised column flags on its name alone.\n- **Values** are matched against the shape of an identifier. An IP address pattern also matches a version string or a dotted numeric code; a card-number pattern requires both a real issuer prefix and a checksum, but a long numeric ID can still coincide.\n- **Free text** is flagged when a column holds long, mostly-distinct prose — the shape open-ended answers take. Most such columns contain no names at all.\n\nA flag means *look at this column*. Where the data is already de-identified (an `ip` column reading `Anonymized`, a `name` column the authors emptied), no action is needed.",
@@ -1059,6 +1103,7 @@
           "data_format",
           "group",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -1142,6 +1187,12 @@
               {
                 "t": "null"
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
             ]
           },
           {
@@ -1527,6 +1578,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

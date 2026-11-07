@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 7,
+        "nrow": 8,
         "names": [
           "paper_id",
           "bib_id",
@@ -53,6 +53,7 @@
           {
             "t": "chr",
             "v": [
+              "orig",
               "both",
               "both",
               "both",
@@ -66,6 +67,7 @@
             "t": "int",
             "v": [
               0,
+              0,
               1,
               1,
               1,
@@ -77,6 +79,7 @@
           {
             "t": "chr",
             "v": [
+              "10.1037/0003-066x.54.6.408",
               "10.1093/qje/qjac034",
               "10.1126/science.1239918",
               "10.1126/science.1239918",
@@ -89,6 +92,7 @@
           {
             "t": "chr",
             "v": [
+              "Reference 0. https://doi.org/10.1037/0003-066x.54.6.408",
               "Reference 0. https://doi.org/10.1093/qje/qjac034",
               "Reference 1. https://doi.org/10.1126/science.1239918",
               "Reference 1. https://doi.org/10.1126/science.1239918",
@@ -101,6 +105,7 @@
           {
             "t": "chr",
             "v": [
+              "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2019). Are Sex Differences in Preferences for Physical Attractiveness and Good Earning Capacity in Potential Mates Smaller in Countries With Greater Gender Equality? Evolutionary Psychology, 17(2).",
               "Hallman, A., Johannesson, M., & Kujansuu, E. (2024). Robustness Reproducibility of\" Improving Workplace Climate in Large Corporations: A Clustered Randomized Intervention\". (No. 118), I4R Discussion Paper Series.",
               "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54.",
               "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at",
@@ -113,6 +118,7 @@
           {
             "t": "chr",
             "v": [
+              "10.1177/1474704919852921",
               "10.10419/295247",
               "10.1037/pspa0000064",
               "10.1038/s41562-018-0399-z",
@@ -125,6 +131,7 @@
           {
             "t": "chr",
             "v": [
+              null,
               "https://osf.io/txqjw/",
               null,
               "https://osf.io/s73x6",
@@ -137,6 +144,7 @@
           {
             "t": "chr",
             "v": [
+              "failed",
               "computationally successful, robustness challenges",
               "mixed",
               "failed",
@@ -149,6 +157,7 @@
           {
             "t": "chr",
             "v": [
+              "replication",
               "reproduction",
               "replication",
               "replication",
@@ -163,8 +172,8 @@
       {
         "t": "chr",
         "v": [
-          "We checked 4 references with DOIs. We found 6 replications and 1 reproduction for 2 originals you cited.\n\nCheck if you are aware of the replication/reproduction studies, and cite them where appropriate.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Reference 0. https://doi.org/10.1093/qje/qjac034\", \n\"Reference 1. https://doi.org/10.1126/science.1239918\", \"Reference 1. https://doi.org/10.1126/science.1239918\", \n\"Reference 1. https://doi.org/10.1126/science.1239918\", \"Reference 1. https://doi.org/10.1126/science.1239918\", \n\"Reference 1. https://doi.org/10.1126/science.1239918\", \"Reference 1. https://doi.org/10.1126/science.1239918\"\n), \"Replication/Reproduction\" = c(\"<b>[Reproduction]<\/b> Hallman, A., Johannesson, M., & Kujansuu, E. (2024). Robustness Reproducibility of\\\" Improving Workplace Climate in Large Corporations: A Clustered Randomized Intervention\\\". (No. 118), I4R Discussion Paper Series. <a href='https://doi.org/10.10419/295247' target='_blank'>doi:10.10419/295247<\/a>\", \n\"<b>[Replication]<\/b> Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. <a href='https://doi.org/10.1037/pspa0000064' target='_blank'>doi:10.1037/pspa0000064<\/a>\", \n\"<b>[Replication]<\/b> Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at <a href='https://doi.org/10.1038/s41562-018-0399-z' target='_blank'>doi:10.1038/s41562-018-0399-z<\/a>\", \n\"<b>[Replication]<\/b> Dijkstra, K., Verkoeijen, P., van Kuijk, I., Yee Chow, S., Bakker, A., & Zwaan, R. (2015). Leidt het lezen van literaire fictie tot meer empathie? : een replicatiestudie van Kidd en Castano (2013). De Psycholoog, 50(10), 10–21. Retrieved from <a href='https://www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf' target='_blank'>www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf<\/a>\", \n\"<b>[Replication]<\/b> Samur, D., Tops, M., & Koole, S. L. (2017). Does a single session of reading literary fiction prime enhanced mentalising performance? Four replication experiments of Kidd and Castano (2013). Cognition and Emotion, 32(1), 130–144. <a href='https://doi.org/10.1080/02699931.2017.1279591' target='_blank'>doi:10.1080/02699931.2017.1279591<\/a>\", \n\"<b>[Replication]<\/b> Kidd, D., & Castano, E. (2018). Reading Literary Fiction and Theory of Mind: Three Preregistered Replications and Extensions of Kidd and Castano (2013). Social Psychological and Personality Science, 10(4), 522–531. <a href='https://doi.org/10.1177/1948550618775410' target='_blank'>doi:10.1177/1948550618775410<\/a>\", \n\"<b>[Replication]<\/b> van Kuijk, I., Verkoeijen, P., Dijkstra, K., & Zwaan, R. A. (2018). The Effect of Reading a Short Passage of Literary Fiction on Theory of Mind: A Replication of Kidd and Castano (2013). Collabra: Psychology, 4(1). <a href='https://doi.org/10.1525/collabra.117' target='_blank'>doi:10.1525/collabra.117<\/a>\"\n)), row.names = c(NA, -7L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.5, 0.5), 2, FALSE)\n```\n"
+          "We checked 4 references with DOIs. We found 7 replications and 1 reproduction for 3 originals you cited.\n\nCheck if you are aware of the replication/reproduction studies, and cite them where appropriate.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Reference 0. https://doi.org/10.1037/0003-066x.54.6.408\", \n\"Reference 0. https://doi.org/10.1093/qje/qjac034\", \"Reference 1. https://doi.org/10.1126/science.1239918\", \n\"Reference 1. https://doi.org/10.1126/science.1239918\", \"Reference 1. https://doi.org/10.1126/science.1239918\", \n\"Reference 1. https://doi.org/10.1126/science.1239918\", \"Reference 1. https://doi.org/10.1126/science.1239918\", \n\"Reference 1. https://doi.org/10.1126/science.1239918\"), \"Replication/Reproduction\" = c(\"<b>[Replication]<\/b> Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2019). Are Sex Differences in Preferences for Physical Attractiveness and Good Earning Capacity in Potential Mates Smaller in Countries With Greater Gender Equality? Evolutionary Psychology, 17(2). <a href='https://doi.org/10.1177/1474704919852921' target='_blank'>doi:10.1177/1474704919852921<\/a>\", \n\"<b>[Reproduction]<\/b> Hallman, A., Johannesson, M., & Kujansuu, E. (2024). Robustness Reproducibility of\\\" Improving Workplace Climate in Large Corporations: A Clustered Randomized Intervention\\\". (No. 118), I4R Discussion Paper Series. <a href='https://doi.org/10.10419/295247' target='_blank'>doi:10.10419/295247<\/a>\", \n\"<b>[Replication]<\/b> Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. <a href='https://doi.org/10.1037/pspa0000064' target='_blank'>doi:10.1037/pspa0000064<\/a>\", \n\"<b>[Replication]<\/b> Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at <a href='https://doi.org/10.1038/s41562-018-0399-z' target='_blank'>doi:10.1038/s41562-018-0399-z<\/a>\", \n\"<b>[Replication]<\/b> Dijkstra, K., Verkoeijen, P., van Kuijk, I., Yee Chow, S., Bakker, A., & Zwaan, R. (2015). Leidt het lezen van literaire fictie tot meer empathie? : een replicatiestudie van Kidd en Castano (2013). De Psycholoog, 50(10), 10–21. Retrieved from <a href='https://www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf' target='_blank'>www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf<\/a>\", \n\"<b>[Replication]<\/b> Samur, D., Tops, M., & Koole, S. L. (2017). Does a single session of reading literary fiction prime enhanced mentalising performance? Four replication experiments of Kidd and Castano (2013). Cognition and Emotion, 32(1), 130–144. <a href='https://doi.org/10.1080/02699931.2017.1279591' target='_blank'>doi:10.1080/02699931.2017.1279591<\/a>\", \n\"<b>[Replication]<\/b> Kidd, D., & Castano, E. (2018). Reading Literary Fiction and Theory of Mind: Three Preregistered Replications and Extensions of Kidd and Castano (2013). Social Psychological and Personality Science, 10(4), 522–531. <a href='https://doi.org/10.1177/1948550618775410' target='_blank'>doi:10.1177/1948550618775410<\/a>\", \n\"<b>[Replication]<\/b> van Kuijk, I., Verkoeijen, P., Dijkstra, K., & Zwaan, R. A. (2018). The Effect of Reading a Short Passage of Literary Fiction on Theory of Mind: A Replication of Kidd and Castano (2013). Collabra: Psychology, 4(1). <a href='https://doi.org/10.1525/collabra.117' target='_blank'>doi:10.1525/collabra.117<\/a>\"\n)), row.names = c(NA, -8L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.5, 0.5), 2, FALSE)\n```\n"
         ]
       },
       {
@@ -176,7 +185,7 @@
       {
         "t": "chr",
         "v": [
-          "We found 6 replications and 1 reproduction for 2 originals you cited."
+          "We found 7 replications and 1 reproduction for 3 originals you cited."
         ]
       },
       {
@@ -198,7 +207,7 @@
           {
             "t": "dbl",
             "v": [
-              0,
+              1,
               0,
               7
             ]
@@ -213,6 +222,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

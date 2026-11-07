@@ -2,9 +2,7 @@
   "id": "ref_miscitation.dup_bib_multi",
   "ok": true,
   "error": null,
-  "warnings": [
-    "Values from `bib_id` are not uniquely identified; output will contain\nlist-cols.\n• Use `values_fn = list` to suppress this warning.\n• Use `values_fn = {summary_fun}` to summarise duplicates.\n• Use the following dplyr code to identify duplicates.\n  {data} |>\n  dplyr::summarise(n = dplyr::n(), .by = c(paper_id, doi)) |>\n  dplyr::filter(n > 1L)"
-  ],
+  "warnings": [],
   "value": {
     "t": "module_output",
     "names": [
@@ -147,9 +145,9 @@
         "nrow": 2,
         "names": [
           "paper_id",
+          "miscite_10.1000/a",
           "miscite_10.1000/b",
-          "miscite_10.1000/c",
-          "miscite_10.1000/a"
+          "miscite_10.1000/c"
         ],
         "v": [
           {
@@ -160,58 +158,30 @@
             ]
           },
           {
-            "t": "list",
-            "names": null,
+            "t": "int",
             "v": [
-              {
-                "t": "int",
-                "v": [
-                  1
-                ]
-              },
-              {
-                "t": "int",
-                "v": [
-                  0
-                ]
-              }
+              0,
+              null
             ]
           },
           {
-            "t": "list",
-            "names": null,
+            "t": "int",
             "v": [
-              {
-                "t": "null"
-              },
-              {
-                "t": "int",
-                "v": [
-                  1
-                ]
-              }
+              1,
+              0
             ]
           },
           {
-            "t": "list",
-            "names": null,
+            "t": "int",
             "v": [
-              {
-                "t": "int",
-                "v": [
-                  0,
-                  2
-                ]
-              },
-              {
-                "t": "null"
-              }
+              null,
+              1
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

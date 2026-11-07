@@ -2,7 +2,9 @@
   "id": "stat_p_exact.duplicate_ids",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "1 paper shared a paper_id with an earlier paper and was renamed: 6c4258abe0fec3~2"
+  ],
   "value": {
     "t": "module_output",
     "names": [
@@ -37,7 +39,7 @@
       },
       {
         "t": "df",
-        "nrow": 8,
+        "nrow": 4,
         "names": [
           "text_id",
           "section_id",
@@ -58,12 +60,8 @@
             "t": "int",
             "v": [
               1,
-              1,
-              2,
               2,
               1,
-              1,
-              2,
               2
             ]
           },
@@ -73,10 +71,6 @@
               0,
               0,
               0,
-              0,
-              0,
-              0,
-              0,
               0
             ]
           },
@@ -86,10 +80,6 @@
               0,
               0,
               0,
-              0,
-              0,
-              0,
-              0,
               0
             ]
           },
@@ -97,25 +87,17 @@
             "t": "chr",
             "v": [
               "p = .20",
-              "p = .20",
               "p < .05",
-              "p < .05",
-              "p = .30 ",
-              "p = .30 ",
-              "p < .10 ",
-              "p < .10 "
+              "p = .30",
+              "p < .10"
             ]
           },
           {
             "t": "chr",
             "v": [
               "No difference was found (p = .20).",
-              "No difference was found (p = .20).",
-              "The other test was imprecise (p < .05).",
               "The other test was imprecise (p < .05).",
               "A second paper found p = .30 here.",
-              "A second paper found p = .30 here.",
-              "And p < .10 there.",
               "And p < .10 there."
             ]
           },
@@ -124,10 +106,12 @@
             "v": [
               "6c4258abe0fec3",
               "6c4258abe0fec3",
-              "6c4258abe0fec3",
-              "6c4258abe0fec3",
-              "6c4258abe0fec3",
-              "6c4258abe0fec3",
+              "6c4258abe0fec3~2",
+              "6c4258abe0fec3~2"
+            ],
+            "names": [
+              "",
+              "",
               "6c4258abe0fec3",
               "6c4258abe0fec3"
             ]
@@ -135,10 +119,6 @@
           {
             "t": "chr",
             "v": [
-              "Test",
-              "Test",
-              "Test",
-              "Test",
               "Test",
               "Test",
               "Test",
@@ -151,10 +131,6 @@
               "unknown",
               "unknown",
               "unknown",
-              "unknown",
-              "unknown",
-              "unknown",
-              "unknown",
               "unknown"
             ]
           },
@@ -162,12 +138,8 @@
             "t": "chr",
             "v": [
               "=",
-              "=",
-              "<",
               "<",
               "=",
-              "=",
-              "<",
               "<"
             ]
           },
@@ -175,48 +147,32 @@
             "t": "dbl",
             "v": [
               0.2,
-              0.2,
-              0.05,
               0.05,
               0.3,
-              0.3,
-              0.1,
               0.1
             ]
           },
           {
             "t": "chr",
             "v": [
-              "No difference was found (p = .20). A second paper found p = .30 here.",
-              "No difference was found (p = .20). A second paper found p = .30 here.",
-              "The other test was imprecise (p < .05). And p < .10 there.",
-              "The other test was imprecise (p < .05). And p < .10 there.",
-              "No difference was found (p = .20). A second paper found p = .30 here.",
-              "No difference was found (p = .20). A second paper found p = .30 here.",
-              "The other test was imprecise (p < .05). And p < .10 there.",
-              "The other test was imprecise (p < .05). And p < .10 there."
+              "No difference was found (p = .20).",
+              "The other test was imprecise (p < .05).",
+              "A second paper found p = .30 here.",
+              "And p < .10 there."
             ]
           },
           {
             "t": "lgl",
             "v": [
               false,
-              false,
-              true,
               true,
               false,
-              false,
-              true,
               true
             ]
           },
           {
             "t": "lgl",
             "v": [
-              false,
-              false,
-              false,
-              false,
               false,
               false,
               false,
@@ -229,7 +185,7 @@
         "t": "chr",
         "v": [
           "Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, reproducibility, and re-use (e.g., in *p* value meta-analyses). Best practice is to report exact p-values with three decimal places (e.g., *p* = .032) unless *p* values are smaller than 0.001, in which case you can use *p* < .001.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = c(\"p < .05\", \"p < .10 \"), Text = c(\"The other test was imprecise (p < .05). And p < .10 there.\", \n\"The other test was imprecise (p < .05). And p < .10 there.\")), row.names = c(NA, \n-2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = c(\"p < .05\", \"p < .10\"), Text = c(\"The other test was imprecise (p < .05).\", \n\"And p < .10 there.\")), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nThe APA manual states: Report exact *p* values (e.g., *p* = .031) to two or three decimal places. However, report *p* values less than .001 as *p* < .001. However, 2 decimals is too imprecise for many use-cases (e.g., a *p* value meta-analysis), so report *p* values with three digits.\n\nAmerican Psychological Association (2020). <em>Publication manual of the American Psychological Association<\/em>, 7 edition. American Psychological Association.\n\n:::\n"
         ]
       },
@@ -242,7 +198,7 @@
       {
         "t": "chr",
         "v": [
-          "We found 2 imprecise *p* values out of 8 detected *p* values."
+          "We found 2 imprecise *p* values out of 4 detected *p* values."
         ]
       },
       {
@@ -258,14 +214,14 @@
             "t": "chr",
             "v": [
               "6c4258abe0fec3",
-              "6c4258abe0fec3"
+              "6c4258abe0fec3~2"
             ]
           },
           {
             "t": "int",
             "v": [
-              4,
-              4
+              1,
+              1
             ]
           },
           {
@@ -285,6 +241,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -381,7 +381,7 @@
       {
         "t": "chr",
         "v": [
-          "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherent is most often an error in reading the reference from the PDF, but it could be a mistake, ar an AI generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
+          "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherence is most often an error in reading the reference from the PDF, but it could be a mistake, or an AI-generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
           "### Incoherent references\n",
           "The cited details of these references do not match the record their DOI points to.\n",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\"\n), \"What is wrong (cited → record)\" = c(\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.32614/10.5281/zenodo.2669586<\/span> could not be found in CrossRef\", \n\"<b>authors:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Gino, Francesca; Wiltermuth, Scott S<\/span> &rarr; Gino, Wilter.muth\", \n\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.0000/0123456789<\/span> could not be found in CrossRef\"\n), Record = c(\"<a href='https://doi.org/10.32614/10.5281/zenodo.2669586' target='_blank'>10.32614/10.5281/zenodo.2669586<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\", \n\"<a href='https://doi.org/10.0000/0123456789' target='_blank'>10.0000/0123456789<\/a>\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)\n```\n"
@@ -443,6 +443,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

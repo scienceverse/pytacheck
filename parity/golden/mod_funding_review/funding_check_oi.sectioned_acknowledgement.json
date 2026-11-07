@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 2,
         "names": [
           "paper_id",
           "text"
@@ -46,13 +46,15 @@
           {
             "t": "chr",
             "v": [
+              "6c4258abe0fec3",
               "6c4258abe0fec3"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Our study was funded by the ERC."
+              "Our study was funded by the ERC.",
+              "The authors declare no funding."
             ]
           }
         ]
@@ -61,7 +63,7 @@
         "t": "chr",
         "v": [
           "The following funding statement was detected:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"Our study was funded by the ERC.\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"Our study was funded by the ERC.\", \"The authors declare no funding.\"\n)), names = \"\", row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -106,6 +108,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

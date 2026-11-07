@@ -191,8 +191,7 @@
         "v": [
           "Data was openly shared for this article, based on the following text:\n\n> Data are available on the Open Science Framework.\n\n> Data are available at https://osf.io/x.",
           "Code was openly shared for this article, based on the following text:\n\n> Scripts are shared via GitHub.",
-          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Code is available on request.",
-          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Code is available by reasonable request."
+          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Code is available on request.\n\n> Code is available by reasonable request."
         ]
       },
       {
@@ -335,6 +334,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -86,15 +86,6 @@
           "knb.ecoinformatics.org",
           "data.piscoweb.org",
           "arcticdata.io"
-        ],
-        "names": [
-          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
-          "https://doi.org/10.6085/AA/marine_ltm.20.1",
-          "https://knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
-          "doi.org/10.5063/PG1Q4B.",
-          "knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
-          "10.6085/AA/marine_ltm.20.1",
-          "ARCTICDATA.IO/catalog/view/doi:10.18739/UPPER"
         ]
       },
       {
@@ -103,23 +94,14 @@
           "doi:10.18739/A2GT5FG86",
           "doi:10.6085/AA/marine_ltm.20.1",
           "doi:10.5063/F1Z60M87",
-          "doi:10.5063/PG1Q4B.",
+          "doi:10.5063/PG1Q4B",
           "doi:10.5063/F1Z60M87",
           "doi:10.6085/AA/marine_ltm.20.1",
           "doi:10.18739/UPPER"
-        ],
-        "names": [
-          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
-          "https://doi.org/10.6085/AA/marine_ltm.20.1",
-          "https://knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
-          "doi.org/10.5063/PG1Q4B.",
-          "knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
-          "10.6085/AA/marine_ltm.20.1",
-          "ARCTICDATA.IO/catalog/view/doi:10.18739/UPPER"
         ]
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

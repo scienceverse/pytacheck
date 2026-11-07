@@ -19,6 +19,7 @@
       "repo_metadata",
       "roster_check",
       "group_no_evidence",
+      "useless_files",
       "na_replace"
     ],
     "v": [
@@ -220,8 +221,11 @@
       {
         "t": "chr",
         "v": [
+          "#### Repositories that could not be checked",
+          "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
+          "- https://osf.io/abcd: not a valid OSF link",
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/n9uvj' target='_blank'>osf.io/n9uvj<\/a>\", \n\"<a href='tests/mod_repo_check/fixtures/tidy' target='_blank'>tests/mod_repo_check/fixtures/tidy<\/a>\"\n), Platform = c(\"osf\", \"local\"), \"All Files\" = 4:3, \"Data Files\" = c(1L, \n1L), \"Code Files\" = 2:1, READMEs = 0:1, Archives = 1:0), row.names = c(NA, \n-2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/n9uvj' target='_blank'>osf.io/n9uvj<\/a>\", \n\"<a href='https://osf.io/abcd' target='_blank'>osf.io/abcd<\/a>\", \n\"<a href='tests/mod_repo_check/fixtures/tidy' target='_blank'>tests/mod_repo_check/fixtures/tidy<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"local\"), Error = c(NA, \"not a valid OSF link\", \nNA), \"All Files\" = c(4L, 0L, 3L), \"Data Files\" = c(1L, 0L, 1L\n), \"Code Files\" = c(2L, 0L, 1L), READMEs = c(0L, 0L, 1L), Archives = c(1L, \n0L, 0L)), row.names = c(NA, -3L), class = c(\"tbl_df\", \"tbl\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://osf.io/n9uvj\", \"https://osf.io/n9uvj\", \n\"https://osf.io/n9uvj\", \"https://osf.io/n9uvj\", \"tests/mod_repo_check/fixtures/tidy\", \n\"tests/mod_repo_check/fixtures/tidy\", \"tests/mod_repo_check/fixtures/tidy\"\n), File = c(\"<a href='https://osf.io/download/21e6c28f552f13a7ef376ad4/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/b6454708503d63b00949d8c7/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/8789af98892dfe9cb77cfc10/' target='_blank'>Archive.zip<\/a>\", \n\"analysis.R\", \"scores.csv\", \"README.md\"), Size = c(\"172 B\", \"413 B\", \n\"5 B\", \"6.4 kB\", \"50 B\", \"19 B\", \"45 B\"), Type = c(\"code\", \"code\", \n\"data\", \"archive\", \"code\", \"data\", \"readme\")), row.names = c(NA, \n-7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
@@ -242,7 +246,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 7 files in 2 repositories.\n-  We found 1 README file and 1 repository without READMEs.\n-  We found 1 archive file.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
+          "\n-  We could not check 1 repository: https://osf.io/abcd (not a valid OSF link).\n-  We found 7 files in 3 repositories.\n-  We found 1 README file and 1 repository without READMEs.\n-  We found 1 archive file.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
         ]
       },
       {
@@ -251,6 +255,7 @@
         "names": [
           "paper_id",
           "repo_n",
+          "repo_unchecked",
           "files_n",
           "files_data",
           "files_code",
@@ -273,7 +278,15 @@
             "t": "dbl",
             "v": [
               2,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
               0,
+              1,
               0
             ]
           },
@@ -345,7 +358,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "repo_url",
           "repo_type",
@@ -354,15 +367,21 @@
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://osf.io/abcd"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "osf"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "not a valid OSF link"
+            ]
           }
         ]
       },
@@ -484,6 +503,34 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -491,6 +538,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

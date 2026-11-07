@@ -51,6 +51,7 @@
           "paper_id",
           "repo_url",
           "source_file",
+          "sheet",
           "group",
           "column_name",
           "representation",
@@ -64,6 +65,7 @@
           "qualtrics_display_order",
           "sample_values",
           "utf8_repaired",
+          "needs_package",
           "n",
           "n_missing",
           "n_unique",
@@ -102,10 +104,19 @@
           {
             "t": "chr",
             "v": [
-              "data.csv",
-              "data.csv",
-              "data.csv",
-              "data.csv"
+              "study1/data.csv",
+              "study1/data.csv",
+              "study2/data.csv",
+              "study2/data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -223,6 +234,15 @@
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -367,18 +387,18 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to, and any file-naming issue found by repo_check.",
-          "**Repository: tests/mod_data_check/fixtures/repos/groups**",
-          "```\n├── study1/\n│   ├── analysis.R  💻 code    ex1\n│   └── data.csv    📊 data    ex1\n├── study2/\n│   └── data.csv    📊 data    ex2\n├── LICENSE         ❓ unknown      could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\n└── README.md       📄 readme\n```",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
+          "**Repository: groups**",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── study1/\n│   ├── analysis.R  💻 code          ex1\n│   └── data.csv    📊 data          ex1\n├── study2/\n│   └── data.csv    📊 data          ex2\n├── LICENSE         📖 documentation\n└── README.md       📄 readme\n```\n:::",
           "#### Data Files",
-          "::: {.panel-tabset}\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:5, y = c(2.2, 1.3, 4.1, 3.8, 6.5)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "::: {.panel-tabset}\n\n## study1/data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:5, y = c(1.2, 2.3, 3.1, 4.8, 5.5)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## study2/data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:5, y = c(2.2, 1.3, 4.1, 3.8, 6.5)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
-          "::: {.panel-tabset}\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"id\", \"y\", \"y\"), Representation = c(\"text\", \n\"text\", \"numeric\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \n\"ratio\", \"ratio\"), Concept = c(\"id\", \"id\", \"\", \"\"), Role = c(\"identifier\", \n\"identifier\", \"measure\", \"measure\"), Unit = c(\"\", \"\", \"\", \"\"), \n    Rows = c(5L, 5L, 5L, 5L), \"% Missing\" = c(0, 0, 0, 0), \"N Unique\" = c(5L, \n    5L, 5L, 5L), Mean = c(NA, NA, 3.38, 3.58), SD = c(NA, NA, \n    1.768, 1.997), Min = c(NA, NA, 1.2, 1.3), Max = c(NA, NA, \n    5.5, 6.5)), row.names = c(\"id...1\", \"id...2\", \"y...3\", \"y...4\"\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
-          "We examined 4 columns across 1 data file.",
+          "::: {.panel-tabset}\n\n## study1/data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"y\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(5L, \n5L), \"% Missing\" = c(0, 0), \"N Unique\" = c(5L, 5L), Mean = c(NA, \n3.38), SD = c(NA, 1.768), Min = c(NA, 1.2), Max = c(NA, 5.5)), row.names = c(\"id...1\", \n\"y...3\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## study2/data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"y\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(5L, \n5L), \"% Missing\" = c(0, 0), \"N Unique\" = c(5L, 5L), Mean = c(NA, \n3.58), SD = c(NA, 1.997), Min = c(NA, 1.3), Max = c(NA, 6.5)), row.names = c(\"id...2\", \n\"y...4\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
+          "We examined 4 columns across 2 data files.",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
-          "**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+          "**What this does not cover.** Only 0 of 2 data files could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
         ]
       },
       {
@@ -390,7 +410,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 5 files: 2 data, 1 code, 1 documentation, 1 unknown.\n-  We found 2 tabular data files and extracted 4 columns from 2 of them.\n-  We grouped the files into 2 study groups (ex1, ex2), plus 1 collection-level file (README/ro-crate metadata), and 1 file reused across studies (referenced, not duplicated). We ran automated data-quality checks on 4 columns and found no issues."
+          "\n-  We classified 5 files: 2 data, 1 code, 2 documentation.\n-  We found 2 tabular data files and extracted 4 columns from 2 of them.\n-  We grouped the files into 2 study groups (ex1, ex2), plus 1 collection-level file (README/ro-crate metadata), and 1 file reused across studies (referenced, not duplicated). We ran automated data-quality checks on 4 columns and found no issues."
         ]
       },
       {
@@ -597,6 +617,7 @@
           "paper_id",
           "data_format",
           "referenced_by",
+          "source_file",
           "tabular_usable",
           "non_tabular_reason"
         ],
@@ -684,7 +705,7 @@
           {
             "t": "chr",
             "v": [
-              "unknown",
+              "documentation",
               "documentation",
               "code",
               "data",
@@ -756,6 +777,16 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "LICENSE",
+              "README.md",
+              "analysis.R",
+              "study1/data.csv",
+              "study2/data.csv"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               true,
@@ -780,9 +811,40 @@
       {
         "t": "list",
         "names": [
-          "data.csv"
+          "study1/data.csv",
+          "study2/data.csv"
         ],
         "v": [
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "id",
+              "y"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1.2,
+                  2.3,
+                  3.1,
+                  4.8,
+                  5.5
+                ]
+              }
+            ]
+          },
           {
             "t": "df",
             "nrow": 5,
@@ -868,6 +930,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -15,11 +15,14 @@
       "summary_text",
       "summary_table",
       "na_replace",
+      "brief",
       "run_results",
       "install_results",
+      "recorded_versions",
       "stat_output",
       "match_table",
       "modifications",
+      "checklist_section",
       "sandbox"
     ],
     "v": [
@@ -47,6 +50,7 @@
         "names": [
           "paper_id",
           "file_name",
+          "file_path",
           "parses",
           "run_order",
           "order_basis",
@@ -61,7 +65,13 @@
           "error_type",
           "undefined_var",
           "reads",
-          "writes"
+          "writes",
+          "names_corrected",
+          "used_by",
+          "not_analysis_why",
+          "paper_link",
+          "repo_name",
+          "reason"
         ],
         "v": [
           {
@@ -76,6 +86,13 @@
             "v": [
               "01_prep.R",
               "02_analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code/01_prep.R",
+              "code/02_analysis.R"
             ]
           },
           {
@@ -109,7 +126,7 @@
           {
             "t": "int",
             "v": [
-              1,
+              0,
               0
             ]
           },
@@ -152,14 +169,14 @@
             "t": "chr",
             "v": [
               "ran_ok",
-              "skipped_missing_inputs"
+              "errored"
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              null
+              "runtime"
             ]
           },
           {
@@ -203,6 +220,48 @@
                 "v": []
               }
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "project",
+              "project"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "file"
+            ]
           }
         ]
       },
@@ -214,27 +273,27 @@
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:2, File = c(\"01_prep.R\", \"02_analysis.R\"\n), \"Runs after\" = c(\"—\", \"01_prep.R\"), Basis = c(\"numeric\", \n\"dependency\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "To run against the Psych-DS layout, 1 referenced data path would be rewritten to its new location.",
-          "#### Missing inputs",
-          "1 input file the code reads is not available. Files withheld only because of their size are distinguished from files absent from the repository — the former are a size-cap issue, not a reproducibility failure.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"not_shared.csv\", Status = \"absent\", Reason = \"referenced file is not present in the repository\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "Every data path in the code works in the repository as deposited.",
+          "#### Files the deposit does not hold",
+          "The scripts that did not run through read 1 data file that is not in the deposit, and no script of the deposit writes: `not_shared.csv`.",
           "#### Execution",
-          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 2 scripts: 1 ran without error, 0 errored, 0 timed out, 1 was skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"01_prep.R\", \"02_analysis.R\"), Outcome = c(\"ran_ok\", \n\"skipped_missing_inputs\"), Detail = c(\"\", \"\"), \"Time (s)\" = 0), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the repository, in the run order above, with a 60-second per-script timeout. Of 2 scripts: 1 ran without error, 1 errored, 0 timed out, 0 could not run because one of its own dependencies is unavailable, 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions. **1 script stopped on a file another script writes**, so it was run once more after the other scripts: `02_analysis.R` (clean_data.csv). One file was written in another folder than where the script looked, so before that run we copied it there: `clean_data.csv` to `code/clean_data.csv` for `02_analysis.R`. The scripts assume they all run from one folder; saying which, or building paths from the top of the project (as with `here::here()`), solves this. Which script must run first can be stated in a README, or shown by numbering the file names (01_, 02_).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"01_prep.R\", \"02_analysis.R\"), Outcome = c(\"ran_ok\", \n\"errored\"), Detail = c(\"\", \"runtime\"), \"Time (s)\" = 0), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
-          "::: {.callout-tip title=\"Output — 01_prep.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> raw <- read.csv(\"data/study-rawdata_data.csv\")\n> clean <- raw[!is.na(raw$score), ]\n> write.csv(clean,\"<root>/output/clean_data.csv\", row.names = FALSE)\n````\n\n:::\n"
+          "::: {.callout-tip title=\"Output — 01_prep.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> raw <- read.csv(\"data/raw_data.csv\")\n> clean <- raw[!is.na(raw$score), ]\n> write.csv(clean, \"clean_data.csv\", row.names = FALSE)\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — 02_analysis.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> library(stats)\n> dat <- read.csv(\"clean_data.csv\")\n> t.test(score ~ group, data = dat)\n\n\tWelch Two Sample t-test\n\ndata:  score by group\nt = -3.4125, df = 3.999, p-value = 0.02698\nalternative hypothesis: true difference in means between group a and group b is not equal to 0\n95 percent confidence interval:\n -2.2973452 -0.2359881\nsample estimates:\nmean in group a mean in group b \n       3.300000        4.566667 \n\n> missing <- read.csv(\"not_shared.csv\")\n````\n**Messages / errors (stderr):**\n````\nError in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\nIn file(file, \"rt\") :\n  cannot open file 'not_shared.csv': No such file or directory\n````\n\n:::\n"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "red"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 2 R code files for reproducibility (each in an isolated subprocess).\n-  1 file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  1 of 2 scripts ran without error when executed.\n-  1 referenced input unavailable (0 withheld due to size).\n-  0 installable dependencies detected."
+          "\n-  We assessed AND ran 2 R code files for reproducibility (each in an isolated subprocess).\n-  1 of 2 scripts ran without error when executed.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -248,7 +307,21 @@
           "repro_deps",
           "repro_ran_ok",
           "repro_tests_reported",
-          "repro_tests_matched"
+          "repro_tests_matched",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
         ],
         "v": [
           {
@@ -298,12 +371,110 @@
             "v": [
               null
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0,
           0,
           0,
@@ -315,7 +486,27 @@
           "repro_runnable",
           "repro_missing_inputs",
           "repro_deps",
-          "repro_ran_ok"
+          "repro_ran_ok",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
@@ -331,7 +522,8 @@
           "stderr",
           "elapsed",
           "script_lines",
-          "captures"
+          "captures",
+          "reason"
         ],
         "v": [
           {
@@ -345,14 +537,21 @@
             "t": "chr",
             "v": [
               "ran_ok",
-              "skipped_missing_inputs"
+              "errored"
             ]
           },
           {
             "t": "chr",
             "v": [
               "",
-              ""
+              "! in callr subprocess.\nCaused by error in `file(file, \"rt\")`:\n! cannot open the connection"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "runtime"
             ]
           },
           {
@@ -365,22 +564,15 @@
           {
             "t": "chr",
             "v": [
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "> raw <- read.csv(\"data/study-rawdata_data.csv\")\n> clean <- raw[!is.na(raw$score), ]\n> write.csv(clean,\"<root>/output/clean_data.csv\", row.names = FALSE)",
-              ""
+              "> raw <- read.csv(\"data/raw_data.csv\")\n> clean <- raw[!is.na(raw$score), ]\n> write.csv(clean, \"clean_data.csv\", row.names = FALSE)",
+              "> library(stats)\n> dat <- read.csv(\"clean_data.csv\")\n> t.test(score ~ group, data = dat)\n\n\tWelch Two Sample t-test\n\ndata:  score by group\nt = -3.4125, df = 3.999, p-value = 0.02698\nalternative hypothesis: true difference in means between group a and group b is not equal to 0\n95 percent confidence interval:\n -2.2973452 -0.2359881\nsample estimates:\nmean in group a mean in group b \n       3.300000        4.566667 \n\n> missing <- read.csv(\"not_shared.csv\")"
             ]
           },
           {
             "t": "chr",
             "v": [
               "",
-              ""
+              "Error in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\nIn file(file, \"rt\") :\n  cannot open file 'not_shared.csv': No such file or directory"
             ]
           },
           {
@@ -397,14 +589,19 @@
               {
                 "t": "chr",
                 "v": [
-                  "raw <- read.csv(\"data/study-rawdata_data.csv\")",
+                  "raw <- read.csv(\"data/raw_data.csv\")",
                   "clean <- raw[!is.na(raw$score), ]",
-                  "write.csv(clean,\"<root>/output/clean_data.csv\", row.names = FALSE)"
+                  "write.csv(clean, \"clean_data.csv\", row.names = FALSE)"
                 ]
               },
               {
                 "t": "chr",
-                "v": []
+                "v": [
+                  "library(stats)",
+                  "dat <- read.csv(\"clean_data.csv\")",
+                  "t.test(score ~ group, data = dat)",
+                  "missing <- read.csv(\"not_shared.csv\")"
+                ]
               }
             ]
           },
@@ -418,8 +615,131 @@
                 "v": []
               },
               {
-                "t": "null"
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "analysis",
+                      "method",
+                      "rows",
+                      "line",
+                      "call_text"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Welch Two Sample t-test"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Welch Two Sample t-test"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "list",
+                            "names": [
+                              "label",
+                              "stats"
+                            ],
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "score by group"
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "t",
+                                  "df",
+                                  "p",
+                                  "mean in group a",
+                                  "mean in group b",
+                                  "conf.low",
+                                  "conf.high"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      -3.41250073850872
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      3.99895968790637
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      0.0269763030563448
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      3.3
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      4.56666666666667
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      -2.29734521568682
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      -0.235988117646509
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          3
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "t.test(score ~ group, data = dat)"
+                        ]
+                      }
+                    ]
+                  }
+                ]
               }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "file"
             ]
           }
         ]
@@ -431,11 +751,527 @@
         "t": "null"
       },
       {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "file",
+              "n_tables",
+              "source",
+              "n_captured",
+              "json",
+              "long"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "02_analysis.R"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "r_output"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "schema",
+                  "schema_version",
+                  "paper_id",
+                  "source_file",
+                  "source_format",
+                  "analyses"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "metacheck-statistical-output"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1.0"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "02_analysis.R"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "R"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "analysis",
+                          "results"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "Welch Two Sample t-test"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "02_analysis_r_l3_1_r1"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "02_analysis_r_l3_1_score_by_group"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "score by group"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "t",
+                                      "df",
+                                      "p",
+                                      "mean_in_group_a",
+                                      "mean_in_group_b",
+                                      "conf_low",
+                                      "conf_high"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              -3.41250073850872
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "t-statistic"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000176"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              3.99895968790637
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "number of degrees of freedom"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000069"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              0.0269763030563448
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "p-value"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000700"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              3.3
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "sample mean"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000401"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              4.56666666666667
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "sample mean"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000401"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              -2.29734521568682
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "confidence interval"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000196"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              -0.235988117646509
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "confidence interval"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000196"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 7,
+                "names": [
+                  "paper_id",
+                  "source_file",
+                  "test_id",
+                  "result_id",
+                  "analysis",
+                  "table_title",
+                  "row_label",
+                  "statistic",
+                  "stato_label",
+                  "stato_iri",
+                  "value",
+                  "model_ref"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "02_analysis.R",
+                      "02_analysis.R",
+                      "02_analysis.R",
+                      "02_analysis.R",
+                      "02_analysis.R",
+                      "02_analysis.R",
+                      "02_analysis.R"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "02_analysis_r_l3_1_score_by_group",
+                      "02_analysis_r_l3_1_score_by_group",
+                      "02_analysis_r_l3_1_score_by_group",
+                      "02_analysis_r_l3_1_score_by_group",
+                      "02_analysis_r_l3_1_score_by_group",
+                      "02_analysis_r_l3_1_score_by_group",
+                      "02_analysis_r_l3_1_score_by_group"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "02_analysis_r_l3_1_r1_t",
+                      "02_analysis_r_l3_1_r1_df",
+                      "02_analysis_r_l3_1_r1_p",
+                      "02_analysis_r_l3_1_r1_mean_in_group_a",
+                      "02_analysis_r_l3_1_r1_mean_in_group_b",
+                      "02_analysis_r_l3_1_r1_conf_low",
+                      "02_analysis_r_l3_1_r1_conf_high"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "score by group",
+                      "score by group",
+                      "score by group",
+                      "score by group",
+                      "score by group",
+                      "score by group",
+                      "score by group"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t",
+                      "df",
+                      "p",
+                      "mean in group a",
+                      "mean in group b",
+                      "conf.low",
+                      "conf.high"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t-statistic",
+                      "number of degrees of freedom",
+                      "p-value",
+                      "sample mean",
+                      "sample mean",
+                      "confidence interval",
+                      "confidence interval"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "http://purl.obolibrary.org/obo/STATO_0000176",
+                      "http://purl.obolibrary.org/obo/STATO_0000069",
+                      "http://purl.obolibrary.org/obo/STATO_0000700",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000196",
+                      "http://purl.obolibrary.org/obo/STATO_0000196"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-3.41250073850872",
+                      "3.99895968790637",
+                      "0.0269763030563448",
+                      "3.3",
+                      "4.56666666666667",
+                      "-2.29734521568682",
+                      "-0.235988117646509"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "dat",
+                      "dat",
+                      "dat",
+                      "dat",
+                      "dat",
+                      "dat",
+                      "dat"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "t": "null"
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 3,
         "names": [
           "file_name",
           "change_type",
@@ -445,21 +1281,33 @@
           {
             "t": "chr",
             "v": [
-              "01_prep.R"
+              "01_prep.R",
+              "02_analysis.R",
+              "02_analysis.R"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "path_rewrite"
+              "path_rewrite",
+              "run_again",
+              "output_copied"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "\"data/raw_data.csv\" -> \"data/study-rawdata_data.csv\""
+              "\"data/raw_data.csv\" -> \"data/raw_data.csv\"",
+              "run once more after another script wrote clean_data.csv",
+              "copied clean_data.csv, written by another script, to code/clean_data.csv"
             ]
           }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We ran the paper's 2 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**1 of 2 scripts ran to the end**: 1 stopped with an error.\n\n| Script | Result | What happened |\n|---|---|---|\n| 01&#95;prep.R | Ran to the end |  |\n| 02&#95;analysis.R | Stopped with an error | <code>Error in file(file, \"rt\") : cannot open the connection<\/code> |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**Files are missing from your deposit.**\n\n- <code>02&#95;analysis.R<\/code> reads <code>not&#95;shared.csv<\/code>.\n\nThe script stops at the line that reads the file.\n\n1. Find the file on your computer.\n2. Add it to the deposit, in the folder where the script looks for it.\n3. If you cannot share it, for example for privacy reasons, say so in the README, and explain where readers can get it and where to put it.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -470,6 +1318,6 @@
       }
     ]
   },
-  "metacheck_version": "0.3.3.2",
+  "metacheck_version": "0.4.3.7",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
