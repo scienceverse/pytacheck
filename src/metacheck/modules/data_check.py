@@ -16,18 +16,20 @@ import pandas as pd
 
 from metacheck._r import grepl, plural, r_round
 from metacheck._values import is_true
+from metacheck.archives._useless import is_useless_file
 from metacheck.module import module
 from metacheck.modules import _data_check as h
+from metacheck.report.file_tree import file_tree_block
 
 _INTRO = (
     "This module classifies repository files and, for tabular data files available "
     "locally, extracts each column's type and summary statistics."
 )
 _DV_INTRO = (
-    "This module runs automated data-quality checks (outliers, miscoded missing values, "
-    "empty and constant columns, SPSS filter variables, category casing, problematic "
-    "column names, mixed text encodings, spreadsheet formatting) on the extracted data "
-    "files."
+    "This module runs automated data-quality checks (empty columns, SPSS filter variables, "
+    "category casing, stray whitespace, numbers stored as text, problematic and colliding "
+    "column names, mixed text encodings, personal information, spreadsheet formatting, and "
+    "careless responding) on the extracted data files."
 )
 
 _FILE_PROMPT = " ".join(
@@ -79,6 +81,7 @@ _CHECK_PHRASE = {
     "Problematic column name": "whose name contains file-illegal characters or is excessively long",
     "Colliding column names": "whose names become identical when special characters are removed",
     "Mixed encoding": "with values in a legacy (non-UTF-8) encoding",
+    "Needs an R package": "whose values cannot be read without a particular R package",
     "Personal info (values)": "whose values look like personal information",
     "Personal info (column name)": "whose name suggests personal information",
     "Geographic coordinates": "that look like geographic coordinates",
@@ -445,6 +448,9 @@ def data_check(
     all_files = get_prev_outputs("repo_check", "table")
     listing_gated = get_prev_outputs("repo_check", "gated_repos")
     tree_naming_issues = get_prev_outputs("repo_check", "naming_issues")
+    # Files that do not belong in a repository, which repo_check leaves out of its table;
+    # the file tree marks them (junk: remove / keep only on purpose).
+    tree_useless = get_prev_outputs("repo_check", "useless_files")
     if all_files is None:
         from metacheck.module import module_run
 
@@ -470,6 +476,7 @@ def data_check(
             )
         listing_gated = mo.get("gated_repos")
         tree_naming_issues = mo.get("naming_issues")
+        tree_useless = mo.get("useless_files")
     all_files = all_files.copy().reset_index(drop=True)
 
     # -- 2. classify every file --------------------------------------------------
@@ -537,6 +544,22 @@ def data_check(
     all_files = dl["all_files"]
     want = dl["want"]
 
+    # Every table, column and finding below is kept under `source_file`, a name unique
+    # within this run: the file name, or its path where several files share a name (a
+    # log.csv in every scan folder), so no same-named file is silently dropped (see
+    # _data_source_keys()).
+    from metacheck.datacheck.files import _data_source_keys
+
+    _set(
+        all_files,
+        "source_file",
+        _data_source_keys(
+            h._col(all_files, "file_name") or [],
+            h._col(all_files, "file_path"),
+            h._col(all_files, "repo_name") or h._col(all_files, "repo_url"),
+        ),
+    )
+
     # -- 3./4. select local tabular files, extract columns --------------------------
     ex = _extract(all_files, paper, model, params, state)
     all_files = ex["all_files"]
@@ -558,9 +581,13 @@ def data_check(
     )
     n_tabular_all = ex["n_tabular_all"]
     n_no_local = ex["n_no_local"]
-    # the files columns were actually extracted from (R subtracts manifests and
-    # non-rectangular files but not unreadable or workspace-only ones)
-    n_extracted = ex["n_extracted"]
+    # the files columns were read from: .RData files and unreadable files were counted too
+    # ("extracted 2 columns from 3 of them", metacheck U99); a file with several sheets
+    # counts once
+    if columns_df is not None and "source_file" in columns_df.columns:
+        n_extracted = ex["n_extracted"]
+    else:
+        n_extracted = ex["n_data_files"] - len(ex["manifest_files"]) - len(ex["non_tabular"])
     summary_data = (
         f"We found {n_tabular_all:d} tabular data file{plural(n_tabular_all)} and extracted "
         f"{n_columns:d} column{plural(n_columns)} from {n_extracted:d} of them."
@@ -656,7 +683,7 @@ def data_check(
         ]
 
     report: list[Any] = [_INTRO]
-    tree_block = h.repo_tree_block(all_files, tree_naming_issues)
+    tree_block = file_tree_block(all_files, tree_naming_issues, tree_useless)
     if tree_block is not None:
         report.extend(tree_block)
     if file_previews:
@@ -728,9 +755,10 @@ def data_check(
         columns_df=columns_df,
         plot_distributions=plot_distributions,
         max_facets=max_facets,
+        rds_workspace_files=ex["rds_workspace_files"],
+        n_tabular_all=n_tabular_all,
+        paper_ids=_summary_paper_ids(summary_table),
     )
-    if not file_previews and tl == "green":
-        tl = "na"  # tabular files exist but none could be read: nothing was checked
     rank = {"na": 0, "green": 1, "yellow": 2, "red": 3}
     both = [t for t in (tl, dv["traffic_light"]) if t in rank]
     final_tl = max(both, key=lambda t: rank[t]) if both else "na"
@@ -740,8 +768,8 @@ def data_check(
     return {
         "table": columns_df if columns_df is not None else pd.DataFrame(),
         "findings": dv["findings"],
-        "careless": dv["careless"],
-        "demographics": dv["demographics"],
+        # the early return (no readable table) has neither, as in metacheck's empty()
+        **{k: dv[k] for k in ("careless", "demographics") if k in dv},
         "qualtrics": dv["qualtrics"],
         "structure": all_files,
         "previews": file_previews,
@@ -754,6 +782,11 @@ def data_check(
         "report": report + dv["report"],
         "summary_text": f"{summary_text} {dv['summary_text']}",
     }
+
+
+def _summary_paper_ids(summary_table: pd.DataFrame) -> list[Any]:
+    """The ``paper_id`` column of the file-level summary table."""
+    return list(h._col(summary_table, "paper_id") or [])
 
 
 def _data_check_types() -> tuple[str, ...]:
@@ -893,6 +926,7 @@ def _download(
     cache: Any,
     skip_on_api_limit: bool,
 ) -> dict[str, Any]:
+    from metacheck.archives.download import _download_for_run, _run_download_want
     from metacheck.archives.zip_peek import (
         _expand_compressed,
         _expand_tar,
@@ -934,6 +968,11 @@ def _download(
             (w and t not in never_fetch) or bool(k)
             for w, t, k in zip(want, data_type, keep_archive, strict=True)
         ]
+    # When the code will run, every file the run could need is fetched too (see
+    # _run_download_want()); code_check, which runs first in a chain, has usually fetched
+    # them already, and download_repo_files() then finds them on disk.
+    if download != "none" and _download_for_run():
+        want = [w or r for w, r in zip(want, _run_download_want(all_files), strict=True)]
 
     file_url = h._col(all_files, "file_url")
     zip_peek_reason: list[Any] = [None] * n
@@ -1048,15 +1087,41 @@ def _download(
             da = da_zip + da_tar + da_gz
             if da:
                 st = skip_types if skip_types is not None else "materials"
+                # The per-file limit also holds for a file inside an archive (metacheck
+                # #472): the download limits saw only the archive's own, compressed size,
+                # so a 74 MB .gz could become a 1.2 GB copy in the cache. An inner file
+                # over the limit is not unpacked, and is listed with the files too large
+                # to download.
+                mfs = max_file_size if max_file_size is not None else math.inf
+                max_bytes = mfs * 1024 * 1024 if math.isfinite(mfs) else math.inf
                 extracted = []
                 for i in da:
                     row1 = all_files.iloc[[i]].reset_index(drop=True)
                     if i in da_zip:
-                        rows_x = _expand_zip(locs[i], row1, skip_types=st)
+                        rows_x = _expand_zip(locs[i], row1, skip_types=st, max_bytes=max_bytes)
                     elif i in da_tar:
-                        rows_x = _expand_tar(locs[i], row1, skip_types=st)
+                        rows_x = _expand_tar(locs[i], row1, skip_types=st, max_bytes=max_bytes)
                     else:
-                        rows_x = _expand_compressed(locs[i], row1, skip_types=st)
+                        rows_x = _expand_compressed(
+                            locs[i], row1, skip_types=st, max_bytes=max_bytes
+                        )
+                    ov = rows_x.attrs.get("oversize") if rows_x is not None else None
+                    if ov is not None and len(ov) > 0:
+                        from metacheck._r import bind_rows
+
+                        repo_of = h._col(row1, "repo_url") or [None]
+                        add = pd.DataFrame(
+                            {
+                                "repo_url": pd.Series([repo_of[0]] * len(ov), dtype="string"),
+                                "file_name": ov["file_name"].astype("string").reset_index(drop=True),
+                                "file_size": ov["file_size"].reset_index(drop=True),
+                            }
+                        )
+                        oversize_files = (
+                            add
+                            if oversize_files is None
+                            else bind_rows([oversize_files, add]).reset_index(drop=True)
+                        )
                     if rows_x is not None and len(rows_x) > 0:
                         extracted.append(rows_x)
                 drop = set(da)
@@ -1073,8 +1138,23 @@ def _download(
                     all_files = bind_rows([all_files, added]).reset_index(drop=True)
                     want = want + [True] * len(added)
                     zip_peek_reason = zip_peek_reason + [None] * len(added)
+                # Files that do not belong in a repository (__MACOSX/, "._" files,
+                # .DS_Store, .Rproj.user/, ...; see useless_file_kind()) are left out, as
+                # repo_check does for the zips it opens: a "._" copy of a .csv would
+                # otherwise be read as data.
                 n = len(all_files)
                 names = h._col(all_files, "file_name") or [None] * n
+                fpaths = h._col(all_files, "file_path") or names
+                sysf = is_useless_file(
+                    [p if p is not None else nm for p, nm in zip(fpaths, names, strict=True)]
+                )
+                if any(sysf):
+                    keep_rows = [i for i in range(n) if not sysf[i]]
+                    all_files = all_files.iloc[keep_rows].reset_index(drop=True)
+                    want = [want[i] for i in keep_rows]
+                    zip_peek_reason = [zip_peek_reason[i] for i in keep_rows]
+                    n = len(all_files)
+                    names = h._col(all_files, "file_name") or [None] * n
 
             # reclassify downloaded .txt files from their content
             from metacheck.datacheck.files import txt_classify_content
@@ -1158,9 +1238,15 @@ def _facets(df: pd.DataFrame) -> tuple[list[dict[str, Any]], list[list[int]]]:
 
 
 def _file_columns(
-    f: dict[str, Any], df: pd.DataFrame, cls: list[dict[str, Any]], pid_fallback: Any
+    f: dict[str, Any],
+    df: pd.DataFrame,
+    cls: list[dict[str, Any]],
+    pid_fallback: Any,
+    source_file: Any,
+    sheet: Any = None,
 ) -> pd.DataFrame:
-    """The per-column rows of one data file (the ``data.frame(...)`` of step 4)."""
+    """The per-column rows of one table (a file, or one sheet of a spreadsheet): the
+    ``data.frame(...)`` of step 4."""
     from metacheck.datacheck.checks import (
         _qualtrics_is_display_order,
         _qualtrics_tag_cols,
@@ -1201,7 +1287,8 @@ def _file_columns(
     data["paper_id"] = _str_series([pid_fallback if pid == "__absent__" else pid] * p)
     # a listing without repo_url (local files) gives NA (R fails building the frame)
     data["repo_url"] = _str_series([f.get("repo_url")] * p)
-    data["source_file"] = _str_series([f.get("file_name")] * p)
+    data["source_file"] = _str_series([source_file] * p)
+    data["sheet"] = _str_series([sheet] * p)
     data["group"] = _str_series([f.get("group")] * p)
     data["column_name"] = _str_series(names)
     for field in ("representation", "measurement_level"):
@@ -1215,6 +1302,10 @@ def _file_columns(
     data["qualtrics_display_order"] = pd.Series(qdo, dtype="boolean")
     data["sample_values"] = _str_series([_sample_values(df, j) for j in range(p)])
     data["utf8_repaired"] = pd.Series(utf8_fixed, dtype="Int64")
+    # columns data_read_head could only read as their plain stored values, because their
+    # values need an R package ("Period, from the R package lubridate")
+    s4 = df.attrs.get("s4_converted") or {}
+    data["needs_package"] = _str_series([str(s4[nm]) if nm in s4 else "" for nm in names])
     return pd.concat([pd.DataFrame(data), stats_mat], axis=1)
 
 
@@ -1227,11 +1318,19 @@ def _extract(
         data_check_is_qualtrics,
         data_strip_qualtrics_header,
     )
-    from metacheck.datacheck.files import data_is_manifest, data_read_head
+    from metacheck.datacheck.columns import _find_codebook_cols
+    from metacheck.datacheck.files import (
+        _data_file_sheets,
+        _rds_is_workspace,
+        _sheet_is_notes,
+        data_is_manifest,
+        data_read_head,
+    )
     from metacheck.llm.core import llm_use
 
     n = len(all_files)
     names = h._col(all_files, "file_name") or [None] * n
+    keys = h._col(all_files, "source_file") or names  # the run's unique file names
     data_type = h._col(all_files, "data_type") or [None] * n
     data_format = h._col(all_files, "data_format") or [None] * n
     locs = h._col(all_files, "file_location")
@@ -1266,6 +1365,7 @@ def _extract(
 
     manifest_files: list[Any] = []
     workspace_files: list[Any] = []
+    rds_workspace_files: list[Any] = []
     non_tabular: dict[str, Any] = {}
     previews: dict[str, pd.DataFrame] = {}
     scale_blocks: dict[str, list[list[int]]] = {}
@@ -1291,45 +1391,116 @@ def _extract(
                 for k, v in records[i].items()
             }
             fname: Any = f.get("file_name")
+            skey: Any = f.get("source_file", fname)
             loc = str(f["file_location"])
             df = data_read_head(loc, n_rows=math.inf)
             if df is not None and keep_reads:
                 raw_reads.setdefault(os.path.basename(loc), []).append(df)
+            # .rds files that are R workspaces, made with save() rather than saveRDS():
+            # readRDS() cannot open them (Lakens/tue_datamanager_check#5, item 3)
+            rds_ws = h._file_ext(fname) == "rds" and _rds_is_workspace(loc)
+            if rds_ws:
+                rds_workspace_files.append(skey)
             if df is None or df.shape[1] == 0:
-                if h._file_ext(fname) in ("rdata", "rda"):
-                    workspace_files.append(fname)
+                # An .RData/.rda that yielded no data frame is an analysis workspace, not
+                # reusable shared data: record it for a sharing recommendation.
+                if rds_ws or h._file_ext(fname) in ("rdata", "rda"):
+                    workspace_files.append(skey)
                 continue
-            other_files = [nm for nm in names if nm is None or nm != fname]
-            if data_is_manifest(df, other_files):
-                manifest_files.append(fname)
-                continue
-            if data_check_is_qualtrics(df):
-                df = data_strip_qualtrics_header(df)
-            cls, blocks = _facets(df)
-            usable = _tabular_usable(cls, df)
-            if not is_true(usable.get("usable")) and h._file_ext(fname) in ("xlsx", "xls"):
-                sheets = _excel_sheets(loc)
-                sheets = h._setdiff(sheets, sheets[:1])  # sheet 1 already tried
-                for sh in sheets:
+
+            # Compare against every other file in the repo, not itself.
+            other_files = [
+                nm for nm, k in zip(names, keys, strict=True) if k is None or k != skey
+            ]
+
+            def prepare_table(d: pd.DataFrame, other_files: list[Any] = other_files) -> dict[str, Any]:
+                """What one table (a file, or one sheet of a spreadsheet) is, before its
+                columns are extracted."""
+                if data_is_manifest(d, other_files):
+                    return {"manifest": True}
+                if data_check_is_qualtrics(d):
+                    d = data_strip_qualtrics_header(d)
+                cls_, blocks_ = _facets(d)
+                return {
+                    "manifest": False,
+                    "df": d,
+                    "cls": cls_,
+                    "blocks": blocks_,
+                    "usable": _tabular_usable(cls_, d),
+                }
+
+            first = prepare_table(df)
+            sheets = _data_file_sheets(loc) or []
+            if len(sheets) < 2:
+                # Skip a file manifest / table-of-contents, or a file that holds no usable
+                # table.
+                if first["manifest"]:
+                    manifest_files.append(skey)
+                    continue
+                if not is_true(first["usable"].get("usable")):
+                    non_tabular[skey] = first["usable"].get("reason")
+                    continue
+                tables = [first]
+                table_sheets: list[Any] = [None]
+            else:
+                # Every sheet of a spreadsheet is read, not just the first (metacheck #555).
+                # A sheet of notes or a codebook is documentation: it counts as a table only
+                # when the file holds no other (#379 looked further only when the first sheet
+                # failed).
+                prepared = [first]
+                for sh in sheets[1:]:
                     try:
-                        df2 = data_read_head(loc, n_rows=math.inf, sheet=sh)
+                        d2 = data_read_head(loc, n_rows=math.inf, sheet=sh)
                     except Exception:
-                        df2 = None
-                    if df2 is not None and keep_reads:
-                        raw_reads.setdefault(os.path.basename(loc), []).append(df2)
-                    if df2 is None or df2.shape[1] == 0:
-                        continue
-                    cls2, blocks2 = _facets(df2)
-                    usable2 = _tabular_usable(cls2, df2)
-                    if is_true(usable2.get("usable")):
-                        df, cls, usable, blocks = df2, cls2, usable2, blocks2
-                        break
-            if not is_true(usable.get("usable")):
-                non_tabular[fname] = usable.get("reason")
-                continue
-            previews[fname] = df
-            scale_blocks[fname] = blocks
-            per_file.append(_file_columns(f, df, cls, pid_fallback))
+                        d2 = None
+                    if d2 is not None and keep_reads:
+                        raw_reads.setdefault(os.path.basename(loc), []).append(d2)
+                    prepared.append(
+                        {"manifest": False} if d2 is None or d2.shape[1] == 0 else prepare_table(d2)
+                    )
+                is_table = [
+                    is_true((p.get("usable") or {}).get("usable")) for p in prepared
+                ]
+                notes = _sheet_is_notes(sheets)
+                is_doc = [
+                    bool(nt)
+                    or (
+                        p.get("df") is not None
+                        and _find_codebook_cols([str(c) for c in p["df"].columns]) is not None
+                    )
+                    for nt, p in zip(notes, prepared, strict=True)
+                ]
+                keep = [k for k, (t, d) in enumerate(zip(is_table, is_doc, strict=True)) if t and not d]
+                if not keep:
+                    keep = [k for k, t in enumerate(is_table) if t][:1]
+                if not keep:
+                    if first["manifest"]:
+                        manifest_files.append(skey)
+                    else:
+                        non_tabular[skey] = (first["usable"].get("reason")) or (
+                            "the file has no data rows or columns"
+                        )
+                    continue
+                tables = [prepared[k] for k in keep]
+                table_sheets = [sheets[k] for k in keep]
+
+            # A file with one table keeps its own name; each table of a file with several is
+            # named "file [sheet]", as the codebook sheets of a spreadsheet are, so columns
+            # with one name on two sheets stay apart.
+            table_keys = (
+                [f"{skey} [{sh}]" for sh in table_sheets] if len(tables) > 1 else [skey]
+            )
+            for tb, tkey in zip(tables, table_keys, strict=True):
+                previews[tkey] = tb["df"]
+                scale_blocks[tkey] = tb["blocks"]
+            per_file.append(
+                bind_rows(
+                    [
+                        _file_columns(f, tb["df"], tb["cls"], pid_fallback, tkey, tsheet)
+                        for tb, tkey, tsheet in zip(tables, table_keys, table_sheets, strict=True)
+                    ]
+                )
+            )
             n_extracted += 1
         columns_df = bind_rows(per_file).reset_index(drop=True) if per_file else pd.DataFrame()
 
@@ -1346,7 +1517,7 @@ def _extract(
         if manifest_files:
             mset = set(manifest_files)
             doc_role = h._col(all_files, "doc_role") or [None] * n
-            for k, nm in enumerate(names):
+            for k, nm in enumerate(keys):
                 if nm in mset:
                     data_type[k] = "documentation"
                     doc_role[k] = "supplemental"
@@ -1399,9 +1570,9 @@ def _extract(
 
     # tabular_usable / non_tabular_reason
     _set(all_files, "tabular_usable", [True] * n, dtype="boolean")
-    reasons = [non_tabular.get(nm) if nm in non_tabular else None for nm in names]
+    reasons = [non_tabular.get(nm) if nm in non_tabular else None for nm in keys]
     if non_tabular:
-        _set(all_files, "tabular_usable", [nm not in non_tabular for nm in names], dtype="boolean")
+        _set(all_files, "tabular_usable", [nm not in non_tabular for nm in keys], dtype="boolean")
     _set(all_files, "non_tabular_reason", reasons)
     return {
         "all_files": all_files,
@@ -1414,6 +1585,7 @@ def _extract(
         "n_extracted": n_extracted,
         "manifest_files": manifest_files,
         "workspace_files": workspace_files,
+        "rds_workspace_files": rds_workspace_files,
         "non_tabular": non_tabular,
         "trial_level_files": trial_level_files,
         "is_tab": is_tab,
@@ -1770,6 +1942,9 @@ def _validate(
     columns_df: pd.DataFrame | None,
     plot_distributions: bool,
     max_facets: int,
+    rds_workspace_files: Sequence[Any] = (),
+    n_tabular_all: int = 0,
+    paper_ids: Sequence[Any] = (),
 ) -> dict[str, Any]:
     from metacheck._r import bind_rows
     from metacheck.module import get_prev_outputs
@@ -1778,37 +1953,55 @@ def _validate(
     sp = h.dv_spreadsheet_findings(structure_df)
     sp_df: pd.DataFrame = sp["findings"]
     n_sp_files = sp["n_files"]
+    # File-level findings, like the spreadsheet ones, made from the raw files: a
+    # space-separated .csv reads as one column of text and never yields a usable
+    # preview to check; an .rds workspace is one readRDS() cannot open
+    sc_df = h.dv_space_csv_findings(structure_df)
+    rds_df = h.dv_rds_workspace_findings(rds_workspace_files)
 
     if not previews:
-        # no readable table: the spreadsheet findings are all there is to report
+        # The early return for a repository with no readable tabular data (all code/PDFs/
+        # images, or every data file unreadable or not a usable table): it skips the
+        # data-quality checks, but gives the same shape as the main return, with the file-
+        # level findings (spreadsheet formatting, space-separated .csv, .rds workspaces).
         text = "We found no readable tabular data files to validate."
-        has = len(sp_df) > 0
+        file_findings = bind_rows([sp_df, sc_df, rds_df]).reset_index(drop=True)
+        if len(sp_df) > 0:
+            text = f"{text} {h.dv_spreadsheet_summary_text(sp_df, n_sp_files)}"
+        if len(sc_df) > 0:
+            text = f"{text} {h.dv_space_csv_summary_text(sc_df)}"
+        dv_report: list[Any] = []
+        if len(sp_df) > 0:
+            dv_report += h.dv_spreadsheet_report(sp_df, n_sp_files)
+        if len(sc_df) > 0:
+            dv_report += ["#### Space-separated .csv files", h.dv_space_csv_summary_text(sc_df)]
         sp_files_by_paper, sp_flagged_by_paper = _spreadsheet_counts(structure_df, sp_df)
-        ids = h._unique([None if h._na(v) else v for v in sp_files_by_paper["paper_id"].tolist()])
+        ids = h._unique([None if h._na(v) else v for v in paper_ids])
         dv_summary = pd.DataFrame({"paper_id": _str_series(ids)})
         for y in (sp_files_by_paper, sp_flagged_by_paper):
             dv_summary = _left_join(dv_summary, y)
         for c in ("spreadsheet_file_n", "spreadsheet_flagged_file_n"):
             dv_summary[c] = dv_summary[c].astype("Int64").fillna(0)
-        dv_summary.insert(1, "flagged_n", pd.Series([0] * len(ids), dtype="Int64"))
+        dv_summary["flagged_n"] = pd.Series([0] * len(ids), dtype="Int64")
+        # Yellow also when tabular data files were found but none could be read: not one
+        # column was checked, so green (the light for having found and fetched the files)
+        # would read as "the data passed" (metacheck #480). With no data files at all there
+        # is nothing to check, and the light stays as it is.
         return {
-            "findings": bind_rows([_findings_df([]), sp_df]).reset_index(drop=True),
-            "careless": _careless({}, columns_df, labels_df)["careless"],
-            "demographics": _demographics({}, columns_df),
+            "findings": file_findings,
             "qualtrics": pd.DataFrame(),
             "summary_table": dv_summary,
-            "traffic_light": "yellow" if has else "na",
-            "summary_text": f"{text} {h.dv_spreadsheet_summary_text(sp_df, n_sp_files)}"
-            if has
-            else text,
-            "report": h.dv_spreadsheet_report(sp_df, n_sp_files) if has else [],
+            "traffic_light": "yellow" if len(file_findings) > 0 or n_tabular_all > 0 else "na",
+            "summary_text": text,
+            "report": dv_report,
         }
 
     labels = _label_lookup(labels_df)
     utf8 = _utf8_lookup(columns_df)
+    needs = _needs_lookup(columns_df)
 
     # -- 2. per-column checks ------------------------------------------------------
-    findings, plot_specs = _column_findings(previews, labels, utf8)
+    findings, plot_specs = _column_findings(previews, labels, utf8, needs)
 
     # -- 2a. demographics ------------------------------------------------------------
     demo_df = _demographics(previews, columns_df)
@@ -1829,7 +2022,7 @@ def _validate(
     careless_df: pd.DataFrame = car["careless"]
 
     findings_df = _findings_df(findings)
-    findings_df = bind_rows([findings_df, sp_df]).reset_index(drop=True)
+    findings_df = bind_rows([findings_df, sp_df, sc_df, rds_df]).reset_index(drop=True)
     n_columns = (
         len(columns_df) if columns_df is not None else sum(d.shape[1] for d in previews.values())
     )
@@ -1880,6 +2073,12 @@ def _validate(
     if len(careless_df) > 0 and dv_tl == "green":
         dv_tl = "yellow"
     if len(sp_df) > 0 and dv_tl == "green":
+        dv_tl = "yellow"
+    # Same for a .csv separated by spaces, whose columns could not be checked, and for an
+    # .rds file that readRDS() cannot open.
+    if len(sc_df) > 0 and dv_tl == "green":
+        dv_tl = "yellow"
+    if len(rds_df) > 0 and dv_tl == "green":
         dv_tl = "yellow"
 
     # -- 4. report ------------------------------------------------------------------
@@ -1935,13 +2134,17 @@ def _validate(
         )
     if len(sp_df) > 0:
         dv_text = f"{dv_text} {h.dv_spreadsheet_summary_text(sp_df, n_sp_files)}"
+    if len(sc_df) > 0:
+        dv_text = f"{dv_text} {h.dv_space_csv_summary_text(sc_df)}"
+    if len(rds_df) > 0:
+        dv_text = f"{dv_text} {h.dv_rds_workspace_summary_text(rds_df)}"
 
     report: list[Any] = [
         _DV_INTRO,
         f"We examined {n_columns:d} column{plural(n_columns)} across {len(previews):d} data "
         f"file{plural(len(previews))}.",
     ]
-    all_issue = bind_rows([column_findings, sp_df]).reset_index(drop=True)
+    all_issue = bind_rows([column_findings, sp_df, sc_df]).reset_index(drop=True)
     if len(all_issue) > 0:
         report.extend(_issues_section(all_issue))
     if plot_specs and _eq_true(plot_distributions):
@@ -2016,7 +2219,7 @@ def _spreadsheet_counts(
     sp_file_to_paper: dict[Any, Any] = {}
     if structure_df is not None and len(structure_df) > 0:
         for nm_f, p in zip(
-            h._col(structure_df, "file_name") or [],
+            h._col(structure_df, "source_file") or h._col(structure_df, "file_name") or [],
             h._col(structure_df, "paper_id") or [],
             strict=False,
         ):
@@ -2073,10 +2276,30 @@ def _utf8_lookup(columns_df: pd.DataFrame | None) -> dict[tuple[Any, Any], Any]:
     return out
 
 
+def _needs_lookup(columns_df: pd.DataFrame | None) -> dict[tuple[Any, Any], str]:
+    """``needs_package_of()``: (source_file, column_name) -> the value type and R package a
+    column needs to be read ("" when it needs none, or the run has no such column)."""
+    if columns_df is None or not all(
+        c in columns_df.columns for c in ("source_file", "column_name", "needs_package")
+    ):
+        return {}
+    out: dict[tuple[Any, Any], str] = {}
+    for s, c, n in zip(
+        h._col(columns_df, "source_file") or [],
+        h._col(columns_df, "column_name") or [],
+        h._col(columns_df, "needs_package") or [],
+        strict=True,
+    ):
+        if (s, c) not in out:
+            out[(s, c)] = "" if n is None else str(n)
+    return out
+
+
 def _column_findings(
     previews: dict[str, pd.DataFrame],
     labels: dict[tuple[Any, Any], Any],
     utf8: dict[tuple[Any, Any], Any],
+    needs: dict[tuple[Any, Any], str] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     from metacheck.datacheck.checks import (
         data_check_case_issues,
@@ -2142,6 +2365,17 @@ def _column_findings(
                 finds["Problematic column name"] = cn["message"]
             if coll.get(col) is not None:
                 finds["Colliding column names"] = coll[col]
+            # Values that need an R package to be read: anyone without that package cannot
+            # use the file, so it is a reproducibility problem
+            # (Lakens/tue_datamanager_check#4, item 8a).
+            pkg_need = (needs or {}).get((file, col), "")
+            if pkg_need != "":
+                finds["Needs an R package"] = (
+                    f"This column holds values of type {pkg_need}, so the file cannot be read "
+                    "without that package. metacheck read the plain stored numbers to "
+                    "continue. Share the data in an open format such as CSV, with this column "
+                    "as plain numbers or text."
+                )
             n_enc = utf8.get((file, col), 0)
             if n_enc is not None and n_enc > 0:
                 n_enc = int(n_enc)
@@ -2270,6 +2504,11 @@ def _careless(
             continue
         known = (scale_blocks or {}).get(file)
         blocks = known if known is not None else _detect_scale_blocks(df)
+        # Only blocks of at least DV_CARELESS_MIN_ITEMS items can flag anyone (the
+        # straightlining floor is that many items -- see dv_careless_block()), so the
+        # minimum applies to each BLOCK; a file whose blocks are all shorter is not counted
+        # as screened (metacheck #480).
+        blocks = [b for b in blocks if len(b) >= h.DV_CARELESS_MIN_ITEMS]
         if not blocks:
             skipped += 1
             continue
@@ -2416,7 +2655,11 @@ def _issues_section(all_issue: pd.DataFrame) -> list[Any]:
     lbl = [None if h._na(v) else v for v in all_issue["label"].tolist()]
     chk = [None if h._na(v) else v for v in all_issue["check"].tolist()]
     det = [None if h._na(v) else v for v in all_issue["detail"].tolist()]
-    display = [l_ if c is None else c for c, l_ in zip(col, lbl, strict=True)]
+    # a space-separated .csv has neither a column nor a sheet: its cell reads "(whole file)"
+    display = [
+        c if c is not None else l_ if l_ is not None else "(whole file)"
+        for c, l_ in zip(col, lbl, strict=True)
+    ]
     order = sorted(range(len(src)), key=lambda i: (h._c_key(src[i]), h._c_key(display[i])))
     groups: dict[tuple[Any, Any], list[int]] = {}
     for i in order:

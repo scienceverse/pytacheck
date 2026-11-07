@@ -351,195 +351,6 @@ def _pad(x: list[str], extra: int = 2) -> list[str]:
     return [s + " " * (target - _disp_width(s)) for s in x]
 
 
-# -----------------------------------------------------------------------------
-# data tree
-# -----------------------------------------------------------------------------
-
-_TREE_ICONS = {
-    "data": "\U0001f4ca",  # 📊
-    "code": "\U0001f4bb",  # 💻
-    "documentation": "\U0001f4d6",  # 📖
-    "materials": "\U0001f4c1",  # 📁
-    "output": "\U0001f4c8",  # 📈
-}
-_README_ICON = "\U0001f4c4"  # 📄
-_UNKNOWN_ICON = "❓"  # ❓
-
-
-def _tree_type_icon(data_type: Any, doc_role: Any) -> str | None:
-    """Port of ``.tree_type_icon()``: the icon of the "Classified as" column."""
-    if doc_role is not None and doc_role == "readme":
-        return _README_ICON
-    if data_type is None:
-        return None
-    return _TREE_ICONS.get(data_type, _UNKNOWN_ICON)
-
-
-def _tree_type_label(data_type: Any, doc_role: Any) -> str | None:
-    """Port of ``.tree_type_label()``: ``readme`` for a readme, else the data type."""
-    if doc_role is not None and doc_role == "readme":
-        return "readme"
-    return None if data_type is None else str(data_type)
-
-
-def repo_tree_rows(paths: Sequence[Any]) -> pd.DataFrame:
-    """Walk relative paths into tree rows (port of ``repo_tree_rows()``).
-
-    Returns ``text`` (the tree line) and ``leaf_idx`` (the 0-based index into
-    *paths* of the file a row is the leaf of; ``None`` for a folder row).
-    """
-    keep = [p is not None and str(p) != "" for p in paths]
-    kept = [str(p) for p, k in zip(paths, keep, strict=True) if k]
-    orig_idx = [i for i, k in enumerate(keep) if k]
-    if not kept:
-        return pd.DataFrame(
-            {"text": pd.Series([], dtype="string"), "leaf_idx": pd.Series([], dtype="Int64")}
-        )
-    split = strsplit([p.replace("\\", "/") for p in kept], "/")
-    parts_list = [[s for s in parts if s != ""] for parts in split]
-    out_text: list[str] = []
-    out_leaf: list[int | None] = []
-
-    def walk(parts_subset: list[list[str]], idx_subset: list[int], prefix: str = "") -> None:
-        # the paths under each head, heads in first-appearance order (unique(heads))
-        groups: dict[str, list[int]] = {}
-        for k, p in enumerate(parts_subset):
-            groups.setdefault(p[0], []).append(k)
-        has_child = {h: any(len(parts_subset[k]) > 1 for k in ks) for h, ks in groups.items()}
-        # order(!has_child, tolower(head_order)): folders first, then by name (stable)
-        head_order = sorted(groups, key=lambda h: (not has_child[h], r_sort_key(h.lower())))
-        for i, head in enumerate(head_order):
-            ks = groups[head]
-            tails = [parts_subset[k][1:] for k in ks]
-            tail_idx = [idx_subset[k] for k in ks]
-            is_last = i == len(head_order) - 1
-            child_exists = any(len(t) > 0 for t in tails)
-            branch = "└── " if is_last else "├── "
-            next_prefix = prefix + ("    " if is_last else "│   ")
-            out_text.append(prefix + branch + head + ("/" if child_exists else ""))
-            out_leaf.append(None if child_exists else tail_idx[0])
-            next_subset = [t for t in tails if len(t) > 0]
-            next_idx = [x for t, x in zip(tails, tail_idx, strict=True) if len(t) > 0]
-            if next_subset:
-                walk(next_subset, next_idx, next_prefix)
-
-    walk(parts_list, orig_idx)
-    return pd.DataFrame(
-        {
-            "text": pd.Series(out_text, dtype="string"),
-            "leaf_idx": pd.Series(out_leaf, dtype="Int64"),
-        }
-    )
-
-
-def repo_tree_block(
-    files: pd.DataFrame | None, naming_issues: pd.DataFrame | None = None
-) -> list[str] | None:
-    """The "Data Tree" report section (port of ``repo_tree_block()``).
-
-    One preformatted tree per repository: path | classification icon + type |
-    study | naming issue (the first ``repo_check`` naming finding of the
-    file). ``None`` when there are no files or no repository URLs.
-    """
-    if files is None or len(files) == 0:
-        return None
-    repo_col = _col(files, "repo_url")
-    if repo_col is None:
-        return None
-    repo_urls = _unique([r for r in repo_col if r is not None and str(r) != ""])
-    if not repo_urls:
-        return None
-
-    ni_names = _col(naming_issues, "file_name") if naming_issues is not None else None
-    ni_detail = _col(naming_issues, "detail") if naming_issues is not None else None
-
-    def naming_of(file_names: list[Any]) -> list[Any]:
-        if naming_issues is None or len(naming_issues) == 0 or ni_names is None:
-            return [None] * len(file_names)
-        first: dict[Any, int] = {}
-        for k, nm in enumerate(ni_names):
-            if nm is not None and nm not in first:
-                first[nm] = k
-        out = []
-        for nm in file_names:
-            hit = first.get(nm) if nm is not None else None
-            out.append(None if hit is None or ni_detail is None else ni_detail[hit])
-        return out
-
-    names_all = _col(files, "file_name") or [None] * len(files)
-    path_all = _col(files, "file_path")
-    type_all = _col(files, "data_type")
-    role_all = _col(files, "doc_role")
-    group_all = _col(files, "group")
-
-    blocks = []
-    for repo in repo_urls:
-        rows_i = [i for i, r in enumerate(repo_col) if r is not None and r == repo]
-        rel_paths = [(path_all if path_all is not None else names_all)[i] for i in rows_i]
-        rows = repo_tree_rows(rel_paths)
-        if len(rows) == 0:
-            continue
-        data_type = [type_all[i] if type_all is not None else None for i in rows_i]
-        doc_role = [role_all[i] if role_all is not None else None for i in rows_i]
-        group = [group_all[i] if group_all is not None else None for i in rows_i]
-        naming = naming_of([names_all[i] for i in rows_i])
-
-        texts = [str(t) for t in rows["text"].tolist()]
-        leaves = [None if _na(v) else int(v) for v in rows["leaf_idx"].tolist()]
-        type_txt, study_txt, naming_txt = [], [], []
-        for leaf in leaves:
-            if leaf is None:
-                type_txt.append("")
-                study_txt.append("")
-                naming_txt.append("")
-                continue
-            icon = _tree_type_icon(data_type[leaf], doc_role[leaf])
-            label = _tree_type_label(data_type[leaf], doc_role[leaf])
-            type_txt.append(f"{_dquote_free(icon)} {_dquote_free(label)}")
-            study_txt.append("" if group[leaf] is None else str(group[leaf]))
-            naming_txt.append("" if naming[leaf] is None else str(naming[leaf]))
-        has_study = any(s != "" for s in study_txt)
-        has_naming = any(s != "" for s in naming_txt)
-        p_text = _pad(texts)
-        p_type = _pad(type_txt)
-        p_study = _pad(study_txt) if has_study else [""] * len(texts)
-        lines = [
-            a + b + c + (d if has_naming else "")
-            for a, b, c, d in zip(p_text, p_type, p_study, naming_txt, strict=True)
-        ]
-        lines = sub(r"\s+$", "", lines)
-        blocks.append(
-            {"repo": repo, "lines": lines, "has_study": has_study, "has_naming": has_naming}
-        )
-    if not blocks:
-        return None
-
-    sections: list[str] = []
-    for b in blocks:
-        sections.append(f"**Repository: {b['repo']}**")
-        sections.append("\n".join(["```", *b["lines"], "```"]))
-    legend = (
-        "Each file is followed by how it was classified"
-        + (", which study it belongs to" if any(b["has_study"] for b in blocks) else "")
-        + (
-            ", and any file-naming issue found by repo_check"
-            if any(b["has_naming"] for b in blocks)
-            else ""
-        )
-        + "."
-    )
-    return [
-        "#### Data Tree",
-        f"Where the files sit within each repository. {legend}",
-        *sections,
-    ]
-
-
-# -----------------------------------------------------------------------------
-# report tabsets
-# -----------------------------------------------------------------------------
-
-
 def file_tabset(files: Sequence[str], table_fun: Callable[[str], list[Any]]) -> list[Any] | None:
     """A Quarto ``.panel-tabset`` with one tab per file (port of ``file_tabset()``).
 
@@ -784,13 +595,16 @@ def dv_careless_by_respondent(
     irv = _col(block_df, "irv") or []
     nit = _col(block_df, "n_items") or []
     cut = _col(block_df, "straight_cut") or []
-    groups: dict[str, list[int]] = {}
+    # A respondent id is only unique within its own file: respondent 58 of Study 2 and
+    # respondent 58 of Study 4 are different people (metacheck #480).
+    groups: dict[tuple[str, str], list[int]] = {}
     for i, r in enumerate(resp):
-        if r is None:  # split() drops NA
+        if r is None or src[i] is None:  # split() drops NA
             continue
-        groups.setdefault(str(r), []).append(i)
+        groups.setdefault((str(r), str(src[i])), []).append(i)
     rows: list[dict[str, Any]] = []
-    for key in sorted(groups, key=r_sort_key):
+    # split() by list(source_file, respondent): the first factor varies fastest
+    for key in sorted(groups, key=lambda k: (r_sort_key(k[0]), r_sort_key(k[1]))):
         g = groups[key]
         g_ls = [ls[i] for i in g]
         best = max((v for v in g_ls if v is not None), default=None)
@@ -798,10 +612,8 @@ def dv_careless_by_respondent(
         irvs = [irv[i] for i in g if irv[i] is not None and not _na(irv[i])]
         rows.append(
             {
-                "respondent": key,
-                "source_file": "; ".join(
-                    sorted(_unique([src[i] for i in g if src[i] is not None]), key=r_sort_key)
-                ),
+                "respondent": key[0],
+                "source_file": key[1],
                 "n_blocks_flagged": len(g),
                 "scales": "; ".join(
                     sorted(_unique([scale[i] for i in g if scale[i] is not None]), key=r_sort_key)
@@ -1049,6 +861,7 @@ DV_ISSUE_ICON = {
     "Problematic column name": "\U0001f3f7️",
     "Colliding column names": "\U0001f465",
     "Mixed encoding": "\U0001f523",
+    "Needs an R package": "\U0001f4e6",
     "Personal info (values)": "\U0001f512",
     "Personal info (column name)": "\U0001f512",
     "Geographic coordinates": "\U0001f30d",
@@ -1223,14 +1036,15 @@ def dv_spreadsheet_findings(structure_df: pd.DataFrame | None) -> dict[str, Any]
         return {"findings": _findings_frame([]), "n_files": 0}
     assert structure_df is not None
     names = _col(structure_df, "file_name") or []
+    keys = _col(structure_df, "source_file") or names  # the run's unique file names
     locs = _col(structure_df, "file_location") or []
     usable = _col(structure_df, "tabular_usable")
     reasons = _col(structure_df, "non_tabular_reason")
     findings: list[dict[str, Any]] = []
     for i in xl_rows:
-        fname = names[i]
+        fname = keys[i]
         path = locs[i]
-        ext = _file_ext(fname)
+        ext = _file_ext(names[i])
         if usable is not None and _is_false(usable[i]):
             reason = reasons[i] if reasons is not None else None
             findings.append(
@@ -1290,8 +1104,6 @@ def dv_spreadsheet_findings(structure_df: pd.DataFrame | None) -> dict[str, Any]
                         "source_file": fname,
                         "label": s["name"],
                         "check": "Colour coding",
-                        # R: "%d cell%s use", "%d merged range%s ... break" and "%d column%s
-                        # %s empty or have" whatever the count (UPSTREAM_ISSUES U82)
                         "detail": f"{n:d} cell{plural(n)} use{'s' if n == 1 else ''} fill "
                         "colour to encode information; colour is lost on CSV export.",
                     }
@@ -1330,6 +1142,94 @@ def dv_spreadsheet_findings(structure_df: pd.DataFrame | None) -> dict[str, Any]
                     }
                 )
     return {"findings": _findings_frame(findings), "n_files": len(xl_rows)}
+
+
+_SPACE_CSV_DETAIL = (
+    # No "." before the first full stop: dv_issue_cell() shows the text up to the first
+    # "." as the short description.
+    "This file is separated by spaces, not commas, so it reads as a single column and "
+    "its columns could not be checked. Separating values with spaces is not good "
+    "practice: a value that itself contains a space cannot be told apart from the "
+    "separator. Save the file as a comma-separated .csv (or a tab-separated .tsv)."
+)
+
+_RDS_WORKSPACE_DETAIL = (
+    "This file was saved with save(), not saveRDS(), so it is an R workspace with the "
+    "extension .rds and readRDS() cannot open it. metacheck opened it with load() "
+    "instead. Rename it to .RData, or save it with saveRDS(); better still, share the "
+    "data in an open format such as CSV."
+)
+
+
+def dv_space_csv_findings(structure_df: pd.DataFrame | None) -> pd.DataFrame:
+    """Every ``.csv`` of *structure_df* separated by spaces (``.dv_space_csv_findings()``).
+
+    Such a file reads as one column of text, so none of its columns are checked;
+    without this finding the module said nothing specific and its light could stay
+    green. File-level findings in the shared (source_file, column, label, check,
+    detail) shape, zero rows when there are none.
+    """
+    from metacheck.datacheck.files import _csv_is_space_separated
+
+    if structure_df is None or len(structure_df) == 0:
+        return _findings_frame([])
+    names = _col(structure_df, "file_name")
+    locs = _col(structure_df, "file_location")
+    if names is None or locs is None:
+        return _findings_frame([])
+    keys = _col(structure_df, "source_file") or names
+    rows = [
+        {
+            "source_file": keys[i],
+            "check": "Space-separated .csv",
+            "detail": _SPACE_CSV_DETAIL,
+        }
+        for i, (nm, loc) in enumerate(zip(names, locs, strict=True))
+        if _file_ext(nm) == "csv"
+        and _has_value(loc)
+        and _file_exists(loc)
+        and _csv_is_space_separated(loc)
+    ]
+    return _findings_frame(rows)
+
+
+def dv_rds_workspace_findings(files: Sequence[Any]) -> pd.DataFrame:
+    """One finding per ``.rds`` file that is an R workspace (``.dv_rds_workspace_findings()``).
+
+    Made with ``save()`` instead of ``saveRDS()``
+    (Lakens/tue_datamanager_check#5, item 3).
+    """
+    return _findings_frame(
+        [
+            {"source_file": f, "check": "R workspace named .rds", "detail": _RDS_WORKSPACE_DETAIL}
+            for f in _unique(list(files))
+        ]
+    )
+
+
+def dv_rds_workspace_summary_text(findings_df: pd.DataFrame) -> str:
+    """Roll-up of the ``.rds`` workspace findings (``.dv_rds_workspace_summary_text()``)."""
+    files = _unique(_col(findings_df, "source_file") or [])
+    n = len(files)
+    one = n == 1
+    return (
+        f"{n:d} .rds file{plural(n)} {'was' if one else 'were'} saved with save() instead of "
+        f"saveRDS(), so readRDS() cannot open {'it' if one else 'them'}; rename "
+        f"{'it' if one else 'them'} to .RData: {', '.join(str(f) for f in files)}."
+    )
+
+
+def dv_space_csv_summary_text(findings_df: pd.DataFrame) -> str:
+    """Roll-up of the space-separated ``.csv`` findings (``.dv_space_csv_summary_text()``)."""
+    files = _unique(_col(findings_df, "source_file") or [])
+    n = len(files)
+    one = n == 1
+    return (
+        f"{n:d} .csv file{plural(n)} {'is' if one else 'are'} separated by spaces instead of "
+        f"commas, so {'its' if one else 'their'} columns could not be checked; save "
+        f"{'it' if one else 'them'} as comma-separated .csv (or tab-separated .tsv): "
+        f"{', '.join(str(f) for f in files)}."
+    )
 
 
 def dv_spreadsheet_summary_text(findings_df: pd.DataFrame, n_files: int) -> str:
