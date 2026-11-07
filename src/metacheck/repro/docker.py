@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import contextlib
 import os
+import re
 import secrets
 import shutil
 import stat
@@ -38,7 +39,7 @@ from typing import Any
 
 import pandas as pd
 
-from metacheck._r.base import as_character, trimws
+from metacheck._r.base import as_character, r_round, trimws
 from metacheck._r.frames import bind_rows
 from metacheck._r.regex import grepl, gsub
 from metacheck._values import as_str
@@ -247,12 +248,18 @@ def _repro_docker_stop(name: str, timeout: float = 30) -> None:
 
 
 def _repro_docker_resource_args() -> list[str]:
-    """``--cpus``/``--memory`` from the ``metacheck.docker_resource_limits`` option."""
+    """Port of R/reproducibility_check_docker.R::.repro_docker_resource_args().
+
+    ``--ulimit core=1`` always, so a crash of R in a container writes no core file (on
+    Windows each crash wrote about 2.5 GB to the temp folder), then ``--cpus``/``--memory``
+    from the ``metacheck.docker_resource_limits`` option.
+    """
     from metacheck.utils import get_option
 
+    no_crash_file = ["--ulimit", "core=1"]
     limits = get_option("metacheck.docker_resource_limits")
     if limits is None:
-        return []
+        return no_crash_file
 
     def get(key: str) -> list[str]:
         # as.character(limits$<key>): a missing element is character(0), NA is "NA"
@@ -264,7 +271,13 @@ def _repro_docker_resource_args() -> list[str]:
 
     memory = get("memory_gb")
     # paste0(limits$memory_gb, "g"): NULL pastes as "g"
-    return ["--cpus", *get("cpus"), "--memory", *([f"{m}g" for m in memory] or ["g"])]
+    return [
+        *no_crash_file,
+        "--cpus",
+        *get("cpus"),
+        "--memory",
+        *([f"{m}g" for m in memory] or ["g"]),
+    ]
 
 
 def _normalize_path(path: str, must_work: bool = False) -> str:
@@ -342,24 +355,120 @@ def _deparse1_chr(values: Sequence[str | None] | None) -> str:
     return "c(" + ", ".join(lit(v) for v in vals) + ")"
 
 
-_INSTALL_SCRIPT = [
+#: Where packages live that are on neither CRAN nor Bioconductor
+#: (``.repro_known_package_places()``, #568 item 12): a GitHub owner/repository, or the
+#: address of a repository of packages.
+_REPRO_KNOWN_PACKAGE_PLACES: dict[str, str] = {
+    "INLA": "https://inla.r-inla-download.org/R/stable",
+    "NicheMapR": "mrke/NicheMapR",
+    "glmmADMB": "bbolker/glmmadmb",
+    "rethinking": "rmcelreath/rethinking",
+    "cmdstanr": "stan-dev/cmdstanr",
+    "TwGeos": "SLisovski/TwGeos",
+    "GeoLocTools": "SLisovski/GeoLocTools",
+    "SGAT": "SWotherspoon/SGAT",
+    "microclima": "ilyamaclean/microclima",
+    "V.PhyloMaker": "jinyizju/V.PhyloMaker",
+    "metabaR": "metabaRfactory/metabaR",
+    "calecopal": "an-bui/calecopal",
+    "easyGgplot2": "kassambara/easyGgplot2",
+    "ggthemr": "Mikata-Project/ggthemr",
+    "BuenColors": "caleblareau/BuenColors",
+    "coefplot2": "palday/coefplot2",
+    "tess3r": "bcm-uga/TESS3_encho_sen",
+    "PAMLr": "KiranLDA/PAMLr",
+    "rcoalescence": "thompsonsed/rcoalescence",
+    "datamodelr": "bergant/datamodelr",
+    "biomonitoR": "alexology/biomonitoR",
+    "scampr": "ElliotDovers/scampr",
+    "mapppdr": "CCheCastaldo/mapppdr",
+    "riojaPlot": "nsj3/riojaPlot",
+    "PCAviz": "NovembreLab/PCAviz",
+    "methClust": "kkdey/methClust",
+    "remake": "richfitz/remake",
+    "ascr": "b-steve/ascr",
+    "dentist": "phylotastic/dentist",
+    "Hmsc": "hmsc-r/HMSC",
+    "HMSC": "hmsc-r/HMSC",
+}
+
+#: Lines for a script that runs without this package, to set where packages come from
+#: (``.repro_repos_lines()``). The rocker/r-ver images of R before 4.0 name MRAN, which
+#: closed in 2023, so nothing could be installed there; Posit keeps the same dated copies
+#: of CRAN.
+_REPOS_LINES = [
+    'repos <- getOption("repos")',
+    'if (is.null(repos) || !length(repos) || any(!nzchar(repos)) || any(repos == "@CRAN@")) {',
+    '  options(repos = c(CRAN = "https://cloud.r-project.org"))',
+    '} else if (any(grepl("mran.microsoft.com", repos, fixed = TRUE))) {',
+    '  options(repos = c(CRAN = sub("^.*/snapshot/", "https://packagemanager.posit.co/cran/", repos[1])))',
+    "}",
+]
+
+
+def _deparse1_named_chr(values: Mapping[str, str]) -> str:
+    """``deparse1()`` of a named character vector whose names are syntactic."""
+    return "c(" + ", ".join(f"{k} = {_deparse1_chr([v])}" for k, v in values.items()) + ")"
+
+
+_INSTALL_LOOP = [
     'lib <- "/rlib"',
     "dir.create(lib, recursive = TRUE, showWarnings = FALSE)",
     ".libPaths(c(lib, .libPaths()))",
-    'repos <- getOption("repos")',
-    'if (is.null(repos) || !length(repos) || any(!nzchar(repos)) || any(repos == "@CRAN@"))',
-    '  options(repos = c(CRAN = "https://cloud.r-project.org"))',
-    'gh_avail <- requireNamespace("remotes", quietly = TRUE)',
+    *_REPOS_LINES,
     "pkgs   <- .repro_docker_pkgs",
     "srcs   <- .repro_docker_srcs",
     "refs   <- .repro_docker_refs",
+    "vers   <- .repro_docker_vers",
+    # A bare rocker/r-ver image does not have remotes, and without it no
+    # recorded version and no GitHub package can be installed.
+    'gh_avail <- requireNamespace("remotes", quietly = TRUE)',
+    'if (!gh_avail && (any(!is.na(vers)) || any(srcs == "github"))) {',
+    '  try(install.packages("remotes", lib = lib, quiet = TRUE))',
+    '  gh_avail <- requireNamespace("remotes", quietly = TRUE)',
+    "}",
+    # The same rules as .repro_installed_version() and .repro_same_version()
+    # (R/reproducibility_check.R), inlined because this script runs without
+    # this package.
+    "have_version <- function(pkg) {",
+    '  v <- suppressWarnings(tryCatch(utils::packageDescription(pkg, lib.loc = .libPaths(), fields = "Version"),',
+    "                                 error = function(e) NA_character_))",
+    "  if (length(v) != 1 || is.na(v)) NA_character_ else as.character(v)",
+    "}",
+    "same_version <- function(a, b) {",
+    "  if (is.na(a) || is.na(b)) return(FALSE)",
+    "  isTRUE(tryCatch(package_version(a) == package_version(b), error = function(e) FALSE))",
+    "}",
+    # The same rule as .repro_load_error() (R/reproducibility_check.R): a bare
+    # image often lacks a system library, which only this message tells.
+    "load_error <- function(pkg) {",
+    '  msg <- tryCatch({ loadNamespace(pkg); "" }, error = function(e) conditionMessage(e))',
+    '  substr(gsub("[[:space:]]+", " ", msg), 1, 300)',
+    "}",
     "out <- list()",
     "for (i in seq_along(pkgs)) {",
-    "  pkg <- pkgs[i]; src <- srcs[i]; ref <- refs[i]",
+    "  pkg <- pkgs[i]; src <- srcs[i]; ref <- refs[i]; ver <- vers[i]",
+    # Read by the host while this runs, for the progress display.
+    '  writeLines(as.character(i), "/sandbox/.install_status")',
     "  warns <- character(0)",
+    '  note <- ""',
+    "  version_done <- same_version(have_version(pkg), ver)",
+    '  if (!version_done && !is.na(ver) && identical(src, "bioc")) {',
+    '    note <- "Bioconductor versions follow the R version, so the current version was installed"',
+    '  } else if (!version_done && !is.na(ver) && identical(src, "cran")) {',
+    "    if (gh_avail) {",
+    "      version_done <- tryCatch({",
+    '        remotes::install_version(pkg, version = ver, lib = lib, upgrade = "never",',
+    "                                 dependencies = NA, force = TRUE, quiet = FALSE)",
+    "        same_version(have_version(pkg), ver)",
+    "      }, error = function(e) { note <<- conditionMessage(e); FALSE })",
+    '      if (!version_done && !nzchar(note)) note <- paste0("the recorded version could not be installed on R ", getRversion())',
+    '    } else note <- "the remotes package is not available in this image"',
+    "  }",
     "  res <- tryCatch({",
     "    withCallingHandlers({",
-    '    if (identical(src, "github")) {',
+    "    if (version_done) {",
+    '    } else if (identical(src, "github")) {',
     '      if (!gh_avail) stop("the remotes package is not available in this image")',
     '      remotes::install_github(ref, lib = lib, upgrade = "never", quiet = FALSE)',
     '    } else if (identical(src, "url")) {',
@@ -372,32 +481,223 @@ _INSTALL_SCRIPT = [
     "      install.packages(pkg, lib = lib, quiet = FALSE)",
     "    }",
     "    }, warning = function(w) warns <<- c(warns, conditionMessage(w)))",
-    # Same rule as _repro_not_loadable_msg() (metacheck.repro.core), inlined
-    # because this script runs without this package: a package
+    # Same rule as .repro_not_loadable_msg() (R/reproducibility_check.R),
+    # inlined because this script runs without this package: a package
     # install.packages() could not find only produces a "not available"
     # warning, which is the real reason (issue #421).
-    "    if (!requireNamespace(pkg, quietly = TRUE, lib.loc = lib)) {",
-    '      na <- unique(grep("is not available", warns, value = TRUE, fixed = TRUE))',
+    # A recorded version already in the image is not in lib. Being in lib is
+    # checked as well, since the load check also passes for a namespace an
+    # earlier package loaded, and a failed install_github() does not stop. A
+    # package that is gone from CRAN may still be in the image.
+    '    in_lib <- file.exists(file.path(lib, pkg, "DESCRIPTION"))',
+    '    in_image <- !in_lib && identical(src, "cran") && is.na(ver) && !is.na(have_version(pkg))',
+    "    if (!(version_done || in_lib || in_image) ||",
+    "        !requireNamespace(pkg, quietly = TRUE, lib.loc = if (in_lib && !version_done) lib else .libPaths())) {",
+    '      na <- unique(grep("is not available|non-zero exit status", warns, value = TRUE))',
     '      stop(if (length(na) > 0) paste(na, collapse = "; ")',
-    '           else "installed but package is not loadable")',
+    '           else if (!(version_done || in_lib)) "the install did not put the package in the library"',
+    '           else paste0("installed but package is not loadable: ", load_error(pkg)))',
     "    }",
     '    list(ok = TRUE, msg = "")',
     "  }, error = function(e) list(ok = FALSE, msg = conditionMessage(e)))",
-    "  out[[i]] <- data.frame(package = pkg, source = src, installed = res$ok, message = res$msg)",
+    "  v <- have_version(pkg)",
+    "  if (res$ok && !is.na(ver) && !same_version(v, ver) && !nzchar(note))",
+    '    note <- "the source gave another version than the recorded one"',
+    # stringsAsFactors: the default is TRUE before R 4.0, and the image may be that old
+    "  out[[i]] <- data.frame(package = pkg, source = src, installed = res$ok, message = res$msg,",
+    "                         version_installed = v, version_note = note, via_archive = FALSE, stringsAsFactors = FALSE)",
+    '  saveRDS(do.call(rbind, out), "/sandbox/.install_results.rds")',
+    "}",
+]
+
+#: The part of the install script for packages that are not on CRAN
+#: (``.repro_docker_elsewhere_lines()``): a second pass after every package has had its
+#: turn, since one time limit covers the whole install. First Bioconductor, then the
+#: latest version in the CRAN Archive (two rounds, because a package can need another
+#: archived one), then a table of known places and R-universe (#568). Runs inside the
+#: container, without this package.
+_ELSEWHERE_SCRIPT = [
+    # This R treats a warning old packages cause as an error, and has dropped
+    # Calloc() and the like, so maptools did not compile. Only for this pass.
+    'makevars <- file.path(tempdir(), "Makevars")',
+    'writeLines(c("CFLAGS += -Wno-error=format-security -DCalloc=R_Calloc -DRealloc=R_Realloc -DFree=R_Free", paste0(c("CXXFLAGS", "CXX11FLAGS", "CXX14FLAGS", "CXX17FLAGS", "CXX20FLAGS"), " += -Wno-error=format-security")), makevars)',
+    'Sys.setenv(R_MAKEVARS_USER = makevars, R_LIBS = paste(.libPaths(), collapse = ":"))',
+    'retry_rows <- function() which(vapply(out, function(x) !x$installed && identical(x$source, "cran") && grepl("is not available|there is no package called", x$message), logical(1)))',
+    # What an install here says, kept: an install that gives only warnings
+    # returned as if it had worked, and INLA, from its own repository, failed
+    # without a word in 10.1111/1365-2435.14173 (#568)
+    "last_log <- character(0)",
+    'logged <- function(expr) withCallingHandlers(expr, warning = function(w) { last_log <<- c(last_log, conditionMessage(w)); invokeRestart("muffleWarning") }, error = function(e) last_log <<- c(last_log, conditionMessage(e)))',
+    "bioc_known <- NULL",
+    "in_elsewhere <- function(pkg, depth = 1) {",
+    "  if (is.null(bioc_known)) bioc_known <<- tryCatch({",
+    '    if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager", lib = lib, quiet = TRUE)',
+    "    rownames(utils::available.packages(repos = BiocManager::repositories()))",
+    "  }, error = function(e) character(0))",
+    # A package on CRAN can need one from Bioconductor, which install.packages()
+    # does not find: speaq needs MassSpecWavelet.
+    '  first_msg <- if (pkg %in% pkgs) paste(out[[match(pkg, pkgs)]]$message) else ""',
+    '  bioc_needed <- regmatches(first_msg, regexpr("(?<=there is no package called .)[A-Za-z0-9.]+", first_msg, perl = TRUE))',
+    "  if (length(bioc_needed) && bioc_needed %in% bioc_known) {",
+    "    BiocManager::install(bioc_needed, lib = lib, update = FALSE, ask = FALSE)",
+    '    return("bioc")',
+    "  }",
+    "  if (pkg %in% bioc_known) {",
+    "    BiocManager::install(pkg, lib = lib, update = FALSE, ask = FALSE)",
+    '    return("bioc")',
+    "  }",
+    '  listing <- suppressWarnings(tryCatch(readLines(paste0("https://cran.r-project.org/src/contrib/Archive/", pkg, "/"), warn = FALSE), error = function(e) character(0)))',
+    # rgdal and rgeos compile against sp's header files, which sp dropped in
+    # version 2.2 after they left CRAN; 2.1-4 is the last version that has them
+    # (#568). The run then loads this sp, from the temporary library.
+    '  if (pkg %in% c("rgdal", "rgeos") && !file.exists(file.path(lib, "sp", "include", "sp.h"))) {',
+    '    sp_src <- file.path(tempdir(), "sp_2.1-4.tar.gz")',
+    '    try(utils::download.file("https://cran.r-project.org/src/contrib/Archive/sp/sp_2.1-4.tar.gz", sp_src, quiet = TRUE), silent = TRUE)',
+    '    if (file.exists(sp_src)) try(install.packages(sp_src, lib = lib, repos = NULL, type = "source", quiet = TRUE), silent = TRUE)',
+    "  }",
+    '  hits <- grep(paste0(pkg, "_[0-9][^\\"\']*\\\\.tar\\\\.gz"), listing, value = TRUE)',
+    "  if (!length(hits)) return(NA_character_)",
+    '  dates <- sub(".*(\\\\d{4}-\\\\d{2}-\\\\d{2} \\\\d{2}:\\\\d{2}).*", "\\\\1", hits)',
+    "  latest <- hits[order(dates, decreasing = TRUE)][1]",
+    '  tarball <- regmatches(latest, regexpr(paste0(pkg, "_[0-9][^\\"\']*\\\\.tar\\\\.gz"), latest))',
+    '  if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes", lib = lib, quiet = TRUE)',
+    '  archive_url <- paste0("https://cran.r-project.org/src/contrib/Archive/", pkg, "/", tarball)',
+    # A dependency that has left CRAN too is installed from the Archive first: the
+    # install takes dependencies from CRAN only, so ggsn, which needs maptools,
+    # stopped (10.1111/1365-2435.14195; #568). Read from the package's DESCRIPTION.
+    "  if (depth < 3) tryCatch({",
+    "    tb <- file.path(tempdir(), tarball)",
+    "    utils::download.file(archive_url, tb, quiet = TRUE)",
+    '    ex <- file.path(tempdir(), paste0("desc_", pkg))',
+    '    utils::untar(tb, files = paste0(pkg, "/DESCRIPTION"), exdir = ex)',
+    '    dcf <- read.dcf(file.path(ex, pkg, "DESCRIPTION"))',
+    '    fields <- intersect(c("Depends", "Imports", "LinkingTo"), colnames(dcf))',
+    '    needs <- trimws(sub("\\\\(.*", "", unlist(strsplit(paste(dcf[1, fields], collapse = ","), ","))))',
+    '    needs <- setdiff(needs[nzchar(needs)], c("R", rownames(utils::installed.packages(lib.loc = .libPaths())), rownames(utils::available.packages())))',
+    "    for (d in needs) tryCatch(in_elsewhere(d, depth + 1), error = function(e) NULL)",
+    "  }, error = function(e) NULL)",
+    '  logged(remotes::install_url(archive_url, lib = lib, upgrade = "never", dependencies = TRUE, quiet = TRUE))',
+    '  "archive"',
+    "}",
+    # Packages only elsewhere (#568, item 12): a table of known places, then
+    # R-universe's search for that exact name. A GitHub tarball needs no token.
+    "known_places <- " + _deparse1_named_chr(_REPRO_KNOWN_PACKAGE_PLACES),
+    "in_known_place <- function(pkg) {",
+    "  place <- unname(known_places[pkg])",
+    '  if (!is.na(place) && startsWith(place, "https://")) {',
+    '    logged(install.packages(pkg, lib = lib, repos = c(place, getOption("repos")), quiet = TRUE))',
+    "    return(place)",
+    "  }",
+    "  if (!is.na(place)) {",
+    '    if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes", lib = lib, quiet = TRUE)',
+    '    logged(remotes::install_url(paste0("https://github.com/", place, "/archive/HEAD.tar.gz"), lib = lib, upgrade = "never", dependencies = TRUE, quiet = TRUE))',
+    '    return(paste0("github.com/", place))',
+    "  }",
+    # a search that fails is not a package R-universe lacks (#389); a bare
+    # rocker/r-ver image has no jsonlite, so the search always failed there
+    '  if (!requireNamespace("jsonlite", quietly = TRUE)) install.packages("jsonlite", lib = lib, quiet = TRUE)',
+    '  found <- tryCatch(jsonlite::fromJSON(paste0("https://r-universe.dev/api/search?q=", pkg, "&limit=20"))$results, error = function(e) e)',
+    '  if (inherits(found, "error")) return(paste("the search of R-universe failed:", conditionMessage(found)))',
+    "  if (is.null(found) || !NROW(found)) return(NA_character_)",
+    '  who <- found[["_user"]][found$Package == pkg]',
+    "  if (!length(who)) return(NA_character_)",
+    '  repo <- paste0("https://", who[1], ".r-universe.dev")',
+    '  logged(install.packages(pkg, lib = lib, repos = c(repo, getOption("repos")), quiet = TRUE))',
+    "  repo",
+    "}",
+    "for (round in 1:2) for (i in retry_rows()) {",
+    "  pkg <- pkgs[i]",
+    '  writeLines(as.character(i), "/sandbox/.install_status")',
+    "  last_log <- character(0)",
+    "  from <- tryCatch(in_elsewhere(pkg), error = function(e) conditionMessage(e))",
+    '  usable <- function() file.exists(file.path(lib, pkg, "DESCRIPTION")) && requireNamespace(pkg, quietly = TRUE, lib.loc = lib)',
+    # what stopped it is kept, next to the first pass's "not available"
+    "  tried <- from",
+    "  if (!usable()) from <- tryCatch(in_known_place(pkg), error = function(e) conditionMessage(e))",
+    '  stopped <- c(tried, from)[!is.na(c(tried, from)) & !c(tried, from) %in% c("bioc", "archive") & !grepl("^https://|^github", c(tried, from))]',
+    '  if (!usable() && round == 2 && length(stopped)) out[[i]]$message <- paste0(out[[i]]$message, "; also tried elsewhere: ", substr(stopped[1], 1, 300))',
+    '  if (!usable() && round == 2 && !length(stopped) && length(last_log)) out[[i]]$message <- paste0(out[[i]]$message, "; installing it from ", c(from, tried)[!is.na(c(from, tried))][1], " failed: ", substr(paste(unique(last_log), collapse = " | "), 1, 400))',
+    # Found in none of the places: the code does not say where the package comes
+    # from, which authors can act on (#389). See .repro_classify_install_message().
+    '  if (!usable() && round == 2 && is.na(tried) && is.na(from)) out[[i]]$message <- paste0(out[[i]]$message, "; found nowhere else: not on Bioconductor, in the CRAN Archive, in our list of known places or on R-universe")',
+    "  if (usable()) {",
+    "    out[[i]]$installed <- TRUE",
+    '    out[[i]]$message <- ""',
+    "    out[[i]]$version_installed <- have_version(pkg)",
+    '    out[[i]]$via_archive <- identical(from, "archive")',
+    '    if (identical(from, "bioc")) out[[i]]$source <- "bioc"',
+    '    if (!from %in% c("bioc", "archive")) { out[[i]]$source <- "elsewhere"; out[[i]]$version_note <- paste0("installed from ", from) }',
+    "  }",
     '  saveRDS(do.call(rbind, out), "/sandbox/.install_results.rds")',
     "}",
 ]
 
 
 def _install_script(install_deps: pd.DataFrame) -> list[str]:
-    """The ``install.R`` a :func:`repro_install_deps_docker` container runs."""
+    """The ``install.R`` a :func:`repro_install_deps_docker` container runs.
+
+    Each package is installed in turn (a recorded version through
+    ``remotes::install_version()``), its result written back after each one; then the
+    packages that were not on CRAN are looked for elsewhere.
+    """
+    n = len(install_deps)
     refs = _chr_list(install_deps["ref"]) if "ref" in install_deps.columns else None
+    versions = (
+        _chr_list(install_deps["version"]) if "version" in install_deps.columns else [None] * n
+    )
     header = [
         ".repro_docker_pkgs <- " + _deparse1_chr(_chr_list(install_deps["package"])),
         ".repro_docker_srcs <- " + _deparse1_chr(_chr_list(install_deps["source"])),
         ".repro_docker_refs <- " + _deparse1_chr(refs),
+        ".repro_docker_vers <- " + _deparse1_chr(versions),
     ]
-    return header + _INSTALL_SCRIPT
+    return header + _INSTALL_LOOP + _ELSEWHERE_SCRIPT
+
+
+def _repro_install_error_lines(txt: str | None, pkg: str | None) -> str:
+    """Port of R/reproducibility_check_docker.R::.repro_install_error_lines().
+
+    The lines of an install's output that say why *pkg* did not install: an ``ERROR:``
+    line that names it ("ERROR: dependencies 'rgdal', 'rgeos' are not available for
+    package 'ellipsenm'"), and the compiler's errors in its own part of the output, from
+    "installing *source* package 'pkg'" to the next package. ``""`` when none (#568).
+    """
+    lines = (txt or "").split("\n")
+    if txt is None or txt == "" or not pkg:
+        return ""
+    q = re.escape(pkg)
+    named = [
+        ln for ln in lines if re.search("^ERROR: .*package ['\u2018\"]" + q + "['\u2019\"]", ln)
+    ]
+    start = [
+        i
+        for i, ln in enumerate(lines)
+        if re.search("installing \\*source\\* package ['\u2018\"]" + q + "['\u2019\"]", ln)
+    ]
+    own: list[str] = []
+    if start:
+        s0 = start[-1]
+        nxt = [i for i, ln in enumerate(lines) if re.search(r"^\* (installing|DONE)", ln)]
+        e = ([i for i in nxt if i > s0] + [len(lines)])[0]
+        own = [
+            ln
+            for ln in lines[s0:e]
+            if re.search(r"fatal error|error: ", ln) and not re.search(r"^ERROR: ", ln)
+        ]
+    out = _unique_strs([trimws(x) for x in named + own])
+    if not out:
+        return ""
+    return " | ".join(out[:4])[:500]
+
+
+def _unique_strs(values: Sequence[str]) -> list[str]:
+    seen: set[str] = set()
+    out: list[str] = []
+    for v in values:
+        if v not in seen:
+            seen.add(v)
+            out.append(v)
+    return out
 
 
 def _read_install_results(path: str) -> pd.DataFrame | None:
@@ -420,6 +720,13 @@ def _read_install_results(path: str) -> pd.DataFrame | None:
             "message": pd.Series(_chr_list(df.get("message", [])), dtype="string"),
         }
     )
+    for col in ("version_installed", "version_note"):
+        if col in df.columns:
+            out[col] = pd.Series(_chr_list(df[col]), dtype="string")
+    if "via_archive" in df.columns:
+        out["via_archive"] = pd.Series(
+            [as_str(v) is not None and bool(v) for v in df["via_archive"]], dtype="boolean"
+        )
     return out
 
 
@@ -485,8 +792,20 @@ def repro_install_deps_docker(
                 txt = "\n".join(_read_lines(out_file))
             except OSError:
                 txt = ""
+            # A failed install whose message gives no reason, only "had non-zero exit
+            # status", gets the reason from the install's own output (#568).
+            if tbl is not None and len(tbl) and txt:
+                vague_pat = "ERROR: |error: |not available|there is no package|cannot "
+                msgs = _chr_list(tbl["message"])
+                inst = _col(tbl, "installed")
+                for i, (ok, m) in enumerate(zip(inst, msgs, strict=True)):
+                    if ok or grepl(vague_pat, m or ""):
+                        continue
+                    why = _repro_install_error_lines(txt, as_str(tbl["package"].iloc[i]))
+                    if why:
+                        tbl.loc[tbl.index[i], "message"] = (m or "") + ("; " if m else "") + why
             if res.get("timeout"):
-                msg = f"docker install timed out after {as_character(timeout)}s"
+                msg = f"docker install timed out after {as_character(r_round(timeout))}s"
             else:
                 status = as_character(res.get("status")) or "NA"
                 msg = f"docker install failed (status {status}): {txt}"
@@ -515,7 +834,19 @@ def repro_install_deps_docker(
             }
         )
     out = bind_rows([tbl, padding])
-    out["via_archive"] = pd.Series([False] * len(out), dtype="boolean")
+    vers = _chr_list(install_deps["version"]) if "version" in install_deps.columns else None
+    ver_of: dict[str | None, str | None] = {}
+    for p, v in zip(pkgs, vers or [None] * len(pkgs), strict=True):
+        ver_of.setdefault(p, v)
+    out["version_recorded"] = pd.Series(
+        [ver_of.get(p) for p in _col(out, "package")], dtype="string"
+    )
+    if "version_installed" not in out.columns:
+        out["version_installed"] = pd.Series([None] * len(out), dtype="string")
+    notes = _col(out, "version_note") if "version_note" in out.columns else [None] * len(out)
+    out["version_note"] = pd.Series([n or "" for n in notes], dtype="string")
+    archived = _col(out, "via_archive") if "via_archive" in out.columns else [None] * len(out)
+    out["via_archive"] = pd.Series([a is True for a in archived], dtype="boolean")
     installed = _col(out, "installed")
     messages = _col(out, "message")
     out["category"] = pd.Series(

@@ -92,9 +92,17 @@ def test_docker_stop_is_best_effort(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_resource_args() -> None:
     from metacheck.utils import local_options
 
-    assert docker._repro_docker_resource_args() == []
+    # --ulimit core=1 is always there: a crashing R writes no core file (metacheck 0.4.x)
+    assert docker._repro_docker_resource_args() == ["--ulimit", "core=1"]
     with local_options({"metacheck.docker_resource_limits": {"cpus": 2, "memory_gb": 3.5}}):
-        assert docker._repro_docker_resource_args() == ["--cpus", "2", "--memory", "3.5g"]
+        assert docker._repro_docker_resource_args() == [
+            "--ulimit",
+            "core=1",
+            "--cpus",
+            "2",
+            "--memory",
+            "3.5g",
+        ]
 
 
 def test_container_path(tmp_path: Path) -> None:

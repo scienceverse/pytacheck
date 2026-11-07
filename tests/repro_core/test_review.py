@@ -168,9 +168,9 @@ def test_resource_args_with_missing_limits() -> None:
     from metacheck.utils import local_options
 
     with local_options({"metacheck.docker_resource_limits": {"memory_gb": 8}}):
-        assert docker._repro_docker_resource_args() == ["--cpus", "--memory", "8g"]
+        assert docker._repro_docker_resource_args()[2:] == ["--cpus", "--memory", "8g"]
     with local_options({"metacheck.docker_resource_limits": {"cpus": 1.5}}):
-        assert docker._repro_docker_resource_args() == ["--cpus", "1.5", "--memory", "g"]
+        assert docker._repro_docker_resource_args()[2:] == ["--cpus", "1.5", "--memory", "g"]
 
 
 # -- module tables ----------------------------------------------------------------------
