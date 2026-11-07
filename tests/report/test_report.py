@@ -308,13 +308,13 @@ def test_module_report_howitworks_without_details(tmp_path):
 
 
 def test_module_report_undefined_traffic_light(tmp_path):
-    # U128: R's sprintf() with a NULL emoji drops the heading and prints the
-    # summary line of report_qmd() as "character(0)"
+    # U128 (fixed in metacheck 0.4): an undefined light has no emoji, and the heading
+    # keeps the blank where it would be
     path = tmp_path / "rp_blue.py"
     path.write_text(_BLUE, encoding="utf-8")
     op = module_run(pc.test_paper(["x"]), str(path))
-    assert module_report(op).startswith("### Blue Module {#blue-module .blue}\n\nBlue.")
-    assert module_report(op, header=0).startswith("Blue Module\n\nBlue.")
+    assert module_report(op).startswith("###  Blue Module {#blue-module .blue}\n\nBlue.")
+    assert module_report(op, header=0).startswith(" Blue Module\n\nBlue.")
     qmd = report_qmd(op, pc.test_paper(["x"]))
     assert '<li class="mc-summary-row blue"><span class="mc-summary-icon"></span>' in qmd
     assert '<a href="#blue-module">Blue Module</a>' in qmd
@@ -383,11 +383,9 @@ def test_module_report_details_wrapper(demo, test_module):
     # a report identical to the summary is dropped
     same = module_report(module_run(demo, test_module("rp_no_details")))
     assert same.count("All good.") == 1
-    # without a summary text the report is shown unwrapped (U129: R shows
-    # "..." and drops the report)
+    # without a summary text the summary line is "..." and the report is shown unwrapped
     null = module_report(module_run(demo, test_module("rp_null_summary")))
-    assert ".info}\n\nSome report text.\n\nMore report text.\n\n::: {.callout" in null
-    assert "..." not in null
+    assert ".info}\n\n...\n\nSome report text.\n\nMore report text.\n\n::: {.callout" in null
     assert "<details>" not in null
 
 

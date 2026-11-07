@@ -12,7 +12,15 @@ from typing import Any
 
 import pandas as pd
 
-from tests.report.parity_helpers import ROOT, _args, _mods, _unpath, rp_mask, rp_norm_output
+from tests.report.parity_helpers import (
+    ROOT,
+    _args,
+    _mods,
+    _unpath,
+    rp_mask,
+    rp_norm_output,
+    rp_stem,
+)
 
 LOGO = str(ROOT / "src" / "metacheck" / "report" / "assets" / "logo.png")
 
@@ -32,6 +40,13 @@ def rc_mask(x: str) -> str:
     x = re.sub(r"data:[A-Za-z/+.-]+;base64,[A-Za-z0-9+/=]+", "data:<masked>", x)
     x = re.sub(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", "<date>", x)
     x = re.sub(r"Metacheck [0-9][0-9.]*( \(pytacheck [^)]*\))?", "Metacheck <version>", x)
+    # a module's own description is its module's to compare, not the report's
+    x = re.sub(
+        r"(<details><summary>How [^<\n]* works</summary>\n\n::: \{\.fold\}\n\n).*?(\n\n:::\n\n</details>)",
+        r"\1<HOW-IT-WORKS>\2",
+        x,
+        flags=re.S,
+    )
     return rp_mask(x)
 
 
@@ -259,7 +274,7 @@ def rc_checks(name: str) -> dict[str, Any]:
         warnings.simplefilter("always")
         checks = checklist_checks(rc_scenario(name))
     out: dict[str, Any] = {c: checks[c].tolist() for c in checks.columns}
-    out["warnings"] = [str(w.message) for w in caught]
+    out["warnings"] = pd.Series([str(w.message) for w in caught], dtype="string")
     return out
 
 
@@ -273,6 +288,25 @@ def rc_report_qmd(name: str, paper: str = "titled", type: str = "checklist") -> 
     from metacheck.report.report import report_qmd
 
     return rc_mask(report_qmd(rc_scenario(name), rc_paper(paper), report_type=type))
+
+
+def _rc_output(res: Any) -> dict[str, Any]:
+    # the module outputs are compared by the cases of the full report; here what
+    # the report type could change: a module's report is its text, which R's
+    # collapse_section() folds into a <details> box when the module runs under the
+    # checklist type, while a pytacheck module's output is the same under every type
+    # and folded when the report is written (the text of the file is compared)
+    out = rp_norm_output(res)
+    return {
+        k: {
+            "module": v.module,
+            "title": v.title,
+            "traffic_light": v.traffic_light,
+            "summary_text": v.summary_text,
+            "n_report": len(v.report) if isinstance(v.report, list) else 1,
+        }
+        for k, v in out.items()
+    }
 
 
 def rc_report(
@@ -292,7 +326,7 @@ def rc_report(
     finally:
         os.unlink(f)
     return {
-        "output": rp_norm_output(res),
+        "output": _rc_output(res),
         "save_path_ok": res.save_path == f,
         "type_after": report_type(),
         "file": rc_mask(_unpath(txt)),
@@ -324,13 +358,8 @@ def rc_report_repository(
     finally:
         shutil.rmtree(d, ignore_errors=True)
         os.unlink(f)
-    out = rp_norm_output(res)
-    for op in out.values():
-        if op.summary_table is not None and "paper_id" in op.summary_table.columns:
-            st = op.summary_table.copy()
-            st["paper_id"] = "test_paper"
-            op.summary_table = st
-    return {"output": out, "file": rc_mask(_unpath(txt))}
+    # (the module outputs are compared by the report_repository cases of the full report)
+    return {"modules": [rp_stem(k) for k in res], "file": rc_mask(_unpath(txt))}
 
 
 # ---- file tree -----------------------------------------------------------------
@@ -409,8 +438,10 @@ def rc_ft_rows(paths: Any, is_dir: Any = None) -> dict[str, Any]:
     rows = file_tree_rows(list(paths), None if is_dir is None else list(is_dir))
     # R's indices are 1-based
     return {
-        "text": rows["text"].tolist(),
-        "leaf_idx": [None if pd.isna(i) else int(i) + 1 for i in rows["leaf_idx"].tolist()],
+        "text": pd.Series(rows["text"].tolist(), dtype="string"),
+        "leaf_idx": pd.Series(
+            [None if pd.isna(i) else int(i) + 1 for i in rows["leaf_idx"].tolist()], dtype="Int64"
+        ),
     }
 
 
@@ -419,7 +450,7 @@ def rc_ft_block(kind: str) -> Any:
 
     x = rc_files(kind)
     block = file_tree_block(x["files"], x["naming"], x["useless"])
-    return None if block is None else list(block)
+    return None if block is None else pd.Series(block, dtype="string")
 
 
 def rc_ft_local() -> dict[str, Any]:
@@ -468,7 +499,10 @@ def rc_ft_report(kind: str) -> Any:
     if kind == "from":
         return file_tree_from_report(report)
     if kind == "from_none":
-        return [file_tree_from_report(["Intro", "#### Data Files"]), file_tree_from_report(None)]
+        return [
+            file_tree_from_report(["Intro", "#### Data Files"]) is None,
+            file_tree_from_report(None) is None,
+        ]
     if kind == "drop":
         return file_tree_drop_from_report(report)
     if kind == "drop_end":
@@ -505,5 +539,5 @@ def rc_ft_pick(kind: str) -> Any:
             }
         )
     if kind == "none":
-        return [file_tree({})]
+        return file_tree({}) is None
     raise ValueError(f"no pick {kind}")

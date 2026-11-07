@@ -391,28 +391,25 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
     title = module_output.title
     level = _header_level(header)
     head: list[str]
-    # an undefined traffic light has no emoji: metacheck's sprintf() with NULL
-    # dropped the whole heading (U128); here it has no symbol
-    symbol = "" if tl_symbol is None else f"{tl_symbol} "
+    # an undefined traffic light has no emoji (metacheck 0.4 keeps the heading, with
+    # the blank where the emoji would be; its earlier sprintf() with NULL lost it: U128)
+    symbol = "" if tl_symbol is None else tl_symbol
     if header is None:
         head = [""]
     elif level == 0:
-        head = [f"{symbol}{title}"]
+        head = [f"{symbol} {title}"]
     elif level is not None and 1 <= level <= 6:
-        head = [f"{'#' * level} {symbol}{title} {{#{_report_title_slug(title)} .{tl}}}"]
+        head = [f"{'#' * level} {symbol} {title} {{#{_report_title_slug(title)} .{tl}}}"]
     else:
         head = [_as_text(header)]
 
     summary_text = module_output.summary_text
-    # without a summary text, metacheck showed "..." and dropped the report
-    # (`all(NULL == report)` is TRUE; U129): here the report is the summary
-    summary = _flatten(summary_text) if summary_text is not None else []
+    # without a summary text the summary line is "..." and the report still shows
+    summary = _flatten(summary_text) if summary_text is not None else ["..."]
     report = module_output.report if module_output.report is not None else summary_text
     blocks: list[Any] | None = _flatten(report)
     if blocks is not None and all(isinstance(b, str) and b == "" for b in blocks):
         blocks = None
-    if summary_text is None and blocks is None:
-        summary = ["..."]
 
     hiw, validation = _how_it_works(module_output.module)
 
@@ -420,9 +417,7 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
     # around fenced divs (metacheck dropped it too)
     pre: str | None = "<details><summary>View detailed feedback</summary>"
     post: str | None = "</details>"
-    if summary_text is None and blocks is not None:
-        pre = post = None
-    elif blocks is None or _all_equal(summary, blocks, False):
+    if blocks is None or (summary_text is not None and _all_equal(summary, blocks, False)):
         pre = post = None
         blocks = None
     elif not any(isinstance(b, ReportTable) for b in blocks) and (
@@ -726,7 +721,9 @@ class _ReportParts:
         return "## Summary\n\n{}\n\n".format("\n".join(rows))
 
     def body_text(self, table: Callable[[ReportTable], str]) -> str:
-        text = re.sub(r"\n{3,}", "\n\n", render_blocks(self.body, table))
+        text = render_blocks(self.body, table)
+        if not self.brief:  # (R collapses blank lines only in the module sections)
+            text = re.sub(r"\n{3,}", "\n\n", text)
         if self.static:
             from metacheck.report.render import static_markdown
 
@@ -773,9 +770,10 @@ class _ReportParts:
 
     def text(self, table: Callable[[ReportTable], str]) -> str:
         parts = [self.head(), self.summary(), self.body_text(table)]
-        if self.static:
-            parts.append("\n\n</div>\n")  # closes the template's <div class="mc-page">
-        return "\n\n".join([*parts, "\n"])
+        # R pastes its closing div (empty unless the template is static) and a last
+        # newline, each after a blank line
+        closing_div = "\n\n</div>\n" if self.static else ""  # closes <div class="mc-page">
+        return "\n\n".join([*parts, closing_div, "\n"])
 
 
 def _report_parts(
@@ -792,7 +790,7 @@ def _report_parts(
     outputs = _module_output_list(module_output)
     brief = _report_is_brief(report_type)
     titles = _info_values(paper, "title")
-    subtitle = ("NA" if _is_na(titles[0]) else str(titles[0])) if titles else ""
+    subtitle = ("" if _is_na(titles[0]) else str(titles[0])) if titles else ""
     dois = _info_values(paper, "doi")
     doi = dois[0] if dois else None
     doi_text = "" if _is_na(doi) or doi == "" else f"DOI: [{doi}](https://doi.org/{doi})"
@@ -808,8 +806,8 @@ def _report_parts(
     rows = [_summary_row(mo, brief) for mo in shown]
     body: list[Any] = []
     if brief:
-        if shown:
-            body.append(validation_table(shown))
+        # (R pastes an empty validation block when nothing is flagged)
+        body.append(validation_table(shown) if shown else "")
         body.append(FEEDBACK)
     else:
         for sec in SECTION_LEVELS:

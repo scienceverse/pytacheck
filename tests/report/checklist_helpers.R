@@ -16,6 +16,9 @@ rc_mask <- function(x) {
   x <- gsub("data:[A-Za-z/+.-]+;base64,[A-Za-z0-9+/=]+", "data:<masked>", x, perl = TRUE)
   x <- gsub("[0-9]{4}-[0-9]{2}-[0-9]{2}", "<date>", x, perl = TRUE)
   x <- gsub("Metacheck [0-9][0-9.]*( \\(pytacheck [^)]*\\))?", "Metacheck <version>", x, perl = TRUE)
+  # a module's own description is its module's to compare, not the report's
+  x <- gsub("(?s)(<details><summary>How [^<\n]* works</summary>\n\n::: \\{\\.fold\\}\n\n).*?(\n\n:::\n\n</details>)",
+            "\\1<HOW-IT-WORKS>\\2", x, perl = TRUE)
   rp_mask(x)
 }
 
@@ -145,6 +148,19 @@ rc_report_qmd <- function(name, paper = "titled", type = "checklist") {
   rc_mask(report_qmd(rc_scenario(name), rc_paper(paper)))
 }
 
+# the module outputs are compared by the cases of the full report; here what the
+# report type could change: a module's report is its text, which R's
+# collapse_section() folds into a <details> box when the module runs under the
+# checklist type, while a pytacheck module's output is the same under every type
+# and folded when the report is written (the text of the file is compared)
+rc_output <- function(res) {
+  lapply(rp_norm_output(res), function(x) {
+    list(module = x$module, title = x$title,
+         traffic_light = x$traffic_light, summary_text = x$summary_text,
+         n_report = length(x$report))
+  })
+}
+
 # report() to a .qmd, with a report type
 rc_report <- function(paper, modules, type = "checklist", args = list()) {
   mods <- vapply(modules, rp_mod, character(1), USE.NAMES = FALSE)
@@ -153,7 +169,7 @@ rc_report <- function(paper, modules, type = "checklist", args = list()) {
   on.exit(unlink(f))
   res <- suppressWarnings(report(paper, mods, f, "qmd", report_type = type, args = args))
   txt <- paste(readLines(f), collapse = "\n")
-  list(output = rp_norm_output(res),
+  list(output = rc_output(res),
        save_path_ok = identical(attr(res, "save_path"), f),
        type_after = report_type(),
        file = rc_mask(gsub("tests/report/modules/([a-z_]+)\\.[Rr]", "\\1", txt)))
@@ -171,11 +187,8 @@ rc_report_repository <- function(folder, modules, args = list(), type = "checkli
                                             output_format = "qmd", modules = mods, args = args,
                                             report_type = type))
   txt <- paste(readLines(f), collapse = "\n")
-  out <- rp_norm_output(res)
-  for (i in seq_along(out)) {
-    if (!is.null(out[[i]]$summary_table)) out[[i]]$summary_table$paper_id <- "test_paper"
-  }
-  list(output = out,
+  # (the module outputs are compared by the report_repository cases of the full report)
+  list(modules = rp_stem(names(res)),
        file = rc_mask(gsub("tests/report/modules/([a-z_]+)\\.[Rr]", "\\1", txt)))
 }
 
@@ -236,7 +249,7 @@ rc_ft_block <- function(kind) {
   x <- rc_files(kind)
   block <- metacheck:::.file_tree_block(x$files, x$naming, x$useless)
   if (is.null(block)) return(NULL)
-  as.list(block)
+  unlist(block)
 }
 
 # A local folder drawn in full; the folder's own (random) name is masked.
@@ -270,8 +283,8 @@ rc_ft_report <- function(kind) {
   report <- c("Intro", "#### Data Tree", "legend", "tree", "#### Data Files", "x")
   switch(kind,
     from = metacheck:::.file_tree_from_report(report),
-    from_none = list(metacheck:::.file_tree_from_report(c("Intro", "#### Data Files")),
-                     metacheck:::.file_tree_from_report(NULL)),
+    from_none = c(is.null(metacheck:::.file_tree_from_report(c("Intro", "#### Data Files"))),
+                  is.null(metacheck:::.file_tree_from_report(NULL))),
     drop = metacheck:::.file_tree_drop_from_report(report),
     drop_end = list(metacheck:::.file_tree_drop_from_report(c("Intro", "#### Data Tree", "tree")),
                     metacheck:::.file_tree_drop_from_report(c("Intro", "#### Data Tree"))),
@@ -288,10 +301,10 @@ rc_ft_pick <- function(kind) {
                         kind = "operating system", severity = "problem")
   switch(kind,
     data_check = metacheck:::.file_tree(list(data_check = list(report = report))),
-    repo_check = as.list(metacheck:::.file_tree(list(
+    repo_check = unlist(metacheck:::.file_tree(list(
       data_check = list(report = "nothing"),
       repo_check = list(table = files[1, ], useless_files = useless)))),
-    none = list(metacheck:::.file_tree(list())),
+    none = is.null(metacheck:::.file_tree(list())),
     stop("no pick ", kind)
   )
 }
