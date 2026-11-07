@@ -3448,7 +3448,8 @@
  ".pad_to": {
   "file": "R/jasp.R",
   "line": 91,
-  "python": "metacheck.statout.jasp:_pad_to"
+  "ported": true,
+  "python": "metacheck.statout.jasp:_pad"
  },
  ".paper_coerce": {
   "file": "R/paper.R",
@@ -3832,6 +3833,7 @@
  ".r_cap_effectsize": {
   "file": "R/r-capture.R",
   "line": 114,
+  "ported": true,
   "python": "metacheck.statout.r_capture:_r_cap_effectsize"
  },
  ".r_cap_htest": {
@@ -4261,22 +4263,26 @@
  ".report_extract_tables": {
   "file": "R/report-helpers.R",
   "line": 290,
-  "python": "metacheck.report.blocks:_report_extract_tables"
+  "ported": true,
+  "python": "metacheck.report.brief:_report_extract_tables"
  },
  ".report_file_finding_bullets": {
   "file": "R/report-helpers.R",
   "line": 401,
-  "python": "metacheck.report.blocks:_report_file_finding_bullets"
+  "ported": true,
+  "python": "metacheck.report.brief:_report_file_finding_bullets"
  },
  ".report_file_findings_by_file": {
   "file": "R/report-helpers.R",
   "line": 366,
-  "python": "metacheck.report.blocks:_report_file_findings_by_file"
+  "ported": true,
+  "python": "metacheck.report.brief:_report_file_findings_by_file"
  },
  ".report_find_callout": {
   "file": "R/report-helpers.R",
   "line": 318,
-  "python": "metacheck.report.blocks:_report_find_callout"
+  "ported": true,
+  "python": "metacheck.report.brief:_report_find_callout"
  },
  ".report_flagged_bullets": {
   "file": "R/report-helpers.R",
@@ -4287,7 +4293,8 @@
  ".report_group_table": {
   "file": "R/report-helpers.R",
   "line": 181,
-  "python": "metacheck.report.blocks:_report_group_table"
+  "ported": true,
+  "python": "metacheck.report.brief:_report_group_table"
  },
  ".report_how_it_works": {
   "file": "R/report.R",
@@ -4310,11 +4317,13 @@
  ".report_merge_tables": {
   "file": "R/report-helpers.R",
   "line": 136,
-  "python": "metacheck.report.blocks:_report_merge_tables"
+  "ported": true,
+  "python": "metacheck.report.brief:_report_merge_tables"
  },
  ".report_move": {
   "file": "R/report.R",
   "line": 7,
+  "ported": true,
   "python": "metacheck.report.report:_report_move"
  },
  ".report_pandoc_dir": {
@@ -4325,7 +4334,8 @@
  ".report_table_static": {
   "file": "R/report-helpers.R",
   "line": 1073,
-  "python": "metacheck.report.blocks:_report_table_static"
+  "ported": true,
+  "python": "metacheck.report.render:DataTable"
  },
  ".report_temp_message": {
   "file": "R/report.R",
@@ -6024,7 +6034,8 @@
  ".spv_split_levels": {
   "file": "R/spv.R",
   "line": 2252,
-  "python": "metacheck.statout.spv:_spv_split_levels"
+  "ported": true,
+  "python": "metacheck.statout.spv:_spv_table_html_pivot"
  },
  ".spv_stato_type_label": {
   "file": "R/stato-map.R",
@@ -6473,7 +6484,8 @@
  ".stat_source_prefix": {
   "file": "R/stat_helpers.R",
   "line": 112,
-  "python": "metacheck.stats.helpers:_stat_source_prefix"
+  "ported": true,
+  "python": "metacheck.statout.stat_output:_source_prefix"
  },
  ".stat_table_parse": {
   "file": "R/stat-tables.R",

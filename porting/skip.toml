@@ -143,6 +143,7 @@
 ".repro_docker_lib_mount" = "Mounts that Docker volume; pytacheck's library is a folder in the sandbox (D154)."
 ".repro_docker_lib_remove" = "Removes that Docker volume; pytacheck's library goes with the sandbox (D154)."
 ".repro_installed_version" = "R reads a package's version from its DESCRIPTION in the run's library; pytacheck reads it inside the R install script it writes (have_version() in metacheck.repro.recorded), where that library is."
+".report_pandoc_dir" = "Finds the Pandoc that Quarto bundles, so rmarkdown::render() can build the simple and checklist reports. pytacheck renders those pages itself with markdown-it-py (D133, no Pandoc), and its Quarto renderer calls quarto directly."
 
 [skip_files]
 "R/app.R" = "Shiny app launchers (see [skip])."
