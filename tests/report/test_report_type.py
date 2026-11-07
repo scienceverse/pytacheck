@@ -64,20 +64,21 @@ def test_report_type_gets_and_sets_the_default() -> None:
     assert report_type() == "full"
     assert report_type("brief") == "brief"
     assert report_type("simple_brief") == "simple_brief"
-    with pytest.raises(ValueError, match="'full', 'brief', 'simple' or 'simple_brief'"):
+    assert report_type("checklist") == "checklist"
+    with pytest.raises(ValueError, match="'simple_brief', or 'checklist'"):
         report_type("fancy")
     # a bad value never changes the setting
     report_type("simple")
     with pytest.raises(ValueError):
         report_type("fancy")
     assert report_type() == "simple"
-    assert blocks.REPORT_TYPES == ("full", "brief", "simple", "simple_brief")
+    assert blocks.REPORT_TYPES == ("full", "brief", "simple", "simple_brief", "checklist")
     assert pc.report_type is report_type
 
 
 def test_report_is_static_and_brief() -> None:
-    assert [_report_is_static(t) for t in blocks.REPORT_TYPES] == [False, False, True, True]
-    assert [_report_is_brief(t) for t in blocks.REPORT_TYPES] == [False, True, False, True]
+    assert [_report_is_static(t) for t in blocks.REPORT_TYPES] == [False, False, True, True, True]
+    assert [_report_is_brief(t) for t in blocks.REPORT_TYPES] == [False, True, False, True, False]
 
 
 def test_flagged_bullets() -> None:

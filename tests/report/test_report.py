@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib
 import re
+import tempfile
 import warnings
 from pathlib import Path
 
@@ -179,11 +180,16 @@ def test_render_formats(tmp_path, demo):
     assert "{.red}" not in md and "{#" not in md
 
 
-def test_default_output_file(tmp_path, monkeypatch, demo):
-    monkeypatch.chdir(tmp_path)
+def test_default_output_file(tmp_path, monkeypatch, demo, capsys):
+    """Without a file name the report goes to the temporary folder, and a message says where."""
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
     rep = report(demo, "marginal", output_format="md")
-    assert rep.save_path == f"{demo.paper_id}_report.md"
-    assert (tmp_path / rep.save_path).exists()
+    assert rep.save_path == str(tmp_path / f"{demo.paper_id}_report.md")
+    assert (tmp_path / f"{demo.paper_id}_report.md").exists()
+    err = capsys.readouterr().err
+    assert "The report is in the temporary folder" in err
+    assert rep.save_path in err
+    assert "Give `output_file`" in err
 
 
 def test_default_modules_skip_unported(tmp_path, demo):
@@ -481,12 +487,14 @@ def test_report_repository(tmp_path, test_module):
 def test_report_repository_default_output(tmp_path, monkeypatch, test_module):
     folder = tmp_path / "data" / "study_a"
     folder.mkdir(parents=True)
-    monkeypatch.chdir(tmp_path)
+    out = tmp_path / "out"
+    out.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(out))
     rep = report_repository(
         str(folder) + "/", modules=[test_module("rp_repo")], output_format="qmd"
     )
-    assert rep.save_path == "study_a_report.qmd"
-    assert (tmp_path / "study_a_report.qmd").exists()
+    assert rep.save_path == str(out / "study_a_report.qmd")
+    assert (out / "study_a_report.qmd").exists()
 
 
 def test_report_list_str(tmp_path):

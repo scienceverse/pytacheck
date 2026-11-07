@@ -70,7 +70,8 @@ __all__ = [
     "report_repository",
 ]
 
-#: The modules ``report()`` runs by default, in metacheck's order.
+#: The modules ``report()`` runs by default, in metacheck's order (``ref_accuracy`` is
+#: not one of them since metacheck 0.4: it needs a lookup of every reference).
 DEFAULT_MODULES: tuple[str, ...] = (
     "prereg_check",
     "funding_check",
@@ -83,7 +84,6 @@ DEFAULT_MODULES: tuple[str, ...] = (
     "stat_p_nonsig",
     "stat_effect_size",
     "marginal",
-    "ref_accuracy",
     "ref_replication",
     "ref_retraction",
     "ref_pubpeer",
@@ -331,8 +331,15 @@ def _report_title_slug(title: Any) -> str:
     return re.sub(r"[^a-z0-9_-]", "", slug)
 
 
-def _how_it_works(module: Any) -> tuple[str | None, list[str]]:
-    """The "How It Works" callout and validation blocks for a module."""
+def _how_it_works_parts(module: Any) -> tuple[list[str] | None, list[str]]:
+    """A module's "How It Works" paragraphs and its validation blocks.
+
+    Port of ``.report_how_it_works()``: ``(text, validation)``, where ``text`` is
+    the description, details, authors and the link to the manual's chapter
+    (``None`` when the module has none of them) and ``validation`` the module's
+    validation statement as fenced divs. Used by :func:`module_report` and the
+    checklist report.
+    """
     validation: list[str] = []
     try:
         info = module_info(module)
@@ -365,11 +372,17 @@ def _how_it_works(module: Any) -> tuple[str | None, list[str]]:
             for p in (info.description or None, details, author_ack, chapter_link)
             if p is not None
         ]
-        if not paragraphs:
-            return None, validation
-        return cast(str, collapse_section(paragraphs, "How It Works", callout="note")), validation
+        return (paragraphs or None), validation
     except Exception:
         return None, validation
+
+
+def _how_it_works(module: Any) -> tuple[str | None, list[str]]:
+    """The "How It Works" callout and validation blocks for a module."""
+    paragraphs, validation = _how_it_works_parts(module)
+    if paragraphs is None:
+        return None, validation
+    return cast(str, collapse_section(paragraphs, "How It Works", callout="note")), validation
 
 
 def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[Any]:
@@ -785,7 +798,13 @@ def _report_parts(
     doi_text = "" if _is_na(doi) or doi == "" else f"DOI: [{doi}](https://doi.org/{doi})"
 
     # a brief report lists only what needs attention, and has no module sections
-    shown = [mo for mo in outputs if mo.traffic_light in FLAGGED_LIGHTS] if brief else outputs
+    # (and a module that asks to stay, whatever its light: ``brief=True`` in its output,
+    # as reproducibility_check does when it ran code)
+    shown = (
+        [mo for mo in outputs if mo.traffic_light in FLAGGED_LIGHTS or mo.get("brief") is True]
+        if brief
+        else outputs
+    )
     rows = [_summary_row(mo, brief) for mo in shown]
     body: list[Any] = []
     if brief:
@@ -839,7 +858,9 @@ def report_qmd(
     ``"brief"`` keeps only the flagged modules, with their to-do items. A
     simple report (``"simple"``, ``"simple_brief"``) is an R Markdown
     document for Pandoc (``_report_simple.Rmd``, as metacheck writes it):
-    static tables, callouts open, tabs as headings, and no script.
+    static tables, callouts open, tabs as headings, and no script. A checklist
+    report (``"checklist"``) has its own template and layout
+    (:func:`~metacheck.report.checklist.checklist_qmd`).
     """
     if tables != "html":
         raise ValueError(
@@ -847,7 +868,12 @@ def report_qmd(
         )
     from metacheck.report.render import static_table_chunk
 
-    parts = _report_parts(module_output, paper, _resolve_report_type(report_type), version)
+    rt = _resolve_report_type(report_type)
+    if rt == "checklist":
+        from metacheck.report.checklist import checklist_qmd
+
+        return checklist_qmd(module_output, paper, version=version)
+    parts = _report_parts(module_output, paper, rt, version)
     if parts.static:
         return parts.text(static_table_chunk)
     text = parts.text(table_chunk)
@@ -900,11 +926,17 @@ def report_html(
     """The report as a self-contained HTML page (no R or Quarto needed).
 
     A simple report (``report_type="simple"`` or ``"simple_brief"``) is a
-    static page with no script at all, safe to send by email.
+    static page with no script at all, safe to send by email. So is a checklist
+    report (``report_type="checklist"``, :func:`~metacheck.report.checklist.checklist_html`).
     """
     from metacheck._version import __version__
 
-    parts = _report_parts(module_output, paper, _resolve_report_type(report_type), version)
+    rt = _resolve_report_type(report_type)
+    if rt == "checklist":
+        from metacheck.report.checklist import checklist_html
+
+        return checklist_html(module_output, paper, version=version)
+    parts = _report_parts(module_output, paper, rt, version)
     if parts.static:
         return _simple_html(parts)
     slots = TableSlots()
@@ -928,7 +960,12 @@ def report_markdown(
     version: str | None = None,
 ) -> str:
     """The report as plain (GitHub-flavoured) Markdown."""
-    parts = _report_parts(module_output, paper, _resolve_report_type(report_type), version)
+    rt = _resolve_report_type(report_type)
+    if rt == "checklist":
+        from metacheck.report.checklist import checklist_markdown
+
+        return checklist_markdown(module_output, paper, version=version)
+    parts = _report_parts(module_output, paper, rt, version)
     intro = _intro_markdown(parts)
     title = "# MetaCheck Report\n\n"
     if parts.subtitle:
@@ -1017,6 +1054,19 @@ def _render_quarto(qmd_text: str, output_file: str) -> None:
         shutil.move(str(Path(tmp) / "report.html"), output_file)
 
 
+def _report_temp_message(path: Any) -> None:
+    """Say where a report without a file name went: the temporary folder."""
+    from metacheck.utils import message
+
+    paths = path.values() if isinstance(path, Mapping) else path
+    shown = [path] if isinstance(path, str | os.PathLike) else list(paths)
+    message(
+        "The report is in the temporary folder, which is removed when the system "
+        "cleans it:\n" + "\n".join(str(p) for p in shown if p is not None),
+        "\nGive `output_file` to save it somewhere else.",
+    )
+
+
 def report(
     paper: Any,
     modules: str | Sequence[Any] = DEFAULT_MODULES,
@@ -1035,7 +1085,9 @@ def report(
     modules:
         Modules to run (built-in names or paths), in order.
     output_file:
-        Where to save the report; defaults to ``<paper_id>_report.<format>``.
+        Where to save the report. Without it the report is named
+        ``<paper_id>_report.<format>`` and written to the temporary folder, and a
+        message says where; give a path to keep it.
         For a paper list, one path per paper, or one path whose file name is
         prefixed with each paper ID and ``_`` (``report.html`` gives
         ``<paper_id>_report.html``).
@@ -1048,11 +1100,14 @@ def report(
         For HTML: ``"pytacheck"`` (built in, the default) or ``"quarto"``
         (render the ``.qmd`` with an installed Quarto).
     report_type:
-        ``"full"``, ``"brief"``, ``"simple"`` or ``"simple_brief"`` (see
-        :func:`~metacheck.report.blocks.report_type`, whose setting ``None``
-        uses): ``"simple"`` writes a static page with no script, to send by
-        email; ``"brief"`` lists only what needs attention. A simple report
-        is always rendered by pytacheck (Quarto's HTML carries scripts).
+        ``"full"``, ``"brief"``, ``"simple"``, ``"simple_brief"`` or
+        ``"checklist"`` (see :func:`~metacheck.report.blocks.report_type`,
+        whose setting ``None`` uses): ``"simple"`` writes a static page with
+        no script, to send by email; ``"brief"`` lists only what needs
+        attention; ``"checklist"`` sorts every check by its result (to fix,
+        to improve, decide by hand, for information, fine, not applicable)
+        and lists the repository's files. A static report is always rendered
+        by pytacheck (Quarto's HTML carries scripts).
 
     Returns
     -------
@@ -1069,6 +1124,8 @@ def report(
     if renderer not in ("pytacheck", "quarto"):
         raise ValueError("The renderer must be either 'pytacheck' or 'quarto'.")
     rt = _resolve_report_type(report_type)
+    # no file name given: the report goes to the temporary folder, and a message says where
+    default_file = output_file is None
     if renderer == "quarto" and _report_is_static(rt):
         raise ValueError(
             f"A '{rt}' report is rendered by pytacheck (renderer='pytacheck'): "
@@ -1086,7 +1143,7 @@ def report(
         bar = pb(len(papers), ":what [:bar] :current/:total :elapsedfull")
         bar.tick(0, tokens={"what": "Creating reports"})
         if output_file is None:
-            files: list[Any] = [f"_report.{fmt}"]
+            files: list[Any] = [os.path.join(tempfile.gettempdir(), f"_report.{fmt}")]
         elif isinstance(output_file, str | os.PathLike):
             files = [output_file]
         else:
@@ -1109,6 +1166,8 @@ def report(
                 r = None
             bar.tick(tokens={"what": str(p.paper_id)})
             out[str(p.paper_id)] = r
+        if default_file:
+            _report_temp_message([r.save_path for r in out.values() if r is not None])
         return out
 
     if output_file is None:
@@ -1117,7 +1176,7 @@ def report(
             raise TypeError(
                 "The paper argument must be a paper object (e.g., created with `read()`)"
             )
-        output_file = f"{paper.paper_id}_report.{fmt}"
+        output_file = os.path.join(tempfile.gettempdir(), f"{paper.paper_id}_report.{fmt}")
     if not isinstance(output_file, str | os.PathLike):
         output_file = next(iter(output_file))
     output_file = os.fspath(output_file)
@@ -1163,6 +1222,8 @@ def report(
             save_path = output_qmd
 
     module_output.save_path = save_path
+    if default_file:
+        _report_temp_message(save_path)
     return module_output
 
 
@@ -1180,6 +1241,9 @@ def report_repository(
     The first module is told where the files are (``local_path``,
     ``local_only=True``); the rest reuse its results. The paper is an empty
     stand-in named after the folder. ``report_type`` is as for :func:`report`.
+    Without ``output_file`` the report is named after the folder
+    (``<folder>_report.<format>``) and written to the temporary folder, with a
+    message saying where.
     """
     from metacheck.papers.io import test_paper
 
@@ -1192,8 +1256,11 @@ def report_repository(
             "repository first with osf_file_download()."
         )
     full_path = Path(path).resolve().as_posix()
+    default_file = output_file is None
     if output_file is None:
-        output_file = f"{os.path.basename(full_path)}_report.{fmt}"
+        output_file = os.path.join(
+            tempfile.gettempdir(), f"{os.path.basename(full_path)}_report.{fmt}"
+        )
     modules = [modules] if isinstance(modules, str | os.PathLike) else list(modules)
     new_args: dict[str, dict[str, Any]] = {k: dict(v) for k, v in (args or {}).items()}
     first = str(modules[0])
@@ -1205,7 +1272,7 @@ def report_repository(
     info = paper.info.copy()
     info["title"] = pd.Series([os.path.basename(full_path)], dtype="string")
     paper.info = info
-    return report(
+    res = report(
         paper=paper,
         modules=modules,
         output_file=output_file,
@@ -1214,6 +1281,9 @@ def report_repository(
         renderer=renderer,
         report_type=report_type,
     )
+    if default_file:
+        _report_temp_message(getattr(res, "save_path", None))
+    return res
 
 
 class _CallableReportModule(ModuleType):
