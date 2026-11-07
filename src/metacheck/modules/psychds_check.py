@@ -331,14 +331,91 @@ def psychds_check(
     labels_df = get_prev_outputs("codebook_check", "table")
 
     if structure_df is None or len(structure_df) == 0:
-        return {
-            "table": pd.DataFrame(),
-            "summary_table": _summary([(_pid(paper, structure_df, columns_df), [0] * 5)]),
-            "na_replace": dict(_NA_REPLACE),
-            "traffic_light": "na",
-            "summary_text": _EMPTY_TEXT,
-        }
+        return _empty(_EMPTY_TEXT, _pid(paper, structure_df, columns_df))
 
+    # One paper's files are checked by _check_one(); a paper list is checked paper by paper.
+    # Checked together, a list got one summary row for the first paper and 0 for the others
+    # (U113).
+    from metacheck.papers.model import is_paper_list
+    from metacheck.papers.tables import paper_id
+
+    all_ids = [str(as_str(v)) for v in paper_id(paper)] if is_paper_list(paper) else []
+    by_paper = (
+        len(all_ids) > 1
+        and "paper_id" in structure_df.columns
+        and any(as_str(v) in all_ids for v in structure_df["paper_id"].tolist())
+    )
+    if not by_paper:
+        return _check_one(
+            structure_df, columns_df, labels_df, no_evidence, _pid(paper, structure_df, columns_df)
+        )
+
+    # each paper from its own files, codebook columns and labels
+    per: list[dict[str, Any]] = []
+    for pid in all_ids:
+        own = _subset(structure_df, pid)
+        if len(own) == 0:
+            per.append(_empty(_EMPTY_TEXT, pid))
+        else:
+            per.append(
+                _check_one(own, _subset(columns_df, pid), _subset(labels_df, pid), no_evidence, pid)
+            )
+
+    tables = []
+    for pid, res in zip(all_ids, per, strict=True):
+        tb = res["table"]
+        if len(tb):
+            tb = tb.copy()
+            tb["paper_id"] = pd.array([pid] * len(tb), dtype="string")
+            tables.append(tb)
+    table = pd.concat(tables, ignore_index=True) if tables else pd.DataFrame()
+    summary_table = pd.concat([res["summary_table"] for res in per], ignore_index=True)
+    lights = [res["traffic_light"] for res in per]
+    n_green = sum(x == "green" for x in lights)
+    summary_text = (
+        f"Of {len(per):d} papers, {n_green:d} already contain{plural(n_green, 's', '')} the "
+        "files required for a Psych-DS dataset, "
+        f"{sum(x == 'yellow' for x in lights):d} could be converted, "
+        f"{sum(x == 'red' for x in lights):d} could not be converted yet, and "
+        f"{sum(x == 'na' for x in lights):d} had no repository files to check."
+    )
+    # one section per paper; its own headings one level down
+    report: list[Any] = []
+    for pid, res in zip(all_ids, per, strict=True):
+        r = res.get("report", res["summary_text"])
+        r = [r] if isinstance(r, str) else list(r)
+        report.append(f"#### Paper {pid}")
+        report += [re.sub(r"^#### ", "##### ", x) if isinstance(x, str) else x for x in r]
+
+    return {
+        "table": table,
+        "summary_table": summary_table,
+        "na_replace": dict(_NA_REPLACE),
+        "traffic_light": "info",
+        "report": report,
+        "summary_text": summary_text,
+    }
+
+
+def _empty(text: str, pid: str | None) -> dict[str, Any]:
+    """The result of a paper with no repository files to check."""
+    return {
+        "table": pd.DataFrame(),
+        "summary_table": _summary([(pid, [0] * 5)]),
+        "na_replace": dict(_NA_REPLACE),
+        "traffic_light": "na",
+        "summary_text": text,
+    }
+
+
+def _check_one(
+    structure_df: pd.DataFrame,
+    columns_df: Any,
+    labels_df: Any,
+    no_evidence: bool,
+    pid: str | None,
+) -> dict[str, Any]:
+    """The Psych-DS check of one paper's repository files (``check_one()`` in the R module)."""
     a = _assess(structure_df, columns_df, labels_df)
     n_files = a["n_files"]
     req_met, rec_met = a["req_met"], a["rec_met"]
@@ -476,30 +553,14 @@ def psychds_check(
         report += ["#### Suggestions", "\n".join(f"- {s}" for s in suggestions)]
 
     # 9. Summary table + return ----------------------------------------------------
-    # one row per paper, each assessed on its own files (R reports the pooled
-    # counts once, for the first paper only)
-    pids = (
-        list(dict.fromkeys(v for v in (as_str(x) for x in structure_df["paper_id"]) if v))
-        if "paper_id" in structure_df.columns
-        else []
-    )
-    if len(pids) > 1:
-        rows = []
-        for pid in pids:
-            sub = _assess(
-                _subset(structure_df, pid), _subset(columns_df, pid), _subset(labels_df, pid)
-            )
-            rows.append((pid, sub["counts"]))
-        summary_table = _summary(rows)
-    else:
-        # the paper that owns the files: on a paper list it need not be the
-        # first paper, which R's .pid() would credit with them
-        owner = pids[0] if pids else _pid(paper, structure_df, columns_df)
-        summary_table = _summary([(owner, a["counts"])])
-
+    table = plan_table(structure_df, a["plan"])
+    # the module's table names a file as the structure does (a missing name stays missing); a
+    # structure without names keeps the names taken from the paths (R stops on such a structure)
+    if "file_name" in structure_df.columns:
+        table["file_name"] = pd.array(structure_df["file_name"].tolist(), dtype="string")
     return {
-        "table": plan_table(structure_df, a["plan"]),
-        "summary_table": summary_table,
+        "table": table,
+        "summary_table": _summary([(pid, a["counts"])]),
         "na_replace": dict(_NA_REPLACE),
         "traffic_light": a["traffic_light"],
         "report": report,

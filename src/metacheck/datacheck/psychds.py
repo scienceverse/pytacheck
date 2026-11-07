@@ -126,6 +126,133 @@ def _tolower(x: str | None) -> str | None:
     return "".join("i" if c == "İ" else low if len(low := c.lower()) == 1 else c for c in x)
 
 
+# folder names that only say what kind of file is in them, as the copy's own data/, analysis/,
+# materials/, documentation/ and outputs/ folders do (``.plan_kind_folders``)
+_PLAN_KIND_FOLDERS = frozenset(
+    [
+        "data",
+        "dataset",
+        "datasets",
+        "rawdata",
+        "raw_data",
+        "raw-data",
+        "code",
+        "codes",
+        "script",
+        "scripts",
+        "analysis",
+        "analyses",
+        "src",
+        "r",
+        "python",
+        "syntax",
+        "materials",
+        "material",
+        "stimuli",
+        "documentation",
+        "docs",
+        "doc",
+        "output",
+        "outputs",
+        "results",
+    ]
+)
+_ARCHIVE_PREFIX = re.compile(
+    r"^([^/]*/)*[^/]*\.(zip|tar|tgz|gz|7z|rar)(\.contents)?/", re.IGNORECASE
+)
+
+
+def _plan_strip_archive(path: str | None) -> str | None:
+    """A path with ``/`` and without the archive it is in (``.plan_strip_archive()``)."""
+    if path is None:
+        return None
+    return _ARCHIVE_PREFIX.sub("", path.replace("\\", "/"), count=1)
+
+
+def _plan_relative_paths(paths: list[str | None]) -> list[str | None]:
+    """Paths without the archive each is in and without the top folders that hold every file.
+
+    Port of ``.plan_relative_paths()``: ``repo-1a2b3c/Code/a.R`` and ``repo-1a2b3c/README.md``
+    become ``Code/a.R`` and ``README.md``. A missing path stays missing.
+    """
+    p = [_plan_strip_archive(x) for x in paths]
+    ok = [i for i, x in enumerate(p) if x is not None and x != ""]
+    while True:
+        parts = []
+        for i in ok:
+            segs = (p[i] or "").split("/")
+            if len(segs) > 1 and segs[-1] == "":  # strsplit() drops a trailing empty piece
+                segs.pop()
+            parts.append(segs)
+        if not parts or any(len(s) < 2 for s in parts):
+            break
+        first = {s[0] for s in parts}
+        if len(first) != 1:
+            break
+        cut = len(next(iter(first))) + 1
+        for i in ok:
+            p[i] = (p[i] or "")[cut:]
+    return p
+
+
+def _plan_readme_folder(path: str | None) -> str | None:
+    """The folder a README is in, as a name for a file, or ``None`` for one at the top.
+
+    Port of ``.plan_readme_folder()``: ``Archive of OSF Storage`` becomes ``Archive-of-OSF-Storage``.
+    """
+    if path is None or path == "":
+        return None
+    stripped = _plan_strip_archive(path) or ""
+    d = _dirname(stripped)
+    if d in (".", "", "/"):
+        return None
+    slug = re.sub(r"(^-+|-+$)", "", re.sub(r"[^A-Za-z0-9]+", "-", _basename(d) or ""))
+    return slug if slug else None
+
+
+def _plan_sub_dirs(
+    rel: list[str | None],
+    groups: list[str | None],
+    kind: list[str | None],
+) -> list[str]:
+    """The folders a file keeps below those its study's files of the same kind share.
+
+    ``Code/utils/helpers.py`` next to ``Code/a.R`` becomes ``analysis/utils/helpers.py``;
+    ``Data/scenario_lb/x.csv`` next to ``Data/y.csv`` becomes ``data/scenario_lb/study-x_data.csv``.
+    A first folder that only names the kind of file is dropped (it is what the copy's own folder
+    says).
+    """
+    n = len(rel)
+    sub_dir = [""] * n
+    dirs = [
+        [d for d in ("" if r is None else _dirname(r)).split("/") if d not in (".", "")]
+        for r in rel
+    ]
+    grp_key = [g if g is not None else "" for g in groups]
+    keys = list(dict.fromkeys((g, k) for g, k in zip(grp_key, kind, strict=True) if k is not None))
+    for gk in keys:
+        rows = [
+            i
+            for i in range(n)
+            if (grp_key[i], kind[i]) == gk and kind[i] is not None and rel[i] is not None
+        ]
+        if not rows:
+            continue
+        common = dirs[rows[0]]
+        for i in rows[1:]:
+            k = 0
+            while k < min(len(common), len(dirs[i])) and common[k] == dirs[i][k]:
+                k += 1
+            common = common[:k]
+        for i in rows:
+            below = dirs[i][len(common) :]
+            if below and below[0].lower() in _PLAN_KIND_FOLDERS:
+                below = below[1:]
+            if below:
+                sub_dir[i] = "/".join(below) + "/"
+    return sub_dir
+
+
 # -- the plan ----------------------------------------------------------------------
 
 
@@ -157,7 +284,7 @@ def file_plan(structure_df: pd.DataFrame) -> FilePlan:
     from metacheck.datacheck.files import data_format
 
     n_files = len(structure_df)
-    raw_name = _col(structure_df, "file_name") or [None] * n_files
+    raw_name = [None if f == "" else f for f in _col(structure_df, "file_name") or [None] * n_files]
     raw_path = _col(structure_df, "file_path") or [None] * n_files
     data_type = _col(structure_df, "data_type") or [None] * n_files
     groups = _col(structure_df, "group") or [None] * n_files
@@ -181,6 +308,33 @@ def file_plan(structure_df: pd.DataFrame) -> FilePlan:
     stems = _keyword_slug(_file_path_sans_ext(names))
     name_ext = _file_ext(names)
 
+    # Each file's path in the repository, without the archive it is in and without a top folder
+    # that holds every file (a repository downloaded from GitHub sits in "<name>-<commit>/").
+    rel = _plan_relative_paths(raw_path)
+    # Which READMEs at the top of a study are its main README: one named just "README" (any
+    # extension), or the only README at that top.
+    is_readme = [
+        dt == "documentation" and role == "readme"
+        for dt, role in zip(dtypes, doc_role, strict=True)
+    ]
+    at_top = [r and _plan_readme_folder(p) is None for r, p in zip(is_readme, rel, strict=True)]
+    plain = [
+        (_tolower(_file_path_sans_ext([_basename(_backslash_to_slash(f or ""))])[0]) or "")
+        == "readme"
+        for f in file_name
+    ]
+    n_top: dict[str, int] = {}
+    for t, g in zip(at_top, groups, strict=True):
+        n_top[g or ""] = n_top.get(g or "", 0) + int(t)
+    top_readme_main = [
+        t and (pl or n_top[g or ""] == 1) for t, pl, g in zip(at_top, plain, groups, strict=True)
+    ]
+    kind = [
+        None if (dt == "documentation" and role in ("readme", "license")) else dt
+        for dt, role in zip(dtypes, doc_role, strict=True)
+    ]
+    sub_dir = _plan_sub_dirs(rel, groups, kind)
+
     # each file's Psych-DS target path. Only a repository with two or more
     # study groups uses the study-<group>/ layout; files without a group (the
     # collection-level README and ro-crate metadata) stay at the root.
@@ -198,16 +352,26 @@ def file_plan(structure_df: pd.DataFrame) -> FilePlan:
             return name  # collection-level metadata: the root, under its own name
         if dt == "data":
             if _PSYCHDS_DATAFILE.match(name):
-                return f"{prefix}data/{name}"  # already a valid Psych-DS data file name
+                # already a valid Psych-DS data file name
+                return f"{prefix}data/{sub_dir[i]}{name}"
             stem = stems[i] or f"file{i + 1}"
-            return f"{prefix}data/study-{stem}_data.csv"
+            return f"{prefix}data/{sub_dir[i]}study-{stem}_data.csv"
         if dt in _ROOT_DOC_TYPES:
+            if role == "readme" and dt == "documentation":
+                # A README in a subfolder describes that folder, so it goes to documentation/
+                # named after the folder; at the top, the README is a file named just "README",
+                # or the only README there is, and one about a single file keeps its name.
+                folder = _plan_readme_folder(rel[i])
+                if folder is not None:
+                    return f"{prefix}documentation/{folder}_{name}"
+                if not top_readme_main[i]:
+                    return f"{prefix}documentation/{name}"
             if role == "readme" or role == "license":
                 base = "README" if role == "readme" else "LICENSE"
                 return prefix + (f"{base}.{ext}" if ext else base)
             if re.match(r"^changes(\.|$)", low):
                 return prefix + name  # a CHANGES log sits at the root, under its own name
-        return f"{prefix}{_TYPE_TO_SUBDIR.get(dt, 'documentation')}/{name}"
+        return f"{prefix}{_TYPE_TO_SUBDIR.get(dt, 'documentation')}/{sub_dir[i]}{name}"
 
     target_path: list[str | None] = [target_of(i) for i in range(n_files)]
     is_data = [dt == "data" for dt in dtypes]
@@ -241,6 +405,12 @@ def file_plan(structure_df: pd.DataFrame) -> FilePlan:
     misplaced = [
         not ex and c != t for ex, c, t in zip(is_excluded, current_path, target_path, strict=True)
     ]
+    # Scripts' paths are rewritten from this plan, so the plan itself must hold names every
+    # operating system can write.
+    from metacheck.utils import _portable_path
+
+    target_path = _portable_path(target_path)
+    original_target = _portable_path(original_target)
     return FilePlan(
         names=names,
         file_name=file_name,
