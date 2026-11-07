@@ -42,7 +42,7 @@ def upstream_r(upstream_dir: Path) -> dict[str, str]:
 
 def test_default_is_report_formals(upstream_r) -> None:
     expected = _formals_modules(upstream_r["report"], "report")
-    assert len(expected) == 16
+    assert len(expected) == 15
     assert builtin_pack().presets["default"]["modules"] == expected
 
 

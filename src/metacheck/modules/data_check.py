@@ -1779,9 +1779,15 @@ def _concept_texts(
     rep = columns_df["representation"].tolist()
     isnum = columns_df["is_numeric"].tolist()
     samples = columns_df["sample_values"].tolist()
+    sheet = columns_df["sheet"].tolist() if "sheet" in columns_df.columns else [None] * n
     texts = []
     for i in rows:
         f = None if h._na(src[i]) else src[i]
+        # the full reads are kept by file: a table of a file with several is "file [sheet]"
+        read_key = os.path.basename(str(f))
+        sh = None if h._na(sheet[i]) else str(sheet[i])
+        if sh is not None and read_key.endswith(f" [{sh}]"):
+            read_key = read_key[: -len(f" [{sh}]")]
         sib = [str(names[r]) for r in in_file[f]]
         k = pos[i]
         stats: dict[str, Any] = {key: None if h._na(v[i]) else v[i] for key, v in stat.items()}
@@ -1796,7 +1802,7 @@ def _concept_texts(
                 None if f is None else str(f),
                 sib[max(0, k - 3) : k] + sib[k + 1 : k + 3],
                 stats,
-                _raw_values(raw_reads.get(os.path.basename(str(f))), names[i]),
+                _raw_values(raw_reads.get(read_key), names[i]),
                 h._dquote_free(None if h._na(samples[i]) else samples[i]),
             )
         )

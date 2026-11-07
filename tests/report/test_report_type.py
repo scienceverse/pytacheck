@@ -230,8 +230,11 @@ def test_validation_table() -> None:
     assert out.startswith("## Validation\n")
     assert "<td>Marginal Significance</td><td>In a sample of 51 papers" in out
     # a module without a validation says so
+    out = validation_table([SimpleNamespace(module="all_urls", title="List All URLs")])
+    assert "<td>List All URLs</td><td>No validation information yet.</td>" in out
+    # code_check says it has not been validated (metacheck 0.4.3.7)
     out = validation_table([SimpleNamespace(module="code_check", title="Code Check")])
-    assert "<td>Code Check</td><td>No validation information yet.</td>" in out
+    assert "<td>Code Check</td><td>This module has not been validated." in out
 
 
 def test_report_writes_each_type(tmp_path: Path) -> None:

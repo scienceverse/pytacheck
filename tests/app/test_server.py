@@ -74,7 +74,7 @@ def test_a_path_outside_the_upload_folder_is_refused(client: TestClient, tmp_pat
     shutil.copy(pc.demofile("json"), outside)
     events = _join(client, _check_fn_index(client), str(outside))
     assert "it was not uploaded by a user" in events
-    assert "Ran 19 checks" not in events
+    assert "Ran 18 checks" not in events
     assert "This paper demonstrates" not in events
 
 
@@ -83,7 +83,7 @@ def test_an_uploaded_file_is_checked(client: TestClient) -> None:
     (path,) = client.post("/gradio_api/upload", files=files).json()
     assert Path(path).resolve().is_relative_to(Path(get_upload_folder()).resolve())
     events = _join(client, _check_fn_index(client), path)
-    assert "Ran 19 checks" in events
+    assert "Ran 18 checks" in events
     assert "/report/t1/paper_report.html" in events.replace("\\/", "/") or "_report.html" in events
 
 
