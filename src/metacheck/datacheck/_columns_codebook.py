@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import math
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -524,22 +525,88 @@ def _pdf_codebook_lines(
     return _nonblank_lines("\n".join(pages))
 
 
-def _strip_rtf(text: str) -> str:
-    """The plain text of an RTF document, by the ``striprtf`` package (the ``data`` extra).
+_RTF_HIDDEN = re.compile(r"\{\\(fonttbl|colortbl|stylesheet|info|pict|\*)")
+_RTF_PAR = re.compile(r"\\(par|line)\b ?")
+_RTF_TAB = re.compile(r"\\tab\b ?")
+_RTF_HEX = re.compile(r"\\'[0-9a-fA-F]{2}")
+_RTF_UNI = re.compile(r"\\u-?[0-9]+ ?.?")
+_RTF_WORD = re.compile(r"\\[a-zA-Z]+-?[0-9]* ?")
 
-    ``.strip_rtf()`` in R removes control words and braces with four regular
-    expressions, which leaves the font table's text, runs the lines together
-    and drops the characters written as ``\\'e9`` or ``\\u233``; striprtf reads
-    RTF properly (see U215). Text that is not valid UTF-8 is still an error, as
-    in R. Without striprtf this raises ``ImportError``, which
-    :func:`_extract_rich_text` turns into ``""``: the codebook is then read as
-    raw lines, as any other file whose text cannot be extracted is.
+
+def _rtf_int_to_utf8(num: int) -> str:
+    """``intToUtf8(num)``: ``"NA"`` (pasted from an ``NA_character_``) for a surrogate, a value
+    above U+10FFFF or a negative one; nothing for zero."""
+    if num == 0:
+        return ""
+    if num < 0 or 0xD800 <= num <= 0xDFFF or num > 0x10FFFF:
+        return "NA"
+    return chr(num)
+
+
+def _strip_rtf(text: str) -> str:
+    """The text of an RTF document, line by line.
+
+    Port of ``R/data_check_helpers.R::.strip_rtf()`` (metacheck 0.4.3.7, U215): hidden groups
+    (font and colour tables, stylesheet, info, pictures, ``\\*`` groups) are dropped, ``\\par``
+    and ``\\line`` are line breaks, ``\\'hh`` (Windows-1252) and ``\\uN`` characters are decoded,
+    and escaped braces and backslashes are kept as characters. Text that is not valid UTF-8 is an
+    error, as in R.
     """
     if not _valid_utf8(text):
         raise ValueError("input string 1 is invalid in this locale")
-    from striprtf.striprtf import rtf_to_text
-
-    return str(rtf_to_text(text))
+    # hidden groups: the group ends where the braces balance, counted without regard to escapes
+    while True:
+        m = _RTF_HIDDEN.search(text)
+        if m is None:
+            break
+        depth = 0
+        end = len(text) - m.start()
+        for i, ch in enumerate(text[m.start() :], start=1):
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+            if depth == 0:
+                end = i
+                break
+        text = text[: m.start()] + text[m.start() + end :]
+    # protect escaped characters
+    text = text.replace("\\\\", "\x01").replace("\\{", "\x02").replace("\\}", "\x03")
+    text = _RTF_PAR.sub("\n", text)
+    text = _RTF_TAB.sub("\t", text)
+    # \'hh: one Windows-1252 byte
+    while True:
+        m = _RTF_HEX.search(text)
+        if m is None:
+            break
+        byte = int(text[m.start() + 2 : m.start() + 4], 16)
+        if byte == 0:
+            raise ValueError("embedded nul in string: '\\0'")
+        try:
+            ch = bytes([byte]).decode("cp1252")
+        except UnicodeDecodeError:
+            ch = ""  # undefined in Windows-1252: iconv() gives NA, which is dropped
+        text = text[: m.start()] + ch + text[m.end() :]
+    # \uN with its one-character fallback (often "?")
+    while True:
+        m = _RTF_UNI.search(text)
+        if m is None:
+            break
+        num: int | None = int(re.match(r"\\u(-?[0-9]+)", m.group(0)).group(1))  # type: ignore[union-attr]
+        if num is not None and abs(num) > 2147483647:
+            num = None  # as.integer() is NA
+        if num is not None and num < 0:
+            num += 65536
+        ch = "" if num is None else _rtf_int_to_utf8(num)
+        text = text[: m.start()] + ch + text[m.end() :]
+    text = text.replace("\\~", " ")  # non-breaking space
+    text = re.sub(r"\\[-_]", "", text)  # optional hyphen
+    text = _RTF_WORD.sub("", text)  # other control words
+    text = re.sub(r"\\.", "", text, flags=re.DOTALL)  # other control symbols
+    text = re.sub(r"[{}]", "", text)
+    text = text.replace("\x01", "\\").replace("\x02", "{").replace("\x03", "}")
+    lines = [re.sub(r"[ \t]+", " ", ln).strip(" \t\r\n") for ln in text.split("\n")]
+    return "\n".join(ln for ln in lines if ln)
 
 
 _W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"

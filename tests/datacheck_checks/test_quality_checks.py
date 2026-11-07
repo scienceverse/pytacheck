@@ -259,11 +259,12 @@ def test_colname_collisions() -> None:
     assert "cannot tell these columns apart" in r["t'"]
     d = data_check_colname_collisions(["id", "id", "x"])
     assert "id" in d
+    assert list(d) == ["id", "id"]  # one element per column, as R's named list
     assert "identically named column" in d["id"]
     assert data_check_colname_collisions(["a", "b", "a_1"]) == {}
     assert data_check_colname_collisions(["k", "k\u02b7"]) == {}
     # U56: blank names collide like any other name (R's out[[""]] entries were
     # unreachable by name, so a blank column's collision was never reported)
     b = data_check_colname_collisions(["", "", "x"])
-    assert list(b) == [""]
+    assert list(b) == ["", ""]
     assert "1 other identically named column" in b[""]

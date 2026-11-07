@@ -7,19 +7,6 @@
 # (marginal's wording, code_check, data_check, repo_check, codebook_check) is not marked here: it
 # shows in the report cases that run the module until that module's lane settles it.
 
-# D118 (code_check's summary; marks of the code_check cases, kept as they were) ------------
-"mod_code/code_check.mixed": &dx_report_5_14
-  kind: deliberate
-  ref: D118
-  reason: "code_check's summary names the files without comments and the files that load libraries in several places, and lists setwd()/install.packages() lines only when found (metacheck 7208868); also U82: one file with libraries at several places is \"In 1 code file\" (metacheck: \"In 1 code files\")"
-"mod_code/code_check.paperlist": *dx_report_5_14
-"mod_code/code_check.parse_errors": *dx_report_5_14
-"mod_code/code_check.psychsci": *dx_report_5_14
-"mod_code_review/code_check.gaps": *dx_report_5_14
-"mod_code_review/code_check.na_pid": *dx_report_5_14
-"mod_code_review/local_path.mixed_local_only": *dx_report_5_14
-"mod_code_review/local_path.parse_errors": *dx_report_5_14
-
 # D131: a module that is not one of metacheck's own (the report tests' own modules) -------
 # metacheck 0.3.3.1+ links every module to a chapter of the online manual, a made-up
 # mod-tests/report/modules/<file>.R.html for a module file of one's own; pytacheck links only

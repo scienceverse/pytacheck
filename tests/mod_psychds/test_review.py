@@ -70,14 +70,15 @@ def test_tree_na_or_empty_path_fails_like_r(paths: list[str | None]) -> None:
 
 
 def test_na_file_name_falls_back_to_the_file_path() -> None:
-    # U113: R targets "analysis/NA"
+    # U113 (fixed in metacheck ebfbb278): the plan names a file without a name from its path;
+    # the module's table lists the structure's own names, a missing one stays missing
     out = ps.run_chain("na_name_code_path", file="review_chains.json")
     assert out.table["target_path"].tolist() == [
-        "analysis/y.R",
+        "analysis/x/y.R",
         "analysis/b.R",
         "documentation/notes.txt",
     ]
-    assert out.table["file_name"].tolist() == ["y.R", "b.R", "notes.txt"]
+    assert out.table["file_name"].isna().tolist() == [True, False, True]
     assert out.table["status"].tolist() == ["move", "present", "move"]
 
 

@@ -977,7 +977,9 @@ def test_unexpanded_zip_code_members_are_checked(
         )
 
     monkeypatch.setattr(zp, "_zip_fetch_members", fetch)
-    monkeypatch.setattr(dl, "_repo_cache_path", lambda repo_url, file_path: str(tmp_path / "c"))
+    monkeypatch.setattr(
+        dl, "_repo_cache_path", lambda repo_url, file_path, cache=True: str(tmp_path / "c")
+    )
     table = _remote_listing(
         [
             {
@@ -1026,7 +1028,7 @@ def test_na_file_url_is_read_as_the_path_na() -> None:
     errors = dict(zip(mo.table["file_name"], mo.table["error"], strict=True))
     assert pd.isna(errors["clean.R"])
     for name in ("naloc.R", "naloc.Rmd", "naloc.py"):
-        assert errors[name].startswith("'NA' does not exist")
+        assert errors[name].startswith("Could not resolve hostname [NA]")
     assert mo.table["checked"].tolist() == [True] * 4
 
 

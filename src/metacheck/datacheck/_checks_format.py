@@ -8,6 +8,7 @@ trial-level (Behaverse / Inquisit / jsPsych / PsychoPy / E-Prime) sections of
 from __future__ import annotations
 
 import os
+import re
 from typing import Any
 
 import pandas as pd
@@ -547,12 +548,17 @@ def _bh_is_trial_level_file(path: Any) -> bool:
         return True
     if ext not in _BH_SNIFF_EXTS:
         return False
+    # The detectors only read the column NAMES, so only the header line is read and split
+    # (read.csv(nrows = 1) took time quadratic in the number of columns when the names are long,
+    # 1.5 hours for one table of 12,110 columns with 250-character names; metacheck #477). A first
+    # line that is blank has no names, so such a file is not trial-level.
     try:
-        hdr = _read_csv_header(p, "\t" if ext == "iqdat" else ",")
+        fields = _header_fields(p, "\t" if ext == "iqdat" else ",")
     except Exception:
         return False
-    if hdr is None or hdr.shape[1] == 0:
+    if not fields:
         return False
+    hdr = pd.DataFrame([[None] * len(fields)], columns=pd.Index(fields, dtype=object))
     return data_check_is_behaverse(hdr) or data_check_is_inquisit(hdr) or data_check_is_jspsych(hdr)
 
 
@@ -582,26 +588,33 @@ def _utf8_bom_connection(raw: bytes, complete: bool) -> bytes:
     return raw
 
 
-def _read_csv_header(path: str, sep: str) -> pd.DataFrame | None:
-    """``utils::read.csv(path, check.names = FALSE, nrows = 1, fileEncoding = "UTF-8-BOM", sep)``.
+def _header_fields(path: str, sep: str) -> list[str]:
+    """The fields of a file's first line, as R's ``scan()`` splits it.
 
-    The ``fileEncoding`` connection is emulated byte-wise (see
-    :func:`_utf8_bom_connection`) -- the BOM goes before ``read.table()``
-    looks for blank lines, and reading stops at invalid UTF-8 -- and the
-    result is read like ``read.table()`` (every line a row, short lines padded).
+    The line is read through ``file(path, encoding = "UTF-8-BOM")``
+    (:func:`_utf8_bom_connection`): a leading byte-order mark goes, and reading stops at invalid
+    UTF-8. A blank first line, or an empty file, has no fields.
     """
-    import tempfile
+    import csv
 
-    from metacheck.datacheck._files_delim import read_delim
-
+    chunks: list[bytes] = []
     with open(path, "rb") as fh:
-        raw = fh.read(_SNIFF_BYTES + 1)
-    data = _utf8_bom_connection(raw[:_SNIFF_BYTES], complete=len(raw) <= _SNIFF_BYTES)
-    with tempfile.TemporaryDirectory(prefix="pytacheck-sniff-") as tmp:
-        tmp_path = os.path.join(tmp, "header.txt")
-        with open(tmp_path, "wb") as fh:
-            fh.write(data)
-        return read_delim(tmp_path, sep=sep, header=True, nrows=1, fill=True)
+        while True:
+            block = fh.read(_SNIFF_BYTES)
+            if not block:
+                break
+            chunks.append(block)
+            if b"\n" in block or b"\r" in block:
+                break
+    raw = _utf8_bom_connection(b"".join(chunks), complete=True)
+    if not raw:
+        return []
+    text = raw.decode("utf-8")
+    line = re.split(r"\r\n|\n|\r", text, maxsplit=1)[0]
+    if line == "":
+        return []
+    rows = list(csv.reader([line], delimiter=sep, quotechar='"', doublequote=True))
+    return rows[0] if rows else []
 
 
 def _names(df: Any) -> list[str]:

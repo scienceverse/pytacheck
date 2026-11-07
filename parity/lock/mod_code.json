@@ -1,9 +1,0 @@
-{
-"code_check.download_file_cap": {"r": "5ceb8af909949cf6", "py": "c64138f187dffe01", "diff": ["summary_text[]"]},
-"code_check.mixed": {"r": "e27b14157bd2e2ba", "py": "a85f3ee9d3ca34d0", "diff": ["report[]"]},
-"code_check.no_file_url": {"r": "ac5146cf65ca52a8", "py": "9d2e98f3179655e8", "diff": ["<R error, Python value>"]},
-"code_check.paperlist": {"r": "eef46a027b82cb15", "py": "91f67607e36076a9", "diff": ["report[]"]},
-"code_check.parse_errors": {"r": "d56cf0651bef4089", "py": "a1a0c0c930bacb05", "diff": ["report[]"]},
-"code_check.psychsci": {"r": "0083c510897564be", "py": "5ec3112f7c6bc721", "diff": ["report[]"]},
-"code_check.qmd": {"r": "58aad50e51ca5718", "py": "76eaea3b38c4c25d", "diff": ["report[]", "summary_table.code_missing_files[]", "summary_text[]", "table.code_lines[]", "table.comment_lines[]", "table.has_docstring[]", "table.language[]", "table.library_lines[]", "table.library_max_between[]", "table.loaded_files_missing[]", "table.loaded_files_missing_names[]", "table.packages[]", "table.packages_n[]", "table.parse_error[]", "table.percentage_comment[]"]}
-}

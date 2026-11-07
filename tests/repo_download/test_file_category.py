@@ -244,8 +244,21 @@ def test_check_file_naming_path_lengths() -> None:
         "directory-length-100",
         "filename-length-50",
     ]
-    assert out["detail"].tolist()[0] == (
-        "path-length-255 is 262 characters, over the 255-character budget"
-    )
-    with pytest.raises(ValueError, match="missing value"):
-        check_file_naming(["a.R", None])
+    assert out["detail"].tolist()[0] == "The path is 262 characters, over the 255-character limit"
+    assert out["detail"].tolist()[3] == "The file name is 160 characters, over the recommended 50"
+    # a file without a name has nothing to check (U122)
+    assert check_file_naming(["a.R", None]).empty
+
+
+def test_is_readme_name() -> None:
+    from metacheck.fileinfo.category import is_readme_name
+
+    assert is_readme_name(
+        ["README", "Read_me.txt", "DataReadMe.md", "read.me.txt", "spread.means.csv"]
+    ) == [
+        True,
+        True,
+        True,
+        True,
+        False,
+    ]

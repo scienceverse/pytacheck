@@ -85,7 +85,7 @@ def test_zip_peek_progress_bar(progress: list[tuple[str, Any]]) -> None:
     assert after[:3] == [("tick", (1, {})), ("tick", (1, {})), ("terminate", None)]
 
 
-ZIP_FORMAT = "Reading zip contents [:bar] :current/:total"
+ZIP_FORMAT = "Reading archive contents [:bar] :current/:total"
 
 
 def test_listing_rows_read_record_columns_once() -> None:
@@ -120,7 +120,6 @@ def test_listing_without_its_url_column_fails_like_r() -> None:
         lambda: info,
         "zenodo_url",
         rc.zenodo_row,
-        col_chr=True,
     )
     assert repos.df["repo_error"].tolist() == ["subscript out of bounds"]
     assert list(files.columns) == ["repo_name"]

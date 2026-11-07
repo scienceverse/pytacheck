@@ -43,6 +43,16 @@
 ".detect_likert_scale" = "metacheck.datacheck.files:_detect_likert_scale"
 
 # constants (R objects that are not functions)
+# metacheck 0.4.3.7 (4a61888)
+".is_geotiff" = "metacheck.datacheck.files:_is_geotiff"
+".is_r_package_service_file" = "metacheck.datacheck.files:_is_r_package_service_file"
+".data_source_keys" = "metacheck.datacheck.files:_data_source_keys"
+".csv_is_space_separated" = "metacheck.datacheck.files:_csv_is_space_separated"
+".rds_is_workspace" = "metacheck.datacheck.files:_rds_is_workspace"
+".data_file_sheets" = "metacheck.datacheck.files:_data_file_sheets"
+".sheet_is_notes" = "metacheck.datacheck.files:_sheet_is_notes"
+".read_sav_any" = "metacheck.datacheck._files_readers:read_stat_file"  # the CP1252 retry inside it
+".utf16_as_utf8" = "metacheck.datacheck._files_delim:read_delim"  # the UTF-16 decoding inside the delimited reader (U217)
 [constants]
 ".data_check_types" = "metacheck.datacheck.files:_DATA_CHECK_TYPES"
 ".file_type_crosswalk" = "metacheck.datacheck.files:_FILE_TYPE_CROSSWALK"

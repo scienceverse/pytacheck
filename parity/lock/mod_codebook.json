@@ -1,5 +1,0 @@
-{
-"codebook_check.llm.paperlist": {"r": "5d2f8dcfd12fdf93", "py": "d3924ddd79574fd3", "diff": ["codebook_vars", "summary_table.clean_n[]", "summary_table.codebook_var_n[]", "summary_table.matched_n[]", "summary_table.unmatched_n[]", "summary_text[]", "table.codebook_variable[]", "table.label[]", "table.label_method[]", "table.label_source[]", "table.label_status[]"]},
-"codebook_check.paperlist": {"r": "884d0c4c9d690ffc", "py": "c9bc4cea066e73dc", "diff": ["codebook_vars", "summary_table.clean_n[]", "summary_table.codebook_var_n[]", "summary_table.matched_n[]", "summary_table.unmatched_n[]", "summary_text[]", "table.codebook_variable[]", "table.label[]", "table.label_method[]", "table.label_source[]", "table.label_status[]", "traffic_light[]"]},
-"scale_text_report.basic": {"r": "6a1703b9a7e9bfca", "py": "5a52c0a06d93d67c", "diff": ["<root>"]}
-}

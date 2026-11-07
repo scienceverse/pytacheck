@@ -1,10 +1,3 @@
 {
-"codebook_check.null_paper.empty": {"r": "ac5146cf65ca52a8", "py": "6f01f1d4ab1274ad", "diff": ["<R error, Python value>"]},
-"codebook_check.pl_onlycb_green": {"r": "94d62267511646af", "py": "9671770d1c90b0f8", "diff": ["codebook_vars", "summary_table.clean_n[]", "summary_table.codebook_var_n[]", "summary_table.matched_n[]", "summary_table.unmatched_n[]", "summary_text[]", "table.codebook_variable[]", "table.label[]", "table.label_method[]", "table.label_source[]", "table.label_status[]", "traffic_light[]"]},
-"codebook_check.pl_samefile": {"r": "a6b247ed7aebab88", "py": "dd97e96638eb2cdb", "diff": ["codebook_vars", "summary_table.clean_n[]", "summary_table.codebook_var_n[]", "summary_table.matched_n[]", "summary_table.unmatched_n[]", "summary_text[]", "table.codebook_variable[]", "table.label[]", "table.label_method[]", "table.label_source[]", "table.label_status[]", "traffic_light[]"]},
-"scale_text_report.na_fields": {"r": "6ad0cc361f5043ab", "py": "ac7e143d2daf441b", "diff": ["<root>"]},
-"scale_text_report.name_only": {"r": "1f6f480cda302570", "py": "4d678012478bbe38", "diff": ["<root>"]},
-"scale_text_report.no_admin": {"r": "1929e7c3e1129b1a", "py": "94eaf56aa75e44f7", "diff": ["<root>"]},
-"scale_text_report.no_match": {"r": "af69d29335ab225d", "py": "c0abd1f1069a8bd7", "diff": ["<root>"]},
-"scale_text_report.special_acronyms": {"r": "ac5146cf65ca52a8", "py": "9b063a76c713f043", "diff": ["<R error, Python value>"]}
+"codebook_check.null_paper.empty": {"r": "ac5146cf65ca52a8", "py": "6f01f1d4ab1274ad", "diff": ["<R error, Python value>"]}
 }
