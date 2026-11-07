@@ -1,11 +1,16 @@
 """Fixtures of the web interface tests: an app whose jobs are small fakes (helpers.py).
 
-A job runs in a process of its own (``JobRunner``). The tests start it with ``fork`` so the
-fake needs no import in the child.
+A job runs in a process of its own (``JobRunner``). On Linux the tests start it with ``fork``,
+so a test's fakes and settings reach it. Elsewhere they start it as the site does, with
+``spawn``: macOS's ``fork`` is not safe once threads run, and Windows has none. The tests
+that need their fakes in the job's process (``test_worker``'s ``real``) are skipped there.
+``METACHECK_TEST_START`` chooses the start method.
 """
 
 from __future__ import annotations
 
+import os
+import sys
 import time
 from collections.abc import Callable, Iterator
 from pathlib import Path
@@ -22,10 +27,13 @@ from metacheck.web.config import SiteConfig
 from metacheck.web.jobs import JobManager
 from tests.web.helpers import Clock, fake_job
 
+#: how a job's process is started in these tests (see the top of this file)
+START = os.environ.get("METACHECK_TEST_START") or ("fork" if sys.platform == "linux" else "spawn")
+
 
 @pytest.fixture(autouse=True)
-def _fork(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(hosted, "START_METHOD", "fork")
+def _start_method(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(hosted, "START_METHOD", START)
 
 
 @pytest.fixture

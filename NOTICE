@@ -27,8 +27,14 @@ src/metacheck/resources/data/tlds.txt lists the top-level domains of the ICANN
 section of the Public Suffix List (https://publicsuffix.org), which is licensed
 under the Mozilla Public License 2.0 (https://mozilla.org/MPL/2.0/).
 
-src/metacheck/web/site/ (the pages of `pytacheck site`) serves two files that are not
-part of this package's own code:
+src/metacheck/web/site/ (the pages of `pytacheck site`) is ported from the website of
+metacheck's demo site on SURF Research Cloud (the `site/` folder of
+https://github.com/scienceverse/surf-research-cloud), by Daniel Lakens: its pages, style,
+texts and page script, rewritten against this package's web interface. They are used
+under the GNU Affero General Public License version 3, the licence of this package.
+Portions are copyright Daniel Lakens.
+
+It also serves two files that are not part of this package's own code:
 
 * fonts/Cabin.ttf, the Cabin typeface, with its licence in fonts/OFL-Cabin.txt. It is
   licensed under the SIL Open Font License 1.1 (https://openfontlicense.org).

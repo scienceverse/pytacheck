@@ -70,7 +70,12 @@ def test_result_before_the_end_is_409(client: TestClient) -> None:
     early = client.get(f"/api/jobs/{job['id']}/result")
     assert early.status_code == 409
     assert early.json()["status"] == "running"
+    # the job is running once a place is free; its process tells its progress soon after
+    end = time.monotonic() + 20
     running = client.get(f"/api/jobs/{job['id']}").json()
+    while "progress" not in running and time.monotonic() < end:
+        time.sleep(0.05)
+        running = client.get(f"/api/jobs/{job['id']}").json()
     assert running["progress"] == 0.5
     assert running["step"] == "working"
     assert "position" not in running

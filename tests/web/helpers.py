@@ -62,10 +62,16 @@ def fake_job(
 
 
 def zip_bytes(members: dict[str, bytes | str]) -> bytes:
+    """A zip of *members*, the same bytes every time: a parameter of a test must not differ
+    between pytest-xdist's workers (a member's time would be the time it was made)."""
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
         for name, data in members.items():
-            archive.writestr(name, data)
+            info = zipfile.ZipInfo(name, date_time=(2026, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            # as writestr() sets them for a name
+            info.external_attr = (0o40775 << 16) | 0x10 if name.endswith("/") else 0o600 << 16
+            archive.writestr(info, data)
     return buffer.getvalue()
 
 

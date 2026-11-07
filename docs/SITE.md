@@ -269,8 +269,10 @@ When it is on, a repository job runs the repository's code unless the field says
 
 ## Differences from the site on SURF Research Cloud
 
-The routes, fields, status codes, limits and the website's layout follow that site. It was
-written again, not copied. These differ:
+The routes, fields, status codes and limits follow that site. The website's pages, style,
+texts and page script are ported from its `site/` folder (GNU AGPL-3.0, see NOTICE) and
+talk to this web interface; the web interface itself is written again in Python. These
+differ:
 
 * The checks are pytacheck's own. No R runs. The report is pytacheck's report.
 * Word files (`.docx`) are refused. GROBID XML is accepted.
