@@ -968,6 +968,10 @@ def _download_one(
         _unlink(dest)
         return "empty response"
     except Exception as e:
+        # read before the file goes: the response body was written to `dest`
+        guestbook = ""
+        if isinstance(e, _HttpError) and int(e.resp.status_code) == 400:
+            guestbook = _dataverse_guestbook_hint(_body_of(e.resp, dest))
         if os.path.exists(dest):
             _unlink(dest)
         if isinstance(e, _HttpError) and expected_bytes == 0:
@@ -991,8 +995,94 @@ def _download_one(
             from metacheck.archives.dryad import _dryad_401_hint
 
             first, nl, rest = str(e).partition("\n")
-            return f"{first}{_dryad_401_hint(url, int(e.resp.status_code))}{nl}{rest}"
+            hint = _dryad_401_hint(url, int(e.resp.status_code))
+            return f"{first}{hint}{nl}{rest}{guestbook}"
         return str(e)
+
+
+def _body_of(resp: Any, dest: str) -> Any:
+    """The response *resp* of a request that wrote its body to *dest*, with that body."""
+    import httpx
+
+    try:
+        with open(dest, "rb") as fh:
+            body = fh.read(1 << 20)
+    except OSError:
+        body = b""
+    return httpx.Response(int(resp.status_code), content=body, headers=dict(resp.headers))
+
+
+def _download_for_run() -> bool:
+    """Port of ``R/repo-download.R::.download_for_run()``: will the modules of this check run the
+    repository's code (``reproducibility_check`` with execute)?
+
+    ``report_module_run()`` and ``reproducibility_check()`` set the option
+    ``metacheck.download_for_run`` for the duration of the check, so the first module that
+    downloads (``code_check``, then ``data_check``) fetches what a run needs in the same call,
+    and no module asks a host for the same repository twice (metacheck #568).
+    """
+    from metacheck.utils import get_option
+
+    return get_option("metacheck.download_for_run") is True
+
+
+_MEDIA_RX = re.compile(
+    r"\.(png|jpe?g|gif|bmp|svg|eps|ps|ico|webp|heic|wav|mp3|flac|ogg|m4a|aac|mp4|avi|mov|mkv"
+    r"|wmv|webm|pdf|docx?|pptx?|odt|odp|key|pages)$",
+    re.IGNORECASE,
+)
+_WHOLE_ARCHIVE_RX = re.compile(r"github\.com|gitlab\.com|datadryad\.org", re.IGNORECASE)
+_RENV_RX = re.compile(r"(^|/)renv/", re.IGNORECASE)
+
+
+def _run_download_want(files: pd.DataFrame | None) -> list[bool]:
+    """Port of ``R/repo-download.R::.run_download_want()``: the files of a listing a run of the
+    code could need.
+
+    Every file, except images, sound, video and documents that hosts send one by one, since
+    there each such file is a request of its own and a script rarely reads one; a script that
+    names one gets it from ``reproducibility_check()`` before the run. From a host that
+    :func:`download_repo_files` fetches as one archive of the whole repository (GitHub, GitLab,
+    Dryad), every file is kept: its bytes arrive anyway (metacheck #568). renv's own library is
+    left out, as in ``code_check``. The size limits of :func:`download_repo_files` still apply.
+    """
+    if files is None or len(files) == 0:
+        return []
+    n = len(files)
+
+    def column(name: str) -> list[Any]:
+        return files[name].tolist() if name in files.columns else [None] * n
+
+    names, urls, paths = column("file_name"), column("repo_url"), column("file_path")
+    out: list[bool] = []
+    for name, url, path in zip(names, urls, paths, strict=True):
+        media = bool(_MEDIA_RX.search("" if is_missing(name) else str(name)))
+        whole = bool(_WHOLE_ARCHIVE_RX.search("" if is_missing(url) else str(url)))
+        where = str(name) if is_missing(path) or str(path) == "" else str(path)
+        if is_missing(path) and is_missing(name):
+            where = "NA"  # R: grepl() on NA is FALSE
+        in_renv = bool(_RENV_RX.search(where.replace("\\", "/")))
+        out.append((not media or whole) and not in_renv)
+    return out
+
+
+def _dataverse_guestbook_hint(resp: Any) -> str:
+    """Port of ``R/repo-download.R::.dataverse_guestbook_hint()``: a guestbook, if the response names one.
+
+    A Dataverse depositor can ask people to fill in a form (a guestbook) before downloading.
+    The listing does not say so; the host answers 400 with this message (verified live
+    2026-10-31, Harvard Dataverse datafile 3670464). The form asks for a person's details,
+    so metacheck does not submit it. ``""`` for any other answer.
+    """
+    from metacheck.archives.dataone import _resp_body_string
+
+    try:
+        txt = _resp_body_string(resp) or ""
+    except Exception:
+        txt = ""
+    if "Guestbook response" in txt:
+        return " (the depositor requires a guestbook form to be filled in before download)"
+    return ""
 
 
 def _download_capped(

@@ -927,6 +927,60 @@ def test_download_one_statuses_and_login_page(tmp_path: Path) -> None:
         )
 
 
+def test_run_download_want_leaves_out_media_from_hosts_that_send_files_one_by_one() -> None:
+    # metacheck #568
+    names = ["a.R", "x.csv", "model.stan", "fig.png", "song.wav", "paper.pdf", "fig.png", "lib.R"]
+    files = pd.DataFrame(
+        {
+            "file_name": names,
+            "file_path": [*names[:7], "renv/library/lib.R"],
+            "repo_url": ["https://zenodo.org/records/1"] * 6
+            + ["https://github.com/a/b", "https://zenodo.org/records/1"],
+        }
+    )
+    assert dlm._run_download_want(files) == [True, True, True, False, False, False, True, False]
+    assert dlm._run_download_want(files.iloc[:0]) == []
+    assert dlm._run_download_want(None) == []
+
+
+def test_download_for_run_follows_the_option() -> None:
+    assert dlm._download_for_run() is False
+    with local_options({"metacheck.download_for_run": True}):
+        assert dlm._download_for_run() is True
+    with local_options({"metacheck.download_for_run": "yes"}):
+        assert dlm._download_for_run() is False
+
+
+def test_dataverse_guestbook_hint_names_a_guestbook_and_nothing_else() -> None:
+    def answer(txt: str) -> httpx.Response:
+        return httpx.Response(400, content=txt.encode())
+
+    assert "guestbook form" in dlm._dataverse_guestbook_hint(
+        answer(
+            '{"status":"ERROR","message":"You may not download this file without the '
+            'required Guestbook response for guestbookID 270."}'
+        )
+    )
+    assert dlm._dataverse_guestbook_hint(answer('{"status":"ERROR","message":"Bad request"}')) == ""
+    assert dlm._dataverse_guestbook_hint(httpx.Response(400)) == ""
+
+
+def test_a_download_refused_for_a_guestbook_says_so(tmp_path: Path) -> None:
+    url = "https://dataverse.example.org/api/access/datafile/1"
+    body = b'{"status":"ERROR","message":"... required Guestbook response for guestbookID 1."}'
+    with respx.mock(assert_all_called=False) as router:
+        router.get(url).mock(return_value=httpx.Response(400, content=body))
+        err = _download_one(url, str(tmp_path / "a.csv"))
+        assert err is not None
+        assert err.startswith("HTTP 400 Bad Request.")
+        assert err.endswith(
+            "(the depositor requires a guestbook form to be filled in before download)"
+        )
+        router.get(url).mock(return_value=httpx.Response(400, content=b"nope"))
+        assert _download_one(url, str(tmp_path / "b.csv")) == "HTTP 400 Bad Request."
+    assert not (tmp_path / "a.csv").exists()
+
+
 def test_is_login_page(tmp_path: Path) -> None:
     assert _is_login_page(str(DATA / "login.html")) is True
     assert _is_login_page(str(DATA / "page.html")) is False

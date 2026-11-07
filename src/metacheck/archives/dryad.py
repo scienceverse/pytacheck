@@ -122,6 +122,8 @@ def dryad_links(paper: Any) -> pd.DataFrame:
     dryad_bare_regex = (
         "(?:https?://)?(?:www\\.)?datadryad\\.org/(?:stash/)?dataset[s]?/doi[:%]"
         "[A-Za-z0-9%._/-]*"
+        # a sharing link, resolved to its DOI by dryad_info() (#484)
+        "|(?:https?://)?(?:www\\.)?datadryad\\.org/(?:stash/)?share/[A-Za-z0-9_-]+"
         "|(?:https?://)?(?:doi\\.org/)?10\\.5061/dryad\\.[A-Za-z0-9]+"
         f"|(?:https?://)?(?:doi\\.org/)?(?:{alt})/[A-Za-z0-9]+"
     )
@@ -170,6 +172,63 @@ def _dryad_doi(dryad_url: Any) -> Any:
     return out[0] if scalar else out
 
 
+@functools.cache
+def _share_token_rx() -> Any:
+    return compile_r(
+        r"datadryad\.org/(?:stash/)?share/([A-Za-z0-9_-]+)", ignore_case=True, perl=True
+    )
+
+
+def _dryad_share_token(url: Any) -> Any:
+    """Port of R/archive-dryad.R::.dryad_share_token(): the token of a Dryad sharing link.
+
+    ``datadryad.org/stash/share/<token>`` or ``datadryad.org/share/<token>``; ``None`` for
+    anything else. A string gives a string, a sequence a list.
+    """
+    vals, scalar = _chr_values(url)
+    out: list[str | None] = []
+    for v in vals:
+        m = None if v is None else _share_token_rx().search(v)
+        out.append(None if m is None else cast("str", m.group(1)))
+    return out[0] if scalar else out
+
+
+def _dryad_share_doi(url: Any) -> dict[str, str | None]:
+    """Port of R/archive-dryad.R::.dryad_share_doi(): the DOI behind a Dryad sharing link (#484).
+
+    Authors link a sharing link, made for reviewers before publication, instead of the
+    dataset DOI; it keeps working after publication and redirects to the dataset's landing
+    page, whose address carries the DOI. One request to ``datadryad.org/share/<token>``,
+    without following the redirect. Returns ``{"doi", "error"}``: the DOI, or ``None`` with
+    the reason.
+    """
+    from metacheck import http
+
+    token = _dryad_share_token(url)
+    if token is None:
+        return {"doi": None, "error": None}
+    try:
+        resp = http.request(
+            "GET",
+            f"https://datadryad.org/share/{token}",
+            headers={"User-Agent": "metacheck"},
+            follow_redirects=False,
+            timeout=60.0,
+        )
+    except Exception:
+        resp = None
+    status = None if resp is None else resp.status_code
+    loc = None if resp is None else resp.headers.get("location")
+    doi = None if loc is None else _dryad_doi_one(loc)
+    if doi is not None:
+        error = None
+    elif status == 404:
+        error = "private or expired Dryad sharing link"
+    else:
+        error = "the Dryad sharing link could not be resolved"
+    return {"doi": doi, "error": error}
+
+
 def dryad_info(
     dryad_url: Any, id_col: int | str = 1, pb: Any = None, cache: bool = False
 ) -> pd.DataFrame:
@@ -184,7 +243,9 @@ def dryad_info(
     (the dataset's total size in bytes as Dryad reports it), ``files_total``
     (the number of files Dryad reports) and ``files_incomplete`` (fewer files
     could be listed than Dryad reports; a warning is given too) added, or
-    ``error``. An incomplete listing is not cached.
+    ``error``. An incomplete listing is not cached. A sharing link
+    (``datadryad.org/stash/share/...``) is followed to the dataset it leads to; one that
+    leads nowhere has its reason in ``error``, as a dataset that could not be found does.
     """
     from metacheck._r import bind_rows
     from metacheck.archives import _spinner, _tick
@@ -211,11 +272,35 @@ def dryad_info(
             ids["dryad_url"] = ids["dryad_url"].astype("string")
         ids = ids.drop_duplicates()
         ids = ids[ids["dryad_url"].notna().to_numpy()].reset_index(drop=True)
+
+        # A sharing link carries no DOI; ask Dryad where it leads (#484). One that leads
+        # nowhere keeps its reason, which repo_check reports.
+        share_error: dict[str, str] = {}
+        for k in range(len(ids)):
+            link = ids["dryad_url"].iloc[k]
+            if is_missing(ids["dryad_doi"].iloc[k]) and _dryad_share_token(link) is not None:
+                res = _dryad_share_doi(link)
+                ids.loc[ids.index[k], "dryad_doi"] = res["doi"]
+                if res["error"] is not None:
+                    share_error[link] = res["error"]
+
+        def add_share_error(d: pd.DataFrame) -> pd.DataFrame:
+            if not share_error:
+                return d
+            if "error" not in d.columns:
+                d["error"] = _string_series([None] * len(d))
+            errors = d["error"].tolist()
+            for i, link in enumerate(d["dryad_url"].tolist()):
+                if isinstance(link, str) and link in share_error:
+                    errors[i] = share_error[link]
+            d["error"] = _string_series(errors)
+            return d
+
         valid_dois = list(dict.fromkeys(v for v in ids["dryad_doi"].tolist() if not is_missing(v)))
 
         if not valid_dois:
             _tick(bar, "No valid Dryad links")
-            return left_join(table, ids, by="dryad_url")
+            return add_share_error(left_join(table, ids, by="dryad_url"))
 
         nv = len(valid_dois)
         _tick(bar, f"Starting Dryad retrieval for {nv} dataset{'' if nv == 1 else 's'}...")
@@ -235,6 +320,7 @@ def dryad_info(
         info = bind_rows(id_info)
         data = left_join(table, ids, by="dryad_url")
         data = left_join(data, info, by="dryad_doi", suffix=("", ".dryad"))
+        data = add_share_error(data)
         _tick(bar, "...Dryad retrieval complete!")
         return data
 

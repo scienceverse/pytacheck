@@ -780,3 +780,60 @@ def test_dryad_info_says_once_that_downloads_need_a_key(
             _dryad_info("10.5061/dryad.x")
         assert said == []
         assert utils.get_option("metacheck.dryad_pat.notified") is True
+
+
+def test_a_dryad_sharing_link_is_followed_to_its_doi(
+    serve: object, online: None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Verified live 2026-10-16 (metacheck #484): a sharing link answers 302 to the landing
+    # page of the dataset, and an unknown token answers 404.
+    token = "M9h0katm5VCYRhfTCUkYBUx_zRYNnnFM3BXgzV_fhMU"
+    share = f"https://datadryad.org/stash/share/{token}"
+    expired = "https://datadryad.org/stash/share/NOTAREALTOKEN123"
+    assert dryad._dryad_share_token(
+        [share, "https://datadryad.org/share/abc_D-1", "https://doi.org/10.5061/dryad.j1fd7"]
+    ) == [token, "abc_D-1", None]
+    assert dryad._dryad_doi(share) is None
+
+    seen = serve(  # type: ignore[operator]
+        {
+            f"https://datadryad.org/share/{token}": httpx.Response(
+                302,
+                headers={
+                    "Location": "https://datadryad.org/landing/show?id=doi%3A10.5061%2Fdryad.t76hdr81n"
+                },
+            ),
+            "https://datadryad.org/share/NOTAREALTOKEN123": httpx.Response(404),
+        }
+    )
+    assert dryad._dryad_share_doi(share) == {"doi": "10.5061/dryad.t76hdr81n", "error": None}
+    # the redirect is read, not followed: one request to /share/
+    assert [str(r.url) for r in seen] == [f"https://datadryad.org/share/{token}"]
+    assert dryad._dryad_share_doi(expired)["error"] == "private or expired Dryad sharing link"
+    assert dryad._dryad_share_doi("https://doi.org/10.5061/dryad.j1fd7") == {
+        "doi": None,
+        "error": None,
+    }
+
+    # dryad_info() looks the dataset up by the resolved DOI, and keeps the reason for a link
+    # that leads nowhere
+    def fake(doi: str, pb: object = None) -> pd.DataFrame:
+        return pd.DataFrame({"dryad_doi": [doi], "doi": [f"doi:{doi}"], "license": ["cc0"]})
+
+    monkeypatch.setattr(dryad, "_dryad_info", fake)
+    info = dryad_info([share, expired])
+    assert info["dryad_doi"].tolist()[0] == "10.5061/dryad.t76hdr81n"
+    assert pd.isna(info["dryad_doi"].tolist()[1])
+    assert info["license"].tolist()[0] == "cc0" and pd.isna(info["license"].tolist()[1])
+    errors = info["error"].tolist()
+    assert pd.isna(errors[0]) and errors[1] == "private or expired Dryad sharing link"
+
+
+def test_dryad_links_finds_a_sharing_link_in_the_text() -> None:
+    paper = pc.test_paper(
+        "The data are at https://datadryad.org/stash/share/abc_D-1 and "
+        "https://doi.org/10.5061/dryad.j1fd7."
+    )
+    links = dryad.dryad_links(paper)
+    assert "https://datadryad.org/stash/share/abc_D-1" in links["dryad_url"].tolist()
+    assert "10.5061/dryad.j1fd7" in [d for d in links["dryad_doi"].tolist() if isinstance(d, str)]
