@@ -15,6 +15,7 @@ from metacheck.statout.r_capture import (
     _r_cap_anova,
     _r_cap_by_fun,
     _r_cap_coef_matrix,
+    _r_cap_effectsize,
     _r_cap_htest,
     _r_capture_helpers,
     _r_capture_run,
@@ -125,8 +126,16 @@ def test_read_captures_missing(tmp_path: Path) -> None:
 
 def test_helpers_source(stato_vocab: None) -> None:
     src = _r_capture_helpers()
-    for name in [".r_cap_htest", ".r_cap_coef_matrix", ".r_cap_anova", ".r_call_fun_arg"]:
+    for name in [
+        ".r_cap_htest",
+        ".r_cap_coef_matrix",
+        ".r_cap_anova",
+        ".r_cap_effectsize",
+        ".r_call_fun_arg",
+    ]:
         assert f"`{name}` <-" in src
+    # a stored effectsize result is reduced before anything else is tried (metacheck #549)
+    assert 'inherits(v, "effectsize_table")) return(.r_cap_effectsize(v))' in src
     assert "stato_type_column <-" in src
 
 
@@ -234,4 +243,40 @@ def test_child_reducers(rscript: str, stato_vocab: None) -> None:
     assert val["analysis"] == "mean by group"
     assert _r_capture_value("shapiro.test(mtcars$mpg)", rscript=rscript)["method"] == (
         "Shapiro-Wilk normality test"
+    )
+
+
+_EFFECTSIZE = (
+    'structure(data.frame(Parameter = c("A", "B"), Eta2_partial = c(0.1, 0.2), CI = 0.95, '
+    "CI_low = c(0.01, 0.02), CI_high = c(0.3, 0.4)), "
+    'class = c("effectsize_table", "see_effectsize_table", "data.frame"))'
+)
+
+
+@pytest.mark.r
+def test_effectsize_result_is_captured(rscript: str, stato_vocab: None) -> None:
+    """A stored cohens_d()/eta_squared() table gets vocabulary names (metacheck #549)."""
+    rec = _r_cap_effectsize(_EFFECTSIZE, rscript=rscript)
+    assert rec["analysis"] == "Eta2_partial"
+    assert [r["label"] for r in rec["rows"]] == ["A", "B"]
+    assert rec["rows"][0]["stats"] == {
+        "partial eta squared": 0.1,
+        "conf.low": 0.01,
+        "conf.high": 0.3,
+    }  # the confidence level "CI" is left out
+    d = _r_cap_effectsize(
+        "structure(data.frame(d_z = 0.5, CI = 0.95, CI_low = 0.1, CI_high = 0.9), "
+        'class = c("effectsize_table", "data.frame"))',
+        rscript=rscript,
+    )
+    assert d["rows"][0]["stats"] == {"d": 0.5, "conf.low": 0.1, "conf.high": 0.9}
+    assert d["rows"][0]["label"] == ""
+    assert _r_capture_value(_EFFECTSIZE, "es <- eta_squared(m)", rscript=rscript)["rows"]
+    # a table without a numeric column is not a result
+    assert (
+        _r_cap_effectsize(
+            'structure(data.frame(Parameter = "A"), class = c("effectsize_table", "data.frame"))',
+            rscript=rscript,
+        )
+        is None
     )

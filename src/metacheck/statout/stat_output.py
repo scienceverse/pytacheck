@@ -149,13 +149,15 @@ def _tables_list(tables: Any) -> list[Any]:
 
 
 def _source_prefix(source_file: Any) -> str:
-    """``.stat_sanitize_id(source_file %||% "result")`` as ``paste()`` shows it.
+    """``.stat_source_prefix(source_file)``: the id prefix of a source file, as ``paste()`` shows it.
 
-    A missing source file (``None`` or ``NA``, the default) gives the
-    ``"result"`` prefix. R's ``%||%`` replaces only ``NULL``, so with its
-    default ``NA_character_`` every id started ``na_`` (UPSTREAM_ISSUES U138).
+    A missing or blank source file (``None``, ``NA`` -- the default -- or whitespace) gives the
+    ``"result"`` prefix. R's ``%||%`` replaces only ``NULL``, so with its default
+    ``NA_character_`` every id started ``na_`` (UPSTREAM_ISSUES U138).
     """
     missing = source_file is None or is_missing(source_file)
+    if not missing and not _paste_chr(source_file).strip():
+        missing = True
     return _paste_chr(_stat_sanitize_id("result" if missing else source_file))
 
 

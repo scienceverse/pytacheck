@@ -10,7 +10,7 @@ file. The parent converts those records to the same table shape
 with the tables parsed from stdout.
 
 The object inspection has to happen *inside R*, so the child-side reducers
-(``.r_cap_htest()``, ``.r_cap_coef_matrix()``, ``.r_cap_anova()``,
+(``.r_cap_htest()``, ``.r_cap_coef_matrix()``, ``.r_cap_anova()``, ``.r_cap_effectsize()``,
 ``.r_call_fun_arg()``, ``.r_cap_by_fun()``, ``.r_capture_value()``) are kept
 as R source (:data:`_CHILD_R`) that is shipped to an ``Rscript`` subprocess \u2014
 the Python analogue of ``callr::r()``. The only change is the sidecar format:
@@ -122,6 +122,42 @@ _CHILD_FUNCTIONS: dict[str, str] = {
   if (!length(rows)) return(NULL)
   list(analysis = analysis, method = analysis, rows = rows)
 }""",
+    # An effectsize result (cohens_d(), repeated_measures_d(), hedges_g(), eta_squared(), ...)
+    # is a data.frame whose first column is named for the effect size ("d_z", "Cohens_d",
+    # "Eta2_partial") with its interval in "CI_low"/"CI_high". Those names are not in the
+    # vocabulary, so they are renamed to ones that are; a stored result is never printed, so
+    # without this it was not found at all (metacheck #549).
+    ".r_cap_effectsize": r"""function(x) {
+  df <- x
+  class(df) <- "data.frame"
+  if (!nrow(df) || !ncol(df)) return(NULL)
+  rename <- c(d_z = "d", d_rm = "d", d_av = "d", d_b = "d", d_d = "d",
+              d_r = "d", cohens_d = "d", hedges_g = "Hedges' g",
+              glass_delta = "Glass' delta", glass_delta_adjusted = "Glass' delta",
+              eta2 = "\u03B7\u00B2", eta2_partial = "partial eta squared",
+              omega2 = "\u03C9\u00B2", r = "r", odds_ratio = "odds ratio",
+              ci_low = "conf.low", ci_high = "conf.high")
+  cn <- names(df)
+  is_num <- vapply(df, is.numeric, logical(1)) & tolower(cn) != "ci"
+  if (!any(is_num)) return(NULL)
+  keys <- ifelse(tolower(cn) %in% names(rename), rename[tolower(cn)], cn)
+  # eta_squared() and the like name each row in a "Parameter" column
+  lab_col <- match("parameter", tolower(cn))
+  rows <- lapply(seq_len(nrow(df)), function(i) {
+    st <- list()
+    for (j in which(is_num)) {
+      v <- df[[j]][i]
+      if (!is.na(v)) st[[keys[j]]] <- unname(v)
+    }
+    if (!length(st)) return(NULL)
+    list(label = if (!is.na(lab_col)) as.character(df[[lab_col]][i]) else "",
+         stats = st)
+  })
+  rows <- Filter(Negate(is.null), rows)
+  if (!length(rows)) return(NULL)
+  an <- cn[which(is_num)[1]]
+  list(analysis = an, method = "", rows = rows)
+}""",
     ".r_call_fun_arg": r"""function(call_text) {
   if (is.null(call_text) || !nzchar(call_text)) return(NA_character_)
   cl <- tryCatch(str2lang(call_text), error = function(e) NULL)
@@ -205,6 +241,8 @@ _CHILD_FUNCTIONS: dict[str, str] = {
   if (is.null(v)) return(NULL)
 
   if (inherits(v, "htest")) return(.r_cap_htest(v))
+
+  if (inherits(v, "effectsize_table")) return(.r_cap_effectsize(v))
 
   if (inherits(v, "summary.lm") || inherits(v, "summary.glm")) {
     an <- if (inherits(v, "summary.glm")) "glm" else "lm"
@@ -713,6 +751,16 @@ def _r_cap_anova(x: str, analysis: str, rscript: str | None = None) -> dict[str,
     Port of ``R/r-capture.R::.r_cap_anova()`` (runs in R).
     """
     return _r_eval_child(f".r_cap_anova({x}, {_r_string(analysis)})", rscript)  # type: ignore[no-any-return]
+
+
+def _r_cap_effectsize(x: str, rscript: str | None = None) -> dict[str, Any] | None:
+    """Reduce an ``effectsize_table`` expression *x* (evaluated in R).
+
+    Port of ``R/r-capture.R::.r_cap_effectsize()`` (runs in R): the effect-size and
+    interval columns take vocabulary names (``d_z`` -> ``d``, ``CI_low`` -> ``conf.low``),
+    the confidence level is left out and a ``Parameter`` column labels the rows.
+    """
+    return _r_eval_child(f".r_cap_effectsize({x})", rscript)  # type: ignore[no-any-return]
 
 
 def _r_call_fun_arg(call_text: str | None, rscript: str | None = None) -> str | None:
