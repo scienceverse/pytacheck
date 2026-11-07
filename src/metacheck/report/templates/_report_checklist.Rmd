@@ -1,0 +1,159 @@
+---
+pagetitle: "{{PAGETITLE}}"
+output:
+  html_document:
+    theme: null
+    highlight: null
+    toc: false
+    section_divs: false
+    anchor_sections: false
+    self_contained: true
+    mathjax: null
+    md_extensions: "+fenced_divs+header_attributes+bracketed_spans"
+---
+
+<style>
+  /* The checklist report (report_type("checklist")): every check of every
+     module sorted into to fix, to improve, decide by hand, for information,
+     fine and not applicable. Colours and font are those of metacheck's
+     website on SURF Research Cloud (its site.css): the logo's green and a
+     light grey, and Cabin (SIL Open Font License, app/www/fonts/), embedded
+     so the report stays one file that contacts no other site. Light only,
+     like the website: a reader's dark setting does not change it. */
+  @font-face {
+    font-family: "Cabin";
+    src: url("{{FONT_DATA_URI}}") format("truetype");
+    font-weight: 400 700;
+    font-stretch: 75% 100%;
+    font-style: normal;
+  }
+  :root {
+    color-scheme: light;
+    --green: #2F6F1C;
+    --green-dark: #1E4A10;
+    --green-tint: #E3ECDF;
+    --bg: #E9E8E5;
+    --card: #F4F3F1;
+    --line: #CFCDC8;
+    --text: #262624;
+    --muted: #5E5C58;
+    --fix: #9B2C1F;
+    --fix-tint: #F6E3DF;
+    --improve: #7A4F00;
+    --improve-tint: #F4E7C9;
+    --improve-line: #C08A1E;
+    --decide: #2C5577;
+    --decide-tint: #DFE8EF;
+    --na-tint: #E4E2DE;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); }
+  body {
+    margin: 0;
+    color: var(--text);
+    font-family: "Cabin", "Segoe UI", sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--green); text-underline-offset: 2px; }
+  a:hover { color: var(--green-dark); }
+  code, pre { font-family: "Cascadia Mono", Consolas, "DejaVu Sans Mono", monospace; font-size: 0.84em; }
+  code { background: #fff; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; overflow-wrap: anywhere; }
+  pre { background: #fff; border: 1px solid var(--line); border-radius: 3px; padding: 10px 12px; overflow: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: 1em; }
+
+  /* title, as the website's masthead */
+  .masthead { text-align: center; max-width: 900px; margin: 0 auto; padding: 32px 16px 0; }
+  .logos { display: flex; justify-content: center; align-items: center; gap: 28px; margin-bottom: 8px; }
+  .logos img { height: 64px; width: auto; }
+  .masthead h1 { margin: 0; font-size: 2.2rem; font-weight: 700; line-height: 1.2; }
+  .masthead .subtitle { margin: 2px 0 0; font-size: 1.15rem; color: var(--muted); overflow-wrap: anywhere; }
+  .masthead .meta { margin: 6px 0 0; padding-bottom: 16px; font-size: 0.88rem; color: var(--muted);
+    border-bottom: 1px solid var(--green); }
+
+  .mc-main { max-width: 900px; margin: 0 auto; padding: 0 16px 48px; }
+  .mc-intro { margin: 22px 0 18px; }
+
+  /* the number of checks per result */
+  .counts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 22px 0 32px; }
+  .count { display: block; background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--line);
+    border-radius: 4px; padding: 10px 12px; text-decoration: none; color: var(--text); }
+  a.count:hover { color: var(--text); background: #fff; }
+  .count b { display: block; font-size: 1.9rem; line-height: 1.1; }
+  .count span { font-size: 0.92rem; color: var(--muted); }
+  .count.fix { border-top-color: var(--fix); } .count.fix b { color: var(--fix); }
+  .count.improve { border-top-color: var(--improve-line); } .count.improve b { color: var(--improve); }
+  .count.decide { border-top-color: var(--decide); } .count.decide b { color: var(--decide); }
+  .count.fine { border-top-color: var(--green); } .count.fine b { color: var(--green); }
+  .count.zero { opacity: 0.55; }
+  @media (max-width: 640px) { .counts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  h2 { font-size: 1.35rem; margin: 36px 0 12px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+  h2 .n { color: var(--muted); font-weight: 400; }
+
+  /* one block per check that needs work */
+  .check { background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--line);
+    border-radius: 4px; padding: 14px 18px 12px; margin: 0 0 14px; }
+  .check.fix { border-left-color: var(--fix); }
+  .check.improve { border-left-color: var(--improve-line); }
+  .check.decide { border-left-color: var(--decide); }
+  .check-head p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin: 0 0 10px; }
+  .check-title { font-weight: 700; font-size: 1.12rem; }
+  .where { font-size: 0.82rem; color: var(--muted); margin-left: auto; }
+  .tag { display: inline-block; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em; line-height: 1.6;
+    text-transform: uppercase; padding: 0 8px; border-radius: 3px; white-space: nowrap; }
+  .tag.fix { color: var(--fix); background: var(--fix-tint); }
+  .tag.improve { color: var(--improve); background: var(--improve-tint); }
+  .tag.decide { color: var(--decide); background: var(--decide-tint); }
+  .tag.fine { color: var(--green); background: var(--green-tint); }
+  .tag.info, .tag.na { color: var(--muted); background: var(--na-tint); }
+
+  .rows { display: grid; grid-template-columns: 8.5em minmax(0, 1fr); gap: 6px 14px; }
+  .rows > .label { font-weight: 700; font-size: 0.92rem; color: var(--muted); padding-top: 1px; }
+  .rows > .text { min-width: 0; }
+  .rows > .text.todo { font-weight: 600; }
+  .rows p { margin: 0 0 4px; }
+  .rows ul, .rows ol { margin: 0 0 4px; padding-left: 1.1em; }
+  @media (max-width: 640px) {
+    .rows { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+    .rows > .label { padding-top: 6px; }
+  }
+
+  details { margin-top: 10px; }
+  details > summary { cursor: pointer; color: var(--green); font-weight: 600; font-size: 0.95rem; }
+  details > summary:hover { color: var(--green-dark); }
+  details[open] > summary { margin-bottom: 8px; }
+  .fold { background: #fff; border: 1px solid var(--line); border-radius: 3px; padding: 10px 12px; overflow-x: auto; }
+  .fold > p:first-child { margin-top: 0; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  th { text-align: left; background: var(--green-tint); color: var(--text); font-weight: 700; }
+  th, td { padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table strong { color: var(--fix); }
+
+  /* the checks that passed, did not apply, or are for information */
+  .done { background: var(--card); border: 1px solid var(--line); border-radius: 4px; }
+  .done-row { display: grid; grid-template-columns: 7.5em 15em minmax(0, 1fr); gap: 4px 12px;
+    padding: 8px 14px; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
+  .done-row:last-child { border-bottom: 0; }
+  .done-row > div { min-width: 0; }
+  .done-row .tag { justify-self: start; align-self: start; margin-top: 2px; }
+  .done-row .t { font-weight: 600; }
+  .done-row .d { color: var(--muted); }
+  .done-row p { margin: 0 0 4px; }
+  @media (max-width: 720px) { .done-row { grid-template-columns: minmax(0, 1fr); } }
+
+  .more > details { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; margin: 0 0 10px; }
+  .more > details > summary { font-size: 1rem; }
+
+  footer { max-width: 900px; margin: 0 auto; padding: 16px 16px 40px; border-top: 1px solid var(--green);
+    text-align: center; font-size: 0.88rem; color: var(--muted); }
+
+  @media print {
+    html, body { background: #fff; }
+    .check, .done-row, .count { break-inside: avoid; }
+  }
+</style>
+
+<header class="masthead"><div class="logos">{{LOGOS}}</div><h1>{{TITLE}}</h1><p class="subtitle">{{SUBTITLE}}</p><p class="meta">{{META}}</p></header>
