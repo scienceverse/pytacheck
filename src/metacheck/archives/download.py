@@ -177,15 +177,18 @@ def _repo_key(repo_url: Any) -> str:
     return key if key != "" else "unknown"
 
 
-def _repo_cache_subdir(repo_url: Any) -> str:
+def _repo_cache_subdir(repo_url: Any, cache: bool = True) -> str:
     """Port of ``R/repo-download.R::.repo_cache_subdir()``: a repository's cache folder.
 
     Keyed by a filesystem-safe encoding of the repository URL (scheme
     dropped, runs of other characters turned into ``_``), so different
     repositories never collide and the same one always resolves to the same
-    folder.
+    folder. With ``cache=False`` the folder is in the session's temporary
+    cache (:func:`_repo_session_dir`), which is removed when the process
+    ends: a lasting cache is kept only when the caller asks for it.
     """
-    return f"{_repo_cache_dir()}/{_repo_key(repo_url)}"
+    root = _repo_cache_dir() if cache is True else _repo_session_dir()
+    return f"{root}/{_repo_key(repo_url)}"
 
 
 def _file_path(*parts: str) -> str:
@@ -215,9 +218,13 @@ def _repo_cache_rel(repo_url: Any, file_path: Any) -> Any:
     return [_rel_one(key, p) for p in file_path]
 
 
-def _repo_cache_path(repo_url: Any, file_path: Any) -> Any:
-    """Port of ``R/repo-download.R::.repo_cache_path()``: a file's persistent cache path."""
-    root = _repo_cache_dir()
+def _repo_cache_path(repo_url: Any, file_path: Any, cache: bool = True) -> Any:
+    """Port of ``R/repo-download.R::.repo_cache_path()``: a file's cache path.
+
+    In the persistent cache, or with ``cache=False`` in the session's
+    temporary one (:func:`_repo_session_dir`), with the same layout.
+    """
+    root = _repo_cache_dir() if cache is True else _repo_session_dir()
     rel = _repo_cache_rel(repo_url, file_path)
     if isinstance(rel, list):
         return [_file_path(root, r) for r in rel]
@@ -339,10 +346,6 @@ def repo_cache_clear(repo_url: Any = None, quiet: bool = False) -> float:
     freed = float(sum(_dir_files_size(d) for d in targets))
     for d in targets:
         shutil.rmtree(d, ignore_errors=True)
-    # Recreate the (empty) root so later downloads have somewhere to write.
-    if repo_url is None:
-        os.makedirs(_repo_cache_dir(), exist_ok=True)
-
     if not quiet:
         human = _format_object_size(freed)
         if repo_url is None:
@@ -1389,6 +1392,7 @@ def download_repo_files(
 
     # -- archive members (repo_check's zip-peek expansion) --------------------
     if "archive_url" in df.columns:
+        from metacheck.archives.tar_peek import _tar_fetch_members
         from metacheck.archives.zip_peek import _whole_request_bytes, _zip_fetch_members
 
         arcs = _col(df, "archive_url") or [None] * n
@@ -1453,18 +1457,35 @@ def download_repo_files(
             # restarted run does not request it again.
             arc_sizes = _col(df, "archive_size")
             # why a member was not fetched is recorded in `failed` (#429)
+            # a member of a plain .tar (listed by downloading the archive whole, see
+            # tar_peek._tar_peek) comes from that session copy or one new download:
+            # a tar has no index to fetch members by byte range from
+            arc_formats = _col(df, "archive_format")
+            is_tar_arc = arc_formats is not None and arc_formats[idx[0]] == "tar"
+            fetched: pd.DataFrame | None
             try:
-                fetched = _zip_fetch_members(
-                    str(arc),
-                    names=[str(members[i]) for i in idx],
-                    dest=member_dest,
-                    cache=cache,
-                    skip_on_api_limit=skip_on_api_limit,
-                    max_whole_bytes=cap_bytes,
-                    archive_path=arc_path,
-                    request_bytes=_whole_request_bytes(arc),
-                    size=None if arc_sizes is None else arc_sizes[idx[0]],
-                )
+                if is_tar_arc:
+                    fetched = _tar_fetch_members(
+                        str(arc),
+                        names=[str(members[i]) for i in idx],
+                        dest=member_dest,
+                        archive_path=arc_path,
+                        size=None if arc_sizes is None else arc_sizes[idx[0]],
+                        max_whole_bytes=cap_bytes,
+                        skip_on_api_limit=skip_on_api_limit,
+                    )
+                else:
+                    fetched = _zip_fetch_members(
+                        str(arc),
+                        names=[str(members[i]) for i in idx],
+                        dest=member_dest,
+                        cache=cache,
+                        skip_on_api_limit=skip_on_api_limit,
+                        max_whole_bytes=cap_bytes,
+                        archive_path=arc_path,
+                        request_bytes=_whole_request_bytes(arc),
+                        size=None if arc_sizes is None else arc_sizes[idx[0]],
+                    )
             except Exception as e:
                 why: str | None = str(e)
                 fetched = None
