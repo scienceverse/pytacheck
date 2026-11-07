@@ -21,6 +21,7 @@ Examples::
     pytacheck read paper.pdf -o paper.json           # extract with bibr, save JSON
     pytacheck serve --port 8000                      # REST API (metacheck[api])
     pytacheck serve --port 8001 --engine r           # ... checks by R metacheck (metacheck[r])
+    pytacheck site                                   # the demo website and its /api (metacheck[api])
     pytacheck r-engine                               # can R metacheck run here? which versions?
     pytacheck app                                    # the local app in your browser (metacheck[app])
     pytacheck version
@@ -603,6 +604,37 @@ def cmd_serve(ns: argparse.Namespace) -> int:
             stacklevel=2,
         )
     uvicorn.run("metacheck.api.app:create_app", factory=True, host=ns.host, port=ns.port)
+    return 0
+
+
+def cmd_site(ns: argparse.Namespace) -> int:
+    try:
+        import uvicorn
+    except ImportError:
+        print('The site needs the api extra: pip install "metacheck[api]"', file=sys.stderr)
+        return 2
+    from metacheck.api.app import is_loopback
+    from metacheck.web.app import create_app
+    from metacheck.web.config import SiteConfig
+
+    host = ns.host or ("0.0.0.0" if ns.public else "127.0.0.1")  # noqa: S104 - asked for with --public
+    if not is_loopback(host) and not ns.public:
+        raise _Failure(
+            f"Refusing to serve the site on {host}: it has no sign-in, so anyone who can reach "
+            "the port can run checks. Pass --public if that is what you want, or serve on "
+            "127.0.0.1."
+        )
+    app = create_app(
+        SiteConfig(run_code=ns.run_code, jobs_dir=Path(ns.jobs_dir) if ns.jobs_dir else None)
+    )
+    if ns.run_code and not app.state.run_code:
+        print(
+            "warning: --run-code was given, but Docker is not running, so repository code "
+            "is not run.",
+            file=sys.stderr,
+        )
+    print(f"Metacheck site: http://{host}:{ns.port}/  (stop it with Ctrl+C)")
+    uvicorn.run(app, host=host, port=ns.port)
     return 0
 
 
@@ -1250,6 +1282,41 @@ def build_parser() -> argparse.ArgumentParser:
         "pytacheck's experimental port",
     )
     p.set_defaults(func=cmd_serve)
+
+    p = sub.add_parser(
+        "site",
+        help="serve the demo website and its web interface (/api)",
+        description=(
+            "Serve a one-page website and the job-queue web interface under /api that it "
+            "talks to: send a paper or a zip of a data and code folder, get a report back. "
+            "It has no sign-in; put a proxy that signs people in in front of it, or keep it "
+            "on 127.0.0.1. See docs/SITE.md."
+        ),
+    )
+    p.add_argument(
+        "--host",
+        default=None,
+        help="address to bind (default: 127.0.0.1, or 0.0.0.0 with --public)",
+    )
+    p.add_argument("--port", type=int, default=8080)
+    p.add_argument(
+        "--public",
+        action="store_true",
+        help="allow a non-loopback address: anyone who can reach the port can run checks",
+    )
+    p.add_argument(
+        "--run-code",
+        action="store_true",
+        help="run the R and Python code of a repository in Docker's sandbox "
+        "(reproducibility_check); needs a running Docker, else it stays off",
+    )
+    p.add_argument(
+        "--jobs-dir",
+        default=None,
+        help="where uploads and results are kept while a job lives "
+        "(default: a private temporary folder)",
+    )
+    p.set_defaults(func=cmd_site)
 
     p = sub.add_parser(
         "r-engine",
