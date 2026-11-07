@@ -105,6 +105,7 @@ zip_peek_cache_clear = "metacheck.archives.zip_peek_cache:zip_peek_cache_clear"
 # R/file_category.R, R/file_types.R
 file_category = "metacheck.fileinfo.category:file_category"
 filetype = "metacheck.fileinfo.category:filetype"
+".is_readme_name" = "metacheck.fileinfo.category:is_readme_name"
 file_types = "metacheck.fileinfo.types:file_types"
 
 # R/file-naming.R
@@ -113,6 +114,9 @@ file_types = "metacheck.fileinfo.types:file_types"
 ".file_naming_check_padding" = "metacheck.fileinfo.naming:_file_naming_check_padding"
 ".file_naming_check_length" = "metacheck.fileinfo.naming:_file_naming_check_length"
 check_file_naming = "metacheck.fileinfo.naming:check_file_naming"
+".useless_file_kind" = "metacheck.archives._useless:useless_file_kind"
+".useless_file_severity" = "metacheck.archives._useless:useless_file_severity"
+".is_useless_file" = "metacheck.archives._useless:is_useless_file"
 # R/tar-peek.R
 ".tar_str" = "metacheck.archives.tar_peek:_tar_str"
 ".tar_num" = "metacheck.archives.tar_peek:_tar_num"
