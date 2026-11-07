@@ -571,8 +571,8 @@ def non_r_note(structure_df: Any, nonr_lang: Sequence[str]) -> str:
     note = ""
     if n_non_r > 0:
         note = (
-            f" The repository does contain {n_non_r:d} non-R code file{plural(n_non_r)}; "
-            "this phase only RUNS R and Python code (see the "
+            f" The repository does contain {n_non_r:d} code file{plural(n_non_r)} in other "
+            "languages; this phase only RUNS R and Python code (see the "
             f"section{plural(len(nonr_lang))} above for what we found and could — or "
             "could not — check for those files)."
         )
@@ -616,7 +616,10 @@ def match_output(paper: Any, stat_output: Sequence[Mapping[str, Any]]) -> dict[s
 
     try:
         matched = match_reported_output(paper, list(stat_output), include_tables=True)
-    except Exception:
+    except Exception as e:
+        from metacheck.repro.core import _message
+
+        _message("[repro] could not compare the output with the paper: ", str(e))
         return None
     if matched is None or len(matched) == 0:
         return None
@@ -734,13 +737,26 @@ def _repro_docker_resource_limits(workers: Any) -> dict[str, float]:
     return {"cpus": cpus, "memory_gb": memory_gb}
 
 
-def _batch_worker(paper1: Any, args: Mapping[str, Any], limits: Mapping[str, Any]) -> Any:
-    """One paper's check in a worker process (the ``callr::r_bg()`` function)."""
+def _batch_worker(paper1: Any, args: Mapping[str, Any], opts: Mapping[str, Any]) -> Any:
+    """One paper's check in a worker process (the ``callr::r_bg()`` function).
+
+    *opts* are the caller's metacheck options, the resource limits among them: a
+    fresh process starts with the defaults, so it would lose e.g. the cache folder
+    (metacheck #474).
+    """
     from metacheck.module import module_run
     from metacheck.utils import options
 
-    options({"metacheck.docker_resource_limits": dict(limits)})
+    options(dict(opts))
     return module_run(paper1, "reproducibility_check", **dict(args))
+
+
+def _metacheck_options() -> dict[str, Any]:
+    """Every ``metacheck.*`` option the caller set (R ``options()[grep("^metacheck\\.", ...)]``)."""
+    from metacheck import utils
+
+    with utils._options_lock:
+        return {k: v for k, v in utils._options.items() if k.startswith("metacheck.")}
 
 
 def _process_executor(workers: int) -> Any:
@@ -788,10 +804,11 @@ def _reproducibility_check_batch(
     )
     make = executor or _process_executor
     with local_options({"metacheck.docker_resource_limits": limits}), make(workers) as pool:
+        mc_opts = _metacheck_options()
         futures = {}
         for i, pid in enumerate(pids):
             _message(f"[repro]   -> starting '{pid}'")
-            futures[pool.submit(_batch_worker, paper[i], args, limits)] = pid
+            futures[pool.submit(_batch_worker, paper[i], args, mc_opts)] = pid
         for done, fut in enumerate(as_completed(futures), 1):
             pid = futures[fut]
             try:
