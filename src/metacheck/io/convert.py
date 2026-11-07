@@ -4,7 +4,7 @@ Both bibr and Grobid convert PDFs; only bibr converts DOC/DOCX; Grobid TEI
 XML files are converted with ``grobid_to_bibr()``. With ``method="auto"`` the
 servers are tried in this order: metacheck's API on SURF Research Cloud (PDF
 only), the TU/e Grobid server, a Grobid on this computer (``localhost:8070``;
-a bibr on ``localhost:8000`` only while :data:`BIBR_WORKING`), then the other
+a bibr on ``localhost:8000`` only while ``_BIBR_WORKING``), then the other
 servers of metacheck's online list. A bibr server named in ``BIBR_URL`` (with
 ``BIBR_API_KEY``) comes before all of those, for ``method="auto"`` and
 ``method="bibr"`` (pytacheck's addition; D59).
@@ -23,7 +23,7 @@ from typing import Any
 from metacheck._r.regex import grepl, sub
 from metacheck._save_path import NO_SAVE_PATH, require_save_path
 
-__all__ = ["BIBR_WORKING", "convert"]
+__all__ = ["convert"]
 
 PathLikeStr = str | PathLike[str]
 
@@ -34,7 +34,7 @@ TUE_GROBID_URL = "https://grobid.hti.ieis.tue.nl"
 #: whether convert() looks for a bibr server on its own (a local bibr, and the bibr servers of
 #: the online list); ``False`` while bibr does not work (metacheck's ``.bibr_working``). A
 #: server named in ``BIBR_URL`` is still used.
-BIBR_WORKING = False
+_BIBR_WORKING = False
 
 
 def _message(msg: str) -> None:
@@ -89,8 +89,8 @@ def _convert_candidates() -> list[dict[str, Any]]:
     return [tue[0], *local, *rest]
 
 
-def grobid_first_alive(default: str) -> str:
-    """The Grobid server ``convert_grobid()`` uses when none is given (``.grobid_first_alive()``):
+def _grobid_first_alive(default: str) -> str:
+    """The Grobid server ``convert_grobid()`` uses when none is given (``._grobid_first_alive()``):
     the first Grobid server of :func:`_convert_candidates` that answers (TU/e, this computer,
     Hugging Face; metacheck's server on SURF returns paper JSON, not Grobid's XML), else
     *default*, so the caller's own check reports why."""
@@ -221,8 +221,8 @@ def convert(
             # skip if the server doesn't match a set method
             if method not in (s.get("service"), "auto"):
                 continue
-            # a bibr server is not asked while bibr does not work (BIBR_WORKING)
-            if s.get("service") == "bibr" and not BIBR_WORKING:
+            # a bibr server is not asked while bibr does not work (_BIBR_WORKING)
+            if s.get("service") == "bibr" and not _BIBR_WORKING:
                 continue
             _message(f"Checking {s.get('id')}")
             if s.get("service") == "grobid":

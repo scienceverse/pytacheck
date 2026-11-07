@@ -1635,9 +1635,9 @@ def convert_grobid(
     # no server given: the TU/e server, or else the first Grobid server of the online list that
     # answers (see convert._convert_candidates())
     if api_url is None:
-        from metacheck.io.convert import TUE_GROBID_URL, grobid_first_alive
+        from metacheck.io.convert import TUE_GROBID_URL, _grobid_first_alive
 
-        api_url = grobid_first_alive(TUE_GROBID_URL)
+        api_url = _grobid_first_alive(TUE_GROBID_URL)
 
     _grobid_isalive(api_url)
 

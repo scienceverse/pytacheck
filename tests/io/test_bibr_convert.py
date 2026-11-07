@@ -1160,7 +1160,7 @@ def test_convert_finds_a_local_bibr_serve(
     import metacheck.io.convert as conv
     from metacheck.io.convert import convert
 
-    monkeypatch.setattr(conv, "BIBR_WORKING", True)  # convert() asks for a bibr only then
+    monkeypatch.setattr(conv, "_BIBR_WORKING", True)  # convert() asks for a bibr only then
     monkeypatch.delenv("SCIVRS_API_KEY", raising=False)
     rec = Recorder()
     routes = {
@@ -1182,7 +1182,7 @@ def test_convert_local_bibr_serve_is_not_the_platform(
     import metacheck.io.convert as conv
     from metacheck.io.convert import convert
 
-    monkeypatch.setattr(conv, "BIBR_WORKING", True)
+    monkeypatch.setattr(conv, "_BIBR_WORKING", True)
     monkeypatch.setenv("SCIVRS_API_KEY", "sv_test")
     rec = Recorder()
     routes = {
@@ -1212,7 +1212,7 @@ def test_convert_ignores_bibr_api_url(
     import metacheck.io.convert as conv
     from metacheck.io.convert import convert
 
-    monkeypatch.setattr(conv, "BIBR_WORKING", True)
+    monkeypatch.setattr(conv, "_BIBR_WORKING", True)
     monkeypatch.setenv("BIBR_API_URL", "http://192.168.1.20:8000")
     monkeypatch.setenv("BIBR_API_KEY", TOKEN)
     rec = Recorder()
