@@ -2,11 +2,6 @@
 # mod_repro, mod_repro_review): R/reproducibility_check*.R and its module.
 # Moved here from code.yaml; a case is marked in exactly one file.
 
-"mod_repro/reproducibility_check.exec_docker": &u132
-  kind: r_bug_fixed
-  ref: U132
-  reason: R's "there is no package called ‘pkg’" (typographic quotes in UTF-8) is recognised, so a script failing on an unavailable dependency is dependency_unavailable, not errored
-"mod_repro_review/tables.exec_docker_exec": *u132
 "mod_repro/reproducibility_check.spv_notebook_py":
   kind: r_bug_fixed
   ref: U148

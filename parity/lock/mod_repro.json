@@ -1,4 +1,3 @@
 {
-"reproducibility_check.exec_docker": {"r": "8dee34b7b2c1b593", "py": "cc29e84dc2967261", "diff": ["report[]", "run_results.error_type[]", "run_results.outcome[]", "summary_text[]", "table.error_type[]", "table.outcome[]", "traffic_light[]"]},
 "reproducibility_check.spv_notebook_py": {"r": "29c57710a5d7217b", "py": "06f88a15fb482026", "diff": ["report[]", "stat_output[].json.analyses", "stat_output[].long", "summary_text[]"]}
 }
