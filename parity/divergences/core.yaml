@@ -19,14 +19,6 @@
 # Cases of other lanes' areas that differ from R because of core-lane fixes
 # (text_search(), module_run(), module_report(), llm(), pubpeer_comments()).
 # The module code is unchanged; the core function it calls no longer has the bug.
-"bibr12/module.coi_check_oi.preprint": &u80_coi
-  kind: r_bug_fixed
-  ref: U80
-  reason: the table's header column holds the section's header (R's text_search(return = "section") groups without it and returns NA)
-"bibr12/module.coi_check_oi.PMC4383902": *u80_coi
-"bibr12/module.coi_check_oi.mixed": *u80_coi
-"grobid12/module.coi_check_oi.demo": *u80_coi
-"grobid12/module.coi_check_oi.0956797615569889": *u80_coi
 "mod_urls_open_review/all_urls.review.chain_after_open_practices": &u77_chain
   kind: r_bug_fixed
   ref: U77

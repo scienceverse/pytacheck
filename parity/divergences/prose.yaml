@@ -7,21 +7,6 @@
 # case that also differs for another reason stays in its lane's file.
 
 # U83: typos -------------------------------------------------------------------
-"bibr12/module.open_practices.PMC4383902": &u83_recognized
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the no-code report says 'not recognized' (metacheck: 'not reconized')"
-  r_text: [["reconized", "recognized"]]
-  # the summary table also has D83's no_data column
-  xfail: true
-"grobid12/module.open_practices.0956797615569889": *u83_recognized
-"bibr12/module.ref_accuracy.preprint": &u83_such_an_incoherence
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the guidance says 'Such an incoherence ... or an AI generated reference' (metacheck: 'Such an incoherent ... ar an AI generated reference')"
-  r_text: [["Such an incoherent", "Such an incoherence"], [" ar an AI generated", " or an AI generated"]]
-"bibr12/module.ref_accuracy.list": *u83_such_an_incoherence
-"bibr12/module.ref_accuracy.mixed": *u83_such_an_incoherence
 "mod_ref_accuracy_review/ref_accuracy.module_help":
   kind: r_bug_fixed
   ref: U83
@@ -70,12 +55,4 @@
 "mod_data_check_review/review.dv_spreadsheet_findings.handmade": *u82_column_is_empty
 
 # U125: the missing-effect-size summary ends with a full stop ------------------
-"bibr12/module.stat_effect_size.preprint": &u125_consider_adding_effect
-  kind: r_bug_fixed
-  ref: U125
-  reason: "the missing-effect-size summary ends with a full stop (metacheck leaves it out)"
-  r_text: [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]
-"bibr12/module.stat_effect_size.full": *u125_consider_adding_effect
-"bibr12/module.stat_effect_size.mixed": *u125_consider_adding_effect
-"grobid12/module.stat_effect_size.debruine": *u125_consider_adding_effect
 

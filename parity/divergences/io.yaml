@@ -129,6 +129,10 @@
 "grobid12/module.open_practices.preprint": *module
 "grobid12/module.open_practices.published": *module
 "grobid12/module.ref_consistency.published": *module
+"grobid12/module.ref_replication.published":
+  kind: r_bug_fixed
+  ref: U16
+  reason: "the reference text read from the TEI keeps the DOI link whole ('science.1224313'; metacheck: 'science .1224313', a space where the link's text is split over elements)"
 "grobid12/module.ref_summary.0956797615569889": *module
 "grobid12/module.ref_summary.debruine": *module
 "grobid12/module.ref_summary.preprint": *module
@@ -167,7 +171,7 @@
 "bibr12/module.all_urls.preprint": &u206_email
   kind: r_bug_fixed
   ref: U206
-  reason: "e-mail addresses are not URLs: 'gmail.com' and the parts of 'name@university.edu' are not listed (metacheck lists each as a host name)"
+  reason: "e-mail addresses are not URLs: 'gmail.com' and the parts of 'name@university.edu' are not listed (metacheck lists each as a host name); the table also has D82's url columns"
 "bibr12/module.all_urls.mixed": *u206_email
 "bibr12_review/read.edge_numeric_id": &u281
   kind: r_bug_fixed

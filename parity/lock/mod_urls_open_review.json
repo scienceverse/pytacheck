@@ -25,7 +25,7 @@
 "open_practices.review.list_counts": {"r": "c670836766688e42", "py": "965ef91ec8e5da92", "diff": ["na_replace.no_data", "summary_table"]},
 "open_practices.review.list_order": {"r": "3a08dc918f47968e", "py": "5fd8a9d93aff11a5", "diff": ["na_replace.no_data", "report[]", "summary_table", "summary_text[]"]},
 "open_practices.review.list_single_on_request": {"r": "2fc4db97f14b8264", "py": "2b062dc93205bbe3", "diff": ["na_replace.no_data", "summary_table"]},
-"open_practices.review.list_with_empty": {"r": "1b9e93613beff0a6", "py": "25156fdf3d72dd18", "diff": ["na_replace.no_data", "report[]", "summary_table", "summary_table.materials_open[]", "summary_table.on_request[]", "summary_table.prereg_open[]", "summary_text[]"]},
+"open_practices.review.list_with_empty": {"r": "1b9e93613beff0a6", "py": "17dad96490c92b1e", "diff": ["na_replace.no_data", "summary_table"]},
 "open_practices.review.marker_repo": {"r": "2abf37d2fe140b12", "py": "65725466f820aa91", "diff": ["na_replace.no_data", "summary_table"]},
 "open_practices.review.materials_only": {"r": "0740e50ce53c752c", "py": "081c7c2e841afa61", "diff": ["na_replace.no_data", "summary_table"]},
 "open_practices.review.na_text": {"r": "129ef0214b4cc4d9", "py": "7aa14cfb277bfaf7", "diff": ["na_replace.no_data", "summary_table"]},

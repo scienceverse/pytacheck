@@ -74,42 +74,10 @@
 # in prose.yaml). Cases of the io lane's generated files (bibr12, grobid12) that
 # run these modules are listed here because the module change, not the
 # conversion, makes them differ.
-"bibr12/module.ref_consistency.preprint": &u83_likley
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the caveat says 'likely' (metacheck: 'likley'); summary_table always has n_missing and n_extra (U115; metacheck drops a count column when no row has it), and duplicated bib_match rows no longer repeat a reference (U114)"
-"bibr12/module.ref_consistency.PMC4383902": *u83_likley
-"bibr12/module.ref_consistency.full":
-  kind: r_bug_fixed
-  ref: U115
-  reason: "the paper has no references, so its citation [1] is reported as missing from the bibliography (metacheck reports only citations without an xref_id); summary_table always has n_missing and n_extra, and the caveat says 'likely' (U83)"
-"bibr12/module.ref_consistency.list": *u83_likley
-"bibr12/module.ref_consistency.mixed": *u83_likley
-"bibr12_review/module.ref_consistency.edge_types": *u83_likley
-"grobid12/module.ref_consistency.demo": *u83_likley
 "mod_ref_accuracy_review/ref_consistency.xml_fixtures": &u83_likley_tei
   kind: r_bug_fixed
   ref: U83
   reason: "the caveat says 'likely' (metacheck: 'likley'); the reference and citation text read from the TEI also differs (io fix U16: 'Henry, 2019', '24 July 2025')"
-"bibr12/module.ref_accuracy.PMC4383902": &u30_fail_light
-  kind: r_bug_fixed
-  ref: U30
-  reason: "a paper without bib_match rows gets the traffic light 'fail' (metacheck: 'error', which is not one of its lights)"
-"grobid12/module.ref_accuracy.demo": *u30_fail_light
-"grobid12/module.ref_accuracy.preprint": *u30_fail_light
-"grobid12/module.ref_accuracy.published": *u30_fail_light
-"grobid12/module.ref_accuracy.0956797615569889": *u30_fail_light
-"grobid12/module.ref_accuracy.debruine": *u30_fail_light
-"grobid12_review/module.ref_accuracy.review": *u30_fail_light
-"bibr12/module.open_practices.mixed": &u106_list
-  kind: r_bug_fixed
-  ref: U106
-  reason: "a paper list gets the paper-list summary, and its papers without a flagged sentence count as 'neither' (metacheck branches on the rows of summary_table)"
-"grobid12/module.open_practices.debruine": *u106_list
-"bibr12_review/module.ref_summary.edge_types": &u119_count
-  kind: r_bug_fixed
-  ref: U119
-  reason: "'Summary information provided for 2 references' counts references, not table rows (reference 1 has two rows)"
 "mod_power/power.psychsci": &u16_power
   kind: r_bug_fixed
   ref: U16
