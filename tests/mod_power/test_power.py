@@ -493,7 +493,8 @@ def test_power_fallback_json_expand_details(
     with pytest.warns(UserWarning):
         mo = module_run(paper, "power")
     # U108: every field is a column (NA when no reply gave it); metacheck's any_of()
-    # skips missing fields, so the first analysis counted as complete
+    # skips missing fields, so the first analysis counted as complete. The "other"
+    # columns follow the canonicalised ones (metacheck 0.4).
     assert list(mo.table.columns)[8:] == [
         "answer",
         "text.power",
@@ -507,13 +508,20 @@ def test_power_fallback_json_expand_details(
         "effect_size_metric",
         "software",
         "complete",
+        "statistical_test_other",
+        "effect_size_metric_other",
+        "software_other",
         "power_id",
     ]
     assert mo.table["power_type"].tolist() == ["apriori", "posthoc"]
     assert values(mo.table["text.power"]) == ["x", None]
     assert mo.table["complete"].tolist() == [False, False]
     assert mo.traffic_light == "red"
-    assert mo.summary_text == "We detected 2 potential power analyses."
+    # the unparsable reply is reported as unchecked (#475)
+    assert mo.summary_text == (
+        "We detected 2 potential power analyses. 1 of 3 paragraphs could not be checked by "
+        "the LLM, so power analyses in it are not counted. Re-run the check, or check it manually."
+    )
     assert list(mo.summary_table.columns) == [
         "paper_id",
         "power_n",
@@ -525,10 +533,12 @@ def test_power_fallback_json_expand_details(
         "power_effect_size",
         "power_effect_size_metric",
         "power_software",
+        "power_unchecked",
     ]
-    assert mo.summary_table.iloc[0, 1:].tolist() == [2, 0, 0, 1, 0, 1, 0, 0, 0]
+    assert mo.summary_table.iloc[0, 1:].tolist() == [2, 0, 0, 1, 0, 1, 0, 0, 0, 1]
     prose = [b for b in mo.report if isinstance(b, str)]
-    assert prose[0].startswith(
+    assert prose[0].startswith("1 of 3 paragraphs could not be checked by the LLM")
+    assert prose[1].startswith(
         "We used the LLM model 'groq/llama-3.3-70b-versatile' to check the contents of 3 paragraphs"
     )
     assert (
@@ -559,7 +569,7 @@ def test_power_reports_failed_llm_check(
     assert "No power analyses were detected" not in mo.summary_text
     # R: the empty table keeps llm()'s and json_expand()'s error columns (U108: and
     # has every extracted field)
-    assert list(mo.table.columns)[-13:] == [
+    assert list(mo.table.columns)[-16:] == [
         "answer",
         "error",
         "error_msg",
@@ -573,6 +583,9 @@ def test_power_reports_failed_llm_check(
         "effect_size_metric",
         "software",
         "complete",
+        "statistical_test_other",
+        "effect_size_metric_other",
+        "software_other",
     ]
     assert mo.summary_table["power_n"].tolist() == [0]
 
@@ -718,14 +731,15 @@ def test_power_structured_only_some_keys(llm_on: None, mock_chat: MockChat) -> N
     assert list(mo.table.columns)[8:] == [
         "power_type",
         "statistical_test",
-        "statistical_test_other",
         "sample_size",
         "alpha_level",
         "power",
         "effect_size",
         "effect_size_metric",
-        "effect_size_metric_other",
         "software",
+        "statistical_test_other",
+        "effect_size_metric_other",
+        "software_other",
         "complete",
         "power_id",
     ]
@@ -733,7 +747,18 @@ def test_power_structured_only_some_keys(llm_on: None, mock_chat: MockChat) -> N
         "Some essential information could not be detected: statistical_test, alpha_level, "
         "power, effect_size, effect_size_metric, software"
     ) in mo.report
-    assert mo.summary_table.iloc[0, 1:].tolist() == [1, 0, 0, 1, 0, 0, 0, 0, 0]
+    assert mo.summary_table.iloc[0, 1:].tolist() == [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ]  # power_unchecked: 0
 
 
 def test_power_structured_partial_failure(llm_on: None, mock_chat: MockChat) -> None:
@@ -767,9 +792,13 @@ def test_power_structured_partial_failure(llm_on: None, mock_chat: MockChat) -> 
     assert len(mo.table) == 1
     assert mo.table["power_type"].tolist() == ["apriori"]
     assert ".error" not in mo.table.columns
-    assert mo.traffic_light == "green"
+    # the paragraph that failed is reported, not dropped without a word (#475)
+    assert mo.traffic_light == "yellow"
+    assert mo.summary_table["power_unchecked"].tolist() == [1]
+    assert "1 of 2 paragraphs could not be checked by the LLM" in mo.summary_text
     prose = [b for b in mo.report if isinstance(b, str)]
-    assert "2 paragraphs" in prose[0]
+    assert prose[0].startswith("1 of 2 paragraphs could not be checked by the LLM")
+    assert any("2 paragraphs" in b for b in prose)
     assert not any("prompt-based extraction" in b for b in prose)
 
 
