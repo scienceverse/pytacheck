@@ -7,16 +7,6 @@
   ref: U132
   reason: R's "there is no package called ‘pkg’" (typographic quotes in UTF-8) is recognised, so a script failing on an unavailable dependency is dependency_unavailable, not errored
 "mod_repro_review/tables.exec_docker_exec": *u132
-"mod_repro/reproducibility_check.bibr12": &u138_rep
-  kind: r_bug_fixed
-  ref: U138
-  reason: a test_id carries its source prefix once (notebook_r_ipynb_t1); R's .stat_test_id() fallback repeats it, and a value key loses its trailing underscore too (95_conf, R 95_conf_)
-"mod_repro/reproducibility_check.jasp_with_r": *u138_rep
-"mod_repro/reproducibility_check.jasp_with_r_keep_sandbox": *u138_rep
-"mod_repro/reproducibility_check.smcl_mplus":
-  kind: "r_bug_fixed"
-  ref: "U138"
-  reason: "a test_id carries its source prefix once (analysis_smcl_t1_price); R's .stat_test_id() fallback repeats it, and a value key loses its trailing underscore too (95_conf, R 95_conf_). The no-code sentence names Python too (D119)"
 "mod_repro/reproducibility_check.spv_notebook_py":
   kind: r_bug_fixed
   ref: U148
