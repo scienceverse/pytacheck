@@ -1747,36 +1747,7 @@ _IO_READ_INNER = (
     r"vroom|source|read_[A-Za-z_0-9]+|loadtxt|genfromtxt|loadmat|open"
 )
 _SRC_PAT = r"""source\s*\(\s*['"]([^'"]+)['"]"""
-_PY_OPEN_PAT = r"\bopen\s*\("
 _PY_WRITE_MODE_PAT = r"""^(['"])(?=[^'"]*[wax+])[rwaxbt+]+\1$"""
-_PY_NAMED_ARG_PAT = r"^[A-Za-z_][A-Za-z0-9_]*\s*=(?!=)"
-
-
-def _close_of(chars: str, first: int) -> int | None:
-    """0-based index of the bracket closing a call whose arguments start at *first*.
-
-    Quoted text and nested brackets (``()``, ``[]``, ``{}``) are skipped.
-    """
-    depth = 1
-    in_str: str | None = None
-    i = first
-    while i < len(chars):
-        ch = chars[i]
-        if in_str is not None:
-            if ch == "\\":
-                i += 1
-            elif ch == in_str:
-                in_str = None
-        elif ch in ("'", '"'):
-            in_str = ch
-        elif ch in "([{":
-            depth += 1
-        elif ch in ")]}":
-            depth -= 1
-            if depth == 0:
-                return i
-        i += 1
-    return None
 
 
 def _py_open_writes(line: str | None) -> bool:
@@ -1785,26 +1756,14 @@ def _py_open_writes(line: str | None) -> bool:
     Whether a line of Python opens a file for writing. Only the mode argument of an
     ``open()`` call counts: the second positional argument, or ``mode =``; a mode is a
     write when it is ``w``, ``a``, ``x`` or ``r+``, with ``b``, ``t`` or ``+`` (U240,
-    fixed in metacheck 0.4.0).
+    fixed in metacheck 0.4.0). The call text is blanked when its mode writes
+    (``_blank_write_opens`` of code_check, which metacheck 0.4.3.9 shares with this).
     """
     if not line:
         return False
-    for m in re.finditer(_PY_OPEN_PAT, line):
-        first = m.end()
-        end = _close_of(line, first)
-        if end is None or end == first:
-            continue
-        args = [trimws(a["text"]) for a in _split_args(line[first:end])]
-        named = [bool(re.match(_PY_NAMED_ARG_PAT, a)) for a in args]
-        modes = [a for a, nm in zip(args, named, strict=True) if nm and re.match(r"^mode\s*=", a)]
-        if modes:
-            mode: str | None = re.sub(r"^mode\s*=\s*", "", modes[0])
-        else:
-            positional = [a for a, nm in zip(args, named, strict=True) if not nm]
-            mode = positional[1] if len(positional) > 1 else None
-        if mode is not None and re.match(_PY_WRITE_MODE_PAT, mode):
-            return True
-    return False
+    from metacheck.codecheck.core import _blank_write_opens
+
+    return _blank_write_opens([line], "Python", _PY_WRITE_MODE_PAT) != [line]
 
 
 def _code_open_calls(

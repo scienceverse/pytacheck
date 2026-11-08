@@ -2627,6 +2627,107 @@ _WRITE_REGEX = {
     ),
     "Python": _alternation(_PY_WRITE_FNS, r"\s*\("),
 }
+_BLANK_CALL = {"Python": r"\bopen\s*\(", "MATLAB": r"\bfopen\s*\("}
+#: The modes that create the file, matched against the mode argument with its quotes. Python's
+#: ``r+`` changes a file that must already exist, so it stays an input here; ``_py_open_writes``
+#: passes its own modes, which count ``r+``.
+_BLANK_MODE = {
+    "Python": r"""^(['"])(?=[^'"]*[wax])[rwaxbt+]+\1$""",
+    "MATLAB": r"""^(['"])[wWaA][+tb]*\1$""",
+}
+_NAMED_ARG = r"^[A-Za-z_][A-Za-z0-9_]*\s*=(?!=)"
+_MPLUS_COMMAND = (
+    r"^\s*(TITLE|DATA(\s+[A-Za-z]+)*|VARIABLE|DEFINE|ANALYSIS|MODEL(\s+[A-Za-z]+)*|OUTPUT|"
+    r"SAVEDATA|PLOT|MONTECARLO)\s*:"
+)
+
+
+def _close_of(text: str, first: int) -> int | None:
+    """Index of the bracket closing a call whose arguments start at *first*.
+
+    Quoted text and nested brackets (``()``, ``[]``, ``{}``) are skipped.
+    """
+    depth = 1
+    in_str: str | None = None
+    i = first
+    while i < len(text):
+        ch = text[i]
+        if in_str is not None:
+            if ch == "\\":
+                i += 1
+            elif ch == in_str:
+                in_str = None
+        elif ch in ("'", '"'):
+            in_str = ch
+        elif ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth -= 1
+            if depth == 0:
+                return i
+        i += 1
+    return None
+
+
+def _blank_write_opens(
+    code_text: Sequence[str | None], lang: str, mode_regex: str | None = None
+) -> list[str | None]:
+    """Calls that open a file for writing, blanked out (``.code_blank_write_opens()``).
+
+    Python's ``open()`` and MATLAB's ``fopen()`` read a file or write one, decided only by their
+    mode argument (the second argument without a name, or Python's ``mode =``), so
+    ``open("out.txt", "w")`` is an output, not a missing input. The text of each call that
+    writes is replaced with spaces, so its file name is not found; the lines and their number
+    stay as they were. A call over several lines is judged as a whole.
+    """
+    from metacheck.statout.r_output import _repro_split_args
+
+    call = _BLANK_CALL.get(lang)
+    if call is None or not code_text:
+        return list(code_text)
+    lines = ["" if t is None else t for t in code_text]
+    mode_pat = mode_regex or _BLANK_MODE[lang]
+    joined = "\n".join(lines)
+    chars = list(joined)
+    changed = False
+    for m in re.finditer(call, joined):
+        first = m.end()
+        end = _close_of(joined, first)
+        if end is None or end == first:
+            continue
+        args = [str(trimws(a["text"])) for a in _repro_split_args(joined[first:end])]
+        named = [bool(re.match(_NAMED_ARG, a)) for a in args]
+        modes = [a for a, nm in zip(args, named, strict=True) if nm and re.match(r"mode\s*=", a)]
+        if modes:
+            mode: str | None = re.sub(r"^mode\s*=\s*", "", modes[0])
+        else:
+            positional = [a for a, nm in zip(args, named, strict=True) if not nm]
+            mode = positional[1] if len(positional) > 1 else None
+        if mode is not None and re.search(mode_pat, mode):
+            for k in range(m.start(), end + 1):
+                if chars[k] != "\n":
+                    chars[k] = " "
+            changed = True
+    return list("".join(chars).split("\n")) if changed else list(code_text)
+
+
+def _blank_mplus_savedata(code_text: Sequence[str | None]) -> list[str | None]:
+    """Mplus's SAVEDATA command, blanked out (``.code_blank_mplus_savedata()``).
+
+    Mplus names its input with ``FILE =`` under ``DATA:`` and the file it writes with ``FILE =``
+    under ``SAVEDATA:``. Every line from ``SAVEDATA:`` up to the next command is emptied.
+    """
+    out = list(code_text)
+    command: str | None = None
+    for i, line in enumerate(out):
+        m = re.match(_MPLUS_COMMAND, line or "", flags=re.IGNORECASE)
+        if m is not None:
+            command = m.group(1).strip().upper()
+        if command == "SAVEDATA":
+            out[i] = ""
+    return out
+
+
 _QUOTED_FILE = "(['\"])(?!\\.\\1)[^'\"]+\\.[A-Za-z0-9]{1,8}(?:\\.[A-Za-z0-9]{1,8})*\\1"
 _FORMAT_SPEC = r"^%[-+ 0#]*[0-9]*(\.[0-9]+)?[diouxXeEfgGaAscp]$"
 _UNQUOTED = {
@@ -2658,9 +2759,21 @@ def code_file_refs(
     """
     lang = _match_arg(lang)
     lines = code_remove_comments(code_text, lang)
+    # Python's open() and MATLAB's fopen() are reading calls below, but with a writing mode they
+    # create the file, and Mplus's SAVEDATA names a file the model writes: outputs, left out
+    # unless writes are asked for
+    if include_writes is not True:
+        lines = _blank_write_opens(lines, lang)
+        if lang == "Mplus":
+            lines = _blank_mplus_savedata(lines)
     pattern = _LOAD_REGEX[lang]
     if include_writes is True and lang in _WRITE_REGEX:
         pattern = f"{pattern}|{_WRITE_REGEX[lang]}"
+    # SAS, SPSS and Mplus ignore capitals: PROC IMPORT DATAFILE= and proc import datafile= are the
+    # same command (metacheck 0.4.3.9)
+    no_case = lang in ("SAS", "SPSS", "Mplus")
+    if no_case:
+        pattern = f"(?i){pattern}"
     load_hits = grepl(pattern, lines, perl=True)
     load_lines = [s for s, h in zip(lines, load_hits, strict=True) if h]
     # A call whose file name is on a line after it, as in `read.csv(` and then `"./data.csv")`, is
@@ -2676,6 +2789,7 @@ def code_file_refs(
     unquoted = [s for s, q in zip(load_lines, quoted, strict=True) if not q]
     extra: list[str] = []
     for regex, group in _UNQUOTED.get(lang, []):
+        regex = f"(?i){regex}" if no_case else regex
         extra.extend(m[group] for m in regexec(regex, unquoted, perl=True) if len(m) >= group + 1)
     extra = list(gsub("[\"']$", "", gsub("^[\"']", "", extra)))
     return list(dict.fromkeys([*loaded, *extra]))

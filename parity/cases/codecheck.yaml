@@ -10168,6 +10168,104 @@
       - "use myfile.dta"
       - "import delimited using \"https://example.org//files/x.csv\""
     "lang": "Stata"
+- "id": "code_file_refs.python_open_modes"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "rows = open(\"data.csv\").read()"
+      - "open(\"out.txt\", \"w\").write(\"1\")"
+      - "with open(\"log.txt\", mode=\"a\") as f: pass"
+      - "with open(\"in.txt\") as f, open(\"res.txt\", \"w\") as g: pass"
+      - "f = open(\"keep.txt\", \"r+\")"
+      - "g = open(\"new.bin\", \"xb\")"
+      - "h = open("
+      - "    \"multi.txt\","
+      - "    \"w\")"
+    "lang": "Python"
+- "id": "code_file_refs.python_open_modes_include_writes"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "rows = open(\"data.csv\").read()"
+      - "open(\"out.txt\", \"w\").write(\"1\")"
+      - "with open(\"log.txt\", mode=\"a\") as f: pass"
+      - "with open(\"in.txt\") as f, open(\"res.txt\", \"w\") as g: pass"
+      - "f = open(\"keep.txt\", \"r+\")"
+      - "g = open(\"new.bin\", \"xb\")"
+      - "h = open("
+      - "    \"multi.txt\","
+      - "    \"w\")"
+    "lang": "Python"
+    "include_writes": !!bool "true"
+- "id": "code_file_refs.matlab_fopen_modes"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "d = load('in.mat');"
+      - "fid = fopen('results.txt', 'w');"
+      - "fid2 = fopen('raw.txt');"
+      - "fid3 = fopen(\"app.txt\", 'at');"
+      - "fid4 = fopen('upd.txt', 'r+');"
+    "lang": "MATLAB"
+- "id": "code_file_refs.mplus_savedata"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "TITLE: two files"
+      - "DATA: FILE = \"in.dat\";"
+      - "VARIABLE: NAMES = y1-y3;"
+      - "MODEL: f BY y1-y3;"
+      - "SAVEDATA:"
+      - "  FILE = \"fscores.dat\";"
+      - "  SAVE = FSCORES;"
+      - "OUTPUT: sampstat;"
+    "lang": "Mplus"
+- "id": "code_file_refs.mplus_capitals"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "DATA: FILE = \"UP.dat\";"
+      - "data: file = \"low.dat\";"
+    "lang": "Mplus"
+- "id": "code_file_refs.sas_capitals"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "proc import datafile='low.csv' out=a;"
+      - "PROC IMPORT DATAFILE='UP.csv' OUT=b;"
+      - "INFILE bare_up.dat;"
+    "lang": "SAS"
+- "id": "code_file_refs.spss_capitals"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "GET FILE='UP.sav'."
+      - "get file='low.sav'."
+      - "get data /type=txt /file=bare_low.txt"
+    "lang": "SPSS"
+- "id": "code_file_refs.stata_capitals"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "use \"a.dta\""
+      - "USE \"b.dta\""
+    "lang": "Stata"
 - "id": "code_abs_path.multiple"
   "r": "code_abs_path"
   "py": "metacheck.codecheck.core.code_abs_path"
