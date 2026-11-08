@@ -9,6 +9,6 @@
       "### ✅️ No Details Module {#no-details-module .green}\n\nAll good.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nRead more in the [metacheck manual](https://www.scienceverse.org/metacheck_book/chapters/mod-tests/report/modules/rp-no-details.R.html).\n\n:::\n"
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.9",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
