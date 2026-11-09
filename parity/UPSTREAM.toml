@@ -3,5 +3,5 @@
 [upstream]
 repository = "https://github.com/scienceverse/metacheck"
 branch = "dev"
-commit = "a6850fd1b51695e9ac7b921936b352fc9a9c61ad"
-version = "0.4.3.9"
+commit = "454263d5cb07effa925295186b9a18797609a8aa"
+version = "0.4.3.21"

@@ -10,6 +10,7 @@
       ".repro_docker_srcs <- c(\"cran\", \"cran\")",
       ".repro_docker_refs <- c(NA_character_, NA_character_)",
       ".repro_docker_vers <- c(NA_character_, NA_character_)",
+      ".repro_docker_bioc <- c(FALSE, FALSE)",
       "lib <- \"/rlib\"",
       "dir.create(lib, recursive = TRUE, showWarnings = FALSE)",
       ".libPaths(c(lib, .libPaths()))",
@@ -87,6 +88,21 @@
       "    }",
       "    list(ok = TRUE, msg = \"\")",
       "  }, error = function(e) list(ok = FALSE, msg = conditionMessage(e)))",
+      "  if (!res$ok && src %in% c(\"github\", \"url\")) {",
+      "    dl <- grep(\"cannot open URL|cannot open the connection|download|status was|Could not resolve host|HTTP error|HTTP status|404|403|Failed to connect\", c(warns, res$msg), value = TRUE, ignore.case = TRUE)",
+      "    first <- if (length(dl)) paste0(\"could not download \", ref, \": \", substr(gsub(\"[[:space:]]+\", \" \", dl[1]), 1, 200)) else res$msg",
+      "    cran_has <- tryCatch(pkg %in% rownames(utils::available.packages()), error = function(e) FALSE)",
+      "    alt <- if (cran_has) \"CRAN\" else if (isTRUE(.repro_docker_bioc[i])) \"Bioconductor\" else NA_character_",
+      "    if (!is.na(alt)) {",
+      "      try(if (alt == \"CRAN\") install.packages(pkg, lib = lib, quiet = FALSE) else {",
+      "        if (!requireNamespace(\"BiocManager\", quietly = TRUE)) install.packages(\"BiocManager\", lib = lib, quiet = FALSE)",
+      "        BiocManager::install(pkg, lib = lib, update = FALSE, ask = FALSE) })",
+      "      if (file.exists(file.path(lib, pkg, \"DESCRIPTION\")) && requireNamespace(pkg, quietly = TRUE, lib.loc = lib)) {",
+      "        res <- list(ok = TRUE, msg = \"\")",
+      "        note <- paste0(\"installed from \", alt, \": the install from \", ref, \" failed (\", substr(first, 1, 200), \")\")",
+      "      } else res$msg <- paste0(first, \"; installing it from \", alt, \" failed too\")",
+      "    } else res$msg <- first",
+      "  }",
       "  v <- have_version(pkg)",
       "  if (res$ok && !is.na(ver) && !same_version(v, ver) && !nzchar(note))",
       "    note <- \"the source gave another version than the recorded one\"",
@@ -189,6 +205,6 @@
       "}"
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

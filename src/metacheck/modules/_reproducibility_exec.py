@@ -126,6 +126,14 @@ def _setdiff(x: Sequence[Any], y: Sequence[Any]) -> list[Any]:
     return list(dict.fromkeys(v for v in x if v not in ys))
 
 
+def _folders_by_script(made: pd.DataFrame) -> dict[str, list[str]]:
+    """``split(made$folder, made$script)``: the folders made for each script so far."""
+    out: dict[str, list[str]] = {}
+    for script, folder in zip(h._chr_col(made, "script"), h._chr_col(made, "folder"), strict=True):
+        out.setdefault(str(script), []).append(str(folder))
+    return out
+
+
 def _pass_order(order: Sequence[Any], redo: Sequence[Any]) -> list[Any]:
     """``c(intersect(order, redo), setdiff(redo, order))``."""
     return [*_intersect(order, redo), *_setdiff(redo, order)]
@@ -808,6 +816,9 @@ def _execute(
     r_placed = layout._none_placed()
     r_deposit_placed = r_placed
     r_seen: dict[str, list[str]] = {}  # script -> the files it stopped on when run again
+    # A script whose write stopped on a folder the deposit does not have runs once more
+    # after the folder is made (metacheck 0.4.3.12, #591; see _repro_make_failed_write_folders())
+    r_folders_made = layout._folders_frame([])
     for _ in range(5):
         names_after = layout._repro_sandbox_names(sandbox_root)
         later = layout._repro_written_later(run_results, r_names_before, names_after)
@@ -828,12 +839,20 @@ def _execute(
             run_results, run_tbl, sandbox_root, r_names_before
         )
         r_deposit_placed = bind_rows([r_deposit_placed, from_deposit])
-        redo = list(dict.fromkeys([*later, *h._chr_col(from_deposit, "script")]))
+        made = layout._repro_make_failed_write_folders(
+            run_results, run_tbl, sandbox_root, _folders_by_script(r_folders_made)
+        )
+        r_folders_made = bind_rows([r_folders_made, made])
+        redo = list(
+            dict.fromkeys(
+                [*later, *h._chr_col(from_deposit, "script"), *h._chr_col(made, "script")]
+            )
+        )
         if not redo:
             break
         dbg(
-            f"re-running {len(redo)} script(s) that stopped on a file another script wrote "
-            "or the deposit holds elsewhere: ",
+            f"re-running {len(redo)} script(s) that stopped on a file another script wrote, "
+            "the deposit holds elsewhere, or a folder a write needed: ",
             ", ".join(map(str, redo)),
         )
         # a script this pass was to run but had no time for is skipped_time_limit, not the
@@ -1015,6 +1034,7 @@ def _execute(
         "r_written_later": r_written_later,
         "r_placed": r_placed,
         "r_deposit_placed": r_deposit_placed,
+        "r_folders_made": r_folders_made,
         # for the report
         "definer_lookup": definer_lookup,
         "run_by_source": run_by_source,
@@ -1065,6 +1085,7 @@ def _execution_report(
     """
     from metacheck.repro.core import _repro_deadline_text
     from metacheck.repro.layout import (
+        _repro_folders_made_text,
         _repro_lfs_stopped_text,
         _repro_not_downloaded_text,
         _repro_placed_text,
@@ -1185,6 +1206,9 @@ def _execution_report(
     r_deposit_placed = ex.get("r_deposit_placed")
     if r_deposit_placed is not None and len(r_deposit_placed):
         report_exec += _repro_placed_text(r_deposit_placed)
+    r_folders_made = ex.get("r_folders_made")
+    if r_folders_made is not None and len(r_folders_made):
+        report_exec += _repro_folders_made_text(r_folders_made)
     r_lfs_stopped = ex.get("r_lfs_stopped") or {}
     if r_lfs_stopped:
         report_exec += _repro_lfs_stopped_text(r_lfs_stopped)

@@ -266,6 +266,10 @@ def _match_sandbox(sandbox: Any) -> str:
         repository lists but that was not downloaded, such as one over
         `max_file_size`: it could not be tried, so it is not counted as a script that
         did not reproduce (`summary_table$repro_not_downloaded_n` counts them apart).
+        For a script that did not run through, `table$error_message` is its error,
+        short (at most 300 characters): the error line of its output, which names a
+        package that is not there, with the address it asked for when it needed the
+        internet, or the time limit it reached; `table$reason` sorts it into a kind.
         `skipped_time_limit` is a script not started, or stopped, because
         `total_timeout` had run out. A timeout means "still running at
         the cutoff", not a failure, so raise `timeout` for legitimately long-running
@@ -350,7 +354,8 @@ def _match_sandbox(sandbox: Any) -> str:
         "install_missing": "if TRUE (and `execute = TRUE`), install the code's\n"
         "declared dependencies into a throwaway temp library before running (CRAN\n"
         "via `install.packages`, GitHub/URL via `remotes`; Python packages via\n"
-        "`pip install --target`). If FALSE, nothing is installed: a script needing\n"
+        '`pip install --prefix` with `sandbox = "docker"`, and `pip install\n'
+        '--target` with `sandbox = "process"`). If FALSE, nothing is installed: a script needing\n'
         "an absent package simply errors, recorded as its outcome. If `None` (the\n"
         "default), this is FALSE, except that the R packages the scripts load are\n"
         "installed when `recorded_versions = TRUE` and the repository records\n"
@@ -1776,6 +1781,20 @@ def _assess_r(
         )
     else:
         outcome_of = errtype_of = undefvar_of = reason_of = [None] * n_code
+    from metacheck.repro.outcomes import _repro_error_message
+
+    # the message of the failure, short (metacheck 0.4.3.20, #615; see _repro_error_message())
+    if run_results is not None:
+        error_message_of = _pick(
+            _repro_error_message(
+                h._chr_col(run_results, "outcome"),
+                h._chr_col(run_results, "error") if "error" in run_results.columns else None,
+                h._chr_col(run_results, "stderr") if "stderr" in run_results.columns else None,
+            ),
+            m_run,
+        )
+    else:
+        error_message_of = [None] * n_code
     if run_tbl is not None and "setwd_removed" in run_tbl.columns:
         setwd_of = _pick(
             h._col(run_tbl, "setwd_removed"), _match_first(names, h._chr_col(run_tbl, "file_name"))
@@ -1821,6 +1840,7 @@ def _assess_r(
             ),
             "repo_name": _str_col(repo_names if repo_names is not None else [None] * n_code),
             "reason": _str_col(reason_of),
+            "error_message": _str_col(error_message_of),
         }
     )
 
@@ -2069,13 +2089,14 @@ def _r_modifications(
             rt_names = h._chr_col(run_tbl, "file_name")
             for col_n, col_d, kind, sep in (
                 ("setwd_removed", "setwd_paths", "setwd_removed", ", "),
+                # a lib.loc folder on the authors' computer, removed (metacheck 0.4.3.11, #594)
+                (None, "lib_loc_removed", "lib_loc_removed", "; "),
                 ("family_replaced", "family_detail", "font_replaced", "; "),
             ):
                 if col_d not in run_tbl.columns:
                     continue
-                for fn, n, p in zip(
-                    rt_names, h._col(run_tbl, col_n), h._chr_col(run_tbl, col_d), strict=True
-                ):
+                counts = [1] * len(run_tbl) if col_n is None else h._col(run_tbl, col_n)
+                for fn, n, p in zip(rt_names, counts, h._chr_col(run_tbl, col_d), strict=True):
                     if not h._na(n) and n > 0 and h._nzchar(p):
                         rows += [(fn, kind, x) for x in strsplit(p, sep, fixed=True)]
         # one row per library() call added (a script can get several)
@@ -2129,6 +2150,20 @@ def _r_modifications(
                     h._chr_col(dep_placed, "script"),
                     h._chr_col(dep_placed, "from"),
                     h._chr_col(dep_placed, "to"),
+                    strict=True,
+                )
+            ]
+        folders_made = ex.get("r_folders_made")
+        if folders_made is not None and len(folders_made):
+            later += [
+                (
+                    s,
+                    "folder_made",
+                    f"made the folder {f}, where the script writes, and ran it once more",
+                )
+                for s, f in zip(
+                    h._chr_col(folders_made, "script"),
+                    h._chr_col(folders_made, "folder"),
                     strict=True,
                 )
             ]

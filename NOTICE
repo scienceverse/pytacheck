@@ -43,3 +43,32 @@ It also serves two files that are not part of this package's own code:
   Public License version 3; this package uses it under the MIT License. SHA-256 of
   jszip.min.js: acc7e41455a80765b5fd9c7ee1b8078a6d160bbbca455aeae854de65c947d59e. SHA-256
   of LICENSE.markdown: 566c953c6090b1218ca6217dd7359d45dde46581968586dc607d59a78af6a9c4.
+
+src/metacheck/resources/databases/key_patterns.json.gz holds the rules for finding keys (API
+keys, access tokens) in files that data_check uses (src/metacheck/keys.py). They are the rules
+of high and medium confidence of the secret scanner betterleaks,
+https://github.com/betterleaks/betterleaks (the file config/betterleaks.toml; the commit read
+is stored with the rules), as collected by metacheck's data-raw/key_patterns.R and converted by
+scripts/convert_key_patterns.R. Licence:
+
+MIT License
+
+Copyright (c) 2026 Zachary Rice
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

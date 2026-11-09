@@ -20,6 +20,7 @@
       "roster_check",
       "group_no_evidence",
       "useless_files",
+      "view_only",
       "na_replace"
     ],
     "v": [
@@ -148,6 +149,7 @@
           "files_zip",
           "files_unknown",
           "naming_issues",
+          "repo_view_only",
           "roster_mismatch"
         ],
         "v": [
@@ -167,6 +169,12 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -342,6 +350,29 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "project"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "dbl",
         "v": [
           0
@@ -349,6 +380,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

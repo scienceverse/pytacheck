@@ -71,7 +71,8 @@
           "not_analysis_why",
           "paper_link",
           "repo_name",
-          "reason"
+          "reason",
+          "error_message"
         ],
         "v": [
           {
@@ -430,6 +431,19 @@
               null,
               null,
               "undefined",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "! object 'shared_x' not found",
+              null,
+              null,
+              "! could not find function \"nonexistent_fun_xyz\"",
               null,
               null,
               null,
@@ -981,6 +995,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

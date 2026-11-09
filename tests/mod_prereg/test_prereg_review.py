@@ -12,15 +12,17 @@ import pytest
 from tests.mod_prereg.parity_support import run_prereg, run_prereg_tables
 
 
-def test_view_only_link_keeps_its_token_and_does_not_join() -> None:
+def test_view_only_link_is_asked_for_with_its_key() -> None:
+    # metacheck 0.4.3.21 (#611) asks the API for a view-only link with its key,
+    # which the recordings do not hold: the registration is not accessible
     url = "https://osf.io/vwonl/?view_only=abc123"
     mo = run_prereg(papers=[{"url": [url], "id": "p_vwonl"}], mock="local")
-    assert mo.table["id"].tolist() == ["vwonl"]
-    assert mo.table["link"].tolist() == ["https://osf.io/vwonl"]
-    # U110: joined by the OSF id (metacheck's join by link text leaves paper_id NA)
-    assert mo.table["paper_id"].tolist() == ["p_vwonl"]
-    assert mo.summary_table["preregistration"].tolist() == [1]
-    assert mo.summary_text == "We found 1 preregistration."
+    assert mo.table is None
+    assert mo.summary_table["preregistration"].tolist() == [0]
+    assert mo.summary_text == (
+        "We found 1 OSF link, but no accessible registrations. "
+        "1 registration link could not be accessed (private, embargoed, or withdrawn)."
+    )
 
 
 def test_registration_without_data_errors_as_in_r() -> None:

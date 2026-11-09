@@ -589,6 +589,10 @@ def test_execute_error_forces_red(rscript: str, paper: pc.Paper, repro_fixture: 
     assert mo.traffic_light == "red"
     assert mo.table["outcome"].tolist() == ["errored"]
     assert "deliberate failure" in mo.run_results["error"].iloc[0]
+    # the message is in the table too, short (metacheck #615)
+    msg = mo.table["error_message"].iloc[0]
+    assert "deliberate failure for testing" in msg
+    assert len(msg) <= 300
 
 
 @pytest.mark.slow
@@ -607,6 +611,49 @@ def test_execute_strips_setwd(rscript: str, paper: pc.Paper, repro_fixture: Any)
     assert mods.loc[mods["change_type"] == "setwd_removed", "detail"].tolist() == [
         "/Users/original_author/project"
     ]
+
+
+@pytest.mark.slow
+def test_execute_removes_a_lib_loc_and_makes_a_folder_a_write_needs(
+    rscript: str, paper: pc.Paper, tmp_path: Any
+) -> None:
+    """A lib.loc on the authors' computer is removed, and a folder a write needs is made
+    (metacheck #594, #591)."""
+    # #594: the package is there, the authors' folder is not
+    (tmp_path / "libloc.R").write_text(
+        'library(stats, lib.loc = "C:/Users/someone/Documents/R/win-library/4.1")\nx <- median(1:5)\n'
+    )
+    # #591: the folder's name is built in a function, so it cannot be made before the run
+    (tmp_path / "writes.R").write_text(
+        'out_dir <- function() file.path("results", "tables")\n'
+        'write.csv(data.frame(a = 1:3), file.path(out_dir(), "a.csv"), row.names = FALSE)\n'
+    )
+    code_tbl = pd.concat(
+        [
+            code_tbl_row(paper, "libloc.R", str(tmp_path / "libloc.R")),
+            code_tbl_row(paper, "writes.R", str(tmp_path / "writes.R")),
+        ],
+        ignore_index=True,
+    )
+    structure_df = pd.DataFrame({"paper_id": [], "file_name": [], "file_location": []})
+    mo = module_run(
+        chain(paper, code_tbl, structure_df, None),
+        "reproducibility_check",
+        execute=True,
+        sandbox="process",
+        timeout=60,
+    )
+    tbl = mo.table.set_index("file_name")
+    assert tbl.loc["libloc.R", "outcome"] == "ran_ok"
+    mods = mo.modifications
+    assert mods.loc[mods["change_type"] == "lib_loc_removed", "detail"].tolist() == [
+        "C:/Users/someone/Documents/R/win-library/4.1"
+    ]
+    assert tbl.loc["writes.R", "outcome"] == "ran_ok"
+    made = mods[mods["change_type"] == "folder_made"]
+    assert made["file_name"].tolist() == ["writes.R"]
+    assert "results/tables" in made["detail"].iloc[0]
+    assert "wrote into a folder that the deposit does not have" in report_text(mo)
 
 
 @pytest.mark.slow

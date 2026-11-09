@@ -1,0 +1,37 @@
+{
+  "id": "keys.find.encoded_run_masked",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "start",
+      "end",
+      "rule"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          2480
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2519
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "github-pat"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.21",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

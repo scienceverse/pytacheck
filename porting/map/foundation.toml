@@ -3,6 +3,9 @@
 "R/paper.R" = ["src/metacheck/papers/model.py", "src/metacheck/papers/io.py", "src/metacheck/papers/tables.py", "src/metacheck/papers/schema.py", "src/metacheck/papers/validate.py"]
 "R/import-read.R" = ["src/metacheck/io/read.py", "src/metacheck/papers/io.py"]
 "R/module.R" = ["src/metacheck/module.py"]
+"R/keys.R" = ["src/metacheck/keys.py"]
+"inst/databases/key_patterns.Rds" = ["src/metacheck/resources/databases/key_patterns.json.gz", "scripts/convert_key_patterns.R"]
+"data-raw/key_patterns.R" = ["scripts/convert_key_patterns.R"]
 "R/text_search.R" = ["src/metacheck/text/search.py"]
 "R/text_expand.R" = ["src/metacheck/text/expand.py"]
 "R/utils.R" = ["src/metacheck/http.py"]
@@ -54,3 +57,19 @@ link = "metacheck.report.blocks:link"
 format_ref = "metacheck.report.blocks:format_ref"
 cap_gate_count = "metacheck.report.blocks:cap_gate_count"
 ".batch_query" = "metacheck.http:batch_query"
+# Keys in text and files (R/keys.R, metacheck #607): data_check's key search and the removal
+# of keys from every module's result in module_run().
+".key_rules" = "metacheck.keys:_key_rules"
+".key_present" = "metacheck.keys:_key_present"
+".key_entropy" = "metacheck.keys:_key_entropy"
+".key_not_a_key" = "metacheck.keys:_key_not_a_key"
+".key_windows" = "metacheck.keys:_key_windows"
+".key_mask_encoded" = "metacheck.keys:_key_mask_encoded"
+".key_find" = "metacheck.keys:_key_find"
+".key_replace" = "metacheck.keys:_key_replace"
+".key_remove" = "metacheck.keys:_key_remove"
+".key_shown" = "metacheck.keys:_key_shown"
+".key_number" = "metacheck.keys:_key_number"
+".key_scan_files" = "metacheck.keys:_key_scan_files"
+".key_scan_tables" = "metacheck.keys:_key_scan_tables"
+".key_scan_repo_files" = "metacheck.keys:_key_scan_repo_files"

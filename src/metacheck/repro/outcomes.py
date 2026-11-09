@@ -15,6 +15,7 @@ limit is set.
 from __future__ import annotations
 
 import math
+import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -79,6 +80,75 @@ def _repro_error_line(stderr: str | None, python: bool = False, max_chars: int =
     out = str(gsub(r"\s+", " ", out))
     if len(out) > max_chars:
         out = out[: max_chars - 1] + "\u2026"
+    return out
+
+
+_NO_ERROR_MESSAGE = (
+    "ran_ok",
+    "run_by_source",
+    "run_by_import",
+    "jags_model",
+    "not_r_content",
+    "defines_functions",
+    "not_analysis",
+)
+
+
+def _repro_error_message(
+    outcome: Sequence[str | None],
+    error: Sequence[str | None] | None,
+    stderr: Sequence[str | None] | None = None,
+    python: bool = False,
+    max_chars: int = 300,
+) -> list[str | None]:
+    """Port of ``.repro_error_message()``: each script's failure, short, for the table (#615).
+
+    So a reader of the table need not take it from the report text, whose wording changes:
+    the error line of the script's output (as the report shows it, see
+    :func:`_repro_error_line`), which names the package that is not there; for a script that
+    needed the internet, with the address it asked for when the error line names none; for
+    one that timed out, the time limit. Else the last line of the output. At most
+    *max_chars* characters; ``None`` for a script that ran through or has no message.
+    """
+    n = len(outcome)
+    errors = list(error) if error is not None else [None] * n
+    stderrs = list(stderr) if stderr is not None else [None] * n
+
+    def shorten(x: str) -> str:
+        x = re.sub(r"\s+", " ", x.strip())
+        return x[: max_chars - 1] + "\u2026" if len(x) > max_chars else x
+
+    out: list[str | None] = []
+    for i in range(n):
+        o = outcome[i]
+        if o is None or o in _NO_ERROR_MESSAGE:
+            out.append(None)
+            continue
+        err, se = errors[i], stderrs[i]
+        e = err if (err is not None and err.strip() != "") else se
+        if e is None or e.strip() == "":
+            out.append(None)
+            continue
+        # the time limit: error is the limit's own sentence ("timed out after 3600s")
+        if o in ("timed_out", "skipped_time_limit"):
+            out.append(shorten(e))
+            continue
+        line = _repro_error_line(e, python=python, max_chars=max_chars)
+        if not line:
+            line = _repro_error_line(e, python=not python, max_chars=max_chars)
+        if not line:
+            lines = [ln.strip() for ln in re.split(r"\r?\n", e)]
+            lines = [
+                ln
+                for ln in lines
+                if ln and not re.match(r"^(Execution halted|Calls:|Backtrace:)", ln)
+            ]
+            line = shorten(lines[-1]) if lines else ""
+        if o == "needs_internet" and not re.search(r"https?://", line, re.I):
+            m = re.search(r"https?://[^\s'\"<>)\]]+", f"{e} {se if se is not None else 'NA'}")
+            if m:
+                line = shorten(f"{line} ({m.group(0)})")
+        out.append(line if line else None)
     return out
 
 

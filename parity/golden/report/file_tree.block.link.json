@@ -12,6 +12,6 @@
       "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── __MACOSX/    junk: remove (2 files)\n├── .git/        junk: keep only on purpose (1 file)\n├── data/\n│   └── raw.csv  📊 data\n└── .DS_Store    junk: remove\n```\n:::"
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

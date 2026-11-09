@@ -51,6 +51,7 @@ from metacheck.repro.core import (
     _is_true,
     _na_str,
     _paste_lines,
+    _portable_path,
     _r_dirname,
     _read_lines,
     _repro_md5,
@@ -844,6 +845,164 @@ def _repro_placed_text(placed: pd.DataFrame | None) -> str:
         f"{plural(ns, 'it', 'them')} once more we copied {plural(n, 'it', 'them')} there: {copies}. "
         "Building paths from the top of the project (as with `here::here()`), or keeping the "
         "folders the code expects, solves this."
+    )
+
+
+_Q = "['\"`\u2018\u2019]"
+_NQ = "[^'\"`\u2018\u2019\n]+"
+_WRITES_R = re.compile(
+    "[\"'](?:w|a|wb|ab|w\\+|a\\+)[\"']|"
+    "\\b(?:pdf|png|jpeg|jpg|tiff|bmp|svg|svglite|cairo_pdf|cairo_ps|postscript|sink|save|"
+    "saveRDS|ggsave|writeLines|writeBin|dev\\.copy|dev\\.print)\\s*\\(|"
+    "\\bwrite[A-Za-z_.]*\\s*\\(|\\bsaveWorkbook\\s*\\("
+)
+_WRITES_PY = re.compile(
+    "\\bopen\\s*\\([^)]*,\\s*(?:mode\\s*=\\s*)?[\"'][^\"']*[wax]|"
+    "\\.(?:savefig|to_csv|to_excel|to_parquet|to_pickle|to_json|to_feather|to_html|"
+    "to_latex|to_netcdf|write|save)\\s*\\(|\\bnp\\.(?:save|savez|savetxt)\\s*\\(|"
+    "\\b(?:savefig|imsave|imwrite)\\s*\\("
+)
+
+
+def _repro_write_failed_folders(msg: str | None) -> list[str]:
+    """Port of ``.repro_write_failed_folders()``: the folders a script's write stopped on (#591).
+
+    A script writes into a folder that is not in the deposit (authors leave empty output
+    folders out), and the check could make it before the run only when it could see the
+    path, not when the path was built elsewhere: in a function of a sourced file
+    (10.1111/1365-2664.14583, "cannot create file './outputs/...xlsx'") or inside
+    ``here()`` (10.1111/1365-2664.14735, ggsave's "Cannot find directory
+    '/sandbox/.../5_figs/final'"). Only a message of a write counts: "cannot create file",
+    ggsave's "Cannot find directory", "cannot open (compressed) file" when the call that
+    failed writes (a mode "w", "a" or "wb", ``pdf()``, ``png()``, ``save()``, ``saveRDS()``,
+    ``sink()``, ``write.csv()``, ...), and Python's ``FileNotFoundError`` when the line it
+    names writes (``open(..., "w")``, ``savefig()``, ``to_csv()``, ...). A file a script reads
+    but does not find gives a message too, and is not a folder to make. Returns the folders
+    as the message gives them.
+    """
+    if msg is None or msg == "":
+        return []
+
+    def grab(pat: str) -> list[str]:
+        first = re.compile(".*?" + _Q + "(" + _NQ + ")" + _Q + ".*")
+        return [
+            first.sub(r"\1", m.group(0))
+            for m in re.finditer(pat, msg)  # type: ignore[arg-type]
+        ]
+
+    out = [_r_dirname(x) or "" for x in grab("cannot create file " + _Q + _NQ + _Q)]
+    out += grab("Cannot find directory " + _Q + _NQ + _Q)
+    calls = re.findall("Error in [^\n]*", msg)
+    if any(_WRITES_R.search(c) for c in calls):
+        out += [
+            _r_dirname(x) or "" for x in grab("cannot open (?:compressed )?file " + _Q + _NQ + _Q)
+        ]
+    if "FileNotFoundError" in msg:
+        lines = [ln.strip() for ln in msg.split("\n")]
+        code = [
+            ln
+            for ln in lines
+            if not re.match(r"^(File |Traceback|FileNotFoundError|\^|~)", ln) and ln != ""
+        ]
+        if code and _WRITES_PY.search(code[-1]):
+            out += [
+                _r_dirname(x) or "" for x in grab("No such file or directory: " + _Q + _NQ + _Q)
+            ]
+    out = [x.replace("\\", "/") for x in out]
+    return _unique([x for x in out if x != "" and x not in (".", "/")])
+
+
+def _repro_make_failed_write_folders(
+    results: pd.DataFrame | None,
+    run_tbl: pd.DataFrame | None,
+    root: str | os.PathLike[str],
+    seen: Mapping[str, Sequence[str]] | None = None,
+) -> pd.DataFrame:
+    """Port of ``.repro_make_failed_write_folders()`` (metacheck 0.4.3.12, #591).
+
+    Before a script runs once more: the folders its writes stopped on are made, inside the
+    sandbox only (see :func:`_repro_write_failed_folders`), counted from the folder the
+    script runs in; a folder on the authors' computer is left. *seen* holds the folders
+    made for each script before, which are not made again. Returns the folders made:
+    ``script`` and ``folder`` (from the top of the sandbox).
+    """
+    seen = seen or {}
+    rows: list[tuple[str, str]] = []
+    if results is None or len(results) == 0 or run_tbl is None:
+        return _folders_frame(rows)
+    root_s = os.fspath(root)
+    root_n = cast(str, _bs2fs(os.path.realpath(root_s)))
+
+    def rel_dir(path: str | None) -> str | None:
+        if path is None:
+            return None
+        p = cast(str, _bs2fs(os.path.realpath(path)))
+        if p.lower() == root_n.lower():
+            return "."
+        if not p.lower().startswith(root_n.lower() + "/"):
+            return None
+        return p[len(root_n) + 1 :]
+
+    r_name = _chr_or_none(results, "file_name")
+    r_outcome = _chr_or_none(results, "outcome")
+    r_error = _chr_or_none(results, "error")
+    r_stderr = _chr_or_none(results, "stderr")
+    t_name = _chr_or_none(run_tbl, "file_name")
+    t_dir = _chr_or_none(run_tbl, "run_dir")
+    for s in [n for n, o in zip(r_name, r_outcome, strict=True) if o == "errored"]:
+        if s is None or s not in r_name or s not in t_name:
+            continue
+        i = r_name.index(s)
+        k = t_name.index(s)
+        run_dir = rel_dir(t_dir[k])
+        for d in _repro_write_failed_folders(f"{_na_str(r_error[i])} {_na_str(r_stderr[i])}"):
+            to: str | None
+            if d.startswith("/sandbox/"):
+                to = _repro_norm_rel(re.sub("^/sandbox/", "", d))
+            elif d.lower().startswith(root_n.lower() + "/"):
+                to = rel_dir(d)
+            elif re.match(r"^(/|~|[A-Za-z]:)", d) or run_dir is None:
+                to = None
+            else:
+                to = _repro_norm_rel(d if run_dir == "." else f"{run_dir}/{d}")
+            if not to or to == "." or to in list(seen.get(s, ())):
+                continue
+            dest = os.path.join(root_s, cast(str, _portable_path(to)))
+            if os.path.isdir(dest):
+                continue
+            try:
+                os.makedirs(dest, exist_ok=True)
+            except OSError:
+                continue
+            rows.append((s, to))
+    return _folders_frame(rows)
+
+
+def _folders_frame(rows: Sequence[tuple[str, str]]) -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "script": pd.Series([r[0] for r in rows], dtype="string"),
+            "folder": pd.Series([r[1] for r in rows], dtype="string"),
+        }
+    )
+
+
+def _repro_folders_made_text(made: pd.DataFrame | None) -> str:
+    """Port of ``.repro_folders_made_text()``: the sentence on the folders made for a write."""
+    if made is None or len(made) == 0:
+        return ""
+    n = len(made)
+    ns = len(_unique(_chr_list(made["script"])))
+    made_list = "; ".join(
+        f"`{f}` for `{s}`"
+        for f, s in zip(_chr_list(made["folder"]), _chr_list(made["script"]), strict=True)
+    )
+    return (
+        f" **{plural(ns, 'A script', f'{ns} scripts')} wrote into {plural(n, 'a folder', f'{n} folders')} "
+        f"that the deposit does not have**, so we made {plural(n, 'it', 'them')} and ran "
+        f"{plural(ns, 'it', 'them')} once more: {made_list}. "
+        "Keeping the (empty) output folders in the deposit, or making them in the code with "
+        "`dir.create()`, solves this."
     )
 
 

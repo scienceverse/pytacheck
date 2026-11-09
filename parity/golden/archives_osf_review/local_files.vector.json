@@ -7,7 +7,7 @@
   ],
   "value": {
     "t": "df",
-    "nrow": 103,
+    "nrow": 104,
     "names": [
       "repo_url",
       "file_name",
@@ -20,6 +20,7 @@
       {
         "t": "chr",
         "v": [
+          "upstream/metacheck/R",
           "upstream/metacheck/R",
           "upstream/metacheck/R",
           "upstream/metacheck/R",
@@ -180,6 +181,7 @@
           "import-papers.R",
           "import-read.R",
           "jasp.R",
+          "keys.R",
           "llm-cache.R",
           "llm.R",
           "match-reported.R",
@@ -236,6 +238,7 @@
       {
         "t": "chr",
         "v": [
+          null,
           null,
           null,
           null,
@@ -396,6 +399,7 @@
           "<repo>/upstream/metacheck/R/import-papers.R",
           "<repo>/upstream/metacheck/R/import-read.R",
           "<repo>/upstream/metacheck/R/jasp.R",
+          "<repo>/upstream/metacheck/R/keys.R",
           "<repo>/upstream/metacheck/R/llm-cache.R",
           "<repo>/upstream/metacheck/R/llm.R",
           "<repo>/upstream/metacheck/R/match-reported.R",
@@ -470,7 +474,7 @@
           13580,
           37926,
           17000,
-          81367,
+          81917,
           23996,
           58724,
           28429,
@@ -480,7 +484,7 @@
           1162,
           11540,
           140786,
-          387325,
+          387747,
           32616,
           2030,
           17632,
@@ -504,13 +508,14 @@
           9504,
           8132,
           13590,
+          20870,
           6133,
           50320,
           65138,
           15595,
           195,
           16054,
-          23666,
+          24038,
           37245,
           14516,
           24399,
@@ -520,18 +525,18 @@
           10111,
           121655,
           5460,
-          13560,
-          63438,
-          52281,
-          82457,
+          13701,
+          63434,
+          52542,
+          84374,
           28800,
           43628,
           33576,
           45037,
-          342271,
+          355071,
           1278,
           121234,
-          15385,
+          27369,
           32504,
           52288,
           26314,
@@ -542,11 +547,11 @@
           1934,
           4815,
           3888,
-          10983,
+          11300,
           3761,
           3914,
           8304,
-          16128,
+          17986,
           3653,
           3288,
           23702,
@@ -554,7 +559,7 @@
           4662,
           92619,
           3570,
-          3162
+          3247
         ]
       },
       {
@@ -662,11 +667,12 @@
           "code",
           "code",
           "code",
+          "code",
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

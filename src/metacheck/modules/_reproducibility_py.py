@@ -530,6 +530,7 @@ def assess_py(
         "written_later": {},
         "placed": None,
         "deposit_placed": None,
+        "folders_made": None,
         "ran_py2": [],
         "imported": {},
         "stat_cut": {},
@@ -592,6 +593,21 @@ def assess_py(
         )
     else:
         outcome_of = errtype_of = undefvar_of = reason_of = [None] * n_code
+    from metacheck.repro.outcomes import _repro_error_message
+
+    # the message of the failure, short (metacheck 0.4.3.20, #615)
+    if run_results is not None:
+        error_message_of = rc._pick(
+            _repro_error_message(
+                h._chr_col(run_results, "outcome"),
+                h._chr_col(run_results, "error") if "error" in run_results.columns else None,
+                h._chr_col(run_results, "stderr") if "stderr" in run_results.columns else None,
+                python=True,
+            ),
+            m_run,
+        )
+    else:
+        error_message_of = [None] * n_code
     if run_tbl is not None and "setwd_removed" in run_tbl.columns:
         setwd_of = rc._pick(
             h._col(run_tbl, "setwd_removed"),
@@ -636,6 +652,7 @@ def assess_py(
             ),
             "repo_name": rc._str_col(repo_names if repo_names is not None else [None] * n_code),
             "reason": rc._str_col(reason_of),
+            "error_message": rc._str_col(error_message_of),
             "commands_removed": rc._str_col(
                 [("; ".join(x) if x else None) for x in commands_removed]
             ),
@@ -980,10 +997,12 @@ def _execute_py(
         repro_write_scripts,
     )
     from metacheck.repro.layout import (
+        _folders_frame,
         _list_files,
         _repro_fetch_files,
         _repro_fetchable,
         _repro_lfs_stopped,
+        _repro_make_failed_write_folders,
         _repro_not_downloaded,
         _repro_package_plan,
         _repro_place_from_deposit,
@@ -1319,8 +1338,10 @@ def _execute_py(
     # which writes f"input{i}.txt". A file the deposit holds in another folder is copied to
     # where a script looked, and a script runs again each time it stops on a new file (#575,
     # items 2 and 4; see the R loop).
+    folders_made = _folders_frame([])
     if run_results is not None and names_before is not None:
         seen: dict[str, list[str]] = {}
+        # a folder a write stopped on is made (metacheck 0.4.3.12, #591; see the R loop)
         for _pass in range(5):
             names_after = _repro_sandbox_names(sandbox_root)
             later = _repro_written_later(run_results, names_before, names_after)
@@ -1340,12 +1361,20 @@ def _execute_py(
                 run_results, run_tbl, sandbox_root, names_before
             )
             deposit_placed = _rbind(deposit_placed, from_deposit)
-            redo = _unique([*later, *_names(from_deposit, "script")])
+            made_by: dict[str, list[str]] = {}
+            for s_, f_ in zip(
+                _names(folders_made, "script"), _names(folders_made, "folder"), strict=True
+            ):
+                made_by.setdefault(s_, []).append(f_)
+            made = _repro_make_failed_write_folders(run_results, run_tbl, sandbox_root, made_by)
+            folders_made = _rbind(folders_made, made)
+            redo = _unique([*later, *_names(from_deposit, "script"), *_names(made, "script")])
             if not redo:
                 break
             _message(
                 f"[repro/py] re-running {len(redo)} script(s) that stopped on a file another "
-                "script wrote or the deposit holds elsewhere: " + ", ".join(redo)
+                "script wrote, the deposit holds elsewhere, or a folder a write needed: "
+                + ", ".join(redo)
             )
             res4 = _repro_later_pass(
                 run_py(run_tbl[run_tbl["file_name"].isin(redo)], order_for(redo))
@@ -1567,6 +1596,7 @@ def _execute_py(
     ex["written_later"] = written_later
     ex["placed"] = placed
     ex["deposit_placed"] = deposit_placed
+    ex["folders_made"] = folders_made
     ex["ran_py2"] = ran_py2
 
     # A NameError usually means the script expects a name another of the paper's scripts
@@ -1680,6 +1710,7 @@ def _execution_report_py(
     """The Python section's "Execution" subsection (R's ``py_report`` after a run)."""
     from metacheck.repro.core import _repro_deadline_text
     from metacheck.repro.layout import (
+        _repro_folders_made_text,
         _repro_lfs_stopped_text,
         _repro_not_downloaded_text,
         _repro_placed_text,
@@ -1748,6 +1779,9 @@ def _execution_report_py(
         )
     if deposit_placed is not None and len(deposit_placed):
         report_exec += _repro_placed_text(deposit_placed)
+    folders_made = ex["folders_made"]
+    if folders_made is not None and len(folders_made):
+        report_exec += _repro_folders_made_text(folders_made)
     if ex["lfs_stopped"]:
         report_exec += _repro_lfs_stopped_text(ex["lfs_stopped"])
     ran_py2_here = [n for n in rnames if n in ex["ran_py2"]]
@@ -2046,6 +2080,18 @@ def _modifications_py(
                     h._chr_col(dep_placed, "from"),
                     h._chr_col(dep_placed, "to"),
                     strict=True,
+                )
+            ]
+        made_rows = ex.get("folders_made")
+        if made_rows is not None and len(made_rows):
+            later_rows += [
+                (
+                    s,
+                    "folder_made",
+                    f"made the folder {f}, where the script writes, and ran it once more",
+                )
+                for s, f in zip(
+                    h._chr_col(made_rows, "script"), h._chr_col(made_rows, "folder"), strict=True
                 )
             ]
         # bind_rows(py_rw_rows, setwd, slash, python2, later)

@@ -24,6 +24,7 @@ UP = ROOT / "upstream" / "metacheck"
 
 FILE_MODULES: dict[str, str | list[tuple[int, str]]] = {
     "R/api-keys.R": "metacheck.archives.api_keys",
+    "R/keys.R": "metacheck.keys",
     "R/app.R": "metacheck.report.app",
     "R/archive-4tu.R": "metacheck.archives.fourtu",
     "R/archive-aspredicted.R": "metacheck.archives.aspredicted",

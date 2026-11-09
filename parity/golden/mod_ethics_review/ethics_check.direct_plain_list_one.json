@@ -110,7 +110,8 @@
           "ethics_approved",
           "ethics_statements",
           "needs_ethics",
-          "live_data_statements"
+          "live_data_statements",
+          "states_no_participants"
         ],
         "v": [
           {
@@ -154,15 +155,28 @@
                 ]
               }
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
           }
         ]
       },
       {
         "t": "list",
         "names": [
-          "ethics_approved"
+          "ethics_approved",
+          "states_no_participants"
         ],
         "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
           {
             "t": "lgl",
             "v": [
@@ -191,6 +205,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

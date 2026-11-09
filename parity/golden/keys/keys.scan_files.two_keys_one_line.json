@@ -1,0 +1,83 @@
+{
+  "id": "keys.scan_files.two_keys_one_line",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "keys",
+      "not_searched"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "file",
+          "line",
+          "key",
+          "rule",
+          "shown"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "two.txt",
+              "two.txt"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "openrouter-api-key",
+              "aws-access-token"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "sk-or-v1-428...",
+              "AKIA..."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file",
+          "reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.21",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

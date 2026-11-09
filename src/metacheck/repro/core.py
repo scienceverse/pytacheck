@@ -373,7 +373,10 @@ def repro_dependencies(code_text: Any, lang: str = "R") -> pd.DataFrame:
     if not pkgs:
         return empty
 
-    joined = _paste_lines(_chr_list(code_text))
+    # From the code without its comments, as the package names are: an address in a line made
+    # a comment ("# install.packages(\"http://...embryogrowth.tar.gz\")", which no longer
+    # answers) was used instead of CRAN, and the install failed (metacheck 0.4.3.10, #598)
+    joined = _paste_lines(_code_remove_comments(_chr_list(code_text), "R"))
     gh = regextract_all(_GH_PAT, joined, perl=True)
     url = regextract_all(_URL_PAT, joined, perl=True)
     gh_refs = list(sub(_GH_PAT, r"\1", gh, perl=True))
@@ -3057,6 +3060,36 @@ def _repro_make_write_folders(
         _dir_create(_file_path(root, _portable_path(_r_dirname(p))))
 
 
+_LIB_LOC_CALL = (
+    r"(\b(?:library|require|requireNamespace|loadNamespace)\s*\([^()]*?)"
+    r"\s*,\s*lib\.loc\s*=\s*(['\"])((?:[A-Za-z]:[/\\]|/|~)[^'\"]*)\2"
+)
+
+
+def _repro_drop_author_lib_loc(txt: Sequence[str | None]) -> tuple[list[str | None], list[str]]:
+    """Port of ``.repro_drop_author_lib_loc()``: ``lib.loc =`` folders on the authors' computer.
+
+    Removed from ``library()``, ``require()``, ``requireNamespace()`` and ``loadNamespace()``:
+    the run has its own library, where the package is installed, and the folder is not
+    there, so the script stopped with "no library trees found in '<folder>'" although the
+    package was there (10.1111/2041-210X.13650; #594). Only an absolute path
+    ("C:/...", "/home/...", "~/..."), which cannot be in the sandbox; a relative one may be a
+    library the deposit holds, and stays. Returns the new lines and the folders removed.
+    """
+    out = list(txt)
+    paths: list[str] = []
+    pat = re.compile(_LIB_LOC_CALL)
+    for i, line in enumerate(out):
+        if line is None or re.match(r"\s*#", line):
+            continue
+        matches = list(pat.finditer(line))
+        if not matches:
+            continue
+        paths.extend(m.group(3) for m in matches)
+        out[i] = pat.sub(r"\1", line)
+    return out, _unique(paths)
+
+
 def repro_write_scripts(
     code_text_list: Mapping[str, Any],
     rewrite_list: Mapping[str, pd.DataFrame | None] | None,
@@ -3084,8 +3117,8 @@ def repro_write_scripts(
     first. It is written to ``<root>/<target>`` (*script_paths* gives each script's own
     path), unless a file there is not text. Returns ``file_name``, ``script_path``,
     ``run_dir``, ``setwd_removed``, ``env_calls_replaced``, ``slashes_fixed``,
-    ``setwd_folder_removed``, ``setwd_paths``, ``family_replaced``, ``family_detail``
-    and ``library_injected``.
+    ``setwd_folder_removed``, ``setwd_paths``, ``lib_loc_removed``, ``family_replaced``,
+    ``family_detail`` and ``library_injected``.
 
     *lang* is the language of every script, or a mapping from file name to language.
     *run_dirs* are the folders the scripts run in, from the root (default the root). A
@@ -3175,6 +3208,11 @@ def repro_write_scripts(
         if replace_env_calls and is_r:
             txt, env_n = _repro_neutralise_env_calls(txt)
 
+        # lib.loc pointing to a folder on the authors' computer (metacheck 0.4.3.11, #594)
+        lib_loc_paths: list[str] = []
+        if is_r:
+            txt, lib_loc_paths = _repro_drop_author_lib_loc(txt)
+
         joined_for_family = _paste_lines(txt)
         family_all = regextract_all(_FAMILY_PAT, joined_for_family, perl=True) if is_r else []
         # a model's family is no font: glmmTMB(..., family = "nbinom2") (#568)
@@ -3224,6 +3262,7 @@ def repro_write_scripts(
                 "; ".join(slashes),
                 "; ".join(folder_removed),
                 ", ".join(setwd_paths),
+                "; ".join(lib_loc_paths),
                 family_n,
                 "; ".join(f'{x} -> "sans"' for x in family_matches),
                 ", ".join(injected) if injected else None,
@@ -3239,9 +3278,10 @@ def repro_write_scripts(
             "slashes_fixed": ("string", [r[5] for r in rows]),
             "setwd_folder_removed": ("string", [r[6] for r in rows]),
             "setwd_paths": ("string", [r[7] for r in rows]),
-            "family_replaced": ("Int64", [r[8] for r in rows]),
-            "family_detail": ("string", [r[9] for r in rows]),
-            "library_injected": ("string", [r[10] for r in rows]),
+            "lib_loc_removed": ("string", [r[8] for r in rows]),
+            "family_replaced": ("Int64", [r[9] for r in rows]),
+            "family_detail": ("string", [r[10] for r in rows]),
+            "library_injected": ("string", [r[11] for r in rows]),
         }
     )
 
@@ -3396,6 +3436,46 @@ if (mode == "check_main") {
         list(ok = FALSE, msg = "", not_loadable = TRUE)
       else list(ok = TRUE, msg = "")
     }, error = function(e) list(ok = FALSE, msg = conditionMessage(e)))
+    # An install from GitHub or a web address that failed, for a package that is on CRAN or
+    # Bioconductor: installed from there, with a note (metacheck #598). A failed download is
+    # reported as such, not as "the install did not put the package in the library".
+    fb_json <- ""
+    res_msg0 <- res$msg
+    if (!res$ok && src %in% c("github", "url")) {
+      dl <- grep(paste0("cannot open URL|cannot open the connection|download|status was|",
+                        "Could not resolve host|HTTP error|HTTP status|404|403|Failed to connect"),
+                 c(install_warnings, res$msg), value = TRUE, ignore.case = TRUE)
+      dl_msg <- if (length(dl))
+        paste0("could not download ", ref, ": ", substr(gsub("[[:space:]]+", " ", dl[[1]]), 1, 200))
+      else NA_character_
+      on_cran <- {
+        repos <- getOption("repos")
+        if (is.null(repos) || !length(repos) || any(repos == "@CRAN@"))
+          repos <- c(CRAN = "https://cloud.r-project.org")
+        ap <- tryCatch(suppressWarnings(utils::available.packages(repos = repos)),
+                       error = function(e) NULL)
+        pkg %in% (if (is.null(ap)) character(0) else rownames(ap))
+      }
+      alt <- if (on_cran) "CRAN" else if (isTRUE(is_bioc)) "Bioconductor" else NA_character_
+      if (!is.na(alt)) {
+        message("[repro]     '", pkg, "' could not be installed from ", ref,
+                "; installing it from ", alt, " ...")
+        try(if (alt == "CRAN") utils::install.packages(pkg, lib = lib_dir, quiet = FALSE) else {
+          if (!requireNamespace("BiocManager", quietly = TRUE))
+            utils::install.packages("BiocManager", lib = lib_dir, quiet = FALSE)
+          BiocManager::install(pkg, lib = lib_dir, update = FALSE, ask = FALSE)
+        })
+        if (file.exists(file.path(lib_dir, pkg, "DESCRIPTION")) &&
+            requireNamespace(pkg, quietly = TRUE, lib.loc = lib_dir)) {
+          res <- list(ok = TRUE, msg = "")
+          first <- if (is.na(dl_msg)) res_msg0 else dl_msg
+          version_note <- paste0("installed from ", alt, ": the install from ", ref,
+                                 " failed (", substr(first, 1, 200), ")")
+        }
+      }
+      fb_json <- paste0(",\"fb_alt\":", if (is.na(alt)) "null" else .mc_json_str(alt),
+                        ",\"dl_msg\":", if (is.na(dl_msg)) "null" else .mc_json_str(dl_msg))
+    }
     warn_json <- if (isTRUE(res$not_loadable) && length(install_warnings))
       paste0(",\"warnings\":[", paste(.mc_json_str(install_warnings), collapse = ","), "]")
     else ""
@@ -3405,7 +3485,7 @@ if (mode == "check_main") {
                         if (isTRUE(res$not_loadable))
                           paste0(",\"not_loadable\":true,\"load_error\":",
                                  .mc_json_str(load_error(pkg, lib_dir))) else "",
-                        warn_json))
+                        warn_json, fb_json))
   }
 } else if (mode == "archive") {
   ok <- tryCatch({
@@ -3684,6 +3764,7 @@ def repro_install_deps(
                 ref=ref,
                 version=version,
                 cran_to_main_lib=_r_is_true(cran_to_main_lib),
+                is_bioc=pkg in set(_repro_bioc_packages()),
             )
             ok = bool(res.get("ok"))
             msg = str(res.get("msg") or "")
@@ -3692,6 +3773,11 @@ def repro_install_deps(
                 msg = _repro_not_loadable_msg(
                     pkg, res.get("warnings") or [], str(res.get("load_error") or "")
                 )
+            if not ok and src in ("github", "url"):
+                # a failed download says so (metacheck #598); a fallback that failed too says that
+                first = as_str(res.get("dl_msg")) or msg
+                alt = as_str(res.get("fb_alt"))
+                msg = f"{first}; installing it from {alt} failed too" if alt else first
             via_archive = False
             have = as_str(res.get("version_installed"))
             if not ok and src == "cran":

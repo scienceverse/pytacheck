@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import math
 import os
+import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -119,6 +120,7 @@ _NA_REPLACE = {
     "flagged_n": 0,
     "spreadsheet_file_n": 0,
     "spreadsheet_flagged_file_n": 0,
+    "key_n": 0,
 }
 
 
@@ -338,6 +340,22 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         and `?dryad_pat`/`?dryad_auth` is included among the download failures.
         A one-time session message is also shown (see repo_check) the first time
         a Dryad dataset is encountered with no key set.
+
+        Every downloaded text file the authors wrote (code, settings, survey
+        definitions such as Qualtrics `.qsf` files, documentation, outputs) is
+        searched for keys: API keys, access tokens and private keys, which let
+        anyone who downloads the file use a paid service at the authors' cost. Of a
+        tabular data file only the column names and first 3 rows of the table as
+        read are searched: its values come from participants, but a key the authors
+        set for a whole survey (as embedded data in a Qualtrics survey flow) is
+        exported in every response. The search
+        uses the rules of the secret scanner betterleaks
+        (https://github.com/betterleaks/betterleaks, MIT licence) of high and medium
+        confidence. A key found turns the traffic light red; the report and the
+        `keys` table give its file, line and type, and only its beginning. Other
+        files over 25 MB and binary files are not searched. A key is never tested
+        with its provider. Every module's result has any whole key replaced by
+        "\\[key removed\\]" (see `module_run()`).
 
         <validation>This module has not been validated. All checks in the data_check module have unknown error rates. Carefully evaluate the output of this module. You can help improve this module by reporting an issue on GitHub.</validation>
     """,
@@ -723,10 +741,25 @@ def data_check(
             f"to {n_clf:d} column{plural(n_clf)} the rules left open."
         )
 
+    # -- 5c. keys in the files (metacheck #607) ----------------------------------------
+    # Every file on disk is searched for a key (an API key, an access token, a private key):
+    # anyone who downloads it can use the service at the authors' cost. code_check's downloads
+    # are searched too, as they are kept in the same place. The report shows only the beginning
+    # of a key, and module_run() removes any whole key from every module's result. Of a tabular
+    # data file, only the column names and first rows of the table as read: a key the authors
+    # set for a whole survey is in every response, a key a participant typed is not looked for.
+    key_found, summary_keys = _keys_in_files(all_files, file_previews, cache, report)
+    n_key = len(key_found)
+
     # -- 6. traffic light + summary table ------------------------------------------
     tl = "na" if n_tabular_all == 0 else "yellow" if n_no_local > 0 else "green"
+    # a key in the files is worse than anything about the data
+    if n_key > 0:
+        tl = "red"
     summary_table = _summary_table(all_files, columns_df, n_columns, ex, paper)
+    summary_table = _add_key_n(summary_table, key_found)
     parts = [
+        *summary_keys,
         summary_files,
         summary_data,
         *summary_studies,
@@ -786,6 +819,7 @@ def data_check(
         **{k: dv[k] for k in ("careless", "demographics") if k in dv},
         "qualtrics": dv["qualtrics"],
         "structure": all_files,
+        "keys": key_found,
         "previews": file_previews,
         "gated_repos": listing_gated,
         "manifest_path": manifest_path,
@@ -796,6 +830,123 @@ def data_check(
         "report": report + dv["report"],
         "summary_text": f"{summary_text} {dv['summary_text']}",
     }
+
+
+def _keys_in_files(
+    all_files: pd.DataFrame, file_previews: Mapping[str, Any], cache: Any, report: list[Any]
+) -> tuple[pd.DataFrame, list[str]]:
+    """Section 5c: the keys in the files; the keys block is put in *report* after its intro.
+
+    Port of the key part of ``data_check()`` (metacheck #607). Returns the keys found (one row
+    per place) and the summary sentence (a list of 0 or 1).
+    """
+    from metacheck.keys import (
+        _KEY_MAX_BYTES,
+        _key_scan_repo_files,
+        _key_scan_tables,
+        _KeySeen,
+    )
+    from metacheck.report import scroll_table
+
+    seen = _KeySeen()
+    found, not_searched = _key_scan_repo_files(all_files, cache=cache is True, seen=seen)
+    found = found.copy()
+    found["row"] = pd.Series([pd.NA] * len(found), dtype="Int64")
+    tab = _key_scan_tables(file_previews, seen=seen)
+    if len(tab):
+        src_col = "source_file" if "source_file" in all_files.columns else "file_name"
+        src = h._col(all_files, src_col) or []
+        pids = h._col(all_files, "paper_id") or []
+        urls = h._col(all_files, "repo_url") or []
+        paper_ids: list[Any] = []
+        repo_urls: list[Any] = []
+        for t in tab["table"]:
+            base = re.sub(r" \[[^]]*\]$", "", t)
+            at = src.index(base) if base in src else None
+            paper_ids.append(pids[at] if at is not None and at < len(pids) else None)
+            repo_urls.append(urls[at] if at is not None and at < len(urls) else None)
+        extra = pd.DataFrame(
+            {
+                "paper_id": pd.Series(paper_ids, dtype="object"),
+                "repo_url": pd.Series(repo_urls, dtype="object"),
+                "file": tab["table"].astype("object"),
+                "line": pd.Series([pd.NA] * len(tab), dtype="Int64"),
+                "key": tab["key"].astype("int64"),
+                "rule": tab["rule"].astype("object"),
+                "shown": tab["shown"].astype("object"),
+                "row": tab["row"].astype("Int64"),
+            }
+        )
+        found = pd.concat([found.astype({"line": "Int64"}), extra], ignore_index=True)
+    if len(found) == 0:
+        return found, []
+    # a key repeated in a file or in several files (a survey's key in every response) is one key
+    n_keys = found["key"].nunique()
+    n_key_files = len(found[["repo_url", "file"]].drop_duplicates())
+    summary = (
+        f"**We found {n_keys:d} key{plural(n_keys)}** (such as an API key or an access token) in "
+        f"{n_key_files:d} file{plural(n_key_files)}. Anyone who downloads "
+        f"{'this file' if n_key_files == 1 else 'these files'} can use the service at the "
+        "authors' cost."
+    )
+    # one row per key and file, with the lines it is on
+    rows: list[dict[str, Any]] = []
+    groups: dict[tuple[Any, Any, Any], list[int]] = {}
+    for i, (k, u, f) in enumerate(
+        zip(found["key"], found["repo_url"].fillna(""), found["file"], strict=True)
+    ):
+        groups.setdefault((k, u, f), []).append(i)
+    for idx in groups.values():
+        g = found.iloc[idx]
+        if g["line"].isna().all():
+            r = sorted({int(v) for v in g["row"].dropna()})
+            where = ["column names" if v == 0 else f"row {v}" for v in r]
+        else:
+            where = [f"line {v}" for v in sorted({int(v) for v in g["line"].dropna()})]
+        rows.append(
+            {
+                "File": g["file"].iloc[0],
+                "Where": ", ".join(where[:5]) + (", ..." if len(where) > 5 else ""),
+                "Key": int(g["key"].iloc[0]),
+                "Type of key": g["rule"].iloc[0],
+                "Beginning": g["shown"].iloc[0],
+            }
+        )
+    key_tbl = pd.DataFrame(rows).sort_values(["Key", "File"], kind="stable").reset_index(drop=True)
+    block: list[Any] = [
+        "#### Keys in the repository",
+        summary,
+        scroll_table(key_tbl),
+        "Revoke each key with its provider and make a new one, then remove it from the files. "
+        "Deleting the file or the line does not remove the key: GitHub keeps every earlier "
+        "version of a repository, and the OSF keeps earlier versions of a file. "
+        "Metacheck shows only the beginning of each key, and does not test whether it still works.",
+    ]
+    if len(not_searched):
+        n_ns = len(not_searched)
+        block.append(
+            f"{n_ns:d} file{plural(n_ns)} over {round(_KEY_MAX_BYTES / 1024**2):d} MB "
+            f"{'was' if n_ns == 1 else 'were'} not searched for keys."
+        )
+    report[1:1] = block
+    return found, [summary]
+
+
+def _add_key_n(summary_table: pd.DataFrame, key_found: pd.DataFrame) -> pd.DataFrame:
+    """The distinct keys per paper (a key in several places counts once) as ``key_n``."""
+    out = summary_table.copy()
+    ids = out["paper_id"].tolist()
+    counts: dict[Any, set[Any]] = {}
+    if len(key_found):
+        for pid, k in zip(key_found["paper_id"], key_found["key"], strict=True):
+            counts.setdefault(None if h._na(pid) else pid, set()).add(k)
+    out["key_n"] = pd.Series([len(counts.get(p, ())) for p in ids], dtype="Int64")
+    # one paper whose id is unknown (local files only) has all the keys found
+    if len(out) == 1:
+        out["key_n"] = pd.Series(
+            [int(key_found["key"].nunique()) if len(key_found) else 0], dtype="Int64"
+        )
+    return out
 
 
 def _summary_paper_ids(summary_table: pd.DataFrame) -> list[Any]:

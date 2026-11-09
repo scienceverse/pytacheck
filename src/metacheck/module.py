@@ -1084,6 +1084,13 @@ def module_run(
     if isinstance(results, pd.DataFrame):
         results = {"table": results}
     results = dict(results or {})
+    # A key (an API key, an access token) that a module read from a file is replaced by
+    # "[key removed]" in its result, so metacheck never copies one into its report, tables or
+    # saved results (metacheck #607). data_check warns about the key itself, by its first
+    # characters only (keys._key_scan_files()).
+    from metacheck.keys import _key_remove
+
+    results, _ = _key_remove(results)
 
     traffic_light = results.pop("traffic_light", None) or "info"
     summary_text = results.pop("summary_text", None)

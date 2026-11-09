@@ -2,7 +2,7 @@
 "all_p_values.real_papers": {"r": "3124b29ce49584f8", "py": "0e4518a823328367", "diff": ["summary_table.p_values[]", "summary_text[]", "table"]},
 "report_tables.all_p_values.real": {"r": "b5d418c09cf0ec45", "py": "42a4b0aba80f42a7", "diff": ["[].table"]},
 "report_tables.stat_p_nonsig.real": {"r": "bfb188b83eb6be0b", "py": "52a83020d6445f20", "diff": ["[].table.Sentence[]"]},
-"stat_p_exact.real_papers": {"r": "bbb2eb48a98fc1e1", "py": "c7db8be217694e76", "diff": ["summary_text[]", "table"]},
+"stat_p_exact.real_papers": {"r": "213a0b30df5bc734", "py": "24f9011350db277c", "diff": ["summary_text[]", "table"]},
 "stat_p_nonsig.real_papers": {"r": "a6e8c4551b0ee488", "py": "2b389f6071dc6831", "diff": ["table.expanded[]"]},
 "stat_p_nonsig.real_single": {"r": "46227c7f6c8ee977", "py": "df3d0b2771894a00", "diff": ["table.expanded[]"]}
 }

@@ -71,7 +71,8 @@
           "not_analysis_why",
           "paper_link",
           "repo_name",
-          "reason"
+          "reason",
+          "error_message"
         ],
         "v": [
           {
@@ -262,6 +263,13 @@
               null,
               "file"
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "! cannot open the connection"
+            ]
           }
         ]
       },
@@ -306,6 +314,7 @@
           "empty_col_n",
           "col_numeric",
           "col_text",
+          "key_n",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n",
@@ -381,6 +390,12 @@
             "t": "int",
             "v": [
               2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -1479,6 +1494,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
