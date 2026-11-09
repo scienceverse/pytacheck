@@ -37,6 +37,7 @@ SUMMARY_COLS = [
     "files_zip",
     "files_unknown",
     "naming_issues",
+    "repo_view_only",
     "roster_mismatch",
 ]
 
@@ -120,6 +121,7 @@ def test_osf_no_files() -> None:
         "files_zip": 0,
         "files_unknown": 0,
         "naming_issues": 0,
+        "repo_view_only": 0,
         "roster_mismatch": False,
     }
     assert " 0 files " in mo.summary_text
@@ -143,6 +145,7 @@ def test_no_code_files() -> None:
         "files_zip": 1,
         "files_unknown": 0,
         "naming_issues": 0,
+        "repo_view_only": 0,
         "roster_mismatch": False,
     }
 
@@ -163,6 +166,7 @@ def test_osf() -> None:
         "files_zip": 1,
         "files_unknown": 1,
         "naming_issues": 1,
+        "repo_view_only": 0,
         "roster_mismatch": False,
     }
 
@@ -696,6 +700,76 @@ def test_failed_registration_source_restores_only_registrations(
     rc.list_osf(repos, [reg, user], "p1", None, False)
     assert repos.df["repo_url"].tolist() == [reg]
     assert repos.df["repo_error"].tolist() == ["source lookup failed"]
+
+
+def test_private_project_read_through_a_view_only_link_is_named_once(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # metacheck 0.4.3.15 (8dn4g_v1): the paper links osf.io/j9sdn plainly and with the
+    # view-only key; the plain link is not "could not check ... (private)"
+    from metacheck.modules import _repo_check as rc
+
+    key = "0123456789abcdef0123456789abcdef"
+    vo = f"https://osf.io/j9sdn/overview?view_only={key}"
+    plain = "https://osf.io/j9sdn"
+    state = {"public": False}
+
+    def info(url: str) -> pd.DataFrame:
+        if "view_only=" in url:
+            return pd.DataFrame(
+                {
+                    "osf_url": [url, url],
+                    "osf_id": [f"j9sdn?view_only={key}"] * 2,
+                    "osf_type": ["nodes", "files"],
+                    "parent": [None, None],
+                    "kind": [None, "file"],
+                    "public": pd.array([state["public"], None], dtype="boolean"),
+                    "name": ["A study", "data.csv"],
+                    "path": [None, "/data.csv"],
+                    "download_url": [None, "https://osf.io/download/abcde"],
+                    "size": [None, 10],
+                    "filetype": [None, "data"],
+                    "provider": [None, "osfstorage"],
+                }
+            )
+        return pd.DataFrame(
+            {
+                "osf_url": [url],
+                "osf_id": ["j9sdn"],
+                "osf_type": ["private"],
+                "public": pd.array([False], dtype="boolean"),
+            }
+        )
+
+    def fake_listing(urls: list[str], pb: object, cache: bool) -> pd.DataFrame:
+        parts = []
+        for u in urls:
+            f = info(u)
+            f["repo_name"] = u
+            parts.append(f)
+        return pd.concat(parts, ignore_index=True)
+
+    monkeypatch.setattr(rc, "_osf_listing", fake_listing)
+    for both in (True, False):
+        paper = pc.test_paper(
+            text="Data: https://osf.io/j9sdn" if both else "Data: see the link.", url=vo
+        )
+        mo = run(paper, peek_zips=False)
+        assert len(mo["gated_repos"]) == 0, both
+        st = summary_row(mo)
+        assert st["repo_n"] == 1 and st["repo_unchecked"] == 0 and st["repo_view_only"] == 1
+        assert mo["view_only"]["project"].tolist() == [plain]
+        assert (
+            f"The OSF project {plain} is private. Metacheck examined the files through the "
+            "view_only link."
+        ) in mo.summary_text
+        assert "Private projects checked through a view-only link" in pc.module_report(mo)
+        assert mo.traffic_light == "yellow"
+    # a public project read through a view-only link is not named
+    state["public"] = True
+    mo = run(pc.test_paper(text="Data: see the link.", url=vo), peek_zips=False)
+    assert len(mo["view_only"]) == 0
+    assert "view_only link" not in mo.summary_text
 
 
 def test_private_osf_file_rows_are_excluded_per_row() -> None:

@@ -642,7 +642,16 @@ def osf_type(guid: Any) -> Any:
     ident = osf_check_id(guid)
     if ident is None:
         return None
-    info = osf_get_all_pages(f"{_api()}/guids/{ident}/?resolve=false")
+    # A view-only key goes at the end of the address, as a second query field
+    # (metacheck 0.4.3.15): osf_check_id() keeps it on the id ("j9sdn?view_only=..."), and
+    # pasted in whole it gave ".../guids/j9sdn?view_only=.../?resolve=false", which the OSF
+    # does not answer (8dn4g_v1)
+    key = ""
+    if "view_only=" in ident:
+        key = sub("^.*view_only=([^&/]*).*$", "\\1", ident)
+    ident = sub("[?/].*$", "", ident)
+    suffix = f"&view_only={key}" if key else ""
+    info = osf_get_all_pages(f"{_api()}/guids/{ident}/?resolve=false{suffix}")
     if _osf_err(info) is not None:
         return "inaccessible"
     from metacheck.archives.osf_helpers import _get

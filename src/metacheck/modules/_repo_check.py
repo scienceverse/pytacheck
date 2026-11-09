@@ -11,6 +11,7 @@ message in ``repo_error`` instead of aborting the module.
 from __future__ import annotations
 
 import math
+import re
 import warnings
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -298,6 +299,17 @@ class Repos:
 
     df: pd.DataFrame
     warnings_: list[str] = field(default_factory=list)
+    #: private OSF projects read through a view-only link in the paper (metacheck 0.4.3.15):
+    #: ``paper_id``, ``repo_url`` (the link) and ``project`` (its plain address)
+    view_only: pd.DataFrame = field(
+        default_factory=lambda: pd.DataFrame(
+            {
+                "paper_id": pd.Series([], dtype="string"),
+                "repo_url": pd.Series([], dtype="string"),
+                "project": pd.Series([], dtype="string"),
+            }
+        )
+    )
 
     def urls(self, repo_type: str) -> list[str]:
         """``repos |> filter(repo_type == type) |> _$repo_url |> unique()``."""
@@ -724,6 +736,44 @@ def _osf_license_meta(repos: Repos, reg_pairs: list[tuple[Any, str]]) -> pd.Data
     return meta_frame(urls, NA_SCALAR, licenses)
 
 
+def _view_only_projects(repos: Repos, osf_info_df: pd.DataFrame, otypes: list[Any]) -> None:
+    """Name the private projects read through a view-only link, and drop their plain links."""
+    if not {"osf_id", "public", "repo_name"} <= set(osf_info_df.columns):
+        return
+    public = vals(osf_info_df["public"])
+    osf_id = [None if _na(x) else str(x) for x in vals(osf_info_df["osf_id"])]
+    names = vals(osf_info_df["repo_name"])
+    in_repos = set(vals(repos.df["repo_url"]))
+    picked: list[tuple[Any, str]] = []
+    seen: set[Any] = set()
+    for t, pub, oid, name in zip(otypes, public, osf_id, names, strict=True):
+        is_view_only = (
+            t == "nodes" and not _na(pub) and not bool(pub) and oid and "view_only=" in oid
+        )
+        if is_view_only and name not in seen and name in in_repos:
+            seen.add(name)
+            picked.append((name, re.sub(r"[?/].*$", "", str(oid))))
+    if not picked:
+        return
+    vo_ids = {oid for _, oid in picked}
+    plain = [
+        u
+        for t, u, oid in zip(otypes, vals(osf_info_df["osf_url"]), osf_id, strict=True)
+        if t == "private" and oid is not None and re.sub(r"[?/].*$", "", oid) in vo_ids
+    ]
+    repos.keep([not v for v in r_in(vals(repos.df["repo_url"]), plain)])
+    first_paper: dict[Any, Any] = {}
+    for u, pid in zip(vals(repos.df["repo_url"]), vals(repos.df["paper_id"]), strict=True):
+        first_paper.setdefault(u, pid)
+    repos.view_only = pd.DataFrame(
+        {
+            "paper_id": pd.Series([first_paper.get(n) for n, _ in picked], dtype="string"),
+            "repo_url": pd.Series([n for n, _ in picked], dtype="string"),
+            "project": pd.Series([f"https://osf.io/{oid}" for _, oid in picked], dtype="string"),
+        }
+    )
+
+
 def _list_osf_files(
     repos: Repos,
     osf_urls: list[str],
@@ -799,6 +849,15 @@ def _list_osf_files(
         private = [u for t, u in zip(otypes, ourls, strict=True) if t == "private"]
         if private:
             repos.flag(private, "private")
+
+        # A private project read through a view-only link in the paper (metacheck 0.4.3.15):
+        # the OSF lists its files through that link, and says the project is not public
+        # (public = FALSE on its node). The paper's plain link to the same project is then
+        # not a repository that could not be checked, and is left out; the project is named
+        # as private instead, as the authors can now make it public (8dn4g_v1 linked
+        # osf.io/j9sdn both ways: one copy was read, the other reported as "could not
+        # check ... (private)").
+        _view_only_projects(repos, osf_info_df, otypes)
 
         # follow registrations back to their origin project
         parent_urls_all = unique(p for _, p in reg_pairs)

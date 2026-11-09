@@ -154,6 +154,28 @@ def test_tar_list_file_reads_pax_gnu_long_name_and_ustar_prefix_names(tmp_path: 
     assert listing["member"].tolist()[3] == "./deposit/notes.txt"
 
 
+def test_tar_list_file_skips_a_binary_pax_record(tmp_path: Path) -> None:
+    # metacheck 0.4.3.18: tar on a Mac stores a file's extended attributes as pax records
+    # whose value is binary, with null bytes (PsyArXiv preprint 4z75t_v1)
+    value = bytes([0x01, 0x00, 0x00, 0xB1, 0xA4, 0x7F, 0x3D])
+    body = b" SCHILY.xattr.com.apple.provenance=" + value + b"\n"
+    n = len(body) + 2  # two digits for the length itself
+    xattr = str(n).encode() + body
+    p = write_tar(
+        tmp_path / "a.tar",
+        tar_entry(
+            "PaxHeaders/data.csv",
+            xattr + pax_record("path", "deposit/data.csv").encode(),
+            type_="x",
+        ),
+        tar_entry("data.csv", "a,b\n1,2\n"),
+    )
+    listing = _tar_list_file(str(p))
+    assert listing is not None
+    assert listing["name"].tolist() == ["deposit/data.csv"]
+    assert listing["size"].tolist() == [8]
+
+
 def test_tar_list_file_takes_the_size_from_a_pax_record(tmp_path: Path) -> None:
     body = "x" * 700
     p = write_tar(

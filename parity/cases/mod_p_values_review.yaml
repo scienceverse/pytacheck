@@ -416,3 +416,57 @@
         "r": "local({p <- test_paper(c('A p > .05.', 'B p = .01.', 'C p = .2.', 'D p > .1.')); p$text$text_id[c(1, 2)] <- NA; p$text$paragraph_id[4] <- NA; p})"
         "py": "(lambda p: (p.__setitem__('text', p.text.assign(text_id=pd.array([None, None, 3, 4], dtype='Int64'), paragraph_id=[0.0, 0.0, 0.0, float('nan')])), p)[1])(pc.test_paper(['A p > .05.', 'B p = .01.', 'C p = .2.', 'D p > .1.']))"
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "p_not_test.markers_legends_thresholds"
+  "r": "metacheck:::.p_not_test"
+  "py": "metacheck.stats.helpers._p_not_test"
+  "args":
+    "p":
+      "$df":
+        "paper_id": ["t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t"]
+        "text_id": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "24", "25", "26", "27", "29", "30", "31", "32", "33", "34", "35"]
+        "text": ["p < .05", "p > 0.05", "p < 0.10", "p <.05", "p < 0.05", "p-value < 0.05", "p <.05", "P < 0.05", "p<.02", "p < .05", "p < .05", "p < 0.05", "p < .05", "p < .01", "p < .001", "p < 0.05", "p < .001", "p < .05", "p < .05", "p < .10", "p > .05", "p<.01", "p < .05"]
+        "expanded": ["Note. ** = p < .01, * = p < .05.", "Data are presented as mean ± SD. ns, p > 0.05; **p < 0.01; ***p < 0.001.", "Error bars indicate standard error. + p < 0.10, * p <0.05.", "Model fit: χ2 = 129.59, df = 89, p < .01, CFI = 0.95, SRMR = .06, N = 135, *p <.05.", "Error bars represent ±1 SEM.* p < 0.05 (two-tailed).", "A p-value < 0.05 was considered statistically significant.", "The significance level was set at p <.05.", "All the reported clusters survived a cFWE-corrected threshold of P < 0.05.", "Contrasts, with a Bonferroni corrected alpha of p<.02 for 4 comparisons, showed an interaction.", "Asterisks indicate significant differences between conditions (p < .05).", "Note: Correlations significant at the p < .05 level are highlighted in bold.", "Black and white markers indicate reported effects that did (black) and did not (white) differ significantly (p < 0.05) from the corresponding expected effect.", "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001.", "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001.", "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001.", "Black and white markers indicate reported effects that did (black) and did not (white) differ significantly (p < 0.05) from the corresponding expected effect. .064 (.006; .122)* .008 (-.017; .033)", "Voxels were thresholded at p < .001 uncorrected, and clusters at pFWE < .05.", "The a priori alpha level was α = .05; results with p < .05 were significant.", "Values in bold are significant at p < .05.", "† p < .10, ‡ p < .05, § p < .01", "ns: p > .05", "* p<.05 ** p<.01 *** p<.001 ns n.s.", "We set the criterion for significance at p < .05 (two-tailed) and report exact values."]
+- "id": "p_not_test.results"
+  "r": "metacheck:::.p_not_test"
+  "py": "metacheck.stats.helpers._p_not_test"
+  "args":
+    "p":
+      "$df":
+        "paper_id": ["t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t", "t"]
+        "text_id": ["13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "28", "36"]
+        "text": ["P < 0.05", "p < 0.05", "p<<0.001", "p<0.05", "p<0.05", "ps > 0.09", "Ps < 0.002", "P < 0.05", "P>0.05", "p < .05", "p < .05", "p < .05", "p < .01"]
+        "expanded": ["More importantly, there was a significant interaction [F(1,18) ¼ 6.05, P < 0.05, g2 ¼ 0.25].", "The indirect effect through hopelessness was significant (β = 0.115*, p < 0.05).", "Trials were more variable (paired t-test, n = 95, t52 = 6.92, ***p<<0.001, and for monkey D).", "Silencing (overground n = 135/600 vs treadmill n = 22/151, *p<0.05 [z = 2.38]; hindlimbs).", "Tor1a +/+ p<0.05; Tor1a +/Dgag p<0.01.", "No other main effects or interactions reached conventional significance levels (all ps > 0.09).", "This effect remained significant when the maps were thresholded at varying levels (all Ps < 0.002).", "Participants showed a higher exit threshold (P < 0.05).", "The Kansas and Florida lines differed in DT but not PA (t-test, P>0.05, data not shown).", "Alpha power was higher in the online group than in the offline group (p < .05).", "Participants who met the inclusion criteria scored higher (p < .05).", "Group A differed, F(1, 30) = 5.20, p < .05.", "A threshold of p < 0.05 (uncorrected) was used for exploratory analysis; effects reached p < .01."]
+- "id": "p_not_test.repeated_note"
+  "r": "metacheck:::.p_not_test"
+  "py": "metacheck.stats.helpers._p_not_test"
+  "args":
+    "p":
+      "$df":
+        "paper_id": ["a", "a", "a", "b"]
+        "text_id": ["1", "1", "1", "1"]
+        "text": ["p < .05", "p < .05", "p < .05", "p < .05"]
+        "expanded": ["We saw p < .05 here. * p < .05. ** p < .05.", "We saw p < .05 here. * p < .05. ** p < .05.", "We saw p < .05 here. * p < .05. ** p < .05.", ""]
+- "id": "stat_p_exact.not_a_test.note_twice"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": ["The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001.", "Some results.", "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001."]
+- "id": "stat_p_exact.not_a_test.legend_joined_to_cells"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": ["Black and white markers indicate reported effects that did (black) and did not (white) differ significantly (p < 0.05) from the corresponding expected effect. .064 (.006; .122)* .008 (-.017; .033)"]
+- "id": "stat_p_exact.not_a_test.result_next_to_note"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": ["Group A differed, F(1, 30) = 5.20, p < .05.", "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001."]
+- "id": "stat_p_exact.not_a_test.thresholds"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": ["A p-value < 0.05 was considered statistically significant.", "The significance level was set at p <.05.", "Contrasts, with a Bonferroni corrected alpha of p<.02 for 4 comparisons, showed an interaction.", "Alpha power was higher in the online group than in the offline group (p < .05)."]

@@ -66,7 +66,7 @@ def report_type(report_type: str | Sequence[str] | None = None) -> str:
       were validated.
     * ``"simple_brief"``: the brief report as a static page.
     * ``"checklist"``: the report laid out by check instead of by module:
-      every check of every module is sorted into to fix, to improve, decide
+      every check of every module is sorted into to fix, to check, decide
       by hand, for information, fine and not applicable, and each check that
       needs work says what was found and what to do on separate lines. It is
       static too, in the colours and font of metacheck's website
@@ -80,7 +80,7 @@ def report_type(report_type: str | Sequence[str] | None = None) -> str:
     title), ``details`` (markdown, for example a
     :func:`~metacheck.report.blocks.scroll_table`) and ``details_title`` (the
     line that unfolds it). A module without ``checks`` is shown as one check:
-    its traffic light gives the result (red: to fix, yellow: to improve, green:
+    its traffic light gives the result (red: to fix, yellow: to check, green:
     fine), its summary text what was found and its report the folded details.
     A module can also give ``intro`` (a paragraph shown at the top), ``logo``
     (the path of an image shown next to metacheck's logo) and

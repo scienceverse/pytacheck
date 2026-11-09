@@ -359,8 +359,9 @@ def _repo_check(
 
     repo_sum = _summarise_repos(repos.df, all_files)
 
+    view_only = repos.view_only
     report, summary, flags = _report(
-        all_files, repo_sum, is_readme, roster_check, useless_files, listed_tars
+        all_files, repo_sum, is_readme, roster_check, useless_files, listed_tars, view_only
     )
 
     # traffic_light ----
@@ -376,6 +377,7 @@ def _repo_check(
         and flags["n_closed_unreachable"] == 0
         and flags["n_unchecked"] == 0
         and flags["n_useless_suggestion"] == 0
+        and flags["n_view_only"] == 0
     )
     tl = "red" if flags["n_useless_problem"] > 0 else "green" if green else "yellow"
 
@@ -398,6 +400,9 @@ def _repo_check(
         # Files that do not belong in a repository, left out of `table`: repo_url,
         # file_path, kind and severity ("problem" or "suggestion")
         "useless_files": useless_files,
+        # Private OSF projects whose files were read through a view-only link in the paper:
+        # paper_id, repo_url (the link) and project (its plain address).
+        "view_only": view_only,
         "na_replace": 0,
         "traffic_light": tl,
         "report": report,
@@ -913,6 +918,7 @@ def _report(
     roster_check: Any,
     useless_files: pd.DataFrame,
     listed_tars: Sequence[str] = (),
+    view_only: pd.DataFrame | None = None,
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
     from metacheck.report.blocks import collapse_section, link, scroll_table
@@ -946,6 +952,26 @@ def _report(
             "retrieved, so nothing below describes them. When the reason is that the platform "
             "did not answer, running the check again later may work.",
             *(f"- {_na_str(u)}: {e}" for u, e in zip(un_urls, un_why, strict=True)),
+        ]
+
+    # private projects checked through a view-only link (see the OSF block): yellow, the
+    # files could be checked, but readers of the paper need the view-only link, which was
+    # meant for peer review
+    summary_view_only = None
+    report_view_only: list[str] = []
+    view_only_projects = (
+        rc.unique(rc.vals(view_only["project"])) if view_only is not None and len(view_only) else []
+    )
+    if view_only_projects:
+        summary_view_only = " ".join(
+            f"The OSF project {u} is private. Metacheck examined the files through the "
+            "view_only link. As the preprint is public, and the OSF Files are accessible to "
+            "anyone, consider making the OSF project public."
+            for u in view_only_projects
+        )
+        report_view_only = [
+            "#### Private projects checked through a view-only link",
+            summary_view_only,
         ]
 
     # empty repos
@@ -1224,6 +1250,7 @@ def _report(
 
     blocks: tuple[Any, ...] = (
         *report_unchecked,
+        *report_view_only,
         report_repo,
         "#### Repositories" if len(repo_tbl) else None,
         scroll_table(repo_tbl, maxrows=10),
@@ -1246,6 +1273,7 @@ def _report(
         s
         for s in (
             summary_unchecked,
+            summary_view_only,
             summary_repo,
             summary_files,
             summary_readme,
@@ -1269,6 +1297,8 @@ def _report(
         "n_closed_unreachable": len(unreachable),
         "n_unchecked": n_unchecked,
         "unchecked": unchecked,
+        "n_view_only": len(view_only_projects),
+        "view_only": view_only,
         "n_useless_problem": useless["n_problem"],
         "n_useless_suggestion": useless["n_suggestion"],
         "naming_issues_by_paper": naming_by_paper,
@@ -1452,6 +1482,15 @@ def _summary_table(
     elif len(naming) > 0:
         raise rc.RError("object 'paper_id' not found")
 
+    # private OSF projects checked through a view-only link, per paper
+    vo_count: dict[Any, int] = {}
+    vo = flags.get("view_only")
+    if vo is not None and len(vo) > 0:
+        pairs = dict.fromkeys(zip(rc.vals(vo["paper_id"]), rc.vals(vo["project"]), strict=True))
+        for pid, _project in pairs:
+            key = None if rc._na(pid) else pid
+            vo_count[key] = vo_count.get(key, 0) + 1
+
     pids = list(rows)
     mismatch = _roster_mismatch(roster_check)
     return pd.DataFrame(
@@ -1462,6 +1501,7 @@ def _summary_table(
             **{c: pd.Series([rows[p][c] for p in pids], dtype="Int64") for c in counts},
             "files_unknown": pd.Series([unknown.get(p, 0) for p in pids], dtype="Int64"),
             "naming_issues": pd.Series([bad.get(p, 0) for p in pids], dtype="Int64"),
+            "repo_view_only": pd.Series([vo_count.get(p, 0) for p in pids], dtype="Int64"),
             "roster_mismatch": pd.Series([mismatch] * len(pids), dtype="boolean"),
         }
     )

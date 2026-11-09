@@ -402,6 +402,59 @@ def add_cases() -> None:
         ec_papers(["d1", "d1"], [["The IRB approved it."], ["Nothing here."]]),
     )
     case("ethics_check.empty_paper", {"$expr": {"r": "paper()", "py": "pc.paper()"}})
+    # a paper that states no participants took part (metacheck 0.4.3.20, dq96z_v2)
+    case(
+        "ethics_check.no_participants.not_as_subjects",
+        test_paper(
+            [
+                "The professionals described their own work as collaborators in the projects, "
+                "not as subjects recruited for a study."
+            ]
+        ),
+    )
+    for i, s in enumerate(
+        [
+            "No human subjects were involved in this study.",
+            "As this study did not involve human subjects, institutional review board approval was not required.",
+            "Ethics Statement: No animals nor human participants were involved in the production and analysis of the data used for this article.",
+        ]
+    ):
+        case(
+            f"ethics_check.no_participants.stated_{i + 1}",
+            test_paper(["Participants were recruited online.", s]),
+        )
+    for i, s in enumerate(
+        [
+            "No participants were excluded.",
+            "No participants were minors.",
+            "Only children without G6PD deficiency were enrolled in the study.",
+            "This study would not have been possible without our participants.",
+            "No participant was included more than once across training samples.",
+        ]
+    ):
+        case(
+            f"ethics_check.no_participants.negation_{i + 1}",
+            test_paper(["Participants were recruited online.", s]),
+        )
+    case(
+        "ethics_check.no_participants.approved",
+        test_paper(
+            [
+                "No human subjects were involved in this study.",
+                "The study was approved by the ethics committee.",
+            ]
+        ),
+    )
+    case(
+        "ethics_check.no_participants.list",
+        {
+            "$expr": {
+                "r": HELPERS_R
+                + 'ec_papers(c("a", "b"), list("No human subjects were involved.", "Participants were recruited online."))',
+                "py": f"{SUPPORT}.ec_papers(['a', 'b'], [['No human subjects were involved.'], ['Participants were recruited online.']])",
+            }
+        },
+    )
     case(
         "ethics_check.empty_paperlist",
         {"$expr": {"r": "paperlist()", "py": "pc.PaperList([])"}},

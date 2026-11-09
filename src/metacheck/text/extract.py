@@ -390,3 +390,21 @@ def _detect_live_data(paper: Any) -> pd.DataFrame:
     animal data collection. Used by the ``ethics_check`` module.
     """
     return cast(pd.DataFrame, text_search(paper, list(_LIVE_WORDS)))
+
+
+_NONE_WORDS = (
+    r"\bno\s+(identifiable\s+)?(human|animal)\s+(research\s+)?(subjects?|participants?|volunteers?)\s+(were|was|are|is)\s+(involved|used)",
+    r"\b(did|does|do)\s+not\s+(involve|include)\s+(any\s+)?(human|animal)\s+(subjects?|participants?)",
+    r"\bno\s+(animals|humans)\s+(nor|or|and)\s+(human\s+)?(participants?|subjects?)\s+were\s+involved",
+    r"\bnot\s+as\s+(research\s+)?(subjects?|participants?)\b",
+)
+
+
+def _detect_no_participants(paper: Any) -> pd.DataFrame:
+    """Sentences stating that no human or animal participants took part (port of ``.detect_no_participants()``).
+
+    Such a statement overrides ``_detect_live_data`` in the ``ethics_check`` module.
+    A negation near a participant phrase alone ("No participants were excluded")
+    does not count; the patterns need "human" or "animal" (or "not as subjects").
+    """
+    return cast(pd.DataFrame, text_search(paper, list(_NONE_WORDS), perl=True))

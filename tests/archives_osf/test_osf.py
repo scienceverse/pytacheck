@@ -71,6 +71,27 @@ def test_osf_type_inaccessible() -> None:
         assert osf_type("abcde") == "inaccessible"
 
 
+def test_osf_type_puts_a_view_only_key_at_the_end_of_the_address(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # metacheck 0.4.3.15 (8dn4g_v1): pasted whole, the key made ".../guids/j9sdn?view_only=
+    # .../?resolve=false", which the OSF does not answer
+    import metacheck.archives.osf as osf_mod
+
+    asked: list[str] = []
+
+    def fake(url: str, *args: object, **kw: object) -> dict[str, object]:
+        asked.append(url)
+        return {"relationships": {"referent": {"links": {"related": {"meta": {"type": "nodes"}}}}}}
+
+    monkeypatch.setattr(osf_mod, "osf_get_all_pages", fake)
+    key = "0123456789abcdef0123456789abcdef"
+    assert osf_type(f"j9sdn?view_only={key}") == "nodes"
+    assert asked[-1] == f"{API}/guids/j9sdn/?resolve=false&view_only={key}"
+    osf_type("j9sdn")
+    assert asked[-1] == f"{API}/guids/j9sdn/?resolve=false"
+
+
 def test_osf_check_id() -> None:
     assert osf_check_id("pngda") == "pngda"
     assert osf_check_id(["pngda", "8c3kb"]) == ["pngda", "8c3kb"]
