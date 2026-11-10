@@ -2794,6 +2794,26 @@ _INSTALLERS = (
 _ENV_TOOLS = r"""['"]?(?:groundhog|checkpoint|renv|pacman|remotes|devtools|BiocManager|pak)['"]?"""
 
 
+def _repro_read_failed_msg(errors: Sequence[str | None], max_chars: int = 300) -> list[str | None]:
+    """Port of ``.repro_read_failed_msg()``: for each script that could not be read, why.
+
+    For its row in the table and the report; ``None`` where the read worked (#620). R names
+    a package metacheck reads scripts with that is installed but cannot be loaded on the
+    computer that ran the check; Python's readers are modules of the standard library or
+    required dependencies, so there is none to name.
+    """
+    out: list[str | None] = []
+    for e in errors:
+        if e is None:
+            out.append(None)
+            continue
+        e = re.sub(r"\s+", " ", e).strip()
+        if len(e) > max_chars:
+            e = e[: max_chars - 1] + "\u2026"
+        out.append(f"metacheck could not read the file: {e}.")
+    return out
+
+
 def _deparse1_vec(values: Sequence[str]) -> str:
     """``deparse1()`` of a character vector (no NA)."""
     lits = ['"' + v.replace("\\", "\\\\").replace('"', '\\"') + '"' for v in values]

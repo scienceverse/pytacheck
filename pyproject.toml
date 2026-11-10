@@ -171,7 +171,7 @@ target-version = "py311"
 line-length = 100
 src = ["src", "tests", "parity"]
 # notebooks and markdown are test fixtures or prose (ruff >= 0.16 formats both by default)
-extend-exclude = ["upstream", "*.ipynb", "*.md"]
+extend-exclude = ["upstream", "*.ipynb", "*.md", "tests/mod_repro/fixtures/scripts/py/blank.py"]  # blank.py is whitespace-only on purpose
 force-exclude = true
 
 [tool.ruff.lint]

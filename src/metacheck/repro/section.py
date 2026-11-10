@@ -76,6 +76,8 @@ _NOT_COUNTED = frozenset(
         "static_defines_functions",
         "static_not_analysis",
         "not_downloaded",
+        "empty",
+        "static_empty",
     }
 )
 
@@ -652,6 +654,7 @@ def _repro_script_result(
     net: Mapping[str, Any] | None,
     input_reason: Callable[[str], str],
     memory_gb: float | None,
+    error_message: str | None = None,
 ) -> tuple[str, str]:
     """What happened to one script, as the *Result* and *What happened* cells."""
     error = error or ""
@@ -763,6 +766,12 @@ def _repro_script_result(
             )
         case "not_analysis" | "static_not_analysis":
             return "Not run", _repro_cell(not_analysis_why)
+        case "not_read" | "static_not_read":
+            return "Not read", _repro_cell(
+                error_message if error_message is not None else "metacheck could not read the file."
+            )
+        case "empty" | "static_empty":
+            return "Not run", "The file is empty."
         case _:
             return "Not run", ""
 
@@ -852,6 +861,7 @@ def _repro_checklist_section(
     # why a file is not part of the analysis (see .repro_software_kind())
     not_analysis_why = _repro_not_analysis_why(_strs(tbl, "not_analysis_why", n))
     unresolved = _strs(tbl, "unresolved_inputs", n)
+    error_message = _strs(tbl, "error_message", n)
 
     # one row per script: its result and what happened, in run order
     rows = []
@@ -880,6 +890,7 @@ def _repro_checklist_section(
             net=net,
             input_reason=input_reason,
             memory_gb=memory_gb,
+            error_message=error_message[i],
         )
         rows.append(f"| {_repro_cell(name[i])} | {result} | {happened} |")
 

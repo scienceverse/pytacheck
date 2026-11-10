@@ -42,9 +42,31 @@
             ]
           }
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Why"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "run.py"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck could not read the file: there is no copy of it and no link to it."
+            ]
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.3.24",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

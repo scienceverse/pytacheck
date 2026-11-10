@@ -266,6 +266,10 @@ def _match_sandbox(sandbox: Any) -> str:
         repository lists but that was not downloaded, such as one over
         `max_file_size`: it could not be tried, so it is not counted as a script that
         did not reproduce (`summary_table$repro_not_downloaded_n` counts them apart).
+        `not_read` is a file metacheck could not read, so it was not run; the light is
+        then not green, as the file may read and run on another computer, and
+        `table$error_message` says why. `empty` is a file with nothing in it, which
+        is not run or counted as a script.
         For a script that did not run through, `table$error_message` is its error,
         short (at most 300 characters): the error line of its output, which names a
         package that is not there, with the address it asked for when it needed the
@@ -897,22 +901,24 @@ def _download_on(download: Any) -> bool:
     return not (download is False or (isinstance(download, str) and download == "none"))
 
 
-def _read_text(path: str | None) -> tuple[list[str], str | None]:
-    """``code_read(path)`` and, for a local file that is not text, what it is.
+def _read_text(path: str | None) -> tuple[list[str], str | None, str | None]:
+    """``code_read(path)``, for a local file that is not text what it is, and why a read failed.
 
     A file that is not text (R data saved as ``.R``) gives no lines, as metacheck's
-    ``code_read()`` does (#568), instead of being decoded and scanned as code.
+    ``code_read()`` does (#568), instead of being decoded and scanned as code. A file that
+    could not be read gives no lines and keeps its error, as no lines would be run as an
+    empty script that "ran" without an error (metacheck #620).
     """
     if path is None:
-        return [], None
+        return [], None, "there is no copy of it and no link to it"
     if h._file_exists(path):
         from metacheck.repro.core import _repro_binary_kind
 
         kind = _repro_binary_kind(path)
         if kind is not None:
-            return [], kind
-    txt = _read_code(path)
-    return (txt or []), None
+            return [], kind, None
+    txt, err = _read_code_error(path)
+    return (txt or []), None, err
 
 
 #: The count columns both language blocks give and the result adds up.
@@ -1219,16 +1225,21 @@ def _resolver(r_files: pd.DataFrame, structure_df: Any) -> Any:
     return resolve
 
 
-def _read_code(path: str | None) -> list[str] | None:
-    """``code_read(path)`` (``None`` on an error)."""
+def _read_code_error(path: str | None) -> tuple[list[str] | None, str | None]:
+    """``code_read(path)``, and the message of its error (both ``None`` for no path)."""
     if path is None:
-        return None
+        return None, None
     from metacheck.codecheck.core import code_read
 
     try:
-        return [x if x is not None else "NA" for x in code_read(path)]
-    except Exception:
-        return None
+        return [x if x is not None else "NA" for x in code_read(path)], None
+    except Exception as e:
+        return None, str(e) or type(e).__name__
+
+
+def _read_code(path: str | None) -> list[str] | None:
+    """``code_read(path)`` (``None`` on an error)."""
+    return _read_code_error(path)[0]
 
 
 def _assess_r(
@@ -1312,7 +1323,7 @@ def _assess_r(
     # R reads each file once to hash it and again for raw_text_list; a row's path does
     # not depend on the other rows, so the first read is kept and reused.
     reads = [_read_text(resolve(i)) for i in range(len(r_files))]
-    hashes: list[str | None] = [None if not txt else "\n".join(txt) for txt, _ in reads]
+    hashes: list[str | None] = [None if not r[0] else "\n".join(r[0]) for r in reads]
     seen: set[str] = set()
     dup: list[bool] = []
     for hv in hashes:
@@ -1356,8 +1367,10 @@ def _assess_r(
     names = [str(f) for f in h._chr_col(r_files, "file_name")]
 
     # Read each file (raw, and the code of R Markdown/Quarto and R-kernel notebooks) ---
-    raw_texts: list[list[str]] = [txt for txt, _ in reads]
-    is_binary = [kind is not None for _, kind in reads]
+    raw_texts: list[list[str]] = [r[0] for r in reads]
+    is_binary = [r[1] is not None for r in reads]
+    # a file that could not be read keeps its error (#620)
+    read_errors: list[str | None] = [r[2] for r in reads]
     code_texts: list[list[str]] = []
     is_rmd = grepl(r"\.(rmd|qmd)$", names, ignore_case=True)
     is_ipynb = grepl(r"\.ipynb$", names, ignore_case=True)
@@ -1371,7 +1384,9 @@ def _assess_r(
             try:
                 ext = code_extract_r(path) if is_rmd[i] else code_extract_py(path)
                 code_texts.append([] if ext is None else list(ext))
-            except Exception:
+            except Exception as e:
+                if read_errors[i] is None:
+                    read_errors[i] = str(e) or type(e).__name__
                 code_texts.append([])
         else:
             code_texts.append(raw_texts[i])
@@ -1598,6 +1613,23 @@ def _assess_r(
     for i in range(n_code):
         if sniff_type[i] is None and _repro_starts_app(code_texts[i]):
             sniff_type[i] = "needs_a_person"
+    # A file that could not be read is not run, and the check is to be done again (see the
+    # light below): it may read and run on another computer (#620). A file with nothing in it
+    # but spaces and line breaks is not run either, as running it says nothing, like a file
+    # that only defines functions.
+    from metacheck.repro.core import _repro_read_failed_msg
+
+    r_read_msg = _repro_read_failed_msg(read_errors)
+    for i in range(n_code):
+        if sniff_type[i] is None and read_errors[i] is not None:
+            sniff_type[i] = "not_read"
+    for i in range(n_code):
+        if (
+            sniff_type[i] is None
+            and not is_binary[i]
+            and not any(re.search(r"\S", x) for x in raw_texts[i])
+        ):
+            sniff_type[i] = "empty"
     io_sources = {
         str(k): v for k, v in zip(h._chr_col(io, "file_name"), h._col(io, "sources"), strict=True)
     }
@@ -1618,7 +1650,10 @@ def _assess_r(
     ]
     parse_errs = sum(parse_error_genuine)
     parses = [not p for p in parse_error_genuine]
-    runs_as_r = [not p and not b for p, b in zip(parse_error_raw, is_binary, strict=True)]
+    runs_as_r = [
+        not p and not b and s != "not_read"
+        for p, b, s in zip(parse_error_raw, is_binary, sniff_type, strict=True)
+    ]
     ot_names = h._chr_col(order_tbl, "file_name")
     file_order = _pick(h._col(order_tbl, "order"), _match_first(names, ot_names))
     file_order = [None if h._na(o) else int(o) for o in file_order]
@@ -1693,6 +1728,8 @@ def _assess_r(
     # missing, and an execution error overrides it to red.
     tl_clean = parse_errs == 0 and len(cycle) == 0 and not ambiguous_order and sum(ambiguous_n) == 0
     tl = _repro_static_light(missing_inputs, tl_clean)
+    if "not_read" in sniff_type and tl == "green":
+        tl = "yellow"  # #620
 
     # 7b. Execution (opt-in; runs downloaded code) ------------------------------------
     ex: dict[str, Any] = {}
@@ -1757,6 +1794,7 @@ def _assess_r(
             "download_too_large",
             "not_downloaded",
             "out_of_memory",
+            "not_read",
         )
         if any(o in ("errored", "timed_out") for o in outcomes):
             tl = "red"
@@ -1795,6 +1833,10 @@ def _assess_r(
         )
     else:
         error_message_of = [None] * n_code
+    # a file that could not be read: why (#620)
+    error_message_of = [
+        r_read_msg[i] if sniff_type[i] == "not_read" else m for i, m in enumerate(error_message_of)
+    ]
     if run_tbl is not None and "setwd_removed" in run_tbl.columns:
         setwd_of = _pick(
             h._col(run_tbl, "setwd_removed"), _match_first(names, h._chr_col(run_tbl, "file_name"))
@@ -1918,7 +1960,7 @@ def _assess_r(
         ]
     if n_not_r_content > 0 or n_jags_model > 0:
         report += _sniff_report(names, sniff_type, sniff_detail, n_not_r_content, n_jags_model)
-    report += _repro_not_run_report(names, sniff_type, r_used_by, sw_why) or []
+    report += _repro_not_run_report(names, sniff_type, r_used_by, sw_why, read_msg=r_read_msg) or []
 
     if run_results is not None and len(run_results) > 0:
         from metacheck.modules._reproducibility_exec import _execution_report

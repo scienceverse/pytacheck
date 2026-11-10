@@ -310,6 +310,19 @@ class Repos:
             }
         )
     )
+    #: private ResearchBox boxes read through a peer-review link whose box is not public
+    #: (metacheck 0.4.3.23, #621), as ``view_only``; and the links without a passcode to a
+    #: box that ResearchBox does not show, which readers cannot open
+    rb_view_only: pd.DataFrame = field(
+        default_factory=lambda: pd.DataFrame(
+            {
+                "paper_id": pd.Series([], dtype="string"),
+                "repo_url": pd.Series([], dtype="string"),
+                "project": pd.Series([], dtype="string"),
+            }
+        )
+    )
+    rb_not_public: list[str] = field(default_factory=list)
 
     def urls(self, repo_type: str) -> list[str]:
         """``repos |> filter(repo_type == type) |> _$repo_url |> unique()``."""
@@ -1045,11 +1058,21 @@ def list_researchbox(
     """The ResearchBox block (the box is downloaded and unzipped to list it).
 
     Returns the files and the licence of each box that was downloaded (one
-    ``box_meta`` request per box; a box that could not be downloaded is not
-    asked about again). ResearchBox puts every box under CC BY 4.0, but names
-    it in each box's metadata since 2026-10.
+    ``box_meta`` request per box, which also gives the box's status; a box that
+    could not be downloaded is not asked about again). ResearchBox puts every box
+    under CC BY 4.0, but names it in each box's metadata since 2026-10.
+
+    Private boxes (metacheck #621) are kept on *repos*: ``rb_not_public``, the links
+    without a passcode to a box that ResearchBox does not show (it does not exist or
+    is not public), and ``rb_view_only``, the boxes read through a peer-review link
+    whose box is not public, named like OSF's view-only projects.
     """
-    from metacheck.archives.researchbox import _rbox_license, rbox_file_download
+    from metacheck.archives.researchbox import (
+        _rbox_box_meta,
+        _rbox_code,
+        _rbox_id,
+        rbox_file_download,
+    )
 
     files_df = placeholder()
     meta = meta_frame()
@@ -1071,6 +1094,27 @@ def list_researchbox(
                 if _na(n):
                     reasons.setdefault(u, f"ResearchBox did not serve the box: {e}")
             repos.fill_errors(reasons)
+            # the API answers "does not exist or is not public"; the web page asks for a
+            # captcha. A link with its passcode that fails this way is not a box readers
+            # were meant to open without it.
+            repos.rb_not_public = unique(
+                [
+                    u
+                    for u, e, n in zip(
+                        vals(failed["rb_url"]),
+                        vals(failed["error"]),
+                        vals(failed["name"]),
+                        strict=True,
+                    )
+                    if _na(n)
+                    and not _na(e)
+                    and re.search(
+                        "does not exist or is not public|not public: ResearchBox asks for a captcha",
+                        str(e),
+                    )
+                    and _rbox_code(u) is None
+                ]
+            )
         rb = _filter_not_dir(rb)
         names = _col(rb, "name")
         files_df = r_frame(
@@ -1095,12 +1139,42 @@ def list_researchbox(
     rb_ok = setdiff(urls, errored)
     if rb_ok:
         licenses: list[str | None] = []
+        statuses: list[str | None] = []
         for u in rb_ok:
             try:
-                licenses.append(_rbox_license(u, cache=cache))
+                box = _rbox_box_meta(u, cache=cache)
+                licenses.append(box["RB_license"])
+                statuses.append(box["RB_status"])
             except Exception:
                 licenses.append(None)
+                statuses.append(None)
         meta = meta_frame(rb_ok, NA_SCALAR, licenses)
+        # A box read through its peer-review link is private unless ResearchBox says it is
+        # public; without a key the status is not known, and the passcode in the link shows
+        # it is a link meant for peer review.
+        rb_vo = [
+            u
+            for u, st in zip(rb_ok, statuses, strict=True)
+            if _rbox_code(u) is not None and st != "public"
+        ]
+        if rb_vo:
+            hits = [
+                (pid, u)
+                for pid, u in zip(
+                    vals(repos.df["paper_id"]), vals(repos.df["repo_url"]), strict=True
+                )
+                if u in rb_vo
+            ]
+            rows = list(
+                dict.fromkeys((pid, u, f"https://researchbox.org/{_rbox_id(u)}") for pid, u in hits)
+            )
+            repos.rb_view_only = pd.DataFrame(
+                {
+                    "paper_id": pd.Series([r[0] for r in rows], dtype="string"),
+                    "repo_url": pd.Series([r[1] for r in rows], dtype="string"),
+                    "project": pd.Series([r[2] for r in rows], dtype="string"),
+                }
+            )
     return files_df, meta
 
 

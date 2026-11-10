@@ -91,6 +91,7 @@ _NO_ERROR_MESSAGE = (
     "not_r_content",
     "defines_functions",
     "not_analysis",
+    "empty",
 )
 
 
@@ -728,6 +729,8 @@ _NOT_SCRIPTS = frozenset(
         "defines_functions",
         "not_analysis",
         "not_downloaded",
+        "not_read",
+        "empty",
     }
 )
 

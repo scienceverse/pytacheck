@@ -935,6 +935,56 @@
     ]
    }
   },
+  "empty_script": {
+   "code": {
+    "file_name": [
+     "blank.R",
+     "blank.py",
+     "01_clean.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/blank.R",
+     "tests/mod_repro/fixtures/scripts/py/blank.py",
+     "tests/mod_repro/fixtures/scripts/01_clean.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "Python",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
   "file_choice": {
    "code": {
     "file_name": [

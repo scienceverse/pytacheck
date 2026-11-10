@@ -359,9 +359,18 @@ def _repo_check(
 
     repo_sum = _summarise_repos(repos.df, all_files)
 
-    view_only = repos.view_only
+    # private OSF projects and ResearchBox boxes read through a view-only or peer-review link
+    view_only = bind_rows([repos.view_only, repos.rb_view_only])
     report, summary, flags = _report(
-        all_files, repo_sum, is_readme, roster_check, useless_files, listed_tars, view_only
+        all_files,
+        repo_sum,
+        is_readme,
+        roster_check,
+        useless_files,
+        listed_tars,
+        repos.view_only,
+        repos.rb_view_only,
+        repos.rb_not_public,
     )
 
     # traffic_light ----
@@ -400,8 +409,9 @@ def _repo_check(
         # Files that do not belong in a repository, left out of `table`: repo_url,
         # file_path, kind and severity ("problem" or "suggestion")
         "useless_files": useless_files,
-        # Private OSF projects whose files were read through a view-only link in the paper:
-        # paper_id, repo_url (the link) and project (its plain address).
+        # Private OSF projects and ResearchBox boxes whose files were read through a view-only
+        # or peer-review link in the paper: paper_id, repo_url (the link) and project (its
+        # plain address).
         "view_only": view_only,
         "na_replace": 0,
         "traffic_light": tl,
@@ -918,7 +928,9 @@ def _report(
     roster_check: Any,
     useless_files: pd.DataFrame,
     listed_tars: Sequence[str] = (),
-    view_only: pd.DataFrame | None = None,
+    osf_view_only: pd.DataFrame | None = None,
+    rb_view_only: pd.DataFrame | None = None,
+    rb_not_public: Sequence[str] = (),
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
     from metacheck.report.blocks import collapse_section, link, scroll_table
@@ -954,25 +966,68 @@ def _report(
             *(f"- {_na_str(u)}: {e}" for u, e in zip(un_urls, un_why, strict=True)),
         ]
 
-    # private projects checked through a view-only link (see the OSF block): yellow, the
-    # files could be checked, but readers of the paper need the view-only link, which was
-    # meant for peer review
+    # private repositories checked through a view-only or peer-review link (see the OSF and
+    # ResearchBox blocks): yellow, the files could be checked, but readers of the paper need
+    # the view-only or peer-review link, which was meant for peer review
     summary_view_only = None
     report_view_only: list[str] = []
-    view_only_projects = (
-        rc.unique(rc.vals(view_only["project"])) if view_only is not None and len(view_only) else []
+    osf_projects = (
+        rc.unique(rc.vals(osf_view_only["project"]))
+        if osf_view_only is not None and len(osf_view_only)
+        else []
     )
+    rb_projects = (
+        rc.unique(rc.vals(rb_view_only["project"]))
+        if rb_view_only is not None and len(rb_view_only)
+        else []
+    )
+    view_only_projects = rc.unique([*osf_projects, *rb_projects])
     if view_only_projects:
         summary_view_only = " ".join(
-            f"The OSF project {u} is private. Metacheck examined the files through the "
-            "view_only link. As the preprint is public, and the OSF Files are accessible to "
-            "anyone, consider making the OSF project public."
-            for u in view_only_projects
+            [
+                *(
+                    f"The OSF project {u} is private. Metacheck examined the files through the "
+                    "view_only link. As the preprint is public, and the OSF Files are accessible "
+                    "to anyone, consider making the OSF project public."
+                    for u in osf_projects
+                ),
+                *(
+                    f"The ResearchBox box {u} is private. Metacheck examined the files through "
+                    "the peer-review link. As the preprint is public, consider making the box "
+                    "public."
+                    for u in rb_projects
+                ),
+            ]
         )
         report_view_only = [
-            "#### Private projects checked through a view-only link",
+            "#### Private repositories checked through a view-only or peer-review link",
             summary_view_only,
         ]
+    view_only = bind_rows([f for f in (osf_view_only, rb_view_only) if f is not None])
+
+    # ResearchBox boxes that readers cannot open (metacheck #621): still counted as
+    # repositories that could not be checked (yellow); the authors are told how to make the
+    # link open the box. ResearchBox's API gives the same answer for a box that does not exist
+    # and one that is not public.
+    summary_not_public = None
+    report_not_public: list[str] = []
+    if rb_not_public:
+        from metacheck.archives.researchbox import _rbox_id
+
+        boxes = rc.unique(
+            [
+                u if (i := _rbox_id(u)) is None else f"https://researchbox.org/{i}"
+                for u in rb_not_public
+            ]
+        )
+        summary_not_public = " ".join(
+            f"The ResearchBox box {b} does not exist or is not public, so readers who follow "
+            "the link cannot open it. As the preprint is public, consider making the box "
+            f"public. If the box has to stay private for now, link to its full peer-review "
+            f"link ({b}&PEER_REVIEW_passcode=...), so that the link itself opens the box."
+            for b in boxes
+        )
+        report_not_public = ["#### Repositories that readers cannot open", summary_not_public]
 
     # empty repos
     repo_no_files = int(((repos["files_n"] == 0).to_numpy(dtype=bool) & ~unchecked).sum())
@@ -1250,6 +1305,7 @@ def _report(
 
     blocks: tuple[Any, ...] = (
         *report_unchecked,
+        *report_not_public,
         *report_view_only,
         report_repo,
         "#### Repositories" if len(repo_tbl) else None,
@@ -1273,6 +1329,7 @@ def _report(
         s
         for s in (
             summary_unchecked,
+            summary_not_public,
             summary_view_only,
             summary_repo,
             summary_files,

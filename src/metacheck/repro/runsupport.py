@@ -349,12 +349,15 @@ def _repro_not_run_report(
     kinds: Sequence[str | None],
     used_by: Sequence[str | None] | None = None,
     why: Sequence[str | None] | None = None,
+    read_msg: Sequence[str | None] | None = None,
 ) -> list[str | ReportTable] | None:
     """Port of ``R/reproducibility_check.R::.repro_not_run_report()``.
 
     The report's section on files that are not run on their own; ``None`` when none.
     *why* gives, for a file that is not part of the analysis, the sentence of
     ``.repro_software_kind()`` (``None`` for a package's tests and ``setup.py``).
+    *read_msg* gives, for a file that could not be read (``not_read``), why (#620); a
+    file with nothing in it (``empty``) is named.
     """
     from metacheck.repro.software import _repro_not_analysis_why
 
@@ -362,11 +365,43 @@ def _repro_not_run_report(
     kind = _chr_list(kinds)
     fn = [k == "defines_functions" for k in kind]
     ts = [k == "not_analysis" for k in kind]
-    n_fn, n_ts = sum(fn), sum(ts)
-    if not n_fn and not n_ts:
+    nr = [k == "not_read" for k in kind]
+    em = [k == "empty" for k in kind]
+    n_fn, n_ts, n_nr, n_em = sum(fn), sum(ts), sum(nr), sum(em)
+    if not n_fn and not n_ts and not n_nr and not n_em:
         return None
     used = _chr_list(used_by) if used_by is not None else [None] * len(kind)
     out: list[str | ReportTable] = ["#### Files not run on their own"]
+    if n_nr:
+        out.append(
+            f"{n_nr:d} file{plural(n_nr)} could not be read, so {plural(n_nr, 'it was', 'they were')} "
+            f"not run and {plural(n_nr, 'needs', 'need')} to be checked again: this may be a "
+            f"problem of the computer that ran the check, not of the {plural(n_nr, 'file', 'files')}."
+        )
+        msgs = _chr_list(read_msg) if read_msg is not None else [""] * len(kind)
+        out.append(
+            scroll_table(
+                pd.DataFrame(
+                    {
+                        "File": pd.array(
+                            [x for x, f in zip(names, nr, strict=True) if f], dtype="string"
+                        ),
+                        "Why": pd.array(
+                            [m for m, f in zip(msgs, nr, strict=True) if f], dtype="string"
+                        ),
+                    }
+                ),
+                maxrows=10,
+            )
+        )
+    if n_em:
+        out.append(
+            f"{n_em:d} file{plural(n_em)} {plural(n_em, 'is', 'are')} empty, so there is nothing "
+            f"to run, and {plural(n_em, 'it is', 'they are')} not counted as "
+            f"{plural(n_em, 'a script', 'scripts')}: "
+            + ", ".join(str(x) for x, f in zip(names, em, strict=True) if f)
+            + "."
+        )
     if n_fn:
         used_fn = [u for u, f in zip(used, fn, strict=True) if f]
         n_unused = sum(1 for u in used_fn if u is None)

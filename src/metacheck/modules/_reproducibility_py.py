@@ -37,6 +37,7 @@ _NOT_FAILURES = (
     "download_too_large",
     "not_downloaded",
     "out_of_memory",
+    "not_read",
 )
 
 
@@ -125,33 +126,43 @@ def _manifest_text(structure_df: Any) -> list[str] | None:
     return None
 
 
-def _extract(path: str | None, name: str) -> tuple[list[str], list[str], list[str]]:
-    """A file's raw text, its Python code and what was left out of a notebook to get it.
+def _extract(
+    path: str | None, name: str
+) -> tuple[list[str], list[str], list[str], str | None, bool]:
+    """A file's raw text, its Python code, what was left out of a notebook to get it, why it
+    could not be read (``None`` when it could), and whether it is not text.
 
     A notebook is JSON and a Quarto document is Markdown: their Python code is extracted first,
     as code_check does (and as the R path purls an .Rmd/.qmd), or ``python`` would be run on
-    the JSON/Markdown itself.
+    the JSON/Markdown itself. A file that could not be read keeps its error, as for R (#620).
     """
     if path is None:
-        return [], [], []
-    raw = rc._read_code(path) or []
+        return [], [], [], "there is no copy of it and no link to it", False
+    binary = False
+    if h._file_exists(path):
+        from metacheck.repro.core import _repro_binary_kind
+
+        binary = _repro_binary_kind(path) is not None
+    raw_read, err = rc._read_code_error(path)
+    raw = raw_read or []
     if grepl(r"\.ipynb$", name, ignore_case=True):
         from metacheck.repro.layout import _code_notebook_parts
 
         try:
             parts = _code_notebook_parts(raw)
-        except Exception:
-            return raw, [], []
-        return raw, list(parts["lines"]), list(parts["removed"])
+        except Exception as e:
+            return raw, [], [], err or str(e) or type(e).__name__, binary
+        return raw, list(parts["lines"]), list(parts["removed"]), err, binary
     if grepl(r"\.qmd$", name, ignore_case=True):
         from metacheck.codecheck.core import code_extract_qmd_py
 
         try:
             code = [x if x is not None else "NA" for x in code_extract_qmd_py(path)]
-        except Exception:
+        except Exception as e:
             code = []
-        return raw, code, []
-    return raw, raw, []
+            err = err or str(e) or type(e).__name__
+        return raw, code, [], err, binary
+    return raw, raw, [], err, binary
 
 
 def _parse_all(code_texts: Sequence[Sequence[str | None]]) -> tuple[list[bool], list[bool]]:
@@ -291,6 +302,8 @@ def assess_py(
     extracted = [_extract(resolve(i), names[i]) for i in range(n_code)]
     raw_texts = [e[0] for e in extracted]
     commands_removed = [e[2] for e in extracted]
+    read_errors = [e[3] for e in extracted]
+    is_binary = [e[4] for e in extracted]
     code_texts: list[list[str]] = []
     uses_get_ipython: list[bool] = []
     for e in extracted:
@@ -439,6 +452,18 @@ def assess_py(
     n_noparse_static = sum(not p and not na for p, na in zip(parses, not_analysis, strict=True))
     # A server waits for a connection until the time limit, so it is not run.
     server = [_repro_py_starts_server(code_texts[i]) and not not_analysis[i] for i in range(n_code)]
+    # a file that could not be read, and an empty file, are not run, as for R (#620)
+    from metacheck.repro.core import _repro_read_failed_msg
+
+    read_msg = _repro_read_failed_msg(read_errors)
+    not_read = [read_errors[i] is not None and not not_analysis[i] for i in range(n_code)]
+    empty = [
+        read_errors[i] is None
+        and not not_analysis[i]
+        and not is_binary[i]
+        and not any(re.search(r"\S", x or "") for x in raw_texts[i])
+        for i in range(n_code)
+    ]
 
     ot_names = h._chr_col(order_tbl, "file_name")
     m_ord = rc._match_first(names, ot_names)
@@ -487,8 +512,10 @@ def assess_py(
         )
     file_unresolved = [len(u) > 0 for u in unresolved_list]
     runnable = [
-        p and pl and not fu and not na
-        for p, pl, fu, na in zip(parses, placeable, file_unresolved, not_analysis, strict=True)
+        p and pl and not fu and not na and not nr and not em
+        for p, pl, fu, na, nr, em in zip(
+            parses, placeable, file_unresolved, not_analysis, not_read, empty, strict=True
+        )
     ]
     n_runnable = sum(runnable)
     not_runnable_reason: list[str | None] = []
@@ -497,6 +524,10 @@ def assess_py(
             not_runnable_reason.append(None)
         elif not_analysis[i]:
             not_runnable_reason.append("not_analysis")
+        elif not_read[i]:
+            not_runnable_reason.append("not_read")
+        elif empty[i]:
+            not_runnable_reason.append("empty")
         elif python2[i]:
             not_runnable_reason.append("python2")
         elif not parses[i]:
@@ -513,6 +544,8 @@ def assess_py(
     # Same priority structure as the R block's own static light.
     tl_clean = n_noparse_static == 0 and not cycle and not ambiguous_order and not sum(ambiguous_n)
     tl = _repro_static_light(missing_inputs, tl_clean)
+    if any(not_read) and tl == "green":
+        tl = "yellow"  # #620
 
     # -- Execution (opt-in; runs downloaded code) ------------------------------------------
     ex: dict[str, Any] = {
@@ -554,6 +587,8 @@ def assess_py(
             parses=parses,
             python2=python2,
             not_analysis=not_analysis,
+            not_read=not_read,
+            empty=empty,
             server=server,
             code_tbl=code_tbl,
             keep_sandbox=keep_sandbox,
@@ -608,6 +643,8 @@ def assess_py(
         )
     else:
         error_message_of = [None] * n_code
+    # a file that could not be read: why (#620)
+    error_message_of = [read_msg[i] if (not_read[i]) else m for i, m in enumerate(error_message_of)]
     if run_tbl is not None and "setwd_removed" in run_tbl.columns:
         setwd_of = rc._pick(
             h._col(run_tbl, "setwd_removed"),
@@ -760,7 +797,13 @@ def assess_py(
             )
     report += (
         _repro_not_run_report(
-            names, ["not_analysis" if na else None for na in not_analysis], why=sw_why
+            names,
+            [
+                "not_analysis" if na else "not_read" if nr else "empty" if em else None
+                for na, nr, em in zip(not_analysis, not_read, empty, strict=True)
+            ],
+            why=sw_why,
+            read_msg=read_msg,
         )
         or []
     )
@@ -979,6 +1022,8 @@ def _execute_py(
     parses: list[bool],
     python2: list[bool],
     not_analysis: list[bool],
+    not_read: list[bool],
+    empty: list[bool],
     server: list[bool],
     code_tbl: Any,
     keep_sandbox: bool,
@@ -1194,7 +1239,10 @@ def _execute_py(
     ex["install_results"] = install_results
 
     parses_named = pd.Series(
-        [p and not na and not sv for p, na, sv in zip(parses, not_analysis, server, strict=True)],
+        [
+            p and not na and not sv and not nr and not em
+            for p, na, sv, nr, em in zip(parses, not_analysis, server, not_read, empty, strict=True)
+        ],
         index=names,
         dtype=bool,
     )
@@ -1203,7 +1251,7 @@ def _execute_py(
     # script another script source()s.
     imported = dict(imports_of)
     # a file that does not parse keeps that outcome: it cannot run when imported either
-    ok_parse = {n for n, p in zip(names, parses, strict=True) if p}
+    ok_parse = {n for n, p, nr in zip(names, parses, not_read, strict=True) if p and not nr}
     imported = {m: v for m, v in imported.items() if m in ok_parse}
     # a test is not run, so a module only a test imports is not run by it
     na_names = {n for n, na in zip(names, not_analysis, strict=True) if na}
@@ -1521,6 +1569,8 @@ def _execute_py(
         py2_set = {n for n, t in zip(names, python2, strict=True) if t}
         na_set = {n for n, na in zip(names, not_analysis, strict=True) if na}
         server_set = {n for n, sv in zip(names, server, strict=True) if sv}
+        not_read_set = {n for n, nr in zip(names, not_read, strict=True) if nr}
+        empty_set = {n for n, em in zip(names, empty, strict=True) if em}
         flag = _py2_flags(run_results, py2_set)
         for i in range(len(run_results)):
             if flag[i] and fn_col[i] not in py2_tried:
@@ -1528,6 +1578,12 @@ def _execute_py(
         for i in range(len(run_results)):
             if fn_col[i] in na_set:
                 outcome[i] = "not_analysis"
+        for i in range(len(run_results)):
+            if fn_col[i] in not_read_set:
+                outcome[i] = "not_read"
+        for i in range(len(run_results)):
+            if fn_col[i] in empty_set:
+                outcome[i] = "empty"
         for i in range(len(run_results)):
             if fn_col[i] in server_set:
                 outcome[i] = "needs_a_person"
@@ -1742,7 +1798,7 @@ def _execution_report_py(
         count("dependency_unavailable"),
     )
     n_import, n_late = count("run_by_import"), count("skipped_time_limit")
-    n_scripts = sum(o not in ("not_analysis", "not_downloaded") for o in oc)
+    n_scripts = sum(o not in ("not_analysis", "not_downloaded", "empty") for o in oc)
     imported: Mapping[str, Sequence[str]] = ex["imported"]
     import_text = (
         f" {n_import:d} {plural(n_import, 'file was', 'files were')} not run on "

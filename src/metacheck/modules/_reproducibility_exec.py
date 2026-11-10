@@ -49,6 +49,7 @@ _NOT_SCRIPTS = (
     "defines_functions",
     "not_analysis",
     "not_downloaded",
+    "empty",
 )
 
 #: ``list.files(d, pattern = "\\.Rproj$|^\\.here$|^DESCRIPTION$", all.files = TRUE)``
