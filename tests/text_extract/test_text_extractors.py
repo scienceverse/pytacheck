@@ -180,6 +180,27 @@ def test_extract_p_values_ps_and_notation() -> None:
     assert len(extract_p_values(["maps < .05", "pss < .05", "p = \u22120.05"])) == 0
 
 
+def test_partial_eta_squared_with_its_subscript_after_it_is_not_a_p_value() -> None:
+    # metacheck 0.4.3.27 (#336): "\u03b7\u00b2 p = .06" is partial eta squared
+    txt = [
+        "F(2, 63) = 590, p < .001, \u019e\u00b2p = .95",
+        "an effect (\u03b7\u00b2 p = .06) as",
+        "t = 2, \u03b7\u00b2 P = 0.029, p = .04",
+        "\u03b7 2 p = .10 and p < .001",
+        "\u03b7\u00b2 = .05, p = .03",
+    ]
+    pv = extract_p_values(txt)
+    assert pv["text_id"].tolist() == [1, 3, 4, 5]
+    assert pv["p_value"].tolist() == [0.001, 0.04, 0.001, 0.03]
+    assert pv["text"].tolist() == ["p < .001", "p = .04", "p < .001", "p = .03"]
+
+    eq = extract_eq(txt)
+    assert eq["lhs"].tolist() == [
+        "F", "p", "\u019e\u00b2p", "\u03b7\u00b2 p", "t", "\u03b7\u00b2 P", "p",
+        "\u03b7 2 p", "p", "\u03b7\u00b2", "p",
+    ]  # fmt: skip
+
+
 def test_extract_eq_unicode_minus() -> None:
     # U205: a number may have the Unicode minus (U+2212), with one space after a
     # leading one; rhs has "-" (metacheck matched none of these)

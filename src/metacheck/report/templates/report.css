@@ -229,7 +229,9 @@ table.dataTable th, table.dataTable td { text-align: left; }
 table.dataTable .dt-right { text-align: right; }
 table.dataTable tr.odd { background-color: var(--row-odd); }
 table.dataTable tr.even { background-color: var(--row-even); }
-.dt-top { display: flex; justify-content: flex-end; margin: 0.25em 0; }
+.dt-top { display: flex; justify-content: space-between; align-items: center; margin: 0.25em 0; }
+.dt-length { font-size: 0.875em; color: var(--muted); }
+.dt-length select { font: inherit; color: var(--fg); background: transparent; border: 1px solid var(--border); border-radius: 0.2em; margin: 0 0.2em; }
 .dt-paging button {
   background: transparent; color: var(--fg); border: 1px solid transparent;
   border-radius: 0.2em; padding: 0.1em 0.55em; margin: 0 0.1em; cursor: pointer; font: inherit; font-size: 0.875em;

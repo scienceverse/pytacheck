@@ -144,6 +144,20 @@
         - "p ≪ .001 and p ≠ .05 and p ~ .05 and p <= .05 and p == .05"
         - "No p-values in this sentence."
   "compare": {"ignore": ["paper_id"]}
+- "id": "extract_p_values.test_paper.eta"
+  "r": "extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "F(2, 63) = 590, p < .001, ƞ²p = .95"
+        - "an effect (η² p = .06) as"
+        - "t = 2, η² P = 0.029, p = .04"
+        - "η 2 p = .10 and p < .001"
+        - "η² = .05, p = .03"
+        - "η2p = .12, ηp = .3, p = .07 and ηp2 = .2"
+  "compare": {"ignore": ["paper_id"]}
 - "id": "extract_p_values.test_paper.none"
   "r": "extract_p_values"
   "py": "metacheck.text.extract.extract_p_values"
@@ -196,6 +210,20 @@
       "$test_paper":
         "text":
         - "A Mantel-Cox log rank test indicated that the difference between conditions was significant, Mantel-Cox χ2 (1, N = 60) = 6.99, p = .008, with children waiting less in the unaware condition (M = 307.10 s, nonparametric bootstrapped 95% CI = [207.69, 406.51]) than in the unaware/additional rewards condition (M = 529.73 s, nonparametric bootstrapped 95% CI = [408.56, 650.91])."
+  "compare": {"ignore": ["paper_id"]}
+- "id": "extract_eq.test_paper.eta"
+  "r": "extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "F(2, 63) = 590, p < .001, ƞ²p = .95"
+        - "an effect (η² p = .06) as"
+        - "t = 2, η² P = 0.029, p = .04"
+        - "η 2 p = .10 and p < .001"
+        - "η² = .05, p = .03"
+        - "η2p = .12, ηp = .3, p = .07 and ηp2 = .2"
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.none"
   "r": "extract_eq"

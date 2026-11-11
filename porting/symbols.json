@@ -646,7 +646,7 @@
  },
  ".as_num_safe": {
   "file": "R/data_check_helpers.R",
-  "line": 6999,
+  "line": 7011,
   "ported": true,
   "python": "metacheck.datacheck.checks:_as_num_safe"
  },
@@ -686,7 +686,7 @@
  },
  ".bh_is_trial_level_file": {
   "file": "R/data_check_helpers.R",
-  "line": 7293,
+  "line": 7305,
   "ported": true,
   "python": "metacheck.datacheck.checks:_bh_is_trial_level_file"
  },
@@ -805,7 +805,7 @@
  },
  ".cap_num": {
   "file": "R/report-helpers.R",
-  "line": 1218,
+  "line": 1223,
   "ported": true,
   "python": "metacheck.report.blocks:_cap_num"
  },
@@ -823,7 +823,7 @@
  },
  ".cb_is_definition_line": {
   "file": "R/data_check_helpers.R",
-  "line": 4159,
+  "line": 4162,
   "ported": true,
   "python": "metacheck.datacheck.columns:_cb_is_definition_line"
  },
@@ -1069,37 +1069,37 @@
  },
  ".coltype_to_facets": {
   "file": "R/data_check_helpers.R",
-  "line": 6504,
+  "line": 6515,
   "ported": true,
   "python": "metacheck.datacheck.checks:_coltype_to_facets"
  },
  ".concept_is_accuracy": {
   "file": "R/data_check_helpers.R",
-  "line": 6350,
+  "line": 6361,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_accuracy"
  },
  ".concept_is_condition": {
   "file": "R/data_check_helpers.R",
-  "line": 6366,
+  "line": 6377,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_condition"
  },
  ".concept_is_date": {
   "file": "R/data_check_helpers.R",
-  "line": 6443,
+  "line": 6454,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_date"
  },
  ".concept_is_rt": {
   "file": "R/data_check_helpers.R",
-  "line": 6339,
+  "line": 6350,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_rt"
  },
  ".concept_is_timestamp": {
   "file": "R/data_check_helpers.R",
-  "line": 6433,
+  "line": 6444,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_timestamp"
  },
@@ -1127,7 +1127,7 @@
  },
  ".count_fields": {
   "file": "R/data_check_helpers.R",
-  "line": 2206,
+  "line": 2209,
   "ported": true,
   "python": "metacheck.datacheck.files:_count_fields"
  },
@@ -1156,67 +1156,67 @@
  },
  ".csv_is_space_separated": {
   "file": "R/data_check_helpers.R",
-  "line": 2152,
+  "line": 2155,
   "ported": true,
   "python": "metacheck.datacheck.files:_csv_is_space_separated"
  },
  ".data_check_write_manifest": {
   "file": "R/data_check_helpers.R",
-  "line": 1094,
+  "line": 1096,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_check_write_manifest"
  },
  ".data_code_refs": {
   "file": "R/data_check_helpers.R",
-  "line": 1554,
+  "line": 1557,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_code_refs"
  },
  ".data_doc_role": {
   "file": "R/data_check_helpers.R",
-  "line": 880,
+  "line": 881,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_doc_role"
  },
  ".data_file_sheets": {
   "file": "R/data_check_helpers.R",
-  "line": 2714,
+  "line": 2717,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_file_sheets"
  },
  ".data_group_check_roster": {
   "file": "R/data_check_helpers.R",
-  "line": 1524,
+  "line": 1527,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_check_roster"
  },
  ".data_group_from_path": {
   "file": "R/data_check_helpers.R",
-  "line": 1595,
+  "line": 1598,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_from_path"
  },
  ".data_group_from_repo": {
   "file": "R/data_check_helpers.R",
-  "line": 1654,
+  "line": 1657,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_from_repo"
  },
  ".data_group_llm_impl": {
   "file": "R/data_check_helpers.R",
-  "line": 1689,
+  "line": 1692,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_llm_impl"
  },
  ".data_group_normalize": {
   "file": "R/data_check_helpers.R",
-  "line": 1622,
+  "line": 1625,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_normalize"
  },
  ".data_group_sort": {
   "file": "R/data_check_helpers.R",
-  "line": 1512,
+  "line": 1515,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_sort"
  },
@@ -1228,7 +1228,7 @@
  },
  ".data_source_keys": {
   "file": "R/data_check_helpers.R",
-  "line": 847,
+  "line": 848,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_source_keys"
  },
@@ -1358,7 +1358,7 @@
  },
  ".decode_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3443,
+  "line": 3446,
   "ported": true,
   "python": "metacheck.datacheck.columns:_decode_value_labels"
  },
@@ -1376,54 +1376,54 @@
  },
  ".demographic_values_ok": {
   "file": "R/data_check_helpers.R",
-  "line": 6195,
+  "line": 6205,
   "ported": true,
   "python": "metacheck.datacheck.checks:_demographic_values_ok"
  },
  ".detect_accuracy_blocks": {
   "file": "R/data_check_helpers.R",
-  "line": 7587,
+  "line": 7599,
   "ported": true,
   "python": "metacheck.datacheck.checks:_detect_accuracy_blocks"
  },
  ".detect_header": {
   "file": "R/data_check_helpers.R",
-  "line": 2170,
+  "line": 2173,
   "ported": true,
   "python": "metacheck.datacheck.files:_detect_header"
  },
  ".detect_header_row": {
   "file": "R/data_check_helpers.R",
-  "line": 7105,
+  "line": 7117,
   "ported": true,
   "python": "metacheck.datacheck.checks:_detect_header_row"
  },
  ".detect_likert_scale": {
   "file": "R/data_check_helpers.R",
-  "line": 2816,
+  "line": 2819,
   "ported": true,
   "python": "metacheck.datacheck.files:_detect_likert_scale"
  },
  ".detect_live_data": {
   "file": "R/text-extractors.R",
-  "line": 302,
+  "line": 318,
   "ported": true,
   "python": "metacheck.text.extract:_detect_live_data"
  },
  ".detect_no_participants": {
   "file": "R/text-extractors.R",
-  "line": 371,
+  "line": 387,
   "python": "metacheck.text.extract:_detect_no_participants"
  },
  ".detect_scale_blocks": {
   "file": "R/data_check_helpers.R",
-  "line": 7640,
+  "line": 7652,
   "ported": true,
   "python": "metacheck.datacheck.checks:_detect_scale_blocks"
  },
  ".detect_task_columns": {
   "file": "R/data_check_helpers.R",
-  "line": 7519,
+  "line": 7531,
   "ported": true,
   "python": "metacheck.datacheck.checks:_detect_task_columns"
  },
@@ -1830,7 +1830,7 @@
  },
  ".empty_codebook_vars": {
   "file": "R/data_check_helpers.R",
-  "line": 3222,
+  "line": 3225,
   "ported": true,
   "python": "metacheck.datacheck.columns:_empty_codebook_vars"
  },
@@ -1854,19 +1854,19 @@
  },
  ".encode_missing_values": {
   "file": "R/data_check_helpers.R",
-  "line": 3453,
+  "line": 3456,
   "ported": true,
   "python": "metacheck.datacheck.columns:_encode_missing_values"
  },
  ".encode_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3432,
+  "line": 3435,
   "ported": true,
   "python": "metacheck.datacheck.columns:_encode_value_labels"
  },
  ".eprime_is_export": {
   "file": "R/data_check_helpers.R",
-  "line": 7279,
+  "line": 7291,
   "ported": true,
   "python": "metacheck.datacheck.checks:_eprime_is_export"
  },
@@ -1895,43 +1895,43 @@
  },
  ".extract_codebook_positional": {
   "file": "R/data_check_helpers.R",
-  "line": 3796,
+  "line": 3799,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_codebook_positional"
  },
  ".extract_haven_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 4128,
+  "line": 4131,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_haven_labels"
  },
  ".extract_json_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 3946,
+  "line": 3949,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_json_codebook"
  },
  ".extract_markdown_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 3856,
+  "line": 3859,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_markdown_codebook"
  },
  ".extract_rich_text": {
   "file": "R/data_check_helpers.R",
-  "line": 4271,
+  "line": 4274,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_rich_text"
  },
  ".extract_spreadsheet_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 4007,
+  "line": 4010,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_spreadsheet_codebook"
  },
  ".extract_structured_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 4037,
+  "line": 4040,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_structured_codebook"
  },
@@ -2119,31 +2119,31 @@
  },
  ".find_codebook_cols": {
   "file": "R/data_check_helpers.R",
-  "line": 3207,
+  "line": 3210,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_codebook_cols"
  },
  ".find_coding_instruction_col": {
   "file": "R/data_check_helpers.R",
-  "line": 3763,
+  "line": 3766,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_coding_instruction_col"
  },
  ".find_missing_value_col": {
   "file": "R/data_check_helpers.R",
-  "line": 3697,
+  "line": 3700,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_missing_value_col"
  },
  ".find_question_col": {
   "file": "R/data_check_helpers.R",
-  "line": 3737,
+  "line": 3740,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_question_col"
  },
  ".find_value_label_col": {
   "file": "R/data_check_helpers.R",
-  "line": 3708,
+  "line": 3711,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_value_label_col"
  },
@@ -2278,13 +2278,13 @@
  },
  ".haven_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3538,
+  "line": 3541,
   "ported": true,
   "python": "metacheck.datacheck.columns:_haven_value_labels"
  },
  ".head_keep_attrs": {
   "file": "R/data_check_helpers.R",
-  "line": 2702,
+  "line": 2705,
   "python": "metacheck.datacheck.columns:_head_keep_attrs"
  },
  ".head_size": {
@@ -2396,7 +2396,7 @@
  },
  ".infer_group": {
   "file": "R/data_check_helpers.R",
-  "line": 4771,
+  "line": 4774,
   "ported": true,
   "python": "metacheck.datacheck.columns:_infer_group"
  },
@@ -2456,7 +2456,7 @@
  },
  ".is_accuracy_item": {
   "file": "R/data_check_helpers.R",
-  "line": 7563,
+  "line": 7575,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_accuracy_item"
  },
@@ -2480,13 +2480,13 @@
  },
  ".is_junk_above_header": {
   "file": "R/data_check_helpers.R",
-  "line": 7061,
+  "line": 7073,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_junk_above_header"
  },
  ".is_likert_item": {
   "file": "R/data_check_helpers.R",
-  "line": 7439,
+  "line": 7451,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_likert_item"
  },
@@ -2516,7 +2516,7 @@
  },
  ".is_placeholder_name": {
   "file": "R/data_check_helpers.R",
-  "line": 7007,
+  "line": 7019,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_placeholder_name"
  },
@@ -2528,13 +2528,13 @@
  },
  ".is_r_package_file": {
   "file": "R/data_check_helpers.R",
-  "line": 758,
+  "line": 759,
   "ported": true,
   "python": "metacheck.datacheck.files:_is_r_package_file"
  },
  ".is_r_package_service_file": {
   "file": "R/data_check_helpers.R",
-  "line": 694,
+  "line": 695,
   "ported": true,
   "python": "metacheck.datacheck.files:_is_r_package_service_file"
  },
@@ -2558,7 +2558,7 @@
  },
  ".is_single_field_blob": {
   "file": "R/data_check_helpers.R",
-  "line": 2219,
+  "line": 2222,
   "ported": true,
   "python": "metacheck.datacheck.files:_is_single_field_blob"
  },
@@ -2576,7 +2576,7 @@
  },
  ".is_task_data": {
   "file": "R/data_check_helpers.R",
-  "line": 7610,
+  "line": 7622,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_task_data"
  },
@@ -2594,7 +2594,7 @@
  },
  ".item_text_key": {
   "file": "R/data_check_helpers.R",
-  "line": 3382,
+  "line": 3385,
   "ported": true,
   "python": "metacheck.datacheck.columns:_item_text_key"
  },
@@ -2671,13 +2671,13 @@
  },
  ".json_field": {
   "file": "R/data_check_helpers.R",
-  "line": 3898,
+  "line": 3901,
   "ported": true,
   "python": "metacheck.datacheck.columns:_json_field"
  },
  ".json_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3919,
+  "line": 3922,
   "ported": true,
   "python": "metacheck.datacheck.columns:_json_value_labels"
  },
@@ -2940,7 +2940,7 @@
  },
  ".llm_classify_batched": {
   "file": "R/data_check_helpers.R",
-  "line": 1370,
+  "line": 1373,
   "ported": true,
   "python": "metacheck.datacheck.files:_llm_classify_batched"
  },
@@ -2991,37 +2991,37 @@
  },
  ".load_module_tables": {
   "file": "R/module.R",
-  "line": 682,
+  "line": 687,
   "ported": true,
   "python": "metacheck.repro.tables:_load_module_tables"
  },
  ".looks_like_accuracy": {
   "file": "R/data_check_helpers.R",
-  "line": 7498,
+  "line": 7510,
   "ported": true,
   "python": "metacheck.datacheck.checks:_looks_like_accuracy"
  },
  ".looks_like_freetext_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3524,
+  "line": 3527,
   "ported": true,
   "python": "metacheck.datacheck.columns:_looks_like_freetext_labels"
  },
  ".looks_like_rt": {
   "file": "R/data_check_helpers.R",
-  "line": 7477,
+  "line": 7489,
   "ported": true,
   "python": "metacheck.datacheck.checks:_looks_like_rt"
  },
  ".looks_like_varnames": {
   "file": "R/data_check_helpers.R",
-  "line": 3775,
+  "line": 3778,
   "ported": true,
   "python": "metacheck.datacheck.columns:_looks_like_varnames"
  },
  ".looks_like_wording": {
   "file": "R/data_check_helpers.R",
-  "line": 3784,
+  "line": 3787,
   "ported": true,
   "python": "metacheck.datacheck.columns:_looks_like_wording"
  },
@@ -3039,7 +3039,7 @@
  },
  ".median_nchar": {
   "file": "R/data_check_helpers.R",
-  "line": 993,
+  "line": 995,
   "python": "metacheck.datacheck.files:_median_nchar"
  },
  ".mendeley_id": {
@@ -3080,7 +3080,7 @@
  },
  ".missing_from_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3684,
+  "line": 3687,
   "ported": true,
   "python": "metacheck.datacheck.columns:_missing_from_value_labels"
  },
@@ -3103,42 +3103,42 @@
  },
  ".module_check_names": {
   "file": "R/module-install.R",
-  "line": 337,
+  "line": 352,
   "python": "metacheck.packs.install:_module_check_names"
  },
  ".module_check_version": {
   "file": "R/module-install.R",
-  "line": 316,
+  "line": 331,
   "python": "metacheck.packs.install:_module_check_version"
  },
  ".module_download": {
   "file": "R/module-install.R",
-  "line": 413,
+  "line": 428,
   "python": "metacheck.packs.install:_module_download"
  },
  ".module_installed_files": {
   "file": "R/module-install.R",
-  "line": 274,
+  "line": 289,
   "python": "metacheck.packs.install:_module_installed_files"
  },
  ".module_repo_files": {
   "file": "R/module-install.R",
-  "line": 302,
+  "line": 317,
   "python": "metacheck.packs.install:_module_repo_files"
  },
  ".module_resolve": {
   "file": "R/module-install.R",
-  "line": 368,
+  "line": 383,
   "python": "metacheck.packs.install:_module_resolve"
  },
  ".module_source": {
   "file": "R/module-install.R",
-  "line": 286,
+  "line": 301,
   "python": "metacheck.packs.install:_module_source"
  },
  ".modules_dir": {
   "file": "R/module-install.R",
-  "line": 264,
+  "line": 279,
   "python": "metacheck.packs.install:_modules_dir"
  },
  ".move_extracted": {
@@ -3285,13 +3285,13 @@
  },
  ".normalize_header": {
   "file": "R/data_check_helpers.R",
-  "line": 3172,
+  "line": 3175,
   "ported": true,
   "python": "metacheck.datacheck.columns:_normalize_header"
  },
  ".numeric_col_fraction": {
   "file": "R/data_check_helpers.R",
-  "line": 7029,
+  "line": 7041,
   "ported": true,
   "python": "metacheck.datacheck.checks:_numeric_col_fraction"
  },
@@ -3352,7 +3352,7 @@
  },
  ".osd_code_and_provenance": {
   "file": "R/data_check_helpers.R",
-  "line": 3287,
+  "line": 3290,
   "ported": true,
   "python": "metacheck.datacheck.columns:_osd_code_and_provenance"
  },
@@ -3370,13 +3370,13 @@
  },
  ".osd_safe_code": {
   "file": "R/data_check_helpers.R",
-  "line": 3259,
+  "line": 3262,
   "ported": true,
   "python": "metacheck.datacheck.columns:_osd_safe_code"
  },
  ".osd_slug": {
   "file": "R/data_check_helpers.R",
-  "line": 3241,
+  "line": 3244,
   "ported": true,
   "python": "metacheck.datacheck.columns:_osd_slug"
  },
@@ -3638,13 +3638,13 @@
  },
  ".papers_cache_dir": {
   "file": "R/import-papers.R",
-  "line": 203,
+  "line": 221,
   "ported": true,
   "python": "metacheck.io.corpus:_papers_cache_dir"
  },
  ".papers_release_assets": {
   "file": "R/import-papers.R",
-  "line": 220,
+  "line": 239,
   "ported": true,
   "python": "metacheck.io.corpus:_papers_release_assets"
  },
@@ -3680,18 +3680,18 @@
  },
  ".parse_comma_numeric": {
   "file": "R/data_check_helpers.R",
-  "line": 983,
+  "line": 985,
   "python": "metacheck.datacheck.files:_parse_comma_numeric"
  },
  ".parse_frac": {
   "file": "R/data_check_helpers.R",
-  "line": 6393,
+  "line": 6404,
   "ported": true,
   "python": "metacheck.datacheck.checks:_parse_frac"
  },
  ".parse_value_label_text": {
   "file": "R/data_check_helpers.R",
-  "line": 3656,
+  "line": 3659,
   "ported": true,
   "python": "metacheck.datacheck.columns:_parse_value_label_text"
  },
@@ -3738,7 +3738,7 @@
  },
  ".pdf_codebook_lines": {
   "file": "R/data_check_helpers.R",
-  "line": 4183,
+  "line": 4186,
   "ported": true,
   "python": "metacheck.datacheck.columns:_pdf_codebook_lines"
  },
@@ -3762,13 +3762,13 @@
  },
  ".pii_card_ok": {
   "file": "R/data_check_helpers.R",
-  "line": 5752,
+  "line": 5762,
   "ported": true,
   "python": "metacheck.datacheck.checks:_pii_card_ok"
  },
  ".pii_luhn_ok": {
   "file": "R/data_check_helpers.R",
-  "line": 5734,
+  "line": 5744,
   "ported": true,
   "python": "metacheck.datacheck.checks:_pii_luhn_ok"
  },
@@ -3780,7 +3780,7 @@
  },
  ".pii_split_name": {
   "file": "R/data_check_helpers.R",
-  "line": 5933,
+  "line": 5943,
   "ported": true,
   "python": "metacheck.datacheck.checks:_pii_split_name"
  },
@@ -3790,6 +3790,16 @@
   "ported": true,
   "python": "metacheck.datacheck.checks:_PII_VALUE_PATTERNS"
  },
+ ".pkg_github_hint": {
+  "file": "R/utils.R",
+  "line": 562,
+  "python": "metacheck.utils:_pkg_github_hint"
+ },
+ ".pkg_name": {
+  "file": "R/utils.R",
+  "line": 558,
+  "python": "metacheck.utils:_pkg_name"
+ },
  ".pkg_problem": {
   "file": "R/utils.R",
   "line": 540,
@@ -3797,12 +3807,12 @@
  },
  ".plain_number": {
   "file": "R/data_check_helpers.R",
-  "line": 979,
+  "line": 981,
   "python": "metacheck.datacheck.files:_plain_number"
  },
  ".plain_s4_columns": {
   "file": "R/data_check_helpers.R",
-  "line": 2681,
+  "line": 2684,
   "ported": true,
   "python": "metacheck.datacheck._files_rdata:_plain_s4_columns"
  },
@@ -3902,49 +3912,49 @@
  },
  ".qsf_export_col": {
   "file": "R/data_check_helpers.R",
-  "line": 4621,
+  "line": 4624,
   "ported": true,
   "python": "metacheck.datacheck.columns:_qsf_export_col"
  },
  ".qsf_option_display": {
   "file": "R/data_check_helpers.R",
-  "line": 4587,
+  "line": 4590,
   "ported": true,
   "python": "metacheck.datacheck.columns:_qsf_option_display"
  },
  ".qsf_strip_html": {
   "file": "R/data_check_helpers.R",
-  "line": 4571,
+  "line": 4574,
   "ported": true,
   "python": "metacheck.datacheck.columns:_qsf_strip_html"
  },
  ".qsf_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 4596,
+  "line": 4599,
   "ported": true,
   "python": "metacheck.datacheck.columns:_qsf_value_labels"
  },
  ".qualtrics_col_stem": {
   "file": "R/data_check_helpers.R",
-  "line": 6822,
+  "line": 6834,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_col_stem"
  },
  ".qualtrics_is_display_order": {
   "file": "R/data_check_helpers.R",
-  "line": 6839,
+  "line": 6851,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_is_display_order"
  },
  ".qualtrics_is_header_row": {
   "file": "R/data_check_helpers.R",
-  "line": 6898,
+  "line": 6910,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_is_header_row"
  },
  ".qualtrics_key": {
   "file": "R/data_check_helpers.R",
-  "line": 6809,
+  "line": 6821,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_key"
  },
@@ -3956,7 +3966,7 @@
  },
  ".qualtrics_tag_cols": {
   "file": "R/data_check_helpers.R",
-  "line": 6812,
+  "line": 6824,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_tag_cols"
  },
@@ -4245,7 +4255,7 @@
  },
  ".rds_is_workspace": {
   "file": "R/data_check_helpers.R",
-  "line": 2664,
+  "line": 2667,
   "ported": true,
   "python": "metacheck.datacheck.files:_rds_is_workspace"
  },
@@ -4263,7 +4273,7 @@
  },
  ".read_delim_fast": {
   "file": "R/data_check_helpers.R",
-  "line": 2241,
+  "line": 2244,
   "ported": true,
   "python": "metacheck.datacheck.files:_read_delim_fast"
  },
@@ -4281,13 +4291,13 @@
  },
  ".read_rdata_isolated": {
   "file": "R/data_check_helpers.R",
-  "line": 2738,
+  "line": 2741,
   "ported": true,
   "python": "metacheck.datacheck.files:_read_rdata_isolated"
  },
  ".read_sav_any": {
   "file": "R/data_check_helpers.R",
-  "line": 2425,
+  "line": 2428,
   "ported": true,
   "python": "metacheck.datacheck._files_readers:read_stat_file"
  },
@@ -4508,7 +4518,7 @@
  },
  ".report_table_static": {
   "file": "R/report-helpers.R",
-  "line": 1074,
+  "line": 1079,
   "ported": true,
   "python": "metacheck.report.render:DataTable"
  },
@@ -5932,7 +5942,7 @@
  },
  ".row_duplication": {
   "file": "R/data_check_helpers.R",
-  "line": 7044,
+  "line": 7056,
   "ported": true,
   "python": "metacheck.datacheck.checks:_row_duplication"
  },
@@ -5956,13 +5966,13 @@
  },
  ".scale_block_is_ratinglike": {
   "file": "R/data_check_helpers.R",
-  "line": 7682,
+  "line": 7694,
   "ported": true,
   "python": "metacheck.datacheck.checks:_scale_block_is_ratinglike"
  },
  ".scale_block_range": {
   "file": "R/data_check_helpers.R",
-  "line": 7627,
+  "line": 7639,
   "ported": true,
   "python": "metacheck.datacheck.checks:_scale_block_range"
  },
@@ -6004,7 +6014,7 @@
  },
  ".scale_match_items": {
   "file": "R/data_check_helpers.R",
-  "line": 3401,
+  "line": 3404,
   "ported": true,
   "python": "metacheck.datacheck.columns:_scale_match_items"
  },
@@ -6022,7 +6032,7 @@
  },
  ".scale_name_prefix": {
   "file": "R/data_check_helpers.R",
-  "line": 7619,
+  "line": 7631,
   "ported": true,
   "python": "metacheck.datacheck.checks:_scale_name_prefix"
  },
@@ -6046,7 +6056,7 @@
  },
  ".scale_ref_code": {
   "file": "R/data_check_helpers.R",
-  "line": 3350,
+  "line": 3353,
   "ported": true,
   "python": "metacheck.datacheck.columns:_scale_ref_code"
  },
@@ -6058,7 +6068,7 @@
  },
  ".scale_reference": {
   "file": "R/data_check_helpers.R",
-  "line": 3364,
+  "line": 3367,
   "ported": true,
   "python": "metacheck.datacheck.columns:_scale_reference"
  },
@@ -6100,7 +6110,7 @@
  },
  ".scale_typo_of": {
   "file": "R/data_check_helpers.R",
-  "line": 5107,
+  "line": 5110,
   "ported": true,
   "python": "metacheck.datacheck.columns:_scale_typo_of"
  },
@@ -6136,7 +6146,7 @@
  },
  ".sheet_is_notes": {
   "file": "R/data_check_helpers.R",
-  "line": 2726,
+  "line": 2729,
   "ported": true,
   "python": "metacheck.datacheck.files:_sheet_is_notes"
  },
@@ -6178,7 +6188,7 @@
  },
  ".sniff_delimiter": {
   "file": "R/data_check_helpers.R",
-  "line": 2126,
+  "line": 2129,
   "ported": true,
   "python": "metacheck.datacheck.files:_sniff_delimiter"
  },
@@ -6793,13 +6803,13 @@
  },
  ".strip_llm_wrapper": {
   "file": "R/data_check_helpers.R",
-  "line": 1634,
+  "line": 1637,
   "ported": true,
   "python": "metacheck.datacheck.files:_strip_llm_wrapper"
  },
  ".strip_rtf": {
   "file": "R/data_check_helpers.R",
-  "line": 4213,
+  "line": 4216,
   "ported": true,
   "python": "metacheck.datacheck.columns:_strip_rtf"
  },
@@ -6875,7 +6885,7 @@
  },
  ".tabular_usable": {
   "file": "R/data_check_helpers.R",
-  "line": 6730,
+  "line": 6742,
   "ported": true,
   "python": "metacheck.datacheck.checks:_tabular_usable"
  },
@@ -6977,7 +6987,7 @@
  },
  ".text_counts": {
   "file": "R/data_check_helpers.R",
-  "line": 963,
+  "line": 965,
   "python": "metacheck.datacheck.files:_text_counts"
  },
  ".title": {
@@ -7041,31 +7051,31 @@
  },
  ".utf16_as_utf8": {
   "file": "R/data_check_helpers.R",
-  "line": 2384,
+  "line": 2387,
   "ported": true,
   "python": "metacheck.datacheck._files_delim:read_delim"
  },
  ".utf8_lines": {
   "file": "R/data_check_helpers.R",
-  "line": 1993,
+  "line": 1996,
   "ported": true,
   "python": "metacheck.datacheck.files:_utf8_lines"
  },
  ".utf8_repair_df": {
   "file": "R/data_check_helpers.R",
-  "line": 2290,
+  "line": 2293,
   "ported": true,
   "python": "metacheck.datacheck.files:_utf8_repair_df"
  },
  ".vl_is_numeric": {
   "file": "R/data_check_helpers.R",
-  "line": 3585,
+  "line": 3588,
   "ported": true,
   "python": "metacheck.datacheck.columns:_vl_is_numeric"
  },
  ".vl_split_pairs": {
   "file": "R/data_check_helpers.R",
-  "line": 3589,
+  "line": 3592,
   "ported": true,
   "python": "metacheck.datacheck.columns:_vl_split_pairs"
  },
@@ -7099,7 +7109,7 @@
  },
  ".xls_readable": {
   "file": "R/data_check_helpers.R",
-  "line": 2406,
+  "line": 2409,
   "python": "metacheck.datacheck.files:_xls_readable"
  },
  ".xml2bib": {
@@ -7428,13 +7438,13 @@
  },
  "cap_gate_count": {
   "file": "R/report-helpers.R",
-  "line": 1254,
+  "line": 1259,
   "ported": true,
   "python": "metacheck.report.blocks:cap_gate_count"
  },
  "capture_module_tables": {
   "file": "R/module.R",
-  "line": 568,
+  "line": 573,
   "ported": true,
   "python": "metacheck.repro.tables:capture_module_tables"
  },
@@ -7578,13 +7588,13 @@
  },
  "collapse_section": {
   "file": "R/report-helpers.R",
-  "line": 1169,
+  "line": 1174,
   "ported": true,
   "python": "metacheck.report.blocks:collapse_section"
  },
  "collect_module_tables": {
   "file": "R/module.R",
-  "line": 630,
+  "line": 635,
   "ported": true,
   "python": "metacheck.repro.tables:collect_module_tables"
  },
@@ -7632,157 +7642,157 @@
  },
  "data_check_case_issues": {
   "file": "R/data_check_helpers.R",
-  "line": 5465,
+  "line": 5473,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_case_issues"
  },
  "data_check_colname": {
   "file": "R/data_check_helpers.R",
-  "line": 5590,
+  "line": 5600,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_colname"
  },
  "data_check_colname_collisions": {
   "file": "R/data_check_helpers.R",
-  "line": 5650,
+  "line": 5660,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_colname_collisions"
  },
  "data_check_constant": {
   "file": "R/data_check_helpers.R",
-  "line": 5359,
+  "line": 5364,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_constant"
  },
  "data_check_demographic": {
   "file": "R/data_check_helpers.R",
-  "line": 6272,
+  "line": 6283,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_demographic"
  },
  "data_check_design_name": {
   "file": "R/data_check_helpers.R",
-  "line": 5419,
+  "line": 5425,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_design_name"
  },
  "data_check_empty": {
   "file": "R/data_check_helpers.R",
-  "line": 5389,
+  "line": 5395,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_empty"
  },
  "data_check_is_behaverse": {
   "file": "R/data_check_helpers.R",
-  "line": 7365,
+  "line": 7377,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_behaverse"
  },
  "data_check_is_inquisit": {
   "file": "R/data_check_helpers.R",
-  "line": 7382,
+  "line": 7394,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_inquisit"
  },
  "data_check_is_jspsych": {
   "file": "R/data_check_helpers.R",
-  "line": 7392,
+  "line": 7404,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_jspsych"
  },
  "data_check_is_psychopy": {
   "file": "R/data_check_helpers.R",
-  "line": 7402,
+  "line": 7414,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_psychopy"
  },
  "data_check_is_qualtrics": {
   "file": "R/data_check_helpers.R",
-  "line": 6864,
+  "line": 6876,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_qualtrics"
  },
  "data_check_numeric_in_text": {
   "file": "R/data_check_helpers.R",
-  "line": 5525,
+  "line": 5534,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_numeric_in_text"
  },
  "data_check_outliers": {
   "file": "R/data_check_helpers.R",
-  "line": 5323,
+  "line": 5327,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_outliers"
  },
  "data_check_pii_freetext": {
   "file": "R/data_check_helpers.R",
-  "line": 6122,
+  "line": 6132,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_pii_freetext"
  },
  "data_check_pii_geo": {
   "file": "R/data_check_helpers.R",
-  "line": 6048,
+  "line": 6058,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_pii_geo"
  },
  "data_check_pii_name": {
   "file": "R/data_check_helpers.R",
-  "line": 5983,
+  "line": 5993,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_pii_name"
  },
  "data_check_pii_values": {
   "file": "R/data_check_helpers.R",
-  "line": 5868,
+  "line": 5878,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_pii_values"
  },
  "data_check_scale_values": {
   "file": "R/data_check_helpers.R",
-  "line": 5196,
+  "line": 5200,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_scale_values"
  },
  "data_check_spss_filter": {
   "file": "R/data_check_helpers.R",
-  "line": 5439,
+  "line": 5446,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_spss_filter"
  },
  "data_check_whitespace": {
   "file": "R/data_check_helpers.R",
-  "line": 5493,
+  "line": 5501,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_whitespace"
  },
  "data_classify_files": {
   "file": "R/data_check_helpers.R",
-  "line": 581,
+  "line": 582,
   "ported": true,
   "python": "metacheck.datacheck.files:data_classify_files"
  },
  "data_col_concept": {
   "file": "R/data_check_helpers.R",
-  "line": 6474,
+  "line": 6485,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_col_concept"
  },
  "data_col_facets": {
   "file": "R/data_check_helpers.R",
-  "line": 6553,
+  "line": 6565,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_col_facets"
  },
  "data_col_stats": {
   "file": "R/data_check_helpers.R",
-  "line": 3048,
+  "line": 3051,
   "ported": true,
   "python": "metacheck.datacheck.columns:data_col_stats"
  },
  "data_col_type": {
   "file": "R/data_check_helpers.R",
-  "line": 2950,
+  "line": 2953,
   "ported": true,
   "python": "metacheck.datacheck.columns:data_col_type"
  },
@@ -7794,43 +7804,43 @@
  },
  "data_format": {
   "file": "R/data_check_helpers.R",
-  "line": 949,
+  "line": 951,
   "ported": true,
   "python": "metacheck.datacheck.files:data_format"
  },
  "data_group_llm": {
   "file": "R/data_check_helpers.R",
-  "line": 1461,
+  "line": 1464,
   "ported": true,
   "python": "metacheck.datacheck.files:data_group_llm"
  },
  "data_is_manifest": {
   "file": "R/data_check_helpers.R",
-  "line": 1028,
+  "line": 1030,
   "ported": true,
   "python": "metacheck.datacheck.files:data_is_manifest"
  },
  "data_promote_header_row": {
   "file": "R/data_check_helpers.R",
-  "line": 7201,
+  "line": 7213,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_promote_header_row"
  },
  "data_read_head": {
   "file": "R/data_check_helpers.R",
-  "line": 2457,
+  "line": 2460,
   "ported": true,
   "python": "metacheck.datacheck.files:data_read_head"
  },
  "data_strip_qualtrics_header": {
   "file": "R/data_check_helpers.R",
-  "line": 6960,
+  "line": 6972,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_strip_qualtrics_header"
  },
  "data_study_roster": {
   "file": "R/data_check_helpers.R",
-  "line": 1490,
+  "line": 1493,
   "ported": true,
   "python": "metacheck.datacheck.files:data_study_roster"
  },
@@ -8034,13 +8044,13 @@
  },
  "extract_eq": {
   "file": "R/text-extractors.R",
-  "line": 113,
+  "line": 126,
   "ported": true,
   "python": "metacheck.text.extract:extract_eq"
  },
  "extract_p_values": {
   "file": "R/text-extractors.R",
-  "line": 46,
+  "line": 52,
   "ported": true,
   "python": "metacheck.text.extract:extract_p_values"
  },
@@ -8117,7 +8127,7 @@
  },
  "format_ref": {
   "file": "R/report-helpers.R",
-  "line": 1325,
+  "line": 1330,
   "ported": true,
   "python": "metacheck.report.blocks:format_ref"
  },
@@ -8273,7 +8283,7 @@
  },
  "get_prev_outputs": {
   "file": "R/module.R",
-  "line": 528,
+  "line": 533,
   "ported": true,
   "python": "metacheck.module:get_prev_outputs"
  },
@@ -8495,7 +8505,7 @@
  },
  "lastlog": {
   "file": "R/utils-logging.R",
-  "line": 102,
+  "line": 104,
   "ported": true,
   "python": "metacheck.log:lastlog"
  },
@@ -8513,7 +8523,7 @@
  },
  "link": {
   "file": "R/report-helpers.R",
-  "line": 1282,
+  "line": 1287,
   "ported": true,
   "python": "metacheck.report.blocks:link"
  },
@@ -8584,7 +8594,7 @@
  },
  "logger": {
   "file": "R/utils-logging.R",
-  "line": 49,
+  "line": 50,
   "ported": true,
   "python": "metacheck.log:logger"
  },
@@ -8596,13 +8606,13 @@
  },
  "manifest_merge": {
   "file": "R/data_check_helpers.R",
-  "line": 1342,
+  "line": 1345,
   "ported": true,
   "python": "metacheck.datacheck.files:manifest_merge"
  },
  "match_column_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 4814,
+  "line": 4817,
   "ported": true,
   "python": "metacheck.datacheck.columns:match_column_labels"
  },
@@ -8835,41 +8845,41 @@
  },
  "module_find": {
   "file": "R/module.R",
-  "line": 211,
+  "line": 216,
   "ported": true,
   "python": "metacheck.module:module_find"
  },
  "module_help": {
   "file": "R/module.R",
-  "line": 357,
+  "line": 362,
   "ported": true,
   "python": "metacheck.module:module_help"
  },
  "module_info": {
   "file": "R/module.R",
-  "line": 302,
+  "line": 307,
   "ported": true,
   "python": "metacheck.module:module_info"
  },
  "module_install": {
   "file": "R/module-install.R",
-  "line": 53,
+  "line": 60,
   "python": "metacheck.packs.install:module_install"
  },
  "module_installed": {
   "file": "R/module-install.R",
-  "line": 212,
+  "line": 227,
   "python": "metacheck.packs.install:module_installed"
  },
  "module_list": {
   "file": "R/module.R",
-  "line": 256,
+  "line": 261,
   "ported": true,
   "python": "metacheck.module:module_list"
  },
  "module_remove": {
   "file": "R/module-install.R",
-  "line": 178,
+  "line": 193,
   "python": "metacheck.packs.install:module_remove"
  },
  "module_report": {
@@ -8886,13 +8896,13 @@
  },
  "module_template": {
   "file": "R/module.R",
-  "line": 483,
+  "line": 488,
   "ported": true,
   "python": "metacheck.packs.scaffold:module_template"
  },
  "module_update": {
   "file": "R/module-install.R",
-  "line": 147,
+  "line": 162,
   "python": "metacheck.packs.install:module_update"
  },
  "murphy2025": {
@@ -8909,13 +8919,13 @@
  },
  "normalize_label": {
   "file": "R/data_check_helpers.R",
-  "line": 3155,
+  "line": 3158,
   "ported": true,
   "python": "metacheck.datacheck.columns:normalize_label"
  },
  "normalize_varname": {
   "file": "R/data_check_helpers.R",
-  "line": 3123,
+  "line": 3126,
   "ported": true,
   "python": "metacheck.datacheck.columns:normalize_varname"
  },
@@ -9112,37 +9122,37 @@
  },
  "papers_available": {
   "file": "R/import-papers.R",
-  "line": 19,
+  "line": 20,
   "ported": true,
   "python": "metacheck.io.corpus:papers_available"
  },
  "papers_load": {
   "file": "R/import-papers.R",
-  "line": 63,
+  "line": 69,
   "ported": true,
   "python": "metacheck.io.corpus:papers_load"
  },
  "papers_metadata": {
   "file": "R/import-papers.R",
-  "line": 170,
+  "line": 187,
   "ported": true,
   "python": "metacheck.io.corpus:papers_metadata"
  },
  "papers_remove": {
   "file": "R/import-papers.R",
-  "line": 129,
+  "line": 145,
   "ported": true,
   "python": "metacheck.io.corpus:papers_remove"
  },
  "parse_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 4340,
+  "line": 4343,
   "ported": true,
   "python": "metacheck.datacheck.columns:parse_codebook"
  },
  "parse_qsf": {
   "file": "R/data_check_helpers.R",
-  "line": 4669,
+  "line": 4672,
   "ported": true,
   "python": "metacheck.datacheck.columns:parse_qsf"
  },
@@ -9166,7 +9176,7 @@
  },
  "plural": {
   "file": "R/report-helpers.R",
-  "line": 1210,
+  "line": 1215,
   "ported": true,
   "python": "metacheck._r.base:plural"
  },
@@ -9184,17 +9194,17 @@
  },
  "print.metacheck_module_help": {
   "file": "R/module.R",
-  "line": 436,
+  "line": 441,
   "python": "metacheck.module:print_metacheck_module_help"
  },
  "print.metacheck_module_list": {
   "file": "R/module.R",
-  "line": 382,
+  "line": 387,
   "python": "metacheck.module:print_metacheck_module_list"
  },
  "print.metacheck_module_output": {
   "file": "R/module.R",
-  "line": 410,
+  "line": 415,
   "python": "metacheck.module:print_metacheck_module_output"
  },
  "print.scivrs_paper": {
@@ -9409,7 +9419,7 @@
  },
  "report_table": {
   "file": "R/report-helpers.R",
-  "line": 999,
+  "line": 1000,
   "ported": true,
   "python": "metacheck.report.blocks:report_table"
  },
@@ -9571,18 +9581,18 @@
  },
  "retractionwatch": {
   "file": "R/db-retractionwatch.R",
-  "line": 17,
+  "line": 18,
   "ported": true,
   "python": "metacheck.db.retractionwatch:retractionwatch"
  },
  "roxy_tag_parse.roxy_tag_metacheck": {
   "file": "R/module-install.R",
-  "line": 250,
+  "line": 265,
   "python": "metacheck.packs.install:roxy_tag_parse_roxy_tag_metacheck"
  },
  "rscript_path": {
   "file": "R/data_check_helpers.R",
-  "line": 2782,
+  "line": 2785,
   "ported": true,
   "python": "metacheck.datacheck.files:rscript_path"
  },
@@ -9606,13 +9616,13 @@
  },
  "rw_date": {
   "file": "R/db-retractionwatch.R",
-  "line": 57,
+  "line": 58,
   "ported": true,
   "python": "metacheck.db.retractionwatch:rw_date"
  },
  "rw_update": {
   "file": "R/db-retractionwatch.R",
-  "line": 73,
+  "line": 78,
   "ported": true,
   "python": "metacheck.db.retractionwatch:rw_update"
  },
@@ -9864,7 +9874,7 @@
  },
  "text_peek": {
   "file": "R/data_check_helpers.R",
-  "line": 2022,
+  "line": 2025,
   "ported": true,
   "python": "metacheck.datacheck.files:text_peek"
  },
@@ -9882,7 +9892,7 @@
  },
  "txt_classify_content": {
   "file": "R/data_check_helpers.R",
-  "line": 2092,
+  "line": 2095,
   "ported": true,
   "python": "metacheck.datacheck.files:txt_classify_content"
  },

@@ -129,29 +129,43 @@ def summarise_retractionwatch(csv_path: str | Path) -> pd.DataFrame:
     return out
 
 
+_GITLAB_URL = "https://gitlab.com/crossref/retraction-watch-data/-/raw/main/retraction_watch.csv"
+
+
 def rw_update() -> Path:
     """Download the newest RetractionWatch data (port of ``rw_update()``).
 
     The download is >50MB; it is summarised into the small ``doi`` /
     ``retractionwatch`` table, dated today, and saved in the user data
     directory, where :func:`retractionwatch` picks it up. Returns the path.
+
+    The data come from the Crossref Labs API. Crossref is retiring that API;
+    when it cannot be reached, Crossref's copy on GitLab
+    (https://gitlab.com/crossref/retraction-watch-data) is used (metacheck
+    0.4.3.27, #305). A download is only the data when it starts with the
+    Retraction Watch columns: the Labs API answers a refused request with status 200
+    and an error message.
     """
     import tempfile
 
     from metacheck import http
     from metacheck.db._utils import default_email
 
-    url = _URL + default_email()
-    resp = http.request("GET", url, timeout=300, max_tries=1)  # plain req_perform()
-    if resp is None:
-        raise RuntimeError(f"Could not download the RetractionWatch data from {url}")
+    urls = [_URL + default_email(), _GITLAB_URL]
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "retractionwatch.csv"
-        path.write_bytes(resp.content)
-        try:
-            table = summarise_retractionwatch(path)
-        except ValueError as exc:  # missing columns: the download was not the CSV
+        for url in urls:
+            resp = http.request("GET", url, timeout=300, max_tries=1)  # plain req_perform()
+            if resp is None or resp.status_code != 200:
+                continue
+            first = resp.content.split(b"\n", 1)[0]
+            if b"OriginalPaperDOI" in first and b"RetractionNature" in first:
+                path.write_bytes(resp.content)
+                break
+        else:
             raise RuntimeError(
-                f"The RetractionWatch download (HTTP {resp.status_code}) is not the expected CSV: {exc}"
-            ) from exc
+                "Could not download the Retraction Watch data from "
+                + " or ".join(u.split("?")[0] for u in urls)
+            )
+        table = summarise_retractionwatch(path)
     return write_database(table, user_database_path(_NAME), _NAME, dt.date.today())

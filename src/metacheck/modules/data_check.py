@@ -361,7 +361,7 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
     """,
     keywords=["results"],
     requires=["network", "llm"],
-    author=["Daniel Lakens <D.Lakens@tue.nl>"],
+    author=["Daniel Lakens <D.Lakens@tue.nl>", "Levi Baruch"],
     params={
         "paper": "a paper object or paperlist object, or NULL to check local\n"
         "files only (see [test_paper()])",
