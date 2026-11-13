@@ -1,5 +1,5 @@
 {
 "all_p_values.duplicate_paragraph": {"r": "fafe1c8fa84ba63e", "py": "99bab810c981ffb8", "diff": ["summary_table.p_values[]", "summary_text[]", "table"]},
-"stat_p_exact.duplicate_paragraph": {"r": "bf2a24c78702723f", "py": "1da9678a71c3e103", "diff": ["summary_table.n_imprecise[]", "summary_text[]", "table"]},
+"stat_p_exact.duplicate_paragraph": {"r": "89922fbcfa678205", "py": "c5c94b72f80887c9", "diff": ["summary_table.n_imprecise[]", "summary_text[]", "table"]},
 "stat_p_nonsig.duplicate_paragraph": {"r": "c91a475b217128ff", "py": "db498e8cca2fbcea", "diff": ["summary_table.n_nonsignificant[]", "summary_text[]", "table"]}
 }
