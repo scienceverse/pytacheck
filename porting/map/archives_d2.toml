@@ -60,6 +60,7 @@
 ".psycharchives_rest" = "metacheck.archives.psycharchives:_psycharchives_rest"
 "psycharchives_file_download" = "metacheck.archives.psycharchives:psycharchives_file_download"
 # R/archive-researchbox.R
+".rbox_box_meta" = "metacheck.archives.researchbox:_rbox_box_meta"
 ".rbox_headers" = "metacheck.archives.researchbox:_rbox_headers"
 "rbox_links" = "metacheck.archives.researchbox:rbox_links"
 "rbox_info" = "metacheck.archives.researchbox:rbox_info"
