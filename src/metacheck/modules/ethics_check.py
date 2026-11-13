@@ -110,6 +110,10 @@ _REPORT_NONE = (
     "typically not required for theoretical work, simulations, reviews, meta-analyses, or "
     "secondary analyses of published data."
 )
+_REPORT_NO_PARTICIPANTS = (
+    "We did not detect an ethics approval statement. The paper states that no human or animal "
+    "participants took part, so we do not expect one:\n\n> {}"
+)
 _REPORT_NEEDS_PRESENT = (
     "Based on the following text, we would expect an ethics approval statement, and it was "
     "present:\n\n> {}\n\nEthics approval statement:\n\n> {}"
@@ -304,6 +308,13 @@ def _summarise(
         avoid flagging secondary data analyses, computational experiments, or
         economics papers that analyse existing survey data. See `.detect_live_data()`
         for the full list of patterns and intentional exclusions.
+
+        A paper that states that no human or animal subjects took part ("no human
+        subjects were involved", "did not involve human participants", or people
+        taking part "not as subjects") is not expected to have an ethics statement,
+        whatever participant phrase it also has (see `.detect_no_participants()`).
+        A negation near a participant phrase alone ("No participants were
+        excluded") does not count: it reports a study with participants.
     """,
     keywords=["general"],
     params={"paper": "a paper object or paperlist object"},
@@ -327,7 +338,7 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     U101/U102). An empty paper list gives an empty result (metacheck stops, U79). Reproduces R's errors
     for a table or a character vector instead of a paper.
     """
-    from metacheck.text.extract import _detect_live_data
+    from metacheck.text.extract import _detect_live_data, _detect_no_participants
 
     # R runs text_search(paper, ethics_words) first, which rejects anything but a
     # paper, a paper list (a plain list of papers too) or a table
@@ -365,6 +376,17 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     live_rows = [
         (False, r[1]) if p in skipped else r for p, r in zip(paper_ids, live_rows, strict=True)
     ]
+    # A paper that states no human or animal subjects took part ("no human subjects were
+    # involved", "not as subjects recruited for a study") is not expected to have an ethics
+    # statement, whatever participant phrase it also has (see _detect_no_participants())
+    none_table = _detect_no_participants(doc)
+    none_ids = (
+        set(none_table["paper_id"].dropna().astype(str))
+        if "paper_id" in none_table.columns
+        else set()
+    )
+    states_none = [p in none_ids for p in paper_ids]
+    live_rows = [(False, r[1]) if s else r for s, r in zip(states_none, live_rows, strict=True)]
     summary_table = pd.DataFrame(
         {
             "paper_id": pd.Series(paper_ids, dtype="string"),
@@ -372,6 +394,7 @@ def ethics_check(paper: Any) -> dict[str, Any]:
             "ethics_statements": pd.Series([r[1] for r in ethics_rows], dtype=object),
             "needs_ethics": pd.Series([r[0] for r in live_rows], dtype="boolean"),
             "live_data_statements": pd.Series([r[1] for r in live_rows], dtype=object),
+            "states_no_participants": pd.Series(states_none, dtype="boolean"),
         }
     )
 
@@ -415,7 +438,10 @@ def ethics_check(paper: Any) -> dict[str, Any]:
         # row, so a sentence found at several text_ids was repeated, U102)
         statements = ethics_rows[0][1] or []
         ethics_quote = "\n\n> ".join(_as_text(t) for t in statements)
-        if not needs[0]:
+        if not needs[0] and states_none[0] and not approved[0]:
+            quote = "\n\n> ".join(_as_text(t) for t in dict.fromkeys(none_table["text"]))
+            report = _REPORT_NO_PARTICIPANTS.format(quote)
+        elif not needs[0]:
             report = _REPORT_APPROVED.format(ethics_quote) if approved[0] else _REPORT_NONE
         else:
             found = live_rows[0][1]
@@ -430,7 +456,7 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     return {
         "table": bind_rows([table, live_table]),
         "summary_table": summary_table,
-        "na_replace": {"ethics_approved": False},
+        "na_replace": {"ethics_approved": False, "states_no_participants": False},
         "traffic_light": tl,
         "summary_text": summary_text,
         "report": report,
