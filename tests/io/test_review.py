@@ -260,7 +260,7 @@ def test_release_assets_without_rds_has_no_rows() -> None:
     with api(NORDS):
         out = _papers_release_assets("scienceverse/nords")
     assert len(out) == 0
-    assert list(out.columns) == ["name", "tag", "size", "download_url"]
+    assert list(out.columns) == ["name", "tag", "size", "download_url", "api_url"]
 
 
 def test_papers_available_without_assets_is_empty() -> None:
