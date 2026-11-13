@@ -79,3 +79,7 @@ saveRDS(labs, "labs.rds")
 readODS::write_ods(data.frame(id = 1:4, grp = c("a", "b", "a", "b"),
                               val = c(0.5, NA, 2.25, 3)), "written.ods")
 readODS::write_fods(data.frame(id = 1:3, name = c("x", "y", "z")), "written.fods")
+
+# -- an .rds with a labelled text column (metacheck 0.4.3.28, PISA country codes) ---
+saveRDS(data.frame(id = 1:3, cnt = labelled(c("826", "826", "250"), c(UK = "826", France = "250"))),
+        "labelled_text.rds")

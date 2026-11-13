@@ -16,6 +16,9 @@
 # R's format() display widths in the data tree.
 [files]
 "inst/modules/data_check.R" = ["src/metacheck/modules/data_check.py", "src/metacheck/modules/_data_check.py"]
+# the key scanner (metacheck #607); its rules are resources/databases/key_patterns.json.gz
+# (betterleaks, MIT), made by scripts/convert_key_patterns.R from inst/databases/key_patterns.Rds
+"R/keys.R" = ["src/metacheck/keys.py"]
 
 [functions]
 "module:data_check" = "metacheck.modules.data_check:data_check"
@@ -64,3 +67,19 @@
 ".dv_rds_workspace_findings" = "metacheck.modules._data_check:dv_rds_workspace_findings"
 ".dv_rds_workspace_summary_text" = "metacheck.modules._data_check:dv_rds_workspace_summary_text"
 ".dv_space_csv_summary_text" = "metacheck.modules._data_check:dv_space_csv_summary_text"
+
+# R/keys.R: keys in text and files (#607); module_run() calls .key_remove() on every result
+".key_rules" = "metacheck.keys:_key_rules"
+".key_present" = "metacheck.keys:_key_present"
+".key_entropy" = "metacheck.keys:_key_entropy"
+".key_not_a_key" = "metacheck.keys:_key_not_a_key"
+".key_windows" = "metacheck.keys:_key_windows"
+".key_mask_encoded" = "metacheck.keys:_key_mask_encoded"
+".key_find" = "metacheck.keys:_key_find"
+".key_replace" = "metacheck.keys:_key_replace"
+".key_remove" = "metacheck.keys:_key_remove"
+".key_shown" = "metacheck.keys:_key_shown"
+".key_number" = "metacheck.keys:KeySeen"
+".key_scan_files" = "metacheck.keys:_key_scan_files"
+".key_scan_tables" = "metacheck.keys:_key_scan_tables"
+".key_scan_repo_files" = "metacheck.keys:_key_scan_repo_files"

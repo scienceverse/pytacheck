@@ -1,0 +1,121 @@
+{
+  "id": "keys.remove",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "out",
+      "n",
+      "plain_same",
+      "no_whole_key",
+      "replaced",
+      "shown"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "report",
+          "table",
+          "nested",
+          "note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "found [key removed]"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "[key removed]",
+              "b"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x",
+                  "[key removed]"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "z"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "key=[key removed]"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nothing here"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "aaa [key removed]b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abcd...",
+          "xxxxxx...",
+          "yyyyyyyyyyyy..."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

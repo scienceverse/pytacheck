@@ -1,4 +1,4 @@
 {
-"review.text": {"r": "15912fe2e42a48fb", "py": "b4e51ed20648b4ee", "diff": ["previews.utf16_table.txt", "report[]", "structure.data_format[]", "structure.data_type[]", "summary_table.col_numeric[]", "summary_table.col_text[]", "summary_table.column_n[]", "summary_table.data_file_n[]", "summary_text[]", "table"]},
+"review.text": {"r": "8cb8c9025125fbb7", "py": "7a319a92999eb06f", "diff": ["previews.utf16_table.txt", "report[]", "structure.data_format[]", "structure.data_type[]", "summary_table.col_numeric[]", "summary_table.col_text[]", "summary_table.column_n[]", "summary_table.data_file_n[]", "summary_text[]", "table"]},
 "review_tables.text": {"r": "9cca52c93f75a0c2", "py": "bd50c4c2e33a10f4", "diff": ["<root>"]}
 }

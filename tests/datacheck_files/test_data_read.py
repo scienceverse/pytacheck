@@ -280,3 +280,14 @@ def test_fread_date_classes() -> None:
 def test_classify_ref_json_is_valid() -> None:
     # keeps the R-written reference used by test_classify.py loadable
     assert json.loads((DATA / "classify_ref.json").read_text(encoding="utf-8"))["names"]
+
+
+def test_rds_with_a_labelled_text_column_is_read_as_text() -> None:
+    """A haven-labelled text column (PISA's three-digit country codes) is read and counted.
+
+    metacheck stopped on it before 0.4.3.28 ("Can't convert `x` <haven_labelled> to
+    <character>", PsyArXiv preprint jev3u_v1): readRDS() does not load haven.
+    """
+    df = F.data_read_head(DATA / "labelled_text.rds", n_rows=INF)
+    assert df["cnt"].tolist() == ["826", "826", "250"]
+    assert df.attrs["col_attrs"]["cnt"]["labels"] == [("UK", "826"), ("France", "250")]
