@@ -657,35 +657,54 @@ def _rbox_info_api(rb_url: Any) -> pd.DataFrame:
     return pd.DataFrame(obj)
 
 
-def _rbox_license(rb_url: Any, cache: bool = False) -> str | None:
-    """Port of R/archive-researchbox.R::.rbox_license(): a box's licence (SPDX id).
+def _rbox_box_meta(rb_url: Any, cache: bool = False) -> pd.DataFrame:
+    """Port of R/archive-researchbox.R::.rbox_box_meta(): a box's licence and status.
 
-    For ``repo_check``, which gets the files from the download: one ``box_meta``
-    request, where :func:`rbox_info` would also ask for the file list. Without a
-    key, or when the API fails, the web page is read. ``None`` when neither gives
-    it. With *cache* a licence from an earlier :func:`rbox_info` or this function
-    is reused.
+    One row with ``RB_license`` (SPDX id, ``"CC-BY-4.0"``) and ``RB_status``
+    (``"public"`` or ``"private"``) for ``repo_check``, which gets the files from
+    the download: one ``box_meta`` request, where :func:`rbox_info` would also ask
+    for the file list. Without a key, or when the API fails, the web page is read
+    for the licence; the page does not give the status. ``None`` where neither
+    gives it. With *cache* a licence from an earlier :func:`rbox_info` or this
+    function is reused, with the status saved with it (``None`` when none was).
     """
     from metacheck.archives.info_cache import _repo_info_cache_get, _repo_info_cache_put
 
+    license_: str | None = None
+    status: str | None = None
+
+    def out() -> pd.DataFrame:
+        return pd.DataFrame(
+            {
+                "RB_license": pd.Series([license_], dtype="string"),
+                "RB_status": pd.Series([status], dtype="string"),
+            }
+        )
+
     rb_id = _rbox_id(rb_url)
     if rb_id is None:
-        return None
+        return out()
     if cache is True:
         for host in ("researchbox", "researchbox_license"):
             cached = _repo_info_cache_get(host, rb_id)
-            if isinstance(cached, pd.DataFrame) and "RB_license" in cached.columns:
-                value = cached["RB_license"].iloc[0] if len(cached) else None
+            if isinstance(cached, pd.DataFrame) and "RB_license" in cached.columns and len(cached):
+                value = cached["RB_license"].iloc[0]
                 if not is_missing(value):
-                    return str(value)
+                    license_ = str(value)
+                    if "RB_status" in cached.columns and not is_missing(
+                        cached["RB_status"].iloc[0]
+                    ):
+                        status = str(cached["RB_status"].iloc[0])
+                    return out()
 
-    license_: str | None = None
     if _rbox_use_api(rb_url):
         meta = _rbox_api("box_meta", box_id=rb_id, code=_rbox_code(rb_url))
-        body = meta["body"] if isinstance(meta["body"], dict) else {}
-        lic = body.get("license_id")
-        if meta["ok"] and isinstance(lic, str) and lic:
-            license_ = lic
+        if meta["ok"]:
+            body = meta["body"] if isinstance(meta["body"], dict) else {}
+            license_ = (
+                _field(body.get("license_id")) if isinstance(body.get("license_id"), str) else None
+            )
+            status = _field(body.get("status")) if isinstance(body.get("status"), str) else None
     if license_ is None:
         try:
             with warnings.catch_warnings():
@@ -697,12 +716,14 @@ def _rbox_license(rb_url: Any, cache: bool = False) -> str | None:
             value = page["RB_license"].iloc[0] if "RB_license" in page.columns else None
             license_ = None if is_missing(value) else str(value)
     if cache is True and license_ is not None:
-        _repo_info_cache_put(
-            "researchbox_license",
-            rb_id,
-            pd.DataFrame({"RB_license": pd.Series([license_], dtype="string")}),
-        )
-    return license_
+        _repo_info_cache_put("researchbox_license", rb_id, out())
+    return out()
+
+
+def _rbox_license(rb_url: Any, cache: bool = False) -> str | None:
+    """Port of R/archive-researchbox.R::.rbox_license(): a box's licence only."""
+    value = _rbox_box_meta(rb_url, cache=cache)["RB_license"].iloc[0]
+    return None if is_missing(value) else str(value)
 
 
 def _rbox_plain_text(x: str | None) -> str | None:
