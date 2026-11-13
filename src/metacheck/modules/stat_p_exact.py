@@ -18,47 +18,13 @@ _APA_REF = (
     "Psychological Association</em>, 7 edition. American Psychological Association."
 )
 
-# a starred footnote ("*p < .05"): only the p-value that is itself starred
-_STAR_P = r"^[pP]\s*<\s*0?\.0*[15]$"
-
-
-def _starred(p: pd.DataFrame) -> np.ndarray:
-    """Which p-values are a table note's "* p < .05" (a star right before them).
-
-    Only ".05", ".01" and ".001" count, and only the p-value that is itself
-    starred. The same p-value can appear unstarred and starred in one sentence,
-    so as many of its rows are left out as there are starred copies, the last
-    ones (a footnote comes after the results).
-    """
-    import re
-
-    from metacheck._r.regex import compile_r
-
-    out = np.zeros(len(p), dtype=bool)
-    texts = p["text"].tolist()
-    expanded = p["expanded"].tolist()
-    values = p["p_value"].astype("float64").tolist()
-    groups: dict[tuple[str, str], list[int]] = {}
-    for i, (txt, exp, val) in enumerate(zip(texts, expanded, values, strict=True)):
-        if not isinstance(txt, str) or not isinstance(exp, str):
-            continue
-        if re.match(_STAR_P, txt) and val in (0.05, 0.01, 0.001):
-            groups.setdefault((exp, txt), []).append(i)
-    # rows of one (sentence, text) pair, whether or not each can be starred
-    for exp, txt in groups:
-        rows = [
-            i
-            for i, (t, e) in enumerate(zip(texts, expanded, strict=True))
-            if isinstance(t, str) and e == exp and t == txt
-        ]
-        esc = re.sub(r"([][{}()+*^$|\\.?])", r"\\\1", txt)
-        n_star = len(compile_r(r"\*\s*" + esc).findall(exp))
-        if n_star > 0:
-            for i in rows[-n_star:]:
-                out[i] = True
-    return out
-
-
+# The threshold words cannot always tell a sentence that sets a threshold from one that
+# reports a result against it (#604)
+_CAUTION = (
+    "This module sometimes flags false positives when sentences discuss how p-value thresholds "
+    "were set. It can also miss an imprecise p-value that is reported against a threshold "
+    '(e.g., "decreased at the *p* < .05 significance threshold").'
+)
 _REPORT_TEXT = (
     "Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, reproducibility, "
     "and re-use (e.g., in *p* value meta-analyses). Best practice is to report exact p-values "
@@ -104,7 +70,9 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: str) -> pd.DataFrame:
     details="""
         This module uses regular expressions to identify p-values. It will flag any values reported as p > ? or p < numbers greater than .001. It will also flag p-values reported as exactly zero (e.g., p = .000, p = 0.00), which are mathematically impossible — p-values are never exactly zero and should instead be reported as p < .001.
 
-        We try to exclude figure and table notes like "* p < .05", but may not succeed at excluding all false positives.
+        A p-value that is not the result of a test is not flagged: a table note ("* p < .05, ** p < .01"), a figure legend ("Asterisks indicate significant differences (p < .05)", "Values in bold are significant at p < .05") or a stated threshold ("p < .05 was considered significant", "thresholded at p < .001"). GROBID often puts such notes into the running text, so each p-value is judged by the words in its own clause (the text up to a ";" or a full stop), and never left out when a test statistic belongs to it ("F(1, 7) = 8.03, # p < .05"). The column `not_a_test` of the table says why a p-value was left out ("marker", "threshold" or "legend"). Notes in other forms, such as a marker after the p-value ("p < .05 (*)"), are still flagged.
+
+        This module sometimes flags false positives when sentences discuss how p-value thresholds were set. It can also miss an imprecise p-value that is reported against a threshold ("decreased at the p < .05 significance threshold").
 
         This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables (as opposed to a table's footnote text, which the module does see and tries to exclude — see above).
 
@@ -120,6 +88,7 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: str) -> pd.DataFrame:
 )
 def stat_p_exact(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/stat_p_exact.R::stat_p_exact()``."""
+    from metacheck.stats.helpers import _p_not_test
     from metacheck.text.expand import expand_text
     from metacheck.text.extract import extract_p_values
 
@@ -149,9 +118,14 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
     imprecise = imprecise | ~comp.isin(["=", "<"]).to_numpy(dtype=bool)
     imprecise = imprecise | value_na
 
-    # remove false positive "*p < .05": only the p-value that is itself
-    # starred, and only .05, .01 or .001 (U127)
-    imprecise = imprecise & ~_starred(p)
+    # Leave out a p-value that is not the result of a test: a table note ("* p < .05,
+    # ** p < .01"), a figure legend ("Asterisks indicate significant differences
+    # (p < .05)") or a stated threshold ("p < .05 was considered significant"). Each
+    # p-value is judged in its own clause, and never when that clause holds a statistic
+    # (see _p_not_test()). Only the starred "*p < .05", ".01" or ".001" was left out
+    # before, and of a note repeated under two tables only one copy (U127, #604).
+    not_a_test = _p_not_test(p)
+    imprecise = imprecise & np.array([x is None for x in not_a_test], dtype=bool)
 
     # Flag p-values reported as exactly zero (e.g., p = .000, p = 0.00), also
     # "p < .000", which was neither imprecise nor zero (U127)
@@ -162,6 +136,7 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
 
     p = p.copy()
     p["imprecise"] = pd.Series(imprecise, index=p.index, dtype="boolean")
+    p["not_a_test"] = pd.Series(not_a_test, index=p.index, dtype="string")
     p["zero"] = pd.Series(zero, index=p.index, dtype="boolean")
 
     imp_rows = imprecise
@@ -223,6 +198,7 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
             report.extend(
                 [
                     _REPORT_TEXT,
+                    _CAUTION,
                     scroll_table(report_table, colwidths=[0.1, 0.9]),
                     collapse_section(guidance),
                 ]
