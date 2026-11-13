@@ -27,6 +27,14 @@ src/metacheck/resources/data/tlds.txt lists the top-level domains of the ICANN
 section of the Public Suffix List (https://publicsuffix.org), which is licensed
 under the Mozilla Public License 2.0 (https://mozilla.org/MPL/2.0/).
 
+src/metacheck/resources/databases/key_patterns.json.gz holds the rules with which
+data_check finds keys (API keys, access tokens, private keys) in a repository's files:
+the rules of high and medium confidence of the secret scanner betterleaks
+(https://github.com/betterleaks/betterleaks), as metacheck collects them
+(data-raw/key_patterns.R, inst/databases/key_patterns.Rds). betterleaks is licensed under
+the MIT License, copyright (c) 2026 Zachary Rice; the licence is in
+src/metacheck/resources/databases/key_patterns.COPYRIGHT.
+
 src/metacheck/web/site/ (the pages of `pytacheck site`) is ported from the website of
 metacheck's demo site on SURF Research Cloud (the `site/` folder of
 https://github.com/scienceverse/surf-research-cloud), by Daniel Lakens: its pages, style,

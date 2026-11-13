@@ -122,6 +122,7 @@ Tier-1 (realistic) cases may not be marked `c_quirk` or `type_detail`: a differe
 | `R/archive-*.R`, `R/repo-*.R`, `R/zip-peek.R`, `R/cache.R`, `R/utils.R` (HTTP helpers) | `metacheck.archives` |
 | `R/code_check.R` | `metacheck.codecheck` |
 | `R/data_check_helpers.R`, `R/file_category.R`, `R/file-naming.R`, `R/scales.R`, `R/tasks.R` | `metacheck.datacheck` |
+| `R/keys.R` (keys in text, files and module results) | `metacheck.keys` |
 | `R/spv.R`, `R/jasp.R`, `R/omv.R`, `R/mplus.R`, `R/stata.R`, `R/r-output.R`, `R/r-capture.R`, `R/stat-tables.R`, `R/stat-output.R`, `R/match-*.R`, `R/stato-map.R` | `metacheck.statout` |
 | `R/reproducibility_check*.R` | `metacheck.repro` |
 | `inst/plumber` | `metacheck.api` (FastAPI) |

@@ -79,6 +79,7 @@ FILE_MODULES: dict[str, str | list[tuple[int, str]]] = {
     "R/import-papers.R": "metacheck.io.corpus",
     "R/import-read.R": "metacheck.io.read",
     "R/jasp.R": "metacheck.statout.jasp",
+    "R/keys.R": "metacheck.keys",
     "R/llm-cache.R": "metacheck.llm.cache",
     "R/llm.R": "metacheck.llm.core",
     "R/match-reported.R": "metacheck.statout.match_reported",
