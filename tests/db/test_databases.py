@@ -173,12 +173,52 @@ def test_rw_update() -> None:
 
 
 def test_rw_update_bad_download() -> None:
+    """Both sources failing says so (metacheck #305)."""
     with respx.mock() as router:
         router.get(url__regex=r"^https://api\.labs\.crossref\.org/").mock(
             return_value=httpx.Response(500, json={"error": "x"})
         )
-        with pytest.raises(RuntimeError, match="not the expected CSV"):
+        router.get(url__regex=r"^https://gitlab\.com/crossref/").mock(
+            return_value=httpx.Response(404)
+        )
+        with pytest.raises(
+            RuntimeError,
+            match=(
+                r"Could not download the Retraction Watch data from "
+                r"https://api\.labs\.crossref\.org/data/retractionwatch or "
+                r"https://gitlab\.com/crossref/retraction-watch-data/-/raw/main/retraction_watch\.csv"
+            ),
+        ):
             retractionwatch.rw_update()
+
+
+def test_rw_update_falls_back_to_the_gitlab_copy() -> None:
+    csv = (DATA / "retractions.csv").read_bytes()
+    with respx.mock() as router:
+        # the Labs API answers a refused request with status 200 and JSON: not the data
+        labs = router.get(url__regex=r"^https://api\.labs\.crossref\.org/").mock(
+            return_value=httpx.Response(200, json={"error": "an email address is needed"})
+        )
+        gitlab = router.get(url__regex=r"^https://gitlab\.com/crossref/").mock(
+            return_value=httpx.Response(200, content=csv)
+        )
+        path = retractionwatch.rw_update()
+    assert labs.called and gitlab.called
+    assert path.exists()
+    assert "10.1234/abc" in retractionwatch.retractionwatch()["doi"].tolist()
+
+
+def test_rw_update_does_not_ask_gitlab_when_the_labs_api_answers() -> None:
+    csv = (DATA / "retractions.csv").read_bytes()
+    with respx.mock(assert_all_called=False) as router:
+        router.get(url__regex=r"^https://api\.labs\.crossref\.org/").mock(
+            return_value=httpx.Response(200, content=csv)
+        )
+        gitlab = router.get(url__regex=r"^https://gitlab\.com/crossref/").mock(
+            return_value=httpx.Response(200, content=csv)
+        )
+        retractionwatch.rw_update()
+    assert not gitlab.called
 
 
 def test_flora_update() -> None:
