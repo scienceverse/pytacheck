@@ -343,3 +343,24 @@ def test_data_check_warns_about_keys_in_code_survey_and_env_files(tmp_path: Path
     assert len(mo3.extras["keys"]) == 0
     assert int(mo3.summary_table["key_n"].iloc[0]) == 0
     assert "Keys in the repository" not in pc.module_report(mo3)
+
+
+def test_key_remove_keeps_a_dict_subclass_and_returns_the_same_object_when_there_is_no_key() -> (
+    None
+):
+    class Tagged(dict):  # type: ignore[type-arg]
+        attrs: dict[str, str]
+
+    clean = Tagged({"a": "text " + "".join(["x", "y"]), "b": [1, 2]})
+    clean.attrs = {"write": "yes"}
+    out, n = k._key_remove({"definition": clean, "list": [clean]})
+    assert n == 0 and out["definition"] is clean and out["list"][0] is clean
+    leaky = Tagged({"a": "key " + fake_keys(7)["github-pat"]})
+    leaky.attrs = {"write": "yes"}
+    out, n = k._key_remove([leaky])
+    assert n == 1
+    assert isinstance(out[0], Tagged) and out[0].attrs == {"write": "yes"}
+    assert out[0]["a"] == "key [key removed]"
+    assert "ghp_" not in leaky["a"][:0] and leaky["a"].startswith(
+        "key ghp_"
+    )  # the input is not changed

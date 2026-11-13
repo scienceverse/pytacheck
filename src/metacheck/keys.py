@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import bisect
 import codecs
+import copy
 import functools
 import gzip
 import math
@@ -360,10 +361,11 @@ def _series_texts(s: pd.Series) -> list[str]:
         return [c for c in s.cat.categories if isinstance(c, str)]
     if not _is_str_dtype(s):
         return []
+    vals: Iterable[Any]
     try:
         vals = pd.unique(s.dropna())
     except TypeError:  # unhashable cells (lists)
-        vals = [v for v in s.tolist() if isinstance(v, str)]
+        vals = s.tolist()
     return [v for v in vals if isinstance(v, str)]
 
 
@@ -426,7 +428,8 @@ class _Cleaner:
     def walk(self, x: Any) -> Any:
         """*x* with the keys replaced; the same object when it holds none."""
         if isinstance(x, str):
-            return self.clean(x)
+            c = self.clean(x)
+            return x if c == x else c  # the same object when there is no key in it
         if isinstance(x, pd.DataFrame):
             return self._frame(x)
         if isinstance(x, pd.Series):
@@ -437,7 +440,13 @@ class _Cleaner:
             ]
             if all(a == k and b is v for (a, b), (k, v) in zip(items, x.items(), strict=True)):
                 return x
-            return dict(items)
+            if type(x) is dict or not isinstance(x, dict):
+                return dict(items)
+            # a dict of a subclass keeps its class and attributes (a shallow copy)
+            new = copy.copy(x)
+            new.clear()
+            new.update(items)
+            return new
         if isinstance(x, list | tuple) and not hasattr(x, "_fields"):
             new_list = [self.walk(v) for v in x]
             if all(a is b for a, b in zip(x, new_list, strict=True)):
@@ -774,7 +783,7 @@ def _key_scan_repo_files(
     repo = _col(files, "repo_url")
     pid = _col(files, "paper_id")
     is_data = [t == "data" for t in _col(files, "data_type")]
-    on_disk = [bool(la) and os.path.exists(la) for la in loc]
+    on_disk = [la is not None and os.path.exists(la) for la in loc]
     for i in range(len(files)):
         if not on_disk[i] and repo[i] and shown_name[i]:
             p = _repo_cache_path(repo[i], shown_name[i], cache=cache)
