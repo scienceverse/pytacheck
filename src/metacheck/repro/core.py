@@ -373,7 +373,10 @@ def repro_dependencies(code_text: Any, lang: str = "R") -> pd.DataFrame:
     if not pkgs:
         return empty
 
-    joined = _paste_lines(_chr_list(code_text))
+    # From the code without its comments, as the package names are: an address in
+    # a line made a comment (``# install.packages("http://.../x.tar.gz")``, which
+    # no longer answers) was used instead of CRAN (R #598).
+    joined = _paste_lines(_code_remove_comments(code_text, "R"))
     gh = regextract_all(_GH_PAT, joined, perl=True)
     url = regextract_all(_URL_PAT, joined, perl=True)
     gh_refs = list(sub(_GH_PAT, r"\1", gh, perl=True))
@@ -1251,7 +1254,13 @@ def repro_rewrite_paths(
     from metacheck.codecheck.core import code_file_refs
 
     code_lines = _chr_list(code_text)
-    refs = list(code_file_refs(code_text, lang))
+    # A file the code writes is not one to place: Python's open() with a mode that
+    # creates the file is blanked before the references are taken (R 0.4.3.28,
+    # code_file_refs()).
+    refs_text: Any = code_text
+    if lang == "Python":
+        refs_text = _blank_write_opens(_code_remove_comments(code_text, lang))
+    refs = list(code_file_refs(refs_text, lang))
     plan_file = _chr_list(plan["file_name"])
     plan_base = [_norm_base(f) for f in plan_file]
     plan_base_set = set(plan_base)
@@ -1749,6 +1758,8 @@ _IO_READ_INNER = (
 _SRC_PAT = r"""source\s*\(\s*['"]([^'"]+)['"]"""
 _PY_OPEN_PAT = r"\bopen\s*\("
 _PY_WRITE_MODE_PAT = r"""^(['"])(?=[^'"]*[wax+])[rwaxbt+]+\1$"""
+# the modes that create the file (``r+`` needs it to exist, so it stays an input)
+_PY_CREATE_MODE_PAT = r"""^(['"])(?=[^'"]*[wax])[rwaxbt+]+\1$"""
 _PY_NAMED_ARG_PAT = r"^[A-Za-z_][A-Za-z0-9_]*\s*=(?!=)"
 
 
@@ -1779,22 +1790,28 @@ def _close_of(chars: str, first: int) -> int | None:
     return None
 
 
-def _py_open_writes(line: str | None) -> bool:
-    """Port of R/reproducibility_check.R::.py_open_writes().
+def _blank_write_opens(
+    code_text: Sequence[str | None], mode_regex: str = _PY_CREATE_MODE_PAT
+) -> list[str | None]:
+    """Python ``open()`` calls whose mode writes, blanked out (R ``.code_blank_write_opens()``).
 
-    Whether a line of Python opens a file for writing. Only the mode argument of an
-    ``open()`` call counts: the second positional argument, or ``mode =``; a mode is a
-    write when it is ``w``, ``a``, ``x`` or ``r+``, with ``b``, ``t`` or ``+`` (U240,
-    fixed in metacheck 0.4.0).
+    The text of each such call becomes spaces, so the file name in it is not found as an
+    input; the lines and their number stay. A call over several lines is judged as a
+    whole. The mode is the second argument without a name, or ``mode =``. ``code_file_refs()``
+    of R 0.4.3.28 does this itself (the text-and-code lane's port); until that is merged
+    this is the minimal copy that :func:`repro_rewrite_paths` needs.
     """
-    if not line:
-        return False
-    for m in re.finditer(_PY_OPEN_PAT, line):
+    lines = list(code_text)
+    joined = "\n".join(s if s is not None else "NA" for s in lines)
+    chars = list(joined)
+    blank = [False] * len(chars)
+    any_blank = False
+    for m in re.finditer(_PY_OPEN_PAT, joined):
         first = m.end()
-        end = _close_of(line, first)
+        end = _close_of(joined, first)
         if end is None or end == first:
             continue
-        args = [trimws(a["text"]) for a in _split_args(line[first:end])]
+        args = [trimws(a["text"]) for a in _split_args(joined[first:end])]
         named = [bool(re.match(_PY_NAMED_ARG_PAT, a)) for a in args]
         modes = [a for a, nm in zip(args, named, strict=True) if nm and re.match(r"^mode\s*=", a)]
         if modes:
@@ -1802,9 +1819,28 @@ def _py_open_writes(line: str | None) -> bool:
         else:
             positional = [a for a, nm in zip(args, named, strict=True) if not nm]
             mode = positional[1] if len(positional) > 1 else None
-        if mode is not None and re.match(_PY_WRITE_MODE_PAT, mode):
-            return True
-    return False
+        if mode is not None and re.match(mode_regex, mode):
+            for k in range(m.start(), end + 1):
+                blank[k] = True
+            any_blank = True
+    if not any_blank:
+        return lines
+    out = [" " if b and ch != "\n" else ch for ch, b in zip(chars, blank, strict=True)]
+    return "".join(out).split("\n")
+
+
+def _py_open_writes(line: str | None) -> bool:
+    """Port of R/reproducibility_check.R::.py_open_writes().
+
+    Whether a line of Python opens a file for writing. Only the mode argument of an
+    ``open()`` call counts: the second positional argument, or ``mode =``; a mode is a
+    write when it is ``w``, ``a``, ``x`` or ``r+``, with ``b``, ``t`` or ``+`` (U240,
+    fixed in metacheck 0.4.0). As in R 0.4.3.28, the call text is blanked when its mode
+    writes (:func:`_blank_write_opens`) and a changed line is a write.
+    """
+    if not line:
+        return False
+    return _blank_write_opens([line], _PY_WRITE_MODE_PAT) != [line]
 
 
 def _code_open_calls(
@@ -2438,7 +2474,10 @@ def _chmod(path: str, mode: int) -> None:
 
 
 def repro_materialize_layout(
-    plan: pd.DataFrame | None, structure_df: pd.DataFrame | None, root: str | os.PathLike[str]
+    plan: pd.DataFrame | None,
+    structure_df: pd.DataFrame | None,
+    root: str | os.PathLike[str],
+    deadline: Any = None,
 ) -> MaterialisedRoot:
     """Materialise the deposit's layout for a paper into a throwaway directory.
 
@@ -2451,8 +2490,24 @@ def repro_materialize_layout(
     holds only a placeholder (#575). The copies and folders are opened for the code to
     change, for the host user only (D135). Returns *root* with the copy log in ``attrs["materialised"]`` and the swaps
     in ``attrs["lfs"]``.
+
+    *deadline* is a clock time (a :class:`datetime.datetime`, or ``time.time()`` seconds)
+    after which no further file is copied: its folder is still made and its row has
+    ``ok`` False. ``None`` copies every file. ``attrs["not_copied_time"]`` is the number
+    of files not copied because the deadline had passed (a repository of 10,658 files took
+    16 minutes to copy on the metacheck server, past its limit).
     """
     root_s = os.fspath(root)
+    limit = _clock_seconds(deadline)
+    late = 0
+
+    def too_late() -> bool:
+        nonlocal late
+        if limit is None or time.time() <= limit:
+            return False
+        late += 1
+        return True
+
     _dir_create(root_s)
     _dir_create(_file_path(root_s, "output"))
     rows: list[tuple[str | None, str | None, bool]] = []
@@ -2470,6 +2525,7 @@ def repro_materialize_layout(
         )
         if lfs is not None:
             out.attrs["lfs"] = lfs
+        out.attrs["not_copied_time"] = late
         return out
 
     if (
@@ -2495,6 +2551,9 @@ def repro_materialize_layout(
             rows.append((tgt, None, False))
             continue
         _dir_create(os.path.dirname(dest))
+        if too_late():
+            rows.append((tgt, src, False))
+            continue
         ok = _copy_file(src, dest)
         if ok:
             # the copy is the code's to change (a script that saves over a file of the
@@ -2511,6 +2570,9 @@ def repro_materialize_layout(
                 continue
             dest = _file_path(root_s, _portable_path(tgt))
             _dir_create(os.path.dirname(dest))
+            if too_late():
+                rows.append((tgt, src, False))
+                continue
             rows.append((tgt, src, _copy_file(src, dest)))
     # and its folders, so a script can save a new file next to the data (for the host
     # user only: metacheck opens them to everyone, D135)
@@ -3098,6 +3160,34 @@ def _repro_make_write_folders(
         _dir_create(_file_path(root, _portable_path(_r_dirname(p))))
 
 
+_LIB_LOC_PAT = re.compile(
+    r"(\b(?:library|require|requireNamespace|loadNamespace)\s*\([^()]*?)"
+    r"""\s*,\s*lib\.loc\s*=\s*(['"])((?:[A-Za-z]:[/\\]|/|~)[^'"]*)\2"""
+)
+
+
+def _repro_drop_author_lib_loc(txt: Sequence[str | None]) -> tuple[list[str | None], list[str]]:
+    """Port of R ``.repro_drop_author_lib_loc()`` (#594).
+
+    A ``lib.loc =`` that points to a folder on the authors' computer, removed from
+    ``library()``, ``require()``, ``requireNamespace()`` and ``loadNamespace()``: the run
+    has its own library, where the package is installed, and the folder is not there, so
+    the script stopped with "no library trees found" although the package was there. Only
+    an absolute path (``C:/...``, ``/home/...``, ``~/...``) goes: a relative one may be a
+    library the deposit holds. Returns the lines and the folders removed.
+    """
+    out = list(txt)
+    paths: list[str] = []
+    for i, line in enumerate(out):
+        if line is None or re.match(r"^\s*#", line):
+            continue
+        found = [m.group(3) for m in _LIB_LOC_PAT.finditer(line)]
+        if found:
+            paths.extend(found)
+            out[i] = _LIB_LOC_PAT.sub(r"\1", line)
+    return out, _unique(paths)
+
+
 def repro_write_scripts(
     code_text_list: Mapping[str, Any],
     rewrite_list: Mapping[str, pd.DataFrame | None] | None,
@@ -3125,8 +3215,9 @@ def repro_write_scripts(
     first. It is written to ``<root>/<target>`` (*script_paths* gives each script's own
     path), unless a file there is not text. Returns ``file_name``, ``script_path``,
     ``run_dir``, ``setwd_removed``, ``env_calls_replaced``, ``slashes_fixed``,
-    ``setwd_folder_removed``, ``setwd_paths``, ``family_replaced``, ``family_detail``
-    and ``library_injected``.
+    ``setwd_folder_removed``, ``setwd_paths``, ``lib_loc_removed`` (a ``lib.loc`` on the
+    authors' computer taken out of ``library()`` and the like, #594), ``family_replaced``,
+    ``family_detail`` and ``library_injected``.
 
     *lang* is the language of every script, or a mapping from file name to language.
     *run_dirs* are the folders the scripts run in, from the root (default the root). A
@@ -3216,6 +3307,11 @@ def repro_write_scripts(
         if replace_env_calls and is_r:
             txt, env_n = _repro_neutralise_env_calls(txt)
 
+        # lib.loc pointing to a folder on the authors' computer (#594)
+        lib_loc_paths: list[str] = []
+        if is_r:
+            txt, lib_loc_paths = _repro_drop_author_lib_loc(txt)
+
         joined_for_family = _paste_lines(txt)
         family_all = regextract_all(_FAMILY_PAT, joined_for_family, perl=True) if is_r else []
         # a model's family is no font: glmmTMB(..., family = "nbinom2") (#568)
@@ -3265,6 +3361,7 @@ def repro_write_scripts(
                 "; ".join(slashes),
                 "; ".join(folder_removed),
                 ", ".join(setwd_paths),
+                "; ".join(lib_loc_paths),
                 family_n,
                 "; ".join(f'{x} -> "sans"' for x in family_matches),
                 ", ".join(injected) if injected else None,
@@ -3280,9 +3377,10 @@ def repro_write_scripts(
             "slashes_fixed": ("string", [r[5] for r in rows]),
             "setwd_folder_removed": ("string", [r[6] for r in rows]),
             "setwd_paths": ("string", [r[7] for r in rows]),
-            "family_replaced": ("Int64", [r[8] for r in rows]),
-            "family_detail": ("string", [r[9] for r in rows]),
-            "library_injected": ("string", [r[10] for r in rows]),
+            "lib_loc_removed": ("string", [r[8] for r in rows]),
+            "family_replaced": ("Int64", [r[9] for r in rows]),
+            "family_detail": ("string", [r[10] for r in rows]),
+            "library_injected": ("string", [r[11] for r in rows]),
         }
     )
 
@@ -3448,6 +3546,27 @@ if (mode == "check_main") {
                                  .mc_json_str(load_error(pkg, lib_dir))) else "",
                         warn_json))
   }
+} else if (mode == "fallback") {
+  # An install from GitHub or a web address that failed, for a package that is on CRAN
+  # or Bioconductor: installed from there (#598). CRAN's list is read from the
+  # repositories R is set to.
+  ap <- tryCatch(suppressWarnings(utils::available.packages(repos = getOption("repos"))),
+                 error = function(e) NULL)
+  on_cran <- !is.null(ap) && pkg %in% rownames(ap)
+  alt <- if (on_cran) "CRAN" else if (isTRUE(is_bioc)) "Bioconductor" else NA_character_
+  if (is.na(alt)) {
+    emit(FALSE, "", extra = ",\"alt\":null")
+  } else {
+    message("[repro]     '", pkg, "' could not be installed from ", ref, "; installing it from ", alt, " ...")
+    try(if (alt == "CRAN") utils::install.packages(pkg, lib = lib_dir, quiet = FALSE) else {
+      if (!requireNamespace("BiocManager", quietly = TRUE))
+        utils::install.packages("BiocManager", lib = lib_dir, quiet = FALSE)
+      BiocManager::install(pkg, lib = lib_dir, update = FALSE, ask = FALSE)
+    })
+    ok <- file.exists(file.path(lib_dir, pkg, "DESCRIPTION")) &&
+      requireNamespace(pkg, quietly = TRUE, lib.loc = lib_dir)
+    emit(ok, "", extra = paste0(",\"alt\":", .mc_json_str(alt)))
+  }
 } else if (mode == "archive") {
   ok <- tryCatch({
     if (requireNamespace("remotes", quietly = TRUE)) {
@@ -3544,6 +3663,17 @@ def _repro_deadline(total_timeout: Any) -> float | None:
     return _time.time() + t
 
 
+def _clock_seconds(when: Any) -> float | None:
+    """A clock time (a :class:`datetime.datetime`, or ``time.time()`` seconds) as seconds; ``None`` stays."""
+    import datetime as _dt
+
+    if when is None:
+        return None
+    if isinstance(when, _dt.datetime):
+        return when.timestamp()
+    return as_float(when)
+
+
 def _repro_time_left(deadline: float | None) -> float:
     """Port of R/reproducibility_check.R::.repro_time_left(): seconds until *deadline*."""
     import time as _time
@@ -3560,6 +3690,53 @@ def _repro_deadline_text(total_timeout: Any) -> str:
     t = as_float(total_timeout)
     mins = "Inf" if t is None or not math.isfinite(t) else f"{t / 60:g}"
     return f"the time for all scripts together ({mins} minutes, `total_timeout`)"
+
+
+def _repro_short_of_time(total_timeout: Any, need: float = 0) -> bool:
+    """Port of R ``.repro_short_of_time()``.
+
+    With a clock time as *total_timeout* (a server's job limit minus the time for its
+    report): whether at most *need* seconds are left. Always False for a time in seconds,
+    which counts from the first script and so has not begun.
+    """
+    import datetime as _dt
+
+    return isinstance(total_timeout, _dt.datetime) and (
+        _repro_time_left(total_timeout.timestamp()) <= need
+    )
+
+
+def _repro_clock_deadline(total_timeout: Any) -> Any:
+    """Port of R ``.repro_clock_deadline()``: *total_timeout* when it is a clock time, else ``None``."""
+    import datetime as _dt
+
+    return total_timeout if isinstance(total_timeout, _dt.datetime) else None
+
+
+def _repro_min_prep_time() -> float:
+    """Port of R ``.repro_min_prep_time()``.
+
+    The seconds a clock time as ``total_timeout`` must leave when the check starts, for
+    it to copy the repository, install its packages and run its scripts. With less, none
+    of that is done and every script is recorded as not started (``skipped_time_limit``),
+    so the job still has its time for the report. The option ``metacheck.repro_min_time``
+    sets it (default 900, 15 minutes).
+    """
+    from metacheck.utils import get_option
+
+    v = as_float(get_option("metacheck.repro_min_time", 900))
+    return 900.0 if v is None else v
+
+
+def _repro_no_prep_text(left: float | None) -> str:
+    """Port of R ``.repro_no_prep_text()``: the report's sentence when too little time was left; ``""`` otherwise."""
+    if left is None:
+        return ""
+    return (
+        f" The checks before this one had left {_repro_duration(left)} before the time limit, too"
+        " little to copy the repository, install its packages and run its"
+        f" scripts (at least {_repro_duration(_repro_min_prep_time())}), so none of that was done."
+    )
 
 
 def _repro_install_limit(
@@ -3735,6 +3912,30 @@ def repro_install_deps(
                 )
             via_archive = False
             have = as_str(res.get("version_installed"))
+            # An install from GitHub or a web address that failed, for a package that is
+            # on CRAN or Bioconductor: installed from there, with a note (#598). A failed
+            # download says so, not "the install did not put the package in the library".
+            if not ok and src in ("github", "url"):
+                first = _repro_download_failed_msg(ref, [*(res.get("warnings") or []), msg]) or msg
+                fb = _install_r(
+                    "fallback",
+                    lib,
+                    pkg=pkg,
+                    ref=ref,
+                    is_bioc=pkg in _repro_bioc_packages(),
+                )
+                alt = as_str(fb.get("alt"))
+                if alt is not None:
+                    if fb.get("ok"):
+                        ok, msg = True, ""
+                        have = as_str(fb.get("version_installed")) or have
+                        version_note = (
+                            f"installed from {alt}: the install from {ref} failed ({first[:200]})"
+                        )
+                    else:
+                        msg = f"{first}; installing it from {alt} failed too"
+                else:
+                    msg = first
             if not ok and src == "cran":
                 _message(
                     "[repro]     '",
@@ -3781,6 +3982,28 @@ def repro_install_deps(
     finally:
         bar.terminate()
     return _install_frame(rows)
+
+
+def _repro_download_failed_msg(ref: str | None, msgs: Sequence[str | None]) -> str | None:
+    """Port of R ``.repro_download_failed_msg()`` (#598).
+
+    ``"could not download <ref>: <why>"`` when a GitHub or URL install failed on the
+    download (a dead address, a missing repository), else ``None``.
+    """
+    hit = [
+        m
+        for m in msgs
+        if m is not None
+        and re.search(
+            "cannot open URL|cannot open the connection|download|status was|Could not resolve host|"
+            "HTTP error|HTTP status|404|403|Failed to connect",
+            m,
+            re.IGNORECASE,
+        )
+    ]
+    if not hit:
+        return None
+    return f"could not download {ref}: " + re.sub(r"\s+", " ", hit[0])[:200]
 
 
 def _repro_not_loadable_msg(
