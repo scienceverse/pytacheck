@@ -3,8 +3,6 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "'raw = FALSE' but '<tempdir>/<tempfile>/adir' is not a regular file",
-    "cannot open file '<tempdir>/<tempfile>/adir': it is a directory",
     "cannot create file '<tempdir>/<tempfile>/root/a/b.csv', reason 'Not a directory'",
     "directories are omitted unless 'recursive = TRUE'",
     "cannot create file '<tempdir>/<tempfile>/root/a/c/orig.csv', reason 'Not a directory'"
