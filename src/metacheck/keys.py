@@ -43,7 +43,7 @@ import regex
 
 from metacheck._r.regex import compile_r
 
-__all__ = ["KeyHit"]
+__all__ = ["KeyHit", "KeySeen"]
 
 #: characters searched on either side of a keyword
 _KEY_WINDOW = 5000

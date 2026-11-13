@@ -280,7 +280,7 @@ def kc_run_repo(name: str) -> Any:
     rel = d.relative_to(ROOT).as_posix()
     with (
         contextlib.chdir(ROOT),
-        local_options({"pytacheck.careless": False, "metacheck.llm.use": False}),
+        local_options({"metacheck.careless": False, "metacheck.llm.use": False}),
     ):
         out = module_run(p, "data_check", local_path=rel, local_only=True)
     return norm_paths(out)
