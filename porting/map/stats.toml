@@ -31,6 +31,7 @@
 [functions]
 stats = "metacheck.stats.core:stats"
 ".r_stat_pattern" = "metacheck.stats.helpers:_r_stat_pattern"
+".p_not_test" = "metacheck.stats.helpers:_p_not_test"
 ".stat_display_value" = "metacheck.stats.helpers:_stat_display_value"
 ".stat_html_escape" = "metacheck.stats.helpers:_stat_html_escape"
 ".stato_strip_variant" = "metacheck.stats.helpers:_stato_strip_variant"
