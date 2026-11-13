@@ -1,6 +1,6 @@
 """The checklist report (port of ``R/report-checklist.R``): ``report_type="checklist"``.
 
-Every check of every module is sorted by its result -- to fix, to improve,
+Every check of every module is sorted by its result -- to fix, to check,
 decide by hand, for information, fine, not applicable -- instead of being
 shown module by module, and each check that needs work says what was found and
 what to do on separate lines. The page is static (no script), light only, in
@@ -52,7 +52,7 @@ __all__ = [
 #: on a check's tag, the label of its count)``.
 CHECKLIST_RESULTS: tuple[tuple[str, str, str, str], ...] = (
     ("fix", "To fix", "To fix", "to fix"),
-    ("improve", "To improve", "To improve", "to improve"),
+    ("improve", "To check", "To check", "to check"),
     ("decide", "Decide by hand", "Decide by hand", "to decide by hand"),
     ("info", "For information", "Info", "for information"),
     ("fine", "Fine", "Fine", "fine"),
@@ -195,7 +195,9 @@ def _single_check(mo: Any, table: TableRenderer) -> pd.DataFrame:
     report_text = _joined(report, table)
     summary = _joined(_field(mo, "summary_text"), table)
     details = "" if tl == "fail" or report_text == summary else report_text
-    found = f"This module failed to run: {report_text}" if tl == "fail" else summary
+    # an error message is plain text: as markdown, "<haven_labelled>" was taken as an
+    # HTML tag and left out of the page
+    found = f"This module failed to run: {_escape(report_text)}" if tl == "fail" else summary
     status = _LIGHT_STATUS.get(tl, "info")
     # a module with its own section shows its details there, not folded here
     note = ""

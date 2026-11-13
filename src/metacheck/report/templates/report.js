@@ -28,6 +28,7 @@
     var size = parseInt(wrap.getAttribute("data-page-length"), 10);
     var rows = wrap.querySelectorAll("tbody > tr");
     var nav = wrap.querySelector(".dt-paging");
+    var menu = wrap.querySelector(".dt-length select");
     if (!size || size < 1 || !nav || rows.length <= size) return;
     var pages = Math.ceil(rows.length / size);
     function show(page) {
@@ -52,6 +53,15 @@
       var t = e.target;
       if (t && t.tagName === "BUTTON" && !t.disabled) show(parseInt(t.dataset.page, 10));
     });
+    // the "Show _MENU_ rows" menu: 10, 25, 50 or all (-1) rows per page (metacheck #408)
+    if (menu) {
+      menu.addEventListener("change", function () {
+        var n = parseInt(menu.value, 10);
+        size = n < 1 ? rows.length : n;
+        pages = Math.max(1, Math.ceil(rows.length / size));
+        show(0);
+      });
+    }
     show(0);
   }
 

@@ -82,7 +82,11 @@ def test_report_table():
     obs = report_table(table)
     pd.testing.assert_frame_equal(obs.data, table)
     assert obs.options["pageLength"] == 2
-    assert obs.options["dom"] == "<'top' p>"
+    assert obs.options["dom"] == "<'top' lp>"
+    # a menu to show more rows per page, or all of them (metacheck #408)
+    assert obs.options["lengthMenu"] == [[2, 10, 25, 50, -1], ["2", "10", "25", "50", "All"]]
+    assert obs.options["language"] == {"lengthMenu": "Show _MENU_ rows"}
+    assert 'class="dt-length"' in obs.to_html()
 
     # 10 rows, show 10
     obs = report_table(table, maxrows=10)

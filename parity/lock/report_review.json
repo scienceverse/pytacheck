@@ -1,8 +1,8 @@
 {
-"module_report.table_in_report": {"r": "fdbd8151f224d939", "py": "db394f8cc678b271", "diff": ["[]"]},
+"module_report.table_in_report": {"r": "fdbd8151f224d939", "py": "ca69233a1857d3f2", "diff": ["[]"]},
 "scroll_table.factor_and_chr": {"r": "db0c252cce9e9b98", "py": "4f6ad6c6250d3158", "diff": ["[]"]},
 "scroll_table.factor_only": {"r": "8dffbc23f5a6b5ad", "py": "a70d27ccd4c9cb15", "diff": ["[]"]},
-"scroll_table.logical_vector": {"r": "30328c71322e6c80", "py": "53db5a46ac175738", "diff": ["[]"]},
+"scroll_table.logical_vector": {"r": "30328c71322e6c80", "py": "1c3066bc59660123", "diff": ["[]"]},
 "scroll_table.maxrows_double": {"r": "822813e0f9532105", "py": "af8b6d41509c9fc4", "diff": ["[]"]},
 "scroll_table.single_value": {"r": "047040532d26b671", "py": "963ff6f5fa407396", "diff": ["[]"]},
 "scroll_table.vector_newlines": {"r": "00c426a88ff3af8d", "py": "25a152cf1d5cc481", "diff": ["[]"]},

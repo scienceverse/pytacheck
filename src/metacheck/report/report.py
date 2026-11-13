@@ -57,6 +57,7 @@ from metacheck.report.render import (
     table_chunk,
     table_gfm,
 )
+from metacheck.stats.helpers import _stat_html_escape
 
 __all__ = [
     "DEFAULT_MODULES",
@@ -410,6 +411,10 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
     blocks: list[Any] | None = _flatten(report)
     if blocks is not None and all(isinstance(b, str) and b == "" for b in blocks):
         blocks = None
+    # a failed module's report is its error message, plain text: as markdown,
+    # "<haven_labelled>" was taken as an HTML tag and left out of the page
+    if module_output.traffic_light == "fail" and blocks is not None:
+        blocks = [_stat_html_escape(b) if isinstance(b, str) else b for b in blocks]
 
     hiw, validation = _how_it_works(module_output.module)
 
@@ -1147,7 +1152,7 @@ def report(
         whose setting ``None`` uses): ``"simple"`` writes a static page with
         no script, to send by email; ``"brief"`` lists only what needs
         attention; ``"checklist"`` sorts every check by its result (to fix,
-        to improve, decide by hand, for information, fine, not applicable)
+        to check, decide by hand, for information, fine, not applicable)
         and lists the repository's files. A static report is always rendered
         by pytacheck (Quarto's HTML carries scripts).
 

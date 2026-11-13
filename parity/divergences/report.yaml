@@ -54,7 +54,7 @@
   kind: r_bug_fixed
   ref: U244
   reason: "a title with %s keeps it (R fills the header's placeholders one after the other, so the title's %s gets the version and the DOI line is left as %s)"
-  r_text: [["100% title\\ with 0.4.3.7\"", "100% title\\ with %s\""], ["\n%s <!-- doi, if exists -->", "\nDOI: [10.1234/abc](https://doi.org/10.1234/abc) <!-- doi, if exists -->"]]
+  r_text: [["100% title\\ with 0.4.3.28\"", "100% title\\ with %s\""], ["\n%s <!-- doi, if exists -->", "\nDOI: [10.1234/abc](https://doi.org/10.1234/abc) <!-- doi, if exists -->"]]
 "report_review/validate.duplicate_ids":
   kind: r_bug_fixed
   ref: U243
