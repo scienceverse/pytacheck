@@ -96,6 +96,7 @@ def r_expr(spec: dict[str, Any]) -> str:
             f"module_report({run}), perl = TRUE)"
         )
     dirs = rvec([r_mock_dir(m) for m in (spec.get("mocks") or ["local", "apis"])])
+    rbox = RBOX_R[spec["rbox"]](spec) if spec.get("rbox") else ""
     return (
         "(function() { .r <- httptest2::get_current_redactor(); "
         "httptest2::set_redactor(function(req) { req$url <- "
@@ -105,9 +106,63 @@ def r_expr(spec: dict[str, Any]) -> str:
         "tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); "
         "p$paper_id <- id; p }; "
         f"httptest2:::with_mock_path({dirs}, httptest2::with_mock_api("
-        f"testthat::with_mocked_bindings({run}, online = function(...) TRUE, "
+        f"testthat::with_mocked_bindings({run}, online = function(...) TRUE{rbox}, "
         '.package = "metacheck")), replace = TRUE) })()'
     )
+
+
+# --- ResearchBox boxes whose status decides the advice (#621) ---------------------------
+# ResearchBox answers need a key (and cannot be replayed to a file in R), so these cases
+# mock the two functions repo_check calls, as metacheck's own tests do:
+# rbox_file_download() (a data file of the tidy fixture, or the failure) and
+# .rbox_box_meta() (licence and status). Python: tests/mod_repo_check/parity_support.py.
+RB_BOX = "https://researchbox.org/8285"
+RB_PEER = RB_BOX + "&PEER_REVIEW_passcode=NNONJR"
+RB_DATA = FIX + "tidy/data/scores.csv"
+RB_WHY = (
+    "HTTP 404: This box either does not exist or is not public; web page: "
+    "not public: ResearchBox asks for a captcha instead of showing the box; "
+    "a peer-review link with its passcode is needed"
+)
+RB_CAPTCHA = "not public: ResearchBox asks for a captcha instead of showing the box"
+RB_OTHER = "API rate limit exhausted: try later"
+# scenario -> (error text or None for a served box, status)
+RBOX = {
+    "private": (None, "private"),
+    "unknown": (None, None),
+    "public": (None, "public"),
+    "not_public_api": (RB_WHY, None),
+    "not_public_page": (RB_CAPTCHA, None),
+    "other_error": (RB_OTHER, None),
+}
+
+
+def _rchr(x: str | None) -> str:
+    return "NA_character_" if x is None else rstr(x)
+
+
+def r_rbox(spec: dict[str, Any]) -> str:
+    err, status = RBOX[spec["rbox"]]
+    if err is None:
+        files = (
+            "function(rb_url, ...) data.frame(rb_url = rb_url, name = 'Data/scores.csv', "
+            f"file_location = normalizePath({rstr(RB_DATA)}), size = 9, type = 'data', "
+            "isdir = FALSE)"
+        )
+        meta = (
+            "function(rb_url, cache = FALSE) data.frame(RB_license = 'CC-BY-4.0', "
+            f"RB_status = {_rchr(status)})"
+        )
+    else:
+        files = (
+            "function(rb_url, ...) metacheck:::.rbox_no_files(data.frame("
+            f"rb_url = rb_url, name = NA_character_, error = {rstr(err)}))"
+        )
+        meta = 'function(...) stop("no licence request expected")'
+    return f", rbox_file_download = {files}, .rbox_box_meta = {meta}"
+
+
+RBOX_R = dict.fromkeys(RBOX, r_rbox)
 
 
 def one(url: list[str] | str, pid: str, text: list[str] | None = None, **kw: Any) -> dict[str, Any]:
@@ -629,6 +684,118 @@ CASES += [
     ),
 ]
 
+# --- OSF projects read through a view-only link (metacheck 0.4.3.15) ---------------------
+VO_KEY = "0123456789abcdef0123456789abcdef"
+VO_PRIVATE = f"https://osf.io/vopri/overview?view_only={VO_KEY}"
+VO_PUBLIC = f"https://osf.io/vopub/overview?view_only={VO_KEY}"
+CASES += [
+    (
+        "osf.view_only_private",
+        "a private project read through a view-only link: named once, yellow",
+        one([VO_PRIVATE], "p_vopriv"),
+        {},
+    ),
+    (
+        "osf.view_only_both_links",
+        "the paper also links the project plainly: that copy is not 'could not check'",
+        one([VO_PRIVATE, "https://osf.io/vopri"], "p_vopriv2"),
+        {},
+    ),
+    (
+        "osf.view_only_public",
+        "a public project read through a view-only link is not named",
+        one([VO_PUBLIC], "p_vopub"),
+        {},
+    ),
+    (
+        "osf.view_only_paperlist",
+        "two papers share a private project's view-only link; a third links a public one",
+        {
+            "papers": [
+                {"url": [VO_PRIVATE], "id": "p_vo_a"},
+                {"url": [VO_PRIVATE, "https://osf.io/vopri"], "id": "p_vo_b"},
+                {"url": [VO_PUBLIC], "id": "p_vo_c"},
+            ]
+        },
+        {},
+    ),
+    (
+        "report.osf_view_only",
+        "module_report(): a private project read through a view-only link",
+        one([VO_PRIVATE], "p_voprep", report=True),
+        {},
+    ),
+]
+
+CASES += [
+    (
+        "researchbox.peer_review_private",
+        "a box read through its peer-review link; ResearchBox says it is private",
+        one([RB_PEER], "p_rbpriv", rbox="private"),
+        {},
+    ),
+    (
+        "researchbox.peer_review_unknown",
+        "a peer-review link, status not known (no ResearchBox key): named as private",
+        one([RB_PEER], "p_rbunk", rbox="unknown"),
+        {},
+    ),
+    (
+        "researchbox.peer_review_public",
+        "a peer-review link to a box that is public: not named",
+        one([RB_PEER], "p_rbpub", rbox="public"),
+        {},
+    ),
+    (
+        "researchbox.plain_public",
+        "a plain link to a public box: not named",
+        one([RB_BOX], "p_rbplain", rbox="public"),
+        {},
+    ),
+    (
+        "researchbox.not_public",
+        "a link without passcode to a box ResearchBox does not show (API answer)",
+        one([RB_BOX], "p_rbnp", rbox="not_public_api"),
+        {},
+    ),
+    (
+        "researchbox.not_public_page",
+        "a link without passcode to a box whose web page asks for a captcha",
+        one([RB_BOX], "p_rbnp2", rbox="not_public_page"),
+        {},
+    ),
+    (
+        "researchbox.passcode_not_public",
+        "a link with its passcode that fails the same way: not 'readers cannot open it'",
+        one([RB_PEER], "p_rbnp3", rbox="not_public_api"),
+        {},
+    ),
+    (
+        "researchbox.other_error",
+        "a box that was not served for another reason: no advice",
+        one([RB_BOX], "p_rbother", rbox="other_error"),
+        {},
+    ),
+    (
+        "researchbox.peer_review_both",
+        "the paper links the box with and without its passcode, and an OSF view-only project",
+        one([RB_PEER, VO_PRIVATE], "p_rbboth", rbox="private"),
+        {},
+    ),
+    (
+        "researchbox.report_private",
+        "module_report(): a private box read through its peer-review link",
+        one([RB_PEER], "p_rbrep", rbox="private", report=True),
+        {},
+    ),
+    (
+        "researchbox.report_not_public",
+        "module_report(): a box readers cannot open",
+        one([RB_BOX], "p_rbrep2", rbox="not_public_api", report=True),
+        {},
+    ),
+]
+
 # --- DSpace items their host does not know (UPSTREAM_ISSUES U43) -------------------------
 # Nothing is recorded for them, so every REST lookup fails on both sides (httptest2
 # errors, the Python replay answers 404).
@@ -675,7 +842,7 @@ def case(cid: str, note: str, spec: dict[str, Any], ignore: Any) -> dict[str, An
     py_args = {
         k: v
         for k, v in spec.items()
-        if k in ("papers", "read", "paperlist", "args", "mocks", "report", "tables")
+        if k in ("papers", "read", "paperlist", "args", "mocks", "report", "tables", "rbox")
     }
     out: dict[str, Any] = {
         "id": f"repo_check.{cid}",

@@ -17,6 +17,7 @@ import contextlib
 import hashlib
 import math
 import os
+import re
 import shutil
 import tempfile
 import threading
@@ -642,7 +643,14 @@ def osf_type(guid: Any) -> Any:
     ident = osf_check_id(guid)
     if ident is None:
         return None
-    info = osf_get_all_pages(f"{_api()}/guids/{ident}/?resolve=false")
+    # A view-only key goes at the end of the address, as a second query field
+    # (osf_check_id() keeps it on the id: "j9sdn?view_only=...").
+    key = ""
+    if "view_only=" in ident:
+        key = re.sub(r"^.*view_only=([^&/]*).*$", r"\1", ident, flags=re.S)
+    ident = re.sub(r"[?/].*$", "", ident, flags=re.S)
+    suffix = f"&view_only={key}" if key else ""
+    info = osf_get_all_pages(f"{_api()}/guids/{ident}/?resolve=false{suffix}")
     if _osf_err(info) is not None:
         return "inaccessible"
     from metacheck.archives.osf_helpers import _get

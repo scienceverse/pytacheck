@@ -1708,6 +1708,285 @@
       "id": "p_cache"
     "args":
       "cache": true
+- "id": "repo_check.osf.view_only_private"
+  "note": "a private project read through a view-only link: named once, yellow"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\"), \"p_vopriv\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef"
+      "id": "p_vopriv"
+- "id": "repo_check.osf.view_only_both_links"
+  "note": "the paper also links the project plainly: that copy is not 'could not check'"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \"https://osf.io/vopri\"), \"p_vopriv2\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef"
+      - "https://osf.io/vopri"
+      "id": "p_vopriv2"
+- "id": "repo_check.osf.view_only_public"
+  "note": "a public project read through a view-only link is not named"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef\"), \"p_vopub\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef"
+      "id": "p_vopub"
+- "id": "repo_check.osf.view_only_paperlist"
+  "note": "two papers share a private project's view-only link; a third links a public one"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(paperlist(tp(c(\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\"), \"p_vo_a\"), tp(c(\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \"https://osf.io/vopri\"), \"p_vo_b\"), tp(c(\"https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef\"), \"p_vo_c\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef"
+      "id": "p_vo_a"
+    - "url":
+      - "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef"
+      - "https://osf.io/vopri"
+      "id": "p_vo_b"
+    - "url":
+      - "https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef"
+      "id": "p_vo_c"
+- "id": "repo_check.report.osf_view_only"
+  "note": "module_report(): a private project read through a view-only link"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\"), \"p_voprep\"), \"repo_check\")), perl = TRUE), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef"
+      "id": "p_voprep"
+    "report": true
+- "id": "repo_check.researchbox.peer_review_private"
+  "note": "a box read through its peer-review link; ResearchBox says it is private"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR\"), \"p_rbpriv\"), \"repo_check\"), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) data.frame(rb_url = rb_url, name = 'Data/scores.csv', file_location = normalizePath(\"tests/mod_repo_check/fixtures/tidy/data/scores.csv\"), size = 9, type = 'data', isdir = FALSE), .rbox_box_meta = function(rb_url, cache = FALSE) data.frame(RB_license = 'CC-BY-4.0', RB_status = \"private\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR"
+      "id": "p_rbpriv"
+    "rbox": "private"
+- "id": "repo_check.researchbox.peer_review_unknown"
+  "note": "a peer-review link, status not known (no ResearchBox key): named as private"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR\"), \"p_rbunk\"), \"repo_check\"), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) data.frame(rb_url = rb_url, name = 'Data/scores.csv', file_location = normalizePath(\"tests/mod_repo_check/fixtures/tidy/data/scores.csv\"), size = 9, type = 'data', isdir = FALSE), .rbox_box_meta = function(rb_url, cache = FALSE) data.frame(RB_license = 'CC-BY-4.0', RB_status = NA_character_), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR"
+      "id": "p_rbunk"
+    "rbox": "unknown"
+- "id": "repo_check.researchbox.peer_review_public"
+  "note": "a peer-review link to a box that is public: not named"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR\"), \"p_rbpub\"), \"repo_check\"), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) data.frame(rb_url = rb_url, name = 'Data/scores.csv', file_location = normalizePath(\"tests/mod_repo_check/fixtures/tidy/data/scores.csv\"), size = 9, type = 'data', isdir = FALSE), .rbox_box_meta = function(rb_url, cache = FALSE) data.frame(RB_license = 'CC-BY-4.0', RB_status = \"public\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR"
+      "id": "p_rbpub"
+    "rbox": "public"
+- "id": "repo_check.researchbox.plain_public"
+  "note": "a plain link to a public box: not named"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://researchbox.org/8285\"), \"p_rbplain\"), \"repo_check\"), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) data.frame(rb_url = rb_url, name = 'Data/scores.csv', file_location = normalizePath(\"tests/mod_repo_check/fixtures/tidy/data/scores.csv\"), size = 9, type = 'data', isdir = FALSE), .rbox_box_meta = function(rb_url, cache = FALSE) data.frame(RB_license = 'CC-BY-4.0', RB_status = \"public\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285"
+      "id": "p_rbplain"
+    "rbox": "public"
+- "id": "repo_check.researchbox.not_public"
+  "note": "a link without passcode to a box ResearchBox does not show (API answer)"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://researchbox.org/8285\"), \"p_rbnp\"), \"repo_check\"), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) metacheck:::.rbox_no_files(data.frame(rb_url = rb_url, name = NA_character_, error = \"HTTP 404: This box either does not exist or is not public; web page: not public: ResearchBox asks for a captcha instead of showing the box; a peer-review link with its passcode is needed\")), .rbox_box_meta = function(...) stop(\"no licence request expected\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285"
+      "id": "p_rbnp"
+    "rbox": "not_public_api"
+- "id": "repo_check.researchbox.not_public_page"
+  "note": "a link without passcode to a box whose web page asks for a captcha"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://researchbox.org/8285\"), \"p_rbnp2\"), \"repo_check\"), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) metacheck:::.rbox_no_files(data.frame(rb_url = rb_url, name = NA_character_, error = \"not public: ResearchBox asks for a captcha instead of showing the box\")), .rbox_box_meta = function(...) stop(\"no licence request expected\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285"
+      "id": "p_rbnp2"
+    "rbox": "not_public_page"
+- "id": "repo_check.researchbox.passcode_not_public"
+  "note": "a link with its passcode that fails the same way: not 'readers cannot open it'"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR\"), \"p_rbnp3\"), \"repo_check\"), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) metacheck:::.rbox_no_files(data.frame(rb_url = rb_url, name = NA_character_, error = \"HTTP 404: This box either does not exist or is not public; web page: not public: ResearchBox asks for a captcha instead of showing the box; a peer-review link with its passcode is needed\")), .rbox_box_meta = function(...) stop(\"no licence request expected\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR"
+      "id": "p_rbnp3"
+    "rbox": "not_public_api"
+- "id": "repo_check.researchbox.other_error"
+  "note": "a box that was not served for another reason: no advice"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://researchbox.org/8285\"), \"p_rbother\"), \"repo_check\"), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) metacheck:::.rbox_no_files(data.frame(rb_url = rb_url, name = NA_character_, error = \"API rate limit exhausted: try later\")), .rbox_box_meta = function(...) stop(\"no licence request expected\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285"
+      "id": "p_rbother"
+    "rbox": "other_error"
+- "id": "repo_check.researchbox.peer_review_both"
+  "note": "the paper links the box with and without its passcode, and an OSF view-only project"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR\", \"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\"), \"p_rbboth\"), \"repo_check\"), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) data.frame(rb_url = rb_url, name = 'Data/scores.csv', file_location = normalizePath(\"tests/mod_repo_check/fixtures/tidy/data/scores.csv\"), size = 9, type = 'data', isdir = FALSE), .rbox_box_meta = function(rb_url, cache = FALSE) data.frame(RB_license = 'CC-BY-4.0', RB_status = \"private\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR"
+      - "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef"
+      "id": "p_rbboth"
+    "rbox": "private"
+- "id": "repo_check.researchbox.report_private"
+  "note": "module_report(): a private box read through its peer-review link"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR\"), \"p_rbrep\"), \"repo_check\")), perl = TRUE), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) data.frame(rb_url = rb_url, name = 'Data/scores.csv', file_location = normalizePath(\"tests/mod_repo_check/fixtures/tidy/data/scores.csv\"), size = 9, type = 'data', isdir = FALSE), .rbox_box_meta = function(rb_url, cache = FALSE) data.frame(RB_license = 'CC-BY-4.0', RB_status = \"private\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR"
+      "id": "p_rbrep"
+    "rbox": "private"
+    "report": true
+- "id": "repo_check.researchbox.report_not_public"
+  "note": "module_report(): a box readers cannot open"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://researchbox.org/8285\"), \"p_rbrep2\"), \"repo_check\")), perl = TRUE), online = function(...) TRUE, rbox_file_download = function(rb_url, ...) metacheck:::.rbox_no_files(data.frame(rb_url = rb_url, name = NA_character_, error = \"HTTP 404: This box either does not exist or is not public; web page: not public: ResearchBox asks for a captcha instead of showing the box; a peer-review link with its passcode is needed\")), .rbox_box_meta = function(...) stop(\"no licence request expected\"), .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://researchbox.org/8285"
+      "id": "p_rbrep2"
+    "rbox": "not_public_api"
+    "report": true
 - "id": "repo_check.dspace.unfound"
   "note": "a PsychArchives item that does not exist"
   "r": "identity"

@@ -184,6 +184,7 @@ def run_repo(
     mocks: Sequence[str] | None = None,
     report: bool = False,
     tables: bool = False,
+    rbox: str | None = None,
 ) -> Any:
     """``module_run(<paper>, "repo_check", ...)`` on recorded responses (a parity case).
 
@@ -207,7 +208,7 @@ def run_repo(
         MOCKS if m == "local" else (ROOT / m if m.startswith("tests/") else m)
         for m in (mocks or ["local", "apis"])
     ]
-    with in_root(), mocked(*dirs):
+    with in_root(), mocked(*dirs), _rbox_scenario(rbox):
         mo = pc.module_run(paper, "repo_check", **dict(args or {}))
     if tables:
         return report_tables(mo)
@@ -216,6 +217,49 @@ def run_repo(
 
         return _R_CHUNK.sub("\n<R-CHUNK>\n", module_report(mo))
     return mo
+
+
+@contextlib.contextmanager
+def _rbox_scenario(name: str | None) -> Iterator[None]:
+    """The ResearchBox answers of a case (see ``make_cases.py``, ``RBOX``): a served box
+    with a status, or a box that was not served (R mocks the same two functions)."""
+    if name is None:
+        yield
+        return
+    import pandas as pd
+
+    from metacheck.archives import researchbox as rb
+    from tests.mod_repo_check.make_cases import RB_DATA, RBOX
+
+    err, status = RBOX[name]
+
+    def files(urls: Any, *a: Any, **k: Any) -> Any:
+        urls = [urls] if isinstance(urls, str) else list(urls)
+        if err is None:
+            return pd.DataFrame(
+                {
+                    "rb_url": urls,
+                    "name": ["Data/scores.csv"] * len(urls),
+                    "file_location": [str(ROOT / RB_DATA)] * len(urls),
+                    "size": [9.0] * len(urls),
+                    "type": ["data"] * len(urls),
+                    "isdir": [False] * len(urls),
+                }
+            )
+        return rb._rbox_no_files(
+            rb._failed_frame([{"rb_url": u, "name": None, "error": err} for u in urls])
+        )
+
+    def meta(url: Any, cache: bool = False) -> Any:
+        if err is not None:
+            raise RuntimeError("no licence request expected")
+        return pd.DataFrame({"RB_license": ["CC-BY-4.0"], "RB_status": [status]})
+
+    with (
+        umock.patch.object(rb, "rbox_file_download", files),
+        umock.patch.object(rb, "_rbox_box_meta", meta),
+    ):
+        yield
 
 
 def report_tables(mo: Any) -> list[Any]:

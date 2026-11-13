@@ -1,6 +1,6 @@
 """The checklist report: report_type="checklist".
 
-Port of metacheck's test-report-checklist.R (metacheck 0.4.3.7, 4a61888), plus the
+Port of metacheck's test-report-checklist.R (metacheck 0.4.3.28), plus the
 parts that are pytacheck's own: the page is rendered here, with no Pandoc.
 """
 
@@ -370,3 +370,21 @@ def test_a_failing_status_warning_does_not_break_the_page() -> None:
         page = checklist_html([bad])
     assert any("unknown status" in str(w.message) for w in caught)
     assert "For information" in page
+
+
+def test_a_failed_modules_error_message_keeps_its_angle_brackets() -> None:
+    # as markdown, "<haven_labelled>" was taken as an HTML tag and left out: the page
+    # said "Can't convert x to ." (PsyArXiv preprint jev3u_v1)
+    out = mo(
+        "data_check",
+        "data_check",
+        "fail",
+        report="Can't convert `x` <haven_labelled> to <character>.",
+    )
+    found = checklist_checks([out])["found"][0]
+    assert "&lt;haven_labelled&gt; to &lt;character&gt;" in found
+
+
+def test_the_second_result_is_called_to_check() -> None:
+    row = next(r for r in CHECKLIST_RESULTS if r[0] == "improve")
+    assert row[1:] == ("To check", "To check", "to check")

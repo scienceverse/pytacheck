@@ -68,7 +68,7 @@ def _jsonable(value: Any) -> Any:
 
 
 def logger(label: str = "", contents: Any = None, path: str | Path | None = None) -> Path:
-    """Record an event; returns the log path.
+    """Record an event; returns the log path. Based on an idea by Levi Baruch.
 
     Never raises for a log that cannot be written: the entry is dropped and
     one warning is logged per process.
@@ -104,6 +104,7 @@ def logger(label: str = "", contents: Any = None, path: str | Path | None = None
 
 def lastlog(i: int | list[int] = 1, path: str | Path | None = None) -> Any:
     """The *i*-th most recent log entries (1 = newest), like ``lastlog()``.
+    Based on an idea by Levi Baruch.
 
     Returns ``None`` for a log that cannot be created or opened. A line that
     is not JSON still raises, as R's ``read_json()`` does.

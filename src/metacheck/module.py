@@ -88,7 +88,7 @@ __all__ = [
 SECTION_LEVELS = ("general", "intro", "method", "results", "discussion", "reference")
 TRAFFIC_LIGHTS = ("na", "fail", "info", "green", "yellow", "red")
 #: The results of a check in a module's ``checks`` table (the checklist report), in the
-#: order the report shows them: to fix, to improve, decide by hand, for information,
+#: order the report shows them: to fix, to check, decide by hand, for information,
 #: fine, not applicable.
 CHECK_STATUSES = ("fix", "improve", "decide", "info", "fine", "na")
 #: The columns of a module's ``checks`` table; all but ``status`` and ``title`` are optional.
@@ -495,6 +495,11 @@ def _load_file(path: Path) -> ModuleSpec:
         from metacheck.log import logger
 
         logger(path.stem, {"error": str(exc)})
+        from metacheck.utils import _import_failure
+
+        failure = _import_failure(path.stem, exc)
+        if failure is not None:
+            raise ModuleError(failure) from exc
         raise ModuleError(f"The module '{path.stem}' has errors: {exc}") from exc
     found = _spec_from_pymodule(pymod, path.stem)
     return replace(found, path=str(path))

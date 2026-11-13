@@ -74,7 +74,12 @@
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "report_table(data.frame(a = 1, b = 2, c = 3, d = 4))$x$options[c('dom', 'autoWidth', 'ordering', 'pageLength', 'columnDefs')]", "py": "{k: v for k, v in __import__('metacheck.report.blocks', fromlist=['x']).report_table(pd.DataFrame({'a': [1.0], 'b': [2.0], 'c': [3.0], 'd': [4.0]})).options.items()}"}}
+    "x": {"$expr": {"r": "report_table(data.frame(a = 1, b = 2, c = 3, d = 4))$x$options[c('dom', 'autoWidth', 'ordering', 'pageLength', 'columnDefs')]", "py": "{k: v for k, v in __import__('metacheck.report.blocks', fromlist=['x']).report_table(pd.DataFrame({'a': [1.0], 'b': [2.0], 'c': [3.0], 'd': [4.0]})).options.items() if k in ['dom', 'autoWidth', 'ordering', 'pageLength', 'columnDefs']}"}}
+- "id": "report_table.length_menu"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "report_table(data.frame(a = 1:40), maxrows = 7)$x$options[c('dom', 'pageLength', 'lengthMenu', 'language')]", "py": "{k: __import__('metacheck.report.blocks', fromlist=['x']).report_table(pd.DataFrame({'a': range(1, 41)}), maxrows=7).options[k] for k in ['dom', 'pageLength', 'lengthMenu', 'language']}"}}
 - "id": "report_table.paginated"
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"

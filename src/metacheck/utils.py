@@ -335,6 +335,113 @@ def _url_decode(x: Sequence[str | None]) -> list[str | None]:
     return out
 
 
+def _pkg_name(x: str) -> str:
+    """Port of ``R/utils.R::.pkg_name()``: the name of a package a pack declares.
+
+    A module names an R package as ``pkg``, or ``owner/pkg`` when it is only on
+    GitHub. A pack names a Python package as a PEP 508 requirement: ``pkg>=1``,
+    or ``pkg @ git+https://github.com/owner/pkg`` for one that is only on GitHub.
+    This is the distribution's name.
+    """
+    m = re.match(r"\s*([A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)", x)
+    return m.group(1) if m else x.strip()
+
+
+def _pkg_problem(pkg: str) -> str | None:
+    """Port of ``R/utils.R::.pkg_problem()``: why a Python package cannot be imported.
+
+    ``None`` when it imports. A package can be installed and still not load (a
+    compiled part built for another system, a missing library), which Python
+    reports like a package that is not installed; the message tells the two apart
+    and gives the reason (metacheck #620).
+    """
+    import importlib
+    import importlib.util
+
+    root = pkg.split(".")[0]
+    try:
+        importlib.import_module(pkg)
+        return None
+    except ImportError as exc:
+        err = " ".join(str(exc).split())
+        try:
+            found = importlib.util.find_spec(root)
+        except (ImportError, ValueError):
+            found = None
+        if found is None or (isinstance(exc, ModuleNotFoundError) and exc.name == root):
+            return f"the Python package '{root}' is not installed"
+        where = ""
+        origin = found.origin or ""
+        if origin and origin not in ("namespace", "built-in", "frozen"):
+            where = f" (in {os.path.dirname(os.path.dirname(origin)) or origin})"
+        if len(err) > 300:
+            err = err[:299] + "\u2026"
+        # a compiled part that does not load: built for another system
+        if re.search(r"shared object|dlopen|DLL", err):
+            hint = (
+                "; it was probably built for another version of the operating system, "
+                "and installing it again may fix this"
+            )
+        else:
+            hint = "; installing it again may fix this"
+        return (
+            f"the Python package '{root}' is installed{where} but cannot be loaded on this "
+            f"computer: {err}{hint}"
+        )
+    except Exception as exc:  # the package's own code failed while importing
+        err = " ".join(str(exc).split())
+        if len(err) > 300:
+            err = err[:299] + "\u2026"
+        return (
+            f"the Python package '{root}' is installed but cannot be loaded on this computer: "
+            f"{err}; installing it again may fix this"
+        )
+
+
+def _pkg_github_hint(x: str) -> str:
+    """Port of ``R/utils.R::.pkg_github_hint()``: how to install a GitHub-only package.
+
+    For a requirement written as a direct reference to GitHub
+    (``pkg @ git+https://github.com/owner/pkg``) that is not installed, the pip
+    command that installs it; ``""`` for any other requirement.
+    """
+    import importlib.metadata
+
+    if not re.search(r"@\s*(?:git\+)?https?://github\.com/", x):
+        return ""
+    with contextlib.suppress(importlib.metadata.PackageNotFoundError):
+        importlib.metadata.version(_pkg_name(x))
+        return ""
+    return f"; install it from GitHub with pip install '{x.strip()}'"
+
+
+def _import_failure(label: str, exc: BaseException, dependencies: Sequence[str] = ()) -> str | None:
+    """The message for a module whose import failed because a package it needs is missing.
+
+    Port of the package-problem part of ``R/module.R::module_run()``: a package that
+    is not installed is told apart from one that is installed but cannot be loaded
+    (with the reason), and a package a pack declares as a dependency says how to
+    install it (``pip install``; a GitHub-only package written as a direct
+    reference gets the command for it). ``None`` when *exc* is not about a package.
+    """
+    if not isinstance(exc, ImportError) or not getattr(exc, "name", None):
+        return None
+    problem = _pkg_problem(str(exc.name))
+    if problem is None:  # it imports now: the failure was in the module's own code
+        return None
+    root = str(exc.name).split(".")[0]
+    want = re.sub(r"[-_.]+", "-", root).lower()
+    hint = ""
+    for dep in dependencies:
+        if re.sub(r"[-_.]+", "-", _pkg_name(dep)).lower() == want:
+            hint = _pkg_github_hint(dep) or f"; install it with pip install '{dep.strip()}'"
+            break
+    else:
+        if problem.endswith("is not installed") and dependencies:
+            hint = "; the pack declares: " + ", ".join(dependencies)
+    return f"The module '{label}' cannot run: {problem}{hint}."
+
+
 def _safe_write_path(path: str | None) -> str | None:
     """Port of R/utils.R::.safe_write_path(): shorten an over-long path.
 

@@ -250,8 +250,9 @@ class DataTable:
             rows.append(f'<tr class="{parity}">' + "".join(cells) + "</tr>")
         wrapper_cls = "datatables" + (f" column-{self.column}" if self.column != "body" else "")
         attrs = f' data-page-length="{int(page_length)}"' if paged else ""
+        menu = self._length_menu(int(page_length)) if paged else ""
         pager = (
-            '<div class="dt-top"><nav class="dt-paging" aria-label="pages"></nav></div>'
+            f'<div class="dt-top">{menu}<nav class="dt-paging" aria-label="pages"></nav></div>'
             if paged
             else ""
         )
@@ -259,6 +260,22 @@ class DataTable:
             f'<div class="{wrapper_cls}"{attrs}>{pager}<div class="dt-scroll">'
             f'<table class="dataTable display">{colgroup}<thead><tr>{"".join(cols)}</tr></thead>'
             f"<tbody>{''.join(rows)}</tbody></table></div></div>"
+        )
+
+    def _length_menu(self, page_length: int) -> str:
+        """The "Show _MENU_ rows" choice of a paginated table (DataTables' ``l``)."""
+        values, labels = self.options.get("lengthMenu") or [[], []]
+        if not values:
+            return ""
+        template = (self.options.get("language") or {}).get("lengthMenu", "Show _MENU_ rows")
+        choices = "".join(
+            f'<option value="{v}"{" selected" if v == page_length else ""}>{_html.escape(str(t))}</option>'
+            for v, t in zip(values, labels, strict=True)
+        )
+        before, _, after = template.partition("_MENU_")
+        return (
+            f'<label class="dt-length">{_html.escape(before)}'
+            f'<select aria-label="rows per page">{choices}</select>{_html.escape(after)}</label>'
         )
 
     def _static_html(
@@ -353,14 +370,24 @@ def report_table(
     if numeric:
         cd.append({"className": "dt-right", "targets": numeric})
     cd.extend({"name": str(name), "targets": i} for i, name in enumerate(data.columns))
+    # a table longer than maxrows gets page buttons and a menu to show more rows per
+    # page, or all of them (metacheck #408)
+    lengths = sorted({maxrows, 10, 25, 50})
     options = {
-        "dom": "<'top' p>" if len(data) > maxrows else "t",
+        "dom": "<'top' lp>" if len(data) > maxrows else "t",
         "autoWidth": True,
         "ordering": False,
         "pageLength": maxrows,
+        "lengthMenu": [[*lengths, -1], [*(_length_label(n) for n in lengths), "All"]],
+        "language": {"lengthMenu": "Show _MENU_ rows"},
         "columnDefs": cd,
     }
     return DataTable(data, options, escape=escape is True, static=static)
+
+
+def _length_label(n: float) -> str:
+    """``as.character()`` of a rows-per-page choice."""
+    return str(int(n)) if float(n).is_integer() else str(n)
 
 
 def _table_html(block: ReportTable, static: bool = False) -> str:

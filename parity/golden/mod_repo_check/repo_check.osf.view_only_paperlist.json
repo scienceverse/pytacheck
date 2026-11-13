@@ -1,0 +1,637 @@
+{
+  "id": "repo_check.osf.view_only_paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "useless_files",
+      "view_only",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "provider",
+          "repo_name",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef",
+              "https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad.R",
+              "bad.R",
+              "bad.Rmd",
+              "bad.Rmd",
+              "example2.csv",
+              "example2.csv",
+              "Archive.zip",
+              "Archive.zip",
+              "bad.R",
+              "example2.csv",
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad.R",
+              "bad.R",
+              "bad.Rmd",
+              "bad.Rmd",
+              "example2.csv",
+              "example2.csv",
+              "Archive.zip",
+              "Archive.zip",
+              "bad.R",
+              "example2.csv",
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/download/5e5465dfa68a2b74b12145d0/",
+              "https://osf.io/download/5e5465dfa68a2b74b12145d0/",
+              "https://osf.io/download/uq347/",
+              "https://osf.io/download/uq347/",
+              "https://osf.io/download/3eb53408f9ae6a5b29c42d3e/",
+              "https://osf.io/download/3eb53408f9ae6a5b29c42d3e/",
+              "https://osf.io/download/2509fc901ec27e4a9e17da70/",
+              "https://osf.io/download/2509fc901ec27e4a9e17da70/",
+              "https://osf.io/download/ef52303025776a3b527dfb0f/",
+              "https://osf.io/download/5732ab7b190be10a84b8d7e7/",
+              "https://osf.io/download/17b99f1846b83e7bedc091a1/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              172,
+              172,
+              413,
+              413,
+              5,
+              5,
+              6410,
+              6410,
+              172,
+              5,
+              6410
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "code",
+              "code",
+              "data",
+              "data",
+              "archive",
+              "archive",
+              "code",
+              "data",
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef",
+              "overview?view_only=0123456789abcdef0123456789abcdef"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "code",
+              "code",
+              "data",
+              "data",
+              "unknown",
+              "unknown",
+              "code",
+              "data",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex2",
+              "ex2",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_vo_a",
+              "p_vo_b",
+              "p_vo_a",
+              "p_vo_b",
+              "p_vo_a",
+              "p_vo_b",
+              "p_vo_a",
+              "p_vo_b",
+              "p_vo_c",
+              "p_vo_c",
+              "p_vo_c"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Private repositories checked through a view-only or peer-review link",
+          "The OSF project https://osf.io/vopri is private. Metacheck examined the files through the view_only link. As the preprint is public, and the OSF Files are accessible to anyone, consider making the OSF project public.",
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\", \n\"<a href='https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\", \n\"<a href='https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\"), \"All Files\" = c(4L, 4L, \n3L), \"Data Files\" = c(1L, 1L, 1L), \"Code Files\" = c(2L, 2L, 1L\n), READMEs = c(0L, 0L, 0L), Archives = c(1L, 1L, 1L)), row.names = c(NA, \n-3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef\", \n\"https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef\"\n), File = c(\"<a href='https://osf.io/download/5e5465dfa68a2b74b12145d0/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/5e5465dfa68a2b74b12145d0/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/3eb53408f9ae6a5b29c42d3e/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/3eb53408f9ae6a5b29c42d3e/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/2509fc901ec27e4a9e17da70/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/2509fc901ec27e4a9e17da70/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/ef52303025776a3b527dfb0f/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/5732ab7b190be10a84b8d7e7/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/17b99f1846b83e7bedc091a1/' target='_blank'>Archive.zip<\/a>\"\n), Size = c(\"172 B\", \"172 B\", \"413 B\", \"413 B\", \"5 B\", \"5 B\", \n\"6.4 kB\", \"6.4 kB\", \"172 B\", \"5 B\", \"6.4 kB\"), Type = c(\"code\", \n\"code\", \"code\", \"code\", \"data\", \"data\", \"archive\", \"archive\", \n\"code\", \"data\", \"archive\")), row.names = c(NA, -11L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
+          "#### Unclassified Files\n\nWe could not classify 3 files by name or extension: Archive.zip, Archive.zip, Archive.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 3 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\", \"Archive.zip\"\n), Rule = c(\"unclassifiable\", \"unclassifiable\", \"unclassifiable\"\n), Severity = c(\"Required\", \"Required\", \"Required\"), Detail = c(\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (5 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"bad.R\", \"bad.R\", \"bad.Rmd\", \"bad.Rmd\", \n\"bad.R\"), Group = c(\"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex2\"), Path = c(\"bad.R\", \n\"bad.R\", \"bad.Rmd\", \"bad.Rmd\", \"bad.R\")), row.names = c(NA, -5L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"example2.csv\", \"example2.csv\", \"example2.csv\"\n), Group = c(\"ex1\", \"ex1\", \"ex2\"), Path = c(\"example2.csv\", \"example2.csv\", \n\"example2.csv\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\", \"Archive.zip\"\n), Group = c(\"ex1\", \"ex1\", \"ex2\"), Path = c(\"Archive.zip\", \"Archive.zip\", \n\"Archive.zip\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  The OSF project https://osf.io/vopri is private. Metacheck examined the files through the view_only link. As the preprint is public, and the OSF Files are accessible to anyone, consider making the OSF project public.\n-  We found 11 files in 3 repositories.\n-  We found 0 README files and 3 repositories without READMEs.\n-  We found 3 archive files.\n-  We could not classify 3 files.\n-  We found 3 file naming problems to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "repo_unchecked",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "repo_view_only",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_vo_a",
+              "p_vo_b",
+              "p_vo_c"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              4,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Archive.zip",
+              "Archive.zip",
+              "Archive.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unclassifiable",
+              "unclassifiable",
+              "unclassifiable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad",
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_vo_a",
+              "p_vo_b",
+              "p_vo_c"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_path",
+          "kind",
+          "severity"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "project"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_vo_a"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/vopri"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
