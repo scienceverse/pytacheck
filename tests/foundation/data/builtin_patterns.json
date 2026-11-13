@@ -1,6 +1,11 @@
 {
 "triples": [
 [
+"(?:[ηƞ]\\s*[²2₂]?\\s*)?\\b[pP]-?(values?|s|['’]s)?\\s*[=<>~≈≠≤≥≪≫]{1,2}\\s*(n\\.?s\\.?|\\d?\\.\\d+)\\s*(e\\s*[-−]\\d+)?(\\s*[x\\*×]\\s*10\\s*\\^?\\s*[-−]\\d+)?",
+false,
+true
+],
+[
 "(F(?i)inancial support(|s)(?-i)(|:|\\.)|F(?i)inancial source(|s)(?-i)(|:|\\.)|S(?i)ource(|s) of financial support(|s)(?-i)(|:|\\.)|F(?i)inancial or other support(|s)(?-i)(|:|\\.)|F(?i)inancial assistance(?-i)(|:|\\.)|F(?i)inancial aid(?-i)(|:|\\.)|F(?i)inancial sponsorship(|s)(?-i)(|:|\\.)|F(?i)inancial support(|s) and sponsorship(|s)(?-i)(|:|\\.)|F(?i)inancial source(|s) for the stud(y|ies)(?-i)(|:|\\.)|F(?i)inancial information(?-i)(|:|\\.)|F(?i)inancial statement(|s)(?-i)(|:|\\.)|F(?i)inanciamento(?-i)(|:|\\.))",
 false,
 true
@@ -291,6 +296,11 @@ true,
 true
 ],
 [
+"\\b(did|does|do)\\s+not\\s+(involve|include)\\s+(any\\s+)?(human|animal)\\s+(subjects?|participants?)",
+true,
+true
+],
+[
 "\\b(ethic|approv|committee|board|panel|institutional|protocol).{0,30}\\b(rec|reb|erb|dec)\\b",
 true,
 false
@@ -314,11 +324,6 @@ false
 "\\bR\\b",
 true,
 false
-],
-[
-"\\b[pP]-?(values?|s|['’]s)?\\s*[=<>~≈≠≤≥≪≫]{1,2}\\s*(n\\.?s\\.?|\\d?\\.\\d+)\\s*(e\\s*[-−]\\d+)?(\\s*[x\\*×]\\s*10\\s*\\^?\\s*[-−]\\d+)?",
-false,
-true
 ],
 [
 "\\baccess",
@@ -436,9 +441,24 @@ true,
 false
 ],
 [
+"\\bno\\s+(animals|humans)\\s+(nor|or|and)\\s+(human\\s+)?(participants?|subjects?)\\s+were\\s+involved",
+true,
+true
+],
+[
+"\\bno\\s+(identifiable\\s+)?(human|animal)\\s+(research\\s+)?(subjects?|participants?|volunteers?)\\s+(were|was|are|is)\\s+(involved|used)",
+true,
+true
+],
+[
 "\\bnot applicable\\b|\\bno (new |original |primary |research )?(data|datasets?)\\b[^.]{0,40}\\b(generated|collected|used|analy[sz]ed|created|produced|associated)\\b|\\b(data|datasets?)\\b[^.]{0,60}\\b(were|was|are|is) not (generated|collected|used|analy[sz]ed|created|produced|associated)\\b|\\bdid not (generate|collect|use|create|produce|analy[sz]e) (any )?(new )?(data|datasets?)\\b",
 true,
 false
+],
+[
+"\\bnot\\s+as\\s+(research\\s+)?(subjects?|participants?)\\b",
+true,
+true
 ],
 [
 "\\bonline\\b",
@@ -572,6 +592,11 @@ false
 ],
 [
 "^[A-Z]",
+false,
+false
+],
+[
+"^[ηƞ]",
 false,
 false
 ],
