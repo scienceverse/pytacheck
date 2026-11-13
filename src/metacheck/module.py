@@ -88,7 +88,7 @@ __all__ = [
 SECTION_LEVELS = ("general", "intro", "method", "results", "discussion", "reference")
 TRAFFIC_LIGHTS = ("na", "fail", "info", "green", "yellow", "red")
 #: The results of a check in a module's ``checks`` table (the checklist report), in the
-#: order the report shows them: to fix, to improve, decide by hand, for information,
+#: order the report shows them: to fix, to check, decide by hand, for information,
 #: fine, not applicable.
 CHECK_STATUSES = ("fix", "improve", "decide", "info", "fine", "na")
 #: The columns of a module's ``checks`` table; all but ``status`` and ``title`` are optional.
@@ -1084,6 +1084,13 @@ def module_run(
     if isinstance(results, pd.DataFrame):
         results = {"table": results}
     results = dict(results or {})
+    # A key (an API key, an access token) that a module read from a file is replaced by
+    # "[key removed]" in its result, so metacheck never copies one into its report, tables or
+    # saved results (metacheck #607). data_check warns about the key itself, by its first
+    # characters only (keys._key_scan_files()).
+    from metacheck.keys import _key_remove
+
+    results, _ = _key_remove(results)
 
     traffic_light = results.pop("traffic_light", None) or "info"
     summary_text = results.pop("summary_text", None)

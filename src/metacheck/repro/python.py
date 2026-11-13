@@ -580,7 +580,11 @@ def repro_run_scripts_py(
             env["PYTHONPATH"] = os.pathsep.join([*own, *([pythonpath] if pythonpath else [])])
             env["MPLBACKEND"] = "Agg"
             env["QT_QPA_PLATFORM"] = "offscreen"
-            with tempfile.TemporaryDirectory(prefix="pytacheck_pyrun_") as tmp:
+            # a killed script's own child (the base interpreter behind a venv's launcher on
+            # Windows) can still hold err.txt open as the folder goes; it must not stop the run
+            with tempfile.TemporaryDirectory(
+                prefix="pytacheck_pyrun_", ignore_cleanup_errors=True
+            ) as tmp:
                 out_file = os.path.join(tmp, "out.txt")
                 err_file = os.path.join(tmp, "err.txt")
                 t0 = time.monotonic()

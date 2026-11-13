@@ -182,7 +182,8 @@ class DataTable:
 
     ``data`` has line breaks as ``<br>`` and column names broken at ``_``
     (``_<wbr>``), as in R; ``options`` are the DataTables options R passes
-    (``dom``, ``autoWidth``, ``ordering``, ``pageLength``, ``columnDefs``).
+    (``dom``, ``autoWidth``, ``ordering``, ``pageLength``, ``lengthMenu``, ``language``,
+    ``columnDefs``).
     :meth:`to_html` renders it as a self-contained paginated HTML table.
     """
 
@@ -250,11 +251,21 @@ class DataTable:
             rows.append(f'<tr class="{parity}">' + "".join(cells) + "</tr>")
         wrapper_cls = "datatables" + (f" column-{self.column}" if self.column != "body" else "")
         attrs = f' data-page-length="{int(page_length)}"' if paged else ""
-        pager = (
-            '<div class="dt-top"><nav class="dt-paging" aria-label="pages"></nav></div>'
-            if paged
-            else ""
-        )
+        pager = ""
+        if paged:
+            menu = self.options.get("lengthMenu") or [[page_length, -1], [str(page_length), "All"]]
+            choices = "".join(
+                f'<option value="{int(n)}"{" selected" if n == page_length else ""}>'
+                f"{_html.escape(str(label))}</option>"
+                for n, label in zip(menu[0], menu[1], strict=True)
+            )
+            template = (self.options.get("language") or {}).get("lengthMenu", "Show _MENU_ rows")
+            before, _, after = template.partition("_MENU_")
+            pager = (
+                '<div class="dt-top"><label class="dt-length">'
+                f'{_html.escape(before)}<select aria-label="rows per page">{choices}</select>'
+                f'{_html.escape(after)}</label><nav class="dt-paging" aria-label="pages"></nav></div>'
+            )
         return (
             f'<div class="{wrapper_cls}"{attrs}>{pager}<div class="dt-scroll">'
             f'<table class="dataTable display">{colgroup}<thead><tr>{"".join(cols)}</tr></thead>'
@@ -353,11 +364,16 @@ def report_table(
     if numeric:
         cd.append({"className": "dt-right", "targets": numeric})
     cd.extend({"name": str(name), "targets": i} for i, name in enumerate(data.columns))
+    # a table longer than maxrows gets page buttons and a menu to show more rows per page,
+    # or all of them (metacheck 0.4.3.27, #408)
+    lengths = sorted({maxrows, 10, 25, 50})
     options = {
-        "dom": "<'top' p>" if len(data) > maxrows else "t",
+        "dom": "<'top' lp>" if len(data) > maxrows else "t",
         "autoWidth": True,
         "ordering": False,
         "pageLength": maxrows,
+        "lengthMenu": [[*lengths, -1], [*(str(n) for n in lengths), "All"]],
+        "language": {"lengthMenu": "Show _MENU_ rows"},
         "columnDefs": cd,
     }
     return DataTable(data, options, escape=escape is True, static=static)

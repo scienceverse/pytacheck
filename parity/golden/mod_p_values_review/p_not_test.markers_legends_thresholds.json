@@ -1,0 +1,36 @@
+{
+  "id": "p_not_test.markers_legends_thresholds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "marker",
+      "marker",
+      "marker",
+      "marker",
+      "marker",
+      "threshold",
+      "threshold",
+      "threshold",
+      "threshold",
+      "legend",
+      "legend",
+      "legend",
+      "marker",
+      "marker",
+      "marker",
+      "legend",
+      null,
+      null,
+      "legend",
+      "marker",
+      "marker",
+      "marker",
+      "threshold"
+    ]
+  },
+  "metacheck_version": "0.4.3.21",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

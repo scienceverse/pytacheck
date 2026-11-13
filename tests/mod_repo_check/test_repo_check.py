@@ -37,6 +37,7 @@ SUMMARY_COLS = [
     "files_zip",
     "files_unknown",
     "naming_issues",
+    "repo_view_only",
     "roster_mismatch",
 ]
 
@@ -120,6 +121,7 @@ def test_osf_no_files() -> None:
         "files_zip": 0,
         "files_unknown": 0,
         "naming_issues": 0,
+        "repo_view_only": 0,
         "roster_mismatch": False,
     }
     assert " 0 files " in mo.summary_text
@@ -143,6 +145,7 @@ def test_no_code_files() -> None:
         "files_zip": 1,
         "files_unknown": 0,
         "naming_issues": 0,
+        "repo_view_only": 0,
         "roster_mismatch": False,
     }
 
@@ -163,6 +166,7 @@ def test_osf() -> None:
         "files_zip": 1,
         "files_unknown": 1,
         "naming_issues": 1,
+        "repo_view_only": 0,
         "roster_mismatch": False,
     }
 
@@ -698,6 +702,79 @@ def test_failed_registration_source_restores_only_registrations(
     assert repos.df["repo_error"].tolist() == ["source lookup failed"]
 
 
+def test_private_project_read_through_a_view_only_link_is_named_once(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # metacheck 0.4.3.15 (8dn4g_v1): the paper links osf.io/j9sdn plainly and with the
+    # view-only key; the plain link is not "could not check ... (private)"
+    from metacheck.modules import _repo_check as rc
+
+    key = "0123456789abcdef0123456789abcdef"
+    vo = f"https://osf.io/j9sdn/overview?view_only={key}"
+    plain = "https://osf.io/j9sdn"
+    state = {"public": False}
+
+    def info(url: str) -> pd.DataFrame:
+        if "view_only=" in url:
+            return pd.DataFrame(
+                {
+                    "osf_url": [url, url],
+                    "osf_id": [f"j9sdn?view_only={key}"] * 2,
+                    "osf_type": ["nodes", "files"],
+                    "parent": [None, None],
+                    "kind": [None, "file"],
+                    "public": pd.array([state["public"], None], dtype="boolean"),
+                    "name": ["A study", "data.csv"],
+                    "path": [None, "/data.csv"],
+                    "download_url": [None, "https://osf.io/download/abcde"],
+                    "size": [None, 10],
+                    "filetype": [None, "data"],
+                    "provider": [None, "osfstorage"],
+                }
+            )
+        return pd.DataFrame(
+            {
+                "osf_url": [url],
+                "osf_id": ["j9sdn"],
+                "osf_type": ["private"],
+                "public": pd.array([False], dtype="boolean"),
+            }
+        )
+
+    def fake_listing(urls: list[str], pb: object, cache: bool) -> pd.DataFrame:
+        parts = []
+        for u in urls:
+            f = info(u)
+            f["repo_name"] = u
+            parts.append(f)
+        return pd.concat(parts, ignore_index=True)
+
+    monkeypatch.setattr(rc, "_osf_listing", fake_listing)
+    for both in (True, False):
+        paper = pc.test_paper(
+            text="Data: https://osf.io/j9sdn" if both else "Data: see the link.", url=vo
+        )
+        mo = run(paper, peek_zips=False)
+        assert len(mo["gated_repos"]) == 0, both
+        st = summary_row(mo)
+        assert st["repo_n"] == 1 and st["repo_unchecked"] == 0 and st["repo_view_only"] == 1
+        assert mo["view_only"]["project"].tolist() == [plain]
+        assert (
+            f"The OSF project {plain} is private. Metacheck examined the files through the "
+            "view_only link."
+        ) in mo.summary_text
+        assert (
+            "Private repositories checked through a view-only or peer-review link"
+            in pc.module_report(mo)
+        )
+        assert mo.traffic_light == "yellow"
+    # a public project read through a view-only link is not named
+    state["public"] = True
+    mo = run(pc.test_paper(text="Data: see the link.", url=vo), peek_zips=False)
+    assert len(mo["view_only"]) == 0
+    assert "view_only link" not in mo.summary_text
+
+
 def test_private_osf_file_rows_are_excluded_per_row() -> None:
     # U123: a file marked private (public FALSE) is left out wherever it sits
     # in the listing (R's !isFALSE(public) tests the whole column at once)
@@ -820,3 +897,131 @@ def test_dryad_rows_carry_the_dataset_size(monkeypatch: pytest.MonkeyPatch) -> N
     assert is_dryad.any() and (~is_dryad).any()
     assert (t.loc[is_dryad, "repo_size"] == 123456.0).all()
     assert t.loc[~is_dryad, "repo_size"].isna().all()
+
+
+# -- private ResearchBox boxes (metacheck 0.4.3.23, #621) ------------------------------------
+
+_BOX_NOT_PUBLIC = (
+    "HTTP 404: This box either does not exist or is not public; web page: "
+    "not public: ResearchBox asks for a captcha instead of showing the box; "
+    "a peer-review link with its passcode is needed"
+)
+
+
+def _mock_box(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, status: str | None, license_: str | None
+) -> None:
+    from metacheck.archives import researchbox
+
+    csv = tmp_path / "study1.csv"
+    csv.write_text("id,x\n1,2\n")
+    monkeypatch.setattr(
+        researchbox,
+        "rbox_file_download",
+        lambda rb_url, pb=None, **kwargs: pd.DataFrame(
+            {
+                "rb_url": list(rb_url) if isinstance(rb_url, list) else [rb_url],
+                "name": ["Data/study1.csv"],
+                "file_location": [str(csv)],
+                "size": [9.0],
+                "type": ["data"],
+                "isdir": [False],
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        researchbox,
+        "_rbox_box_meta",
+        lambda rb_url, cache=False: {"RB_license": license_, "RB_status": status},
+    )
+
+
+def test_a_box_readers_cannot_open_is_advised_on(monkeypatch: pytest.MonkeyPatch) -> None:
+    from metacheck.archives import researchbox
+
+    box = "https://researchbox.org/8285"
+
+    def no_meta(*args: object, **kwargs: object) -> dict[str, str | None]:
+        raise AssertionError("no licence request expected")
+
+    monkeypatch.setattr(researchbox, "_rbox_box_meta", no_meta)
+    for err in (
+        _BOX_NOT_PUBLIC,
+        "not public: ResearchBox asks for a captcha instead of showing the box",
+    ):
+        monkeypatch.setattr(
+            researchbox,
+            "rbox_file_download",
+            lambda rb_url, pb=None, err=err, **kwargs: researchbox._rbox_no_files(
+                researchbox._failed_frame([{"rb_url": rb_url[0], "error": err}])
+            ),
+        )
+        mo = run(tp([box], "p_rbox_np"))
+        assert (
+            "The ResearchBox box https://researchbox.org/8285 does not exist or is not public, so "
+            "readers who follow the link cannot open it. As the preprint is public, consider "
+            "making the box public. If the box has to stay private for now, link to its full "
+            "peer-review link (https://researchbox.org/8285&PEER_REVIEW_passcode=...), so that "
+            "the link itself opens the box."
+        ) in mo.summary_text
+        assert "Repositories that readers cannot open" in "\n".join(map(str, mo.report))
+        # still a repository that could not be checked
+        assert mo.summary_table["repo_unchecked"].tolist() == [1]
+        assert mo.summary_table["repo_view_only"].tolist() == [0]
+        assert mo.traffic_light == "yellow"
+
+    # not for a box that was not served for another reason, nor for a link with its passcode
+    for url, err in (
+        (box, "API rate limit exhausted: try later"),
+        (box + "&PEER_REVIEW_passcode=NNONJR", _BOX_NOT_PUBLIC),
+    ):
+        monkeypatch.setattr(
+            researchbox,
+            "rbox_file_download",
+            lambda rb_url, pb=None, err=err, **kwargs: researchbox._rbox_no_files(
+                researchbox._failed_frame([{"rb_url": rb_url[0], "error": err}])
+            ),
+        )
+        mo = run(tp([url], "p_rbox_np2"))
+        assert "We could not check 1 repository" in mo.summary_text
+        assert "readers who follow the link cannot open it" not in mo.summary_text
+
+
+def test_a_public_box_read_through_its_plain_link_is_not_private(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    box = "https://researchbox.org/99999"
+    _mock_box(monkeypatch, tmp_path, "public", "CC-BY-4.0")
+    mo = run(tp([box], "p_rbox_pub"), peek_zips=False)
+    assert mo["repo_metadata"]["license"].tolist() == ["CC-BY-4.0"]
+    assert len(mo["view_only"]) == 0
+    assert mo.summary_table["repo_view_only"].tolist() == [0]
+
+
+@pytest.mark.parametrize("status", ["private", None, "public"])
+def test_a_private_box_read_through_its_peer_review_link_is_named(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, status: str | None
+) -> None:
+    link = "https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR"
+    _mock_box(monkeypatch, tmp_path, status, "CC-BY-4.0")
+    mo = run(tp([link], "p_rbox_vo"), peek_zips=False)
+    assert mo.summary_table["files_n"].tolist() == [1]
+    if status == "public":
+        # the box is public: the passcode in the link does no harm
+        assert len(mo["view_only"]) == 0
+        assert mo.summary_table["repo_view_only"].tolist() == [0]
+        assert "is private" not in mo.summary_text
+    else:
+        # private, or not known (no ResearchBox key): the passcode shows it is a link meant for
+        # peer review
+        assert mo["view_only"]["project"].tolist() == ["https://researchbox.org/8285"]
+        assert mo.summary_table["repo_view_only"].tolist() == [1]
+        assert (
+            "The ResearchBox box https://researchbox.org/8285 is private. Metacheck examined the "
+            "files through the peer-review link. As the preprint is public, consider making the "
+            "box public."
+        ) in mo.summary_text
+        assert "Private repositories checked through a view-only or peer-review link" in "\n".join(
+            map(str, mo.report)
+        )
+        assert mo.traffic_light == "yellow"

@@ -70,7 +70,8 @@
           "not_analysis_why",
           "paper_link",
           "repo_name",
-          "reason"
+          "reason",
+          "error_message"
         ],
         "v": [
           {
@@ -252,6 +253,14 @@
             "v": [
               null,
               "fn_main.R, tests/testthat/test-helpers.R",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
               null
             ]
           },
@@ -585,6 +594,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

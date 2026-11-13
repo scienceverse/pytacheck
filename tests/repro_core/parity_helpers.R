@@ -22,12 +22,19 @@ rc_listing <- function(root) {
   sort(list.files(root, recursive = TRUE, all.files = TRUE, include.dirs = TRUE))
 }
 
-rc_materialize <- function(plan, structure_df) {
+rc_materialize <- function(plan, structure_df, late = FALSE) {
   root <- file.path(tempfile(), "root")
-  out <- repro_materialize_layout(plan, structure_df, root)
-  list(files = rc_listing(root),
-       materialised = attr(out, "materialised"),
-       is_root = identical(as.vector(out), root))
+  # late: the deadline has passed (metacheck 0.4.3.28), so no file is copied
+  out <- if (late) {
+    repro_materialize_layout(plan, structure_df, root, deadline = Sys.time() - 1)
+  } else {
+    repro_materialize_layout(plan, structure_df, root)
+  }
+  res <- list(files = rc_listing(root),
+              materialised = attr(out, "materialised"),
+              is_root = identical(as.vector(out), root))
+  if (late) res$not_copied_time <- attr(out, "not_copied_time")
+  res
 }
 
 rc_unroot <- function(x, root) gsub(root, "<root>", x, fixed = TRUE)

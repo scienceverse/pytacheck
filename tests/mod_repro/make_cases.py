@@ -211,6 +211,16 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "structure": DATA,
         "plan": PLAN,
     },
+    # a file with nothing but spaces and line breaks is not run or counted (metacheck #620)
+    "empty_script": {
+        "code": code(
+            r("blank.R", S + "blank.R"),
+            r("blank.py", S + "py/blank.py", language="Python"),
+            r("01_clean.R", S + "01_clean.R"),
+        ),
+        "structure": DATA,
+        "plan": PLAN,
+    },
     # file.choose() filled in with the deposit's one data file
     "file_choice": {
         "code": code(r("choose_file.R", S + "choose_file.R")),

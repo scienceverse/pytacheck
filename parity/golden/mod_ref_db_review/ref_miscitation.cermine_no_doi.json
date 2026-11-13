@@ -9,6 +9,6 @@
     "Unknown or uninitialised column: `schema_version`."
   ],
   "value": null,
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.9",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

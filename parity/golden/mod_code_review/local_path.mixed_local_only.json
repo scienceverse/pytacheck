@@ -561,7 +561,7 @@
               2,
               1,
               0,
-              0,
+              1,
               1,
               0,
               0,
@@ -577,7 +577,7 @@
               "raw.csv, model_fit.rds",
               "matlab_data.csv",
               "",
-              "",
+              "data.xlsx",
               "trials.csv",
               "",
               "",
@@ -592,12 +592,12 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"analysis.do\", \"analysis.R\", \"fit.m\", \n\"model.inp\", \"model.sas\", \"notebook.ipynb\", \"notes.qmd\", \"report.Rmd\", \n\"script.py\", \"syntax.sps\", \"results.jasp\"), \"% Comments\" = c(\"50%\", \n\"8%\", \"25%\", \"20%\", \"33%\", \"25%\", \"0%\", \"25%\", \"0%\", \"33%\", \"\"\n), \"Missing Files\" = c(1L, 2L, 1L, 0L, 0L, 1L, 0L, 0L, 1L, 1L, \nNA), \"Absolute Paths\" = c(0L, 2L, 0L, 0L, 1L, 0L, 0L, 0L, 1L, \n0L, NA), \"Code Between Libraries\" = c(NA, 9L, NA, NA, NA, 1L, \nNA, NA, 1L, NA, NA)), row.names = c(NA, 11L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"analysis.do\", \"analysis.R\", \"fit.m\", \n\"model.inp\", \"model.sas\", \"notebook.ipynb\", \"notes.qmd\", \"report.Rmd\", \n\"script.py\", \"syntax.sps\", \"results.jasp\"), \"% Comments\" = c(\"50%\", \n\"8%\", \"25%\", \"20%\", \"33%\", \"25%\", \"0%\", \"25%\", \"0%\", \"33%\", \"\"\n), \"Missing Files\" = c(1L, 2L, 1L, 0L, 1L, 1L, 0L, 0L, 1L, 1L, \nNA), \"Absolute Paths\" = c(0L, 2L, 0L, 0L, 1L, 0L, 0L, 0L, 1L, \n0L, NA), \"Code Between Libraries\" = c(NA, 9L, NA, NA, NA, 1L, \nNA, NA, 1L, NA, NA)), row.names = c(NA, 11L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). Note: this percentage counts only `#` comments; 1 of these Python file is documented via docstrings (`\"\"\"...\"\"\"`), which are not counted as comments here since they are string literals, not comment syntax.",
           "#### Missing Files",
-          "The scripts load files, but 6 scripts loaded 7 files that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"analysis.do\", \"analysis.R\", \"fit.m\", \n\"notebook.ipynb\", \"script.py\", \"syntax.sps\"), \"Missing Files\" = c(\"data.dta\", \n\"raw.csv, model_fit.rds\", \"matlab_data.csv\", \"trials.csv\", \"trials.csv\", \n\"survey.sav\")), row.names = c(1L, 2L, 3L, 6L, 9L, 10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "The scripts load files, but 7 scripts loaded 8 files that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"analysis.do\", \"analysis.R\", \"fit.m\", \n\"model.sas\", \"notebook.ipynb\", \"script.py\", \"syntax.sps\"), \"Missing Files\" = c(\"data.dta\", \n\"raw.csv, model_fit.rds\", \"matlab_data.csv\", \"data.xlsx\", \"trials.csv\", \n\"trials.csv\", \"survey.sav\")), row.names = c(1L, 2L, 3L, 5L, 6L, \n9L, 10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Absolute Paths",
           "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. The following absolute file paths were found in 3 code files. However, these may be false positives in code like `paste0(dir, '/file.csv')`. ",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"analysis.R\", \"model.sas\", \"script.py\"\n), \"Absolute paths found\" = c(\"C:/Users/lisa/project | C:/Users/lisa/project/raw.csv\", \n\"C:\\\\Users\\\\lisa\\\\data.xlsx\", \"/home/lisa/data/trials.csv\")), row.names = c(2L, \n5L, 9L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
@@ -687,7 +687,7 @@
           {
             "t": "int",
             "v": [
-              7
+              8
             ]
           },
           {
@@ -870,6 +870,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.9",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

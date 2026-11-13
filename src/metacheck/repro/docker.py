@@ -56,6 +56,7 @@ from metacheck.repro.core import (
     _r_is_true,
     _read_cap,
     _read_lines,
+    _repro_bioc_packages,
     _repro_classify_install_message,
     _repro_script_limit,
     _run_frame,
@@ -548,6 +549,24 @@ _INSTALL_LOOP = [
     "    }",
     '    list(ok = TRUE, msg = "")',
     "  }, error = function(e) list(ok = FALSE, msg = conditionMessage(e)))",
+    # An install from GitHub or a web address that failed, for a package that is on CRAN
+    # or Bioconductor: installed from there, with a note (metacheck #598). A failed
+    # download says so. The same rules as repro_install_deps().
+    '  if (!res$ok && src %in% c("github", "url")) {',
+    '    dl <- grep("cannot open URL|cannot open the connection|download|status was|Could not resolve host|HTTP error|HTTP status|404|403|Failed to connect", c(warns, res$msg), value = TRUE, ignore.case = TRUE)',
+    '    first <- if (length(dl)) paste0("could not download ", ref, ": ", substr(gsub("[[:space:]]+", " ", dl[1]), 1, 200)) else res$msg',
+    "    cran_has <- tryCatch(pkg %in% rownames(utils::available.packages()), error = function(e) FALSE)",
+    '    alt <- if (cran_has) "CRAN" else if (isTRUE(.repro_docker_bioc[i])) "Bioconductor" else NA_character_',
+    "    if (!is.na(alt)) {",
+    '      try(if (alt == "CRAN") install.packages(pkg, lib = lib, quiet = FALSE) else {',
+    '        if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager", lib = lib, quiet = FALSE)',
+    "        BiocManager::install(pkg, lib = lib, update = FALSE, ask = FALSE) })",
+    '      if (file.exists(file.path(lib, pkg, "DESCRIPTION")) && requireNamespace(pkg, quietly = TRUE, lib.loc = lib)) {',
+    '        res <- list(ok = TRUE, msg = "")',
+    '        note <- paste0("installed from ", alt, ": the install from ", ref, " failed (", substr(first, 1, 200), ")")',
+    '      } else res$msg <- paste0(first, "; installing it from ", alt, " failed too")',
+    "    } else res$msg <- first",
+    "  }",
     "  v <- have_version(pkg)",
     "  if (res$ok && !is.na(ver) && !same_version(v, ver) && !nzchar(note))",
     '    note <- "the source gave another version than the recorded one"',
@@ -689,6 +708,7 @@ def _install_script(install_deps: pd.DataFrame) -> list[str]:
     packages that were not on CRAN are looked for elsewhere.
     """
     n = len(install_deps)
+    bioc = set(_repro_bioc_packages())
     refs = _chr_list(install_deps["ref"]) if "ref" in install_deps.columns else None
     versions = (
         _chr_list(install_deps["version"]) if "version" in install_deps.columns else [None] * n
@@ -698,6 +718,10 @@ def _install_script(install_deps: pd.DataFrame) -> list[str]:
         ".repro_docker_srcs <- " + _deparse1_chr(_chr_list(install_deps["source"])),
         ".repro_docker_refs <- " + _deparse1_chr(refs),
         ".repro_docker_vers <- " + _deparse1_chr(versions),
+        # whether each package is a Bioconductor one, for a failed GitHub or URL install
+        ".repro_docker_bioc <- c("
+        + ", ".join("TRUE" if p in bioc else "FALSE" for p in _chr_list(install_deps["package"]))
+        + ")",
     ]
     return header + _INSTALL_LOOP + _ELSEWHERE_SCRIPT
 

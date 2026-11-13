@@ -1,0 +1,93 @@
+{
+  "id": "keys.scan_files.type.stripe-access-token",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "keys",
+      "not_searched"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "file",
+          "line",
+          "key",
+          "rule",
+          "shown"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "plain.txt",
+              "code.R",
+              "header.json",
+              "obj.json"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stripe-access-token",
+              "stripe-access-token",
+              "stripe-access-token",
+              "stripe-access-token"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "sk_li...",
+              "sk_li...",
+              "sk_li...",
+              "sk_li..."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file",
+          "reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.21",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

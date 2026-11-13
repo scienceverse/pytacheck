@@ -64,6 +64,8 @@
 "rbox_links" = "metacheck.archives.researchbox:rbox_links"
 "rbox_info" = "metacheck.archives.researchbox:rbox_info"
 ".rbox_info" = "metacheck.archives.researchbox:_rbox_info"
+".rbox_box_meta" = "metacheck.archives.researchbox:_rbox_box_meta"
+".rbox_license" = "metacheck.archives.researchbox:_rbox_license"
 "rbox_file_download" = "metacheck.archives.researchbox:rbox_file_download"
 # R/archive-reshare.R
 "reshare_links" = "metacheck.archives.reshare:reshare_links"

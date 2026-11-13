@@ -349,6 +349,8 @@ def test_python_error_is_red(paper: pc.Paper, monkeypatch: pytest.MonkeyPatch) -
     mo = module_run(py_chain(paper, ["undefined_var.py"]), "reproducibility_check", execute=True)
     assert mo.traffic_light == "red"
     assert mo.table["error_type"].tolist() == ["undefined_variable"]
+    # the Python error line in the table (metacheck #615)
+    assert "NameError" in mo.table["error_message"].iloc[0]
     text = report_text(mo)
     assert "**Undefined-name errors**" in text
     assert "0 of 1 Python script ran without error" in mo.summary_text

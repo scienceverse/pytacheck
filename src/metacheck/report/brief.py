@@ -405,8 +405,37 @@ def _repo_check_bullets(mo: Any) -> list[str]:
 _OUTCOME_LABELS = {
     "skipped_missing_inputs": "could not be run because a referenced input file is missing",
     "not_parsed": "could not be parsed and so could not be run",
+    "python2": "are written for Python 2 and so could not be run",
+    "docker_failed": "could not be run because Docker failed, which says nothing about the code",
+    "not_downloaded": (
+        "could not be tried, because they need a file the deposit holds but that we did not "
+        "download"
+    ),
+    "not_read": (
+        "could not be read by metacheck, which may be a problem of the computer that ran the "
+        "check (the reason is in the table)"
+    ),
+    "needs_a_person": (
+        "need a person to choose a file, answer a question, use an app or give a program its "
+        "arguments"
+    ),
+    "needs_internet": (
+        "need the internet, which is off during the run, or could not reach what they asked for"
+    ),
+    "download_too_large": "were stopped for downloading more than our limits allow",
+    "out_of_memory": (
+        "ran out of the memory each script can use here, which says nothing about the code"
+    ),
     "dependency_unavailable": "could not be run because a required dependency is unavailable",
+    "skipped_time_limit": (
+        "could not be started because the time for all scripts together had run out"
+    ),
 }
+
+#: A model file or other non-R content is not a script, so not a failure (nor is an empty file)
+_NOT_FAILURES = frozenset(
+    {"ran_ok", "jags_model", "not_r_content", "defines_functions", "not_analysis", "empty"}
+)
 
 
 def _reproducibility_check_bullets(mo: Any) -> list[str]:
@@ -427,7 +456,7 @@ def _reproducibility_check_bullets(mo: Any) -> list[str]:
         flagged = [
             (_text(f), _text(o))
             for f, o in zip(_col(tbl, "File"), _col(tbl, "Outcome"), strict=True)
-            if as_character(o) != "ran_ok"
+            if as_character(o) not in _NOT_FAILURES
         ]
         with_output = [x for x in flagged if x[1] in ("errored", "timed_out")]
         grouped = [x for x in flagged if x[1] not in ("errored", "timed_out")]

@@ -21,7 +21,7 @@ from metacheck.io.corpus import (
 )
 from parity.canonical import canonical
 from parity.compare import Options, compare
-from tests.io.conftest import IO_FIXTURES, api
+from tests.io.conftest import IO_FIXTURES, api, json_response
 
 DOWNLOAD = re.compile(r"https://github\.com/scienceverse/retagtest/releases/download/.*")
 
@@ -74,7 +74,7 @@ def test_release_assets_no_releases() -> None:
     with api("apis_papers_empty"):
         assets = _papers_release_assets("scienceverse/norealeases")
     assert len(assets) == 0
-    assert list(assets.columns) == ["name", "tag", "size", "download_url"]
+    assert list(assets.columns) == ["name", "tag", "size", "download_url", "api_url"]
 
 
 def test_release_assets_unreachable_repo() -> None:
@@ -221,3 +221,87 @@ def test_read_rds_text_is_valid_utf8(tmp_path: Path) -> None:
     got = _read_rds(f)
     assert got == ["a\ufffdb", "caf\u00e9", "caf\u00e9", ""]
     assert all(type(v) is str for v in got)
+
+
+def _private_releases(download: str, api_url: str) -> dict[str, object]:
+    asset = {
+        "name": "secret.rds",
+        "size": 2000,
+        "browser_download_url": download,
+        "url": api_url,
+    }
+    return {
+        "tag_name": "secret-2026-11-01",
+        "published_at": "2026-11-01T10:00:00Z",
+        "assets": [asset],
+    }
+
+
+def test_papers_load_private_repo_uses_the_api_url_with_the_token(
+    cache_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # metacheck 0.4.3.27 (#369): a private repository's file is downloaded through
+    # GitHub's API with the token, as its public link does not work for it
+    from metacheck.archives import api_keys
+
+    monkeypatch.setattr(api_keys, "key_get", lambda service, *a, **k: "ghp_notakey")
+    monkeypatch.setattr(api_keys, "key_check_request", lambda *a, **k: True)
+    releases = [
+        _private_releases(
+            "https://github.com/scienceverse/papers_private/releases/download/x/secret.rds",
+            "https://api.github.com/repos/scienceverse/papers_private/releases/assets/7",
+        )
+    ]
+    seen: list[httpx.Request] = []
+
+    def asset(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, content=(IO_FIXTURES / "fake_paperlist.rds").read_bytes())
+
+    routes = {
+        ("GET", "https://api.github.com/repos/scienceverse/papers_private/releases"): (
+            lambda r: (seen.append(r), httpx.Response(200, json=releases))[1]
+        ),
+        (
+            "GET",
+            "https://api.github.com/repos/scienceverse/papers_private/releases/assets/7",
+        ): asset,
+    }
+    with api(routes=routes):
+        result = papers_load("secret", repo="scienceverse/papers_private")
+    assert result == {"info": {"title": ["fake paper"]}}
+    listing, download = seen
+    assert listing.headers["Authorization"] == "token ghp_notakey"
+    assert listing.headers["Accept"] == "application/vnd.github+json"
+    assert download.headers["Authorization"] == "token ghp_notakey"
+    assert download.headers["Accept"] == "application/octet-stream"
+
+
+def test_papers_load_without_a_token_uses_the_public_link(
+    cache_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from metacheck.archives import api_keys
+
+    monkeypatch.setattr(api_keys, "key_get", lambda service, *a, **k: "")
+    public = "https://github.com/scienceverse/papers_private/releases/download/x/secret.rds"
+    releases = [
+        _private_releases(public, "https://api.github.com/repos/scienceverse/papers_private/x")
+    ]
+    routes = {
+        ("GET", "https://api.github.com/repos/scienceverse/papers_private/releases"): json_response(
+            releases
+        ),
+        ("GET", public): lambda r: (sent.append(r), _serve(IO_FIXTURES / "fake_paperlist.rds")(r))[
+            1
+        ],
+    }
+    sent: list[httpx.Request] = []
+    with api(routes=routes):
+        papers_load("secret", repo="scienceverse/papers_private")
+    assert [str(r.url) for r in sent] == [public]
+    assert "Authorization" not in sent[0].headers
+
+
+def test_release_assets_404_says_to_set_a_token() -> None:
+    with api("apis_papers_404"), pytest.raises(RuntimeError, match=r"set a GitHub token"):
+        _papers_release_assets("scienceverse/doesnotexist12345")

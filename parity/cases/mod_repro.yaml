@@ -189,6 +189,14 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('starts_app')})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('starts_app')"
+- "id": "reproducibility_check.empty_script"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('empty_script')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('empty_script')"
 - "id": "reproducibility_check.file_choice"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"

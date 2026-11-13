@@ -589,6 +589,10 @@ def test_execute_error_forces_red(rscript: str, paper: pc.Paper, repro_fixture: 
     assert mo.traffic_light == "red"
     assert mo.table["outcome"].tolist() == ["errored"]
     assert "deliberate failure" in mo.run_results["error"].iloc[0]
+    # the message is in the table too, short (metacheck #615)
+    msg = mo.table["error_message"].iloc[0]
+    assert "deliberate failure for testing" in msg
+    assert len(msg) <= 300
 
 
 @pytest.mark.slow
@@ -607,6 +611,174 @@ def test_execute_strips_setwd(rscript: str, paper: pc.Paper, repro_fixture: Any)
     assert mods.loc[mods["change_type"] == "setwd_removed", "detail"].tolist() == [
         "/Users/original_author/project"
     ]
+
+
+@pytest.mark.slow
+def test_execute_removes_a_lib_loc_and_makes_a_folder_a_write_needs(
+    rscript: str, paper: pc.Paper, tmp_path: Any
+) -> None:
+    """A lib.loc on the authors' computer is removed, and a folder a write needs is made
+    (metacheck #594, #591)."""
+    # #594: the package is there, the authors' folder is not
+    (tmp_path / "libloc.R").write_text(
+        'library(stats, lib.loc = "C:/Users/someone/Documents/R/win-library/4.1")\nx <- median(1:5)\n'
+    )
+    # #591: the folder's name is built in a function, so it cannot be made before the run
+    (tmp_path / "writes.R").write_text(
+        'out_dir <- function() file.path("results", "tables")\n'
+        'write.csv(data.frame(a = 1:3), file.path(out_dir(), "a.csv"), row.names = FALSE)\n'
+    )
+    code_tbl = pd.concat(
+        [
+            code_tbl_row(paper, "libloc.R", str(tmp_path / "libloc.R")),
+            code_tbl_row(paper, "writes.R", str(tmp_path / "writes.R")),
+        ],
+        ignore_index=True,
+    )
+    structure_df = pd.DataFrame({"paper_id": [], "file_name": [], "file_location": []})
+    mo = module_run(
+        chain(paper, code_tbl, structure_df, None),
+        "reproducibility_check",
+        execute=True,
+        sandbox="process",
+        timeout=60,
+    )
+    tbl = mo.table.set_index("file_name")
+    assert tbl.loc["libloc.R", "outcome"] == "ran_ok"
+    mods = mo.modifications
+    assert mods.loc[mods["change_type"] == "lib_loc_removed", "detail"].tolist() == [
+        "C:/Users/someone/Documents/R/win-library/4.1"
+    ]
+    assert tbl.loc["writes.R", "outcome"] == "ran_ok"
+    made = mods[mods["change_type"] == "folder_made"]
+    assert made["file_name"].tolist() == ["writes.R"]
+    assert "results/tables" in made["detail"].iloc[0]
+    assert "wrote into a folder that the deposit does not have" in report_text(mo)
+
+
+def _unreadable(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """Files for the #620 tests: a script whose read fails, an empty file, and one that reads.
+
+    ``code_read()`` fails for the first, as with a stringi that cannot load.
+    """
+    import re
+
+    from metacheck.codecheck import core
+
+    (tmp_path / "fail.R").write_text('x <- read.csv("data/nothere.csv")\nstop("boom")\n')
+    (tmp_path / "empty.R").write_text("")
+    (tmp_path / "ok.R").write_text("x <- median(1:5)\n")
+    (tmp_path / "fail.py").write_text("print(1)\n")
+    real_read = core.code_read
+
+    def code_read(file_path: Any) -> Any:
+        if re.search(r"fail\.(R|py)$", str(file_path)):
+            raise RuntimeError("stringi package required for encoding operations")
+        return real_read(file_path)
+
+    monkeypatch.setattr(core, "code_read", code_read)
+    return tmp_path
+
+
+def _three_files(paper: Any, tmp: Path) -> ModuleOutput:
+    code_tbl = pd.concat(
+        [
+            code_tbl_row(paper, "fail.R", str(tmp / "fail.R")),
+            code_tbl_row(paper, "empty.R", str(tmp / "empty.R")),
+            code_tbl_row(paper, "ok.R", str(tmp / "ok.R")),
+        ],
+        ignore_index=True,
+    )
+    structure_df = pd.DataFrame({"paper_id": [], "file_name": [], "file_location": []})
+    return chain(paper, code_tbl, structure_df, None)
+
+
+def test_a_script_that_could_not_be_read_is_not_run_and_the_light_is_yellow(
+    paper: pc.Paper, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """metacheck #620: no lines were an empty script that "ran" without an error."""
+    tmp = _unreadable(tmp_path, monkeypatch)
+    mo = module_run(_three_files(paper, tmp), "reproducibility_check")
+    reason = dict(zip(mo.table["file_name"], mo.table["not_runnable_reason"], strict=True))
+    assert reason["fail.R"] == "not_read"
+    assert reason["empty.R"] == "empty"
+    assert mo.traffic_light == "yellow"
+    msg = mo.table.set_index("file_name").loc["fail.R", "error_message"]
+    assert (
+        "metacheck could not read the file: stringi package required for encoding operations" in msg
+    )
+    assert "1 file could not be read" in report_text(mo)
+
+
+@pytest.mark.slow
+def test_execute_a_script_that_could_not_be_read_is_not_run(
+    rscript: str, paper: pc.Paper, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    tmp = _unreadable(tmp_path, monkeypatch)
+    mo = module_run(
+        _three_files(paper, tmp),
+        "reproducibility_check",
+        execute=True,
+        sandbox="process",
+        timeout=60,
+    )
+    tbl = mo.table.set_index("file_name")
+    assert tbl.loc["fail.R", "outcome"] == "not_read"
+    assert tbl.loc["empty.R", "outcome"] == "empty"
+    assert tbl.loc["ok.R", "outcome"] == "ran_ok"
+    assert mo.traffic_light == "yellow"
+    assert "stringi package required" in tbl.loc["fail.R", "error_message"]
+    assert pd.isna(tbl.loc["empty.R", "error_message"])
+    # neither is counted as a script that ran or failed
+    assert mo.summary_table["repro_scripts_n"].tolist() == [1]
+
+
+def test_a_python_script_that_could_not_be_read_is_not_run(
+    paper: pc.Paper, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    tmp = _unreadable(tmp_path, monkeypatch)
+    code_tbl = code_tbl_row(paper, "fail.py", str(tmp / "fail.py"), language="Python")
+    structure_df = pd.DataFrame({"paper_id": [], "file_name": [], "file_location": []})
+    mo = module_run(chain(paper, code_tbl, structure_df, None), "reproducibility_check")
+    py = mo.table.set_index("file_name")
+    assert py.loc["fail.py", "not_runnable_reason"] == "not_read"
+    assert "stringi package required" in py.loc["fail.py", "error_message"]
+    assert mo.traffic_light != "green"
+
+
+def test_repro_read_failed_msg_says_why_a_script_was_not_read() -> None:
+    from metacheck.repro.core import _repro_read_failed_msg
+
+    assert _repro_read_failed_msg([None, None]) == [None, None]
+    msg = _repro_read_failed_msg([None, "cannot open URL 'https://x.org/a.R': HTTP status was 404"])
+    assert msg[0] is None
+    assert msg[1] == (
+        "metacheck could not read the file: cannot open URL 'https://x.org/a.R': HTTP status "
+        "was 404."
+    )
+    # the error is shortened to 300 characters
+    (long,) = _repro_read_failed_msg(["a" * 1000])
+    assert long is not None and "a" * 299 + "\u2026" in long and "a" * 300 not in long
+
+
+def test_repro_not_run_report_lists_files_not_read_and_empty_files() -> None:
+    from metacheck.repro.runsupport import _repro_not_run_report
+
+    rep = _repro_not_run_report(
+        ["a.R", "b.R", "c.R"],
+        ["not_read", "empty", None],
+        read_msg=["metacheck could not read the file: x.", None, None],
+    )
+    assert rep is not None
+    txt = "\n".join(x if isinstance(x, str) else "" for x in rep)
+    assert "1 file could not be read, so it was not run and needs to be checked again" in txt
+    assert (
+        "1 file is empty, so there is nothing to run, and it is not counted as a script: b.R."
+        in txt
+    )
+    table = next(x for x in rep if isinstance(x, ReportTable))
+    assert table.data["Why"].tolist() == ["metacheck could not read the file: x."]
+    assert _repro_not_run_report(["a.R"], [None]) is None
 
 
 @pytest.mark.slow

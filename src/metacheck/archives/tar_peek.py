@@ -97,6 +97,11 @@ def _tar_pax(r: bytes) -> dict[str, str]:
             break
         rec = r[sp + 1 : p + length - 1]  # without the trailing newline
         eq = rec.find(b"=")
+        # a record with a null byte is binary, such as a file's extended attributes
+        # (SCHILY.xattr.*, written by tar on a Mac): only path and size are used
+        # (metacheck 0.4.3.18; rawToChar() stopped on it, PsyArXiv preprint 4z75t_v1)
+        if eq >= 0 and b"\x00" in rec:
+            eq = -1
         if eq >= 0:
             out[rec[:eq].decode("latin-1")] = _tar_str(rec[eq + 1 :])
         p += length

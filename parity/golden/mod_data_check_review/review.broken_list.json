@@ -16,6 +16,7 @@
       "summary_table",
       "findings",
       "na_replace",
+      "keys",
       "structure",
       "previews",
       "gated_repos",
@@ -83,6 +84,7 @@
           "data_file_n",
           "column_n",
           "empty_col_n",
+          "key_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n",
           "flagged_n"
@@ -100,6 +102,13 @@
             "v": [
               0,
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
             ]
           },
           {
@@ -190,6 +199,7 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "names": [
@@ -198,7 +208,56 @@
           "empty_col_n",
           "flagged_n",
           "spreadsheet_file_n",
-          "spreadsheet_flagged_file_n"
+          "spreadsheet_flagged_file_n",
+          "key_n"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "file",
+          "line",
+          "key",
+          "rule",
+          "shown",
+          "row"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
         ]
       },
       {
@@ -397,6 +456,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

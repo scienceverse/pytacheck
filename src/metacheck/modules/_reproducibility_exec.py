@@ -49,6 +49,7 @@ _NOT_SCRIPTS = (
     "defines_functions",
     "not_analysis",
     "not_downloaded",
+    "empty",
 )
 
 #: ``list.files(d, pattern = "\\.Rproj$|^\\.here$|^DESCRIPTION$", all.files = TRUE)``
@@ -124,6 +125,14 @@ def _setdiff(x: Sequence[Any], y: Sequence[Any]) -> list[Any]:
     """R ``setdiff()``: the unique elements of *x* not in *y*."""
     ys = set(y)
     return list(dict.fromkeys(v for v in x if v not in ys))
+
+
+def _folders_by_script(made: pd.DataFrame) -> dict[str, list[str]]:
+    """``split(made$folder, made$script)``: the folders made for each script so far."""
+    out: dict[str, list[str]] = {}
+    for script, folder in zip(h._chr_col(made, "script"), h._chr_col(made, "folder"), strict=True):
+        out.setdefault(str(script), []).append(str(folder))
+    return out
 
 
 def _pass_order(order: Sequence[Any], redo: Sequence[Any]) -> list[Any]:
@@ -310,8 +319,19 @@ def _execute(
         dbg("docker image: ", docker_image)
 
     # 1. Build the data tree the plan describes, and write the scripts into it.
+    # Not when too little time is left, and the copying stops at the clock deadline (a
+    # server's job limit), as running does
+    no_time = core._repro_no_time_to_prepare(total_timeout, a["run_state"])
     dbg(f"copying the repository ({len(plan) if plan is not None else 0} files) ...")
-    ml = core.repro_materialize_layout(plan, structure_df, sandbox_root)
+    ml = core.repro_materialize_layout(
+        plan,
+        structure_df,
+        sandbox_root,
+        deadline=time.time() if no_time else core._repro_clock_deadline(total_timeout),
+    )
+    not_copied = getattr(ml, "attrs", {}).get("not_copied_time") or 0
+    if not_copied > 0:
+        dbg(f"  {not_copied} not copied: the time had run out.")
     # Stan files in the syntax Stan removed in 2.33 get the newer form (#568)
     stan_parts: list[pd.DataFrame | None] = [rec._repro_upgrade_stan_files(sandbox_root)]
     # and Stan programs held in the R code as a quoted text (#568; see
@@ -403,7 +423,16 @@ def _execute(
     #    cran_install_main has no meaning there and is silently ignored.
     install_results: pd.DataFrame | None = None
     failed_deps: list[str] = []
-    if install_r and len(to_install) > 0:
+    if (
+        install_r
+        and len(to_install) > 0
+        and core._repro_no_time_to_install(total_timeout, a["run_state"])
+    ):
+        # a script started in the last minute that fails on one of them could not run here
+        # (dependency_unavailable), as when nothing is installed
+        dbg(f"no time left to install {len(to_install)} dependenc(y/ies); skipping installs.")
+        failed_deps = [str(p) for p in h._chr_col(to_install, "package") if p is not None]
+    elif install_r and len(to_install) > 0:
         dbg(
             f"installing {len(to_install)} dependenc(y/ies)",
             f" (cran_install_main = {'TRUE' if h._is_true(a.get('cran_install_main')) else 'FALSE'})"
@@ -741,7 +770,12 @@ def _execute(
     # The first download leaves out some kinds of files, and a name built while the script
     # runs cannot be seen before.
     plan_now = plan
-    if _download_on(a.get("download")) and any(layout._repro_fetchable(structure_df)):
+    # (not when the time is up: the scripts would not be run again)
+    if (
+        _download_on(a.get("download"))
+        and any(layout._repro_fetchable(structure_df))
+        and not core._repro_short_of_time(total_timeout, 60)
+    ):
         stopped = [o == "errored" for o in h._chr_col(run_results, "outcome")]
         msgs = _msgs(run_results)
         unopened = {
@@ -776,7 +810,12 @@ def _execute(
                 new_plan = plan_now[
                     [s is not None and s in got_locs for s in h._chr_col(plan_now, "source")]
                 ].reset_index(drop=True)
-                core.repro_materialize_layout(new_plan, structure_df, sandbox_root)
+                core.repro_materialize_layout(
+                    new_plan,
+                    structure_df,
+                    sandbox_root,
+                    deadline=core._repro_clock_deadline(total_timeout),
+                )
                 fetched_after = [
                     (n or "").lower() for n, g in zip(_names(structure_df), got, strict=True) if g
                 ]
@@ -808,6 +847,9 @@ def _execute(
     r_placed = layout._none_placed()
     r_deposit_placed = r_placed
     r_seen: dict[str, list[str]] = {}  # script -> the files it stopped on when run again
+    # A script whose write stopped on a folder the deposit does not have runs once more
+    # after the folder is made (metacheck 0.4.3.12, #591; see _repro_make_failed_write_folders())
+    r_folders_made = layout._folders_frame([])
     for _ in range(5):
         names_after = layout._repro_sandbox_names(sandbox_root)
         later = layout._repro_written_later(run_results, r_names_before, names_after)
@@ -828,12 +870,20 @@ def _execute(
             run_results, run_tbl, sandbox_root, r_names_before
         )
         r_deposit_placed = bind_rows([r_deposit_placed, from_deposit])
-        redo = list(dict.fromkeys([*later, *h._chr_col(from_deposit, "script")]))
+        made = layout._repro_make_failed_write_folders(
+            run_results, run_tbl, sandbox_root, _folders_by_script(r_folders_made)
+        )
+        r_folders_made = bind_rows([r_folders_made, made])
+        redo = list(
+            dict.fromkeys(
+                [*later, *h._chr_col(from_deposit, "script"), *h._chr_col(made, "script")]
+            )
+        )
         if not redo:
             break
         dbg(
-            f"re-running {len(redo)} script(s) that stopped on a file another script wrote "
-            "or the deposit holds elsewhere: ",
+            f"re-running {len(redo)} script(s) that stopped on a file another script wrote, "
+            "the deposit holds elsewhere, or a folder a write needed: ",
             ", ".join(map(str, redo)),
         )
         # a script this pass was to run but had no time for is skipped_time_limit, not the
@@ -1015,6 +1065,7 @@ def _execute(
         "r_written_later": r_written_later,
         "r_placed": r_placed,
         "r_deposit_placed": r_deposit_placed,
+        "r_folders_made": r_folders_made,
         # for the report
         "definer_lookup": definer_lookup,
         "run_by_source": run_by_source,
@@ -1063,8 +1114,9 @@ def _execution_report(
     section. Returns the report items in R's order: strings, ``scroll_table()`` and
     ``collapse_section()`` objects.
     """
-    from metacheck.repro.core import _repro_deadline_text
+    from metacheck.repro.core import _repro_deadline_text, _repro_no_prep_text
     from metacheck.repro.layout import (
+        _repro_folders_made_text,
         _repro_lfs_stopped_text,
         _repro_not_downloaded_text,
         _repro_placed_text,
@@ -1130,6 +1182,7 @@ def _execution_report(
         report_exec += (
             f" {n_late:d} {plural(n_late, 'script was', 'scripts were')} not started, or "
             f"stopped early, because {_repro_deadline_text(a.get('total_timeout'))} had run out."
+            f"{_repro_no_prep_text(a['run_state'].get('prep_skipped_left'))}"
         )
     n = count("docker_failed")
     if n > 0:
@@ -1185,6 +1238,9 @@ def _execution_report(
     r_deposit_placed = ex.get("r_deposit_placed")
     if r_deposit_placed is not None and len(r_deposit_placed):
         report_exec += _repro_placed_text(r_deposit_placed)
+    r_folders_made = ex.get("r_folders_made")
+    if r_folders_made is not None and len(r_folders_made):
+        report_exec += _repro_folders_made_text(r_folders_made)
     r_lfs_stopped = ex.get("r_lfs_stopped") or {}
     if r_lfs_stopped:
         report_exec += _repro_lfs_stopped_text(r_lfs_stopped)

@@ -19,6 +19,7 @@
       "p_value",
       "expanded",
       "imprecise",
+      "not_a_test",
       "zero"
     ],
     "v": [
@@ -95,6 +96,12 @@
         ]
       },
       {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
         "t": "lgl",
         "v": [
           false
@@ -102,6 +109,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

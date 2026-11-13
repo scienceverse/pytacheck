@@ -177,8 +177,40 @@ def test_rw_update_bad_download() -> None:
         router.get(url__regex=r"^https://api\.labs\.crossref\.org/").mock(
             return_value=httpx.Response(500, json={"error": "x"})
         )
-        with pytest.raises(RuntimeError, match="not the expected CSV"):
+        router.get(url__regex=r"^https://gitlab\.com/").mock(return_value=httpx.Response(404))
+        with pytest.raises(RuntimeError, match="Could not download the Retraction Watch data"):
             retractionwatch.rw_update()
+
+
+def test_rw_update_falls_back_to_gitlab() -> None:
+    # metacheck 0.4.3.27 (#305): Crossref is retiring the Labs API, so its copy on GitLab
+    # is the second source; the Labs API answers a refused request with status 200 and an
+    # error message, which is not the data
+    csv = (DATA / "retractions.csv").read_bytes()
+    with respx.mock() as router:
+        labs = router.get(url__regex=r"^https://api\.labs\.crossref\.org/").mock(
+            return_value=httpx.Response(200, json={"error": "an email address is needed"})
+        )
+        gitlab = router.get(
+            "https://gitlab.com/crossref/retraction-watch-data/-/raw/main/retraction_watch.csv"
+        ).mock(return_value=httpx.Response(200, content=csv))
+        path = retractionwatch.rw_update()
+    assert labs.called and gitlab.called
+    assert path.exists()
+    assert retractionwatch.retractionwatch()["doi"].tolist()[0] == "10.1234/abc"
+
+
+def test_rw_update_labs_first() -> None:
+    csv = (DATA / "retractions.csv").read_bytes()
+    with respx.mock(assert_all_called=False) as router:
+        router.get(url__regex=r"^https://api\.labs\.crossref\.org/").mock(
+            return_value=httpx.Response(200, content=csv)
+        )
+        gitlab = router.get(url__regex=r"^https://gitlab\.com/").mock(
+            return_value=httpx.Response(200, content=b"x")
+        )
+        retractionwatch.rw_update()
+    assert not gitlab.called
 
 
 def test_flora_update() -> None:

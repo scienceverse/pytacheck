@@ -1,0 +1,44 @@
+{
+  "id": "keys.remove.none",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "out",
+      "n"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "report",
+          "n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "nothing here"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.21",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

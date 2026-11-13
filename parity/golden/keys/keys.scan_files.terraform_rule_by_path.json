@@ -1,0 +1,78 @@
+{
+  "id": "keys.scan_files.terraform_rule_by_path",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "keys",
+      "not_searched"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "file",
+          "line",
+          "key",
+          "rule",
+          "shown"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "main.tf"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "hashicorp-tf-password"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "\"x7K..."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file",
+          "reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.21",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

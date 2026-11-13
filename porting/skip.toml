@@ -27,6 +27,11 @@
 "osf_app" = "Shiny app (inst/app/osf_app.R). Its steps are ported functions: osf_user_projects(), osf_file_download(), zenodo_upload()."
 "report_app" = "Shiny app (inst/app/report_app.R). Replaced by `pytacheck report`/`run` (--preset metacheck::validated, --offline) and the API's /paper/check (report_html)."
 
+# R/utils.R -- R packages that cannot be loaded
+".pkg_problem" = "Tells an R package that is installed but cannot be loaded (a compiled part built for another system) from one that is not installed, for module_run() and the reproducibility check (D141). Python has no such packages to check."
+".pkg_name" = "Name of the package an R module's @import line names (\"owner/pkg\" for a package only on GitHub), for module_run() and module_install(), which run R module files (D142). Python modules name their dependencies in `requires` and pack metadata."
+".pkg_github_hint" = "Tells how to install a GitHub-only R package a module needs (remotes::install_github()), for module_run() and module_install() (D142). pytacheck's modules have no R package requirements."
+
 # R/zzz.R -- package hooks
 ".onLoad" = "R package load hook. Its option defaults are in metacheck.config and metacheck.llm.core (_default_model_from_env), applied lazily; .osf_pat_validate() runs when OSF is used."
 ".onAttach" = "library() startup banner, including a network version check against GitHub. pytacheck does no network I/O at import; `pytacheck version` shows versions."

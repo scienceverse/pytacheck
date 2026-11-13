@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 2,
+    "nrow": 3,
     "names": [
       "repo_url",
       "file_name",
@@ -19,6 +19,7 @@
         "t": "chr",
         "v": [
           "upstream/metacheck/inst/",
+          "upstream/metacheck/inst/",
           "upstream/metacheck/inst/"
         ]
       },
@@ -26,12 +27,14 @@
         "t": "chr",
         "v": [
           "--CITATION",
-          "CITATION"
+          "CITATION",
+          "COPYRIGHTS"
         ]
       },
       {
         "t": "chr",
         "v": [
+          null,
           null,
           null
         ]
@@ -40,25 +43,28 @@
         "t": "chr",
         "v": [
           "<repo>/upstream/metacheck/inst/--CITATION",
-          "<repo>/upstream/metacheck/inst/CITATION"
+          "<repo>/upstream/metacheck/inst/CITATION",
+          "<repo>/upstream/metacheck/inst/COPYRIGHTS"
         ]
       },
       {
         "t": "dbl",
         "v": [
           1057,
-          736
+          736,
+          1433
         ]
       },
       {
         "t": "chr",
         "v": [
           null,
+          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.21",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

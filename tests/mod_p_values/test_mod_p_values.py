@@ -270,7 +270,8 @@ def test_chaining_p_value_modules(psychsci) -> None:
     # metacheck: [6, 39, 13], [0, 0, 2] and [0, 17, 0]; its pattern misses the
     # 'ps < .05' forms of the second and third paper (U204)
     assert x.summary_table["p_values"].tolist() == [6, 44, 15]
-    assert x.summary_table["n_imprecise"].tolist() == [0, 5, 5]
+    # 0.4.3.19 (#604) leaves out table notes, legends and thresholds: 5 -> 3 for the third paper
+    assert x.summary_table["n_imprecise"].tolist() == [0, 5, 3]
     assert x.summary_table["n_nonsignificant"].tolist() == [0, 20, 0]
     assert isinstance(x.prev_outputs["all_p_values"], ModuleOutput)
 
@@ -339,13 +340,14 @@ def test_stat_p_exact_star_note_information_separators() -> None:
 
 
 def test_stat_p_exact_star_note_hides_only_its_p_value() -> None:
-    # U127: metacheck 0.3 drops every imprecise p-value of a sentence with a star note;
-    # 0.4 leaves out as many rows of a starred p-value as there are starred copies, the
-    # last ones (a footnote comes after the results): the "p < .05" of the footnote stays
-    # and the copy in the running text goes, "** p < .01" goes, "p = .03" is exact
+    # U127: metacheck 0.3 drops every imprecise p-value of a sentence with a star note.
+    # From 0.4.3.19 (#604) each p-value is judged in its own clause: the "p < .05" and
+    # "** p < .01" of the note go (not_a_test "marker"), the "p < .05" of the running text
+    # stays, "p = .03" is exact
     paper = pc.test_paper(["Note. * p < .05, ** p < .01. The effect was p < .05 and p = .03."])
     out = module_run(paper, "stat_p_exact")
-    assert out.table["imprecise"].tolist() == [True, False, False, False]
+    assert out.table["imprecise"].tolist() == [False, False, True, False]
+    assert out.table["not_a_test"].tolist()[:2] == ["marker", "marker"]
     assert out.summary_text == "We found 1 imprecise *p* value out of 4 detected *p* values."
 
 
@@ -428,3 +430,105 @@ def test_report_tables_match_r() -> None:
     assert list(allp["table"].columns) == ["Text", "Sentence"]
     assert allp["colwidths"] == ["5em", None]
     assert len(allp["table"]) == 9
+
+
+def test_stat_p_exact_leaves_out_notes_legends_and_thresholds() -> None:
+    # metacheck 0.4.3.19 (#604): port of the R test of the same name; the values are R's
+    from metacheck.stats.helpers import _p_not_test
+
+    cases = [
+        ("Note. ** = p < .01, * = p < .05.", "p < .05", "marker"),
+        (
+            "Data are presented as mean ± SD. ns, p > 0.05; **p < 0.01; ***p < 0.001.",
+            "p > 0.05",
+            "marker",
+        ),
+        ("Error bars indicate standard error. + p < 0.10, * p <0.05.", "p < 0.10", "marker"),
+        ("Error bars represent ±1 SEM.* p < 0.05 (two-tailed).", "p < 0.05", "marker"),
+        (
+            "A p-value < 0.05 was considered statistically significant.",
+            "p-value < 0.05",
+            "threshold",
+        ),
+        ("The significance level was set at p <.05.", "p <.05", "threshold"),
+        (
+            "All the reported clusters survived a cFWE-corrected threshold of P < 0.05.",
+            "P < 0.05",
+            "threshold",
+        ),
+        (
+            "Asterisks indicate significant differences between conditions (p < .05).",
+            "p < .05",
+            "legend",
+        ),
+        (
+            "Note: Correlations significant at the p < .05 level are highlighted in bold.",
+            "p < .05",
+            "legend",
+        ),
+        (
+            "More importantly, there was a significant interaction [F(1,18) ¼ 6.05, P < 0.05, g2 ¼ 0.25].",
+            "P < 0.05",
+            None,
+        ),
+        (
+            "The indirect effect through hopelessness was significant (β = 0.115*, p < 0.05).",
+            "p < 0.05",
+            None,
+        ),
+        (
+            "Trials were more variable (paired t-test, n = 95, t52 = 6.92, ***p<<0.001, and for monkey D).",
+            "p<<0.001",
+            None,
+        ),
+        (
+            "Silencing (overground n = 135/600 vs treadmill n = 22/151, *p<0.05 [z = 2.38]; hindlimbs).",
+            "p<0.05",
+            None,
+        ),
+        ("Tor1a +/+ p<0.05; Tor1a +/Dgag p<0.01.", "p<0.05", None),
+        (
+            "No other main effects or interactions reached conventional significance levels (all ps > 0.09).",
+            "ps > 0.09",
+            None,
+        ),
+        (
+            "This effect remained significant when the maps were thresholded at varying levels (all Ps < 0.002).",
+            "Ps < 0.002",
+            None,
+        ),
+        ("Participants showed a higher exit threshold (P < 0.05).", "P < 0.05", None),
+        (
+            "Alpha power was higher in the online group than in the offline group (p < .05).",
+            "p < .05",
+            None,
+        ),
+        ("Participants who met the inclusion criteria scored higher (p < .05).", "p < .05", None),
+    ]
+    p = pd.DataFrame(
+        {
+            "paper_id": "x",
+            "text_id": range(1, len(cases) + 1),
+            "expanded": [c[0] for c in cases],
+            "text": [c[1] for c in cases],
+        }
+    )
+    assert _p_not_test(p) == [c[2] for c in cases]
+
+    # the same note under two tables: both copies are left out, not one (b92ku_v1)
+    note = (
+        "The table reports standard errors and asymptotic p-values. "
+        "* p < .05. * * p < .01. * * * p < .001."
+    )
+    out = module_run(pc.test_paper([note, "Some results.", note]), "stat_p_exact")
+    assert out.table["imprecise"].sum() == 0
+    # a result reported imprecisely is still found, next to a note
+    out = module_run(
+        pc.test_paper(["Group A differed, F(1, 30) = 5.20, p < .05.", note]), "stat_p_exact"
+    )
+    assert out.summary_table["n_imprecise"].tolist() == [1]
+    assert out.table["not_a_test"].notna().sum() == 3
+    # the report says where the threshold words can be wrong
+    assert "sometimes flags false positives when sentences discuss how p-value thresholds" in (
+        "\n".join(str(x) for x in out.report)
+    )

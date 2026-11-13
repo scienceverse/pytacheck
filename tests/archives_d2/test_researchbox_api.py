@@ -25,6 +25,7 @@ import respx
 from metacheck.archives import researchbox as rb
 from metacheck.archives.researchbox import (
     _rbox_api,
+    _rbox_box_meta,
     _rbox_info,
     _rbox_license,
     _rbox_retry_after,
@@ -469,6 +470,49 @@ def test_rbox_license(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         rb, "_rbox_info_page", lambda u: pd.DataFrame({"rb_url": [u], "error": ["unfound"]})
     )
     assert _rbox_license("https://researchbox.org/803") is None
+
+
+def test_rbox_box_meta_gives_the_licence_and_status_from_one_request(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """metacheck 0.4.3.23 (#621): the status comes with the licence."""
+    asked: list[Any] = []
+
+    def api(action: str, **kw: Any) -> Any:
+        asked.append(kw.get("code"))
+        return {
+            "ok": True,
+            "error": None,
+            "body": {"license_id": "CC-BY-4.0", "status": "private"},
+        }
+
+    with local_options(
+        {
+            "metacheck.cache.dir": str(tmp_path / "cache"),
+            "metacheck.repo_cache.session_dir": str(tmp_path / "s2"),
+            "metacheck.state.dir": str(tmp_path / "st"),
+        }
+    ):
+        monkeypatch.setattr(rb, "_rbox_api", api)
+        meta = _rbox_box_meta(
+            "https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR", cache=True
+        )
+        assert meta == {"RB_license": "CC-BY-4.0", "RB_status": "private"}
+        assert asked == ["NNONJR"]
+        # the status is saved with the licence
+        assert _rbox_box_meta("https://researchbox.org/8285", cache=True)["RB_status"] == "private"
+        assert len(asked) == 1
+
+    # the web page gives no status
+    monkeypatch.setattr(
+        rb, "_rbox_api", lambda *a, **k: {"ok": False, "error": "HTTP 503", "body": None}
+    )
+    monkeypatch.setattr(
+        rb, "_rbox_info_page", lambda u: pd.DataFrame({"rb_url": [u], "RB_license": ["CC-BY-4.0"]})
+    )
+    meta = _rbox_box_meta("https://researchbox.org/802")
+    assert meta["RB_license"] == "CC-BY-4.0"
+    assert meta["RB_status"] is None
 
 
 # --------------------------------------------------------------------------- downloads
