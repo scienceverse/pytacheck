@@ -18,6 +18,13 @@ package's. The R commit each release is compared against is in
 - **Not done yet:** `run_code` is off unless `--run-code` is given and Docker runs; `crossref` only reaches GROBID.
 - **Fixed:** the site's job queue woke its clean-up thread instead of a worker when a job arrived, so a job could wait until the next one came.
 
+### Compared with metacheck 0.4.3.28 (`dev` at f0e5c95)
+
+- **Changed:** the parity checks compare pytacheck with metacheck `dev` at f0e5c95 (0.4.3.28) instead of e6a4340 (0.4.3.27). The goldens of `mod_repro`, `mod_repro_review` and `archives_osf_review/local_files.vector` are regenerated (the version they record, and the sizes of the files of the metacheck submodule); the new case `repro_materialize_layout.deadline` agrees with R. No mark was added or removed, and no new divergence was found.
+- **Fixed:** `reproducibility_check()` with a clock time as `total_timeout` (a server's job limit minus the time for its report) now keeps to it before the scripts run too (metacheck 0.4.3.28), so the job still gets its report. When less than 15 minutes are left as the check starts (the option `metacheck.repro_min_time`, in seconds), it copies, installs and runs nothing: every script is `skipped_time_limit`, and the report says how much time the checks before it had left. This holds for the R block and the Python block alike. A time in seconds as `total_timeout`, which counts from the first script, works as before.
+- **Changed:** `repro_materialize_layout()` takes `deadline=` (seconds since the epoch, as pytacheck's deadlines are, where R takes a `POSIXct`): after it no further file is copied, its folder is still made, and its row has `ok = False`; the number of files not copied is `out.attrs["not_copied_time"]`. The copy of the repository, the one that fetches the files the scripts asked for, and the one for `stat_output` all stop at the clock deadline.
+- **Changed:** packages are not installed with less than a minute left (before, installing always had at least a minute), and the files the scripts asked for are not fetched then either, as the scripts would not be run again. A script that fails on a package that was not installed for this reason counts as `dependency_unavailable`.
+
 ### Compared with metacheck 0.4.3.27 (`dev` at e6a4340)
 
 - **Changed:** the parity checks compare pytacheck with metacheck `dev` at e6a4340 (0.4.3.27) instead of c72b44e (0.4.3.24). The goldens of the cases whose R result changed (the sizes of the files of the metacheck submodule, `_papers_release_assets()`, `report_table()` and the default report) are regenerated; the new cases `extract_p_values.test_paper.eta` and `extract_eq.test_paper.eta` agree with R. No mark was added or removed.

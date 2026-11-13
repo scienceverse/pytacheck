@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import os
 import re
+import time
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -1036,8 +1037,12 @@ def _execute_py(
     """
     from metacheck.repro.core import (
         _message,
+        _repro_clock_deadline,
         _repro_deadline,
         _repro_install_limit,
+        _repro_no_time_to_install,
+        _repro_no_time_to_prepare,
+        _repro_short_of_time,
         repro_materialize_layout,
         repro_write_scripts,
     )
@@ -1103,14 +1108,16 @@ def _execute_py(
     sandbox_root = ex["sandbox_root"]
     # Reuse the SAME sandbox_root the R block (and/or the JASP step) already materialised, if
     # any: one shared tree, not two.
+    py_no_time = _repro_no_time_to_prepare(total_timeout, state)
+    py_copy_deadline = time.time() if py_no_time else _repro_clock_deadline(total_timeout)
     if sandbox_root is None:
         sandbox_root = rc._new_sandbox(h._is_true(keep_sandbox), cleanup)
-        repro_materialize_layout(plan, structure_df, sandbox_root)
+        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=py_copy_deadline)
     elif not has_r:
         # the R block's own materialise call never ran, so a Python-only paper still needs the
         # layout built into whatever sandbox_root the JASP/jamovi step above created (that
         # step only writes statistical_output/, never the data/ tree)
-        repro_materialize_layout(plan, structure_df, sandbox_root)
+        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=py_copy_deadline)
     ex["sandbox_root"] = sandbox_root
     lib_dir = os.path.join(sandbox_root, "_pylib")
 
@@ -1203,7 +1210,19 @@ def _execute_py(
         )
     to_install = install_deps[[p in needed for p in install_pkgs]].reset_index(drop=True)
     install_results: pd.DataFrame | None = None
-    if ex["exec_error"] is None and install_is_true and len(to_install) > 0:
+    if (
+        ex["exec_error"] is None
+        and install_is_true
+        and len(to_install) > 0
+        and _repro_no_time_to_install(total_timeout, state)
+    ):
+        # as for R: a script that fails on one of them could not run here
+        _message(
+            f"[repro/py] no time left to install {len(to_install)} dependenc(y/ies); "
+            "skipping installs."
+        )
+        failed_deps = [str(p) for p in h._chr_col(to_install, "package")]
+    elif ex["exec_error"] is None and install_is_true and len(to_install) > 0:
         _message(
             f"[repro/py] installing {len(to_install)} dependenc(y/ies): "
             f"{', '.join(str(p) for p in h._chr_col(to_install, 'package'))}"
@@ -1341,7 +1360,8 @@ def _execute_py(
                 and str(h._basename(n.replace("\\", "/"))).lower() in lower_unopened
                 for f, n in zip(fetchable, sd_names, strict=True)
             ]
-            if any(rows):
+            # (not when the time is up: the scripts would not be run again)
+            if any(rows) and not _repro_short_of_time(total_timeout, 60):
                 _message(f"[repro/py] fetching {sum(rows)} file(s) scripts could not open")
                 structure_df = _repro_fetch_files(
                     structure_df,
@@ -1361,6 +1381,7 @@ def _execute_py(
                         plan[[s is not None and s in got_locs for s in sources]],
                         structure_df,
                         sandbox_root,
+                        deadline=_repro_clock_deadline(total_timeout),
                     )
                     sd_names = h._chr_col(structure_df, "file_name")
                     got_names = [str(n).lower() for g, n in zip(got, sd_names, strict=True) if g]
@@ -1764,7 +1785,7 @@ def _execution_report_py(
     internet: bool,
 ) -> list[Any]:
     """The Python section's "Execution" subsection (R's ``py_report`` after a run)."""
-    from metacheck.repro.core import _repro_deadline_text
+    from metacheck.repro.core import _repro_deadline_text, _repro_no_prep_text
     from metacheck.repro.layout import (
         _repro_folders_made_text,
         _repro_lfs_stopped_text,
@@ -1826,6 +1847,7 @@ def _execution_report_py(
         report_exec += (
             f" {n_late:d} {plural(n_late, 'script was', 'scripts were')} not started, or stopped "
             f"early, because {_repro_deadline_text(a.get('total_timeout'))} had run out."
+            f"{_repro_no_prep_text((a.get('run_state') or {}).get('prep_skipped_left'))}"
         )
     written_later: Mapping[str, Sequence[str]] = ex["written_later"]
     placed, deposit_placed = ex["placed"], ex["deposit_placed"]

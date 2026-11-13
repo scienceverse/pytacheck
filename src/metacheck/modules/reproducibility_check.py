@@ -745,11 +745,16 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     # Materialised root for statistical_output/ ---------------------------------
     sandbox_root: str | None = None
     if stat_output:
-        from metacheck.repro.core import repro_materialize_layout
+        from metacheck.repro.core import _repro_clock_deadline, repro_materialize_layout
         from metacheck.statout.stat_output import stat_output_write
 
         sandbox_root = _new_sandbox(keep_sandbox, cleanup)
-        repro_materialize_layout(plan, structure_df, sandbox_root)
+        repro_materialize_layout(
+            plan,
+            structure_df,
+            sandbox_root,
+            deadline=_repro_clock_deadline(a.get("total_timeout")),
+        )
         stat_output_write(stat_output, sandbox_root)
 
     # Non-R code with no way to check its results ------------------------------

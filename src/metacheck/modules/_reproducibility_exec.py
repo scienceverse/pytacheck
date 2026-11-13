@@ -319,8 +319,19 @@ def _execute(
         dbg("docker image: ", docker_image)
 
     # 1. Build the data tree the plan describes, and write the scripts into it.
+    # Not when too little time is left, and the copying stops at the clock deadline (a
+    # server's job limit), as running does
+    no_time = core._repro_no_time_to_prepare(total_timeout, a["run_state"])
     dbg(f"copying the repository ({len(plan) if plan is not None else 0} files) ...")
-    ml = core.repro_materialize_layout(plan, structure_df, sandbox_root)
+    ml = core.repro_materialize_layout(
+        plan,
+        structure_df,
+        sandbox_root,
+        deadline=time.time() if no_time else core._repro_clock_deadline(total_timeout),
+    )
+    not_copied = getattr(ml, "attrs", {}).get("not_copied_time") or 0
+    if not_copied > 0:
+        dbg(f"  {not_copied} not copied: the time had run out.")
     # Stan files in the syntax Stan removed in 2.33 get the newer form (#568)
     stan_parts: list[pd.DataFrame | None] = [rec._repro_upgrade_stan_files(sandbox_root)]
     # and Stan programs held in the R code as a quoted text (#568; see
@@ -412,7 +423,16 @@ def _execute(
     #    cran_install_main has no meaning there and is silently ignored.
     install_results: pd.DataFrame | None = None
     failed_deps: list[str] = []
-    if install_r and len(to_install) > 0:
+    if (
+        install_r
+        and len(to_install) > 0
+        and core._repro_no_time_to_install(total_timeout, a["run_state"])
+    ):
+        # a script started in the last minute that fails on one of them could not run here
+        # (dependency_unavailable), as when nothing is installed
+        dbg(f"no time left to install {len(to_install)} dependenc(y/ies); skipping installs.")
+        failed_deps = [str(p) for p in h._chr_col(to_install, "package") if p is not None]
+    elif install_r and len(to_install) > 0:
         dbg(
             f"installing {len(to_install)} dependenc(y/ies)",
             f" (cran_install_main = {'TRUE' if h._is_true(a.get('cran_install_main')) else 'FALSE'})"
@@ -750,7 +770,12 @@ def _execute(
     # The first download leaves out some kinds of files, and a name built while the script
     # runs cannot be seen before.
     plan_now = plan
-    if _download_on(a.get("download")) and any(layout._repro_fetchable(structure_df)):
+    # (not when the time is up: the scripts would not be run again)
+    if (
+        _download_on(a.get("download"))
+        and any(layout._repro_fetchable(structure_df))
+        and not core._repro_short_of_time(total_timeout, 60)
+    ):
         stopped = [o == "errored" for o in h._chr_col(run_results, "outcome")]
         msgs = _msgs(run_results)
         unopened = {
@@ -785,7 +810,12 @@ def _execute(
                 new_plan = plan_now[
                     [s is not None and s in got_locs for s in h._chr_col(plan_now, "source")]
                 ].reset_index(drop=True)
-                core.repro_materialize_layout(new_plan, structure_df, sandbox_root)
+                core.repro_materialize_layout(
+                    new_plan,
+                    structure_df,
+                    sandbox_root,
+                    deadline=core._repro_clock_deadline(total_timeout),
+                )
                 fetched_after = [
                     (n or "").lower() for n, g in zip(_names(structure_df), got, strict=True) if g
                 ]
@@ -1084,7 +1114,7 @@ def _execution_report(
     section. Returns the report items in R's order: strings, ``scroll_table()`` and
     ``collapse_section()`` objects.
     """
-    from metacheck.repro.core import _repro_deadline_text
+    from metacheck.repro.core import _repro_deadline_text, _repro_no_prep_text
     from metacheck.repro.layout import (
         _repro_folders_made_text,
         _repro_lfs_stopped_text,
@@ -1152,6 +1182,7 @@ def _execution_report(
         report_exec += (
             f" {n_late:d} {plural(n_late, 'script was', 'scripts were')} not started, or "
             f"stopped early, because {_repro_deadline_text(a.get('total_timeout'))} had run out."
+            f"{_repro_no_prep_text(a['run_state'].get('prep_skipped_left'))}"
         )
     n = count("docker_failed")
     if n > 0:

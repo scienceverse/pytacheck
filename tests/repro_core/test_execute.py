@@ -57,6 +57,33 @@ def test_materialize_copies_converted_original(tmp_path: Path) -> None:
     assert (root / "study-ex1/data/math.dta").exists()
 
 
+def test_materialize_stops_copying_at_its_deadline(tmp_path: Path) -> None:
+    # metacheck 0.4.3.28: copying 10,658 files took 16 minutes on the metacheck server, past
+    # its limit for the code; after the deadline a file's folder is still made, not the file
+    import time
+
+    srcs = []
+    for n in ("a.csv", "b.csv"):
+        f = tmp_path / n
+        f.write_text("x\n1\n")
+        srcs.append(str(f))
+    structure_df = pd.DataFrame({"file_name": ["a.csv", "b.csv"], "file_location": srcs})
+    plan = pd.DataFrame({"file_name": ["a.csv", "b.csv"], "target_path": ["d1/a.csv", "d2/b.csv"]})
+    late = repro_materialize_layout(plan, structure_df, tmp_path / "late", deadline=time.time() - 1)
+    assert late.materialised["ok"].tolist() == [False, False]
+    assert late.attrs["not_copied_time"] == 2
+    assert (tmp_path / "late/d1").is_dir() and not (tmp_path / "late/d1/a.csv").exists()
+    assert (tmp_path / "late/output").is_dir()
+
+    early = repro_materialize_layout(
+        plan, structure_df, tmp_path / "early", deadline=time.time() + 3600
+    )
+    assert early.materialised["ok"].tolist() == [True, True]
+    assert early.attrs["not_copied_time"] == 0
+    none = repro_materialize_layout(plan, structure_df, tmp_path / "none")
+    assert none.attrs["not_copied_time"] == 0 and (tmp_path / "none/d2/b.csv").exists()
+
+
 def test_materialize_without_plan(tmp_path: Path) -> None:
     out = repro_materialize_layout(None, None, tmp_path / "root")
     assert (tmp_path / "root" / "output").is_dir()

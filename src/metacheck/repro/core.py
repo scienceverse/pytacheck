@@ -2400,7 +2400,10 @@ def _chmod(path: str, mode: int) -> None:
 
 
 def repro_materialize_layout(
-    plan: pd.DataFrame | None, structure_df: pd.DataFrame | None, root: str | os.PathLike[str]
+    plan: pd.DataFrame | None,
+    structure_df: pd.DataFrame | None,
+    root: str | os.PathLike[str],
+    deadline: float | None = None,
 ) -> MaterialisedRoot:
     """Materialise the deposit's layout for a paper into a throwaway directory.
 
@@ -2413,11 +2416,25 @@ def repro_materialize_layout(
     holds only a placeholder (#575). The copies and folders are opened for the code to
     change, for the host user only (D135). Returns *root* with the copy log in ``attrs["materialised"]`` and the swaps
     in ``attrs["lfs"]``.
+
+    *deadline* is a clock time (``time.time()`` seconds) after which no further file is
+    copied: its folder is still made and its row has ``ok`` false (metacheck 0.4.3.28);
+    ``None`` copies every file. ``attrs["not_copied_time"]`` is the number of files not
+    copied because the deadline had passed.
     """
     root_s = os.fspath(root)
     _dir_create(root_s)
     _dir_create(_file_path(root_s, "output"))
     rows: list[tuple[str | None, str | None, bool]] = []
+    late = 0
+
+    def too_late() -> bool:
+        """The deadline has passed (copying 10,658 files took 16 minutes on a server)."""
+        nonlocal late
+        if deadline is None or time.time() <= deadline:
+            return False
+        late += 1
+        return True
 
     def result(lfs: pd.DataFrame | None = None) -> MaterialisedRoot:
         out = MaterialisedRoot(
@@ -2432,6 +2449,7 @@ def repro_materialize_layout(
         )
         if lfs is not None:
             out.attrs["lfs"] = lfs
+        out.attrs["not_copied_time"] = late
         return out
 
     if (
@@ -2457,6 +2475,9 @@ def repro_materialize_layout(
             rows.append((tgt, None, False))
             continue
         _dir_create(os.path.dirname(dest))
+        if too_late():
+            rows.append((tgt, src, False))
+            continue
         ok = _copy_file(src, dest)
         if ok:
             # the copy is the code's to change (a script that saves over a file of the
@@ -2473,6 +2494,9 @@ def repro_materialize_layout(
                 continue
             dest = _file_path(root_s, _portable_path(tgt))
             _dir_create(os.path.dirname(dest))
+            if too_late():
+                rows.append((tgt, src, False))
+                continue
             rows.append((tgt, src, _copy_file(src, dest)))
     # and its folders, so a script can save a new file next to the data (for the host
     # user only: metacheck opens them to everyone, D135)
@@ -3619,6 +3643,82 @@ def _repro_deadline_text(total_timeout: Any) -> str:
     t = as_float(total_timeout)
     mins = "Inf" if t is None or not math.isfinite(t) else f"{t / 60:g}"
     return f"the time for all scripts together ({mins} minutes, `total_timeout`)"
+
+
+def _repro_short_of_time(total_timeout: Any, need: float = 0.0) -> bool:
+    """Port of ``.repro_short_of_time()``: with a clock time as *total_timeout* (a server's
+    job limit minus the time for its report), whether at most *need* seconds are left.
+
+    Always false for a time in seconds, which counts from the first script and so has not
+    begun.
+    """
+    import datetime as _dt
+
+    return isinstance(total_timeout, _dt.datetime) and (
+        _repro_time_left(total_timeout.timestamp()) <= need
+    )
+
+
+def _repro_clock_deadline(total_timeout: Any) -> float | None:
+    """Port of ``.repro_clock_deadline()``: the moment (``time.time()`` seconds) by which
+    copying the repository must stop, *total_timeout* when it is a clock time, else ``None``
+    (no limit)."""
+    import datetime as _dt
+
+    return total_timeout.timestamp() if isinstance(total_timeout, _dt.datetime) else None
+
+
+def _repro_min_prep_time() -> float:
+    """Port of ``.repro_min_prep_time()``: the seconds a clock time as *total_timeout* must
+    leave when the code check starts, for it to copy the repository, install its packages
+    and run its scripts. With less, none of that is done and every script is recorded as
+    not started (``skipped_time_limit``), so the job still has its time for the report.
+    The option ``metacheck.repro_min_time`` sets it (default 900, 15 minutes).
+    """
+    from metacheck.utils import get_option
+
+    value = as_float(get_option("metacheck.repro_min_time", 900))
+    return 900.0 if value is None else value
+
+
+def _repro_no_prep_text(left: float | None) -> str:
+    """Port of ``.repro_no_prep_text()``: the sentence for the report when the code check
+    started with too little time left (:func:`_repro_min_prep_time`); ``""`` otherwise."""
+    if left is None:
+        return ""
+    return (
+        f" The checks before this one had left {_repro_duration(left)} before the time limit, "
+        "too little to copy the repository, install its packages and run its scripts "
+        f"(at least {_repro_duration(_repro_min_prep_time())}), so none of that was done."
+    )
+
+
+def _repro_no_time_to_prepare(total_timeout: Any, state: dict[str, Any]) -> bool:
+    """Whether the code check started with too little time to copy, install and run.
+
+    Port of ``.repro_no_time_to_prepare()``, asked before the R scripts and again before
+    the Python ones; true once it applies. The first time, the seconds left are kept in
+    ``state["prep_skipped_left"]`` and the script deadline is set to now, so every script
+    is ``skipped_time_limit``.
+    """
+    if state.get("prep_skipped_left") is None and _repro_short_of_time(
+        total_timeout, _repro_min_prep_time()
+    ):
+        assert total_timeout is not None
+        left = max(0.0, _repro_time_left(total_timeout.timestamp()))
+        state["prep_skipped_left"] = left
+        state["script_deadline"] = time.time()
+        _message(
+            f"only {_repro_duration(left)} left before the time limit: "
+            "not copying, installing or running anything."
+        )
+    return state.get("prep_skipped_left") is not None
+
+
+def _repro_no_time_to_install(total_timeout: Any, state: dict[str, Any]) -> bool:
+    """Port of ``.repro_no_time_to_install()``: no time left to install packages (a minute
+    at least, or none at all when the code check started short of time)."""
+    return state.get("prep_skipped_left") is not None or _repro_short_of_time(total_timeout, 60)
 
 
 def _repro_install_limit(

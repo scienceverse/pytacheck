@@ -32,6 +32,7 @@ from metacheck.modules import _reproducibility_exec as rx
 from metacheck.report.blocks import ReportTable
 from metacheck.repro import core, docker, recorded, runsupport
 from metacheck.repro.core import _run_frame, _run_row
+from metacheck.utils import options
 from tests.mod_repro.test_reproducibility_check import chain, code_tbl_row, report_text
 
 DOCKER_OK = {"ok": True, "msg": ""}
@@ -998,3 +999,68 @@ def paper_p1() -> pc.Paper:
     p = pc.test_paper()
     p.paper_id = "p1"
     return p
+
+
+# -- the time before the scripts run (metacheck 0.4.3.28) -------------------------------------------
+
+
+def test_with_too_little_time_nothing_is_copied_installed_or_run(
+    tmp_path: Path, runner: Runner, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # a clock time as total_timeout with less than 15 minutes left as the check starts:
+    # none of copying, installing and running is done, so the job still has its report
+    monkeypatch.setattr(core, "repro_install_deps", lambda *a, **k: pytest.fail("installed"))
+    runner.respond = lambda *_: {"outcome": "skipped_time_limit"}
+    d = deposit(tmp_path, {"a.R": "library(digest)\nx <- 1\n", "data.csv": "a\n1\n"})
+    mo = run(d, install_missing=True, total_timeout=dt.datetime.now() + dt.timedelta(minutes=5))
+    (call,) = runner.calls
+    assert call.kwargs["deadline"] <= time.time()  # no script starts
+    assert call.kwargs["failed_deps"] == ["digest"]
+    assert outcomes(mo) == {"a.R": "skipped_time_limit"}
+    text = report_text(mo)
+    assert "not started, or stopped early, because the time for all scripts together" in text
+    assert (
+        "The checks before this one had left 5 min before the time limit, too little to copy "
+        "the repository, install its packages and run its scripts (at least 15 min), so none "
+        "of that was done."
+    ) in text
+
+
+def test_enough_time_before_the_scripts_changes_nothing(
+    tmp_path: Path, runner: Runner, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[dict[str, Any]] = []
+    monkeypatch.setattr(core, "repro_install_deps", _installs(calls))
+    d = deposit(tmp_path, {"a.R": "library(digest)\nx <- 1\n"})
+    mo = run(d, install_missing=True, total_timeout=dt.datetime.now() + dt.timedelta(hours=2))
+    assert calls[0]["packages"] == ["digest"]
+    assert outcomes(mo) == {"a.R": "ran_ok"}
+    assert "The checks before this one had left" not in report_text(mo)
+
+
+def test_a_minute_or_less_left_installs_nothing_but_scripts_still_start(
+    tmp_path: Path, runner: Runner, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # the option metacheck.repro_min_time (seconds) sets what the check needs to start;
+    # with less than a minute left, packages are not installed
+    monkeypatch.setattr(core, "repro_install_deps", lambda *a, **k: pytest.fail("installed"))
+    options({"metacheck.repro_min_time": 10})
+    try:
+        d = deposit(tmp_path, {"a.R": "library(digest)\nx <- 1\n"})
+        run(d, install_missing=True, total_timeout=dt.datetime.now() + dt.timedelta(seconds=40))
+    finally:
+        options({"metacheck.repro_min_time": None})
+    assert runner.calls[0].kwargs["failed_deps"] == ["digest"]
+    assert runner.calls[0].kwargs["deadline"] > time.time()  # the script may start
+
+
+def test_short_of_time_needs_a_clock_time() -> None:
+    soon = dt.datetime.now() + dt.timedelta(seconds=30)
+    assert core._repro_short_of_time(soon, 60)
+    assert not core._repro_short_of_time(soon, 10)
+    assert not core._repro_short_of_time(30, 60)  # seconds count from the first script
+    assert not core._repro_short_of_time(None, 60)
+    assert core._repro_clock_deadline(30) is None
+    assert core._repro_clock_deadline(soon) == soon.timestamp()
+    assert core._repro_min_prep_time() == 900
+    assert core._repro_no_prep_text(None) == ""

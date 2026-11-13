@@ -347,3 +347,36 @@ def test_the_python2_image_can_be_turned_off(
     got = dict(zip(mo.table["file_name"], mo.table["outcome"], strict=True))
     assert got["old.py"] == "python2"
     assert "python2" not in set(mo.modifications["change_type"])
+
+
+def test_python_with_too_little_time_installs_and_runs_nothing(
+    paper: pc.Paper, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # metacheck 0.4.3.28: a clock time as total_timeout with less than 15 minutes left as
+    # the check starts: nothing is copied, installed or run, as for R code
+    import datetime as dt
+    import time
+
+    script = write(tmp_path, "a.py", "import requests\nprint(1)\n")
+    deadlines: list[float] = []
+
+    def fake_run(run_tbl: pd.DataFrame, order: Any, **kw: Any) -> pd.DataFrame:
+        deadlines.append(kw["deadline"])
+        return _run_frame([{"fn": n, "outcome": "skipped_time_limit"} for n in order])
+
+    monkeypatch.setattr(docker, "repro_docker_available", lambda: DOCKER_OK)
+    monkeypatch.setattr(docker, "repro_run_scripts_py_docker", fake_run)
+    monkeypatch.setattr(
+        docker, "repro_install_deps_py_docker", lambda *a, **k: pytest.fail("installed")
+    )
+    mo = module_run(
+        py_chain(paper, [script]),
+        "reproducibility_check",
+        execute=True,
+        install_missing=True,
+        total_timeout=dt.datetime.now() + dt.timedelta(minutes=5),
+    )
+    assert deadlines and deadlines[0] <= time.time()  # no script starts
+    got = dict(zip(mo.table["file_name"], mo.table["outcome"], strict=True))
+    assert got == {"a.py": "skipped_time_limit"}
+    assert "The checks before this one had left 5 min before the time limit" in report_text(mo)

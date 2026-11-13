@@ -1384,6 +1384,14 @@
       "$expr":
         "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_materialize(data.frame(file_name = c('math.dta', 'scores.csv'), target_path = c('study-ex1/data/study-math_data.csv', 'data/scores.csv'), original_target = c('study-ex1/data/math.dta', NA)), data.frame(file_name = c('math.dta', 'scores.csv'), file_location = c('tests/repro_core/fixtures/layout/math.dta', 'tests/repro_core/fixtures/layout/scores.csv'))) }"
         "py": "lambda m: m.materialize(m.pd.DataFrame({'file_name': ['math.dta', 'scores.csv'], 'target_path': ['study-ex1/data/study-math_data.csv', 'data/scores.csv'], 'original_target': ['study-ex1/data/math.dta', None]}), m.pd.DataFrame({'file_name': ['math.dta', 'scores.csv'], 'file_location': ['tests/repro_core/fixtures/layout/math.dta', 'tests/repro_core/fixtures/layout/scores.csv']}))"
+- "id": "repro_materialize_layout.deadline"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_materialize(data.frame(file_name = c('demographics.csv', 'sub/scores.csv', 'missing.csv', 'x.zip'), target_path = c('study-ex1/data/study-demographics_data.csv', 'data/scores_data.csv', 'data/missing.csv', NA), original_target = c('study-ex1/data/demographics_orig.csv', NA, NA, NA)), data.frame(file_name = c('demographics.csv', 'other/SCORES.csv', 'x.zip'), file_location = c('tests/repro_core/fixtures/layout/demographics.csv', 'tests/repro_core/fixtures/layout/scores.csv', 'tests/repro_core/fixtures/layout/x.zip')), late = TRUE) }"
+        "py": "lambda m: m.materialize(m.pd.DataFrame({'file_name': ['demographics.csv', 'sub/scores.csv', 'missing.csv', 'x.zip'], 'target_path': ['study-ex1/data/study-demographics_data.csv', 'data/scores_data.csv', 'data/missing.csv', None], 'original_target': ['study-ex1/data/demographics_orig.csv', None, None, None]}), m.pd.DataFrame({'file_name': ['demographics.csv', 'other/SCORES.csv', 'x.zip'], 'file_location': ['tests/repro_core/fixtures/layout/demographics.csv', 'tests/repro_core/fixtures/layout/scores.csv', 'tests/repro_core/fixtures/layout/x.zip']}), late=True)"
 - "id": "repro_materialize_layout.no_plan"
   "r": "identity"
   "py": "tests.repro_core.parity_support.run"
