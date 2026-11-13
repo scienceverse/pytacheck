@@ -37,7 +37,8 @@ def fake_keys(seed: int = 1) -> dict[str, str]:
         "stripe-access-token": "sk_live_" + r(24, _AN),
         "anthropic-api-key": "sk-ant-api03-" + r(93, _AN + "_-") + "AA",
         "gcp-api-key": "AIza" + r(35, _AN + "_-"),
-        "huggingface-access-token": "hf_" + r(34, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+        "huggingface-access-token": "hf_"
+        + r(34, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
         "openai-api-key": "sk-proj-" + r(58, _AN + "_-") + "T3BlbkFJ" + r(58, _AN + "_-"),
         "gitlab-pat": "glpat-" + r(20, _AN),
         "groq-api-key": "gsk_" + r(52, _AN),
@@ -106,8 +107,13 @@ def test_key_remove_replaces_each_key_in_a_result_in_tables_and_names_too() -> N
     out, n = k._key_remove(res)
     assert n == 5
     flat = " ".join(
-        [*out["report"], *out["table"].columns, out["nested"][0]["z"], *map(str, out["f"].cat.categories)]
-        + out["table"].iloc[:, 0].tolist()
+        [
+            *out["report"],
+            *out["table"].columns,
+            *out["table"].iloc[:, 0],
+            out["nested"][0]["z"],
+            *map(str, out["f"].cat.categories),
+        ]
     )
     assert not has_any(keys, flat)
     assert out["report"][1] == "found [key removed]"
@@ -128,7 +134,7 @@ def test_module_run_removes_a_key_from_any_modules_result(tmp_path: Path) -> Non
     key = fake_keys(4)["openrouter-api-key"]
 
     @module(title="Leaky", description="A module that copies a key.")
-    def leaky(paper: Any) -> dict[str, Any]:  # noqa: ARG001
+    def leaky(paper: Any) -> dict[str, Any]:
         joined = key[:20] + key[20:]
         return {
             "table": pd.DataFrame({"text": ["Bearer " + joined]}),
@@ -142,7 +148,9 @@ def test_module_run_removes_a_key_from_any_modules_result(tmp_path: Path) -> Non
     assert mo.table["text"][0] == "Bearer [key removed]"
 
 
-def test_key_scan_files_gives_file_line_type_and_only_the_beginning_of_a_key(tmp_path: Path) -> None:
+def test_key_scan_files_gives_file_line_type_and_only_the_beginning_of_a_key(
+    tmp_path: Path,
+) -> None:
     keys = fake_keys(5)
     # Windows line endings, a Latin-1 character, a key on the last line without a line ending
     (tmp_path / "a.R").write_bytes(
@@ -305,8 +313,9 @@ def test_data_check_warns_about_keys_in_code_survey_and_env_files(tmp_path: Path
                     "DataExportTag": "worry",
                     "QuestionType": "MC",
                     "Choices": {"1": {"Display": "Not"}, "2": {"Display": "Very"}},
-                    "QuestionJS": 'fetch(u, {headers: {"Authorization": "Bearer %s"}})'
-                    % keys["anthropic-api-key"],
+                    "QuestionJS": 'fetch(u, {headers: {"Authorization": "Bearer '
+                    + keys["anthropic-api-key"]
+                    + '"}})',
                 },
             }
         ],
