@@ -1254,13 +1254,8 @@ def repro_rewrite_paths(
     from metacheck.codecheck.core import code_file_refs
 
     code_lines = _chr_list(code_text)
-    # A file the code writes is not one to place: Python's open() with a mode that
-    # creates the file is blanked before the references are taken (R 0.4.3.28,
-    # code_file_refs()).
-    refs_text: Any = code_text
-    if lang == "Python":
-        refs_text = _code_blank_write_opens(_code_remove_comments(code_text, lang), lang)
-    refs = list(code_file_refs(refs_text, lang))
+    # code_file_refs() leaves out the files the code writes (R 0.4.3.28)
+    refs = list(code_file_refs(code_text, lang))
     plan_file = _chr_list(plan["file_name"])
     plan_base = [_norm_base(f) for f in plan_file]
     plan_base_set = set(plan_base)
@@ -1756,83 +1751,7 @@ _IO_READ_INNER = (
     r"vroom|source|read_[A-Za-z_0-9]+|loadtxt|genfromtxt|loadmat|open"
 )
 _SRC_PAT = r"""source\s*\(\s*['"]([^'"]+)['"]"""
-_PY_OPEN_PAT = r"\bopen\s*\("
 _PY_WRITE_MODE_PAT = r"""^(['"])(?=[^'"]*[wax+])[rwaxbt+]+\1$"""
-# the modes that create the file (``r+`` needs it to exist, so it stays an input)
-_PY_CREATE_MODE_PAT = r"""^(['"])(?=[^'"]*[wax])[rwaxbt+]+\1$"""
-_PY_NAMED_ARG_PAT = r"^[A-Za-z_][A-Za-z0-9_]*\s*=(?!=)"
-
-
-def _close_of(chars: str, first: int) -> int | None:
-    """0-based index of the bracket closing a call whose arguments start at *first*.
-
-    Quoted text and nested brackets (``()``, ``[]``, ``{}``) are skipped.
-    """
-    depth = 1
-    in_str: str | None = None
-    i = first
-    while i < len(chars):
-        ch = chars[i]
-        if in_str is not None:
-            if ch == "\\":
-                i += 1
-            elif ch == in_str:
-                in_str = None
-        elif ch in ("'", '"'):
-            in_str = ch
-        elif ch in "([{":
-            depth += 1
-        elif ch in ")]}":
-            depth -= 1
-            if depth == 0:
-                return i
-        i += 1
-    return None
-
-
-def _code_blank_write_opens(
-    code_text: Sequence[str | None], lang: str = "Python", mode_regex: str | None = None
-) -> list[str | None]:
-    """Python ``open()`` calls whose mode writes, blanked out (R ``.code_blank_write_opens()``).
-
-    The text of each such call becomes spaces, so the file name in it is not found as an
-    input; the lines and their number stay. A call over several lines is judged as a
-    whole. The mode is the second argument without a name, or ``mode =``.
-
-    STAND-IN: the same name and signature as ``metacheck.codecheck.core._code_blank_write_opens``
-    of the text-and-code lane (``codecheck/`` is not this lane's to edit). At merge, replace
-    this function by an import of that one; its callers here (``repro_rewrite_paths`` and
-    ``_py_open_writes``) already call it by this name.
-    """
-    lines = list(code_text)
-    if lang != "Python":
-        return lines
-    mode_regex = mode_regex or _PY_CREATE_MODE_PAT
-    joined = "\n".join(s if s is not None else "NA" for s in lines)
-    chars = list(joined)
-    blank = [False] * len(chars)
-    any_blank = False
-    for m in re.finditer(_PY_OPEN_PAT, joined):
-        first = m.end()
-        end = _close_of(joined, first)
-        if end is None or end == first:
-            continue
-        args = [trimws(a["text"]) for a in _split_args(joined[first:end])]
-        named = [bool(re.match(_PY_NAMED_ARG_PAT, a)) for a in args]
-        modes = [a for a, nm in zip(args, named, strict=True) if nm and re.match(r"^mode\s*=", a)]
-        if modes:
-            mode: str | None = re.sub(r"^mode\s*=\s*", "", modes[0])
-        else:
-            positional = [a for a, nm in zip(args, named, strict=True) if not nm]
-            mode = positional[1] if len(positional) > 1 else None
-        if mode is not None and re.match(mode_regex, mode):
-            for k in range(m.start(), end + 1):
-                blank[k] = True
-            any_blank = True
-    if not any_blank:
-        return lines
-    out = [" " if b and ch != "\n" else ch for ch, b in zip(chars, blank, strict=True)]
-    return "".join(out).split("\n")
 
 
 def _py_open_writes(line: str | None) -> bool:
@@ -1846,6 +1765,8 @@ def _py_open_writes(line: str | None) -> bool:
     """
     if not line:
         return False
+    from metacheck.codecheck.core import _code_blank_write_opens
+
     return _code_blank_write_opens([line], "Python", _PY_WRITE_MODE_PAT) != [line]
 
 
