@@ -259,3 +259,15 @@ repro_run_scripts_py_docker = "metacheck.repro.docker:repro_run_scripts_py_docke
 # the install progress (metacheck 0.4.3.7)
 ".repro_install_what" = "metacheck.repro.core:_repro_install_what"
 ".repro_docker_run_install" = "metacheck.repro.docker:_repro_docker_run_install"
+# the 0.4.3.28 changes (#591, #594, #598, #615, #620, the clock-time limit)
+".repro_error_message" = "metacheck.repro.outcomes:_repro_error_message"
+".repro_read_failed_msg" = "metacheck.repro.outcomes:_repro_read_failed_msg"
+".repro_write_failed_folders" = "metacheck.repro.layout:_repro_write_failed_folders"
+".repro_make_failed_write_folders" = "metacheck.repro.layout:_repro_make_failed_write_folders"
+".repro_folders_made_text" = "metacheck.repro.layout:_repro_folders_made_text"
+".repro_drop_author_lib_loc" = "metacheck.repro.core:_repro_drop_author_lib_loc"
+".repro_download_failed_msg" = "metacheck.repro.core:_repro_download_failed_msg"
+".repro_short_of_time" = "metacheck.repro.core:_repro_short_of_time"
+".repro_clock_deadline" = "metacheck.repro.core:_repro_clock_deadline"
+".repro_min_prep_time" = "metacheck.repro.core:_repro_min_prep_time"
+".repro_no_prep_text" = "metacheck.repro.core:_repro_no_prep_text"

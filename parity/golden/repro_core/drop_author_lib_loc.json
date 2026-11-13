@@ -1,0 +1,36 @@
+{
+  "id": "drop_author_lib_loc",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "paths"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "library(hydroGOF)",
+          "suppressPackageStartupMessages(require(sp))",
+          "requireNamespace(\"raster\", quietly = TRUE)",
+          "library(mypkg, lib.loc = \"lib\")",
+          "# library(y, lib.loc = \"C:/z\")",
+          "library(dplyr)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "C:/Users/me/Documents/R/win-library/4.0",
+          "/home/me/R/x86_64",
+          "~/Rlibs"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

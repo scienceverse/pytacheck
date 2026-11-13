@@ -1,0 +1,14 @@
+{
+  "id": "error_message.missing_package",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Error in library(lme4) : there is no package called 'lme4'"
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

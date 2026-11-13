@@ -108,6 +108,7 @@ def test_python_table_columns_follow_the_r_module(paper: pc.Paper) -> None:
         "paper_link",
         "repo_name",
         "reason",
+        "error_message",
         "commands_removed",
     ]
 

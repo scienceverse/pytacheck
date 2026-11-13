@@ -1,0 +1,56 @@
+{
+  "id": "repro_dependencies.commented_install_address",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "package",
+      "source",
+      "ref",
+      "base"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "embryogrowth",
+          "HelpersMG",
+          "remotes",
+          "mypkg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cran",
+          "cran",
+          "cran",
+          "github"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "user/mypkg"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
