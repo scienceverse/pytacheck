@@ -396,6 +396,65 @@ def add_cases() -> None:
         },
     )
 
+    # a paper that states no human or animal participants took part (0.4.3.28, dq96z_v2)
+    case(
+        "ethics_check.no_participants.not_as_subjects",
+        test_paper(
+            [
+                "The professionals described their own work as collaborators in the projects, "
+                "not as subjects recruited for a study."
+            ]
+        ),
+    )
+    for i, sentence in enumerate(
+        [
+            "No human subjects were involved in this study.",
+            "As this study did not involve human subjects, institutional review board approval "
+            "was not required.",
+            "Ethics Statement: No animals nor human participants were involved in the production "
+            "and analysis of the data used for this article.",
+            "No identifiable human research participants were used.",
+        ]
+    ):
+        case(
+            f"ethics_check.no_participants.stated_{i + 1}",
+            test_paper(["Participants were recruited online.", sentence]),
+        )
+    case(
+        "ethics_check.no_participants.approved",
+        test_paper(
+            [
+                "Participants were recruited online.",
+                "No human subjects were involved in the second analysis.",
+                "The study was approved by the ethics committee.",
+            ]
+        ),
+    )
+    for i, sentence in enumerate(
+        [
+            "No participants were excluded.",
+            "No participants were minors.",
+            "Only children without G6PD deficiency were enrolled in the study.",
+            "This study would not have been possible without our participants.",
+            "No participant was included more than once across training samples.",
+        ]
+    ):
+        case(
+            f"ethics_check.no_participants.negation_{i + 1}",
+            test_paper(["Participants were recruited online.", sentence]),
+        )
+    case(
+        "ethics_check.no_participants.paperlist",
+        ec_papers(
+            ["none", "live", "both"],
+            [
+                ["No human subjects were involved in this study."],
+                ["Participants were recruited online."],
+                ["Participants were recruited online.", "We did not involve human participants."],
+            ],
+        ),
+    )
+
     # errors in R ----
     case(
         "ethics_check.duplicate_ids",

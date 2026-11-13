@@ -1,0 +1,20 @@
+{
+  "id": "code_file_refs.writes.python",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "data.csv",
+      "in.txt",
+      "keep.txt",
+      "single.txt",
+      "rt.txt",
+      "named.txt",
+      "cmp.txt"
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

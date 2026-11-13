@@ -1,5 +1,5 @@
 {
-"ethics_check.fixture_corpus": {"r": "715485bbf248cf40", "py": "1f0187a87e5c2c31", "diff": ["summary_table.ethics_approved[]", "summary_table.ethics_statements[][]", "table"]},
-"ethics_check.no_text_column_ethics_match": {"r": "ac5146cf65ca52a8", "py": "1357b83a8672fbb0", "diff": ["<R error, Python value>"]},
-"ethics_check.no_text_column_live_match": {"r": "ac5146cf65ca52a8", "py": "1357b83a8672fbb0", "diff": ["<R error, Python value>"]}
+"ethics_check.fixture_corpus": {"r": "5a8ad59bdcceea00", "py": "b6a7e0e1278b19cb", "diff": ["summary_table.ethics_approved[]", "summary_table.ethics_statements[][]", "table"]},
+"ethics_check.no_text_column_ethics_match": {"r": "ac5146cf65ca52a8", "py": "66724393cddea7a1", "diff": ["<R error, Python value>"]},
+"ethics_check.no_text_column_live_match": {"r": "ac5146cf65ca52a8", "py": "66724393cddea7a1", "diff": ["<R error, Python value>"]}
 }

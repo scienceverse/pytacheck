@@ -270,7 +270,8 @@ def test_chaining_p_value_modules(psychsci) -> None:
     # metacheck: [6, 39, 13], [0, 0, 2] and [0, 17, 0]; its pattern misses the
     # 'ps < .05' forms of the second and third paper (U204)
     assert x.summary_table["p_values"].tolist() == [6, 44, 15]
-    assert x.summary_table["n_imprecise"].tolist() == [0, 5, 5]
+    # R 0.4.3.28: the table notes of the third paper are not flagged (#604): [0, 5, 3]
+    assert x.summary_table["n_imprecise"].tolist() == [0, 5, 3]
     assert x.summary_table["n_nonsignificant"].tolist() == [0, 20, 0]
     assert isinstance(x.prev_outputs["all_p_values"], ModuleOutput)
 
@@ -339,13 +340,13 @@ def test_stat_p_exact_star_note_information_separators() -> None:
 
 
 def test_stat_p_exact_star_note_hides_only_its_p_value() -> None:
-    # U127: metacheck 0.3 drops every imprecise p-value of a sentence with a star note;
-    # 0.4 leaves out as many rows of a starred p-value as there are starred copies, the
-    # last ones (a footnote comes after the results): the "p < .05" of the footnote stays
-    # and the copy in the running text goes, "** p < .01" goes, "p = .03" is exact
+    # U127: metacheck 0.3 drops every imprecise p-value of a sentence with a star note.
+    # 0.4.3.28 judges each p-value in its own clause (#604): the "p < .05" and "p < .01"
+    # of the note are markers, the "p < .05" of the result stays, "p = .03" is exact
     paper = pc.test_paper(["Note. * p < .05, ** p < .01. The effect was p < .05 and p = .03."])
     out = module_run(paper, "stat_p_exact")
-    assert out.table["imprecise"].tolist() == [True, False, False, False]
+    assert out.table["imprecise"].tolist() == [False, False, True, False]
+    assert out.table["not_a_test"].tolist() == ["marker", "marker", pd.NA, pd.NA]
     assert out.summary_text == "We found 1 imprecise *p* value out of 4 detected *p* values."
 
 

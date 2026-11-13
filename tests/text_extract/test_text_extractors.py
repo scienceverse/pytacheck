@@ -396,3 +396,39 @@ def test_detect_live_data(demo) -> None:
     live = _detect_live_data(paper)
     assert live["text_id"].tolist() == [1, 3]
     assert isinstance(_detect_live_data(demo), pd.DataFrame)
+
+
+def test_partial_eta_squared_is_not_a_p_value() -> None:
+    # 0.4.3.28, metacheck #336: eta with its subscript after it is one statistic, not "p"
+    txt = [
+        "F(2, 63) = 590, p < .001, ƞ²p = .95",
+        "an effect (η² p = .06) as",
+        "t = 2, η² P = 0.029, p = .04",
+        "η 2 p = .10 and p < .001",
+        "η² = .05, p = .03",
+    ]
+    pv = extract_p_values(txt)
+    assert pv["text_id"].tolist() == [1, 3, 4, 5]
+    assert pv["p_value"].tolist() == [0.001, 0.04, 0.001, 0.03]
+    eq = extract_eq(txt)
+    assert eq["lhs"].tolist() == [
+        "F", "p", "ƞ²p", "η² p", "t", "η² P", "p",
+        "η 2 p", "p", "η²", "p",
+    ]  # fmt: skip
+
+
+def test_detect_no_participants() -> None:
+    from metacheck.text.extract import _detect_no_participants
+
+    hits = _detect_no_participants(
+        pc.test_paper(
+            [
+                "No human subjects were involved.",
+                "This did not involve human participants.",
+                "People took part, not as subjects.",
+                "No participants were excluded.",
+                "Without our participants this would be impossible.",
+            ]
+        )
+    )
+    assert hits["text_id"].tolist() == [1, 2, 3]

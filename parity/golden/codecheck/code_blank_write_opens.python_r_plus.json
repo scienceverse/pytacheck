@@ -1,0 +1,28 @@
+{
+  "id": "code_blank_write_opens.python_r_plus",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "rows = open(\"data.csv\").read()",
+      "                    .write(\"1\")",
+      "with                           as f: pass",
+      "with open(\"in.txt\") as f,                      as g: pass",
+      "f =                       ",
+      "g =                      ",
+      "h =      ",
+      "                ",
+      "        ",
+      "k = open('single.txt', 'rb')",
+      "m = open(\"rt.txt\", \"rt\")",
+      "n =                        ",
+      "o = open(\"named.txt\", encoding=\"utf-8\")",
+      "q =                              ",
+      "r = open(\"cmp.txt\", mode=\"r\") if x == \"w\" else None"
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

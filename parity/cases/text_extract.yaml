@@ -835,3 +835,38 @@
   "args":
     "sentence": "Smoking causes cancer."
     "timeout": 0
+# ---- 0.4.3.28: partial eta squared is not a p-value (#336)
+- "id": "extract_p_values.eta_squared_p"
+  "r": "extract_p_values"
+  "py": "metacheck.text.extract.extract_p_values"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "F(2, 63) = 590, p < .001, ƞ²p = .95"
+        - "an effect (η² p = .06) as"
+        - "t = 2, η² P = 0.029, p = .04"
+        - "η 2 p = .10 and p < .001"
+        - "η² = .05, p = .03"
+        - "F(1, 20) = 4.1, p = .06, η₂p = .17 and ηp = .2"
+        - "partial η²p < .05 and p > .10"
+  "compare":
+    "ignore":
+    - "paper_id"
+- "id": "extract_eq.eta_squared_p"
+  "r": "extract_eq"
+  "py": "metacheck.text.extract.extract_eq"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "F(2, 63) = 590, p < .001, ƞ²p = .95"
+        - "an effect (η² p = .06) as"
+        - "t = 2, η² P = 0.029, p = .04"
+        - "η 2 p = .10 and p < .001"
+        - "η² = .05, p = .03"
+        - "F(1, 20) = 4.1, p = .06, η₂p = .17 and ηp = .2"
+        - "partial η²p < .05 and p > .10"
+  "compare":
+    "ignore":
+    - "paper_id"

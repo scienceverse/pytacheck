@@ -1,0 +1,32 @@
+{
+  "id": "code_blank_mplus_savedata.commands",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "title: lower",
+      "data: file = low.dat;",
+      "variable: names = a b;",
+      "",
+      "",
+      "output: tech1;",
+      "data imputation: file = imp.dat;",
+      "",
+      "",
+      "ANALYSIS: type = basic;",
+      "TITLE: two files",
+      "DATA: FILE = \"in.dat\";",
+      "VARIABLE: NAMES = y1-y3;",
+      "MODEL: f BY y1-y3;",
+      "",
+      "",
+      "",
+      "OUTPUT: sampstat;",
+      "PLOT: FILE = \"plot.dat\";"
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

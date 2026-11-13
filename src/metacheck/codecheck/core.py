@@ -2642,6 +2642,116 @@ _UNQUOTED = {
 }
 
 
+def _code_blank_write_opens(
+    code_text: Sequence[str | None], lang: str, mode_regex: str | None = None
+) -> list[str]:
+    """Calls that open a file for writing, blanked out.
+
+    Port of ``R/code_check.R::.code_blank_write_opens()``. Python's ``open()`` and MATLAB's
+    ``fopen()`` read a file or write one, decided only by their mode argument.
+    :func:`code_file_refs` took the file name in every such call as an input, so
+    ``open("out.txt", "w")`` was reported as a missing file when the script itself creates it.
+    This replaces the text of each call that writes with spaces, so its file name is not found;
+    the lines and their number stay as they were. A call over several lines is judged as a whole.
+
+    The mode is the second argument without a name, or (Python) ``mode =``. The default modes are
+    those that create the file: Python's ``w``, ``a`` and ``x``, MATLAB's ``w`` and ``a``. ``r+``
+    changes a file that must already exist, so it is left as an input; the reproducibility check's
+    ``_py_open_writes()`` passes its own *mode_regex*, which counts ``r+``.
+
+    *code_text* is the lines of one file, comments removed; only ``"Python"`` and ``"MATLAB"`` are
+    changed. *mode_regex* is matched (PCRE) against the mode argument with its quotes. Returns the
+    lines, with each writing call's text replaced by spaces.
+    """
+    from metacheck.statout.r_output import _repro_split_args
+
+    lines = ["NA" if t is None else t for t in code_text]
+    call_regex = {"Python": r"\bopen\s*\(", "MATLAB": r"\bfopen\s*\("}.get(lang)
+    if call_regex is None or not lines:
+        return lines
+    if mode_regex is None:
+        mode_regex = {
+            "Python": r"^(['\"])(?=[^'\"]*[wax])[rwaxbt+]+\1$",
+            "MATLAB": r"^(['\"])[wWaA][+tb]*\1$",
+        }[lang]
+    joined = "\n".join(lines)
+    starts = list(compile_r(call_regex, perl=True).finditer(joined))
+    if not starts:
+        return lines
+    blank = [False] * len(joined)
+    named_rx = compile_r(r"^[A-Za-z_][A-Za-z0-9_]*\s*=(?!=)", perl=True)
+    mode_arg_rx = compile_r(r"^mode\s*=")
+    mode_rx = compile_r(mode_regex, perl=True)
+    for m in starts:
+        first = m.end()  # the first character after "("
+        # the call's closing parenthesis, skipping quoted text and nested brackets
+        depth = 1
+        in_str: str | None = None
+        end: int | None = None
+        i = first
+        while i < len(joined):
+            ch = joined[i]
+            if in_str is not None:
+                if ch == "\\":
+                    i += 1
+                elif ch == in_str:
+                    in_str = None
+            elif ch in ("'", '"'):
+                in_str = ch
+            elif ch in "([{":
+                depth += 1
+            elif ch in ")]}":
+                depth -= 1
+                if depth == 0:
+                    end = i
+                    break
+            i += 1
+        if end is None or end == first:
+            continue
+        args = [str(trimws(a["text"])) for a in _repro_split_args(joined[first:end])]
+        named = [named_rx.search(a) is not None for a in args]
+        mode_args = [a for a, nm in zip(args, named, strict=True) if nm and mode_arg_rx.search(a)]
+        if mode_args:
+            mode: str | None = re.sub(r"^mode\s*=\s*", "", mode_args[0])
+        else:
+            positional = [a for a, nm in zip(args, named, strict=True) if not nm]
+            mode = positional[1] if len(positional) > 1 else None
+        if mode is not None and mode_rx.search(mode):
+            for k in range(m.start(), end + 1):
+                blank[k] = True
+    if not any(blank):
+        return lines
+    out = "".join(" " if b and c != "\n" else c for b, c in zip(blank, joined, strict=True))
+    return out.split("\n")
+
+
+_MPLUS_HEADER = (
+    r"^\s*(TITLE|DATA(\s+[A-Za-z]+)*|VARIABLE|DEFINE|ANALYSIS|"
+    r"MODEL(\s+[A-Za-z]+)*|OUTPUT|SAVEDATA|PLOT|MONTECARLO)\s*:"
+)
+
+
+def _code_blank_mplus_savedata(code_text: Sequence[str | None]) -> list[str]:
+    """Mplus's SAVEDATA command, blanked out.
+
+    Port of ``R/code_check.R::.code_blank_mplus_savedata()``. Mplus names its input with
+    ``FILE =`` under ``DATA:``, and the file it writes with ``FILE =`` under ``SAVEDATA:``.
+    :func:`code_file_refs` took both as inputs, so a file of factor scores the model writes was
+    reported as missing. This empties every line from ``SAVEDATA:`` up to the next command.
+    """
+    lines = ["NA" if t is None else t for t in code_text]
+    header = compile_r(_MPLUS_HEADER, ignore_case=True, perl=True)
+    in_savedata = False
+    out = []
+    for line in lines:
+        m = header.search(line)
+        # each line belongs to the last command named on or above it
+        if m is not None:
+            in_savedata = str(trimws(m.group(1))).upper() == "SAVEDATA"
+        out.append("" if in_savedata else line)
+    return out
+
+
 def code_file_refs(
     code_text: str | Sequence[str],
     lang: str | Sequence[str] = LANGS,
@@ -2657,8 +2767,18 @@ def code_file_refs(
     *include_writes* (R and Python) written files count too.
     """
     lang = _match_arg(lang)
-    lines = code_remove_comments(code_text, lang)
-    pattern = _LOAD_REGEX[lang]
+    lines: Sequence[str | None] = code_remove_comments(code_text, lang)
+    # Python's open() and MATLAB's fopen() are reading calls below, but with a writing mode they
+    # create the file, and Mplus's SAVEDATA names a file the model writes: outputs, left out
+    # unless writes are asked for
+    if include_writes is not True:
+        lines = _code_blank_write_opens(lines, lang)
+        if lang == "Mplus":
+            lines = _code_blank_mplus_savedata(lines)
+    # SAS, SPSS and Mplus ignore capitals: PROC IMPORT DATAFILE= and proc import datafile=,
+    # GET FILE= and get file=, FILE = and file = are the same command
+    no_case = "(?i)" if lang in ("SAS", "SPSS", "Mplus") else ""
+    pattern = no_case + _LOAD_REGEX[lang]
     if include_writes is True and lang in _WRITE_REGEX:
         pattern = f"{pattern}|{_WRITE_REGEX[lang]}"
     load_hits = grepl(pattern, lines, perl=True)
@@ -2676,7 +2796,9 @@ def code_file_refs(
     unquoted = [s for s, q in zip(load_lines, quoted, strict=True) if not q]
     extra: list[str] = []
     for regex, group in _UNQUOTED.get(lang, []):
-        extra.extend(m[group] for m in regexec(regex, unquoted, perl=True) if len(m) >= group + 1)
+        extra.extend(
+            m[group] for m in regexec(no_case + regex, unquoted, perl=True) if len(m) >= group + 1
+        )
     extra = list(gsub("[\"']$", "", gsub("^[\"']", "", extra)))
     return list(dict.fromkeys([*loaded, *extra]))
 

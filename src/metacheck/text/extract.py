@@ -48,7 +48,14 @@ _MINUS_SIGN = "\u2212"  # U+2212, which text from PDFs often has for "-"
 _MINUS = f"-{_MINUS_SIGN}"
 _SCI_E = f"(e\\s*[{_MINUS}]\\d+)?"
 _SCI_10 = f"(\\s*[x\\*×]\\s*10\\s*\\^?\\s*[{_MINUS}]\\d+)?"
+
+# Eta, or the Latin letter that looks like it (U+019E), with an optional squared sign: before
+# a p it is partial eta squared written with its subscript after it ("η² p = .06"), which
+# extract_p_values() and extract_eq() do not read as a p-value (metacheck #336)
+_ETA = "ηƞ"
+_ETA_P_PREFIX = f"[{_ETA}]\\s*[²2₂]?\\s*"
 _P_PATTERN = (
+    f"(?:{_ETA_P_PREFIX})?"  # partial eta squared: taken into the match, then dropped
     r"\b[pP]-?(values?|s|['’]s)?\s*"  # ways to write p (or P)
     f"[{_OPS}]{{1,2}}\\s*"  # 1-2 operators
     r"(n\.?s\.?|\d?\.\d+)"  # ns or valid numbers
@@ -70,6 +77,9 @@ _GREEK = "Ͱ-Ͽ"
 # age years = 25" is years). The g or d is a word of its own: metacheck also
 # reads "and z ≤ 1.96" as "d z".
 _BARE_SUBSCRIPT = f"\\b[gd]\\s+(?:av|z|rm|s)(?=\\s*[{_OPS}])"
+# partial eta squared with its subscript after it, "η² p = .06", is one statistic, not
+# "p = .06" (metacheck #336)
+_BARE_SUBSCRIPT += f"|{_ETA_P_PREFIX}[pP](?=\\s*[{_OPS}])"
 _EQ_PATTERN = (
     r"(?:(Hedge.{0,3}|Cronbach.{0,2}|Cohen.{0,2}|\d{1,2}%)\s+)?"  # common prefix
     f"(?:{_BARE_SUBSCRIPT}|"
@@ -187,6 +197,9 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     )
     if not isinstance(p, pd.DataFrame):  # pragma: no cover - strings became a table
         raise TypeError("$ operator is invalid for atomic vectors")
+    # a p right after eta is partial eta squared ("η² p = .06"), not a p-value (#336)
+    eta = grepl(f"^[{_ETA}]", p["text"].tolist())
+    p = p.loc[[not e for e in eta]]
     texts = [None if pd.isna(t) else str(t) for t in p["text"].tolist()]
     comps = regextract(_OP_RUN, texts, perl=True)
     split = strsplit(texts, _OP_SPLIT)
@@ -390,3 +403,25 @@ def _detect_live_data(paper: Any) -> pd.DataFrame:
     animal data collection. Used by the ``ethics_check`` module.
     """
     return cast(pd.DataFrame, text_search(paper, list(_LIVE_WORDS)))
+
+
+_NONE_WORDS = (
+    r"\bno\s+(identifiable\s+)?(human|animal)\s+(research\s+)?(subjects?|participants?|volunteers?)"
+    r"\s+(were|was|are|is)\s+(involved|used)",
+    r"\b(did|does|do)\s+not\s+(involve|include)\s+(any\s+)?(human|animal)\s+(subjects?|participants?)",
+    r"\bno\s+(animals|humans)\s+(nor|or|and)\s+(human\s+)?(participants?|subjects?)\s+were\s+involved",
+    r"\bnot\s+as\s+(research\s+)?(subjects?|participants?)\b",
+)
+
+
+def _detect_no_participants(paper: Any) -> pd.DataFrame:
+    """Sentences stating that no participants took part (port of ``.detect_no_participants()``).
+
+    "no human subjects were involved", "did not involve human participants", "no animals
+    nor human participants were involved", or people taking part "not as subjects". Such
+    a statement overrides :func:`_detect_live_data` in the ``ethics_check`` module. A
+    negation near a participant phrase is not enough ("No participants were excluded"
+    reports a study with participants), so each pattern names human or animal subjects,
+    or "not as subjects".
+    """
+    return cast(pd.DataFrame, text_search(paper, list(_NONE_WORDS), perl=True))

@@ -56,6 +56,7 @@ MODULE_CASES: list[tuple[str, str, dict[str, Any]]] = [
     ("windows", "windows", {}),
     ("na_repo", "na_repo", {}),
     ("urls", "urls", {}),
+    ("writes", "writes", {}),
 ]
 
 # download cases (file:// URLs): paths normalised by cc_norm() (the repository
@@ -88,6 +89,7 @@ TABLE_CASES: list[tuple[str, str, dict[str, Any]]] = [
     ("duplicates", "duplicates", {}),
     ("windows", "windows", {}),
     ("urls", "urls", {}),
+    ("writes", "writes", {}),
 ]
 
 

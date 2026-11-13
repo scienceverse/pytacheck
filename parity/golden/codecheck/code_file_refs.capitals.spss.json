@@ -1,0 +1,19 @@
+{
+  "id": "code_file_refs.capitals.spss",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "UP.sav",
+      "low.sav",
+      "hand.sav",
+      "HAND2.SAV",
+      "bare_low.txt",
+      "bare_up.txt"
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
