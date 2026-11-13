@@ -1,0 +1,34 @@
+{
+  "id": "data_read_head.labelled_text.rds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "id",
+      "cnt"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "826",
+          "826",
+          "250"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

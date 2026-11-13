@@ -294,8 +294,6 @@ def test_key_shown_is_a_sixth_of_the_key_between_4_and_12_characters() -> None:
 def test_data_check_warns_about_keys_in_code_survey_and_env_files(tmp_path: Path) -> None:
     import json
 
-    from tests.mod_data_check import test_data_check as dct
-
     keys = fake_keys(6)
     d = tmp_path / "repo"
     (d / "code").mkdir(parents=True)
@@ -345,4 +343,3 @@ def test_data_check_warns_about_keys_in_code_survey_and_env_files(tmp_path: Path
     assert len(mo3.extras["keys"]) == 0
     assert int(mo3.summary_table["key_n"].iloc[0]) == 0
     assert "Keys in the repository" not in pc.module_report(mo3)
-    del dct
