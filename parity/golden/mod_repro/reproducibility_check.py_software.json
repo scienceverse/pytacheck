@@ -341,8 +341,6 @@
           "Every data path in the code works in the repository as deposited.",
           "#### Missing inputs",
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
-          "#### Parsing",
-          "The Python files were not checked for syntax errors, because no Python interpreter (`python` or `python3`) was found on this computer; a syntax error will only show if the code is run.",
           "#### Files not run on their own",
           "2 files are not part of the analysis but of software (a package, its tests or documentation, a tool, a web application), so they were not run or counted as scripts.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"tests/check_rows.py\", \"setup.py\"), Why = c(\"It is a test of the software, not part of the analysis.\", \n\"It is a test of a package or the file that installs it, not part of the analysis.\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",

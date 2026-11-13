@@ -6,13 +6,6 @@
   kind: r_bug_fixed
   ref: U148
   reason: the SPSS Notes table's template cell renders as 3, so it adds 2 statistics (38, R 36)
-"mod_repro/reproducibility_check.py_software": &d122
-  kind: deliberate
-  ref: D122
-  reason: the R reference image has no `python`, so metacheck adds a "#### Parsing" paragraph saying the Python files were not checked; pytacheck parses with the interpreter it runs in and has nothing to say there
-"mod_repro/reproducibility_check.nonr_only": *d122
-"mod_repro/module.nonr_only": *d122
-"mod_repro_review/review.rv_jasp_nonr": *d122
 "mod_repro_review/review.rv_no_file_name_col": &u242
   kind: r_bug_fixed
   ref: U242

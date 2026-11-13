@@ -277,8 +277,6 @@
           "Every data path in the code works in the repository as deposited.",
           "#### Missing inputs",
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
-          "#### Parsing",
-          "The Python files were not checked for syntax errors, because no Python interpreter (`python` or `python3`) was found on this computer; a syntax error will only show if the code is run.",
           "#### Files not run on their own",
           "2 files could not be read, so they were not run and need to be checked again: this may be a problem of the computer that ran the check, not of the files.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"script.py\", \"helper.py\"), Why = c(\"metacheck could not read the file: there is no copy of it and no link to it.\", \n\"metacheck could not read the file: there is no copy of it and no link to it.\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
