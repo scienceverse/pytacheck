@@ -1456,6 +1456,162 @@
       "$expr":
         "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_write_scripts(list(`ex1/a.R` = c('wd <- \"exp1\"', 'd <- read.csv(sprintf(\"%s_data.csv\", wd))', 'e <- read.csv(\"demo.csv\")', 'f <- read.csv(\"demo.csv\")')), list(`ex1/a.R` = data.frame(ref = c('sprintf(\"%s_data.csv\", wd)', 'demo.csv', 'x.csv'), basename = c('exp1_data.csv', 'demo.csv', 'x.csv'), matched = c(TRUE, TRUE, FALSE), target = c('data/exp1_data.csv', NA, NA), ambiguous = c(FALSE, TRUE, FALSE), n_candidates = c(1L, 2L, 0L), is_call = c(TRUE, FALSE, FALSE))), data.frame(file_name = c('ex1/a.R', 'b.R'), target_path = c('study-ex1/code/a.R', NA))) }"
         "py": "lambda m: m.write_scripts({'ex1/a.R': ['wd <- \"exp1\"', 'd <- read.csv(sprintf(\"%s_data.csv\", wd))', 'e <- read.csv(\"demo.csv\")', 'f <- read.csv(\"demo.csv\")']}, {'ex1/a.R': m.core._rewrite_frame([('sprintf(\"%s_data.csv\", wd)', 'exp1_data.csv', True, 'data/exp1_data.csv', False, 1, True), ('demo.csv', 'demo.csv', True, None, True, 2, False), ('x.csv', 'x.csv', False, None, False, 0, False)])}, m.pd.DataFrame({'file_name': ['ex1/a.R', 'b.R'], 'target_path': ['study-ex1/code/a.R', None]}))"
+- "id": "repro_write_scripts.lib_loc"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_write_scripts(list(libloc.R = c('library(hydroGOF, lib.loc = \"C:/Users/me/R/win-library/4.0\")', 'x <- 1', 'library(mypkg, lib.loc = \"lib\")')), list(libloc.R = data.frame(ref = character(0), basename = character(0), matched = logical(0), target = character(0), ambiguous = logical(0), n_candidates = integer(0), is_call = logical(0))), data.frame(file_name = 'libloc.R', target_path = 'libloc.R')) }"
+        "py": "lambda m: m.write_scripts({'libloc.R': ['library(hydroGOF, lib.loc = \"C:/Users/me/R/win-library/4.0\")', 'x <- 1', 'library(mypkg, lib.loc = \"lib\")']}, {'libloc.R': m.core._rewrite_frame([])}, m.pd.DataFrame({'file_name': ['libloc.R'], 'target_path': ['libloc.R']}))"
+- "id": "repro_dependencies.commented_install_address"
+  "r": "repro_dependencies"
+  "py": "metacheck.repro.core.repro_dependencies"
+  "args":
+    "code_text":
+      "$chr":
+      - "# install.packages(\"embryogrowth\")"
+      - "# install.packages(\"http://www.ese.u-psud.fr/epc/conservation/CRAN/embryogrowth.tar.gz\", repos=NULL, type=\"source\")"
+      - "#devtools::install_github('someone/HelpersMG')"
+      - "library(embryogrowth); library(HelpersMG)"
+      - "remotes::install_github(\"user/mypkg\")  # this one is used"
+      - "library(mypkg)"
+- "id": "drop_author_lib_loc"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); { x <- metacheck:::.repro_drop_author_lib_loc(c('library(hydroGOF, lib.loc = \"C:/Users/me/Documents/R/win-library/4.0\")', \"suppressPackageStartupMessages(require(sp, lib.loc='/home/me/R/x86_64'))\", 'requireNamespace(\"raster\", lib.loc = \"~/Rlibs\", quietly = TRUE)', 'library(mypkg, lib.loc = \"lib\")', '# library(y, lib.loc = \"C:/z\")', 'library(dplyr)')); list(txt = x$txt, paths = x$paths) } }"
+        "py": "lambda m: (lambda r: {'txt': r[0], 'paths': r[1]})(m.core._repro_drop_author_lib_loc(['library(hydroGOF, lib.loc = \"C:/Users/me/Documents/R/win-library/4.0\")', \"suppressPackageStartupMessages(require(sp, lib.loc='/home/me/R/x86_64'))\", 'requireNamespace(\"raster\", lib.loc = \"~/Rlibs\", quietly = TRUE)', 'library(mypkg, lib.loc = \"lib\")', '# library(y, lib.loc = \"C:/z\")', 'library(dplyr)']))"
+- "id": "download_failed_msg.url"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_download_failed_msg('http://a.org/p.tar.gz', c('x', \"cannot open URL 'http://a.org/p.tar.gz'\")) }"
+        "py": "lambda m: m.core._repro_download_failed_msg('http://a.org/p.tar.gz', ['x', \"cannot open URL 'http://a.org/p.tar.gz'\"])"
+- "id": "download_failed_msg.http_404"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_download_failed_msg('u/r', 'HTTP error 404.\\n  Not Found') }"
+        "py": "lambda m: m.core._repro_download_failed_msg('u/r', ['HTTP error 404.\\n  Not Found'])"
+- "id": "download_failed_msg.other_failure"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_download_failed_msg('u/r', c('non-zero exit status', 'compilation failed')) }"
+        "py": "lambda m: m.core._repro_download_failed_msg('u/r', ['non-zero exit status', 'compilation failed'])"
+- "id": "write_failed_folders.excel_file"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_write_failed_folders(\"Error in saveWorkbook(wb, paste0(wdoutputs, filename, \\\".xlsx\\\")) :\\n  cannot create file './outputs/Butterfly.xlsx', reason 'No such file or directory'\") }"
+        "py": "lambda m: __import__('metacheck.repro.layout', fromlist=['_'])._repro_write_failed_folders(\"Error in saveWorkbook(wb, paste0(wdoutputs, filename, \\\".xlsx\\\")) :\\n  cannot create file './outputs/Butterfly.xlsx', reason 'No such file or directory'\")"
+- "id": "write_failed_folders.ggsave_dir"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_write_failed_folders(\"Error in `ggsave()`:\\n! Cannot find directory '/sandbox/SERDP/5_figs/final'.\") }"
+        "py": "lambda m: __import__('metacheck.repro.layout', fromlist=['_'])._repro_write_failed_folders(\"Error in `ggsave()`:\\n! Cannot find directory '/sandbox/SERDP/5_figs/final'.\")"
+- "id": "write_failed_folders.png_device"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_write_failed_folders(\"Error in png(\\\"figs/a.png\\\") : unable to start png() device\\nIn addition: Warning message:\\ncannot open file 'figs/a.png': No such file or directory\") }"
+        "py": "lambda m: __import__('metacheck.repro.layout', fromlist=['_'])._repro_write_failed_folders(\"Error in png(\\\"figs/a.png\\\") : unable to start png() device\\nIn addition: Warning message:\\ncannot open file 'figs/a.png': No such file or directory\")"
+- "id": "write_failed_folders.python_open"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_write_failed_folders(\"Traceback (most recent call last):\\n  File \\\"a.py\\\", line 3, in <module>\\n    with open('out/res.txt', 'w') as f:\\nFileNotFoundError: [Errno 2] No such file or directory: 'out/res.txt'\") }"
+        "py": "lambda m: __import__('metacheck.repro.layout', fromlist=['_'])._repro_write_failed_folders(\"Traceback (most recent call last):\\n  File \\\"a.py\\\", line 3, in <module>\\n    with open('out/res.txt', 'w') as f:\\nFileNotFoundError: [Errno 2] No such file or directory: 'out/res.txt'\")"
+- "id": "write_failed_folders.python_read"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_write_failed_folders(\"Traceback (most recent call last):\\n  File \\\"a.py\\\", line 3, in <module>\\n    df = pd.read_csv('data/x.csv')\\nFileNotFoundError: [Errno 2] No such file or directory: 'data/x.csv'\") }"
+        "py": "lambda m: __import__('metacheck.repro.layout', fromlist=['_'])._repro_write_failed_folders(\"Traceback (most recent call last):\\n  File \\\"a.py\\\", line 3, in <module>\\n    df = pd.read_csv('data/x.csv')\\nFileNotFoundError: [Errno 2] No such file or directory: 'data/x.csv'\")"
+- "id": "write_failed_folders.r_read"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_write_failed_folders(\"Error in file(file, \\\"rt\\\") : cannot open the connection\\nIn addition: Warning message:\\ncannot open file 'data/x.csv': No such file or directory\") }"
+        "py": "lambda m: __import__('metacheck.repro.layout', fromlist=['_'])._repro_write_failed_folders(\"Error in file(file, \\\"rt\\\") : cannot open the connection\\nIn addition: Warning message:\\ncannot open file 'data/x.csv': No such file or directory\")"
+- "id": "error_message.errored"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_error_message('errored', \"Loading required package: x\\nError in f() : 0 arguments passed\\nCalls: source\\nExecution halted\") }"
+        "py": "lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_error_message(['errored'], [\"Loading required package: x\\nError in f() : 0 arguments passed\\nCalls: source\\nExecution halted\"])"
+- "id": "error_message.missing_package"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_error_message('dependency_unavailable', \"Error in library(lme4) : there is no package called 'lme4'\\nExecution halted\") }"
+        "py": "lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_error_message(['dependency_unavailable'], [\"Error in library(lme4) : there is no package called 'lme4'\\nExecution halted\"])"
+- "id": "error_message.timed_out"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_error_message('timed_out', \"timed out after 3600s\") }"
+        "py": "lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_error_message(['timed_out'], [\"timed out after 3600s\"])"
+- "id": "error_message.no_message"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_error_message('errored', \"killed\\nthe script stopped without a message\") }"
+        "py": "lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_error_message(['errored'], [\"killed\\nthe script stopped without a message\"])"
+- "id": "error_message.ran_ok"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_error_message('ran_ok', \"x\") }"
+        "py": "lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_error_message(['ran_ok'], [\"x\"])"
+- "id": "error_message.python"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_error_message('errored', \"Traceback (most recent call last):\\n  File 'a.py', line 3\\nNameError: name 'x' is not defined\", python = TRUE) }"
+        "py": "lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_error_message(['errored'], [\"Traceback (most recent call last):\\n  File 'a.py', line 3\\nNameError: name 'x' is not defined\"], python=True)"
+- "id": "read_failed_msg"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_read_failed_msg(c(NA, \"cannot open URL 'https://x.org/a.R': HTTP status was 404\")) }"
+        "py": "lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_read_failed_msg([None, \"cannot open URL 'https://x.org/a.R': HTTP status was 404\"])"
 - "id": "repro_run_scripts.ok"
   "r": "identity"
   "py": "tests.repro_core.parity_support.run"

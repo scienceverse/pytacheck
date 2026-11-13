@@ -998,3 +998,144 @@ def paper_p1() -> pc.Paper:
     p = pc.test_paper()
     p.paper_id = "p1"
     return p
+
+
+# -- upstream 0.4.3.28: lib.loc, made folders, files not read, error messages, no time ----------
+
+
+def static(d: Path, **kw: Any) -> ModuleOutput:
+    """``module_run(local_path = d)`` without running anything."""
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        return module_run(
+            pc.test_paper(), "reproducibility_check", local_path=str(d), local_only=True, **kw
+        )
+
+
+@pytest.fixture
+def unreadable(monkeypatch: pytest.MonkeyPatch) -> None:
+    """``code_read()`` fails for fail.R and fail.py, as with a stringi that cannot load."""
+    from metacheck.codecheck import core as cc
+
+    real = cc.code_read
+
+    def code_read(path: str, *a: Any, **k: Any) -> Any:
+        if str(path).endswith(("fail.R", "fail.py")):
+            raise RuntimeError("stringi package required for encoding operations")
+        return real(path, *a, **k)
+
+    monkeypatch.setattr(cc, "code_read", code_read)
+
+
+def test_a_lib_loc_of_the_authors_computer_is_removed_and_reported(
+    tmp_path: Path, runner: Runner
+) -> None:
+    lib = "C:/Users/someone/Documents/R/win-library/4.1"
+    d = deposit(
+        tmp_path,
+        {"libloc.R": f'library(stats, lib.loc = "{lib}")\nx <- median(1:5)\n', "b.R": "y <- 1\n"},
+    )
+    mo = run(d)
+    assert "lib.loc" not in runner.calls[0].texts["libloc.R"]
+    assert "library(stats)" in runner.calls[0].texts["libloc.R"]
+    assert mods(mo, "lib_loc_removed") == [("libloc.R", lib)]
+    assert mo.run_results.set_index("file_name").loc["libloc.R", "outcome"] == "ran_ok"
+
+
+def test_a_folder_a_write_stopped_on_is_made_and_the_script_run_again(
+    tmp_path: Path, runner: Runner
+) -> None:
+    def respond(n: int, f: str, call: Call) -> dict[str, Any] | None:
+        if f == "writes.R" and not exists_from(call, f, "results/tables"):
+            return errored(
+                "cannot open the connection\ncannot create file 'results/tables/a.csv', "
+                "reason 'No such file or directory'"
+            )
+        return None
+
+    runner.respond = respond
+    mo = run(deposit(tmp_path, {"writes.R": 'write.csv(1, file.path(out(), "a.csv"))\n'}))
+    assert len(runner.calls) == 2
+    assert outcomes(mo) == {"writes.R": "ran_ok"}
+    ((fn, detail),) = mods(mo, "folder_made")
+    assert fn == "writes.R"
+    assert "results/tables" in detail
+    assert "wrote into a folder that the deposit does not have" in report_text(mo)
+
+
+def test_a_script_that_could_not_be_read_is_not_run_and_an_empty_one_is_not_counted(
+    tmp_path: Path, runner: Runner, unreadable: None
+) -> None:
+    d = deposit(
+        tmp_path,
+        {"fail.R": "stop('boom')\n", "empty.R": "", "ok.R": "x <- median(1:5)\n"},
+    )
+    mo = run(d)
+    assert outcomes(mo) == {"fail.R": "not_read", "empty.R": "empty", "ok.R": "ran_ok"}
+    parses = runner.calls[0].kwargs["parses"]
+    assert [bool(parses[f]) for f in ("fail.R", "empty.R", "ok.R")] == [False, False, True]
+    assert mo.traffic_light == "yellow"
+    t = mo.table.set_index("file_name")
+    assert t.loc["fail.R", "error_message"].startswith(
+        "metacheck could not read the file: stringi package required for encoding operations"
+    )
+    assert pd.isna(t.loc["empty.R", "error_message"])
+    assert int(mo.summary_table["repro_scripts_n"].iloc[0]) == 1
+    assert "1 file could not be read" in report_text(mo)
+
+
+def test_the_static_check_says_a_script_that_could_not_be_read_is_not_run(
+    tmp_path: Path, unreadable: None
+) -> None:
+    d = deposit(tmp_path, {"fail.R": "stop('boom')\n", "empty.R": "", "ok.R": "x <- median(1:5)\n"})
+    mo = static(d)
+    reason = dict(zip(mo.table["file_name"], mo.table["not_runnable_reason"], strict=True))
+    assert reason["fail.R"] == "not_read"
+    assert reason["empty.R"] == "empty"
+    assert pd.isna(reason["ok.R"])
+    assert mo.traffic_light == "yellow"
+    assert "1 file could not be read" in report_text(mo)
+
+
+def test_a_python_script_that_could_not_be_read_is_not_run(
+    tmp_path: Path, unreadable: None
+) -> None:
+    mo = static(deposit(tmp_path, {"fail.py": "print(1)\n"}))
+    t = mo.table.set_index("file_name")
+    assert t.loc["fail.py", "not_runnable_reason"] == "not_read"
+    assert "stringi package required" in t.loc["fail.py", "error_message"]
+    assert mo.traffic_light != "green"
+
+
+def test_the_table_gives_the_error_of_a_script_that_failed_short(
+    tmp_path: Path, runner: Runner
+) -> None:
+    runner.respond = lambda n, f, call: errored("deliberate failure for testing " + "x" * 400)
+    mo = run(deposit(tmp_path, {"a.R": "stop('x')\n"}))
+    msg = mo.table["error_message"].iloc[0]
+    assert "deliberate failure for testing" in msg
+    assert len(msg) <= 300
+
+
+def test_with_too_little_time_left_nothing_is_copied_or_run(tmp_path: Path, runner: Runner) -> None:
+    left = dt.datetime.now() + dt.timedelta(seconds=300)  # under repro_min_time (900 s)
+    # the real runner starts nothing after the deadline
+    runner.respond = lambda n, f, call: {"outcome": "skipped_time_limit"}
+    mo = run(deposit(tmp_path, {"a.R": "x <- 1\n"}), total_timeout=left)
+    # the runner is given a deadline that has passed, so it starts nothing
+    assert runner.calls[0].kwargs["deadline"] <= time.time()
+    assert "too little to copy the repository, install its packages and run its scripts" in (
+        report_text(mo)
+    )
+
+
+def test_the_minimum_time_is_an_option(tmp_path: Path, runner: Runner) -> None:
+    from metacheck.utils import options
+
+    left = dt.datetime.now() + dt.timedelta(seconds=300)
+    old = options({"metacheck.repro_min_time": 60})
+    try:
+        mo = run(deposit(tmp_path, {"a.R": "x <- 1\n"}), total_timeout=left)
+    finally:
+        options(old)
+    assert outcomes(mo) == {"a.R": "ran_ok"}

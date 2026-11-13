@@ -1,0 +1,15 @@
+{
+  "id": "read_failed_msg",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      null,
+      "metacheck could not read the file: cannot open URL 'https://x.org/a.R': HTTP status was 404."
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

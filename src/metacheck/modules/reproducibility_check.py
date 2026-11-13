@@ -266,6 +266,14 @@ def _match_sandbox(sandbox: Any) -> str:
         repository lists but that was not downloaded, such as one over
         `max_file_size`: it could not be tried, so it is not counted as a script that
         did not reproduce (`summary_table$repro_not_downloaded_n` counts them apart).
+        `not_read` is a file metacheck could not read, so it was not run; the light is
+        then not green, as the file may read and run on another computer, and
+        `table["error_message"]` says why. `empty` is a file with nothing in it, which
+        is not run or counted as a script. For a script that did not run through,
+        `table["error_message"]` is its error, short (at most 300 characters): the
+        error line of its output, which names a package that is not there, with the
+        address it asked for when it needed the internet, or the time limit it
+        reached; `table["reason"]` sorts it into a kind.
         `skipped_time_limit` is a script not started, or stopped, because
         `total_timeout` had run out. A timeout means "still running at
         the cutoff", not a failure, so raise `timeout` for legitimately long-running
@@ -350,8 +358,10 @@ def _match_sandbox(sandbox: Any) -> str:
         "install_missing": "if TRUE (and `execute = TRUE`), install the code's\n"
         "declared dependencies into a throwaway temp library before running (CRAN\n"
         "via `install.packages`, GitHub/URL via `remotes`; Python packages via\n"
-        "`pip install --target`). If FALSE, nothing is installed: a script needing\n"
-        "an absent package simply errors, recorded as its outcome. If `None` (the\n"
+        '`pip install --prefix` with `sandbox = "docker"`, and `pip install\n'
+        '--target` with `sandbox = "process"`). If FALSE, nothing is installed: a\n'
+        "script needing an absent package simply errors, recorded as its outcome. If\n"
+        "`None` (the\n"
         "default), this is FALSE, except that the R packages the scripts load are\n"
         "installed when `recorded_versions = TRUE` and the repository records\n"
         "versions for them.",

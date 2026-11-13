@@ -1259,7 +1259,7 @@ def repro_rewrite_paths(
     # code_file_refs()).
     refs_text: Any = code_text
     if lang == "Python":
-        refs_text = _blank_write_opens(_code_remove_comments(code_text, lang))
+        refs_text = _code_blank_write_opens(_code_remove_comments(code_text, lang), lang)
     refs = list(code_file_refs(refs_text, lang))
     plan_file = _chr_list(plan["file_name"])
     plan_base = [_norm_base(f) for f in plan_file]
@@ -1790,18 +1790,24 @@ def _close_of(chars: str, first: int) -> int | None:
     return None
 
 
-def _blank_write_opens(
-    code_text: Sequence[str | None], mode_regex: str = _PY_CREATE_MODE_PAT
+def _code_blank_write_opens(
+    code_text: Sequence[str | None], lang: str = "Python", mode_regex: str | None = None
 ) -> list[str | None]:
     """Python ``open()`` calls whose mode writes, blanked out (R ``.code_blank_write_opens()``).
 
     The text of each such call becomes spaces, so the file name in it is not found as an
     input; the lines and their number stay. A call over several lines is judged as a
-    whole. The mode is the second argument without a name, or ``mode =``. ``code_file_refs()``
-    of R 0.4.3.28 does this itself (the text-and-code lane's port); until that is merged
-    this is the minimal copy that :func:`repro_rewrite_paths` needs.
+    whole. The mode is the second argument without a name, or ``mode =``.
+
+    STAND-IN: the same name and signature as ``metacheck.codecheck.core._code_blank_write_opens``
+    of the text-and-code lane (``codecheck/`` is not this lane's to edit). At merge, replace
+    this function by an import of that one; its callers here (``repro_rewrite_paths`` and
+    ``_py_open_writes``) already call it by this name.
     """
     lines = list(code_text)
+    if lang != "Python":
+        return lines
+    mode_regex = mode_regex or _PY_CREATE_MODE_PAT
     joined = "\n".join(s if s is not None else "NA" for s in lines)
     chars = list(joined)
     blank = [False] * len(chars)
@@ -1836,11 +1842,11 @@ def _py_open_writes(line: str | None) -> bool:
     ``open()`` call counts: the second positional argument, or ``mode =``; a mode is a
     write when it is ``w``, ``a``, ``x`` or ``r+``, with ``b``, ``t`` or ``+`` (U240,
     fixed in metacheck 0.4.0). As in R 0.4.3.28, the call text is blanked when its mode
-    writes (:func:`_blank_write_opens`) and a changed line is a write.
+    writes (:func:`_code_blank_write_opens`) and a changed line is a write.
     """
     if not line:
         return False
-    return _blank_write_opens([line], _PY_WRITE_MODE_PAT) != [line]
+    return _code_blank_write_opens([line], "Python", _PY_WRITE_MODE_PAT) != [line]
 
 
 def _code_open_calls(
