@@ -10928,3 +10928,310 @@
     "max_file_size": !!int "10"
     "max_download_size": !!int "100"
     "cache": !!bool "false"
+# ---- 0.4.3.28: files the code writes are not inputs; SAS, SPSS and Mplus ignore capitals
+- "id": "code_file_refs.writes.python"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "rows = open(\"data.csv\").read()"
+      - "open(\"out.txt\", \"w\").write(\"1\")"
+      - "with open(\"log.txt\", mode=\"a\") as f: pass"
+      - "with open(\"in.txt\") as f, open(\"res.txt\", \"w\") as g: pass"
+      - "f = open(\"keep.txt\", \"r+\")"
+      - "g = open(\"new.bin\", \"xb\")"
+      - "h = open("
+      - "    \"multi.txt\","
+      - "    \"w\")"
+      - "k = open('single.txt', 'rb')"
+      - "m = open(\"rt.txt\", \"rt\")"
+      - "n = open(\"wplus.txt\", \"w+\")"
+      - "o = open(\"named.txt\", encoding=\"utf-8\")"
+      - "q = open(file=\"kw.txt\", mode=\"w\")"
+      - "r = open(\"cmp.txt\", mode=\"r\") if x == \"w\" else None"
+    "lang": "Python"
+- "id": "code_file_refs.writes.python_include_writes"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "rows = open(\"data.csv\").read()"
+      - "open(\"out.txt\", \"w\").write(\"1\")"
+      - "with open(\"log.txt\", mode=\"a\") as f: pass"
+      - "with open(\"in.txt\") as f, open(\"res.txt\", \"w\") as g: pass"
+      - "f = open(\"keep.txt\", \"r+\")"
+      - "g = open(\"new.bin\", \"xb\")"
+      - "h = open("
+      - "    \"multi.txt\","
+      - "    \"w\")"
+      - "k = open('single.txt', 'rb')"
+      - "m = open(\"rt.txt\", \"rt\")"
+      - "n = open(\"wplus.txt\", \"w+\")"
+      - "o = open(\"named.txt\", encoding=\"utf-8\")"
+      - "q = open(file=\"kw.txt\", mode=\"w\")"
+      - "r = open(\"cmp.txt\", mode=\"r\") if x == \"w\" else None"
+    "lang": "Python"
+    "include_writes": true
+- "id": "code_file_refs.writes.matlab"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "d = load('in.mat');"
+      - "fid = fopen('results.txt', 'w');"
+      - "fid2 = fopen('raw.txt');"
+      - "fid3 = fopen(\"app.txt\", 'at');"
+      - "fid4 = fopen('upd.txt', 'r+');"
+      - "fid5 = fopen('rw.txt', 'W');"
+      - "fid6 = fopen('bin.dat', 'rb');"
+    "lang": "MATLAB"
+- "id": "code_file_refs.writes.matlab_include_writes"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "d = load('in.mat');"
+      - "fid = fopen('results.txt', 'w');"
+      - "fid2 = fopen('raw.txt');"
+      - "fid3 = fopen(\"app.txt\", 'at');"
+      - "fid4 = fopen('upd.txt', 'r+');"
+      - "fid5 = fopen('rw.txt', 'W');"
+      - "fid6 = fopen('bin.dat', 'rb');"
+    "lang": "MATLAB"
+    "include_writes": true
+- "id": "code_file_refs.writes.mplus_savedata"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "TITLE: two files"
+      - "DATA: FILE = \"in.dat\";"
+      - "VARIABLE: NAMES = y1-y3;"
+      - "MODEL: f BY y1-y3;"
+      - "SAVEDATA:"
+      - "  FILE = \"fscores.dat\";"
+      - "  SAVE = FSCORES;"
+      - "OUTPUT: sampstat;"
+      - "PLOT: FILE = \"plot.dat\";"
+    "lang": "Mplus"
+- "id": "code_file_refs.writes.mplus_savedata_include_writes"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "TITLE: two files"
+      - "DATA: FILE = \"in.dat\";"
+      - "VARIABLE: NAMES = y1-y3;"
+      - "MODEL: f BY y1-y3;"
+      - "SAVEDATA:"
+      - "  FILE = \"fscores.dat\";"
+      - "  SAVE = FSCORES;"
+      - "OUTPUT: sampstat;"
+      - "PLOT: FILE = \"plot.dat\";"
+    "lang": "Mplus"
+    "include_writes": true
+- "id": "code_file_refs.writes.mplus_capitals"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "title: lower"
+      - "data: file = low.dat;"
+      - "variable: names = a b;"
+      - "savedata: file is out.dat;"
+      - "  save = fscores;"
+      - "output: tech1;"
+      - "data imputation: file = imp.dat;"
+      - "SaveData:"
+      - "File = \"mixed.dat\";"
+      - "ANALYSIS: type = basic;"
+    "lang": "Mplus"
+- "id": "code_file_refs.capitals.sas"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "proc import datafile='low.csv' out=a;"
+      - "PROC IMPORT DATAFILE='UP.csv' OUT=b;"
+      - "INFILE bare_up.dat;"
+      - "infile bare_low.dat;"
+      - "libname lib 'C:/data/lib';"
+      - "Libname Mixed 'x';"
+    "lang": "SAS"
+- "id": "code_file_refs.capitals.spss"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "GET FILE='UP.sav'."
+      - "get file='low.sav'."
+      - "get data /type=txt /file=bare_low.txt"
+      - "GET DATA /TYPE=TXT /FILE=bare_up.txt"
+      - "file handle h /name='hand.sav'."
+      - "FILE HANDLE H2 /NAME='HAND2.SAV'."
+    "lang": "SPSS"
+- "id": "code_file_refs.capitals.stata_unchanged"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "use \"a.dta\""
+      - "USE \"b.dta\""
+      - "import delimited using c.csv, clear"
+      - "insheet using d.csv"
+      - "merge 1:1 id using e.dta"
+    "lang": "Stata"
+- "id": "code_file_refs.writes.r_unchanged"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- read.csv(\"a.csv\")"
+      - "write.csv(x, \"b.csv\")"
+      - "f <- file(\"c.csv\", \"w\")"
+    "lang": "R"
+- "id": "code_blank_write_opens.python"
+  "r": "metacheck:::.code_blank_write_opens"
+  "py": "metacheck.codecheck.core._code_blank_write_opens"
+  "args":
+    "code_text":
+      "$chr":
+      - "rows = open(\"data.csv\").read()"
+      - "open(\"out.txt\", \"w\").write(\"1\")"
+      - "with open(\"log.txt\", mode=\"a\") as f: pass"
+      - "with open(\"in.txt\") as f, open(\"res.txt\", \"w\") as g: pass"
+      - "f = open(\"keep.txt\", \"r+\")"
+      - "g = open(\"new.bin\", \"xb\")"
+      - "h = open("
+      - "    \"multi.txt\","
+      - "    \"w\")"
+      - "k = open('single.txt', 'rb')"
+      - "m = open(\"rt.txt\", \"rt\")"
+      - "n = open(\"wplus.txt\", \"w+\")"
+      - "o = open(\"named.txt\", encoding=\"utf-8\")"
+      - "q = open(file=\"kw.txt\", mode=\"w\")"
+      - "r = open(\"cmp.txt\", mode=\"r\") if x == \"w\" else None"
+    "lang": "Python"
+- "id": "code_blank_write_opens.python_r_plus"
+  "r": "metacheck:::.code_blank_write_opens"
+  "py": "metacheck.codecheck.core._code_blank_write_opens"
+  "args":
+    "code_text":
+      "$chr":
+      - "rows = open(\"data.csv\").read()"
+      - "open(\"out.txt\", \"w\").write(\"1\")"
+      - "with open(\"log.txt\", mode=\"a\") as f: pass"
+      - "with open(\"in.txt\") as f, open(\"res.txt\", \"w\") as g: pass"
+      - "f = open(\"keep.txt\", \"r+\")"
+      - "g = open(\"new.bin\", \"xb\")"
+      - "h = open("
+      - "    \"multi.txt\","
+      - "    \"w\")"
+      - "k = open('single.txt', 'rb')"
+      - "m = open(\"rt.txt\", \"rt\")"
+      - "n = open(\"wplus.txt\", \"w+\")"
+      - "o = open(\"named.txt\", encoding=\"utf-8\")"
+      - "q = open(file=\"kw.txt\", mode=\"w\")"
+      - "r = open(\"cmp.txt\", mode=\"r\") if x == \"w\" else None"
+    "lang": "Python"
+    "mode_regex": "^(['\"])(?=[^'\"]*[wax+])[rwaxbt+]+\\1$"
+- "id": "code_blank_write_opens.matlab"
+  "r": "metacheck:::.code_blank_write_opens"
+  "py": "metacheck.codecheck.core._code_blank_write_opens"
+  "args":
+    "code_text":
+      "$chr":
+      - "d = load('in.mat');"
+      - "fid = fopen('results.txt', 'w');"
+      - "fid2 = fopen('raw.txt');"
+      - "fid3 = fopen(\"app.txt\", 'at');"
+      - "fid4 = fopen('upd.txt', 'r+');"
+      - "fid5 = fopen('rw.txt', 'W');"
+      - "fid6 = fopen('bin.dat', 'rb');"
+    "lang": "MATLAB"
+- "id": "code_blank_write_opens.other_language"
+  "r": "metacheck:::.code_blank_write_opens"
+  "py": "metacheck.codecheck.core._code_blank_write_opens"
+  "args":
+    "code_text":
+      "$chr":
+      - "rows = open(\"data.csv\").read()"
+      - "open(\"out.txt\", \"w\").write(\"1\")"
+      - "with open(\"log.txt\", mode=\"a\") as f: pass"
+      - "with open(\"in.txt\") as f, open(\"res.txt\", \"w\") as g: pass"
+      - "f = open(\"keep.txt\", \"r+\")"
+      - "g = open(\"new.bin\", \"xb\")"
+      - "h = open("
+      - "    \"multi.txt\","
+      - "    \"w\")"
+      - "k = open('single.txt', 'rb')"
+      - "m = open(\"rt.txt\", \"rt\")"
+      - "n = open(\"wplus.txt\", \"w+\")"
+      - "o = open(\"named.txt\", encoding=\"utf-8\")"
+      - "q = open(file=\"kw.txt\", mode=\"w\")"
+      - "r = open(\"cmp.txt\", mode=\"r\") if x == \"w\" else None"
+    "lang": "R"
+- "id": "code_blank_write_opens.unclosed_and_empty"
+  "r": "metacheck:::.code_blank_write_opens"
+  "py": "metacheck.codecheck.core._code_blank_write_opens"
+  "args":
+    "code_text":
+      "$chr":
+      - "a = open()"
+      - "b = open(\"x.txt\", \"w\""
+      - "c = 1"
+    "lang": "Python"
+- "id": "code_blank_write_opens.nested_brackets"
+  "r": "metacheck:::.code_blank_write_opens"
+  "py": "metacheck.codecheck.core._code_blank_write_opens"
+  "args":
+    "code_text":
+      "$chr":
+      - "a = open(os.path.join(\"d\", \"x.txt\"), \"w\")"
+      - "b = open(f(g(\"w\")), mode)"
+      - "c = open([\"a\", \"b\"][0], \"a\")"
+    "lang": "Python"
+- "id": "code_blank_mplus_savedata.commands"
+  "r": "metacheck:::.code_blank_mplus_savedata"
+  "py": "metacheck.codecheck.core._code_blank_mplus_savedata"
+  "args":
+    "code_text":
+      "$chr":
+      - "title: lower"
+      - "data: file = low.dat;"
+      - "variable: names = a b;"
+      - "savedata: file is out.dat;"
+      - "  save = fscores;"
+      - "output: tech1;"
+      - "data imputation: file = imp.dat;"
+      - "SaveData:"
+      - "File = \"mixed.dat\";"
+      - "ANALYSIS: type = basic;"
+      - "TITLE: two files"
+      - "DATA: FILE = \"in.dat\";"
+      - "VARIABLE: NAMES = y1-y3;"
+      - "MODEL: f BY y1-y3;"
+      - "SAVEDATA:"
+      - "  FILE = \"fscores.dat\";"
+      - "  SAVE = FSCORES;"
+      - "OUTPUT: sampstat;"
+      - "PLOT: FILE = \"plot.dat\";"
+- "id": "code_blank_mplus_savedata.none"
+  "r": "metacheck:::.code_blank_mplus_savedata"
+  "py": "metacheck.codecheck.core._code_blank_mplus_savedata"
+  "args":
+    "code_text":
+      "$chr":
+      - "DATA: FILE = a.dat;"
+      - "MODEL: y ON x;"

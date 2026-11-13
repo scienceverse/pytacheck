@@ -1,0 +1,28 @@
+{
+  "id": "code_blank_write_opens.other_language",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "rows = open(\"data.csv\").read()",
+      "open(\"out.txt\", \"w\").write(\"1\")",
+      "with open(\"log.txt\", mode=\"a\") as f: pass",
+      "with open(\"in.txt\") as f, open(\"res.txt\", \"w\") as g: pass",
+      "f = open(\"keep.txt\", \"r+\")",
+      "g = open(\"new.bin\", \"xb\")",
+      "h = open(",
+      "    \"multi.txt\",",
+      "    \"w\")",
+      "k = open('single.txt', 'rb')",
+      "m = open(\"rt.txt\", \"rt\")",
+      "n = open(\"wplus.txt\", \"w+\")",
+      "o = open(\"named.txt\", encoding=\"utf-8\")",
+      "q = open(file=\"kw.txt\", mode=\"w\")",
+      "r = open(\"cmp.txt\", mode=\"r\") if x == \"w\" else None"
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

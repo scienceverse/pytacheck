@@ -304,6 +304,101 @@
       "$expr":
         "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); paperlist(ec_paper(\"Participants were recruited online.\"), paper(\"empty\"))"
         "py": "pc.PaperList([__import__('tests.mod_ethics.parity_support', fromlist=['x']).ec_paper(['Participants were recruited online.']), pc.paper('empty')])"
+- "id": "ethics_check.no_participants.not_as_subjects"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The professionals described their own work as collaborators in the projects, not as subjects recruited for a study."
+- "id": "ethics_check.no_participants.stated_1"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "No human subjects were involved in this study."
+- "id": "ethics_check.no_participants.stated_2"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "As this study did not involve human subjects, institutional review board approval was not required."
+- "id": "ethics_check.no_participants.stated_3"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "Ethics Statement: No animals nor human participants were involved in the production and analysis of the data used for this article."
+- "id": "ethics_check.no_participants.stated_4"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "No identifiable human research participants were used."
+- "id": "ethics_check.no_participants.approved"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "No human subjects were involved in the second analysis."
+        - "The study was approved by the ethics committee."
+- "id": "ethics_check.no_participants.negation_1"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "No participants were excluded."
+- "id": "ethics_check.no_participants.negation_2"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "No participants were minors."
+- "id": "ethics_check.no_participants.negation_3"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "Only children without G6PD deficiency were enrolled in the study."
+- "id": "ethics_check.no_participants.negation_4"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "This study would not have been possible without our participants."
+- "id": "ethics_check.no_participants.negation_5"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants were recruited online."
+        - "No participant was included more than once across training samples."
+- "id": "ethics_check.no_participants.paperlist"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ec_papers(c(\"none\", \"live\", \"both\"), list(c(\"No human subjects were involved in this study.\"), c(\"Participants were recruited online.\"), c(\"Participants were recruited online.\", \"We did not involve human participants.\")))"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ec_papers(['none', 'live', 'both'], [['No human subjects were involved in this study.'], ['Participants were recruited online.'], ['Participants were recruited online.', 'We did not involve human participants.']])"
 - "id": "ethics_check.duplicate_ids"
   "module": "ethics_check"
   "args":

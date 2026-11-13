@@ -1,0 +1,201 @@
+{
+  "id": "stat_p_exact.not_a_test.sentence_09",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_p_exact"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Exact P-Values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value",
+          "expanded",
+          "imprecise",
+          "not_a_test",
+          "zero"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p<.02"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Contrasts, with a Bonferroni corrected alpha of p<.02 for 4 comparisons, showed an interaction."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.02
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Contrasts, with a Bonferroni corrected alpha of p<.02 for 4 comparisons, showed an interaction."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "threshold"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no imprecise *p* values or *p*-values of exactly zero out of 1 detected."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no imprecise *p* values or *p*-values of exactly zero out of 1 detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "n_imprecise",
+          "n_zero"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
