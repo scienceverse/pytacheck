@@ -1,3 +1,6 @@
 {
-"reproducibility_check.spv_notebook_py": {"r": "29c57710a5d7217b", "py": "06f88a15fb482026", "diff": ["report[]", "stat_output[].json.analyses", "stat_output[].long", "summary_text[]"]}
+"module.nonr_only": {"r": "7ac685216bff6c5c", "py": "e9d55ba5d9d30353", "diff": ["report[]"]},
+"reproducibility_check.nonr_only": {"r": "7ac685216bff6c5c", "py": "e9d55ba5d9d30353", "diff": ["report[]"]},
+"reproducibility_check.py_software": {"r": "c7fef332669c85f2", "py": "eed63aa370510b95", "diff": ["report[]"]},
+"reproducibility_check.spv_notebook_py": {"r": "652062caa9bb9e3d", "py": "8f59f4667836d4fa", "diff": ["report[]", "stat_output[].json.analyses", "stat_output[].long", "summary_text[]"]}
 }

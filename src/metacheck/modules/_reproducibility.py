@@ -35,6 +35,44 @@ from metacheck.report import scroll_table
 # -- small R helpers ---------------------------------------------------------------
 
 
+def no_time_to_prepare(a: Mapping[str, Any], dbg: Callable[..., None]) -> bool:
+    """R ``.repro_no_time_to_prepare()``: too little time is left to copy, install and run.
+
+    With a clock time as ``total_timeout`` (a server's job limit): when less than
+    ``metacheck.repro_min_time`` (default 15 minutes) is left as the code check starts,
+    nothing is copied, installed or run, and every script is recorded as not started
+    (``skipped_time_limit``), so the job keeps its time for the report. Asked before the R
+    scripts and again before the Python ones; True once it applies. The seconds that were
+    left are kept in ``a["run_state"]["prep_skipped_left"]``.
+    """
+    import time
+
+    from metacheck.repro import core
+
+    state = a["run_state"]
+    total = a.get("total_timeout")
+    if state.get("prep_skipped_left") is None and core._repro_short_of_time(
+        total, core._repro_min_prep_time()
+    ):
+        left = max(0.0, core._repro_time_left(total.timestamp()))
+        state["prep_skipped_left"] = left
+        state["script_deadline"] = time.time()
+        dbg(
+            f"only {core._repro_duration(left)} left before the time limit: "
+            "not copying, installing or running anything."
+        )
+    return state.get("prep_skipped_left") is not None
+
+
+def no_time_to_install(a: Mapping[str, Any]) -> bool:
+    """R ``.repro_no_time_to_install()``: no time left to install packages (a minute at least, or none at all)."""
+    from metacheck.repro import core
+
+    return a["run_state"].get("prep_skipped_left") is not None or core._repro_short_of_time(
+        a.get("total_timeout"), 60
+    )
+
+
 def _na(x: Any) -> bool:
     if x is None or x is pd.NA:
         return True
