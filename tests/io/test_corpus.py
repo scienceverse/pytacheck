@@ -74,7 +74,7 @@ def test_release_assets_no_releases() -> None:
     with api("apis_papers_empty"):
         assets = _papers_release_assets("scienceverse/norealeases")
     assert len(assets) == 0
-    assert list(assets.columns) == ["name", "tag", "size", "download_url"]
+    assert list(assets.columns) == ["name", "tag", "size", "download_url", "api_url"]
 
 
 def test_release_assets_unreachable_repo() -> None:
@@ -221,3 +221,105 @@ def test_read_rds_text_is_valid_utf8(tmp_path: Path) -> None:
     got = _read_rds(f)
     assert got == ["a\ufffdb", "caf\u00e9", "caf\u00e9", ""]
     assert all(type(v) is str for v in got)
+
+
+# -- private corpora (metacheck 0.4.3.27, #369) ----------------------------------------
+
+PRIVATE = "scienceverse/papers_private"
+RELEASES = f"https://api.github.com/repos/{PRIVATE}/releases"
+ASSET_API = f"https://api.github.com/repos/{PRIVATE}/releases/assets/101"
+ASSET_PUBLIC = f"https://github.com/{PRIVATE}/releases/download/glasgow-2026-11-01/glasgow.rds"
+
+
+def _releases_body() -> list[dict]:
+    return [
+        {
+            "tag_name": "glasgow-2026-11-01",
+            "published_at": "2026-11-01T10:00:00Z",
+            "assets": [
+                {
+                    "name": "glasgow.rds",
+                    "size": 1200,
+                    "browser_download_url": ASSET_PUBLIC,
+                    "url": ASSET_API,
+                }
+            ],
+        }
+    ]
+
+
+@pytest.fixture
+def token(monkeypatch: pytest.MonkeyPatch) -> str:
+    from metacheck.archives import api_keys
+    from metacheck.utils import local_options
+
+    monkeypatch.setattr(api_keys, "key_check_request", lambda *a, **k: True)
+    with local_options({"metacheck.github.pat": "secret-token"}):
+        yield "secret-token"
+
+
+def test_release_assets_have_the_api_url_and_use_the_token(token: str) -> None:
+    import respx
+
+    with respx.mock() as router:
+        route = router.get(RELEASES).mock(return_value=httpx.Response(200, json=_releases_body()))
+        assets = _papers_release_assets(PRIVATE)
+    assert route.calls.last.request.headers["authorization"] == f"token {token}"
+    assert assets["api_url"].tolist() == [ASSET_API]
+    assert assets["download_url"].tolist() == [ASSET_PUBLIC]
+
+
+def test_a_private_corpus_is_downloaded_through_the_api_with_the_token(
+    cache_dir: Path, token: str
+) -> None:
+    import respx
+
+    rds = IO_FIXTURES / "papers_small.rds"
+    with respx.mock() as router:
+        router.get(RELEASES).mock(return_value=httpx.Response(200, json=_releases_body()))
+        asset = router.get(ASSET_API).mock(
+            return_value=httpx.Response(200, content=rds.read_bytes())
+        )
+        result = papers_load("glasgow", repo=PRIVATE)
+    assert isinstance(result, pc.PaperList)
+    req = asset.calls.last.request
+    assert req.headers["authorization"] == f"token {token}"
+    assert req.headers["accept"] == "application/octet-stream"
+
+
+def test_a_public_link_is_used_without_a_token(cache_dir: Path, monkeypatch) -> None:
+    import respx
+
+    from metacheck.archives import api_keys
+    from metacheck.utils import local_options
+
+    monkeypatch.setattr(api_keys, "key_get", lambda service: "")
+    rds = IO_FIXTURES / "papers_small.rds"
+    with local_options({"metacheck.github.pat": ""}), respx.mock() as router:
+        router.get(RELEASES).mock(return_value=httpx.Response(200, json=_releases_body()))
+        public = router.get(ASSET_PUBLIC).mock(
+            return_value=httpx.Response(200, content=rds.read_bytes())
+        )
+        papers_load("glasgow", repo=PRIVATE)
+    assert public.called
+    assert "authorization" not in public.calls.last.request.headers
+
+
+def test_a_404_says_to_set_a_github_token() -> None:
+    import respx
+
+    with respx.mock() as router:
+        router.get(RELEASES).mock(return_value=httpx.Response(404, json={"message": "Not Found"}))
+        with pytest.raises(RuntimeError, match=r"If the repository is private, set a GitHub token"):
+            _papers_release_assets(PRIVATE)
+
+
+def test_metadata_is_read_with_the_token(token: str) -> None:
+    import respx
+
+    url = f"https://raw.githubusercontent.com/{PRIVATE}/main/glasgow/metadata.json"
+    with respx.mock() as router:
+        route = router.get(url).mock(return_value=httpx.Response(200, json={"dc:title": "Glasgow"}))
+        meta = papers_metadata("glasgow", repo=PRIVATE)
+    assert meta == {"dc_title": "Glasgow"}
+    assert route.calls.last.request.headers["authorization"] == f"token {token}"

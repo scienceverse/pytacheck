@@ -55,13 +55,14 @@ def _file_path_sans_ext(name: str) -> str:
     return cast(str, sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", name))
 
 
-def _release_assets_frame(rows: list[tuple[str, str, Any, str]]) -> pd.DataFrame:
+def _release_assets_frame(rows: list[tuple[str, str, Any, str, str | None]]) -> pd.DataFrame:
     return pd.DataFrame(
         {
             "name": pd.Series([r[0] for r in rows], dtype="string"),
             "tag": pd.Series([r[1] for r in rows], dtype="string"),
             "size": pd.Series([r[2] for r in rows], dtype="Int64"),
             "download_url": pd.Series([r[3] for r in rows], dtype="string"),
+            "api_url": pd.Series([r[4] for r in rows], dtype="string"),
         }
     )
 
@@ -70,22 +71,34 @@ def _papers_release_assets(repo: str = DEFAULT_REPO) -> pd.DataFrame:
     """Port of ``R/import-papers.R::.papers_release_assets()``.
 
     One row per ``.rds`` asset of the repository's releases (``name``,
-    ``tag``, ``size``, ``download_url``). Release tags follow a
+    ``tag``, ``size``, ``download_url`` and ``api_url``, the address a private
+    repository's file is downloaded from with a token). Release tags follow a
     ``{corpus}-{date}`` convention; when a corpus family was re-released,
     only its most recently published release is kept. A table without rows when
     no release has an ``.rds`` asset (metacheck 0.3 returned ``NULL``; U18).
     """
     from metacheck import http
+    from metacheck.archives.github import _github_config
 
     url = f"https://api.github.com/repos/{repo}/releases"
     try:
-        resp = http.request("GET", url, headers={"Accept": "application/vnd.github+json"})
+        # a private repository is read with the GitHub token (#369)
+        resp = http.request(
+            "GET", url, headers={**_github_config(), "Accept": "application/vnd.github+json"}
+        )
     except Exception as exc:
         raise ConnectionError(f"Could not reach GitHub API: {exc}") from exc
     if resp is None:
         raise ConnectionError("Could not reach GitHub API: connection failed")
     if resp.status_code != 200:
-        raise RuntimeError(f"GitHub API error (status {resp.status_code}): {url}")
+        # GitHub answers 404 for a private repository it is not shown
+        hint = (
+            " If the repository is private, set a GitHub token with access to it "
+            "(see github_pat())."
+            if resp.status_code == 404
+            else ""
+        )
+        raise RuntimeError(f"GitHub API error (status {resp.status_code}): {url}{hint}")
 
     releases = resp.json()
     if not releases:
@@ -104,12 +117,15 @@ def _papers_release_assets(repo: str = DEFAULT_REPO) -> pd.DataFrame:
         seen.add(family[i])
         kept.append(releases[i])
 
-    rows: list[tuple[str, str, Any, str]] = []
+    rows: list[tuple[str, str, Any, str, str | None]] = []
     for rel in kept:
         rds = [
             a for a in rel.get("assets") or [] if str(a.get("name", "")).lower().endswith(".rds")
         ]
-        rows.extend((a["name"], rel["tag_name"], a["size"], a["browser_download_url"]) for a in rds)
+        rows.extend(
+            (a["name"], rel["tag_name"], a["size"], a["browser_download_url"], a.get("url"))
+            for a in rds
+        )
     return _release_assets_frame(rows)
 
 
@@ -149,6 +165,8 @@ def papers_load(
     and reused by later calls unless ``overwrite=True``.
     """
     from metacheck import http
+    from metacheck.archives.api_keys import key_use
+    from metacheck.archives.github import _github_config, _github_key_check
 
     cache_dir = _papers_cache_dir()
     cache_path = cache_dir / f"{name}.rds"
@@ -168,9 +186,20 @@ def papers_load(
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp = Path(tmpdir) / f"{name}.rds"
-        url = str(entry["download_url"])
+        # A private repository's file can only be downloaded through the API, with the
+        # token (#369); GitHub then sends the request on to where the file is stored,
+        # and the token is not sent there.
+        token = key_use("github", check=_github_key_check)
+        headers: dict[str, str] = {}
+        if token and not pd.isna(entry["api_url"]):
+            url = str(entry["api_url"])
+            headers = {**_github_config(), "Accept": "application/octet-stream"}
+        else:
+            url = str(entry["download_url"])
         try:
-            with http.client().stream("GET", url, follow_redirects=True, timeout=None) as resp:
+            with http.client().stream(
+                "GET", url, headers=headers, follow_redirects=True, timeout=None
+            ) as resp:
                 status = resp.status_code
                 if status == 200:
                     with tmp.open("wb") as fh:
@@ -209,10 +238,11 @@ def papers_metadata(name: str, repo: str = DEFAULT_REPO) -> dict[str, Any]:
     (``dc:title`` -> ``dc_title``).
     """
     from metacheck import http
+    from metacheck.archives.github import _github_config
 
     url = f"https://raw.githubusercontent.com/{repo}/main/{name}/metadata.json"
     try:
-        resp = http.request("GET", url)
+        resp = http.request("GET", url, headers=_github_config())
     except Exception as exc:
         raise ConnectionError(f"Could not reach GitHub: {exc}") from exc
     if resp is None:
