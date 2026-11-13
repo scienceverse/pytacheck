@@ -355,7 +355,7 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         `keys` table give its file, line and type, and only its beginning. Other
         files over 25 MB and binary files are not searched. A key is never tested
         with its provider. Every module's result has any whole key replaced by
-        "[key removed]" (see `module_run()`).
+        "\\[key removed\\]" (see `module_run()`).
 
         <validation>This module has not been validated. All checks in the data_check module have unknown error rates. Carefully evaluate the output of this module. You can help improve this module by reporting an issue on GitHub.</validation>
     """,

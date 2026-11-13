@@ -1184,6 +1184,10 @@ def _hermetic_env() -> None:
 
     os.environ.setdefault("PYTACHECK_CONFIG", "none")
     os.environ.setdefault("PYTACHECK_NO_SLEEP", "1")  # no backoff against mocks, as under pytest
+    # data_check's concepts from metacheck's rules (and LLM tier), as under pytest
+    # (tests/conftest.py): a classifier model in this computer's cache would add its
+    # concepts and a report line that R and a fresh machine do not have
+    os.environ.setdefault("METACHECK_CONCEPTS", "llm")
     if not os.environ.get("PYTACHECK_DATA_DIR"):
         _DATA_DIR = tempfile.TemporaryDirectory(prefix="pytacheck-parity-data-")
         atexit.register(_DATA_DIR.cleanup)
