@@ -18,6 +18,7 @@ this file holds the pieces it is built from:
 
 from __future__ import annotations
 
+import datetime
 import math
 import os
 import platform
@@ -51,8 +52,10 @@ def no_time_to_prepare(a: Mapping[str, Any], dbg: Callable[..., None]) -> bool:
 
     state = a["run_state"]
     total = a.get("total_timeout")
-    if state.get("prep_skipped_left") is None and core._repro_short_of_time(
-        total, core._repro_min_prep_time()
+    if (
+        state.get("prep_skipped_left") is None
+        and isinstance(total, datetime.datetime)
+        and core._repro_short_of_time(total, core._repro_min_prep_time())
     ):
         left = max(0.0, core._repro_time_left(total.timestamp()))
         state["prep_skipped_left"] = left

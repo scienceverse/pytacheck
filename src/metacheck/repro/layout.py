@@ -854,7 +854,7 @@ def _repro_write_failed_folders(msg: str | None) -> list[str]:
     """
     if is_missing(msg) or not msg:
         return []
-    text = cast(str, msg)
+    text = msg
 
     def grab(prefix: str) -> list[str]:
         return [m.group(1) for m in re.finditer(prefix + _QUOTE + f"({_NOT_QUOTE})" + _QUOTE, text)]
