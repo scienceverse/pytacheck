@@ -18,6 +18,29 @@ package's. The R commit each release is compared against is in
 - **Not done yet:** `run_code` is off unless `--run-code` is given and Docker runs; `crossref` only reaches GROBID.
 - **Fixed:** the site's job queue woke its clean-up thread instead of a worker when a job arrived, so a job could wait until the next one came.
 
+### Compared with metacheck 0.4.3.28 (`dev` at f0e5c95)
+
+- **Changed:** the parity checks compare pytacheck with metacheck `dev` at f0e5c95 (0.4.3.28) instead of 4a61888 (0.4.3.7). Every R golden and the accuracy report's R outputs are regenerated with the R reference image (`parity/r/docker`), which now has a `python3` on its PATH as the Parity workflow has.
+- **Added:** data_check warns when a repository holds a key (an API key, an access token, a private key), as metacheck does (#607). The rules are the high- and medium-confidence rules of the secret scanner betterleaks (MIT, see NOTICE), in `metacheck.keys`; the files the authors wrote are searched whole, and of a data table only its column names and first 3 rows. A key turns the light red, the report shows each key's files, lines, type and only its first characters, and the result has a `keys` table and a `key_n` column. A key is never tested with its provider.
+- **Added:** `module_run()` replaces any key in a module's result by "[key removed]", in its report, tables and names.
+- **Changed:** reproducibility_check follows metacheck 0.4.3.28:
+  - A clock time as `total_timeout` is kept before the scripts run too; with less than 15 minutes left (the option `metacheck.repro_min_time`, in seconds) nothing is copied, installed or run, and every script is `skipped_time_limit`. Copying the repository stops when the time is up, and no package is installed with less than a minute left.
+  - A script that cannot be read is `not_read` (yellow, not run) instead of an empty script that "reproduces"; an empty file is `empty` and not counted (#620).
+  - The table has an `error_message` column: each failed script's error, at most 300 characters (#615).
+  - An install address is taken only from code that is not a comment, and a failed install from GitHub or a web address falls back to CRAN or Bioconductor (#598).
+  - A `lib.loc =` pointing to the authors' computer is removed (`lib_loc_removed`, #594), and a folder a script's write stopped on is made and the script run again (`folder_made`, #591).
+  - Files the code writes are not files to place for a script.
+- **Changed:** `stat_p_exact` does not report table notes, figure legends and stated thresholds as imprecise p-values (the new column `not_a_test`), and its report says where its threshold words can be wrong (#604). Partial eta squared written with its subscript after it ("η² p = .06", "ƞ²p = .95") is no longer a p-value in `extract_p_values()` and so in `all_p_values`, `stat_p_exact` and `stat_p_nonsig`; `extract_eq()` gives it as one statistic (#336).
+- **Changed:** `ethics_check` expects no ethics statement from a paper that states that no human or animal subjects took part, quotes that statement, and has the summary column `states_no_participants`.
+- **Changed:** code_check no longer reports a file that the code writes (Python's `open()` with `w`, `a` or `x`, MATLAB's `fopen()` with `w` or `a`, Mplus's `SAVEDATA`) as a missing file, and finds the files SAS, SPSS and Mplus code reads however it is capitalised.
+- **Changed:** repo_check names a private OSF project linked through a view-only link once and checks it through that link, and advises on private ResearchBox boxes (#621): the result has a `view_only` table and the summary column `repo_view_only`, and the light is yellow. `osf_type()` puts a view-only key at the end of the address, so `prereg_check` reads a registration behind a view-only link.
+- **Added:** `papers_available()`, `papers_load()` and `papers_metadata()` read corpora in private GitHub repositories with the token `github_pat()` finds (#369).
+- **Changed:** `rw_update()` falls back to Crossref's copy of the Retraction Watch data on GitLab, and a download without the Retraction Watch columns counts as failed (#305).
+- **Changed:** the checklist report calls a yellow result "To check" instead of "To improve"; a table with more rows than it shows has a menu for 10, 25, 50 or all rows per page (#408); a module that failed shows its whole error message.
+- **Changed:** a module that needs a Python package that is missing, or installed but not importable, says which and why (D140; metacheck's `@import owner/pkg` for R packages has no Python counterpart).
+- **Changed:** the bundled RegCheck app is rebuilt from metacheck f0e5c95 (Python packages without known security faults), and the descriptions of `ref_pubpeer`, `ref_replication` and `ref_retraction` are corrected.
+- **Deliberate:** when a script cannot be read, pytacheck's message does not name R packages that cannot be loaded, as it reads scripts with Python (D139).
+
 ### Compared with metacheck 0.4.3.7 (`dev` at 4a61888)
 
 - **Changed:** the parity checks compare pytacheck with metacheck `dev` at 4a61888 (0.4.3.7) instead of 98105f6 (0.3.3.2). Every R golden and the accuracy report's R outputs are regenerated by the Parity workflow.
