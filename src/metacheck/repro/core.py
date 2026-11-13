@@ -4433,7 +4433,11 @@ def repro_run_scripts(
             _message(
                 "[repro]   -> running '", fn, "' (timeout ", as_character(run_timeout), "s) ..."
             )
-            with tempfile.TemporaryDirectory(prefix="pytacheck_run_") as tmp:
+            # a script stopped at its time limit may still hold its output files on
+            # Windows for a moment; the folder is then left for the system to clear
+            with tempfile.TemporaryDirectory(
+                prefix="pytacheck_run_", ignore_cleanup_errors=True
+            ) as tmp:
                 out_file = os.path.join(tmp, "out.txt")
                 err_file = os.path.join(tmp, "err.txt")
                 cap_file = os.path.join(tmp, "captures.json")
