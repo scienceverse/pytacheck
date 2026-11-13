@@ -23,6 +23,7 @@
           "slashes_fixed",
           "setwd_folder_removed",
           "setwd_paths",
+          "lib_loc_removed",
           "family_replaced",
           "family_detail",
           "library_injected"
@@ -56,6 +57,12 @@
             "t": "int",
             "v": [
               0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
             ]
           },
           {
@@ -116,6 +123,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

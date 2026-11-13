@@ -9,6 +9,6 @@
       "age: Age in years\nsex: 1 = méle; 2 = fémale\nbrace { and } and \\ backslash\nnext\nbold texthyphen nbsp"
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

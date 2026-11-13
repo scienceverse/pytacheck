@@ -50,9 +50,33 @@
             ]
           }
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Why"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "1/gone.R",
+              "2/gone.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck could not read the file: there is no copy of it and no link to it.",
+              "metacheck could not read the file: there is no copy of it and no link to it."
+            ]
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

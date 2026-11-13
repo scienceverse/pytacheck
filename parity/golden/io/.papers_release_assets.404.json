@@ -1,9 +1,9 @@
 {
   "id": ".papers_release_assets.404",
   "ok": false,
-  "error": "GitHub API error (status 404): https://api.github.com/repos/scienceverse/doesnotexist12345/releases",
+  "error": "GitHub API error (status 404): https://api.github.com/repos/scienceverse/doesnotexist12345/releases If the repository is private, set a GitHub token with access to it (see ?github_pat).",
   "warnings": [],
   "value": null,
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

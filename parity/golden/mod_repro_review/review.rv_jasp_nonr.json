@@ -70,6 +70,7 @@
           "paper_link",
           "repo_name",
           "reason",
+          "error_message",
           "commands_removed"
         ],
         "v": [
@@ -136,13 +137,13 @@
           {
             "t": "lgl",
             "v": [
-              true
+              false
             ]
           },
           {
             "t": "chr",
             "v": [
-              null
+              "not_read"
             ]
           },
           {
@@ -217,6 +218,12 @@
             "t": "chr",
             "v": [
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck could not read the file: there is no copy of it and no link to it."
             ]
           },
           {
@@ -239,6 +246,11 @@
           "Every data path in the code works in the repository as deposited.",
           "#### Missing inputs",
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
+          "#### Parsing",
+          "The Python files were not checked for syntax errors, because no Python interpreter (`python` or `python3`) was found on this computer; a syntax error will only show if the code is run.",
+          "#### Files not run on their own",
+          "1 file could not be read, so it was not run and needs to be checked again: this may be a problem of the computer that ran the check, not of the file.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"run.py\", Why = \"metacheck could not read the file: there is no copy of it and no link to it.\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "*Executing the code is a separate, opt-in phase (run with `execute = TRUE`). This report describes what a run would involve; it did not run anything.*",
           "### All code and output",
           "#### Self-reproducible output (JASP / jamovi / SPSS Viewer / Jupyter notebook)",
@@ -250,13 +262,13 @@
       {
         "t": "chr",
         "v": [
-          "green"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 1 Python code file for reproducibility (static analysis; no code was run).\n-  1 Python file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  0 installable Python dependencies detected."
+          "\n-  We assessed 1 Python code file for reproducibility (static analysis; no code was run).\n-  0 Python files appear runnable so far (parses, inputs resolve, placeable in the run order).\n-  0 installable Python dependencies detected."
         ]
       },
       {
@@ -302,7 +314,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -2148,6 +2160,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.7",
+  "metacheck_version": "0.4.3.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
