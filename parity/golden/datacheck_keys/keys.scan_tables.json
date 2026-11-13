@@ -1,0 +1,83 @@
+{
+  "id": "keys.scan_tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "found",
+      "header_row",
+      "no_whole_key"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "table",
+          "row",
+          "key",
+          "rule",
+          "shown"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "responses.csv",
+              "responses.csv",
+              "responses.csv"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "openrouter-api-key",
+              "openrouter-api-key",
+              "openrouter-api-key"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "sk-or-v1-22e...",
+              "sk-or-v1-22e...",
+              "sk-or-v1-22e..."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

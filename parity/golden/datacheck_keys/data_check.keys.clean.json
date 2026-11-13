@@ -1,0 +1,885 @@
+{
+  "id": "data_check.keys.clean",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace",
+      "keys"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "sheet",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "needs_package",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "parity/_out/dc_keys/run/clean",
+              "parity/_out/dc_keys/run/clean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "worry"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 | 2 | 3 | 4 | 5",
+              "2 | 1 | 2 | 1 | 2"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              20,
+              20
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              20,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
+          "**Repository: clean**",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── analysis.R  💻 code          ex1\n├── data.csv    📊 data          ex1\n└── notes.txt   📖 documentation ex1\n```\n:::",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:20, worry = c(2L, 1L, 2L, 1L, 2L, 1L, 2L, \n1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L)), row.names = c(NA, \n20L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
+          "::: {.panel-tabset}\n\n## data.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"worry\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"nominal\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(20L, \n20L), \"% Missing\" = c(0, 0), \"N Unique\" = c(20L, 2L), Mean = c(NA_real_, \nNA_real_), SD = c(NA_real_, NA_real_), Min = c(NA_real_, NA_real_\n), Max = c(NA_real_, NA_real_)), row.names = c(\"id\", \"worry\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
+          "We examined 2 columns across 1 data file.",
+          "#### Careless Responding",
+          "No file could be screened for careless responding.",
+          "**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 3 files: 1 data, 1 code, 1 documentation.\n-  We found 1 tabular data file and extracted 2 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1). We ran automated data-quality checks on 2 columns and found no issues."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_numeric",
+          "col_text",
+          "key_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "file_path",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id",
+          "data_format",
+          "referenced_by",
+          "source_file",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "clean",
+              "clean",
+              "clean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "parity/_out/dc_keys/run/clean",
+              "parity/_out/dc_keys/run/clean",
+              "parity/_out/dc_keys/run/clean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "data.csv",
+              "notes.txt"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "parity/_out/dc_keys/run/clean/analysis.R",
+              "parity/_out/dc_keys/run/clean/data.csv",
+              "parity/_out/dc_keys/run/clean/notes.txt"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              53,
+              184,
+              77
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "data",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "data.csv",
+              "notes.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "data",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "supplemental"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "tabular",
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "data.csv",
+              "notes.txt"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "data.csv"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 20,
+            "names": [
+              "id",
+              "worry"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2,
+                  1,
+                  2,
+                  1,
+                  2,
+                  1,
+                  2,
+                  1,
+                  2,
+                  1,
+                  2,
+                  1,
+                  2,
+                  1,
+                  2,
+                  1,
+                  2,
+                  1,
+                  2,
+                  1
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n",
+          "key_n"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "file",
+          "line",
+          "key",
+          "rule",
+          "shown",
+          "row"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

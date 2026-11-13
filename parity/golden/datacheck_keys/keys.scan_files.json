@@ -1,0 +1,83 @@
+{
+  "id": "keys.scan_files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "found",
+      "n_skipped",
+      "no_whole_key"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "file",
+          "line",
+          "key",
+          "rule",
+          "shown"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a.R",
+              "two.txt",
+              "two.txt"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "github-pat",
+              "openrouter-api-key",
+              "aws-access-token"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ghp_Hl...",
+              "sk-or-v1-22e...",
+              "AKIA..."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.3.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
