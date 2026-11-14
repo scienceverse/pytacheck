@@ -1,0 +1,31 @@
+{
+  "eprintid": 4333,
+  "type": "data_collection",
+  "title": "Surveillance data of a clinical study",
+  "doi": "10.17037/DATA.00004333",
+  "datestamp": "2020-01-01 10:00:00",
+  "lastmod": "2021-02-03 04:05:06",
+  "creators": [
+    {
+      "name": {
+        "given": "Jane",
+        "family": "Doe"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "content": "data",
+      "files": [
+        {
+          "fileid": 77,
+          "filename": "survey.csv",
+          "filesize": 1200,
+          "hash": "2fa7b041eea9ee875e012bac495a639c",
+          "hash_type": "MD5",
+          "uri": "http://datacompass.lshtm.ac.uk/id/file/77"
+        }
+      ]
+    }
+  ]
+}

@@ -573,7 +573,7 @@
  },
  ".announce_rate_limit_wait": {
   "file": "R/repo-download.R",
-  "line": 631,
+  "line": 632,
   "python": "metacheck.archives.download:_announce_rate_limit_wait"
  },
  ".ap_anonymous_authors": {
@@ -911,6 +911,46 @@
   "ported": true,
   "python": "metacheck.report.checklist:_section_id"
  },
+ ".ckan_api_base": {
+  "file": "R/archive-ckan.R",
+  "line": 30,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_api_base"
+ },
+ ".ckan_doi_prefixes": {
+  "file": "R/repo-tables.R",
+  "line": 384,
+  "python": "metacheck.archives._repo_tables:_ckan_doi_prefixes"
+ },
+ ".ckan_doi_prefixes_all": {
+  "file": "R/archive-ckan.R",
+  "line": 39,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_doi_prefixes_all"
+ },
+ ".ckan_hosts": {
+  "file": "R/archive-ckan.R",
+  "line": 24,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_hosts"
+ },
+ ".ckan_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 355,
+  "python": "metacheck.archives._repo_tables:_ckan_hosts_survey"
+ },
+ ".ckan_id": {
+  "file": "R/archive-ckan.R",
+  "line": 101,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_id"
+ },
+ ".ckan_info": {
+  "file": "R/archive-ckan.R",
+  "line": 161,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_info"
+ },
  ".code_blank_mplus_savedata": {
   "file": "R/code_check.R",
   "line": 2605,
@@ -1121,7 +1161,7 @@
  },
  ".copy_into_place": {
   "file": "R/repo-download.R",
-  "line": 1325,
+  "line": 1326,
   "ported": true,
   "python": "metacheck.archives._atomic:atomic_write"
  },
@@ -1275,42 +1315,47 @@
  },
  ".dataverse_doi_prefix_hosts": {
   "file": "R/archive-dataverse.R",
-  "line": 265,
+  "line": 267,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_doi_prefix_hosts"
  },
+ ".dataverse_doi_prefix_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 170,
+  "python": "metacheck.archives._repo_tables:_dataverse_doi_prefix_hosts_survey"
+ },
  ".dataverse_doi_prefix_regex": {
   "file": "R/archive-dataverse.R",
-  "line": 360,
+  "line": 371,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_doi_prefix_regex"
  },
  ".dataverse_file_entry": {
   "file": "R/archive-dataverse.R",
-  "line": 904,
+  "line": 915,
   "python": "metacheck.archives.dataverse:_dataverse_file_entry"
  },
  ".dataverse_guestbook_hint": {
   "file": "R/repo-download.R",
-  "line": 914,
+  "line": 915,
   "ported": true,
   "python": "metacheck.archives.download:_dataverse_guestbook_hint"
  },
  ".dataverse_headers": {
   "file": "R/archive-dataverse.R",
-  "line": 836,
+  "line": 847,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_headers"
  },
  ".dataverse_host_from_doi": {
   "file": "R/archive-dataverse.R",
-  "line": 376,
+  "line": 387,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_host_from_doi"
  },
  ".dataverse_host_regex": {
   "file": "R/archive-dataverse.R",
-  "line": 204,
+  "line": 206,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_host_regex"
  },
@@ -1320,39 +1365,44 @@
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_hosts"
  },
+ ".dataverse_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 136,
+  "python": "metacheck.archives._repo_tables:_dataverse_hosts_survey"
+ },
  ".dataverse_info": {
   "file": "R/archive-dataverse.R",
-  "line": 752,
+  "line": 763,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_info"
  },
  ".dataverse_parse": {
   "file": "R/archive-dataverse.R",
-  "line": 544,
+  "line": 555,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_parse"
  },
  ".dataverse_pat": {
   "file": "R/archive-dataverse.R",
-  "line": 876,
+  "line": 887,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_pat"
  },
  ".dataverse_resolve_doi_host": {
   "file": "R/archive-dataverse.R",
-  "line": 435,
+  "line": 446,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_resolve_doi_host"
  },
  ".dataverse_verify_downloads": {
   "file": "R/archive-dataverse.R",
-  "line": 1317,
+  "line": 1328,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_verify_downloads"
  },
  ".dataverse_zip_members": {
   "file": "R/archive-dataverse.R",
-  "line": 1280,
+  "line": 1291,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_zip_members"
  },
@@ -1429,36 +1479,36 @@
  },
  ".download_capped": {
   "file": "R/repo-download.R",
-  "line": 767,
+  "line": 768,
   "python": "metacheck.archives.download:_download_capped"
  },
  ".download_for_run": {
   "file": "R/repo-download.R",
-  "line": 1340,
+  "line": 1341,
   "ported": true,
   "python": "metacheck.archives.download:_download_for_run"
  },
  ".download_many_parallel": {
   "file": "R/repo-download.R",
-  "line": 953,
+  "line": 954,
   "ported": true,
   "python": "metacheck.archives.download:_download_many_parallel"
  },
  ".download_one": {
   "file": "R/repo-download.R",
-  "line": 823,
+  "line": 824,
   "ported": true,
   "python": "metacheck.archives.download:_download_one"
  },
  ".download_zip_to_cache": {
   "file": "R/repo-download.R",
-  "line": 1148,
+  "line": 1149,
   "ported": true,
   "python": "metacheck.archives.download:_download_zip_to_cache"
  },
  ".dryad_401_hint": {
   "file": "R/repo-download.R",
-  "line": 411,
+  "line": 412,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_401_hint"
  },
@@ -1548,27 +1598,32 @@
  },
  ".dspace7_api_host_aliases": {
   "file": "R/archive-dspace7.R",
-  "line": 131,
+  "line": 133,
   "python": "metacheck.archives.dspace7:_dspace7_api_host_aliases"
  },
  ".dspace7_bitstreams": {
   "file": "R/archive-dspace7.R",
-  "line": 505,
+  "line": 515,
   "python": "metacheck.archives.dspace7:_dspace7_bitstreams"
  },
  ".dspace7_doi_key": {
   "file": "R/archive-dspace7.R",
-  "line": 294,
+  "line": 300,
   "python": "metacheck.archives.dspace7:_dspace7_doi_key"
+ },
+ ".dspace7_doi_prefixes": {
+  "file": "R/repo-tables.R",
+  "line": 85,
+  "python": "metacheck.archives._repo_tables:_dspace7_doi_prefixes"
  },
  ".dspace7_find_uuid": {
   "file": "R/archive-dspace7.R",
-  "line": 458,
+  "line": 468,
   "python": "metacheck.archives.dspace7:_dspace7_find_uuid"
  },
  ".dspace7_host_regex": {
   "file": "R/archive-dspace7.R",
-  "line": 117,
+  "line": 119,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_host_regex"
  },
@@ -1578,49 +1633,54 @@
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_hosts"
  },
+ ".dspace7_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 14,
+  "python": "metacheck.archives._repo_tables:_dspace7_hosts_survey"
+ },
  ".dspace7_info": {
   "file": "R/archive-dspace7.R",
-  "line": 537,
+  "line": 547,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_info"
  },
  ".dspace7_item": {
   "file": "R/archive-dspace7.R",
-  "line": 491,
+  "line": 501,
   "python": "metacheck.archives.dspace7:_dspace7_item"
  },
  ".dspace7_on_known_host": {
   "file": "R/archive-dspace7.R",
-  "line": 341,
+  "line": 347,
   "ported": true,
   "python": "metacheck.archives.dspace7:_on_known_host"
  },
  ".dspace7_parse": {
   "file": "R/archive-dspace7.R",
-  "line": 146,
+  "line": 148,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_parse"
  },
  ".dspace7_resolve_doi_url": {
   "file": "R/archive-dspace7.R",
-  "line": 400,
+  "line": 406,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_resolve_doi_url"
  },
  ".dspace7_rest": {
   "file": "R/archive-dspace7.R",
-  "line": 438,
+  "line": 448,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_rest"
  },
  ".dspace7_skip_doi_prefixes": {
   "file": "R/archive-dspace7.R",
-  "line": 314,
+  "line": 320,
   "python": "metacheck.archives.dspace7:_dspace7_skip_doi_prefixes"
  },
  ".dspace_legacy_host_regex": {
   "file": "R/archive-psycharchives.R",
-  "line": 56,
+  "line": 58,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_dspace_legacy_host_regex"
  },
@@ -1630,9 +1690,14 @@
   "ported": true,
   "python": "metacheck.archives.psycharchives:_dspace_legacy_hosts"
  },
+ ".dspace_legacy_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 69,
+  "python": "metacheck.archives._repo_tables:_dspace_legacy_hosts_survey"
+ },
  ".dspace_legacy_parse": {
   "file": "R/archive-psycharchives.R",
-  "line": 71,
+  "line": 73,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_dspace_legacy_parse"
  },
@@ -1869,6 +1934,34 @@
   "line": 7291,
   "ported": true,
   "python": "metacheck.datacheck.checks:_eprime_is_export"
+ },
+ ".eprints_doi_prefixes": {
+  "file": "R/repo-tables.R",
+  "line": 285,
+  "python": "metacheck.archives._repo_tables:_eprints_doi_prefixes"
+ },
+ ".eprints_host_regex": {
+  "file": "R/archive-reshare.R",
+  "line": 53,
+  "ported": true,
+  "python": "metacheck.archives.reshare:_eprints_host_regex"
+ },
+ ".eprints_hosts": {
+  "file": "R/archive-reshare.R",
+  "line": 44,
+  "ported": true,
+  "python": "metacheck.archives.reshare:_eprints_hosts"
+ },
+ ".eprints_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 241,
+  "python": "metacheck.archives._repo_tables:_eprints_hosts_survey"
+ },
+ ".eprints_resolve_doi_url": {
+  "file": "R/archive-reshare.R",
+  "line": 122,
+  "ported": true,
+  "python": "metacheck.archives.reshare:_eprints_resolve_doi_url"
  },
  ".exact_double_json": {
   "file": "R/paper.R",
@@ -2149,7 +2242,7 @@
  },
  ".format_wait_duration": {
   "file": "R/repo-download.R",
-  "line": 598,
+  "line": 599,
   "ported": true,
   "python": "metacheck.http:_format_wait_duration"
  },
@@ -2273,7 +2366,7 @@
  },
  ".handle_registered_url": {
   "file": "R/archive-dspace7.R",
-  "line": 361,
+  "line": 367,
   "python": "metacheck.archives.dspace7:_handle_registered_url"
  },
  ".haven_value_labels": {
@@ -2295,13 +2388,13 @@
  },
  ".host_rate_limit_record": {
   "file": "R/repo-download.R",
-  "line": 567,
+  "line": 568,
   "ported": true,
   "python": "metacheck.archives.download:_host_rate_limit_record"
  },
  ".host_rate_limit_remaining": {
   "file": "R/repo-download.R",
-  "line": 584,
+  "line": 585,
   "python": "metacheck.archives.download:_host_rate_limit_remaining"
  },
  ".html_export_r_source": {
@@ -2406,6 +2499,40 @@
   "ported": true,
   "python": "metacheck.archives.zip_peek:_ext_type"
  },
+ ".invenio_doi_prefixes": {
+  "file": "R/repo-tables.R",
+  "line": 338,
+  "python": "metacheck.archives._repo_tables:_invenio_doi_prefixes"
+ },
+ ".invenio_files": {
+  "file": "R/archive-zenodo.R",
+  "line": 458,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:_invenio_files"
+ },
+ ".invenio_host_regex": {
+  "file": "R/archive-zenodo.R",
+  "line": 46,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:_invenio_host_regex"
+ },
+ ".invenio_hosts": {
+  "file": "R/archive-zenodo.R",
+  "line": 37,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:_invenio_hosts"
+ },
+ ".invenio_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 310,
+  "python": "metacheck.archives._repo_tables:_invenio_hosts_survey"
+ },
+ ".invenio_record_url": {
+  "file": "R/archive-zenodo.R",
+  "line": 120,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:_invenio_record_url"
+ },
  ".ipynb_is_noise": {
   "file": "R/stat-tables.R",
   "line": 735,
@@ -2498,7 +2625,7 @@
  },
  ".is_login_page": {
   "file": "R/repo-download.R",
-  "line": 432,
+  "line": 433,
   "ported": true,
   "python": "metacheck.archives.download:_is_login_page"
  },
@@ -3430,7 +3557,7 @@
  },
  ".osf_file_server_url": {
   "file": "R/repo-download.R",
-  "line": 386,
+  "line": 387,
   "ported": true,
   "python": "metacheck.archives.download:_osf_file_server_url"
  },
@@ -3876,19 +4003,19 @@
  },
  ".psycharchives_handle": {
   "file": "R/archive-psycharchives.R",
-  "line": 99,
+  "line": 101,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_psycharchives_handle"
  },
  ".psycharchives_info": {
   "file": "R/archive-psycharchives.R",
-  "line": 291,
+  "line": 293,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_psycharchives_info"
  },
  ".psycharchives_rest": {
   "file": "R/archive-psycharchives.R",
-  "line": 441,
+  "line": 445,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_psycharchives_rest"
  },
@@ -4134,7 +4261,7 @@
  },
  ".rate_limit_wait": {
   "file": "R/repo-download.R",
-  "line": 510,
+  "line": 511,
   "ported": true,
   "python": "metacheck.archives.download:_rate_limit_wait"
  },
@@ -4391,6 +4518,18 @@
   "ported": true,
   "python": "metacheck.archives.download:_repo_cache_subdir"
  },
+ ".repo_doi_records": {
+  "file": "R/repo-kind.R",
+  "line": 52,
+  "ported": true,
+  "python": "metacheck.archives.repo_kind:_repo_doi_records"
+ },
+ ".repo_doi_url": {
+  "file": "R/repo-kind.R",
+  "line": 84,
+  "ported": true,
+  "python": "metacheck.archives.repo_kind:_repo_doi_url"
+ },
  ".repo_info_cache_dir": {
   "file": "R/repo-info-cache.R",
   "line": 57,
@@ -4432,6 +4571,12 @@
   "line": 99,
   "ported": true,
   "python": "metacheck.archives.info_cache:_repo_info_ok"
+ },
+ ".repo_publication_type": {
+  "file": "R/repo-kind.R",
+  "line": 27,
+  "ported": true,
+  "python": "metacheck.archives.repo_kind:_repo_publication_type"
  },
  ".repo_session_dir": {
   "file": "R/repo-download.R",
@@ -5915,31 +6060,31 @@
  },
  ".reshare_headers": {
   "file": "R/archive-reshare.R",
-  "line": 301,
+  "line": 424,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_headers"
  },
  ".reshare_id": {
   "file": "R/archive-reshare.R",
-  "line": 77,
+  "line": 178,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_id"
  },
  ".reshare_info": {
   "file": "R/archive-reshare.R",
-  "line": 224,
+  "line": 341,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_info"
  },
  ".reshare_verify_downloads": {
   "file": "R/archive-reshare.R",
-  "line": 675,
+  "line": 798,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_verify_downloads"
  },
  ".reshare_zip_members": {
   "file": "R/archive-reshare.R",
-  "line": 638,
+  "line": 761,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_zip_members"
  },
@@ -5968,7 +6113,7 @@
  },
  ".run_download_want": {
   "file": "R/repo-download.R",
-  "line": 1350,
+  "line": 1351,
   "ported": true,
   "python": "metacheck.archives.download:_run_download_want"
  },
@@ -6802,23 +6947,23 @@
  },
  ".storage_backoff": {
   "file": "R/repo-download.R",
-  "line": 481,
+  "line": 482,
   "python": "metacheck.archives.download:_storage_backoff"
  },
  ".storage_is_transient": {
   "file": "R/repo-download.R",
-  "line": 472,
+  "line": 473,
   "ported": true,
   "python": "metacheck.archives.download:_storage_is_transient"
  },
  ".storage_is_transient_factory": {
   "file": "R/repo-download.R",
-  "line": 700,
+  "line": 701,
   "python": "metacheck.archives.download:_storage_is_transient_factory"
  },
  ".storage_retry_after_factory": {
   "file": "R/repo-download.R",
-  "line": 664,
+  "line": 665,
   "python": "metacheck.archives.download:_storage_retry_after_factory"
  },
  ".strip_llm_wrapper": {
@@ -7047,7 +7192,7 @@
  },
  ".url_host_is": {
   "file": "R/repo-download.R",
-  "line": 373,
+  "line": 374,
   "ported": true,
   "python": "metacheck.archives.download:_url_host_is"
  },
@@ -7107,7 +7252,7 @@
  },
  ".wait_out_known_rate_limit": {
   "file": "R/repo-download.R",
-  "line": 729,
+  "line": 730,
   "python": "metacheck.archives.download:_wait_out_known_rate_limit"
  },
  ".where_acknows_txt": {
@@ -7200,13 +7345,13 @@
  },
  ".zenodo_id": {
   "file": "R/archive-zenodo.R",
-  "line": 56,
+  "line": 166,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_id"
  },
  ".zenodo_info": {
   "file": "R/archive-zenodo.R",
-  "line": 257,
+  "line": 383,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_info"
  },
@@ -7215,6 +7360,11 @@
   "line": 200,
   "ported": true,
   "python": "metacheck.archives.zenodo_upload:_zenodo_license_id"
+ },
+ ".zenodo_links_only": {
+  "file": "R/archive-zenodo.R",
+  "line": 128,
+  "python": "metacheck.archives.zenodo:_zenodo_links_only"
  },
  ".zenodo_meta_from_folder": {
   "file": "R/archive-zenodo-upload.R",
@@ -7230,19 +7380,19 @@
  },
  ".zenodo_unread": {
   "file": "R/archive-zenodo.R",
-  "line": 220,
+  "line": 346,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_unread"
  },
  ".zenodo_verify_downloads": {
   "file": "R/archive-zenodo.R",
-  "line": 795,
+  "line": 945,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_verify_downloads"
  },
  ".zenodo_zip_members": {
   "file": "R/archive-zenodo.R",
-  "line": 744,
+  "line": 894,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_zip_members"
  },
@@ -7357,7 +7507,7 @@
  },
  ".zip_timeout_for_size": {
   "file": "R/repo-download.R",
-  "line": 1142,
+  "line": 1143,
   "ported": true,
   "python": "metacheck.archives.download:_zip_timeout_for_size"
  },
@@ -7497,6 +7647,18 @@
   "line": 76,
   "ported": true,
   "python": "metacheck.db.orcid:check_orcid"
+ },
+ "ckan_info": {
+  "file": "R/archive-ckan.R",
+  "line": 135,
+  "ported": true,
+  "python": "metacheck.archives.ckan:ckan_info"
+ },
+ "ckan_links": {
+  "file": "R/archive-ckan.R",
+  "line": 61,
+  "ported": true,
+  "python": "metacheck.archives.ckan:ckan_links"
  },
  "code_abs_path": {
   "file": "R/code_check.R",
@@ -7890,25 +8052,25 @@
  },
  "dataverse_file_download": {
   "file": "R/archive-dataverse.R",
-  "line": 979,
+  "line": 990,
   "ported": true,
   "python": "metacheck.archives.dataverse:dataverse_file_download"
  },
  "dataverse_info": {
   "file": "R/archive-dataverse.R",
-  "line": 650,
+  "line": 661,
   "ported": true,
   "python": "metacheck.archives.dataverse:dataverse_info"
  },
  "dataverse_links": {
   "file": "R/archive-dataverse.R",
-  "line": 487,
+  "line": 498,
   "ported": true,
   "python": "metacheck.archives.dataverse:dataverse_links"
  },
  "dataverse_pat": {
   "file": "R/archive-dataverse.R",
-  "line": 872,
+  "line": 883,
   "ported": true,
   "python": "metacheck.archives.dataverse:dataverse_pat"
  },
@@ -7956,7 +8118,7 @@
  },
  "download_repo_files": {
   "file": "R/repo-download.R",
-  "line": 1463,
+  "line": 1464,
   "ported": true,
   "python": "metacheck.archives.download:download_repo_files"
  },
@@ -7992,19 +8154,19 @@
  },
  "dspace7_file_download": {
   "file": "R/archive-dspace7.R",
-  "line": 652,
+  "line": 665,
   "ported": true,
   "python": "metacheck.archives.dspace7:dspace7_file_download"
  },
  "dspace7_links": {
   "file": "R/archive-dspace7.R",
-  "line": 208,
+  "line": 210,
   "ported": true,
   "python": "metacheck.archives.dspace7:dspace7_links"
  },
  "dspace_links": {
   "file": "R/archive-psycharchives.R",
-  "line": 123,
+  "line": 125,
   "ported": true,
   "python": "metacheck.archives.psycharchives:dspace_links"
  },
@@ -8025,6 +8187,12 @@
   "line": 0,
   "ported": true,
   "python": "metacheck.modules.codebook_check:_empty_summary"
+ },
+ "eprints_links": {
+  "file": "R/archive-reshare.R",
+  "line": 81,
+  "ported": true,
+  "python": "metacheck.archives.reshare:eprints_links"
  },
  "expand_text": {
   "file": "",
@@ -8516,6 +8684,12 @@
   "line": 402,
   "ported": true,
   "python": "metacheck.statout.stata:import_stata_smcl"
+ },
+ "invenio_links": {
+  "file": "R/archive-zenodo.R",
+  "line": 70,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:invenio_links"
  },
  "json_expand": {
   "file": "R/text-json_expand.R",
@@ -9245,19 +9419,19 @@
  },
  "psycharchives_file_download": {
   "file": "R/archive-psycharchives.R",
-  "line": 476,
+  "line": 480,
   "ported": true,
   "python": "metacheck.archives.psycharchives:psycharchives_file_download"
  },
  "psycharchives_info": {
   "file": "R/archive-psycharchives.R",
-  "line": 203,
+  "line": 205,
   "ported": true,
   "python": "metacheck.archives.psycharchives:psycharchives_info"
  },
  "psycharchives_links": {
   "file": "R/archive-psycharchives.R",
-  "line": 159,
+  "line": 161,
   "ported": true,
   "python": "metacheck.archives.psycharchives:psycharchives_links"
  },
@@ -9583,19 +9757,19 @@
  },
  "reshare_file_download": {
   "file": "R/archive-reshare.R",
-  "line": 355,
+  "line": 478,
   "ported": true,
   "python": "metacheck.archives.reshare:reshare_file_download"
  },
  "reshare_info": {
   "file": "R/archive-reshare.R",
-  "line": 136,
+  "line": 248,
   "ported": true,
   "python": "metacheck.archives.reshare:reshare_info"
  },
  "reshare_links": {
   "file": "R/archive-reshare.R",
-  "line": 43,
+  "line": 144,
   "ported": true,
   "python": "metacheck.archives.reshare:reshare_links"
  },
@@ -9990,13 +10164,13 @@
  },
  "zenodo_file_download": {
   "file": "R/archive-zenodo.R",
-  "line": 370,
+  "line": 517,
   "ported": true,
   "python": "metacheck.archives.zenodo:zenodo_file_download"
  },
  "zenodo_info": {
   "file": "R/archive-zenodo.R",
-  "line": 111,
+  "line": 233,
   "ported": true,
   "python": "metacheck.archives.zenodo:zenodo_info"
  },

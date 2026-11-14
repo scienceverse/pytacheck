@@ -754,6 +754,13 @@ def _host_rate_limit_record(host: str, reset: float) -> None:
         key_problem_record(service, "limit", dt.datetime.fromtimestamp(reset, dt.UTC))
 
 
+def _eprints_hosts_list() -> list[str]:
+    """The EPrints repositories that take no token (ReShare and the others, metacheck #637)."""
+    from metacheck.archives.reshare import _eprints_hosts
+
+    return _eprints_hosts()
+
+
 def _auth_for_url(req: Mapping[str, Any]) -> dict[str, Any]:
     """Port of ``R/repo-download.R::.auth_for_url()``: host authentication for a file request.
 
@@ -805,7 +812,8 @@ def _auth_for_url(req: Mapping[str, Any]) -> dict[str, Any]:
             from metacheck.archives.dryad import _dryad_headers
 
             spec = _dryad_headers(spec)
-        elif _url_host_is(url, "reshare.ukdataservice.ac.uk"):
+        elif _url_host_is(url, _eprints_hosts_list()):
+            # ReShare and the other EPrints data repositories (metacheck #637)
             from metacheck.archives.reshare import _reshare_headers
 
             spec = _reshare_headers(spec)

@@ -1,0 +1,182 @@
+{
+  "id": "reshare_info.mock.other_host_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "reshare_url",
+      "reshare_id",
+      "title",
+      "record_type",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "datacompass.lshtm.ac.uk/4333"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "datacompass.lshtm.ac.uk/4333"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "datacompass.lshtm.ac.uk/4333"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Surveillance data of a clinical study"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data_collection"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.17037/DATA.00004333"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-01-01 10:00:00"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021-02-03 04:05:06"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "fileid",
+                  "filename",
+                  "filesize",
+                  "hash",
+                  "hash_type",
+                  "uri",
+                  "content"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      77
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "survey.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1200
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "2fa7b041eea9ee875e012bac495a639c"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "MD5"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "http://datacompass.lshtm.ac.uk/id/file/77"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

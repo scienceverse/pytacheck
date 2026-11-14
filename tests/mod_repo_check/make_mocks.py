@@ -285,6 +285,33 @@ def zenodo() -> None:
         ],
     }
     write("zenodo.org/api/records/5559002.json", json.dumps(rec2))
+    # publications are not deposits (metacheck 0.4.4.1, #636): a paper alone, a preprint with its
+    # data, a dataset without data files, and a record that gives no type
+    kinds = {
+        5559010: ("publication", ["paper.pdf"]),
+        5559011: ("publication", ["preprint.pdf", "data.csv"]),
+        5559012: ("dataset", ["notes.txt"]),
+        5559013: (None, ["slides.pdf"]),
+        5559014: (None, []),
+    }
+    for rid, (kind, names) in kinds.items():
+        meta: dict[str, Any] = {"title": f"Record {rid}", "license": {"id": "cc-by-4.0"}}
+        if kind is not None:
+            meta["resource_type"] = {"type": kind}
+        write(
+            f"zenodo.org/api/records/{rid}.json",
+            json.dumps(
+                {
+                    "id": rid,
+                    "doi": f"10.5281/zenodo.{rid}",
+                    "metadata": meta,
+                    "files": [
+                        f(n, 100, f"https://zenodo.org/api/records/{rid}/files/{n}/content")
+                        for n in names
+                    ],
+                }
+            ),
+        )
 
 
 # ---------------------------------------------------------------------------

@@ -29,6 +29,7 @@ import pandas as pd
 
 from metacheck._r import regextract, sub
 from metacheck._values import field, is_missing
+from metacheck.archives import _repo_tables as _tables
 
 __all__ = [
     "DSPACE_LEGACY_HOSTS",
@@ -38,8 +39,9 @@ __all__ = [
     "psycharchives_links",
 ]
 
-#: R ``.dspace_legacy_hosts()``: installations answering the legacy ``/rest/`` API.
-DSPACE_LEGACY_HOSTS: tuple[str, ...] = (
+#: R ``.dspace_legacy_hosts()``'s hand-written list: installations answering the legacy
+#: ``/rest/`` API.
+_DSPACE_LEGACY_HOSTS_LISTED: tuple[str, ...] = (
     "www.psycharchives.org",  # PsychArchives, ZPID (Germany)
     "bonndoc.ulb.uni-bonn.de",  # bonndoc, University of Bonn (Germany)
     # dspace.ut.ee runs DSpace 7 (its /rest is DSpace 7's deprecated copy of the
@@ -51,6 +53,13 @@ DSPACE_LEGACY_HOSTS: tuple[str, ...] = (
     # added upstream 2026-10-05 (metacheck #461): /rest/test answers
     # "REST api is running."; a DSpace 5 installation
     "datastorre.stir.ac.uk",  # University of Stirling DataSTORRE (UK)
+)
+
+#: R ``.dspace_legacy_hosts()``: the hand-written list and the hosts the repository survey
+#: found (metacheck #636)
+DSPACE_LEGACY_HOSTS: tuple[str, ...] = (
+    *_DSPACE_LEGACY_HOSTS_LISTED,
+    *_tables.dspace_legacy_hosts_survey,
 )
 
 #: dc.rights values that are an access level, not a licence (PsychArchives)
@@ -401,6 +410,8 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
         obj["PA_title"] = _field_cell(title if title is not None else md_val("dc.title"))
         obj["PA_authors"] = _cell(md_val("dc.contributor.author"))
         obj["PA_doi"] = _cell(md_val("dc.identifier.doi"))
+        # what the item is (dc.type): repo_check ignores a publication (metacheck #637)
+        obj["PA_type"] = _cell(md_val("dc.type"))
         rights = md_val("dc.rights")
         license_ = md_val("dc.rights.license")
         if license_ is None:
@@ -626,8 +637,8 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
     them: one row per file with ``pa_url``, ``name``, ``file_url`` (the
     bitstream's retrieve URL, fetched later by ``download_repo_files()``),
     ``file_location`` (``NA``), ``size``, ``isdir``, ``ext`` and ``type``.
-    Each item's access level (``dc.rights``), licence and DOI are carried in
-    the table's ``attrs["rights"]``, ``attrs["license"]`` and ``attrs["doi"]``
+    Each item's access level (``dc.rights``), licence, DOI and type (``dc.type``) are carried in
+    the table's ``attrs["rights"]``, ``attrs["license"]``, ``attrs["doi"]`` and ``attrs["record_type"]``
     (``{url: value}``; R: named vectors in attributes), also for an item that
     lists no public files (a zero-row table). ``None`` when the item could not be found (or *pa_url*
     is ``None``, R's ``NA``). A sequence of URLs gives one table, aligned with
@@ -665,7 +676,7 @@ def _psycharchives_file_lists(
                 return None, unfound
             df = left_join(orig, info, by="pa_url")
             # R: unlist(lapply(file_lists, attr, "rights")) -- NULL (no attribute) if none
-            for name in ("rights", "license", "doi"):
+            for name in ("rights", "license", "doi", "record_type"):
                 merged: dict[str, Any] = {}
                 for fl in file_lists:
                     if fl is not None:
@@ -692,10 +703,11 @@ def _psycharchives_file_lists(
             return {_paste(url): None if is_missing(v) else v}
 
         rights, license_, doi = attr("PA_rights"), attr("PA_license"), attr("PA_doi")
+        record_type = attr("PA_type")
         file_list = info["files"].iloc[0] if "files" in info.columns and len(info) else None
         if file_list is None or len(file_list) == 0:
             empty = pd.DataFrame({k: pd.Series([], dtype=t) for k, t in _EMPTY_FILES.items()})
-            empty.attrs.update(rights=rights, license=license_, doi=doi)
+            empty.attrs.update(rights=rights, license=license_, doi=doi, record_type=record_type)
             return empty, []
 
         n = len(file_list)
@@ -710,5 +722,5 @@ def _psycharchives_file_lists(
             }
         )
         df = _add_ext_type(df)
-        df.attrs.update(rights=rights, license=license_, doi=doi)
+        df.attrs.update(rights=rights, license=license_, doi=doi, record_type=record_type)
         return df, []

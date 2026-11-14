@@ -1,0 +1,127 @@
+{
+  "id": "ckan_info.mock.files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "ckan_url",
+      "ckan_id",
+      "title",
+      "doi",
+      "license",
+      "error",
+      "authors",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://data.cnra.ca.gov/dataset/statewide-crop-mapping"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.cnra.ca.gov/statewide-crop-mapping"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Statewide Crop Mapping"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1/x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Creative Commons Attribution"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "California DWR",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "file_name",
+              "file_path",
+              "file_url",
+              "file_size",
+              "format"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "i15_crop_2024.zip",
+                  "Readme.pdf"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "i15_crop_2024.zip",
+                  "Readme.pdf"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://data.cnra.ca.gov/dataset/6c3d/resource/1/download/i15_crop_2024.zip",
+                  "https://data.cnra.ca.gov/dataset/6c3d/resource/2/download"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  176115282,
+                  2000
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "zip",
+                  "pdf"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

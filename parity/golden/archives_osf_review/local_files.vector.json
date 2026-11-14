@@ -7,7 +7,7 @@
   ],
   "value": {
     "t": "df",
-    "nrow": 104,
+    "nrow": 107,
     "names": [
       "repo_url",
       "file_name",
@@ -123,6 +123,9 @@
           "upstream/metacheck/R",
           "upstream/metacheck/R",
           "upstream/metacheck/R",
+          "upstream/metacheck/R",
+          "upstream/metacheck/R",
+          "upstream/metacheck/R",
           "upstream/metacheck/DESCRIPTION"
         ]
       },
@@ -133,6 +136,7 @@
           "app.R",
           "archive-4tu.R",
           "archive-aspredicted.R",
+          "archive-ckan.R",
           "archive-dataone.R",
           "archive-dataverse.R",
           "archive-dryad.R",
@@ -198,6 +202,8 @@
           "regcheck-local.R",
           "repo-download.R",
           "repo-info-cache.R",
+          "repo-kind.R",
+          "repo-tables.R",
           "report-checklist.R",
           "report-helpers.R",
           "report.R",
@@ -341,6 +347,9 @@
           null,
           null,
           null,
+          null,
+          null,
+          null,
           null
         ]
       },
@@ -351,6 +360,7 @@
           "<repo>/upstream/metacheck/R/app.R",
           "<repo>/upstream/metacheck/R/archive-4tu.R",
           "<repo>/upstream/metacheck/R/archive-aspredicted.R",
+          "<repo>/upstream/metacheck/R/archive-ckan.R",
           "<repo>/upstream/metacheck/R/archive-dataone.R",
           "<repo>/upstream/metacheck/R/archive-dataverse.R",
           "<repo>/upstream/metacheck/R/archive-dryad.R",
@@ -416,6 +426,8 @@
           "<repo>/upstream/metacheck/R/regcheck-local.R",
           "<repo>/upstream/metacheck/R/repo-download.R",
           "<repo>/upstream/metacheck/R/repo-info-cache.R",
+          "<repo>/upstream/metacheck/R/repo-kind.R",
+          "<repo>/upstream/metacheck/R/repo-tables.R",
           "<repo>/upstream/metacheck/R/report-checklist.R",
           "<repo>/upstream/metacheck/R/report-helpers.R",
           "<repo>/upstream/metacheck/R/report.R",
@@ -460,10 +472,11 @@
           3388,
           17829,
           19855,
+          10017,
           28966,
-          65345,
+          65830,
           49249,
-          37312,
+          38589,
           70834,
           11323,
           24176,
@@ -475,11 +488,11 @@
           37926,
           17000,
           81917,
-          23996,
+          24477,
           59241,
-          28429,
+          34492,
           49199,
-          34771,
+          42501,
           4819,
           1162,
           11540,
@@ -523,8 +536,10 @@
           26844,
           49173,
           10111,
-          121655,
+          121696,
           5460,
+          5367,
+          20164,
           13701,
           63943,
           52542,
@@ -559,12 +574,15 @@
           4662,
           92619,
           3570,
-          3333
+          3332
         ]
       },
       {
         "t": "chr",
         "v": [
+          "code",
+          "code",
+          "code",
           "code",
           "code",
           "code",
@@ -673,6 +691,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

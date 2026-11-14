@@ -1,0 +1,164 @@
+{
+  "id": ".invenio_files.formats",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "key",
+          "size",
+          "checksum",
+          "links"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "md5:1"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "self"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://zenodo.org/api/records/1/files/x.csv/content"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "key",
+          "size",
+          "checksum",
+          "links"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "y.R"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              20
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "md5:2"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "self"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://h/api/records/2/files/y.R/content"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "key",
+          "size",
+          "checksum",
+          "links"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "z.txt"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              30
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "self"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://h/record/3/files/z.txt"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

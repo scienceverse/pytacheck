@@ -1,0 +1,23 @@
+{
+  "id": ".reshare_id.eprints_hosts",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "datacompass.lshtm.ac.uk/4333",
+      "datacompass.lshtm.ac.uk/4333",
+      "researchdata.gla.ac.uk/2235",
+      "datacompass.lshtm.ac.uk/4333",
+      null,
+      null,
+      "854001",
+      "854243",
+      "854001",
+      null
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,18 @@
+{
+  "eprintid": 1411,
+  "type": "thesis",
+  "title": "A thesis",
+  "documents": [
+    {
+      "content": "text",
+      "files": [
+        {
+          "fileid": 78,
+          "filename": "thesis.pdf",
+          "filesize": 90000,
+          "uri": "http://datacompass.lshtm.ac.uk/id/file/78"
+        }
+      ]
+    }
+  ]
+}

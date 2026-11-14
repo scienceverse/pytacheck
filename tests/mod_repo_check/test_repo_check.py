@@ -22,9 +22,10 @@ HERE = Path(__file__).resolve().parent
 CODE_FILES = ROOT / "upstream" / "metacheck" / "tests" / "testthat" / "fixtures" / "code_files"
 BIBR12 = ROOT / "upstream" / "metacheck" / "tests" / "testthat" / "fixtures" / "bibr12"
 NO_REPOS = (
-    "We found no links to repositories on the Open Science Framework, Github, ResearchBox, "
-    "DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, "
-    "DataONE, or LDbase."
+    "We found no links to repositories on the Open Science Framework, Github, GitLab, "
+    "ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), "
+    "Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, or CKAN "
+    "data portals."
 )
 SUMMARY_COLS = [
     "paper_id",
@@ -1025,3 +1026,75 @@ def test_a_private_box_read_through_its_peer_review_link_is_named(
             map(str, mo.report)
         )
         assert mo.traffic_light == "yellow"
+
+
+# -- publications are not deposits (metacheck 0.4.4.1, #636, #637) ---------------------------
+
+
+def _fake_zenodo(
+    monkeypatch: pytest.MonkeyPatch, records: dict[str, tuple[str | None, list[str]]]
+) -> None:
+    """Stand in for ``zenodo_info()``: ``{url: (resource_type, file names)}``."""
+    from metacheck.archives import zenodo
+
+    def info(urls: object, pb: object = None, cache: bool = False) -> pd.DataFrame:
+        rows = []
+        for u in urls:  # type: ignore[attr-defined]
+            rtype, names = records[u]
+            rows.append(
+                {
+                    "zenodo_url": u,
+                    "zenodo_id": u.rsplit("/", 1)[-1],
+                    "title": "t",
+                    "doi": None,
+                    "license": None,
+                    "error": None,
+                    "resource_type": rtype,
+                    "files": [
+                        {"key": n, "size": 10, "links": {"self": f"https://zenodo.org/f/{n}"}}
+                        for n in names
+                    ],
+                }
+            )
+        return pd.DataFrame(rows)
+
+    monkeypatch.setattr(zenodo, "zenodo_info", info)
+
+
+def test_a_publication_without_data_is_not_a_repository(monkeypatch: pytest.MonkeyPatch) -> None:
+    url = "https://zenodo.org/records/9000001"
+    _fake_zenodo(monkeypatch, {url: ("publication", ["paper.pdf"])})
+    mo = run(pc.test_paper(url=url))
+    assert mo.summary_text == NO_REPOS
+    assert mo.traffic_light == "na"
+
+
+def test_a_publication_with_its_data_is_kept(monkeypatch: pytest.MonkeyPatch) -> None:
+    url = "https://zenodo.org/records/9000002"
+    _fake_zenodo(monkeypatch, {url: ("publication-preprint", ["paper.pdf", "data.csv"])})
+    mo = run(pc.test_paper(url=url))
+    assert mo.summary_table["repo_n"].tolist() == [1]
+    assert set(mo.table["file_name"]) == {"paper.pdf", "data.csv"}
+
+
+def test_a_dataset_is_kept_without_data_files(monkeypatch: pytest.MonkeyPatch) -> None:
+    url = "https://zenodo.org/records/9000003"
+    _fake_zenodo(monkeypatch, {url: ("dataset", ["readme.txt"])})
+    mo = run(pc.test_paper(url=url))
+    assert mo.summary_table["repo_n"].tolist() == [1]
+
+
+def test_a_record_without_a_type_is_ignored_only_when_it_lists_files_but_no_data(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    only_pdf = "https://zenodo.org/records/9000004"
+    empty = "https://zenodo.org/records/9000005"
+    with_data = "https://zenodo.org/records/9000006"
+    _fake_zenodo(
+        monkeypatch,
+        {only_pdf: (None, ["paper.pdf"]), empty: (None, []), with_data: (None, ["d.csv"])},
+    )
+    mo = run(pc.test_paper(["See " + " ".join([only_pdf, empty, with_data])]))
+    assert set(mo.table["repo_url"]) == {with_data}
+    # the pdf-only record is gone from the metadata too; the empty one is kept
+    assert set(mo["repo_metadata"]["repo_url"]) == {empty, with_data}

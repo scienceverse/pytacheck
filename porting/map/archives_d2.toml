@@ -19,6 +19,9 @@
 "R/archive-mendeley.R" = ["src/metacheck/archives/mendeley.py", "src/metacheck/archives/reshare.py", "src/metacheck/archives/psycharchives.py"]
 "R/archive-fsd.R" = ["src/metacheck/archives/fsd.py", "src/metacheck/archives/psycharchives.py"]
 "R/archive-ldbase.R" = ["src/metacheck/archives/ldbase.py"]
+"R/archive-ckan.R" = ["src/metacheck/archives/ckan.py"]
+"R/repo-kind.R" = ["src/metacheck/archives/repo_kind.py"]
+"R/repo-tables.R" = ["src/metacheck/archives/_repo_tables.py"]
 "R/archive-aspredicted.R" = ["src/metacheck/archives/aspredicted.py"]
 
 [functions]
@@ -100,6 +103,29 @@
 ".ldbase_page_meta" = "metacheck.archives.ldbase:_ldbase_page_meta"
 ".ldbase_project_items" = "metacheck.archives.ldbase:_ldbase_project_items"
 ".ldbase_item_files" = "metacheck.archives.ldbase:_ldbase_item_files"
+# R/archive-ckan.R
+".ckan_hosts" = "metacheck.archives.ckan:_ckan_hosts"
+".ckan_api_base" = "metacheck.archives.ckan:_ckan_api_base"
+".ckan_doi_prefixes_all" = "metacheck.archives.ckan:_ckan_doi_prefixes_all"
+"ckan_links" = "metacheck.archives.ckan:ckan_links"
+".ckan_id" = "metacheck.archives.ckan:_ckan_id"
+"ckan_info" = "metacheck.archives.ckan:ckan_info"
+".ckan_info" = "metacheck.archives.ckan:_ckan_info"
+# R/archive-reshare.R (EPrints installations other than ReShare, metacheck #637)
+".eprints_hosts" = "metacheck.archives.reshare:_eprints_hosts"
+".eprints_host_regex" = "metacheck.archives.reshare:_eprints_host_regex"
+"eprints_links" = "metacheck.archives.reshare:eprints_links"
+".eprints_resolve_doi_url" = "metacheck.archives.reshare:_eprints_resolve_doi_url"
+# R/archive-zenodo.R (Invenio installations other than Zenodo, metacheck #636)
+".invenio_hosts" = "metacheck.archives.zenodo:_invenio_hosts"
+".invenio_host_regex" = "metacheck.archives.zenodo:_invenio_host_regex"
+"invenio_links" = "metacheck.archives.zenodo:invenio_links"
+".invenio_record_url" = "metacheck.archives.zenodo:_invenio_record_url"
+".invenio_files" = "metacheck.archives.zenodo:_invenio_files"
+# R/repo-kind.R: is a record a deposit or a publication (metacheck #637)
+".repo_publication_type" = "metacheck.archives.repo_kind:_repo_publication_type"
+".repo_doi_records" = "metacheck.archives.repo_kind:_repo_doi_records"
+".repo_doi_url" = "metacheck.archives.repo_kind:_repo_doi_url"
 # R/archive-aspredicted.R, R/archive-dspace7.R, R/archive-researchbox.R
 ".aspredicted_warn_if_no_key" = "metacheck.archives.aspredicted:_warn_if_no_key"
 ".dspace7_on_known_host" = "metacheck.archives.dspace7:_on_known_host"
@@ -108,6 +134,17 @@
 ".dataone_hosts()" = "metacheck.archives.dataone:DATAONE_HOSTS"
 ".dspace7_hosts()" = "metacheck.archives.dspace7:DSPACE7_HOSTS"
 ".dspace_legacy_hosts()" = "metacheck.archives.psycharchives:DSPACE_LEGACY_HOSTS"
+".dspace7_hosts_survey()" = "metacheck.archives._repo_tables:dspace7_hosts_survey"
+".dspace_legacy_hosts_survey()" = "metacheck.archives._repo_tables:dspace_legacy_hosts_survey"
+".dspace7_doi_prefixes()" = "metacheck.archives._repo_tables:dspace7_doi_prefixes"
+".dataverse_hosts_survey()" = "metacheck.archives._repo_tables:dataverse_hosts_survey"
+".dataverse_doi_prefix_hosts_survey()" = "metacheck.archives._repo_tables:dataverse_doi_prefix_hosts_survey"
+".eprints_hosts_survey()" = "metacheck.archives._repo_tables:eprints_hosts_survey"
+".eprints_doi_prefixes()" = "metacheck.archives._repo_tables:eprints_doi_prefixes"
+".invenio_hosts_survey()" = "metacheck.archives._repo_tables:invenio_hosts_survey"
+".invenio_doi_prefixes()" = "metacheck.archives._repo_tables:invenio_doi_prefixes"
+".ckan_hosts_survey()" = "metacheck.archives._repo_tables:ckan_hosts_survey"
+".ckan_doi_prefixes()" = "metacheck.archives._repo_tables:ckan_doi_prefixes"
 ".FSD_DDI_BASE" = "metacheck.archives.fsd:_FSD_DDI_BASE"
 "sections (in .rbox_info())" = "metacheck.archives.researchbox:_SECTIONS"
 

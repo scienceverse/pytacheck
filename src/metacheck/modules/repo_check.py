@@ -1,8 +1,9 @@
 """Repository Check (port of ``inst/modules/repo_check.R``).
 
 Lists the files in the repositories a paper links (OSF, GitHub, GitLab,
-ResearchBox, DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare,
-4TU.ResearchData, Mendeley Data, DataONE) and in local folders, without
+ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), Dataverse,
+Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, CKAN data portals) and in
+local folders, without
 downloading them; peeks inside ``.zip`` archives; classifies and groups the
 files by name; and reports missing READMEs, opaque archives, proprietary
 E-Prime files, restricted or closed sources, unclassifiable files, a
@@ -26,9 +27,10 @@ from metacheck.module import module
 from metacheck.modules import _repo_check as rc
 
 _NO_REPOS = (
-    "We found no links to repositories on the Open Science Framework, Github, ResearchBox, "
-    "DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, "
-    "DataONE, or LDbase."
+    "We found no links to repositories on the Open Science Framework, Github, GitLab, "
+    "ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), "
+    "Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, or CKAN "
+    "data portals."
 )
 
 _README_REPORT = (
@@ -294,9 +296,9 @@ def _repo_check(
 
     # get files ----
     if len(repos.df) > 0:
-        file_parts, meta_parts = _online_listings(repos, osf_license, cache, bar, first_pid)
+        file_named, meta_named = _online_listings(repos, osf_license, cache, bar, first_pid)
     else:  # local_only, or no repository links: every platform's listing is empty
-        file_parts, meta_parts = [rc.placeholder()], [rc.meta_frame()]
+        file_named, meta_named = [("osf", rc.placeholder())], [("osf", rc.meta_frame())]
 
     local_files_df = rc.placeholder()
     if local_path is not None:
@@ -305,6 +307,13 @@ def _repo_check(
         paths = [local_path] if isinstance(local_path, str) else list(dict.fromkeys(local_path))
         pid = first_pid()
         repos.add(rc.repo_rows(rc.NA_SCALAR if pid is None else pid, paths, "local", rc.NA_SCALAR))
+
+    # publications ----
+    # A paper, book or thesis in a repository that also holds them (DSpace, EPrints, Zenodo and
+    # the other Invenio installations) is not a deposit, and is ignored with its files
+    # (metacheck #636, #637). Before the check below, so a paper whose only links are
+    # publications has no repositories.
+    file_parts, meta_parts = rc.drop_publications(repos, file_named, meta_named)
 
     # no repos found ----
     if len(repos.df) == 0:
@@ -427,8 +436,9 @@ def _repo_check(
 
 def _online_listings(
     repos: rc.Repos, osf_license: bool, cache: bool, bar: Any, first_pid: Callable[[], Any]
-) -> tuple[list[pd.DataFrame], list[pd.DataFrame]]:
-    """Every platform's file listing and metadata, in R's order (for ``bind_rows()``)."""
+) -> tuple[list[tuple[str, pd.DataFrame]], list[tuple[str, pd.DataFrame]]]:
+    """Every platform's ``(platform, file listing)`` and ``(platform, metadata)``, in R's order
+    (for ``bind_rows()``)."""
     osf_urls = repos.urls("osf")
     osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
     osf_paper_id = osf_ids[0] if osf_ids else first_pid()
@@ -442,18 +452,40 @@ def _online_listings(
     dspace7_files, dspace7_meta = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
     listings = _api_listings(repos, cache, bar)
     ldbase_files, ldbase_meta = rc.list_ldbase(repos, repos.urls("ldbase"), bar, cache)
-    files = [osf_files, github_files, gitlab_files, rb_files, pa_files, dspace7_files]
-    meta = [osf_meta, github_meta, gitlab_meta, rb_meta, pa_meta, dspace7_meta]
+    ckan_files, ckan_meta = rc.list_ckan(repos, repos.urls("ckan"), bar, cache)
+    files = [
+        ("osf", osf_files),
+        ("github", github_files),
+        ("gitlab", gitlab_files),
+        ("researchbox", rb_files),
+        ("dspace", pa_files),
+        ("dspace7", dspace7_files),
+    ]
+    meta = [
+        ("osf", osf_meta),
+        ("github", github_meta),
+        ("gitlab", gitlab_meta),
+        ("researchbox", rb_meta),
+        ("dspace", pa_meta),
+        ("dspace7", dspace7_meta),
+    ]
     return (
-        files + [f for f, _ in listings.values()] + [ldbase_files],
-        meta + [m for _, m in listings.values()] + [ldbase_meta],
+        files
+        + [(k, f) for k, (f, _) in listings.items()]
+        + [("ldbase", ldbase_files)]
+        + [("ckan", ckan_files)],
+        meta
+        + [(k, m) for k, (_, m) in listings.items()]
+        + [("ldbase", ldbase_meta)]
+        + [("ckan", ckan_meta)],
     )
 
 
 def _api_listings(
     repos: rc.Repos, cache: bool, bar: Any = None
 ) -> dict[str, tuple[pd.DataFrame, pd.DataFrame]]:
-    """The Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU, Mendeley and DataONE blocks."""
+    """The Zenodo (and Invenio), Dataverse, Figshare, Dryad, ReShare (and EPrints), 4TU, Mendeley
+    and DataONE blocks."""
     from metacheck.archives import (
         dataone,
         dataverse,
@@ -473,6 +505,7 @@ def _api_listings(
         lambda: zenodo.zenodo_info(urls, pb=bar, cache=cache),
         "zenodo_url",
         rc.zenodo_row,
+        "resource_type",
     )
     dv = repos.urls("dataverse")
     out["dataverse"] = rc._api_listing(

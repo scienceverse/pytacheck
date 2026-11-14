@@ -20,10 +20,135 @@ from typing import Any
 import pandas as pd
 
 from metacheck._values import field, is_missing
+from metacheck.archives import _repo_tables as _tables
 
-__all__ = ["reshare_file_download", "reshare_info", "reshare_links"]
+__all__ = [
+    "EPRINTS_HOSTS",
+    "eprints_links",
+    "reshare_file_download",
+    "reshare_info",
+    "reshare_links",
+]
 
-_ID_PATTERNS = (r"10\.5255/UKDA-SN-([0-9]+)", r"reshare\.ukdataservice\.ac\.uk/([0-9]+)")
+#: R ``.reshare_id()``'s patterns: a UK Data Service DOI, or ReShare's own address (``/<id>``, or
+#: EPrints' record address ``/id/eprint/<id>``, metacheck #637)
+_ID_PATTERNS = (
+    r"10\.5255/UKDA-SN-([0-9]+)",
+    r"reshare\.ukdataservice\.ac\.uk/(?:id/eprint/)?([0-9]+)",
+)
+
+# ReShare is one EPrints installation; every EPrints data repository answers the same
+# /id/eprint/<id> request (metacheck verified live 2026-11-13: JSON with the same
+# documents[].files[] shape). So the functions below take the host from the link, as the
+# legacy DSpace functions do, and eprints_links() is the general (all-hosts) counterpart to
+# reshare_links() (metacheck #637). A deposit on ReShare keeps its plain eprint id
+# ("854001"); one on another host is "<host>/<id>" ("datacompass.lshtm.ac.uk/4333").
+
+#: R ``.eprints_hosts()``: ReShare, UCLan's data repository (its DOIs, 10.17030, are registered
+#: at uclandata.uclan.ac.uk, while DataCite's sample landed on its older name
+#: data.lancashire.ac.uk), and the EPrints hosts the repository survey found. Most of those
+#: mainly hold papers and theses, but they hold datasets too (eprints.soton.ac.uk,
+#: wrap.warwick.ac.uk): repo_check ignores a record whose own type says it is a publication.
+EPRINTS_HOSTS: tuple[str, ...] = tuple(
+    dict.fromkeys(
+        (
+            "reshare.ukdataservice.ac.uk",  # ReShare, UK Data Service
+            "uclandata.uclan.ac.uk",  # UCLan Data Repository (UK)
+            *_tables.eprints_hosts_survey,
+        )
+    )
+)
+
+
+def _eprints_hosts() -> list[str]:
+    """Port of R/archive-reshare.R::.eprints_hosts(): the known EPrints repositories."""
+    return list(EPRINTS_HOSTS)
+
+
+def _eprints_host_regex() -> str:
+    """Port of R/archive-reshare.R::.eprints_host_regex(): any known host, as a regex."""
+    return "|".join(h.replace(".", r"\.") for h in EPRINTS_HOSTS)
+
+
+def _eprints_doi_prefixes() -> list[str]:
+    """Port of R/repo-tables.R::.eprints_doi_prefixes(): DOI prefixes of the EPrints hosts.
+
+    DataCite's count per host, or a repository whose DOIs land on one, less the other detectors'
+    platforms' and ReShare's own 10.5255. :func:`eprints_links` looks up online only DOIs under
+    these prefixes, and drops one DataCite calls a publication; a looked-up DOI still has to lead
+    to a host in :data:`EPRINTS_HOSTS`.
+    """
+    return list(_tables.eprints_doi_prefixes)
+
+
+def eprints_links(paper: Any) -> pd.DataFrame:
+    """Port of R/archive-reshare.R::eprints_links(): EPrints repository links in papers.
+
+    All links to records on an EPrints repository: ReShare (see :func:`reshare_links`) and the
+    others in the list (LSHTM Data Compass, Glasgow's, Bath's and Reading's research data
+    repositories, Mannheim's MADATA, ...) and university repositories that also hold datasets.
+    Hyperlinks from the paper's own ``url`` table, bare mentions in the text, and DOIs under one
+    of these repositories' DOI prefixes, which are looked up once at DataCite to find the
+    record's address; a DOI DataCite calls a publication (a paper, book or thesis) is left out,
+    and a DOI under any other prefix is not looked up. A link to a publication is found here, and
+    the ``repo_check`` module ignores it once its record says what it is.
+
+    The table has ``href`` (the deposit's url), ``reshare_url`` and ``reshare_id`` (the eprint id
+    on ReShare, ``host/id`` on another host).
+    """
+    from metacheck._r import regexec
+    from metacheck.archives.dataone import _scan_links
+    from metacheck.archives.dataverse import (
+        _collect_links,
+        _link_matches,
+        _string_series,
+        _url_rows,
+    )
+
+    host_regex = _eprints_host_regex()
+    found_href = _url_rows(paper, f"{host_regex}|10\\.5255/ukda-sn")
+    bare = (
+        rf"(?:https?://)?(?:www\.)?(?:{host_regex})/(?:id/eprint/)?[0-9]+/?"
+        r"|(?:https?://)?(?:dx\.)?(?:doi\.org/)?10\.5255/UKDA-SN-[0-9]+(?:-[0-9]+)?"
+    )
+    other = _scan_links(paper, bare, [*(f"{h}/" for h in EPRINTS_HOSTS), "10.5255/ukda-sn-"])
+    # a DOI under an EPrints repository's prefix, replaced by the address it is registered with
+    # when that is on one of these hosts
+    by_doi = None
+    prefixes = _eprints_doi_prefixes()
+    if prefixes:
+        alt = "|".join(p.replace(".", r"\.") for p in prefixes)
+        doi_rx = (
+            rf"(?:https?://)?(?:dx\.)?(?:doi\.org/)?((?:{alt})/[-._;()/:A-Za-z0-9]+[A-Za-z0-9])"
+        )
+        by_doi = _link_matches(paper, doi_rx, alt)
+        if len(by_doi) > 0:
+            hrefs = []
+            for href in by_doi["href"].tolist():
+                groups = regexec(doi_rx, href, perl=True, ignore_case=True)
+                hrefs.append(_eprints_resolve_doi_url(str(groups[1])) if len(groups) >= 2 else None)
+            by_doi = by_doi.copy()
+            by_doi["href"] = pd.Series(hrefs, index=by_doi.index, dtype="string")
+            by_doi = by_doi[by_doi["href"].notna()]
+    parts = [found_href, other] if by_doi is None else [found_href, other, by_doi]
+    links = _collect_links(parts)
+    links["reshare_url"] = links["href"]
+    links["reshare_id"] = _string_series([_reshare_id_one(u) for u in links["href"].tolist()])
+    return links
+
+
+def _eprints_resolve_doi_url(doi: str) -> str | None:
+    """Port of R/archive-reshare.R::.eprints_resolve_doi_url().
+
+    The address a DOI is registered with, when it is on an EPrints repository in
+    :data:`EPRINTS_HOSTS` and DataCite does not call it a publication
+    (:func:`metacheck.archives.repo_kind._repo_doi_url`, one request); ``None`` otherwise.
+    """
+    from metacheck.archives.download import _url_host_is
+    from metacheck.archives.repo_kind import _repo_doi_url
+
+    url = _repo_doi_url(doi)[0]
+    return url if url is not None and _url_host_is(url, EPRINTS_HOSTS) else None
 
 
 def reshare_links(paper: Any) -> pd.DataFrame:
@@ -72,7 +197,31 @@ def _id_one(x: Any, simple: str, patterns: tuple[str, ...]) -> str | None:
 
 
 def _reshare_id_one(x: Any) -> str | None:
-    return _id_one(x, "^[0-9]+$", _ID_PATTERNS)
+    from metacheck._r import grepl, regexec
+    from metacheck.archives.dataone import _clean_one
+
+    s = _clean_one(x)
+    if s is None:
+        return None
+    if grepl("^[0-9]+$", s):
+        return s
+    # a deposit on another EPrints repository (EPRINTS_HOSTS): its address, /<id>/ or
+    # /id/eprint/<id>; already a "<host>/<id>" key too
+    other = [h for h in EPRINTS_HOSTS if h != "reshare.ukdataservice.ac.uk"]
+    if other:
+        alt = "|".join(h.replace(".", r"\.") for h in other)
+        groups = regexec(
+            rf"(?i)^(?:https?://)?(?:www\.)?({alt})/(?:id/eprint/)?([0-9]+)(?:[/?#].*)?$",
+            s,
+            perl=True,
+        )
+        if len(groups) >= 3:
+            return f"{str(groups[1]).lower()}/{groups[2]}"
+    for pattern in _ID_PATTERNS:
+        groups = regexec(pattern, s, perl=True, ignore_case=True)
+        if len(groups) >= 2:
+            return str(groups[1])
+    return None
 
 
 def _unique_ids(ids: Any) -> list[str]:
@@ -162,9 +311,22 @@ def reshare_info(
     ``doi``, ``publication_date``, ``updated_date``, ``authors``,
     ``license`` and ``files`` (or ``error``) added.
     """
+    from metacheck.archives.dataverse import _as_values
     from metacheck.utils import online
 
-    if not online("reshare.ukdataservice.ac.uk"):
+    # only ReShare's own deposits need ReShare; another EPrints host that does not answer gives
+    # its deposit an error row (_reshare_info())
+    if isinstance(reshare_url, pd.DataFrame):
+        col = (
+            reshare_url.iloc[:, int(id_col) - 1] if isinstance(id_col, int) else reshare_url[id_col]
+        )
+        urls = col.tolist()
+    else:
+        urls = _as_values(reshare_url)[0]
+    ids0 = [_reshare_id_one(u) for u in urls]
+    if any(i is not None and "/" not in i for i in ids0) and not online(
+        "reshare.ukdataservice.ac.uk"
+    ):
         raise ConnectionError("ReShare seems to be offline")
     return _info_by_id(
         reshare_url,
@@ -207,9 +369,12 @@ def _reshare_info(reshare_id: Any, pb: Any = None) -> pd.DataFrame:
         _tick(bar, f"* Retrieving info from ReShare eprint {rid}...")
         obj: dict[str, pd.Series] = {"reshare_id": _cell(None if is_missing(reshare_id) else rid)}
 
-        resp = _query(f"https://reshare.ukdataservice.ac.uk/id/eprint/{rid}", _reshare_headers)
+        # "<host>/<id>" for another EPrints repository (see _reshare_id_one())
+        host = rid.split("/", 1)[0] if "/" in rid else "reshare.ukdataservice.ac.uk"
+        resp = _query(f"https://{host}/id/eprint/{rid.rsplit('/', 1)[-1]}", _reshare_headers)
         if resp is None or resp.status_code != 200:
-            warnings.warn(f"{rid} could not be found on ReShare", stacklevel=2)
+            where = "ReShare" if host == "reshare.ukdataservice.ac.uk" else host
+            warnings.warn(f"{rid} could not be found on {where}", stacklevel=2)
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
 
@@ -230,6 +395,9 @@ def _reshare_info(reshare_id: Any, pb: Any = None) -> pd.DataFrame:
             files_flat.extend(_set_content(f, content) for f in _elements(field(d, "files")))
 
         obj["title"] = _field_cell(_empty_or(field(rec, "title"), None))
+        # what the record is (data_collection, dataset, article, thesis, ...): repo_check ignores
+        # a publication (metacheck #637; _repo_publication_type())
+        obj["record_type"] = _field_cell(_empty_or(field(rec, "type"), None))
         obj["doi"] = _field_cell(_empty_or(field(rec, "doi"), None))
         obj["publication_date"] = _field_cell(_empty_or(field(rec, "datestamp"), None))
         obj["updated_date"] = _field_cell(_empty_or(field(rec, "lastmod"), None))
@@ -396,7 +564,7 @@ def reshare_file_download(
         done = _download_file_table(
             files,
             ident=rid,
-            folder_name=f"reshare_{rid}",
+            folder_name="reshare_" + rid.replace("/", "_"),  # "<host>/<id>" (another EPrints host)
             download_to=download_to,
             max_file_size=max_file_size,
             max_download_size=max_download_size,

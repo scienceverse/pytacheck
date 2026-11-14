@@ -21,13 +21,14 @@ from typing import TYPE_CHECKING, Any, cast
 import pandas as pd
 
 from metacheck._values import field, field_or_value, is_missing
+from metacheck.archives import _repo_tables as _tables
 from metacheck.archives._atomic import atomic_write
 from metacheck.archives._memo import session_memo
 
 if TYPE_CHECKING:
     import httpx
 
-__all__ = ["zenodo_file_download", "zenodo_info", "zenodo_links"]
+__all__ = ["INVENIO_HOSTS", "invenio_links", "zenodo_file_download", "zenodo_info", "zenodo_links"]
 
 _ZEN_BARE_REGEX = (
     r"(?:https?://)?zenodo\.org/(?:record|records)/[0-9]+"
@@ -48,6 +49,135 @@ _MB = 1024 * 1024
 
 def zenodo_links(paper: Any) -> pd.DataFrame:
     """Port of R/archive-zenodo.R::zenodo_links(): Zenodo links in papers.
+
+    See :func:`_zenodo_links_only`; :func:`invenio_links` finds the records of the other Invenio
+    installations too.
+    """
+    return _zenodo_links_only(paper)
+
+
+# Zenodo runs Invenio; other installations of it answer the same /api/records/<id> request
+# (metacheck #636), in one of three record formats (checked 2026-11-13): Zenodo's (files a list of
+# key/size/checksum/links$self), InvenioRDM's (files$entries, a file's bytes at links$content;
+# Caltech's data.caltech.edu and most others), and an older Invenio's (filename/filesize/
+# links$download; Hamburg's fdr.uni-hamburg.de). _invenio_files() reads all three into Zenodo's.
+# A record on Zenodo keeps its numeric id ("2669586"); one on another host is "<host>/<id>"
+# ("data.caltech.edu/j4k4w-p8331"). Zenodo's token is only ever sent to zenodo.org, never to
+# another installation.
+
+#: R ``.invenio_hosts()``: Zenodo, Hamburg's research data repository (an older Invenio, whose
+#: search address answers differently, so the survey's check did not find it; its
+#: /api/records/<id> answers, checked 2026-11-13), and the hosts the repository survey found
+INVENIO_HOSTS: tuple[str, ...] = tuple(
+    dict.fromkeys(
+        (
+            "zenodo.org",  # Zenodo (CERN)
+            "fdr.uni-hamburg.de",  # Forschungsdaten-Repositorium, Universität Hamburg
+            *_tables.invenio_hosts_survey,
+        )
+    )
+)
+
+
+def _invenio_hosts() -> list[str]:
+    """Port of R/archive-zenodo.R::.invenio_hosts(): the known Invenio installations."""
+    return list(INVENIO_HOSTS)
+
+
+def _invenio_host_regex() -> str:
+    """Port of R/archive-zenodo.R::.invenio_host_regex(): any known host, as a regex."""
+    return "|".join(h.replace(".", r"\.") for h in INVENIO_HOSTS)
+
+
+def invenio_links(paper: Any) -> pd.DataFrame:
+    """Port of R/archive-zenodo.R::invenio_links(): Invenio repository links in papers.
+
+    All links to records on Zenodo (see :func:`zenodo_links`) and on the other Invenio
+    installations in the list (Caltech's data repository, CERN's, TU Wien's, Hamburg's, EUDAT's
+    B2SHARE, ...): real hyperlinks from the paper's own ``url`` table, bare mentions in the text,
+    and DOIs under one of these installations' DOI prefixes, which are looked up once at DataCite
+    to find the record's address; a DOI DataCite calls a publication is left out, and a DOI
+    under any other prefix is not looked up.
+
+    The table has ``href`` (the record's url), ``zenodo_url``, ``zenodo_id`` (the record id on
+    Zenodo, ``host/id`` on another installation) and ``zenodo_link``.
+    """
+    from metacheck._r import bind_rows, regexec, sub
+    from metacheck.archives.dataverse import _link_matches, _url_rows
+    from metacheck.archives.download import _url_host_is
+    from metacheck.archives.repo_kind import _repo_doi_url
+
+    zen = _zenodo_links_only(paper)
+    other = [h for h in INVENIO_HOSTS if h != "zenodo.org"]
+    rx = "|".join(h.replace(".", r"\.") for h in other)
+    found_href = _url_rows(paper, rx)
+    bare = _link_matches(
+        paper,
+        rf"(?:https?://)?(?:www\.)?(?:{rx})/(?:records?|doi)/[-A-Za-z0-9.:/_]+[A-Za-z0-9]",
+        rx,
+    )
+    # a DOI under another installation's prefix, replaced by the address it is registered with
+    # when that is on one of these hosts; Hamburg's prefix by hand, as Hamburg itself
+    pre = list(dict.fromkeys(["10.25592", *_tables.invenio_doi_prefixes]))
+    by_doi = None
+    alt = "|".join(p.replace(".", r"\.") for p in pre)
+    doi_rx = rf"(?:https?://)?(?:dx\.)?(?:doi\.org/)?((?:{alt})/[-._;()/:A-Za-z0-9]+[A-Za-z0-9])"
+    by_doi = _link_matches(paper, doi_rx, alt)
+    if len(by_doi) > 0:
+        hrefs = []
+        for href in by_doi["href"].tolist():
+            groups = regexec(doi_rx, href, perl=True, ignore_case=True)
+            u = _repo_doi_url(str(groups[1]))[0] if len(groups) >= 2 else None
+            hrefs.append(u if u is not None and _url_host_is(u, other) else None)
+        by_doi = by_doi.copy()
+        by_doi["href"] = pd.Series(hrefs, index=by_doi.index, dtype="string")
+        by_doi = by_doi[by_doi["href"].notna()]
+    more = bind_rows([found_href, bare, by_doi])
+    if len(more) > 0:
+        more["href"] = pd.Series(
+            sub("/+$", "", more["href"].tolist()), index=more.index, dtype="string"
+        )
+        # an address by DOI (data.caltech.edu/doi/10.22002/...) leads to the record's own address:
+        # followed once
+        followed = [
+            _invenio_record_url(h) if isinstance(h, str) and "/doi/" in h else h
+            for h in more["href"].tolist()
+        ]
+        more["href"] = pd.Series(followed, index=more.index, dtype="string")
+        more = more.drop_duplicates().reset_index(drop=True)
+        more["zenodo_url"] = more["href"]
+        more["zenodo_id"] = pd.Series(_zenodo_id(more["zenodo_url"].tolist()), dtype="string")
+        more["zenodo_link"] = more["href"]
+    # a table without rows has empty logical columns, which cannot be joined to text columns
+    if len(more) == 0:
+        return zen
+    if len(zen) == 0:
+        return more
+    return bind_rows([zen, more]).drop_duplicates().reset_index(drop=True)
+
+
+def _invenio_record_url(url: str) -> str:
+    """Port of R/archive-zenodo.R::.invenio_record_url().
+
+    The record address an Invenio ``/doi/<doi>`` address redirects to (one request), or the
+    address as given when it cannot be followed.
+    """
+    import re
+
+    from metacheck import http
+
+    u = url if re.match(r"^https?://", url) else f"https://{url}"
+    try:
+        resp = http.request("GET", u, max_tries=1, timeout=30, follow_redirects=True)
+    except Exception:
+        resp = None
+    if resp is not None and resp.status_code == 200 and re.search(r"/records?/", str(resp.url)):
+        return str(resp.url)
+    return url
+
+
+def _zenodo_links_only(paper: Any) -> pd.DataFrame:
+    """Zenodo's own links and DOIs (:func:`zenodo_links`).
 
     Hyperlinks mentioning ``zenodo.org`` or ``10.5281/zenodo`` from the
     paper's ``url`` table, plus bare record URLs and Zenodo DOIs in the text
@@ -94,6 +224,20 @@ def _zenodo_id_one(zenodo_url: Any) -> str | None:
         return None
     if grepl("^[0-9]+$", text):
         return str(text)
+    # a record on another Invenio installation (INVENIO_HOSTS): its address, /records/<id>,
+    # /record/<id> or /api/records/<id>; a "<host>/<id>" key too. The host is kept as the link
+    # writes it, "www." included: Hamburg's answers only at www.fdr.uni-hamburg.de
+    other = [h for h in INVENIO_HOSTS if h != "zenodo.org"]
+    if other:
+        alt = "|".join(h.replace(".", r"\.") for h in other)
+        groups = regexec(
+            rf"(?i)^(?:https?://)?((?:www\.)?(?:{alt}))/(?:(?:api/)?records?/)?"
+            r"([A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)(?:[/?#].*)?$",
+            text,
+            perl=True,
+        )
+        if len(groups) >= 3:
+            return f"{str(groups[1]).lower()}/{groups[2]}"
     for pattern in _ID_PATTERNS:
         groups = regexec(pattern, text, perl=True, ignore_case=True)
         if len(groups) >= 2:
@@ -157,14 +301,25 @@ def zenodo_info(
     from metacheck import utils
     from metacheck.archives import _spinner
 
-    if not utils.online("zenodo.org"):
+    # only Zenodo's own records need Zenodo; a record on another Invenio installation that does
+    # not answer gets an error row (_zenodo_info())
+    if isinstance(zenodo_url, pd.DataFrame):
+        urls0 = zenodo_url[_column_name(zenodo_url, id_col)].tolist()
+    else:
+        from metacheck.archives.github import _as_list
+
+        urls0 = _as_list(zenodo_url)
+    ids0 = [_zenodo_id_one(u) for u in urls0]
+    if any(i is not None and "/" not in i for i in ids0) and not utils.online("zenodo.org"):
         raise RuntimeError("Zenodo.org seems to be offline")
     with _spinner(pb, "Zenodo Retrieve") as bar:
         return _zenodo_info_table(zenodo_url, id_col, bar, cache)
 
 
 def _record_url(zenodo_id: str) -> str:
-    return f"https://zenodo.org/api/records/{zenodo_id}"
+    # "<host>/<id>" for another Invenio installation (see _zenodo_id_one())
+    host = zenodo_id.split("/", 1)[0] if "/" in zenodo_id else "zenodo.org"
+    return f"https://{host}/api/records/{zenodo_id.rsplit('/', 1)[-1]}"
 
 
 def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool) -> pd.DataFrame:
@@ -325,6 +480,50 @@ def _as_double(x: Any) -> float | None:
         return None
 
 
+def _invenio_files(files: Any) -> list[Any]:
+    """Port of R/archive-zenodo.R::.invenio_files(): a record's files in Zenodo's format.
+
+    A list of ``id``, ``key``, ``size``, ``checksum`` and ``links["self"]`` (the file's bytes),
+    from any of Invenio's three formats: Zenodo's own; InvenioRDM's ``files.entries``, whose
+    bytes are at ``links.content`` (its ``links.self`` describes the file); an older Invenio's
+    ``filename``, ``filesize`` and ``links.download``. A restricted record lists none.
+    """
+    if isinstance(files, dict) and "entries" in files:
+        files = files["entries"]
+        files = list(files.values()) if isinstance(files, dict) else files
+    elif isinstance(files, dict):
+        files = list(files.values())  # R: lapply() over a named list's fields
+    if not isinstance(files, list) or len(files) == 0:
+        return []
+    out = []
+    for x in files:
+        if not isinstance(x, dict | list):
+            raise TypeError("$ operator is invalid for atomic vectors")
+        links = field(x, "links")
+        out.append(
+            {
+                "id": _empty_none(field(x, "id"), field(x, "file_id")),
+                "key": _empty_none(field(x, "key"), field(x, "filename")),
+                "size": _empty_none(field(x, "size"), field(x, "filesize")),
+                "checksum": field(x, "checksum"),
+                "links": {
+                    "self": _empty_none(
+                        field(links, "content"), field(links, "download"), field(links, "self")
+                    )
+                },
+            }
+        )
+    return out
+
+
+def _empty_none(*values: Any) -> Any:
+    """R's ``a %||% b %||% ...``: the first value that is not ``NULL`` (``None`` otherwise)."""
+    for v in values:
+        if v is not None:
+            return v
+    return None
+
+
 def _zenodo_unread(zenodo_id: Any, error: str) -> pd.DataFrame:
     """Port of R/archive-zenodo.R::.zenodo_unread(): the row for an unreadable record.
 
@@ -400,23 +599,36 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
             _empty_or(field_or_value(lic, "title"), _empty_or(lic)),
         )
         stats = field(rec, "stats")
+        # The three record formats (see _invenio_files()): InvenioRDM gives the DOI under pids and
+        # the record type as resource_type$id ("dataset", "publication-article"); an older
+        # Invenio gives the date as `modified`
+        rtype = field(metadata, "resource_type")
         row = {
             "zenodo_id": zid,
             "title": _scalar_field(field(metadata, "title")),
-            "doi": _scalar_field(field(rec, "doi")),
+            "doi": _scalar_field(
+                _empty_or(field(rec, "doi"), _empty_or(field(rec, "pids", "doi", "identifier")))
+            ),
             "description": _scalar_field(field(metadata, "description")),
             "publication_date": _scalar_field(field(metadata, "publication_date")),
-            "updated_date": _scalar_field(field(rec, "updated")),
+            "updated_date": _scalar_field(
+                _empty_or(field(rec, "updated"), _empty_or(field(rec, "modified")))
+            ),
             "creators": field(metadata, "creators"),
             "keywords": field(metadata, "keywords"),
-            "resource_type": _scalar_field(field(field(metadata, "resource_type"), "type")),
+            "resource_type": _scalar_field(
+                _empty_or(
+                    field(rtype, "type"),
+                    _empty_or(field(rtype, "id"), _empty_or(field(metadata, "upload_type"))),
+                )
+            ),
             "journal": field(metadata, "journal"),
             "owners": field(rec, "owners"),
             "license": _scalar_field(license_value),
             "downloads": _scalar_field(field(stats, "downloads")),
             "unique_downloads": _scalar_field(field(stats, "unique_downloads")),
             "views": _scalar_field(field(stats, "views")),
-            "files": field(rec, "files"),
+            "files": _invenio_files(field(rec, "files")),
         }
         out = _info_frame(row)
         if len(ids) > 1:  # R recycles the one record's fields over the IDs
@@ -603,7 +815,7 @@ def _zenodo_download_one(
         # name itself, U37) ----
         target = _normalize(download_to)
         if os.path.isdir(target):
-            target = os.path.join(target, str(zid))
+            target = os.path.join(target, str(zid).replace("/", "_"))  # "<host>/<id>": one folder
         base = target
         i = 0
         while os.path.isdir(target):
@@ -631,6 +843,8 @@ def _zenodo_download_one(
             n == len(files_list)
             and not any(unzippable)
             and not any(omitted)
+            # Zenodo's own records only: another Invenio installation is read file by file
+            and "/" not in zid
             and not _FILES_ARCHIVE.get("unavailable")
         ):
             zip_url = f"https://zenodo.org/api/records/{zid}/files-archive"

@@ -1,0 +1,64 @@
+{
+  "id": ".invenio_files.rdm",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "key",
+          "size",
+          "checksum",
+          "links"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "y.R"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              20
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "md5:2"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "self"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://h/a/y.R/content"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

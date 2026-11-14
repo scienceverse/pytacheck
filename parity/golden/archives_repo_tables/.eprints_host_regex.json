@@ -1,0 +1,14 @@
+{
+  "id": ".eprints_host_regex",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "reshare\\.ukdataservice\\.ac\\.uk|uclandata\\.uclan\\.ac\\.uk|agritrop\\.cirad\\.fr|amsacta\\.unibo\\.it|amsdottorato\\.unibo\\.it|bordar\\.bournemouth\\.ac\\.uk|centaur\\.reading\\.ac\\.uk|collection-numerique\\.uqtr\\.ca|data\\.lancashire\\.ac\\.uk|datacat\\.liverpool\\.ac\\.uk|datacompass\\.lshtm\\.ac\\.uk|discovery\\.ucl\\.ac\\.uk|disszertacio\\.uni-eszterhazy\\.hu|doktori\\.uni-sopron\\.hu|elib\\.dlr\\.de|epapers\\.bham\\.ac\\.uk|epic\\.awi\\.de|eprints\\.bbk\\.ac\\.uk|eprints\\.bournemouth\\.ac\\.uk|eprints\\.glos\\.ac\\.uk|eprints\\.whiterose\\.ac\\.uk|epub\\.uni-bayreuth\\.de|espace\\.enap\\.ca|espace2\\.etsmtl\\.ca|irihs\\.ihs\\.ac\\.at|kar\\.kent\\.ac\\.uk|knowledge\\.lancashire\\.ac\\.uk|lbsresearch\\.london\\.edu|livrepository\\.liverpool\\.ac\\.uk|madata\\.bib\\.uni-mannheim\\.de|mural\\.maynoothuniversity\\.ie|oceanrep\\.geomar\\.de|openarchive\\.tk\\.hu|phrepo\\.phbern\\.ch|publications\\.aston\\.ac\\.uk|publikacio\\.uni-eszterhazy\\.hu|pure\\.iiasa\\.ac\\.at|real-eod\\.mtak\\.hu|real-j\\.mtak\\.hu|real-ms\\.mtak\\.hu|real-phd\\.mtak\\.hu|real\\.mtak\\.hu|repository\\.corp\\.at|repository\\.essex\\.ac\\.uk|repository\\.norland\\.ac\\.uk|repository\\.rothamsted\\.ac\\.uk|repository\\.uwtsd\\.ac\\.uk|research\\.gold\\.ac\\.uk|researchdata\\.aston\\.ac\\.uk|researchdata\\.bath\\.ac\\.uk|researchdata\\.bbk\\.ac\\.uk|researchdata\\.brighton\\.ac\\.uk|researchdata\\.essex\\.ac\\.uk|researchdata\\.gla\\.ac\\.uk|researchdata\\.keele\\.ac\\.uk|researchdata\\.reading\\.ac\\.uk|researchonline\\.jcu\\.edu\\.au|researchonline\\.lse\\.ac\\.uk|researchonline\\.lshtm\\.ac\\.uk|researchonline\\.rca\\.ac\\.uk|researchonline\\.rcm\\.ac\\.uk|sas-space\\.sas\\.ac\\.uk|shurda\\.shu\\.ac\\.uk|strathprints\\.strath\\.ac\\.uk|theses\\.gla\\.ac\\.uk|ualresearchonline\\.arts\\.ac\\.uk|uhra\\.herts\\.ac\\.uk|vuir\\.vu\\.edu\\.au|wrap\\.warwick\\.ac\\.uk"
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

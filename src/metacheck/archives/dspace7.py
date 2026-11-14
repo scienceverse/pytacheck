@@ -20,12 +20,13 @@ import pandas as pd
 
 from metacheck._r import regextract, sub
 from metacheck._values import field, is_missing
+from metacheck.archives import _repo_tables as _tables
 from metacheck.archives._memo import session_memo
 
 __all__ = ["DSPACE7_HOSTS", "dspace7_file_download", "dspace7_links"]
 
-#: R ``.dspace7_hosts()``: DSpace 7+ installations, in R's order.
-DSPACE7_HOSTS: tuple[str, ...] = (
+#: R ``.dspace7_hosts()``'s hand-written list: DSpace 7+ installations, in R's order.
+_DSPACE7_HOSTS_LISTED: tuple[str, ...] = (
     "archive.uax.com",  # UAX Archive
     "aura.abdn.ac.uk",  # University of Aberdeen (UK)
     "bedl.asabe.org",  # Biosystems Engineering Digital Library
@@ -94,6 +95,10 @@ DSPACE7_HOSTS: tuple[str, ...] = (
     "ecommons.cornell.edu",  # Cornell eCommons (USA): DSpace 8 (/server/api), not legacy DSpace
     "www.repository.cam.ac.uk",  # Apollo, University of Cambridge (UK): UI only, see _API_HOST_ALIASES
 )
+
+#: R ``.dspace7_hosts()``: the hand-written list and the hosts the repository survey found
+#: (metacheck #636; ``scripts/convert_repo_tables.py`` writes ``_repo_tables.py``).
+DSPACE7_HOSTS: tuple[str, ...] = (*_DSPACE7_HOSTS_LISTED, *_tables.dspace7_hosts_survey)
 
 #: R ``.dspace7_api_host_aliases()``: a citable UI host whose ``/server/api`` is
 #: served by another host. Apollo's www.repository.cam.ac.uk answers 404 there;
@@ -172,9 +177,9 @@ def dspace7_links(paper: Any) -> pd.DataFrame:
     such a host (the row's ``href`` is then the registered URL). Trailing
     slashes are stripped and duplicate rows dropped.
 
-    A paper's own DOI is not looked up, nor a DOI under a prefix that another
-    detector handles (:func:`_dspace7_skip_doi_prefixes`); every other DOI is
-    looked up once per session, in doi.org's handle API
+    A paper's own DOI is not looked up, nor a DOI under a prefix that has no DOIs registered on
+    a DSpace 7+ host (:func:`_dspace7_doi_prefixes`, metacheck #636); every other DOI is looked
+    up once per session, at DataCite and then in doi.org's handle API
     (:func:`_dspace7_resolve_doi_url`).
     """
     from metacheck._r import regexec
@@ -203,8 +208,14 @@ def dspace7_links(paper: Any) -> pd.DataFrame:
                 None if d is None or (pid, _dspace7_doi_key(d)) in own else d
                 for d, pid in zip(dois, pids, strict=True)
             ]
-        skip = set(_dspace7_skip_doi_prefixes())
-        dois = [None if d is None or d.split("/", 1)[0].lower() in skip else d for d in dois]
+        # only a DOI under a prefix with DOIs registered on a DSpace 7+ host is looked up
+        # (_dspace7_doi_prefixes(); metacheck #636): looking up every other DOI cost 25,172 lookups
+        # in the main texts of 17 corpora (13,706 papers) and 445,034 in their reference lists,
+        # where the prefix list leaves 20 and 78
+        prefixes = set(_dspace7_doi_prefixes())
+        dois = [
+            None if d is None or d.split("/", 1)[0].lower() not in prefixes else d for d in dois
+        ]
         resolved = {d: _dspace7_resolve_doi_url(d) for d in dict.fromkeys(dois) if d is not None}
         urls = [None if d is None else resolved[d] for d in dois]
         keep = [u is not None for u in urls]
@@ -241,6 +252,17 @@ def _dspace7_doi_key(doi: str) -> str:
 
 
 _DOI_KEY_RX = re.compile(r"^(?:https?://)?(?:dx\.)?(?:doi\.org/)?(?:doi:\s*)?")
+
+
+def _dspace7_doi_prefixes() -> list[str]:
+    """Port of R/repo-tables.R::.dspace7_doi_prefixes(): DOI prefixes with DOIs on a DSpace 7+ host.
+
+    DataCite's count per host, or a repository whose DOIs land on one; never another detector's
+    platform's (OSF, Zenodo, Dryad, Figshare, ...). :func:`dspace7_links` looks up online only
+    DOIs under these prefixes; a looked-up DOI still has to lead to a host in
+    :data:`DSPACE7_HOSTS`. 254 prefixes (metacheck #636).
+    """
+    return list(_tables.dspace7_doi_prefixes)
 
 
 def _dspace7_skip_doi_prefixes() -> list[str]:
@@ -362,7 +384,12 @@ def _dspace7_resolve_doi_url(doi: str) -> str | None:
     if key in _DOI_CACHE:
         return cast("str | None", _DOI_CACHE[key])
 
-    url, ok = _handle_registered_url(doi)
+    # DataCite's record first: it gives the address and says whether the DOI is a publication (a
+    # paper or thesis in an institutional repository), which is not looked up further (metacheck
+    # #637; _repo_doi_url()); a DOI DataCite does not have is asked of the handle service
+    from metacheck.archives.repo_kind import _repo_doi_url
+
+    url, ok, _publication = _repo_doi_url(doi)
     hdl = None if url is None else _HDL_URL_RX.match(url)
     if ok and hdl is not None:
         url, ok = _handle_registered_url(unquote(hdl.group(1)), api=HDL_HANDLE_API)
@@ -559,6 +586,9 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
         obj["license"] = _cell(md_val(("dc.rights", "dc.rights.uri", "dc.rights.license")))
         obj["publication_date"] = _cell(md_val(("dc.date.issued", "dc.date.available")))
         obj["updated_date"] = _field_cell(_empty_or(field(item, "lastModified"), None))
+        # what the item is (dc.type: "Dataset", "Article", "Doctoral thesis", ...): repo_check
+        # ignores a publication (metacheck #637; _repo_publication_type())
+        obj["record_type"] = _cell(md_val(("dc.type",)))
 
         names: list[Any] = []
         sizes: list[float] = []
@@ -608,8 +638,8 @@ def dspace7_file_download(dspace7_url: Any, pb: Any = None) -> pd.DataFrame | No
     without downloading them: one row per file with ``dspace7_url``,
     ``name``, ``file_url`` (the bitstream's content URL, fetched later by
     ``download_repo_files()``), ``file_location`` (``NA``), ``size``,
-    ``isdir``, ``ext`` and ``type``. Each item's licence and DOI are carried
-    in the table's ``attrs["license"]`` / ``attrs["doi"]`` (``{url: value}``;
+    ``isdir``, ``ext`` and ``type``. Each item's licence, DOI and record type (``dc.type``) are
+    carried in the table's ``attrs["license"]`` / ``attrs["doi"]`` / ``attrs["record_type"]`` (``{url: value}``;
     R: named vectors in attributes), also for an item without files (a
     zero-row table). ``None`` when the URL names no known host or the item
     cannot be found. A sequence of URLs gives one table, aligned with the
@@ -656,7 +686,7 @@ def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame 
                 return None, unfound  # no URL found an item (metacheck's join errors here: U43)
             df = left_join(orig, info, by="dspace7_url")
             # R: unlist(lapply(file_lists, attr, "license")) -- NULL (no attribute) if none
-            for name in ("license", "doi"):
+            for name in ("license", "doi", "record_type"):
                 merged: dict[str, Any] = {}
                 for fl in file_lists:
                     if fl is not None:
@@ -686,12 +716,14 @@ def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame 
             return {_paste(url): None if is_missing(v) else v}
 
         license_, doi = attr("license"), attr("doi")
+        record_type = attr("record_type")
         file_list = info["files"].iloc[0]
         if file_list is None or len(file_list) == 0:
             _tick(bar, f"- {_paste(url)} contained no files")
             empty = pd.DataFrame({k: pd.Series([], dtype=t) for k, t in _EMPTY_FILES.items()})
             empty.attrs["license"] = license_
             empty.attrs["doi"] = doi
+            empty.attrs["record_type"] = record_type
             return empty, []
 
         n = len(file_list)
@@ -708,4 +740,5 @@ def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame 
         df = _add_ext_type(df)
         df.attrs["license"] = license_
         df.attrs["doi"] = doi
+        df.attrs["record_type"] = record_type
         return df, []

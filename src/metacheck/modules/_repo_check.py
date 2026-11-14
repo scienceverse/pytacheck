@@ -286,6 +286,7 @@ REPO_TYPES = (
     "mendeley",
     "dataone",
     "ldbase",
+    "ckan",
 )
 
 _FIGSHARE_SHARE = "private share link (figshare.com/s/...) cannot be resolved without a browser"
@@ -323,6 +324,15 @@ class Repos:
         )
     )
     rb_not_public: list[str] = field(default_factory=list)
+    #: R ``repo_record_type``: each DSpace, EPrints and Invenio record's own type by ``repo_url``
+    #: (the first given for a url), read by the "Publications" step (metacheck #637)
+    record_types: dict[str, Any] = field(default_factory=dict)
+
+    def add_record_types(self, urls: Sequence[Any], types: Sequence[Any]) -> None:
+        """``repo_record_type <- c(repo_record_type, setNames(types, urls))``."""
+        for u, t in zip(urls, types, strict=True):
+            if u is not None and not _na(u):
+                self.record_types.setdefault(str(u), None if _na(t) else str(t))
 
     def urls(self, repo_type: str) -> list[str]:
         """``repos |> filter(repo_type == type) |> _$repo_url |> unique()``."""
@@ -387,6 +397,7 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     private share links).
     """
     from metacheck._r import bind_rows
+    from metacheck.archives.ckan import ckan_links
     from metacheck.archives.dataone import dataone_links
     from metacheck.archives.dataverse import dataverse_links
     from metacheck.archives.dryad import dryad_links
@@ -400,8 +411,8 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     from metacheck.archives.osf import osf_links
     from metacheck.archives.psycharchives import dspace_links
     from metacheck.archives.researchbox import rbox_links
-    from metacheck.archives.reshare import reshare_links
-    from metacheck.archives.zenodo import zenodo_links
+    from metacheck.archives.reshare import eprints_links
+    from metacheck.archives.zenodo import invenio_links
 
     osf = osf_links(paper)
     if "href" in osf.columns:
@@ -414,15 +425,19 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
         "researchbox": rbox_links(paper),
         "dspace": dspace_links(paper),
         "dspace7": dspace7_links(paper),
-        "zenodo": zenodo_links(paper),
+        # Zenodo and the other Invenio installations (metacheck #636)
+        "zenodo": invenio_links(paper),
         "dataverse": dataverse_links(paper),
         "figshare": figshare_links(paper),
         "dryad": dryad_links(paper),
-        "reshare": reshare_links(paper),
+        # ReShare and the other EPrints repositories (metacheck #637)
+        "reshare": eprints_links(paper),
         "researchdata4tu": researchdata4tu_links(paper),
         "mendeley": mendeley_links(paper),
         "dataone": dataone_links(paper),
         "ldbase": ldbase_links(paper),
+        # CKAN data portals (metacheck #637)
+        "ckan": ckan_links(paper),
     }
     parts = []
     for repo_type in REPO_TYPES:
@@ -1185,6 +1200,12 @@ def _named_lookup(named: Mapping[str, Any] | None, keys: Sequence[str]) -> list[
     return [named.get(k) for k in keys]
 
 
+def _add_record_types(repos: Repos, named: Mapping[str, Any] | None) -> None:
+    """``repo_record_type <- c(repo_record_type, attr(file_list, "record_type"))``."""
+    if named:
+        repos.add_record_types(list(named.keys()), list(named.values()))
+
+
 def list_dspace(
     repos: Repos, urls: list[str], pb: Any, cache: bool
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -1204,6 +1225,7 @@ def list_dspace(
         if unfound:
             repos.flag(unfound, _DSPACE_UNFOUND)
         attrs = pa.attrs if isinstance(pa, pd.DataFrame) else {}
+        _add_record_types(repos, attrs.get("record_type"))
         rights = attrs.get("rights") or None
         if rights:
             restricted = [
@@ -1263,6 +1285,7 @@ def list_dspace7(repos: Repos, urls: list[str], pb: Any) -> tuple[pd.DataFrame, 
             repos.flag(unfound, _DSPACE_UNFOUND)
         # the items' DOI and licence, carried in the listing's attrs
         attrs = ds.attrs if isinstance(ds, pd.DataFrame) else {}
+        _add_record_types(repos, attrs.get("record_type"))
         doi = attrs.get("doi") or None
         license_ = attrs.get("license") or None
         if doi or license_:
@@ -1334,15 +1357,24 @@ def _api_listing(
     info_fn: Callable[[], pd.DataFrame],
     url_col: str,
     row_fn: Callable[[dict[str, Any], Any], dict[str, Any]],
+    record_type_col: str | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The shared shape of the Zenodo, Dataverse, Figshare, Dryad, ReShare,
-    4TU.ResearchData, Mendeley Data, DataONE and LDbase blocks."""
+    4TU.ResearchData, Mendeley Data, DataONE and LDbase blocks.
+
+    *record_type_col* names the column of the info table holding each record's own type
+    (Zenodo's ``resource_type``, ReShare's ``record_type``), kept for the "Publications" step.
+    """
+    from metacheck.utils import _col_chr
+
     files_df = placeholder()
     meta = meta_frame()
     if not urls:
         return files_df, meta
     try:
         info = info_fn()
+        if len(info) > 0 and record_type_col is not None and record_type_col in info.columns:
+            repos.add_record_types(_col_chr(info, url_col), _col_chr(info, record_type_col))
         if len(info) > 0:
             meta = _meta_from(info, url_col)
             link_errors(repos, info, url_col)
@@ -1397,6 +1429,98 @@ def list_ldbase(
                             ("file_url", vals(files_i["file_url"]), "string"),
                             ("file_location", [None] * n, "string"),
                             ("file_size", [None] * n, "float64"),
+                        ]
+                    )
+                )
+            files_df = _typed_listing(bind_rows(parts) if parts else pd.DataFrame())
+    except Exception as e:
+        repos.flag_unflagged(urls, condition_message(e))
+    return files_df, meta
+
+
+_DEPOSIT_TYPES = ("data", "code", "stats", "archive")
+
+
+def drop_publications(
+    repos: Repos, files: list[tuple[str, pd.DataFrame]], metas: list[tuple[str, pd.DataFrame]]
+) -> tuple[list[pd.DataFrame], list[pd.DataFrame]]:
+    """The "Publications" step (metacheck #636, #637): a paper, book or thesis is not a deposit.
+
+    A DSpace, EPrints, Zenodo or other Invenio record whose own type says it is a publication
+    (:func:`metacheck.archives.repo_kind._repo_publication_type`) and that holds no data or code
+    file (data, code, a statistics file or an archive) is ignored with its files. A record that
+    gives no type is ignored only when it lists files and none of them is data or code. *files*
+    and *metas* are ``(platform, table)`` pairs; only the four institutional platforms'
+    tables are filtered. Returns the tables, in order.
+    """
+    from metacheck.archives.repo_kind import _repo_publication_type
+
+    inst = ("dspace", "dspace7", "reshare", "zenodo")
+    mask = repos.df["repo_type"].isin(inst).fillna(False).to_numpy(dtype=bool)
+    inst_urls = [u for u in unique(repos.df["repo_url"][mask].tolist()) if u is not None]
+    drop: set[str] = set()
+    if inst_urls:
+        tables = [f for name, f in files if name in inst and "repo_url" in f.columns]
+        kinds = []
+        for u in inst_urls:
+            ks: list[Any] = []
+            for f in tables:
+                hit = r_in(vals(f["repo_url"]), [u])
+                ks.extend(t for t, h in zip(vals(f["file_type"]), hit, strict=True) if h)
+            kinds.append(ks)
+        is_pub = _repo_publication_type([repos.record_types.get(u) for u in inst_urls])
+        for u, pub, ks in zip(inst_urls, is_pub, kinds, strict=True):
+            no_data = not any(k in _DEPOSIT_TYPES for k in ks)
+            listed = len(ks) > 0
+            if (pub is True and no_data) or (pub is None and listed and no_data):
+                drop.add(u)
+    if drop:
+        repos.df = repos.df[~repos.df["repo_url"].isin(drop).fillna(False)].reset_index(drop=True)
+
+    def cut(name: str, df: pd.DataFrame) -> pd.DataFrame:
+        if drop and name in inst and "repo_url" in df.columns:
+            return df[~df["repo_url"].isin(drop).fillna(False)].reset_index(drop=True)
+        return df
+
+    return [cut(n, f) for n, f in files], [cut(n, m) for n, m in metas]
+
+
+def list_ckan(
+    repos: Repos, urls: list[str], pb: Any, cache: bool
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """The CKAN block (metacheck #637): ``ckan_info()`` reads each dataset's record, one request.
+
+    The files are the resources the portal holds itself, with their sizes; a resource that
+    only links to another website is not listed.
+    """
+    from metacheck._r import bind_rows
+    from metacheck.archives.ckan import ckan_info
+
+    files_df = placeholder()
+    meta = meta_frame()
+    if not urls:
+        return files_df, meta
+    try:
+        info = _quiet(lambda: ckan_info(urls, pb=pb, cache=cache))
+        if len(info) > 0:
+            meta = _meta_from(info, "ckan_url")
+            link_errors(repos, info, "ckan_url")
+        if len(info) > 0 and "files" in info.columns:
+            parts = []
+            url_col = vals(info["ckan_url"])
+            for i, files_i in enumerate(info["files"].tolist()):
+                if not isinstance(files_i, pd.DataFrame) or len(files_i) == 0:
+                    continue
+                n = len(files_i)
+                parts.append(
+                    r_frame(
+                        [
+                            ("repo_url", _as_chr(url_col[i]), "string"),
+                            ("file_name", vals(files_i["file_name"]), "string"),
+                            ("file_path", vals(files_i["file_path"]), "string"),
+                            ("file_url", vals(files_i["file_url"]), "string"),
+                            ("file_location", [None] * n, "string"),
+                            ("file_size", vals(files_i["file_size"]), "float64"),
                         ]
                     )
                 )

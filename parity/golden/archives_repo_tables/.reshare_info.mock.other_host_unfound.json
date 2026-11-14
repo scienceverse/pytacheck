@@ -1,0 +1,32 @@
+{
+  "id": ".reshare_info.mock.other_host_unfound",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "datacompass.lshtm.ac.uk/9999 could not be found on datacompass.lshtm.ac.uk"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "reshare_id",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "datacompass.lshtm.ac.uk/9999"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

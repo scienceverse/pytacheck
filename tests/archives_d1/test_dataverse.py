@@ -406,8 +406,8 @@ def test_unzip_types_leaves_datasets_without_a_zip_unchanged(
 
 
 def test_allowlists_are_complete() -> None:
-    assert len(DATAVERSE_HOSTS) == 121
-    assert len(set(DATAVERSE_HOSTS)) == 121
+    assert len(DATAVERSE_HOSTS) == 169
+    assert len(set(DATAVERSE_HOSTS)) == 169
     assert all(h in DATAVERSE_HOSTS for h in dataverse.DATAVERSE_DOI_PREFIX_HOSTS)
 
 
@@ -756,3 +756,31 @@ def test_a_file_dataverse_converted_is_taken_as_it_was_uploaded() -> None:
     assert e["name"] == "x.tab"
     assert pd.isna(e["size"])  # not the converted file's size
     assert e["url"].endswith("format=original")
+
+
+def test_survey_hosts_and_prefixes_are_added_to_the_hand_written_lists() -> None:
+    from metacheck.archives import _repo_tables
+
+    hosts = dataverse.DATAVERSE_HOSTS
+    # hand-written and survey hosts, each once
+    for h in ("dataverse.harvard.edu", "data.indores.fr", "dataverse.geus.dk"):
+        assert h in hosts
+    assert len(hosts) == len(set(hosts))
+    x = dataverse.DATAVERSE_DOI_PREFIX_HOSTS
+    # a survey prefix of a host the hand-written table writes with "www." goes under that
+    # entry, not a second one
+    names = [k.removeprefix("www.") for k in x]
+    assert len(names) == len(set(names))
+    # never another platform's own prefix (10.6084 is Figshare's)
+    prefixes = [p for v in x.values() for p in (v if isinstance(v, list | tuple) else [v])]
+    assert not {"10.6084", "10.5281", "10.17605", "10.5061"} & set(prefixes)
+    # every prefix is a full prefix: a table read as numbers loses a final 0 ("10.18150")
+    import re
+
+    assert all(re.fullmatch(r"10\.[0-9]{4,9}", p) for p in prefixes)
+    survey = _repo_tables.dataverse_doi_prefix_hosts_survey
+    assert "10.18150" in {
+        p for v in survey.values() for p in (v if isinstance(v, list | tuple) else [v])
+    }
+    # a DOI under a survey prefix finds its host
+    assert dataverse._dataverse_host_from_doi("10.48579/PRO/3LQH1M") == "data.indores.fr"

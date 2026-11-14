@@ -475,6 +475,17 @@ PLATFORM: list[tuple[str, str, list[str]]] = [
         ["https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86"],
     ),
     (
+        "zenodo.publications",
+        "Zenodo records that are publications (a paper alone, a preprint with data, a dataset, "
+        "no type with a pdf, no type without files): a paper without data is not a repository",
+        [f"https://zenodo.org/records/55590{i}" for i in (10, 11, 12, 13, 14)],
+    ),
+    (
+        "zenodo.only_publication",
+        "a paper whose only repository link is a publication: no repositories",
+        ["https://zenodo.org/records/5559010"],
+    ),
+    (
         "zenodo.nameless",
         "a Zenodo file without a name: the module fails (as in R)",
         ["https://zenodo.org/records/5559002"],

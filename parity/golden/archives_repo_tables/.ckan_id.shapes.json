@@ -1,0 +1,21 @@
+{
+  "id": ".ckan_id.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "data.cnra.ca.gov/statewide-crop-mapping",
+      "www.envidat.ch/chelsa-climatologies",
+      "data.nhm.ac.uk/8c67d782-c01d-4807-8913-f57d0daabf35",
+      "open.canada.ca/0c0a6e7b-4c1d-4b6f-9b1e-1a2b3c4d5e6f",
+      "data.cnra.ca.gov/6c3d65e3",
+      null,
+      null,
+      null
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

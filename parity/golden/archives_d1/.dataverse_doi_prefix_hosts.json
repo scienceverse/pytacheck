@@ -93,7 +93,61 @@
       "uek.rodbuk.pl",
       "uj.rodbuk.pl",
       "uwr.rodbuk.pl",
-      "www.sodha.be"
+      "www.sodha.be",
+      "adattar.unideb.hu",
+      "aleia.ibict.br",
+      "bonndata.uni-bonn.de",
+      "d2et-openscience.list.lu",
+      "dados.ipb.pt",
+      "dados.unipb.pt",
+      "dadosdepesquisa.ufg.br",
+      "darus.uni-stuttgart.de",
+      "data.dassi-archive.it",
+      "data.fz-juelich.de",
+      "data.goettingen-research-online.de",
+      "data.indores.fr",
+      "data.mapbiomas.org",
+      "data.tu-dortmund.de",
+      "data4research.unimas.my",
+      "datacatalogue.sodanet.gr",
+      "datarepositorium.uminho.pt",
+      "datarepository.ipen.br",
+      "dataset.usm.cl",
+      "dataverse.adp.fdv.uni-lj.si",
+      "dataverse.datascience.insper.edu.br",
+      "dataverse.dipc.org",
+      "dataverse.fgcu.edu",
+      "dataverse.geologischedienst.nl",
+      "dataverse.geus.dk",
+      "dataverse.isae-supaero.fr",
+      "dataverse.qcif.edu.au",
+      "dataverse.telkomuniversity.ac.id",
+      "dataverse.unr.edu.ar",
+      "datos.uandes.cl",
+      "datos.uautonoma.cl",
+      "depositadados.ibict.br",
+      "dmportal.biodata.pt",
+      "gagnis.hi.is",
+      "health-study-hub.de",
+      "heidata.uni-heidelberg.de",
+      "india.climateverse.net",
+      "infraverse.zih.tu-dresden.de",
+      "lattesdata.cnpq.br",
+      "mhridataverse.medstar.net",
+      "mxrdr.icm.edu.pl",
+      "open-data.unibw.de",
+      "osnadata.ub.uni-osnabrueck.de",
+      "papyrus-datos.co",
+      "planetary-data-portal.org",
+      "prometheus.cut.ac.cy",
+      "radogost.dariah.pl",
+      "rdb.p.lodz.pl",
+      "rds.icm.edu.pl",
+      "redu.unicamp.br",
+      "repodatos.uvg.edu.gt",
+      "repositorio.aibili.pt",
+      "repository.spibirds.org",
+      "researchdata.rijksmuseum.nl"
     ],
     "v": [
       {
@@ -140,7 +194,9 @@
           "10.34990",
           "10.5203",
           "10.5683",
-          "10.7939"
+          "10.7939",
+          "10.5887",
+          "10.14289"
         ]
       },
       {
@@ -194,7 +250,8 @@
       {
         "t": "chr",
         "v": [
-          "10.21410"
+          "10.21410",
+          "10.48388"
         ]
       },
       {
@@ -208,7 +265,8 @@
         "v": [
           "10.15155",
           "10.23659",
-          "10.23673"
+          "10.23673",
+          "10.23680"
         ]
       },
       {
@@ -361,7 +419,9 @@
       {
         "t": "chr",
         "v": [
-          "10.18130"
+          "10.18130",
+          "10.25888",
+          "10.25893"
         ]
       },
       {
@@ -410,7 +470,26 @@
       {
         "t": "chr",
         "v": [
-          "10.25346"
+          "10.25346",
+          "10.6079",
+          "10.15144",
+          "10.17610",
+          "10.20352",
+          "10.21222",
+          "10.21978",
+          "10.23733",
+          "10.25348",
+          "10.34948",
+          "10.34953",
+          "10.35012",
+          "10.48452",
+          "10.48739",
+          "10.60542",
+          "10.60603",
+          "10.82158",
+          "10.82903",
+          "10.82930",
+          "10.83206"
         ]
       },
       {
@@ -428,7 +507,9 @@
       {
         "t": "chr",
         "v": [
-          "10.15139"
+          "10.15139",
+          "10.25821",
+          "10.25825"
         ]
       },
       {
@@ -539,7 +620,8 @@
       {
         "t": "chr",
         "v": [
-          "10.48788"
+          "10.48788",
+          "10.71942"
         ]
       },
       {
@@ -646,9 +728,346 @@
         "v": [
           "10.34934"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.48428"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.48472"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.60507"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.83142"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.34620"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.34620"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.60879"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.18419"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.71732"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.26165"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.25625"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.48579"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.58053",
+          "10.60502"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.15467",
+          "10.17877",
+          "10.71955"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.60767"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.17903"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.34622"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.57766",
+          "10.58148"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.82172"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.17898"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.48808",
+          "10.60873"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.82518"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.60863"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.82347"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.22008"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.34849"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.60540"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.34818",
+          "10.34820"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.57715"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.82263"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.71733",
+          "10.71855"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.48472"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.34636"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.34881"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.48793"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.11588"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.71646"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.57826"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.57810"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.83183"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.18150",
+          "10.60884"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.60776"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.26249"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.57924",
+          "10.82190",
+          "10.82328",
+          "10.82358",
+          "10.82367"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.35003"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.83201"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.82343"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.34658"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.18150",
+          "10.60894"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.25824"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.60885"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.82312"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.82356"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.82382"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

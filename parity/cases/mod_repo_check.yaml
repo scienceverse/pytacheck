@@ -1281,6 +1281,42 @@
   "compare":
     "ignore":
     - "table.file_location"
+- "id": "repo_check.zenodo.publications"
+  "note": "Zenodo records that are publications (a paper alone, a preprint with data, a dataset, no type with a pdf, no type without files): a paper without data is not a repository"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://zenodo.org/records/5559010\", \"https://zenodo.org/records/5559011\", \"https://zenodo.org/records/5559012\", \"https://zenodo.org/records/5559013\", \"https://zenodo.org/records/5559014\"), \"p_zenodo_publications\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://zenodo.org/records/5559010"
+      - "https://zenodo.org/records/5559011"
+      - "https://zenodo.org/records/5559012"
+      - "https://zenodo.org/records/5559013"
+      - "https://zenodo.org/records/5559014"
+      "id": "p_zenodo_publications"
+- "id": "repo_check.zenodo.only_publication"
+  "note": "a paper whose only repository link is a publication: no repositories"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://zenodo.org/records/5559010\"), \"p_zenodo_only_publication\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://zenodo.org/records/5559010"
+      "id": "p_zenodo_only_publication"
 - "id": "repo_check.zenodo.nameless"
   "note": "a Zenodo file without a name: the module fails (as in R)"
   "r": "identity"
@@ -1503,7 +1539,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/bigrepo\", \"https://github.com/gzorg/emptyrepo\", \"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/bigproj\", \"https://gitlab.com/gzorg/missing\", \"https://zenodo.org/records/5550001\", \"https://zenodo.org/records/5550005\", \"https://zenodo.org/records/5559001\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://doi.org/10.5061/dryad.missing\", \"https://doi.org/10.5255/UKDA-SN-854001\", \"https://doi.org/10.5255/UKDA-SN-854100\", \"https://doi.org/10.4121/16766929.v1\", \"https://data.mendeley.com/datasets/vjtxybrc28\", \"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \"https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5\", \"https://www.psycharchives.org/handle/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678\", \"https://researchbox.org/4377\", \"https://osf.io/regc1\", \"https://osf.io/regc2\", \"https://osf.io/regp3\", \"https://osf.io/parp3\", \"https://osf.io/regor\", \"https://osf.io/privn\"), \"p_all\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/bigrepo\", \"https://github.com/gzorg/emptyrepo\", \"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/bigproj\", \"https://gitlab.com/gzorg/missing\", \"https://zenodo.org/records/5550001\", \"https://zenodo.org/records/5550005\", \"https://zenodo.org/records/5559001\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://doi.org/10.5061/dryad.missing\", \"https://doi.org/10.5255/UKDA-SN-854001\", \"https://doi.org/10.5255/UKDA-SN-854100\", \"https://doi.org/10.4121/16766929.v1\", \"https://data.mendeley.com/datasets/vjtxybrc28\", \"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \"https://zenodo.org/records/5559010\", \"https://zenodo.org/records/5559011\", \"https://zenodo.org/records/5559012\", \"https://zenodo.org/records/5559013\", \"https://zenodo.org/records/5559014\", \"https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5\", \"https://www.psycharchives.org/handle/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678\", \"https://researchbox.org/4377\", \"https://osf.io/regc1\", \"https://osf.io/regc2\", \"https://osf.io/regp3\", \"https://osf.io/parp3\", \"https://osf.io/regor\", \"https://osf.io/privn\"), \"p_all\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -1531,6 +1567,11 @@
       - "https://doi.org/10.4121/16766929.v1"
       - "https://data.mendeley.com/datasets/vjtxybrc28"
       - "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY"
+      - "https://zenodo.org/records/5559010"
+      - "https://zenodo.org/records/5559011"
+      - "https://zenodo.org/records/5559012"
+      - "https://zenodo.org/records/5559013"
+      - "https://zenodo.org/records/5559014"
       - "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5"
       - "https://www.psycharchives.org/handle/20.500.12034/17526"
       - "https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234"
@@ -1553,7 +1594,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(paperlist(tp(c(\"https://github.com/gzorg/treerepo\", \"https://gitlab.com/gzorg/sub/glproj\", \"https://zenodo.org/records/5550001\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://doi.org/10.5061/dryad.missing\", \"https://doi.org/10.4121/16766929.v1\", \"https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678\", \"https://osf.io/regc2\", \"https://osf.io/regor\"), \"p_all0\"), tp(c(\"https://github.com/gzorg/bigrepo\", \"https://gitlab.com/gzorg/bigproj\", \"https://zenodo.org/records/5550005\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"https://doi.org/10.5255/UKDA-SN-854001\", \"https://data.mendeley.com/datasets/vjtxybrc28\", \"https://www.psycharchives.org/handle/20.500.12034/17526\", \"https://researchbox.org/4377\", \"https://osf.io/regp3\", \"https://osf.io/privn\"), \"p_all1\"), tp(c(\"https://github.com/gzorg/emptyrepo\", \"https://gitlab.com/gzorg/missing\", \"https://zenodo.org/records/5559001\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://doi.org/10.5255/UKDA-SN-854100\", \"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\", \"https://osf.io/regc1\", \"https://osf.io/parp3\"), \"p_all2\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(paperlist(tp(c(\"https://github.com/gzorg/treerepo\", \"https://gitlab.com/gzorg/sub/glproj\", \"https://zenodo.org/records/5550001\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://doi.org/10.5061/dryad.missing\", \"https://doi.org/10.4121/16766929.v1\", \"https://zenodo.org/records/5559010\", \"https://zenodo.org/records/5559013\", \"https://www.psycharchives.org/handle/20.500.12034/17526\", \"https://researchbox.org/4377\", \"https://osf.io/regp3\", \"https://osf.io/privn\"), \"p_all0\"), tp(c(\"https://github.com/gzorg/bigrepo\", \"https://gitlab.com/gzorg/bigproj\", \"https://zenodo.org/records/5550005\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"https://doi.org/10.5255/UKDA-SN-854001\", \"https://data.mendeley.com/datasets/vjtxybrc28\", \"https://zenodo.org/records/5559011\", \"https://zenodo.org/records/5559014\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\", \"https://osf.io/regc1\", \"https://osf.io/parp3\"), \"p_all1\"), tp(c(\"https://github.com/gzorg/emptyrepo\", \"https://gitlab.com/gzorg/missing\", \"https://zenodo.org/records/5559001\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://doi.org/10.5255/UKDA-SN-854100\", \"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \"https://zenodo.org/records/5559012\", \"https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678\", \"https://osf.io/regc2\", \"https://osf.io/regor\"), \"p_all2\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -1567,10 +1608,12 @@
       - "https://figshare.com/projects/PERICLES_-_Heritage_values/133332"
       - "https://doi.org/10.5061/dryad.missing"
       - "https://doi.org/10.4121/16766929.v1"
-      - "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5"
-      - "https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678"
-      - "https://osf.io/regc2"
-      - "https://osf.io/regor"
+      - "https://zenodo.org/records/5559010"
+      - "https://zenodo.org/records/5559013"
+      - "https://www.psycharchives.org/handle/20.500.12034/17526"
+      - "https://researchbox.org/4377"
+      - "https://osf.io/regp3"
+      - "https://osf.io/privn"
       "id": "p_all0"
     - "url":
       - "https://github.com/gzorg/bigrepo"
@@ -1580,10 +1623,11 @@
       - "https://figshare.com/s/5e01cc0cae4cf3e2e14f"
       - "https://doi.org/10.5255/UKDA-SN-854001"
       - "https://data.mendeley.com/datasets/vjtxybrc28"
-      - "https://www.psycharchives.org/handle/20.500.12034/17526"
-      - "https://researchbox.org/4377"
-      - "https://osf.io/regp3"
-      - "https://osf.io/privn"
+      - "https://zenodo.org/records/5559011"
+      - "https://zenodo.org/records/5559014"
+      - "https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234"
+      - "https://osf.io/regc1"
+      - "https://osf.io/parp3"
       "id": "p_all1"
     - "url":
       - "https://github.com/gzorg/emptyrepo"
@@ -1593,9 +1637,11 @@
       - "https://doi.org/10.5061/dryad.j1fd7"
       - "https://doi.org/10.5255/UKDA-SN-854100"
       - "https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY"
-      - "https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234"
-      - "https://osf.io/regc1"
-      - "https://osf.io/parp3"
+      - "https://zenodo.org/records/5559012"
+      - "https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5"
+      - "https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678"
+      - "https://osf.io/regc2"
+      - "https://osf.io/regor"
       "id": "p_all2"
   "compare":
     "ignore":
@@ -1607,7 +1653,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/bigrepo\", \"https://github.com/gzorg/emptyrepo\", \"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/bigproj\", \"https://gitlab.com/gzorg/missing\", \"https://zenodo.org/records/5550001\", \"https://zenodo.org/records/5550005\", \"https://zenodo.org/records/5559001\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://doi.org/10.5061/dryad.missing\", \"https://doi.org/10.5255/UKDA-SN-854001\", \"https://doi.org/10.5255/UKDA-SN-854100\", \"https://doi.org/10.4121/16766929.v1\", \"https://data.mendeley.com/datasets/vjtxybrc28\", \"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \"https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5\", \"https://www.psycharchives.org/handle/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678\", \"https://researchbox.org/4377\", \"https://osf.io/regc1\", \"https://osf.io/regc2\", \"https://osf.io/regp3\", \"https://osf.io/parp3\", \"https://osf.io/regor\", \"https://osf.io/privn\"), \"p_allrep\"), \"repo_check\")), perl = TRUE), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/bigrepo\", \"https://github.com/gzorg/emptyrepo\", \"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/bigproj\", \"https://gitlab.com/gzorg/missing\", \"https://zenodo.org/records/5550001\", \"https://zenodo.org/records/5550005\", \"https://zenodo.org/records/5559001\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://doi.org/10.5061/dryad.missing\", \"https://doi.org/10.5255/UKDA-SN-854001\", \"https://doi.org/10.5255/UKDA-SN-854100\", \"https://doi.org/10.4121/16766929.v1\", \"https://data.mendeley.com/datasets/vjtxybrc28\", \"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \"https://zenodo.org/records/5559010\", \"https://zenodo.org/records/5559011\", \"https://zenodo.org/records/5559012\", \"https://zenodo.org/records/5559013\", \"https://zenodo.org/records/5559014\", \"https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5\", \"https://www.psycharchives.org/handle/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678\", \"https://researchbox.org/4377\", \"https://osf.io/regc1\", \"https://osf.io/regc2\", \"https://osf.io/regp3\", \"https://osf.io/parp3\", \"https://osf.io/regor\", \"https://osf.io/privn\"), \"p_allrep\"), \"repo_check\")), perl = TRUE), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -1623,7 +1669,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings((function(mo) { rep <- unlist(mo$report); m <- unlist(regmatches(rep, gregexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE))); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/bigrepo\", \"https://github.com/gzorg/emptyrepo\", \"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/bigproj\", \"https://gitlab.com/gzorg/missing\", \"https://zenodo.org/records/5550001\", \"https://zenodo.org/records/5550005\", \"https://zenodo.org/records/5559001\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://doi.org/10.5061/dryad.missing\", \"https://doi.org/10.5255/UKDA-SN-854001\", \"https://doi.org/10.5255/UKDA-SN-854100\", \"https://doi.org/10.4121/16766929.v1\", \"https://data.mendeley.com/datasets/vjtxybrc28\", \"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \"https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5\", \"https://www.psycharchives.org/handle/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678\", \"https://researchbox.org/4377\", \"https://osf.io/regc1\", \"https://osf.io/regc2\", \"https://osf.io/regp3\", \"https://osf.io/parp3\", \"https://osf.io/regor\", \"https://osf.io/privn\"), \"p_alltab\"), \"repo_check\")), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings((function(mo) { rep <- unlist(mo$report); m <- unlist(regmatches(rep, gregexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE))); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/bigrepo\", \"https://github.com/gzorg/emptyrepo\", \"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/bigproj\", \"https://gitlab.com/gzorg/missing\", \"https://zenodo.org/records/5550001\", \"https://zenodo.org/records/5550005\", \"https://zenodo.org/records/5559001\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE\", \"https://doi.org/10.6084/m9.figshare.18093368.v1\", \"https://figshare.com/projects/PERICLES_-_Heritage_values/133332\", \"https://figshare.com/s/5e01cc0cae4cf3e2e14f\", \"https://doi.org/10.5061/dryad.j1fd7\", \"https://doi.org/10.5061/dryad.missing\", \"https://doi.org/10.5255/UKDA-SN-854001\", \"https://doi.org/10.5255/UKDA-SN-854100\", \"https://doi.org/10.4121/16766929.v1\", \"https://data.mendeley.com/datasets/vjtxybrc28\", \"https://knb.ecoinformatics.org/view/doi:10.5063/F1TIDY\", \"https://zenodo.org/records/5559010\", \"https://zenodo.org/records/5559011\", \"https://zenodo.org/records/5559012\", \"https://zenodo.org/records/5559013\", \"https://zenodo.org/records/5559014\", \"https://repository.gatech.edu/entities/publication/bac086e5-c606-474b-af1e-4a6122694af5\", \"https://www.psycharchives.org/handle/20.500.12034/17526\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/1234\", \"https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678\", \"https://researchbox.org/4377\", \"https://osf.io/regc1\", \"https://osf.io/regc2\", \"https://osf.io/regp3\", \"https://osf.io/parp3\", \"https://osf.io/regor\", \"https://osf.io/privn\"), \"p_alltab\"), \"repo_check\")), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
         "py": "None"
   "py_drop":
   - "x"

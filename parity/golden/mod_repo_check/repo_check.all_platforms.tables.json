@@ -15,7 +15,7 @@
     "v": [
       {
         "t": "df",
-        "nrow": 27,
+        "nrow": 29,
         "names": [
           "Repository",
           "Platform",
@@ -43,6 +43,8 @@
               "<a href='https://zenodo.org/records/5550001' target='_blank'>zenodo.org/records/5550001<\/a>",
               "<a href='https://zenodo.org/records/5550005' target='_blank'>zenodo.org/records/5550005<\/a>",
               "<a href='https://zenodo.org/records/5559001' target='_blank'>zenodo.org/records/5559001<\/a>",
+              "<a href='https://zenodo.org/records/5559011' target='_blank'>zenodo.org/records/5559011<\/a>",
+              "<a href='https://zenodo.org/records/5559012' target='_blank'>zenodo.org/records/5559012<\/a>",
               "<a href='https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123' target='_blank'>dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123<\/a>",
               "<a href='https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE' target='_blank'>dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE<\/a>",
               "<a href='https://doi.org/10.6084/m9.figshare.18093368.v1' target='_blank'>doi.org/10.6084/m9.figshare.18093368.v1<\/a>",
@@ -72,6 +74,8 @@
               "researchbox",
               "dspace",
               "dspace",
+              "zenodo",
+              "zenodo",
               "zenodo",
               "zenodo",
               "zenodo",
@@ -108,6 +112,8 @@
               null,
               null,
               null,
+              null,
+              null,
               "unfound",
               null,
               "private share link (figshare.com/s/...) cannot be resolved without a browser",
@@ -139,6 +145,8 @@
               2,
               2,
               8,
+              2,
+              1,
               4,
               0,
               4,
@@ -171,6 +179,8 @@
               1,
               0,
               1,
+              1,
+              0,
               2,
               0,
               2,
@@ -211,6 +221,8 @@
               0,
               0,
               0,
+              0,
+              0,
               1,
               0,
               0,
@@ -234,6 +246,8 @@
               1,
               0,
               1,
+              0,
+              0,
               0,
               0,
               0,
@@ -278,6 +292,8 @@
               0,
               0,
               0,
+              0,
+              0,
               1,
               0,
               1
@@ -287,7 +303,7 @@
       },
       {
         "t": "df",
-        "nrow": 157,
+        "nrow": 160,
         "names": [
           "Repository",
           "File",
@@ -430,6 +446,9 @@
               "https://zenodo.org/records/5559001",
               "https://zenodo.org/records/5559001",
               "https://zenodo.org/records/5559001",
+              "https://zenodo.org/records/5559011",
+              "https://zenodo.org/records/5559011",
+              "https://zenodo.org/records/5559012",
               "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123",
               "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123",
               "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123",
@@ -592,6 +611,9 @@
               "<a href='https://zenodo.org/api/records/5559001/files/results.tar.gz/content' target='_blank'>results.tar.gz<\/a>",
               "<a href='https://zenodo.org/api/records/5559001/files/session1.edat2/content' target='_blank'>session1.edat2<\/a>",
               "<a href='https://zenodo.org/api/records/5559001/files/analysis.R/content' target='_blank'>analysis.R<\/a>",
+              "<a href='https://zenodo.org/api/records/5559011/files/preprint.pdf/content' target='_blank'>preprint.pdf<\/a>",
+              "<a href='https://zenodo.org/api/records/5559011/files/data.csv/content' target='_blank'>data.csv<\/a>",
+              "<a href='https://zenodo.org/api/records/5559012/files/notes.txt/content' target='_blank'>notes.txt<\/a>",
               "<a href='https://dataverse.harvard.edu/api/access/datafile/999' target='_blank'>data.csv<\/a>",
               "<a href='https://dataverse.harvard.edu/api/access/datafile/1000' target='_blank'>codebook.pdf<\/a>",
               "<a href='https://dataverse.harvard.edu/api/access/datafile/1001' target='_blank'>fallback_name.txt<\/a>",
@@ -754,6 +776,9 @@
               "4.1 kB",
               "1 kB",
               "300 B",
+              "100 B",
+              "100 B",
+              "100 B",
               "8 B",
               "11 B",
               "5 B",
@@ -916,6 +941,9 @@
               "archive",
               null,
               "code",
+              "text",
+              "data",
+              "text",
               "data",
               "text",
               "text",
@@ -1073,7 +1101,7 @@
       },
       {
         "t": "df",
-        "nrow": 20,
+        "nrow": 21,
         "names": [
           "File",
           "Group",
@@ -1095,6 +1123,7 @@
               "model.rds",
               "data.csv",
               "config.json",
+              "data.csv",
               "data.csv",
               "huge.dat",
               "data.csv",
@@ -1121,13 +1150,14 @@
               "ex8",
               "ex10",
               "ex11",
-              "ex11",
-              "ex12",
-              "ex12",
+              "ex13",
               "ex13",
               "ex14",
+              "ex14",
               "ex15",
-              "ex16"
+              "ex16",
+              "ex17",
+              "ex18"
             ]
           },
           {
@@ -1146,6 +1176,7 @@
               "data.csv",
               "config.json",
               "data.csv",
+              "data.csv",
               "huge.dat",
               "data.csv",
               "missing.csv",
@@ -1159,7 +1190,7 @@
       },
       {
         "t": "df",
-        "nrow": 114,
+        "nrow": 116,
         "names": [
           "File",
           "Group",
@@ -1271,6 +1302,8 @@
               "readme.txt",
               "notes.txt",
               "readme.txt",
+              "preprint.pdf",
+              "notes.txt",
               "codebook.pdf",
               "fallback_name.txt",
               "readme.txt",
@@ -1391,14 +1424,16 @@
               "ex8",
               "—",
               "ex11",
-              "ex11",
-              "—",
-              "—",
+              "ex12",
               "ex13",
               "ex13",
-              "ex14",
-              "ex14",
-              "ex14",
+              "—",
+              "—",
+              "ex15",
+              "ex15",
+              "ex16",
+              "ex16",
+              "ex16",
               "—",
               "—",
               "—"
@@ -1509,6 +1544,8 @@
               "readme.txt",
               "notes.txt",
               "readme.txt",
+              "preprint.pdf",
+              "notes.txt",
               "codebook.pdf",
               "fallback_name.txt",
               "readme.txt",
@@ -1548,8 +1585,8 @@
             "t": "chr",
             "v": [
               "ex10",
-              "ex12",
-              "ex13",
+              "ex14",
+              "ex15",
               "ex10",
               "ex10"
             ]
@@ -1629,7 +1666,7 @@
               "ex7",
               "ex9",
               "ex10",
-              "ex16"
+              "ex18"
             ]
           },
           {
@@ -1650,6 +1687,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

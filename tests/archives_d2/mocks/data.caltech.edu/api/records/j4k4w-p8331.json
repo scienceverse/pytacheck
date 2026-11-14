@@ -1,0 +1,44 @@
+{
+  "id": "j4k4w-p8331",
+  "pids": {
+    "doi": {
+      "identifier": "10.22002/j4k4w-p8331"
+    }
+  },
+  "updated": "2024-05-06T07:08:09",
+  "metadata": {
+    "title": "Calibration data",
+    "resource_type": {
+      "id": "dataset",
+      "title": {
+        "en": "Dataset"
+      }
+    }
+  },
+  "files": {
+    "enabled": true,
+    "count": 2,
+    "entries": {
+      "a.csv": {
+        "id": "f1",
+        "key": "a.csv",
+        "size": 10,
+        "checksum": "md5:1",
+        "links": {
+          "self": "https://data.caltech.edu/api/records/j4k4w-p8331/files/a.csv",
+          "content": "https://data.caltech.edu/api/records/j4k4w-p8331/files/a.csv/content"
+        }
+      },
+      "b.R": {
+        "id": "f2",
+        "key": "b.R",
+        "size": 20,
+        "checksum": "md5:2",
+        "links": {
+          "self": "https://data.caltech.edu/api/records/j4k4w-p8331/files/b.R",
+          "content": "https://data.caltech.edu/api/records/j4k4w-p8331/files/b.R/content"
+        }
+      }
+    }
+  }
+}

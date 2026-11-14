@@ -180,6 +180,8 @@ _EXPORTS: dict[str, str] = {
     "aspredicted_info": "metacheck.archives.aspredicted",
     "aspredicted_links": "metacheck.archives.aspredicted",
     "metacheck_cache_info": "metacheck.archives.cache",
+    "ckan_info": "metacheck.archives.ckan",
+    "ckan_links": "metacheck.archives.ckan",
     "dataone_info": "metacheck.archives.dataone",
     "dataone_links": "metacheck.archives.dataone",
     "dataverse_file_download": "metacheck.archives.dataverse",
@@ -246,9 +248,11 @@ _EXPORTS: dict[str, str] = {
     "rbox_links": "metacheck.archives.researchbox",
     "rbox_search": "metacheck.archives.researchbox",
     "rbox_token": "metacheck.archives.researchbox",
+    "eprints_links": "metacheck.archives.reshare",
     "reshare_file_download": "metacheck.archives.reshare",
     "reshare_info": "metacheck.archives.reshare",
     "reshare_links": "metacheck.archives.reshare",
+    "invenio_links": "metacheck.archives.zenodo",
     "zenodo_file_download": "metacheck.archives.zenodo",
     "zenodo_info": "metacheck.archives.zenodo",
     "zenodo_links": "metacheck.archives.zenodo",
@@ -550,6 +554,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from metacheck.archives.api_keys import api_key_status, api_keys_use, github_pat, openalex_key
     from metacheck.archives.aspredicted import aspredicted_info, aspredicted_links
     from metacheck.archives.cache import metacheck_cache_info
+    from metacheck.archives.ckan import ckan_info, ckan_links
     from metacheck.archives.dataone import dataone_info, dataone_links
     from metacheck.archives.dataverse import (
         dataverse_file_download,
@@ -625,8 +630,18 @@ if TYPE_CHECKING:  # pragma: no cover
         rbox_search,
         rbox_token,
     )
-    from metacheck.archives.reshare import reshare_file_download, reshare_info, reshare_links
-    from metacheck.archives.zenodo import zenodo_file_download, zenodo_info, zenodo_links
+    from metacheck.archives.reshare import (
+        eprints_links,
+        reshare_file_download,
+        reshare_info,
+        reshare_links,
+    )
+    from metacheck.archives.zenodo import (
+        invenio_links,
+        zenodo_file_download,
+        zenodo_info,
+        zenodo_links,
+    )
     from metacheck.archives.zenodo_upload import zenodo_pat, zenodo_upload
     from metacheck.archives.zip_peek import zip_decision, zip_peek
     from metacheck.archives.zip_peek_cache import zip_peek_cache_clear

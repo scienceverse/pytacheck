@@ -83,11 +83,36 @@ def repo_cache(files: dict[str, str], fn: Callable[[str], Any]) -> Any:
             return fn(d)
 
 
+def datacite(records: dict[str, tuple[str, str]], fn: Callable[[], Any]) -> Any:
+    """``fn()`` with DataCite's records of DOIs stood in for (R: ``.repo_doi_records`` mocked).
+
+    *records* maps a lower-cased DOI to its ``(registered url, resource type)``.
+    """
+    from metacheck.archives import repo_kind
+
+    def answer(doi: Any) -> list[dict[str, Any]]:
+        out = []
+        for d in doi:
+            url, rtype = records[str(d).lower()]
+            out.append(
+                {"doi": str(d).lower(), "url": url, "resource_type": rtype, "in_datacite": True}
+            )
+        return out
+
+    saved = repo_kind._repo_doi_records
+    repo_kind._repo_doi_records = answer  # type: ignore[assignment]
+    try:
+        return fn()
+    finally:
+        repo_kind._repo_doi_records = saved  # type: ignore[assignment]
+
+
 def _namespace() -> types.SimpleNamespace:
     import pandas as pd
 
     import metacheck as pc
     from metacheck.archives import (
+        ckan,
         dataone,
         dspace7,
         fourtu,
@@ -96,9 +121,13 @@ def _namespace() -> types.SimpleNamespace:
         psycharchives,
         researchbox,
         reshare,
+        zenodo,
     )
 
     return types.SimpleNamespace(
+        ckan=ckan,
+        zenodo=zenodo,
+        datacite=datacite,
         dataone=dataone,
         dspace7=dspace7,
         fourtu=fourtu,

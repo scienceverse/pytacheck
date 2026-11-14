@@ -1,0 +1,21 @@
+{
+  "id": ".zenodo_id.invenio_hosts",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "data.caltech.edu/j4k4w-p8331",
+      "data.caltech.edu/j4k4w-p8331",
+      "www.fdr.uni-hamburg.de/14137",
+      "data.caltech.edu/j4k4w-p8331",
+      "2669586",
+      "2669586",
+      null,
+      null
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

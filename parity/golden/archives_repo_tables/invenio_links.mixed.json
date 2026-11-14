@@ -1,0 +1,86 @@
+{
+  "id": "invenio_links.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "zenodo_url",
+      "zenodo_id",
+      "zenodo_link"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.2669586",
+          "https://www.fdr.uni-hamburg.de/record/14137",
+          "data.caltech.edu/records/mzrjq-6wc02",
+          "www.fdr.uni-hamburg.de/record/14137"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5,
+          2,
+          2,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.2669586",
+          "https://www.fdr.uni-hamburg.de/record/14137",
+          "data.caltech.edu/records/mzrjq-6wc02",
+          "www.fdr.uni-hamburg.de/record/14137"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2669586",
+          "www.fdr.uni-hamburg.de/14137",
+          "data.caltech.edu/mzrjq-6wc02",
+          "www.fdr.uni-hamburg.de/14137"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5281/zenodo.2669586",
+          "https://www.fdr.uni-hamburg.de/record/14137",
+          "data.caltech.edu/records/mzrjq-6wc02",
+          "www.fdr.uni-hamburg.de/record/14137"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
