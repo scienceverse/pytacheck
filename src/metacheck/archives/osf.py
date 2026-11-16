@@ -302,6 +302,13 @@ _LISTING_CACHE: dict[str, pd.DataFrame] = {}
 _LISTING_TIMES: dict[str, float] = {}
 _LISTING_LOCK = threading.Lock()
 _LISTING_COMPLETE: ContextVar[list[bool] | None] = ContextVar("osf_listing_complete", default=None)
+# the state of a recursive listing that stopped at ``max_requests`` (see osf_info)
+_LISTING_PART: ContextVar[dict[str, Any] | None] = ContextVar("osf_listing_part", default=None)
+
+# The number of OSF API pages requested in this session, increased by _osf_get_one_page().
+# osf_info() compares it before and after, to keep a listing within its ``max_requests``.
+_OSF_REQUESTS = [0]
+_OSF_REQUESTS_LOCK = threading.Lock()
 
 
 def _osf_cache_key(osf_url: Any, recursive: Any, id_col: int | str = 1) -> str:
@@ -360,12 +367,17 @@ def _public_listing(data: pd.DataFrame, osf_url: Any) -> bool:
 def osf_cache_clear() -> int:
     """Port of R/archive-osf.R::osf_cache_clear(): empty the session cache of OSF listings.
 
+    Also forgets the file-server address of each file the listings named.
+
     Returns the number of cached listings removed.
     """
+    from metacheck.archives.download import _OSF_FILE_SERVER_MEMO
+
     with _LISTING_LOCK:
         n = len(_LISTING_CACHE)
         _LISTING_CACHE.clear()
         _LISTING_TIMES.clear()
+    _OSF_FILE_SERVER_MEMO.clear()
     return n
 
 
@@ -402,6 +414,7 @@ def osf_info(
     recursive: bool = False,
     pb: Any = None,
     cache: bool = False,
+    max_requests: float = math.inf,
 ) -> pd.DataFrame:
     """Port of R/archive-osf.R::osf_info(): look up OSF IDs or URLs.
 
@@ -414,26 +427,46 @@ def osf_info(
     ``metacheck.osf.cache_ttl`` sets its lifetime in seconds). With *cache*,
     complete public recursive listings are also kept on disk, alongside the
     per-ID cache. Private and view-only trees are never persisted.
+
+    With *recursive*, *max_requests* is the largest number of requests to the OSF API for
+    listing components and folders (the records of the projects themselves are not counted):
+    the OSF needs one request per folder, so a project with hundreds of folders takes hundreds
+    of requests. When the limit is reached the listing stops, with a warning, and the result
+    has a column ``listing_cut`` (``True``): files in folders not yet opened are missing from
+    it. Folders are listed level by level, so the top folders come first; a request already
+    started has its retries, so the count can end a little above the limit. A listing cut
+    short is kept for the session under its limit only, and with *cache* its progress is
+    kept on disk: the next call goes on from there with up to *max_requests* more requests,
+    until the listing is complete.
     """
     from metacheck.archives import _spinner, _tick
-    from metacheck.archives.info_cache import _repo_info_cache_get, _repo_info_cache_put
+    from metacheck.archives.info_cache import (
+        _repo_info_cache_get,
+        _repo_info_cache_path,
+        _repo_info_cache_put,
+    )
     from metacheck.http import _request_session
     from metacheck.utils import get_option
 
     use_cache = get_option("metacheck.osf.cache", True) is True
     ttl = _listing_ttl()
     cache_key = _osf_cache_key(osf_url, recursive, id_col) if use_cache and ttl > 0 else None
+    # A listing that stopped at `max_requests` is kept under a key that names the limit, so a
+    # later call with another limit (osf_file_download() has none) never receives it as if it
+    # were complete.
+    cut_key = None if cache_key is None else f"{cache_key}::max_requests={max_requests}"
     if cache_key is not None:
-        with _LISTING_LOCK:
-            hit = _LISTING_CACHE.get(cache_key)
-            fresh = time.monotonic() - _LISTING_TIMES.get(cache_key, -math.inf) < ttl
-            if hit is not None and not fresh:
-                _LISTING_CACHE.pop(cache_key, None)
-                _LISTING_TIMES.pop(cache_key, None)
-                hit = None
-        if hit is not None:
-            _tick(pb, "OSF listing (cached)")
-            return hit.copy()
+        for k in (cache_key, cut_key):
+            with _LISTING_LOCK:
+                hit = _LISTING_CACHE.get(str(k))
+                fresh = time.monotonic() - _LISTING_TIMES.get(str(k), -math.inf) < ttl
+                if hit is not None and not fresh:
+                    _LISTING_CACHE.pop(str(k), None)
+                    _LISTING_TIMES.pop(str(k), None)
+                    hit = None
+            if hit is not None:
+                _tick(pb, "OSF listing (cached)")
+                return hit.copy()
         if cache is True and recursive is True and isinstance(osf_url, str):
             saved = _repo_info_cache_get("osf_tree", cache_key)
             if isinstance(saved, dict):
@@ -451,19 +484,40 @@ def osf_info(
                     _tick(pb, "OSF listing (cached)")
                     return data
 
+    # the progress of a listing a previous run stopped at its limit is kept under this key
+    disk_key = (
+        _osf_cache_key(osf_url, recursive, id_col)
+        if cache is True and recursive is True and isinstance(osf_url, str)
+        else None
+    )
     complete = [True]
+    part: dict[str, Any] = {"cut": False, "state": None}
     reset = _LISTING_COMPLETE.set(complete)
+    reset_part = _LISTING_PART.set(part)
     try:
         with _request_session(), _spinner(pb, "OSF Retrieve") as bar:
-            data = _osf_info_listing(osf_url, id_col, recursive, bar, cache)
+            data = _osf_info_listing(osf_url, id_col, recursive, bar, cache, max_requests, disk_key)
     finally:
         _LISTING_COMPLETE.reset(reset)
-    if cache_key is not None and complete[0] and _listing_ok(data):
+        _LISTING_PART.reset(reset_part)
+    if part["cut"]:
+        if complete[0]:
+            if cut_key is not None:
+                with _LISTING_LOCK:
+                    _LISTING_CACHE[cut_key] = data.copy()
+                    _LISTING_TIMES[cut_key] = time.monotonic()
+            if disk_key is not None and _public_listing(data, osf_url):
+                _repo_info_cache_put("osf_listing_part", disk_key, part["state"])
+    elif cache_key is not None and complete[0] and _listing_ok(data):
         with _LISTING_LOCK:
             _LISTING_CACHE[cache_key] = data.copy()
             _LISTING_TIMES[cache_key] = time.monotonic()
         if cache is True and recursive is True and _public_listing(data, osf_url):
             _repo_info_cache_put("osf_tree", cache_key, {"created": time.time(), "data": data})
+    if not part["cut"] and complete[0] and disk_key is not None:
+        # a listing that is complete removes the progress of an earlier, cut one
+        with contextlib.suppress(OSError):
+            os.unlink(_repo_info_cache_path("osf_listing_part", disk_key))
     return data
 
 
@@ -473,16 +527,14 @@ def _osf_info_listing(
     recursive: bool,
     pb: Any,
     cache: bool,
+    max_requests: float = math.inf,
+    disk_key: str | None = None,
 ) -> pd.DataFrame:
     """The body of :func:`osf_info` after the session-cache check."""
     from metacheck._r import as_character
     from metacheck.archives import _tick
     from metacheck.archives.osf_helpers import (
-        _GITHUB_FILES_LINK,
-        _osf_github_files,
         _osf_info,
-        _osf_parse_response,
-        _osf_tree,
     )
     from metacheck.utils import left_join
 
@@ -520,93 +572,218 @@ def _osf_info_listing(
     if recursive is True:
         _tick(pb, "...Main retrieval complete")
         _tick(pb, "Starting retrieval of children...")
-        # Each linked node's component tree, with every component's storage
-        # providers, is first listed in one request per 100 components
-        # (_osf_tree()), instead of a /children/ and a /files/ request per
-        # component; the walk below covers the nodes it could not list.
-        child_parts: list[pd.DataFrame] = []
-        provider_parts: list[pd.DataFrame] = []
-        provider_missing: list[str] = []
-        covered: set[str] = set()
+        data = _osf_walk(data, info, pb, max_requests, disk_key)
+
+    _tick(pb, "...OSF retrieval complete!")
+    return data
+
+
+def _cat(*frames: Any) -> pd.DataFrame:
+    """The non-empty frames bound together (an empty frame when there are none)."""
+    parts = [f for f in frames if isinstance(f, pd.DataFrame) and len(f) > 0]
+    return bind_rows(parts) if parts else pd.DataFrame()
+
+
+def _osf_walk(
+    data: pd.DataFrame,
+    info: pd.DataFrame,
+    pb: Any,
+    max_requests: float,
+    disk_key: str | None,
+) -> pd.DataFrame:
+    """The recursive part of :func:`osf_info`: components, providers and folders.
+
+    Each linked node's component tree, with every component's storage providers, is first
+    listed in one request per 100 components (``_osf_tree()``), instead of a ``/children/`` and
+    a ``/files/`` request per component; the walk covers the nodes it could not list.
+
+    The requests are counted (``max_requests``) and no new component tree or folder is opened
+    once the limit is used up. The walk has three stages: the component tree of each linked
+    node (``trees``), the components it did not cover (``components``), and the folders
+    (``files``). Its progress is kept in a state dict, so a listing that stopped at the limit
+    can go on where it stopped: with ``cache``, the state is stored (``osf_listing_part``) and
+    the next run lists up to ``max_requests`` more, until the listing is complete.
+    """
+    from metacheck.archives import _tick
+    from metacheck.archives.info_cache import _repo_info_cache_get
+    from metacheck.archives.osf_helpers import (
+        _GITHUB_FILES_LINK,
+        _osf_github_files,
+        _osf_parse_response,
+        _osf_tree,
+    )
+
+    n_start = _OSF_REQUESTS[0]
+    cut = False
+
+    def budget_left() -> float:
+        return max_requests - (_OSF_REQUESTS[0] - n_start)
+
+    def fetch(urls: list[str]) -> tuple[OsfResult, list[str]]:
+        """Lists *urls* in order while the limit lasts; the rows and the urls not yet asked for."""
+        nonlocal cut
+        out = OsfResult()
+        done = 0
+        while done < len(urls):
+            room = budget_left()
+            if room < 1:
+                cut = True
+                break
+            chunk = urls[done : done + int(min(4, room))]
+            out.extend(_fetch_listings(chunk))
+            done += len(chunk)
+        return out, urls[done:]
+
+    st: Any = _repo_info_cache_get("osf_listing_part", disk_key) if disk_key is not None else None
+    if isinstance(st, dict) and st.get("stage") in ("trees", "components", "files"):
+        n_found = _count_files(st["files"])
+        _tick(
+            pb,
+            f"Going on with the listing a previous run stopped ({n_found} file{plural(n_found)} so far)",
+        )
+    else:
+        has_children = (
+            ~info["children"].isna() if "children" in info else pd.Series(False, index=info.index)
+        )
+        containers = info[
+            info["osf_type"].isin(["nodes", "registrations"])
+            & has_children
+            & ~info["osf_id"].isna()
+        ]["osf_id"].tolist()
+        st = {
+            "stage": "trees",
+            "trees": list(dict.fromkeys(str(i) for i in containers)),
+            "child": pd.DataFrame(),
+            "providers": pd.DataFrame(),
+            "missing": [],
+            "covered": [],
+            "walked": pd.DataFrame(),
+            "urls": [],
+            "files": pd.DataFrame(),
+        }
+
+    if st["stage"] == "trees":
         listings: dict[str, Any] = {}
-        for row in info.itertuples(index=False):
-            node_id, otype = getattr(row, "osf_id", None), getattr(row, "osf_type", None)
-            if otype not in ("nodes", "registrations") or is_missing(
-                getattr(row, "children", None)
-            ):
-                continue
+        while st["trees"]:
+            if budget_left() < 1:
+                cut = True
+                break
+            node_id = st["trees"].pop(0)
+            row = info[info["osf_id"] == node_id].iloc[0]
             _tick(pb, f"Listing the components of {node_id}")
-            project = getattr(row, "project", None)
+            project = row.get("project")
             tree = _osf_tree(
-                str(node_id), otype, None if is_missing(project) else project, listings
+                str(node_id),
+                row["osf_type"],
+                None if is_missing(project) else project,
+                listings,
             )
             if tree is None:
                 continue
-            covered.add(str(node_id))
-            child_parts.extend(f for f in (tree["nodes"],) if f is not None)
-            provider_parts.extend(f for f in (tree["providers"],) if f is not None)
-            provider_missing.extend(tree["missing"])
+            st["covered"].append(str(node_id))
+            st["child"] = _cat(st["child"], tree["nodes"])
+            st["providers"] = _cat(st["providers"], tree["providers"])
+            st["missing"] = [*st["missing"], *tree["missing"]]
+        if not cut:
+            st["urls"] = _non_na(info[~info["osf_id"].isin(st["covered"])], "children")
+            st["stage"] = "components"
 
-        uncovered = info[~info["osf_id"].isin(covered)]
-        walked: list[pd.DataFrame] = []
-        children: pd.DataFrame | None = uncovered
-        urls = _non_na(children, "children")
+    if not cut and st["stage"] == "components":
         depth = 0
-        while urls:
+        while st["urls"]:
             depth += 1
-            found = sum(len(p) for p in child_parts)
             _tick(
                 pb,
-                f"Listing components: level {depth}, {len(urls)} to check ({found} found so far)",
+                f"Listing components: level {depth}, {len(st['urls'])} to check "
+                f"({len(st['child'])} found so far)",
             )
-            children = _osf_parse_response(_fetch_listings(urls))
+            got, left = fetch(st["urls"])
+            children = _osf_parse_response(got)
             if children is not None:
-                child_parts.append(children)
-                walked.append(children)
-            urls = _non_na(children, "children")
-        child_collector = bind_rows(child_parts) if child_parts else pd.DataFrame()
-        if len(child_collector) > 0:
-            n = len(child_collector)
-            _tick(pb, f"Found {n} component{plural(n)}")
+                st["child"] = _cat(st["child"], children)
+                st["walked"] = _cat(st["walked"], children)
+            st["urls"] = [*left, *_non_na(children, "children")]
+            if cut:
+                break
+        if not cut:
+            if len(st["child"]) > 0:
+                n = len(st["child"])
+                _tick(pb, f"Found {n} component{plural(n)}")
+            # Storage providers were already listed for every node _osf_tree() covered; the
+            # rest (nodes it did not cover, and file or folder links) are listed through their
+            # /files/ links as before.
+            uncovered = _cat(info[~info["osf_id"].isin(st["covered"])], st["walked"])
+            st["urls"] = [
+                *_non_na(uncovered, "files"),
+                *st["missing"],
+                *_non_na(st["providers"], "files"),
+            ]
+            st["files"] = st["providers"]
+            st["stage"] = "files"
 
-        # providers of the nodes the tree listings did not cover are listed
-        # through their /files/ links, as are the providers' own folders
-        file_parts: list[pd.DataFrame] = list(provider_parts)
-        urls = (
-            _non_na(bind_rows([uncovered, *walked]), "files")
-            + provider_missing
-            + [u for p in provider_parts for u in _non_na(p, "files")]
-        )
-        while urls:
-            # a linked GitHub repository is listed through GitHub itself (2
-            # requests, with sizes); only the add-on's top folder is matched,
-            # so when that fails it is listed through the OSF in full
-            for u in dict.fromkeys(urls):
+    if not cut and st["stage"] == "files":
+        while st["urls"]:
+            # a linked GitHub repository is listed through GitHub itself (2 requests, with
+            # sizes); only the add-on's top folder is matched, so when that fails it is listed
+            # through the OSF in full
+            for u in dict.fromkeys(st["urls"]):
                 if (m := _GITHUB_FILES_LINK.search(u)) is None:
                     continue
                 gh_rows = _osf_github_files(m.group(1))
                 if gh_rows is not None:
-                    file_parts.append(gh_rows)
-                    urls = [x for x in urls if x != u]
-            if not urls:
+                    st["files"] = _cat(st["files"], gh_rows)
+                    st["urls"] = [x for x in st["urls"] if x != u]
+            if not st["urls"]:
                 break
-            n_files = sum(
-                int((p["kind"] == "file").fillna(False).sum()) for p in file_parts if "kind" in p
-            )
+            n_files = _count_files(st["files"])
             _tick(
                 pb,
-                f"Listing files: {len(urls)} folder{plural(len(urls))} to check "
+                f"Listing files: {len(st['urls'])} folder{plural(len(st['urls']))} to check "
                 f"({n_files} file{plural(n_files)} found so far)",
             )
-            files = _osf_parse_response(_fetch_listings(urls))
+            got, left = fetch(st["urls"])
+            files = _osf_parse_response(got)
             if files is not None:
-                file_parts.append(files)
-            urls = _non_na(files, "files")
-        file_collector = bind_rows(file_parts) if file_parts else pd.DataFrame()
-        data = bind_rows([data, child_collector, file_collector])
+                st["files"] = _cat(st["files"], files)
+            st["urls"] = [*left, *_non_na(files, "files")]
+            if cut:
+                break
 
-    _tick(pb, "...OSF retrieval complete!")
+    # Until the files stage, the providers listed with the trees are kept in st["providers"]
+    # only; they are part of what was found so far.
+    found_files = st["files"] if st["stage"] == "files" else st["providers"]
+    data = bind_rows([x for x in (data, st["child"], found_files) if len(x) > 0 or x is data])
+
+    if cut:
+        n_files = _count_files(found_files)
+        data = data.copy()
+        data["listing_cut"] = True
+        _tick(
+            pb,
+            f"Listing stopped at the limit of {int(max_requests)} requests "
+            f"({n_files} file{plural(n_files)} found)",
+        )
+        ids = ", ".join(dict.fromkeys(str(i) for i in info["osf_id"].dropna()))
+        warnings.warn(
+            f"The OSF listing of {ids} stopped at the limit of {int(max_requests)} requests "
+            f"(`max_requests`), with {n_files} file{plural(n_files)} listed: files in folders "
+            "not yet opened are missing from it. Raise `max_requests` to list it in full"
+            + (", or run again with `cache = TRUE` to list the next part" if disk_key else "")
+            + ".",
+            stacklevel=3,
+        )
+        part = _LISTING_PART.get()
+        if part is not None:
+            part["cut"] = True
+            part["state"] = st
     return data
+
+
+def _count_files(frame: Any) -> int:
+    """The number of file rows (``kind == "file"``) in a listing."""
+    if not isinstance(frame, pd.DataFrame) or "kind" not in frame:
+        return 0
+    return int((frame["kind"] == "file").fillna(False).sum())
 
 
 def _non_na(df: pd.DataFrame | None, col: str) -> list[str]:
@@ -827,6 +1004,8 @@ def _osf_get_one_page(url: str) -> Any:
     from metacheck.archives.osf_helpers import _osf_headers, _resp_body_json
     from metacheck.log import logger
 
+    with _OSF_REQUESTS_LOCK:
+        _OSF_REQUESTS[0] += 1
     try:
         resp = http.request(
             "GET",

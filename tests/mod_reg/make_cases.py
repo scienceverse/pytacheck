@@ -183,9 +183,15 @@ def r_expr(spec: dict[str, Any], fakes: str = R_FAKES) -> str:
             f"httptest2::with_mock_dir({rstr(APIS)}, testthat::with_mocked_bindings({run}, "
             f'regcheck_compare = .fake_{fake}, .package = "metacheck"))'
         )
+    # AsPredicted is asked only if `online()` says so; the recorded responses answer it, whether
+    # or not this computer can reach the site
+    run = f'testthat::with_mocked_bindings({run}, online = function(...) TRUE, .package = "metacheck")'
     steps = [f"x <- {r_paper(spec)}"]
     for m in spec.get("pre", []):
-        steps.append(f"x <- httptest2::with_mock_dir({rstr(APIS)}, module_run(x, {rstr(m)}))")
+        steps.append(
+            f"x <- httptest2::with_mock_dir({rstr(APIS)}, testthat::with_mocked_bindings("
+            f'module_run(x, {rstr(m)}), online = function(...) TRUE, .package = "metacheck"))'
+        )
     if spec.get("double"):
         steps.append("x$table <- rbind(x$table, x$table)")
     if spec.get("na_paper_id"):
@@ -216,7 +222,9 @@ def r_expr(spec: dict[str, Any], fakes: str = R_FAKES) -> str:
     return (
         "(function() { .r <- httptest2::get_current_redactor(); "
         "httptest2::set_redactor(function(req) { req$url <- "
-        'gsub("[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100", "", req$url); req }); '
+        'gsub("[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100", "", req$url); '
+        'req$url <- gsub("(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$", '
+        '"\\\\1", req$url, perl = TRUE); req }); '
         "on.exit(httptest2::set_redactor(.r)); "
         f"withr::local_envvar(c({env})); "
         "tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); "

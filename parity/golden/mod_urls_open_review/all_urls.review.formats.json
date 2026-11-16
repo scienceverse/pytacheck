@@ -98,7 +98,7 @@
               "https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129",
               "osf.io/6b4ag",
               "http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67",
-              "http://www.osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be",
+              "osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be",
               "http://journals.sagepub.com/doi/suppl/10.1177/0956797617737129",
               "http://www.psychologicalscience.org/publications/badges",
               "http://journals.sagepub.com/doi/suppl/10.1177/0956797617737129",
@@ -604,6 +604,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

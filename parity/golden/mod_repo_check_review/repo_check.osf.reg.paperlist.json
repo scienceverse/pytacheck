@@ -15,8 +15,10 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "partial_repos",
       "naming_issues",
       "repo_metadata",
+      "ownership",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -352,6 +354,8 @@
       {
         "t": "chr",
         "v": [
+          "#### Whose Deposits",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://github.com/gzorg/treerepo' target='_blank'>github.com/gzorg/treerepo<\/a>\", \n\"<a href='https://osf.io/regp3' target='_blank'>osf.io/regp3<\/a>\", \n\"<a href='https://osf.io/regor' target='_blank'>osf.io/regor<\/a>\", \n\"<a href='https://osf.io/regc1' target='_blank'>osf.io/regc1<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\", \"text\", \"text\"), Whose = c(\"the authors', for this paper\", \n\"the authors', for this paper\", \"the authors', for this paper\", \n\"the authors', for this paper\"), Why = c(\"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\", \"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\")), row.names = c(NA, \n-4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://github.com/gzorg/treerepo' target='_blank'>github.com/gzorg/treerepo<\/a>\", \n\"<a href='https://osf.io/parc1' target='_blank'>osf.io/parc1<\/a>\", \n\"<a href='https://osf.io/parp3' target='_blank'>osf.io/parp3<\/a>\", \n\"<a href='https://osf.io/regor' target='_blank'>osf.io/regor<\/a>\"\n), Platform = c(\"github\", \"osf\", \"osf\", \"osf\"), Error = c(NA, \n\"closed registration source (files retrieved from registration: https://osf.io/regc1)\", \nNA, NA), \"All Files\" = c(7L, 4L, 3L, 3L), \"Data Files\" = c(2L, \n1L, 1L, 1L), \"Code Files\" = c(1L, 2L, 1L, 1L), READMEs = c(1L, \n0L, 0L, 0L), Archives = c(1L, 1L, 1L, 1L)), row.names = c(NA, \n-4L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
@@ -393,6 +397,9 @@
           "files_zip",
           "files_unknown",
           "naming_issues",
+          "repo_own",
+          "repo_others",
+          "ref_others",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -480,6 +487,30 @@
           {
             "t": "dbl",
             "v": [
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
               0,
               0,
               0
@@ -521,6 +552,29 @@
             "v": [
               "closed registration source (files retrieved from registration: https://osf.io/regc1)"
             ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "files_listed"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
           }
         ]
       },
@@ -594,36 +648,636 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 4,
         "names": [
-          "repo_url",
           "doi",
           "license",
-          "paper_id"
+          "repo_url",
+          "title",
+          "description",
+          "category",
+          "osf_type",
+          "creators",
+          "creator_orcids",
+          "published",
+          "updated",
+          "readme",
+          "keywords",
+          "homepage",
+          "owner_type",
+          "owner_name",
+          "stars",
+          "forks",
+          "is_fork",
+          "paper_id",
+          "ownership",
+          "ownership_group",
+          "ownership_reason"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
-              "https://github.com/gzorg/treerepo"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
+              null,
+              null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
               "MIT"
             ]
           },
           {
             "t": "chr",
             "v": [
+              "https://osf.io/parc1",
+              "https://osf.io/parp3",
+              "https://osf.io/regor",
+              "https://github.com/gzorg/treerepo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Understanding mixed effects models through data simulation",
+              "gzorg/treerepo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "registration",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "registrations",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "2020-12-28",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_reg_b",
+              "p_reg_b",
+              "p_reg_b",
               "p_gh_only"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "source",
+          "repo_url",
+          "repo_type",
+          "ownership",
+          "ownership_group",
+          "ownership_reason",
+          "dep_title",
+          "dep_description",
+          "dep_creators",
+          "dep_orcids",
+          "dep_type",
+          "dep_related",
+          "dep_date",
+          "dep_year",
+          "osf_type",
+          "osf_category",
+          "osf_contributors",
+          "gh_owner_name",
+          "gh_stars",
+          "gh_forks",
+          "n_files",
+          "listed",
+          "has_data",
+          "has_code",
+          "pkg_layout",
+          "file_paper_words",
+          "context",
+          "sections",
+          "cites_others",
+          "cites_own",
+          "ref_text",
+          "ref_authors",
+          "ref_year",
+          "ref_title",
+          "citing",
+          "citing_sections",
+          "cff_dois",
+          "listing_cut"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_gh_only",
+              "p_reg_a",
+              "p_reg_a",
+              "p_reg_b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/gzorg/treerepo",
+              "https://osf.io/regp3",
+              "https://osf.io/regor",
+              "https://osf.io/regc1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "github",
+              "osf",
+              "osf",
+              "osf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own_this",
+              "own_this",
+              "own_this",
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own",
+              "own",
+              "own",
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gzorg/treerepo",
+              "Understanding mixed effects models through data simulation",
+              "Understanding mixed effects models through data simulation",
+              "Understanding mixed effects models through data simulation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs.",
+              "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs.",
+              "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "2020-12-28",
+              "2020-12-28",
+              "2020-12-28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "2020",
+              "2020",
+              "2020"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "registrations",
+              "registrations",
+              "registrations"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "registration",
+              "registration",
+              "registration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7,
+              0,
+              3,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
             ]
           }
         ]
@@ -735,6 +1389,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.1",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

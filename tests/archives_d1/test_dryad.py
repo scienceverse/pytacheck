@@ -114,6 +114,9 @@ def test_dryad_info_found(mock_api: object) -> None:
         "publication_date",
         "updated_date",
         "authors",
+        "orcids",
+        "description",
+        "related",
         "license",
         "files",
         "storage_size",
@@ -803,6 +806,7 @@ def test_a_stored_dryad_listing_from_before_the_paging_fix_is_fetched_again(
                 {
                     "dryad_doi": [dryad_doi],
                     "doi": [f"doi:{dryad_doi}"],
+                    "related": [None],
                     "license": ["cc0"],
                     "files_total": [22.0],
                     "files_incomplete": [False],
@@ -816,7 +820,9 @@ def test_a_stored_dryad_listing_from_before_the_paging_fix_is_fetched_again(
         info = dryad_info(url, cache=True)
         assert len(calls) == 1 and info["files_total"].tolist() == [22.0]
         # a stored listing marked incomplete is fetched again too
-        _repo_info_cache_put("dryad", doi, old.assign(files_total=22.0, files_incomplete=True))
+        _repo_info_cache_put(
+            "dryad", doi, old.assign(related=None, files_total=22.0, files_incomplete=True)
+        )
         dryad_info(url, cache=True)
         assert len(calls) == 2
 

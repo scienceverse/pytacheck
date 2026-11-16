@@ -15,8 +15,10 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "partial_repos",
       "naming_issues",
       "repo_metadata",
+      "ownership",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -197,6 +199,9 @@
           "files_zip",
           "files_unknown",
           "naming_issues",
+          "repo_own",
+          "repo_others",
+          "ref_others",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -268,6 +273,24 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               true
@@ -294,6 +317,29 @@
           },
           {
             "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "files_listed"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
             "v": []
           }
         ]
@@ -350,6 +396,204 @@
           },
           {
             "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "source",
+          "repo_url",
+          "repo_type",
+          "ownership",
+          "ownership_group",
+          "ownership_reason",
+          "context",
+          "sections",
+          "ref_text",
+          "ref_authors",
+          "ref_year",
+          "ref_title",
+          "citing",
+          "citing_sections",
+          "cites_others",
+          "cites_own",
+          "dep_title",
+          "dep_description",
+          "dep_creators",
+          "dep_orcids",
+          "dep_type",
+          "dep_related",
+          "dep_year",
+          "dep_date",
+          "listed",
+          "n_files",
+          "has_data",
+          "has_code",
+          "pkg_layout",
+          "file_paper_words",
+          "osf_type",
+          "osf_category",
+          "osf_contributors",
+          "gh_owner_name",
+          "gh_stars",
+          "gh_forks",
+          "cff_dois"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -460,6 +704,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.1",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

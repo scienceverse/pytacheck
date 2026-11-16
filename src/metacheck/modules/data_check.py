@@ -381,6 +381,9 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         "max_download_size": "largest total download per repository, in MB (default 500).",
         "max_files_per_repo": "largest file COUNT a single repository may have\n"
         "before it is refused outright (default `Inf`, no cap).",
+        "osf_max_requests": "the largest number of requests to the OSF for listing one OSF project,\n"
+        "passed to `repo_check()` when this module runs it (default 50; `Inf` for no limit). A\n"
+        "project listed only in part is named in a warning before anything is downloaded.",
         "cache": "if `TRUE`, keep downloaded files in a persistent on-disk cache.",
         "skip_on_api_limit": "if `TRUE`, a 429 that carries a confirmed\n"
         "rate-limit-exhausted signal skips that file instead of waiting. Also\n"
@@ -411,6 +414,7 @@ def data_check(
     max_file_size: float = 100,
     max_download_size: float = 500,
     max_files_per_repo: float = math.inf,
+    osf_max_requests: float = 50,
     cache: Any = False,
     skip_on_api_limit: bool = False,
     manifest: str | os.PathLike[str] | None = None,
@@ -483,6 +487,9 @@ def data_check(
     # Files that do not belong in a repository, which repo_check leaves out of its table;
     # the file tree marks them (junk: remove / keep only on purpose).
     tree_useless = get_prev_outputs("repo_check", "useless_files")
+    # OSF projects repo_check listed only in part (`osf_max_requests`); warned about below, before
+    # anything is downloaded
+    listing_partial = get_prev_outputs("repo_check", "partial_repos")
     if all_files is None:
         from metacheck.module import module_run
 
@@ -495,8 +502,10 @@ def data_check(
             **rc_args,
             local_only=local_only,
             cache=cache,
+            osf_max_requests=osf_max_requests,
             skip_on_api_limit=skip_on_api_limit,
         )
+        listing_partial = mo.get("partial_repos")
         all_files = mo.table
         if all_files is None:
             all_files = pd.DataFrame(
@@ -510,6 +519,12 @@ def data_check(
         tree_naming_issues = mo.get("naming_issues")
         tree_useless = mo.get("useless_files")
     all_files = all_files.copy().reset_index(drop=True)
+    if download != "none" and len(all_files) > 0:
+        from metacheck.llm.cap_prompt import _cap_report_partial
+
+        _cap_report_partial(
+            listing_partial, all_files["repo_url"].tolist() if "repo_url" in all_files else []
+        )
 
     # -- 2. classify every file --------------------------------------------------
     if len(all_files) == 0:

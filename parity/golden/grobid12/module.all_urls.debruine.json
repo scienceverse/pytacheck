@@ -61,7 +61,7 @@
               "Soc.Lond",
               "https://royalsocietypublishing.org",
               "https://royalsocietypublishing.org",
-              "http://dx.doi",
+              "http://dx.doi.org/10.1098/rspb.2004.3003",
               "http://www.journals.royalsoc",
               "ac.uk"
             ]
@@ -247,6 +247,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

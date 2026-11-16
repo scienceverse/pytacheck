@@ -21,7 +21,9 @@
       "self",
       "parent",
       "project",
-      "primary_file"
+      "primary_file",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -248,9 +250,39 @@
           "https://api.osf.io/v2/files/6310e30271d2cb043f8d03da/",
           "https://api.osf.io/v2/files/6310d9c071d2cb04288d0364/"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

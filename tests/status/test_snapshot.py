@@ -32,6 +32,9 @@ from metacheck.status import (
 VALIDATED = {"power", "stat_p_exact", "stat_p_nonsig", "marginal", "stat_effect_size"}
 #: the validated modules whose R header says the team validated them on Psychological Science
 PSYCH_SCI = {"power", "stat_effect_size"}
+#: the modules whose block (0.4.4.3) is written as "Validated on N Psychological Science papers ..."
+#: or on three sets of papers, not "In a sample of N papers ..."
+NEW_BLOCK = {"stat_p_exact", "stat_p_nonsig"}
 
 
 def _raw() -> bytes:
@@ -105,18 +108,26 @@ def test_counts_are_copied_from_the_r_blocks(upstream_dir: Path) -> None:
         (ev,) = entry["evidence"]
         text = _r_block(upstream_dir, name)
         assert ev["summary"] == text, name
-        numbers = {int(n) for n in re.findall(r"\b\d+\b", text)}
-        stated = [*(v for v in ev["counts"].values() if v is not None), ev["corpus"]["papers"]]
+        plain = re.sub(r"(?<=\d),(?=\d{3}\b)", "", text)  # 1,719 -> 1719
+        numbers = {int(n) for n in re.findall(r"\b\d+\b", plain)}
+        stated = [
+            *(v for v in ev["counts"].values() if v is not None),
+            *([ev["corpus"]["papers"]] if ev["corpus"]["papers"] is not None else []),
+        ]
         assert set(stated) <= numbers, name
-        assert text.startswith(f"In a sample of {ev['corpus']['papers']} papers"), name
+        if name in NEW_BLOCK:
+            assert text.startswith("Validated on"), name
+        else:
+            assert text.startswith(f"In a sample of {ev['corpus']['papers']} papers"), name
 
 
 #: ECOSYSTEM.md §1.1: papers, (tp, fp, fn, tn), and the PPV and sensitivity derived
 #: from them; stat_p_nonsig states no FN, so it has no sensitivity
 _COUNTS = {
     "power": (128, (203, 21, 22, None), 0.906, 0.902),
-    "stat_p_exact": (225, (269, 78, 136, 4557), 0.775, 0.664),
-    "stat_p_nonsig": (194, (1486, 153, None, None), 0.907, None),
+    # the 0.4.4.3 blocks state the PPV and sensitivity, and not every count
+    "stat_p_exact": (226, (388, None, 50, None), 0.93, 0.89),
+    "stat_p_nonsig": (None, (1719, None, None, None), 0.948, None),
     "marginal": (51, (38, 22, 27, None), 0.633, 0.585),
     "stat_effect_size": (161, (1106, 45, 23, 295), 0.961, 0.98),
 }
@@ -142,7 +153,8 @@ def test_nothing_is_inferred() -> None:
         (ev,) = modules[ref]["evidence"]
         for key in ("validators", "date", "unit", "settings", "server_safe", "protocol"):
             assert ev[key] is None, (ref, key)
-        named = ref.removeprefix("metacheck::") in PSYCH_SCI
+        name = ref.removeprefix("metacheck::")
+        named = name in PSYCH_SCI or name == "stat_p_exact"
         assert ev["corpus"]["source"] == ("Psychological Science" if named else None), ref
         assert ev["corpus"]["fields"] == (["psychology"] if named else None), ref
 
@@ -150,8 +162,11 @@ def test_nothing_is_inferred() -> None:
 def test_the_corpus_is_named_where_r_names_it(upstream_dir: Path) -> None:
     for name in sorted(VALIDATED):
         source = (upstream_dir / "inst" / "modules" / f"{name}.R").read_text(encoding="utf-8")
-        named = re.search(r"validated by the Metacheck team on [^.]*Psychological Science", source)
-        assert bool(named) == (name in PSYCH_SCI), name
+        named = re.search(
+            r"(validated by the Metacheck team on|Validated on \d+) [^.]*Psychological Science",
+            source,
+        )
+        assert bool(named) == (name in PSYCH_SCI or name == "stat_p_exact"), name
 
 
 @pytest.mark.parametrize("name", ["stat_check", "ref_accuracy"])

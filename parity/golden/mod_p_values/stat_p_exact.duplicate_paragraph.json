@@ -49,6 +49,7 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "expanded",
           "imprecise",
           "not_a_test",
@@ -148,6 +149,15 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "No difference was found (p = .20).",
               "The other test was imprecise (p < .05).",
               "No difference was found (p = .20).",
@@ -241,6 +251,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

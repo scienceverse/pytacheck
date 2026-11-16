@@ -97,6 +97,8 @@ FILE_MODULES: dict[str, str | list[tuple[int, str]]] = {
     "R/repo-download.R": "metacheck.archives.download",
     "R/repo-info-cache.R": "metacheck.archives.info_cache",
     "R/repo-kind.R": "metacheck.archives.repo_kind",
+    "R/repo-link-versions.R": "metacheck.archives.link_versions",
+    "R/repo-ownership.R": "metacheck.archives.ownership",
     "R/repo-tables.R": "metacheck.archives._repo_tables",
     "R/report-checklist.R": "metacheck.report.checklist",
     "R/report-helpers.R": "metacheck.report.blocks",

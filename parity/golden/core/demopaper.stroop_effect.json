@@ -241,7 +241,7 @@
               "The Stroop effect in the 2013 cohort (M = 7.77) did not differ from the Stroop effect in the 2014 cohort (M = 8.13), t(120.37) = -0.42, p = 0.673, Cohen's d = -0.07, 95% CI [-0.42, 0.27].",
               "The raw data, the processed data, the analysis code, and the code used to generate this manuscript are all openly available in a GitHub repository at https://github.com/Lakens/stroop_effect_paper.",
               "No preregistration was filed for this classroom demonstration.",
-              "Champely, S. (2020). Pwr: Basic functions for power analysis. https://doi.org/10.32614/CRAN. package.pwr",
+              "Champely, S. (2020). Pwr: Basic functions for power analysis. https://doi.org/10.32614/CRAN.package.pwr",
               "Lakens, D. (2013). Calculating and reporting effect sizes to facilitate cumulative science: A practical primer for t-tests and ANOVAs. Frontiers in Psychology, 4. https://doi.org/10.3389/fpsyg.2013.00863",
               "MacLeod, C. M. (1991). Half a century of research on the Stroop effect: An integrative review. Psychological Bulletin, 109(2), 163-203. https://doi.org/10.1037/0033-2909.109.2.163"
             ]
@@ -948,6 +948,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -15,8 +15,10 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "partial_repos",
       "naming_issues",
       "repo_metadata",
+      "ownership",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -161,6 +163,8 @@
       {
         "t": "chr",
         "v": [
+          "#### Whose Deposits",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://zenodo.org/records/5559010' target='_blank'>zenodo.org/records/5559010<\/a>\", \n\"<a href='https://zenodo.org/records/5559011' target='_blank'>zenodo.org/records/5559011<\/a>\", \n\"<a href='https://zenodo.org/records/5559012' target='_blank'>zenodo.org/records/5559012<\/a>\", \n\"<a href='https://zenodo.org/records/5559013' target='_blank'>zenodo.org/records/5559013<\/a>\", \n\"<a href='https://zenodo.org/records/5559014' target='_blank'>zenodo.org/records/5559014<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\", \"text\", \"text\", \"text\"), Whose = c(\"a publication, not a deposit\", \n\"a publication, not a deposit\", \"the authors', for this paper\", \n\"a publication, not a deposit\", \"the authors', for this paper\"\n), Why = c(\"a publication in a repository (its record says so), without data or code files\", \n\"a publication: a preprint, an article or a manuscript, not a deposit\", \n\"a link in the main text, not shown to be anyone else's\", \"a publication in a repository (its record says so), without data or code files\", \n\"a link in the main text, not shown to be anyone else's\")), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://zenodo.org/records/5559011' target='_blank'>zenodo.org/records/5559011<\/a>\", \n\"<a href='https://zenodo.org/records/5559012' target='_blank'>zenodo.org/records/5559012<\/a>\"\n), Platform = c(\"zenodo\", \"zenodo\"), \"All Files\" = 2:1, \"Data Files\" = 1:0, \n    \"Code Files\" = c(0L, 0L), READMEs = c(0L, 0L), Archives = c(0L, \n    0L)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
@@ -196,6 +200,9 @@
           "files_zip",
           "files_unknown",
           "naming_issues",
+          "repo_own",
+          "repo_others",
+          "ref_others",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -263,6 +270,24 @@
           {
             "t": "int",
             "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               0
             ]
           },
@@ -293,6 +318,29 @@
           },
           {
             "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "files_listed"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
             "v": []
           }
         ]
@@ -332,7 +380,19 @@
           "repo_url",
           "doi",
           "license",
-          "paper_id"
+          "title",
+          "creators",
+          "creator_orcids",
+          "published",
+          "description",
+          "keywords",
+          "resource_type",
+          "resource_subtype",
+          "related",
+          "paper_id",
+          "ownership",
+          "ownership_group",
+          "ownership_reason"
         ],
         "v": [
           {
@@ -362,9 +422,542 @@
           {
             "t": "chr",
             "v": [
+              "Record 5559011",
+              "Record 5559012",
+              "Record 5559014"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NA",
+              "NA",
+              "NA"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "publication",
+              "dataset",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "p_zenodo_publications",
               "p_zenodo_publications",
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not_data",
+              "own_this",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not_data",
+              "own",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a publication: a preprint, an article or a manuscript, not a deposit",
+              "a link in the main text, not shown to be anyone else's",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "source",
+          "repo_url",
+          "repo_type",
+          "ownership",
+          "ownership_group",
+          "ownership_reason",
+          "dep_title",
+          "dep_description",
+          "dep_creators",
+          "dep_orcids",
+          "dep_type",
+          "dep_related",
+          "dep_date",
+          "dep_year",
+          "osf_type",
+          "osf_category",
+          "osf_contributors",
+          "gh_owner_name",
+          "gh_stars",
+          "gh_forks",
+          "n_files",
+          "listed",
+          "has_data",
+          "has_code",
+          "pkg_layout",
+          "file_paper_words",
+          "context",
+          "sections",
+          "cites_others",
+          "cites_own",
+          "ref_text",
+          "ref_authors",
+          "ref_year",
+          "ref_title",
+          "citing",
+          "citing_sections",
+          "cff_dois",
+          "listing_cut"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_zenodo_publications",
+              "p_zenodo_publications",
+              "p_zenodo_publications",
+              "p_zenodo_publications",
+              "p_zenodo_publications"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "text",
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://zenodo.org/records/5559010",
+              "https://zenodo.org/records/5559011",
+              "https://zenodo.org/records/5559012",
+              "https://zenodo.org/records/5559013",
+              "https://zenodo.org/records/5559014"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "zenodo",
+              "zenodo",
+              "zenodo",
+              "zenodo",
+              "zenodo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not_data",
+              "not_data",
+              "own_this",
+              "not_data",
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not_data",
+              "not_data",
+              "own",
+              "not_data",
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a publication in a repository (its record says so), without data or code files",
+              "a publication: a preprint, an article or a manuscript, not a deposit",
+              "a link in the main text, not shown to be anyone else's",
+              "a publication in a repository (its record says so), without data or code files",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Record 5559010",
+              "Record 5559011",
+              "Record 5559012",
+              "Record 5559013",
+              "Record 5559014"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NA",
+              "NA",
+              "NA",
+              "NA",
+              "NA"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Text",
+              "Text",
+              "Dataset",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
             ]
           }
         ]
@@ -474,6 +1067,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.1",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -150,10 +150,17 @@ def run_mocked_local(x: Callable[[], Any]) -> Any:
 
 def run_mocked(x: Callable[[], Any], mock_dirs: tuple[str | Path, ...] = ("apis",)) -> Any:
     """Call *x* against metacheck's recorded API responses (see module docstring)."""
+    from unittest import mock
+
     from metacheck import utils
+    from metacheck.archives import download
     from tests.archives_osf.osfmock import replay_osf
 
+    # the recordings hold the downloads at their osf.io/download/ addresses; a file the listing
+    # names is otherwise read at its file server, which they do not hold (R's cases mock
+    # `.osf_file_server_remember()` the same way)
     with (
+        mock.patch.object(download, "_osf_file_server_remember", lambda *a, **k: 0),
         tempfile.TemporaryDirectory() as tmp,
         _env(OSF_PAT="", PYTACHECK_NO_SLEEP="1"),
         utils.local_options(
@@ -167,6 +174,7 @@ def run_mocked(x: Callable[[], Any], mock_dirs: tuple[str | Path, ...] = ("apis"
         _filetype_stub(),
         replay_osf(*mock_dirs, missing="error"),
     ):
+        download._OSF_FILE_SERVER_MEMO.clear()
         return x()
 
 

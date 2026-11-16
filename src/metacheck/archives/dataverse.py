@@ -34,6 +34,7 @@ from metacheck._values import as_float, field, field_or_value, is_missing
 from metacheck.archives import _repo_tables as _tables
 from metacheck.archives._atomic import atomic_write
 from metacheck.archives._memo import session_memo
+from metacheck.utils import _meta_orcids, _meta_text
 
 if TYPE_CHECKING:
     import httpx
@@ -1569,7 +1570,9 @@ def dataverse_info(
             valid["dataverse_host"].tolist(), valid["dataverse_doi"].tolist(), strict=True
         ):
             ckey = f"{h} {d}"
-            cached = _repo_info_cache_get("dataverse", ckey) if cache is True else None
+            cached = (
+                _repo_info_cache_get("dataverse", ckey, need=["related"]) if cache is True else None
+            )
             if cached is not None:
                 id_info.append(cached)
                 continue
@@ -1653,6 +1656,37 @@ def _dataverse_info(host: Any, doi: Any, pb: Any = None) -> pd.DataFrame:
         obj["publication_date"] = _field_cell(pub)
         obj["updated_date"] = _field_cell(_empty_or(field(version, "lastUpdateTime"), None))
         obj["authors"] = _list_cell(authors)
+        # who made it (ORCID iDs), what it says, and the publication it belongs to
+        # (relatedPublication): they tell the paper's own deposit from one it reuses (#634), and
+        # come in this same answer
+        obj["orcids"] = _cell(
+            _meta_orcids(
+                [
+                    field(a, "authorIdentifier", "value")
+                    for a in (
+                        _elements(authors_field) if isinstance(authors_field, list | dict) else []
+                    )
+                ]
+            )
+        )
+        obj["description"] = _cell(
+            _meta_text(
+                [
+                    field(d, "dsDescriptionValue", "value")
+                    for d in _elements(_empty_or(field_val("dsDescription"), []))
+                ]
+            )
+        )
+        pubs = _empty_or(field_val("publication"), [])
+        related = []
+        for pub_ in _elements(pubs) if isinstance(pubs, list | dict) else []:
+            i = _empty_or(
+                field(pub_, "publicationIDNumber", "value"),
+                _empty_or(field(pub_, "publicationURL", "value"), ""),
+            )
+            if i not in ("", None):
+                related.append(f"IsSupplementTo:{i}")
+        obj["related"] = _cell(" | ".join(dict.fromkeys(related)) if related else None)
         # older installations give the licence as a plain string ("CC0"), which
         # metacheck's `license$name` cannot read (U34)
         licence = field_or_value(field(version, "license"), "name")

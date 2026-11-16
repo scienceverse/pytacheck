@@ -18,17 +18,17 @@
 # This file has code owners (.github/CODEOWNERS): a change needs their review.
 
 differences:
-  # Grobid TEI clean-up -------------------------------------------------------
-  - module: "*"
-    input: "*.xml"
-    field: "table.*"
-    match: whitespace
-    kind: r_bug_fixed
-    ref: U16
+  # Ownership (metacheck 0.4.4.2) ---------------------------------------------
+  - module: repo_check
+    input: "*"
+    field: summary_table
+    match: values
+    kind: deliberate
+    ref: D143
     reason: >-
-      numbers before a TEI tag keep their space ('p = 0.152', 'Study 1', 'Henry, 2019',
-      '24 July 2025') and DOIs split by a PDF line break are rejoined; metacheck's
-      number-before-operator clean-up treats a closing tag's '<' as an operator and glues them
+      metacheck 0.4.4.3 adds the repo_own, repo_others and ref_others columns (whose deposit each
+      link is); pytacheck does not port the ownership engine yet
+  # Grobid TEI clean-up --------------------------------------------------------
   - module: [all_p_values, stat_p_exact]
     input: problems/0956797617737129.xml
     field: [summary_text, summary_table.p_values, table]

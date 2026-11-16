@@ -19,7 +19,11 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "date_created",
+      "date_modified",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -99,9 +103,33 @@
         "v": [
           "pngda"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-06-12T13:27:04.495826"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-06-12T14:01:40.819254"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

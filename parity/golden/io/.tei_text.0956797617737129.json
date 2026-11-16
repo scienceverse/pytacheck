@@ -232,8 +232,8 @@
           "We see not only our own lives through rose-tinted glasses but also the lives of those we care about.",
           "Eddie Harmon-Jones served as action editor for this article.",
           "This work was supported by a Wellcome Trust Institutional Strategic Support Fund grant (204826/Z/16/Z) awarded to J. Savulescu, M. J. Crockett, N. S. Faber, and G. Kahane and by the Oxford Martin Programme for Collective Responsibility for Infectious Disease. J. Savulescu's work on this article was funded by a Wellcome Trust grant (104848/Z/14/Z).",
-          "All data and materials have been made publicly available via the Open Science Framework and can be accessed at osf  .io/6b4ag.",
-          "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: osf.io/a5bmw/register/565fb3678c5e4a66b5582f67; Study 3: osf  .io/zmf4c/register/564d31db8c5e4a7c9694b2be).",
+          "All data and materials have been made publicly available via the Open Science Framework and can be accessed at osf.io/6b4ag.",
+          "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: osf.io/a5bmw/register/565fb3678c5e4a66b5582f67; Study 3: osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be).",
           "The complete Open Practices Disclosure for this article can be found at http://journals.sagepub.com/doi/suppl/10.1177/0956797617737129.",
           "This article has received badges for Open Data, Open Materials, and Preregistration.",
           "More information about the Open Practices badges can be found at http://www.psychologicalscience.org/  publications/badges.",
@@ -1995,6 +1995,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

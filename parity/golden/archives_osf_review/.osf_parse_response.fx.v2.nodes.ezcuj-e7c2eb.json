@@ -19,7 +19,11 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "date_created",
+      "date_modified",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -99,9 +103,33 @@
         "v": [
           "ezcuj"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2012-04-01T15:49:07.702000"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-01-08T16:33:52.962281"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Christopher Jon Anderson; Joanna Anderson; Marcel A.L.M. van Assen; Peter Raymond Attridge; Angela Attwood; Jordan Axt; Molly Babel; Štěpán Bahník; Erica Baranski; Michael Barnett-Cowan"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

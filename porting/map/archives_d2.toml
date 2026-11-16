@@ -21,6 +21,7 @@
 "R/archive-ldbase.R" = ["src/metacheck/archives/ldbase.py"]
 "R/archive-ckan.R" = ["src/metacheck/archives/ckan.py"]
 "R/repo-kind.R" = ["src/metacheck/archives/repo_kind.py"]
+"R/repo-link-versions.R" = ["src/metacheck/archives/link_versions.py"]
 "R/repo-tables.R" = ["src/metacheck/archives/_repo_tables.py"]
 "R/archive-aspredicted.R" = ["src/metacheck/archives/aspredicted.py"]
 

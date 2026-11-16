@@ -1,4 +1,5 @@
 {
+"report_repository.default_modules": {"r": "f9f215061e6d6f05", "py": "2ef0730057fa401e", "diff": ["file[]", "output.codebook_check.summary_table", "output.repo_check.ownership"]},
 "scroll_table.colwidths_chr": {"r": "319830222b3434b0", "py": "7a175577a340a8df", "diff": ["[]"]},
 "scroll_table.colwidths_frac": {"r": "2801c1e6b1322064", "py": "8000d14c62316070", "diff": ["[]"]},
 "scroll_table.colwidths_na": {"r": "50804e5d58f42f38", "py": "d2867b75a7331987", "diff": ["[]"]},

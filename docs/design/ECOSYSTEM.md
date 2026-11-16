@@ -40,8 +40,8 @@ The example report (`docs/report-example.qmd` at 8cc2132d in upstream; the rende
 | Module | Block | Evidence as written | PPV / sensitivity | Validator named |
 |---|---|---|---|---|
 | power | `power.R:11` | 128 papers; TP 203, FP 21, FN 22 | 0.906 / 0.902 | "Metacheck team" (`:9`) |
-| stat_p_exact | `stat_p_exact.R:13` | 225 papers; TP 269, FP 78, FN 136, TN 4,557 | 0.775 / 0.664 | none |
-| stat_p_nonsig | `stat_p_nonsig.R:13` | 194 papers; TP 1,486, FP 153; FN not stated | 0.907 / ≈ 0.928 | none |
+| stat_p_exact | `stat_p_exact.R:13` | 226 Psychological Science papers; TP 388, FN 50; FP and TN not stated (0.4.4.3 block) | 0.93 / 0.89 (as stated) | none |
+| stat_p_nonsig | `stat_p_nonsig.R:13` | three sets (Psychological Science, Economics, MDPI); TP 1,719 of 1,783; FP not stated (0.4.4.3 block) | 0.948 / not stated | none |
 | marginal | `marginal.R:11` | 51 papers; TP 38, FP 22, FN 27 | 0.633 / 0.585 | none |
 | stat_effect_size | `stat_effect_size.R:11` | 161 papers; TP 1,106, TN 295, FN 23, FP 45 | 0.961 / 0.980 | "Metacheck team" (`:7`) |
 | stat_check | `stat_check.R:15` | 685 tests; TP 34, FP 26, FN 0 | 0.567 / 1.000 | Nuijten et al. 2017, i.e. **external** |

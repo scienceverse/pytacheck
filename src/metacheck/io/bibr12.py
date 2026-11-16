@@ -36,7 +36,7 @@ import re
 from collections.abc import Mapping, Sequence
 from os import PathLike
 from pathlib import Path, PurePath
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import orjson
@@ -987,7 +987,10 @@ def _bibr12_paper(
         p._set_raw(name, records, columns)
     if extraction is not None:
         p["extraction"] = extraction
-    return p
+    # links split by a space when the PDF was read (see metacheck.io.read._repair_links())
+    from metacheck.io.read import _paper_repair_links
+
+    return cast(Paper, _paper_repair_links(p))
 
 
 # ---------------------------------------------------------------------------

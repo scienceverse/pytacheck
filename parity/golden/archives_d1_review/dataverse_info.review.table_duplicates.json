@@ -17,6 +17,9 @@
       "publication_date",
       "updated_date",
       "authors",
+      "orcids",
+      "description",
+      "related",
       "license",
       "files"
     ],
@@ -121,6 +124,33 @@
             "t": "chr",
             "v": []
           }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          null,
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
         ]
       },
       {
@@ -509,6 +539,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

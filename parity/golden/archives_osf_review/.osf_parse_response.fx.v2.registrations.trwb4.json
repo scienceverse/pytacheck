@@ -17,7 +17,12 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "description",
+      "date_created",
+      "date_registered",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -85,9 +90,39 @@
         "v": [
           "trwb4"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This project tested the hypothesis that in social contexts, people pursuing a goal they share with another person will make decisions that minimize the shared costs of an action sequence. We hypothesized that people would make such decisions rather than ones that minimize the individual costs of (a) themselves or (b) their partner. We used a touchscreen-based joint motor task to test our hypothesis. The task presented participants with two alternative paths for reaching a goal state, one of which was efficient (in case of joint tasks: co-efficient), and the other was sub-efficient. We measured and analyzed path choices of participants who initiated action sequences.\nWe share the data of four experiments. Experiment 1 investigated individual decision-making in action planning, as a control  for individual efficiency. Experiments 2-4 tested the co-efficiency maximization hypothesis. "
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2019-02-05T19:00:45.011954"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2019-02-05T19:00:44.981065"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

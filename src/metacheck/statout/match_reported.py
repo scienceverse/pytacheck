@@ -44,6 +44,7 @@ from metacheck._r import (
     trimws,
 )
 from metacheck._values import as_str, is_missing
+from metacheck.stats.helpers import _sci_text
 
 __all__ = ["match_reported_output"]
 
@@ -103,13 +104,15 @@ _NUM_CHARS = frozenset("0123456789.eE+-")
 
 
 @functools.lru_cache(maxsize=65536)
-def _norm_value_str(s: str) -> tuple[float | None, int, str]:
+def _norm_value_str(s: str, ten_power: bool = False) -> tuple[float | None, int, str]:
     s = trimws(s)
     cens = ""
     if s[:1] in ("<", ">") and s != "":
         cens = s[0]
         s = trimws(sub(r"^[<>]\s*", "", s))
-    s = s.replace(",", "").replace(" ", "")
+    s = s.replace(",", "")
+    # "1.8 x 10 -6" was read as 1.8, so a reported p never matched its own output (#642)
+    s = _sci_text(s, ten_power)
     # sub("[^0-9.eE+-].*$", "", s): cut at the first character outside the set
     for i, ch in enumerate(s):
         if ch not in _NUM_CHARS:
@@ -136,19 +139,20 @@ def _norm_value_str(s: str) -> tuple[float | None, int, str]:
     return num, dec, cens
 
 
-def _norm_value(x: Any) -> dict[str, Any]:
+def _norm_value(x: Any, ten_power: bool = False) -> dict[str, Any]:
     """Normalise a value string to a number.
 
     Port of ``R/match-reported.R::.norm_value()``. APA leading-dot ``".06"``
     -> 0.06; thousands separators stripped; ``"< .001"``/``"> .05"`` -> the
-    bound with a censored flag. Returns ``{"num", "dec", "censored"}``:
+    bound with a censored flag; scientific notation as papers write it ("1.8 x 10 -6"), through
+    ``_sci_text()``; with *ten_power* (a p-value), also "10 -15". Returns ``{"num", "dec", "censored"}``:
     ``num`` is ``None`` (R ``NA``) when unparseable, ``dec`` the number of
     decimals as written.
     """
     s = "" if x is None else as_str(x)
     if s is None:  # NA
         return {"num": None, "dec": 0, "censored": ""}
-    num, dec, cens = _norm_value_str(s)
+    num, dec, cens = _norm_value_str(s, ten_power)
     return {"num": num, "dec": dec, "censored": cens}
 
 
@@ -340,7 +344,8 @@ def _expand_component(
             _comp("ci_lower", "ci_lower", lo["num"], lo["dec"], "", **tag),
             _comp("ci_upper", "ci_upper", hi["num"], hi["dec"], "", **tag),
         ]
-    nv = _norm_value(value)
+    # a p-value may be 10 to a power with nothing before it ("p < 10 -15"; #642)
+    nv = _norm_value(value, ten_power=fam == "p")
     if nv["num"] is None:
         return None
     cens = nv["censored"]

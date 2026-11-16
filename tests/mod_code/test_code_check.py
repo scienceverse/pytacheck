@@ -104,7 +104,9 @@ def test_offline_no_code(stub_repo_check: list[dict[str, Any]]) -> None:
     # R: "code_check offline" -- test_paper("no text") has no repositories
     paper = pc.test_paper(["no text"])
     mo = module_run(paper, "code_check")
-    assert stub_repo_check == [{"local_only": False, "cache": False, "skip_on_api_limit": False}]
+    assert stub_repo_check == [
+        {"local_only": False, "cache": False, "osf_max_requests": 50, "skip_on_api_limit": False}
+    ]
     assert mo.traffic_light == "na"
     assert len(mo.table) == 0
     assert {"file_name", "repo_url", "language"} <= set(mo.table.columns)
@@ -764,6 +766,7 @@ def test_local_path_forces_a_fresh_repo_check(stub_repo_check: list[dict[str, An
             "local_path": str(CODE_FILES / "subdir"),
             "local_only": True,
             "cache": False,
+            "osf_max_requests": 50,
             "skip_on_api_limit": False,
         }
     ]

@@ -49,8 +49,10 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "significance",
-          "expanded"
+          "expanded",
+          "not_a_test"
         ],
         "v": [
           {
@@ -226,6 +228,23 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "nonsignificant",
               "nonsignificant",
               "nonsignificant",
@@ -255,6 +274,23 @@
               "r10 p = .91",
               "r11 p = .92 and again p = .92",
               "r11 p = .92 and again p = .92"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           }
         ]
@@ -307,6 +343,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

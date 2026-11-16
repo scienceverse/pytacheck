@@ -64,8 +64,9 @@ def test_github_links_bare_mentions() -> None:
         ]
     )
     obs = github_links(paper)
-    assert obs["href"].tolist() == ["scienceverse/metacheck"]
-    assert obs["text_id"].tolist() == [1]
+    # a link written in full in the text is found too (metacheck 0.4.4.2, `.links_in_text()`)
+    assert obs["href"].tolist() == ["https://github.com/a/b", "scienceverse/metacheck"]
+    assert obs["text_id"].tolist() == [3, 1]
 
 
 def test_github_links_none() -> None:

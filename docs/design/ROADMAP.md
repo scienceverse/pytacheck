@@ -421,8 +421,8 @@ The registry (`validation.json`) is provisional. Of its 30 entries, five carry c
 | marginal | 51 | not recorded | 38 / 22 / 27 | 63% (51-74%) | 58% (46-70%) |
 | power | 128 | Psychological Science | 203 / 21 / 22 | 91% (86-94%) | 90% (86-93%) |
 | stat_effect_size | 161 | Psychological Science | 1,106 / 45 / 23 | 96% (95-97%) | 98% (97-99%) |
-| stat_p_exact | 225 | not recorded | 269 / 78 / 136 | 78% (73-82%) | 66% (62-71%) |
-| stat_p_nonsig | 194 | not recorded | 1,486 / 153 / — | 91% (89-92%) | not published |
+| stat_p_exact | 226 | Psychological Science | 388 / — / 50 | 93% | 89% |
+| stat_p_nonsig | three sets | Psychological Science, Economics, MDPI | 1,719 / — / — | 94.8% | not published |
 
 Agreement with R is not the same as these rates.
 - Of the accuracy gate's 21 inputs, only 5 are Psychological Science papers.

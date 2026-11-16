@@ -20,6 +20,10 @@
       "parent",
       "project",
       "description",
+      "date_created",
+      "date_registered",
+      "contributors",
+      "contributor_orcids",
       "provider",
       "kind",
       "filetype",
@@ -261,6 +265,82 @@
       {
         "t": "chr",
         "v": [
+          "Supplementary files for \"Gossiping about deviance: Evidence that deviance spurs the gossip that builds bonds.\"",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2017-05-22T15:07:28.091221",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2017-05-22T15:07:28.072901",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
           null,
           null,
           null,
@@ -431,6 +511,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

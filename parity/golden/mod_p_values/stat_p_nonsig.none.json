@@ -49,8 +49,10 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "significance",
-          "expanded"
+          "expanded",
+          "not_a_test"
         ],
         "v": [
           {
@@ -95,11 +97,19 @@
             "v": []
           },
           {
+            "t": "chr",
+            "v": []
+          },
+          {
             "t": "lgl",
             "v": []
           },
           {
             "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           }
         ]
@@ -152,6 +162,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

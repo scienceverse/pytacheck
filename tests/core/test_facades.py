@@ -148,6 +148,13 @@ def _same(a: tuple[str, Any], b: tuple[str, Any]) -> bool:
     return bool(x == y)
 
 
+def _p_values_without_name(x: Any) -> pd.DataFrame:
+    """``extract_p_values()`` without the ``p_name`` column metacheck 0.4.4.2 added, which the
+    frozen legacy oracle does not have."""
+    out = X.extract_p_values(x)
+    return out.drop(columns="p_name") if "p_name" in out else out
+
+
 class Cases:
     """Runs each case on both sides and keeps the ones that differ."""
 
@@ -213,7 +220,7 @@ def test_text_search_of_a_paper(path: Path, form: str) -> None:
     for fn, legacy in [
         (X.extract_eq, LX.extract_eq),
         (X.extract_urls, LX.extract_urls),
-        (X.extract_p_values, LX.extract_p_values),
+        (_p_values_without_name, LX.extract_p_values),
     ]:
         cases.check(path.name, fn, legacy, new, old)
     cases.check(path.name, sentence_table, LS._text_frame, new, old)
@@ -338,7 +345,7 @@ def test_text_search_of_strings() -> None:
     for fn, legacy in [
         (X.extract_eq, LX.extract_eq),
         (X.extract_urls, LX.extract_urls),
-        (X.extract_p_values, LX.extract_p_values),
+        (_p_values_without_name, LX.extract_p_values),
     ]:
         cases.check("strings", fn, legacy, eqs, eqs)
         cases.check("string", fn, legacy, eqs[0], eqs[0])

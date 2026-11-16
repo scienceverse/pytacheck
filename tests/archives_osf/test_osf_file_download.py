@@ -26,6 +26,17 @@ from metacheck.config import verbose
 
 
 @pytest.fixture(autouse=True)
+def _no_file_servers(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The downloads below were recorded at their osf.io/download/ addresses. A file the listing
+    names is now read at its file server directly (``_osf_file_server_remember``, tested in
+    test_osf_file_servers.py), which these recordings do not hold, so in this file the listings
+    remember nothing and every download goes to its osf.io/download/ address as recorded."""
+    from metacheck.archives import download
+
+    monkeypatch.setattr(download, "_osf_file_server_remember", lambda *a, **k: 0)
+
+
+@pytest.fixture(autouse=True)
 def _fresh_cache() -> Iterator[None]:
     from metacheck.config import _state
 

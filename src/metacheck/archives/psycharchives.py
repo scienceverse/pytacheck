@@ -282,7 +282,13 @@ def _vector(values: list[Any]) -> pd.Series:
     return pd.Series(values)
 
 
-def _cached(ns: str | None, key: Any, cache: bool, fetch: Callable[..., pd.DataFrame]) -> Any:
+def _cached(
+    ns: str | None,
+    key: Any,
+    cache: bool,
+    fetch: Callable[..., pd.DataFrame],
+    need: list[str] | None = None,
+) -> Any:
     """``.repo_info_cache_get()``, else *fetch* and ``.repo_info_cache_put()`` a good result."""
     if ns is None:
         return fetch()
@@ -292,7 +298,7 @@ def _cached(ns: str | None, key: Any, cache: bool, fetch: Callable[..., pd.DataF
         _repo_info_ok,
     )
 
-    cached = _repo_info_cache_get(ns, key) if cache is True else None
+    cached = _repo_info_cache_get(ns, key, need=need) if cache is True else None
     if cached is not None:
         return cached
     got = fetch()

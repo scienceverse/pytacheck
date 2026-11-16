@@ -314,7 +314,7 @@
           "Torralba, A., & Oliva, A. (2003). Statistics of natural image categories. Network: Computation in Neural Systems, 14, 391-412.",
           "Tversky, B., & Hemenway, K. (1983). Categories of environ- mental scenes. Cognitive Psychology, 15, 121-149.",
           "VanRullen, R., & Thorpe, S. J. (2002). Surfing a spike wave down the ventral stream. Vision Research, 42, 2593-2615.",
-          "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
+          "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https://doi.org/10.5281/10.5281/zenodo.2669586.",
           "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
           "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
           "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
@@ -323,6 +323,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

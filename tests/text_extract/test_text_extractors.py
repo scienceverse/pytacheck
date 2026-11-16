@@ -218,7 +218,7 @@ def test_extract_eq_unicode_minus() -> None:
 def test_extract_p_values_empty() -> None:
     p = extract_p_values(pc.test_paper(["No p-values here.", "The p-value is 0.03."]))
     assert len(p) == 0
-    assert list(p.columns)[-2:] == ["p_comp", "p_value"]
+    assert list(p.columns)[-3:] == ["p_comp", "p_value", "p_name"]
 
 
 def test_extract_eq() -> None:

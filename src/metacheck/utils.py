@@ -808,3 +808,81 @@ def pb(total: float | None, format: str = "[:bar] :current/:total") -> ProgressB
 
 
 _init_default_model()
+
+
+# ---------------------------------------------------------------------------
+# a deposit's descriptive fields (metacheck 0.4.4.2, #634)
+# ---------------------------------------------------------------------------
+#
+# One text value per row of an *_info() table, for repo_check's repo_metadata: who made the
+# deposit, when, under what title and description. These tell a paper's own deposit from one it
+# reuses; the info functions fetch them anyway, in the request that lists the files.
+
+
+def _leaves(x: Any) -> list[str]:
+    """``unlist(x)`` as text: the scalar leaves of nested lists and dicts (``None`` dropped)."""
+    if x is None:
+        return []
+    if isinstance(x, Mapping):
+        return [leaf for v in x.values() for leaf in _leaves(v)]
+    if isinstance(x, list | tuple):
+        return [leaf for v in x for leaf in _leaves(v)]
+    if is_missing(x):
+        return ["NA"]
+    if isinstance(x, bool):
+        return ["TRUE" if x else "FALSE"]
+    return [x if isinstance(x, str) else as_character(x) or ""]
+
+
+def _meta_orcids(x: Any) -> str | None:
+    """Port of ``.meta_orcids()``: the ORCID iDs anywhere in a cell of people, as ``"id; id"``."""
+    s = " ".join(_leaves(x))
+    ids = re.findall(r"\d{4}-\d{4}-\d{4}-\d{3}[0-9X]", s)
+    return "; ".join(dict.fromkeys(ids)) if ids else None
+
+
+def _meta_related(items: Any, rel: str, id: str) -> str | None:
+    """Port of ``.meta_related()``: a deposit's related works as ``"relation:identifier | ..."``.
+
+    From a list of records naming each work's relation and identifier under the field names
+    *rel* and *id* (Zenodo: relation/identifier; Dryad: relationship/identifier; Dataverse:
+    publication type/ID). ``None`` (R ``NA``) when there is none.
+    """
+    if items is None or not isinstance(items, list | tuple | Mapping) or len(items) == 0:
+        return None
+    records = list(items.values()) if isinstance(items, Mapping) else list(items)
+    out: list[str] = []
+    for r in records:
+        if not isinstance(r, Mapping):
+            continue
+        i = r.get(id)
+        if isinstance(i, Mapping):
+            i = i.get("value")
+        elif isinstance(i, list | tuple):
+            i = i[0] if (len(i) and not isinstance(i[0], Mapping | list)) else None
+        if i is None or is_missing(i) or not str(i if isinstance(i, str) else as_character(i)):
+            continue
+        k = r.get(rel)
+        if isinstance(k, Mapping):
+            k = k.get("value")
+        elif isinstance(k, list | tuple):
+            k = k[0] if (len(k) and not isinstance(k[0], Mapping | list)) else None
+        kind = (
+            "related"
+            if k is None or is_missing(k)
+            else (k if isinstance(k, str) else as_character(k))
+        )
+        out.append(f"{kind}:{i if isinstance(i, str) else as_character(i)}")
+    return " | ".join(dict.fromkeys(out)) if out else None
+
+
+def _meta_text(x: Any, n: int = 1000) -> str:
+    """Port of ``.meta_text()``: text without HTML tags, entities or runs of spaces (<= *n*)."""
+    s = " ".join(_leaves(x))
+    s = gsub("<[^>]+>", " ", s)
+    s = gsub("&nbsp;", " ", s, fixed=True)
+    s = gsub("&[a-z]+;|&#[0-9]+;", " ", s, perl=True)
+    s = trimws(gsub(r"\s+", " ", s))
+    if len(s) > n:
+        s = s[: n - 3] + "..."
+    return str(s)

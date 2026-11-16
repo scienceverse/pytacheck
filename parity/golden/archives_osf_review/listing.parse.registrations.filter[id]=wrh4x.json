@@ -17,7 +17,12 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "description",
+      "date_created",
+      "date_registered",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -85,9 +90,39 @@
         "v": [
           "wrh4x"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This project aims to investigate the effect of technology use on adolescent well-being. Previous research has relied on Likert scale self-report measures to enumerate adolescents’ technology use. We complement and extend this research by examining both adolescent self-report technology use using Likert scales and by completing time use diaries. These time use diaries allow for a more detailed investigation of the technology-wellbeing relationship, as we examine not only the total time spent using technology but also the timings of this use. "
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2018-05-08T21:30:06.047337"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2018-05-08T21:30:06.030818"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

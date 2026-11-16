@@ -165,7 +165,8 @@ def reshare_links(paper: Any) -> pd.DataFrame:
     found_href = _url_rows(paper, r"reshare\.ukdataservice\.ac\.uk|10\.5255/ukda-sn")
     bare = (
         r"(?:https?://)?(?:www\.)?reshare\.ukdataservice\.ac\.uk/[0-9]+/?"
-        r"|(?:https?://)?(?:dx\.)?(?:doi\.org/)?10\.5255/UKDA-SN-[0-9]+"
+        # with its edition, when given ("10.5255/UKDA-SN-5050-20"; #634)
+        r"|(?:https?://)?(?:dx\.)?(?:doi\.org/)?10\.5255/UKDA-SN-[0-9]+(?:-[0-9]+)?"
     )
     other = _scan_links(paper, bare, ["reshare.ukdataservice.ac.uk/", "10.5255/ukda-sn-"])
     links = _collect_links([found_href, other])

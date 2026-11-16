@@ -1,21 +1,11 @@
 {
-".grobid_to_bibr.debruine.debruine-fret": {"r": "cd342a85fbb366ab", "py": "ec9db47df06ae250", "diff": ["text.text[]"]},
-".grobid_to_bibr.debruine.debruine-sex": {"r": "e9553e6d941e669c", "py": "cac55659b4df55c2", "diff": ["text.text[]"]},
-".grobid_to_bibr.formats.preprint.pdf.tei": {"r": "b4699e2588710e72", "py": "b0618c7f5e18eacc", "diff": ["text.text[]"]},
-".grobid_to_bibr.formats.published.pdf.tei": {"r": "e825fb38259b6e11", "py": "06ee1f866b2d1514", "diff": ["text.text[]"]},
-".grobid_to_bibr.grobid.pfd-1181af": {"r": "ce29b9f9dca910c2", "py": "c2bf329db0364c4a", "diff": ["text.text[]"]},
-".grobid_to_bibr.grobid.pfd-9c61e4": {"r": "8bc9a7f967479af1", "py": "aa1ee2ed739f013d", "diff": ["text.text[]"]},
-".grobid_to_bibr.grobidorg.pfd-1181af": {"r": "8332026c8c22e5b6", "py": "1a2b302d6d40b6ff", "diff": ["text.text[]"]},
-".grobid_to_bibr.grobidorg.pfd-9c61e4": {"r": "2f5e6868fb83f1ed", "py": "b6dfd3dca48757b1", "diff": ["text.text[]"]},
-".grobid_to_bibr.problems.0956797615569889": {"r": "01000f09e8f256dd", "py": "5a09bd6485ac6040", "diff": ["text.text[]"]},
-".grobid_to_bibr.problems.0956797617737129": {"r": "f3df1f7146874ee5", "py": "69b36b9249db8e22", "diff": ["eq", "text.text[]"]},
-".grobid_to_bibr.problems.203020": {"r": "2ca73d774745d406", "py": "4817a7da77eab17a", "diff": ["text.text[]"]},
+".grobid_to_bibr.problems.0956797615569889": {"r": "c3bd64ea53ebf7cc", "py": "5a09bd6485ac6040", "diff": ["text.text[]"]},
+".grobid_to_bibr.problems.0956797617737129": {"r": "9c75692c5b102cab", "py": "69b36b9249db8e22", "diff": ["eq", "text.text[]"]},
 ".grobid_to_bibr.synthetic.edge_body": {"r": "e37edbd537135bdb", "py": "07c40968f15c7f0d", "diff": ["bib.text_id[]", "eq", "figure", "table", "text", "url.text_id[]", "xref"]},
 ".grobid_to_bibr.synthetic.figure_twice": {"r": "76f42d0a974d7995", "py": "32178da6435c7d54", "diff": ["figure", "section.section_type[]"]},
 ".grobid_to_bibr.synthetic.table_norows": {"r": "ac5146cf65ca52a8", "py": "bd849b4594bd1395", "diff": ["<R error, Python value>"]},
 ".tei_bib.biblstruct_monogr": {"r": "9951b784e84731a7", "py": "da64e6d1daeeb4c0", "diff": ["bib_text[]"]},
 ".tei_text.edge_body": {"r": "890f35ee62a256d5", "py": "5cc29a64c29abf33", "diff": ["<root>"]},
-"convert.xml.null_save": {"r": "01000f09e8f256dd", "py": "5a09bd6485ac6040", "diff": ["text.text[]"]},
-"grobid_to_bibr.null_save.multiple_with_failure": {"r": "728756fccac8084f", "py": "e9562ad7d9e19f6c", "diff": ["edge_body.tei.bib.text_id[]", "edge_body.tei.eq", "edge_body.tei.figure", "edge_body.tei.table", "edge_body.tei.text", "edge_body.tei.url.text_id[]", "edge_body.tei.xref", "preprint.pdf.tei.text.text[]"]},
-"read.xml_and_json": {"r": "33243a2931be881f", "py": "9e0642c1b62f9e1f", "diff": ["preprint.pdf.tei.text.text[]"]}
+"convert.xml.null_save": {"r": "c3bd64ea53ebf7cc", "py": "5a09bd6485ac6040", "diff": ["text.text[]"]},
+"grobid_to_bibr.null_save.multiple_with_failure": {"r": "ed26206015a933fd", "py": "e9562ad7d9e19f6c", "diff": ["edge_body.tei.bib.text_id[]", "edge_body.tei.eq", "edge_body.tei.figure", "edge_body.tei.table", "edge_body.tei.text", "edge_body.tei.url.text_id[]", "edge_body.tei.xref"]}
 }

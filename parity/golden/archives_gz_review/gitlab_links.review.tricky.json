@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 6,
+    "nrow": 7,
     "names": [
       "href",
       "text_id",
@@ -17,6 +17,7 @@
         "v": [
           "https://gitlab.com/group/sub/project",
           "https://GitLab.com/Upper/Case.git",
+          "gitlab.com/a/b",
           "my-org/my.repo_v2",
           "foo/bar",
           "1/2",
@@ -28,6 +29,7 @@
         "v": [
           1,
           2,
+          3,
           1,
           2,
           2,
@@ -42,11 +44,12 @@
           "6c4258abe0fec3",
           "6c4258abe0fec3",
           "6c4258abe0fec3",
+          "6c4258abe0fec3",
           "6c4258abe0fec3"
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

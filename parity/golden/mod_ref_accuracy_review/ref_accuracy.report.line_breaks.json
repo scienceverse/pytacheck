@@ -263,7 +263,7 @@
           {
             "t": "chr",
             "v": [
-              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
+              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https://doi.org/10.5281/10.5281/zenodo.2669586.",
               "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
               "Gino, F.\nEvil genius.\n",
               "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
@@ -378,7 +378,7 @@
           "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherence is most often an error in reading the reference from the PDF, but it could be a mistake, or an AI-generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
           "### Incoherent references\n",
           "The cited details of these references do not match the record their DOI points to.\n",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Gino, F.<br>Evil genius.<br>\"), \"What is wrong (cited → record)\" = c(\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.32614/10.5281/zenodo.2669586<\/span> could not be found in CrossRef\", \n\"<b>title:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Zzz<\/span> &rarr; Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity\"\n), Record = c(\"<a href='https://doi.org/10.32614/10.5281/zenodo.2669586' target='_blank'>10.32614/10.5281/zenodo.2669586<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https://doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Gino, F.<br>Evil genius.<br>\"), \"What is wrong (cited → record)\" = c(\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.32614/10.5281/zenodo.2669586<\/span> could not be found in CrossRef\", \n\"<b>title:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Zzz<\/span> &rarr; Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity\"\n), Record = c(\"<a href='https://doi.org/10.32614/10.5281/zenodo.2669586' target='_blank'>10.32614/10.5281/zenodo.2669586<\/a>\", \n\"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)\n```\n",
           "### References without a DOI\n",
           "These references have no DOI, so they could not be checked here, and they also cannot be checked by the other reference modules (retraction, PubPeer, and replication checks all rely on the DOI). We searched CrossRef for a matching DOI; where a confident match was found it is suggested below. We recommend adding a DOI to every reference that has one: it lets these checks run and makes each cited work easier to find and verify.\n",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = \"Line one<br>line two\", \"Suggested DOI\" = \"\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.7, 0.3), 5, FALSE)\n```\n"
@@ -440,6 +440,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

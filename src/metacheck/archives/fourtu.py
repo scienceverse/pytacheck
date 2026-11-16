@@ -213,6 +213,7 @@ def researchdata4tu_info(
                 f"{_HOST} {v}",
                 cache,
                 lambda v=v: _figshare_info(v, host=_HOST, pb=bar),
+                need=["related"],
             )
             for v in valid
         ]

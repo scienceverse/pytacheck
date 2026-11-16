@@ -17,7 +17,12 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "description",
+      "date_created",
+      "date_registered",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -85,9 +90,39 @@
         "v": [
           "428fj"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We quantified how many studies registered on the Open Science Framework (OSF) up to November 2017 are performed but not shared after at least 4 years. Examining a sample of 169 registered research studies we found that 104 (61.5%) were publicly shared. We estimate that 5316 out of 9172 (58%) registered studies on the OSF are publicly shared. Researchers use registries to make unpublished studies public, and the OSF policy to open registrations after a four year embargo substantially increases the number of studies that become known to the scientific community. In responses to emails asking researchers why studies remained unpublished logistical issues (e.g., lack of time, researchers changing jobs) were the most common cause, followed by null results, and rejections during peer review. Our exploratory study shows that a substantial amount of studies that researchers perform remain unpublished."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2024-10-07T17:10:19.119889"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2024-10-07T17:10:19.103153"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

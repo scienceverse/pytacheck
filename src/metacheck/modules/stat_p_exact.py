@@ -9,6 +9,8 @@ import pandas as pd
 
 from metacheck._r.base import plural
 from metacheck._r.frames import count
+from metacheck._r.regex import compile_r, grepl
+from metacheck._values import is_missing
 from metacheck.module import module
 from metacheck.report import collapse_section, format_ref, scroll_table
 
@@ -38,7 +40,8 @@ _GUIDANCE = (
 _ZERO_TEXT = (
     "*P* values are never exactly zero. A *p* value of .000 is a rounding artifact — the actual "
     "value is simply smaller than the reported precision. Very small *p* values should be "
-    "reported as *p* < .001 rather than *p* = .000."
+    "reported as *p* < .001 rather than *p* = .000. A *p* = 0 can also be a model parameter, such "
+    "as an ARIMA order; check that it is a *p* value."
 )
 _ZERO_GUIDANCE = "The APA manual states: report *p* values less than .001 as *p* < .001."
 
@@ -68,13 +71,15 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: str) -> pd.DataFrame:
     details="""
         This module uses regular expressions to identify p-values. It will flag any values reported as p > ? or p < numbers greater than .001. It will also flag p-values reported as exactly zero (e.g., p = .000, p = 0.00), which are mathematically impossible — p-values are never exactly zero and should instead be reported as p < .001.
 
-        A p-value that is not the result of a test is not flagged: a table note ("* p < .05, ** p < .01"), a figure legend ("Asterisks indicate significant differences (p < .05)", "Values in bold are significant at p < .05") or a stated threshold ("p < .05 was considered significant", "thresholded at p < .001"). GROBID often puts such notes into the running text, so each p-value is judged by the words in its own clause (the text up to a ";" or a full stop), and never left out when a test statistic belongs to it ("F(1, 7) = 8.03, # p < .05"). The column `not_a_test` of the table says why a p-value was left out ("marker", "threshold" or "legend"). Notes in other forms, such as a marker after the p-value ("p < .05 (*)"), are still flagged.
+        A p-value that is not the result of a test is not flagged: a table note ("* p < .05, ** p < .01"), a figure legend ("Asterisks indicate significant differences (p < .05)", "Values in bold are significant at p < .05") or a stated threshold ("p < .05 was considered significant", "thresholded at p < .001"). GROBID often puts such notes into the running text, so each p-value is judged by the words in its own clause (the text up to a ";" or a full stop), and never left out when a test statistic belongs to it ("F(1, 7) = 8.03, # p < .05"). The column `not_a_test` of the table says why a p-value was left out ("marker", "threshold", "legend" or "named").
+
+        A p-value with the name of a correction or a test after the p ("pFWE < .05", "padj < 0.05", "p Wilcoxon = .02") is flagged only when a test statistic comes before it in its clause ("t(37) = 7.17, p FWE < .05"). Without one it is mostly the rule that decided what was significant ("genes with padj < 0.05 were selected"); such a p-value is "named" in `not_a_test`. Notes in other forms, such as a marker after the p-value ("p < .05 (*)"), are still flagged.
 
         This module sometimes flags false positives when sentences discuss how p-value thresholds were set. It can also miss an imprecise p-value that is reported against a threshold ("decreased at the p < .05 significance threshold").
 
         This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables (as opposed to a table's footnote text, which the module does see and tries to exclude — see above).
 
-        <validation>In a sample of 225 papers containing 405 instances of non-exact p-values, the module correctly detected 269 cases (true positives) and incorrectly identified 78 (false positives). It missed 136 instances of imprecisely reported p-values (false negatives) and correctly identified 4557 cases of precisely reported p-values (true negative). Additionally, 78% of positive detections were correct (positive predictive value).</validation>
+        <validation>Validated on 226 Psychological Science papers with 5,019 hand-coded p-values, 438 of them imprecise (scienceverse/validation, branch stat_p_exact). Version 0.4.4.3 reported 419 p-values as imprecise, 388 of them correctly (93%), and missed 50 (89% found). Of the misses, 13 are starred table notes ("*p < .05") that the module leaves out on purpose and 11 are p-values it did not find; of the wrong reports, 20 are p-values the ground truth does not contain (such as "ps < .05") and 6 use ≤ or ≥. These figures measure agreement with the hand-coding, which has known errors in both directions (scienceverse/validation#48).</validation>
     """,
     keywords=["results"],
     # one R @author line naming both authors (metacheck's module_report() kept only the first; U6)
@@ -86,7 +91,7 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: str) -> pd.DataFrame:
 )
 def stat_p_exact(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/stat_p_exact.R::stat_p_exact()``."""
-    from metacheck.stats.helpers import _p_not_test
+    from metacheck.stats.helpers import _TEST_STAT_PATTERN, _p_clause, _p_not_test
     from metacheck.text.expand import expand_text
     from metacheck.text.extract import extract_p_values
 
@@ -125,13 +130,33 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
     p = p.copy()
     p["imprecise"] = pd.Series(imprecise, index=p.index, dtype="boolean")
     p["not_a_test"] = pd.Series(_p_not_test(p), index=p.index, dtype=object)
+    # A p with a correction or test name ("pFWE < .05", "padj < 0.05") counts only when a test
+    # statistic comes before it in its clause ("t(37) = 7.17, p FWE < .05"). Without one it is
+    # mostly the rule that decided what was significant ("genes with padj < 0.05 were
+    # selected", "thresholds at the cluster level, P FWE < 0.05"), in wordings the threshold
+    # words do not all catch (#642)
+    named = (~p["p_name"].isna() & p["not_a_test"].isna()).to_numpy(dtype=bool)
+    if named.any():
+        before = _p_clause(p.loc[named])["before"].tolist()
+        stat_rx = compile_r(_TEST_STAT_PATTERN, perl=True)
+        has_stat = [not is_missing(b) and stat_rx.search(str(b)) is not None for b in before]
+        labels = ["named" if not h else None for h in has_stat]
+        p.loc[named, "not_a_test"] = pd.Series(labels, index=p.index[named], dtype=object)
     not_test = p["not_a_test"].isna().to_numpy(dtype=bool)
     imprecise = imprecise & not_test
 
     # Flag p-values reported as exactly zero (e.g., p = .000, p = 0.00), also
     # "p < .000", which was neither imprecise nor zero (U127)
+    # A number written with an exponent is never a zero: "p < 10 -324" is smaller than R can
+    # hold and reads as 0 (#642)
+    has_exponent = grepl(
+        "[eE]\\s*[-\u2212\u00c0]|10\\s*\\^?\\s*[-\u2212\u00c0]", p["text"].tolist()
+    )
     is_zero = (
-        comp.isin(["=", "<"]).to_numpy(dtype=bool) & ~value_na & (value.fillna(1).to_numpy() == 0)
+        comp.isin(["=", "<"]).to_numpy(dtype=bool)
+        & ~value_na
+        & (value.fillna(1).to_numpy() == 0)
+        & ~np.asarray(has_exponent, dtype=bool)
     )
     zero = pd.array(is_zero, dtype="boolean")
 

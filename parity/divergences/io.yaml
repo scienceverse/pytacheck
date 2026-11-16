@@ -61,27 +61,14 @@
   ref: U16
   reason: "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.'), with Grobid's sentence tags unwrapped, body text squished (U27), reference DOIs broken by line breaks joined and URL hrefs printed only where their link is (U28)"
 "grobid12/.grobid_to_bibr.0956797617737129": *tei
-"grobid12/.grobid_to_bibr.203020": *tei
-"grobid12/.grobid_to_bibr.apis.hf.1181af": *tei
-"grobid12/.grobid_to_bibr.apis.hf.9c61e4": *tei
-"grobid12/.grobid_to_bibr.apis.tue.1181af": *tei
-"grobid12/.grobid_to_bibr.apis.tue.9c61e4": *tei
-"grobid12/.grobid_to_bibr.debruine-fret": *tei
-"grobid12/.grobid_to_bibr.debruine-sex": *tei
 "grobid12/.grobid_to_bibr.edges": *tei
-"grobid12/.grobid_to_bibr.preprint": *tei
-"grobid12/.grobid_to_bibr.published": *tei
-"grobid12/grobid_to_bibr.null_save.dir": *tei
 "grobid12/grobid_to_bibr.null_save.multiple_with_failure": *tei
 "grobid12/paper_table.upstream.eq": *tei
 "grobid12/paper_table.upstream.text": *tei
 "grobid12/paper_table.upstream.url": *tei
 "grobid12/paper_table.upstream.xref": *tei
-"grobid12/read.v12.published": *tei
 "grobid12/write_read.0956797617737129": *tei
 "grobid12/write_read.edges": *tei
-"grobid12/write_read.preprint": *tei
-"grobid12/write_read.published": *tei
 "grobid12/written.0956797615569889": &d64_tei
   kind: deliberate
   ref: D64
@@ -128,15 +115,6 @@
 "grobid12/module.all_urls.published": *module
 "grobid12/module.open_practices.preprint": *module
 "grobid12/module.open_practices.published": *module
-"grobid12/module.ref_consistency.published": *module
-"grobid12/module.ref_replication.published":
-  kind: r_bug_fixed
-  ref: U16
-  reason: "the reference text read from the TEI keeps the DOI link whole ('science.1224313'; metacheck: 'science .1224313', a space where the link's text is split over elements)"
-"grobid12/module.ref_summary.0956797615569889": *module
-"grobid12/module.ref_summary.debruine": *module
-"grobid12/module.ref_summary.preprint": *module
-"grobid12/module.ref_summary.published": *module
 "grobid12_review/module.all_p_values.review": *module
 "grobid12_review/module.all_urls.review": *module
 "grobid12_review/module.stat_check.review": *module

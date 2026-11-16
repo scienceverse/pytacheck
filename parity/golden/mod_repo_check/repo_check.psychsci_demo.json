@@ -3,7 +3,6 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "Repository https://github.com/Lak- was not listed: links to a GitHub account, not to a specific repository.",
     "Could not download https://researchbox.org/4377: download failed or resulted in an empty file (HTTP 404)"
   ],
   "value": {
@@ -18,8 +17,10 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "partial_repos",
       "naming_issues",
       "repo_metadata",
+      "ownership",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -118,15 +119,17 @@
         "v": [
           "#### Repositories that could not be checked",
           "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
-          "- https://osf.io/48ncu: An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
-          "- https://osf.io/5tbm9: An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
-          "- https://osf.io/629bx: An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
-          "- https://github.com/Lak-: links to a GitHub account, not to a specific repository",
+          "- https://osf.io/48ncu: An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
+          "- https://osf.io/5tbm9: An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
+          "- https://osf.io/629bx: An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
           "- https://researchbox.org/4377: ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)",
+          "Double-check permissions on repositories with no detectable files.",
+          "#### Whose Deposits",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/48ncu' target='_blank'>osf.io/48ncu<\/a>\", \n\"<a href='https://osf.io/5tbm9' target='_blank'>osf.io/5tbm9<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://github.com/Lak-ens/to_err_is_human' target='_blank'>github.com/Lak-ens/to_err_is_human<\/a>\", \n\"<a href='https://researchbox.org/4377' target='_blank'>researchbox.org/4377<\/a>\", \n\"<a href='10.5281/zenodo.2669586' target='_blank'>10.5281/zenodo.2669586<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\", \"text\", \"text\", \"text\", \"reference list\"\n), Whose = c(\"the authors', for this paper\", \"the authors', for this paper\", \n\"the authors', for this paper\", \"the authors', for this paper\", \n\"the authors', for this paper\", \"the authors' earlier code\"), \n    Why = c(\"a link in the main text, not shown to be anyone else's\", \n    \"a link in the main text, not shown to be anyone else's\", \n    \"a link in the main text, not shown to be anyone else's\", \n    \"a link in the main text, not shown to be anyone else's\", \n    \"a link in the main text, not shown to be anyone else's\", \n    \"an older reference by the authors\")), row.names = c(NA, \n-6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/48ncu' target='_blank'>osf.io/48ncu<\/a>\", \n\"<a href='https://osf.io/5tbm9' target='_blank'>osf.io/5tbm9<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://github.com/Lak-' target='_blank'>github.com/Lak-<\/a>\", \n\"<a href='https://researchbox.org/4377' target='_blank'>researchbox.org/4377<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\", \"github\", \"researchbox\"), \n    Error = c(\"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n    \"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n    \"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n    \"links to a GitHub account, not to a specific repository\", \n    \"ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)\"\n    ), \"All Files\" = c(0L, 0L, 0L, 0L, 0L), \"Data Files\" = c(0L, \n    0L, 0L, 0L, 0L), \"Code Files\" = c(0L, 0L, 0L, 0L, 0L), READMEs = c(0L, \n    0L, 0L, 0L, 0L), Archives = c(0L, 0L, 0L, 0L, 0L)), row.names = c(NA, \n-5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/48ncu' target='_blank'>osf.io/48ncu<\/a>\", \n\"<a href='https://osf.io/5tbm9' target='_blank'>osf.io/5tbm9<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://github.com/Lak-ens/to_err_is_human' target='_blank'>github.com/Lak-ens/to_err_is_human<\/a>\", \n\"<a href='https://researchbox.org/4377' target='_blank'>researchbox.org/4377<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\", \"github\", \"researchbox\"), \n    Error = c(\"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n    \"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n    \"An unexpected request was made:<br>GET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors<br>Expected mock file: api.osf.io/v2/guids/48ncu.*\", \n    NA, \"ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)\"\n    ), \"All Files\" = c(0L, 0L, 0L, 0L, 0L), \"Data Files\" = c(0L, \n    0L, 0L, 0L, 0L), \"Code Files\" = c(0L, 0L, 0L, 0L, 0L), READMEs = c(0L, \n    0L, 0L, 0L, 0L), Archives = c(0L, 0L, 0L, 0L, 0L)), row.names = c(NA, \n-5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "",
-          "README files were found in all repositories."
+          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document."
         ]
       },
       {
@@ -138,7 +141,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We could not check 5 repositories: https://osf.io/48ncu (An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*); https://osf.io/5tbm9 (An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*); https://osf.io/629bx (An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*); https://github.com/Lak- (links to a GitHub account, not to a specific repository); https://researchbox.org/4377 (ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)).\n-  We found 0 files in 5 repositories.\n-  We found 0 README files and 0 repositories without READMEs."
+          "\n-  We could not check 4 repositories: https://osf.io/48ncu (An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors\nExpected mock file: api.osf.io/v2/guids/48ncu.*); https://osf.io/5tbm9 (An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors\nExpected mock file: api.osf.io/v2/guids/48ncu.*); https://osf.io/629bx (An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors\nExpected mock file: api.osf.io/v2/guids/48ncu.*); https://researchbox.org/4377 (ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)).\n-  We found 1 empty repository.\n-  We found 0 files in 5 repositories.\n-  We found 0 README files and 1 repository without READMEs."
         ]
       },
       {
@@ -155,6 +158,9 @@
           "files_zip",
           "files_unknown",
           "naming_issues",
+          "repo_own",
+          "repo_others",
+          "ref_others",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -183,52 +189,79 @@
               0,
               0,
               0,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
               5
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0,
-              0,
-              0,
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0,
-              0,
-              0,
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0,
-              0,
-              0,
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0,
-              0,
-              0,
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0,
-              0,
-              0,
-              0
             ]
           },
           {
@@ -271,7 +304,7 @@
       },
       {
         "t": "df",
-        "nrow": 5,
+        "nrow": 4,
         "names": [
           "repo_url",
           "repo_type",
@@ -284,7 +317,6 @@
               "https://osf.io/48ncu",
               "https://osf.io/5tbm9",
               "https://osf.io/629bx",
-              "https://github.com/Lak-",
               "https://researchbox.org/4377"
             ]
           },
@@ -294,19 +326,40 @@
               "osf",
               "osf",
               "osf",
-              "github",
               "researchbox"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
-              "An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
-              "An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
-              "links to a GitHub account, not to a specific repository",
+              "An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
+              "An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
+              "An unexpected request was made:\nGET https://api.osf.io/v2/guids/48ncu?embed=bibliographic_contributors\nExpected mock file: api.osf.io/v2/guids/48ncu.*",
               "ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)"
             ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "files_listed"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
           }
         ]
       },
@@ -345,13 +398,29 @@
           "repo_url",
           "doi",
           "license",
-          "paper_id"
+          "readme",
+          "title",
+          "creators",
+          "published",
+          "updated",
+          "description",
+          "keywords",
+          "homepage",
+          "owner_type",
+          "owner_name",
+          "stars",
+          "forks",
+          "is_fork",
+          "paper_id",
+          "ownership",
+          "ownership_group",
+          "ownership_reason"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
-              "https://github.com/Lak-"
+              "https://github.com/Lak-ens/to_err_is_human"
             ]
           },
           {
@@ -362,6 +431,84 @@
           },
           {
             "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
             "v": [
               null
             ]
@@ -370,6 +517,512 @@
             "t": "chr",
             "v": [
               "to_err_is_human"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "source",
+          "repo_url",
+          "repo_type",
+          "ownership",
+          "ownership_group",
+          "ownership_reason",
+          "dep_title",
+          "dep_description",
+          "dep_creators",
+          "dep_orcids",
+          "dep_type",
+          "dep_related",
+          "dep_date",
+          "dep_year",
+          "osf_type",
+          "osf_category",
+          "osf_contributors",
+          "gh_owner_name",
+          "gh_stars",
+          "gh_forks",
+          "n_files",
+          "listed",
+          "has_data",
+          "has_code",
+          "pkg_layout",
+          "file_paper_words",
+          "context",
+          "sections",
+          "cites_others",
+          "cites_own",
+          "ref_text",
+          "ref_authors",
+          "ref_year",
+          "ref_title",
+          "citing",
+          "citing_sections",
+          "cff_dois",
+          "listing_cut",
+          "bib_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "text",
+              "text",
+              "text",
+              "reference"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/48ncu",
+              "https://osf.io/5tbm9",
+              "https://osf.io/629bx",
+              "https://github.com/Lak-ens/to_err_is_human",
+              "https://researchbox.org/4377",
+              "10.5281/zenodo.2669586"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osf",
+              "osf",
+              "osf",
+              "github",
+              "researchbox",
+              "zenodo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own_this",
+              "own_this",
+              "own_this",
+              "own_this",
+              "own_this",
+              "own_earlier_code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own",
+              "own",
+              "own",
+              "own",
+              "own",
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "an older reference by the authors"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "faux: Simulation for Factorial Designs"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Create datasets with factorial structure through simulation by specifying variable parameters."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Lisa DeBruine"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "0000-0002-7523-5539"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Software"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "isSupplementTo:https://debruine.github.io/faux/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "2023-02-03"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "2023"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This study was preregistered at https://osf.io/48ncu and on AsPredicted at https://aspredicted.org/by8i8v.pdf.",
+              "Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx.",
+              "Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx.",
+              "Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377.",
+              "Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method:Method",
+              "availability:Data Availability",
+              "availability:Data Availability",
+              "availability:Data Availability",
+              "availability:Data Availability",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https://doi.org/10.5281/10.5281/zenodo.2669586."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Debruine, Lisa"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "2025"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Faux: Simulation for Factorial Designs"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              ":"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "0"
             ]
           }
         ]
@@ -442,6 +1095,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.1",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

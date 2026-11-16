@@ -50,8 +50,10 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "significance",
-          "expanded"
+          "expanded",
+          "not_a_test"
         ],
         "v": [
           {
@@ -453,6 +455,42 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "nonsignificant",
               "nonsignificant",
               "nonsignificant",
@@ -521,6 +559,42 @@
               "The effect of Turning was not significant, F(1, 491) < 0.01, p = .99, ηp 2 < .001.",
               "The effect on benign envy was still not significant, yet the effect increased slightly, ΔM = -0.24, SE = 0.17, t(491) = -1.37, p = .17, d = -0.12, still tending in the predicted direction."
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
           }
         ]
       },
@@ -576,6 +650,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -15,8 +15,10 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "partial_repos",
       "naming_issues",
       "repo_metadata",
+      "ownership",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -176,6 +178,8 @@
           "#### Repositories that could not be checked",
           "These repositories are linked in the paper, but their contents could not be retrieved, so nothing below describes them. When the reason is that the platform did not answer, running the check again later may work.",
           "- https://figshare.com/s/5e01cc0cae4cf3e2e14f: private share link (figshare.com/s/...) cannot be resolved without a browser",
+          "#### Whose Deposits",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://figshare.com/s/5e01cc0cae4cf3e2e14f' target='_blank'>figshare.com/s/5e01cc0cae4cf3e2e14f<\/a>\", \n\"<a href='https://doi.org/10.6084/m9.figshare.18093368.v1' target='_blank'>doi.org/10.6084/m9.figshare.18093368.v1<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\"), Whose = c(\"the authors', for this paper\", \n\"the authors', for this paper\"), Why = c(\"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://figshare.com/s/5e01cc0cae4cf3e2e14f' target='_blank'>figshare.com/s/5e01cc0cae4cf3e2e14f<\/a>\", \n\"<a href='https://doi.org/10.6084/m9.figshare.18093368.v1' target='_blank'>doi.org/10.6084/m9.figshare.18093368.v1<\/a>\"\n), Platform = c(\"figshare\", \"figshare\"), Error = c(\"private share link (figshare.com/s/...) cannot be resolved without a browser\", \nNA), \"All Files\" = c(0L, 4L), \"Data Files\" = c(0L, 2L), \"Code Files\" = c(0L, \n0L), READMEs = 0:1, Archives = c(0L, 0L)), row.names = c(NA, \n-2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
@@ -211,6 +215,9 @@
           "files_zip",
           "files_unknown",
           "naming_issues",
+          "repo_own",
+          "repo_others",
+          "ref_others",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -278,6 +285,24 @@
           {
             "t": "int",
             "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               0
             ]
           },
@@ -322,6 +347,29 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
+          "repo_url",
+          "files_listed"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
           "file_name",
           "rule",
           "severity",
@@ -353,7 +401,19 @@
           "repo_url",
           "doi",
           "license",
-          "paper_id"
+          "title",
+          "creators",
+          "creator_orcids",
+          "published",
+          "description",
+          "keywords",
+          "resource_type",
+          "resource_subtype",
+          "related",
+          "paper_id",
+          "ownership",
+          "ownership_group",
+          "ownership_reason"
         ],
         "v": [
           {
@@ -380,8 +440,412 @@
           {
             "t": "chr",
             "v": [
+              "NA",
+              "Example Figshare dataset"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Jane Doe"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "2022-01-01"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NA",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "p_fs_mix",
               "p_fs_mix"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own_this",
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own",
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "source",
+          "repo_url",
+          "repo_type",
+          "ownership",
+          "ownership_group",
+          "ownership_reason",
+          "dep_title",
+          "dep_description",
+          "dep_creators",
+          "dep_orcids",
+          "dep_type",
+          "dep_related",
+          "dep_date",
+          "dep_year",
+          "osf_type",
+          "osf_category",
+          "osf_contributors",
+          "gh_owner_name",
+          "gh_stars",
+          "gh_forks",
+          "n_files",
+          "listed",
+          "has_data",
+          "has_code",
+          "pkg_layout",
+          "file_paper_words",
+          "context",
+          "sections",
+          "cites_others",
+          "cites_own",
+          "ref_text",
+          "ref_authors",
+          "ref_year",
+          "ref_title",
+          "citing",
+          "citing_sections",
+          "cff_dois",
+          "listing_cut"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_fs_mix",
+              "p_fs_mix"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://figshare.com/s/5e01cc0cae4cf3e2e14f",
+              "https://doi.org/10.6084/m9.figshare.18093368.v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "figshare",
+              "figshare"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own_this",
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own",
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NA",
+              "Example Figshare dataset"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NA",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Jane Doe"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "2022-01-01"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "2022"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              4
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
             ]
           }
         ]
@@ -489,6 +953,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.1",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

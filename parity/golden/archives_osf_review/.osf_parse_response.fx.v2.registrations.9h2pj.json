@@ -17,7 +17,12 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "description",
+      "date_created",
+      "date_registered",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -85,9 +90,39 @@
         "v": [
           "9h2pj"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This project aims to validate a new intellectual justice scale, first developed in a pilot test. Through an exploratory factor analysis (EFA), we established a 3-factor solution that we want to test using confirmatory factor analysis (CFA). If the scale works as intended, it will be tested against similar yet distinct concepts, to determine its construct validity. \n\nBased on pre‑test results, we expect the scale to demonstrate acceptable overall model fit, high internal consistency (e.g., Cronbach’s alpha or omega), and meaningful item loadings. Furthermore, we expect the scale to correlate moderately, yet not overly, with scales of similar construct (e.g. intellectual humility)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-02-26T14:35:24.643386"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-02-26T14:35:24.621911"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

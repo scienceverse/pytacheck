@@ -1058,6 +1058,7 @@ def test_an_osf_download_address_goes_straight_to_the_file_server(
     assert spec["url"] == "https://files.de-1.osf.io/v1/resources/x/abcde"
     assert spec["headers"]["Authorization"] == "Bearer osf-token"
     # a redirect that leaves the OSF, no redirect, and a failed request leave the address alone
+    dlm._OSF_FILE_SERVER_MEMO.clear()  # the address above is remembered now
     for response in (
         httpx.Response(302, headers={"Location": "https://cloud.example/blob?sig=1"}),
         httpx.Response(200, content=b"x"),

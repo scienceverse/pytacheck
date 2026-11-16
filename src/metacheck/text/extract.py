@@ -43,24 +43,62 @@ _URL_PATTERN = (
 # Differs from metacheck (U204, U205): "ps", "p's" and "p-values" are ways to
 # write p, a minus sign may be the Unicode one (U+2212, as text from PDFs has
 # it), and "x 10^-5" may be written with "×" and without "^" ("1.8 × 10 -6",
-# "6.1 × 10−5", which metacheck read as p = 1.8 and p = 6.1)
+# "6.1 × 10−5", which metacheck read as p = 1.8 and p = 6.1); metacheck 0.4.4.3
+# reads those too (#642)
 _MINUS_SIGN = "\u2212"  # U+2212, which text from PDFs often has for "-"
 _MINUS = f"-{_MINUS_SIGN}"
-_SCI_E = f"(e\\s*[{_MINUS}]\\d+)?"
-_SCI_10 = f"(\\s*[x\\*×]\\s*10\\s*\\^?\\s*[{_MINUS}]\\d+)?"
+# GROBID reads the minus sign as A with a grave accent and the multiplication sign as A with a
+# circumflex or a tilde in some PDFs ("p<2.2Â10 À16" was read as 2.2; #642)
+_SCI_MINUS = f"[{_MINUS}\u00c0]"
+_SCI_E = f"(e\\s*{_SCI_MINUS}\\d+)?"
+_SCI_10 = f"(\\s*[x\\*×\u00c2\u00c3]\\s*10\\s*\\^?\\s*{_SCI_MINUS}\\s*\\d+)?"
 # Eta, or the Latin letter that looks like it (U+019E), with an optional squared sign:
 # before a p, it is partial eta squared written with its subscript after it ("η² p = .06"),
 # which extract_p_values() and extract_eq() do not read as a p-value (metacheck 0.4.3.27,
 # #336)
 _ETA_P_PREFIX = "[\u03b7\u019e]\\s*[\u00b22\u2082]?\\s*"
+
+# Names written after p, glued or after a space, hyphen or underscore, that make it a corrected
+# or otherwise named p-value ("pFWE = .006", "p adj = .034", "P MCMC = 0.27", "p interaction =
+# .003", "pMantel < .01"): correction methods, names of p-values and names of tests. A fixed
+# list, so that "PSA (ng/ml) = 0.5" or "SD = 0" are not read as p-values (#21, #642). Not GLM:
+# "p GLM < 7.1" lost its exponent. Port of ``.p_subscripts``.
+_P_SUBSCRIPTS = (
+    "(?i:adj(?:usted)?|corr(?:ected)?|uncorr(?:ected)?|unc|fwer?|fdr|"
+    "bonf(?:erroni)?|holm|tukey|perm(?:uted|utation)?|boot|mcmc|"
+    "int(?:eraction)?|trend|het(?:erogeneity)?|cluster|svc|"
+    "anova|mantel|wilcox(?:on)?|mann.?whitney|mwu?|kruskal(?:.?wallis)?|kw|"
+    "kolmogorov(?:.?smirnov)?|ks|fisher|binom(?:ial)?|chi.?(?:2|sq(?:uared?)?)|"
+    "\u03c7\u00b2?2?|lrt|wald|log.?rank|t.?test|welch|dunn|games.?howell|"
+    "spearman|pearson)(?![\\w])"
+)
+
+# Numbers without a decimal point (#642): a whole first number before scientific notation
+# ("p < 1e-10", "p = 5 x 10 -8"), a capital E ("p = 2.4E-08" was read as 2.4), 10 to a power with
+# nothing before it ("p < 10 -15"), and a whole 0 or 1 ("p = 1")
+_P_SCI_E = f"[eE]\\s*{_SCI_MINUS}\\d+"
+_P_SCI_X = f"[x\\*\u00d7\u00c2\u00c3]\\s*10\\s*\\^?\\s*{_SCI_MINUS}\\s*\\d+"
+# what may follow a whole 0 or 1: a bracket, a semicolon, or a comma with no digit after it;
+# after 1 also a full stop or the end of the text. Not "p < 0." (the digits of "p < 0.05" were
+# lost), "p = 0,05", "p = 0·05", "p = 1/6", "P = 1 bar" or "p = 1 × 10⁻⁶"
+_P_END01 = r"\s*(?:[)\];]|,(?!\s*\d))"
+_P_NUMBER = (
+    r"n\.?s\.?"  # ns
+    r"|\d?\.\d+"  # a number with a decimal point
+    f"|[1-9](?=\\s*(?:{_P_SCI_E}|{_P_SCI_X}))"  # 1e-10, 5 x 10^-8
+    f"|10\\s*\\^?\\s*{_SCI_MINUS}\\s*\\d+"  # 10^-15, written "10 -15"
+    f"|0(?={_P_END01})"  # p = 0
+    f"|1(?={_P_END01}|\\s*\\.(?!\\s*\\d)|\\s*$)"  # p = 1
+)
 # A p right after eta takes the eta into the match, and those matches are left out
 _P_PATTERN = (
     f"(?:{_ETA_P_PREFIX})?"
-    r"\b[pP]-?(values?|s|['’]s)?\s*"  # ways to write p (or P)
+    r"\b[pP]-?(values?|s|['’]s)?"  # ways to write p (or P)
+    f"(?:[\\s_-]?{_P_SUBSCRIPTS})?\\s*"  # pFWE, p adj
     f"[{_OPS}]{{1,2}}\\s*"  # 1-2 operators
-    r"(n\.?s\.?|\d?\.\d+)"  # ns or valid numbers
-    f"\\s*{_SCI_E}"  # also match scientific notation
-    f"{_SCI_10}"
+    f"({_P_NUMBER})"  # ns or valid numbers
+    f"\\s*({_P_SCI_E})?"  # also match scientific notation
+    f"(\\s*{_P_SCI_X})?"
 )
 
 # A df-parenthetical: digits/commas/periods/whitespace, optionally with an
@@ -80,6 +118,9 @@ _BARE_SUBSCRIPT = f"\\b[gd]\\s+(?:av|z|rm|s)(?=\\s*[{_OPS}])"
 # partial eta squared with its subscript after it, "η² p = .06", is one statistic, not
 # "p = .06" (#336)
 _BARE_SUBSCRIPT += f"|{_ETA_P_PREFIX}[pP](?=\\s*[{_OPS}])"
+# a p with a correction or test name after a space, "p adj = .034", is one statistic: the name
+# was "adj" (#642)
+_BARE_SUBSCRIPT += f"|\\b[pP]s?[\\s_-]{_P_SUBSCRIPTS}(?=\\s*[{_OPS}])"
 _EQ_PATTERN = (
     r"(?:(Hedge.{0,3}|Cronbach.{0,2}|Cohen.{0,2}|\d{1,2}%)\s+)?"  # common prefix
     f"(?:{_BARE_SUBSCRIPT}|"
@@ -94,7 +135,12 @@ _EQ_PATTERN = (
     # numbers (a Unicode minus may have a space after it: "r = − 0.12"),
     # anything in [], or NS
     f"((?:{_MINUS_SIGN}\\s)?[0-9\\.,+\\-{_MINUS_SIGN}]*[0-9]|\\[[^\\]]+\\]|n\\.?\\s*s\\.?)"
-    f"\\s*{_SCI_E}"  # also match scientific notation
+    # 10 to a power with nothing before it, "p < 10 -15", was "10": kept below only for a
+    # p-value, as elsewhere "10 -15" can be a range (#642)
+    f"((?<=(?<![\\d.])10)\\s*\\^?\\s*{_SCI_MINUS}\\s*\\d+)?"
+    # also match scientific notation, with GROBID's A-accent readings of the minus and
+    # multiplication signs ("2.2Â10 À16"; #642)
+    f"\\s*{_SCI_E}"
     f"{_SCI_10}"
 )
 
@@ -180,21 +226,38 @@ def extract_urls(paper: Any) -> pd.DataFrame:
     return urls.loc[~is_email.to_numpy(dtype=bool)].reset_index(drop=True)
 
 
+def _p_name(text: Any) -> list[str | None]:
+    """Port of ``.p_name()``: the correction or test name after the p of each p-value.
+
+    As ``extract_p_values()`` matched it ("FWE" in "pFWE < .05", "adj" in "p adj = .03");
+    ``NA`` for a plain p (#642).
+    """
+    rx = compile_r(f"^[pP](?:-?values?|s|['\u2019]s)?[\\s_-]?({_P_SUBSCRIPTS}).*$", perl=True)
+    out: list[str | None] = []
+    for t in text:
+        m = None if is_missing(t) else rx.search(str(t).strip())
+        out.append(m.group(1) if m else None)
+    return out
+
+
 def extract_p_values(paper: Any) -> pd.DataFrame:
     """List all p-values in the text (port of ``extract_p_values()``).
 
     Returns the matched text (e.g. ``"p = 0.04"``) with its document location,
-    plus ``p_comp`` (the comparator) and ``p_value`` (the number; ``NaN`` for
-    ``"n.s."``). Text such as "the p-value is 0.03" is deliberately not
-    matched; scientific notation (``5.0 x 10^-2``, ``5.0e-2``) and the
-    comparators ``= < > ~ ≈ ≠ ≤ ≥ ≪ ≫`` are. Strings are searched as a text
-    table (metacheck fails on a character vector; U150).
+    plus ``p_comp`` (the comparator), ``p_value`` (the number; ``NaN`` for
+    ``"n.s."``) and ``p_name`` (the correction or test name after the p, as in
+    ``"pFWE = .006"`` or ``"p adj = .034"``; ``NA`` for a plain p). Text such as "the p-value is
+    0.03" is deliberately not matched; scientific notation (``5.0 x 10^-2``, ``5.0e-2``,
+    ``5E-2``, ``10^-15``) and the comparators ``= < > ~ ≈ ≠ ≤ ≥ ≪ ≫`` are. A p-value written as a
+    whole 0 or 1 is found only after "=", "~" or "≈", when a bracket, a semicolon or a comma
+    follows it, and when its sentence reports a test (metacheck 0.4.4.3, #642). Strings are
+    searched as a text table (metacheck fails on a character vector; U150).
     """
     from metacheck._values import as_float
+    from metacheck.stats.helpers import _reports_test, _sci_text
 
-    p = text_search(
-        _strings_table(paper), _P_PATTERN, return_="match", perl=True, ignore_case=False
-    )
+    table = _strings_table(paper)
+    p = text_search(table, _P_PATTERN, return_="match", perl=True, ignore_case=False)
     if not isinstance(p, pd.DataFrame):  # pragma: no cover - strings became a table
         raise TypeError("$ operator is invalid for atomic vectors")
     is_eta = p["text"].map(lambda t: isinstance(t, str) and t.startswith(("\u03b7", "\u019e")))
@@ -207,14 +270,44 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
         if len(parts) < 2:
             raise IndexError("subscript out of bounds")
         values.append(parts[1])
-    values = gsub(r"\s", "", values)
-    # a Unicode minus is a minus, and "×" and a missing "^" are allowed (U204, U205)
-    values = gsub(_MINUS_SIGN, "-", values, fixed=True)
-    values = gsub(r"[x*×]10\^?", "e", values)
+    # the one reader of written scientific notation, shared with the matcher's _norm_value()
+    values = _sci_text(values, ten_power=True)
     p = p.copy()
     p["p_comp"] = pd.Series(comps, index=p.index, dtype="string")
     p["p_value"] = pd.Series([as_float(v) for v in values], index=p.index, dtype="float64")
+    # the name after the p: a raw and a corrected p-value of one test are two rows
+    p["p_name"] = pd.Series(_p_name(texts), index=p.index, dtype="string")
+
+    # A whole 0 or 1 is a p-value only after "=", "≈" or "~" ("0 < p < 1" bounds a probability,
+    # and "p < 1" says nothing), and only when its sentence reports a test: "p = 1" is
+    # otherwise often a probability or a model parameter ("with p = 1", "ARIMA values p = 0")
+    whole = grepl(f"[{_OPS}]\\s*[01]$", trimws(texts))
+    if any(whole):
+        idx = [i for i, w in enumerate(whole) if w]
+        ok = [comps[i] in ("=", "==", "\u2248", "~") for i in idx]
+        sent = text_search(table, _P_PATTERN, return_="sentence", perl=True, ignore_case=False)
+        by = [
+            c
+            for c in ("paper_id", "section_id", "paragraph_id", "text_id")
+            if c in p.columns and c in sent.columns
+        ]
+        keys: dict[tuple[Any, ...], int] = {}
+        for j in range(len(sent)):
+            keys.setdefault(tuple(_key_part(sent[c].iloc[j]) for c in by), j)
+        sentence = []
+        for i in idx:
+            jj = keys.get(tuple(_key_part(p[c].iloc[i]) for c in by)) if by else None
+            sentence.append(None if jj is None else sent["text"].iloc[jj])
+        zero = [p["p_value"].iloc[i] == 0 for i in idx]
+        reports = _reports_test(sentence, zero)
+        drop = {i for i, k, r in zip(idx, ok, reports, strict=True) if not (k and r)}
+        p = p.loc[[i not in drop for i in range(len(p))]].reset_index(drop=True)
     return p
+
+
+def _key_part(x: Any) -> str:
+    """One ``paste()`` part of a row key: ``NA`` is the text "NA"."""
+    return "NA" if is_missing(x) else str(x)
 
 
 def _empty_eq() -> pd.DataFrame:
@@ -320,6 +413,14 @@ def _eq_of_table(table: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+_TEN_POWER = compile_r("^10(?=\\s|\\^|\u00c0)\\s*\\^?\\s*[-\u00c0]\\s*\\d+$", perl=True)
+
+
+def _sub_ten(v: str) -> str:
+    """``sub("^10(?=\\s|\\^|À)\\s*\\^?\\s*[-À]\\s*\\d+$", "10", v, perl = TRUE)"""
+    return "10" if _TEN_POWER.search(v) else v
+
+
 def _eq_frame(
     texts: list[str],
     text_id: pd.Series,
@@ -353,6 +454,10 @@ def _eq_frame(
     # ("− 0.12" gives "-0.12"); metacheck matched no such value (U205)
     rhs = gsub(f"^{_MINUS_SIGN}\\s?", "-", rhs, perl=True)
     rhs = gsub(_MINUS_SIGN, "-", rhs, fixed=True)
+    # "10 -15" is 10 to a power only for a p-value; for another statistic the value stays "10",
+    # as before (#642)
+    is_p = grepl(f"^[pP](?:s|-?values?|['\u2019]s)?(?:[\\s_-]?{_P_SUBSCRIPTS})?$", lhs, perl=True)
+    rhs = [v if p_ else _sub_ten(v) for v, p_ in zip(rhs, is_p, strict=True)]
 
     # set group equal to sentence for now: each sentence is numbered within its
     # own paper, by the rank of its text_id among the paper's text_ids (a missing

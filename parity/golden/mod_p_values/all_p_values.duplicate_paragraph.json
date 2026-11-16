@@ -48,7 +48,8 @@
           "header",
           "section_type",
           "p_comp",
-          "p_value"
+          "p_value",
+          "p_name"
         ],
         "v": [
           {
@@ -140,6 +141,15 @@
               0.2,
               0.05
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
           }
         ]
       },
@@ -147,7 +157,7 @@
         "t": "chr",
         "v": [
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p = .20\", \"p < .05\", \"p = .20\", \"p < .05\"\n), Sentence = c(\"No difference was found (p = .20).\", \"The other test was imprecise (p < .05).\", \n\"No difference was found (p = .20).\", \"The other test was imprecise (p < .05).\"\n)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
-          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
+          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2, 5.0e-2, 5E-2 or 10^-15, and a p with a correction name such as pFWE or p adj. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
         ]
       },
       {
@@ -192,6 +202,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

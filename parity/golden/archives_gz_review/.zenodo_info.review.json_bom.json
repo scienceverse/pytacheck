@@ -18,6 +18,8 @@
       "creators",
       "keywords",
       "resource_type",
+      "resource_subtype",
+      "related",
       "journal",
       "owners",
       "license",
@@ -88,6 +90,18 @@
         ]
       },
       {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
         "t": "list",
         "names": null,
         "v": [
@@ -134,12 +148,14 @@
         "names": null,
         "v": [
           {
-            "t": "null"
+            "t": "list",
+            "names": null,
+            "v": []
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

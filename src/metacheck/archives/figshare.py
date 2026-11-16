@@ -49,6 +49,7 @@ from metacheck.archives.dataverse import (
     _verify_file_table,
     _zip_members,
 )
+from metacheck.utils import _meta_orcids, _meta_text
 
 __all__ = [
     "FIGSHARE_DOI_PREFIX_HOSTS",
@@ -226,7 +227,10 @@ def figshare_links(paper: Any) -> pd.DataFrame:
         f"(?:https?://)?(?:[a-z0-9.-]+\\.)?(?:{host_regex})"
         "/(?:articles|ndownloader|projects|collections|s)/[A-Za-z0-9/_.-]*"
         "|(?:https?://)?(?:doi\\.org/)?10\\.6084/m9\\.figshare\\.[0-9]+(?:\\.v[0-9]+)?"
-        f"|(?:https?://)?(?:doi\\.org/)?(?:{doi_prefix_regex})/[A-Za-z0-9._-]+(?:\\.v[0-9]+)?"
+        # an institution's DOI can have a "/" in its suffix (UCL's 10.5522/04/14484084.v1, Ag Data
+        # Commons' 10.15482/USDA.ADC/1529590), which cut the link at its second "/" before (#634)
+        f"|(?:https?://)?(?:doi\\.org/)?(?:{doi_prefix_regex})/[A-Za-z0-9._-]+"
+        "(?:/[A-Za-z0-9._-]+)?(?:\\.v[0-9]+)?"
     )
     other_fs = _link_matches(paper, fs_bare_regex, _figshare_prefilter())
 
@@ -448,6 +452,19 @@ def _bundle_articles(path: str, label: str, bundle_id: Any, host: str, pb: Any) 
         return list(dict.fromkeys(all_ids))
 
 
+def _figshare_related(rec: Any) -> str | None:
+    """The works a record belongs to: its ``resource_doi`` and ``related_materials``."""
+    rd = _empty_or(field(rec, "resource_doi"), "")
+    v: list[str] = []
+    if rd not in ("", None):
+        v.append(f"IsSupplementTo:{rd}")
+    for m in _elements(_empty_or(field(rec, "related_materials"), [])):
+        i = _empty_or(field(m, "identifier"), "")
+        if i not in ("", None):
+            v.append(f"{_empty_or(field(m, 'relation'), 'related')}:{i}")
+    return " | ".join(dict.fromkeys(v)) if v else None
+
+
 def figshare_info(
     figshare_url: Any,
     id_col: int | str = 1,
@@ -518,7 +535,9 @@ def figshare_info(
         id_info = []
         for fid in valid_ids:
             ckey = f"{host} {fid}"
-            cached = _repo_info_cache_get("figshare", ckey) if cache is True else None
+            cached = (
+                _repo_info_cache_get("figshare", ckey, need=["related"]) if cache is True else None
+            )
             if cached is not None:
                 id_info.append(cached)
                 continue
@@ -617,6 +636,16 @@ def _figshare_info(
         obj["publication_date"] = _field_cell(_empty_or(field(rec, "published_date"), None))
         obj["updated_date"] = _field_cell(_empty_or(field(rec, "modified_date"), None))
         obj["authors"] = _list_cell(authors)
+        # who made it (ORCID iDs), what kind of record it is ("dataset", "software", "preprint",
+        # "journal contribution"), what it says, and the article it belongs to (resource_doi):
+        # they tell the paper's own deposit from one it reuses (#634), and come in this same
+        # answer
+        obj["orcids"] = _cell(
+            _meta_orcids([field(a, "orcid_id") for a in _elements(authors_field or [])])
+        )
+        obj["resource_type"] = _cell(_empty_or(field(rec, "defined_type_name"), None))
+        obj["description"] = _cell(_meta_text(_empty_or(field(rec, "description"), "")))
+        obj["related"] = _cell(_figshare_related(rec))
         # a plain-string licence is the licence name (metacheck's `license$name`
         # fails on it: U34)
         licence = field_or_value(field(rec, "license"), "name")

@@ -122,6 +122,17 @@ def _key_state_in_tmp(tmp_path: Path) -> Iterator[None]:
 
 
 @pytest.fixture(autouse=True)
+def _no_remembered_file_servers() -> Iterator[None]:
+    """The OSF file servers a listing remembered (``_osf_file_server_remember``) are kept for the
+    session, so no test starts from another test's memo."""
+    from metacheck.archives import download
+
+    download._OSF_FILE_SERVER_MEMO.clear()
+    yield
+    download._OSF_FILE_SERVER_MEMO.clear()
+
+
+@pytest.fixture(autouse=True)
 def _concepts_as_metacheck(monkeypatch: pytest.MonkeyPatch) -> None:
     """data_check's concepts come from metacheck's rules/LLM tier, not the local
     classifier (a model download); tests/datacheck_concepts opts back in."""

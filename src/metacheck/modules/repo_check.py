@@ -186,6 +186,12 @@ _NAMING_SEVERITY_LABEL = {"bad": "Required", "suggestion": "Suggestion"}
         "(Dryad, confirmed live 2026-09-08) has its quota re-spent on every restart "
         "re-listing repositories nothing new needs fetching for, rather than on the actual "
         "(usually much smaller) download workload.",
+        "osf_max_requests": "the largest number of requests to the OSF for listing the components and "
+        "folders of one OSF project (default 50; `Inf` for no limit). The OSF needs one request per "
+        "folder, and a project with many components or folders, or one the OSF answers slowly for, can "
+        "take an hour to list in full. A project that reaches the limit is listed in part: it is named "
+        "in `partial_repos` and in the report. With `cache = TRUE`, the next run goes on where the "
+        "listing stopped (see [osf_info()]).",
         "model": "the LLM model name (`provider/model`, for example `groq/openai/gpt-oss-20b`), used only when `llm_use(TRUE)` "
         "for study grouping the deterministic passes cannot place",
         "params": "a named list passed to `llm()`, used only when `llm_use(TRUE)`",
@@ -203,6 +209,7 @@ def repo_check(
     peek_zips: bool = True,
     osf_license: bool = False,
     cache: bool = False,
+    osf_max_requests: float = 50,
     model: str | None = None,
     params: Mapping[str, Any] | None = None,
     skip_on_api_limit: bool = False,
@@ -216,6 +223,13 @@ def repo_check(
     grouping when ``llm_use(TRUE)``. *cache* also reuses zip listings
     peeked before, and *skip_on_api_limit* skips a zip whose host's rate limit
     is exhausted instead of waiting for its reset.
+
+    *osf_max_requests* is the largest number of requests to the OSF for listing the components
+    and folders of one OSF project (default 50; ``math.inf`` for no limit). The OSF needs one
+    request per folder, and a project with many components or folders, or one the OSF answers
+    slowly for, can take an hour to list in full. A project that reaches the limit is listed in
+    part: it is named in ``partial_repos`` and in the report. With *cache*, the next run goes on
+    where the listing stopped (see :func:`~metacheck.osf_info`).
 
     Listing needs no API key. Dryad, however, needs one to download file
     contents (:func:`~metacheck.dryad_pat` or :func:`~metacheck.dryad_auth`),
@@ -242,6 +256,7 @@ def repo_check(
             params,
             bar,
             skip_on_api_limit,
+            osf_max_requests,
         )
     finally:
         _tick(bar, "Repo Check Complete")
@@ -260,6 +275,7 @@ def _repo_check(
     params: Mapping[str, Any] | None,
     bar: Any,
     skip_on_api_limit: bool = False,
+    osf_max_requests: float = 50,
 ) -> dict[str, Any]:
     """The body of :func:`repo_check` (*bar* is the module's progress spinner)."""
     from metacheck.papers.tables import as_paper_list
@@ -291,12 +307,28 @@ def _repo_check(
         repos = rc.Repos(rc.empty_links())
     else:
         links, fs_links = rc.collect_links(paper)
+        # Damage from reading the PDF: a link in a security wrapper, two links run together, a
+        # home page alone, a link cut inside a name beside its longer form; then a link that a
+        # space split, with the rest after it in the text, is replaced by the joined form when
+        # only that form exists (metacheck/archives/link_versions.py, #634).
+        from metacheck.archives import _tick
+        from metacheck.archives.link_versions import _repo_links_joined, _repo_links_tidy
+
+        links = _repo_links_tidy(links, paper)
+        if len(links) > 0:
+            _tick(bar, "Checking links that may be split")
+            links = _repo_links_joined(links, paper)
         repos = rc.Repos(links)
         rc.flag_figshare_share_links(repos, fs_links)
 
+    # OSF projects whose listing stopped at `osf_max_requests`
+    osf_cut_urls: list[str] = []
+
     # get files ----
     if len(repos.df) > 0:
-        file_named, meta_named = _online_listings(repos, osf_license, cache, bar, first_pid)
+        file_named, meta_named = _online_listings(
+            repos, osf_license, cache, bar, first_pid, osf_max_requests, osf_cut_urls
+        )
     else:  # local_only, or no repository links: every platform's listing is empty
         file_named, meta_named = [("osf", rc.placeholder())], [("osf", rc.meta_frame())]
 
@@ -380,6 +412,7 @@ def _repo_check(
         repos.view_only,
         repos.rb_view_only,
         repos.rb_not_public,
+        osf_cut_urls,
     )
 
     # traffic_light ----
@@ -411,6 +444,10 @@ def _repo_check(
         "table": all_files,
         "summary_table": summary_table,
         "gated_repos": gated_repos,
+        # OSF projects listed only in part, because their listing stopped at `osf_max_requests`:
+        # paper_id, repo_url and files_listed. data_check and code_check warn that their files
+        # may be missing from what they download.
+        "partial_repos": flags["partial_repos"],
         "naming_issues": flags["naming_issues_by_paper"],
         "repo_metadata": repo_metadata,
         "roster_check": roster_check,
@@ -435,7 +472,13 @@ def _repo_check(
 
 
 def _online_listings(
-    repos: rc.Repos, osf_license: bool, cache: bool, bar: Any, first_pid: Callable[[], Any]
+    repos: rc.Repos,
+    osf_license: bool,
+    cache: bool,
+    bar: Any,
+    first_pid: Callable[[], Any],
+    osf_max_requests: float = 50,
+    osf_cut_urls: list[str] | None = None,
 ) -> tuple[list[tuple[str, pd.DataFrame]], list[tuple[str, pd.DataFrame]]]:
     """Every platform's ``(platform, file listing)`` and ``(platform, metadata)``, in R's order
     (for ``bind_rows()``)."""
@@ -443,7 +486,9 @@ def _online_listings(
     osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
     osf_paper_id = osf_ids[0] if osf_ids else first_pid()
 
-    osf_files, osf_meta = rc.list_osf(repos, osf_urls, osf_paper_id, bar, cache, osf_license)
+    osf_files, osf_meta = rc.list_osf(
+        repos, osf_urls, osf_paper_id, bar, cache, osf_license, osf_max_requests, osf_cut_urls
+    )
 
     github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
     gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
@@ -964,6 +1009,7 @@ def _report(
     osf_view_only: pd.DataFrame | None = None,
     rb_view_only: pd.DataFrame | None = None,
     rb_not_public: Sequence[str] = (),
+    osf_cut_urls: Sequence[str] = (),
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
     from metacheck.report.blocks import collapse_section, link, scroll_table
@@ -1042,6 +1088,46 @@ def _report(
     # repositories that could not be checked (yellow); the authors are told how to make the
     # link open the box. ResearchBox's API gives the same answer for a box that does not exist
     # and one that is not public.
+    # OSF projects listed only in part ----
+    # The listing of these stopped at `osf_max_requests` (see `listing_cut` in a listing).
+    in_tables = set(rc.vals(repos["repo_url"])) | (
+        set(rc.vals(all_files["repo_url"])) if "repo_url" in all_files else set()
+    )
+    cut_urls = [u for u in dict.fromkeys(osf_cut_urls) if u in in_tables]
+    first_paper: dict[Any, Any] = {}
+    for u, pid in zip(rc.vals(repos["repo_url"]), rc.vals(repos["paper_id"]), strict=True):
+        first_paper.setdefault(u, pid)
+    file_urls = rc.vals(all_files["repo_url"]) if "repo_url" in all_files else []
+    listed = [sum(1 for f in file_urls if f == u) for u in cut_urls]
+    partial_repos = pd.DataFrame(
+        {
+            "paper_id": pd.Series([first_paper.get(u) for u in cut_urls], dtype="string"),
+            "repo_url": pd.Series(cut_urls, dtype="string"),
+            "files_listed": pd.Series(listed, dtype="Int64"),
+        }
+    )
+    summary_partial = None
+    report_partial: list[str] = []
+    if len(partial_repos) > 0:
+        n_cut = len(partial_repos)
+        one = n_cut == 1
+        counts = ", ".join(f"{n} {plural(n, 'file', 'files')}" for n in listed)
+        report_partial = [
+            "#### Partly Listed Repositories\n\n"
+            f"{n_cut} {plural(n_cut, 'OSF project', 'OSF projects')} "
+            f"({', '.join(cut_urls)}) {'has' if one else 'have'} more folders than metacheck lists "
+            f"by default, so only part of {'its' if one else 'their'} files "
+            f"{'was' if sum(listed) == 1 else 'were'} listed "
+            f"({counts}), and what this "
+            f"report says about {'its' if one else 'their'} files describes only that part. Run "
+            "the check again with `cache = TRUE` to list the next part, or raise "
+            "`osf_max_requests`."
+        ]
+        summary_partial = (
+            f"We listed only part of {n_cut} OSF {plural(n_cut, 'project', 'projects')} "
+            "(the request limit was reached)."
+        )
+
     summary_not_public = None
     report_not_public: list[str] = []
     if rb_not_public:
@@ -1338,6 +1424,7 @@ def _report(
 
     blocks: tuple[Any, ...] = (
         *report_unchecked,
+        *report_partial,
         *report_not_public,
         *report_view_only,
         report_repo,
@@ -1362,6 +1449,7 @@ def _report(
         s
         for s in (
             summary_unchecked,
+            summary_partial,
             summary_not_public,
             summary_view_only,
             summary_repo,
@@ -1386,6 +1474,7 @@ def _report(
         "n_naming_bad": n_naming_bad,
         "n_closed_unreachable": len(unreachable),
         "n_unchecked": n_unchecked,
+        "partial_repos": partial_repos,
         "unchecked": unchecked,
         "n_view_only": len(view_only_projects),
         "view_only": view_only,

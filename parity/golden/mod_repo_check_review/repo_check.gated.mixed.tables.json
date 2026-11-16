@@ -14,6 +14,46 @@
         "nrow": 2,
         "names": [
           "Repository",
+          "Cited in",
+          "Whose",
+          "Why"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>",
+              "<a href='https://github.com/gzorg/bigrepo' target='_blank'>github.com/gzorg/bigrepo<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "the authors', for this paper",
+              "the authors', for this paper"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Repository",
           "Platform",
           "Error",
           "All Files",
@@ -257,6 +297,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.1",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

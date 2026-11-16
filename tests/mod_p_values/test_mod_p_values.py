@@ -373,12 +373,13 @@ def test_stat_p_exact_comparator_quirks() -> None:
     t = out.table
     # "==" is "=" (U127)
     assert t["p_comp"].tolist() == ["=", "~", "<", "=", "=", "<", "<", "<", "<"]
-    # U127: "p == .000" and "p < 0.0" are reported as zero ("==" is exact), and
-    # "p = 1.0e-400", which underflows to 0, is zero too (p_value == 0 in metacheck 0.4)
+    # U127: "p == .000" and "p < 0.0" are reported as zero ("==" is exact). A number written
+    # with an exponent is never a zero (metacheck 0.4.4.2): "p = 1.0e-400" underflows to 0, but
+    # it is a very small p, not a rounded .000
     assert t["imprecise"].tolist() == [False, True, False, False, False, False, True, True, False]
-    assert t["zero"].tolist() == [True, False, True, True, True, False, False, False, True]
+    assert t["zero"].tolist() == [True, False, True, False, False, False, False, False, False]
     assert out.summary_text == (
-        "We found 3 imprecise *p* values and 5 *p* values reported as exactly zero "
+        "We found 3 imprecise *p* values and 2 *p* values reported as exactly zero "
         "out of 9 detected *p* values."
     )
 

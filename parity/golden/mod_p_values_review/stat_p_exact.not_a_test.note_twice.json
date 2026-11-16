@@ -49,6 +49,7 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "expanded",
           "imprecise",
           "not_a_test",
@@ -168,6 +169,17 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001.",
               "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001.",
               "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001.",
@@ -266,6 +278,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

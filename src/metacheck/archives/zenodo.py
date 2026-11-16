@@ -364,7 +364,8 @@ def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool)
     n = len(valid_ids)
     _tick(pb, f"Starting Zenodo retrieval for {n} file{'' if n == 1 else 's'}...")
     cached_info = {
-        zid: _repo_info_cache_get("zenodo", zid) if cache is True else None for zid in valid_ids
+        zid: _repo_info_cache_get("zenodo", zid, need=["related"]) if cache is True else None
+        for zid in valid_ids
     }
     # metacheck fetches one record at a time; the uncached records are fetched
     # here in one polite batch instead (same requests, same results)
@@ -410,6 +411,8 @@ _INFO_COLUMNS = (
     "creators",
     "keywords",
     "resource_type",
+    "resource_subtype",
+    "related",
     "journal",
     "owners",
     "license",
@@ -418,6 +421,24 @@ _INFO_COLUMNS = (
     "views",
     "files",
 )
+
+
+def _zenodo_related(rel: Any) -> str | None:
+    """``.meta_related(rel, "relation", "identifier")`` with InvenioRDM's relation_type$id."""
+    from metacheck.utils import _meta_related
+
+    if isinstance(rel, list):
+        rel = [
+            {**r, "relation": r["relation_type"].get("id")}
+            if isinstance(r, dict)
+            and r.get("relation") is None
+            and isinstance(r.get("relation_type"), dict)
+            else r
+            for r in rel
+        ]
+    return _meta_related(rel, "relation", "identifier")
+
+
 _LIST_COLUMNS = frozenset({"creators", "keywords", "journal", "owners", "files"})
 _NUM_COLUMNS = frozenset({"downloads", "unique_downloads", "views"})
 
@@ -622,6 +643,12 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
                     _empty_or(field(rtype, "id"), _empty_or(field(metadata, "upload_type"))),
                 )
             ),
+            # the subtype tells a preprint or article from other publications; the related works
+            # name the paper a deposit belongs to ("isSupplementTo" a DOI), which tells the
+            # paper's own deposit from one it reuses (#634). InvenioRDM names a relation
+            # relation_type$id ("issupplementto"), Zenodo `relation`.
+            "resource_subtype": _scalar_field(_empty_or(field(rtype, "subtype"))),
+            "related": _scalar_field(_zenodo_related(field(metadata, "related_identifiers"))),
             "journal": field(metadata, "journal"),
             "owners": field(rec, "owners"),
             "license": _scalar_field(license_value),

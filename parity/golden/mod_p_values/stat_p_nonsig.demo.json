@@ -50,8 +50,10 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "significance",
-          "expanded"
+          "expanded",
+          "not_a_test"
         ],
         "v": [
           {
@@ -134,6 +136,13 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "nonsignificant",
               "nonsignificant"
             ]
@@ -143,6 +152,13 @@
             "v": [
               "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
               "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
             ]
           }
         ]
@@ -195,6 +211,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -54,6 +54,7 @@
   ref: U217
   reason: the repository's UTF-16 table (utf16_table.txt) is classified as data and read as 3 columns (Subject, Trial, RT), so the file and column counts, the summary and the tree differ; R keeps the name-based class (documentation) and reads no table
 
+
 # U100: data_check crashes
 "mod_data_check/data_check.nourl":
   kind: r_bug_fixed

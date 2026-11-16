@@ -17,7 +17,12 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "description",
+      "date_created",
+      "date_registered",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -85,9 +90,39 @@
         "v": [
           "a6y7r"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data repository"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-08-24T02:39:48.759898"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-08-24T02:39:48.740831"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

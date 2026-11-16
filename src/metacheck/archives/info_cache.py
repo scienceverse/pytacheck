@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import contextlib
 import os
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -79,9 +80,15 @@ def _repo_info_cache_path(host: str, id: Any) -> str:
     return os.path.join(_repo_info_cache_dir(), _repo_info_cache_key(host, id) + _SUFFIX)
 
 
-def _repo_info_cache_get(host: str, id: Any) -> Any:
-    """Port of R/repo-info-cache.R::.repo_info_cache_get(): a cached value, or ``None``."""
+def _repo_info_cache_get(host: str, id: Any, need: Sequence[str] | None = None) -> Any:
+    """Port of R/repo-info-cache.R::.repo_info_cache_get(): a cached value, or ``None``.
+
+    *need* names columns a stored table must have: one stored before a column was added to the
+    host's record (e.g. ``related``, #634) is not reused, so the host is asked again and the new
+    answer is stored.
+    """
     import orjson
+    import pandas as pd
 
     from metacheck.repro.tables import _decode
 
@@ -97,9 +104,12 @@ def _repo_info_cache_get(host: str, id: Any) -> Any:
             or payload.get("version") != _VERSION
         ):
             return None
-        return _decode(payload["value"])
+        value = _decode(payload["value"])
     except Exception:
         return None
+    if need and isinstance(value, pd.DataFrame) and not all(c in value.columns for c in need):
+        return None
+    return value
 
 
 def _repo_info_cache_put(host: str, id: Any, value: Any) -> Any:

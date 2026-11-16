@@ -17,6 +17,8 @@
       "creators",
       "keywords",
       "resource_type",
+      "resource_subtype",
+      "related",
       "journal",
       "owners",
       "license",
@@ -168,6 +170,20 @@
         "v": [
           "dataset",
           "dataset"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
         ]
       },
       {
@@ -375,6 +391,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

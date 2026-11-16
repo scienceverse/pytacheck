@@ -22,6 +22,36 @@ def cap_report(message: str) -> None:
     warnings.warn(message, stacklevel=2)
 
 
+def _cap_report_partial(partial: object, repo_urls: object) -> None:
+    """Port of ``.cap_report_partial()``: warn, once per repository, that one whose files are about
+    to be downloaded was listed only in part.
+
+    repo_check's listing of an OSF project stopped at ``osf_max_requests`` (its ``partial_repos``),
+    so files in folders not yet opened are not downloaded either. *partial* is that table,
+    *repo_urls* the repositories this download uses. Reported like a size cap (:func:`cap_report`),
+    so a missing file is never missing without a word.
+    """
+    import pandas as pd
+
+    if not isinstance(partial, pd.DataFrame) or len(partial) == 0 or "repo_url" not in partial:
+        return
+    urls = set(repo_urls) if repo_urls is not None else set()  # type: ignore[call-overload]
+    shown = partial[partial["repo_url"].isin(urls)].drop_duplicates("repo_url")
+    for _, row in shown.iterrows():
+        n = row.get("files_listed")
+        listed = (
+            ""
+            if n is None or pd.isna(n)
+            else f" ({int(n)} file{'' if int(n) == 1 else 's'} listed)"
+        )
+        cap_report(
+            f"Repository {row['repo_url']} was listed only in part{listed}: the OSF listing "
+            "stopped at the request limit, so files in folders not yet opened are not "
+            "downloaded. Run again with `cache = TRUE` to list the next part, or raise "
+            "`osf_max_requests`."
+        )
+
+
 def _cap_size_str(bytes: float | None) -> str:
     """Port of ``.cap_size_str()``: a byte count as a short string (``"5.4 GB"``)."""
     if bytes is None or (isinstance(bytes, float) and math.isnan(bytes)):

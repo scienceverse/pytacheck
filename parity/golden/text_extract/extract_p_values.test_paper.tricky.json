@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 25,
+    "nrow": 26,
     "names": [
       "text_id",
       "section_id",
@@ -16,7 +16,8 @@
       "header",
       "section_type",
       "p_comp",
-      "p_value"
+      "p_value",
+      "p_name"
     ],
     "v": [
       {
@@ -30,6 +31,7 @@
           2,
           3,
           3,
+          4,
           4,
           4,
           4,
@@ -76,12 +78,14 @@
           0,
           0,
           0,
+          0,
           0
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
           0,
           0,
           0,
@@ -122,6 +126,7 @@
           "p=ns",
           "p = 2.2e-16",
           "p < 1.5 x 10^-5",
+          "p = 3 × 10^-4",
           "p < .05",
           "p-value = .03",
           "pvalue < .04",
@@ -153,6 +158,7 @@
           "Scientific: p = 2.2e-16, p < 1.5 x 10^-5, p = 3 × 10^-4, p < .05e - 3",
           "Scientific: p = 2.2e-16, p < 1.5 x 10^-5, p = 3 × 10^-4, p < .05e - 3",
           "Scientific: p = 2.2e-16, p < 1.5 x 10^-5, p = 3 × 10^-4, p < .05e - 3",
+          "Scientific: p = 2.2e-16, p < 1.5 x 10^-5, p = 3 × 10^-4, p < .05e - 3",
           "p-values: p-value = .03, pvalue < .04, p value = .05",
           "p-values: p-value = .03, pvalue < .04, p value = .05",
           "Unicode minus p = −0.05 and p=.5e-2",
@@ -172,6 +178,7 @@
       {
         "t": "chr",
         "v": [
+          "6c4258abe0fec3",
           "6c4258abe0fec3",
           "6c4258abe0fec3",
           "6c4258abe0fec3",
@@ -226,12 +233,14 @@
           "Test",
           "Test",
           "Test",
+          "Test",
           "Test"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "unknown",
           "unknown",
           "unknown",
           "unknown",
@@ -272,6 +281,7 @@
           "=",
           "=",
           "<",
+          "=",
           "<",
           "=",
           "<",
@@ -302,6 +312,7 @@
           null,
           2.2e-16,
           1.5e-05,
+          0.0003,
           0.05,
           0.03,
           0.04,
@@ -318,9 +329,40 @@
           0.05,
           0.05
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.9",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -682,7 +682,9 @@ def _osf_files(info: pd.DataFrame) -> pd.DataFrame:
     return take(info, keep)
 
 
-def _osf_listing(urls: list[str], pb: Any, cache: bool) -> pd.DataFrame:
+def _osf_listing(
+    urls: list[str], pb: Any, cache: bool, max_requests: float = math.inf
+) -> pd.DataFrame:
     """``lapply(urls, osf_info(x, recursive = TRUE)) |> bind_rows()`` with ``repo_name``."""
     from metacheck._r import bind_rows
     from metacheck.archives._parallel import map_ordered
@@ -692,7 +694,8 @@ def _osf_listing(urls: list[str], pb: Any, cache: bool) -> pd.DataFrame:
     unique_urls = list(dict.fromkeys(urls))
     with _request_session():
         listings = map_ordered(
-            lambda x: osf_info(x, recursive=True, pb=pb, cache=cache), unique_urls
+            lambda x: osf_info(x, recursive=True, pb=pb, cache=cache, max_requests=max_requests),
+            unique_urls,
         )
     by_url = dict(zip(unique_urls, listings, strict=True))
     parts = []
@@ -711,8 +714,13 @@ def list_osf(
     pb: Any,
     cache: bool,
     osf_license: bool = False,
+    max_requests: float = 50,
+    cut_urls: list[str] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The OSF block: list files, follow registrations to their source projects.
+
+    A project whose listing stopped at *max_requests* is added to *cut_urls*, with the project
+    a registration of it was registered from.
 
     Returns the files and, with *osf_license*, the licence of each OSF
     repository left in ``repos`` (one ``?embed=license`` request each).
@@ -720,7 +728,16 @@ def list_osf(
     osf_files_df = placeholder()
     reg_pairs: list[tuple[Any, str]] = []
     if osf_urls:
-        osf_files_df = _list_osf_files(repos, osf_urls, osf_paper_id, pb, cache, reg_pairs)
+        osf_files_df = _list_osf_files(
+            repos,
+            osf_urls,
+            osf_paper_id,
+            pb,
+            cache,
+            reg_pairs,
+            max_requests,
+            cut_urls if cut_urls is not None else [],
+        )
     meta = meta_frame()
     if osf_license is True:
         meta = _osf_license_meta(repos, reg_pairs)
@@ -809,12 +826,17 @@ def _list_osf_files(
     pb: Any,
     cache: bool,
     reg_pairs: list[tuple[Any, str]],
+    max_requests: float = 50,
+    cut_urls: list[str] | None = None,
 ) -> pd.DataFrame:
     from metacheck._r import bind_rows
 
+    if cut_urls is None:
+        cut_urls = []
     osf_files_df = placeholder()
     try:
-        osf_info_df = _quiet(lambda: _osf_listing(osf_urls, pb, cache))
+        osf_info_df = _quiet(lambda: _osf_listing(osf_urls, pb, cache, max_requests))
+        cut_urls.extend(_cut_urls(osf_info_df))
 
         # a link OSF does not know (an invalid id) has no osf_type: when no
         # link resolved there is no osf_type column at all
@@ -892,7 +914,8 @@ def _list_osf_files(
         parent_urls_new = setdiff(parent_urls_all, osf_urls)
         closed_parent_urls: list[Any] = []
         if parent_urls_new:
-            parent_info = _quiet(lambda: _osf_listing(parent_urls_new, pb, cache))
+            parent_info = _quiet(lambda: _osf_listing(parent_urls_new, pb, cache, max_requests))
+            cut_urls.extend(_cut_urls(parent_info))
             if "kind" in parent_info.columns:
                 parent_files = _osf_files(parent_info)
                 if len(parent_files) > 0:
@@ -969,7 +992,21 @@ def _list_osf_files(
                     repo_url=pd.Series(moved, index=osf_files_df.index, dtype="string")
                 )
         repos.flag_unflagged(osf_urls, msg)
+    # A registration's files are kept under the project it was registered from, so that project
+    # counts as listed in part as well.
+    reg_map_final: dict[Any, str] = {}
+    for name, parent in reg_pairs:
+        reg_map_final.setdefault(name, parent)
+    cut_urls[:] = unique([*cut_urls, *(reg_map_final[u] for u in cut_urls if u in reg_map_final)])
     return osf_files_df
+
+
+def _cut_urls(listing: pd.DataFrame) -> list[str]:
+    """The ``repo_name`` of the OSF listings that stopped at their request limit."""
+    if "listing_cut" not in listing.columns or "repo_name" not in listing.columns:
+        return []
+    cut = listing["listing_cut"].fillna(False).to_numpy(dtype=bool)
+    return unique(u for u, c in zip(vals(listing["repo_name"]), cut, strict=True) if c)
 
 
 # -- GitHub / GitLab ----------------------------------------------------------
@@ -996,10 +1033,20 @@ def list_git(
     if not urls:
         return files_df, meta_frame()
 
+    from metacheck.archives.link_versions import _repo_link_unhyphenated
+
+    if host == "github":
+        from metacheck.archives.github import github_repo as exists
+    else:
+        from metacheck.archives.gitlab import gitlab_repo as exists
+    invalid = f"invalid or inaccessible {'GitHub' if host == 'github' else 'GitLab'} repository"
+
     results: dict[str, Any] = {}
     for url in urls:
         cached = _repo_info_cache_get(host, url) if cache is True else None
-        if cached is not None:
+        # a GitHub listing stored before the repository's own description was kept (`info`)
+        # is asked for again
+        if cached is not None and (host != "github" or cached.get("info") is not None):
             results[url] = cached
             continue
         try:
@@ -1013,9 +1060,38 @@ def list_git(
             }
             if host == "gitlab":
                 result["license"] = None
+        # A repository that does not exist may have a hyphen a line break added
+        # ("Betha-nyL/DeepKoopman"): the form without it is listed instead, and `repo_url`
+        # names it (archives/link_versions.py).
+        if result.get("reason") == invalid:
+            alt = _repo_link_unhyphenated(url, exists)
+            if alt is not None:
+                try:
+                    alt_result = tree_files(alt)
+                except Exception:
+                    alt_result = None
+                if alt_result is not None and alt_result.get("gated") is not True:
+                    result = {**alt_result, "repo_url": alt}
         if cache is True and _repo_info_list_ok(result):
             _repo_info_cache_put(host, url, result)
         results[url] = result
+
+    # the links found without a hyphen take the place of the links as written
+    moved = {u: r["repo_url"] for u, r in results.items() if not _na(r.get("repo_url"))}
+    if moved:
+        repos.df = (
+            repos.df.assign(
+                repo_url=pd.Series(
+                    [moved.get(u, u) for u in vals(repos.df["repo_url"])],
+                    dtype="string",
+                    index=repos.df.index,
+                )
+            )
+            .drop_duplicates()
+            .reset_index(drop=True)
+        )
+        results = {moved.get(u, u): r for u, r in results.items()}
+        urls = unique(moved.get(u, u) for u in urls)
 
     for url in urls:
         r = results[url]

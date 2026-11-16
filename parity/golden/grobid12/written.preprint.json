@@ -4041,7 +4041,7 @@
       "      \"formatted\": null",
       "    },",
       "    {",
-      "      \"text\": \"Adams, R. B., & Kleck, R. E. (2005). Effects of direct and averted gaze on the perception of facially communicated emotion. Emotion, 5(1), 3-11. https://doi.org/10.1037/1528- 3542.5.1.\",",
+      "      \"text\": \"Adams, R. B., & Kleck, R. E. (2005). Effects of direct and averted gaze on the perception of facially communicated emotion. Emotion, 5(1), 3-11. https://doi.org/10.1037/1528-3542.5.1.\",",
       "      \"text_id\": 493,",
       "      \"paragraph_id\": 105,",
       "      \"section_id\": 34,",
@@ -4417,7 +4417,7 @@
       "      \"formatted\": null",
       "    },",
       "    {",
-      "      \"text\": \"Reisenzein, R., Bördgen, S., Holtbernd, T., & Matz, D. (2006). Evidence for strong dissociation between emotion and facial displays: The case of surprise. Journal of Personality and Social Psychology, 91(2), 295-315. https://doi.org/10.1037/0022- 3514.91.2.295\",",
+      "      \"text\": \"Reisenzein, R., Bördgen, S., Holtbernd, T., & Matz, D. (2006). Evidence for strong dissociation between emotion and facial displays: The case of surprise. Journal of Personality and Social Psychology, 91(2), 295-315. https://doi.org/10.1037/0022-3514.91.2.295\",",
       "      \"text_id\": 540,",
       "      \"paragraph_id\": 152,",
       "      \"section_id\": 34,",
@@ -4561,7 +4561,7 @@
       "      \"formatted\": null",
       "    },",
       "    {",
-      "      \"text\": \"Van de Ven, N., Zeelenberg, M., & Pieters, R. (2012). Appraisal patterns of envy and related emotions. Motivation and Emotion, 36(2), 195-204. https://doi.org/10.1007/s11031- 011-9235-8\",",
+      "      \"text\": \"Van de Ven, N., Zeelenberg, M., & Pieters, R. (2012). Appraisal patterns of envy and related emotions. Motivation and Emotion, 36(2), 195-204. https://doi.org/10.1007/s11031-011-9235-8\",",
       "      \"text_id\": 558,",
       "      \"paragraph_id\": 170,",
       "      \"section_id\": 34,",
@@ -15306,6 +15306,6 @@
       "}"
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -691,7 +691,9 @@ def test_failed_registration_source_restores_only_registrations(
         }
     )
 
-    def fake_listing(urls: list[str], pb: object, cache: bool) -> pd.DataFrame:
+    def fake_listing(
+        urls: list[str], pb: object, cache: bool, max_requests: float = 50
+    ) -> pd.DataFrame:
         if urls == [reg, user]:
             return listing
         raise RuntimeError("source lookup failed")
@@ -742,7 +744,9 @@ def test_private_project_read_through_a_view_only_link_is_named_once(
             }
         )
 
-    def fake_listing(urls: list[str], pb: object, cache: bool) -> pd.DataFrame:
+    def fake_listing(
+        urls: list[str], pb: object, cache: bool, max_requests: float = 50
+    ) -> pd.DataFrame:
         parts = []
         for u in urls:
             f = info(u)

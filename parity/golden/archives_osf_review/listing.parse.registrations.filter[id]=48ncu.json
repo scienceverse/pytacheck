@@ -17,7 +17,12 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "description",
+      "date_created",
+      "date_registered",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -85,9 +90,39 @@
         "v": [
           "48ncu"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This is my test description"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-11-28T19:14:24.639665"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-11-28T19:14:24.608826"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

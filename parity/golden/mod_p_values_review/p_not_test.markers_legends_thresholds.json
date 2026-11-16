@@ -22,7 +22,7 @@
       "marker",
       "marker",
       "legend",
-      null,
+      "threshold",
       null,
       "legend",
       "marker",
@@ -31,6 +31,6 @@
       "threshold"
     ]
   },
-  "metacheck_version": "0.4.3.21",
+  "metacheck_version": "0.4.4.3",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
