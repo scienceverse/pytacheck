@@ -976,6 +976,118 @@ ws(
     " m.pd.DataFrame({'file_name': ['ex1/a.R', 'b.R'], 'target_path': ['study-ex1/code/a.R', None]})",
 )
 
+ws(
+    "lib_loc",
+    f"list(libloc.R = c('library(hydroGOF, lib.loc = \"C:/Users/me/R/win-library/4.0\")', 'x <- 1', 'library(mypkg, lib.loc = \"lib\")')),"
+    f" list(libloc.R = {EMPTY_RW_R}), data.frame(file_name = 'libloc.R', target_path = 'libloc.R')",
+    f"{{'libloc.R': ['library(hydroGOF, lib.loc = \"C:/Users/me/R/win-library/4.0\")', 'x <- 1', 'library(mypkg, lib.loc = \"lib\")']}},"
+    f" {{'libloc.R': {EMPTY_RW_PY}}}, m.pd.DataFrame({{'file_name': ['libloc.R'], 'target_path': ['libloc.R']}})",
+)
+
+# ---------------------------------------------------------------------------
+# helpers of upstream 0.4.3.28 (#591, #594, #598, #615, #620)
+# ---------------------------------------------------------------------------
+
+deps(
+    "commented_install_address",
+    chr_(
+        '# install.packages("embryogrowth")',
+        '# install.packages("http://www.ese.u-psud.fr/epc/conservation/CRAN/embryogrowth.tar.gz", repos=NULL, type="source")',
+        "#devtools::install_github('someone/HelpersMG')",
+        "library(embryogrowth); library(HelpersMG)",
+        'remotes::install_github("user/mypkg")  # this one is used',
+        "library(mypkg)",
+    ),
+)
+
+
+def _py(module: str, fn: str, call_args: str) -> str:
+    return f"lambda m: __import__('metacheck.repro.{module}', fromlist=['_'])._{fn}({call_args})"
+
+
+_LIB_LOC_LINES = (
+    "'library(hydroGOF, lib.loc = \"C:/Users/me/Documents/R/win-library/4.0\")',"
+    " \"suppressPackageStartupMessages(require(sp, lib.loc='/home/me/R/x86_64'))\","
+    ' \'requireNamespace("raster", lib.loc = "~/Rlibs", quietly = TRUE)\','
+    " 'library(mypkg, lib.loc = \"lib\")', '# library(y, lib.loc = \"C:/z\")', 'library(dplyr)'"
+)
+expr(
+    "drop_author_lib_loc",
+    f"{{ x <- metacheck:::.repro_drop_author_lib_loc(c({_LIB_LOC_LINES})); list(txt = x$txt, paths = x$paths) }}",
+    "lambda m: (lambda r: {'txt': r[0], 'paths': r[1]})("
+    f"m.core._repro_drop_author_lib_loc([{_LIB_LOC_LINES}]))",
+)
+for _id, _ref, _msgs in (
+    ("url", "http://a.org/p.tar.gz", "c('x', \"cannot open URL 'http://a.org/p.tar.gz'\")"),
+    ("http_404", "u/r", "'HTTP error 404.\\n  Not Found'"),
+    ("other_failure", "u/r", "c('non-zero exit status', 'compilation failed')"),
+):
+    expr(
+        f"download_failed_msg.{_id}",
+        f"metacheck:::.repro_download_failed_msg('{_ref}', {_msgs})",
+        f"lambda m: m.core._repro_download_failed_msg('{_ref}', {_msgs.replace('c(', '[').replace(')', ']', 1) if _msgs.startswith('c(') else '[' + _msgs + ']'})",
+    )
+for _id, _msg in (
+    (
+        "excel_file",
+        "Error in saveWorkbook(wb, paste0(wdoutputs, filename, \\\".xlsx\\\")) :\\n  cannot create file './outputs/Butterfly.xlsx', reason 'No such file or directory'",
+    ),
+    ("ggsave_dir", "Error in `ggsave()`:\\n! Cannot find directory '/sandbox/SERDP/5_figs/final'."),
+    (
+        "png_device",
+        "Error in png(\\\"figs/a.png\\\") : unable to start png() device\\nIn addition: Warning message:\\ncannot open file 'figs/a.png': No such file or directory",
+    ),
+    (
+        "python_open",
+        "Traceback (most recent call last):\\n  File \\\"a.py\\\", line 3, in <module>\\n    with open('out/res.txt', 'w') as f:\\nFileNotFoundError: [Errno 2] No such file or directory: 'out/res.txt'",
+    ),
+    (
+        "python_read",
+        "Traceback (most recent call last):\\n  File \\\"a.py\\\", line 3, in <module>\\n    df = pd.read_csv('data/x.csv')\\nFileNotFoundError: [Errno 2] No such file or directory: 'data/x.csv'",
+    ),
+    (
+        "r_read",
+        "Error in file(file, \\\"rt\\\") : cannot open the connection\\nIn addition: Warning message:\\ncannot open file 'data/x.csv': No such file or directory",
+    ),
+):
+    expr(
+        f"write_failed_folders.{_id}",
+        f'metacheck:::.repro_write_failed_folders("{_msg}")',
+        _py("layout", "repro_write_failed_folders", f'"{_msg}"'),
+    )
+for _id, _oc, _err, _extra in (
+    (
+        "errored",
+        "errored",
+        "Loading required package: x\\nError in f() : 0 arguments passed\\nCalls: source\\nExecution halted",
+        "",
+    ),
+    (
+        "missing_package",
+        "dependency_unavailable",
+        "Error in library(lme4) : there is no package called 'lme4'\\nExecution halted",
+        "",
+    ),
+    ("timed_out", "timed_out", "timed out after 3600s", ""),
+    ("no_message", "errored", "killed\\nthe script stopped without a message", ""),
+    ("ran_ok", "ran_ok", "x", ""),
+):
+    expr(
+        f"error_message.{_id}",
+        f"metacheck:::.repro_error_message('{_oc}', \"{_err}\")",
+        f"lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_error_message(['{_oc}'], [\"{_err}\"])",
+    )
+expr(
+    "error_message.python",
+    "metacheck:::.repro_error_message('errored', \"Traceback (most recent call last):\\n  File 'a.py', line 3\\nNameError: name 'x' is not defined\", python = TRUE)",
+    "lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_error_message(['errored'], [\"Traceback (most recent call last):\\n  File 'a.py', line 3\\nNameError: name 'x' is not defined\"], python=True)",
+)
+expr(
+    "read_failed_msg",
+    "metacheck:::.repro_read_failed_msg(c(NA, \"cannot open URL 'https://x.org/a.R': HTTP status was 404\"))",
+    "lambda m: __import__('metacheck.repro.outcomes', fromlist=['_'])._repro_read_failed_msg([None, \"cannot open URL 'https://x.org/a.R': HTTP status was 404\"])",
+)
+
 # ---------------------------------------------------------------------------
 # repro_run_scripts() (runs R on both sides)
 # ---------------------------------------------------------------------------

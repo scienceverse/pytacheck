@@ -57,6 +57,7 @@ from metacheck.report.render import (
     table_chunk,
     table_gfm,
 )
+from metacheck.stats.helpers import _stat_html_escape
 
 __all__ = [
     "DEFAULT_MODULES",
@@ -407,14 +408,13 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
     # without a summary text the summary line is "..." and the report still shows
     summary = _flatten(summary_text) if summary_text is not None else ["..."]
     report = module_output.report if module_output.report is not None else summary_text
-    # a failed module's report is its error message, plain text: as markdown,
-    # "<haven_labelled>" was taken as an HTML tag and left out of the page
-    # (metacheck 0.4.3.20)
-    if module_output.traffic_light == "fail" and report is not None:
-        report = _escape_failed(report)
     blocks: list[Any] | None = _flatten(report)
     if blocks is not None and all(isinstance(b, str) and b == "" for b in blocks):
         blocks = None
+    # a failed module's report is its error message, plain text: as markdown,
+    # "<haven_labelled>" was taken as an HTML tag and left out of the page
+    if module_output.traffic_light == "fail" and blocks is not None:
+        blocks = [_stat_html_escape(b) if isinstance(b, str) else b for b in blocks]
 
     hiw, validation = _how_it_works(module_output.module)
 
@@ -443,16 +443,6 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
         out.append(hiw)
     out.extend(validation)
     return out
-
-
-def _escape_failed(report: Any) -> Any:
-    from metacheck.stats.helpers import _stat_html_escape
-
-    if isinstance(report, str):
-        return _stat_html_escape(report)
-    if isinstance(report, list | tuple):
-        return [_stat_html_escape(b) if isinstance(b, str) else b for b in report]
-    return report
 
 
 def module_report(module_output: ModuleOutput, header: Any = 3) -> str:

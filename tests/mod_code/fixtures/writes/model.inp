@@ -1,0 +1,8 @@
+TITLE: two files
+DATA: FILE = "in.dat";
+VARIABLE: NAMES = y1-y3;
+MODEL: f BY y1-y3;
+SAVEDATA:
+  FILE = "fscores.dat";
+  SAVE = FSCORES;
+OUTPUT: sampstat;

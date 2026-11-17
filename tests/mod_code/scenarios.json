@@ -1069,5 +1069,22 @@
         ]
       }
     ]
+  },
+  "writes": {
+    "repos": [
+      {
+        "repo_url": "https://osf.io/writes",
+        "dir": "tests/mod_code/fixtures/writes",
+        "files": [
+          "clean.py",
+          "fit.m",
+          "lookup.txt",
+          "model.inp",
+          "model.sas",
+          "syntax.sps",
+          "trials.csv"
+        ]
+      }
+    ]
   }
 }

@@ -268,12 +268,12 @@ def _match_sandbox(sandbox: Any) -> str:
         did not reproduce (`summary_table$repro_not_downloaded_n` counts them apart).
         `not_read` is a file metacheck could not read, so it was not run; the light is
         then not green, as the file may read and run on another computer, and
-        `table$error_message` says why. `empty` is a file with nothing in it, which
-        is not run or counted as a script.
-        For a script that did not run through, `table$error_message` is its error,
-        short (at most 300 characters): the error line of its output, which names a
-        package that is not there, with the address it asked for when it needed the
-        internet, or the time limit it reached; `table$reason` sorts it into a kind.
+        `table["error_message"]` says why. `empty` is a file with nothing in it, which
+        is not run or counted as a script. For a script that did not run through,
+        `table["error_message"]` is its error, short (at most 300 characters): the
+        error line of its output, which names a package that is not there, with the
+        address it asked for when it needed the internet, or the time limit it
+        reached; `table["reason"]` sorts it into a kind.
         `skipped_time_limit` is a script not started, or stopped, because
         `total_timeout` had run out. A timeout means "still running at
         the cutoff", not a failure, so raise `timeout` for legitimately long-running
@@ -359,8 +359,9 @@ def _match_sandbox(sandbox: Any) -> str:
         "declared dependencies into a throwaway temp library before running (CRAN\n"
         "via `install.packages`, GitHub/URL via `remotes`; Python packages via\n"
         '`pip install --prefix` with `sandbox = "docker"`, and `pip install\n'
-        '--target` with `sandbox = "process"`). If FALSE, nothing is installed: a script needing\n'
-        "an absent package simply errors, recorded as its outcome. If `None` (the\n"
+        '--target` with `sandbox = "process"`). If FALSE, nothing is installed: a\n'
+        "script needing an absent package simply errors, recorded as its outcome. If\n"
+        "`None` (the\n"
         "default), this is FALSE, except that the R packages the scripts load are\n"
         "installed when `recorded_versions = TRUE` and the repository records\n"
         "versions for them.",
@@ -650,7 +651,7 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     # keeps the network off (#568, item 21)
     a["net"] = _repro_download_limits(a["internet"], a["max_file_size"], a["max_download_size"])
     # set when the first script starts, R or Python (see total_timeout)
-    a["run_state"] = {"script_deadline": None}
+    a["run_state"] = {"script_deadline": None, "prep_skipped_left": None}
 
     def pid(*dfs: Any) -> str | None:
         return h._pid(paper, *dfs)
@@ -745,16 +746,11 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     # Materialised root for statistical_output/ ---------------------------------
     sandbox_root: str | None = None
     if stat_output:
-        from metacheck.repro.core import _repro_clock_deadline, repro_materialize_layout
+        from metacheck.repro.core import repro_materialize_layout
         from metacheck.statout.stat_output import stat_output_write
 
         sandbox_root = _new_sandbox(keep_sandbox, cleanup)
-        repro_materialize_layout(
-            plan,
-            structure_df,
-            sandbox_root,
-            deadline=_repro_clock_deadline(a.get("total_timeout")),
-        )
+        repro_materialize_layout(plan, structure_df, sandbox_root)
         stat_output_write(stat_output, sandbox_root)
 
     # Non-R code with no way to check its results ------------------------------
@@ -906,23 +902,36 @@ def _download_on(download: Any) -> bool:
     return not (download is False or (isinstance(download, str) and download == "none"))
 
 
-def _read_text(path: str | None) -> tuple[list[str], str | None, str | None]:
-    """``code_read(path)``, for a local file that is not text what it is, and why a read failed.
+def _read_text(path: str | None) -> tuple[list[str], str | None]:
+    """``code_read(path)`` and, for a local file that is not text, what it is.
 
     A file that is not text (R data saved as ``.R``) gives no lines, as metacheck's
-    ``code_read()`` does (#568), instead of being decoded and scanned as code. A file that
-    could not be read gives no lines and keeps its error, as no lines would be run as an
-    empty script that "ran" without an error (metacheck #620).
+    ``code_read()`` does (#568), instead of being decoded and scanned as code.
+    """
+    txt, kind, _err = _read_text_err(path)
+    return txt, kind
+
+
+#: Why a file with no path could not be read (R: ``resolve_row_path()`` gave ``NA``).
+NO_COPY_MSG = "there is no copy of it and no link to it"
+
+
+def _read_text_err(path: str | None) -> tuple[list[str], str | None, str | None]:
+    """:func:`_read_text` and, when the read failed, why (#620).
+
+    A file that could not be read keeps its error: as no lines, it was written as an empty
+    script that "ran" without an error, so a script nobody had read was reported as
+    reproducible.
     """
     if path is None:
-        return [], None, "there is no copy of it and no link to it"
+        return [], None, NO_COPY_MSG
     if h._file_exists(path):
         from metacheck.repro.core import _repro_binary_kind
 
         kind = _repro_binary_kind(path)
         if kind is not None:
             return [], kind, None
-    txt, err = _read_code_error(path)
+    txt, err = _read_code_err(path)
     return (txt or []), None, err
 
 
@@ -1230,21 +1239,21 @@ def _resolver(r_files: pd.DataFrame, structure_df: Any) -> Any:
     return resolve
 
 
-def _read_code_error(path: str | None) -> tuple[list[str] | None, str | None]:
-    """``code_read(path)``, and the message of its error (both ``None`` for no path)."""
+def _read_code(path: str | None) -> list[str] | None:
+    """``code_read(path)`` (``None`` on an error)."""
+    return _read_code_err(path)[0]
+
+
+def _read_code_err(path: str | None) -> tuple[list[str] | None, str | None]:
+    """``code_read(path)`` and the error's message (``(None, message)`` when the read fails)."""
     if path is None:
         return None, None
     from metacheck.codecheck.core import code_read
 
     try:
         return [x if x is not None else "NA" for x in code_read(path)], None
-    except Exception as e:
-        return None, str(e) or type(e).__name__
-
-
-def _read_code(path: str | None) -> list[str] | None:
-    """``code_read(path)`` (``None`` on an error)."""
-    return _read_code_error(path)[0]
+    except Exception as exc:
+        return None, str(exc)
 
 
 def _assess_r(
@@ -1298,7 +1307,12 @@ def _assess_r(
         _repro_static_light,
         _repro_unique_script_names,
     )
-    from metacheck.repro.outcomes import _repro_absent_report, _repro_starts_app
+    from metacheck.repro.outcomes import (
+        _repro_absent_report,
+        _repro_error_message,
+        _repro_read_failed_msg,
+        _repro_starts_app,
+    )
     from metacheck.repro.recorded import (
         _repro_recorded_advice,
         _repro_recorded_preview,
@@ -1327,8 +1341,8 @@ def _assess_r(
     # 2. Byte-identical duplicates across repo mirrors -----------------------------
     # R reads each file once to hash it and again for raw_text_list; a row's path does
     # not depend on the other rows, so the first read is kept and reused.
-    reads = [_read_text(resolve(i)) for i in range(len(r_files))]
-    hashes: list[str | None] = [None if not r[0] else "\n".join(r[0]) for r in reads]
+    reads = [_read_text_err(resolve(i)) for i in range(len(r_files))]
+    hashes: list[str | None] = [None if not txt else "\n".join(txt) for txt, _, _ in reads]
     seen: set[str] = set()
     dup: list[bool] = []
     for hv in hashes:
@@ -1372,10 +1386,10 @@ def _assess_r(
     names = [str(f) for f in h._chr_col(r_files, "file_name")]
 
     # Read each file (raw, and the code of R Markdown/Quarto and R-kernel notebooks) ---
-    raw_texts: list[list[str]] = [r[0] for r in reads]
-    is_binary = [r[1] is not None for r in reads]
+    raw_texts: list[list[str]] = [txt for txt, _, _ in reads]
+    is_binary = [kind is not None for _, kind, _ in reads]
     # a file that could not be read keeps its error (#620)
-    read_errors: list[str | None] = [r[2] for r in reads]
+    r_read_errors: list[str | None] = [err for _, _, err in reads]
     code_texts: list[list[str]] = []
     is_rmd = grepl(r"\.(rmd|qmd)$", names, ignore_case=True)
     is_ipynb = grepl(r"\.ipynb$", names, ignore_case=True)
@@ -1389,9 +1403,9 @@ def _assess_r(
             try:
                 ext = code_extract_r(path) if is_rmd[i] else code_extract_py(path)
                 code_texts.append([] if ext is None else list(ext))
-            except Exception as e:
-                if read_errors[i] is None:
-                    read_errors[i] = str(e) or type(e).__name__
+            except Exception as exc:
+                if r_read_errors[i] is None:
+                    r_read_errors[i] = str(exc)
                 code_texts.append([])
         else:
             code_texts.append(raw_texts[i])
@@ -1619,14 +1633,12 @@ def _assess_r(
         if sniff_type[i] is None and _repro_starts_app(code_texts[i]):
             sniff_type[i] = "needs_a_person"
     # A file that could not be read is not run, and the check is to be done again (see the
-    # light below): it may read and run on another computer (#620). A file with nothing in it
-    # but spaces and line breaks is not run either, as running it says nothing, like a file
-    # that only defines functions.
-    from metacheck.repro.core import _repro_read_failed_msg
-
-    r_read_msg = _repro_read_failed_msg(read_errors)
+    # light below): it may read and run on another computer (#620). A file with nothing in
+    # it but spaces and line breaks is not run either, as running it says nothing, like a
+    # file that only defines functions.
+    r_read_msg = _repro_read_failed_msg(r_read_errors)
     for i in range(n_code):
-        if sniff_type[i] is None and read_errors[i] is not None:
+        if sniff_type[i] is None and r_read_errors[i] is not None:
             sniff_type[i] = "not_read"
     for i in range(n_code):
         if (
@@ -1822,12 +1834,7 @@ def _assess_r(
             if "reason" in run_results.columns
             else [None] * n_code
         )
-    else:
-        outcome_of = errtype_of = undefvar_of = reason_of = [None] * n_code
-    from metacheck.repro.outcomes import _repro_error_message
-
-    # the message of the failure, short (metacheck 0.4.3.20, #615; see _repro_error_message())
-    if run_results is not None:
+        # the message of the failure, short (#615)
         error_message_of = _pick(
             _repro_error_message(
                 h._chr_col(run_results, "outcome"),
@@ -1837,6 +1844,7 @@ def _assess_r(
             m_run,
         )
     else:
+        outcome_of = errtype_of = undefvar_of = reason_of = [None] * n_code
         error_message_of = [None] * n_code
     # a file that could not be read: why (#620)
     error_message_of = [
@@ -2136,14 +2144,20 @@ def _r_modifications(
             rt_names = h._chr_col(run_tbl, "file_name")
             for col_n, col_d, kind, sep in (
                 ("setwd_removed", "setwd_paths", "setwd_removed", ", "),
-                # a lib.loc folder on the authors' computer, removed (metacheck 0.4.3.11, #594)
+                # a lib.loc folder on the authors' computer, removed (#594)
                 (None, "lib_loc_removed", "lib_loc_removed", "; "),
                 ("family_replaced", "family_detail", "font_replaced", "; "),
             ):
                 if col_d not in run_tbl.columns:
                     continue
-                counts = [1] * len(run_tbl) if col_n is None else h._col(run_tbl, col_n)
-                for fn, n, p in zip(rt_names, counts, h._chr_col(run_tbl, col_d), strict=True):
+                if col_n is None:
+                    for fn, p in zip(rt_names, h._chr_col(run_tbl, col_d), strict=True):
+                        if h._nzchar(p):
+                            rows += [(fn, kind, x) for x in strsplit(p, sep, fixed=True)]
+                    continue
+                for fn, n, p in zip(
+                    rt_names, h._col(run_tbl, col_n), h._chr_col(run_tbl, col_d), strict=True
+                ):
                     if not h._na(n) and n > 0 and h._nzchar(p):
                         rows += [(fn, kind, x) for x in strsplit(p, sep, fixed=True)]
         # one row per library() call added (a script can get several)
@@ -2200,8 +2214,8 @@ def _r_modifications(
                     strict=True,
                 )
             ]
-        folders_made = ex.get("r_folders_made")
-        if folders_made is not None and len(folders_made):
+        folders = ex.get("r_folders_made")
+        if folders is not None and len(folders):
             later += [
                 (
                     s,
@@ -2209,12 +2223,10 @@ def _r_modifications(
                     f"made the folder {f}, where the script writes, and ran it once more",
                 )
                 for s, f in zip(
-                    h._chr_col(folders_made, "script"),
-                    h._chr_col(folders_made, "folder"),
-                    strict=True,
+                    h._chr_col(folders, "script"), h._chr_col(folders, "folder"), strict=True
                 )
             ]
-        # bind_rows(rw_rows, setwd, font, library, env, slash, old_default, stan,
+        # bind_rows(rw_rows, setwd, lib_loc, font, library, env, slash, old_default, stan,
         # run_after, later)
         extra = [
             part[["file_name", "change_type", "detail"]]

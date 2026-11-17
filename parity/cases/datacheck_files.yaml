@@ -1271,6 +1271,16 @@
       "$expr":
         "r": "Inf"
         "py": "float('inf')"
+- "id": "data_read_head.labelled_text.rds"
+  "r": "data_read_head"
+  "py": "metacheck.datacheck.files.data_read_head"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/labelled_text.rds"
+    "n_rows":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
 - "id": "data_read_head.does_not_exist.csv"
   "r": "data_read_head"
   "py": "metacheck.datacheck.files.data_read_head"

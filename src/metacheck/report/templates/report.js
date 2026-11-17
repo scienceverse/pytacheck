@@ -53,12 +53,12 @@
       var t = e.target;
       if (t && t.tagName === "BUTTON" && !t.disabled) show(parseInt(t.dataset.page, 10));
     });
+    // the "Show _MENU_ rows" menu: 10, 25, 50 or all (-1) rows per page (metacheck #408)
     if (menu) {
-      // the menu of rows per page: 10, 25, 50 or all (-1)
       menu.addEventListener("change", function () {
         var n = parseInt(menu.value, 10);
-        size = n > 0 ? n : rows.length;
-        pages = Math.ceil(rows.length / size);
+        size = n < 1 ? rows.length : n;
+        pages = Math.max(1, Math.ceil(rows.length / size));
         show(0);
       });
     }

@@ -60,8 +60,8 @@
   ref: U243
   reason: "validate() makes one paper per distinct paper_id, so ids 1, 1, 2 give 4 rows joined back to gt (R makes a paper per row, metacheck renames the second 1 to 1~2 (U208) and the module's rows for it join to nothing: 6 rows)"
 
-# metacheck 0.4.4.3: the default modules' ownership output and summary_table columns (D143)
+# metacheck 0.4.4.3: the default modules' ownership output and summary_table columns (D141)
 "report/report_repository.default_modules":
   kind: deliberate
-  ref: D143
+  ref: D141
   reason: "metacheck 0.4.4.3 adds the ownership table and the repo_own/repo_others/ref_others summary columns to repo_check, code_check and data_check; pytacheck does not port the ownership engine yet"

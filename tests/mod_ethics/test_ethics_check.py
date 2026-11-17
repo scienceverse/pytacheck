@@ -517,42 +517,44 @@ def test_module_search_equals_the_search_before_the_core(fixtures_dir: Path) -> 
         pd.testing.assert_frame_equal(got, expected.reset_index(drop=True), check_dtype=False)
 
 
-# -- metacheck 0.4.3.20: a paper that states no participants took part ------------
+# -- 0.4.3.28: a paper that states no participants took part (dq96z_v2) ---------
 
 
-def test_no_participants_needs_no_ethics_statement() -> None:
-    # dq96z_v2: "subjects recruited" is in the sentence that says they were not subjects
+def test_no_participants_statement_needs_no_ethics() -> None:
+    # dq96z_v2: the participant phrase "subjects recruited" is in the sentence that says
+    # the professionals were not subjects
     mo = run(
         pc.test_paper(
             "The professionals described their own work as collaborators in the projects, "
             "not as subjects recruited for a study."
         )
     )
-    assert not mo.summary_table["needs_ethics"].iloc[0]
-    assert mo.summary_table["states_no_participants"].iloc[0]
+    assert mo.summary_table["needs_ethics"].tolist() == [False]
+    assert mo.summary_table["states_no_participants"].tolist() == [True]
     assert mo.traffic_light == "na"
     assert "The paper states that no human or animal participants took part" in mo.report
     assert "not as subjects recruited" in mo.report
-    for s in (
+    for s in [
         "No human subjects were involved in this study.",
         "As this study did not involve human subjects, institutional review board approval "
         "was not required.",
         "Ethics Statement: No animals nor human participants were involved in the production "
         "and analysis of the data used for this article.",
-    ):
+    ]:
         mo = run(pc.test_paper(["Participants were recruited online.", s]))
-        assert not mo.summary_table["needs_ethics"].iloc[0], s
+        assert mo.summary_table["needs_ethics"].tolist() == [False], s
 
 
-def test_a_negation_near_a_participant_phrase_reports_a_study_with_participants() -> None:
-    for s in (
+def test_negation_near_a_participant_phrase_is_not_a_statement() -> None:
+    # these report a study with participants
+    for s in [
         "No participants were excluded.",
         "No participants were minors.",
         "Only children without G6PD deficiency were enrolled in the study.",
         "This study would not have been possible without our participants.",
         "No participant was included more than once across training samples.",
-    ):
+    ]:
         mo = run(pc.test_paper(["Participants were recruited online.", s]))
-        assert mo.summary_table["needs_ethics"].iloc[0], s
-        assert not mo.summary_table["states_no_participants"].iloc[0], s
+        assert mo.summary_table["needs_ethics"].tolist() == [True], s
+        assert mo.summary_table["states_no_participants"].tolist() == [False], s
         assert mo.traffic_light == "red", s

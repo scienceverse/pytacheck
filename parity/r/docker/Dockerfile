@@ -30,4 +30,10 @@ ARG METACHECK_REV
 LABEL pytacheck.metacheck-rev=$METACHECK_REV
 COPY install-suggests.R /tmp/install-suggests.R
 RUN Rscript /tmp/install-suggests.R
+# A Python interpreter on the PATH, as in the Parity workflow, where `uv run` puts the
+# project's Python 3.12 first: reproducibility_check parses Python files with it, and
+# without one it writes "no Python interpreter was found" into its report
+RUN apt-get update -q \
+ && apt-get install -q -y --no-install-recommends python3 \
+ && rm -rf /var/lib/apt/lists/*
 ENV HOME=/tmp

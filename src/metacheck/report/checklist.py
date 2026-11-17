@@ -185,7 +185,6 @@ def _section_id(mo: Any) -> str:
 def _single_check(mo: Any, table: TableRenderer) -> pd.DataFrame:
     """A module without ``checks`` as one check: light, summary, report."""
     from metacheck.report.file_tree import file_tree_drop_from_report
-    from metacheck.stats.helpers import _stat_html_escape
 
     tl = _field(mo, "traffic_light") or "info"
     report: Any = _field(mo, "report")
@@ -196,11 +195,9 @@ def _single_check(mo: Any, table: TableRenderer) -> pd.DataFrame:
     report_text = _joined(report, table)
     summary = _joined(_field(mo, "summary_text"), table)
     details = "" if tl == "fail" or report_text == summary else report_text
-    # an error message is plain text: as markdown, "<haven_labelled>" was taken as an HTML
-    # tag and left out of the page (metacheck 0.4.3.20)
-    found = (
-        f"This module failed to run: {_stat_html_escape(report_text)}" if tl == "fail" else summary
-    )
+    # an error message is plain text: as markdown, "<haven_labelled>" was taken as an
+    # HTML tag and left out of the page
+    found = f"This module failed to run: {_escape(report_text)}" if tl == "fail" else summary
     status = _LIGHT_STATUS.get(tl, "info")
     # a module with its own section shows its details there, not folded here
     note = ""

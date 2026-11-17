@@ -300,29 +300,11 @@ class Repos:
 
     df: pd.DataFrame
     warnings_: list[str] = field(default_factory=list)
-    #: private OSF projects read through a view-only link in the paper (metacheck 0.4.3.15):
-    #: ``paper_id``, ``repo_url`` (the link) and ``project`` (its plain address)
-    view_only: pd.DataFrame = field(
-        default_factory=lambda: pd.DataFrame(
-            {
-                "paper_id": pd.Series([], dtype="string"),
-                "repo_url": pd.Series([], dtype="string"),
-                "project": pd.Series([], dtype="string"),
-            }
-        )
-    )
-    #: private ResearchBox boxes read through a peer-review link whose box is not public
-    #: (metacheck 0.4.3.23, #621), as ``view_only``; and the links without a passcode to a
-    #: box that ResearchBox does not show, which readers cannot open
-    rb_view_only: pd.DataFrame = field(
-        default_factory=lambda: pd.DataFrame(
-            {
-                "paper_id": pd.Series([], dtype="string"),
-                "repo_url": pd.Series([], dtype="string"),
-                "project": pd.Series([], dtype="string"),
-            }
-        )
-    )
+    #: private OSF projects and ResearchBox boxes read through a view-only or
+    #: peer-review link in the paper: paper_id, repo_url (the link), project
+    osf_view_only: pd.DataFrame = field(default_factory=lambda: view_only_frame())
+    rb_view_only: pd.DataFrame = field(default_factory=lambda: view_only_frame())
+    #: ResearchBox links without a passcode to a box ResearchBox does not show
     rb_not_public: list[str] = field(default_factory=list)
     #: R ``repo_record_type``: each DSpace, EPrints and Invenio record's own type by ``repo_url``
     #: (the first given for a url), read by the "Publications" step (metacheck #637)
@@ -376,6 +358,19 @@ class Repos:
 
     def keep(self, mask: Sequence[bool]) -> None:
         self.df = take(self.df, mask)
+
+
+def view_only_frame(
+    paper_id: Iterable[Any] = (), repo_url: Iterable[Any] = (), project: Iterable[Any] = ()
+) -> pd.DataFrame:
+    """The ``view_only`` table: paper_id, repo_url (the link) and project (its plain address)."""
+    return pd.DataFrame(
+        {
+            "paper_id": pd.Series(list(paper_id), dtype="string"),
+            "repo_url": pd.Series(list(repo_url), dtype="string"),
+            "project": pd.Series(list(project), dtype="string"),
+        }
+    )
 
 
 def repo_rows(paper_id: Any, repo_url: Any, repo_type: str, repo_error: Any) -> pd.DataFrame:
@@ -781,41 +776,44 @@ def _osf_license_meta(repos: Repos, reg_pairs: list[tuple[Any, str]]) -> pd.Data
     return meta_frame(urls, NA_SCALAR, licenses)
 
 
-def _view_only_projects(repos: Repos, osf_info_df: pd.DataFrame, otypes: list[Any]) -> None:
-    """Name the private projects read through a view-only link, and drop their plain links."""
-    if not {"osf_id", "public", "repo_name"} <= set(osf_info_df.columns):
+def _osf_view_only(repos: Repos, osf_info_df: pd.DataFrame, otypes: list[Any]) -> None:
+    """Name a private OSF project read through a view-only link, once.
+
+    The OSF lists its files through the link and says the project is not public
+    (``public`` False on its node). The paper's plain link to the same project is
+    then not a repository that could not be checked, and is left out; the project
+    is named as private instead, as the authors can now make it public.
+    """
+    if not {"osf_id", "public"} <= set(osf_info_df.columns):
         return
+    osf_id = vals(osf_info_df["osf_id"])
     public = vals(osf_info_df["public"])
-    osf_id = [None if _na(x) else str(x) for x in vals(osf_info_df["osf_id"])]
     names = vals(osf_info_df["repo_name"])
+    ourls = vals(osf_info_df["osf_url"])
     in_repos = set(vals(repos.df["repo_url"]))
-    picked: list[tuple[Any, str]] = []
     seen: set[Any] = set()
-    for t, pub, oid, name in zip(otypes, public, osf_id, names, strict=True):
-        is_view_only = (
-            t == "nodes" and not _na(pub) and not bool(pub) and oid and "view_only=" in oid
-        )
-        if is_view_only and name not in seen and name in in_repos:
+    vo: list[tuple[Any, str]] = []  # (repo_name, project id)
+    for t, p, i, name in zip(otypes, public, osf_id, names, strict=True):
+        if t == "nodes" and p is False and not _na(i) and "view_only=" in i and name not in seen:
             seen.add(name)
-            picked.append((name, re.sub(r"[?/].*$", "", str(oid))))
-    if not picked:
+            if name in in_repos:
+                vo.append((name, re.sub(r"[?/].*$", "", i, flags=re.S)))
+    if not vo:
         return
-    vo_ids = {oid for _, oid in picked}
-    plain = [
+    vo_ids = {i for _, i in vo}
+    plain = {
         u
-        for t, u, oid in zip(otypes, vals(osf_info_df["osf_url"]), osf_id, strict=True)
-        if t == "private" and oid is not None and re.sub(r"[?/].*$", "", oid) in vo_ids
-    ]
-    repos.keep([not v for v in r_in(vals(repos.df["repo_url"]), plain)])
+        for t, i, u in zip(otypes, osf_id, ourls, strict=True)
+        if t == "private" and not _na(i) and re.sub(r"[?/].*$", "", i, flags=re.S) in vo_ids
+    }
+    repos.keep([u not in plain for u in vals(repos.df["repo_url"])])
     first_paper: dict[Any, Any] = {}
-    for u, pid in zip(vals(repos.df["repo_url"]), vals(repos.df["paper_id"]), strict=True):
+    for pid, u in zip(vals(repos.df["paper_id"]), vals(repos.df["repo_url"]), strict=True):
         first_paper.setdefault(u, pid)
-    repos.view_only = pd.DataFrame(
-        {
-            "paper_id": pd.Series([first_paper.get(n) for n, _ in picked], dtype="string"),
-            "repo_url": pd.Series([n for n, _ in picked], dtype="string"),
-            "project": pd.Series([f"https://osf.io/{oid}" for _, oid in picked], dtype="string"),
-        }
+    repos.osf_view_only = view_only_frame(
+        [first_paper.get(n) for n, _ in vo],
+        [n for n, _ in vo],
+        [f"https://osf.io/{i}" for _, i in vo],
     )
 
 
@@ -900,14 +898,7 @@ def _list_osf_files(
         if private:
             repos.flag(private, "private")
 
-        # A private project read through a view-only link in the paper (metacheck 0.4.3.15):
-        # the OSF lists its files through that link, and says the project is not public
-        # (public = FALSE on its node). The paper's plain link to the same project is then
-        # not a repository that could not be checked, and is left out; the project is named
-        # as private instead, as the authors can now make it public (8dn4g_v1 linked
-        # osf.io/j9sdn both ways: one copy was read, the other reported as "could not
-        # check ... (private)").
-        _view_only_projects(repos, osf_info_df, otypes)
+        _osf_view_only(repos, osf_info_df, otypes)
 
         # follow registrations back to their origin project
         parent_urls_all = unique(p for _, p in reg_pairs)
@@ -1149,14 +1140,9 @@ def list_researchbox(
     """The ResearchBox block (the box is downloaded and unzipped to list it).
 
     Returns the files and the licence of each box that was downloaded (one
-    ``box_meta`` request per box, which also gives the box's status; a box that
-    could not be downloaded is not asked about again). ResearchBox puts every box
-    under CC BY 4.0, but names it in each box's metadata since 2026-10.
-
-    Private boxes (metacheck #621) are kept on *repos*: ``rb_not_public``, the links
-    without a passcode to a box that ResearchBox does not show (it does not exist or
-    is not public), and ``rb_view_only``, the boxes read through a peer-review link
-    whose box is not public, named like OSF's view-only projects.
+    ``box_meta`` request per box; a box that could not be downloaded is not
+    asked about again). ResearchBox puts every box under CC BY 4.0, but names
+    it in each box's metadata since 2026-10.
     """
     from metacheck.archives.researchbox import (
         _rbox_box_meta,
@@ -1185,26 +1171,20 @@ def list_researchbox(
                 if _na(n):
                     reasons.setdefault(u, f"ResearchBox did not serve the box: {e}")
             repos.fill_errors(reasons)
-            # the API answers "does not exist or is not public"; the web page asks for a
-            # captcha. A link with its passcode that fails this way is not a box readers
-            # were meant to open without it.
+            # the API answers "does not exist or is not public"; the web page asks
+            # for a captcha. A link with its passcode that fails this way is not a
+            # box readers were meant to open without it.
             repos.rb_not_public = unique(
-                [
-                    u
-                    for u, e, n in zip(
-                        vals(failed["rb_url"]),
-                        vals(failed["error"]),
-                        vals(failed["name"]),
-                        strict=True,
-                    )
-                    if _na(n)
-                    and not _na(e)
-                    and re.search(
-                        "does not exist or is not public|not public: ResearchBox asks for a captcha",
-                        str(e),
-                    )
-                    and _rbox_code(u) is None
-                ]
+                u
+                for u, e, n in zip(
+                    vals(failed["rb_url"]), vals(failed["error"]), vals(failed["name"]), strict=True
+                )
+                if _na(n)
+                and not _na(e)
+                and re.search(
+                    "does not exist or is not public|not public: ResearchBox asks for a captcha", e
+                )
+                and _rbox_code(u) is None
             )
         rb = _filter_not_dir(rb)
         names = _col(rb, "name")
@@ -1233,38 +1213,31 @@ def list_researchbox(
         statuses: list[str | None] = []
         for u in rb_ok:
             try:
-                box = _rbox_box_meta(u, cache=cache)
-                licenses.append(box["RB_license"])
-                statuses.append(box["RB_status"])
+                m = _rbox_box_meta(u, cache=cache)
+                licenses.append(_as_chr(m["RB_license"].iloc[0]))
+                statuses.append(_as_chr(m["RB_status"].iloc[0]))
             except Exception:
                 licenses.append(None)
                 statuses.append(None)
         meta = meta_frame(rb_ok, NA_SCALAR, licenses)
-        # A box read through its peer-review link is private unless ResearchBox says it is
-        # public; without a key the status is not known, and the passcode in the link shows
-        # it is a link meant for peer review.
+        # A box read through its peer-review link is private unless ResearchBox says
+        # it is public; without a key the status is not known, and the passcode in
+        # the link shows it is a link meant for peer review.
         rb_vo = [
             u
-            for u, st in zip(rb_ok, statuses, strict=True)
-            if _rbox_code(u) is not None and st != "public"
+            for u, s in zip(rb_ok, statuses, strict=True)
+            if _rbox_code(u) is not None and s != "public"
         ]
         if rb_vo:
-            hits = [
-                (pid, u)
-                for pid, u in zip(
-                    vals(repos.df["paper_id"]), vals(repos.df["repo_url"]), strict=True
-                )
-                if u in rb_vo
-            ]
-            rows = list(
-                dict.fromkeys((pid, u, f"https://researchbox.org/{_rbox_id(u)}") for pid, u in hits)
-            )
-            repos.rb_view_only = pd.DataFrame(
-                {
-                    "paper_id": pd.Series([r[0] for r in rows], dtype="string"),
-                    "repo_url": pd.Series([r[1] for r in rows], dtype="string"),
-                    "project": pd.Series([r[2] for r in rows], dtype="string"),
-                }
+            keys: dict[Any, Any] = {}
+            for pid, u in zip(vals(repos.df["paper_id"]), vals(repos.df["repo_url"]), strict=True):
+                if u in rb_vo:
+                    keys.setdefault((pid, u), None)
+            rows = list(keys)
+            repos.rb_view_only = view_only_frame(
+                [p for p, _ in rows],
+                [u for _, u in rows],
+                [f"https://researchbox.org/{_rbox_id(u)}" for _, u in rows],
             )
     return files_df, meta
 

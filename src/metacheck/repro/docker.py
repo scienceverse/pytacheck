@@ -354,6 +354,14 @@ def _repro_docker_image_for(
     return f"rocker/r-ver:{tag}"
 
 
+def _deparse1_lgl(values: Sequence[bool]) -> str:
+    """``deparse1()`` of a logical vector."""
+    vals = ["TRUE" if v else "FALSE" for v in values]
+    if not vals:
+        return "logical(0)"
+    return vals[0] if len(vals) == 1 else "c(" + ", ".join(vals) + ")"
+
+
 def _deparse1_chr(values: Sequence[str | None] | None) -> str:
     """``deparse1()`` of a character vector (``NULL`` for ``None``)."""
     if values is None:
@@ -549,9 +557,10 @@ _INSTALL_LOOP = [
     "    }",
     '    list(ok = TRUE, msg = "")',
     "  }, error = function(e) list(ok = FALSE, msg = conditionMessage(e)))",
-    # An install from GitHub or a web address that failed, for a package that is on CRAN
-    # or Bioconductor: installed from there, with a note (metacheck #598). A failed
-    # download says so. The same rules as repro_install_deps().
+    # An install from GitHub or a web address that failed, for a package that
+    # is on CRAN or Bioconductor: installed from there, with a note (#598,
+    # embryogrowth: the address no longer answered). A failed download says so.
+    # The same rules as repro_install_deps() (R/reproducibility_check.R).
     '  if (!res$ok && src %in% c("github", "url")) {',
     '    dl <- grep("cannot open URL|cannot open the connection|download|status was|Could not resolve host|HTTP error|HTTP status|404|403|Failed to connect", c(warns, res$msg), value = TRUE, ignore.case = TRUE)',
     '    first <- if (length(dl)) paste0("could not download ", ref, ": ", substr(gsub("[[:space:]]+", " ", dl[1]), 1, 200)) else res$msg',
@@ -708,20 +717,20 @@ def _install_script(install_deps: pd.DataFrame) -> list[str]:
     packages that were not on CRAN are looked for elsewhere.
     """
     n = len(install_deps)
-    bioc = set(_repro_bioc_packages())
     refs = _chr_list(install_deps["ref"]) if "ref" in install_deps.columns else None
     versions = (
         _chr_list(install_deps["version"]) if "version" in install_deps.columns else [None] * n
     )
+    bioc = set(_repro_bioc_packages())
     header = [
         ".repro_docker_pkgs <- " + _deparse1_chr(_chr_list(install_deps["package"])),
         ".repro_docker_srcs <- " + _deparse1_chr(_chr_list(install_deps["source"])),
         ".repro_docker_refs <- " + _deparse1_chr(refs),
         ".repro_docker_vers <- " + _deparse1_chr(versions),
         # whether each package is a Bioconductor one, for a failed GitHub or URL install
-        ".repro_docker_bioc <- c("
-        + ", ".join("TRUE" if p in bioc else "FALSE" for p in _chr_list(install_deps["package"]))
-        + ")",
+        # (#598)
+        ".repro_docker_bioc <- "
+        + _deparse1_lgl([p in bioc for p in _chr_list(install_deps["package"])]),
     ]
     return header + _INSTALL_LOOP + _ELSEWHERE_SCRIPT
 

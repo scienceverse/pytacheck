@@ -20,16 +20,18 @@ _APA_REF = (
     "Psychological Association</em>, 7 edition. American Psychological Association."
 )
 
+# The threshold words cannot always tell a sentence that sets a threshold from one that
+# reports a result against it (#604)
+_CAUTION = (
+    "This module sometimes flags false positives when sentences discuss how p-value thresholds "
+    "were set. It can also miss an imprecise p-value that is reported against a threshold "
+    '(e.g., "decreased at the *p* < .05 significance threshold").'
+)
 _REPORT_TEXT = (
     "Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, reproducibility, "
     "and re-use (e.g., in *p* value meta-analyses). Best practice is to report exact p-values "
     "with three decimal places (e.g., *p* = .032) unless *p* values are smaller than 0.001, in "
     "which case you can use *p* < .001."
-)
-_CAUTION = (
-    "This module sometimes flags false positives when sentences discuss how p-value thresholds "
-    "were set. It can also miss an imprecise p-value that is reported against a threshold "
-    '(e.g., "decreased at the *p* < .05 significance threshold").'
 )
 _GUIDANCE = (
     "The APA manual states: Report exact *p* values (e.g., *p* = .031) to two or three decimal "
@@ -161,6 +163,7 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
     zero = pd.array(is_zero, dtype="boolean")
 
     p["imprecise"] = pd.Series(imprecise, index=p.index, dtype="boolean")
+    p["not_a_test"] = p["not_a_test"].astype("string")
     p["zero"] = pd.Series(zero, index=p.index, dtype="boolean")
 
     imp_rows = imprecise

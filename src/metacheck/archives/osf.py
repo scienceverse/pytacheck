@@ -17,6 +17,7 @@ import contextlib
 import hashlib
 import math
 import os
+import re
 import shutil
 import tempfile
 import threading
@@ -820,13 +821,11 @@ def osf_type(guid: Any) -> Any:
     if ident is None:
         return None
     # A view-only key goes at the end of the address, as a second query field
-    # (metacheck 0.4.3.15): osf_check_id() keeps it on the id ("j9sdn?view_only=..."), and
-    # pasted in whole it gave ".../guids/j9sdn?view_only=.../?resolve=false", which the OSF
-    # does not answer (8dn4g_v1)
+    # (osf_check_id() keeps it on the id: "j9sdn?view_only=...").
     key = ""
     if "view_only=" in ident:
-        key = sub("^.*view_only=([^&/]*).*$", "\\1", ident)
-    ident = sub("[?/].*$", "", ident)
+        key = re.sub(r"^.*view_only=([^&/]*).*$", r"\1", ident, flags=re.S)
+    ident = re.sub(r"[?/].*$", "", ident, flags=re.S)
     suffix = f"&view_only={key}" if key else ""
     info = osf_get_all_pages(f"{_api()}/guids/{ident}/?resolve=false{suffix}")
     if _osf_err(info) is not None:

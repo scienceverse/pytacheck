@@ -495,6 +495,11 @@ def _load_file(path: Path) -> ModuleSpec:
         from metacheck.log import logger
 
         logger(path.stem, {"error": str(exc)})
+        from metacheck.utils import _import_failure
+
+        failure = _import_failure(path.stem, exc)
+        if failure is not None:
+            raise ModuleError(failure) from exc
         raise ModuleError(f"The module '{path.stem}' has errors: {exc}") from exc
     found = _spec_from_pymodule(pymod, path.stem)
     return replace(found, path=str(path))
@@ -1084,10 +1089,11 @@ def module_run(
     if isinstance(results, pd.DataFrame):
         results = {"table": results}
     results = dict(results or {})
-    # A key (an API key, an access token) that a module read from a file is replaced by
-    # "[key removed]" in its result, so metacheck never copies one into its report, tables or
-    # saved results (metacheck #607). data_check warns about the key itself, by its first
-    # characters only (keys._key_scan_files()).
+
+    # A key (an API key, an access token) that a module read from a file is
+    # replaced by "[key removed]" in its result, so pytacheck never copies one
+    # into its report, tables or saved results (metacheck #607). data_check
+    # warns about the key itself, by its first characters only.
     from metacheck.keys import _key_remove
 
     results, _ = _key_remove(results)

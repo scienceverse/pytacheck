@@ -93,6 +93,6 @@
 "archives_d1_review/figshare_info.review.project_mixed_ids": *u254_figshare_authors
 "archives_gz_review/.zenodo_info.review.vector": &d148_zenodo_vector
   kind: deliberate
-  ref: D148
+  ref: D146
   reason: ".zenodo_info() reads the host of one id with a scalar `if`, so a vector of ids stops; _zenodo_info() takes several as before"
 "archives_gz_review/.zenodo_info.review.vector_urls": *d148_zenodo_vector

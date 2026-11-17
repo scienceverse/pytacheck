@@ -21,7 +21,7 @@ from metacheck.io.corpus import (
 )
 from parity.canonical import canonical
 from parity.compare import Options, compare
-from tests.io.conftest import IO_FIXTURES, api, json_response
+from tests.io.conftest import IO_FIXTURES, api
 
 DOWNLOAD = re.compile(r"https://github\.com/scienceverse/retagtest/releases/download/.*")
 
@@ -223,85 +223,103 @@ def test_read_rds_text_is_valid_utf8(tmp_path: Path) -> None:
     assert all(type(v) is str for v in got)
 
 
-def _private_releases(download: str, api_url: str) -> dict[str, object]:
-    asset = {
-        "name": "secret.rds",
-        "size": 2000,
-        "browser_download_url": download,
-        "url": api_url,
-    }
-    return {
-        "tag_name": "secret-2026-11-01",
-        "published_at": "2026-11-01T10:00:00Z",
-        "assets": [asset],
-    }
+# -- private corpora (metacheck 0.4.3.27, #369) ----------------------------------------
+
+PRIVATE = "scienceverse/papers_private"
+RELEASES = f"https://api.github.com/repos/{PRIVATE}/releases"
+ASSET_API = f"https://api.github.com/repos/{PRIVATE}/releases/assets/101"
+ASSET_PUBLIC = f"https://github.com/{PRIVATE}/releases/download/glasgow-2026-11-01/glasgow.rds"
 
 
-def test_papers_load_private_repo_uses_the_api_url_with_the_token(
-    cache_dir: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    # metacheck 0.4.3.27 (#369): a private repository's file is downloaded through
-    # GitHub's API with the token, as its public link does not work for it
+def _releases_body() -> list[dict]:
+    return [
+        {
+            "tag_name": "glasgow-2026-11-01",
+            "published_at": "2026-11-01T10:00:00Z",
+            "assets": [
+                {
+                    "name": "glasgow.rds",
+                    "size": 1200,
+                    "browser_download_url": ASSET_PUBLIC,
+                    "url": ASSET_API,
+                }
+            ],
+        }
+    ]
+
+
+@pytest.fixture
+def token(monkeypatch: pytest.MonkeyPatch) -> str:
     from metacheck.archives import api_keys
+    from metacheck.utils import local_options
 
-    monkeypatch.setattr(api_keys, "key_get", lambda service, *a, **k: "ghp_notakey")
     monkeypatch.setattr(api_keys, "key_check_request", lambda *a, **k: True)
-    releases = [
-        _private_releases(
-            "https://github.com/scienceverse/papers_private/releases/download/x/secret.rds",
-            "https://api.github.com/repos/scienceverse/papers_private/releases/assets/7",
-        )
-    ]
-    seen: list[httpx.Request] = []
-
-    def asset(request: httpx.Request) -> httpx.Response:
-        seen.append(request)
-        return httpx.Response(200, content=(IO_FIXTURES / "fake_paperlist.rds").read_bytes())
-
-    routes = {
-        ("GET", "https://api.github.com/repos/scienceverse/papers_private/releases"): (
-            lambda r: (seen.append(r), httpx.Response(200, json=releases))[1]
-        ),
-        (
-            "GET",
-            "https://api.github.com/repos/scienceverse/papers_private/releases/assets/7",
-        ): asset,
-    }
-    with api(routes=routes):
-        result = papers_load("secret", repo="scienceverse/papers_private")
-    assert result == {"info": {"title": ["fake paper"]}}
-    listing, download = seen
-    assert listing.headers["Authorization"] == "token ghp_notakey"
-    assert listing.headers["Accept"] == "application/vnd.github+json"
-    assert download.headers["Authorization"] == "token ghp_notakey"
-    assert download.headers["Accept"] == "application/octet-stream"
+    with local_options({"metacheck.github.pat": "secret-token"}):
+        yield "secret-token"
 
 
-def test_papers_load_without_a_token_uses_the_public_link(
-    cache_dir: Path, monkeypatch: pytest.MonkeyPatch
+def test_release_assets_have_the_api_url_and_use_the_token(token: str) -> None:
+    import respx
+
+    with respx.mock() as router:
+        route = router.get(RELEASES).mock(return_value=httpx.Response(200, json=_releases_body()))
+        assets = _papers_release_assets(PRIVATE)
+    assert route.calls.last.request.headers["authorization"] == f"token {token}"
+    assert assets["api_url"].tolist() == [ASSET_API]
+    assert assets["download_url"].tolist() == [ASSET_PUBLIC]
+
+
+def test_a_private_corpus_is_downloaded_through_the_api_with_the_token(
+    cache_dir: Path, token: str
 ) -> None:
+    import respx
+
+    rds = IO_FIXTURES / "papers_small.rds"
+    with respx.mock() as router:
+        router.get(RELEASES).mock(return_value=httpx.Response(200, json=_releases_body()))
+        asset = router.get(ASSET_API).mock(
+            return_value=httpx.Response(200, content=rds.read_bytes())
+        )
+        result = papers_load("glasgow", repo=PRIVATE)
+    assert isinstance(result, pc.PaperList)
+    req = asset.calls.last.request
+    assert req.headers["authorization"] == f"token {token}"
+    assert req.headers["accept"] == "application/octet-stream"
+
+
+def test_a_public_link_is_used_without_a_token(cache_dir: Path, monkeypatch) -> None:
+    import respx
+
     from metacheck.archives import api_keys
+    from metacheck.utils import local_options
 
-    monkeypatch.setattr(api_keys, "key_get", lambda service, *a, **k: "")
-    public = "https://github.com/scienceverse/papers_private/releases/download/x/secret.rds"
-    releases = [
-        _private_releases(public, "https://api.github.com/repos/scienceverse/papers_private/x")
-    ]
-    routes = {
-        ("GET", "https://api.github.com/repos/scienceverse/papers_private/releases"): json_response(
-            releases
-        ),
-        ("GET", public): lambda r: (sent.append(r), _serve(IO_FIXTURES / "fake_paperlist.rds")(r))[
-            1
-        ],
-    }
-    sent: list[httpx.Request] = []
-    with api(routes=routes):
-        papers_load("secret", repo="scienceverse/papers_private")
-    assert [str(r.url) for r in sent] == [public]
-    assert "Authorization" not in sent[0].headers
+    monkeypatch.setattr(api_keys, "key_get", lambda service: "")
+    rds = IO_FIXTURES / "papers_small.rds"
+    with local_options({"metacheck.github.pat": ""}), respx.mock() as router:
+        router.get(RELEASES).mock(return_value=httpx.Response(200, json=_releases_body()))
+        public = router.get(ASSET_PUBLIC).mock(
+            return_value=httpx.Response(200, content=rds.read_bytes())
+        )
+        papers_load("glasgow", repo=PRIVATE)
+    assert public.called
+    assert "authorization" not in public.calls.last.request.headers
 
 
-def test_release_assets_404_says_to_set_a_token() -> None:
-    with api("apis_papers_404"), pytest.raises(RuntimeError, match=r"set a GitHub token"):
-        _papers_release_assets("scienceverse/doesnotexist12345")
+def test_a_404_says_to_set_a_github_token() -> None:
+    import respx
+
+    with respx.mock() as router:
+        router.get(RELEASES).mock(return_value=httpx.Response(404, json={"message": "Not Found"}))
+        with pytest.raises(RuntimeError, match=r"If the repository is private, set a GitHub token"):
+            _papers_release_assets(PRIVATE)
+
+
+def test_metadata_is_read_with_the_token(token: str) -> None:
+    import respx
+
+    url = f"https://raw.githubusercontent.com/{PRIVATE}/main/glasgow/metadata.json"
+    with respx.mock() as router:
+        route = router.get(url).mock(return_value=httpx.Response(200, json={"dc:title": "Glasgow"}))
+        meta = papers_metadata("glasgow", repo=PRIVATE)
+    assert meta == {"dc_title": "Glasgow"}
+    assert route.calls.last.request.headers["authorization"] == f"token {token}"

@@ -252,3 +252,466 @@
         "r": "local({p1 <- test_paper(c('No difference was found (p = .20).', 'The other test was imprecise (p < .05).')); p2 <- test_paper(c('A second paper found p = .30 here.', 'And p < .10 there.')); p2$paper_id <- p1$paper_id; p2$text$paper_id <- p1$paper_id; paperlist(p1, p2)})"
         "py": "(lambda p1, p2: (p2.__setitem__('paper_id', p1.paper_id), p2.__setitem__('text', p2['text'].assign(paper_id=p1.paper_id)), pc.PaperList([p1, p2]))[-1])(pc.test_paper(['No difference was found (p = .20).', 'The other test was imprecise (p < .05).']), pc.test_paper(['A second paper found p = .30 here.', 'And p < .10 there.']))"
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---- 0.4.3.28: partial eta squared; p-values that are not a test (#336, #604)
+- "id": "all_p_values.eta_squared_p"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "F(2, 63) = 590, p < .001, ƞ²p = .95"
+        - "an effect (η² p = .06) as"
+        - "t = 2, η² P = 0.029, p = .04"
+        - "η 2 p = .10 and p < .001"
+        - "η² = .05, p = .03"
+        - "F(1, 20) = 4.1, p = .06, η₂p = .17 and ηp = .2"
+        - "partial η²p < .05 and p > .10"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.eta_squared_p"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "F(2, 63) = 590, p < .001, ƞ²p = .95"
+        - "an effect (η² p = .06) as"
+        - "t = 2, η² P = 0.029, p = .04"
+        - "η 2 p = .10 and p < .001"
+        - "η² = .05, p = .03"
+        - "F(1, 20) = 4.1, p = .06, η₂p = .17 and ηp = .2"
+        - "partial η²p < .05 and p > .10"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_nonsig.eta_squared_p"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "F(2, 63) = 590, p < .001, ƞ²p = .95"
+        - "an effect (η² p = .06) as"
+        - "t = 2, η² P = 0.029, p = .04"
+        - "η 2 p = .10 and p < .001"
+        - "η² = .05, p = .03"
+        - "F(1, 20) = 4.1, p = .06, η₂p = .17 and ηp = .2"
+        - "partial η²p < .05 and p > .10"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.markers"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Note. ** = p < .01, * = p < .05."
+        - "Data are presented as mean ± SD. ns, p > 0.05; **p < 0.01; ***p < 0.001."
+        - "Error bars indicate standard error. + p < 0.10, * p <0.05."
+        - "Model fit: χ2 = 129.59, df = 89, p < .01, CFI = 0.95, SRMR = .06, N = 135, *p <.05."
+        - "Error bars represent ±1 SEM.* p < 0.05 (two-tailed)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.thresholds"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "A p-value < 0.05 was considered statistically significant."
+        - "The significance level was set at p <.05."
+        - "All the reported clusters survived a cFWE-corrected threshold of P < 0.05."
+        - "Contrasts, with a Bonferroni corrected alpha of p<.02 for 4 comparisons, showed an interaction."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.legends"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Asterisks indicate significant differences between conditions (p < .05)."
+        - "Note: Correlations significant at the p < .05 level are highlighted in bold."
+        - "Black and white markers indicate reported effects that did (black) and did not (white) differ significantly (p < 0.05) from the corresponding expected effect."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.results"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "More importantly, there was a significant interaction [F(1,18) ¼ 6.05, P < 0.05, g2 ¼ 0.25]."
+        - "The indirect effect through hopelessness was significant (β = 0.115*, p < 0.05)."
+        - "Trials were more variable (paired t-test, n = 95, t52 = 6.92, ***p<<0.001, and for monkey D)."
+        - "Silencing (overground n = 135/600 vs treadmill n = 22/151, *p<0.05 [z = 2.38]; hindlimbs)."
+        - "Tor1a +/+ p<0.05; Tor1a +/Dgag p<0.01."
+        - "No other main effects or interactions reached conventional significance levels (all ps > 0.09)."
+        - "This effect remained significant when the maps were thresholded at varying levels (all Ps < 0.002)."
+        - "Participants showed a higher exit threshold (P < 0.05)."
+        - "The Kansas and Florida lines differed in DT but not PA (t-test, P>0.05, data not shown)."
+        - "Alpha power was higher in the online group than in the offline group (p < .05)."
+        - "Participants who met the inclusion criteria scored higher (p < .05)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_01"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Note. ** = p < .01, * = p < .05."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_02"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Data are presented as mean ± SD. ns, p > 0.05; **p < 0.01; ***p < 0.001."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_03"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Error bars indicate standard error. + p < 0.10, * p <0.05."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_04"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Model fit: χ2 = 129.59, df = 89, p < .01, CFI = 0.95, SRMR = .06, N = 135, *p <.05."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_05"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Error bars represent ±1 SEM.* p < 0.05 (two-tailed)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_06"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "A p-value < 0.05 was considered statistically significant."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_07"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The significance level was set at p <.05."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_08"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "All the reported clusters survived a cFWE-corrected threshold of P < 0.05."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_09"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Contrasts, with a Bonferroni corrected alpha of p<.02 for 4 comparisons, showed an interaction."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_10"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Asterisks indicate significant differences between conditions (p < .05)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_11"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Note: Correlations significant at the p < .05 level are highlighted in bold."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_12"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Black and white markers indicate reported effects that did (black) and did not (white) differ significantly (p < 0.05) from the corresponding expected effect."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_13"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "More importantly, there was a significant interaction [F(1,18) ¼ 6.05, P < 0.05, g2 ¼ 0.25]."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_14"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The indirect effect through hopelessness was significant (β = 0.115*, p < 0.05)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_15"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Trials were more variable (paired t-test, n = 95, t52 = 6.92, ***p<<0.001, and for monkey D)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_16"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Silencing (overground n = 135/600 vs treadmill n = 22/151, *p<0.05 [z = 2.38]; hindlimbs)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_17"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Tor1a +/+ p<0.05; Tor1a +/Dgag p<0.01."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_18"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "No other main effects or interactions reached conventional significance levels (all ps > 0.09)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_19"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "This effect remained significant when the maps were thresholded at varying levels (all Ps < 0.002)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_20"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants showed a higher exit threshold (P < 0.05)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_21"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The Kansas and Florida lines differed in DT but not PA (t-test, P>0.05, data not shown)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_22"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Alpha power was higher in the online group than in the offline group (p < .05)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.sentence_23"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Participants who met the inclusion criteria scored higher (p < .05)."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.note_twice"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001."
+        - "Some results."
+        - "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.legend_joined_to_cells"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Black and white markers indicate reported effects that did (black) and did not (white) differ significantly (p < 0.05) from the corresponding expected effect. .064 (.006; .122)* .008 (-.017; .033)"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.result_next_to_note"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Group A differed, F(1, 30) = 5.20, p < .05."
+        - "The table reports standard errors and asymptotic p-values. * p < .05. * * p < .01. * * * p < .001."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.marker_after_p"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The effect was small (p < .05 (*))."
+        - "Note. * p < .05, ** p < .01."
+        - "A result, p < .01."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.not_a_test.star_note_hides_only_its_p"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Note. * p < .05, ** p < .01. The effect was p < .05 and p = .03."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"

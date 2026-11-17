@@ -83,16 +83,19 @@ def _repro_error_line(stderr: str | None, python: bool = False, max_chars: int =
     return out
 
 
-_NO_ERROR_MESSAGE = (
-    "ran_ok",
-    "run_by_source",
-    "run_by_import",
-    "jags_model",
-    "not_r_content",
-    "defines_functions",
-    "not_analysis",
-    "empty",
+_NO_MESSAGE_OUTCOMES = frozenset(
+    {
+        "ran_ok",
+        "run_by_source",
+        "run_by_import",
+        "jags_model",
+        "not_r_content",
+        "defines_functions",
+        "not_analysis",
+        "empty",
+    }
 )
+_URL_PAT = r"https?://[^\s'\"<>)\]]+"
 
 
 def _repro_error_message(
@@ -102,34 +105,38 @@ def _repro_error_message(
     python: bool = False,
     max_chars: int = 300,
 ) -> list[str | None]:
-    """Port of ``.repro_error_message()``: each script's failure, short, for the table (#615).
+    """Port of R ``.repro_error_message()`` (#615).
 
-    So a reader of the table need not take it from the report text, whose wording changes:
-    the error line of the script's output (as the report shows it, see
-    :func:`_repro_error_line`), which names the package that is not there; for a script that
-    needed the internet, with the address it asked for when the error line names none; for
-    one that timed out, the time limit. Else the last line of the output. At most
-    *max_chars* characters; ``None`` for a script that ran through or has no message.
+    The message of each script's failure, short, for the module's table, so a reader of
+    the table need not take it from the report text, whose wording changes: the error line
+    of the script's output (as the report shows it, see :func:`_repro_error_line`), which
+    names the package that is not there; for a script that needed the internet, with the
+    address it asked for when the error line names none; for one that timed out, the time
+    limit. Else the last line of the output. At most *max_chars* characters; ``None`` for
+    a script that ran through or has no message.
     """
     n = len(outcome)
-    errors = list(error) if error is not None else [None] * n
-    stderrs = list(stderr) if stderr is not None else [None] * n
+    err = list(error) if error is not None else [None] * n
+    sto = list(stderr) if stderr is not None else [None] * n
+    err = (err * n)[:n] if len(err) == 1 else err
+    sto = (sto * n)[:n] if len(sto) == 1 else sto
 
     def shorten(x: str) -> str:
-        x = re.sub(r"\s+", " ", x.strip())
+        x = " ".join(x.split())
         return x[: max_chars - 1] + "\u2026" if len(x) > max_chars else x
 
     out: list[str | None] = []
     for i in range(n):
         o = outcome[i]
-        if o is None or o in _NO_ERROR_MESSAGE:
+        if is_missing(o) or o in _NO_MESSAGE_OUTCOMES:
             out.append(None)
             continue
-        err, se = errors[i], stderrs[i]
-        e = err if (err is not None and err.strip() != "") else se
-        if e is None or e.strip() == "":
+        e_i, s_i = err[i], sto[i]
+        e = e_i if not is_missing(e_i) and str(e_i).strip() else s_i
+        if is_missing(e) or not str(e).strip():
             out.append(None)
             continue
+        e = str(e)
         # the time limit: error is the limit's own sentence ("timed out after 3600s")
         if o in ("timed_out", "skipped_time_limit"):
             out.append(shorten(e))
@@ -138,18 +145,38 @@ def _repro_error_message(
         if not line:
             line = _repro_error_line(e, python=not python, max_chars=max_chars)
         if not line:
-            lines = [ln.strip() for ln in re.split(r"\r?\n", e)]
             lines = [
                 ln
-                for ln in lines
+                for ln in (x.strip() for x in e.replace("\r\n", "\n").split("\n"))
                 if ln and not re.match(r"^(Execution halted|Calls:|Backtrace:)", ln)
             ]
             line = shorten(lines[-1]) if lines else ""
-        if o == "needs_internet" and not re.search(r"https?://", line, re.I):
-            m = re.search(r"https?://[^\s'\"<>)\]]+", f"{e} {se if se is not None else 'NA'}")
-            if m:
-                line = shorten(f"{line} ({m.group(0)})")
+        if o == "needs_internet" and not re.search("https?://", line, re.IGNORECASE):
+            both = f"{e} {'' if is_missing(s_i) else s_i}"
+            url = re.search(_URL_PAT, both)
+            if url:
+                line = shorten(f"{line} ({url.group(0)})")
         out.append(line if line else None)
+    return out
+
+
+def _repro_read_failed_msg(errors: Sequence[str | None], max_chars: int = 300) -> list[str | None]:
+    """Port of R ``.repro_read_failed_msg()`` (#620).
+
+    For each script that could not be read, why, for its row in the table and the report;
+    ``None`` where the read worked. R names here any of the R packages it reads scripts
+    with that is installed but cannot be loaded; pytacheck reads them with Python, so it
+    has no such package to name (D139).
+    """
+    out: list[str | None] = []
+    for e in errors:
+        if is_missing(e):
+            out.append(None)
+            continue
+        text = " ".join(str(e).split())
+        if len(text) > max_chars:
+            text = text[: max_chars - 1] + "\u2026"
+        out.append(f"metacheck could not read the file: {text}.")
     return out
 
 
@@ -729,7 +756,6 @@ _NOT_SCRIPTS = frozenset(
         "defines_functions",
         "not_analysis",
         "not_downloaded",
-        "not_read",
         "empty",
     }
 )
@@ -741,9 +767,10 @@ def _repro_run_counts(run_results: pd.DataFrame | None) -> pd.DataFrame:
     Per-paper counts for ``summary_table`` (#568, item 24): the scripts with a result
     of their own, the files of software that were not run (not analyses, counted
     apart), and for each reason how many scripts did not run through for it. A sourced
-    or imported file, a model or function file and a Docker failure on our side are
-    not scripts with a result of their own, nor is a script that stopped on a file we
-    did not download (counted apart as well). One row; ``NA`` when nothing was run.
+    or imported file, a model or function file, an empty file, and a Docker failure or a
+    file not read on our side are not scripts with a result of their own, nor is a script
+    that stopped on a file we did not download (counted apart as well). One row; ``NA``
+    when nothing was run.
     """
     cols = [
         "repro_scripts_n",
@@ -764,7 +791,8 @@ def _repro_run_counts(run_results: pd.DataFrame | None) -> pd.DataFrame:
             outcome, [f"{e} {s}" for e, s in zip(err, stderr, strict=True)]
         )
     counted = [
-        oc is not None and oc not in _NOT_SCRIPTS and oc != "docker_failed" for oc in outcome
+        oc is not None and oc not in _NOT_SCRIPTS and oc not in ("docker_failed", "not_read")
+        for oc in outcome
     ]
     fails = [
         sum(c and r == level for c, r in zip(counted, reason, strict=True))

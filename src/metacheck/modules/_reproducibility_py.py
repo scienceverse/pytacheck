@@ -130,40 +130,34 @@ def _manifest_text(structure_df: Any) -> list[str] | None:
 def _extract(
     path: str | None, name: str
 ) -> tuple[list[str], list[str], list[str], str | None, bool]:
-    """A file's raw text, its Python code, what was left out of a notebook to get it, why it
-    could not be read (``None`` when it could), and whether it is not text.
+    """A file's raw text, its Python code, what was left out of a notebook to get it, why it could not be read and whether it is not text.
 
     A notebook is JSON and a Quarto document is Markdown: their Python code is extracted first,
     as code_check does (and as the R path purls an .Rmd/.qmd), or ``python`` would be run on
-    the JSON/Markdown itself. A file that could not be read keeps its error, as for R (#620).
+    the JSON/Markdown itself. A file that could not be read keeps its error (#620, as for R).
     """
     if path is None:
-        return [], [], [], "there is no copy of it and no link to it", False
-    binary = False
-    if h._file_exists(path):
-        from metacheck.repro.core import _repro_binary_kind
-
-        binary = _repro_binary_kind(path) is not None
-    raw_read, err = rc._read_code_error(path)
-    raw = raw_read or []
+        return [], [], [], rc.NO_COPY_MSG, False
+    raw, kind, err = rc._read_text_err(path)
+    if err is not None:
+        return [], [], [], err, False
     if grepl(r"\.ipynb$", name, ignore_case=True):
         from metacheck.repro.layout import _code_notebook_parts
 
         try:
             parts = _code_notebook_parts(raw)
-        except Exception as e:
-            return raw, [], [], err or str(e) or type(e).__name__, binary
-        return raw, list(parts["lines"]), list(parts["removed"]), err, binary
+        except Exception as exc:
+            return raw, [], [], str(exc), kind is not None
+        return raw, list(parts["lines"]), list(parts["removed"]), None, kind is not None
     if grepl(r"\.qmd$", name, ignore_case=True):
         from metacheck.codecheck.core import code_extract_qmd_py
 
         try:
             code = [x if x is not None else "NA" for x in code_extract_qmd_py(path)]
-        except Exception as e:
-            code = []
-            err = err or str(e) or type(e).__name__
-        return raw, code, [], err, binary
-    return raw, raw, [], err, binary
+        except Exception as exc:
+            return raw, [], [], str(exc), kind is not None
+        return raw, code, [], None, kind is not None
+    return raw, raw, [], None, kind is not None
 
 
 def _parse_all(code_texts: Sequence[Sequence[str | None]]) -> tuple[list[bool], list[bool]]:
@@ -234,7 +228,12 @@ def assess_py(
         _repro_static_light,
         _repro_unique_script_names,
     )
-    from metacheck.repro.outcomes import _repro_absent_report, _repro_py_starts_server
+    from metacheck.repro.outcomes import (
+        _repro_absent_report,
+        _repro_error_message,
+        _repro_py_starts_server,
+        _repro_read_failed_msg,
+    )
     from metacheck.repro.python import _repro_docker_image_py2, _repro_py_get_ipython
     from metacheck.repro.runsupport import _repro_not_run_report
     from metacheck.repro.software import (
@@ -303,6 +302,7 @@ def assess_py(
     extracted = [_extract(resolve(i), names[i]) for i in range(n_code)]
     raw_texts = [e[0] for e in extracted]
     commands_removed = [e[2] for e in extracted]
+    # a file that could not be read keeps its error, as for R (#620)
     read_errors = [e[3] for e in extracted]
     is_binary = [e[4] for e in extracted]
     code_texts: list[list[str]] = []
@@ -454,16 +454,11 @@ def assess_py(
     # A server waits for a connection until the time limit, so it is not run.
     server = [_repro_py_starts_server(code_texts[i]) and not not_analysis[i] for i in range(n_code)]
     # a file that could not be read, and an empty file, are not run, as for R (#620)
-    from metacheck.repro.core import _repro_read_failed_msg
-
     read_msg = _repro_read_failed_msg(read_errors)
-    not_read = [read_errors[i] is not None and not not_analysis[i] for i in range(n_code)]
+    not_read = [e is not None and not na for e, na in zip(read_errors, not_analysis, strict=True)]
     empty = [
-        read_errors[i] is None
-        and not not_analysis[i]
-        and not is_binary[i]
-        and not any(re.search(r"\S", x or "") for x in raw_texts[i])
-        for i in range(n_code)
+        e is None and not na and not b and not any(re.search(r"\S", x) for x in raw_texts[i])
+        for i, (e, na, b) in enumerate(zip(read_errors, not_analysis, is_binary, strict=True))
     ]
 
     ot_names = h._chr_col(order_tbl, "file_name")
@@ -564,7 +559,6 @@ def assess_py(
         "written_later": {},
         "placed": None,
         "deposit_placed": None,
-        "folders_made": None,
         "ran_py2": [],
         "imported": {},
         "stat_cut": {},
@@ -627,12 +621,7 @@ def assess_py(
             if "reason" in run_results.columns
             else [None] * n_code
         )
-    else:
-        outcome_of = errtype_of = undefvar_of = reason_of = [None] * n_code
-    from metacheck.repro.outcomes import _repro_error_message
-
-    # the message of the failure, short (metacheck 0.4.3.20, #615)
-    if run_results is not None:
+        # the message of the failure, short (#615)
         error_message_of = rc._pick(
             _repro_error_message(
                 h._chr_col(run_results, "outcome"),
@@ -643,9 +632,10 @@ def assess_py(
             m_run,
         )
     else:
+        outcome_of = errtype_of = undefvar_of = reason_of = [None] * n_code
         error_message_of = [None] * n_code
     # a file that could not be read: why (#620)
-    error_message_of = [read_msg[i] if (not_read[i]) else m for i, m in enumerate(error_message_of)]
+    error_message_of = [read_msg[i] if not_read[i] else m for i, m in enumerate(error_message_of)]
     if run_tbl is not None and "setwd_removed" in run_tbl.columns:
         setwd_of = rc._pick(
             h._col(run_tbl, "setwd_removed"),
@@ -1040,14 +1030,11 @@ def _execute_py(
         _repro_clock_deadline,
         _repro_deadline,
         _repro_install_limit,
-        _repro_no_time_to_install,
-        _repro_no_time_to_prepare,
         _repro_short_of_time,
         repro_materialize_layout,
         repro_write_scripts,
     )
     from metacheck.repro.layout import (
-        _folders_frame,
         _list_files,
         _repro_fetch_files,
         _repro_fetchable,
@@ -1096,7 +1083,8 @@ def _execute_py(
     install_is_true = h._is_true(install_missing)
     state = a.get("run_state")
     if state is None:
-        state = {"script_deadline": None}
+        state = {"script_deadline": None, "prep_skipped_left": None}
+        a = {**a, "run_state": state}
     net = a.get("net")
     n_code = len(names)
     _message(
@@ -1106,18 +1094,20 @@ def _execute_py(
 
     structure_df, plan = ex["structure_df"], ex["plan"]
     sandbox_root = ex["sandbox_root"]
+    # Not when too little time is left (see h.no_time_to_prepare()), and the copying stops at
+    # the clock deadline, as for R
+    py_no_time = h.no_time_to_prepare(a, lambda m: _message(f"[repro/py] {m}"))
+    copy_deadline = time.time() if py_no_time else _repro_clock_deadline(total_timeout)
     # Reuse the SAME sandbox_root the R block (and/or the JASP step) already materialised, if
     # any: one shared tree, not two.
-    py_no_time = _repro_no_time_to_prepare(total_timeout, state)
-    py_copy_deadline = time.time() if py_no_time else _repro_clock_deadline(total_timeout)
     if sandbox_root is None:
         sandbox_root = rc._new_sandbox(h._is_true(keep_sandbox), cleanup)
-        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=py_copy_deadline)
+        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline)
     elif not has_r:
         # the R block's own materialise call never ran, so a Python-only paper still needs the
         # layout built into whatever sandbox_root the JASP/jamovi step above created (that
         # step only writes statistical_output/, never the data/ tree)
-        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=py_copy_deadline)
+        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline)
     ex["sandbox_root"] = sandbox_root
     lib_dir = os.path.join(sandbox_root, "_pylib")
 
@@ -1214,14 +1204,14 @@ def _execute_py(
         ex["exec_error"] is None
         and install_is_true
         and len(to_install) > 0
-        and _repro_no_time_to_install(total_timeout, state)
+        and h.no_time_to_install(a)
     ):
         # as for R: a script that fails on one of them could not run here
         _message(
             f"[repro/py] no time left to install {len(to_install)} dependenc(y/ies); "
             "skipping installs."
         )
-        failed_deps = [str(p) for p in h._chr_col(to_install, "package")]
+        failed_deps = [p for p in h._chr_col(to_install, "package") if p is not None]
     elif ex["exec_error"] is None and install_is_true and len(to_install) > 0:
         _message(
             f"[repro/py] installing {len(to_install)} dependenc(y/ies): "
@@ -1287,6 +1277,8 @@ def _execute_py(
 
     placed = _repro_place_written({}, None, None, ".", [], [])
     deposit_placed = placed
+    # a folder a write stopped on is made (#591; see the R loop)
+    folders_made = pd.DataFrame({"script": [], "folder": []}, dtype="string")
     ran_py2: list[str] = []
     py2_tried: list[str] = []
 
@@ -1360,7 +1352,7 @@ def _execute_py(
                 and str(h._basename(n.replace("\\", "/"))).lower() in lower_unopened
                 for f, n in zip(fetchable, sd_names, strict=True)
             ]
-            # (not when the time is up: the scripts would not be run again)
+            # not when the time is up: the scripts would not be run again
             if any(rows) and not _repro_short_of_time(total_timeout, 60):
                 _message(f"[repro/py] fetching {sum(rows)} file(s) scripts could not open")
                 structure_df = _repro_fetch_files(
@@ -1407,10 +1399,8 @@ def _execute_py(
     # which writes f"input{i}.txt". A file the deposit holds in another folder is copied to
     # where a script looked, and a script runs again each time it stops on a new file (#575,
     # items 2 and 4; see the R loop).
-    folders_made = _folders_frame([])
     if run_results is not None and names_before is not None:
         seen: dict[str, list[str]] = {}
-        # a folder a write stopped on is made (metacheck 0.4.3.12, #591; see the R loop)
         for _pass in range(5):
             names_after = _repro_sandbox_names(sandbox_root)
             later = _repro_written_later(run_results, names_before, names_after)
@@ -1430,12 +1420,15 @@ def _execute_py(
                 run_results, run_tbl, sandbox_root, names_before
             )
             deposit_placed = _rbind(deposit_placed, from_deposit)
-            made_by: dict[str, list[str]] = {}
-            for s_, f_ in zip(
-                _names(folders_made, "script"), _names(folders_made, "folder"), strict=True
+            seen_folders: dict[str, list[str]] = {}
+            for fs, ff in zip(
+                h._chr_col(folders_made, "script"), h._chr_col(folders_made, "folder"), strict=True
             ):
-                made_by.setdefault(s_, []).append(f_)
-            made = _repro_make_failed_write_folders(run_results, run_tbl, sandbox_root, made_by)
+                if fs is not None and ff is not None:
+                    seen_folders.setdefault(fs, []).append(ff)
+            made = _repro_make_failed_write_folders(
+                run_results, run_tbl, sandbox_root, seen_folders
+            )
             folders_made = _rbind(folders_made, made)
             redo = _unique([*later, *_names(from_deposit, "script"), *_names(made, "script")])
             if not redo:
@@ -1590,8 +1583,8 @@ def _execute_py(
         py2_set = {n for n, t in zip(names, python2, strict=True) if t}
         na_set = {n for n, na in zip(names, not_analysis, strict=True) if na}
         server_set = {n for n, sv in zip(names, server, strict=True) if sv}
-        not_read_set = {n for n, nr in zip(names, not_read, strict=True) if nr}
-        empty_set = {n for n, em in zip(names, empty, strict=True) if em}
+        not_read_set = {n for n, x in zip(names, not_read, strict=True) if x}
+        empty_set = {n for n, x in zip(names, empty, strict=True) if x}
         flag = _py2_flags(run_results, py2_set)
         for i in range(len(run_results)):
             if flag[i] and fn_col[i] not in py2_tried:
@@ -1847,7 +1840,7 @@ def _execution_report_py(
         report_exec += (
             f" {n_late:d} {plural(n_late, 'script was', 'scripts were')} not started, or stopped "
             f"early, because {_repro_deadline_text(a.get('total_timeout'))} had run out."
-            f"{_repro_no_prep_text((a.get('run_state') or {}).get('prep_skipped_left'))}"
+            + _repro_no_prep_text(a["run_state"].get("prep_skipped_left"))
         )
     written_later: Mapping[str, Sequence[str]] = ex["written_later"]
     placed, deposit_placed = ex["placed"], ex["deposit_placed"]
@@ -1857,9 +1850,8 @@ def _execution_report_py(
         )
     if deposit_placed is not None and len(deposit_placed):
         report_exec += _repro_placed_text(deposit_placed)
-    folders_made = ex["folders_made"]
-    if folders_made is not None and len(folders_made):
-        report_exec += _repro_folders_made_text(folders_made)
+    if ex.get("folders_made") is not None and len(ex["folders_made"]):
+        report_exec += _repro_folders_made_text(ex["folders_made"])
     if ex["lfs_stopped"]:
         report_exec += _repro_lfs_stopped_text(ex["lfs_stopped"])
     ran_py2_here = [n for n in rnames if n in ex["ran_py2"]]
@@ -2160,8 +2152,8 @@ def _modifications_py(
                     strict=True,
                 )
             ]
-        made_rows = ex.get("folders_made")
-        if made_rows is not None and len(made_rows):
+        folders = ex.get("folders_made")
+        if folders is not None and len(folders):
             later_rows += [
                 (
                     s,
@@ -2169,7 +2161,7 @@ def _modifications_py(
                     f"made the folder {f}, where the script writes, and ran it once more",
                 )
                 for s, f in zip(
-                    h._chr_col(made_rows, "script"), h._chr_col(made_rows, "folder"), strict=True
+                    h._chr_col(folders, "script"), h._chr_col(folders, "folder"), strict=True
                 )
             ]
         # bind_rows(py_rw_rows, setwd, slash, python2, later)

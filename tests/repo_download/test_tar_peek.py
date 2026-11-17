@@ -154,13 +154,15 @@ def test_tar_list_file_reads_pax_gnu_long_name_and_ustar_prefix_names(tmp_path: 
     assert listing["member"].tolist()[3] == "./deposit/notes.txt"
 
 
-def test_tar_list_file_skips_a_binary_pax_record(tmp_path: Path) -> None:
-    # metacheck 0.4.3.18: tar on a Mac stores a file's extended attributes as pax records
-    # whose value is binary, with null bytes (PsyArXiv preprint 4z75t_v1)
+def test_tar_list_file_skips_a_binary_pax_record_such_as_a_macs_extended_attributes(
+    tmp_path: Path,
+) -> None:
+    # tar on a Mac stores a file's extended attributes as pax records whose value is
+    # binary, with null bytes: metacheck's rawToChar() stopped on them ("embedded nul
+    # in string") and with it data_check (PsyArXiv preprint 4z75t_v1)
     value = bytes([0x01, 0x00, 0x00, 0xB1, 0xA4, 0x7F, 0x3D])
     body = b" SCHILY.xattr.com.apple.provenance=" + value + b"\n"
-    n = len(body) + 2  # two digits for the length itself
-    xattr = str(n).encode() + body
+    xattr = str(len(body) + 2).encode() + body  # two digits for the length itself
     p = write_tar(
         tmp_path / "a.tar",
         tar_entry(

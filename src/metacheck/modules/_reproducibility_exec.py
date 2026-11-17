@@ -127,14 +127,6 @@ def _setdiff(x: Sequence[Any], y: Sequence[Any]) -> list[Any]:
     return list(dict.fromkeys(v for v in x if v not in ys))
 
 
-def _folders_by_script(made: pd.DataFrame) -> dict[str, list[str]]:
-    """``split(made$folder, made$script)``: the folders made for each script so far."""
-    out: dict[str, list[str]] = {}
-    for script, folder in zip(h._chr_col(made, "script"), h._chr_col(made, "folder"), strict=True):
-        out.setdefault(str(script), []).append(str(folder))
-    return out
-
-
 def _pass_order(order: Sequence[Any], redo: Sequence[Any]) -> list[Any]:
     """``c(intersect(order, redo), setdiff(redo, order))``."""
     return [*_intersect(order, redo), *_setdiff(redo, order)]
@@ -321,7 +313,7 @@ def _execute(
     # 1. Build the data tree the plan describes, and write the scripts into it.
     # Not when too little time is left, and the copying stops at the clock deadline (a
     # server's job limit), as running does
-    no_time = core._repro_no_time_to_prepare(total_timeout, a["run_state"])
+    no_time = h.no_time_to_prepare(a, dbg)
     dbg(f"copying the repository ({len(plan) if plan is not None else 0} files) ...")
     ml = core.repro_materialize_layout(
         plan,
@@ -330,8 +322,10 @@ def _execute(
         deadline=time.time() if no_time else core._repro_clock_deadline(total_timeout),
     )
     not_copied = getattr(ml, "attrs", {}).get("not_copied_time") or 0
-    if not_copied > 0:
-        dbg(f"  {not_copied} not copied: the time had run out.")
+    dbg(
+        f"  materialised {_n_ok(ml)}/{_n_rows(ml)} files."
+        + (f" {not_copied} not copied: the time had run out." if not_copied > 0 else "")
+    )
     # Stan files in the syntax Stan removed in 2.33 get the newer form (#568)
     stan_parts: list[pd.DataFrame | None] = [rec._repro_upgrade_stan_files(sandbox_root)]
     # and Stan programs held in the R code as a quoted text (#568; see
@@ -423,11 +417,7 @@ def _execute(
     #    cran_install_main has no meaning there and is silently ignored.
     install_results: pd.DataFrame | None = None
     failed_deps: list[str] = []
-    if (
-        install_r
-        and len(to_install) > 0
-        and core._repro_no_time_to_install(total_timeout, a["run_state"])
-    ):
+    if install_r and len(to_install) > 0 and h.no_time_to_install(a):
         # a script started in the last minute that fails on one of them could not run here
         # (dependency_unavailable), as when nothing is installed
         dbg(f"no time left to install {len(to_install)} dependenc(y/ies); skipping installs.")
@@ -770,12 +760,7 @@ def _execute(
     # The first download leaves out some kinds of files, and a name built while the script
     # runs cannot be seen before.
     plan_now = plan
-    # (not when the time is up: the scripts would not be run again)
-    if (
-        _download_on(a.get("download"))
-        and any(layout._repro_fetchable(structure_df))
-        and not core._repro_short_of_time(total_timeout, 60)
-    ):
+    if _download_on(a.get("download")) and any(layout._repro_fetchable(structure_df)):
         stopped = [o == "errored" for o in h._chr_col(run_results, "outcome")]
         msgs = _msgs(run_results)
         unopened = {
@@ -789,7 +774,8 @@ def _execute(
             ok and (core._norm_base(n) or "") in unopened
             for ok, n in zip(layout._repro_fetchable(structure_df), sd_names, strict=True)
         ]
-        if any(rows):
+        # not when the time is up: the scripts would not be run again
+        if any(rows) and not core._repro_short_of_time(total_timeout, 60):
             dbg(
                 f"fetching {sum(rows)} file(s) scripts could not open: ",
                 ", ".join(_na_str(n) for n, r in zip(sd_names, rows, strict=True) if r),
@@ -848,8 +834,8 @@ def _execute(
     r_deposit_placed = r_placed
     r_seen: dict[str, list[str]] = {}  # script -> the files it stopped on when run again
     # A script whose write stopped on a folder the deposit does not have runs once more
-    # after the folder is made (metacheck 0.4.3.12, #591; see _repro_make_failed_write_folders())
-    r_folders_made = layout._folders_frame([])
+    # after the folder is made (#591; see _repro_make_failed_write_folders())
+    r_folders_made = pd.DataFrame({"script": [], "folder": []}, dtype="string")
     for _ in range(5):
         names_after = layout._repro_sandbox_names(sandbox_root)
         later = layout._repro_written_later(run_results, r_names_before, names_after)
@@ -1077,6 +1063,27 @@ def _execute(
     }
 
 
+def _n_rows(ml: Any) -> int:
+    """The rows of a layout's copy log."""
+    mat = getattr(ml, "attrs", {}).get("materialised")
+    return 0 if mat is None else len(mat)
+
+
+def _n_ok(ml: Any) -> int:
+    """The files of a layout's copy log that were copied."""
+    mat = getattr(ml, "attrs", {}).get("materialised")
+    return 0 if mat is None else sum(h._is_true(v) for v in mat["ok"].tolist())
+
+
+def _folders_by_script(made: pd.DataFrame) -> dict[str, list[str]]:
+    """R ``split(made$folder, made$script)``."""
+    out: dict[str, list[str]] = {}
+    for s_, f in zip(h._chr_col(made, "script"), h._chr_col(made, "folder"), strict=True):
+        if s_ is not None and f is not None:
+            out.setdefault(s_, []).append(f)
+    return out
+
+
 def _lower(x: Any) -> str | None:
     s = as_str(x)
     return None if s is None else s.lower()
@@ -1182,7 +1189,7 @@ def _execution_report(
         report_exec += (
             f" {n_late:d} {plural(n_late, 'script was', 'scripts were')} not started, or "
             f"stopped early, because {_repro_deadline_text(a.get('total_timeout'))} had run out."
-            f"{_repro_no_prep_text(a['run_state'].get('prep_skipped_left'))}"
+            + _repro_no_prep_text(a["run_state"].get("prep_skipped_left"))
         )
     n = count("docker_failed")
     if n > 0:

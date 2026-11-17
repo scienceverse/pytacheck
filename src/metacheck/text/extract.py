@@ -56,7 +56,8 @@ _SCI_10 = f"(\\s*[x\\*×\u00c2\u00c3]\\s*10\\s*\\^?\\s*{_SCI_MINUS}\\s*\\d+)?"
 # before a p, it is partial eta squared written with its subscript after it ("η² p = .06"),
 # which extract_p_values() and extract_eq() do not read as a p-value (metacheck 0.4.3.27,
 # #336)
-_ETA_P_PREFIX = "[\u03b7\u019e]\\s*[\u00b22\u2082]?\\s*"
+_ETA = "\u03b7\u019e"
+_ETA_P_PREFIX = f"[{_ETA}]\\s*[\u00b22\u2082]?\\s*"
 
 # Names written after p, glued or after a space, hyphen or underscore, that make it a corrected
 # or otherwise named p-value ("pFWE = .006", "p adj = .034", "P MCMC = 0.27", "p interaction =
@@ -116,7 +117,7 @@ _GREEK = "Ͱ-Ͽ"
 # reads "and z ≤ 1.96" as "d z".
 _BARE_SUBSCRIPT = f"\\b[gd]\\s+(?:av|z|rm|s)(?=\\s*[{_OPS}])"
 # partial eta squared with its subscript after it, "η² p = .06", is one statistic, not
-# "p = .06" (#336)
+# "p = .06" (metacheck #336)
 _BARE_SUBSCRIPT += f"|{_ETA_P_PREFIX}[pP](?=\\s*[{_OPS}])"
 # a p with a correction or test name after a space, "p adj = .034", is one statistic: the name
 # was "adj" (#642)
@@ -260,8 +261,9 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     p = text_search(table, _P_PATTERN, return_="match", perl=True, ignore_case=False)
     if not isinstance(p, pd.DataFrame):  # pragma: no cover - strings became a table
         raise TypeError("$ operator is invalid for atomic vectors")
-    is_eta = p["text"].map(lambda t: isinstance(t, str) and t.startswith(("\u03b7", "\u019e")))
-    p = p.loc[~is_eta.to_numpy(dtype=bool)].reset_index(drop=True)
+    # a p right after eta is partial eta squared ("η² p = .06"), not a p-value (#336)
+    eta = grepl(f"^[{_ETA}]", p["text"].tolist())
+    p = p.loc[[not e for e in eta]]
     texts = [None if pd.isna(t) else str(t) for t in p["text"].tolist()]
     comps = regextract(_OP_RUN, texts, perl=True)
     split = strsplit(texts, _OP_SPLIT)
@@ -510,7 +512,8 @@ def _detect_live_data(paper: Any) -> pd.DataFrame:
 
 
 _NONE_WORDS = (
-    r"\bno\s+(identifiable\s+)?(human|animal)\s+(research\s+)?(subjects?|participants?|volunteers?)\s+(were|was|are|is)\s+(involved|used)",
+    r"\bno\s+(identifiable\s+)?(human|animal)\s+(research\s+)?(subjects?|participants?|volunteers?)"
+    r"\s+(were|was|are|is)\s+(involved|used)",
     r"\b(did|does|do)\s+not\s+(involve|include)\s+(any\s+)?(human|animal)\s+(subjects?|participants?)",
     r"\bno\s+(animals|humans)\s+(nor|or|and)\s+(human\s+)?(participants?|subjects?)\s+were\s+involved",
     r"\bnot\s+as\s+(research\s+)?(subjects?|participants?)\b",
@@ -518,10 +521,13 @@ _NONE_WORDS = (
 
 
 def _detect_no_participants(paper: Any) -> pd.DataFrame:
-    """Sentences stating that no human or animal participants took part (port of ``.detect_no_participants()``).
+    """Sentences stating that no participants took part (port of ``.detect_no_participants()``).
 
-    Such a statement overrides ``_detect_live_data`` in the ``ethics_check`` module.
-    A negation near a participant phrase alone ("No participants were excluded")
-    does not count; the patterns need "human" or "animal" (or "not as subjects").
+    "no human subjects were involved", "did not involve human participants", "no animals
+    nor human participants were involved", or people taking part "not as subjects". Such
+    a statement overrides :func:`_detect_live_data` in the ``ethics_check`` module. A
+    negation near a participant phrase is not enough ("No participants were excluded"
+    reports a study with participants), so each pattern names human or animal subjects,
+    or "not as subjects".
     """
     return cast(pd.DataFrame, text_search(paper, list(_NONE_WORDS), perl=True))

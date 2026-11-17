@@ -351,6 +351,7 @@ read_files = [
     "script_refs.R",
     "labs.rds",
     "labs_ws.RData",
+    "labelled_text.rds",
     "does_not_exist.csv",
 ]
 promote_sensitive = {

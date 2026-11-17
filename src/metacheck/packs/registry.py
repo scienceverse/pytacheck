@@ -552,6 +552,11 @@ def load_module(pack: Pack, name: str) -> ModuleSpec:
             from metacheck.log import logger
 
             logger(name, {"pack": pack.name, "error": str(exc)})
+            from metacheck.utils import _import_failure
+
+            failure = _import_failure(f"{pack.name}::{name}", exc, pack.dependencies)
+            if failure is not None:
+                raise ModuleError(failure) from exc
             raise ModuleError(f"The module '{pack.name}::{name}' has errors: {exc}") from exc
     spec = _spec_from_pymodule(pymod, name)
     if spec.pack != pack.name:

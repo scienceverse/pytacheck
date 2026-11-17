@@ -5,67 +5,47 @@
   "warnings": [],
   "value": {
     "t": "list",
-    "names": null,
+    "names": [
+      "dom",
+      "pageLength",
+      "lengthMenu",
+      "language"
+    ],
     "v": [
       {
-        "t": "list",
-        "names": [
-          "dom",
-          "pageLength",
-          "lengthMenu",
-          "language"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "<'top' lp>"
-            ]
-          },
+          "<'top' lp>"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          7
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
           {
             "t": "dbl",
             "v": [
-              2
+              7,
+              10,
+              25,
+              50,
+              -1
             ]
           },
           {
-            "t": "list",
-            "names": null,
+            "t": "chr",
             "v": [
-              {
-                "t": "dbl",
-                "v": [
-                  2,
-                  10,
-                  25,
-                  50,
-                  -1
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "2",
-                  "10",
-                  "25",
-                  "50",
-                  "All"
-                ]
-              }
-            ]
-          },
-          {
-            "t": "list",
-            "names": [
-              "lengthMenu"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "Show _MENU_ rows"
-                ]
-              }
+              "7",
+              "10",
+              "25",
+              "50",
+              "All"
             ]
           }
         ]
@@ -73,123 +53,13 @@
       {
         "t": "list",
         "names": [
-          "dom",
-          "pageLength",
-          "lengthMenu",
-          "language"
+          "lengthMenu"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
-              "<'top' lp>"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              10
-            ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": [
-              {
-                "t": "dbl",
-                "v": [
-                  10,
-                  25,
-                  50,
-                  -1
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "10",
-                  "25",
-                  "50",
-                  "All"
-                ]
-              }
-            ]
-          },
-          {
-            "t": "list",
-            "names": [
-              "lengthMenu"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "Show _MENU_ rows"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "t": "list",
-        "names": [
-          "dom",
-          "pageLength",
-          "lengthMenu",
-          "language"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "<'top' lp>"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              30
-            ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": [
-              {
-                "t": "dbl",
-                "v": [
-                  10,
-                  25,
-                  30,
-                  50,
-                  -1
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "10",
-                  "25",
-                  "30",
-                  "50",
-                  "All"
-                ]
-              }
-            ]
-          },
-          {
-            "t": "list",
-            "names": [
-              "lengthMenu"
-            ],
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "Show _MENU_ rows"
-                ]
-              }
+              "Show _MENU_ rows"
             ]
           }
         ]

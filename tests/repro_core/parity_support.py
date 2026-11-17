@@ -80,29 +80,18 @@ def _listing(root: str) -> list[str]:
     return sorted(out, key=r_sort_key)
 
 
-def materialize(plan: Any, structure_df: Any, late: bool = False) -> dict[str, Any]:
-    """``repro_materialize_layout()`` into a fresh directory, with the tree it built.
-
-    *late*: the deadline has passed (metacheck 0.4.3.28), so no file is copied.
-    """
-    import time
-
+def materialize(plan: Any, structure_df: Any) -> dict[str, Any]:
+    """``repro_materialize_layout()`` into a fresh directory, with the tree it built."""
     from metacheck.repro.core import repro_materialize_layout
 
     with tempfile.TemporaryDirectory() as tmp:
         root = os.path.join(tmp, "root")
-        if late:
-            out = repro_materialize_layout(plan, structure_df, root, deadline=time.time() - 1)
-        else:
-            out = repro_materialize_layout(plan, structure_df, root)
-        res = {
+        out = repro_materialize_layout(plan, structure_df, root)
+        return {
             "files": _listing(root),
             "materialised": out.attrs["materialised"],
             "is_root": str(out) == root,
         }
-        if late:
-            res["not_copied_time"] = out.attrs["not_copied_time"]
-        return res
 
 
 def _unroot(x: Any, root: str) -> Any:

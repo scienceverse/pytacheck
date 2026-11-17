@@ -396,13 +396,7 @@ def add_cases() -> None:
         },
     )
 
-    # errors in R ----
-    case(
-        "ethics_check.duplicate_ids",
-        ec_papers(["d1", "d1"], [["The IRB approved it."], ["Nothing here."]]),
-    )
-    case("ethics_check.empty_paper", {"$expr": {"r": "paper()", "py": "pc.paper()"}})
-    # a paper that states no participants took part (metacheck 0.4.3.20, dq96z_v2)
+    # a paper that states no human or animal participants took part (0.4.3.28, dq96z_v2)
     case(
         "ethics_check.no_participants.not_as_subjects",
         test_paper(
@@ -412,18 +406,31 @@ def add_cases() -> None:
             ]
         ),
     )
-    for i, s in enumerate(
+    for i, sentence in enumerate(
         [
             "No human subjects were involved in this study.",
-            "As this study did not involve human subjects, institutional review board approval was not required.",
-            "Ethics Statement: No animals nor human participants were involved in the production and analysis of the data used for this article.",
+            "As this study did not involve human subjects, institutional review board approval "
+            "was not required.",
+            "Ethics Statement: No animals nor human participants were involved in the production "
+            "and analysis of the data used for this article.",
+            "No identifiable human research participants were used.",
         ]
     ):
         case(
             f"ethics_check.no_participants.stated_{i + 1}",
-            test_paper(["Participants were recruited online.", s]),
+            test_paper(["Participants were recruited online.", sentence]),
         )
-    for i, s in enumerate(
+    case(
+        "ethics_check.no_participants.approved",
+        test_paper(
+            [
+                "Participants were recruited online.",
+                "No human subjects were involved in the second analysis.",
+                "The study was approved by the ethics committee.",
+            ]
+        ),
+    )
+    for i, sentence in enumerate(
         [
             "No participants were excluded.",
             "No participants were minors.",
@@ -434,27 +441,26 @@ def add_cases() -> None:
     ):
         case(
             f"ethics_check.no_participants.negation_{i + 1}",
-            test_paper(["Participants were recruited online.", s]),
+            test_paper(["Participants were recruited online.", sentence]),
         )
     case(
-        "ethics_check.no_participants.approved",
-        test_paper(
+        "ethics_check.no_participants.paperlist",
+        ec_papers(
+            ["none", "live", "both"],
             [
-                "No human subjects were involved in this study.",
-                "The study was approved by the ethics committee.",
-            ]
+                ["No human subjects were involved in this study."],
+                ["Participants were recruited online."],
+                ["Participants were recruited online.", "We did not involve human participants."],
+            ],
         ),
     )
+
+    # errors in R ----
     case(
-        "ethics_check.no_participants.list",
-        {
-            "$expr": {
-                "r": HELPERS_R
-                + 'ec_papers(c("a", "b"), list("No human subjects were involved.", "Participants were recruited online."))',
-                "py": f"{SUPPORT}.ec_papers(['a', 'b'], [['No human subjects were involved.'], ['Participants were recruited online.']])",
-            }
-        },
+        "ethics_check.duplicate_ids",
+        ec_papers(["d1", "d1"], [["The IRB approved it."], ["Nothing here."]]),
     )
+    case("ethics_check.empty_paper", {"$expr": {"r": "paper()", "py": "pc.paper()"}})
     case(
         "ethics_check.empty_paperlist",
         {"$expr": {"r": "paperlist()", "py": "pc.PaperList([])"}},

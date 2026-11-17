@@ -12,17 +12,22 @@ in ``R/stat-output.R``, ``R/stat-tables.R``, ``R/match-reported.R``,
 
 from __future__ import annotations
 
+import functools
 import math
 import re
+from types import SimpleNamespace
 from typing import Any
 
+import pandas as pd
+
 from metacheck._r.base import as_character, r_round
-from metacheck._r.regex import grepl, gsub, sub
+from metacheck._r.regex import compile_r, grepl, gsub, sub
 from metacheck._values import as_float, is_missing
 from metacheck.text.extract import _P_SUBSCRIPTS
 
 __all__ = [
     "_p_clause",
+    "_p_not_test",
     "_r_stat_pattern",
     "_reports_test",
     "_sci_text",
@@ -32,6 +37,7 @@ __all__ = [
 ]
 
 _NUMBER_TEXT = r"^[-+]?[0-9.]+([eE][-+]?[0-9]+)?$"
+
 
 # ---- a number as a paper writes it (metacheck 0.4.4.3, #642) -------------------------
 
@@ -151,27 +157,33 @@ def _r_stat_pattern() -> dict[str, str]:
     return {"op": op, "pattern": pattern}
 
 
-# ---- p-values that are not the result of a test (metacheck 0.4.3.19, #604) --------
+# ---- p-values that are not the result of a test ---------------------------------------
+#
+# Which p-values in sentences are clearly not the result of a test: a threshold or a
+# legend, not a finding (metacheck #604). A table note ("* p < .05, ** p < .01"), a
+# figure legend ("Asterisks indicate significant differences (p < .05)") or a stated
+# threshold ("p < .05 was considered significant", "thresholded at P < .001") gives the
+# level that marks significance, and is not a p-value reported imprecisely. GROBID often
+# puts such notes and legends into the running text, so the section cannot tell them
+# apart.
+#
+# Each p-value is judged in its own clause: the text around it up to a ";" or a full stop
+# followed by a space. That keeps the items of a note apart ("p < .05. ** p < .01.") and
+# keeps a note apart from a result in the same sentence. A clause that holds a test
+# statistic or an estimate (t(20) =, F =, r =, b =, M =, a confidence interval) is never
+# taken as a note: the p-value then belongs to a result ("F(1, 7) = 8.03, # p < .05").
+#
+# A p-value is taken as not a test when its clause has, and no statistic:
+#   marker     a symbol right before it (*, a dagger, #, ^, +, ~ or a repeat of them), or
+#              "ns" with ":" or "=" after it
+#   threshold  words that state a threshold: a significance level, alpha, "threshold",
+#              "cut-off", "criterion", "considered as significant", "set at"; not
+#              "reached", which reports a result
+#   legend     a marker that is the subject of a verb of meaning ("Asterisks indicate"),
+#              the passive ("indicated by an asterisk"), or "in bold" / "in grey"
 
+_GREEK_RANGE = "Ͱ-Ͽ"
 
-def _re(pattern: str, ignore_case: bool = False) -> Any:
-    from metacheck._r.regex import compile_r
-
-    return compile_r(pattern, ignore_case=ignore_case, perl=True)
-
-
-# a statistic or an estimate: a short name, an optional (df), a comparison and a number; not p
-# (or q, an adjusted p), n, k, df or alpha, which thresholds and notes use too. The fraction one
-# quarter and A with a grave accent are how GROBID reads "=" and the minus sign in some journals.
-_NT_STAT_NAME = (
-    "(?<![\\w.\u0370-\u03ff-])(?!(?:p|P|ps|Ps|q|n|N|k|K|df|alpha|value|values|pvalue|pvalues)(?![\\w\u0370-\u03ff]))"
-    "(?![pP]_?" + _P_SUBSCRIPTS + ")"  # pFWE, padj: a p-value (#642)
-    "(?!\u03b1(?![\\w\u0370-\u03ff]))"
-    "(?:[A-Za-z\u0370-\u03ff][A-Za-z\u0370-\u03ff0-9\u00b2_]{0,5}|\u03c7\u00b2?)"
-    "\\s*(?:\\([^()]{0,40}\\)|\\[[^\\]\\[]{0,40}\\])?\\s*"
-    "(?:=|<|>|\u2264|\u2265|\u00bc)\\s*[-\u2212\u00c0]?\\s*\\.?\\d"
-)
-_NT_CI = "\\bCI\\b\\s*[\\[(=:]?\\s*[-\u2212\u00c0]?\\.?\\d|\\d+\\s*%\\s*CI\\b"
 # A test statistic with a value: t(20) =, F =, chi2 =, z =, W =, OR =, b =. Not a fit index, R
 # squared, a size or another number, which a table note can follow (``.test_stat_head``)
 _TEST_STAT_HEAD = (
@@ -184,85 +196,136 @@ _TEST_STAT_PATTERN = _TEST_STAT_HEAD + "\\.?\\d"
 # the same, with a value that is not 0 ("d = 0", "T = 0.00" are left out): a p-value of exactly 0
 # needs a large statistic (#642)
 _TEST_STAT_NONZERO = _TEST_STAT_HEAD + "(?!(?:0+\\.?0*|\\.0+)(?![\\d.]))\\.?\\d"
-_NT_TEST_STAT = _TEST_STAT_PATTERN
-# a p with a correction name is a p-value too ("pFWE < .05", #642)
-_NT_P_VALUE = (
-    "(?<![\\w])[pP]s?\\s*(?:-?values?)?(?:[\\s_-]?" + _P_SUBSCRIPTS + ")?"
-    "\\s*(?:=|<|>|\u2264|\u2265|\u00bc)"
-)
+
 # The symbols of a table note: *, the asterisk operator, a dagger or double dagger, a section or
 # paragraph sign, #, ^, ~ and the replacement character; also the low asterisk, "@", and A with
 # a tilde, which is how GROBID reads an asterisk in some journals (#642)
 _P_NOTE_SYMBOL = "[*\u2217\u2020\u2021\u00a7#\u00b6^~\ufffd\u00c3\u204e@]"
-_NT_SYMBOL = _P_NOTE_SYMBOL
-_NT_MARKER = "(?<![\\w)\\]/])(?:(?:" + _NT_SYMBOL + "|(?<![\\w/+])\\++)\\s*)+[:=,]?\\s*$"
-# a marker in brackets, before the p-value ("(*) p < .05", "(**) = p < .01") or after it
-# ("p < .01 (**)") (#642)
-_NT_MARKER_BR_BEFORE = "\\(\\s*(?:" + _NT_SYMBOL + "\\s*)+\\)\\s*[:=,]?\\s*$"
-_NT_MARKER_BR_AFTER = "^\\s*\\(\\s*(?:" + _NT_SYMBOL + "\\s*)+\\)"
-_NT_NS_MARKER = "(?<![\\w.])n\\.?s\\.?\\s*[:=]\\s*$"
-_NT_NS_PLAIN = "(?<![\\w.])n\\.?s\\.?\\s*,?\\s*$"
-_NT_THRESH = (
-    "thresholded|threshold(?:s|ing)?\\s+(?:of|at|was|were|is|set|for\\s+(?:statistical\\s+)?significance|level)\\b|"
-    "(?:significance|statistical|voxel-?(?:wise|level)|cluster(?:-|\\s)?(?:level|wise|forming|extent)?|"
-    "height|extent|uncorrected|corrected|FWE|FDR|peak|whole-?brain|lenient|liberal|conservative|stringent)"
-    "\\s+thresholds?\\b|threshold-free|"
-    "significance\\s+(?:level|criterion|cut-?off)|levels?\\s+of\\s+(?:statistical\\s+)?significance|"
-    "\\balpha\\s*(?:level|value|criterion|of|was|is|=|set|\\()|\u03b1\\s*(?:level|value|=|<|\\()|"
-    "(?:corrected|adjusted|Bonferroni|nominal)\\s+(?:alpha|\u03b1)\\b|"
-    "(?:considered|regarded|accepted|deemed|defined|taken|treated|interpreted)\\s+(?:as\\s+)?(?:to\\s+be\\s+)?"
-    "(?:statistically\\s+)?significan|(?:set|fixed)\\s+(?:at|to)\\s+(?:an?\\s+|the\\s+)?(?:alpha|\u03b1|p\\b|P\\b|two|one|\\.|0)|"
-    "criteri(?:on|a)\\s+(?:for|of)\\s+(?:statistical\\s+)?significan|as\\s+(?:the|a|our)\\s+criterion|"
-    "cut-?off\\s+(?:value\\s+)?(?:of|for|at)\\b|as\\s+(?:the|a)\\s+cut-?off|cut-?off\\s*:|"
-    "significan(?:t|ce)\\s+(?:was|were|is|are)\\s+(?:set|defined|accepted|considered|determined|assumed)"
-)
-_NT_REACH = (
-    "\\b(?:reach|exceed|surpass|surviv)\\w*|\\bpass(?:ed|es|ing)?\\b|"
-    "\\b(?:above|below|beyond)\\s+(?:the\\s+)?(?:\\w+\\s+)?(?:level|threshold|significan)"
-)
-_NT_VIS = (
-    "asterisks?|stars?|daggers?|symbols?|markers?|letters|superscripts?|"
-    "(?:(?:filled|open|solid|dashed|dotted|horizontal|vertical|black|white|gr[ae]y|red|blue|green|"
-    "orange|yellow|purple|pink|colou?red|bold|thick|shaded)\\s+)+"
-    "(?:dots?|circles?|squares?|triangles?|diamonds?|lines?|bars?|arrows?|symbols?|markers?|"
-    "boxes|cells?|areas?|regions?|channels?|clusters?|voxels?|points?|values?|entries|estimates|numbers|fonts?|text)"
-    "|bold(?:ed|face)?\\s+(?:values?|entries|estimates|numbers|coefficients|correlations|cells?|text|font)"
-)
-_NT_VERB = "(?:indicat|denot|represent|mark|show|highlight|depict|signif|correspond|identif)\\w*"
-_NT_LEGEND = (
-    "\\b(?:" + _NT_VIS + ")\\s+(?:\\S+\\s+){0,3}?" + _NT_VERB + "|"
-    "(?:indicated|denoted|marked|highlighted|shown|represented|labell?ed|depicted|flagged|printed|"
-    "presented|displayed|set|written|given)\\s+(?:by|with|in|as|using)\\s+(?:an?\\s+|the\\s+)?"
-    "(?:asterisks?|stars?|daggers?|bold|boldface|italics?|colou?rs?|gr[ae]y|red|blue|green|black|white|"
-    "symbols?|letters|superscripts?|lines?|bars?|dots|circles|arrows|shading|boxes|"
-    + _NT_SYMBOL
-    + ")"
-    "|\\bin\\s+(?:bold|boldface|gr[ae]y|colou?r)\\b"
-    "|(?:" + _NT_SYMBOL + "\\s*)+(?:(?:and|or|,)\\s*(?:" + _NT_SYMBOL + "\\s*)+)*"
-    "(?:indicat|denot|represent|mark|correspond)\\w*"
-    "|\\b(?:" + _NT_VIS + ")\\s*:"
-)
-_NT_BOUNDARY = ";|\\.\\s+|\\.(?=" + _NT_SYMBOL + ")|:\\s+(?=[A-Z])"
-_NT_ATTACHED_BEFORE = (
-    "(?:threshold(?:ed|s)?|alpha|\u03b1|cut-?off|criterion|significance\\s+level)"
-    "\\s*(?:of|at|=|:|\\(|was\\s+set\\s+(?:at|to)|set\\s+(?:at|to))?\\s*"
-    "(?:an?\\s+|the\\s+)?(?:(?:two|one)-?\\s*tailed\\s+|(?:un)?corrected\\s+)?$"
-)
-_NT_ATTACHED_AFTER = (
-    "^\\s*\\)?\\s*(?:\\(?(?:uncorrected|corrected|FWE|FDR|two-tailed|one-tailed)\\)?,?\\s*)*"
-    "threshold"
-)
-_NT_COMPARATIVE = (
-    "(?:higher|lower|greater|smaller|larger|increased|decreased|elevated|reduced|raised)"
-)
-_NT_PATTERNS: dict[str, Any] = {}
 
 
-def _nt(name: str, pattern: str, ignore_case: bool = False) -> Any:
-    key = f"{name}/{int(ignore_case)}"
-    if key not in _NT_PATTERNS:
-        _NT_PATTERNS[key] = _re(pattern, ignore_case)
-    return _NT_PATTERNS[key]
+@functools.cache
+def _pnt() -> SimpleNamespace:
+    """The compiled patterns of :func:`_p_not_test` (built on first use)."""
+
+    def rx(pattern: str, icase: bool = False) -> Any:
+        return compile_r(pattern, ignore_case=icase, perl=True)
+
+    g = _GREEK_RANGE
+    # a statistic or an estimate: a short name, an optional (df), a comparison and a
+    # number; not p (or q, an adjusted p), n, k, df or alpha, which thresholds and notes use
+    # too. The fraction one quarter and A with a grave accent are how GROBID reads "="
+    # and the minus sign in some journals.
+    stat_name = (
+        f"(?<![\\w.{g}-])(?!(?:p|P|ps|Ps|q|n|N|k|K|df|alpha|value|values|pvalue|pvalues)(?![\\w{g}]))"
+        f"(?![pP]_?{_P_SUBSCRIPTS})"  # pFWE, padj: a p-value (#642)
+        f"(?!α(?![\\w{g}]))"
+        f"(?:[A-Za-z{g}][A-Za-z{g}0-9²_]{{0,5}}|χ²?)"
+        "\\s*(?:\\([^()]{0,40}\\)|\\[[^][]{0,40}\\])?\\s*"
+        "(?:=|<|>|≤|≥|¼)\\s*[-−À]?\\s*\\.?\\d"
+    )
+    ci = "\\bCI\\b\\s*[\\[(=:]?\\s*[-−À]?\\.?\\d|\\d+\\s*%\\s*CI\\b"
+    # a test statistic, which a p-value right after it belongs to: not a fit index, R
+    # squared, a size or another number, which a table note can follow
+    test_stat = _TEST_STAT_PATTERN
+    # a p with a correction name is a p-value too ("pFWE < .05", #642)
+    p_value = f"(?<![\\w])[pP]s?\\s*(?:-?values?)?(?:[\\s_-]?{_P_SUBSCRIPTS})?\\s*(?:=|<|>|≤|≥|¼)"
+    symbol = _P_NOTE_SYMBOL
+    marker = f"(?<![\\w)\\]/])(?:(?:{symbol}|(?<![\\w/+])\\++)\\s*)+[:=,]?\\s*$"
+    # a marker in brackets, before the p-value ("(*) p < .05", "(**) = p < .01") or after it
+    # ("p < .01 (**)") (#642)
+    marker_br_before = f"\\(\\s*(?:{symbol}\\s*)+\\)\\s*[:=,]?\\s*$"
+    marker_br_after = f"^\\s*\\(\\s*(?:{symbol}\\s*)+\\)"
+    ns_marker = "(?<![\\w.])n\\.?s\\.?\\s*[:=]\\s*$"
+    ns_plain = "(?<![\\w.])n\\.?s\\.?\\s*,?\\s*$"
+    # threshold words, each in a form that states a threshold: "threshold" or "alpha"
+    # alone also name perception thresholds and alpha power
+    thresh = (
+        "thresholded|threshold(?:s|ing)?\\s+(?:of|at|was|were|is|set|for\\s+(?:statistical\\s+)?significance|level)\\b|"
+        "(?:significance|statistical|voxel-?(?:wise|level)|cluster(?:-|\\s)?(?:level|wise|forming|extent)?|"
+        "height|extent|uncorrected|corrected|FWE|FDR|peak|whole-?brain|lenient|liberal|conservative|stringent)"
+        "\\s+thresholds?\\b|threshold-free|"
+        "significance\\s+(?:level|criterion|cut-?off)|levels?\\s+of\\s+(?:statistical\\s+)?significance|"
+        "\\balpha\\s*(?:level|value|criterion|of|was|is|=|set|\\()|α\\s*(?:level|value|=|<|\\()|"
+        "(?:corrected|adjusted|Bonferroni|nominal)\\s+(?:alpha|α)\\b|"
+        "(?:considered|regarded|accepted|deemed|defined|taken|treated|interpreted)\\s+(?:as\\s+)?(?:to\\s+be\\s+)?"
+        "(?:statistically\\s+)?significan|(?:set|fixed)\\s+(?:at|to)\\s+(?:an?\\s+|the\\s+)?(?:alpha|α|p\\b|P\\b|two|one|\\.|0)|"
+        "criteri(?:on|a)\\s+(?:for|of)\\s+(?:statistical\\s+)?significan|as\\s+(?:the|a|our)\\s+criterion|"
+        "cut-?off\\s+(?:value\\s+)?(?:of|for|at)\\b|as\\s+(?:the|a)\\s+cut-?off|cut-?off\\s*:|"
+        "significan(?:t|ce)\\s+(?:was|were|is|are)\\s+(?:set|defined|accepted|considered|determined|assumed)"
+    )
+    # words that report a result against the level: "did not reach significance levels",
+    # "was found above the level of statistical significance"
+    reach = (
+        "\\b(?:reach|exceed|surpass|surviv)\\w*|\\bpass(?:ed|es|ing)?\\b|"
+        "\\b(?:above|below|beyond)\\s+(?:the\\s+)?(?:\\w+\\s+)?(?:level|threshold|significan)"
+    )
+    vis = (
+        "asterisks?|stars?|daggers?|symbols?|markers?|letters|superscripts?|"
+        "(?:(?:filled|open|solid|dashed|dotted|horizontal|vertical|black|white|gr[ae]y|red|blue|green|"
+        "orange|yellow|purple|pink|colou?red|bold|thick|shaded)\\s+)+"
+        "(?:dots?|circles?|squares?|triangles?|diamonds?|lines?|bars?|arrows?|symbols?|markers?|"
+        "boxes|cells?|areas?|regions?|channels?|clusters?|voxels?|points?|values?|entries|estimates|numbers|fonts?|text)"
+        "|bold(?:ed|face)?\\s+(?:values?|entries|estimates|numbers|coefficients|correlations|cells?|text|font)"
+    )
+    verb = "(?:indicat|denot|represent|mark|show|highlight|depict|signif|correspond|identif)\\w*"
+    legend = (
+        f"\\b(?:{vis})\\s+(?:\\S+\\s+){{0,3}}?{verb}|"
+        "(?:indicated|denoted|marked|highlighted|shown|represented|labell?ed|depicted|flagged|printed|"
+        "presented|displayed|set|written|given)\\s+(?:by|with|in|as|using)\\s+(?:an?\\s+|the\\s+)?"
+        "(?:asterisks?|stars?|daggers?|bold|boldface|italics?|colou?rs?|gr[ae]y|red|blue|green|black|white|"
+        f"symbols?|letters|superscripts?|lines?|bars?|dots|circles|arrows|shading|boxes|{symbol})"
+        "|\\bin\\s+(?:bold|boldface|gr[ae]y|colou?r)\\b"
+        # "* and ** indicate p < .05 and p < .01", "red dotted line: corrected p < .05"
+        f"|(?:{symbol}\\s*)+(?:(?:and|or|,)\\s*(?:{symbol}\\s*)+)*(?:indicat|denot|represent|mark|correspond)\\w*"
+        f"|\\b(?:{vis})\\s*:"
+    )
+    # the end of a clause: ";", or a full stop with a space or a marker after it
+    boundary = f";|\\.\\s+|\\.(?={symbol})|:\\s+(?=[A-Z])"
+    comparative = (
+        "(?:higher|lower|greater|smaller|larger|increased|decreased|elevated|reduced|raised)"
+    )
+    return SimpleNamespace(
+        stat_name=rx(stat_name),
+        ci=rx(ci),
+        test_stat=rx(test_stat),
+        p_value=rx(p_value),
+        symbol=rx(symbol),
+        marker=rx(marker),
+        marker_br_before=rx(marker_br_before),
+        marker_br_after=rx(marker_br_after),
+        ns_marker=rx(ns_marker, True),
+        ns_plain=rx(ns_plain, True),
+        symbol_p=rx(f"{symbol}\\s*[pP]\\b"),
+        next_p=rx(f"{p_value}|{symbol}"),
+        thresh=rx(thresh, True),
+        reach=rx(reach, True),
+        legend=rx(legend, True),
+        boundary=rx(boundary),
+        p_plural=rx("^[pP]\\s*['’]?s\\b"),
+        all_both=rx("\\b(?:all|both|each)\\s*\\(?\\s*$", True),
+        attached_before=rx(
+            "(?:threshold(?:ed|s)?|alpha|α|cut-?off|criterion|significance\\s+level)"
+            "\\s*(?:of|at|=|:|\\(|was\\s+set\\s+(?:at|to)|set\\s+(?:at|to))?\\s*"
+            "(?:an?\\s+|the\\s+)?(?:(?:two|one)-?\\s*tailed\\s+|(?:un)?corrected\\s+)?$",
+            True,
+        ),
+        attached_after=rx(
+            "^\\s*\\)?\\s*(?:\\(?(?:uncorrected|corrected|FWE|FDR|two-tailed|one-tailed)\\)?,?\\s*)*"
+            "threshold",
+            True,
+        ),
+        # a threshold that is measured, not set: "participants showed a higher exit
+        # threshold (P < 0.05)", "lower thresholds for CA than DYS". A threshold that is set
+        # can be "lower" too ("using a lower statistical threshold of P < .005"): a measured
+        # one is compared ("than") or someone has it ("showed a higher threshold").
+        comparative=rx(f"\\b{comparative}\\s+(?:\\w+\\s+){{0,2}}thresholds?\\b", True),
+        than=rx("\\bthan\\b", True),
+        has=rx(
+            "\\b(?:showed|shows?|had|has|have|exhibited|displayed|revealed|demonstrated|yielded)\\s+"
+            f"(?:an?\\s+|the\\s+)?(?:\\w+\\s+){{0,1}}{comparative}",
+            True,
+        ),
+    )
 
 
 def _reports_test(sentence: Any, nonzero: Any = False) -> list[bool]:
@@ -283,10 +346,10 @@ def _reports_test(sentence: Any, nonzero: Any = False) -> list[bool]:
         flags = (
             [flags[i % len(flags)] for i in range(len(texts))] if flags else [False] * len(texts)
         )
-    stat = _nt("test_stat", _TEST_STAT_PATTERN)
-    stat_nz = _nt("test_stat_nonzero", _TEST_STAT_NONZERO)
-    other_p = _nt("other_p", _OTHER_P)
-    words = _nt("test_words", _TEST_WORDS, True)
+    stat = compile_r(_TEST_STAT_PATTERN, perl=True)
+    stat_nz = compile_r(_TEST_STAT_NONZERO, perl=True)
+    other_p = compile_r(_OTHER_P, perl=True)
+    words = compile_r(_TEST_WORDS, ignore_case=True, perl=True)
     return [
         bool(
             (stat_nz if (flags[i] is True or flags[i] == 1) else stat).search(t)
@@ -320,8 +383,6 @@ def _p_clause(p: Any) -> Any:
     and ``after``, ``NA`` where the p-value is not found. Used by ``_p_not_test()`` and
     ``stat_p_exact`` (#604, #642).
     """
-    import pandas as pd
-
     before, after = _p_clause_lists(p)
     return pd.DataFrame(
         {
@@ -343,8 +404,8 @@ def _p_clause_lists(p: Any) -> tuple[list[str | None], list[str | None]]:
         for x in (p["expanded"] if "expanded" in cols else p["text"])
     ]
     ptext = [str(x).strip() if not is_missing(x) else "" for x in p["text"]]
-    paper_ids = [str(x) for x in p["paper_id"]]
-    text_ids = [str(x) for x in p["text_id"]]
+    paper_ids = [str(x) for x in (p["paper_id"] if "paper_id" in cols else [None] * n)]
+    text_ids = [str(x) for x in (p["text_id"] if "text_id" in cols else [None] * n)]
 
     # the k-th row of a p-value in a sentence is its k-th place there
     seen: dict[tuple[str, str, str, str], int] = {}
@@ -354,12 +415,12 @@ def _p_clause_lists(p: Any) -> tuple[list[str | None], list[str | None]]:
         seen[key] = seen.get(key, 0) + 1
         ks.append(seen[key])
 
-    boundary = _nt("boundary", _NT_BOUNDARY)
+    boundary = _pnt().boundary
     for i in range(n):
         s = sentence[i]
         # not inside a longer value: "p < .05" is not found in "p < .051"
         esc = re.sub(r"([\]\[{}()+*^$|\\.?])", r"\\\1", ptext[i])
-        at = [m.start() for m in _re(esc + "(?![0-9])").finditer(s)]
+        at = [m.start() for m in compile_r(esc + "(?![0-9])", perl=True).finditer(s)]
         if not at or ks[i] > len(at):
             continue  # not found: may be a result
         start = at[ks[i] - 1]
@@ -378,110 +439,73 @@ def _p_clause_lists(p: Any) -> tuple[list[str | None], list[str | None]]:
     return before, after
 
 
-def _p_not_test(p: Any) -> list[str | None]:
-    """Port of ``.p_not_test()``: which p-values in sentences are not the result of a test.
+def _p_not_test(p: pd.DataFrame) -> list[str | None]:
+    """Why each p-value of *p* is clearly not the result of a test (port of ``.p_not_test()``).
 
-    A table note ("* p < .05, ** p < .01"), a figure legend ("Asterisks indicate
-    significant differences (p < .05)") or a stated threshold ("p < .05 was considered
-    significant") gives the level that marks significance; it is not a p-value reported
-    imprecisely. Each p-value is judged in its own clause (the text around it up to a ";"
-    or a full stop followed by a space), and never as a note when the clause holds a test
-    statistic or an estimate ("F(1, 7) = 8.03, # p < .05").
-
-    *p* is the table of ``extract_p_values()`` with ``expanded`` (the sentence). Returns one
-    entry per row: ``"marker"``, ``"threshold"``, ``"legend"``, or ``None`` for a p-value
-    that may be a result.
+    *p* is the table of ``extract_p_values()`` with ``expanded`` (the sentence): the
+    columns ``paper_id``, ``text_id``, ``text`` (the p-value as matched) and ``expanded``.
+    Returns one entry per row: ``"marker"``, ``"threshold"``, ``"legend"``, or ``None`` for
+    a p-value that may be a result.
     """
     n = len(p)
     out: list[str | None] = [None] * n
-    if not n:
+    if n == 0:
         return out
-    cols = set(p.columns)
-    sentence = [
-        "" if is_missing(x) else str(x)
-        for x in (p["expanded"] if "expanded" in cols else p["text"])
+    sentences = [
+        "" if is_missing(s) else str(s) for s in p["expanded" if "expanded" in p else "text"]
     ]
-    ptext = [str(x).strip() if not is_missing(x) else "" for x in p["text"]]
+    ptexts = [("" if is_missing(t) else str(t)).strip(" \t\r\n") for t in p["text"]]
     ctx_before, ctx_after = _p_clause_lists(p)
 
-    marker = _nt("marker", _NT_MARKER)
-    marker_br_before = _nt("marker_br_before", _NT_MARKER_BR_BEFORE)
-    marker_br_after = _nt("marker_br_after", _NT_MARKER_BR_AFTER)
-    ns_marker = _nt("ns_marker", _NT_NS_MARKER, True)
-    ns_plain = _nt("ns_plain", _NT_NS_PLAIN, True)
-    symbol_p = _nt("symbol_p", _NT_SYMBOL + "\\s*[pP]\\b")
-    test_stat = _nt("test_stat", _NT_TEST_STAT)
-    p_value = _nt("p_value", _NT_P_VALUE)
-    p_or_symbol = _nt("p_or_symbol", _NT_P_VALUE + "|" + _NT_SYMBOL)
-    stat_name = _nt("stat_name", _NT_STAT_NAME)
-    ci = _nt("ci", _NT_CI)
-    p_plural = _nt("p_plural", "^[pP]\\s*['\u2019]?s\\b")
-    all_both = _nt("all_both", "\\b(?:all|both|each)\\s*\\(?\\s*$", True)
-    attached_before = _nt("attached_before", _NT_ATTACHED_BEFORE, True)
-    attached_after = _nt("attached_after", _NT_ATTACHED_AFTER, True)
-    comp_threshold = _nt(
-        "comp_threshold", "\\b" + _NT_COMPARATIVE + "\\s+(?:\\w+\\s+){0,2}thresholds?\\b", True
-    )
-    than = _nt("than", "\\bthan\\b", True)
-    someone_has = _nt(
-        "someone_has",
-        "\\b(?:showed|shows?|had|has|have|exhibited|displayed|revealed|demonstrated|yielded)\\s+"
-        "(?:an?\\s+|the\\s+)?(?:\\w+\\s+){0,1}" + _NT_COMPARATIVE,
-        True,
-    )
-    thresh = _nt("thresh", _NT_THRESH, True)
-    reach = _nt("reach", _NT_REACH, True)
-    legend = _nt("legend", _NT_LEGEND, True)
-
+    r = _pnt()
     for i in range(n):
-        s = sentence[i]
+        s = sentences[i]
+        ptext = ptexts[i]
         before, after = ctx_before[i], ctx_after[i]
         if before is None or after is None:
             continue  # not found: may be a result
-        clause = before + " " + after
+        clause = f"{before} {after}"
 
         # a marker note: unless a test statistic comes right before the p-value, with no
         # other p-value between them ("t52 = 6.92, ***p < .001"), or right after it
         # ("*p < .05 [z = 2.38]")
         if (
-            marker.search(before)
-            or ns_marker.search(before)
-            or marker_br_before.search(before)
-            or marker_br_after.search(after)
-            or (ns_plain.search(before) and symbol_p.search(s))
+            r.marker.search(before)
+            or r.ns_marker.search(before)
+            or r.marker_br_before.search(before)
+            or r.marker_br_after.search(after)
+            or (r.ns_plain.search(before) and r.symbol_p.search(s))
         ):
-            sts = list(test_stat.finditer(before))
+            stats = list(r.test_stat.finditer(before))
             owned = False
-            if sts:
-                between = before[sts[-1].end() :]
-                owned = not p_value.search(between)
-            next_p = p_or_symbol.search(after)
-            soon = after[: next_p.start()] if next_p else after[:30]
-            if not owned and not test_stat.search(soon[:30]):
+            if stats:
+                owned = not r.p_value.search(before[stats[-1].end() :])
+            nxt = r.next_p.search(after)
+            soon = after[: nxt.start()] if nxt else after[:30]
+            if not owned and not r.test_stat.search(soon[:30]):
                 out[i] = "marker"
             continue
 
         # the words of a threshold or a legend: never with a statistic or an estimate
         # anywhere in the clause, and never for "ps" or "all p", which report results
-        if stat_name.search(clause) or ci.search(clause):
+        # ("remained significant when thresholded at varying levels, all Ps < .002")
+        if r.stat_name.search(clause) or r.ci.search(clause):
             continue
-        if p_plural.search(ptext[i]) or all_both.search(before):
+        if r.p_plural.search(ptext) or r.all_both.search(before):
             continue
         # the p-value is the threshold itself: "a threshold of p < .05", "the p < .05
         # uncorrected threshold", even where clusters "survived" it
-        attached = bool(attached_before.search(before)) or bool(attached_after.search(after))
-        # a threshold that is measured, not set: "participants showed a higher exit
-        # threshold (P < 0.05)", "lower thresholds for CA than DYS"
-        measured = bool(comp_threshold.search(clause)) and (
-            bool(than.search(clause)) or bool(someone_has.search(clause))
+        attached = bool(r.attached_before.search(before) or r.attached_after.search(after))
+        measured = bool(r.comparative.search(clause)) and bool(
+            r.than.search(clause) or r.has.search(clause)
         )
         if measured:
             continue
         if attached:
             out[i] = "threshold"
             continue
-        if thresh.search(clause) and not reach.search(clause):
+        if r.thresh.search(clause) and not r.reach.search(clause):
             out[i] = "threshold"
-        elif legend.search(clause):
+        elif r.legend.search(clause):
             out[i] = "legend"
     return out

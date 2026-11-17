@@ -400,8 +400,7 @@ def _repo_check(
 
     repo_sum = _summarise_repos(repos.df, all_files)
 
-    # private OSF projects and ResearchBox boxes read through a view-only or peer-review link
-    view_only = bind_rows([repos.view_only, repos.rb_view_only])
+    view_only = bind_rows([repos.osf_view_only, repos.rb_view_only]).reset_index(drop=True)
     report, summary, flags = _report(
         all_files,
         repo_sum,
@@ -409,7 +408,7 @@ def _repo_check(
         roster_check,
         useless_files,
         listed_tars,
-        repos.view_only,
+        repos.osf_view_only,
         repos.rb_view_only,
         repos.rb_not_public,
         osf_cut_urls,
@@ -432,7 +431,7 @@ def _repo_check(
     )
     tl = "red" if flags["n_useless_problem"] > 0 else "green" if green else "yellow"
 
-    summary_table = _summary_table(repo_sum, all_files, flags, roster_check)
+    summary_table = _summary_table(repo_sum, all_files, flags, roster_check, view_only)
     summary_text = "".join(f"\n-  {s}" for s in summary)
 
     error_rows = repo_sum["repo_error"].notna().to_numpy(dtype=bool)
@@ -455,9 +454,9 @@ def _repo_check(
         # Files that do not belong in a repository, left out of `table`: repo_url,
         # file_path, kind and severity ("problem" or "suggestion")
         "useless_files": useless_files,
-        # Private OSF projects and ResearchBox boxes whose files were read through a view-only
-        # or peer-review link in the paper: paper_id, repo_url (the link) and project (its
-        # plain address).
+        # Private OSF projects and ResearchBox boxes whose files were read through a
+        # view-only or peer-review link in the paper: paper_id, repo_url (the link)
+        # and project (its plain address)
         "view_only": view_only,
         "na_replace": 0,
         "traffic_light": tl,
@@ -1008,7 +1007,7 @@ def _report(
     listed_tars: Sequence[str] = (),
     osf_view_only: pd.DataFrame | None = None,
     rb_view_only: pd.DataFrame | None = None,
-    rb_not_public: Sequence[str] = (),
+    not_public: Sequence[str] = (),
     osf_cut_urls: Sequence[str] = (),
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
@@ -1045,36 +1044,31 @@ def _report(
             *(f"- {_na_str(u)}: {e}" for u, e in zip(un_urls, un_why, strict=True)),
         ]
 
-    # private repositories checked through a view-only or peer-review link (see the OSF and
-    # ResearchBox blocks): yellow, the files could be checked, but readers of the paper need
-    # the view-only or peer-review link, which was meant for peer review
+    # private repositories checked through a view-only or peer-review link: yellow,
+    # the files could be checked, but readers of the paper need the link, which was
+    # meant for peer review
     summary_view_only = None
     report_view_only: list[str] = []
-    osf_projects = (
-        rc.unique(rc.vals(osf_view_only["project"]))
-        if osf_view_only is not None and len(osf_view_only)
-        else []
+    osf_projects = rc.unique(
+        rc.vals((osf_view_only if osf_view_only is not None else rc.view_only_frame())["project"])
     )
-    rb_projects = (
-        rc.unique(rc.vals(rb_view_only["project"]))
-        if rb_view_only is not None and len(rb_view_only)
-        else []
+    rb_projects = rc.unique(
+        rc.vals((rb_view_only if rb_view_only is not None else rc.view_only_frame())["project"])
     )
-    view_only_projects = rc.unique([*osf_projects, *rb_projects])
-    if view_only_projects:
+    if osf_projects or rb_projects:
         summary_view_only = " ".join(
             [
                 *(
-                    f"The OSF project {u} is private. Metacheck examined the files through the "
+                    f"The OSF project {p} is private. Metacheck examined the files through the "
                     "view_only link. As the preprint is public, and the OSF Files are accessible "
                     "to anyone, consider making the OSF project public."
-                    for u in osf_projects
+                    for p in osf_projects
                 ),
                 *(
-                    f"The ResearchBox box {u} is private. Metacheck examined the files through "
+                    f"The ResearchBox box {p} is private. Metacheck examined the files through "
                     "the peer-review link. As the preprint is public, consider making the box "
                     "public."
-                    for u in rb_projects
+                    for p in rb_projects
                 ),
             ]
         )
@@ -1082,12 +1076,7 @@ def _report(
             "#### Private repositories checked through a view-only or peer-review link",
             summary_view_only,
         ]
-    view_only = bind_rows([f for f in (osf_view_only, rb_view_only) if f is not None])
 
-    # ResearchBox boxes that readers cannot open (metacheck #621): still counted as
-    # repositories that could not be checked (yellow); the authors are told how to make the
-    # link open the box. ResearchBox's API gives the same answer for a box that does not exist
-    # and one that is not public.
     # OSF projects listed only in part ----
     # The listing of these stopped at `osf_max_requests` (see `listing_cut` in a listing).
     in_tables = set(rc.vals(repos["repo_url"])) | (
@@ -1128,23 +1117,25 @@ def _report(
             "(the request limit was reached)."
         )
 
+    # ResearchBox boxes that readers cannot open (#621): still repositories that
+    # could not be checked (above); the authors are told how to make the link open
+    # the box. ResearchBox's API gives the same answer for a box that does not
+    # exist and one that is not public.
     summary_not_public = None
     report_not_public: list[str] = []
-    if rb_not_public:
+    if not_public:
         from metacheck.archives.researchbox import _rbox_id
 
-        boxes = rc.unique(
-            [
-                u if (i := _rbox_id(u)) is None else f"https://researchbox.org/{i}"
-                for u in rb_not_public
-            ]
-        )
+        boxes = []
+        for u in not_public:
+            box = _rbox_id(u)
+            boxes.append(u if box is None else f"https://researchbox.org/{box}")
         summary_not_public = " ".join(
             f"The ResearchBox box {b} does not exist or is not public, so readers who follow "
             "the link cannot open it. As the preprint is public, consider making the box "
-            f"public. If the box has to stay private for now, link to its full peer-review "
+            "public. If the box has to stay private for now, link to its full peer-review "
             f"link ({b}&PEER_REVIEW_passcode=...), so that the link itself opens the box."
-            for b in boxes
+            for b in rc.unique(boxes)
         )
         report_not_public = ["#### Repositories that readers cannot open", summary_not_public]
 
@@ -1476,10 +1467,9 @@ def _report(
         "n_unchecked": n_unchecked,
         "partial_repos": partial_repos,
         "unchecked": unchecked,
-        "n_view_only": len(view_only_projects),
-        "view_only": view_only,
         "n_useless_problem": useless["n_problem"],
         "n_useless_suggestion": useless["n_suggestion"],
+        "n_view_only": len(osf_projects) + len(rb_projects),
         "naming_issues_by_paper": naming_by_paper,
     }
     return report, summary, flags
@@ -1632,7 +1622,11 @@ def _naming_by_paper(all_files: pd.DataFrame, naming_issues: pd.DataFrame) -> pd
 
 
 def _summary_table(
-    repos: pd.DataFrame, all_files: pd.DataFrame, flags: dict[str, Any], roster_check: Any
+    repos: pd.DataFrame,
+    all_files: pd.DataFrame,
+    flags: dict[str, Any],
+    roster_check: Any,
+    view_only: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """One row per paper: repository and file counts, unknown files, naming problems."""
     counts = ["files_n", "files_data", "files_code", "files_readme", "files_zip"]
@@ -1661,14 +1655,15 @@ def _summary_table(
     elif len(naming) > 0:
         raise rc.RError("object 'paper_id' not found")
 
-    # private OSF projects checked through a view-only link, per paper
-    vo_count: dict[Any, int] = {}
-    vo = flags.get("view_only")
-    if vo is not None and len(vo) > 0:
-        pairs = dict.fromkeys(zip(rc.vals(vo["paper_id"]), rc.vals(vo["project"]), strict=True))
-        for pid, _project in pairs:
-            key = None if rc._na(pid) else pid
-            vo_count[key] = vo_count.get(key, 0) + 1
+    # private OSF projects and ResearchBox boxes checked through a view-only or
+    # peer-review link, per paper (a paper without an id has none)
+    by_paper: dict[Any, set[Any]] = {}
+    if view_only is not None:
+        for pid, project in zip(
+            rc.vals(view_only["paper_id"]), rc.vals(view_only["project"]), strict=True
+        ):
+            if not rc._na(pid):
+                by_paper.setdefault(pid, set()).add(project)
 
     pids = list(rows)
     mismatch = _roster_mismatch(roster_check)
@@ -1680,7 +1675,7 @@ def _summary_table(
             **{c: pd.Series([rows[p][c] for p in pids], dtype="Int64") for c in counts},
             "files_unknown": pd.Series([unknown.get(p, 0) for p in pids], dtype="Int64"),
             "naming_issues": pd.Series([bad.get(p, 0) for p in pids], dtype="Int64"),
-            "repo_view_only": pd.Series([vo_count.get(p, 0) for p in pids], dtype="Int64"),
+            "repo_view_only": pd.Series([len(by_paper.get(p, ())) for p in pids], dtype="Int64"),
             "roster_mismatch": pd.Series([mismatch] * len(pids), dtype="boolean"),
         }
     )

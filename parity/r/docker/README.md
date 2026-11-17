@@ -15,6 +15,9 @@ The image holds:
 - metacheck at the commit that `upstream/metacheck` has checked out.
 - careless 1.2.2 in `<R.home()>/suggests`, the library that only the accuracy
   report loads (`parity/r/install-suggests.R`).
+- Ubuntu's `python3` (3.12, as the Parity workflow's `uv run` puts the project's
+  Python 3.12 on the PATH): reproducibility_check parses Python files with it,
+  and without one its report says that no Python interpreter was found.
 
 ## Build
 

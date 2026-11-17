@@ -373,10 +373,10 @@ def repro_dependencies(code_text: Any, lang: str = "R") -> pd.DataFrame:
     if not pkgs:
         return empty
 
-    # From the code without its comments, as the package names are: an address in a line made
-    # a comment ("# install.packages(\"http://...embryogrowth.tar.gz\")", which no longer
-    # answers) was used instead of CRAN, and the install failed (metacheck 0.4.3.10, #598)
-    joined = _paste_lines(_code_remove_comments(_chr_list(code_text), "R"))
+    # From the code without its comments, as the package names are: an address in
+    # a line made a comment (``# install.packages("http://.../x.tar.gz")``, which
+    # no longer answers) was used instead of CRAN (R #598).
+    joined = _paste_lines(_code_remove_comments(code_text, "R"))
     gh = regextract_all(_GH_PAT, joined, perl=True)
     url = regextract_all(_URL_PAT, joined, perl=True)
     gh_refs = list(sub(_GH_PAT, r"\1", gh, perl=True))
@@ -1254,6 +1254,7 @@ def repro_rewrite_paths(
     from metacheck.codecheck.core import code_file_refs
 
     code_lines = _chr_list(code_text)
+    # code_file_refs() leaves out the files the code writes (R 0.4.3.28)
     refs = list(code_file_refs(code_text, lang))
     plan_file = _chr_list(plan["file_name"])
     plan_base = [_norm_base(f) for f in plan_file]
@@ -1759,14 +1760,14 @@ def _py_open_writes(line: str | None) -> bool:
     Whether a line of Python opens a file for writing. Only the mode argument of an
     ``open()`` call counts: the second positional argument, or ``mode =``; a mode is a
     write when it is ``w``, ``a``, ``x`` or ``r+``, with ``b``, ``t`` or ``+`` (U240,
-    fixed in metacheck 0.4.0). The call text is blanked when its mode writes
-    (``_blank_write_opens`` of code_check, which metacheck 0.4.3.9 shares with this).
+    fixed in metacheck 0.4.0). As in R 0.4.3.28, the call text is blanked when its mode
+    writes (:func:`_code_blank_write_opens`) and a changed line is a write.
     """
     if not line:
         return False
-    from metacheck.codecheck.core import _blank_write_opens
+    from metacheck.codecheck.core import _code_blank_write_opens
 
-    return _blank_write_opens([line], "Python", _PY_WRITE_MODE_PAT) != [line]
+    return _code_blank_write_opens([line], "Python", _PY_WRITE_MODE_PAT) != [line]
 
 
 def _code_open_calls(
@@ -2403,7 +2404,7 @@ def repro_materialize_layout(
     plan: pd.DataFrame | None,
     structure_df: pd.DataFrame | None,
     root: str | os.PathLike[str],
-    deadline: float | None = None,
+    deadline: Any = None,
 ) -> MaterialisedRoot:
     """Materialise the deposit's layout for a paper into a throwaway directory.
 
@@ -2417,24 +2418,26 @@ def repro_materialize_layout(
     change, for the host user only (D135). Returns *root* with the copy log in ``attrs["materialised"]`` and the swaps
     in ``attrs["lfs"]``.
 
-    *deadline* is a clock time (``time.time()`` seconds) after which no further file is
-    copied: its folder is still made and its row has ``ok`` false (metacheck 0.4.3.28);
-    ``None`` copies every file. ``attrs["not_copied_time"]`` is the number of files not
-    copied because the deadline had passed.
+    *deadline* is a clock time (a :class:`datetime.datetime`, or ``time.time()`` seconds)
+    after which no further file is copied: its folder is still made and its row has
+    ``ok`` False. ``None`` copies every file. ``attrs["not_copied_time"]`` is the number
+    of files not copied because the deadline had passed (a repository of 10,658 files took
+    16 minutes to copy on the metacheck server, past its limit).
     """
     root_s = os.fspath(root)
-    _dir_create(root_s)
-    _dir_create(_file_path(root_s, "output"))
-    rows: list[tuple[str | None, str | None, bool]] = []
+    limit = _clock_seconds(deadline)
     late = 0
 
     def too_late() -> bool:
-        """The deadline has passed (copying 10,658 files took 16 minutes on a server)."""
         nonlocal late
-        if deadline is None or time.time() <= deadline:
+        if limit is None or time.time() <= limit:
             return False
         late += 1
         return True
+
+    _dir_create(root_s)
+    _dir_create(_file_path(root_s, "output"))
+    rows: list[tuple[str | None, str | None, bool]] = []
 
     def result(lfs: pd.DataFrame | None = None) -> MaterialisedRoot:
         out = MaterialisedRoot(
@@ -2818,26 +2821,6 @@ _INSTALLERS = (
 _ENV_TOOLS = r"""['"]?(?:groundhog|checkpoint|renv|pacman|remotes|devtools|BiocManager|pak)['"]?"""
 
 
-def _repro_read_failed_msg(errors: Sequence[str | None], max_chars: int = 300) -> list[str | None]:
-    """Port of ``.repro_read_failed_msg()``: for each script that could not be read, why.
-
-    For its row in the table and the report; ``None`` where the read worked (#620). R names
-    a package metacheck reads scripts with that is installed but cannot be loaded on the
-    computer that ran the check; Python's readers are modules of the standard library or
-    required dependencies, so there is none to name.
-    """
-    out: list[str | None] = []
-    for e in errors:
-        if e is None:
-            out.append(None)
-            continue
-        e = re.sub(r"\s+", " ", e).strip()
-        if len(e) > max_chars:
-            e = e[: max_chars - 1] + "\u2026"
-        out.append(f"metacheck could not read the file: {e}.")
-    return out
-
-
 def _deparse1_vec(values: Sequence[str]) -> str:
     """``deparse1()`` of a character vector (no NA)."""
     lits = ['"' + v.replace("\\", "\\\\").replace('"', '\\"') + '"' for v in values]
@@ -3104,33 +3087,31 @@ def _repro_make_write_folders(
         _dir_create(_file_path(root, _portable_path(_r_dirname(p))))
 
 
-_LIB_LOC_CALL = (
+_LIB_LOC_PAT = re.compile(
     r"(\b(?:library|require|requireNamespace|loadNamespace)\s*\([^()]*?)"
-    r"\s*,\s*lib\.loc\s*=\s*(['\"])((?:[A-Za-z]:[/\\]|/|~)[^'\"]*)\2"
+    r"""\s*,\s*lib\.loc\s*=\s*(['"])((?:[A-Za-z]:[/\\]|/|~)[^'"]*)\2"""
 )
 
 
 def _repro_drop_author_lib_loc(txt: Sequence[str | None]) -> tuple[list[str | None], list[str]]:
-    """Port of ``.repro_drop_author_lib_loc()``: ``lib.loc =`` folders on the authors' computer.
+    """Port of R ``.repro_drop_author_lib_loc()`` (#594).
 
-    Removed from ``library()``, ``require()``, ``requireNamespace()`` and ``loadNamespace()``:
-    the run has its own library, where the package is installed, and the folder is not
-    there, so the script stopped with "no library trees found in '<folder>'" although the
-    package was there (10.1111/2041-210X.13650; #594). Only an absolute path
-    ("C:/...", "/home/...", "~/..."), which cannot be in the sandbox; a relative one may be a
-    library the deposit holds, and stays. Returns the new lines and the folders removed.
+    A ``lib.loc =`` that points to a folder on the authors' computer, removed from
+    ``library()``, ``require()``, ``requireNamespace()`` and ``loadNamespace()``: the run
+    has its own library, where the package is installed, and the folder is not there, so
+    the script stopped with "no library trees found" although the package was there. Only
+    an absolute path (``C:/...``, ``/home/...``, ``~/...``) goes: a relative one may be a
+    library the deposit holds. Returns the lines and the folders removed.
     """
     out = list(txt)
     paths: list[str] = []
-    pat = re.compile(_LIB_LOC_CALL)
     for i, line in enumerate(out):
-        if line is None or re.match(r"\s*#", line):
+        if line is None or re.match(r"^\s*#", line):
             continue
-        matches = list(pat.finditer(line))
-        if not matches:
-            continue
-        paths.extend(m.group(3) for m in matches)
-        out[i] = pat.sub(r"\1", line)
+        found = [m.group(3) for m in _LIB_LOC_PAT.finditer(line)]
+        if found:
+            paths.extend(found)
+            out[i] = _LIB_LOC_PAT.sub(r"\1", line)
     return out, _unique(paths)
 
 
@@ -3161,7 +3142,8 @@ def repro_write_scripts(
     first. It is written to ``<root>/<target>`` (*script_paths* gives each script's own
     path), unless a file there is not text. Returns ``file_name``, ``script_path``,
     ``run_dir``, ``setwd_removed``, ``env_calls_replaced``, ``slashes_fixed``,
-    ``setwd_folder_removed``, ``setwd_paths``, ``lib_loc_removed``, ``family_replaced``,
+    ``setwd_folder_removed``, ``setwd_paths``, ``lib_loc_removed`` (a ``lib.loc`` on the
+    authors' computer taken out of ``library()`` and the like, #594), ``family_replaced``,
     ``family_detail`` and ``library_injected``.
 
     *lang* is the language of every script, or a mapping from file name to language.
@@ -3252,7 +3234,7 @@ def repro_write_scripts(
         if replace_env_calls and is_r:
             txt, env_n = _repro_neutralise_env_calls(txt)
 
-        # lib.loc pointing to a folder on the authors' computer (metacheck 0.4.3.11, #594)
+        # lib.loc pointing to a folder on the authors' computer (#594)
         lib_loc_paths: list[str] = []
         if is_r:
             txt, lib_loc_paths = _repro_drop_author_lib_loc(txt)
@@ -3480,46 +3462,6 @@ if (mode == "check_main") {
         list(ok = FALSE, msg = "", not_loadable = TRUE)
       else list(ok = TRUE, msg = "")
     }, error = function(e) list(ok = FALSE, msg = conditionMessage(e)))
-    # An install from GitHub or a web address that failed, for a package that is on CRAN or
-    # Bioconductor: installed from there, with a note (metacheck #598). A failed download is
-    # reported as such, not as "the install did not put the package in the library".
-    fb_json <- ""
-    res_msg0 <- res$msg
-    if (!res$ok && src %in% c("github", "url")) {
-      dl <- grep(paste0("cannot open URL|cannot open the connection|download|status was|",
-                        "Could not resolve host|HTTP error|HTTP status|404|403|Failed to connect"),
-                 c(install_warnings, res$msg), value = TRUE, ignore.case = TRUE)
-      dl_msg <- if (length(dl))
-        paste0("could not download ", ref, ": ", substr(gsub("[[:space:]]+", " ", dl[[1]]), 1, 200))
-      else NA_character_
-      on_cran <- {
-        repos <- getOption("repos")
-        if (is.null(repos) || !length(repos) || any(repos == "@CRAN@"))
-          repos <- c(CRAN = "https://cloud.r-project.org")
-        ap <- tryCatch(suppressWarnings(utils::available.packages(repos = repos)),
-                       error = function(e) NULL)
-        pkg %in% (if (is.null(ap)) character(0) else rownames(ap))
-      }
-      alt <- if (on_cran) "CRAN" else if (isTRUE(is_bioc)) "Bioconductor" else NA_character_
-      if (!is.na(alt)) {
-        message("[repro]     '", pkg, "' could not be installed from ", ref,
-                "; installing it from ", alt, " ...")
-        try(if (alt == "CRAN") utils::install.packages(pkg, lib = lib_dir, quiet = FALSE) else {
-          if (!requireNamespace("BiocManager", quietly = TRUE))
-            utils::install.packages("BiocManager", lib = lib_dir, quiet = FALSE)
-          BiocManager::install(pkg, lib = lib_dir, update = FALSE, ask = FALSE)
-        })
-        if (file.exists(file.path(lib_dir, pkg, "DESCRIPTION")) &&
-            requireNamespace(pkg, quietly = TRUE, lib.loc = lib_dir)) {
-          res <- list(ok = TRUE, msg = "")
-          first <- if (is.na(dl_msg)) res_msg0 else dl_msg
-          version_note <- paste0("installed from ", alt, ": the install from ", ref,
-                                 " failed (", substr(first, 1, 200), ")")
-        }
-      }
-      fb_json <- paste0(",\"fb_alt\":", if (is.na(alt)) "null" else .mc_json_str(alt),
-                        ",\"dl_msg\":", if (is.na(dl_msg)) "null" else .mc_json_str(dl_msg))
-    }
     warn_json <- if (isTRUE(res$not_loadable) && length(install_warnings))
       paste0(",\"warnings\":[", paste(.mc_json_str(install_warnings), collapse = ","), "]")
     else ""
@@ -3529,7 +3471,28 @@ if (mode == "check_main") {
                         if (isTRUE(res$not_loadable))
                           paste0(",\"not_loadable\":true,\"load_error\":",
                                  .mc_json_str(load_error(pkg, lib_dir))) else "",
-                        warn_json, fb_json))
+                        warn_json))
+  }
+} else if (mode == "fallback") {
+  # An install from GitHub or a web address that failed, for a package that is on CRAN
+  # or Bioconductor: installed from there (#598). CRAN's list is read from the
+  # repositories R is set to.
+  ap <- tryCatch(suppressWarnings(utils::available.packages(repos = getOption("repos"))),
+                 error = function(e) NULL)
+  on_cran <- !is.null(ap) && pkg %in% rownames(ap)
+  alt <- if (on_cran) "CRAN" else if (isTRUE(is_bioc)) "Bioconductor" else NA_character_
+  if (is.na(alt)) {
+    emit(FALSE, "", extra = ",\"alt\":null")
+  } else {
+    message("[repro]     '", pkg, "' could not be installed from ", ref, "; installing it from ", alt, " ...")
+    try(if (alt == "CRAN") utils::install.packages(pkg, lib = lib_dir, quiet = FALSE) else {
+      if (!requireNamespace("BiocManager", quietly = TRUE))
+        utils::install.packages("BiocManager", lib = lib_dir, quiet = FALSE)
+      BiocManager::install(pkg, lib = lib_dir, update = FALSE, ask = FALSE)
+    })
+    ok <- file.exists(file.path(lib_dir, pkg, "DESCRIPTION")) &&
+      requireNamespace(pkg, quietly = TRUE, lib.loc = lib_dir)
+    emit(ok, "", extra = paste0(",\"alt\":", .mc_json_str(alt)))
   }
 } else if (mode == "archive") {
   ok <- tryCatch({
@@ -3627,6 +3590,17 @@ def _repro_deadline(total_timeout: Any) -> float | None:
     return _time.time() + t
 
 
+def _clock_seconds(when: Any) -> float | None:
+    """A clock time (a :class:`datetime.datetime`, or ``time.time()`` seconds) as seconds; ``None`` stays."""
+    import datetime as _dt
+
+    if when is None:
+        return None
+    if isinstance(when, _dt.datetime):
+        return when.timestamp()
+    return as_float(when)
+
+
 def _repro_time_left(deadline: float | None) -> float:
     """Port of R/reproducibility_check.R::.repro_time_left(): seconds until *deadline*."""
     import time as _time
@@ -3645,12 +3619,12 @@ def _repro_deadline_text(total_timeout: Any) -> str:
     return f"the time for all scripts together ({mins} minutes, `total_timeout`)"
 
 
-def _repro_short_of_time(total_timeout: Any, need: float = 0.0) -> bool:
-    """Port of ``.repro_short_of_time()``: with a clock time as *total_timeout* (a server's
-    job limit minus the time for its report), whether at most *need* seconds are left.
+def _repro_short_of_time(total_timeout: Any, need: float = 0) -> bool:
+    """Port of R ``.repro_short_of_time()``.
 
-    Always false for a time in seconds, which counts from the first script and so has not
-    begun.
+    With a clock time as *total_timeout* (a server's job limit minus the time for its
+    report): whether at most *need* seconds are left. Always False for a time in seconds,
+    which counts from the first script and so has not begun.
     """
     import datetime as _dt
 
@@ -3659,66 +3633,37 @@ def _repro_short_of_time(total_timeout: Any, need: float = 0.0) -> bool:
     )
 
 
-def _repro_clock_deadline(total_timeout: Any) -> float | None:
-    """Port of ``.repro_clock_deadline()``: the moment (``time.time()`` seconds) by which
-    copying the repository must stop, *total_timeout* when it is a clock time, else ``None``
-    (no limit)."""
+def _repro_clock_deadline(total_timeout: Any) -> Any:
+    """Port of R ``.repro_clock_deadline()``: *total_timeout* when it is a clock time, else ``None``."""
     import datetime as _dt
 
-    return total_timeout.timestamp() if isinstance(total_timeout, _dt.datetime) else None
+    return total_timeout if isinstance(total_timeout, _dt.datetime) else None
 
 
 def _repro_min_prep_time() -> float:
-    """Port of ``.repro_min_prep_time()``: the seconds a clock time as *total_timeout* must
-    leave when the code check starts, for it to copy the repository, install its packages
-    and run its scripts. With less, none of that is done and every script is recorded as
-    not started (``skipped_time_limit``), so the job still has its time for the report.
-    The option ``metacheck.repro_min_time`` sets it (default 900, 15 minutes).
+    """Port of R ``.repro_min_prep_time()``.
+
+    The seconds a clock time as ``total_timeout`` must leave when the check starts, for
+    it to copy the repository, install its packages and run its scripts. With less, none
+    of that is done and every script is recorded as not started (``skipped_time_limit``),
+    so the job still has its time for the report. The option ``metacheck.repro_min_time``
+    sets it (default 900, 15 minutes).
     """
     from metacheck.utils import get_option
 
-    value = as_float(get_option("metacheck.repro_min_time", 900))
-    return 900.0 if value is None else value
+    v = as_float(get_option("metacheck.repro_min_time", 900))
+    return 900.0 if v is None else v
 
 
 def _repro_no_prep_text(left: float | None) -> str:
-    """Port of ``.repro_no_prep_text()``: the sentence for the report when the code check
-    started with too little time left (:func:`_repro_min_prep_time`); ``""`` otherwise."""
+    """Port of R ``.repro_no_prep_text()``: the report's sentence when too little time was left; ``""`` otherwise."""
     if left is None:
         return ""
     return (
-        f" The checks before this one had left {_repro_duration(left)} before the time limit, "
-        "too little to copy the repository, install its packages and run its scripts "
-        f"(at least {_repro_duration(_repro_min_prep_time())}), so none of that was done."
+        f" The checks before this one had left {_repro_duration(left)} before the time limit, too"
+        " little to copy the repository, install its packages and run its"
+        f" scripts (at least {_repro_duration(_repro_min_prep_time())}), so none of that was done."
     )
-
-
-def _repro_no_time_to_prepare(total_timeout: Any, state: dict[str, Any]) -> bool:
-    """Whether the code check started with too little time to copy, install and run.
-
-    Port of ``.repro_no_time_to_prepare()``, asked before the R scripts and again before
-    the Python ones; true once it applies. The first time, the seconds left are kept in
-    ``state["prep_skipped_left"]`` and the script deadline is set to now, so every script
-    is ``skipped_time_limit``.
-    """
-    if state.get("prep_skipped_left") is None and _repro_short_of_time(
-        total_timeout, _repro_min_prep_time()
-    ):
-        assert total_timeout is not None
-        left = max(0.0, _repro_time_left(total_timeout.timestamp()))
-        state["prep_skipped_left"] = left
-        state["script_deadline"] = time.time()
-        _message(
-            f"only {_repro_duration(left)} left before the time limit: "
-            "not copying, installing or running anything."
-        )
-    return state.get("prep_skipped_left") is not None
-
-
-def _repro_no_time_to_install(total_timeout: Any, state: dict[str, Any]) -> bool:
-    """Port of ``.repro_no_time_to_install()``: no time left to install packages (a minute
-    at least, or none at all when the code check started short of time)."""
-    return state.get("prep_skipped_left") is not None or _repro_short_of_time(total_timeout, 60)
 
 
 def _repro_install_limit(
@@ -3884,7 +3829,6 @@ def repro_install_deps(
                 ref=ref,
                 version=version,
                 cran_to_main_lib=_r_is_true(cran_to_main_lib),
-                is_bioc=pkg in set(_repro_bioc_packages()),
             )
             ok = bool(res.get("ok"))
             msg = str(res.get("msg") or "")
@@ -3893,13 +3837,32 @@ def repro_install_deps(
                 msg = _repro_not_loadable_msg(
                     pkg, res.get("warnings") or [], str(res.get("load_error") or "")
                 )
-            if not ok and src in ("github", "url"):
-                # a failed download says so (metacheck #598); a fallback that failed too says that
-                first = as_str(res.get("dl_msg")) or msg
-                alt = as_str(res.get("fb_alt"))
-                msg = f"{first}; installing it from {alt} failed too" if alt else first
             via_archive = False
             have = as_str(res.get("version_installed"))
+            # An install from GitHub or a web address that failed, for a package that is
+            # on CRAN or Bioconductor: installed from there, with a note (#598). A failed
+            # download says so, not "the install did not put the package in the library".
+            if not ok and src in ("github", "url"):
+                first = _repro_download_failed_msg(ref, [*(res.get("warnings") or []), msg]) or msg
+                fb = _install_r(
+                    "fallback",
+                    lib,
+                    pkg=pkg,
+                    ref=ref,
+                    is_bioc=pkg in _repro_bioc_packages(),
+                )
+                alt = as_str(fb.get("alt"))
+                if alt is not None:
+                    if fb.get("ok"):
+                        ok, msg = True, ""
+                        have = as_str(fb.get("version_installed")) or have
+                        version_note = (
+                            f"installed from {alt}: the install from {ref} failed ({first[:200]})"
+                        )
+                    else:
+                        msg = f"{first}; installing it from {alt} failed too"
+                else:
+                    msg = first
             if not ok and src == "cran":
                 _message(
                     "[repro]     '",
@@ -3946,6 +3909,28 @@ def repro_install_deps(
     finally:
         bar.terminate()
     return _install_frame(rows)
+
+
+def _repro_download_failed_msg(ref: str | None, msgs: Sequence[str | None]) -> str | None:
+    """Port of R ``.repro_download_failed_msg()`` (#598).
+
+    ``"could not download <ref>: <why>"`` when a GitHub or URL install failed on the
+    download (a dead address, a missing repository), else ``None``.
+    """
+    hit = [
+        m
+        for m in msgs
+        if m is not None
+        and re.search(
+            "cannot open URL|cannot open the connection|download|status was|Could not resolve host|"
+            "HTTP error|HTTP status|404|403|Failed to connect",
+            m,
+            re.IGNORECASE,
+        )
+    ]
+    if not hit:
+        return None
+    return f"could not download {ref}: " + re.sub(r"\s+", " ", hit[0])[:200]
 
 
 def _repro_not_loadable_msg(
@@ -4448,7 +4433,11 @@ def repro_run_scripts(
             _message(
                 "[repro]   -> running '", fn, "' (timeout ", as_character(run_timeout), "s) ..."
             )
-            with tempfile.TemporaryDirectory(prefix="pytacheck_run_") as tmp:
+            # a script stopped at its time limit may still hold its output files on
+            # Windows for a moment; the folder is then left for the system to clear
+            with tempfile.TemporaryDirectory(
+                prefix="pytacheck_run_", ignore_cleanup_errors=True
+            ) as tmp:
                 out_file = os.path.join(tmp, "out.txt")
                 err_file = os.path.join(tmp, "err.txt")
                 cap_file = os.path.join(tmp, "captures.json")

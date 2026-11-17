@@ -472,10 +472,10 @@ def test_rbox_license(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     assert _rbox_license("https://researchbox.org/803") is None
 
 
-def test_rbox_box_meta_gives_the_licence_and_status_from_one_request(
+def test_rbox_box_meta_gives_licence_and_status_from_one_request(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    """metacheck 0.4.3.23 (#621): the status comes with the licence."""
+    """Port of test-archive-researchbox.R: .rbox_box_meta() (#621)."""
     asked: list[Any] = []
 
     def api(action: str, **kw: Any) -> Any:
@@ -488,19 +488,22 @@ def test_rbox_box_meta_gives_the_licence_and_status_from_one_request(
 
     with local_options(
         {
+            "metacheck.researchbox.token": "test-token",
             "metacheck.cache.dir": str(tmp_path / "cache"),
-            "metacheck.repo_cache.session_dir": str(tmp_path / "s2"),
-            "metacheck.state.dir": str(tmp_path / "st"),
+            "metacheck.repo_cache.session_dir": str(tmp_path / "session"),
+            "metacheck.state.dir": str(tmp_path / "state"),
         }
     ):
         monkeypatch.setattr(rb, "_rbox_api", api)
         meta = _rbox_box_meta(
             "https://researchbox.org/8285&PEER_REVIEW_passcode=NNONJR", cache=True
         )
-        assert meta == {"RB_license": "CC-BY-4.0", "RB_status": "private"}
+        assert meta["RB_license"].iloc[0] == "CC-BY-4.0"
+        assert meta["RB_status"].iloc[0] == "private"
         assert asked == ["NNONJR"]
         # the status is saved with the licence
-        assert _rbox_box_meta("https://researchbox.org/8285", cache=True)["RB_status"] == "private"
+        again = _rbox_box_meta("https://researchbox.org/8285", cache=True)
+        assert again["RB_status"].iloc[0] == "private"
         assert len(asked) == 1
 
     # the web page gives no status
@@ -511,8 +514,8 @@ def test_rbox_box_meta_gives_the_licence_and_status_from_one_request(
         rb, "_rbox_info_page", lambda u: pd.DataFrame({"rb_url": [u], "RB_license": ["CC-BY-4.0"]})
     )
     meta = _rbox_box_meta("https://researchbox.org/802")
-    assert meta["RB_license"] == "CC-BY-4.0"
-    assert meta["RB_status"] is None
+    assert meta["RB_license"].iloc[0] == "CC-BY-4.0"
+    assert pd.isna(meta["RB_status"].iloc[0])
 
 
 # --------------------------------------------------------------------------- downloads

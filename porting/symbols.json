@@ -960,13 +960,13 @@
   "file": "R/code_check.R",
   "line": 2605,
   "ported": true,
-  "python": "metacheck.codecheck.core:_blank_mplus_savedata"
+  "python": "metacheck.codecheck.core:_code_blank_mplus_savedata"
  },
  ".code_blank_write_opens": {
   "file": "R/code_check.R",
   "line": 2550,
   "ported": true,
-  "python": "metacheck.codecheck.core:_blank_write_opens"
+  "python": "metacheck.codecheck.core:_code_blank_write_opens"
  },
  ".code_char_vector_vars": {
   "file": "R/code_check.R",
@@ -1468,6 +1468,7 @@
  ".detect_no_participants": {
   "file": "R/text-extractors.R",
   "line": 485,
+  "ported": true,
   "python": "metacheck.text.extract:_detect_no_participants"
  },
  ".detect_scale_blocks": {
@@ -2875,7 +2876,7 @@
   "file": "R/keys.R",
   "line": 287,
   "ported": true,
-  "python": "metacheck.keys:_key_number"
+  "python": "metacheck.keys:KeySeen"
  },
  ".key_present": {
   "file": "R/keys.R",
@@ -3900,6 +3901,7 @@
  ".p_not_test": {
   "file": "R/stat_helpers.R",
   "line": 439,
+  "ported": true,
   "python": "metacheck.stats.helpers:_p_not_test"
  },
  ".pad_to": {
@@ -4105,16 +4107,19 @@
  ".pkg_github_hint": {
   "file": "R/utils.R",
   "line": 645,
+  "ported": true,
   "python": "metacheck.utils:_pkg_github_hint"
  },
  ".pkg_name": {
   "file": "R/utils.R",
   "line": 641,
+  "ported": true,
   "python": "metacheck.utils:_pkg_name"
  },
  ".pkg_problem": {
   "file": "R/utils.R",
   "line": 623,
+  "ported": true,
   "python": "metacheck.utils:_pkg_problem"
  },
  ".plain_number": {
@@ -4516,7 +4521,6 @@
  ".rbox_license": {
   "file": "R/archive-researchbox.R",
   "line": 623,
-  "ported": true,
   "python": "metacheck.archives.researchbox:_rbox_license"
  },
  ".rbox_no_files": {
@@ -5058,6 +5062,7 @@
  ".repro_clock_deadline": {
   "file": "R/reproducibility_check.R",
   "line": 6207,
+  "ported": true,
   "python": "metacheck.repro.core:_repro_clock_deadline"
  },
  ".repro_common_pkgs": {
@@ -5238,6 +5243,7 @@
  ".repro_download_failed_msg": {
   "file": "R/reproducibility_check.R",
   "line": 5011,
+  "ported": true,
   "python": "metacheck.repro.core:_repro_download_failed_msg"
  },
  ".repro_download_limits": {
@@ -5536,6 +5542,7 @@
  ".repro_min_prep_time": {
   "file": "R/reproducibility_check.R",
   "line": 6219,
+  "ported": true,
   "python": "metacheck.repro.core:_repro_min_prep_time"
  },
  ".repro_missing_fn_pkgs": {
@@ -5631,6 +5638,7 @@
  ".repro_no_prep_text": {
   "file": "R/reproducibility_check.R",
   "line": 6225,
+  "ported": true,
   "python": "metacheck.repro.core:_repro_no_prep_text"
  },
  ".repro_norm_rel": {
@@ -5888,7 +5896,7 @@
   "file": "R/reproducibility_check.R",
   "line": 5026,
   "ported": true,
-  "python": "metacheck.repro.core:_repro_read_failed_msg"
+  "python": "metacheck.repro.outcomes:_repro_read_failed_msg"
  },
  ".repro_recorded_advice": {
   "file": "R/reproducibility_check.R",
@@ -6031,6 +6039,7 @@
  ".repro_short_of_time": {
   "file": "R/reproducibility_check.R",
   "line": 6201,
+  "ported": true,
   "python": "metacheck.repro.core:_repro_short_of_time"
  },
  ".repro_shown_location": {

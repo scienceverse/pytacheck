@@ -24,7 +24,7 @@ differences:
     field: summary_table
     match: values
     kind: deliberate
-    ref: D143
+    ref: D141
     reason: >-
       metacheck 0.4.4.3 adds the repo_own, repo_others and ref_others columns (whose deposit each
       link is); pytacheck does not port the ownership engine yet

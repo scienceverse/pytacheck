@@ -38,7 +38,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from tests.httpmock import fixture_response
+from tests.httpmock import fixture_response, r_digest
 
 MOCKS = HERE / "mocks"
 MOCKS_RB = HERE / "mocks_researchbox"
@@ -150,7 +150,35 @@ def osf_private(node: str) -> None:
     )
 
 
+VIEW_ONLY_KEY = "0123456789abcdef0123456789abcdef"
+
+
+def osf_view_only(node: str, public: bool) -> None:
+    """A project read through a view-only link (``guids/<id>?view_only=<key>``).
+
+    The OSF lists its files through the link and says whether it is public (a
+    node ``public`` false is a private project). Its plain link is answered 403
+    when the project is private.
+    """
+    guid = NODE_GUID.replace("629bx", node)
+    if not public:
+        guid = guid.replace('"public":true', '"public":false')
+    write(f"api.osf.io/v2/guids/{node}-{r_digest('view_only=' + VIEW_ONLY_KEY)[:6]}.json", guid)
+    write(f"api.osf.io/v2/nodes/{node}/children.json", EMPTY_LIST)
+    write(f"api.osf.io/v2/nodes/{node}/files.json", new_ids(FILES.replace("629bx", node), node))
+    write(
+        f"api.osf.io/v2/nodes/{node}/files/osfstorage.json",
+        new_ids(OSFSTORAGE.replace("629bx", node), node),
+    )
+    if not public:
+        osf_private(node)
+
+
 def osf() -> None:
+    # a private project read through a view-only link (its plain link is closed),
+    # and a public one read through a view-only link
+    osf_view_only("vopri", public=False)
+    osf_view_only("vopub", public=True)
     # registration with its own copy of the files; source project private
     osf_registration("regc1", "parc1", with_files=True)
     osf_private("parc1")
