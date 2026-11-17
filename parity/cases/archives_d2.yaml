@@ -357,7 +357,7 @@
   "args":
     "x":
       "$expr":
-        "r": "dspace7_links(test_paper(text = c(\"Data: https://doi.org/10.35090/gatech/67239 and doi:10.7275/abcd-1234.\", \"Also repository.gatech.edu/handle/1853/67239 and 10.35090/gatech/67239 again.\"), url = c(\"https://dx.doi.org/10.7275/xyz\")))"
+        "r": "testthat::with_mocked_bindings(dspace7_links(test_paper(text = c(\"Data: https://doi.org/10.35090/gatech/67239 and doi:10.7275/abcd-1234.\", \"Also repository.gatech.edu/handle/1853/67239 and 10.35090/gatech/67239 again.\"), url = c(\"https://dx.doi.org/10.7275/xyz\"))), .repo_doi_records = function(doi) data.frame(doi = tolower(doi), url = NA_character_, resource_type = NA_character_, in_datacite = FALSE), .package = \"metacheck\")"
         "py": "lambda m: m.dspace7.dspace7_links(m.pc.test_paper([\"Data: https://doi.org/10.35090/gatech/67239 and doi:10.7275/abcd-1234.\", \"Also repository.gatech.edu/handle/1853/67239 and 10.35090/gatech/67239 again.\"], [\"https://dx.doi.org/10.7275/xyz\"]))"
   "mock_dir": "tests/archives_d2/mocks"
   "compare": *id001
@@ -367,7 +367,7 @@
   "args":
     "x":
       "$expr":
-        "r": "metacheck:::.dspace7_resolve_doi_url(\"10.35090/gatech/67239\")"
+        "r": "testthat::with_mocked_bindings(metacheck:::.dspace7_resolve_doi_url(\"10.35090/gatech/67239\"), .repo_doi_records = function(doi) data.frame(doi = tolower(doi), url = NA_character_, resource_type = NA_character_, in_datacite = FALSE), .package = \"metacheck\")"
         "py": "lambda m: m.dspace7._dspace7_resolve_doi_url(\"10.35090/gatech/67239\")"
   "mock_dir": "tests/archives_d2/mocks"
 - "id": ".dspace7_info.mock.uuid"
