@@ -157,8 +157,7 @@
             "v": [
               "d <- read.csv(\"C_/data/a/1.csv\")",
               "invisible(NULL)  # [reproducibility_check removed setwd] setwd(\"/z\")",
-              "write.csv(\"output/d.csv\", \"o.csv\")",
-              ""
+              "write.csv(\"output/d.csv\", \"o.csv\")"
             ]
           },
           {
@@ -191,6 +190,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

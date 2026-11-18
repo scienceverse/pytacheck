@@ -2435,3 +2435,545 @@
   "args":
     "code_text":
       "$chr": []
+- "id": "code_file_refs.review.writes_only_r"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "write.csv(x, \"out.csv\")"
+      - "download.file(\"https://x/a.zip\", \"b.zip\")"
+      - "read.csv(\"in.csv\")"
+    "lang": "R"
+    "writes_only": !!bool "true"
+- "id": "code_file_refs.review.include_writes_r"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "write.csv(x, \"out.csv\")"
+      - "download.file(\"https://x/a.zip\", \"b.zip\")"
+      - "read.csv(\"in.csv\")"
+    "lang": "R"
+    "include_writes": !!bool "true"
+- "id": "code_file_refs.review.writes_only_stata"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "save \"out/clean.dta\", replace"
+      - "export delimited using results.csv, replace"
+      - "use raw.dta"
+      - "graph export fig.png, replace"
+      - "esttab using \"t.tex\""
+    "lang": "Stata"
+    "writes_only": !!bool "true"
+- "id": "code_file_refs.review.include_writes_stata"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "save \"out/clean.dta\", replace"
+      - "export delimited using results.csv, replace"
+      - "use raw.dta"
+      - "graph export fig.png, replace"
+      - "esttab using \"t.tex\""
+    "lang": "Stata"
+    "include_writes": !!bool "true"
+- "id": "code_file_refs.review.writes_only_matlab"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "writetable(T, \"tab.csv\");"
+      - "fid = fopen(\"log.txt\", \"w\");"
+      - "x = load(\"in.mat\");"
+      - "csvwrite(\"c.csv\", x)"
+    "lang": "MATLAB"
+    "writes_only": !!bool "true"
+- "id": "code_file_refs.review.include_writes_matlab"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "writetable(T, \"tab.csv\");"
+      - "fid = fopen(\"log.txt\", \"w\");"
+      - "x = load(\"in.mat\");"
+      - "csvwrite(\"c.csv\", x)"
+    "lang": "MATLAB"
+    "include_writes": !!bool "true"
+- "id": "code_file_refs.review.writes_only_python"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "df.to_csv(f\"vzv_{COMPARATOR}_model.csv\")"
+      - "with open(\"o.txt\", \"w\") as f:"
+      - "d = pd.read_csv(\"in.csv\")"
+      - "urllib.request.urlretrieve(\"https://x/y.zip\", \"y.zip\")"
+    "lang": "Python"
+    "writes_only": !!bool "true"
+- "id": "code_file_refs.review.include_writes_python"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "df.to_csv(f\"vzv_{COMPARATOR}_model.csv\")"
+      - "with open(\"o.txt\", \"w\") as f:"
+      - "d = pd.read_csv(\"in.csv\")"
+      - "urllib.request.urlretrieve(\"https://x/y.zip\", \"y.zip\")"
+    "lang": "Python"
+    "include_writes": !!bool "true"
+- "id": "code_file_refs.review.writes_only_sas"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "proc export data=a outfile=\"x.csv\" dbms=csv;"
+      - "ods pdf file=\"r.pdf\";"
+      - "infile in.csv;"
+    "lang": "SAS"
+    "writes_only": !!bool "true"
+- "id": "code_file_refs.review.include_writes_sas"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "proc export data=a outfile=\"x.csv\" dbms=csv;"
+      - "ods pdf file=\"r.pdf\";"
+      - "infile in.csv;"
+    "lang": "SAS"
+    "include_writes": !!bool "true"
+- "id": "code_file_refs.review.writes_only_spss"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "SAVE OUTFILE=\"a.sav\"."
+      - "GET FILE=\"in.sav\"."
+    "lang": "SPSS"
+    "writes_only": !!bool "true"
+- "id": "code_file_refs.review.include_writes_spss"
+  "r": "code_file_refs"
+  "py": "metacheck.codecheck.core.code_file_refs"
+  "args":
+    "code_text":
+      "$chr":
+      - "SAVE OUTFILE=\"a.sav\"."
+      - "GET FILE=\"in.sav\"."
+    "lang": "SPSS"
+    "include_writes": !!bool "true"
+- "id": "code_abs_path.review.sync_join_paste0"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "d <- read_csv(paste0(input_dir, \"/behaviour_data/ages.csv\"))"
+- "id": "code_abs_path.review.sync_join_plus"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "emfd = read_csv(fileDir+'/dictionaries/emfd_scoring.csv')"
+- "id": "code_abs_path.review.sync_join_strcat"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "p = strcat(userpath,'/MVPA-Light/startup');"
+- "id": "code_abs_path.review.sync_join_brackets"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "sbjdir = [rawdir 'sub-' nr '/ses-meg/meg/'];"
+- "id": "code_abs_path.review.sync_join_strcat_win"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "save(strcat(DATA_DIR,'\\\\All\\Results'),'x');"
+- "id": "code_abs_path.review.sync_join_file_path"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "ggsave(file.path(out, \"/figs/a.pdf\"))"
+- "id": "code_abs_path.review.sync_first_stays"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "d <- read.csv(file.path(\"/Users/me/data\", \"x.csv\"))"
+- "id": "code_abs_path.review.sync_vector_stays"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- c(\"/Users/me/a.csv\", \"/Users/me/b.csv\")"
+- "id": "code_abs_path.review.sync_list_stays"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "files = [\"/home/me/a.csv\"]"
+- "id": "code_abs_path.review.sync_wildcard_stays"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "m = dir(\"C:\\Users\\me\\Data\\S5*.mat\")"
+- "id": "code_abs_path.review.sync_brackets_stay"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "d <- read.csv(\"/Users/me/Dropbox (Personal)/x.csv\")"
+- "id": "code_abs_path.review.sync_regex"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "dicom = meta.str.extract(r\"/([^/]+)\\.dcm$\")"
+- "id": "code_abs_path.review.sync_route"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "@app.route(\"/users/<int:user_id>/reset\")"
+- "id": "code_abs_path.review.sync_query"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "r = client.get(\"/api/v1/audit?limit=50\")"
+- "id": "code_abs_path.review.sync_device"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "system(\"cmd > /dev/null/x\")"
+- "id": "code_abs_path.review.sync_hdf5_key"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "mag = f[\"/Data/MAG\"][:]"
+- "id": "code_abs_path.review.sync_h5read"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- h5read(file, \"/Data/MAG\")"
+- "id": "code_abs_path.review.sync_placeholder"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "annot <- \"/path/to/variants.tsv\""
+- "id": "code_abs_path.review.sync_placeholder_caps"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "snp <- \"/YOUR PATH HERE/v10/files/\""
+- "id": "code_abs_path.review.sync_placeholder_example"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- \"/EXAMPLEDIRECTORY/data/a.csv\""
+- "id": "code_abs_path.review.sync_win_message"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "\"C:\\Users\\me\\launcher.py:36: RuntimeWarning: More than 20 figures\""
+- "id": "code_abs_path.review.sync_win_regex"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "india <- str_detect(x, \"\\\\bindia\\\\b\")"
+- "id": "code_abs_path.review.sync_win_path"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- read.csv(\"C:\\Users\\me\\data.csv\")"
+- "id": "code_abs_path.review.sync_unc_path"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- \"\\\\\\\\server\\share\\data.csv\""
+- "id": "code_abs_path.review.sync_home"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- read.csv(\"~/Desktop/data.csv\")"
+- "id": "code_extract_py.review.sync_pip"
+  "r": "code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
+  "args":
+    "text":
+      "$chr":
+      - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"pip install pandas\\nx = 1\"}]}"
+- "id": "code_extract_py.review.sync_pip_name"
+  "r": "code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
+  "args":
+    "text":
+      "$chr":
+      - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"pip = 2\\nx = pip\"}]}"
+- "id": "code_extract_py.review.sync_conda"
+  "r": "code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
+  "args":
+    "text":
+      "$chr":
+      - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"conda install numpy\\nx = 1\"}]}"
+- "id": "code_extract_py.review.sync_continued"
+  "r": "code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
+  "args":
+    "text":
+      "$chr":
+      - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"%run train.py \\\\\\n    --epochs 5 \\\\\
+        \\n    --lr 0.1\\nx = 1\"}]}"
+- "id": "code_extract_py.review.sync_continued_indented"
+  "r": "code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
+  "args":
+    "text":
+      "$chr":
+      - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"if a:\\n    %run t.py \\\\\\n      --x 1\\\
+        nx = 1\"}]}"
+- "id": "code_extract_py.review.sync_bang_continued"
+  "r": "code_extract_py"
+  "py": "metacheck.codecheck.core.code_extract_py"
+  "args":
+    "text":
+      "$chr":
+      - "{\"cells\": [{\"cell_type\": \"code\", \"source\": \"!python t.py \\\\\\n  --x 1\\ny = 2\"}]}"
+- "id": "code_extract_qmd_py.review.sync_ipython"
+  "r": "code_extract_qmd_py"
+  "py": "metacheck.codecheck.core.code_extract_qmd_py"
+  "args":
+    "text":
+      "$chr":
+      - "```{python}"
+      - "%matplotlib inline"
+      - "import numpy as np"
+      - "!pip install x"
+      - "```"
+- "id": "code_name_match.review.sync_placeholders"
+  "r": "metacheck:::.code_name_match"
+  "py": "metacheck.codecheck.core._code_name_match"
+  "args":
+    "names":
+      "$chr":
+      - "vzv_aou_ac_%s_model.csv"
+      - "vzv_aou_ac_pneumo_model.csv"
+      - "other.csv"
+      - "X.CSV"
+    "candidates":
+      "$chr":
+      - "vzv_aou_ac_{COMPARATOR}_model.csv"
+      - "x.csv"
+- "id": "code_name_match.review.sync_education_tests_csv"
+  "r": "metacheck:::.code_name_match"
+  "py": "metacheck.codecheck.core._code_name_match"
+  "args":
+    "names":
+      "$chr":
+      - "education_tests.csv"
+    "candidates":
+      "$chr":
+      - "{name}.csv"
+- "id": "code_name_match.review.sync_x_dta"
+  "r": "metacheck:::.code_name_match"
+  "py": "metacheck.codecheck.core._code_name_match"
+  "args":
+    "names":
+      "$chr":
+      - "x.dta"
+    "candidates":
+      "$chr":
+      - "`weekly'"
+- "id": "code_name_match.review.sync_resnet50_embeddings_npy"
+  "r": "metacheck:::.code_name_match"
+  "py": "metacheck.codecheck.core._code_name_match"
+  "args":
+    "names":
+      "$chr":
+      - "resnet50_embeddings.npy"
+    "candidates":
+      "$chr":
+      - "{backbone}_embeddings.npy"
+- "id": "code_name_match.review.sync_a_b_Data_CSV"
+  "r": "metacheck:::.code_name_match"
+  "py": "metacheck.codecheck.core._code_name_match"
+  "args":
+    "names":
+      "$chr":
+      - "a/b/Data.CSV"
+    "candidates":
+      "$chr":
+      - "data.csv"
+- "id": "code_name_match.review.sync_run_i_out"
+  "r": "metacheck:::.code_name_match"
+  "py": "metacheck.codecheck.core._code_name_match"
+  "args":
+    "names":
+      "$chr":
+      - "run_${i}.out"
+    "candidates":
+      "$chr":
+      - "run_1.out"
+- "id": "code_missing_files.review.sync"
+  "r": "metacheck:::.code_missing_files"
+  "py": "metacheck.codecheck.core._code_missing_files"
+  "args":
+    "code_files":
+      "$df":
+        "paper_id":
+        - "p"
+        - "p"
+        - "p"
+        "repo_url":
+        - "r"
+        - "r"
+        - "r"
+        "file_name":
+        - "a.R"
+        - "b.R"
+        - "c.do"
+        "loaded_refs":
+        - "raw.csv\x1Fclean.csv\x1Fres_pneumo.csv\x1F_part.csv\x1Fs{seed}.json\x1Fgone.csv"
+        - ""
+        - ""
+        "files_written":
+        - ""
+        - "clean.csv"
+        - "res_%s.csv"
+    "all_files":
+      "$df":
+        "repo_url":
+        - "r"
+        "file_name":
+        - "raw.csv"
+- "id": "code_missing_files.review.sync_no_refs_column"
+  "r": "metacheck:::.code_missing_files"
+  "py": "metacheck.codecheck.core._code_missing_files"
+  "args":
+    "code_files":
+      "$df":
+        "paper_id":
+        - "p"
+        "repo_url":
+        - "r"
+        "file_name":
+        - "a.R"
+    "all_files":
+      "$df":
+        "repo_url":
+        - "r"
+        "file_name":
+        - "raw.csv"
+- "id": "code_expand_html.review.sync_has_source"
+  "r": "metacheck:::.code_expand_html"
+  "py": "metacheck.codecheck.core._code_expand_html"
+  "args":
+    "all_files":
+      "$df":
+        "repo_url":
+        - "https://osf.io/abcde"
+        - "https://osf.io/abcde"
+        - "https://osf.io/abcde"
+        "file_name":
+        - "knit_classic.html"
+        - "knit_classic.Rmd"
+        - "knit_quarto.html"
+        "file_path":
+        - "sub/knit_classic.html"
+        - "sub/knit_classic.Rmd"
+        - "sub/knit_quarto.html"
+        "file_url":
+        - !!null "null"
+        - !!null "null"
+        - !!null "null"
+        "file_location":
+        - "tests/codecheck/fixtures/expand/knit_classic.html"
+        - "tests/codecheck/fixtures/expand/knit_classic.Rmd"
+        - "tests/codecheck/fixtures/expand/knit_quarto.html"
+        "file_size":
+        - !!int "1"
+        - !!int "1"
+        - !!int "1"
+    "max_file_size": !!int "100"
+    "max_download_size": !!int "500"
+    "cache": !!bool "false"
+- "id": "code_expand_html.review.sync_source_other_repo"
+  "r": "metacheck:::.code_expand_html"
+  "py": "metacheck.codecheck.core._code_expand_html"
+  "args":
+    "all_files":
+      "$df":
+        "repo_url":
+        - "https://osf.io/abcde"
+        - "https://osf.io/zzzzz"
+        "file_name":
+        - "knit_classic.html"
+        - "knit_classic.qmd"
+        "file_path":
+        - "sub/knit_classic.html"
+        - "sub/knit_classic.qmd"
+        "file_url":
+        - !!null "null"
+        - !!null "null"
+        "file_location":
+        - "tests/codecheck/fixtures/expand/knit_classic.html"
+        - "tests/codecheck/fixtures/expand/knit_classic.qmd"
+        "file_size":
+        - !!int "1"
+        - !!int "1"
+    "max_file_size": !!int "100"
+    "max_download_size": !!int "500"
+    "cache": !!bool "false"

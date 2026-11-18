@@ -249,9 +249,9 @@
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "*Executing the code is a separate, opt-in phase (run with `execute = TRUE`). This report describes what a run would involve; it did not run anything.*",
           "#### Reported vs. reproduced",
-          "6 statistical tests reported in the manuscript text were checked against the extracted analysis output: 0 matched (0 fully, 0 partially) — 0% found.",
+          "5 statistical tests reported in the manuscript text were checked against the extracted analysis output: 0 matched (0 fully, 0 partially) — 0% found.",
           "Some reported values were only found alongside OTHER components after being separated from their own originally-reported neighbours (e.g. a mean split from its own confidence interval). The \"Plausible\" column marks whether that split is well-supported: TRUE when the pieces still trace back to the same underlying variable (via the output's own row labels), FALSE when no such link was found — a FALSE match is not necessarily wrong, but is worth checking against its own Source file/Analysis columns before treating it as confirmed.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reported = c(\"M=9.12\", \"M=10.9\", \"t=2.9 df=97.7 p=0.005 d=0.59\", \n\"M=5.06\", \"M=4.5\", \"t=-1.96 df=97.2 p=0.152\"), Found = c(FALSE, \nFALSE, FALSE, FALSE, FALSE, FALSE), Confidence = c(\"none\", \"none\", \n\"none\", \"none\", \"none\", \"none\"), Plausible = c(\"yes\", \"yes\", \n\"yes\", \"yes\", \"yes\", \"yes\"), \"Matched values\" = c(\"\", \"\", \"\", \n\"\", \"\", \"\"), \"Not matched\" = c(\"\", \"\", \"\", \"\", \"\", \"\"), \"Source file\" = c(\"\", \n\"\", \"\", \"\", \"\", \"\"), Analysis = c(\"\", \"\", \"\", \"\", \"\", \"\")), row.names = c(NA, \n-6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reported = c(\"M=9.12\", \"M=10.9\", \"t=2.9 df=97.7 p=0.005 d=0.59\", \n\"M=5.06\", \"t=-1.96 df=97.2 p=0.152\"), Found = c(FALSE, FALSE, \nFALSE, FALSE, FALSE), Confidence = c(\"none\", \"none\", \"none\", \n\"none\", \"none\"), Plausible = c(\"yes\", \"yes\", \"yes\", \"yes\", \"yes\"\n), \"Matched values\" = c(\"\", \"\", \"\", \"\", \"\"), \"Not matched\" = c(\"\", \n\"\", \"\", \"\", \"\"), \"Source file\" = c(\"\", \"\", \"\", \"\", \"\"), Analysis = c(\"\", \n\"\", \"\", \"\", \"\")), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "#### Self-reproducible output (JASP / jamovi / SPSS Viewer / Jupyter notebook)",
           "1 JASP/jamovi/SPSS-Viewer/notebook file bundles the analyses and their saved results together, so the reported statistics are recoverable from the file itself, with nothing re-run. We extracted 2 result tables (32 individual statistics), typed with the STATO ontology, and export them as a statistical-output JSON document (in the logs) and as queryable rows."
         ]
@@ -265,7 +265,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 1 R code file for reproducibility (static analysis; no code was run).\n-  1 file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  0 installable dependencies detected.\n- 32 statistics stored from the extracted output; 0 of 6 reported tests matched (0%)."
+          "\n-  We assessed 1 R code file for reproducibility (static analysis; no code was run).\n-  1 file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  0 installable dependencies detected.\n- 32 statistics stored from the extracted output; 0 of 5 reported tests matched (0%)."
         ]
       },
       {
@@ -288,6 +288,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -335,11 +336,17 @@
           {
             "t": "int",
             "v": [
-              6
+              5
             ]
           },
           {
             "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
             "v": [
               0
             ]
@@ -451,6 +458,7 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "names": [
@@ -467,6 +475,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -2128,7 +2137,7 @@
       },
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 5,
         "names": [
           "text_id",
           "grp_id",
@@ -2141,7 +2150,8 @@
           "source_file",
           "analysis",
           "confidence",
-          "plausible_split"
+          "plausible_split",
+          "n_sites"
         ],
         "v": [
           {
@@ -2150,7 +2160,6 @@
               15,
               15,
               15,
-              16,
               16,
               16
             ]
@@ -2162,7 +2171,6 @@
               1,
               1,
               4,
-              4,
               4
             ]
           },
@@ -2173,7 +2181,6 @@
               "M=10.9",
               "t=2.9 df=97.7 p=0.005 d=0.59",
               "M=5.06",
-              "M=4.5",
               "t=-1.96 df=97.2 p=0.152"
             ]
           },
@@ -2184,14 +2191,12 @@
               1,
               4,
               1,
-              1,
               3
             ]
           },
           {
             "t": "int",
             "v": [
-              0,
               0,
               0,
               0,
@@ -2206,7 +2211,6 @@
               false,
               false,
               false,
-              false,
               false
             ]
           },
@@ -2217,25 +2221,12 @@
               null,
               null,
               null,
-              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
               null,
               null,
               null,
@@ -2250,6 +2241,15 @@
               null,
               null,
               null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
               null,
               null
             ]
@@ -2257,7 +2257,6 @@
           {
             "t": "chr",
             "v": [
-              "none",
               "none",
               "none",
               "none",
@@ -2272,8 +2271,17 @@
               true,
               true,
               true,
-              true,
               true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
             ]
           }
         ]
@@ -2312,6 +2320,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

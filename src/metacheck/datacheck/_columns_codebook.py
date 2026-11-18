@@ -22,7 +22,7 @@ import shutil
 import subprocess
 import tempfile
 import zipfile
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any, cast
 
@@ -316,18 +316,26 @@ def _extract_spreadsheet_codebook(
     src: str,
     observed: Any,
     header_lookahead: float,
+    only: Sequence[str] | None = None,
 ) -> pd.DataFrame | None:
     """Parse a multi-sheet spreadsheet codebook, format-agnostically.
 
     Port of ``.extract_spreadsheet_codebook()``: per sheet, the named-header
     parser, then a header-row lookahead, then the positional fallback.
     *sheets* returns the sheet names; ``read(sheet, header)`` one sheet
-    (``sheet = None`` is the default sheet).
+    (``sheet = None`` is the default sheet). *only* names the sheets to read
+    (``parse_codebook()``'s ``sheets``).
     """
     try:
         sh_names: list[str | None] = list(sheets())
     except Exception:
         sh_names = []
+    # only the sheets asked for (parse_codebook()'s `sheets`)
+    if only is not None:
+        keep = set(only)
+        sh_names = list(dict.fromkeys(n for n in sh_names if n in keep))
+        if not sh_names:
+            return None
     if not sh_names:
         sh_names = [None]
     parsed: list[pd.DataFrame] = []
@@ -1045,7 +1053,14 @@ def _import_data(path: str, ext: str) -> pd.DataFrame | None:
     return df if isinstance(df, pd.DataFrame) else None
 
 
-def _dispatch(path: str, ext: str, src: str, observed: Any, header_lookahead: float) -> Any:
+def _dispatch(
+    path: str,
+    ext: str,
+    src: str,
+    observed: Any,
+    header_lookahead: float,
+    only: Sequence[str] | None = None,
+) -> Any:
     """The ``switch(ext, ...)`` of ``parse_codebook()``: ``(kind, result)``."""
     if ext == "json":
         return ("value", _extract_json_codebook(path, src))
@@ -1060,7 +1075,7 @@ def _dispatch(path: str, ext: str, src: str, observed: Any, header_lookahead: fl
         return ("value", _extract_spreadsheet_codebook(
             sheets=lambda: _ods_sheets(path),
             read=lambda sh, header: _read_ods_sheet(path, sh, header),
-            src=src, observed=observed, header_lookahead=header_lookahead,
+            src=src, observed=observed, header_lookahead=header_lookahead, only=only,
         ))  # fmt: skip
     if ext in ("xlsx", "xls"):
         from metacheck.datacheck._files_readers import read_excel
@@ -1068,7 +1083,7 @@ def _dispatch(path: str, ext: str, src: str, observed: Any, header_lookahead: fl
         return ("value", _extract_spreadsheet_codebook(
             sheets=lambda: _excel_sheets(path),
             read=lambda sh, header: read_excel(path, sheet=sh, col_names=header),
-            src=src, observed=observed, header_lookahead=header_lookahead,
+            src=src, observed=observed, header_lookahead=header_lookahead, only=only,
         ))  # fmt: skip
     if ext in ("sav", "dta", "sas7bdat"):
         res = _extract_haven_labels(_haven_frame(path, ext), src)
@@ -1095,6 +1110,7 @@ def parse_codebook(
     header_lookahead: int = 5,
     observed: Mapping[str, Any] | None = None,
     group: str | None = None,
+    sheets: Sequence[str] | None = None,
 ) -> pd.DataFrame | list[str] | None:
     """Parse a codebook file into variable definitions.
 
@@ -1106,7 +1122,10 @@ def parse_codebook(
     structured definitions give their text lines (for the LLM tier).
 
     *observed* maps a variable name to a sample of its data values (resolves
-    text-coded value labels); *group* scopes the definitions to one study.
+    text-coded value labels); *group* scopes the definitions to one study. For a
+    spreadsheet, *sheets* names the sheets to read (``None``, the default, reads
+    every sheet): a codebook sheet inside a data spreadsheet is read alone (#651), as the
+    other sheets hold data, which the positional fallback would turn into made-up definitions.
 
     Returns a data frame of variable definitions, a list of text lines, or
     ``None``.
@@ -1118,7 +1137,7 @@ def parse_codebook(
     src = _basename(p)
     obs = observed or {}
     try:
-        kind, result = _dispatch(p, ext, src, obs, header_lookahead)
+        kind, result = _dispatch(p, ext, src, obs, header_lookahead, sheets)
     except Exception:
         kind, result = "value", None
     if kind == "return":
@@ -1133,6 +1152,11 @@ def parse_codebook(
         if "group" in result.columns and group is not None and not _na(group) and group != "":
             result["group"] = pd.Series([group] * len(result), dtype="string")
         return result
+    # No structured definitions: raw lines, so the caller can try the LLM. Not for a binary
+    # format, whose "lines" are the bytes of a zip or of a statistics program's file (an .xlsx
+    # whose sheets held no definitions gave "PK\003\004..." to the LLM, #651).
+    if ext in ("xlsx", "xls", "ods", "sav", "dta", "sas7bdat", "jasp", "omv", "zip"):
+        return None
     try:
         return _read_lines(p)
     except OSError:

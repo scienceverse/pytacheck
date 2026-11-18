@@ -66,6 +66,7 @@
           "code_lines",
           "percentage_comment",
           "has_docstring",
+          "files_written",
           "loaded_files_missing",
           "loaded_files_missing_names"
         ],
@@ -331,9 +332,19 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "clean.csv, log.txt, missing_input.dat, summary.txt",
+              "results.txt",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
             "t": "int",
             "v": [
-              1,
+              0,
               3,
               1,
               2,
@@ -343,7 +354,7 @@
           {
             "t": "chr",
             "v": [
-              "missing_input.dat",
+              "",
               "in.mat, raw.txt, upd.txt",
               "in.dat",
               "low.csv, UP.csv",
@@ -356,12 +367,12 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"clean.py\", \"fit.m\", \"model.inp\", \n\"model.sas\", \"syntax.sps\"), \"% Comments\" = c(\"0%\", \"0%\", \"0%\", \n\"0%\", \"0%\"), \"Missing Files\" = c(1L, 3L, 1L, 2L, 2L), \"Absolute Paths\" = c(0L, \n0L, 0L, 0L, 0L), \"Code Between Libraries\" = c(NA_integer_, NA_integer_, \nNA_integer_, NA_integer_, NA_integer_)), row.names = c(NA, 5L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"clean.py\", \"fit.m\", \"model.inp\", \n\"model.sas\", \"syntax.sps\"), \"% Comments\" = c(\"0%\", \"0%\", \"0%\", \n\"0%\", \"0%\"), \"Missing Files\" = c(0L, 3L, 1L, 2L, 2L), \"Absolute Paths\" = c(0L, \n0L, 0L, 0L, 0L), \"Code Between Libraries\" = c(NA_integer_, NA_integer_, \nNA_integer_, NA_integer_, NA_integer_)), row.names = c(NA, 5L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). Note: this percentage counts only `#` comments; 1 of these Python file is documented via docstrings (`\"\"\"...\"\"\"`), which are not counted as comments here since they are string literals, not comment syntax.",
           "#### Missing Files",
-          "The scripts load files, but 5 scripts loaded 9 files that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"clean.py\", \"fit.m\", \"model.inp\", \n\"model.sas\", \"syntax.sps\"), \"Missing Files\" = c(\"missing_input.dat\", \n\"in.mat, raw.txt, upd.txt\", \"in.dat\", \"low.csv, UP.csv\", \"low.sav, UP.sav\"\n)), row.names = c(NA, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "The scripts load files, but 4 scripts loaded 8 files that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"fit.m\", \"model.inp\", \"model.sas\", \n\"syntax.sps\"), \"Missing Files\" = c(\"in.mat, raw.txt, upd.txt\", \n\"in.dat\", \"low.csv, UP.csv\", \"low.sav, UP.sav\")), row.names = 2:5, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Absolute Paths",
           "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
           "",
@@ -451,7 +462,7 @@
           {
             "t": "int",
             "v": [
-              9
+              8
             ]
           },
           {
@@ -629,6 +640,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

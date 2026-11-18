@@ -261,8 +261,8 @@ def _zip_row(z: Path) -> pd.DataFrame:
     return pd.DataFrame(
         {
             "repo_url": ["r"],
-            "file_name": ["mixed.zip"],
-            "file_path": ["mixed.zip"],
+            "file_name": [z.name],
+            "file_path": [z.name],
             "file_url": ["u"],
             "file_location": [str(z)],
             "file_size": [float(z.stat().st_size)],
@@ -298,6 +298,25 @@ def test_expand_zip_keeps_data_drops_materials(tmp_path: Path) -> None:
     assert (rows["paper_id"] == "p.1").all()
     assert rows["file_url"].isna().all()
     assert rows["file_path"].tolist() == [f"mixed.zip/{n}" for n in rows["file_name"]]
+    # the files carry their archive's path and its file on disk (#648)
+    assert (rows["archive_file_path"] == "mixed.zip").all()
+    assert (rows["archive_file_location"] == str(z)).all()
+
+
+def test_archive_files_are_listed_under_the_archives_own_path(tmp_path: Path) -> None:
+    """The folder an archive was in is kept: its files are not put at the top (#648)."""
+    z = tmp_path / "res.zip"
+    with zipfile.ZipFile(z, "w") as zf:
+        zf.writestr("study.csv", "a,b\n1,2\n")
+    row = _zip_row(z).assign(file_path="templates/ref/res.zip")
+    rows = _expand_zip(z, row, skip_types="materials")
+    assert rows["file_path"].tolist() == ["templates/ref/res.zip/study.csv"]
+    assert rows["archive_file_path"].tolist() == ["templates/ref/res.zip"]
+    # a leading "./" or "/" and backslashes are tidied
+    row = _zip_row(z).assign(file_path="./a\\b/res.zip")
+    assert _expand_zip(z, row, skip_types="materials")["archive_file_path"].tolist() == [
+        "a/b/res.zip"
+    ]
 
 
 # -- archive expansion beyond the upstream tests ------------------------------

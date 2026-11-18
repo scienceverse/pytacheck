@@ -97,6 +97,40 @@ def test_module_metadata() -> None:
 # -- OSF (recorded) ----------------------------------------------------------------------
 
 
+def test_a_plain_link_to_a_registration_a_view_only_key_opens_is_not_private() -> None:
+    """A preregistration shared with a view-only link: the plain link is no failed check (#648)."""
+    from metacheck.modules import _repo_check as rc
+
+    repos = rc.Repos(
+        pd.concat(
+            [
+                rc.repo_rows("p", "https://osf.io/kpngh", "osf", "private"),
+                rc.repo_rows("p", "https://osf.io/kpngh/?view_only=1e70", "osf", None),
+                rc.repo_rows("p", "https://osf.io/other", "osf", "private"),
+            ],
+            ignore_index=True,
+        )
+    )
+    info = pd.DataFrame(
+        {
+            "osf_id": pd.Series(["kpngh", "kpngh/?view_only=1e70", "other"], dtype="string"),
+            "osf_url": pd.Series(
+                [
+                    "https://osf.io/kpngh",
+                    "https://osf.io/kpngh/?view_only=1e70",
+                    "https://osf.io/other",
+                ],
+                dtype="string",
+            ),
+        }
+    )
+    rc._osf_view_only(repos, info, ["private", "registrations", "private"])
+    assert repos.df["repo_url"].tolist() == [
+        "https://osf.io/kpngh/?view_only=1e70",
+        "https://osf.io/other",
+    ]
+
+
 def test_osf_view_only_link() -> None:
     osf_url = "https://osf.io/t9j8e/? view_only=f171281f212f4435917b16a9e581a73b"
     mo = run(pc.test_paper(url=osf_url))
@@ -165,8 +199,8 @@ def test_osf() -> None:
         "files_code": 2,
         "files_readme": 0,
         "files_zip": 1,
-        "files_unknown": 1,
-        "naming_issues": 1,
+        "files_unknown": 0,  # an archive is neither unclassified nor a naming problem (#648)
+        "naming_issues": 0,
         "repo_view_only": 0,
         "roster_mismatch": False,
     }
@@ -475,6 +509,41 @@ def test_messy_folder_reports() -> None:
     # root-level readme/licence files are never assigned a study
     lic = mo.table[mo.table["file_name"] == "LICENSE.txt"]
     assert lic["group"].isna().all()
+
+
+def test_unknown_file_type_is_not_a_naming_problem(tmp_path: Path) -> None:
+    """Port of "repo_check: an unknown file type is not a naming problem (#648)"."""
+    d = tmp_path / "dep"
+    d.mkdir()
+    (d / "data.csv").write_text("x,y\n1,2\n")
+    (d / "analysis.R").write_text("x <- 1\n")
+    (d / "model.joblib").write_text("")  # a type metacheck does not know
+    (d / ".gitattributes").write_text("* text=auto\n")  # a tool's settings
+    (d / "Makefile").write_text("all:\n")
+    (d / "asdoc.sthlp").write_text("help\n")
+    mo = pc.module_run(pc.test_paper(), "repo_check", local_path=str(d))
+    # only model.joblib is listed as unclassified; nothing is a naming problem
+    assert mo.summary_table["files_unknown"].tolist() == [1]
+    assert mo.summary_table["naming_issues"].tolist() == [0]
+    assert "unclassifiable" not in set(mo["naming_issues"].get("rule", []))
+    assert "We could not classify 1 file" in mo.summary_text
+    t = mo.table
+    assert t.loc[t["file_name"] == "Makefile", "data_type"].tolist() == ["code"]
+    assert t.loc[t["file_name"] == "asdoc.sthlp", "data_type"].tolist() == ["documentation"]
+
+
+def test_naming_problems_of_a_local_folder_without_a_paper(tmp_path: Path) -> None:
+    """Port of "repo_check counts naming problems of a local folder without a paper (#650)"."""
+    d = tmp_path / "dep"
+    d.mkdir()
+    (d / "my data.csv").write_text("x,y\n1,2\n")
+    (d / "analysis two.R").write_text("x <- 1\n")
+    (d / "clean.R").write_text("x <- 1\n")
+    mo = pc.module_run(None, "repo_check", local_path=str(d), local_only=True)
+    assert "2 file naming problems" in mo.summary_text
+    assert mo.summary_table["naming_issues"].tolist() == [2]
+    nm = mo["naming_issues"]
+    assert set(nm.loc[nm["rule"] == "spaces", "file_name"]) == {"my data.csv", "analysis two.R"}
 
 
 def test_restricted_and_closed_sources() -> None:

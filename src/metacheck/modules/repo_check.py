@@ -1284,8 +1284,14 @@ def _report(
         )
 
     # unclassifiable files
+    # Two kinds are left out, as no name the authors could choose would help (#648): an archive,
+    # which is a container whose files are typed once it is opened (and which "Archive Files"
+    # already reports), and a hidden settings file (".gitattributes", ".Rbuildignore",
+    # ".gitkeep"), whose name the tool that reads it fixes. Hidden settings files were unknown in
+    # 83 of 563 papers.
     dtypes = rc.vals(all_files["data_type"])
-    unknown = [n for n, d in zip(names, dtypes, strict=True) if not rc._na(d) and d == "unknown"]
+    is_unknown = _is_unknown(all_files)
+    unknown = [n for n, u in zip(names, is_unknown, strict=True) if u]
     n_unknown = len(unknown)
     summary_unknown = report_unknown = None
     if n_unknown > 0:
@@ -1593,23 +1599,46 @@ def _check_naming(names: list[Any], paths: list[Any], dtypes: list[Any]) -> pd.D
     )
 
 
+def _is_unknown(all_files: pd.DataFrame) -> list[bool]:
+    """The files ``data_classify_files()`` could not place at all, as repo_check lists them.
+
+    ``data_type == "unknown"``, except an archive (readable by name, or typed "archive") and a
+    hidden settings file (#648).
+    """
+    from metacheck.archives.zip_peek import _is_readable_archive
+
+    n = len(all_files)
+    dtypes = rc.vals(all_files["data_type"])
+    names = rc.vals(all_files["file_name"])
+    ftypes = rc.vals(all_files["file_type"]) if "file_type" in all_files.columns else [None] * n
+    arch = _is_readable_archive(["" if rc._na(x) else x for x in names])
+    return [
+        (not rc._na(d) and d == "unknown")
+        and not a
+        and not (not rc._na(f) and f == "archive")
+        and not (not rc._na(nm) and str(nm).startswith("."))
+        for d, a, f, nm in zip(dtypes, arch, ftypes, names, strict=True)
+    ]
+
+
 def _naming_by_paper(all_files: pd.DataFrame, naming_issues: pd.DataFrame) -> pd.DataFrame:
     """``check_file_naming()`` per paper, tagged with ``paper_id`` (R: ``split()`` by paper)."""
     if len(all_files) == 0:
         return naming_issues.iloc[0:0].copy()
     pids = rc.vals(all_files["paper_id"])
     levels = _split_levels(pids)
-    if not levels:
-        return naming_issues.iloc[0:0].copy()
     names = rc.vals(all_files["file_name"])
     paths = rc.vals(all_files["file_path"])
     dtypes = rc.vals(all_files["data_type"])
     rows_of: dict[Any, list[int]] = {}
     for i, p in enumerate(pids):
-        if p is not None:
-            rows_of.setdefault(p, []).append(i)
+        rows_of.setdefault(p, []).append(i)
+    # Files of a local folder checked without a paper have paper_id NA, which split() drops:
+    # the summary named the naming problems, while summary_table$naming_issues was 0 and
+    # naming_issues had no rows, so data_check saw none either (#650). NA is kept as a group of
+    # its own, after the others.
     parts = []
-    for pid in levels:
+    for pid in [*levels, *([None] if None in rows_of else [])]:
         idx = rows_of[pid]
         pf = _check_naming(
             [names[i] for i in idx], [paths[i] for i in idx], [dtypes[i] for i in idx]
@@ -1643,9 +1672,9 @@ def _summary_table(
             row[c] += int(v)
 
     unknown: dict[Any, int] = {}
-    for pid, d in zip(rc.vals(all_files["paper_id"]), rc.vals(all_files["data_type"]), strict=True):
+    for pid, u in zip(rc.vals(all_files["paper_id"]), _is_unknown(all_files), strict=True):
         key = None if rc._na(pid) else pid
-        unknown[key] = unknown.get(key, 0) + (1 if (not rc._na(d) and d == "unknown") else 0)
+        unknown[key] = unknown.get(key, 0) + (1 if u else 0)
     naming = flags["naming_issues_by_paper"]
     bad: dict[Any, int] = {}
     if len(naming) > 0 and "paper_id" in naming.columns:

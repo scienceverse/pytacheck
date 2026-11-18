@@ -55,6 +55,10 @@ _NOT_SCRIPTS = (
 #: ``list.files(d, pattern = "\\.Rproj$|^\\.here$|^DESCRIPTION$", all.files = TRUE)``
 _HERE_MARK = re.compile(r"\.Rproj$|^\.here$|^DESCRIPTION$")
 
+#: ``grepl("(?<![A-Za-z0-9_.])here\\s*\\(|here::|library\\(\\s*['\"]?here\\b", t, perl = TRUE)``:
+#: code that uses here() (see the ``.here`` mark written with the scripts).
+_USES_HERE = re.compile(r"""(?<![A-Za-z0-9_.])here\s*\(|here::|library\(\s*['"]?here\b""")
+
 
 # -- small R idioms ---------------------------------------------------------------------------
 
@@ -392,13 +396,22 @@ def _execute(
     # here("scripts", "functions.R") from scripts/ became scripts/scripts/functions.R
     # (10.1111/1365-2664.14317; #568). The top always has a mark, so here() finds a root
     # from every folder; a mark in each run folder came before the authors' own .Rproj at
-    # the top.
+    # the top. Only when a script uses here(): an empty .here in a deposit whose code does not
+    # use it is a file the authors did not make, and a release check of the authors' own that
+    # compares the folder with its list of checksums failed on it (10.1101/2026.11.03.26367206;
+    # #648).
+    uses_here = any(
+        _USES_HERE.search(str(line)) is not None
+        for t in code_text_list.values()
+        for line in (t if isinstance(t, (list, tuple)) else [t])
+        if line is not None
+    )
     root_dirs = [
         sandbox_root if r == "." else os.path.join(sandbox_root, core._portable_path(r) or "")
         for r in here_roots
         if r is not None
     ]
-    for d in dict.fromkeys([sandbox_root, *root_dirs]):
+    for d in dict.fromkeys([sandbox_root, *root_dirs] if uses_here else []):
         try:
             marked = any(_HERE_MARK.search(f) for f in os.listdir(d))
         except OSError:
@@ -640,8 +653,16 @@ def _execute(
                 # _repro_missing_fn_pkgs()). One injection per file per pass -- a script
                 # failing on a second, different missing function is left for a later,
                 # separate report rather than stacking guesses.
+                # Without installs, failed_deps holds every package the code uses; one
+                # already installed here is there for a script run outside Docker, so its
+                # library() line can be added (#648)
+                if not install_r and sandbox != "docker":
+                    here_ok = runsupport._repro_installed_here(failed_deps)
+                    unavailable = [p for p, ok in zip(failed_deps, here_ok, strict=True) if not ok]
+                else:
+                    unavailable = failed_deps
                 pkgs = runsupport._repro_missing_fn_pkgs(
-                    str(v), str(user), code_text_list, candidate_pkgs
+                    str(v), str(user), code_text_list, candidate_pkgs, unavailable=unavailable
                 )
                 if pkgs:
                     library_injections[str(user)] = list(pkgs)
@@ -791,7 +812,7 @@ def _execute(
             locs = h._chr_col(structure_df, "file_location")
             got = [r and loc is not None for r, loc in zip(rows, locs, strict=True)]
             if any(got):
-                plan_now = layout._repro_package_plan(structure_df)
+                plan_now = (a.get("plan_of") or layout._repro_package_plan)(structure_df)
                 got_locs = {loc for loc, g in zip(locs, got, strict=True) if g}
                 new_plan = plan_now[
                     [s is not None and s in got_locs for s in h._chr_col(plan_now, "source")]
@@ -1574,17 +1595,15 @@ _INSTALL_CATEGORY_LABELS = {
 
 def _r_install_report(install_results: pd.DataFrame) -> list[str]:
     """The dependency-installation lines of the "Execution" part (metacheck 0.4.3.7)."""
-    from metacheck.repro.outcomes import _repro_source_unknown, _repro_source_unknown_text
+    from metacheck.repro.outcomes import (
+        _repro_install_sentence,
+        _repro_source_unknown,
+        _repro_source_unknown_text,
+    )
 
     installed = [h._is_true(v) for v in h._col(install_results, "installed")]
     pkgs = h._chr_col(install_results, "package")
-    n_ok = sum(installed)
-    out = [
-        "Dependencies were installed into a throwaway library before running: "
-        f"{n_ok:d} succeeded, {len(installed) - n_ok:d} failed. "
-        + ", ".join(_na_str(p) for p in pkgs)
-        + " were installed."
-    ]
+    out = [_repro_install_sentence(install_results)]
     # A package installed via the CRAN Archive retry (live CRAN no longer serves it)
     # reproduced against a STALE version, not necessarily the one the authors used.
     if "via_archive" in install_results.columns:

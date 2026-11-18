@@ -124,23 +124,28 @@ def test_stat_p_exact_texts_and_summary() -> None:
     out = module_run(pc.test_paper(["Nothing.", "Or here."]), "stat_p_exact")
     assert out.traffic_light == "na"
     assert out.summary_text == out.report == "We detected no *p* values."
-    assert out.summary_table.columns.tolist() == ["paper_id", "n_imprecise", "n_zero"]
-    assert out.summary_table.iloc[0, 1:].tolist() == [0, 0]
+    assert out.summary_table.columns.tolist() == [
+        "paper_id",
+        "n_imprecise",
+        "n_zero",
+        "n_impossible",
+    ]
+    assert out.summary_table.iloc[0, 1:].tolist() == [0, 0, 0]
 
     out = module_run(pc.test_paper("The p = .0123"), "stat_p_exact")
     assert out.summary_text == (
-        "We found no imprecise *p* values or *p*-values of exactly zero out of 1 detected."
+        "We found no imprecise *p* values, *p*-values of exactly zero or impossible *p* values out of 1 detected."
     )
 
-    # the same p-value text in identical sentences is reported once (unique());
-    # (within one sentence the matches differ: "p < .05 " keeps trailing space)
+    # identical sentences are listed once each (metacheck 0.4.4.5, #351: no unique(); before,
+    # the same p-value text in identical sentences was reported once)
     paper = pc.test_paper(["Dup p < .05.", "Dup p < .05.", "Zero p = .000.", "Zero p = .000."])
     out = module_run(paper, "stat_p_exact")
     assert out.summary_text == (
-        "We found 1 imprecise *p* value and 1 *p* value reported as exactly zero "
+        "We found 2 imprecise *p* values and 2 *p* values reported as exactly zero "
         "out of 4 detected *p* values."
     )
-    assert out.summary_table.iloc[0, 1:].tolist() == [2, 2]
+    assert out.summary_table.iloc[0, 1:].tolist() == [2, 2, 0]
     assert next(b for b in out.report if isinstance(b, str)).startswith("Reporting *p* values")
 
     # table and figure notes like "* p < .05" are not flagged
@@ -265,6 +270,7 @@ def test_chaining_p_value_modules(psychsci) -> None:
         "p_values",
         "n_imprecise",
         "n_zero",
+        "n_impossible",
         "n_nonsignificant",
     ]
     # metacheck: [6, 39, 13], [0, 0, 2] and [0, 17, 0]; its pattern misses the
@@ -335,8 +341,9 @@ def test_stat_p_exact_star_note_information_separators() -> None:
     out = module_run(paper, "stat_p_exact")
     assert out.table["imprecise"].tolist() == [True, True, True, False]
     assert ["\x1c" in s for s in out.table["expanded"]] == [True, True, False, False]
-    # the separator sentence's two "p < .05" are listed once
-    assert out.summary_text == "We found 2 imprecise *p* values out of 4 detected *p* values."
+    # every p-value has its own row (metacheck 0.4.4.5, #351): the separator sentence's two
+    # "p < .05" are two reports
+    assert out.summary_text == "We found 3 imprecise *p* values out of 4 detected *p* values."
 
 
 def test_stat_p_exact_star_note_hides_only_its_p_value() -> None:
@@ -350,11 +357,12 @@ def test_stat_p_exact_star_note_hides_only_its_p_value() -> None:
     assert out.summary_text == "We found 1 imprecise *p* value out of 4 detected *p* values."
 
 
-def test_stat_p_exact_same_p_value_twice_listed_once() -> None:
+def test_stat_p_exact_same_p_value_twice_has_two_rows() -> None:
     # U127: the match text kept trailing whitespace, so metacheck 0.3 listed "p < .05 "
-    # and "p < .05" of one sentence as two rows (0.4 trims it)
+    # and "p < .05" of one sentence as two rows; 0.4.3.7 trimmed it and listed it once,
+    # and 0.4.4.5 gives every p-value its own row (#351), as summary_table counts them
     out = module_run(pc.test_paper(["It was p < .05 and later p < .05"]), "stat_p_exact")
-    assert out.summary_text == "We found 1 imprecise *p* value out of 2 detected *p* values."
+    assert out.summary_text == "We found 2 imprecise *p* values out of 2 detected *p* values."
 
 
 def test_stat_p_exact_comparator_quirks() -> None:
@@ -411,9 +419,17 @@ def test_report_tables_match_r() -> None:
     assert list(imprecise["table"].columns) == ["P-Value", "Text"]
     # U127: "p < .01" after the "* p < .05" note is listed (metacheck hides it); the match text
     # is trimmed, as in metacheck 0.4.3.7
-    assert imprecise["table"]["P-Value"].tolist() == ["p < .05", "p > .1", "p < .01"]
+    # one row per p-value (metacheck 0.4.4.5, #351): the repeated sentence gives four rows
+    assert imprecise["table"]["P-Value"].tolist() == [
+        "p < .05",
+        "p < .05",
+        "p < .05",
+        "p < .05",
+        "p > .1",
+        "p < .01",
+    ]
     assert imprecise["table"]["Text"].tolist() == [
-        "Bad p < .05 and p < .05 again.",
+        *["Bad p < .05 and p < .05 again."] * 4,
         "Zero p = .000 line two p > .1.",
         "Note * p < .05, p < .01.",
     ]

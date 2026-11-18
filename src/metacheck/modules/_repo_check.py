@@ -776,6 +776,9 @@ def _osf_license_meta(repos: Repos, reg_pairs: list[tuple[Any, str]]) -> pd.Data
     return meta_frame(urls, NA_SCALAR, licenses)
 
 
+_OSF_FAILED_TYPES = ("unfound", "error", "too many requests")
+
+
 def _osf_view_only(repos: Repos, osf_info_df: pd.DataFrame, otypes: list[Any]) -> None:
     """Name a private OSF project read through a view-only link, once.
 
@@ -784,6 +787,28 @@ def _osf_view_only(repos: Repos, osf_info_df: pd.DataFrame, otypes: list[Any]) -
     then not a repository that could not be checked, and is left out; the project
     is named as private instead, as the authors can now make it public.
     """
+    if "osf_id" in osf_info_df.columns:
+        # The same holds for any page the key opens, also a registration (a preregistration
+        # shared with a view-only link): the plain link the paper also gives is not a repository
+        # that could not be checked (#648: osf.io/kpngh and osf.io/4vtjq in q7pnw_v3 were
+        # "private").
+        ids = vals(osf_info_df["osf_id"])
+        urls = vals(osf_info_df["osf_url"])
+        opened = {
+            re.sub(r"[?/].*$", "", i, flags=re.S)
+            for t, i in zip(otypes, ids, strict=True)
+            if not _na(i)
+            and "view_only=" in i
+            and not _na(t)
+            and t not in ("private", *_OSF_FAILED_TYPES)
+        }
+        plain_all = {
+            u
+            for t, i, u in zip(otypes, ids, urls, strict=True)
+            if t == "private" and not _na(i) and re.sub(r"[?/].*$", "", i, flags=re.S) in opened
+        }
+        if plain_all:
+            repos.keep([u not in plain_all for u in vals(repos.df["repo_url"])])
     if not {"osf_id", "public"} <= set(osf_info_df.columns):
         return
     osf_id = vals(osf_info_df["osf_id"])
@@ -845,6 +870,45 @@ def _list_osf_files(
         )
         ourls = vals(osf_info_df["osf_url"])
 
+        # Opened with a view-only key, a registration does not say which project it was
+        # registered from (the OSF hides it, as an anonymous key hides who made the page). A
+        # public registration says it without the key, so it is asked once more without it
+        # (#648: q7pnw_v3's "osf.io/ujdep/?view_only=..." came from the closed project ke24d,
+        # which was reported only while the link was also found without its key).
+        if "parent" in osf_info_df.columns and "osf_id" in osf_info_df.columns:
+            parents = vals(osf_info_df["parent"])
+            osf_ids = vals(osf_info_df["osf_id"])
+            keyed_reg = [
+                k
+                for k, (t, par, i) in enumerate(zip(otypes, parents, osf_ids, strict=True))
+                if t == "registrations" and _na(par) and not _na(i) and "view_only=" in i
+            ]
+            changed = False
+            for rid in unique(re.sub(r"[?/].*$", "", osf_ids[k], flags=re.S) for k in keyed_reg):
+                from metacheck.archives.osf import osf_info
+
+                def ask(rid: str = rid) -> pd.DataFrame:
+                    return osf_info(f"https://osf.io/{rid}", recursive=False, pb=pb, cache=cache)
+
+                try:
+                    plain_info: pd.DataFrame | None = _quiet(ask)
+                except Exception:
+                    plain_info = None
+                found = None
+                if isinstance(plain_info, pd.DataFrame) and "parent" in plain_info.columns:
+                    ok = [x for x in vals(plain_info["parent"]) if not _na(x)]
+                    found = ok[0] if ok else None
+                if found is not None:
+                    for k in keyed_reg:
+                        if re.sub(r"[?/].*$", "", osf_ids[k], flags=re.S) == rid:
+                            parents[k] = found
+                            changed = True
+            if changed:
+                osf_info_df = osf_info_df.copy()
+                osf_info_df["parent"] = pd.Series(
+                    parents, index=osf_info_df.index, dtype=osf_info_df["parent"].dtype
+                )
+
         # registration URL -> the project it was registered from (R: a named vector)
         if "parent" in osf_info_df.columns:
             for t, parent, url in zip(otypes, vals(osf_info_df["parent"]), ourls, strict=True):
@@ -866,7 +930,7 @@ def _list_osf_files(
         # requests") is kept, with its reason, instead of being removed with the
         # registrations (metacheck #501): during an OSF outage every OSF link was
         # dropped, so the paper read as linking no repository at all.
-        failed_types = ("unfound", "error", "too many requests")
+        failed_types = _OSF_FAILED_TYPES
         # a link whose id is not a valid OSF id gets no osf_type (U122)
         invalid = {u for t, u in zip(otypes, ourls, strict=True) if _na(t) and u in set(osf_urls)}
         repos.fill_errors(dict.fromkeys(invalid, "not a valid OSF link"))

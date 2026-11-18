@@ -85,7 +85,7 @@ def test_empty_test_id_site_is_a_site() -> None:
     # an output site named "" matches like any other; metacheck 0.4.3.7 calls it "\x01empty"
     # (by_site[[""]] stopped the call, U142), which also decides where it sorts
     long = _long([("", "t", "2.103"), ("", "p", "0.0481"), ("e", "t", "2.103")])
-    res = match_reported_output(_tt([1], [T1]), long)
+    res = match_reported_output(_tt([1], [T1]), long, evidence="any")
     assert res["found"].tolist()[0]
     sites = _build_sites(long)
     assert sites.names == ["e", "\x01empty"]
@@ -99,7 +99,7 @@ def test_empty_test_id_site_is_a_site() -> None:
             "rhs": ["3", ".05"],
         }
     )
-    res = match_reported_output(eq, long)
+    res = match_reported_output(eq, long, evidence="any")
     assert res["n_matched"].tolist() == [2]
     assert res["found"].iloc[0]
 
@@ -108,10 +108,10 @@ def test_infinite_values_do_not_match() -> None:
     # U142: an Inf value simply does not match (R: if (NA) fails the call)
     long = _long([("i", "t", "1e400"), ("i", "p", "0.01")])
     tt = _tt([1], [[_c("t", "1e400", 1), _c("p", ".01", 2)]])
-    res = match_reported_output(tt, long)
+    res = match_reported_output(tt, long, evidence="any")
     assert res["n_matched"].tolist() == [1]
     other = _tt([1], [[_c("F", "1e400", 1), _c("p", ".01", 2)]])
-    res = match_reported_output(other, long)
+    res = match_reported_output(other, long, evidence="any")
     assert res["n_matched"].tolist() == [1]
 
 
@@ -221,16 +221,20 @@ def test_scientific_notation_is_matched_at_its_own_precision() -> None:
     # U143: "1.5e-05" is written to 6 decimals; R counts the mantissa's one
     # and matched any output value that rounds to 0.0
     tiny = _tt([1], [[_c("b", "1.5e-05", 1), _c("p", ".048", 2)]])
-    near = match_reported_output(tiny, _long([("s", "b", "0.0000151"), ("s", "p", "0.048")]))
+    near = match_reported_output(
+        tiny, _long([("s", "b", "0.0000151"), ("s", "p", "0.048")]), evidence="any"
+    )
     assert near["n_matched"].tolist() == [2]
-    other = match_reported_output(tiny, _long([("s", "b", "0.00003"), ("s", "p", "0.048")]))
+    other = match_reported_output(
+        tiny, _long([("s", "b", "0.00003"), ("s", "p", "0.048")]), evidence="any"
+    )
     assert other["n_matched"].tolist() == [1]
     assert not other["found"].iloc[0]
     # an exponent beyond double range (310 decimals) does not overflow the
     # tolerance: the same tiny value matches, another one does not
     for reported, output, found in [("2e-310", "2e-310", True), ("2e-310", "1.5e-05", False)]:
         tiny = _tt([1], [[_c("p", reported, 1)]])
-        out = match_reported_output(tiny, _long([("s", "p", output)]))
+        out = match_reported_output(tiny, _long([("s", "p", output)]), evidence="any")
         assert out["found"].tolist() == [found]
 
 

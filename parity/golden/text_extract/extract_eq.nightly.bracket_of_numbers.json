@@ -1,0 +1,100 @@
+{
+  "id": "extract_eq.nightly.bracket_of_numbers",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "text_id",
+      "grp_id",
+      "lhs",
+      "df",
+      "comp",
+      "rhs",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          2,
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "p",
+          "n",
+          "chi2",
+          "F",
+          "t"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "(20)",
+          null,
+          null,
+          "(1, N = 200)",
+          "(2, 57)",
+          "(n = 30, 28)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2.1",
+          ".04",
+          "308",
+          "4.2",
+          "3.1",
+          "2.0"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

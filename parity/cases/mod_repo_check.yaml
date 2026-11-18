@@ -289,6 +289,39 @@
       "id": "p_local"
     "args":
       "local_path": "tests/mod_repo_check/fixtures/zip_local"
+- "id": "repo_check.local.unknown_type"
+  "note": "a file of an unknown type is not a naming problem; build files and Stata help typed (#648)"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"p_local\"), \"repo_check\", local_path = \"tests/mod_repo_check/fixtures/unknown_type\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_local"
+    "args":
+      "local_path": "tests/mod_repo_check/fixtures/unknown_type"
+- "id": "repo_check.local.no_paper"
+  "note": "naming problems of a local folder checked without a paper (#650)"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(NULL, \"repo_check\", local_path = \"tests/mod_repo_check/fixtures/no_paper\", local_only = TRUE), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "nopaper": true
+    "args":
+      "local_path": "tests/mod_repo_check/fixtures/no_paper"
+      "local_only": true
 - "id": "repo_check.local.rpkg"
   "note": "an R package tree is excluded"
   "r": "identity"

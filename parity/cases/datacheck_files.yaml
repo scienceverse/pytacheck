@@ -2859,6 +2859,129 @@
   "py": "metacheck.datacheck.files.data_study_roster"
   "args":
     "paper": "Experiment 1"
+- "id": "data_group_from_short_label.experiments"
+  "r": ".data_group_from_short_label"
+  "py": "metacheck.datacheck.files._data_group_from_short_label"
+  "args":
+    "paths":
+      "$chr":
+      - "data/Shift_E1A_sub1-40.txt"
+      - "data/Shift_E1B_sub1-20.txt"
+      - "E2/RT.csv"
+      - "analysis.R"
+      - "dat.e01"
+    "paper":
+      "$test_paper":
+        "text":
+        - "We ran Experiment 1A, Experiment 1B and Experiment 2."
+- "id": "data_group_from_short_label.study_letter_for_experiments"
+  "r": ".data_group_from_short_label"
+  "py": "metacheck.datacheck.files._data_group_from_short_label"
+  "args":
+    "paths":
+      "$chr":
+      - "df_s1.csv"
+    "paper":
+      "$test_paper":
+        "text":
+        - "We ran Experiment 1A, Experiment 1B and Experiment 2."
+- "id": "data_group_from_short_label.unnamed_label"
+  "r": ".data_group_from_short_label"
+  "py": "metacheck.datacheck.files._data_group_from_short_label"
+  "args":
+    "paths":
+      "$chr":
+      - "data/Shift_E1A_sub1-40.txt"
+      - "data/Shift_E1B_sub1-20.txt"
+      - "E2/RT.csv"
+      - "analysis.R"
+      - "dat.e01"
+      - "E3_RT.csv"
+    "paper":
+      "$test_paper":
+        "text":
+        - "We ran Experiment 1A, Experiment 1B and Experiment 2."
+- "id": "data_group_from_short_label.studies"
+  "r": ".data_group_from_short_label"
+  "py": "metacheck.datacheck.files._data_group_from_short_label"
+  "args":
+    "paths":
+      "$chr":
+      - "placebo_df_s1.csv"
+      - "S2_data.xlsx"
+    "paper":
+      "$test_paper":
+        "text":
+        - "Study 1 and Study 2 are reported here."
+- "id": "data_group_from_short_label.supplement"
+  "r": ".data_group_from_short_label"
+  "py": "metacheck.datacheck.files._data_group_from_short_label"
+  "args":
+    "paths":
+      "$chr":
+      - "placebo_df_s1.csv"
+    "paper":
+      "$test_paper":
+        "text":
+        - "Study 1 and Study 2 are reported here."
+        - "See Table S1 in the supplement."
+- "id": "data_group_from_short_label.sessions"
+  "r": ".data_group_from_short_label"
+  "py": "metacheck.datacheck.files._data_group_from_short_label"
+  "args":
+    "paths":
+      "$chr":
+      - "placebo_df_s1.csv"
+    "paper":
+      "$test_paper":
+        "text":
+        - "Study 1 and Study 2 are reported here."
+        - "Each person came to Session 1 and Session 2."
+- "id": "data_group_from_short_label.no_paper"
+  "r": ".data_group_from_short_label"
+  "py": "metacheck.datacheck.files._data_group_from_short_label"
+  "args":
+    "paths":
+      "$chr":
+      - "data/Shift_E1A_sub1-40.txt"
+      - "data/Shift_E1B_sub1-20.txt"
+      - "E2/RT.csv"
+      - "analysis.R"
+      - "dat.e01"
+- "id": "data_study_roster.words_experiment"
+  "r": "data_study_roster"
+  "py": "metacheck.datacheck.files.data_study_roster"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "We ran Experiment 1A, Experiment 1B and Experiment 2."
+    "words": "experiment"
+- "id": "data_study_roster.words_study"
+  "r": "data_study_roster"
+  "py": "metacheck.datacheck.files.data_study_roster"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "We ran Experiment 1A, Experiment 1B and Experiment 2."
+    "words": "study"
+- "id": "data_group_llm.short_labels"
+  "r": "data_group_llm"
+  "py": "metacheck.datacheck.files.data_group_llm"
+  "args":
+    "files":
+      "$expr":
+        "r": "data.frame(file_name = c(\"Shift_E1A_sub1-40.txt\", \"Shift_E1B_sub1-20.txt\", \"RT.csv\"\
+          ), file_path = c(\"data/Shift_E1A_sub1-40.txt\", \"data/Shift_E1B_sub1-20.txt\", \"E2/RT.csv\"\
+          ), data_type = \"data\")"
+        "py": "pd.DataFrame({\"file_name\": [\"Shift_E1A_sub1-40.txt\", \"Shift_E1B_sub1-20.txt\", \"\
+          RT.csv\"], \"file_path\": [\"data/Shift_E1A_sub1-40.txt\", \"data/Shift_E1B_sub1-20.txt\", \"\
+          E2/RT.csv\"], \"data_type\": [\"data\"] * 3})"
+    "paper":
+      "$test_paper":
+        "text":
+        - "We ran Experiment 1A, Experiment 1B and Experiment 2."
 - "id": "manifest_merge.create"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.manifest_merge_lines"

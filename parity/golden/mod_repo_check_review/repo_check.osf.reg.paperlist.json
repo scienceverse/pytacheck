@@ -19,6 +19,7 @@
       "naming_issues",
       "repo_metadata",
       "ownership",
+      "table_not_checked",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -363,10 +364,10 @@
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
           "#### Archive Files\n\nThe following files are not ZIP archives: archive.tar.gz. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, `.tar` or `.tar.gz`.",
           "#### Registration's Source Project Is Closed\n\n1 OSF source project is closed. The files metacheck lists below were not read from it — they were retrieved from the OSF registration's own copy, which is separate from and unaffected by the project's access setting. Nothing is currently lost, but this is still worth fixing: a closed source project means the files only survive for as long as the registration's copy does, and anyone who follows the project link itself (rather than the registration) will find it inaccessible.\n\n- **https://osf.io/parc1** is closed; its files were retrieved from the OSF registration https://osf.io/regc1.\n\nConsider making the source project openly available.",
-          "#### Unclassified Files\n\nWe could not classify 5 files by name or extension: Archive.zip, Archive.zip, Archive.zip, archive.tar.gz, weird.file-name. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: weird.file-name. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
-          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 6 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\", \"Archive.zip\", \n\"study 1.csv\", \"archive.tar.gz\", \"weird.file-name\"), Rule = c(\"unclassifiable\", \n\"unclassifiable\", \"unclassifiable\", \"spaces\", \"unclassifiable\", \n\"unclassifiable\"), Severity = c(\"Required\", \"Required\", \"Required\", \n\"Required\", \"Required\", \"Required\"), Detail = c(\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"contains a space\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"study 1.csv\", Rule = \"spaces\", Severity = \"Required\", \n    Detail = \"contains a space\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (5 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"bad.R\", \"bad.Rmd\", \"bad.R\", \"bad.R\", \n\"analysis.R\"), Group = c(\"ex1\", \"ex1\", \"ex2\", \"ex2\", \"ex3\"), \n    Path = c(\"bad.R\", \"bad.Rmd\", \"bad.R\", \"bad.R\", \"code/analysis.R\"\n    )), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (5 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"example2.csv\", \"example2.csv\", \"example2.csv\", \n\"study 1.csv\", \"config.json\"), Group = c(\"ex1\", \"ex2\", \"ex2\", \n\"ex1\", \"ex3\"), Path = c(\"example2.csv\", \"example2.csv\", \"example2.csv\", \n\"data/study 1.csv\", \"code/config.json\")), row.names = c(NA, -5L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README.md\", \"LICENSE\"), Group = c(\"—\", \n\"—\"), Path = c(\"README.md\", \"LICENSE\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (5 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\", \"Archive.zip\", \n\"archive.tar.gz\", \"weird.file-name\"), Group = c(\"ex1\", \"ex2\", \n\"ex2\", \"ex3\", \"ex3\"), Path = c(\"Archive.zip\", \"Archive.zip\", \n\"Archive.zip\", \"archive.tar.gz\", \"weird.file-name\")), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -380,7 +381,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 17 files in 4 repositories.\n-  We found 1 README file and 3 repositories without READMEs.\n-  We found 4 archive files.\n-  We found 1 registration-linked OSF project that is closed; its files were retrieved from the OSF registration instead.\n-  We could not classify 5 files.\n-  We found 6 file naming problems to fix."
+          "\n-  We found 17 files in 4 repositories.\n-  We found 1 README file and 3 repositories without READMEs.\n-  We found 4 archive files.\n-  We found 1 registration-linked OSF project that is closed; its files were retrieved from the OSF registration instead.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
         ]
       },
       {
@@ -471,16 +472,16 @@
           {
             "t": "dbl",
             "v": [
-              2,
-              3,
+              1,
+              0,
               0
             ]
           },
           {
             "t": "dbl",
             "v": [
-              3,
-              3,
+              1,
+              0,
               0
             ]
           },
@@ -580,7 +581,7 @@
       },
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 1,
         "names": [
           "file_name",
           "rule",
@@ -592,56 +593,31 @@
           {
             "t": "chr",
             "v": [
-              "study 1.csv",
-              "archive.tar.gz",
-              "weird.file-name",
-              "Archive.zip",
-              "Archive.zip",
-              "Archive.zip"
+              "study 1.csv"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "spaces",
-              "unclassifiable",
-              "unclassifiable",
-              "unclassifiable",
-              "unclassifiable",
-              "unclassifiable"
+              "spaces"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "bad",
-              "bad",
-              "bad",
-              "bad",
-              "bad",
               "bad"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "contains a space",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+              "contains a space"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "p_gh_only",
-              "p_gh_only",
-              "p_gh_only",
-              "p_reg_b",
-              "p_reg_b",
-              "p_reg_b"
+              "p_gh_only"
             ]
           }
         ]
@@ -1283,6 +1259,69 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "provider",
+          "repo_name",
+          "data_type",
+          "doc_role"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "list",
         "names": [
           "roster",
@@ -1389,6 +1428,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

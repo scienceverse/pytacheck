@@ -33,8 +33,9 @@ rd_expand <- function(fn, fixture, skip_types = "materials", minimal = FALSE) {
   if (isTRUE(minimal)) row <- row[, c("repo_url", "file_name")]
   expand <- getFromNamespace(sub("^_", ".", fn), "metacheck")
   out <- expand(f, row, skip_types = skip_types)
-  if ("file_location" %in% names(out))
-    out$file_location <- sub(d, "<TMP>", out$file_location, fixed = TRUE)
+  for (col in c("file_location", "archive_file_location"))
+    if (col %in% names(out))
+      out[[col]] <- sub(d, "<TMP>", out[[col]], fixed = TRUE)
   out
 }
 

@@ -630,11 +630,13 @@ def match_case(
     include_tables: bool = False,
     min_components: int = 1,
     summary: bool = True,
+    evidence: str | None = None,
     **extra: Any,
 ) -> None:
+    ev = "" if evidence is None else f", evidence = {rs(evidence)}"
     call = (
         f"metacheck::match_reported_output({r_paper(paper)}, {r_output(output)}, "
-        f"include_tables = {rs(include_tables)}, min_components = {rs(min_components)})"
+        f"include_tables = {rs(include_tables)}, min_components = {rs(min_components)}{ev})"
     )
     args = {
         "paper": paper,
@@ -642,6 +644,8 @@ def match_case(
         "include_tables": include_tables,
         "min_components": min_components,
     }
+    if evidence is not None:
+        args["evidence"] = evidence
     expr_case(f"match_reported_output.{id_}", call, "match", args, **extra)
     if summary:
         expr_case(
@@ -874,6 +878,76 @@ expr_case(
     "table_caption",
     {"paper": {"kind": "demo"}, "section_ids": [10, 1]},
 )
+
+# ---- evidence = "informative" (R 0.4.4.6, #648): which values count as evidence
+
+
+def _ev(stat: list[str], value: list[str], analysis: Any = "a1") -> dict[str, Any]:
+    n = len(stat)
+    return {
+        "kind": "df",
+        "cols": {
+            "source_file": ["a.R"] * n,
+            "analysis": analysis if isinstance(analysis, list) else [analysis] * n,
+            "statistic": stat,
+            "value": value,
+        },
+    }
+
+
+def _txt(*texts: str) -> dict[str, Any]:
+    return {"kind": "texts", "texts": list(texts)}
+
+
+EVIDENCE_CASES = {
+    "f_p": (
+        _txt("The effect was F(2, 57) = 72.28, p < .001."),
+        _ev(["F", "p"], ["72.284", "0.00001"]),
+    ),
+    "t_df_only": (
+        _txt("A test, t(801) = 20.22, p < .001."),
+        _ev(["t", "df", "p"], ["-1.607", "801", "0.00001"]),
+    ),
+    "chi2": (
+        _txt("A test, chi2(1) = .05, p = .82."),
+        _ev(["chi2", "df", "p"], ["0.05", "1", "0.823"]),
+    ),
+    "t_sign": (
+        _txt("A test, t(160.18) = 5.55, p < .001."),
+        _ev(["t", "df", "p"], ["-5.546", "160.177571", "1.18e-07"]),
+    ),
+    "se_alone": (
+        _txt("Scores were M = 2.95, SE = 0.11, p = .021."),
+        _ev(["mean", "se", "p"], ["3.10", "0.11", "0.0212"]),
+    ),
+    "se_with_estimate": (
+        _txt("Scores were M = 2.95, SE = 0.11, p = .021."),
+        _ev(["mean", "se", "p"], ["2.95", "0.11", "0.0212"]),
+    ),
+    "single_values": (
+        _txt("Mortality was lower (p = .023).", "The slope was B = -0.323, p < .001."),
+        _ev(["p", "b", "p"], ["0.0231", "-0.3234", "0.0004"], analysis=["a1", "a1", "a2"]),
+    ),
+    "single_two_numbers": (
+        _txt("Mortality was lower (p = .023)."),
+        _ev(["p", "p"], ["0.0231", "0.0226"], analysis=["a1", "a2"]),
+    ),
+    "single_same_number": (
+        _txt("Mortality was lower (p = .023)."),
+        _ev(["p", "p"], ["0.0231", "0.0231"], analysis=["a1", "a2"]),
+    ),
+    "none_informative": (
+        _txt(
+            "The power analysis used alpha = .05 and N = 55.",
+            "Both were significant, p < .05 and p < .0002.",
+            "The scale was reliable, alpha = .86; the F was 4.21.",
+        ),
+        _ev(["F", "p"], ["4.2", "0.04"]),
+    ),
+}
+for _name, (_paper, _out) in EVIDENCE_CASES.items():
+    for _mode in ("informative", "any"):
+        match_case(f"evidence.{_name}.{_mode}", _paper, _out, evidence=_mode)
 
 
 class QuotedDumper(yaml.SafeDumper):

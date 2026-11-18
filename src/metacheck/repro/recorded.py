@@ -46,6 +46,7 @@ from metacheck.repro.docker import (
     _normalize_path,
     _repro_docker_container_name,
     _repro_docker_hand_over,
+    _repro_docker_image_for,
     _repro_docker_resource_args,
     _repro_docker_stop,
     _repro_docker_user,
@@ -811,6 +812,25 @@ def _repro_host_r_version() -> str | None:
     return res.stdout.strip() or None
 
 
+def _repro_recorded_r_used(
+    version_pin: Mapping[str, Any] | None, sandbox: str, use_declared: bool = False
+) -> str | None:
+    """Port of ``R/reproducibility_check.R::.repro_recorded_r_used()``.
+
+    The recorded R version a run used, or ``None`` when it kept its own: only a Docker run
+    with ``docker_use_declared_version = TRUE`` uses it, in the image
+    ``rocker/r-ver:<version>`` (:func:`_repro_docker_image_for`, which takes ``"latest"`` for
+    a version it cannot use as a tag).
+    """
+    declared = [r for r in _chr_list(_pin(version_pin, "r_versions")) if r is not None]
+    if sandbox != "docker" or not is_true(use_declared) or len(declared) == 0:
+        return None
+    tag = re.sub(
+        r"^rocker/r-ver:", "", _repro_docker_image_for(declared, use_declared_version=True), count=1
+    )
+    return None if tag == "latest" else tag
+
+
 def _repro_recorded_limits(
     recorded: Mapping[str, Any],
     version_pin: Mapping[str, Any] | None,
@@ -823,7 +843,7 @@ def _repro_recorded_limits(
     both the warning before a run and the report after it.
     """
     declared = [r for r in _chr_list(_pin(version_pin, "r_versions")) if r is not None]
-    r_kept = not (sandbox == "docker" and is_true(use_declared) and len(declared) > 0)
+    r_kept = _repro_recorded_r_used(version_pin, sandbox, use_declared) is None
     deps = recorded["deps"]
     bioc = [
         p
@@ -929,16 +949,31 @@ def _repro_recorded_counts(
 
 
 def _repro_recorded_summary(
-    recorded: Mapping[str, Any] | None, install_results: pd.DataFrame | None
+    recorded: Mapping[str, Any] | None,
+    install_results: pd.DataFrame | None,
+    version_pin: Mapping[str, Any] | None = None,
+    sandbox: str = "none",
+    use_declared: bool = False,
 ) -> str | None:
     """Port of ``R/reproducibility_check.R::.repro_recorded_summary()``.
 
-    One sentence for the summary and the checklist. ``None`` without recorded versions.
+    One sentence for the summary and the checklist. ``None`` without recorded versions. It
+    said "but did not change the R version" also when a Docker run with
+    ``docker_use_declared_version = TRUE`` used the recorded R version (#649).
     """
     if recorded is None or install_results is None or len(install_results) == 0:
         return None
     counts = _repro_recorded_counts(recorded, install_results)
     n = len(counts["listed"])
+    r_used = _repro_recorded_r_used(version_pin, sandbox, use_declared)
+    if r_used is not None:
+        n_exact = sum(counts["exact"])
+        tail = ", so this is not an exact copy of the authors' setup" if n_exact < n else ""
+        return (
+            f"We installed {n_exact} of the {n} package{plural(n)} the scripts load and the "
+            f"repository lists at the recorded version, and used the recorded R version "
+            f"({r_used}){tail}."
+        )
     return (
         f"We installed {sum(counts['exact'])} of the {n} package{plural(n)} the scripts load and "
         "the repository lists at the recorded version, but did not change the R version, so "

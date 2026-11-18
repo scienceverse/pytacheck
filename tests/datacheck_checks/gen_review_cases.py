@@ -692,6 +692,93 @@ add(
     py=PH + "identity",
 )
 
+# metacheck 0.4.4.4 (#648): a card number needs most of the values that look like one to pass the
+# checksum, and free text is flagged only when written in the first person (not file paths)
+add(
+    "data_check_pii_values.sync0444.codelist_codes",
+    "data_check_pii_values",
+    {
+        "x": ex(
+            'c(sprintf("%015.0f", (1:97) * 1.03e12 + 1e14), "4111111111111111", '
+            '"5500005555555559", "4012888888881881")',
+            '[f"{(i * 1.03e12 + 1e14):015.0f}" for i in range(1, 98)] + '
+            '["4111111111111111", "5500005555555559", "4012888888881881"]',
+        )
+    },
+)
+add(
+    "data_check_pii_values.sync0444.one_card_in_text",
+    "data_check_pii_values",
+    {
+        "x": ex(
+            'c(rep("no comment", 20), "my card is 4111111111111111")',
+            '["no comment"] * 20 + ["my card is 4111111111111111"]',
+        )
+    },
+)
+add(
+    "data_check_pii_freetext.sync0444.code_terms",
+    "data_check_pii_freetext",
+    {
+        "x": {
+            "$chr": [
+                "Coronary arteriosclerosis in patient with history of previous myocardial infarction",
+                "Acute infarction of papillary muscle following surgery on the heart",
+                "Dialysis therapy started by renal service after kidney failure",
+                "Ulcer of skin due to type 2 diabetes mellitus of the left foot",
+                "Congestive heart failure due to left ventricular systolic dysfunction",
+                "Glaucoma suspect due to diabetes mellitus type 2 in both eyes",
+            ]
+        }
+    },
+)
+add(
+    "data_check_pii_freetext.sync0444.video_paths",
+    "data_check_pii_freetext",
+    {
+        "x": ex(
+            'paste0("/Users/me/Dropbox/Road Hazards - Raw Videos/Final Set/clip_", 1:30, ".mp4")',
+            '[f"/Users/me/Dropbox/Road Hazards - Raw Videos/Final Set/clip_{i}.mp4" for i in range(1, 31)]',
+        )
+    },
+)
+add(
+    "data_check_pii_freetext.sync0444.one_in_ten_first_person",
+    "data_check_pii_freetext",
+    {
+        "x": {
+            "$chr": [
+                "Coronary arteriosclerosis in patient with history of previous myocardial infarction",
+                "Acute infarction of papillary muscle following surgery on the heart",
+                "Dialysis therapy started by renal service after kidney failure",
+                "Ulcer of skin due to type 2 diabetes mellitus of the left foot",
+                "Congestive heart failure due to left ventricular systolic dysfunction",
+                "The task was long and the screen was small for the pictures shown",
+                "Fine, nothing to add here at all and the screen was small for the pictures shown",
+                "It was a bit hard to focus on the long blocks of the task",
+                "Too many questions about the same topic in the last part",
+                "My neighbour Anna helped me set up the laptop for the study",
+            ]
+        }
+    },
+)
+add(
+    "data_check_pii_freetext.sync0444.other_languages",
+    "data_check_pii_freetext",
+    {
+        "x": {
+            "$chr": [
+                "Ik vond de taak erg lang en ik kon me moeilijk concentreren op het scherm",
+                "Ich habe die Aufgabe nicht ganz verstanden und mein Computer war zu langsam",
+                "J'ai trouve les questions un peu longues mais l'ensemble etait tres clair",
+                "Yo creo que la tarea fue larga pero nosotros pudimos terminar a tiempo",
+                "Io penso che il compito fosse lungo ma noi abbiamo finito in tempo comunque",
+                "The study took more than an hour and the instructions were rather unclear",
+            ]
+        }
+    },
+)
+
 
 def main() -> None:
     doc = {"area": "datacheck_checks_review", "cases": CASES}

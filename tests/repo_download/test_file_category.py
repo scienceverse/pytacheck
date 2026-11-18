@@ -70,7 +70,56 @@ def test_data_classify_files_genomic_formats() -> None:
     assert data_classify_files(contents) == ["data"] * len(contents)
     assert data_classify_files("random_archive.tar.gz") == ["unknown"]
     assert data_classify_files("random.gz") == ["unknown"]
-    assert data_classify_files("sample.dat.gz") == ["unknown"]
+    # A single compressed file is typed as the file inside it (metacheck 0.4.4.4, #648): .dat is
+    # not format-locked, but the crosswalk makes "sample.dat" data, and so "sample.dat.gz" too.
+    assert data_classify_files("sample.dat.gz") == data_classify_files("sample.dat")
+
+
+def test_data_classify_files_build_files_notices_stata_help_and_compressed() -> None:
+    """Port of "data_classify_files types build files, notices, Stata help and compressed files"."""
+    from metacheck.datacheck.files import data_classify_files
+    from metacheck.fileinfo.naming import check_file_naming
+
+    x = [
+        "Makefile",
+        "Dockerfile",
+        "Snakefile_inflation",
+        "Makefile.win",
+        "postBuild",
+        "NOTICE",
+        "NEWS",
+        "CHANGELOG",
+        "asdoc.sthlp",
+        "estadd.hlp",
+        "scan.nii.gz",
+        "trials.csv.gz",
+        "ids.txt.xz",
+        # not changed: a type found otherwise, an archive, an unknown format
+        "makefile.txt",
+        "news.md",
+        "pkg.tar.gz",
+        "reads.bed.gz",
+        "newsletter",
+    ]
+    assert data_classify_files(x) == [
+        *["code"] * 5,
+        *["documentation"] * 5,
+        "data",
+        "data",
+        "documentation",
+        "documentation",
+        "documentation",
+        "unknown",
+        "unknown",
+        "unknown",
+    ]
+    # a compressed file in a folder is typed with its path, as the file inside
+    assert data_classify_files("x.gz", "raw/x.gz") == ["unknown"]
+    assert data_classify_files("trials.txt.gz", "data/trials.txt.gz") == data_classify_files(
+        "trials.txt", "data/trials.txt"
+    )
+    # a file of an unknown type is not a naming problem
+    assert len(check_file_naming("model.joblib", data_type="unknown")) == 0
 
 
 def test_add_filetype() -> None:
@@ -210,7 +259,8 @@ def test_check_file_naming_rules() -> None:
     assert ("my file.csv", "spaces") in rules
     assert ("résumé.txt", "special-characters") in rules
     assert ("résumé.txt", "diacritics") in rules
-    assert ("x_20231301.csv", "unclassifiable") in rules
+    # a file of an unknown type is not a naming problem (#648)
+    assert ("x_20231301.csv", "unclassifiable") not in rules
     assert ("data_2.csv", "zero-padding") in rules
     assert "ok.R" not in out["file_name"].tolist()
     assert set(out["severity"]) <= {"bad", "suggestion"}

@@ -12,10 +12,19 @@ from __future__ import annotations
 import re
 from typing import Any, cast
 
+import numpy as np
 import pandas as pd
 
 from metacheck._r.base import trimws
-from metacheck._r.regex import compile_r, grepl, gsub, regextract, regextract_all, strsplit
+from metacheck._r.regex import (
+    compile_r,
+    grepl,
+    gsub,
+    regextract,
+    regextract_all,
+    strsplit,
+    sub,
+)
 from metacheck._values import is_missing
 from metacheck.core.doc import Doc, bits
 from metacheck.core.patterns import Pat, patterns
@@ -91,16 +100,40 @@ _P_NUMBER = (
     f"|0(?={_P_END01})"  # p = 0
     f"|1(?={_P_END01}|\\s*\\.(?!\\s*\\d)|\\s*$)"  # p = 1
 )
-# A p right after eta takes the eta into the match, and those matches are left out
-_P_PATTERN = (
-    f"(?:{_ETA_P_PREFIX})?"
-    r"\b[pP]-?(values?|s|['’]s)?"  # ways to write p (or P)
-    f"(?:[\\s_-]?{_P_SUBSCRIPTS})?\\s*"  # pFWE, p adj
-    f"[{_OPS}]{{1,2}}\\s*"  # 1-2 operators
-    f"({_P_NUMBER})"  # ns or valid numbers
-    f"\\s*({_P_SCI_E})?"  # also match scientific notation
-    f"(\\s*{_P_SCI_X})?"
+# A symbol standing right before a p (#351): a standing r or R, a Greek letter, a superscript 2,
+# or a Delta. With "=" the p is that symbol's subscript, not a p-value: a correlation ("r p =
+# .64"), a reliability factor ("R p = 3.83%"), Cronbach's alpha or a model parameter ("α p =
+# .95"). With "<" or ">" the symbol marks a significance level in a note ("a p < 0.05", "α p <
+# 0.05", "ΔΔ p < 0.01"), and the p is a p-value. Written against the p, a superscript 2 is
+# partial eta squared whose eta was lost ("²p = 0.02"), and a Delta a change in p or a
+# contingency ("Δp = .33"), whatever the comparison. Port of ``.p_symbol_prefix``.
+_P_SYMBOL_PREFIX = (
+    "(?<![\\w.'’-])[rRΑ-Ωα-ω]\\s+"  # a standing letter
+    "|²\\s*|[Δ∆]"  # against the p
 )
+# a p-value with a minus: the minus (also an en dash, or GROBID's A with a grave accent) and a
+# number with a decimal point (#351)
+_P_SIGN = "[-−–À]"
+
+
+def _p_pattern(negative: bool = False) -> str:
+    number = f"{_P_SIGN}\\s*\\d?\\.\\d+" if negative else _P_NUMBER
+    sci = "" if negative else f"\\s*({_P_SCI_E})?(\\s*{_P_SCI_X})?"  # scientific notation
+    # A p right after eta takes the eta into the match, and those matches are left out
+    return (
+        f"(?:{_ETA_P_PREFIX}|{_P_SYMBOL_PREFIX})?"
+        r"\b[pP]-?(values?|s|['’]s)?"  # ways to write p (or P)
+        f"(?:[\\s_-]?{_P_SUBSCRIPTS})?\\s*"  # pFWE, p adj
+        f"[{_OPS}]{{1,2}}\\s*"  # 1-2 operators
+        f"({number})"  # ns or valid numbers
+        f"{sci}"
+    )
+
+
+_P_PATTERN = _p_pattern()
+_P_PATTERN_NEGATIVE = _p_pattern(True)
+_P_SYMBOL_START = f"^(?:{_P_SYMBOL_PREFIX})"
+_P_SYMBOL_AGAINST = "^(?:²|[Δ∆](?!\\s))"
 
 # A df-parenthetical: digits/commas/periods/whitespace, optionally with an
 # "N = <number>" qualifier (see the long comment in R/text-extractors.R).
@@ -251,43 +284,115 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     0.03" is deliberately not matched; scientific notation (``5.0 x 10^-2``, ``5.0e-2``,
     ``5E-2``, ``10^-15``) and the comparators ``= < > ~ ≈ ≠ ≤ ≥ ≪ ≫`` are. A p-value written as a
     whole 0 or 1 is found only after "=", "~" or "≈", when a bracket, a semicolon or a comma
-    follows it, and when its sentence reports a test (metacheck 0.4.4.3, #642). Strings are
-    searched as a text table (metacheck fails on a character vector; U150).
+    follows it, and when its sentence reports a test (metacheck 0.4.4.3, #642). A "p" that is the
+    subscript of another symbol is not a p-value ("r p = .64", "²p = .02", "Δp = .33"), nor is a
+    value outside 0 to 1 with a unit, a logarithm or in a ratio ("P = 2.9 µm", "-log10 P = 7.5",
+    "Ca/P = 1.67"), and a p-value written with a minus ("p = -.22") is not returned: no p-value
+    is negative (`stat_p_exact` lists those as impossible; 0.4.4.5, #351). A raised dot between
+    two digits is a decimal point ("p = 0·0079"; #648). Strings are searched as a text table
+    (metacheck fails on a character vector; U150).
+    """
+    return _p_extract(paper)
+
+
+def _negated(text: str) -> float | None:
+    """``-as.numeric(text)``: ``NA`` stays ``NA``."""
+    from metacheck._values import as_float
+
+    x = as_float(text)
+    return None if x is None else -x
+
+
+def _p_extract(paper: Any, negative: bool = False) -> pd.DataFrame:
+    """Port of ``.p_extract()``: the p-values of a paper, as :func:`extract_p_values` returns them.
+
+    With *negative* true, only the p-values written with a minus ("p = -.22"), which no p-value
+    can be: the minus of a statistic copied into it, or a typing error (#351). These have the
+    value of the number with its minus, and only those from -1 to 0 are kept, the numbers that
+    are a p-value without it.
     """
     from metacheck._values import as_float
-    from metacheck.stats.helpers import _reports_test, _sci_text
+    from metacheck.stats.helpers import (
+        _p_clause,
+        _p_not_a_value,
+        _reports_test,
+        _sci_text,
+        _stat_decimal_point,
+    )
 
     table = _strings_table(paper)
-    p = text_search(table, _P_PATTERN, return_="match", perl=True, ignore_case=False)
+    # "p = 0·0079" in the style of The Lancet (#648)
+    table = _stat_decimal_point(table)
+    pattern = _P_PATTERN_NEGATIVE if negative else _P_PATTERN
+    p = text_search(table, pattern, return_="match", perl=True, ignore_case=False)
     if not isinstance(p, pd.DataFrame):  # pragma: no cover - strings became a table
         raise TypeError("$ operator is invalid for atomic vectors")
     # a p right after eta is partial eta squared ("η² p = .06"), not a p-value (#336)
     eta = grepl(f"^[{_ETA}]", p["text"].tolist())
     p = p.loc[[not e for e in eta]]
     texts = [None if pd.isna(t) else str(t) for t in p["text"].tolist()]
-    comps = regextract(_OP_RUN, texts, perl=True)
+    comps = list(regextract(_OP_RUN, texts, perl=True))
+
+    # a symbol before the p: its subscript with "=", or a note's marker (see _P_SYMBOL_PREFIX);
+    # a marker leaves the match (#351)
+    has_sym = grepl(_P_SYMBOL_START, texts, perl=True)
+    if any(has_sym):
+        sym_len = [
+            (m.end() if (m := compile_r(_P_SYMBOL_START, perl=True).search(t or "")) else 0)
+            for t in texts
+        ]
+        against = grepl(_P_SYMBOL_AGAINST, texts, perl=True)
+        drop = [
+            h and (ag or comps[i] in ("=", "==", "\u2248", "~"))
+            for i, (h, ag) in enumerate(zip(has_sym, against, strict=True))
+        ]
+        texts = [
+            t if not h or t is None else t[n:]
+            for t, h, n in zip(texts, has_sym, sym_len, strict=True)
+        ]
+        p = p.copy()
+        p["text"] = pd.Series(texts, index=p.index, dtype=p["text"].dtype)
+        keep = [not d for d in drop]
+        p = p.loc[keep]
+        texts = [t for t, k in zip(texts, keep, strict=True) if k]
+        comps = [c for c, k in zip(comps, keep, strict=True) if k]
     split = strsplit(texts, _OP_SPLIT)
     values: list[str | None] = []
     for parts in split:
         if len(parts) < 2:
             raise IndexError("subscript out of bounds")
         values.append(parts[1])
-    # the one reader of written scientific notation, shared with the matcher's _norm_value()
-    values = _sci_text(values, ten_power=True)
     p = p.copy()
+    if negative:
+        num = [
+            _negated(sub(f"^{_P_SIGN}\\s*", "", v, perl=True)) if v is not None else None
+            for v in values
+        ]
+        p["p_value"] = pd.Series(num, index=p.index, dtype="float64")
+    else:
+        # the one reader of written scientific notation, shared with the matcher's _norm_value()
+        values = _sci_text(values, ten_power=True)
+        p["p_value"] = pd.Series([as_float(v) for v in values], index=p.index, dtype="float64")
     p["p_comp"] = pd.Series(comps, index=p.index, dtype="string")
-    p["p_value"] = pd.Series([as_float(v) for v in values], index=p.index, dtype="float64")
-    # the name after the p: a raw and a corrected p-value of one test are two rows
+    # the name after the p: a raw and a corrected p-value of one table are two rows
     p["p_name"] = pd.Series(_p_name(texts), index=p.index, dtype="string")
+    # the columns of the table as metacheck gives them: p_comp, p_value, p_name
+    p = p[
+        [c for c in p.columns if c not in ("p_comp", "p_value", "p_name")]
+        + ["p_comp", "p_value", "p_name"]
+    ]
 
-    # A whole 0 or 1 is a p-value only after "=", "≈" or "~" ("0 < p < 1" bounds a probability,
-    # and "p < 1" says nothing), and only when its sentence reports a test: "p = 1" is
-    # otherwise often a probability or a model parameter ("with p = 1", "ARIMA values p = 0")
-    whole = grepl(f"[{_OPS}]\\s*[01]$", trimws(texts))
-    if any(whole):
-        idx = [i for i, w in enumerate(whole) if w]
-        ok = [comps[i] in ("=", "==", "\u2248", "~") for i in idx]
-        sent = text_search(table, _P_PATTERN, return_="sentence", perl=True, ignore_case=False)
+    # the sentence of each row in `rows`, from the sentences with a match: text_expand()
+    # rebuilt the text table of a whole paper list for a few sentences, and took 13 of 14
+    # seconds for 1,000 papers
+    sent_cache: list[pd.DataFrame] = []
+
+    def sentence_of(rows: list[int]) -> list[Any]:
+        if not sent_cache:
+            sent_cache.append(
+                text_search(table, pattern, return_="sentence", perl=True, ignore_case=False)
+            )
+        sent = sent_cache[0]
         by = [
             c
             for c in ("paper_id", "section_id", "paragraph_id", "text_id")
@@ -296,14 +401,49 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
         keys: dict[tuple[Any, ...], int] = {}
         for j in range(len(sent)):
             keys.setdefault(tuple(_key_part(sent[c].iloc[j]) for c in by), j)
-        sentence = []
-        for i in idx:
+        out: list[Any] = []
+        for i in rows:
             jj = keys.get(tuple(_key_part(p[c].iloc[i]) for c in by)) if by else None
-            sentence.append(None if jj is None else sent["text"].iloc[jj])
+            out.append(None if jj is None else sent["text"].iloc[jj])
+        return out
+
+    # A value below 0 or above 1 is not a p-value when a unit follows it, a logarithm comes
+    # before it, or the p is part of a name or a formula ("P = 2.9 µm", "-log10 P = 7.5", "Ca/P
+    # = 1.67"; _p_not_a_value(); #351)
+    pv = p["p_value"].to_numpy(dtype="float64")
+    odd = ~np.isnan(pv) & ((pv < 0) | (pv > 1))
+    if odd.any():
+        # every p-value of those sentences, so _p_clause() counts their places
+        pids = p["paper_id"].tolist() if "paper_id" in p.columns else [None] * len(p)
+        tids = p["text_id"].tolist() if "text_id" in p.columns else [None] * len(p)
+        key = [f"{_key_part(a)}\r{_key_part(b)}" for a, b in zip(pids, tids, strict=True)]
+        odd_keys = {k for k, o in zip(key, odd, strict=True) if o}
+        in_sent = [i for i, k in enumerate(key) if k in odd_keys]
+        q = p.iloc[in_sent].copy()
+        q["expanded"] = pd.Series(sentence_of(in_sent), index=q.index, dtype="object")
+        cl = _p_clause(q)
+        why = _p_not_a_value(cl["before"].tolist(), cl["after"].tolist())
+        drop_rows = {i for i, w in zip(in_sent, why, strict=True) if w is not None and odd[i]}
+        keep = [i not in drop_rows for i in range(len(p))]
+        p = p.loc[keep].reset_index(drop=True)
+    if negative:
+        p = p.loc[p["p_value"].notna() & (p["p_value"] >= -1)]
+        return p.reset_index(drop=True)
+
+    # A whole 0 or 1 is a p-value only after "=", "≈" or "~" ("0 < p < 1" bounds a probability,
+    # and "p < 1" says nothing), and only when its sentence reports a test: "p = 1" is
+    # otherwise often a probability or a model parameter ("with p = 1", "ARIMA values p = 0")
+    texts = [None if pd.isna(t) else str(t) for t in p["text"].tolist()]
+    comps = p["p_comp"].tolist()
+    whole = grepl(f"[{_OPS}]\\s*[01]$", trimws(texts))
+    if any(whole):
+        idx = [i for i, w in enumerate(whole) if w]
+        ok = [comps[i] in ("=", "==", "\u2248", "~") for i in idx]
+        sentence = sentence_of(idx)
         zero = [p["p_value"].iloc[i] == 0 for i in idx]
         reports = _reports_test(sentence, zero)
-        drop = {i for i, k, r in zip(idx, ok, reports, strict=True) if not (k and r)}
-        p = p.loc[[i not in drop for i in range(len(p))]].reset_index(drop=True)
+        drop_idx = {i for i, k, r in zip(idx, ok, reports, strict=True) if not (k and r)}
+        p = p.loc[[i not in drop_idx for i in range(len(p))]].reset_index(drop=True)
     return p
 
 
@@ -363,7 +503,12 @@ def extract_eq(paper: Any) -> pd.DataFrame:
     ``text_id`` 1, 2, ...; ``text_id`` and ``paper_id`` are ``NA`` when a table
     has none).
     """
+    from metacheck.stats.helpers import _stat_chi_join, _stat_decimal_point
+
     table = _strings_table(paper)
+    # "p = 0·0079" in the style of The Lancet (#648), and "χ 2 (10) = 9.61": the chi joined to
+    # its 2 (#351)
+    table = _stat_chi_join(_stat_decimal_point(table))
     if isinstance(table, pd.DataFrame):
         doc = Doc.from_frame(table.copy(deep=False))
     else:

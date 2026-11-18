@@ -1426,9 +1426,9 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any =
 
     # _process_columns() repairs the main text only; the reference list is repaired here, as every
     # other reader does (see metacheck.io.read._repair_links())
-    from metacheck.io.read import _paper_repair_links
+    from metacheck.io.read import _paper_repair_text
 
-    p = _paper_repair_links(p)
+    p = _paper_repair_text(p)
     return coerce_paper(p)
 
 

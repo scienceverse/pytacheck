@@ -286,13 +286,13 @@
       {
         "t": "chr",
         "v": [
-          "red"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 2 R code files for reproducibility (each in an isolated subprocess).\n-  0 of 2 scripts ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed 2 R code files for reproducibility and ran 1 of them (each in an isolated subprocess).\n-  0 of 2 scripts ran without error when executed.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -315,6 +315,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -440,6 +441,12 @@
           {
             "t": "int",
             "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               2
             ]
           },
@@ -478,6 +485,7 @@
           0,
           0,
           0,
+          0,
           0
         ],
         "names": [
@@ -494,6 +502,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -668,6 +677,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

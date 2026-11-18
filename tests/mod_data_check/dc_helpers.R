@@ -202,14 +202,19 @@ dc_mock_llm <- function(spec) {
 # A temporary copy's location as "<copy>/<dir>/..." (goldens must not hold
 # per-run temporary paths).
 .dc_norm_paths <- function(mo) {
-  st <- mo$structure
   root <- paste0(normalizePath("."), "/")
-  if (!is.null(st) && "file_location" %in% names(st)) {
-    loc <- sub("^.*/dcrepo_[^/]*/", "<copy>/", st$file_location)
-    loc <- sub("^.*/metacheck-repo-files/", "<cache>/", loc)
-    loc <- ifelse(startsWith(loc, root), substring(loc, nchar(root) + 1L), loc)
-    mo$structure$file_location <- loc
+  for (tab in c("structure", "doc_sheets")) {
+    st <- mo[[tab]]
+    if (is.null(st)) next
+    for (col in c("file_location", "archive_file_location")) {
+      if (!col %in% names(st)) next
+      loc <- sub("^.*/dcrepo_[^/]*/", "<copy>/", st[[col]])
+      loc <- sub("^.*/metacheck-repo-files/", "<cache>/", loc)
+      loc <- ifelse(startsWith(loc, root), substring(loc, nchar(root) + 1L), loc)
+      mo[[tab]][[col]] <- loc
+    }
   }
+  st <- mo$structure
   if (!is.null(st) && "file_url" %in% names(st)) {
     url <- st$file_url
     mo$structure$file_url <- ifelse(startsWith(url, paste0("file://", root)),

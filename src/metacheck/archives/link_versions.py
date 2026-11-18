@@ -249,6 +249,25 @@ def _paper_of(paper: Any, pid: Any) -> Any:
         return None
 
 
+_SAME_PREFIX = re.compile(r"^(?:https?://)?(?:www\.|dx\.)?(?:doi\.org/)?", re.IGNORECASE)
+
+
+def _repo_link_same_key(urls: Sequence[Any]) -> list[str]:
+    """Port of ``.repo_link_same_key()``: the form of a link by which two ways of writing one address are found.
+
+    Without "https://", "www.", "dx.", "doi.org/" and a closing "/", the website's name in small
+    letters, and a DOI all in small letters (DOIs do not depend on case).
+    """
+    out: list[str] = []
+    for url in urls:
+        b = _SAME_PREFIX.sub("", str(url), count=1)
+        b = re.sub(r"/+$", "", b)
+        host = re.sub(r"/.*$", "", b, flags=re.DOTALL)
+        b = host.lower() + b[len(host) :]
+        out.append(b.lower() if re.match(r"10\.\d{4,9}/", b) else b)
+    return out
+
+
 def _repo_links_tidy(repos: pd.DataFrame, paper: Any) -> pd.DataFrame:
     """Port of ``.repo_links_tidy()``: repo_check()'s gathered links, before they are checked.
 
@@ -322,6 +341,30 @@ def _repo_links_tidy(repos: pd.DataFrame, paper: Any) -> pd.DataFrame:
             or bool(re.search(r"^(?:doi\.org/)?10\.[0-9]{4,9}$", bare))
         )
     repos = repos.loc[[not h for h in home]].drop_duplicates().reset_index(drop=True)
+    # one address written in two ways ("https://osf.io/abcde" and "osf.io/abcde/", "github.com/x"
+    # and "www.github.com/x") is one repository: it was checked, listed and counted twice (#648).
+    # Compared without "https://", "www.", "dx.", "doi.org/" and a closing "/", with the
+    # website's name in small letters (and a DOI, which is the same in either case); the form
+    # written in full is kept.
+    same = _repo_link_same_key(repos["repo_url"].tolist())
+    urls_now = repos["repo_url"].tolist()
+    pids_now = repos["paper_id"].tolist()
+    types_now = repos["repo_type"].tolist()
+    order = sorted(
+        range(len(repos)),
+        key=lambda i: (
+            not (isinstance(urls_now[i], str) and re.match(r"https?://", urls_now[i], re.I)),
+            i,
+        ),
+    )
+    seen: set[tuple[Any, ...]] = set()
+    dup = [False] * len(repos)
+    for i in order:
+        dkey = (str(pids_now[i]), str(types_now[i]), same[i])
+        if dkey in seen:
+            dup[i] = True
+        seen.add(dkey)
+    repos = repos.loc[[not d for d in dup]].reset_index(drop=True)
     # a link cut inside a name, beside its longer form; an account beside one of its repositories
     key = _link_key(repos["repo_url"].tolist())
     pids = repos["paper_id"].tolist()

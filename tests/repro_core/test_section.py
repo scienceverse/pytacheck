@@ -413,7 +413,7 @@ def test_advice_for_a_package_found_nowhere_and_for_an_old_one() -> None:
         {
             "package": ["ecodeal", "oldpkg"],
             "installed": [False, False],
-            "category": ["source_unknown", "compile_failure"],
+            "category": ["source_unknown", "other"],
         }
     )
     adv, _ = _repro_advice(
@@ -426,7 +426,8 @@ def test_advice_for_a_package_found_nowhere_and_for_an_old_one() -> None:
         in adv[0]
     )
     assert 'remotes::install_github("user/ecodeal")' not in adv[0]  # escaped by the cell rule
-    assert "<code>oldpkg</code> could not be installed with the current version of R" in adv[0]
+    assert "<code>oldpkg</code> could not be installed in our run." in adv[0]
+    assert "probably because it is old" not in adv[0]
 
 
 def test_advice_for_a_file_inside_an_archive() -> None:

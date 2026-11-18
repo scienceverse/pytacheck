@@ -1,0 +1,104 @@
+{
+  "id": "extract_p_values.nightly.minus",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "text",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type",
+      "p_comp",
+      "p_value",
+      "p_name"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          4,
+          6
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "p < .001",
+          "p = .05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A correlation (r p = -.64, p < .001).",
+          "Not negative, p = .05."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Test",
+          "Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown",
+          "unknown"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.001,
+          0.05
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

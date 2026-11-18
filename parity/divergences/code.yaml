@@ -75,6 +75,8 @@
 "mod_repo_check/repo_check.local.roster_missing_one": *d141_ownership
 "mod_repo_check/repo_check.local.edat_ok": *d141_ownership
 "mod_repo_check/repo_check.local.zip": *d141_ownership
+"mod_repo_check/repo_check.local.unknown_type": *d141_ownership
+"mod_repo_check/repo_check.local.no_paper": *d141_ownership
 "mod_repo_check/repo_check.local.rpkg": *d141_ownership
 "mod_repo_check/repo_check.local.desc_only": *d141_ownership
 "mod_repo_check/repo_check.local.rpkg_root": *d141_ownership
@@ -336,3 +338,18 @@
 # D89: file_types has one type per extension (metacheck d52b3fd), so a .json
 # file is data (R at the pin: code) and counts as a data file, not a code file
 # D91: the naming table shows "Required"/"Suggestion" (metacheck 8c1f6c1)
+"statout_match/match_reported_output.synthetic.na_test_id_censored_only": &u255_all_dropped
+  kind: r_bug_fixed
+  ref: U255
+  reason: "when every test is left out as not evidence, the result is empty and R stops with \"invalid argument type\" (`!out$found` on a table without columns); pytacheck returns the empty result with its summary"
+"statout_match/match_reported_output.synthetic.na_test_id_censored_only.summary": *u255_all_dropped
+"statout_match/match_reported_output.evidence.none_informative.informative": *u255_all_dropped
+"statout_match/match_reported_output.evidence.none_informative.informative.summary": *u255_all_dropped
+"statout_match_review/match_reported_output.tt.empty_test_id.censored_only": *u255_all_dropped
+"statout_match_review/match_reported_output.eq.empty_test_id.censored_only": *u255_all_dropped
+"statout_match_review/match_reported_output.tt.inf_value": *u255_all_dropped
+"statout_match_review/match_reported_output.tt.inf_value_other_family": *u255_all_dropped
+"statout_match_review/match_reported_output.tt.inf_value_other_family.summary": *u255_all_dropped
+"statout_match_review/match_reported_output.tt.inf_value_hit_first": *u255_all_dropped
+"statout_match_review/match_reported_output.derived.apa_xml": *u255_all_dropped
+"statout_match_review/match_reported_output.derived.apa_xml.summary": *u255_all_dropped

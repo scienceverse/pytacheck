@@ -1,9 +1,13 @@
 """File-naming convention checks (port of ``R/file-naming.R``).
 
 Checks file names against the metacheck "machine readable FAIR data and code"
-guide: no spaces or special characters, no diacritics, an actually
-classifiable name, zero-padded numbering across sibling files, and path-length
-budgets. Used by ``repo_check`` to surface naming problems.
+guide: no spaces or special characters, no diacritics, zero-padded numbering across
+sibling files, and path-length budgets. Used by ``repo_check`` to surface naming problems.
+
+A file of a type metacheck does not know is not a naming problem (#648): the "unclassifiable"
+rule made every such file a "bad" naming problem (10,587 files in 150 of 563 papers: model
+files, game-engine assets, genomics and brain-scan formats, Stata help files), which the
+authors could not fix by renaming. ``repo_check`` lists those files on their own.
 
 There is no date rule: metacheck's flagged every run of 8 digits that is not a
 valid ``YYYYMMDD`` date, but nothing in a file name says whether 8 digits were
@@ -34,7 +38,6 @@ FILE_NAMING_SEVERITY: dict[str, str] = {
     "spaces": "bad",
     "special-characters": "bad",
     "diacritics": "bad",
-    "unclassifiable": "bad",
     "zero-padding": "suggestion",
     "path-length-255": "bad",
     "path-length-228": "suggestion",
@@ -50,10 +53,6 @@ _DETAIL = {
     "spaces": "contains a space",
     "special-characters": ("contains a character other than letters, digits, underscore, or dash"),
     "diacritics": "contains non-ASCII characters (e.g. accented letters)",
-    "unclassifiable": (
-        "could not be classified by name or extension (data_type is 'unknown'); "
-        "add a recognisable keyword (data, code, materials, ...) or a known extension"
-    ),
 }
 
 _COLUMNS = ["file_name", "rule", "severity", "detail"]
@@ -118,7 +117,7 @@ def _frame(rows: Sequence[tuple[Any, ...]], columns: Sequence[str]) -> pd.DataFr
 # -- per-file rules ------------------------------------------------------------
 
 
-def _check_rows(file_names: list[str | None], data_types: list[str | None]) -> list[Row]:
+def _check_rows(file_names: list[str | None]) -> list[Row]:
     """``.file_naming_check_one()`` for every file at once, rows in file order.
 
     A name with bytes that are not valid UTF-8 is checked like any other (its
@@ -137,8 +136,6 @@ def _check_rows(file_names: list[str | None], data_types: list[str | None]) -> l
             rows.append((f, "special-characters", _DETAIL["special-characters"]))
         if non_ascii[i]:
             rows.append((f, "diacritics", _DETAIL["diacritics"]))
-        if data_types[i] is not None and data_types[i] == "unknown":
-            rows.append((f, "unclassifiable", _DETAIL["unclassifiable"]))
     return rows
 
 
@@ -152,17 +149,15 @@ def _scalar(x: Any, what: str) -> str | None:
     raise ValueError(f"the condition has length > 1 ({what})")
 
 
-def _file_naming_check_one(file_name: Any, data_type: Any = None) -> pd.DataFrame:
+def _file_naming_check_one(file_name: Any, data_type: Any = None) -> pd.DataFrame:  # noqa: ARG001
     """Port of ``R/file-naming.R::.file_naming_check_one()``.
 
     Checks ONE file name (its basename) against the rules that apply to a file
-    in isolation -- spaces, special characters, diacritics and classifiability
-    (``data_type == "unknown"``). Returns the violations as a data frame
+    in isolation -- spaces, special characters and diacritics. Returns the violations as a data frame
     with columns ``rule`` and ``detail`` (0 rows when clean).
     """
     name = _scalar(file_name, "file_name")
-    dtype = None if data_type is None else _chr_list(data_type)
-    rows = _check_rows([name], [dtype[0] if dtype else None])
+    rows = _check_rows([name])
     return _frame([(r[1], r[2]) for r in rows], ["rule", "detail"])
 
 
@@ -286,7 +281,8 @@ def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = No
         (the default) means R's default ``file_path = file_name``.
     data_type:
         an optional ``data_check`` semantic type per file (recycled; see
-        ``data_classify_files()``), used only for the classifiability rule.
+        ``data_classify_files()``); not used any more: it was only used for a rule that made a file
+        of an unknown type a naming problem, which was removed (#648).
         ``None`` is R's ``NA_character_``.
 
     Returns
@@ -298,8 +294,8 @@ def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = No
 
     Notes
     -----
-    ``"bad"`` rules: spaces, special characters, diacritics,
-    ``data_type == "unknown"`` and the hard 255-character path limit. ``"suggestion"``
+    ``"bad"`` rules: spaces, special characters, diacritics and the hard 255-character path
+    limit. ``"suggestion"``
     rules: unpadded sibling numbering and the 228/100/50-character budgets. A file
     without a name or a path has nothing to check and is left out.
     """
@@ -308,11 +304,12 @@ def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = No
     if n == 0:
         return _frame([], _COLUMNS)
     paths = names if file_path is None else _chr_list(file_path)
-    data_types = _rep_len(data_type, n)
+    # R still recycles it (rep_len()), though no rule reads it any more
+    _rep_len(data_type, n)
 
     # a file without a name (a platform listing can have one) has nothing to check
     keep = [i for i, nm in enumerate(names) if nm is not None]
-    rows = _check_rows([names[i] for i in keep], [data_types[i] for i in keep])
+    rows = _check_rows([names[i] for i in keep])
     rows += _padding_rows([nm for nm in names if nm is not None])
     rows += _length_rows([p for p in paths if p is not None])
     return _frame(

@@ -223,4 +223,8 @@ EXT_REGISTRY: tuple[tuple[str, str | None, bool, str | None, str | None], ...] =
     ("drawio", "documentation", False, None, None),
     ("key", "documentation", False, None, None),
     ("cgi", "documentation", False, None, None),
+    # Stata's help files, which come with every Stata command a deposit bundles (#648: 20
+    # .sthlp/.hlp files beside the .ado files in one deposit's extra_ados/ folder were "unknown")
+    ("sthlp", "documentation", False, None, None),
+    ("hlp", "documentation", False, None, None),
 )

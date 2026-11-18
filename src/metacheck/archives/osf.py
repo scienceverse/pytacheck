@@ -148,7 +148,9 @@ def osf_api_check(osf_api: str | None = None, on_error: str = "stop") -> str:
 # links and IDs
 # ---------------------------------------------------------------------------
 
-_OSF_BARE_REGEX = r"(?:https?://)?osf\.io/[A-Za-z0-9]+/?"
+# A view-only key after it ("osf.io/kpngh/?view_only=1e70...") is part of the link: without it the
+# OSF answers "private" for a private project or registration that the key opens (#648)
+_OSF_BARE_REGEX = r"(?:https?://)?osf\.io/[A-Za-z0-9]+/?(?:\?view_only=[A-Za-z0-9]+)?"
 
 
 def osf_links(paper: Any) -> pd.DataFrame:

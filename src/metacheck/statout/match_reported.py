@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import functools
 import math
+import re
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
@@ -228,10 +229,11 @@ _FAMILY_CASES: tuple[tuple[tuple[str, ...], tuple[str, ...], str], ...] = (
     ((r"^df1$",), (), "df1"),
     ((r"^df2$",), (), "df2"),
     ((r"^df$",), (), "df"),
-    ((r"^t($| |-|value|stat)", r"t-?test|student'?s t"), ("student's t",), "t"),
+    # "tval" and "zval" are metafor::rma()'s (#648)
+    ((r"^t($| |-|value|stat)|^tval$", r"t-?test|student'?s t"), ("student's t",), "t"),
     ((r"^f($| |-|value| change)", r"\banova\b|f-?test"), (), "F"),
     (("chi|χ|x-squared|x²|goodness of fit",), (), "chisq"),
-    ((r"^z($| |value)",), (), "z"),
+    ((r"^z($| |value)|^zval$",), (), "z"),
     ((r"^w$|wilcoxon|mann-whitney",), (), "W"),
     ((r"^u$",), (), "U"),
     ((r"^q$",), (), "Q"),
@@ -558,18 +560,23 @@ class _Sites:
             self._has[fam] = got
         return got
 
-    def _exact(self, fam: str | None, value: float, tol: float) -> np.ndarray:
+    def _exact(
+        self, fam: str | None, value: float, tol: float, absolute: bool = False
+    ) -> np.ndarray:
         """Sites with a value of family *fam* within *tol* of *value*, both ends included.
 
         An output value matches when it is within half a unit of the reported last decimal (a
         mean of exactly 13.625 reported as 13.63 is found; rounding it first with R's round(),
         which rounds half to even, gave 13.62 only; metacheck 0.4.3.7). The small extra margin
-        absorbs floating-point error in ``x - value``."""
+        absorbs floating-point error in ``x - value``. With *absolute*, the sign is not compared:
+        the sign of a t or z depends on which group the code takes first, and papers often give
+        its size only (``t(160.18) = 5.55`` for an output t of -5.546; metacheck 0.4.4.4, #648)."""
         rv, site = self._values_of(fam)
         out = np.zeros(len(self.names), dtype=bool)
         if len(rv):
             with np.errstate(invalid="ignore", over="ignore"):
-                hit = np.abs(rv - value) <= tol * (1 + 1e-9)
+                diff = np.abs(np.abs(rv) - abs(value)) if absolute else np.abs(rv - value)
+                hit = diff <= tol * (1 + 1e-9)
             out[site[hit]] = True
         return out
 
@@ -605,7 +612,7 @@ class _Sites:
             # 10.0**dec overflows beyond 1e308 (a reported "p = 1e-310" has
             # 310 decimals, U143); the tolerance is then a subnormal or 0
             tol = 0.5 / (10.0**dec) if dec <= 308 else 0.5 * 10.0**-dec
-            got = self._exact(fam, value, tol)
+            got = self._exact(fam, value, tol, absolute=fam in ("t", "z"))
             fallback = _FALLBACK_FAMILY.get(fam) if fam is not None else None
             if fallback is not None:
                 got = got | (~self.has_family(fam) & self._exact(fallback, value, tol))
@@ -881,6 +888,7 @@ _RESULT_COLUMNS = {
     "analysis": "string",
     "confidence": "string",
     "plausible_split": "boolean",
+    "n_sites": "Int64",
 }
 
 
@@ -905,6 +913,153 @@ def _fmt_comp(c: Mapping[str, Any]) -> str:
     value = c["value"]
     num = "NA" if value is None else format_num(float(value), 7)
     return f"{_paste_chr(c.get('name'))}={c.get('censored') or ''}{num}"
+
+
+def _match_sig_digits(value: float | None, dec: Any) -> int:
+    """Port of ``.match_sig_digits()``: the significant digits of a reported value as written.
+
+    From its value and its decimals (``_norm_value()``): .023 has 2, 0.007 has 1, 1678.9 has 5.
+    """
+    if value is None or math.isnan(value):
+        return 0
+    digits = max(0, int(dec if dec is not None else 0))
+    text = f"{abs(value):.{digits}f}"
+    return len(re.sub(r"[^0-9]", "", text).lstrip("0"))
+
+
+def _match_informative(comp: Mapping[str, Any]) -> bool:
+    """Port of ``.match_informative()``: is a reported value evidence that a test was found?
+
+    Under ``evidence = "informative"`` (#648): exact (not a bound such as p < .001), with at
+    least 2 significant digits or at least 3 decimals. p = .007 and df = 163 are; df1 = 2, d =
+    0.5 and p < .001 are not, as nearly every output holds them. A count of people or studies (n
+    = 75) is not a result, nor is a significance level (alpha = .05, a Bonferroni alpha =
+    .0125); a reliability (Cronbach's alpha = .86) has the same family but is above .10.
+    """
+    dec = comp.get("dec")
+    dec = 0 if dec is None else int(dec)
+    fam = comp.get("family")
+    value = comp.get("value")
+    missing = value is None or math.isnan(value)
+    return bool(
+        fam != "n"
+        and not (fam == "alpha" and not missing and value is not None and value < 0.1)
+        and not (comp.get("censored") or "")
+        and not missing
+        and (dec >= 3 or _match_sig_digits(value, dec) >= 2)
+    )
+
+
+def _match_threshold(comp: Mapping[str, Any]) -> bool:
+    """Port of ``.match_threshold()``: a conventional threshold, which code prints as a setting.
+
+    p = .05, .01, .001, .10, .005 and alpha = .05 (a chance match rested on "p = 0.001").
+    """
+    value = comp.get("value")
+    return bool(
+        comp.get("family") in ("p", "alpha")
+        and value is not None
+        and not math.isnan(value)
+        and any(abs(value - t) < 1e-9 for t in (0.05, 0.01, 0.001, 0.1, 0.005))
+    )
+
+
+def _match_strong(comp: Mapping[str, Any]) -> bool:
+    """Port of ``.match_strong()``: is a reported value strong evidence on its own?
+
+    Exact, with at least 3 decimals or 3 significant digits (F = 72.28, W = 52378, p = .023).
+    Matched against other papers' output, such single values were never found by chance.
+    """
+    dec = comp.get("dec")
+    dec = 0 if dec is None else int(dec)
+    value = comp.get("value")
+    return bool(
+        not (comp.get("censored") or "")
+        and value is not None
+        and not math.isnan(value)
+        and not _match_threshold(comp)
+        and (dec >= 3 or _match_sig_digits(value, dec) >= 3)
+    )
+
+
+def _match_single_ok(comp: Mapping[str, Any]) -> bool:
+    """Port of ``.match_single_ok()``: can a test of this one value take part?
+
+    Under ``evidence = "informative"``: exact, at least 3 decimals or 3 significant digits, not a
+    whole number (a setting or a count: R = 1000, beta = 0) and not a conventional threshold (p =
+    .05, .01, .001, .10, .005; alpha = .05). Matched against other papers' output, such values
+    were never found by chance (0 of 257 with 3 or more decimals), and 2 decimals about 1 in 8
+    of the own matches. 2 significant digits are not enough on their own (#648).
+    """
+    value = comp.get("value")
+    if value is None or math.isnan(value) or (comp.get("censored") or ""):
+        return False
+    if value == round(value):
+        return False
+    return _match_strong(comp)
+
+
+def _match_value_key(comp: Mapping[str, Any]) -> str:
+    """Port of ``.match_value_key()``: a reported value as a key, to tell whether it is reported once.
+
+    Its family and its value as written.
+    """
+    dec = comp.get("dec")
+    digits = max(0, int(0 if dec is None else dec))
+    value = comp.get("value")
+    num = "NA" if value is None or math.isnan(value) else f"{value:.{digits}f}"
+    return f"{_paste_chr(comp.get('family'))} {comp.get('censored') or ''} {num}"
+
+
+def _n_numbers(sites: _Sites, comp: Mapping[str, Any], match: np.ndarray) -> int:
+    """For a test of one value: the different output numbers it matches, over all places.
+
+    A model printed twice gives one number at two places; two numbers that round alike (p =
+    0.0075 and 0.0070 for p = .007) give two (#648).
+    """
+    dec = comp.get("dec")
+    d = 0 if dec is None else int(dec)
+    tol = 0.5 / (10.0**d) if d <= 308 else 0.5 * 10.0**-d
+    fam = comp.get("family")
+    value = float(comp["value"])
+    seen: set[float] = set()
+    for s in np.flatnonzero(match):
+        rows = sites.rows[int(s)]
+        vals = [sites.val[r] for r in rows]
+        fams = [sites.fam[r] for r in rows]
+        same = [f is not None and f == fam for f in fams]
+        use = [v for v, ok in zip(vals, same, strict=True) if ok] if any(same) else vals
+        for v in use:
+            gap = abs(abs(v) - abs(value)) if fam in ("t", "z") else abs(v - value)
+            if not math.isnan(gap) and gap <= tol * (1 + 1e-9):
+                seen.add(float(f"{v:.8g}"))
+    return len(seen)
+
+
+def _drop_weak(tests: list[dict[str, Any]], evidence: str) -> list[dict[str, Any]]:
+    """A test that cannot be told from chance takes no part (``drop_weak()``, see `evidence`).
+
+    A test of one value takes part only when that value is strong, is not a whole number or a
+    threshold, and is reported once among the paper's values; a test of several values none of
+    which is evidence can never be found either: a power analysis's "alpha = 0.05, N = 55, N =
+    68", "p < .05" with "p < 2e-04" (#648).
+    """
+    if evidence != "informative" or not tests:
+        return tests
+    counts: dict[str, int] = {}
+    for t in tests:
+        for c in t["components"]:
+            k = _match_value_key(c)
+            counts[k] = counts.get(k, 0) + 1
+    out = []
+    for t in tests:
+        comps = t["components"]
+        if len(comps) == 1:
+            if _match_single_ok(comps[0]) and counts[_match_value_key(comps[0])] == 1:
+                out.append(t)
+        elif any(_match_informative(c) for c in comps):
+            out.append(t)
+    return out
 
 
 def _output_long(output: Any) -> pd.DataFrame | None:
@@ -1010,6 +1165,7 @@ def match_reported_output(
     output: Any,
     include_tables: bool = False,
     min_components: int = 1,
+    evidence: str = "informative",
 ) -> pd.DataFrame:
     """Match reported statistical tests against the extracted analysis output.
 
@@ -1038,6 +1194,16 @@ def match_reported_output(
     min_components:
         A test must have at least this many recognised components to be
         assessed (default 1, so a lone reported statistic is still checked).
+    evidence:
+        Which reported values count as evidence that a test was found (#648).
+        ``"informative"`` (default): only an exact value (not a bound such as ``p < .001``) with
+        at least 2 significant digits or at least 3 decimals (``p = .007``, ``df = 163``, not
+        ``df1 = 2`` or ``d = 0.5``); a test with several values is found when at least two such
+        values match at one place of the output, and a test of one value takes part only when
+        that value has at least 3 decimals or 3 significant digits, is not a whole number or a
+        conventional threshold (p = .05, .01, .001, .10, .005), and occurs once among the paper's
+        reported values; other tests of one value are left out of the result and the summary.
+        ``"any"``: every value counts, and a test of one value is found by one match, as before.
 
     Returns
     -------
@@ -1045,13 +1211,17 @@ def match_reported_output(
         One row per reported test: ``text_id``, ``grp_id``, ``reported``,
         ``n_components``, ``n_matched``, ``found``, ``match_values``,
         ``not_matched``, ``source_file``, ``analysis``, ``confidence``
-        (``"full"``/``"partial"``/``"none"``) and ``plausible_split``. The
+        (``"full"``/``"partial"``/``"none"``), ``plausible_split`` and ``n_sites`` (the places of
+        the output that match as well as the best one). The
         roll-up (``n_tests``, ``n_found``, ``n_full``, ``n_partial``,
         ``n_missing``, ``pct_found``) is in ``df.attrs["summary"]`` (R's
         ``attr(x, "summary")``).
     """
     from metacheck.papers import Paper, PaperList
+    from metacheck.text.extract_tests import _is_primary_anchor
 
+    if evidence not in ("informative", "any"):
+        raise ValueError("'arg' should be one of 'informative', 'any'")
     if isinstance(paper, PaperList):
         # R fails in .recompose_eq() ("missing value where TRUE/FALSE
         # needed"); the result rows carry no paper id (UPSTREAM_ISSUES U142)
@@ -1089,6 +1259,8 @@ def match_reported_output(
 
     out_long = _output_long(output)
     if not tests or out_long is None or len(out_long) == 0:
+        # a test of one value that cannot be told from chance takes no part (see `evidence`)
+        tests = _drop_weak(tests, evidence)
         empty = _empty_result()
         empty.attrs["summary"] = {
             "n_tests": len(tests),
@@ -1103,6 +1275,18 @@ def match_reported_output(
     sites = _build_sites(out_long)
     if len(sites) > 0:
         tests = _regroup_by_evidence(tests, sites, _val_in)
+    tests = _drop_weak(tests, evidence)
+    if not tests:  # R: bind_rows(list()) is a table without columns
+        none = pd.DataFrame()
+        none.attrs["summary"] = {
+            "n_tests": 0,
+            "n_found": 0,
+            "n_full": 0,
+            "n_partial": 0,
+            "n_missing": 0,
+            "pct_found": None,
+        }
+        return none
 
     rows: dict[str, list[Any]] = {k: [] for k in _RESULT_COLUMNS}
     for tst in tests:
@@ -1127,23 +1311,63 @@ def match_reported_output(
             "analysis": None,
             "confidence": "none",
             "plausible_split": None if plausible is None else bool(plausible),
+            "n_sites": 0,
         }
         if nc >= min_components and len(sites) > 0:
-            # Best site = the analysis where the most components co-occur
-            # (the first one on ties).
-            matches, counts = sites.count(comps)
-            best = int(np.argmax(counts))
-            best_n = int(counts[best])
+            matches, _counts = sites.count(comps)
+            hit = np.vstack(matches) if matches else np.zeros((0, len(sites)), dtype=bool)
+            if evidence == "informative":
+                # Best place = the analysis where the most components co-occur; with
+                # evidence = "informative", the most informative ones, then the most of all
+                weight = np.array([_match_informative(c) for c in comps], dtype=bool)
+                fams = [c.get("family") for c in comps]
+                is_se = np.array([f == "se" for f in fams], dtype=bool)
+                est = np.array([f in ("mean", "b", "beta") for f in fams], dtype=bool)
+                strong = np.array(
+                    [_match_strong(c) and _is_primary_anchor(c.get("name") or "") for c in comps],
+                    dtype=bool,
+                )
+                # A standard error belongs to its estimate (a mean, b, beta): with the estimate
+                # reported, the SE counts only at a place where the estimate matches too
+                w = np.repeat(weight[:, None], hit.shape[1], axis=1)
+                if est.any():
+                    no_est = ~(hit & est[:, None]).any(axis=0)
+                    w = w & ~(no_est[None, :] & is_se[:, None])
+                ni = (hit & w).sum(axis=0)
+            else:
+                strong = np.ones(nc, dtype=bool)
+                ni = hit.sum(axis=0)
+            nm = hit.sum(axis=0)
+            # the first place with the most informative matches, then the most matches
+            order = ni.astype(np.int64) * (nc + 1) + nm
+            best = int(np.argmax(order))
+            best_inf, best_n = int(ni[best]), int(nm[best])
+            n_sites = int(((ni == best_inf) & (nm == best_n) & (nm > 0)).sum())
+            res["n_sites"] = n_sites if best_n > 0 else 0
+            best_strong = int((hit[:, best] & strong).sum())
             res["n_matched"] = best_n
-            if best_n > 0 and best_n >= min(2, nc):
+            if evidence != "informative":
+                found_now = best_n >= min(2, nc)
+            elif nc == 1:
+                # a test of one value is found when it matches one output number only
+                found_now = (
+                    best_inf >= 1 and best_n > 0 and _n_numbers(sites, comps[0], matches[0]) == 1
+                )
+            else:
+                found_now = (
+                    best_inf >= 2
+                    or (best_strong >= 1 and best_n >= 2)
+                    or (best_n == nc and best_inf >= 1)
+                )
+            if found_now and best_n > 0:
                 res["found"] = True
                 res["source_file"] = as_str(sites.first(best, "sf"))
                 res["analysis"] = as_str(sites.first(best, "an"))
                 res["confidence"] = "full" if best_n == nc else "partial"
                 matched = [bool(m[best]) for m in matches]
-                hit = [c for c, ok in zip(comps, matched, strict=True) if ok]
+                hit_c = [c for c, ok in zip(comps, matched, strict=True) if ok]
                 miss = [c for c, ok in zip(comps, matched, strict=True) if not ok]
-                res["match_values"] = ", ".join(_fmt_comp(c) for c in hit) if hit else ""
+                res["match_values"] = ", ".join(_fmt_comp(c) for c in hit_c) if hit_c else ""
                 res["not_matched"] = ", ".join(_fmt_comp(c) for c in miss) if miss else ""
         for k in _RESULT_COLUMNS:
             rows[k].append(res[k])

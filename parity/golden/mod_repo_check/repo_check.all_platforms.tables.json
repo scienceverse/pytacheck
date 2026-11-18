@@ -1155,7 +1155,7 @@
       },
       {
         "t": "df",
-        "nrow": 11,
+        "nrow": 2,
         "names": [
           "File",
           "Rule",
@@ -1166,47 +1166,20 @@
           {
             "t": "chr",
             "v": [
-              "Archive.zip",
-              "Archive.zip",
-              "Archive.zip",
               "study 1.csv",
-              "archive.tar.gz",
-              "weird.file-name",
-              "trial data.csv",
-              "noext",
-              "bundle.zip",
-              "notzip.zip",
-              "nameless"
+              "trial data.csv"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "unclassifiable",
-              "unclassifiable",
-              "unclassifiable",
               "spaces",
-              "unclassifiable",
-              "unclassifiable",
-              "spaces",
-              "unclassifiable",
-              "unclassifiable",
-              "unclassifiable",
-              "unclassifiable"
+              "spaces"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Required",
-              "Required",
-              "Required",
-              "Required",
-              "Required",
-              "Required",
-              "Required",
-              "Required",
-              "Required",
               "Required",
               "Required"
             ]
@@ -1214,17 +1187,8 @@
           {
             "t": "chr",
             "v": [
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "contains a space",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "contains a space",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+              "contains a space"
             ]
           }
         ]
@@ -1867,6 +1831,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1,0 +1,81 @@
+{
+  "id": "repro_rewrite_preview.repro_paths",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "file_name",
+      "lang",
+      "run_dir",
+      "original",
+      "rewritten"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "analysis/from_analysis.py",
+          "scripts/utils.py",
+          "top.py",
+          "analysis/from_analysis.R",
+          "analysis/report.Rmd",
+          "scripts/helper.R",
+          "top.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Python",
+          "Python",
+          "Python",
+          "R",
+          "R",
+          "R",
+          "R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "analysis",
+          "scripts",
+          ".",
+          "analysis",
+          "analysis",
+          "analysis",
+          "."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "# The authors run this script from its own folder, analysis/.\nfrom pathlib import Path\n\nimport pandas as pd\n\nHERE = Path(__file__).resolve().parent\nPROC = HERE.parent / \"data\" / \"processed\"  # KEEP q01a\nd01 = pd.read_csv(PROC / \"trials.csv\")  # KEEP q01b\nd02 = pd.read_csv(\"../data/raw/raw_lab.csv\")  # KEEP q02\nd03 = pd.read_csv(HERE / \"..\" / \"data\" / \"reference\" / \"ref.csv\")  # KEEP q03",
+          "def helper(x):\n    return x",
+          "# The authors run this script from the top of the project.\nimport glob\nimport json\nimport os\nimport re\nfrom pathlib import Path\n\nimport pandas as pd\n\nRAW = \"data/raw\"\nRAW_P = Path(\"data\") / \"raw\"\nd01 = pd.read_csv(\"data/raw/raw_lab.csv\")  # KEEP p01\nd02 = pd.read_csv(\"raw_lab.csv\")  # RESOLVES p02 data/raw/raw_lab.csv\nd03 = pd.read_csv(r\"C:\\Users\\me\\project\\data\\raw\\raw_lab.csv\")  # RESOLVES p03 data/raw/raw_lab.csv\nd04 = pd.read_csv(os.path.join(RAW, \"raw_lab.csv\"))  # KEEP p04\nd05 = pd.read_csv(os.path.join(\"data\", \"raw\", \"raw_lab.csv\"))  # KEEP p05\nd06 = pd.read_csv(Path(\"data\") / \"raw\" / \"raw_lab.csv\")  # KEEP p06\nd07 = pd.read_csv(RAW_P / \"raw_lab.csv\")  # KEEP p07\nd08 = pd.read_csv(RAW + \"/raw_lab.csv\")  # KEEP p08\nd09 = pd.read_csv(f\"{RAW}/raw_online.csv\")  # KEEP p09\nf10 = glob.glob(\"data/raw/*.csv\")  # KEEP p10\nd11 = json.load(open(\"config/settings.json\"))  # KEEP p11\ns12 = re.sub(r\"raw_(\\w+)\\.csv\", r\"clean_\\1.csv\", \"raw_lab.csv\")  # KEEP p12\nfiles13 = [\"raw_lab.csv\", \"raw_online.csv\"]  # KEEP p13\nd13 = [pd.read_csv(os.path.join(RAW, f)) for f in files13]\nREF = Path(\"data\") / \"reference\"  # KEEP p14a\nd14 = pd.read_csv(REF / \"ref.csv\")  # KEEP p14b\nPACK = {\"a\": [\"raw_lab.csv\"], \"b\": [\"raw_online.csv\"]}  # KEEP p15\n\n\ndef ref_path(name):\n    return REF / name\n\n\nd16 = pd.read_csv(ref_path(\"ref.csv\"))  # KEEP p16",
+          "# The authors run this script from its own folder, analysis/.\nROOT <- \"..\" # KEEP a00\nd01 <- read.csv(\"../data/raw/raw_lab.csv\") # KEEP a01\nsource(\"../scripts/helper.R\") # KEEP a02\nd03 <- read.csv(file.path(\"..\", \"data\", \"reference\", \"ref.csv\")) # KEEP a03\nd04 <- read.csv(file.path(ROOT, \"data\", \"raw\", \"raw_online.csv\")) # KEEP a04\nRAW_DIR <- file.path(ROOT, \"data\", \"raw\") # KEEP a05a\nRAW_FILES <- c(Lab = \"raw_lab.csv\", Online = \"raw_online.csv\") # KEEP a05b\nd05 <- lapply(RAW_FILES, function(x) read.csv(file.path(RAW_DIR, x)))",
+          "library(here)\nd01 <- read.csv(here(\"data\", \"raw\", \"raw_lab.csv\")) # KEEP m01\nd02 <- read.csv(here( # KEEP m02a\n  \"data\", # KEEP m02b\n  \"reference\", # KEEP m02c\n  \"ref.csv\" # KEEP m02d\n))\nd03 <- read.csv(\"../data/processed/trials.csv\") # KEEP m03",
+          "helper <- function(x) x",
+          "# The authors run this script from the top of the project.\n# Markers: KEEP = the line must stay as written; RESOLVES = the path in the\n# line must lead to the file named after the id, from where the script runs.\nlibrary(here)\nRAW <- \"data/raw\"\nd01 <- read.csv(\"data/raw/raw_lab.csv\") # KEEP r01\nd02 <- read.csv(\"./data/raw/raw_lab.csv\") # KEEP r02\nd03 <- read.csv(\"raw_lab.csv\") # RESOLVES r03 data/raw/raw_lab.csv\nd04 <- read.csv(\"C:/Users/me/project/data/raw/raw_lab.csv\") # RESOLVES r04 data/raw/raw_lab.csv\nd05 <- read.csv(\"~/project/raw_online.csv\") # RESOLVES r05 data/raw/raw_online.csv\nd06 <- read.csv(\"data\\\\raw\\\\raw_lab.csv\") # RESOLVES r06 data/raw/raw_lab.csv\nd07 <- read.csv(file.path(\"data\", \"raw\", \"raw_lab.csv\")) # KEEP r07\nd08 <- read.csv(file.path(RAW, \"raw_lab.csv\")) # KEEP r08\nd09 <- read.csv(paste0(RAW, \"/raw_lab.csv\")) # KEEP r09\nd10 <- read.csv(paste(RAW, \"raw_lab.csv\", sep = \"/\")) # KEEP r10\nd11 <- read.csv(stringr::str_c(RAW, \"/raw_online.csv\")) # KEEP r11\nd12 <- read.csv(here::here(\"data\", \"raw\", \"raw_lab.csv\")) # KEEP r12\nd13 <- read.csv(here(\"data/raw/raw_lab.csv\")) # KEEP r13\nd14 <- read.csv(here( # KEEP r14a\n  \"data\", # KEEP r14b\n  \"raw\", # KEEP r14c\n  \"raw_lab.csv\" # KEEP r14d\n))\nsource(here::here(\"scripts\", \"helper.R\")) # KEEP r15\nf16 <- \"raw_lab.csv\" # RESOLVES r16 data/raw/raw_lab.csv\nd16 <- read.csv(f16)\nfiles17 <- c(lab = \"raw_lab.csv\", online = \"raw_online.csv\") # KEEP r17\nd17 <- lapply(files17, function(x) read.csv(file.path(RAW, x)))\nd18 <- read.csv(sprintf(\"data/raw/%s.csv\", \"raw_lab\")) # KEEP r18\nf19 <- list.files(\"data/raw\", pattern = \"\\\\.csv$\") # KEEP r19\nf20 <- Sys.glob(\"data/raw/*.csv\") # KEEP r20\nf21 <- sub(\"^raw_(.*)\\\\.csv$\", \"clean_\\\\1.csv\", f19) # KEEP r21\nd22 <- jsonlite::read_json(\"config/settings.json\") # KEEP r22\nd23 <- read.csv(\"data/raw/not_deposited.csv\") # KEEP r23\nREF <- file.path(\"data\", \"reference\") # KEEP r24a\nd24 <- read.csv(file.path(REF, \"ref.csv\")) # KEEP r24b\nd25 <- read.csv(paste0(\"data/processed/\", \"trials.csv\")) # KEEP r25\n# d26 <- read.csv(here(\"data\", \"raw\", \"raw_lab.csv\")) # KEEP r26\nraw_path <- function(f) file.path(RAW, f)\nd27 <- read.csv(raw_path(\"raw_lab.csv\")) # KEEP r27\nd28 <- read.csv(here(\"data\", \"raw\", \"Raw_Lab.csv\")) # NAMES r28 raw_lab.csv\nOLD_DIR <- \"C:/Users/me/project/data/raw/\" # RESOLVES r29 data/raw\nd29 <- read.csv(file.path(OLD_DIR, \"raw_online.csv\"))\nhas_raw <- function(f) file.exists(raw_path(f))\nd30 <- if (has_raw(\"raw_lab.csv\")) 1 # KEEP r30"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "# The authors run this script from its own folder, analysis/.\nfrom pathlib import Path\n\nimport pandas as pd\n\nHERE = Path(__file__).resolve().parent\nPROC = HERE.parent / \"data\" / \"processed\"  # KEEP q01a\nd01 = pd.read_csv(PROC / \"trials.csv\")  # KEEP q01b\nd02 = pd.read_csv(\"../data/raw/raw_lab.csv\")  # KEEP q02\nd03 = pd.read_csv(HERE / \"..\" / \"data\" / \"reference\" / \"ref.csv\")  # KEEP q03",
+          "def helper(x):\n    return x",
+          "# The authors run this script from the top of the project.\nimport glob\nimport json\nimport os\nimport re\nfrom pathlib import Path\n\nimport pandas as pd\n\nRAW = \"data/raw\"\nRAW_P = Path(\"data\") / \"raw\"\nd01 = pd.read_csv(\"data/raw/raw_lab.csv\")  # KEEP p01\nd02 = pd.read_csv(\"data/raw/raw_lab.csv\")  # RESOLVES p02 data/raw/raw_lab.csv\nd03 = pd.read_csv(r\"data/raw/raw_lab.csv\")  # RESOLVES p03 data/raw/raw_lab.csv\nd04 = pd.read_csv(os.path.join(RAW, \"raw_lab.csv\"))  # KEEP p04\nd05 = pd.read_csv(os.path.join(\"data\", \"raw\", \"raw_lab.csv\"))  # KEEP p05\nd06 = pd.read_csv(Path(\"data\") / \"raw\" / \"raw_lab.csv\")  # KEEP p06\nd07 = pd.read_csv(RAW_P / \"raw_lab.csv\")  # KEEP p07\nd08 = pd.read_csv(RAW + \"/raw_lab.csv\")  # KEEP p08\nd09 = pd.read_csv(f\"{RAW}/raw_online.csv\")  # KEEP p09\nf10 = glob.glob(\"data/raw/*.csv\")  # KEEP p10\nd11 = json.load(open(\"config/settings.json\"))  # KEEP p11\ns12 = re.sub(r\"raw_(\\w+)\\.csv\", r\"clean_\\1.csv\", \"raw_lab.csv\")  # KEEP p12\nfiles13 = [\"raw_lab.csv\", \"raw_online.csv\"]  # KEEP p13\nd13 = [pd.read_csv(os.path.join(RAW, f)) for f in files13]\nREF = Path(\"data\") / \"reference\"  # KEEP p14a\nd14 = pd.read_csv(REF / \"ref.csv\")  # KEEP p14b\nPACK = {\"a\": [\"raw_lab.csv\"], \"b\": [\"raw_online.csv\"]}  # KEEP p15\n\n\ndef ref_path(name):\n    return REF / name\n\n\nd16 = pd.read_csv(ref_path(\"ref.csv\"))  # KEEP p16",
+          "# The authors run this script from its own folder, analysis/.\nROOT <- \"..\" # KEEP a00\nd01 <- read.csv(\"../data/raw/raw_lab.csv\") # KEEP a01\nsource(\"../scripts/helper.R\") # KEEP a02\nd03 <- read.csv(file.path(\"..\", \"data\", \"reference\", \"ref.csv\")) # KEEP a03\nd04 <- read.csv(file.path(ROOT, \"data\", \"raw\", \"raw_online.csv\")) # KEEP a04\nRAW_DIR <- file.path(ROOT, \"data\", \"raw\") # KEEP a05a\nRAW_FILES <- c(Lab = \"raw_lab.csv\", Online = \"raw_online.csv\") # KEEP a05b\nd05 <- lapply(RAW_FILES, function(x) read.csv(file.path(RAW_DIR, x)))",
+          "library(here)\nd01 <- read.csv(here(\"data\", \"raw\", \"raw_lab.csv\")) # KEEP m01\nd02 <- read.csv(here( # KEEP m02a\n  \"data\", # KEEP m02b\n  \"reference\", # KEEP m02c\n  \"ref.csv\" # KEEP m02d\n))\nd03 <- read.csv(\"../data/processed/trials.csv\") # KEEP m03",
+          "helper <- function(x) x",
+          "# The authors run this script from the top of the project.\n# Markers: KEEP = the line must stay as written; RESOLVES = the path in the\n# line must lead to the file named after the id, from where the script runs.\nlibrary(here)\nRAW <- \"data/raw\"\nd01 <- read.csv(\"data/raw/raw_lab.csv\") # KEEP r01\nd02 <- read.csv(\"./data/raw/raw_lab.csv\") # KEEP r02\nd03 <- read.csv(\"data/raw/raw_lab.csv\") # RESOLVES r03 data/raw/raw_lab.csv\nd04 <- read.csv(\"data/raw/raw_lab.csv\") # RESOLVES r04 data/raw/raw_lab.csv\nd05 <- read.csv(\"data/raw/raw_online.csv\") # RESOLVES r05 data/raw/raw_online.csv\nd06 <- read.csv(\"data/raw/raw_lab.csv\") # RESOLVES r06 data/raw/raw_lab.csv\nd07 <- read.csv(file.path(\"data\", \"raw\", \"raw_lab.csv\")) # KEEP r07\nd08 <- read.csv(file.path(RAW, \"raw_lab.csv\")) # KEEP r08\nd09 <- read.csv(paste0(RAW, \"/raw_lab.csv\")) # KEEP r09\nd10 <- read.csv(paste(RAW, \"raw_lab.csv\", sep = \"/\")) # KEEP r10\nd11 <- read.csv(stringr::str_c(RAW, \"/raw_online.csv\")) # KEEP r11\nd12 <- read.csv(here::here(\"data\", \"raw\", \"raw_lab.csv\")) # KEEP r12\nd13 <- read.csv(here(\"data/raw/raw_lab.csv\")) # KEEP r13\nd14 <- read.csv(here( # KEEP r14a\n  \"data\", # KEEP r14b\n  \"raw\", # KEEP r14c\n  \"raw_lab.csv\" # KEEP r14d\n))\nsource(here::here(\"scripts\", \"helper.R\")) # KEEP r15\nf16 <- \"data/raw/raw_lab.csv\" # RESOLVES r16 data/raw/raw_lab.csv\nd16 <- read.csv(f16)\nfiles17 <- c(lab = \"raw_lab.csv\", online = \"raw_online.csv\") # KEEP r17\nd17 <- lapply(files17, function(x) read.csv(file.path(RAW, x)))\nd18 <- read.csv(sprintf(\"data/raw/%s.csv\", \"raw_lab\")) # KEEP r18\nf19 <- list.files(\"data/raw\", pattern = \"\\\\.csv$\") # KEEP r19\nf20 <- Sys.glob(\"data/raw/*.csv\") # KEEP r20\nf21 <- sub(\"^raw_(.*)\\\\.csv$\", \"clean_\\\\1.csv\", f19) # KEEP r21\nd22 <- jsonlite::read_json(\"config/settings.json\") # KEEP r22\nd23 <- read.csv(\"data/raw/not_deposited.csv\") # KEEP r23\nREF <- file.path(\"data\", \"reference\") # KEEP r24a\nd24 <- read.csv(file.path(REF, \"ref.csv\")) # KEEP r24b\nd25 <- read.csv(paste0(\"data/processed/\", \"trials.csv\")) # KEEP r25\n# d26 <- read.csv(here(\"data\", \"raw\", \"raw_lab.csv\")) # KEEP r26\nraw_path <- function(f) file.path(RAW, f)\nd27 <- read.csv(raw_path(\"raw_lab.csv\")) # KEEP r27\nd28 <- read.csv(here(\"data\", \"raw\", \"raw_lab.csv\")) # NAMES r28 raw_lab.csv\nOLD_DIR <- \"data/raw/\" # RESOLVES r29 data/raw\nd29 <- read.csv(file.path(OLD_DIR, \"raw_online.csv\"))\nhas_raw <- function(f) file.exists(raw_path(f))\nd30 <- if (has_raw(\"raw_lab.csv\")) 1 # KEEP r30"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

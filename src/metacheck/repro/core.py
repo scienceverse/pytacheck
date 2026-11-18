@@ -674,8 +674,12 @@ def _lang_rules(lang: str) -> _Lang:
     if lang == "Python":
         from metacheck.codecheck.core import _PY_WRITE_FNS
 
+        # the writes of _CODE_WRITE_CALLS without the downloads, whose first quoted text is the
+        # address to download from, not a path to redirect (#648)
+        downloads = {"urlretrieve", r"wget\.download", "download_file"}
+        writes = [f for f in _PY_WRITE_FNS if f not in downloads]
         return _Lang(
-            write_fn=r"\b(" + "|".join(_PY_WRITE_FNS) + r")\s*\(",
+            write_fn=r"\b(" + "|".join(writes) + r")\s*\(",
             assign_any=r"^([A-Za-z_][A-Za-z0-9_]*)\s*=(?!=)\s*(.+)$",
             ident=r"[A-Za-z_][A-Za-z0-9_]*",
             # an f-string or .format() builds a path too, but nothing marks it as one
@@ -1270,8 +1274,25 @@ def repro_rewrite_paths(
         if lang == "R"
         else _frame({c: ("string", []) for c in ("call_text", "fmt", "resolved")})
     )
+    # A format string that also stands in quotes outside such calls stays a reference of its
+    # own: paste(dir, "x.csv", sep = "/") took "x.csv" out, and a read.csv("x.csv") elsewhere
+    # in the script was not pointed to its file (#648).
     if len(call_refs) > 0:
-        refs = _setdiff(refs, _col(call_refs, "fmt"))
+        code_joined = "\n".join("NA" if x is None else x for x in code_lines)
+        call_texts = _chr_list(_col(call_refs, "call_text"))
+
+        def n_quoted(f: str, x: str | None) -> int:
+            return 0 if x is None else x.count(f'"{f}"') + x.count(f"'{f}'")
+
+        fmts = _unique([f for f in _col(call_refs, "fmt") if not is_missing(f)])
+        only_in_calls: list[str] = []
+        for f in fmts:
+            in_calls = 0
+            for ct in call_texts:
+                in_calls += n_quoted(f, ct)
+            if n_quoted(f, code_joined) <= in_calls:
+                only_in_calls.append(f)
+        refs = _setdiff(refs, only_in_calls)
     if len(refs) == 0 and len(call_refs) == 0:
         return empty
     ref_base = [_norm_base(r) or "" for r in refs]
@@ -1742,10 +1763,6 @@ def _code_text_items(code_text_list: Any) -> tuple[list[str], list[Any]]:
     return [str(i) for i in range(1, len(items) + 1)], items
 
 
-_IO_WRITE_INNER = {
-    "R": r"write[._][A-Za-z._0-9]*|saveRDS|save|save\.image|ggsave|export|fwrite",
-    "Python": r"to_[A-Za-z_0-9]+|savetxt|savefig|dump|save",
-}
 _IO_READ_INNER = (
     r"read[._][A-Za-z._0-9]+|import(_list)?|fread|readRDS|load|readLines|fromJSON|readtext|"
     r"vroom|source|read_[A-Za-z_0-9]+|loadtxt|genfromtxt|loadmat|open"
@@ -1853,7 +1870,7 @@ def repro_file_io(code_text_list: Any, lang: str | Mapping[str, str] = "R") -> p
     if code_text_list is None or len(code_text_list) == 0:
         return _frame({"file_name": ("string", [])})
 
-    from metacheck.codecheck.core import code_file_refs
+    from metacheck.codecheck.core import _code_write_regex, code_file_refs
 
     fnames, texts = _code_text_items(code_text_list)
     langs = _langs_for(fnames, lang)
@@ -1866,8 +1883,10 @@ def repro_file_io(code_text_list: Any, lang: str | Mapping[str, str] = "R") -> p
         all_refs = list(code_file_refs(cast(list[str], nc), fn_lang, include_writes=True))
         joined = _paste_lines(nc)
         ref_base = [_norm_base(r) for r in all_refs]
-        write_inner = _IO_WRITE_INNER.get(fn_lang, _IO_WRITE_INNER["R"])
-        write_pat = r"\b(" + write_inner + r")\s*\("
+        # the same calls code_file_refs() takes as writes (_code_write_regex()), so a file a
+        # script downloads is made by it, not read (#648)
+        write_pat = _code_write_regex(fn_lang if fn_lang in ("R", "Python") else "R") or ""
+        write_inner = write_pat.removeprefix(r"\b(").removesuffix(r")\s*\(")
         io_regex = r"\b(" + _IO_READ_INNER + "|" + write_inner + r")\s*\("
         open_calls, open_lines = _code_open_calls(nc, io_regex)
         taken = set(open_lines)
@@ -2651,14 +2670,322 @@ def _repro_apply_rewrites(txt: list[str | None], rw: pd.DataFrame | None) -> lis
             tgt[k] = _portable_ref(cast(str, ref))
         good[k] = good[k] and (not kept[k] or unportable)
     for k in range(n):
-        if not good[k]:
-            continue
-        if _is_true(is_call[k]):
+        if good[k] and _is_true(is_call[k]):
             txt = list(gsub(refs[k], f'"{tgt[k]}"', txt, fixed=True))
-        else:
-            for q in ('\\"', '"', "'"):
-                txt = list(gsub(f"{q}{refs[k]}{q}", f"{q}{tgt[k]}{q}", txt, fixed=True))
-    return txt
+    plain = [k for k in range(n) if good[k] and not _is_true(is_call[k])]
+    if not plain:
+        return txt
+    # Each place a plain reference stands in quotes is judged on its own: a piece the code
+    # joins to a folder (file.path(RAW, "x.csv"), `folder / "x.csv"`), a text in a list or a
+    # pattern stays as written, as the folder would be put in twice (_repro_path_piece();
+    # #648); a whole path elsewhere in the script is rewritten. The places are found in the
+    # whole script, as a call can span lines, and replaced from the last, so the earlier
+    # places keep their position. A folder held in a variable on the authors' computer
+    # (_repro_folder_vars()) is a whole value, rewritten wherever it stands. A piece keeps
+    # its folders, but a file name spelled otherwise than in the deposit is still corrected
+    # in it: here("data", "x.Rds") with x.rds in the deposit (#648).
+    whole = (
+        [w is True or w == 1 for w in _col(rw, "whole")] if "whole" in rw.columns else [False] * n
+    )
+    respelled = _col(rw, "name_in_deposit") if "name_in_deposit" in rw.columns else [None] * n
+    full = "\n".join("" if t is None else t for t in txt)
+    bo = _repro_bracket_owner(full)
+    edits: list[tuple[int, int, str]] = []
+    for k in plain:
+        ref = cast(str, refs[k])
+        for q in ('"', "'"):
+            needle = f"{q}{ref}{q}"
+            at = full.find(needle)
+            while at >= 0:
+                start = at + 1  # 1 = first character
+                end = start + len(needle) - 1
+                new: str | None
+                if whole[k] or not _repro_path_piece(full, start, end, bo):
+                    new = tgt[k]
+                elif not is_missing(respelled[k]) and not bo["comment"][start]:
+                    base = re.sub(r"([][{}()+*^$|\\?.])", r"\\\1", _basename(ref) or "")
+                    rk = str(respelled[k])
+
+                    def _respell(_m: re.Match[str], r: str = rk) -> str:
+                        return r
+
+                    new = re.sub(base + "$", _respell, ref, count=1)
+                else:
+                    new = None
+                if new is not None:
+                    edits.append((start, end, f"{q}{new}{q}"))
+                at = full.find(needle, at + len(needle))
+    for start, end, text in sorted(edits, key=lambda e: -e[0]):
+        full = full[: start - 1] + text + full[end:]
+    # a notebook's JSON escapes its quotes (\"x.csv\"); replaced as before
+    for k in plain:
+        full = full.replace(f'\\"{refs[k]}\\"', f'\\"{tgt[k]}\\"')
+    out: list[str | None] = list(full.split("\n"))
+    # strsplit() drops the empty text at the end, and empty lines at the end
+    if out and out[-1] == "":
+        out.pop()
+    if len(out) < len(txt):
+        out = [*out, *([""] * (len(txt) - len(out)))]
+    return out
+
+
+# For each character of *text* (a whole script, 1 = first character): the position of the
+# innermost bracket, "(", "[" or "{", that holds it, 0 when none, and that bracket's closing
+# position. Text in quotes and comments does not count. One pass over the script, for
+# :func:`_repro_path_piece` (port of ``.repro_bracket_owner()``, #648).
+def _repro_bracket_owner(text: str) -> dict[str, Any]:
+    ch = ["", *text]  # 1-based
+    n = len(text)
+    owner = [0] * (n + 3)
+    close_at = [0] * (n + 3)
+    comment = [False] * (n + 3)
+    stack: list[int] = []
+    in_str = ""
+    triple = False
+    i = 1
+
+    def top() -> int:
+        return stack[-1] if stack else 0
+
+    while i <= n:
+        c1 = ch[i]
+        owner[i] = top()
+        if in_str:
+            if c1 == "\\":
+                i += 1
+                if i <= n:
+                    owner[i] = owner[i - 1]
+            elif c1 == in_str:
+                if not triple:
+                    in_str = ""
+                elif i + 2 <= n and ch[i + 1] == c1 and ch[i + 2] == c1:
+                    owner[i + 1] = owner[i]
+                    owner[i + 2] = owner[i]
+                    i += 2
+                    in_str = ""
+                    triple = False
+        elif c1 == "#":
+            while i <= n and ch[i] != "\n":
+                owner[i] = top()
+                comment[i] = True
+                i += 1
+            continue
+        elif c1 in ('"', "'", "`"):
+            in_str = c1
+            if c1 != "`" and i + 2 <= n and ch[i + 1] == c1 and ch[i + 2] == c1:
+                triple = True
+                owner[i + 1] = owner[i]
+                owner[i + 2] = owner[i]
+                i += 2
+        elif c1 in ("(", "[", "{"):
+            stack.append(i)
+        elif c1 in (")", "]", "}") and stack:
+            close_at[stack[-1]] = i
+            stack.pop()
+        i += 1
+    return {"chars": ch, "owner": owner, "close_at": close_at, "comment": comment}
+
+
+# Calls that join a name to a folder (with more than one part), and calls whose texts are
+# patterns or replacements rather than file paths (#648)
+_REPRO_JOIN_FNS = (
+    "file.path",
+    "paste",
+    "paste0",
+    "str_c",
+    "str_glue",
+    "glue",
+    "here",
+    "path",
+    "join",
+    "Path",
+    "PurePath",
+    "PosixPath",
+    "WindowsPath",
+)
+_REPRO_REGEX_FNS = (
+    "sub",
+    "gsub",
+    "regexpr",
+    "gregexpr",
+    "regexec",
+    "regmatches",
+    "grepl",
+    "grep",
+    "str_replace",
+    "str_replace_all",
+    "str_detect",
+    "str_extract",
+    "str_extract_all",
+    "str_match",
+    "str_remove",
+    "str_remove_all",
+    "str_split",
+    "subn",
+    "match",
+    "search",
+    "compile",
+    "findall",
+    "finditer",
+    "split",
+    "fullmatch",
+)
+
+
+def _repro_path_piece(
+    text: str, from_: int, to: int, bo: dict[str, Any] | None = None, depth: int = 0
+) -> bool:
+    """Port of ``.repro_path_piece()``: is the quoted text a piece the code joins to a folder?
+
+    Whether the quoted text from *from_* (its opening quote) to *to* (its closing quote) in
+    *text*, a whole script (1 = first character), is a piece the code joins to a folder
+    itself, or no path at all, so that rewriting it to a whole path would put the folder in
+    twice (#648): an argument of a joining call with more than one part (file.path(),
+    paste0(), str_c(), here(), os.path.join(), Path()), next to a "/" or "+" (pathlib's
+    ``folder / "x.csv"``, ``base + "/x.csv"``), an f-string or glue() text with a {}, one of
+    several texts in a list (c(), list(), [], (), {}), or a text in a pattern call (sub(),
+    re.sub(); "regex" functions of R, stringr and Python's re, by their name without the
+    package). A name kept in a variable on its own (``f <- "x.csv"``) is a piece when that
+    variable is used as one. *bo* is :func:`_repro_bracket_owner` of *text*.
+    """
+    bo = bo if bo is not None else _repro_bracket_owner(text)
+    ch: list[str] = bo["chars"]
+    n = len(ch) - 1
+    owner: list[int] = bo["owner"]
+    close_at: list[int] = bo["close_at"]
+    # in a comment: no code reads it, so it is left as it is
+    if bo["comment"][from_]:
+        return True
+    space = (" ", "\t", "\n", "\r")
+
+    def prev_sig(i: int) -> str:
+        while i >= 1 and ch[i] in space:
+            i -= 1
+        return ch[i] if i >= 1 else ""
+
+    def next_sig(i: int) -> str:
+        while i <= n and ch[i] in space:
+            i += 1
+        return ch[i] if i <= n else ""
+
+    body = "".join(ch[from_ : to + 1])
+    # a Python f-string: f"{base}/x.csv"
+    pre = [c.lower() for c in ch[max(1, from_ - 2) : from_]] if from_ > 1 else []
+    if "f" in pre and "{" in body:
+        return True
+    if prev_sig(from_ - 1) in ("/", "+") or next_sig(to + 1) in ("/", "+"):
+        return True
+
+    # the function before the "(" at `ob`, with its package or module ("here::here",
+    # "os.path.join"); "" for another bracket
+    def fn_at(ob: int) -> str:
+        if ch[ob] != "(":
+            return ""
+        j = ob - 1
+        while j >= 1 and ch[j] in (" ", "\t"):
+            j -= 1
+        k = j
+        while k >= 1 and re.match(r"[A-Za-z0-9_.:]", ch[k]):
+            k -= 1
+        return "".join(ch[k + 1 : j + 1]) if k < j else ""
+
+    def n_args_at(ob: int) -> int:
+        cl = close_at[ob]
+        if cl == 0:
+            cl = n
+        inside = range(ob + 1, cl) if cl - 1 >= ob + 1 else range(0)
+        return 1 + sum(1 for q in inside if ch[q] == "," and owner[q] == ob)
+
+    def is_list_at(ob: int, fn: str) -> bool:
+        return (
+            (ch[ob] == "(" and fn in ("c", "list", ""))
+            or ch[ob] == "["
+            or (ch[ob] == "{" and fn == "")
+        )
+
+    ob = owner[from_]
+    if ob > 0:
+        fn = fn_at(ob)
+        base_fn = re.sub(r"^.*(::|\.)", "", fn, flags=re.DOTALL)
+        n_args = n_args_at(ob)
+        if base_fn in _REPRO_REGEX_FNS and fn:
+            return True
+        if base_fn in _REPRO_JOIN_FNS and n_args > 1:
+            return True
+        if base_fn in ("glue", "str_glue") and "{" in body:
+            return True
+        # one of several texts in a list: c("a.csv", "b.csv"), ["a.csv", "b.csv"], a tuple or
+        # a dict, also when the list holds one text and stands in a larger one: {"S4":
+        # ["x.csv"], "S5": ["y.csv"]} (5cx93_v2; #648)
+        up = ob
+        while up > 0 and is_list_at(up, fn_at(up)):
+            if n_args_at(up) > 1:
+                return True
+            up = owner[up]
+        # a function of the authors' own that joins its argument to a folder: derived_path <-
+        # function(f) file.path(DERIVED, f) (rxzpa_v1; #648)
+        if base_fn and base_fn not in ("c", "list") and _repro_joining_function(text, base_fn):
+            return True
+    # a name held in a variable on its own: a piece when the variable is used as one
+    if depth == 0:
+        before = "".join(ch[max(1, from_ - 200) : max(1, from_ - 1) + 1])
+        m = re.search(r"(?:^|\n)\s*([A-Za-z_.][A-Za-z0-9_.]*)\s*(?:<-|=)\s*$", before)
+        if m:
+            v = m.group(1)
+            rx = re.compile(r"(?<![A-Za-z0-9_.$])" + v.replace(".", r"\.") + r"(?![A-Za-z0-9_.])")
+            for hit in rx.finditer(text):
+                h = hit.start() + 1
+                e = h + len(v) - 1
+                # the variable being given a value is no use of it
+                if re.match(r"\s*(<-|=)(?!=)", text[e : e + 5]):
+                    continue
+                if _repro_path_piece(text, h, e, bo, depth=1):
+                    return True
+    return False
+
+
+def _repro_joining_function(text: str, fn: str, depth: int = 0) -> bool:
+    """Port of ``.repro_joining_function()``: does the script define *fn* to join its argument?
+
+    Whether the script *text* defines a function *fn* (R ``fn <- function(x)``, Python
+    ``def fn(x)``) whose first argument it joins to a folder in the lines that follow:
+    ``derived_path <- function(f) file.path(DERIVED, f)``, ``def out(name): return OUT /
+    name`` (#648). Also when it hands the argument on to another such function of the
+    authors': ``have_derived <- function(f) file.exists(derived_path(f))`` (rxzpa_v1);
+    *depth* stops a loop of functions that call each other.
+    """
+    q = fn.replace(".", r"\.")
+    m = re.search(
+        r"(?:(?<![A-Za-z0-9_.])" + q + r"\s*(?:<-|=)\s*function\s*\(|\bdef\s+" + q + r"\s*\()"
+        r"\s*([A-Za-z_.][A-Za-z0-9_.]*)",
+        text,
+    )
+    if m is None:
+        return False
+    arg = m.group(1)
+    if not arg or arg in ("self", "..."):
+        return False
+    body = text[m.end() : m.end() + 801]
+    a = arg.replace(".", r"\.")
+    if re.search(
+        r"\b(file\.path|paste0?|str_c|here|path|join|Path)\s*\([^()]*(?<![A-Za-z0-9_.])"
+        + a
+        + r"(?![A-Za-z0-9_.])|[/+]\s*"
+        + a
+        + r"(?![A-Za-z0-9_.])|(?<![A-Za-z0-9_.])"
+        + a
+        + r"\s*[/+]",
+        body,
+    ):
+        return True
+    if depth >= 3:
+        return False
+    # the argument handed on as the first argument of another function
+    inner = re.findall(
+        r"(?<![A-Za-z0-9_.$])([A-Za-z_.][A-Za-z0-9_.]*)\s*\(\s*" + a + r"\s*[,)]", body
+    )
+    inner = [g for g in _unique(inner) if g != fn]
+    return any(_repro_joining_function(text, g, depth + 1) for g in inner)
 
 
 _QUOTED_LINE_PAT = r"""(["'])((?:[^"'\\\n]|\\.)*)\1"""
@@ -2721,11 +3048,23 @@ def _repro_slash_paths(txt: list[str | None]) -> tuple[list[str | None], list[st
     if not txt:
         return txt, []
     changed: list[str] = []
+    current = [""]
 
     def one(m: re.Match[str]) -> str:
         h = m.group(0)
         inner = h[1:-1]
         if re.search(r"\\\\\.", inner) or re.search(r"[\^$*+?|()\[\]{}]", inner):
+            return h
+        # the replacement of a pattern call, where \\1 is the first group:
+        # sub("^key(.*)[.]csv$", "sheet\\1_scored.xlsx", x) gave "sheet/1_scored.xlsx" (#648)
+        in_pattern_call = (
+            re.search(
+                r"\b(sub|gsub|str_replace(_all)?|regmatches|re\.subn?)\s*\(",
+                current[0][: m.start()],
+            )
+            is not None
+        )
+        if in_pattern_call and re.search(r"\\\\[0-9]", inner):
             return h
         changed.append(h)
         return h[0] + inner.replace("\\\\", "/") + h[0]
@@ -2735,6 +3074,7 @@ def _repro_slash_paths(txt: list[str | None]) -> tuple[list[str | None], list[st
         if line is None or "\\\\" not in line:
             out.append(line)
             continue
+        current[0] = line
         out.append(re.sub(_SLASH_PAT, one, line))
     return out, changed
 
@@ -3264,6 +3604,15 @@ def repro_write_scripts(
             txt = [*_chr_list(prepend[fn]), *txt]
 
         tgt = script_target(fn, i)
+        # A document (R Markdown, Quarto, a Jupyter notebook) runs as the code taken out of it,
+        # written next to it under its own name with the language's extension
+        # ("analysis.Rmd.R"); the document stays as deposited, so a script that renders it
+        # (rmarkdown::render(), quarto::quarto_render(), nbconvert) finds it whole. In vtwbs_v2 the
+        # .qmd files had become bare R code, so the main script rendered nothing and was reported
+        # as having run (#648).
+        run_ext = "py" if fn_lang == "Python" else "R"
+        if not re.search(rf"\.{run_ext}$", tgt, re.IGNORECASE):
+            tgt = f"{tgt}.{run_ext}"
         dest = _file_path(root_s, _portable_path(tgt))
         _dir_create(os.path.dirname(dest))
         # a file there that is not text (R data saved under a name ending in .R) is

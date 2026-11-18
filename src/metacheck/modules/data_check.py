@@ -840,6 +840,9 @@ def data_check(
         # one row per key found in the repository's files: file, line, type and
         # only the beginning of the key
         "keys": key_found,
+        # sheets of notes or a codebook beside the data in a spreadsheet, which codebook_check
+        # reads (#651)
+        "doc_sheets": ex["doc_sheets"],
     }
 
 
@@ -1569,6 +1572,10 @@ def _extract(
         n_no_local = sum(1 for t, hl in zip(is_tab, has_local, strict=True) if t and not hl)
 
     manifest_files: list[Any] = []
+    # Sheets of notes or a codebook that a data spreadsheet holds beside its data, set aside
+    # below as documentation: one row per sheet. Returned as `doc_sheets`, so codebook_check
+    # reads them (#651).
+    doc_sheets: list[dict[str, Any]] = []
     workspace_files: list[Any] = []
     rds_workspace_files: list[Any] = []
     non_tabular: dict[str, Any] = {}
@@ -1678,6 +1685,18 @@ def _extract(
                 ]
                 if not keep:
                     keep = [k for k, t in enumerate(is_table) if t][:1]
+                set_aside = [k for k, d in enumerate(is_doc) if d and k not in keep]
+                if set_aside and keep:
+                    doc_sheets.extend(
+                        {
+                            "paper_id": None if f.get("paper_id") is None else str(f["paper_id"]),
+                            "source_file": f.get("source_file"),
+                            "file_location": f.get("file_location"),
+                            "sheet": sheets[k],
+                            "group": None if f.get("group") is None else str(f["group"]),
+                        }
+                        for k in set_aside
+                    )
                 if not keep:
                     if first["manifest"]:
                         manifest_files.append(skey)
@@ -1787,6 +1806,12 @@ def _extract(
         "n_data_files": len(data_rows),
         "n_extracted": n_extracted,
         "manifest_files": manifest_files,
+        "doc_sheets": pd.DataFrame(
+            {
+                c: pd.Series([r[c] for r in doc_sheets], dtype="string")
+                for c in ("paper_id", "source_file", "file_location", "sheet", "group")
+            }
+        ),
         "workspace_files": workspace_files,
         "rds_workspace_files": rds_workspace_files,
         "non_tabular": non_tabular,

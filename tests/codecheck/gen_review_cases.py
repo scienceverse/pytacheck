@@ -11,6 +11,8 @@ Every string is quoted in the YAML (``default_style='"'``).
 
 from __future__ import annotations
 
+import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -545,6 +547,198 @@ case(
     {"text": chr_("", "  ")},
 )
 case("code_abs_path.review.character0", "code_abs_path", "code_abs_path", {"code_text": chr_()})
+
+# ---------------------------------------------------------------------------
+# metacheck 0.4.4.4 (#648): files a script writes are not missing, text that is not a path is not
+# an absolute path, pip/conda lines and continued commands leave a notebook cell, a knitted .html
+# whose source is in the deposit gives no second copy of the code
+# ---------------------------------------------------------------------------
+WRITES = {
+    "r": (
+        [
+            'write.csv(x, "out.csv")',
+            'download.file("https://x/a.zip", "b.zip")',
+            'read.csv("in.csv")',
+        ],
+        "R",
+    ),
+    "stata": (
+        [
+            'save "out/clean.dta", replace',
+            "export delimited using results.csv, replace",
+            "use raw.dta",
+            "graph export fig.png, replace",
+            'esttab using "t.tex"',
+        ],
+        "Stata",
+    ),
+    "matlab": (
+        [
+            'writetable(T, "tab.csv");',
+            'fid = fopen("log.txt", "w");',
+            'x = load("in.mat");',
+            'csvwrite("c.csv", x)',
+        ],
+        "MATLAB",
+    ),
+    "python": (
+        [
+            'df.to_csv(f"vzv_{COMPARATOR}_model.csv")',
+            'with open("o.txt", "w") as f:',
+            'd = pd.read_csv("in.csv")',
+            'urllib.request.urlretrieve("https://x/y.zip", "y.zip")',
+        ],
+        "Python",
+    ),
+    "sas": (
+        ['proc export data=a outfile="x.csv" dbms=csv;', 'ods pdf file="r.pdf";', "infile in.csv;"],
+        "SAS",
+    ),
+    "spss": (['SAVE OUTFILE="a.sav".', 'GET FILE="in.sav".'], "SPSS"),
+}
+for name, (text, lang) in WRITES.items():
+    case(
+        f"code_file_refs.review.writes_only_{name}",
+        "code_file_refs",
+        "code_file_refs",
+        {"code_text": chr_(*text), "lang": lang, "writes_only": True},
+    )
+    case(
+        f"code_file_refs.review.include_writes_{name}",
+        "code_file_refs",
+        "code_file_refs",
+        {"code_text": chr_(*text), "lang": lang, "include_writes": True},
+    )
+
+ABS_SYNC = {
+    "join_paste0": 'd <- read_csv(paste0(input_dir, "/behaviour_data/ages.csv"))',
+    "join_plus": "emfd = read_csv(fileDir+'/dictionaries/emfd_scoring.csv')",
+    "join_strcat": "p = strcat(userpath,'/MVPA-Light/startup');",
+    "join_brackets": "sbjdir = [rawdir 'sub-' nr '/ses-meg/meg/'];",
+    "join_strcat_win": "save(strcat(DATA_DIR,'\\\\All\\Results'),'x');",
+    "join_file_path": 'ggsave(file.path(out, "/figs/a.pdf"))',
+    "first_stays": 'd <- read.csv(file.path("/Users/me/data", "x.csv"))',
+    "vector_stays": 'x <- c("/Users/me/a.csv", "/Users/me/b.csv")',
+    "list_stays": 'files = ["/home/me/a.csv"]',
+    "wildcard_stays": 'm = dir("C:\\Users\\me\\Data\\S5*.mat")',
+    "brackets_stay": 'd <- read.csv("/Users/me/Dropbox (Personal)/x.csv")',
+    "regex": 'dicom = meta.str.extract(r"/([^/]+)\\.dcm$")',
+    "route": '@app.route("/users/<int:user_id>/reset")',
+    "query": 'r = client.get("/api/v1/audit?limit=50")',
+    "device": 'system("cmd > /dev/null/x")',
+    "hdf5_key": 'mag = f["/Data/MAG"][:]',
+    "h5read": 'x <- h5read(file, "/Data/MAG")',
+    "placeholder": 'annot <- "/path/to/variants.tsv"',
+    "placeholder_caps": 'snp <- "/YOUR PATH HERE/v10/files/"',
+    "placeholder_example": 'x <- "/EXAMPLEDIRECTORY/data/a.csv"',
+    "win_message": '"C:\\Users\\me\\launcher.py:36: RuntimeWarning: More than 20 figures"',
+    "win_regex": 'india <- str_detect(x, "\\\\bindia\\\\b")',
+    "win_path": 'x <- read.csv("C:\\Users\\me\\data.csv")',
+    "unc_path": 'x <- "\\\\\\\\server\\share\\data.csv"',
+    "home": 'x <- read.csv("~/Desktop/data.csv")',
+}
+for name, text in ABS_SYNC.items():
+    case(
+        f"code_abs_path.review.sync_{name}",
+        "code_abs_path",
+        "code_abs_path",
+        {"code_text": chr_(text)},
+    )
+
+NB_CELLS = {
+    "pip": "pip install pandas\nx = 1",
+    "pip_name": "pip = 2\nx = pip",
+    "conda": "conda install numpy\nx = 1",
+    "continued": "%run train.py \\\n    --epochs 5 \\\n    --lr 0.1\nx = 1",
+    "continued_indented": "if a:\n    %run t.py \\\n      --x 1\nx = 1",
+    "bang_continued": "!python t.py \\\n  --x 1\ny = 2",
+}
+for name, src in NB_CELLS.items():
+    case(
+        f"code_extract_py.review.sync_{name}",
+        "code_extract_py",
+        "code_extract_py",
+        {"text": chr_(nb(json.dumps(src)))},
+    )
+case(
+    "code_extract_qmd_py.review.sync_ipython",
+    "code_extract_qmd_py",
+    "code_extract_qmd_py",
+    {
+        "text": chr_(
+            "```{python}", "%matplotlib inline", "import numpy as np", "!pip install x", "```"
+        )
+    },
+)
+
+case(
+    "code_name_match.review.sync_placeholders",
+    "metacheck:::.code_name_match",
+    "_code_name_match",
+    {
+        "names": chr_(
+            "vzv_aou_ac_%s_model.csv", "vzv_aou_ac_pneumo_model.csv", "other.csv", "X.CSV"
+        ),
+        "candidates": chr_("vzv_aou_ac_{COMPARATOR}_model.csv", "x.csv"),
+    },
+)
+for nm, cand in (
+    ("education_tests.csv", "{name}.csv"),
+    ("x.dta", "`weekly'"),
+    ("resnet50_embeddings.npy", "{backbone}_embeddings.npy"),
+    ("a/b/Data.CSV", "data.csv"),
+    ("run_${i}.out", "run_1.out"),
+):
+    case(
+        f"code_name_match.review.sync_{re.sub('[^A-Za-z0-9]+', '_', nm)}",
+        "metacheck:::.code_name_match",
+        "_code_name_match",
+        {"names": chr_(nm), "candidates": chr_(cand)},
+    )
+case(
+    "code_missing_files.review.sync",
+    "metacheck:::.code_missing_files",
+    "_code_missing_files",
+    {
+        "code_files": {
+            "$df": {
+                "paper_id": ["p", "p", "p"],
+                "repo_url": ["r", "r", "r"],
+                "file_name": ["a.R", "b.R", "c.do"],
+                "loaded_refs": [
+                    "raw.csv\u001fclean.csv\u001fres_pneumo.csv\u001f_part.csv\u001fs{seed}.json"
+                    "\u001fgone.csv",
+                    "",
+                    "",
+                ],
+                "files_written": ["", "clean.csv", "res_%s.csv"],
+            }
+        },
+        "all_files": {"$df": {"repo_url": ["r"], "file_name": ["raw.csv"]}},
+    },
+)
+case(
+    "code_missing_files.review.sync_no_refs_column",
+    "metacheck:::.code_missing_files",
+    "_code_missing_files",
+    {
+        "code_files": {"$df": {"paper_id": ["p"], "repo_url": ["r"], "file_name": ["a.R"]}},
+        "all_files": {"$df": {"repo_url": ["r"], "file_name": ["raw.csv"]}},
+    },
+)
+expand(
+    "code_expand_html.review.sync_has_source",
+    "code_expand_html",
+    files(["knit_classic.html", "knit_classic.Rmd", "knit_quarto.html"]),
+)
+expand(
+    "code_expand_html.review.sync_source_other_repo",
+    "code_expand_html",
+    files(
+        ["knit_classic.html", "knit_classic.qmd"],
+        repo_url=["https://osf.io/abcde", "https://osf.io/zzzzz"],
+    ),
+)
 
 OUT.write_text(
     "# Adversarial-review parity cases for R/code_check.R (generated by\n"

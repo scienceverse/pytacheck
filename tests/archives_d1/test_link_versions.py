@@ -142,9 +142,10 @@ def test_repo_links_tidy_repairs_damage_from_reading_the_pdf() -> None:
         "https://osf.io/j7kt2/;%20%20https://rr.peercommunityin.org/x",
     ]
     out = lv._repo_links_tidy(_frame(urls, ["osf", "osf", "osf", "osf", "dataone", "osf"]), paper)
+    # ("http://osf.io/3bh67", what is left of the second, is the same address as
+    # "https://osf.io/3bh67" and is not kept twice, #648)
     assert out["repo_url"].tolist() == [
         "https://osf.io/3bh67",
-        "http://osf.io/3bh67",
         "https://osf.io/c9pag",
         "knb.341.1",
         "https://osf.io/j7kt2/",
@@ -160,6 +161,56 @@ def test_repo_links_tidy_repairs_damage_from_reading_the_pdf() -> None:
     # a longer form that repeats the link's end is the reader writing it twice
     two = ["https://github.com/o/Vaccine-Policy", "https://github.com/o/Vaccine-PolicyPolicy"]
     assert lv._repo_links_tidy(_frame(two, "github"), paper)["repo_url"].tolist() == two
+
+
+def test_repo_links_tidy_keeps_one_row_for_an_address_written_in_two_ways() -> None:
+    """Port of ".repo_links_tidy keeps one row for an address written in two ways (#648)"."""
+    repos = pd.DataFrame(
+        {
+            "paper_id": pd.Series(["p"] * 8, dtype="string"),
+            "repo_type": pd.Series(
+                ["github", "github", "osf", "osf", "zenodo", "zenodo", "github", "github"],
+                dtype="string",
+            ),
+            "repo_url": pd.Series(
+                [
+                    "github.com/OpenSAFELY-Core",
+                    "www.github.com/OpenSAFELY-Core",
+                    "osf.io/abcde/",
+                    "https://osf.io/abcde",
+                    "https://doi.org/10.5281/ZENODO.123",
+                    "10.5281/zenodo.123",
+                    # capitals in a name may matter: both stay
+                    "github.com/A/Repo",
+                    "github.com/A/repo",
+                ],
+                dtype="string",
+            ),
+        }
+    )
+    paper = _paper("No text needed here.")
+    assert lv._repo_links_tidy(repos, paper)["repo_url"].tolist() == [
+        "github.com/OpenSAFELY-Core",
+        "https://osf.io/abcde",
+        "https://doi.org/10.5281/ZENODO.123",
+        "github.com/A/Repo",
+        "github.com/A/repo",
+    ]
+    # the same address on two platforms' lists, or in two papers, is not merged
+    repos = pd.DataFrame(
+        {
+            "paper_id": pd.Series(["p", "p", "q"], dtype="string"),
+            "repo_type": pd.Series(["zenodo", "dataverse", "zenodo"], dtype="string"),
+            "repo_url": pd.Series(
+                ["10.5281/zenodo.1", "https://doi.org/10.5281/zenodo.1", "10.5281/zenodo.1"],
+                dtype="string",
+            ),
+        }
+    )
+    q = pc.test_paper("Nothing.")
+    q.paper_id = "q"
+    papers = pc.PaperList([paper, q])
+    assert len(lv._repo_links_tidy(repos, papers)) == 3
 
 
 def test_repo_link_without_hyphen_changes_the_owner_and_repository_only() -> None:

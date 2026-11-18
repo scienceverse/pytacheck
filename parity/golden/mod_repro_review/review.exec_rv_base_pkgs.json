@@ -251,7 +251,7 @@
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"ok.R\", Outcome = \"ran_ok\", Detail = \"\", \n    \"Time (s)\" = 0), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
           "::: {.callout-tip title=\"Output — ok.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"data.csv\")\n> t.test(dat$x ~ dat$g)\n\n\tWelch Two Sample t-test\n\ndata:  dat$x by dat$g\nt = -4.0415, df = 4.9592, p-value = 0.01008\nalternative hypothesis: true difference in means between group a and group b is not equal to 0\n95 percent confidence interval:\n -5.731711 -1.268289\nsample estimates:\nmean in group a mean in group b \n            2.0             5.5 \n````\n\n:::\n",
-          "Dependencies were installed into a throwaway library before running: 2 succeeded, 3 failed. tidyr, zzzpkg, oldpkg, oddpkg, fine were installed.",
+          "Dependencies were installed into a throwaway library before running: 2 succeeded, 3 failed. oldpkg, fine were installed.",
           "**1 of these were no longer on live CRAN** and were instead installed from the **CRAN Archive**'s most recent published version — a real version the package once had, but not necessarily the one the paper's authors used: oldpkg.",
           "**Failed:** tidyr [not available on CRAN for this R version] (package is not available for this version of R); zzzpkg [not available on CRAN for this R version] (package is not available for this version of R); oddpkg [NA] (NA)"
         ]
@@ -265,7 +265,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 1 R code file for reproducibility (each in an isolated subprocess).\n-  1 of 1 script ran without error when executed.\n-  2 installable dependencies detected."
+          "\n-  We assessed 1 R code file for reproducibility and ran it (each in an isolated subprocess).\n-  1 of 1 script ran without error when executed.\n-  2 installable dependencies detected."
         ]
       },
       {
@@ -288,6 +288,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -427,12 +428,19 @@
             "v": [
               0
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
           0,
           0,
           0,
@@ -467,6 +475,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -1331,6 +1340,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

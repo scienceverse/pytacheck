@@ -3447,3 +3447,860 @@
     "section_ids":
     - 10
     - 1
+- "id": "match_reported_output.evidence.f_p.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"The effect was F(2, 57) = 72.28, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\")), \"statistic\" = as.character(c(\"F\", \"p\")), \"value\" = as.character(c(\"72.284\", \"0.00001\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id055
+      "kind": "texts"
+      "texts":
+      - "The effect was F(2, 57) = 72.28, p < .001."
+    "output": &id056
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a1"
+        "statistic":
+        - "F"
+        - "p"
+        "value":
+        - "72.284"
+        - "0.00001"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.f_p.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"The effect was F(2, 57) = 72.28, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\")), \"statistic\" = as.character(c(\"F\", \"p\")), \"value\" = as.character(c(\"72.284\", \"0.00001\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id055
+    "output": *id056
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.f_p.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"The effect was F(2, 57) = 72.28, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\")), \"statistic\" = as.character(c(\"F\", \"p\")), \"value\" = as.character(c(\"72.284\", \"0.00001\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id055
+    "output": *id056
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.f_p.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"The effect was F(2, 57) = 72.28, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\")), \"statistic\" = as.character(c(\"F\", \"p\")), \"value\" = as.character(c(\"72.284\", \"0.00001\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id055
+    "output": *id056
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"
+- "id": "match_reported_output.evidence.t_df_only.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, t(801) = 20.22, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\")), \"value\" = as.character(c(\"-1.607\", \"801\", \"0.00001\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id057
+      "kind": "texts"
+      "texts":
+      - "A test, t(801) = 20.22, p < .001."
+    "output": &id058
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a1"
+        - "a1"
+        "statistic":
+        - "t"
+        - "df"
+        - "p"
+        "value":
+        - "-1.607"
+        - "801"
+        - "0.00001"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.t_df_only.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, t(801) = 20.22, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\")), \"value\" = as.character(c(\"-1.607\", \"801\", \"0.00001\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id057
+    "output": *id058
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.t_df_only.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, t(801) = 20.22, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\")), \"value\" = as.character(c(\"-1.607\", \"801\", \"0.00001\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id057
+    "output": *id058
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.t_df_only.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, t(801) = 20.22, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\")), \"value\" = as.character(c(\"-1.607\", \"801\", \"0.00001\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id057
+    "output": *id058
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"
+- "id": "match_reported_output.evidence.chi2.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, chi2(1) = .05, p = .82.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"chi2\", \"df\", \"p\")), \"value\" = as.character(c(\"0.05\", \"1\", \"0.823\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id059
+      "kind": "texts"
+      "texts":
+      - "A test, chi2(1) = .05, p = .82."
+    "output": &id060
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a1"
+        - "a1"
+        "statistic":
+        - "chi2"
+        - "df"
+        - "p"
+        "value":
+        - "0.05"
+        - "1"
+        - "0.823"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.chi2.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, chi2(1) = .05, p = .82.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"chi2\", \"df\", \"p\")), \"value\" = as.character(c(\"0.05\", \"1\", \"0.823\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id059
+    "output": *id060
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.chi2.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, chi2(1) = .05, p = .82.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"chi2\", \"df\", \"p\")), \"value\" = as.character(c(\"0.05\", \"1\", \"0.823\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id059
+    "output": *id060
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.chi2.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, chi2(1) = .05, p = .82.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"chi2\", \"df\", \"p\")), \"value\" = as.character(c(\"0.05\", \"1\", \"0.823\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id059
+    "output": *id060
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"
+- "id": "match_reported_output.evidence.t_sign.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, t(160.18) = 5.55, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\")), \"value\" = as.character(c(\"-5.546\", \"160.177571\", \"1.18e-07\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id061
+      "kind": "texts"
+      "texts":
+      - "A test, t(160.18) = 5.55, p < .001."
+    "output": &id062
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a1"
+        - "a1"
+        "statistic":
+        - "t"
+        - "df"
+        - "p"
+        "value":
+        - "-5.546"
+        - "160.177571"
+        - "1.18e-07"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.t_sign.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, t(160.18) = 5.55, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\")), \"value\" = as.character(c(\"-5.546\", \"160.177571\", \"1.18e-07\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id061
+    "output": *id062
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.t_sign.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, t(160.18) = 5.55, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\")), \"value\" = as.character(c(\"-5.546\", \"160.177571\", \"1.18e-07\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id061
+    "output": *id062
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.t_sign.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"A test, t(160.18) = 5.55, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\")), \"value\" = as.character(c(\"-5.546\", \"160.177571\", \"1.18e-07\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id061
+    "output": *id062
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"
+- "id": "match_reported_output.evidence.se_alone.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Scores were M = 2.95, SE = 0.11, p = .021.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"mean\", \"se\", \"p\")), \"value\" = as.character(c(\"3.10\", \"0.11\", \"0.0212\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id063
+      "kind": "texts"
+      "texts":
+      - "Scores were M = 2.95, SE = 0.11, p = .021."
+    "output": &id064
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a1"
+        - "a1"
+        "statistic":
+        - "mean"
+        - "se"
+        - "p"
+        "value":
+        - "3.10"
+        - "0.11"
+        - "0.0212"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.se_alone.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Scores were M = 2.95, SE = 0.11, p = .021.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"mean\", \"se\", \"p\")), \"value\" = as.character(c(\"3.10\", \"0.11\", \"0.0212\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id063
+    "output": *id064
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.se_alone.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Scores were M = 2.95, SE = 0.11, p = .021.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"mean\", \"se\", \"p\")), \"value\" = as.character(c(\"3.10\", \"0.11\", \"0.0212\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id063
+    "output": *id064
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.se_alone.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Scores were M = 2.95, SE = 0.11, p = .021.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"mean\", \"se\", \"p\")), \"value\" = as.character(c(\"3.10\", \"0.11\", \"0.0212\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id063
+    "output": *id064
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"
+- "id": "match_reported_output.evidence.se_with_estimate.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Scores were M = 2.95, SE = 0.11, p = .021.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"mean\", \"se\", \"p\")), \"value\" = as.character(c(\"2.95\", \"0.11\", \"0.0212\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id065
+      "kind": "texts"
+      "texts":
+      - "Scores were M = 2.95, SE = 0.11, p = .021."
+    "output": &id066
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a1"
+        - "a1"
+        "statistic":
+        - "mean"
+        - "se"
+        - "p"
+        "value":
+        - "2.95"
+        - "0.11"
+        - "0.0212"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.se_with_estimate.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Scores were M = 2.95, SE = 0.11, p = .021.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"mean\", \"se\", \"p\")), \"value\" = as.character(c(\"2.95\", \"0.11\", \"0.0212\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id065
+    "output": *id066
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.se_with_estimate.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Scores were M = 2.95, SE = 0.11, p = .021.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"mean\", \"se\", \"p\")), \"value\" = as.character(c(\"2.95\", \"0.11\", \"0.0212\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id065
+    "output": *id066
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.se_with_estimate.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Scores were M = 2.95, SE = 0.11, p = .021.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a1\")), \"statistic\" = as.character(c(\"mean\", \"se\", \"p\")), \"value\" = as.character(c(\"2.95\", \"0.11\", \"0.0212\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id065
+    "output": *id066
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"
+- "id": "match_reported_output.evidence.single_values.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\", \"The slope was B = -0.323, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"b\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"-0.3234\", \"0.0004\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id067
+      "kind": "texts"
+      "texts":
+      - "Mortality was lower (p = .023)."
+      - "The slope was B = -0.323, p < .001."
+    "output": &id068
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a1"
+        - "a2"
+        "statistic":
+        - "p"
+        - "b"
+        - "p"
+        "value":
+        - "0.0231"
+        - "-0.3234"
+        - "0.0004"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.single_values.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\", \"The slope was B = -0.323, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"b\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"-0.3234\", \"0.0004\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id067
+    "output": *id068
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.single_values.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\", \"The slope was B = -0.323, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"b\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"-0.3234\", \"0.0004\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id067
+    "output": *id068
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.single_values.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\", \"The slope was B = -0.323, p < .001.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"b\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"-0.3234\", \"0.0004\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id067
+    "output": *id068
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"
+- "id": "match_reported_output.evidence.single_two_numbers.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"0.0226\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id069
+      "kind": "texts"
+      "texts":
+      - "Mortality was lower (p = .023)."
+    "output": &id070
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a2"
+        "statistic":
+        - "p"
+        - "p"
+        "value":
+        - "0.0231"
+        - "0.0226"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.single_two_numbers.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"0.0226\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id069
+    "output": *id070
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.single_two_numbers.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"0.0226\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id069
+    "output": *id070
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.single_two_numbers.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"0.0226\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id069
+    "output": *id070
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"
+- "id": "match_reported_output.evidence.single_same_number.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"0.0231\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id071
+      "kind": "texts"
+      "texts":
+      - "Mortality was lower (p = .023)."
+    "output": &id072
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a2"
+        "statistic":
+        - "p"
+        - "p"
+        "value":
+        - "0.0231"
+        - "0.0231"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.single_same_number.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"0.0231\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id071
+    "output": *id072
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.single_same_number.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"0.0231\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id071
+    "output": *id072
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.single_same_number.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"Mortality was lower (p = .023).\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a2\")), \"statistic\" = as.character(c(\"p\", \"p\")), \"value\" = as.character(c(\"0.0231\", \"0.0231\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id071
+    "output": *id072
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"
+- "id": "match_reported_output.evidence.none_informative.informative"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"The power analysis used alpha = .05 and N = 55.\", \"Both were significant, p < .05 and p < .0002.\", \"The scale was reliable, alpha = .86; the F was 4.21.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\")), \"statistic\" = as.character(c(\"F\", \"p\")), \"value\" = as.character(c(\"4.2\", \"0.04\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id073
+      "kind": "texts"
+      "texts":
+      - "The power analysis used alpha = .05 and N = 55."
+      - "Both were significant, p < .05 and p < .0002."
+      - "The scale was reliable, alpha = .86; the F was 4.21."
+    "output": &id074
+      "kind": "df"
+      "cols":
+        "source_file":
+        - "a.R"
+        - "a.R"
+        "analysis":
+        - "a1"
+        - "a1"
+        "statistic":
+        - "F"
+        - "p"
+        "value":
+        - "4.2"
+        - "0.04"
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+- "id": "match_reported_output.evidence.none_informative.informative.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"The power analysis used alpha = .05 and N = 55.\", \"Both were significant, p < .05 and p < .0002.\", \"The scale was reliable, alpha = .86; the F was 4.21.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\")), \"statistic\" = as.character(c(\"F\", \"p\")), \"value\" = as.character(c(\"4.2\", \"0.04\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"informative\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id073
+    "output": *id074
+    "include_tables": false
+    "min_components": 1
+    "evidence": "informative"
+    "what": "summary"
+- "id": "match_reported_output.evidence.none_informative.any"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"The power analysis used alpha = .05 and N = 55.\", \"Both were significant, p < .05 and p < .0002.\", \"The scale was reliable, alpha = .86; the F was 4.21.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\")), \"statistic\" = as.character(c(\"F\", \"p\")), \"value\" = as.character(c(\"4.2\", \"0.04\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id073
+    "output": *id074
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+- "id": "match_reported_output.evidence.none_informative.any.summary"
+  "r": "identity"
+  "py": "tests.statout_match._helpers.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::test_paper(as.character(c(\"The power analysis used alpha = .05 and N = 55.\", \"Both were significant, p < .05 and p < .0002.\", \"The scale was reliable, alpha = .86; the F was 4.21.\"))), data.frame(\"source_file\" = as.character(c(\"a.R\", \"a.R\")), \"analysis\" = as.character(c(\"a1\", \"a1\")), \"statistic\" = as.character(c(\"F\", \"p\")), \"value\" = as.character(c(\"4.2\", \"0.04\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L, evidence = \"any\"), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id073
+    "output": *id074
+    "include_tables": false
+    "min_components": 1
+    "evidence": "any"
+    "what": "summary"

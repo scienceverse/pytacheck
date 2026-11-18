@@ -1,0 +1,93 @@
+{
+  "id": "extract_p_values.nightly.unit_log_ratio",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "text",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type",
+      "p_comp",
+      "p_value",
+      "p_name"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "P = 3.091"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Groups differed (Z = 3.091, P = 3.091)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3.091
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

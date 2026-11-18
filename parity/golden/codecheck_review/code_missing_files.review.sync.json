@@ -1,0 +1,70 @@
+{
+  "id": "code_missing_files.review.sync",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "paper_id",
+      "repo_url",
+      "file_name",
+      "files_written",
+      "loaded_files_missing",
+      "loaded_files_missing_names"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p",
+          "p",
+          "p"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.R",
+          "b.R",
+          "c.do"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "clean.csv",
+          "res_%s.csv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "gone.csv",
+          "",
+          ""
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

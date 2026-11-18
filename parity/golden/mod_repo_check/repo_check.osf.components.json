@@ -19,6 +19,7 @@
       "naming_issues",
       "repo_metadata",
       "ownership",
+      "table_not_checked",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -46,7 +47,7 @@
       },
       {
         "t": "df",
-        "nrow": 30,
+        "nrow": 0,
         "names": [
           "repo_url",
           "file_name",
@@ -65,489 +66,81 @@
         "v": [
           {
             "t": "chr",
-            "v": [
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x",
-              "https://osf.io/mc45x"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "DESCRIPTION",
-              "good-example.R",
-              "README.md",
-              "01.R",
-              "02.R",
-              "03.R",
-              "04.R",
-              "05.R",
-              "06.R",
-              "07.R",
-              "08.R",
-              "09.R",
-              "10.R",
-              "11.R",
-              "12.R",
-              "13.R",
-              "14.R",
-              "15.R",
-              "16.R",
-              "17.R",
-              "18.R",
-              "19.R",
-              "20.R",
-              "21.R",
-              "22.R",
-              "23.R",
-              "24.R",
-              "25.R",
-              "Archive.zip",
-              "file.txt"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "DESCRIPTION",
-              "good-example.R",
-              "README.md",
-              "code/01.R",
-              "code/02.R",
-              "code/03.R",
-              "code/04.R",
-              "code/05.R",
-              "code/06.R",
-              "code/07.R",
-              "code/08.R",
-              "code/09.R",
-              "code/10.R",
-              "code/11.R",
-              "code/12.R",
-              "code/13.R",
-              "code/14.R",
-              "code/15.R",
-              "code/16.R",
-              "code/17.R",
-              "code/18.R",
-              "code/19.R",
-              "code/20.R",
-              "code/21.R",
-              "code/22.R",
-              "code/23.R",
-              "code/24.R",
-              "code/25.R",
-              "folder/Archive.zip",
-              "folder/file.txt"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "https://osf.io/download/akh76/",
-              "https://osf.io/download/6979344e74d28a1d4cee7be5/",
-              "https://osf.io/download/6891f2f7157709eae14783e1/",
-              "https://osf.io/download/6a1c53b43e54533937713cd7/",
-              "https://osf.io/download/6a1c53b43e54533937713cd9/",
-              "https://osf.io/download/6a1c53b43e54533937713cdb/",
-              "https://osf.io/download/6a1c53b43e54533937713cdd/",
-              "https://osf.io/download/6a1c53b43e54533937713cdf/",
-              "https://osf.io/download/6a1c53b43e54533937713ce1/",
-              "https://osf.io/download/6a1c53b43e54533937713ce3/",
-              "https://osf.io/download/6a1c53b43e54533937713ce5/",
-              "https://osf.io/download/6a1c53b43e54533937713ce7/",
-              "https://osf.io/download/6a1c53b43e54533937713ce9/",
-              "https://osf.io/download/6a1c53b43e54533937713ceb/",
-              "https://osf.io/download/6a1c53b43e54533937713ced/",
-              "https://osf.io/download/6a1c53b43e54533937713cef/",
-              "https://osf.io/download/6a1c53b43e54533937713cf1/",
-              "https://osf.io/download/6a1c53b43e54533937713cf3/",
-              "https://osf.io/download/6a1c53b43e54533937713cf5/",
-              "https://osf.io/download/6a1c53b43e54533937713cf7/",
-              "https://osf.io/download/6a1c53b43e54533937713cf9/",
-              "https://osf.io/download/6a1c53b43e54533937713cfb/",
-              "https://osf.io/download/6a1c53b43e54533937713cfd/",
-              "https://osf.io/download/6a1c53b43e54533937713cff/",
-              "https://osf.io/download/6a1c53b43e54533937713d01/",
-              "https://osf.io/download/6a1c53b43e54533937713d03/",
-              "https://osf.io/download/6a1c53b43e54533937713d05/",
-              "https://osf.io/download/6a1c53b43e54533937713d07/",
-              "https://osf.io/download/69793452a632b245cf52acac/",
-              "https://osf.io/download/6892329b18e02c5277810aa9/"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null
-            ]
+            "v": []
           },
           {
             "t": "int",
-            "v": [
-              867,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "NA",
-              "code",
-              "readme",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "archive",
-              "text"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "osfstorage",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github",
-              "github"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x",
-              "mc45x"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "unknown",
-              "code",
-              "documentation",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "code",
-              "unknown",
-              "documentation"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              null,
-              null,
-              "readme",
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              "supplemental"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              null,
-              "ex1",
-              null,
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              "ex1",
-              null,
-              "ex1"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x",
-              "p_mc45x"
-            ]
+            "v": []
           }
         ]
       },
       {
         "t": "chr",
         "v": [
+          "#### Deposits we did not check",
+          "The paper links these deposits, but the paper or the deposit itself shows that they hold other people's work or the authors' earlier work, so we did not check them as the data and code of this paper (the table Whose Deposits gives the reason for each). If one of them is where you shared the data or code of this paper, name this paper in it: its title or DOI in the deposit's description or README. Metacheck then checks it.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://osf.io/mc45x' target='_blank'>osf.io/mc45x<\/a>\", \n    Whose = \"others' code\", Why = \"a tool by others\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Whose Deposits",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://osf.io/mc45x' target='_blank'>osf.io/mc45x<\/a>\", \n    \"Cited in\" = \"text\", Whose = \"others' code\", Why = \"a tool by others\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
-          "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://osf.io/mc45x' target='_blank'>osf.io/mc45x<\/a>\", \n    Platform = \"osf\", \"All Files\" = 30L, \"Data Files\" = 0L, \"Code Files\" = 26L, \n    READMEs = 1L, Archives = 1L), row.names = c(NA, -1L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
-          "#### Files",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \"https://osf.io/mc45x\", \n\"https://osf.io/mc45x\"), File = c(\"<a href='https://osf.io/download/akh76/' target='_blank'>DESCRIPTION<\/a>\", \n\"<a href='https://osf.io/download/6979344e74d28a1d4cee7be5/' target='_blank'>good-example.R<\/a>\", \n\"<a href='https://osf.io/download/6891f2f7157709eae14783e1/' target='_blank'>README.md<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cd7/' target='_blank'>01.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cd9/' target='_blank'>02.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cdb/' target='_blank'>03.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cdd/' target='_blank'>04.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cdf/' target='_blank'>05.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713ce1/' target='_blank'>06.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713ce3/' target='_blank'>07.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713ce5/' target='_blank'>08.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713ce7/' target='_blank'>09.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713ce9/' target='_blank'>10.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713ceb/' target='_blank'>11.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713ced/' target='_blank'>12.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cef/' target='_blank'>13.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cf1/' target='_blank'>14.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cf3/' target='_blank'>15.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cf5/' target='_blank'>16.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cf7/' target='_blank'>17.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cf9/' target='_blank'>18.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cfb/' target='_blank'>19.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cfd/' target='_blank'>20.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713cff/' target='_blank'>21.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713d01/' target='_blank'>22.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713d03/' target='_blank'>23.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713d05/' target='_blank'>24.R<\/a>\", \n\"<a href='https://osf.io/download/6a1c53b43e54533937713d07/' target='_blank'>25.R<\/a>\", \n\"<a href='https://osf.io/download/69793452a632b245cf52acac/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/6892329b18e02c5277810aa9/' target='_blank'>file.txt<\/a>\"\n), Size = c(\"867 B\", \"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \n\"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \n\"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \n\"—\", \"—\", \"—\", \"—\", \"—\"), Type = c(\"NA\", \"code\", \"readme\", \n\"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \n\"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \n\"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \"code\", \n\"code\", \"archive\", \"text\")), row.names = c(NA, -30L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
-          "README files were found in all repositories.",
-          "#### Unclassified Files\n\nWe could not classify 2 files by name or extension: DESCRIPTION, Archive.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
-          "#### File Naming",
-          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 2 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"DESCRIPTION\", \"Archive.zip\"), Rule = c(\"unclassifiable\", \n\"unclassifiable\"), Severity = c(\"Required\", \"Required\"), Detail = c(\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
-          "#### File Classification",
-          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (26 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"good-example.R\", \"01.R\", \"02.R\", \"03.R\", \n\"04.R\", \"05.R\", \"06.R\", \"07.R\", \"08.R\", \"09.R\", \"10.R\", \"11.R\", \n\"12.R\", \"13.R\", \"14.R\", \"15.R\", \"16.R\", \"17.R\", \"18.R\", \"19.R\", \n\"20.R\", \"21.R\", \"22.R\", \"23.R\", \"24.R\", \"25.R\"), Group = c(\"ex1\", \n\"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \n\"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \n\"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex1\"), Path = c(\"good-example.R\", \n\"code/01.R\", \"code/02.R\", \"code/03.R\", \"code/04.R\", \"code/05.R\", \n\"code/06.R\", \"code/07.R\", \"code/08.R\", \"code/09.R\", \"code/10.R\", \n\"code/11.R\", \"code/12.R\", \"code/13.R\", \"code/14.R\", \"code/15.R\", \n\"code/16.R\", \"code/17.R\", \"code/18.R\", \"code/19.R\", \"code/20.R\", \n\"code/21.R\", \"code/22.R\", \"code/23.R\", \"code/24.R\", \"code/25.R\"\n)), row.names = c(NA, -26L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README.md\", \"file.txt\"), Group = c(\"—\", \n\"ex1\"), Path = c(\"README.md\", \"folder/file.txt\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"DESCRIPTION\", \"Archive.zip\"), Group = c(\"—\", \n\"—\"), Path = c(\"DESCRIPTION\", \"folder/Archive.zip\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+          "",
+          "",
+          "README files were found in all repositories."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "na"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We found 30 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 1 archive file.\n-  We could not classify 2 files.\n-  We found 2 file naming problems to fix."
+          "\n-  We found 0 files in 0 repositories.\n-  We did not check 1 linked deposit that is not this paper's own: https://osf.io/mc45x (others' code).\n-  We found 1 README file and 0 repositories without READMEs."
         ]
       },
       {
@@ -578,87 +171,87 @@
             ]
           },
           {
-            "t": "int",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "int",
+            "t": "dbl",
             "v": [
               0
             ]
           },
           {
-            "t": "int",
-            "v": [
-              30
-            ]
-          },
-          {
-            "t": "int",
+            "t": "dbl",
             "v": [
               0
             ]
           },
           {
-            "t": "int",
-            "v": [
-              26
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              2
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              2
-            ]
-          },
-          {
-            "t": "int",
+            "t": "dbl",
             "v": [
               0
             ]
           },
           {
-            "t": "int",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "int",
+            "t": "dbl",
             "v": [
               0
             ]
           },
           {
-            "t": "int",
+            "t": "dbl",
             "v": [
               0
             ]
           },
           {
-            "t": "lgl",
+            "t": "dbl",
             "v": [
-              false
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
             ]
           }
         ]
@@ -711,49 +304,29 @@
       },
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 0,
         "names": [
           "file_name",
           "rule",
           "severity",
-          "detail",
-          "paper_id"
+          "detail"
         ],
         "v": [
           {
             "t": "chr",
-            "v": [
-              "DESCRIPTION",
-              "Archive.zip"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "unclassifiable",
-              "unclassifiable"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "bad",
-              "bad"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "p_mc45x",
-              "p_mc45x"
-            ]
+            "v": []
           }
         ]
       },
@@ -1152,47 +725,416 @@
         ]
       },
       {
-        "t": "list",
+        "t": "df",
+        "nrow": 30,
         "names": [
-          "roster",
-          "found",
-          "missing",
-          "extra",
-          "agrees"
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "provider",
+          "repo_name",
+          "data_type",
+          "doc_role"
         ],
         "v": [
           {
             "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
             "v": [
-              "ex1"
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x",
+              "https://osf.io/mc45x"
             ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "DESCRIPTION",
+              "good-example.R",
+              "README.md",
+              "01.R",
+              "02.R",
+              "03.R",
+              "04.R",
+              "05.R",
+              "06.R",
+              "07.R",
+              "08.R",
+              "09.R",
+              "10.R",
+              "11.R",
+              "12.R",
+              "13.R",
+              "14.R",
+              "15.R",
+              "16.R",
+              "17.R",
+              "18.R",
+              "19.R",
+              "20.R",
+              "21.R",
+              "22.R",
+              "23.R",
+              "24.R",
+              "25.R",
+              "Archive.zip",
+              "file.txt"
+            ]
           },
           {
             "t": "chr",
             "v": [
-              "ex1"
+              "DESCRIPTION",
+              "good-example.R",
+              "README.md",
+              "code/01.R",
+              "code/02.R",
+              "code/03.R",
+              "code/04.R",
+              "code/05.R",
+              "code/06.R",
+              "code/07.R",
+              "code/08.R",
+              "code/09.R",
+              "code/10.R",
+              "code/11.R",
+              "code/12.R",
+              "code/13.R",
+              "code/14.R",
+              "code/15.R",
+              "code/16.R",
+              "code/17.R",
+              "code/18.R",
+              "code/19.R",
+              "code/20.R",
+              "code/21.R",
+              "code/22.R",
+              "code/23.R",
+              "code/24.R",
+              "code/25.R",
+              "folder/Archive.zip",
+              "folder/file.txt"
             ]
           },
           {
-            "t": "lgl",
+            "t": "chr",
             "v": [
-              false
+              "https://osf.io/download/akh76/",
+              "https://osf.io/download/6979344e74d28a1d4cee7be5/",
+              "https://osf.io/download/6891f2f7157709eae14783e1/",
+              "https://osf.io/download/6a1c53b43e54533937713cd7/",
+              "https://osf.io/download/6a1c53b43e54533937713cd9/",
+              "https://osf.io/download/6a1c53b43e54533937713cdb/",
+              "https://osf.io/download/6a1c53b43e54533937713cdd/",
+              "https://osf.io/download/6a1c53b43e54533937713cdf/",
+              "https://osf.io/download/6a1c53b43e54533937713ce1/",
+              "https://osf.io/download/6a1c53b43e54533937713ce3/",
+              "https://osf.io/download/6a1c53b43e54533937713ce5/",
+              "https://osf.io/download/6a1c53b43e54533937713ce7/",
+              "https://osf.io/download/6a1c53b43e54533937713ce9/",
+              "https://osf.io/download/6a1c53b43e54533937713ceb/",
+              "https://osf.io/download/6a1c53b43e54533937713ced/",
+              "https://osf.io/download/6a1c53b43e54533937713cef/",
+              "https://osf.io/download/6a1c53b43e54533937713cf1/",
+              "https://osf.io/download/6a1c53b43e54533937713cf3/",
+              "https://osf.io/download/6a1c53b43e54533937713cf5/",
+              "https://osf.io/download/6a1c53b43e54533937713cf7/",
+              "https://osf.io/download/6a1c53b43e54533937713cf9/",
+              "https://osf.io/download/6a1c53b43e54533937713cfb/",
+              "https://osf.io/download/6a1c53b43e54533937713cfd/",
+              "https://osf.io/download/6a1c53b43e54533937713cff/",
+              "https://osf.io/download/6a1c53b43e54533937713d01/",
+              "https://osf.io/download/6a1c53b43e54533937713d03/",
+              "https://osf.io/download/6a1c53b43e54533937713d05/",
+              "https://osf.io/download/6a1c53b43e54533937713d07/",
+              "https://osf.io/download/69793452a632b245cf52acac/",
+              "https://osf.io/download/6892329b18e02c5277810aa9/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              867,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NA",
+              "code",
+              "readme",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "archive",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github",
+              "github"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x",
+              "mc45x"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "code",
+              "documentation",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "unknown",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "readme",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "supplemental"
             ]
           }
         ]
       },
       {
+        "t": "null"
+      },
+      {
         "t": "lgl",
         "v": [
-          true
+          false
         ]
       },
       {
@@ -1254,6 +1196,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

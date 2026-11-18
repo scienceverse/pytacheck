@@ -189,8 +189,11 @@ def run_repo(
     report: bool = False,
     tables: bool = False,
     rbox: str | None = None,
+    nopaper: bool = False,
 ) -> Any:
     """``module_run(<paper>, "repo_check", ...)`` on recorded responses (a parity case).
+
+    With *nopaper*, the paper is ``NULL``: a local folder checked without a paper.
 
     The paper is made of test papers (*papers*) or read from *read*
     (repository-relative paths). *args* are passed to the module; a
@@ -201,7 +204,9 @@ def run_repo(
     """
     import metacheck as pc
 
-    if read:
+    if nopaper:
+        paper = None
+    elif read:
         got = pc.read([ROOT / r for r in read])
         items = list(got) if isinstance(got, pc.PaperList) else [got]
         items.extend(make_paper(papers, paperlist=True) if papers else [])

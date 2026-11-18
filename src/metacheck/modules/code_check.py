@@ -15,6 +15,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._values import is_missing
+from metacheck.codecheck.core import _code_missing_files
 from metacheck.module import get_prev_outputs, module
 from metacheck.modules._code_check import (
     CHECKED_LANGS,
@@ -370,7 +371,7 @@ def code_check(
             warnings.warn("NA" if m is None else str(m), stacklevel=2)
 
     # Check code ----
-    rows, r_text_by_paper = analyse_files(checked_files, all_files)
+    rows, r_text_by_paper = analyse_files(checked_files)
     if not rows:
         # nothing analysed (every repository gated, or no file locations)
         code_files = seed_analysis_cols(code_files)
@@ -380,6 +381,9 @@ def code_check(
         collected = collected_frame(checked_files, rows)
         unchecked = code_files.loc[[not c for c in is_checked]]
         code_files = bind_rows([collected, unchecked]).reset_index(drop=True)
+    # which of the files each code file reads are missing: decided once every script of the paper
+    # has been read, as another script may make them (#648)
+    code_files = _code_missing_files(code_files, all_files)
     checked = code_files["checked"].astype("boolean").fillna(False)
     code_files["checked"] = checked.astype("boolean")
 

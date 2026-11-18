@@ -92,9 +92,8 @@ def test_invalid_utf8_files_fall_back_to_raw_lines() -> None:
 
 
 def test_negative_lookahead_is_an_error_caught_by_parse_codebook() -> None:
-    # R: seq_len(-1) errors inside the tryCatch -> readLines() of the workbook
-    lines = parse_codebook(REV / "tricky.xlsx", header_lookahead=-1)
-    assert isinstance(lines, list) and lines[:2] == ["PK\x03\x04\x14", "-'"]
+    # R: seq_len(-1) errors inside the tryCatch; a workbook is not read as lines (0.4.4.5, #651)
+    assert parse_codebook(REV / "tricky.xlsx", header_lookahead=-1) is None
     assert isinstance(parse_codebook(REV / "tricky.xlsx", header_lookahead=2.7), pd.DataFrame)
 
 

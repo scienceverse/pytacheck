@@ -13,7 +13,7 @@
   ],
   "value": {
     "t": "df",
-    "nrow": 11,
+    "nrow": 12,
     "names": [
       "eq_id",
       "text_id",
@@ -40,6 +40,7 @@
           7,
           8,
           9,
+          10,
           1,
           2
         ]
@@ -47,6 +48,7 @@
       {
         "t": "int",
         "v": [
+          2,
           2,
           2,
           2,
@@ -73,21 +75,6 @@
           null,
           null,
           null,
-          null
-        ]
-      },
-      {
-        "t": "int",
-        "v": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           null,
           null
         ]
@@ -95,6 +82,24 @@
       {
         "t": "int",
         "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
           1,
           1,
           1,
@@ -121,6 +126,7 @@
           null,
           null,
           null,
+          null,
           null
         ]
       },
@@ -131,6 +137,7 @@
           "ηp²",
           "ηG²",
           "R²M",
+          "χ2",
           "r",
           "dz",
           "BF10",
@@ -147,6 +154,7 @@
           null,
           null,
           null,
+          "( 12 )",
           "( 45)",
           null,
           null,
@@ -168,6 +176,7 @@
           "=",
           "=",
           "=",
+          "=",
           "≤",
           "="
         ]
@@ -179,6 +188,7 @@
           ".10",
           ".2",
           ".3",
+          "4.5",
           ".30",
           "0.4",
           "3.2",
@@ -200,12 +210,13 @@
           "edge_body.tei",
           "edge_body.tei",
           "edge_body.tei",
+          "edge_body.tei",
           "v12_edges.tei",
           "v12_edges.tei"
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

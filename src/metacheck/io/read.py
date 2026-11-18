@@ -345,11 +345,212 @@ def _repair_bib_dois(
     return text
 
 
+# Line numbers ----
+#
+# A manuscript with numbered lines keeps some of its line numbers when GROBID or bibr reads it,
+# as stand-alone numbers inside sentences ("t(118) = 7.35, p < 538 .001"). Port of
+# ``.repair_line_numbers()`` (metacheck 0.4.4.4, #648): the numbers of a paper with a sure sign
+# of line numbers (a run of 5 or more numbers adding one from 30 up, or a chain of stand-alone
+# numbers rising at the pace of a printed line) are removed, and in a paper without either sign
+# nothing is.
+_LINE_NO_LABEL = (
+    r"(?i)(?:^|\W)(?:tables?|figures?|figs?\.?|stud(?:y|ies)|experiments?|sections?|chapters?|"
+    r"appendix|items?|waves?|sessions?|steps?|models?|hypothes[ie]s|pages?|pp?\.|vol\.?|no\.?|"
+    r"versions?|grades?|days?|weeks?|years?|months?|et al\.?|refs?\.?|n|k|h|s|t)\s*$"
+)
+_LINE_NO_TOKEN = r"(?<![\w.,\-\u2212\u2013])\d{1,4}(?![\w,]|\.\d)"  # noqa: S105
+_LINE_NO_PREV = frozenset(["[", "(", ",", ";", "\u2013", "-", "/", ":"])
+_LINE_NO_NEXT = frozenset(["]", ")", ",", ";", "\u2013", "-", "/", "%", ":"])
+
+
+def _line_step_ok(dv: int, chars: int) -> bool:
+    """Is going *dv* line numbers up over *chars* characters a line's distance?
+
+    40 to 170 characters per line on average; one line may be shorter, down to nothing, as the
+    last line of a paragraph, a heading or an empty line can be.
+    """
+    return (40 <= chars / dv <= 170) or (dv == 1 and chars <= 170)
+
+
+def _repair_line_numbers(text: list[Any]) -> list[Any]:
+    """Port of ``.repair_line_numbers()``: the sentences of one paper without its line numbers."""
+    import bisect
+    import re
+    import statistics
+
+    from metacheck._r.regex import compile_r
+    from metacheck._values import is_missing
+
+    if not len(text):
+        return text
+    t = ["" if is_missing(x) else str(x) for x in text]
+    tok_rx = compile_r(_LINE_NO_TOKEN, perl=True)
+    label_rx = compile_r(_LINE_NO_LABEL, perl=True)
+    sent: list[int] = []
+    start: list[int] = []  # 1 = first character
+    length: list[int] = []
+    for i, x in enumerate(t):
+        for m in tok_rx.finditer(x):
+            sent.append(i)
+            start.append(m.start() + 1)
+            length.append(m.end() - m.start())
+    n_tok = len(sent)
+    if not n_tok:
+        return text
+    value = [int(t[sent[k]][start[k] - 1 : start[k] - 1 + length[k]]) for k in range(n_tok)]
+    offsets = [0]
+    for x in t[:-1]:
+        offsets.append(offsets[-1] + len(x) + 1)
+    pos = [offsets[sent[k]] + start[k] for k in range(n_tok)]
+    ws = " \t\r\n"
+    before = [t[sent[k]][: start[k] - 1].rstrip(ws) for k in range(n_tok)]
+    after = [t[sent[k]][start[k] - 1 + length[k] :].lstrip(ws) for k in range(n_tok)]
+    stand = [
+        (not before[k] or before[k][-1] not in _LINE_NO_PREV)
+        and (not after[k] or after[k][0] not in _LINE_NO_NEXT)
+        and label_rx.search(before[k][max(0, len(before[k]) - 15) :]) is None
+        for k in range(n_tok)
+    ]
+    remove = [False] * n_tok
+
+    # runs of 5 or more numbers adding one each, from 30 up, in one sentence
+    by_sent: dict[int, list[int]] = {}
+    for k in range(n_tok):
+        by_sent.setdefault(sent[k], []).append(k)
+    for ks in by_sent.values():
+        if len(ks) < 5:
+            continue
+        v = [value[k] for k in ks]
+        step = [False] + [
+            v[j + 1] - v[j] == 1 and start[ks[j + 1]] - (start[ks[j]] + length[ks[j]]) <= 2
+            for j in range(len(ks) - 1)
+        ]
+        j = 0
+        while j < len(step):  # rle(step)
+            e = j
+            while e + 1 < len(step) and step[e + 1] == step[j]:
+                e += 1
+            run = e - j + 1
+            if step[j] and run >= 4:
+                span = range(j - 1, e + 1)  # the number before the run, too
+                years = all(1950 <= v[q] <= 2050 for q in span)
+                if v[span[0]] >= 30 and not years:
+                    for q in span:
+                        remove[ks[q]] = True
+            j = e + 1
+
+    # the chain of stand-alone numbers, and how fast it advances
+    cand = [k for k in range(n_tok) if stand[k] and not remove[k]]
+    if len(cand) >= 15:
+        v = [value[k] for k in cand]
+        n = len(v)
+        best = [1] * n
+        prev_i = [-1] * n
+        for i in range(1, n):
+            w = range(max(0, i - 400), i)
+            ok = [q for q in w if 1 <= v[i] - v[q] <= 10]
+            if ok:
+                j = max(ok, key=lambda q: (best[q], -q))
+                if best[j] + 1 > best[i]:
+                    best[i] = best[j] + 1
+                    prev_i[i] = j
+        i = best.index(max(best))
+        ch: list[int] = []
+        while i >= 0:
+            ch.append(i)
+            i = prev_i[i]
+        ch.reverse()
+        if len(ch) >= 15:
+            dvs = [v[ch[q + 1]] - v[ch[q]] for q in range(len(ch) - 1)]
+            dps = [pos[cand[ch[q + 1]]] - pos[cand[ch[q]]] for q in range(len(ch) - 1)]
+            rate = [dp / dv for dp, dv in zip(dps, dvs, strict=True)]
+            line_steps = sum(1 for r in rate if 50 <= r <= 150)
+            other = sum(1 for r in rate if r >= 8)
+            if (
+                line_steps >= 10
+                and line_steps >= 0.5 * other
+                and statistics.median([v[q] for q in ch]) >= 50
+            ):
+                # only a number that is a line's distance from its neighbours in the chain, on
+                # both sides, also at the chain's two ends
+                ok_step = [_line_step_ok(dv, dp) for dv, dp in zip(dvs, dps, strict=True)]
+                keep = [False, *ok_step]
+                keep2 = [*ok_step, False]
+                for q in range(len(ch)):
+                    if keep[q] and keep2[q]:
+                        remove[cand[ch[q]]] = True
+    if not any(remove):
+        return text
+
+    # one pass through the whole text, across sentences, adds each stand-alone number that fits
+    # the nearest line number before or after it (see the comments of the R function)
+    amount_rx = re.compile(r"^(?:thousand|million|billion|trillion)", re.IGNORECASE)
+    row_prev = compile_r(r"\d%?\)?$", perl=True)
+    row_next = compile_r(r"^\(?\.?\d", perl=True)
+    amount = []
+    in_row = []
+    for k in range(n_tok):
+        prev_word = re.sub(r"^.*\s", "", before[k], flags=re.DOTALL)
+        next_word = re.sub(r"\s.*$", "", after[k], flags=re.DOTALL)
+        amount.append(amount_rx.search(next_word) is not None)
+        in_row.append(
+            row_prev.search(prev_word) is not None and row_next.search(next_word) is not None
+        )
+
+    def fits(dv: int, dpos: int) -> tuple[bool, bool]:
+        near = 1 <= dv <= 10
+        return near, near and _line_step_ok(dv, dpos)
+
+    removed = sorted(k for k in range(n_tok) if remove[k])
+    for _round in range(20):
+        added = False
+        for r in [
+            k
+            for k in range(n_tok)
+            if stand[k] and not remove[k] and not amount[k] and not in_row[k]
+        ]:
+            at = bisect.bisect_left(removed, r)
+            l_near, l_ok = (
+                fits(value[r] - value[removed[at - 1]], pos[r] - pos[removed[at - 1]])
+                if at > 0
+                else (False, False)
+            )
+            a_near, a_ok = (
+                fits(value[removed[at]] - value[r], pos[removed[at]] - pos[r])
+                if at < len(removed)
+                else (False, False)
+            )
+            if (l_ok or a_ok) and (not l_near or l_ok) and (not a_near or a_ok):
+                remove[r] = True
+                bisect.insort(removed, r)
+                added = True
+        if not added:
+            break
+
+    # remove each number, with the space after it (or before it, at the end)
+    out = list(t)
+    for i, ks in by_sent.items():
+        gone = [k for k in reversed(ks) if remove[k]]
+        if not gone:
+            continue
+        x = out[i]
+        for k in gone:
+            a = start[k] - 1
+            b = a + length[k]
+            if b < len(x) and x[b] == " ":
+                b += 1
+            elif a > 0 and x[a - 1] == " ":
+                a -= 1
+            x = x[:a] + x[b:]
+        out[i] = x
+    return [None if is_missing(orig) else o for orig, o in zip(text, out, strict=True)]
+
+
 def _removed_positions(old: str, new: str) -> list[int]:
     """Port of ``.removed_positions()``: where *old* has characters that *new* does not.
 
     The positions (1 = first character) in *old* of the characters that are not in *new*, where
-    *new* is *old* with some spaces removed.
+    *new* is *old* with some characters removed (spaces, or a line number).
     """
     gone: list[int] = []
     j = 0
@@ -413,12 +614,13 @@ class _Column:
         self.frame[col] = pd.Series(values, index=self.frame.index, dtype=self.frame[col].dtype)
 
 
-def _paper_repair_links(paper: Any) -> Any:
-    """Port of ``.paper_repair_links()``: join links in a paper's sentences that a space split.
+def _paper_repair_text(paper: Any) -> Any:
+    """Port of ``.paper_repair_text()``: clean a paper's sentences of what reading the PDF left wrong.
 
-    Repairs the text table with :func:`_repair_links` and :func:`_repair_bib_dois` (references'
+    Repairs the text table with :func:`_repair_line_numbers` (a manuscript's line numbers),
+    :func:`_repair_links` (links split with a space) and :func:`_repair_bib_dois` (references'
     DOIs). The url, xref and eq tables give where each item is in its sentence (``start``,
-    counted from 0, and ``end``, just after it); these move back by the number of spaces
+    counted from 0, and ``end``, just after it); these move back by the number of characters
     removed before them, so a paper written with ``paper_write()`` stays right. Applies to a
     paper or a paper list.
     """
@@ -426,7 +628,7 @@ def _paper_repair_links(paper: Any) -> Any:
     from metacheck.papers.model import PaperList, is_paper_list
 
     if is_paper_list(paper):
-        return PaperList([_paper_repair_links(p) for p in paper])
+        return PaperList([_paper_repair_text(p) for p in paper])
     if not hasattr(paper, "_tables"):  # not a paper (a list of other objects)
         return paper
     text = _Column(paper, "text")
@@ -435,7 +637,8 @@ def _paper_repair_links(paper: Any) -> Any:
     old = text.get("text")
     if not all(is_missing(s) or isinstance(s, str) for s in old):
         return paper
-    new = _repair_links(old)
+    # line numbers first: the link rules would join a line number after "osf.io/ " to the link
+    new = _repair_links(_repair_line_numbers(old))
     has_id = text.has("text_id")
     tids = text.get("text_id") if has_id else []
     if has_id:

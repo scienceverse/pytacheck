@@ -768,7 +768,7 @@
               "<span title='Categories differing only by case: Female/female; male/Male'>🔤 Case issues — Categories differing only by case: Female/female<\/span><br><span title='1 value with leading/trailing whitespace: \"Male \"'>↔️ Whitespace — 1 value with leading/trailing whitespace: \"Male \"<\/span>",
               "<span title='Column name becomes \"a_b\" when special characters are replaced, the same as \"a_b\": tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \"a_b\" when special characters are replaced, the...<\/span>",
               "<span title='Column name becomes \"a_b\" when special characters are replaced, the same as \"a b\": tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \"a_b\" when special characters are replaced, the...<\/span>",
-              "<span title='Free-text column (median 73 characters, 100% distinct) may contain names or other personal detail. Review before sharing.'>🔒 Personally Identifying Information — Free-text column (median 73 characters, 100% distinct) may contain ...<\/span>",
+              "<span title='Free-text column (median 73 characters, 100% distinct, 83% written in the first person) may contain names or other personal detail. Review before sharing.'>🔒 Personally Identifying Information — Free-text column (median 73 characters, 100% distinct, 83% written ...<\/span>",
               "<span title='Values look like personal information: email (12 values, 100%). Review before sharing. Column name suggests personal information (matched: email). Review before sharing.'>🔒 Personally Identifying Information — Values look like personal information: email (12 values, 100%); Column name suggests personal information (matched: email)<\/span>",
               "<span title='Column is empty: all 12 values are missing.'>⬜ Empty column — Column is empty: all 12 values are missing<\/span>",
               "<span title='SPSS \"Select Cases\" filter variable: 10 of 12 rows are selected (value 1). The reported analyses likely used only the selected rows; re-apply this filter to reproduce them.'>🧮 SPSS filter variable — SPSS \"Select Cases\" filter variable: 10 of 12 rows are selected (va...<\/span>",
@@ -781,6 +781,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

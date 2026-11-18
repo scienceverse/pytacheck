@@ -277,46 +277,6 @@
       },
       {
         "t": "df",
-        "nrow": 2,
-        "names": [
-          "File",
-          "Rule",
-          "Severity",
-          "Detail"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "Archive.zip",
-              "Archive.zip"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "unclassifiable",
-              "unclassifiable"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Required",
-              "Required"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
-            ]
-          }
-        ]
-      },
-      {
-        "t": "df",
         "nrow": 28,
         "names": [
           "File",
@@ -520,6 +480,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

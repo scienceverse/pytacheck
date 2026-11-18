@@ -64,4 +64,4 @@
 "report/report_repository.default_modules":
   kind: deliberate
   ref: D141
-  reason: "metacheck 0.4.4.3 adds the ownership table and the repo_own/repo_others/ref_others summary columns to repo_check, code_check and data_check; pytacheck does not port the ownership engine yet"
+  reason: "metacheck 0.4.4.3 adds the ownership table and the repo_own/repo_others/ref_others summary columns to repo_check, code_check and data_check; pytacheck does not port the ownership engine yet; 0.4.4.4 adds the `table_not_checked` output (D148)"

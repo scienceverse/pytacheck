@@ -143,6 +143,53 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         ),
         "plan": PLAN,
     },
+    # -- metacheck 0.4.4.4 to 0.4.4.6 (#648) --------------------------------------
+    # a file that is only inside a zip is unpacked where the authors had it, and the report
+    # says the code could unpack it itself
+    "archive_zip": {
+        "code": code(
+            r("zip_main.R", S + "zip_main.R", file_path="main.R"),
+            columns=(
+                "file_name",
+                "file_location",
+                "file_url",
+                "language",
+                "packages",
+                "parse_error",
+                "file_path",
+            ),
+        ),
+        "structure": table(
+            file_name=["scores.csv"],
+            file_path=["data.zip/data/scores.csv"],
+            file_location=[U + "data.csv"],
+        ),
+    },
+    # a file a script in another language (a Stata .do) writes is not a missing input
+    "other_writes": {
+        "code": code(
+            r("reads_other_made.R", S + "reads_other_made.R"),
+            {
+                "file_name": "002_incidence.do",
+                "file_location": None,
+                "language": "Stata",
+                "files_written": "$projectdir/output/arima_standardised.csv",
+            },
+            columns=(
+                "file_name",
+                "file_location",
+                "file_url",
+                "language",
+                "packages",
+                "parse_error",
+                "files_written",
+            ),
+        ),
+        "structure": table(
+            file_name=["reads_other_made.R", "002_incidence.do"],
+            file_location=[S + "reads_other_made.R", None],
+        ),
+    },
     "duplicates": {
         "code": code(r("ok.R"), r("ok.R"), r("errors.R")),
         "structure": DATA,

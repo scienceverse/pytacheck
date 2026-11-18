@@ -296,6 +296,18 @@ def test_the_warning_and_report_state_that_the_r_version_is_not_changed() -> Non
     assert "The R version is not changed" in text
     summary = _repro_recorded_summary(recorded, results)
     assert summary is not None and "1 of the 3 packages" in summary
+    assert "did not change the R version" in summary
+    # a Docker run with the declared version used the recorded R version (#649)
+    s = _repro_recorded_summary(recorded, results, vp, "docker", True)
+    assert s is not None
+    assert f"used the recorded R version ({vp['r_versions'][0]}), so this is not an exact copy" in s
+    assert "did not change" not in s
+    for sandbox, declared in (("docker", False), ("process", True)):
+        kept = _repro_recorded_summary(recorded, results, vp, sandbox, declared)
+        assert kept is not None and "did not change the R version" in kept
+    # a recorded version that cannot be an image's name is not used
+    odd = _repro_recorded_summary(recorded, results, {"r_versions": ["4.4.2 (x)"]}, "docker", True)
+    assert odd is not None and "did not change the R version" in odd
     assert _repro_recorded_summary(None, results) is None
     assert _repro_recorded_report(recorded, None, vp, "process") is None
 

@@ -208,9 +208,9 @@ def _from_bibr_legacy(data: Mapping[str, Any], include_images: bool) -> Paper:
     known = {"paper_id", "info", "bib_match", *_BIBR_TABLES}
     p.extra.update({k: v for k, v in data.items() if k not in known})
     # links split by a space when the PDF was read (see metacheck.io.read._repair_links())
-    from metacheck.io.read import _paper_repair_links
+    from metacheck.io.read import _paper_repair_text
 
-    return cast(Paper, _paper_repair_links(p))
+    return cast(Paper, _paper_repair_text(p))
 
 
 def read_bibr(file_path: str | PathLike[str], include_images: bool = False) -> Paper:

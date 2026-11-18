@@ -202,6 +202,13 @@ def _repro_unopened_files(msgs: str | Sequence[str | None], full: bool = False) 
         f"{q}({nq}+){q} does not exist|"
         f"Cannot open {q}({nq}+){q}|"
         "file does not exist: ([^\\s'\"]+)"
+        # "Data file not found: ../data/x.csv", Rcpp's "file not found: 'x.cpp'", h5py's "unable
+        # to open file: name = 'x.h5'", ggsave's "Cannot find directory `x`", a
+        # FileNotFoundError with only a path (#648)
+        f"|[Ff]ile not found:? *{q}?([^\\s'\"\u2018\u2019(]+[./][^\\s'\"\u2018\u2019(]*)"
+        f"|unable to open file[^\n]*?name = {q}({nq}+){q}"
+        f"|[Cc]annot find (?:the )?(?:file|directory|folder) [`'\"\u2018]({nq}+?)[`'\"\u2019]"
+        "|FileNotFoundError: (?!\\[Errno)([^\\s'\"]+[./][^\\s'\"]*)"
     )
     texts = [msgs] if isinstance(msgs, str) else [m for m in msgs if not is_missing(m)]
     out: list[str] = []
@@ -299,7 +306,25 @@ def _repro_missing_program(msg: Sequence[str | None]) -> list[str | None]:
                     found = trimws(hit[1])
                     break
             else:
-                if "subprocess" in m:
+                # programs R packages start: Chrome for chrome_print() and webshot2, pandoc for
+                # rmarkdown and Word tables, Python for reticulate and argparse (#648)
+                if grepl(
+                    r"Cannot find (Chromium or )?(Google )?Chrome|find_chrome\(\)", m, perl=True
+                ):
+                    found = "Chrome"
+                elif grepl(
+                    r"[Pp]andoc[^\n]{0,40}(is required|not found|was not found|is not available)",
+                    m,
+                    perl=True,
+                ):
+                    found = "pandoc"
+                elif grepl(
+                    r"\b[Pp]ython3? (is required|was not found|not found)|Python was not found",
+                    m,
+                    perl=True,
+                ):
+                    found = "Python"
+                elif "subprocess" in m:
                     hit = regexec(
                         r"FileNotFoundError: \[Errno 2\] No such file or directory: '([^'/]+)'",
                         m,
@@ -397,15 +422,26 @@ def _repro_needs_arguments(
         bool(grepl(reads_pat, s if isinstance(s, str) else "\n".join(map(str, s)), perl=True))
         for s in code
     ]
+    # The script's own message about its arguments, in either language: "Provide the file index
+    # as the first command-line argument", "--units is required", argparse's "error: one of
+    # --synthetic / --real is required", "One of -x, -y, or -z should be given" (#648)
+    own = (
+        "command[- ]line arguments?\\b|"
+        "(?:^|[\\s'\"`])--?[A-Za-z][\\w-]*\\b[^\n]{0,60}?\\b(?:is|are) required|"
+        "\\b[Oo]ne of --?[A-Za-z][\\w-]*|"
+        "--?[A-Za-z][\\w-]*\\b[^\n]{0,60}?\\b(?:should|must) be (?:given|specified|provided|supplied)"
+    )
     if python:
         points = grepl(
-            "the following arguments are required|: error: (argument|unrecognized arguments)|"
-            r"Use '-h'|sys[.]argv\[|parse_args\(",
+            "the following arguments are required|: error: (argument|unrecognized arguments|one of)|"
+            r"Use '-h'|sys[.]argv\[|parse_args\(|" + own,
             texts,
             perl=True,
         )
     else:
-        points = grepl("Error in [^\n:]*(\\bargs?\\[|\\bargv\\[|commandArgs)", texts, perl=True)
+        points = grepl(
+            "Error in [^\n:]*(\\bargs?\\[|\\bargv\\[|commandArgs)|" + own, texts, perl=True
+        )
     usage = grepl(
         r"(?im)^\s*usage\s*:|Show this help message and exit",
         [f"{t} {o}" for t, o in zip(texts, outs, strict=False)],
@@ -587,7 +623,11 @@ _FILE_PAT = (
     "cannot open the connection|cannot open file|No such file|FileNotFoundError|"
     "(?:[Ff]ile|[Pp]ath|[Dd]irectory|[Ff]older|['\"\u2018\u2019`])[^\n]{0,300}?does not exist|"
     "does not exist:? *['\"\u2018`/~.]|Cannot find the file|Could not find a root|"
-    "cannot open compressed"
+    "cannot open compressed|"
+    # "Data file not found: x", "model file(s) not found", h5py's "unable to open file",
+    # ggsave's "Cannot find directory", sf's "The file doesn't seem to exist" (#648)
+    "[Ff]ile(?:\\(s\\)|s)? not found|[Uu]nable to open file|"
+    "[Cc]annot find (?:the )?(?:directory|folder)|doesn't seem to exist"
 )
 
 _OUTCOME_REASON = {
@@ -648,18 +688,43 @@ def _failure_reason_one(outcome: str | None, full: str) -> str | None:
     # provided by Snakemake when it runs the script, so only there
     if has("object 'snakemake' not found|name 'snakemake' is not defined", msg):
         return "environment"
+    # a setting from the authors' computer that a deposit cannot hold: an environment variable
+    # with the place of restricted data, or a personal key for an online service ("LEVELS_DB is
+    # not set", "ANTHROPIC_API_KEY environment variable is required", openai's "Missing
+    # credentials") (#648)
+    if has(
+        "\\b[A-Z][A-Z0-9]*_[A-Z0-9_]+\\b[^\n]{0,40}?\\b(?:is not set|not set\\b|is required|must be set)|"
+        "environment variable[^\n]{0,60}?\\b(?:is not set|not set|is required|must be set|missing)|"
+        "[Ss]et the [^\n]{0,40}?environment variable|Missing credentials|"
+        "api[_ ]?key[^\n]{0,40}?(?:not set|missing|required)",
+        msg,
+    ):
+        return "settings"
     if has(
         "there is no package called|ModuleNotFoundError|No module named|ImportError|"
         "package or namespace|Error: package ",
         msg,
     ):
         return "package"
+    # a package that another package loads only when one of its functions is used, so the run
+    # did not install it: "Please install the 'cmdstanr' package", 'The package
+    # "broom.helpers" (>= 1.20.0) is required' (#648)
+    if has(
+        "[Pp]lease install the ['\"`\u2018][^'\"`\u2019]+['\"`\u2019] package|"
+        "[Tt]he package ['\"`\u2018][^'\"`\u2019]+['\"`\u2019] (?:\\([^)]*\\) )?is required|"
+        "requires the ['\"`\u2018][^'\"`\u2019]+['\"`\u2019] package",
+        msg,
+    ):
+        return "package"
+    # a program our run does not have (git, pandoc, Chrome): a gap in our run
+    if _repro_missing_program([full])[0] is not None:
+        return "environment"
     # "does not exist" only of a file: Stan's "variable does not exist" is not one
     # (10.1111/1365-2435.14436; #575, item 10). A file error after a program could not
     # be started is about the program (#575, item 7): "Output file does not exist.
     # Unable to find or run mark.exe"
     if has(_FILE_PAT, msg):
-        return "environment" if _repro_missing_program([full])[0] is not None else "file"
+        return "file"
     for pat, label in (
         ("object '[^']*' not found|could not find function|NameError|is not defined", "undefined"),
         ("SyntaxError|IndentationError", "syntax"),
@@ -738,12 +803,48 @@ _REPRO_REASON_LEVELS = (
     "undefined",
     "syntax",
     "environment",
+    "settings",
     "internet",
     "download",
     "interactive",
     "time",
     "no_message",
     "other",
+)
+
+#: Outcomes of files that are not scripts with a result of their own: run by another script,
+#: files of software or of functions only, not downloaded, empty (``.repro_not_own_outcomes``).
+#: The summary counted them as scripts run: "0 of 5 scripts ran" when 4 were files of a package
+#: that were rightly not run (#648).
+_REPRO_NOT_OWN_OUTCOMES = frozenset(
+    {
+        "run_by_source",
+        "run_by_import",
+        "jags_model",
+        "not_r_content",
+        "static_jags_model",
+        "static_not_r_content",
+        "defines_functions",
+        "not_analysis",
+        "static_defines_functions",
+        "static_not_analysis",
+        "not_downloaded",
+        "empty",
+        "static_empty",
+    }
+)
+#: Outcomes of scripts that were started (``.repro_started_outcomes``). The summary said "We
+#: assessed AND ran 32 Python code files" when none was started (#648).
+_REPRO_STARTED_OUTCOMES = frozenset(
+    {
+        "ran_ok",
+        "errored",
+        "timed_out",
+        "needs_a_person",
+        "needs_internet",
+        "download_too_large",
+        "out_of_memory",
+    }
 )
 
 #: The outcomes of files that are not scripts with a result of their own.
@@ -759,6 +860,74 @@ _NOT_SCRIPTS = frozenset(
         "empty",
     }
 )
+
+
+def _repro_run_light(tl: str, run_results: pd.DataFrame | None) -> str:
+    """Port of ``.repro_run_light()``: the light after a run of one language.
+
+    From the light before it (*tl*, from the files the code reads) and the scripts' outcomes
+    and reasons. A script that stopped on an error of the code makes it red. Yellow, when
+    nothing is red: a script that ran past the time limit (a slow analysis is not an error of
+    the code; a time-out alone made 5 papers red, #648), one that stopped only on something our
+    run lacks or a deposit cannot hold (a program such as git or Chrome, software outside R and
+    Python, a setting such as a key or the place of restricted data; reasons "environment" and
+    "settings"), the other outcomes the check could not finish, and a run in which no script ran
+    to the end, which was green when every script was set aside or could not install its
+    packages (#648).
+    """
+    if run_results is None or len(run_results) == 0:
+        return tl
+    oc = [None if is_missing(v) else v for v in run_results["outcome"].tolist()]
+    reason = (
+        [None if is_missing(v) else v for v in run_results["reason"].tolist()]
+        if "reason" in run_results.columns
+        else [None] * len(oc)
+    )
+    ours = [
+        o == "errored" and r in ("environment", "settings") for o, r in zip(oc, reason, strict=True)
+    ]
+    if any(o == "errored" and not u for o, u in zip(oc, ours, strict=True)):
+        return "red"
+    unfinished = (
+        any(ours)
+        or any(
+            o
+            in (
+                "timed_out",
+                "skipped_time_limit",
+                "docker_failed",
+                "needs_a_person",
+                "needs_internet",
+                "download_too_large",
+                "not_downloaded",
+                "out_of_memory",
+                "not_read",
+                "dependency_unavailable",
+            )
+            for o in oc
+        )
+        or not any(o in ("ran_ok", "run_by_source", "run_by_import") for o in oc)
+    )
+    return "yellow" if unfinished and tl == "green" else tl
+
+
+def _repro_install_sentence(install_results: pd.DataFrame, pip: bool = False) -> str:
+    """Port of ``.repro_install_sentence()``: the report's sentence on the packages installed.
+
+    It named every package tried as installed, also those that failed: "6 succeeded, 1 failed.
+    matplotlib, monai, ... were installed." (#648)
+    """
+    installed = [not is_missing(v) and bool(v) for v in install_results["installed"].tolist()]
+    ok = [str(p) for p, i in zip(install_results["package"].tolist(), installed, strict=True) if i]
+    n_ok = len(ok)
+    n_fail = len(install_results) - n_ok
+    text = (
+        "Dependencies were installed into a throwaway library before running"
+        f"{' (`pip install`)' if pip else ''}: {n_ok:d} succeeded, {n_fail:d} failed."
+    )
+    if n_ok:
+        text += f" {', '.join(ok)} {plural(n_ok, 'was', 'were')} installed."
+    return text
 
 
 def _repro_run_counts(run_results: pd.DataFrame | None) -> pd.DataFrame:

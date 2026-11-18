@@ -942,6 +942,31 @@ def _code_expand_html(
         )
         html_files = _set_locations(html_files, need, dl)
 
+    # The R Markdown or Quarto file an .html was knitted from, when the deposit has it (the same
+    # name, in the same repository): its code is then checked and run from that file, and the copy
+    # recovered from the .html was counted and run a second time (#648, q7pnw_v3: 4 R files and 4
+    # runs for 2 analyses). In the 563 stored reports, 174 .html files in 48 papers had an .Rmd
+    # or .qmd of the same name.
+    def stem(x: Any) -> str:
+        t = "NA" if is_missing(x) else str(x).replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
+        return re.sub(r"\.[^.]*$", "", t).lower()
+
+    def key(repo: Any, name: Any) -> str:
+        return f"{'NA' if is_missing(repo) else repo}\r{stem(name)}"
+
+    all_names = _col(all_files, "file_name")
+    all_repos = (
+        _col(all_files, "repo_url") if "repo_url" in all_files.columns else [""] * len(all_names)
+    )
+    is_src = grepl(r"\.(rmd|qmd)$", all_names, ignore_case=True)
+    src_key = {key(r, n) for r, n, f in zip(all_repos, all_names, is_src, strict=True) if f}
+    h_repos = (
+        _col(html_files, "repo_url") if "repo_url" in html_files.columns else [""] * len(html_files)
+    )
+    has_source = [
+        key(r, n) in src_key for r, n in zip(h_repos, _col(html_files, "file_name"), strict=True)
+    ]
+
     new_rows: list[pd.DataFrame] = []
     kinds: list[Any] = [None] * len(html_files)
     locs = _col(html_files, "file_location")
@@ -953,6 +978,8 @@ def _code_expand_html(
         except Exception:
             kinds[i] = None
         if is_missing(kinds[i]) or kinds[i] != "rmd":
+            continue
+        if has_source[i]:
             continue
         try:
             r_path = html_output._html_export_r_source(str(loc))
@@ -1192,7 +1219,7 @@ def _code_notebook_parts(text: Sequence[str | None]) -> tuple[list[str], list[st
     return lines, removed
 
 
-def _code_notebook_cell(lines: list[str]) -> tuple[list[str], list[str]]:
+def _code_notebook_cell(lines: Sequence[str | None]) -> tuple[list[Any], list[str]]:
     """One notebook cell of a non-R kernel without its commands.
 
     Port of ``R/code_check.R::.code_notebook_cell()``. A cell that starts with ``%%bash`` and the
@@ -1201,7 +1228,8 @@ def _code_notebook_cell(lines: list[str]) -> tuple[list[str], list[str]]:
     code that does not parse. Also removed: the commands IPython accepts without a ``%``
     (``cd folder``), and ``name?`` for help.
     """
-    first = next((s for s in lines if trimws(s) != ""), None)
+    # (a missing line counts as text, as nzchar(NA) is TRUE, and is no command)
+    first = next((s for s in lines if s is None or trimws(s) != ""), None)
     if (
         first is not None
         and re.match(r"\s*%%", first)
@@ -1209,18 +1237,45 @@ def _code_notebook_cell(lines: list[str]) -> tuple[list[str], list[str]]:
     ):
         return [], [trimws(first)]
     is_cmd = [
-        bool(
+        s is not None
+        and bool(
             re.match(r"\s*[%!?]", s)
             or re.match(r"\s*cd(\s+[^=(\s].*)?$", s)
             or re.match(r"\s*[A-Za-z_][A-Za-z0-9_.]*\?{1,2}\s*$", s)
+            # pip and conda, which IPython runs without "%" or "!" (Colab: "pip install x"); a
+            # line that begins so is never Python (nx3s2_v2; #648)
+            or re.match(
+                r"\s*(pip3?|conda|mamba)\s+"
+                r"(install|uninstall|list|show|freeze|download|update|remove|create)\b",
+                s,
+            )
         )
         for s in lines
     ]
-    indented = [c and bool(re.match(r"\s", s)) for c, s in zip(is_cmd, lines, strict=True)]
-    removed = [trimws(s) for s, c in zip(lines, is_cmd, strict=True) if c]
-    out: list[str] = []
-    for s, c, ind in zip(lines, is_cmd, indented, strict=True):
-        if ind:
+    # A command continued on the next lines with a final "\": those lines are part of it. Only
+    # the first line went, and the 18 argument lines of a "%run ... \" were left as Python
+    # (10.1101/2026.10.15.26365116; #648). They go whole, also when indented, as a `pass` there
+    # would not parse.
+    continued = [False] * len(lines)
+    for i in [k for k, c in enumerate(is_cmd) if c]:
+        j = i
+        while j < len(lines) - 1 and re.search(r"\\\s*$", lines[j] or ""):
+            j += 1
+            continued[j] = True
+    is_cmd = [c and not k for c, k in zip(is_cmd, continued, strict=True)]
+    indented = [
+        c and s is not None and bool(re.match(r"\s", s)) for c, s in zip(is_cmd, lines, strict=True)
+    ]
+    removed = [
+        trimws(s)
+        for s, c, k in zip(lines, is_cmd, continued, strict=True)
+        if s is not None and (c or k)
+    ]
+    out: list[Any] = []
+    for s, c, ind, k in zip(lines, is_cmd, indented, continued, strict=True):
+        if k:
+            continue
+        if ind and s is not None:
             m = re.match(r"(\s*)", s)
             out.append((m.group(1) if m else "") + "pass")
         elif not c:
@@ -1271,6 +1326,10 @@ def code_extract_qmd_py(
             j += 1
         keep = grepl(r"^\s*#\|", body)
         body = [b for b, k in zip(body, keep, strict=True) if not k]
+        # IPython commands (%matplotlib inline, !pip install) run in a Quarto Python chunk as in a
+        # notebook cell; as Python they are a syntax error, reported as the authors' mistake
+        # (10.1101/2026.05.14.26352933; #648)
+        body = list(_code_notebook_cell(body)[0])
         if body:
             out.extend(body)
             out.append("")
@@ -1394,13 +1453,130 @@ def code_abs_path(code_text: str | Sequence[str]) -> pd.DataFrame:
     normed = gsub("<~p~>", "\n\n", normed, fixed=True)
     ids, texts = _search_matches(normed, _ABS_PATH)
     ids = [line_ids[i - 1] for i in ids]
-    paths = gsub("[\"']$", "", gsub("^[\"']", "", texts))
+    paths = list(gsub("[\"']$", "", gsub("^[\"']", "", texts)))
+    # what is not a path on the authors' computer (#648); a check that fails keeps the path,
+    # rather than losing the whole file
+    keep = []
+    for line_id, path in zip(ids, paths, strict=True):
+        try:
+            keep.append(_code_is_abs_path(lines[line_id - 1], path))
+        except Exception:
+            keep.append(True)
+    paths = [p for p, k in zip(paths, keep, strict=True) if k]
+    ids = [i for i, k in zip(ids, keep, strict=True) if k]
     return pd.DataFrame(
         {
             "abs_path": pd.Series(paths, dtype="string"),
             "line": pd.Series(ids, dtype="Int64"),
         }
     )
+
+
+def _code_is_abs_path(line: str | None, path: str | None) -> bool:
+    """Whether *path*, a quoted text on *line* that looks like an absolute path, is one.
+
+    Port of ``.code_is_abs_path()`` (metacheck 0.4.4.4, #648): a place on the authors' computer
+    that the code reads or writes. Not when
+    - it starts with one "/" and something comes before it in a path the code joins:
+      ``paste0(dir, "/x.csv")``, ``file.path(root, "/x")``, base + "/x", pathlib's ``base / "x"``,
+      MATLAB's ``[userpath '/x']`` or ``strcat(userpath, '/x')``. The code adds it to a folder of
+      its own. A path that comes first, or that starts with a drive or "~", stays.
+    - it holds a character that names on disk do not have but patterns and templates do
+      (``< > [ ] ^ $ | \\`` and a space before a slash), or the query of a web address
+      (``?name=``): a regular expression, a web route. On Windows, a character Windows does not
+      allow in a name or a second ":" marks a message, and a network path with mixed single and
+      double backslashes is a regular expression escaped in R.
+    - it names a device or the system (/dev/null, /proc/...).
+    - it is a key in square brackets (an HDF5 data set ``f["/Data/MAG"]``) or the name inside a
+      file that ``h5read()`` and the like take after the file.
+    - it is a placeholder for the reader's own folder: /path/to/..., /your/..., a first folder in
+      capitals that says what to put there (/EXAMPLEDIRECTORY/).
+    """
+    from metacheck.repro.software import _sw_escape
+
+    if line is None or path is None:
+        return True
+    m = compile_r("['\"]" + _sw_escape(path) + "['\"]", perl=True).search(line)
+    before = line[: m.start()].rstrip(" \t\r\n") if m else ""
+    # text that starts with a separator can be a piece the code joins (MATLAB's
+    # strcat(DATA_DIR, '\\All\Results')); a drive or "~" cannot
+    slash = re.match(r"/(?!/)|\\", path) is not None
+    drive = re.match(r"[A-Za-z]:[/\\]", path) is not None
+    unc = path.startswith("\\\\")
+    if drive or unc:
+        # A character Windows does not allow in a name, or a second ":": a message
+        # ("C:\...\ipykernel_launcher.py:36: RuntimeWarning: ...") or a pattern (* and ? are
+        # left out: a path with a wildcard, dir("C:\data\S5*.mat"), is still a path)
+        if re.search(r"[|<>\"]", path) or ":" in path[2 if drive else 0 :]:
+            return False
+        # A network path uses one kind of separator: "\\server\share" (Python's r"...") or,
+        # escaped in R, "\\\\server\\share". Two backslashes and then doubled ones are R's
+        # escapes of a regular expression ("\\bword\\b").
+        lead = len(path) - len(path.lstrip("\\"))
+        if unc and lead == 2 and "\\\\" in path[2:]:
+            return False
+        if unc and re.search(r"[\[\]^$(){}+]", path):
+            return False
+    elif re.search(r"[<>\[\]^$|\\]| /|\?[A-Za-z_][A-Za-z0-9_]*=", path):
+        # Round brackets, {}, * and ? are left out of the signs: "Dropbox (Personal)",
+        # f"/Users/{user}/data" and "/Users/me/data/*.csv" are paths. "?name=" is the query of a
+        # web address ("/api/audit?limit=50").
+        return False
+    if re.match(r"/(dev|proc|sys)(/|$)", path):
+        return False
+    if re.search(r"(^|/)(path/to|your[^/]*)(/|$)", path, re.IGNORECASE) or re.match(
+        r"(/|[A-Za-z]:[/\\])?[A-Z_]*(EXAMPLE|DIRECTORY|FOLDER|PATH|YOUR)[A-Z_]*(/|$)", path
+    ):
+        return False
+    # a key: a name or a closing bracket, then "[" (a list "[" stays)
+    if re.search(r"[A-Za-z0-9_)\]]\s*\[\s*$", before):
+        return False
+    if re.search(
+        r"\b(h5read|h5readAtt|h5write|h5info|h5disp|h5ls|h5createDataset|read_hdf|get_node)\s*"
+        r"\([^()]*,\s*$",
+        before,
+    ):
+        return False
+    if not slash:
+        return True
+    # joined to what comes before it: + (Python, MATLAB strings), pathlib's /
+    if re.search(r"(\+|[^/*]/)$", before):
+        return False
+    # MATLAB's [userpath '/x']: a name or a text, then this text, in brackets
+    if re.search(r"\[[^\[\],;=]*[A-Za-z0-9_)'\"]$", before):
+        return False
+    if not before.endswith(","):
+        return True
+    # an argument after the first of a call that joins paths
+    depth = 0
+    for k in range(len(before) - 1, -1, -1):
+        c = before[k]
+        if c in ")]":
+            depth += 1
+        elif c in "([":
+            if depth > 0:
+                depth -= 1
+                continue
+            if c == "[":
+                return True
+            head = before[:k]
+            mf = re.search(r"[A-Za-z_][A-Za-z0-9_.]*\s*$", head)
+            if mf is None:
+                return True
+            fn = re.sub(r"^.*\.(?=[A-Za-z_][A-Za-z0-9_]*$)", "", mf.group(0).strip(" \t\r\n"))
+            return fn not in (
+                "paste",
+                "paste0",
+                "file.path",
+                "here",
+                "path",
+                "join",
+                "str_c",
+                "glue",
+                "fullfile",
+                "strcat",
+            )
+    return True
 
 
 def _code_pos_in_string(L: str | None, pos: int | None) -> bool:
@@ -2612,21 +2788,55 @@ _PY_WRITE_FNS = [
     "save",
     "dump",
 ]
-_WRITE_REGEX = {
-    "R": _alternation(
-        [
-            r"write[\._][A-Za-z\._0-9]*",
-            "saveRDS",
-            "save",
-            r"save\.image",
-            "ggsave",
-            "export",
-            "fwrite",
-        ],
-        r"\s*\(",
-    ),
-    "Python": _alternation(_PY_WRITE_FNS, r"\s*\("),
+#: The calls with which code writes or downloads a file, per language (port of
+#: ``.code_write_calls``). Shared by :func:`code_file_refs` and ``repro_file_io()``, so a file
+#: both see is a write in both. Python's differ from metacheck's (D121). The Stata, MATLAB and SAS
+#: ones are new (metacheck 0.4.4.4, #648): a file a .do or .m file writes was reported as missing.
+_CODE_WRITE_CALLS = {
+    "R": [
+        r"write[\._][A-Za-z\._0-9]*",
+        "saveRDS",
+        "save",
+        r"save\.image",
+        "ggsave",
+        "export",
+        "fwrite",
+        r"download\.file",
+        "curl_download",
+    ],
+    # the downloads (metacheck 0.4.4.4, #648) are the last three
+    "Python": [*_PY_WRITE_FNS, "urlretrieve", r"wget\.download", "download_file"],
+    "MATLAB": [
+        "save",
+        "writetable",
+        "writematrix",
+        "writecell",
+        "csvwrite",
+        "dlmwrite",
+        "xlswrite",
+        "saveas",
+        "exportgraphics",
+        "imwrite",
+        "websave",
+    ],
 }
+#: The write calls as one regular expression per language (port of ``.code_write_regex()``);
+#: none for a language without one.
+_WRITE_REGEX: dict[str, str] = {
+    lang: _alternation(calls, r"\s*\(") for lang, calls in _CODE_WRITE_CALLS.items()
+}
+_WRITE_REGEX["Stata"] = (
+    r"^\s*(?:save|saveold|export\s+(?:delimited|excel)|outsheet|graph\s+export|esttab|estout"
+    r"|outreg2|putexcel\s+set)\b"
+)
+_WRITE_REGEX["SAS"] = r"\bproc\s+export\b|\boutfile\s*=|\bods\s+[a-z]+\s+file\s*="
+
+
+def _code_write_regex(lang: str) -> str | None:
+    """Port of ``.code_write_regex()``: the calls that write a file in *lang*, as one regex."""
+    return _WRITE_REGEX.get(lang)
+
+
 _QUOTED_FILE = "(['\"])(?!\\.\\1)[^'\"]+\\.[A-Za-z0-9]{1,8}(?:\\.[A-Za-z0-9]{1,8})*\\1"
 _FORMAT_SPEC = r"^%[-+ 0#]*[0-9]*(\.[0-9]+)?[diouxXeEfgGaAscp]$"
 _UNQUOTED = {
@@ -2752,10 +2962,22 @@ def _code_blank_mplus_savedata(code_text: Sequence[str | None]) -> list[str]:
     return out
 
 
+#: the files Stata and SAS write, named without quotes (metacheck 0.4.4.4, #648)
+_UNQUOTED_WRITES = {
+    "Stata": [
+        (r"^\s*(?:save|saveold)\s+([^,\s]+)", 1),
+        (r"\busing\s+([^,\s]+)", 1),
+        (r"graph\s+export\s+([^,\s]+)", 1),
+    ],
+    "SAS": [(r"outfile\s*=\s*([^\s;]+)", 1), (r"\bfile\s*=\s*([^\s;]+)", 1)],
+}
+
+
 def code_file_refs(
     code_text: str | Sequence[str],
     lang: str | Sequence[str] = LANGS,
     include_writes: bool = False,
+    writes_only: bool = False,
 ) -> list[str]:
     """The files that (comment-free) code reads.
 
@@ -2764,14 +2986,17 @@ def code_file_refs(
     ``import()``, ``fread``, ``load``, ``source``, pandas readers, ``use``,
     ``GET FILE=``, ...), plus bare-word references for SAS/SPSS/Stata.
     Format specifiers such as ``"%.2f"`` are not file names. With
-    *include_writes* (R and Python) written files count too.
+    *include_writes* (R, Python and MATLAB) written files count too. With *writes_only*, only the
+    files the code writes or downloads (R, Python, MATLAB, Stata and SAS; see
+    :func:`_code_write_regex`), so that ``code_check`` does not report a file a script of the
+    deposit makes as missing (metacheck 0.4.4.4, #648).
     """
     lang = _match_arg(lang)
     lines: Sequence[str | None] = code_remove_comments(code_text, lang)
     # Python's open() and MATLAB's fopen() are reading calls below, but with a writing mode they
     # create the file, and Mplus's SAVEDATA names a file the model writes: outputs, left out
     # unless writes are asked for
-    if include_writes is not True:
+    if include_writes is not True and writes_only is not True:
         lines = _code_blank_write_opens(lines, lang)
         if lang == "Mplus":
             lines = _code_blank_mplus_savedata(lines)
@@ -2779,10 +3004,26 @@ def code_file_refs(
     # GET FILE= and get file=, FILE = and file = are the same command
     no_case = "(?i)" if lang in ("SAS", "SPSS", "Mplus") else ""
     pattern = no_case + _LOAD_REGEX[lang]
-    if include_writes is True and lang in _WRITE_REGEX:
-        pattern = f"{pattern}|{_WRITE_REGEX[lang]}"
+    write_call_regex = _code_write_regex(lang)
+    if writes_only is True:
+        if write_call_regex is None:
+            return []
+        pattern = no_case + write_call_regex
+    elif include_writes is True and write_call_regex is not None:
+        pattern = f"{pattern}|{write_call_regex}"
     load_hits = grepl(pattern, lines, perl=True)
     load_lines = [s for s, h in zip(lines, load_hits, strict=True) if h]
+    # Python's open(..., "w") and MATLAB's fopen(..., "w") write the file
+    if writes_only is True and lang in ("Python", "MATLAB"):
+        opens = [
+            s
+            for s in lines
+            if s is not None and compile_r(r"\b(open|fopen)\s*\(", perl=True).search(s)
+        ]
+        load_lines = [
+            *load_lines,
+            *(o for o in opens if _code_blank_write_opens([o], lang) != [o]),
+        ]
     # A call whose file name is on a line after it, as in `read.csv(` and then `"./data.csv")`, is
     # searched as a whole too (metacheck #568)
     if lang in ("R", "Python"):
@@ -2795,12 +3036,175 @@ def code_file_refs(
     quoted = grepl(_QUOTED_FILE, load_lines, perl=True)
     unquoted = [s for s, q in zip(load_lines, quoted, strict=True) if not q]
     extra: list[str] = []
-    for regex, group in _UNQUOTED.get(lang, []):
+    for regex, group in (_UNQUOTED_WRITES if writes_only is True else _UNQUOTED).get(lang, []):
         extra.extend(
             m[group] for m in regexec(no_case + regex, unquoted, perl=True) if len(m) >= group + 1
         )
     extra = list(gsub("[\"']$", "", gsub("^[\"']", "", extra)))
     return list(dict.fromkeys([*loaded, *extra]))
+
+
+# ---------------------------------------------------------------------------
+# files missing from the repository (metacheck 0.4.4.4, #648)
+# ---------------------------------------------------------------------------
+
+#: A part of a file name that the code fills in while it runs: a format specifier (%s, %d,
+#: %.2f), an f-string or glue field ({m}), a wildcard (*), a shell or Stata global ($x, ${x}) or a
+#: Stata local (`x'). Port of ``.code_placeholder_re``.
+_CODE_PLACEHOLDER_RE = (
+    r"%[-+ 0#]*[0-9]*(?:\.[0-9]+)?[a-zA-Z]|\{[^{}]*\}|\*|\$\{?[A-Za-z_][A-Za-z0-9_]*\}?|`[^`']*'"
+)
+_PH = compile_r(_CODE_PLACEHOLDER_RE, perl=True)
+_EXT_TAIL = re.compile(r"(\.[A-Za-z0-9]{1,8}){1,2}$")
+
+
+def _lower(x: str) -> str:
+    """R ``tolower()`` (the simple Unicode mapping, one character at a time)."""
+    return "".join(ch.lower()[0] for ch in x)
+
+
+def _base_lower(x: Any) -> str | None:
+    """``tolower(basename(gsub("\\\\", "/", x)))`` (``NA`` stays ``NA``)."""
+    if is_missing(x):
+        return None
+    t = str(x).replace("\\", "/").rstrip("/")
+    return _lower(t.rsplit("/", 1)[-1])
+
+
+def _specific(x: str) -> bool:
+    """A pattern counts only with 3 letters or digits besides its placeholders and extension."""
+    bare = _EXT_TAIL.sub("", _PH.sub("", x), count=1)
+    return len(re.sub("[^A-Za-z0-9]", "", bare)) >= 3
+
+
+def _ph_to_re(x: str) -> str:
+    """A name as a regular expression, each placeholder any text (``to_re()``)."""
+    from metacheck.repro.software import _sw_escape
+
+    lit: list[str] = []
+    last = 0
+    for m in _PH.finditer(x):
+        lit.append(x[last : m.start()])
+        last = m.end()
+    lit.append(x[last:])
+    return "^" + ".+".join(_sw_escape(piece) for piece in lit) + "$"
+
+
+def _code_name_match(names: Sequence[Any], candidates: Sequence[Any]) -> list[bool]:
+    """Port of ``.code_name_match()``: whether each file name in *names* is one of *candidates*.
+
+    Compared by base name and without case, where a placeholder in either name stands for any
+    text: "vzv_aou_ac_%s_model.csv" is "vzv_aou_ac_{COMPARATOR}_model.csv" and
+    "vzv_aou_ac_pneumo_model.csv". code_check listed such patterns as missing files, and
+    reproducibility_check did not see that a script makes a file whose name it builds (#648).
+    """
+    nm = [_base_lower(n) for n in names]
+    if not nm:
+        return []
+    cand = list(
+        dict.fromkeys(
+            c
+            for c in (_base_lower(c) for c in candidates if not is_missing(c) and str(c) != "")
+            if c is not None
+        )
+    )
+    if not cand:
+        return [False] * len(nm)
+
+    def skel(x: str) -> str:
+        return _PH.sub("x", x)
+
+    # A pattern with little text of its own matches almost any file: a Stata local alone
+    # (`weekly'), "{name}.csv", "{prefix}_{who}.json". Such a written pattern took dozens of files
+    # that were missing in an OpenSAFELY deposit, so a pattern counts only with 3 letters or
+    # digits besides its placeholders and its extension ("{backbone}_embeddings.npy").
+    cand = [c for c in cand if _PH.search(c) is None or _specific(c)]
+    cand_set = set(cand)
+    cand_skel = [skel(c) for c in cand]
+    cand_re = [compile_r(_ph_to_re(c), perl=True) for c in cand if _PH.search(c) is not None]
+    out: list[bool] = []
+    for n in nm:
+        if n is None:
+            out.append(False)
+        elif n in cand_set or (
+            _PH.search(n) is not None
+            and _specific(n)
+            and any(compile_r(_ph_to_re(n), perl=True).search(c) for c in cand_skel)
+        ):
+            out.append(True)
+        else:
+            sn = skel(n)
+            out.append(any(r.search(sn) for r in cand_re))
+    return out
+
+
+def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd.DataFrame:
+    """Port of ``.code_missing_files()``: the files each code file reads that are missing.
+
+    code_check's ``loaded_files_missing`` and ``loaded_files_missing_names``, once every code file
+    of the paper has been read. A file is not missing when the repository holds it (compared by
+    base name and without case: authors work on Windows and Macs, where "REM_tools.r" opens
+    "REM_tools.R"), or a code file of the same paper, in any language, writes or downloads it
+    (``files_written``, see ``code_file_refs(writes_only = TRUE)``), or a name with a placeholder
+    matches either (:func:`_code_name_match`). A piece of a name the code joins to another
+    ("_model.csv", ".png") is not a file name, nor is a name with a placeholder. Before #648 only
+    the repository counted, so files a script writes a few lines earlier, files a Stata script
+    writes, and patterns such as "vzv_aou_ac_%s_model.csv" were reported as missing.
+    ``code_files`` holds ``loaded_refs`` (the files read, joined by "\u001f"), which is dropped.
+    """
+    if "loaded_refs" not in code_files.columns:
+        return code_files
+    out = code_files.copy()
+    n = len(out)
+    n_missing: list[Any] = [None] * n
+    names_missing: list[Any] = [None] * n
+    paper = (
+        [None if is_missing(v) else v for v in out["paper_id"].tolist()]
+        if "paper_id" in out.columns
+        else [""] * n
+    )
+    if "files_written" in out.columns:
+        written_raw = ["" if is_missing(v) else str(v) for v in out["files_written"].tolist()]
+    else:
+        written_raw = [""] * n
+    written = [[w for w in re.split(r",[ \t\r\n\f\v]*", x) if w != ""] for x in written_raw]
+    refs_col = out["loaded_refs"].tolist()
+    repo_col = out["repo_url"].tolist() if "repo_url" in out.columns else [None] * n
+    if "repo_url" in all_files.columns:
+        all_repo = [None if is_missing(v) else v for v in all_files["repo_url"].tolist()]
+        all_name = all_files["file_name"].tolist()
+    else:
+        all_repo, all_name = [], []
+    by_repo: dict[Any, list[Any]] = {}
+    for r, nme in zip(all_repo, all_name, strict=False):
+        by_repo.setdefault(r, []).append(nme)
+    by_paper: dict[Any, list[str]] = {}
+    for pid, w in zip(paper, written, strict=True):
+        by_paper.setdefault(pid, []).extend(w)
+    for i in range(n):
+        refs = refs_col[i]
+        if is_missing(refs):
+            continue
+        parts = [
+            r.replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
+            for r in str(refs).split("\u001f")
+            if str(refs) != ""
+        ]
+        # a piece, and a name with a placeholder ("Ax1_s{seed}.jsonl"), are no file names, as
+        # reproducibility_check also leaves them out (.repro_ref_checkable())
+        parts = [
+            r for r in parts if r != "" and not re.match(r"[._-]", r) and _PH.search(r) is None
+        ]
+        repo = None if is_missing(repo_col[i]) else repo_col[i]
+        in_repo = by_repo.get(repo, [])
+        made = by_paper.get(paper[i], [])
+        ok = _code_name_match(parts, [*in_repo, *made])
+        miss = [r for r, k in zip(parts, ok, strict=True) if not k]
+        n_missing[i] = len(miss)
+        names_missing[i] = ", ".join(miss)
+    out["loaded_files_missing"] = pd.Series(n_missing, index=out.index, dtype="Int64")
+    out["loaded_files_missing_names"] = pd.Series(names_missing, index=out.index, dtype="string")
+    return out.drop(columns=["loaded_refs"])
 
 
 # kept for callers that want the positions R's gregexpr() gives

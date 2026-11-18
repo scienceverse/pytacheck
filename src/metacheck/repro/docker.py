@@ -1118,7 +1118,15 @@ def _wrapper_lines(
     lines = [
         *preamble,
         ".repro_docker_run <- function() {",
-        *_WRAPPER_ENV_SETUP,
+        *_WRAPPER_ENV_SETUP[:-1],
+        # A script that finds its own folder from "--file=" in commandArgs() found this wrapper
+        # in /sandbox instead of its own folder (4sw6h_v4; #648): the command line it sees
+        # names the script itself.
+        '  assign("commandArgs", function(trailingOnly = FALSE) { '
+        "a <- base::commandArgs(trailingOnly); "
+        f'if (!trailingOnly) a <- sub("^--file=.*$", "--file={container_script}", a); a }}, '
+        "envir = stand_ins)",
+        *_WRAPPER_ENV_SETUP[-1:],
         *(lib_setup if lib else []),
         "  captures <- list()",
         f'  on.exit(try(.mc_write_json(captures, "{cap_file_container}"), silent = TRUE), '

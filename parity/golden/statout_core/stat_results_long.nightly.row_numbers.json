@@ -1,0 +1,160 @@
+{
+  "id": "stat_results_long.nightly.row_numbers",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "paper_id",
+      "source_file",
+      "test_id",
+      "result_id",
+      "analysis",
+      "table_title",
+      "row_label",
+      "statistic",
+      "stato_label",
+      "stato_iri",
+      "value",
+      "model_ref"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "result_a_human",
+          "result_a_ai",
+          "result_b",
+          "result_b",
+          "result_b",
+          "result_b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "result_a_r1_m",
+          "result_a_r2_m",
+          "result_b_r1_v1",
+          "result_b_r1_t",
+          "result_b_r2_v1",
+          "result_b_r2_t"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "a",
+          "b",
+          "b",
+          "b",
+          "b"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Human",
+          "AI",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "M",
+          "M",
+          "V1",
+          "t",
+          "V1",
+          "t"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "M",
+          "M",
+          "V1",
+          "t-statistic",
+          "V1",
+          "t-statistic"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "http://purl.obolibrary.org/obo/STATO_0000176",
+          "",
+          "http://purl.obolibrary.org/obo/STATO_0000176"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3.36",
+          "4.08",
+          "5",
+          "2.1",
+          "7",
+          "3.3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

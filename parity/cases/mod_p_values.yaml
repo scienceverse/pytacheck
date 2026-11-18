@@ -715,3 +715,28 @@
     - "paper_id"
     - "table.paper_id"
     - "summary_table.paper_id"
+- "id": "stat_p_exact.nightly.impossible"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$test_paper": {"text": ["The groups differed, t(134) = -2.32, p = -.13, d = -0.4.", "Controls and the BMS group differed (Z = 3.091, P = 3.091).", "Age did not differ, χ 2 (10) = 9.61, p = 7.15.", "Less garbage was found (p = 3.23, CI = 2.11-4.61).", "The model fit, z = 4.61, p = 8.06 × 10 -06.", "An effect, z = 7.68, p = 6.57 � 10 -14.", "Both were negative, p < -0.6 -0.4 -0.2 0.0 0.2.", "The ratio was N: P = À0.23*P concentration + 1.17.", "Group A differed, p < .05."]}}
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.nightly.duplicates"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$test_paper": {"text": ["The indirect effect was significant (p < .01), as was the direct effect (p < .01)."]}}
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "stat_p_exact.nightly.duplicates.paperlist"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper('The indirect effect was significant (p < .01), as was the direct effect (p < .01).'); p$paper_id <- 'a'; p}), local({p <- test_paper('The indirect effect was significant (p < .01), as was the direct effect (p < .01).'); p$paper_id <- 'b'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper('The indirect effect was significant (p < .01), as was the direct effect (p < .01).'), i) for i in ['a', 'b']])"

@@ -988,9 +988,9 @@ def _bibr12_paper(
     if extraction is not None:
         p["extraction"] = extraction
     # links split by a space when the PDF was read (see metacheck.io.read._repair_links())
-    from metacheck.io.read import _paper_repair_links
+    from metacheck.io.read import _paper_repair_text
 
-    return cast(Paper, _paper_repair_links(p))
+    return cast(Paper, _paper_repair_text(p))
 
 
 # ---------------------------------------------------------------------------

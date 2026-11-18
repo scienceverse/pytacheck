@@ -25,6 +25,7 @@
       "naming_issues",
       "repo_metadata",
       "ownership",
+      "table_not_checked",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -3071,10 +3072,10 @@
           "#### Restricted-Access Files\n\n2 repositories (https://www.psycharchives.org/handle/20.500.12034/17526, https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678) contain files behind restricted or embargoed access. These files require a login and cannot be downloaded programmatically, so metacheck cannot examine them and other researchers cannot reuse them without requesting access. Consider making the files openly available to improve their reusability.",
           "#### Registration Points to a Closed Project\n\n1 OSF project (https://osf.io/parc2) is referenced by a registration in this manuscript, but it is closed or inaccessible, and no copy of its files could be found anywhere else. Some OSF registrations only describe what was shared, while the actual files live in the project they were registered from — if that project is closed and the registration holds no copy, metacheck cannot list or download its files, and other researchers cannot access them either. Consider making the source project openly available, or re-uploading its files directly into the registration.",
           "#### Registration's Source Project Is Closed\n\n1 OSF source project is closed. The files metacheck lists below were not read from it — they were retrieved from the OSF registration's own copy, which is separate from and unaffected by the project's access setting. Nothing is currently lost, but this is still worth fixing: a closed source project means the files only survive for as long as the registration's copy does, and anyone who follows the project link itself (rather than the registration) will find it inaccessible.\n\n- **https://osf.io/parc1** is closed; its files were retrieved from the OSF registration https://osf.io/regc1.\n\nConsider making the source project openly available.",
-          "#### Unclassified Files\n\nWe could not classify 9 files by name or extension: Archive.zip, Archive.zip, Archive.zip, archive.tar.gz, weird.file-name, noext, bundle.zip, notzip.zip, nameless. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Unclassified Files\n\nWe could not classify 3 files by name or extension: weird.file-name, noext, nameless. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
-          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 11 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\", \"Archive.zip\", \n\"study 1.csv\", \"archive.tar.gz\", \"weird.file-name\", \"trial data.csv\", \n\"noext\", \"bundle.zip\", \"notzip.zip\", \"nameless\"), Rule = c(\"unclassifiable\", \n\"unclassifiable\", \"unclassifiable\", \"spaces\", \"unclassifiable\", \n\"unclassifiable\", \"spaces\", \"unclassifiable\", \"unclassifiable\", \n\"unclassifiable\", \"unclassifiable\"), Severity = c(\"Required\", \n\"Required\", \"Required\", \"Required\", \"Required\", \"Required\", \"Required\", \n\"Required\", \"Required\", \"Required\", \"Required\"), Detail = c(\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"contains a space\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"contains a space\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"\n)), row.names = c(NA, -11L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 2 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"study 1.csv\", \"trial data.csv\"), Rule = c(\"spaces\", \n\"spaces\"), Severity = c(\"Required\", \"Required\"), Detail = c(\"contains a space\", \n\"contains a space\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (8 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"bad.R\", \"bad.Rmd\", \"bad.R\", \"bad.R\", \n\"analysis.R\", \"run.py\", \"analysis.R\", \"analysis.R\"), Group = c(\"ex1\", \n\"ex1\", \"ex2\", \"ex2\", \"ex3\", \"ex4\", \"ex7\", \"ex10\"), Path = c(\"bad.R\", \n\"bad.Rmd\", \"bad.R\", \"bad.R\", \"code/analysis.R\", \"src/run.py\", \n\"analysis.R\", \"analysis.R\")), row.names = c(NA, -8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (21 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"example2.csv\", \"example2.csv\", \"example2.csv\", \n\"study 1.csv\", \"config.json\", \"d1.csv\", \"x.json\", \"trial data.csv\", \n\"data.CSV\", \"model.rds\", \"data.csv\", \"config.json\", \"data.csv\", \n\"data.csv\", \"huge.dat\", \"data.csv\", \"missing.csv\", \"data.csv\", \n\"interviews.csv\", \"survey.csv\", \"soil_temp.csv\"), Group = c(\"ex1\", \n\"ex2\", \"ex2\", \"ex1\", \"ex3\", \"ex4\", \"ex4\", \"ex6\", \"ex7\", \"ex7\", \n\"ex8\", \"ex10\", \"ex11\", \"ex13\", \"ex13\", \"ex14\", \"ex14\", \"ex15\", \n\"ex16\", \"ex17\", \"ex18\"), Path = c(\"example2.csv\", \"example2.csv\", \n\"example2.csv\", \"data/study 1.csv\", \"code/config.json\", \"data/d1.csv\", \n\"x.json\", \"trial data.csv\", \"data.CSV\", \"model.rds\", \"data.csv\", \n\"config.json\", \"data.csv\", \"data.csv\", \"huge.dat\", \"data.csv\", \n\"missing.csv\", \"data.csv\", \"interviews.csv\", \"survey.csv\", \"soil_temp.csv\"\n)), row.names = c(NA, -21L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (116 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README.md\", \"LICENSE\", \"README.md\", \n\"f001.txt\", \"f002.txt\", \"f003.txt\", \"f004.txt\", \"f005.txt\", \"f006.txt\", \n\"f007.txt\", \"f008.txt\", \"f009.txt\", \"f010.txt\", \"f011.txt\", \"f012.txt\", \n\"f013.txt\", \"f014.txt\", \"f015.txt\", \"f016.txt\", \"f017.txt\", \"f018.txt\", \n\"f019.txt\", \"f020.txt\", \"f021.txt\", \"f022.txt\", \"f023.txt\", \"f024.txt\", \n\"f025.txt\", \"f026.txt\", \"f027.txt\", \"f028.txt\", \"f029.txt\", \"f030.txt\", \n\"f031.txt\", \"f032.txt\", \"f033.txt\", \"f034.txt\", \"f035.txt\", \"f036.txt\", \n\"f037.txt\", \"f038.txt\", \"f039.txt\", \"f040.txt\", \"f041.txt\", \"f042.txt\", \n\"f043.txt\", \"f044.txt\", \"f045.txt\", \"f046.txt\", \"f047.txt\", \"f048.txt\", \n\"f049.txt\", \"f050.txt\", \"f051.txt\", \"f052.txt\", \"f053.txt\", \"f054.txt\", \n\"f055.txt\", \"f056.txt\", \"f057.txt\", \"f058.txt\", \"f059.txt\", \"f060.txt\", \n\"f061.txt\", \"f062.txt\", \"f063.txt\", \"f064.txt\", \"f065.txt\", \"f066.txt\", \n\"f067.txt\", \"f068.txt\", \"f069.txt\", \"f070.txt\", \"f071.txt\", \"f072.txt\", \n\"f073.txt\", \"f074.txt\", \"f075.txt\", \"f076.txt\", \"f077.txt\", \"f078.txt\", \n\"f079.txt\", \"f080.txt\", \"f081.txt\", \"f082.txt\", \"f083.txt\", \"f084.txt\", \n\"f085.txt\", \"f086.txt\", \"f087.txt\", \"f088.txt\", \"f089.txt\", \"f090.txt\", \n\"f091.txt\", \"f092.txt\", \"f093.txt\", \"f094.txt\", \"f095.txt\", \"readme.txt\", \n\"readme.txt\", \"notes.txt\", \"readme.txt\", \"preprint.pdf\", \"notes.txt\", \n\"codebook.pdf\", \"fallback_name.txt\", \"readme.txt\", \"README.md\", \n\"sub/notes.txt\", \"nolink.txt\", \"guide.pdf\", \"notes.txt\", \"gone.txt\", \n\"readme.txt\", \"readme.txt\", \"readme.txt\"), Group = c(\"—\", \"—\", \n\"—\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \n\"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"ex5\", \"—\", \"—\", \"ex8\", \n\"—\", \"ex11\", \"ex12\", \"ex13\", \"ex13\", \"—\", \"—\", \"ex15\", \n\"ex15\", \"ex16\", \"ex16\", \"ex16\", \"—\", \"—\", \"—\"), Path = c(\"README.md\", \n\"LICENSE\", \"README.md\", \"f001.txt\", \"f002.txt\", \"f003.txt\", \"f004.txt\", \n\"f005.txt\", \"f006.txt\", \"f007.txt\", \"f008.txt\", \"f009.txt\", \"f010.txt\", \n\"f011.txt\", \"f012.txt\", \"f013.txt\", \"f014.txt\", \"f015.txt\", \"f016.txt\", \n\"f017.txt\", \"f018.txt\", \"f019.txt\", \"f020.txt\", \"f021.txt\", \"f022.txt\", \n\"f023.txt\", \"f024.txt\", \"f025.txt\", \"f026.txt\", \"f027.txt\", \"f028.txt\", \n\"f029.txt\", \"f030.txt\", \"f031.txt\", \"f032.txt\", \"f033.txt\", \"f034.txt\", \n\"f035.txt\", \"f036.txt\", \"f037.txt\", \"f038.txt\", \"f039.txt\", \"f040.txt\", \n\"f041.txt\", \"f042.txt\", \"f043.txt\", \"f044.txt\", \"f045.txt\", \"f046.txt\", \n\"f047.txt\", \"f048.txt\", \"f049.txt\", \"f050.txt\", \"f051.txt\", \"f052.txt\", \n\"f053.txt\", \"f054.txt\", \"f055.txt\", \"f056.txt\", \"f057.txt\", \"f058.txt\", \n\"f059.txt\", \"f060.txt\", \"f061.txt\", \"f062.txt\", \"f063.txt\", \"f064.txt\", \n\"f065.txt\", \"f066.txt\", \"f067.txt\", \"f068.txt\", \"f069.txt\", \"f070.txt\", \n\"f071.txt\", \"f072.txt\", \"f073.txt\", \"f074.txt\", \"f075.txt\", \"f076.txt\", \n\"f077.txt\", \"f078.txt\", \"f079.txt\", \"f080.txt\", \"f081.txt\", \"f082.txt\", \n\"f083.txt\", \"f084.txt\", \"f085.txt\", \"f086.txt\", \"f087.txt\", \"f088.txt\", \n\"f089.txt\", \"f090.txt\", \"f091.txt\", \"f092.txt\", \"f093.txt\", \"f094.txt\", \n\"f095.txt\", \"readme.txt\", \"readme.txt\", \"notes.txt\", \"readme.txt\", \n\"preprint.pdf\", \"notes.txt\", \"codebook.pdf\", \"fallback_name.txt\", \n\"readme.txt\", \"README.md\", \"sub/notes.txt\", \"nolink.txt\", \"guide.pdf\", \n\"notes.txt\", \"gone.txt\", \"readme.txt\", \"readme.txt\", \"stimuli.zip/readme.txt\"\n)), row.names = c(NA, -116L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (5 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"session1.edat2\", \"video.mp4\", \"big.bin\", \n\"a.png\", \"b.jpg\"), Group = c(\"ex10\", \"ex14\", \"ex15\", \"ex10\", \n\"ex10\"), Path = c(\"session1.edat2\", \"video.mp4\", \"big.bin\", \"stimuli.zip/a.png\", \n\"stimuli.zip/b.jpg\")), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**output** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"results.tar.gz\", Group = \"ex10\", Path = \"results.tar.gz\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (9 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\", \"Archive.zip\", \n\"archive.tar.gz\", \"weird.file-name\", \"noext\", \"bundle.zip\", \"notzip.zip\", \n\"nameless\"), Group = c(\"ex1\", \"ex2\", \"ex2\", \"ex3\", \"ex3\", \"ex7\", \n\"ex9\", \"ex10\", \"ex18\"), Path = c(\"Archive.zip\", \"Archive.zip\", \n\"Archive.zip\", \"archive.tar.gz\", \"weird.file-name\", \"noext\", \n\"bundle.zip\", \"notzip.zip\", \"nameless\")), row.names = c(NA, -9L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -3088,7 +3089,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We could not check 8 repositories: https://osf.io/privn (private); https://github.com/gzorg/bigrepo (GitHub repo tree truncated (>100 000 items); too large to list); https://gitlab.com/gzorg/missing (invalid or inaccessible GitLab repository); https://researchbox.org/4377 (ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)); https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE (unfound); https://figshare.com/s/5e01cc0cae4cf3e2e14f (private share link (figshare.com/s/...) cannot be resolved without a browser); https://doi.org/10.5061/dryad.missing (unfound); https://osf.io/parc2 (closed registration source).\n-  We found 160 files in 29 repositories.\n-  We found 9 README files and 12 repositories without READMEs.\n-  We found 7 archive files.\n-  We found 1 proprietary E-Prime file.\n-  We found 2 repositories with restricted-access files.\n-  We found 1 registration-linked OSF project that is closed with no files reachable anywhere.\n-  We found 1 registration-linked OSF project that is closed; its files were retrieved from the OSF registration instead.\n-  We could not classify 9 files.\n-  We found 11 file naming problems to fix."
+          "\n-  We could not check 8 repositories: https://osf.io/privn (private); https://github.com/gzorg/bigrepo (GitHub repo tree truncated (>100 000 items); too large to list); https://gitlab.com/gzorg/missing (invalid or inaccessible GitLab repository); https://researchbox.org/4377 (ResearchBox did not serve the box: download failed or resulted in an empty file (HTTP 404)); https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NOPE (unfound); https://figshare.com/s/5e01cc0cae4cf3e2e14f (private share link (figshare.com/s/...) cannot be resolved without a browser); https://doi.org/10.5061/dryad.missing (unfound); https://osf.io/parc2 (closed registration source).\n-  We found 160 files in 29 repositories.\n-  We found 9 README files and 12 repositories without READMEs.\n-  We found 7 archive files.\n-  We found 1 proprietary E-Prime file.\n-  We found 2 repositories with restricted-access files.\n-  We found 1 registration-linked OSF project that is closed with no files reachable anywhere.\n-  We found 1 registration-linked OSF project that is closed; its files were retrieved from the OSF registration instead.\n-  We could not classify 3 files.\n-  We found 2 file naming problems to fix."
         ]
       },
       {
@@ -3163,13 +3164,13 @@
           {
             "t": "int",
             "v": [
-              9
+              3
             ]
           },
           {
             "t": "int",
             "v": [
-              11
+              2
             ]
           },
           {
@@ -3288,7 +3289,7 @@
       },
       {
         "t": "df",
-        "nrow": 11,
+        "nrow": 2,
         "names": [
           "file_name",
           "rule",
@@ -3300,47 +3301,20 @@
           {
             "t": "chr",
             "v": [
-              "Archive.zip",
-              "Archive.zip",
-              "Archive.zip",
               "study 1.csv",
-              "archive.tar.gz",
-              "weird.file-name",
-              "trial data.csv",
-              "noext",
-              "bundle.zip",
-              "notzip.zip",
-              "nameless"
+              "trial data.csv"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "unclassifiable",
-              "unclassifiable",
-              "unclassifiable",
               "spaces",
-              "unclassifiable",
-              "unclassifiable",
-              "spaces",
-              "unclassifiable",
-              "unclassifiable",
-              "unclassifiable",
-              "unclassifiable"
+              "spaces"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "bad",
-              "bad",
-              "bad",
-              "bad",
-              "bad",
-              "bad",
-              "bad",
-              "bad",
-              "bad",
               "bad",
               "bad"
             ]
@@ -3348,31 +3322,13 @@
           {
             "t": "chr",
             "v": [
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "contains a space",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "contains a space",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+              "contains a space"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "p_all",
-              "p_all",
-              "p_all",
-              "p_all",
-              "p_all",
-              "p_all",
-              "p_all",
-              "p_all",
-              "p_all",
               "p_all",
               "p_all"
             ]
@@ -6113,6 +6069,94 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "provider",
+          "repo_size",
+          "repo_name",
+          "archive_url",
+          "archive_member",
+          "archive_format",
+          "archive_size",
+          "data_type",
+          "doc_role"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "list",
         "names": [
           "roster",
@@ -6249,6 +6293,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -673,6 +673,7 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         _repro_fetchable,
         _repro_named_files,
         _repro_package_plan,
+        _repro_unpack_archives,
     )
 
     code_tbl = upstream("code_check", "table")
@@ -698,40 +699,113 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
 
     if structure_df is None:
         structure_df = run_missing("data_check").get("structure")
-    plan = _repro_package_plan(structure_df)
     if code_tbl is None:
         cc = run_missing("code_check")
         code_tbl = cc.table
         version_pin = cc.get("version_pin")
-    # Before a run, the files the code names that the repository lists but the first
-    # download left out (an image, a sound file) are fetched, in one call (#568)
-    if (
-        execute
-        and _download_on(a["download"])
-        and code_tbl is not None
-        and len(code_tbl) > 0
-        and any(_repro_fetchable(structure_df))
-    ):
+    # Deposits linked in the paper that hold other people's work or the authors' earlier work
+    # are not checked (repo_check's `table_not_checked`, #648), but the paper's own code may
+    # read their files, as a re-analysis of another team's data does. The files of theirs that
+    # the code names are fetched below and put in the run folder with the paper's own
+    # (`others_got`, added to the plan only); nothing else in this module counts them.
+    others_in = upstream("repo_check", "table_not_checked")
+    others_got: pd.DataFrame | None = None
+    # The files of an archive are where unpacking the archive in its folder puts them, as on
+    # the authors' computer, and the archive itself is there too (`archives_got`, added to the
+    # plan only); the report still names each file by its path in the deposit
+    # (`file_path_deposit`) (#648)
+    # the files any code file of the paper writes or downloads, in any language (code_check's
+    # files_written), so a file a script makes is not missing (#648)
+    written_by_code: list[str] = []
+    if code_tbl is not None and "files_written" in code_tbl.columns:
+        written_by_code = list(
+            dict.fromkeys(
+                x
+                for w in h._chr_col(code_tbl, "files_written")
+                if w is not None
+                for x in re.split(r",\s*", w)
+                if x != ""
+            )
+        )
+    a["written_by_code"] = written_by_code
+    up = _repro_unpack_archives(structure_df, code_tbl)
+    structure_df = up["structure_df"]
+    code_tbl = up["code_tbl"]
+    archives_got = up["archives"]
+
+    # The code runs in the repository as the authors organised it; only paths that do not work
+    # there are rewritten (#568)
+    def plan_of(s: pd.DataFrame | None) -> pd.DataFrame:
+        return _repro_package_plan(bind_rows([s, others_got, archives_got]))
+
+    a["plan_of"] = plan_of
+    plan = plan_of(structure_df)
+    # Before a run, the files the code names that the repository lists but the first download
+    # left out (an image, a sound file) are fetched, in one call for those files only (#568)
+    if execute and _download_on(a["download"]) and code_tbl is not None and len(code_tbl) > 0:
         code_txt: list[str] = []
         for loc in h._chr_col(code_tbl, "file_location"):
             if h._file_exists(loc):
                 code_txt.extend(_read_text(loc)[0])
-        named = _repro_named_files(structure_df, code_txt)
-        if any(named):
-            from metacheck.repro.core import _message
+        from metacheck.repro.core import _message
 
-            _message(
-                f"[repro] fetching {sum(named)} file(s) the code names that were not downloaded"
-            )
-            structure_df = _repro_fetch_files(
-                structure_df,
-                named,
-                a["max_file_size"],
-                a["max_download_size"],
-                a["cache"],
-                a["skip_on_api_limit"],
-            )
-            plan = _repro_package_plan(structure_df)
+        if any(_repro_fetchable(structure_df)):
+            named = _repro_named_files(structure_df, code_txt)
+            if any(named):
+                _message(
+                    f"[repro] fetching {sum(named)} file(s) the code names that were not downloaded"
+                )
+                structure_df = _repro_fetch_files(
+                    structure_df,
+                    named,
+                    a["max_file_size"],
+                    a["max_download_size"],
+                    a["cache"],
+                    a["skip_on_api_limit"],
+                )
+        if isinstance(others_in, pd.DataFrame) and len(others_in) > 0:
+            cols = [
+                c
+                for c in (
+                    "file_name",
+                    "file_path",
+                    "file_url",
+                    "file_size",
+                    "repo_url",
+                    "archive_url",
+                    "archive_member",
+                )
+                if c in others_in.columns
+            ]
+            others_in = others_in[cols].copy()
+            others_in["file_location"] = pd.array([None] * len(others_in), dtype="string")
+            named = _repro_named_files(others_in, code_txt, by_extension=False)
+            if any(named):
+                _message(
+                    f"[repro] fetching {sum(named)} file(s) the code names from deposits that "
+                    "are not this paper's"
+                )
+                others_in = _repro_fetch_files(
+                    others_in,
+                    named,
+                    a["max_file_size"],
+                    a["max_download_size"],
+                    a["cache"],
+                    a["skip_on_api_limit"],
+                )
+                locs = h._chr_col(others_in, "file_location")
+                got = [
+                    n and loc is not None and h._file_exists(loc)
+                    for n, loc in zip(named, locs, strict=True)
+                ]
+                if any(got):
+                    got_cols = [
+                        c
+                        for c in ("file_name", "file_path", "file_location")
+                        if c in others_in.columns
+                    ]
+                    others_got = others_in.loc[got, got_cols].reset_index(drop=True)
+        plan = plan_of(structure_df)
 
     # SPSS / Stata data without syntax ------------------------------------------
     fnames_all = h._chr_col(structure_df, "file_name")
@@ -894,6 +968,8 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         shared_reports=[spss_report, stata_report, self_repro_report, nonr_report],
         execute=execute,
         keep_sandbox=keep_sandbox,
+        code_tbl=code_tbl,
+        version_pin=version_pin,
     )
 
 
@@ -1033,6 +1109,8 @@ def _finish(
     shared_reports: Sequence[list[Any] | None],
     execute: bool,
     keep_sandbox: bool,
+    code_tbl: pd.DataFrame | None = None,
+    version_pin: Any = None,
 ) -> dict[str, Any]:
     """Combine the R and Python blocks, with the sections shared across languages."""
     from metacheck.repro.outcomes import (
@@ -1144,6 +1222,8 @@ def _finish(
             ms=ms,
             r=r,
             source_unknown=_repro_source_unknown(install_results),
+            code_tbl=code_tbl,
+            version_pin=version_pin,
         )
         if execute
         else None,
@@ -1164,6 +1244,8 @@ def _checklist(
     ms: Mapping[str, Any] | None,
     r: Mapping[str, Any],
     source_unknown: Sequence[str],
+    code_tbl: pd.DataFrame | None = None,
+    version_pin: Any = None,
 ) -> str | None:
     """``.repro_checklist_section()`` with the module's arguments."""
     from metacheck.repro.recorded import _repro_recorded_summary
@@ -1174,11 +1256,27 @@ def _checklist(
     note = [
         str(x)
         for x in (
-            _repro_recorded_summary(r["recorded"], install_results),
+            _repro_recorded_summary(
+                r["recorded"],
+                install_results,
+                version_pin,
+                a["sandbox"],
+                h._is_true(a.get("docker_use_declared_version")),
+            ),
             r["recorded_advice"],
         )
         if x is not None
     ]
+    # code files in languages that are not run, with what they write (#648)
+    other_writes: pd.DataFrame | None = None
+    if code_tbl is not None and {"language", "files_written"} <= set(code_tbl.columns):
+        lang = h._chr_col(code_tbl, "language")
+        made = h._chr_col(code_tbl, "files_written")
+        keep = [
+            lg not in ("R", "Python") and w is not None and w != ""
+            for lg, w in zip(lang, made, strict=True)
+        ]
+        other_writes = code_tbl.loc[keep, ["file_name", "files_written"]].reset_index(drop=True)
     return _repro_checklist_section(
         table,
         run_results,
@@ -1194,6 +1292,7 @@ def _checklist(
         source_unknown=source_unknown,
         install_results=install_results,
         versions_recorded=r["recorded_advice"] is not None,
+        other_writes=other_writes,
     )
 
 
@@ -1279,38 +1378,30 @@ def _assess_r(
         _repro_content_sniff,
         _repro_is_jags_model,
         repro_dependencies,
-        repro_file_io,
         repro_missing_inputs,
-        repro_rewrite_paths,
-        repro_run_order,
     )
     from metacheck.repro.layout import (
-        _repro_apply_folder_vars,
+        _repro_archive_text,
         _repro_fill_file_choice,
-        _repro_folder_vars,
-        _repro_here_roots,
-        _repro_here_start,
         _repro_inputs_after_run,
         _repro_inputs_to_report,
-        _repro_keep_working_refs,
-        _repro_listed_folders,
         _repro_name_corrections,
         _repro_name_report,
         _repro_names_corrected,
-        _repro_order_path,
         _repro_path_fix_text,
+        _repro_plan_rewrites,
         _repro_ref_checkable,
-        _repro_run_folders,
-        _repro_script_path,
-        _repro_script_places,
         _repro_shown_location,
         _repro_static_light,
         _repro_unique_script_names,
     )
     from metacheck.repro.outcomes import (
+        _REPRO_NOT_OWN_OUTCOMES,
+        _REPRO_STARTED_OUTCOMES,
         _repro_absent_report,
         _repro_error_message,
         _repro_read_failed_msg,
+        _repro_run_light,
         _repro_starts_app,
     )
     from metacheck.repro.recorded import (
@@ -1457,52 +1548,15 @@ def _assess_r(
     n_deps = len(install_deps)
 
     # 4. Per-file path rewrite + I/O for ordering ---------------------------------
-    io = repro_file_io(code_text_list)
-    io["file_path"] = pd.array(_repro_order_path(r_files), dtype="string")
-    r_script_paths = _repro_script_path(r_files)
-    rewrites = [
-        repro_rewrite_paths(
-            code_texts[i],
-            names[i],
-            plan,
-            "R",
-            structure_df=structure_df,
-            script_path=r_script_paths[i],
-        )
-        for i in range(n_code)
-    ]
-    order_tbl = repro_run_order(io)
-    r_script_places = _repro_script_places(r_files)
-    # the folder each script runs from
-    r_run_dirs = _repro_run_folders(r_script_places, code_text_list, plan, order_tbl, "R")
-    # where here() starts for each script: a path given to here() counts from there
-    # (a named vector in R: by position here)
-    here_roots = list(_repro_here_roots(code_text_list, r_run_dirs, plan).values())
-    r_here_dirs = [_repro_here_start(r_run_dirs[i], here_roots[i], plan) for i in range(n_code)]
-    # a reference that works as written stays as it is
-    rewrites = [
-        _repro_keep_working_refs(
-            rewrites[i], plan, r_script_paths[i], r_run_dirs[i], here_dir=r_here_dirs[i]
-        )
-        for i in range(n_code)
-    ]
-    # a folder on the authors' computer held in a variable gets the deposit's folder
-    rewrites = [
-        _repro_apply_folder_vars(
-            rewrites[i],
-            _repro_folder_vars(code_texts[i], plan, r_run_dirs[i], rw=rewrites[i]),
-        )
-        for i in range(n_code)
-    ]
-    # a folder the script lists, where the deposit holds it (#578, item 2)
-    for i in range(n_code):
-        d = rewrites[i]
-        lf = _repro_listed_folders(code_texts[i], plan, r_run_dirs[i], "R")
-        if lf is not None and len(lf):
-            have_refs = set(h._chr_col(d, "ref")) if len(d) else set()
-            extra = lf[[ref not in have_refs for ref in h._chr_col(lf, "ref")]]
-            if len(extra):
-                rewrites[i] = bind_rows([d, extra]) if len(d.columns) else extra
+    # (see _repro_plan_rewrites(), which _repro_rewrite_preview() also uses)
+    rp = _repro_plan_rewrites(code_text_list, r_files, plan, structure_df, "R")
+    io = rp["io"]
+    r_script_paths = rp["script_paths"]
+    rewrites = rp["rewrite_list"]
+    order_tbl = rp["order_tbl"]
+    r_script_places = rp["script_places"]
+    r_run_dirs = rp["run_dirs"]
+    here_roots = rp["here_roots"]
     rewrite_list = h.RNamedList(names, rewrites)
 
     def lgl(d: pd.DataFrame, col: str) -> list[bool]:
@@ -1558,7 +1612,17 @@ def _assess_r(
         )
     )
     unres_lower = list(dict.fromkeys(None if x is None else x.lower() for x in unresolved_refs))
-    candidate_missing = [x for x in unres_lower if x not in produced]
+    # Also what scripts in other languages write (code_check's files_written: a Stata .do
+    # file's export delimited), and a name the code builds, matched as a pattern
+    # (.code_name_match()) (#648)
+    from metacheck.codecheck.core import _code_name_match
+
+    in_written = (
+        _code_name_match(list(unres_lower), [*produced, *a["written_by_code"]])
+        if unres_lower
+        else []
+    )
+    candidate_missing = [x for x, w in zip(unres_lower, in_written, strict=True) if not w]
     missing_inputs = repro_missing_inputs(candidate_missing, plan, structure_df)
     n_missing_inputs = len(missing_inputs)
     n_withheld = sum(s == "withheld_size" for s in h._chr_col(missing_inputs, "status"))
@@ -1802,21 +1866,10 @@ def _assess_r(
         tl = _repro_static_light(
             _repro_inputs_after_run(missing_inputs, unresolved_list, names, run_results), tl_clean
         )
-        outcomes = h._chr_col(run_results, "outcome")
-        not_failures = (
-            "skipped_time_limit",
-            "docker_failed",
-            "needs_a_person",
-            "needs_internet",
-            "download_too_large",
-            "not_downloaded",
-            "out_of_memory",
-            "not_read",
-        )
-        if any(o in ("errored", "timed_out") for o in outcomes):
-            tl = "red"
-        elif any(o in not_failures for o in outcomes) and tl == "green":
-            tl = "yellow"
+        # An error of the code is a reproduction failure: red, whatever the static signals
+        # said. A time-out, a package that could not be installed, a gap in our run or no
+        # script run to the end is yellow (see _repro_run_light(); #648).
+        tl = _repro_run_light(tl, run_results)
 
     # 8. Per-file table --------------------------------------------------------------
     ot_names = h._chr_col(order_tbl, "file_name")
@@ -1915,6 +1968,10 @@ def _assess_r(
 
     total_ambiguous = sum(ambiguous_n)
     report_paths = _repro_path_fix_text(rewrite_list, execute)
+    # archives the run unpacked because the code reads files inside them (#648)
+    arch_txt = _repro_archive_text(structure_df, code_texts)
+    if arch_txt:
+        report_paths = f"{report_paths} {arch_txt}"
     if total_ambiguous > 0:
         report_paths += (
             f" {total_ambiguous:d} reference{plural(total_ambiguous)} matched several files "
@@ -2001,13 +2058,29 @@ def _assess_r(
     n_ran_ok = sum(o == "ran_ok" for o in outcomes_all) if run_results is not None else None
     n_nodep_sum = sum(o == "dependency_unavailable" for o in outcomes_all)
     n_by_src_sum = sum(o == "run_by_source" for o in outcomes_all)
-    n_run_own = len(run_results) - n_by_src_sum if run_results is not None else 0
+    # the scripts with a result of their own, and those that were started: files of software
+    # or of functions only were counted as scripts run (#648)
+    n_run_own = (
+        sum(o not in _REPRO_NOT_OWN_OUTCOMES for o in outcomes_all)
+        if run_results is not None
+        else 0
+    )
+    n_started = (
+        sum(o in _REPRO_STARTED_OUTCOMES for o in outcomes_all) if run_results is not None else 0
+    )
     lines: list[str | None] = []
     if execute:
         where = "Docker container" if sandbox == "docker" else "subprocess"
+        ran = (
+            "none of them"
+            if n_started == 0
+            else plural(n_code, "it", "them")
+            if n_started == n_code
+            else f"{n_started:d} of them"
+        )
         lines.append(
-            f"We assessed AND ran {n_code:d} R code file{plural(n_code)} for reproducibility "
-            f"(each in an isolated {where})."
+            f"We assessed {n_code:d} R code file{plural(n_code)} for reproducibility and ran "
+            f"{ran} (each in an isolated {where})."
         )
     else:
         lines.append(
@@ -2024,7 +2097,7 @@ def _assess_r(
             "another file already in the run (the paper links more than one "
             "repository/component)."
         )
-    if execute and run_results is not None:
+    if execute and run_results is not None and n_run_own > 0:
         more = (
             f" ({n_by_src_sum:d} more {plural(n_by_src_sum, 'is', 'are')} run by another script "
             "with `source()`)"
@@ -2039,7 +2112,7 @@ def _assess_r(
         lines.append(
             f"{n_nodep_sum:d} script{plural(n_nodep_sum)} could not run because "
             f"{plural(n_nodep_sum, 'its', 'their')} own dependency is unavailable (not counted "
-            "against the traffic light)."
+            "as an error of the code)."
         )
     if len(reported_inputs) > 0:
         nr = len(reported_inputs)
@@ -2048,7 +2121,15 @@ def _assess_r(
             "size)."
         )
     lines.append(f"{n_deps:d} installable dependenc{'y' if n_deps == 1 else 'ies'} detected.")
-    lines += _as_lines(_repro_recorded_summary(recorded, install_results))
+    lines += _as_lines(
+        _repro_recorded_summary(
+            recorded,
+            install_results,
+            version_pin,
+            sandbox,
+            h._is_true(a.get("docker_use_declared_version")),
+        )
+    )
     lines += _as_lines(recorded_advice)
     summary_text = h._paste_bullets(lines)
 

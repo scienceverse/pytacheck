@@ -60,6 +60,8 @@ def rval(x: Any) -> str:
 
 
 def r_paper(spec: dict[str, Any]) -> str:
+    if spec.get("nopaper"):
+        return "NULL"
     parts = []
     if spec.get("read"):
         parts.append(f"read({rvec(spec['read'])})")
@@ -267,6 +269,18 @@ CASES: list[tuple[str, str, dict[str, Any], dict[str, Any]]] = [
         {},
     ),
     ("local.zip", "local archives are not peeked (no URL)", local(FIX + "zip_local"), {}),
+    (
+        "local.unknown_type",
+        "a file of an unknown type is not a naming problem; build files and Stata help typed (#648)",
+        local(FIX + "unknown_type"),
+        {},
+    ),
+    (
+        "local.no_paper",
+        "naming problems of a local folder checked without a paper (#650)",
+        {"nopaper": True, "args": {"local_path": FIX + "no_paper", "local_only": True}},
+        {},
+    ),
     ("local.rpkg", "an R package tree is excluded", local(FIX + "rpkg"), {}),
     (
         "local.desc_only",
@@ -855,7 +869,8 @@ def case(cid: str, note: str, spec: dict[str, Any], ignore: Any) -> dict[str, An
     py_args = {
         k: v
         for k, v in spec.items()
-        if k in ("papers", "read", "paperlist", "args", "mocks", "report", "tables", "rbox")
+        if k
+        in ("papers", "read", "paperlist", "args", "mocks", "report", "tables", "rbox", "nopaper")
     }
     out: dict[str, Any] = {
         "id": f"repo_check.{cid}",

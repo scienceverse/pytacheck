@@ -19,6 +19,7 @@
       "naming_issues",
       "repo_metadata",
       "ownership",
+      "table_not_checked",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -169,10 +170,6 @@
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/zip_local\", \n\"tests/mod_repo_check/fixtures/zip_local\", \"tests/mod_repo_check/fixtures/zip_local\"\n), File = c(\"archive.7z\", \"bundle.zip\", \"README.md\"), Size = c(\"6 B\", \n\"237 B\", \"14 B\"), Type = c(\"archive\", \"archive\", \"readme\")), row.names = c(NA, \n-3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
           "#### Archive Files\n\nThe following files are not ZIP archives: archive.7z. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, `.tar` or `.tar.gz`.",
-          "#### Unclassified Files\n\nWe could not classify 2 files by name or extension: archive.7z, bundle.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
-          "#### File Naming",
-          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 2 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"archive.7z\", \"bundle.zip\"), Rule = c(\"unclassifiable\", \n\"unclassifiable\"), Severity = c(\"Required\", \"Required\"), Detail = c(\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"archive.7z\", \"bundle.zip\"), Group = c(\"—\", \n\"—\"), Path = c(\"archive.7z\", \"bundle.zip\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -186,7 +183,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 3 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 2 archive files.\n-  We could not classify 2 files.\n-  We found 2 file naming problems to fix."
+          "\n-  We found 3 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 2 archive files."
         ]
       },
       {
@@ -261,13 +258,13 @@
           {
             "t": "int",
             "v": [
-              2
+              0
             ]
           },
           {
             "t": "int",
             "v": [
-              2
+              0
             ]
           },
           {
@@ -350,49 +347,29 @@
       },
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 0,
         "names": [
           "file_name",
           "rule",
           "severity",
-          "detail",
-          "paper_id"
+          "detail"
         ],
         "v": [
           {
             "t": "chr",
-            "v": [
-              "archive.7z",
-              "bundle.zip"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "unclassifiable",
-              "unclassifiable"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "bad",
-              "bad"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "p_local",
-              "p_local"
-            ]
+            "v": []
           }
         ]
       },
@@ -623,6 +600,64 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "file_path",
+          "data_type",
+          "doc_role"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "list",
         "names": [
           "roster",
@@ -721,6 +756,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

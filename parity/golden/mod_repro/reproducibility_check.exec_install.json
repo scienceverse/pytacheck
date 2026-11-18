@@ -252,7 +252,7 @@
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"fake_dep.R\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
           "::: {.callout-tip title=\"Output — fake_dep.R (dependency_unavailable)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> x <- 1\n> stop(\"there is no package called 'oddpkg'\")\n````\n**Messages / errors (stderr):**\n````\nError in eval(e, envir = env) : there is no package called 'oddpkg'\n````\n\n:::\n",
-          "Dependencies were installed into a throwaway library before running: 2 succeeded, 2 failed. notapkg123, oldpkg, oddpkg, fine were installed.",
+          "Dependencies were installed into a throwaway library before running: 2 succeeded, 2 failed. oldpkg, fine were installed.",
           "**1 of these were no longer on live CRAN** and were instead installed from the **CRAN Archive**'s most recent published version — a real version the package once had, but not necessarily the one the paper's authors used: oldpkg.",
           "**Failed:** notapkg123 [not available on CRAN for this R version] (package is not available for this version of R); oddpkg [NA] (NA)"
         ]
@@ -260,13 +260,13 @@
       {
         "t": "chr",
         "v": [
-          "green"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 1 R code file for reproducibility (each in an isolated subprocess).\n-  0 of 1 script ran without error when executed.\n-  1 script could not run because its own dependency is unavailable (not counted against the traffic light).\n-  1 installable dependency detected."
+          "\n-  We assessed 1 R code file for reproducibility and ran none of them (each in an isolated subprocess).\n-  0 of 1 script ran without error when executed.\n-  1 script could not run because its own dependency is unavailable (not counted as an error of the code).\n-  1 installable dependency detected."
         ]
       },
       {
@@ -289,6 +289,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -428,12 +429,19 @@
             "v": [
               0
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
           0,
           0,
           0,
@@ -468,6 +476,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -682,7 +691,7 @@
       {
         "t": "chr",
         "v": [
-          "We ran the paper's 1 R script in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script.\n\n**0 of 1 script ran to the end**: 1 could not run on our server.\n\n| Script | Result | What happened |\n|---|---|---|\n| fake&#95;dep.R | Could not run on our server | It needs the R package oddpkg, which we could not install. This is not an error in the script. |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A package could not be installed.**\n\n- <code>fake&#95;dep.R<\/code> needs <code>oddpkg<\/code>.\n\n<code>oddpkg<\/code> could not be installed with the current version of R, probably because it is old. Record the versions you used (in R, <code>renv::init()<\/code> writes them to a <code>renv.lock<\/code> file) and your R version. To be sure the code keeps running, provide a Docker image: a frozen copy of the whole computer setup the code needs, which you can build from <code>rocker/r-ver<\/code> at your R version.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+          "We ran the paper's 1 R script in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script.\n\n**0 of 1 script ran to the end**: 1 could not run on our server.\n\n| Script | Result | What happened |\n|---|---|---|\n| fake&#95;dep.R | Could not run on our server | It needs the R package oddpkg, which we could not install. This is not an error in the script. |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A package could not be installed.**\n\n- <code>fake&#95;dep.R<\/code> needs <code>oddpkg<\/code>.\n\n<code>oddpkg<\/code> could not be installed in our run. Record the versions you used (in R, <code>renv::init()<\/code> writes them to a <code>renv.lock<\/code> file) and your R version, and say in the README where any package that is not on CRAN comes from.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -693,6 +702,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

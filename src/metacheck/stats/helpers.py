@@ -18,6 +18,7 @@ import re
 from types import SimpleNamespace
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from metacheck._r.base import as_character, r_round
@@ -136,6 +137,146 @@ def _stato_strip_variant(key: Any) -> Any:
     return sub(r"\[[^]]*\]$", "", key)
 
 
+# ---- the decimal point of The Lancet, and the chi of a chi-squared test ---------------------
+
+_DECIMAL_POINT = "(?<=\\d)[\u00b7\u2022\u2219](?=\\d)"
+_CHI_JOIN = "\u03c7\\s+([\u00b22\u2082])(?=\\s*[([=<>\u2264\u2265])"
+_X_JOIN = "(?<![\\w\u0370-\u03ff])X\\s+([\u00b22])(?=\\s*[([=<>\u2264\u2265])"
+_DECIMAL_ANY = re.compile("[\u00b7\u2022\u2219]|\u03c7|X")
+
+
+def _stat_decimal_point_text(x: Any) -> Any:
+    """``gsub("(?<=\\d)[·•∙](?=\\d)", ".", x)`` of strings (``None`` stays)."""
+    return [
+        s if s is None or not isinstance(s, str) else gsub(_DECIMAL_POINT, ".", s, perl=True)
+        for s in x
+    ]
+
+
+def _stat_chi_join_text(x: Any) -> Any:
+    """The chi of a chi-squared test joined to its 2 in strings (``.stat_chi_join()``)."""
+    out = []
+    for s in x:
+        if isinstance(s, str):
+            s = gsub(_CHI_JOIN, "\u03c7\\1", s, perl=True)
+            s = gsub(_X_JOIN, "X\\1", s, perl=True)
+        out.append(s)
+    return out
+
+
+def _stat_text_apply(paper: Any, fix: Any, quick: Any = None) -> Any:
+    """Apply *fix* to the text of a paper, a paper list or a text table (``.stat_text_apply()``).
+
+    *fix* maps a list of strings to a list of strings. A paper or a paper list is returned as
+    the table it is searched as, with the text changed, when the change touches any text, and
+    as it is otherwise. *quick* is a pattern that every text *fix* changes contains, so that
+    only those texts go through *fix*.
+    """
+    from metacheck.text.search import sentence_table
+
+    if isinstance(paper, str) or paper is None:
+        return paper
+    if isinstance(paper, pd.DataFrame):
+        if "text" not in paper.columns:
+            return paper
+        table = paper
+    else:
+        try:
+            table, is_strings = sentence_table(paper)
+        except Exception:  # not a paper: left to the search to complain
+            return paper
+        if is_strings:
+            return paper
+    if "text" not in table.columns:
+        return paper
+    texts = table["text"]
+    if quick is not None:
+        hit = texts.astype("string").str.contains(quick, regex=True, na=False).to_numpy(bool)
+    else:
+        hit = ~texts.isna().to_numpy(bool)
+    if not hit.any():
+        return paper
+    idx = np.flatnonzero(hit)
+    values = list(texts.to_numpy(dtype=object))
+    fixed = fix([values[i] for i in idx])
+    if all(a == b for a, b in zip(fixed, (values[i] for i in idx), strict=True)):
+        return paper
+    for i, v in zip(idx, fixed, strict=True):
+        values[i] = v
+    out = table.copy()
+    out["text"] = pd.Series(values, index=out.index, dtype=texts.dtype)
+    return out
+
+
+def _stat_decimal_point(paper: Any) -> Any:
+    """A paper's text with a raised dot between two digits read as a decimal point.
+
+    Port of ``.stat_decimal_point()``: The Lancet and medRxiv papers in its style write "p =
+    0·0079", which GROBID gives with the middle dot or the bullet, so the p-values and tests of
+    such papers were not read at all (#648).
+    """
+    return _stat_text_apply(paper, _stat_decimal_point_text, "[\u00b7\u2022\u2219]")
+
+
+def _stat_chi_join(paper: Any) -> Any:
+    """A paper's text with the chi of a chi-squared test joined to its 2 (``.stat_chi_join()``).
+
+    Reading a PDF often puts a space between them ("χ 2 (10) = 9.61", "X 2 (1) = 3.20"), and
+    the statistic was then not read (#351). Only where a test follows.
+    """
+    return _stat_text_apply(paper, _stat_chi_join_text, "\u03c7\\s|X\\s")
+
+
+# ---- p-values below 0 or above 1 (#351) ----------------------------------------------------
+#
+# Rules from all 237,000 "p <comparison> number" in 18 corpora (16,847 papers), each case read:
+# 50 were negative and 180 were read above 1.
+
+# The power of ten of a p-value in scientific notation, lost or garbled when the PDF was read,
+# right after the number: a multiplication sign ("2.4 x", GROBID's "9 10 À5" in some journals,
+# "5.0.10 -12"), "10" with an exponent, a minus with digits ("1.3 -4"), a superscript or an
+# "e". The number written is then not the p-value (99 of the 230).
+_P_LOST_POWER = (
+    "^\\s*(?:[x×X·•⋅�ÃÂ*]|9\\s+10\\b|\\.\\s*10\\b"
+    "|10\\s*(?:\\^|[-−À⁻]|\\s+[-−À]?\\d|E|e|$)"
+    "|[-−À⁻]\\s*\\d|[⁰¹²³⁴-⁹]|[eE]\\s*[-−+À]?\\s*\\d)"
+)
+
+_P_UNIT = (
+    "^\\s*(?i:%|‰|[µμnmck]?m\\b|[kmg]?hz\\b|[mun]?s\\b|ps\\b|[km]?pa\\b|bar\\b|"
+    "[mk]?w\\b|[mk]?v\\b|k\\b|°|[km]?ev\\b|m?g\\b|kg\\b|g/ml|m?l\\b|mmhg\\b|dbm?\\b|"
+    "h\\b|hr\\b|min\\b|years?\\b|days?\\b|atm\\b)"
+)
+_P_LOG = "(?i:log|\\bln)\\s*(?:\\(?\\s*10\\s*\\)?|₁₀)?\\s*\\(?\\s*$"
+_P_FORMULA = "(?:/|(?<!\\s):|\\d-)$"
+
+
+def _p_not_a_value(before: Any, after: Any) -> list[str | None]:
+    """Why a "p" with a value below 0 or above 1 is not a p-value at all (``.p_not_a_value()``).
+
+    From the text right before it (*before*) and right after its number (*after*); ``None``
+    when there is no such reason: "unit" (a unit follows the number, so P is a physical
+    quantity: "P = 2.9 µm", "P = 6.02 MPa"), "log" (a logarithm of p: "-log10 P = 7.5") or
+    "formula" (the p is part of a name or a formula, written against "/" or ":" or after a number
+    and a hyphen: "Ca/P = 1.67", "N:P = -0.41", "1-p"). 50 of the 230 were one of these, none a
+    p-value.
+    """
+    unit = compile_r(_P_UNIT, perl=True)
+    logp = compile_r(_P_LOG, perl=True)
+    formula = compile_r(_P_FORMULA, perl=True)
+    b = ["" if is_missing(x) else str(x) for x in before]
+    a = ["" if is_missing(x) else str(x) for x in after]
+    out: list[str | None] = [None] * len(b)
+    for i in range(len(b)):
+        if formula.search(b[i]):
+            out[i] = "formula"
+        if logp.search(b[i]):
+            out[i] = "log"
+        if unit.search(a[i]):
+            out[i] = "unit"
+    return out
+
+
 _OPERATORS = ("=", "<", ">", "~", "≈", "≠", "≤", "≥", "≪", "≫")
 
 
@@ -185,10 +326,12 @@ def _r_stat_pattern() -> dict[str, str]:
 _GREEK_RANGE = "Ͱ-Ͽ"
 
 # A test statistic with a value: t(20) =, F =, chi2 =, z =, W =, OR =, b =. Not a fit index, R
-# squared, a size or another number, which a table note can follow (``.test_stat_head``)
+# squared, a size or another number, which a table note can follow (``.test_stat_head``). A
+# chi-squared test in any of its written forms, also with a space before its 2, which reading a
+# PDF often adds ("χ 2 (10) =", "X 2 (1) =", "chi-square(2) =") (#351)
 _TEST_STAT_HEAD = (
     "(?<![\\w\u0370-\u03ff-])(?:t|F|z|Z|r|rs|R(?![\u00b22])|W|U|H|D|V|Q|T|B|b|d|g|OR|HR|RR|"
-    "\u03c7\u00b2?|\u03c72|X2|chi2|chi\u00b2|\u03c1|rho|\u03c4|\u03b2|\u03b7\u00b2?p?|\u03c9\u00b2?)"
+    "\u03c7\\s?[\u00b22\u2082]?|X\\s?[2\u00b2]|chi[- ]?squared?|chi\\s?[2\u00b2]|\u03c1|rho|\u03c4|\u03b2|\u03b7\u00b2?p?|\u03c9\u00b2?)"
     "[0-9]{0,4}\\s*(?:\\([^()]{0,40}\\)|\\[[^\\]\\[]{0,40}\\])?\\s*"
     "(?:=|<|>|\u2264|\u2265|\u00bc)\\s*[-\u2212\u00c0]?\\s*"
 )
@@ -219,7 +362,7 @@ def _pnt() -> SimpleNamespace:
         f"(?<![\\w.{g}-])(?!(?:p|P|ps|Ps|q|n|N|k|K|df|alpha|value|values|pvalue|pvalues)(?![\\w{g}]))"
         f"(?![pP]_?{_P_SUBSCRIPTS})"  # pFWE, padj: a p-value (#642)
         f"(?!α(?![\\w{g}]))"
-        f"(?:[A-Za-z{g}][A-Za-z{g}0-9²_]{{0,5}}|χ²?)"
+        f"(?:[A-Za-z{g}][A-Za-z{g}0-9²_]{{0,5}}|χ\\s?[²2₂]?|X\\s[2²])"
         "\\s*(?:\\([^()]{0,40}\\)|\\[[^][]{0,40}\\])?\\s*"
         "(?:=|<|>|≤|≥|¼)\\s*[-−À]?\\s*\\.?\\d"
     )

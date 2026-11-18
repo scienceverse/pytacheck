@@ -659,6 +659,8 @@ def test_parse_errors() -> None:
         "code_lines": [4, 2, 2, 3, 1, 7, 1, 1],
         "percentage_comment": [0.2, 1 / 3, 1 / 3, 0.5, 0.5, 2 / 9, 0.8, 0.8],
         "has_docstring": [None] * 8,
+        # none of the fixture files writes a file (metacheck 0.4.4.4, #648)
+        "files_written": [""] * 8,
         "loaded_files_missing": [0, 0, 0, 1, 0, 0, 0, 0],
         "loaded_files_missing_names": ["", "", "", "file.csv", "", "", "", ""],
     }
@@ -1038,7 +1040,7 @@ def test_na_file_url_is_read_as_the_path_na() -> None:
 def test_case_insensitive_match_uses_r_tolower() -> None:
     # R's tolower() (towlower) maps "İ" to "i": "İNDEX.csv" is the repository's
     # index.csv, "DATÉ.CSV" its daté.csv; only Ümlaut.csv is missing
-    from metacheck.modules._code_check import _r_tolower
+    from metacheck.codecheck.core import _lower as _r_tolower
 
     assert _r_tolower("İNDEX.CSV") == "index.csv"
     assert _r_tolower("DATÉ.CSV ΣΑΣ Ǆ") == "daté.csv σασ ǆ"

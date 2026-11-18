@@ -53,7 +53,8 @@
           "expanded",
           "imprecise",
           "not_a_test",
-          "zero"
+          "zero",
+          "impossible"
         ],
         "v": [
           {
@@ -89,8 +90,7 @@
             "v": []
           },
           {
-            "t": "list",
-            "names": null,
+            "t": "chr",
             "v": []
           },
           {
@@ -111,6 +111,10 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           },
           {
@@ -143,13 +147,20 @@
         "names": [
           "paper_id",
           "n_imprecise",
-          "n_zero"
+          "n_zero",
+          "n_impossible"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
               "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
             ]
           },
           {
@@ -174,6 +185,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

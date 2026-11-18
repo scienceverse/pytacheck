@@ -1316,6 +1316,243 @@ expr(
     "(" + CHAIN_PY.format(paper="m.pc.demopaper()") + "))",
 )
 
+# ---------------------------------------------------------------------------
+# metacheck 0.4.4.4 to 0.4.4.6 (#648, #649): paths, archives, reasons, light, wording
+# ---------------------------------------------------------------------------
+
+# a document is written as <name>.<ext> and the code taken out of it runs from that file
+ws(
+    "document_qmd",
+    "list(`analysis/report.qmd` = 'x <- 1'), list(`analysis/report.qmd` = " + EMPTY_RW_R + "),"
+    " data.frame(file_name = 'analysis/report.qmd', target_path = 'analysis/report.qmd')",
+    "{'analysis/report.qmd': 'x <- 1'}, {'analysis/report.qmd': " + EMPTY_RW_PY + "},"
+    " m.pd.DataFrame({'file_name': ['analysis/report.qmd'], 'target_path': ['analysis/report.qmd']})",
+)
+
+# a text joined to a folder stays as written; a direct read in the same script is pointed to the file
+expr(
+    "repro_apply_rewrites.joined_and_direct",
+    "{ plan <- data.frame(file_name = c('x.csv', 'm.R'), target_path = c('data/x.csv', 'scripts/m.R'));"
+    " code2 <- c('d <- read.csv(file.path(dir, \"x.csv\"))', 'e <- read.csv(\"x.csv\")');"
+    " rw2 <- metacheck:::.repro_keep_working_refs(repro_rewrite_paths(code2, 'm.R', plan,"
+    " script_path = 'scripts/m.R'), plan, 'scripts/m.R', '.');"
+    " metacheck:::.repro_apply_rewrites(code2, rw2) }",
+    "lambda m: (lambda plan, code2: m.core._repro_apply_rewrites(code2,"
+    " m.layout._repro_keep_working_refs(m.core.repro_rewrite_paths(code2, 'm.R', plan,"
+    " script_path='scripts/m.R'), plan, 'scripts/m.R', '.')))"
+    "(m.pd.DataFrame({'file_name': ['x.csv', 'm.R'], 'target_path': ['data/x.csv', 'scripts/m.R']}),"
+    " ['d <- read.csv(file.path(dir, \"x.csv\"))', 'e <- read.csv(\"x.csv\")'])",
+)
+
+# the tiny deposit of the paths test: each script as written and as it is rewritten
+expr(
+    "repro_rewrite_preview.repro_paths",
+    "{ x <- metacheck:::.repro_rewrite_preview('tests/repro_core/fixtures/repro_paths');"
+    " x[order(x$lang, x$file_name), ] }",
+    "lambda m: (lambda x: x.sort_values(['lang', 'file_name'], kind='stable').reset_index(drop=True))"
+    "(m.layout._repro_rewrite_preview('tests/repro_core/fixtures/repro_paths'))",
+)
+
+# where the files of an archive are once it is unpacked
+expr(
+    "repro_unpacked_paths.archives",
+    "metacheck:::.repro_unpacked_paths(c('behaviour_data.zip/behaviour_data/p01.json',"
+    " 'd/loose.zip/a.csv', 'd/loose.zip/sub/b.csv', 'raw/s3_raw.json.gz/s3_raw.json',"
+    " 'Data.tar.gz/Data/x.csv', 'outer.zip/top/inner.zip/q.csv', 'outer.zip/top/r.csv',"
+    " 'dup.zip/a.csv', 'dup/a.csv', 'plain.csv', NA))",
+    "lambda m: m.layout._repro_unpacked_paths(['behaviour_data.zip/behaviour_data/p01.json',"
+    " 'd/loose.zip/a.csv', 'd/loose.zip/sub/b.csv', 'raw/s3_raw.json.gz/s3_raw.json',"
+    " 'Data.tar.gz/Data/x.csv', 'outer.zip/top/inner.zip/q.csv', 'outer.zip/top/r.csv',"
+    " 'dup.zip/a.csv', 'dup/a.csv', 'plain.csv', None])",
+)
+expr(
+    "repro_unpack_archives.gz_on_disk",
+    "{ d <- tempfile(); dir.create(d); gz <- file.path(d, 'res.nii.gz'); writeLines('x', gz);"
+    " s <- data.frame(file_name = 'res.nii', file_path = 'templates/res.nii.gz/res.nii',"
+    " file_location = file.path(d, 'res.nii'), archive_file_path = 'templates/res.nii.gz',"
+    " archive_file_location = gz);"
+    " code <- data.frame(file_name = 'a.R', file_path = 'code/a.R');"
+    " up <- metacheck:::.repro_unpack_archives(s, code);"
+    " list(up$structure_df$file_path, up$structure_df$file_path_deposit, up$code_tbl$file_path,"
+    " up$archives$file_name, up$archives$file_path, basename(up$archives$file_location)) }",
+    "lambda m: m.tmp(lambda d: (lambda gz: (lambda up: [up['structure_df']['file_path'].tolist(),"
+    " up['structure_df']['file_path_deposit'].tolist(), up['code_tbl']['file_path'].tolist(),"
+    " up['archives']['file_name'].tolist(), up['archives']['file_path'].tolist(),"
+    " [__import__('os').path.basename(x) for x in up['archives']['file_location'].tolist()]])"
+    "(m.layout._repro_unpack_archives(m.pd.DataFrame({'file_name': ['res.nii'],"
+    " 'file_path': ['templates/res.nii.gz/res.nii'], 'file_location': [d + '/res.nii'],"
+    " 'archive_file_path': ['templates/res.nii.gz'], 'archive_file_location': [gz]}),"
+    " m.pd.DataFrame({'file_name': ['a.R'], 'file_path': ['code/a.R']}))))"
+    "((lambda p: (open(p, 'w').write('x\\n'), p)[1])(d + '/res.nii.gz')))",
+)
+_ARCH_S2 = (
+    "file_name = 'p01.json', file_path = 'behaviour_data/p01.json',"
+    " file_path_deposit = 'behaviour_data.zip/behaviour_data/p01.json'"
+)
+_ARCH_S2_PY = (
+    "m.pd.DataFrame({'file_name': ['p01.json'], 'file_path': ['behaviour_data/p01.json'],"
+    " 'file_path_deposit': ['behaviour_data.zip/behaviour_data/p01.json']})"
+)
+expr(
+    "repro_archive_text.cases",
+    f"{{ s2 <- data.frame({_ARCH_S2});"
+    " list(metacheck:::.repro_archive_text(s2, \"f <- Sys.glob('behaviour_data/*.json')\"),"
+    " metacheck:::.repro_archive_text(s2, \"unzip('behaviour_data.zip'); f <- Sys.glob('behaviour_data/*.json')\"),"
+    " metacheck:::.repro_archive_text(s2, \"x <- read.csv('other.csv')\")) }",
+    f"lambda m: (lambda s2: [m.layout._repro_archive_text(s2, [[\"f <- Sys.glob('behaviour_data/*.json')\"]]),"
+    " m.layout._repro_archive_text(s2, [[\"unzip('behaviour_data.zip'); f <- Sys.glob('behaviour_data/*.json')\"]]),"
+    " m.layout._repro_archive_text(s2, [[\"x <- read.csv('other.csv')\"]])])"
+    f"({_ARCH_S2_PY})",
+)
+
+# why a script stopped
+_REASON_MSGS = [
+    "Error in read_experiment(1) : Data file not found: ../data/expt1all.csv",
+    "Error in eval(e, envir = env) : file not found: 'new/wiener_marginal.cpp'",
+    'Error: Cannot open "data/x.shp"; The file doesn\'t seem to exist.',
+    "Error in `ggsave()`: ! Cannot find directory 'out/plots'.",
+    "Error in check(ti) : model file(s) not found in /sandbox: models/a.jags",
+    "Error in `select()`: ! Can't select columns that don't exist.",
+    "Error in `require_package()`: ! Please install the 'cmdstanr' package.",
+    'Error in check_pkg_installed(x) : The package "broom.helpers" (>= 1.20.0) is required.',
+    "Error in find_chrome() : Cannot find Chromium or Google Chrome",
+    "Error: python3 is required when rerun_text_analysis is TRUE.",
+    "LEVELS_DB is not set. Set it to the path of the study DuckDB database",
+    "ValueError: ANTHROPIC_API_KEY environment variable is required",
+    "openai.OpenAIError: Missing credentials. Please pass an `api_key`",
+    "Error in library(x) : there is no package called 'x'",
+    "Error in file(file, \"rt\") : cannot open file 'a.csv': No such file or directory",
+]
+
+
+def _rchr(xs: list[str]) -> str:
+    return (
+        "c("
+        + ", ".join(repr(x) if '"' not in x else '"' + x.replace('"', '\\"') + '"' for x in xs)
+        + ")"
+    )
+
+
+def _pyl(xs: list[str]) -> str:
+    return repr(xs)
+
+
+expr(
+    "repro_failure_reason.settings_and_more",
+    f"metacheck:::.repro_failure_reason(rep('errored', {len(_REASON_MSGS)}), {_rchr(_REASON_MSGS)})",
+    f"lambda m: m.outcomes._repro_failure_reason(['errored'] * {len(_REASON_MSGS)}, {_pyl(_REASON_MSGS)})",
+)
+_OPEN_MSGS = [
+    "Error in f(1) : Data file not found: ../data/expt1all.csv",
+    "Error in eval(e) : file not found: 'new/w.cpp'",
+    "OSError: unable to open file (unable to open file: name = 'res/a.h5', errno = 2)",
+    "Error in `ggsave()`: ! Cannot find directory `out/plots`.",
+    "FileNotFoundError: data/raw/x.csv",
+]
+expr(
+    "repro_unopened_files.more_ways",
+    f"metacheck:::.repro_unopened_files({_rchr(_OPEN_MSGS)})",
+    f"lambda m: m.outcomes._repro_unopened_files({_pyl(_OPEN_MSGS)})",
+)
+expr(
+    "repro_unopened_files.read_spss_quotes",
+    "metacheck:::.repro_unopened_files(\"Error in read.spss(x) : unable to open file: 'No such file or directory'\")",
+    "lambda m: m.outcomes._repro_unopened_files(\"Error in read.spss(x) : unable to open file: 'No such file or directory'\")",
+)
+expr(
+    "repro_missing_program.python_needed",
+    "metacheck:::.repro_missing_program(c('Error: python3 is required when rerun_text_analysis is TRUE.',"
+    " 'Error in find_chrome() : Cannot find Chromium or Google Chrome', 'Error: pandoc not found'))",
+    "lambda m: m.outcomes._repro_missing_program(['Error: python3 is required when rerun_text_analysis is TRUE.',"
+    " 'Error in find_chrome() : Cannot find Chromium or Google Chrome', 'Error: pandoc not found'])",
+)
+expr(
+    "repro_needs_arguments.own_messages",
+    '{ py <- list("import argparse\\np = argparse.ArgumentParser()");'
+    " c(metacheck:::.repro_needs_arguments(py, 'analysis.py: error: one of --synthetic / --real is required', 'Python'),"
+    " metacheck:::.repro_needs_arguments(py, 'FATAL: --units is required (or use --selftest)', 'Python'),"
+    " metacheck:::.repro_needs_arguments(list('a <- commandArgs(TRUE)'),"
+    " 'Error: Provide the file index as the first command-line argument.', 'R'),"
+    " metacheck:::.repro_needs_arguments(list('x <- 1'), 'Error: Provide the first command-line argument.', 'R')) }",
+    "lambda m: (lambda py: [m.outcomes._repro_needs_arguments(py, 'analysis.py: error: one of --synthetic / --real is required', 'Python')[0],"
+    " m.outcomes._repro_needs_arguments(py, 'FATAL: --units is required (or use --selftest)', 'Python')[0],"
+    " m.outcomes._repro_needs_arguments(['a <- commandArgs(TRUE)'],"
+    " 'Error: Provide the file index as the first command-line argument.', 'R')[0],"
+    " m.outcomes._repro_needs_arguments(['x <- 1'], 'Error: Provide the first command-line argument.', 'R')[0]])"
+    "(['import argparse\\np = argparse.ArgumentParser()'])",
+)
+
+# the light after a run, and the sentences on what was installed
+_RR_R = "function(o, reason = NA_character_) data.frame(outcome = o, reason = reason)"
+_RR_PY = (
+    "lambda o, reason=None: m.pd.DataFrame({'outcome': m.pd.array(o, dtype='string'),"
+    " 'reason': m.pd.array(reason or [None] * len(o), dtype='string')})"
+)
+expr(
+    "repro_run_light.cases",
+    f"{{ rr <- {_RR_R}; list("
+    " metacheck:::.repro_run_light('green', rr(c('ran_ok', 'errored'), c(NA, 'file'))),"
+    " metacheck:::.repro_run_light('green', rr(c('ran_ok', 'timed_out'))),"
+    " metacheck:::.repro_run_light('green', rr(c('ran_ok', 'errored'), c(NA, 'settings'))),"
+    " metacheck:::.repro_run_light('green', rr(c('ran_ok', 'errored'), c(NA, 'environment'))),"
+    " metacheck:::.repro_run_light('green', rr(c('not_analysis', 'dependency_unavailable'))),"
+    " metacheck:::.repro_run_light('green', rr('ran_ok')),"
+    " metacheck:::.repro_run_light('green', rr(c('ran_ok', 'skipped_time_limit'))),"
+    " metacheck:::.repro_run_light('yellow', rr('errored', 'file')),"
+    " metacheck:::.repro_run_light('red', rr('timed_out'))) }",
+    f"lambda m: (lambda rr: [m.outcomes._repro_run_light('green', rr(['ran_ok', 'errored'], [None, 'file'])),"
+    " m.outcomes._repro_run_light('green', rr(['ran_ok', 'timed_out'])),"
+    " m.outcomes._repro_run_light('green', rr(['ran_ok', 'errored'], [None, 'settings'])),"
+    " m.outcomes._repro_run_light('green', rr(['ran_ok', 'errored'], [None, 'environment'])),"
+    " m.outcomes._repro_run_light('green', rr(['not_analysis', 'dependency_unavailable'])),"
+    " m.outcomes._repro_run_light('green', rr(['ran_ok'])),"
+    " m.outcomes._repro_run_light('green', rr(['ran_ok', 'skipped_time_limit'])),"
+    " m.outcomes._repro_run_light('yellow', rr(['errored'], ['file'])),"
+    " m.outcomes._repro_run_light('red', rr(['timed_out']))])"
+    f"({_RR_PY})",
+)
+expr(
+    "repro_install_sentence.cases",
+    "{ ir <- data.frame(package = c('a', 'b', 'c'), installed = c(TRUE, FALSE, TRUE));"
+    " list(metacheck:::.repro_install_sentence(ir), metacheck:::.repro_install_sentence(ir[2, ], pip = TRUE),"
+    " metacheck:::.repro_install_sentence(ir[c(1, 3), ])) }",
+    "lambda m: (lambda ir: [m.outcomes._repro_install_sentence(ir),"
+    " m.outcomes._repro_install_sentence(ir.iloc[[1]].reset_index(drop=True), pip=True),"
+    " m.outcomes._repro_install_sentence(ir.iloc[[0, 2]].reset_index(drop=True))])"
+    "(m.pd.DataFrame({'package': ['a', 'b', 'c'], 'installed': [True, False, True]}))",
+)
+
+# the recorded R version a Docker run used (#649)
+_REC_R = (
+    "{ recorded <- list(deps = data.frame(package = c('a', 'b', 'c'), source = 'cran',"
+    " version = c('1.0', '2.0', NA), base = FALSE, stringsAsFactors = FALSE),"
+    " kept_with_r = data.frame(package = character(0), version = character(0)),"
+    " dates = character(0), date_failed = FALSE);"
+    " results <- data.frame(package = c('a', 'b', 'c'), installed = c(TRUE, TRUE, TRUE),"
+    " version_installed = c('1.0', '2.5', '9.9'));"
+    " vp <- list(r_versions = '4.3.1');"
+)
+_REC_PY = (
+    "lambda m: (lambda recorded, results, vp: [m.recorded._repro_recorded_summary(*a) for a in ["
+    "(recorded, results), (recorded, results, vp, 'docker', True), (recorded, results, vp, 'docker', False),"
+    " (recorded, results, vp, 'process', True),"
+    " (recorded, results, {'r_versions': ['4.4.2 (x)']}, 'docker', True)]])"
+    "({'deps': m.pd.DataFrame({'package': ['a', 'b', 'c'], 'source': 'cran', 'version': ['1.0', '2.0', None],"
+    " 'base': False}), 'kept_with_r': m.pd.DataFrame({'package': m.pd.array([], dtype='string'),"
+    " 'version': m.pd.array([], dtype='string')}), 'dates': [], 'date_failed': False},"
+    " m.pd.DataFrame({'package': ['a', 'b', 'c'], 'installed': [True, True, True],"
+    " 'version_installed': ['1.0', '2.5', '9.9']}), {'r_versions': ['4.3.1']})"
+)
+expr(
+    "repro_recorded_summary.docker_declared_version",
+    _REC_R + " list(metacheck:::.repro_recorded_summary(recorded, results),"
+    " metacheck:::.repro_recorded_summary(recorded, results, vp, 'docker', TRUE),"
+    " metacheck:::.repro_recorded_summary(recorded, results, vp, 'docker', FALSE),"
+    " metacheck:::.repro_recorded_summary(recorded, results, vp, 'process', TRUE),"
+    " metacheck:::.repro_recorded_summary(recorded, results, list(r_versions = '4.4.2 (x)'), 'docker', TRUE)) }",
+    _REC_PY,
+)
+
 
 def main() -> None:
     header = (

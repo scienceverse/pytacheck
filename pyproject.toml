@@ -170,8 +170,9 @@ override-dependencies = ["pillow>=13.0.0"]
 target-version = "py311"
 line-length = 100
 src = ["src", "tests", "parity"]
-# notebooks and markdown are test fixtures or prose (ruff >= 0.16 formats both by default)
-extend-exclude = ["upstream", "*.ipynb", "*.md"]
+# notebooks and markdown are test fixtures or prose (ruff >= 0.16 formats both by default);
+# the repro_paths deposit holds code whose lines the test compares as written
+extend-exclude = ["upstream", "*.ipynb", "*.md", "tests/repro_core/fixtures/repro_paths"]
 force-exclude = true
 
 [tool.ruff.lint]

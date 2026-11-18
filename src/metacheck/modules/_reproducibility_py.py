@@ -29,19 +29,6 @@ from metacheck.modules import reproducibility_check as rc
 from metacheck.report import collapse_section, scroll_table
 from metacheck.repro.python import repro_dependencies_py
 
-#: Outcomes that keep a script from running through without being a failure of its code.
-_NOT_FAILURES = (
-    "skipped_time_limit",
-    "docker_failed",
-    "needs_a_person",
-    "needs_internet",
-    "download_too_large",
-    "not_downloaded",
-    "out_of_memory",
-    "not_read",
-)
-
-
 # ---------------------------------------------------------------------------
 # small helpers
 # ---------------------------------------------------------------------------
@@ -212,6 +199,7 @@ def assess_py(
         repro_run_order,
     )
     from metacheck.repro.layout import (
+        _repro_archive_text,
         _repro_inputs_after_run,
         _repro_inputs_to_report,
         _repro_keep_working_refs,
@@ -229,10 +217,13 @@ def assess_py(
         _repro_unique_script_names,
     )
     from metacheck.repro.outcomes import (
+        _REPRO_NOT_OWN_OUTCOMES,
+        _REPRO_STARTED_OUTCOMES,
         _repro_absent_report,
         _repro_error_message,
         _repro_py_starts_server,
         _repro_read_failed_msg,
+        _repro_run_light,
     )
     from metacheck.repro.python import _repro_docker_image_py2, _repro_py_get_ipython
     from metacheck.repro.runsupport import _repro_not_run_report
@@ -407,11 +398,15 @@ def assess_py(
             for w in h._as_list(ws)
         ]
     )
-    candidate = [
-        x
-        for x in _unique([None if x is None else x.lower() for x in unresolved_refs])
-        if x not in produced
-    ]
+    # Also what scripts in other languages write, and a name the code builds, matched as a
+    # pattern (.code_name_match()) (#648)
+    from metacheck.codecheck.core import _code_name_match
+
+    unres_lower = _unique([None if x is None else x.lower() for x in unresolved_refs])
+    in_written = (
+        _code_name_match(unres_lower, [*produced, *a["written_by_code"]]) if unres_lower else []
+    )
+    candidate = [x for x, w in zip(unres_lower, in_written, strict=True) if not w]
     missing_inputs = repro_missing_inputs(candidate, plan, structure_df)
     n_missing = len(missing_inputs)
     n_withheld = sum(s == "withheld_size" for s in h._chr_col(missing_inputs, "status"))
@@ -601,11 +596,8 @@ def assess_py(
             _repro_inputs_after_run(missing_inputs, unresolved_list, names, run_results),
             tl_clean,
         )
-        outcomes_now = h._chr_col(run_results, "outcome") if run_results is not None else []
-        if any(o in ("errored", "timed_out") for o in outcomes_now):
-            tl = "red"
-        elif any(o in _NOT_FAILURES for o in outcomes_now) and tl == "green":
-            tl = "yellow"
+        # (see _repro_run_light(); #648)
+        tl = _repro_run_light(tl, run_results)
 
     # -- Per-file table --------------------------------------------------------------------
     ord_of = rc._pick(h._col(order_tbl, "order"), m_ord)
@@ -703,6 +695,13 @@ def assess_py(
 
     total_ambiguous = sum(ambiguous_n)
     report_paths = _repro_path_fix_text(rewrite_list, execute)
+    py_arch_txt = _repro_archive_text(structure_df, code_texts)
+    if py_arch_txt:
+        report_paths = f"{report_paths} " + re.sub(
+            r'`unzip\("([^"]*)"\)` in R',
+            lambda m: f'`zipfile.ZipFile("{m.group(1)}").extractall()` in Python',
+            py_arch_txt,
+        )
     if total_ambiguous > 0:
         report_paths += (
             f" {total_ambiguous:d} reference{plural(total_ambiguous)} matched several files "
@@ -852,8 +851,19 @@ def assess_py(
             f"could not run {plural(n_code, 'it', 'them')}: {exec_error}"
         )
     elif execute:
+        n_started = (
+            0 if run_results is None else sum(o in _REPRO_STARTED_OUTCOMES for o in outcomes_all)
+        )
+        ran = (
+            "none of them"
+            if n_started == 0
+            else plural(n_code, "it", "them")
+            if n_started == n_code
+            else f"{n_started:d} of them"
+        )
         lines.append(
-            f"We assessed AND ran {n_code:d} Python code file{plural(n_code)} for reproducibility."
+            f"We assessed {n_code:d} Python code file{plural(n_code)} for reproducibility and "
+            f"ran {ran}."
         )
     else:
         lines.append(
@@ -875,17 +885,18 @@ def assess_py(
     if execute and run_results is not None:
         n_imp = outcomes_all.count("run_by_import")
         # nor are files of software (a package's tests, __init__.py)
-        n_own = len(run_results) - n_imp - outcomes_all.count("not_analysis")
+        n_own = sum(o not in _REPRO_NOT_OWN_OUTCOMES for o in outcomes_all)
         more = (
             f" ({n_imp:d} more {plural(n_imp, 'file is', 'files are')} imported by other files, "
             f"not run on {plural(n_imp, 'its', 'their')} own)"
             if n_imp > 0
             else ""
         )
-        lines.append(
-            f"{n_ran_ok:d} of {n_own:d} Python script{plural(n_own)} ran without error when "
-            f"executed{more}."
-        )
+        if n_own > 0:
+            lines.append(
+                f"{n_ran_ok:d} of {n_own:d} Python script{plural(n_own)} ran without error "
+                f"when executed{more}."
+            )
     if len(reported_inputs) > 0:
         nr = len(reported_inputs)
         lines.append(
@@ -1366,7 +1377,7 @@ def _execute_py(
                 locs = h._chr_col(structure_df, "file_location")
                 got = [r and loc is not None for r, loc in zip(rows, locs, strict=True)]
                 if any(got):
-                    plan = _repro_package_plan(structure_df)
+                    plan = (a.get("plan_of") or _repro_package_plan)(structure_df)
                     got_locs = {loc for g, loc in zip(got, locs, strict=True) if g}
                     sources = h._chr_col(plan, "source")
                     repro_materialize_layout(
@@ -2021,15 +2032,11 @@ def _execution_report_py(
         report.append(cut_note)
 
     if install_results is not None and len(install_results) > 0:
+        from metacheck.repro.outcomes import _repro_install_sentence
+
         installed = [h._is_true(v) for v in h._col(install_results, "installed")]
         pkgs = h._chr_col(install_results, "package")
-        n_ok_i = sum(installed)
-        report.append(
-            "Dependencies were installed into a throwaway library before running (`pip "
-            f"install`): {n_ok_i:d} succeeded, {len(installed) - n_ok_i:d} failed. "
-            + ", ".join(rc._na_str(p) for p in pkgs)
-            + " were installed."
-        )
+        report.append(_repro_install_sentence(install_results, pip=True))
         failed = [i for i, ok in enumerate(installed) if not ok]
         if failed:
             msgs = h._chr_col(install_results, "message")

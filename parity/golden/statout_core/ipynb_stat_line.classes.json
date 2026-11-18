@@ -33,6 +33,7 @@
             "nrow": 1,
             "names": [
               "slope",
+              "intercept",
               "rvalue",
               "pvalue",
               "stderr"
@@ -42,6 +43,12 @@
                 "t": "chr",
                 "v": [
                   "11.474329080951929"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "46.43030811550318"
                 ]
               },
               {
@@ -285,6 +292,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.3",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

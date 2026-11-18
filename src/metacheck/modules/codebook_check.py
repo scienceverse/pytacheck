@@ -135,6 +135,7 @@ def codebook_check(
     columns_df = get_prev_outputs("data_check", "table")
     structure_df = get_prev_outputs("data_check", "structure")
     previews = get_prev_outputs("data_check", "previews")
+    doc_sheets = get_prev_outputs("data_check", "doc_sheets")
     if columns_df is None or structure_df is None:
         kwargs: dict[str, Any] = {"local_only": local_only}
         if local_path is not None:
@@ -143,6 +144,7 @@ def codebook_check(
         columns_df = mo.table
         structure_df = mo.get("structure")
         previews = mo.get("previews")
+        doc_sheets = mo.get("doc_sheets")
 
     if columns_df is None or len(columns_df) == 0:
         return _empty_summary(
@@ -160,6 +162,7 @@ def codebook_check(
         model,
         params,
         extract_scales=extract_scales is True,
+        doc_sheets=doc_sheets,
     )
 
 
@@ -234,6 +237,7 @@ def _codebook_check(
     model: Any,
     params: dict[str, Any],
     extract_scales: bool = False,
+    doc_sheets: Any = None,
 ) -> dict[str, Any]:
     import pandas as pd
 
@@ -336,6 +340,36 @@ def _codebook_check(
                     llm_parse_files += 1
                     if llm_model_used is None:
                         llm_model_used = llm_model
+
+    # A codebook sheet inside a data spreadsheet (a "Data_Dictionary" sheet beside the data):
+    # data_check reads the data sheet as the table and sets the other aside as documentation,
+    # but the file is data, not a codebook, so it was never parsed, and the module said there
+    # was no codebook (#651). Only the sheets set aside are read, as the positional fallback
+    # would make definitions of a data sheet's rows.
+    if isinstance(doc_sheets, pd.DataFrame) and len(doc_sheets) > 0:
+        ds_loc = _vals(doc_sheets, "file_location") or [None] * len(doc_sheets)
+        have = {locs[i] for i in cb_idx}
+        ds_idx = [
+            k
+            for k, loc in enumerate(ds_loc)
+            if loc is not None and _file_exists(loc) and loc not in have
+        ]
+        ds_sheet = _vals(doc_sheets, "sheet") or []
+        ds_group = _vals(doc_sheets, "group") or [None] * len(doc_sheets)
+        ds_pid = _vals(doc_sheets, "paper_id") or [None] * len(doc_sheets)
+        for loc in dict.fromkeys(ds_loc[k] for k in ds_idx):
+            rows = [k for k in ds_idx if ds_loc[k] == loc]
+            pv = parse_codebook(
+                str(loc),
+                group=ds_group[rows[0]],
+                sheets=[ds_sheet[k] for k in rows],
+            )
+            if isinstance(pv, pd.DataFrame) and len(pv) > 0:
+                pv = pv.copy()
+                pv["paper_id"] = pd.Series(
+                    [ds_pid[rows[0]]] * len(pv), index=pv.index, dtype="string"
+                )
+                parsed_list.append(pv)
 
     if haven_idx:
         parsed_list += _harvest_labels(
