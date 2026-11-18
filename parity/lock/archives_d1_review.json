@@ -1,0 +1,5 @@
+{
+"figshare_info.review.empty_fields": {"r": "ac5146cf65ca52a8", "py": "e7906de589e982f1", "diff": ["<R error, Python value>"]},
+"figshare_info.review.project_mixed_ids": {"r": "ac5146cf65ca52a8", "py": "80ac5df61ab43d4a", "diff": ["<R error, Python value>"]},
+"figshare_info.review.string_license_error": {"r": "ac5146cf65ca52a8", "py": "f2e963ee8bee2aef", "diff": ["<R error, Python value>"]}
+}

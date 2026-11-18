@@ -15,8 +15,11 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "partial_repos",
       "naming_issues",
       "repo_metadata",
+      "ownership",
+      "table_not_checked",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -365,15 +368,16 @@
       {
         "t": "chr",
         "v": [
+          "#### Whose Deposits",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/j3gcx' target='_blank'>osf.io/j3gcx<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://osf.io/msfcn' target='_blank'>osf.io/msfcn<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\", \"text\", \"text\"), Whose = c(\"the authors', for this paper\", \n\"the authors', for this paper\", \"the authors', for this paper\", \n\"the authors', for this paper\"), Why = c(\"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\", \"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\")), row.names = c(NA, \n-4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/msfcn' target='_blank'>osf.io/msfcn<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://osf.io/j3gcx' target='_blank'>osf.io/j3gcx<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\", \"osf\"), \"All Files\" = c(3L, \n4L, 7L, 4L), \"Data Files\" = c(2L, 1L, 1L, 1L), \"Code Files\" = c(0L, \n2L, 0L, 2L), READMEs = c(0L, 0L, 2L, 0L), Archives = c(0L, 1L, \n0L, 1L)), row.names = c(NA, -4L), class = c(\"tbl_df\", \"tbl\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://osf.io/msfcn\", \"https://osf.io/msfcn\", \n\"https://osf.io/msfcn\", \"https://osf.io/629bx\", \"https://osf.io/629bx\", \n\"https://osf.io/629bx\", \"https://osf.io/629bx\", \"https://osf.io/629bx\", \n\"https://osf.io/629bx\", \"https://osf.io/629bx\", \"https://osf.io/629bx\", \n\"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \n\"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \"https://osf.io/j3gcx\", \n\"https://osf.io/j3gcx\"), File = c(\"<a href='https://osf.io/download/5qsc6/' target='_blank'>Data_Experiment_1.xlsx<\/a>\", \n\"<a href='https://osf.io/download/4v5hd/' target='_blank'>Data_Experiment_2.xlsx<\/a>\", \n\"<a href='https://osf.io/download/x6n74/' target='_blank'>Suplemental Material_Chairs used for data collection.docx<\/a>\", \n\"<a href='https://osf.io/download/6935bc117049c887a125cb25/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/6935bc117049c887a125cb25/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/6935c4679ca0f02ea72a1a31/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/6935c4679ca0f02ea72a1a31/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/6976438ff9da155d0565c720/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/6976438ff9da155d0565c720/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/k6gbt/' target='_blank'>data.xlsx<\/a>\", \n\"<a href='https://osf.io/download/ez87j/' target='_blank'>README<\/a>\", \n\"<a href='https://osf.io/download/hn9fs/' target='_blank'>test-1.txt<\/a>\", \n\"<a href='https://osf.io/download/qfvpy/' target='_blank'>README<\/a>\", \n\"<a href='https://osf.io/download/b7eds/' target='_blank'>test-2.txt<\/a>\", \n\"<a href='https://osf.io/download/zyf34/' target='_blank'>test-3.txt<\/a>\", \n\"<a href='https://osf.io/download/3wv7h/' target='_blank'>test-4.txt<\/a>\"\n), Size = c(\"251 kB\", \"181.7 kB\", \"122.4 kB\", \"172 B\", \"172 B\", \n\"413 B\", \"413 B\", \"5 B\", \"5 B\", \"6.4 kB\", \"6.4 kB\", \"9.1 kB\", \n\"52 B\", \"12 B\", \"58 B\", \"12 B\", \"12 B\", \"12 B\"), Type = c(\"data\", \n\"data\", \"text\", \"code\", \"code\", \"code\", \"code\", \"data\", \"data\", \n\"archive\", \"archive\", \"data\", \"readme\", \"text\", \"readme\", \"text\", \n\"text\", \"text\")), row.names = c(NA, -18L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
-          "#### Unclassified Files\n\nWe could not classify 2 files by name or extension: Archive.zip, Archive.zip. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
-          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 3 naming problems that should be fixed, and 1 file with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Suplemental Material_Chairs used for data collection.docx\", \n\"Archive.zip\", \"Archive.zip\", \"Suplemental Material_Chairs used for data collection.docx\"\n), Rule = c(\"spaces\", \"unclassifiable\", \"unclassifiable\", \"filename-length-50\"\n), Severity = c(\"Required\", \"Required\", \"Required\", \"Suggestion\"\n), Detail = c(\"contains a space\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"The file name is 57 characters, over the recommended 50\")), row.names = c(NA, \n-4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 1 file with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Suplemental Material_Chairs used for data collection.docx\", \n\"Suplemental Material_Chairs used for data collection.docx\"), \n    Rule = c(\"spaces\", \"filename-length-50\"), Severity = c(\"Required\", \n    \"Suggestion\"), Detail = c(\"contains a space\", \"The file name is 57 characters, over the recommended 50\"\n    )), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (4 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"bad.R\", \"bad.R\", \"bad.Rmd\", \"bad.Rmd\"\n), Group = c(\"ex2\", \"ex2\", \"ex2\", \"ex2\"), Path = c(\"bad.R\", \"bad.R\", \n\"bad.Rmd\", \"bad.Rmd\")), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (5 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Data_Experiment_1.xlsx\", \"Data_Experiment_2.xlsx\", \n\"example2.csv\", \"example2.csv\", \"data.xlsx\"), Group = c(\"ex1\", \n\"ex2\", \"ex2\", \"ex2\", \"ex3\"), Path = c(\"Data_Experiment_1.xlsx\", \n\"Data_Experiment_2.xlsx\", \"example2.csv\", \"example2.csv\", \"data.xlsx\"\n)), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (7 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Suplemental Material_Chairs used for data collection.docx\", \n\"README\", \"test-1.txt\", \"README\", \"test-2.txt\", \"test-3.txt\", \n\"test-4.txt\"), Group = c(\"ex1\", \"—\", \"ex3\", \"—\", \"ex3\", \"ex3\", \n\"ex3\"), Path = c(\"Suplemental Material_Chairs used for data collection.docx\", \n\"README\", \"nest-1/test-1.txt\", \"nest-1/README\", \"nest-1/nest-2/test-2.txt\", \n\"nest-1/nest-2/nest-3/test-3.txt\", \"nest-1/nest-2/nest-3/nest-4/test-4.txt\"\n)), row.names = c(NA, -7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Archive.zip\", \"Archive.zip\"), Group = c(\"ex2\", \n\"ex2\"), Path = c(\"Archive.zip\", \"Archive.zip\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -387,7 +391,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 18 files in 4 repositories.\n-  We found 2 README files and 3 repositories without READMEs.\n-  We found 2 archive files.\n-  We could not classify 2 files.\n-  We found 3 file naming problems to fix."
+          "\n-  We found 18 files in 4 repositories.\n-  We found 2 README files and 3 repositories without READMEs.\n-  We found 2 archive files.\n-  We found 1 file naming problem to fix."
         ]
       },
       {
@@ -404,6 +408,9 @@
           "files_zip",
           "files_unknown",
           "naming_issues",
+          "repo_own",
+          "repo_others",
+          "ref_others",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -476,8 +483,16 @@
             "t": "int",
             "v": [
               0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               1,
-              1
+              0,
+              0
             ]
           },
           {
@@ -485,7 +500,23 @@
             "v": [
               1,
               1,
-              1
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
             ]
           },
           {
@@ -531,7 +562,30 @@
       },
       {
         "t": "df",
-        "nrow": 4,
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "files_listed"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
         "names": [
           "file_name",
           "rule",
@@ -543,8 +597,6 @@
           {
             "t": "chr",
             "v": [
-              "Archive.zip",
-              "Archive.zip",
               "Suplemental Material_Chairs used for data collection.docx",
               "Suplemental Material_Chairs used for data collection.docx"
             ]
@@ -552,8 +604,6 @@
           {
             "t": "chr",
             "v": [
-              "unclassifiable",
-              "unclassifiable",
               "spaces",
               "filename-length-50"
             ]
@@ -562,16 +612,12 @@
             "t": "chr",
             "v": [
               "bad",
-              "bad",
-              "bad",
               "suggestion"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "contains a space",
               "The file name is 57 characters, over the recommended 50"
             ]
@@ -579,10 +625,564 @@
           {
             "t": "chr",
             "v": [
-              "alpha",
-              "Alpha",
               "zeta",
               "zeta"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "doi",
+          "license",
+          "repo_url",
+          "title",
+          "description",
+          "category",
+          "osf_type",
+          "creators",
+          "creator_orcids",
+          "published",
+          "updated",
+          "paper_id",
+          "ownership",
+          "ownership_group",
+          "ownership_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/msfcn",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/j3gcx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Social Reach Psychological Science-2016-Ramenzoni Liszkowski-0956797616659938",
+              "Public",
+              "Public",
+              "Raw Data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "The raw data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "project",
+              "",
+              "",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nodes",
+              "nodes",
+              "nodes",
+              "nodes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2017-01-19",
+              "2024-05-27",
+              "2024-05-27",
+              "2025-06-09"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2017-01-19",
+              "2026-01-25",
+              "2026-01-25",
+              "2025-07-21"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "zeta",
+              "Alpha",
+              "alpha",
+              "alpha"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own_this",
+              "own_this",
+              "own_this",
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own",
+              "own",
+              "own",
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "source",
+          "repo_url",
+          "repo_type",
+          "ownership",
+          "ownership_group",
+          "ownership_reason",
+          "dep_title",
+          "dep_description",
+          "dep_creators",
+          "dep_orcids",
+          "dep_type",
+          "dep_related",
+          "dep_date",
+          "dep_year",
+          "osf_type",
+          "osf_category",
+          "osf_contributors",
+          "gh_owner_name",
+          "gh_stars",
+          "gh_forks",
+          "n_files",
+          "listed",
+          "has_data",
+          "has_code",
+          "pkg_layout",
+          "file_paper_words",
+          "context",
+          "sections",
+          "cites_others",
+          "cites_own",
+          "ref_text",
+          "ref_authors",
+          "ref_year",
+          "ref_title",
+          "citing",
+          "citing_sections",
+          "cff_dois",
+          "listing_cut"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "alpha",
+              "alpha",
+              "Alpha",
+              "zeta"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/j3gcx",
+              "https://osf.io/629bx",
+              "https://osf.io/629bx",
+              "https://osf.io/msfcn"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osf",
+              "osf",
+              "osf",
+              "osf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own_this",
+              "own_this",
+              "own_this",
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own",
+              "own",
+              "own",
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Raw Data",
+              "Public",
+              "Public",
+              "Social Reach Psychological Science-2016-Ramenzoni Liszkowski-0956797616659938"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The raw data",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-06-09",
+              "2024-05-27",
+              "2024-05-27",
+              "2017-01-19"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025",
+              "2024",
+              "2024",
+              "2017"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nodes",
+              "nodes",
+              "nodes",
+              "nodes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "",
+              "",
+              "project"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7,
+              4,
+              4,
+              3
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
             ]
           }
         ]
@@ -592,11 +1192,46 @@
         "nrow": 0,
         "names": [
           "repo_url",
-          "doi",
-          "license",
-          "paper_id"
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "provider",
+          "repo_name",
+          "data_type",
+          "doc_role"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -722,6 +1357,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

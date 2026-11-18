@@ -1288,7 +1288,7 @@
       "      \"formatted\": null",
       "    },",
       "    {",
-      "      \"text\": \"DeBruine, L. M. 2002 Facial resemblance enhances trust. Proc. R. Soc. Lond. B 269, 1307-1312. (doi:10.1098/rspb. 2002.2034)\",",
+      "      \"text\": \"DeBruine, L. M. 2002 Facial resemblance enhances trust. Proc. R. Soc. Lond. B 269, 1307-1312. (doi:10.1098/rspb.2002.2034)\",",
       "      \"text_id\": 153,",
       "      \"paragraph_id\": 50,",
       "      \"section_id\": 13,",
@@ -1400,7 +1400,7 @@
       "      \"formatted\": null",
       "    },",
       "    {",
-      "      \"text\": \"Little, A. C., Burt, D. M., Penton-Voak, I. S. & Perrett, D. I. 2001 Self-perceived attractiveness influences human female preferences for sexual dimorphism and symmetry in male faces. Proc. R. Soc. Lond. B 268, 39-44. (doi:10.1098/ rspb.2000.1327)\",",
+      "      \"text\": \"Little, A. C., Burt, D. M., Penton-Voak, I. S. & Perrett, D. I. 2001 Self-perceived attractiveness influences human female preferences for sexual dimorphism and symmetry in male faces. Proc. R. Soc. Lond. B 268, 39-44. (doi:10.1098/rspb.2000.1327)\",",
       "      \"text_id\": 167,",
       "      \"paragraph_id\": 64,",
       "      \"section_id\": 13,",
@@ -3430,6 +3430,6 @@
       "}"
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

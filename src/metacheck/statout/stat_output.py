@@ -375,6 +375,21 @@ def stat_results_long(
     return pd.DataFrame({c: _frame_column(v) for c, v in rows.items()})
 
 
+_ROW_NO_HEADER = "^(V[0-9]+|X[0-9]*|\\.\\.\\.[0-9]+|rownames?|row|)$"
+
+
+def _is_row_number_column(header: str, cells: Sequence[Any], n: int) -> bool:
+    """Is a column only the row number (1, 2, ...), under a default name? (#648)"""
+    if not grepl(_ROW_NO_HEADER, [trimws(header) or ""])[0]:
+        return False
+    for k, c in enumerate(cells):
+        txt = _cell(c)
+        v = None if txt is None else as_float(trimws(txt))
+        if v is None or v != k + 1:
+            return False
+    return len(cells) == n
+
+
 def _long_rows(
     tb: Mapping[str, Any],
     base_id: str,
@@ -392,6 +407,10 @@ def _long_rows(
     is_label = _label_flags(df, columns)
     label_cols = [i for i, lab in enumerate(is_label) if lab]
     stat_cols = [i for i, lab in enumerate(is_label) if not lab]
+    # A column that is only the row number, under a default name (V1, X, ...1, rownames): a
+    # printed data frame or data.table numbers its rows so, and "V1 = 1, 2, 3" was the most
+    # common name in the corpus runs' stored output, 1,467 values (#648)
+    stat_cols = [i for i in stat_cols if not _is_row_number_column(headers[i], columns[i], len(df))]
     if not stat_cols:
         return
 

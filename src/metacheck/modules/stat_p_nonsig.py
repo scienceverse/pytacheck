@@ -39,7 +39,8 @@ _MURPHY_2025 = (
 )
 
 # "==" is a typo of "=" (metacheck counts "p == .03" as non-significant, U127)
-_SIG_COMPS = ["<", "=", "==", "≤", "<=", "=<"]
+# "p ≈ 0" or "p ~ .01" is significant too (metacheck 0.4.4.3, #642)
+_SIG_COMPS = ["<", "=", "==", "≤", "<=", "=<", "≈", "~"]
 
 _EXPLANATION = [
     "Meta-scientific research has shown nonsignificant p values are commonly misinterpreted. "
@@ -76,9 +77,11 @@ _GUIDANCE_OUTRO = (
 
         In the future, the Metacheck team aims to incorporate a machine learning classifier to only return sentences likely to contain misinterpretations. If you want to help to improve the module, reach out to the Metacheck development team.
 
+        A p-value in a table note ("† p < .10, * p < .05") or a figure legend ("dashed lines indicate non-significant paths (p > .05)") is left out, as in stat_p_exact; the column `not_a_test` says why. A p-value next to words that state a threshold is kept, because such sentences often report a result against that level ("not significant at the conventional threshold (p = .054)").
+
         This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables.
 
-        <validation>In a sample of 194 papers with 1602 instances of non-significant p-values, this module correctly detected 1486 of them, and incorrectly identified 153. Additionally, 91% of detections were true instances (positive predictive value). That is, when this module flags non-significant p-values in a paper, it correctly identifies an issue 91% of the time.</validation>
+        <validation>Validated on three hand-coded sets of papers (scienceverse/validation: 249 Psychological Science, 250 Economics and 250 MDPI papers). Of 1,783 non-significant p-values in the ground truth, version 0.4.4.3 found 1,719 (3.6% missed), and 94.8% of its 1,814 detections were in the ground truth. Some differences come from the ground truth: it lacks p-values with a correction name ("p Bonf = .061"), and counts partial eta squared written with its subscript after it ("η 2 p = .05"), "p = .05", and some table notes and figure legends ("† p < .10, *p < .05"), which this module leaves out, as non-significant p-values. These figures measure agreement with the hand-coding, which has known errors in both directions (scienceverse/validation#48).</validation>
     """,
     keywords=["results"],
     author=["Daniel Lakens <D.Lakens@tue.nl>"],
@@ -86,6 +89,7 @@ _GUIDANCE_OUTRO = (
 )
 def stat_p_nonsig(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/stat_p_nonsig.R::stat_p_nonsig()``."""
+    from metacheck.stats.helpers import _p_not_test
     from metacheck.text.expand import text_expand
     from metacheck.text.extract import extract_p_values
 
@@ -111,6 +115,18 @@ def stat_p_nonsig(paper: Any) -> dict[str, Any]:
 
     # Expand the sentences so the full sentence can be seen
     table = text_expand(table, paper, expand_to="sentence")
+
+    # A p-value in a table note or a figure legend is not a result whose interpretation can be
+    # checked ("† p < .10, * p < .05", "dashed lines indicate non-significant paths (p > .05)"):
+    # left out, as stat_p_exact does (.p_not_test(); #604, #642). A "threshold" is kept: in 40
+    # that .p_not_test() took for one, 14 were results reported against the level ("significant
+    # when the categorical measure was used (p = .003) but not when the continuous measure was
+    # used (p = .08)"); markers and legends were results in 3 and 2 of 40.
+    table = table.copy()
+    table["not_a_test"] = pd.Series(_p_not_test(table), index=table.index, dtype=object)
+    table = table.loc[table["not_a_test"].isna() | table["not_a_test"].eq("threshold")].reset_index(
+        drop=True
+    )
 
     # summary_table ----
     # must have id column as the id of each paper, one row per paper

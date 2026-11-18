@@ -24,8 +24,18 @@ REF = json.loads((DATA / "classify_ref.json").read_text(encoding="utf-8"))
 def stub_category(monkeypatch: pytest.MonkeyPatch) -> None:
     cats = dict(zip(REF["names"], REF["file_category"], strict=True))
     types = dict(zip(REF["names"], REF["filetype"], strict=True))
-    monkeypatch.setattr(F, "_file_category", lambda names: [cats[n] for n in names])
-    monkeypatch.setattr(F, "_filetype", lambda names: [types[n] for n in names])
+    real_category, real_filetype = F._file_category, F._filetype
+
+    # a compressed file is typed as the file inside it (metacheck 0.4.4.4, #648): the name
+    # without its ".gz" is not in the recording, and is looked up as it is
+    def category(names: list[str]) -> list[str | None]:
+        return [cats[n] if n in cats else real_category([n])[0] for n in names]
+
+    def filetype(names: list[str]) -> list[str | None]:
+        return [types[n] if n in types else real_filetype([n])[0] for n in names]
+
+    monkeypatch.setattr(F, "_file_category", category)
+    monkeypatch.setattr(F, "_filetype", filetype)
 
 
 def test_classify_matches_r(stub_category: None) -> None:
@@ -98,7 +108,8 @@ def test_genomic_formats_compressed_or_not(stub_category: None) -> None:
     assert F.data_classify_files(contents) == ["data"] * len(contents)
     assert F.data_classify_files(["random_archive.tar.gz"]) == ["unknown"]
     assert F.data_classify_files(["random.gz"]) == ["unknown"]
-    assert F.data_classify_files(["sample.dat.gz"]) == ["unknown"]
+    # a single compressed file is typed as the file inside it (#648)
+    assert F.data_classify_files(["sample.dat.gz"]) == F.data_classify_files(["sample.dat"])
 
 
 # -- upstream test-data-checks.R: domain data formats by extension alone (issue #441) --

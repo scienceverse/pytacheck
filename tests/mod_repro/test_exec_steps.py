@@ -314,9 +314,28 @@ def test_a_here_mark_is_put_at_the_top_unless_the_project_has_one(
         seen.append(exists_from(call, f, ".here"))
 
     runner.respond = respond
-    run(deposit(tmp_path / "a", {"a.R": "x <- 1\n"}))
-    run(deposit(tmp_path / "b", {"a.R": "x <- 1\n", "proj.Rproj": "Version: 1.0\n"}))
+    run(deposit(tmp_path / "a", {"a.R": "library(here)\nx <- here::here('x.csv')\n"}))
+    run(
+        deposit(
+            tmp_path / "b",
+            {"a.R": "library(here)\nx <- 1\n", "proj.Rproj": "Version: 1.0\n"},
+        )
+    )
     assert seen == [True, False]
+
+
+def test_no_here_mark_is_written_when_no_script_uses_here(tmp_path: Path, runner: Runner) -> None:
+    # an empty .here in a deposit whose code does not use it is a file the authors did not
+    # make, and a release check of the authors' own that compares the folder with its list of
+    # checksums failed on it (#648)
+    seen: list[bool] = []
+
+    def respond(n: int, f: str, call: Call) -> None:
+        seen.append(exists_from(call, f, ".here"))
+
+    runner.respond = respond
+    run(deposit(tmp_path / "a", {"a.R": "x <- 1\n"}))
+    assert seen == [False]
 
 
 def test_the_output_is_searched_only_in_part_and_the_report_says_so(
@@ -462,8 +481,10 @@ def test_a_script_the_second_run_changed_but_has_no_time_for_is_skipped(
 
 
 def test_a_script_relying_on_another_scripts_library_calls_gets_them_added(
-    tmp_path: Path, runner: Runner
+    tmp_path: Path, runner: Runner, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    # without installs, a package already installed here can be attached (#648)
+    monkeypatch.setattr(runsupport, "_repro_installed_here", lambda pkgs: [True] * len(pkgs))
     # port of metacheck's test of the same name: 1_prep.R loads dplyr, 2_analysis.R uses
     # %>% and mutate() without loading it, and nothing sources it
     d = deposit(
@@ -759,7 +780,7 @@ def test_installs_have_a_limit_only_when_one_was_asked_for(
     text = report_text(mo)
     assert (
         "Dependencies were installed into a throwaway library before running: 1 succeeded, "
-        "1 failed. digest, mypkg were installed." in text
+        "1 failed. digest was installed." in text
     )
     assert (
         "**Failed:** mypkg [not on CRAN or Bioconductor, and the code does not say where it "
@@ -906,7 +927,7 @@ def test_the_install_report_labels_failures_and_names_unknown_sources() -> None:
     out = rx._r_install_report(ir)
     assert out[0] == (
         "Dependencies were installed into a throwaway library before running: 2 succeeded, "
-        "3 failed. dplyr, ggplot2, oldpkg, lme4, mine were installed."
+        "3 failed. dplyr, oldpkg were installed."
     )
     assert out[1].startswith("**1 of these were no longer on live CRAN**")
     assert out[2] == (

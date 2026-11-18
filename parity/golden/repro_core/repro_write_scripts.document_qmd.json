@@ -1,0 +1,129 @@
+{
+  "id": "repro_write_scripts.document_qmd",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "written",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "file_name",
+          "script_path",
+          "run_dir",
+          "setwd_removed",
+          "env_calls_replaced",
+          "slashes_fixed",
+          "setwd_folder_removed",
+          "setwd_paths",
+          "lib_loc_removed",
+          "family_replaced",
+          "family_detail",
+          "library_injected"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis/report.qmd"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>/analysis/report.qmd.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "x <- 1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "analysis",
+          "analysis/report.qmd.R"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

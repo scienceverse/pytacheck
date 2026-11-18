@@ -1272,3 +1272,70 @@
           \ ['01-02-2003 04:05:06', '2020-05-19T16:20:33Z', '2020-05-19T16:20:33Z'], ['May 19, 2020',\
           \ 'May 19, 2020', '2020-05-19T16:20:33Z', '2020-05-19_16h20.01.792', 'May 19, 2020', 'May 19,\
           \ 2020'], ['May 19, 2020', 'May 19, 2020', 'May 19, 2020']])]"
+- "id": "data_check_pii_values.sync0444.codelist_codes"
+  "r": "data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(sprintf(\"%015.0f\", (1:97) * 1.03e12 + 1e14), \"4111111111111111\", \"5500005555555559\"\
+          , \"4012888888881881\")"
+        "py": "[f\"{(i * 1.03e12 + 1e14):015.0f}\" for i in range(1, 98)] + [\"4111111111111111\", \"\
+          5500005555555559\", \"4012888888881881\"]"
+- "id": "data_check_pii_values.sync0444.one_card_in_text"
+  "r": "data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(rep(\"no comment\", 20), \"my card is 4111111111111111\")"
+        "py": "[\"no comment\"] * 20 + [\"my card is 4111111111111111\"]"
+- "id": "data_check_pii_freetext.sync0444.code_terms"
+  "r": "data_check_pii_freetext"
+  "py": "metacheck.datacheck.checks.data_check_pii_freetext"
+  "args":
+    "x":
+      "$chr":
+      - "Coronary arteriosclerosis in patient with history of previous myocardial infarction"
+      - "Acute infarction of papillary muscle following surgery on the heart"
+      - "Dialysis therapy started by renal service after kidney failure"
+      - "Ulcer of skin due to type 2 diabetes mellitus of the left foot"
+      - "Congestive heart failure due to left ventricular systolic dysfunction"
+      - "Glaucoma suspect due to diabetes mellitus type 2 in both eyes"
+- "id": "data_check_pii_freetext.sync0444.video_paths"
+  "r": "data_check_pii_freetext"
+  "py": "metacheck.datacheck.checks.data_check_pii_freetext"
+  "args":
+    "x":
+      "$expr":
+        "r": "paste0(\"/Users/me/Dropbox/Road Hazards - Raw Videos/Final Set/clip_\", 1:30, \".mp4\")"
+        "py": "[f\"/Users/me/Dropbox/Road Hazards - Raw Videos/Final Set/clip_{i}.mp4\" for i in range(1,\
+          \ 31)]"
+- "id": "data_check_pii_freetext.sync0444.one_in_ten_first_person"
+  "r": "data_check_pii_freetext"
+  "py": "metacheck.datacheck.checks.data_check_pii_freetext"
+  "args":
+    "x":
+      "$chr":
+      - "Coronary arteriosclerosis in patient with history of previous myocardial infarction"
+      - "Acute infarction of papillary muscle following surgery on the heart"
+      - "Dialysis therapy started by renal service after kidney failure"
+      - "Ulcer of skin due to type 2 diabetes mellitus of the left foot"
+      - "Congestive heart failure due to left ventricular systolic dysfunction"
+      - "The task was long and the screen was small for the pictures shown"
+      - "Fine, nothing to add here at all and the screen was small for the pictures shown"
+      - "It was a bit hard to focus on the long blocks of the task"
+      - "Too many questions about the same topic in the last part"
+      - "My neighbour Anna helped me set up the laptop for the study"
+- "id": "data_check_pii_freetext.sync0444.other_languages"
+  "r": "data_check_pii_freetext"
+  "py": "metacheck.datacheck.checks.data_check_pii_freetext"
+  "args":
+    "x":
+      "$chr":
+      - "Ik vond de taak erg lang en ik kon me moeilijk concentreren op het scherm"
+      - "Ich habe die Aufgabe nicht ganz verstanden und mein Computer war zu langsam"
+      - "J'ai trouve les questions un peu longues mais l'ensemble etait tres clair"
+      - "Yo creo que la tarea fue larga pero nosotros pudimos terminar a tiempo"
+      - "Io penso che il compito fosse lungo ma noi abbiamo finito in tempo comunque"
+      - "The study took more than an hour and the instructions were rather unclear"

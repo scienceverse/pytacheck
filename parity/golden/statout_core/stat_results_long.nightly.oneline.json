@@ -1,0 +1,208 @@
+{
+  "id": "stat_results_long.nightly.oneline",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "paper_id",
+      "source_file",
+      "test_id",
+      "result_id",
+      "analysis",
+      "table_title",
+      "row_label",
+      "statistic",
+      "stato_label",
+      "stato_iri",
+      "value",
+      "model_ref"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s_r_s_r",
+          "s_r_s_r",
+          "s_r_s_r",
+          "s_r_s_r",
+          "s_r_s_r",
+          "s_r_s_r",
+          "s_r_s_r",
+          "s_r_s_r",
+          "s_r_s_r",
+          "s_r_s_r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s_r_s_r_r1_t",
+          "s_r_s_r_r1_df",
+          "s_r_s_r_r1_p_value",
+          "s_r_s_r_r1_sd",
+          "s_r_s_r_r1_se",
+          "s_r_s_r_r1_statistic",
+          "s_r_s_r_r1_pvalue",
+          "s_r_s_r_r1_df_1",
+          "s_r_s_r_r1_chisq",
+          "s_r_s_r_r1_v"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "df",
+          "p-value",
+          "SD",
+          "SE",
+          "statistic",
+          "pvalue",
+          "df.1",
+          "Chisq",
+          "V"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t-statistic",
+          "number of degrees of freedom",
+          "p-value",
+          "standard deviation for sample",
+          "standard error of the mean",
+          "statistic",
+          "p-value",
+          "number of degrees of freedom",
+          "Chi-Squared statistic",
+          "V"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://purl.obolibrary.org/obo/STATO_0000176",
+          "http://purl.obolibrary.org/obo/STATO_0000069",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "http://purl.obolibrary.org/obo/STATO_0000684",
+          "http://purl.obolibrary.org/obo/STATO_0000037",
+          "",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "http://purl.obolibrary.org/obo/STATO_0000069",
+          "http://purl.obolibrary.org/obo/STATO_0000030",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2.34",
+          "48",
+          "0.02",
+          "0.41",
+          "0.05",
+          "4.9",
+          "6.8e-05",
+          "22",
+          "3.2",
+          "4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -15,8 +15,11 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "partial_repos",
       "naming_issues",
       "repo_metadata",
+      "ownership",
+      "table_not_checked",
       "roster_check",
       "group_no_evidence",
       "useless_files",
@@ -281,16 +284,18 @@
       {
         "t": "chr",
         "v": [
+          "#### Whose Deposits",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://github.com/gzorg/treerepo' target='_blank'>github.com/gzorg/treerepo<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj' target='_blank'>gitlab.com/gzorg/sub/glproj<\/a>\", \n\"<a href='https://zenodo.org/records/5550001' target='_blank'>zenodo.org/records/5550001<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\", \"text\"), Whose = c(\"the authors', for this paper\", \n\"the authors', for this paper\", \"the authors', for this paper\"\n), Why = c(\"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\", \"a link in the main text, not shown to be anyone else's\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://github.com/gzorg/treerepo' target='_blank'>github.com/gzorg/treerepo<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj' target='_blank'>gitlab.com/gzorg/sub/glproj<\/a>\", \n\"<a href='https://zenodo.org/records/5550001' target='_blank'>zenodo.org/records/5550001<\/a>\"\n), Platform = c(\"github\", \"gitlab\", \"zenodo\"), \"All Files\" = c(7L, \n4L, 2L), \"Data Files\" = c(2L, 2L, 1L), \"Code Files\" = c(1L, 1L, \n0L), READMEs = c(1L, 1L, 0L), Archives = c(1L, 0L, 0L)), row.names = c(NA, \n-3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\", \n\"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/sub/glproj\", \n\"https://gitlab.com/gzorg/sub/glproj\", \"https://gitlab.com/gzorg/sub/glproj\", \n\"https://zenodo.org/records/5550001\", \"https://zenodo.org/records/5550001\"\n), File = c(\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md' target='_blank'>README.md<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study 1.csv' target='_blank'>study 1.csv<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json' target='_blank'>config.json<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/LICENSE' target='_blank'>LICENSE<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/archive.tar.gz' target='_blank'>archive.tar.gz<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/weird.file-name' target='_blank'>weird.file-name<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/README.md' target='_blank'>README.md<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/data/d1.csv' target='_blank'>d1.csv<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/src/run.py' target='_blank'>run.py<\/a>\", \n\"<a href='https://gitlab.com/gzorg/sub/glproj/-/raw/develop/x.json' target='_blank'>x.json<\/a>\", \n\"<a href='https://zenodo.org/api/records/5550001/files/data.csv/content' target='_blank'>data.csv<\/a>\", \n\"<a href='https://zenodo.org/api/records/5550001/files/notes.txt/content' target='_blank'>notes.txt<\/a>\"\n), Size = c(\"120 B\", \"2 kB\", \"512 B\", \"64 B\", \"1.1 kB\", \"100 kB\", \n\"—\", \"1.2 kB\", \"56 B\", \"789 B\", \"—\", \"9 B\", \"6 B\"), Type = c(\"readme\", \n\"data\", \"code\", \"data\", \"file\", \"archive\", \"file\", \"readme\", \n\"data\", \"code\", \"data\", \"data\", \"text\")), row.names = c(NA, -13L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
           "#### Archive Files\n\nThe following files are not ZIP archives: archive.tar.gz. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, `.tar` or `.tar.gz`.",
-          "#### Unclassified Files\n\nWe could not classify 2 files by name or extension: archive.tar.gz, weird.file-name. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: weird.file-name. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
           "#### File Naming",
-          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 3 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"study 1.csv\", \"archive.tar.gz\", \"weird.file-name\"\n), Rule = c(\"spaces\", \"unclassifiable\", \"unclassifiable\"), Severity = c(\"Required\", \n\"Required\", \"Required\"), Detail = c(\"contains a space\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"study 1.csv\", Rule = \"spaces\", Severity = \"Required\", \n    Detail = \"contains a space\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"analysis.R\", \"run.py\"), Group = c(\"ex1\", \n\"ex2\"), Path = c(\"code/analysis.R\", \"src/run.py\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (5 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"study 1.csv\", \"config.json\", \"d1.csv\", \n\"x.json\", \"data.csv\"), Group = c(\"ex1\", \"ex1\", \"ex2\", \"ex2\", \n\"ex3\"), Path = c(\"data/study 1.csv\", \"code/config.json\", \"data/d1.csv\", \n\"x.json\", \"data.csv\")), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (4 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README.md\", \"LICENSE\", \"README.md\", \n\"notes.txt\"), Group = c(\"—\", \"—\", \"—\", \"ex3\"), Path = c(\"README.md\", \n\"LICENSE\", \"README.md\", \"notes.txt\")), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"archive.tar.gz\", \"weird.file-name\"), \n    Group = c(\"ex1\", \"ex1\"), Path = c(\"archive.tar.gz\", \"weird.file-name\"\n    )), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -304,7 +309,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 13 files in 3 repositories.\n-  We found 2 README files and 1 repository without READMEs.\n-  We found 1 archive file.\n-  We could not classify 2 files.\n-  We found 3 file naming problems to fix."
+          "\n-  We found 13 files in 3 repositories.\n-  We found 2 README files and 1 repository without READMEs.\n-  We found 1 archive file.\n-  We could not classify 1 file.\n-  We found 1 file naming problem to fix."
         ]
       },
       {
@@ -321,6 +326,9 @@
           "files_zip",
           "files_unknown",
           "naming_issues",
+          "repo_own",
+          "repo_others",
+          "ref_others",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -376,13 +384,31 @@
           {
             "t": "int",
             "v": [
-              2
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
             ]
           },
           {
             "t": "int",
             "v": [
               3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -424,7 +450,30 @@
       },
       {
         "t": "df",
-        "nrow": 3,
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "files_listed"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
         "names": [
           "file_name",
           "rule",
@@ -436,40 +485,30 @@
           {
             "t": "chr",
             "v": [
-              "study 1.csv",
-              "archive.tar.gz",
-              "weird.file-name"
+              "study 1.csv"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "spaces",
-              "unclassifiable",
-              "unclassifiable"
+              "spaces"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "bad",
-              "bad",
               "bad"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "contains a space",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+              "contains a space"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "p_cache",
-              "p_cache",
               "p_cache"
             ]
           }
@@ -482,7 +521,27 @@
           "repo_url",
           "doi",
           "license",
-          "paper_id"
+          "readme",
+          "title",
+          "creators",
+          "published",
+          "updated",
+          "description",
+          "keywords",
+          "homepage",
+          "owner_type",
+          "owner_name",
+          "stars",
+          "forks",
+          "is_fork",
+          "creator_orcids",
+          "resource_type",
+          "resource_subtype",
+          "related",
+          "paper_id",
+          "ownership",
+          "ownership_group",
+          "ownership_reason"
         ],
         "v": [
           {
@@ -512,10 +571,587 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gzorg/treerepo",
+              null,
+              "All good"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Doe, Jane"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "2026-01-01"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "NA"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "one; two"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "dataset"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "p_cache",
               "p_cache",
               "p_cache"
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own_this",
+              "own_this",
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own",
+              "own",
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "source",
+          "repo_url",
+          "repo_type",
+          "ownership",
+          "ownership_group",
+          "ownership_reason",
+          "dep_title",
+          "dep_description",
+          "dep_creators",
+          "dep_orcids",
+          "dep_type",
+          "dep_related",
+          "dep_date",
+          "dep_year",
+          "osf_type",
+          "osf_category",
+          "osf_contributors",
+          "gh_owner_name",
+          "gh_stars",
+          "gh_forks",
+          "n_files",
+          "listed",
+          "has_data",
+          "has_code",
+          "pkg_layout",
+          "file_paper_words",
+          "context",
+          "sections",
+          "cites_others",
+          "cites_own",
+          "ref_text",
+          "ref_authors",
+          "ref_year",
+          "ref_title",
+          "citing",
+          "citing_sections",
+          "cff_dois",
+          "listing_cut"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_cache",
+              "p_cache",
+              "p_cache"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/gzorg/treerepo",
+              "https://gitlab.com/gzorg/sub/glproj",
+              "https://zenodo.org/records/5550001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "github",
+              "gitlab",
+              "zenodo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own_this",
+              "own_this",
+              "own_this"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "own",
+              "own",
+              "own"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gzorg/treerepo",
+              null,
+              "All good"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "NA"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Doe, Jane"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Dataset"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "2026-01-01"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "2026"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7,
+              4,
+              2
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "data_type",
+          "doc_role"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
           }
         ]
       },
@@ -626,6 +1262,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

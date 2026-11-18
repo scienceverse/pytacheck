@@ -1,11 +1,9 @@
 {
   "id": ".zenodo_info.review.vector_unfound_error",
   "ok": false,
-  "error": "arguments imply differing number of rows: 2, 1",
-  "warnings": [
-    "55590045559001 could not be found"
-  ],
+  "error": "the condition has length > 1",
+  "warnings": [],
   "value": null,
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

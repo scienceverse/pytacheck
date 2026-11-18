@@ -1,0 +1,50 @@
+{
+  "id": "repro_unpack_archives.gz_on_disk",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "templates/res.nii"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "templates/res.nii.gz/res.nii"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code/a.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "res.nii.gz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "templates/res.nii.gz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "res.nii.gz"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

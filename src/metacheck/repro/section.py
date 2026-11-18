@@ -30,8 +30,10 @@ from metacheck._r import (
     sub,
 )
 from metacheck._values import as_int, is_missing, is_true
+from metacheck.codecheck.core import _code_name_match
 from metacheck.repro.core import _basename
 from metacheck.repro.outcomes import (
+    _REPRO_NOT_OWN_OUTCOMES,
     _repro_error_line,
     _repro_failure_reason,
     _repro_internet_text,
@@ -58,27 +60,13 @@ _REPRO_CHANGED_PACKAGE_PAT = (
 )
 
 #: The quote characters around a package's name in R's and Python's errors.
-_PKG_PAT = "(?:no package called|No module named) ['\"‘]([^'\"’]+)['\"’]"
-
-#: The outcomes that are not scripts with a result of their own (the files of the
-#: section's count; ``static_*`` are the outcomes of files that were never handed to R
-#: or Python).
-_NOT_COUNTED = frozenset(
-    {
-        "run_by_source",
-        "run_by_import",
-        "jags_model",
-        "not_r_content",
-        "static_jags_model",
-        "static_not_r_content",
-        "defines_functions",
-        "not_analysis",
-        "static_defines_functions",
-        "static_not_analysis",
-        "not_downloaded",
-        "empty",
-        "static_empty",
-    }
+_Q1 = "['\"`\u2018]"
+_Q2 = "['\"`\u2019]"
+_PKG_PAT = (
+    f"(?:no package called|No module named) {_Q1}([^'\"`\u2019]+){_Q2}|"
+    f"[Pp]lease install the {_Q1}([^'\"`\u2019]+){_Q2} package|"
+    f"[Tt]he package {_Q1}([^'\"`\u2019]+){_Q2} (?:\\([^)]*\\) )?is required|"
+    f"requires the {_Q1}([^'\"`\u2019]+){_Q2} package"
 )
 
 #: What happened to the scripts of the groups of the headline.
@@ -126,6 +114,7 @@ def _repro_advice(
     install_results: pd.DataFrame | None = None,
     versions_recorded: bool = False,
     timeout: float = 600,
+    other_writes: pd.DataFrame | None = None,
     *,
     memory_gb: float | None = None,
 ) -> tuple[list[str], list[int]]:
@@ -141,7 +130,10 @@ def _repro_advice(
     *rr* holds the run results in the order of *tbl*; *outcome* the outcome per row;
     *mi* the rows of ``repro_missing_inputs()``; *install_results* the install of the
     packages; *versions_recorded* whether the deposit records package versions (see
-    ``.repro_recorded_advice()``); *timeout* the time limit per script, in seconds.
+    ``.repro_recorded_advice()``); *timeout* the time limit per script, in seconds;
+    *other_writes* the code files in languages that are not run, with the files each writes
+    (``file_name``, ``files_written``), so a file a Stata script makes is not called missing
+    (#648).
     Returns the blocks (Markdown) and the positions (0-based) of the rows of *tbl* they
     cover, sorted (R's attribute ``scripts``); both empty when nothing failed.
     """
@@ -203,17 +195,45 @@ def _repro_advice(
 
     # A file a script could not open: what kind of file it is decides what helps.
     found: dict[str, list[tuple[int, str]]] = {
-        k: [] for k in ("by_script", "absolute", "renamed", "archived", "absent")
+        k: [] for k in ("by_script", "by_other", "absolute", "renamed", "archived", "absent")
     }
+    # code files in languages that are not run, with the files they write (#648)
+    other_name = (
+        _strs(other_writes, "file_name", len(other_writes)) if other_writes is not None else []
+    )
+    other_made = [
+        strsplit(w, r",\s*") if w else []
+        for w in (
+            _strs(other_writes, "files_written", len(other_writes))
+            if other_writes is not None
+            else []
+        )
+    ]
     for i in rows_where(lambda i: err[i] and reason[i] == "file"):
         for p in _repro_unopened_files(msg[i], full=True):
             base = _basename(p) or ""
             b = base.lower()
             k = mi_base.index(b) if b in mi_base else None
-            maker = [j for j in range(n) if b in writes[j] and j != i]
+            # a name the other script builds counts, as a pattern (.code_name_match()):
+            # matched by exact names only, one of two identical cases in gx9qa_v3 got
+            # "find the file on your computer" (#648)
+            maker = [
+                j
+                for j in range(n)
+                if j != i and len(writes[j]) > 0 and _code_name_match([b], writes[j])[0]
+            ]
+            other = [
+                j for j, w in enumerate(other_made) if len(w) > 0 and _code_name_match([b], w)[0]
+            ]
             if maker:
                 line = f"{_code(name[i])} needs {_code(base)}, which {_code(name[maker[0]])} makes."
                 found["by_script"].append((i, line))
+            elif other:
+                line = (
+                    f"{_code(name[i])} needs {_code(base)}, which "
+                    f"{_code(other_name[other[0]])} makes."
+                )
+                found["by_other"].append((i, line))
             elif k is not None and similar[k] is not None:
                 line = (
                     f"{_code(name[i])} reads {_code(base)}; your deposit holds {_code(similar[k])}."
@@ -245,6 +265,17 @@ def _repro_advice(
             "one may then run as well. To make the order clear to readers, number your scripts "
             "in the order they run (<code>01&#95;clean.R</code>, <code>02&#95;model.R</code>), "
             "or add one main script that runs the others in order."
+        ],
+    )
+    block(
+        "by_other",
+        rows_of("by_other"),
+        "A script needs a file that a script in another language makes.",
+        text_of("by_other"),
+        [
+            "We run only R and Python code, so the file was not made. Add the file to the "
+            "deposit, or say in the README in which order the scripts run, with the program "
+            "each needs."
         ],
     )
     block(
@@ -346,8 +377,8 @@ def _repro_advice(
 
     # A package the code loads that was not there, which the install did not know of
     def pkg_of(m: str) -> str | None:
-        hit = regexec(_PKG_PAT, m, perl=True)
-        return hit[1] if len(hit) > 1 else None
+        hit = [g for g in regexec(_PKG_PAT, m, perl=True)[1:] if g]
+        return hit[0] if hit else None
 
     missing_pkg = not_covered(rows_where(lambda i: err[i] and reason[i] == "package"))
     mp = [pkg_of(msg[i]) for i in missing_pkg]
@@ -368,50 +399,68 @@ def _repro_advice(
     )
 
     # A package that could not be installed.
-    unknown_source: set[str | None] = set()
+    category: dict[str | None, str | None] = {}
     if (
         install_results is not None
         and len(install_results)
         and {"package", "installed"} <= set(install_results.columns)
     ):
-        categories = _strs(install_results, "category", len(install_results))
-        unknown_source = {
-            p
-            for p, ok, cat in zip(
-                _strs(install_results, "package", len(install_results)),
-                install_results["installed"].tolist(),
-                categories,
-                strict=True,
-            )
-            if not is_true(ok) and cat == "source_unknown"
-        }
+        cats = _strs(install_results, "category", len(install_results))
+        for pk, ok, cat in zip(
+            _strs(install_results, "package", len(install_results)),
+            install_results["installed"].tolist(),
+            cats,
+            strict=True,
+        ):
+            if not is_true(ok):
+                category.setdefault(pk, cat if "category" in install_results.columns else None)
     dep = rows_where(lambda i: outcome[i] == "dependency_unavailable")
     if dep:
         dp = [pkg_of(msg[i]) for i in dep]
         pkgs = list(dict.fromkeys(p for p in dp if p is not None))
+        # Advice for the language of the script that needs the package, and for why the
+        # install failed: every failed install was told that R was old and to use renv and
+        # rocker, also Python packages (ehrql, monai) and R packages from GitHub or
+        # Bioconductor, which the run looks for on CRAN (#648).
         explain = []
         for p in pkgs:
-            if p in _REPRO_RETIRED_PACKAGES:
+            py = any(is_py[i] for i, q in zip(dep, dp, strict=True) if q == p)
+            cat_p = category.get(p)
+            if not py and p in _REPRO_RETIRED_PACKAGES:
                 successors = " or ".join(_code(s) for s in _REPRO_RETIRED_PACKAGES[p].split(" or "))
                 explain.append(
                     f"{_code(p)} was removed from CRAN in 2023 and can no longer be installed. "
                     f"Replace it with {successors}, which do the same work, and check that your "
                     "results stay the same."
                 )
-            elif p in unknown_source:
+            elif py:
+                explain.append(
+                    f"{_code(p)} could not be installed with <code>pip</code>. List it with its "
+                    "version in <code>requirements.txt</code>. If it is not on PyPI, or its name "
+                    "there differs from the name the code imports, say in the README how to "
+                    "install it."
+                )
+            elif cat_p == "compile_failure":
+                explain.append(
+                    f"{_code(p)} could not be built, because it needs software outside R that "
+                    "our computer does not have. Name that software in the README; a Docker "
+                    "image can include it."
+                )
+            elif cat_p in ("source_unknown", "cran_unavailable"):
                 install = f'remotes::install_github("user/{p}")'
+                bioc = f'BiocManager::install("{p}")'
                 explain.append(
                     f"{_code(p)} is not on CRAN, and your code does not say where it comes from. "
-                    f"Add the command that installs it to the README, for example {_code(install)}."
+                    "If it comes from GitHub or Bioconductor, install it at the top of the "
+                    "script, or name the command in the README, for example "
+                    f"{_code(install)} or {_code(bioc)}, with the version you used."
                 )
             else:
                 explain.append(
-                    f"{_code(p)} could not be installed with the current version of R, probably "
-                    "because it is old. Record the versions you used (in R, "
-                    "<code>renv::init()</code> writes them to a <code>renv.lock</code> file) and "
-                    "your R version. To be sure the code keeps running, provide a Docker image: "
-                    "a frozen copy of the whole computer setup the code needs, which you can "
-                    "build from <code>rocker/r-ver</code> at your R version."
+                    f"{_code(p)} could not be installed in our run. Record the versions you used "
+                    "(in R, <code>renv::init()</code> writes them to a <code>renv.lock</code> "
+                    "file) and your R version, and say in the README where any package that is "
+                    "not on CRAN comes from."
                 )
         block(
             "dep",
@@ -433,9 +482,9 @@ def _repro_advice(
         "A script starts a program outside R or Python.",
         [f"{_code(name[i])} starts {_code(program[i])}." for i in prog],
         [
-            "Our computer does not have this program, and neither will most readers'. Name the "
-            "program, its version and where to get it in the README. A Docker image can "
-            "include it."
+            "The computer we run the code on does not have this program, so we could not check "
+            "these scripts; this need not be a fault of the code. Name the program, its "
+            "version and where to get it in the README. A Docker image can include it."
         ],
     )
     oom = _repro_out_of_memory(msg)
@@ -445,8 +494,11 @@ def _repro_advice(
         for i in rows_where(
             lambda i: (
                 err[i]
-                and bool(
-                    grepl("API key|api[_ ]key|set env(ironment)? var", key[i], ignore_case=True)
+                and (
+                    reason[i] == "settings"
+                    or bool(
+                        grepl("API key|api[_ ]key|set env(ironment)? var", key[i], ignore_case=True)
+                    )
                 )
             )
         )
@@ -474,12 +526,15 @@ def _repro_advice(
     block(
         "keys",
         keys,
-        "A script uses an online service that needs a personal key.",
-        [_code(name[i]) for i in keys],
+        "A script needs a setting from your computer that the deposit does not hold, such as a "
+        "personal key or the place of data.",
+        [f'{_code(name[i])}: "{_repro_cell(short(i))}"' for i in keys],
         [
-            "Say in the README which service it is and how to get a key. Services change or "
-            "close (Dark Sky has closed), so also save the data the script downloads, add it "
-            "to the deposit, and let the script read the saved copy."
+            "We could not check these scripts. Say in the README what each setting is and how "
+            "readers get it. For an online service, also save the data the script downloads, "
+            "add it to the deposit, and let the script read the saved copy, as services change "
+            "or close. For data that cannot be shared, say where and how readers can apply for "
+            "it."
         ],
     )
     block(
@@ -615,6 +670,7 @@ def _repro_advice(
     # in the order in which the problems should be fixed
     order = (
         "by_script",
+        "by_other",
         "absent",
         "absolute",
         "renamed",
@@ -791,6 +847,7 @@ def _repro_checklist_section(
     source_unknown: Sequence[str] = (),
     install_results: pd.DataFrame | None = None,
     versions_recorded: bool = False,
+    other_writes: pd.DataFrame | None = None,
     *,
     memory_gb: float | None = None,
 ) -> str | None:
@@ -895,7 +952,7 @@ def _repro_checklist_section(
         rows.append(f"| {_repro_cell(name[i])} | {result} | {happened} |")
 
     # the opening sentences: what was run, and how
-    counted = [o not in _NOT_COUNTED for o in oc]
+    counted = [o not in _REPRO_NOT_OWN_OUTCOMES for o in oc]
     n_r = sum(c and not py for c, py in zip(counted, is_py, strict=True))
     n_py = sum(c and py for c, py in zip(counted, is_py, strict=True))
     scripts = " and ".join(
@@ -910,11 +967,19 @@ def _repro_checklist_section(
         else "each in a separate R or Python session"
     )
     limit_minutes = r_round(timeout / 60, 1)
-    intro = (
-        f"We ran the paper's {scripts} in the order they depend on each other, {how}, for at "
-        f"most {format_num(limit_minutes, 7)} minute{plural(limit_minutes)} per script."
-        + ("" if install_missing else " We did not install packages the scripts need.")
-    )
+    # with no script of its own, the sentence had no number: "We ran the paper's in the order
+    # they depend on each other" (#648)
+    if not scripts:
+        intro = (
+            "We ran none of the paper's code files: none of them is a script with a result of "
+            "its own."
+        )
+    else:
+        intro = (
+            f"We ran the paper's {scripts} in the order they depend on each other, {how}, for at "
+            f"most {format_num(limit_minutes, 7)} minute{plural(limit_minutes)} per script."
+            + ("" if install_missing else " We did not install packages the scripts need.")
+        )
     if net is not None:
         intro += " " + _repro_internet_text(net)
     if recorded_note is not None:
@@ -1005,6 +1070,7 @@ def _repro_checklist_section(
         install_results,
         versions_recorded,
         timeout=timeout,
+        other_writes=other_writes,
         memory_gb=memory_gb,
     )
 

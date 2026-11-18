@@ -45,6 +45,8 @@ ANALYSIS_COLS = (
     "code_lines",
     "percentage_comment",
     "has_docstring",
+    "loaded_refs",
+    "files_written",
     "loaded_files_missing",
     "loaded_files_missing_names",
     "error",
@@ -69,6 +71,8 @@ _DTYPES = {
     "code_lines": "Int64",
     "percentage_comment": "float64",
     "has_docstring": "boolean",
+    "loaded_refs": "string",
+    "files_written": "string",
     "loaded_files_missing": "Int64",
     "loaded_files_missing_names": "string",
     "error": "string",
@@ -87,24 +91,9 @@ def col(df: pd.DataFrame, name: str, default: Any = None) -> list[Any]:
     return [default] * len(df)
 
 
-def _r_tolower(x: str) -> str:
-    """R ``tolower()``: a per-character (``towlower``) mapping.
-
-    ``towlower`` is Unicode's simple lowercase mapping; Python's full mapping
-    differs only where it yields several characters (``"İ".lower()`` is
-    ``"i̇"``), whose first one is the simple mapping (``"i"``).
-    """
-    return "".join(ch.lower()[0] for ch in x)
-
-
 def _r_basename(x: str) -> str:
     """R ``basename()`` of a ``/``-separated path (trailing slashes ignored)."""
     return slashed(x).rstrip("/").rsplit("/", 1)[-1]
-
-
-def _base_names(x: Sequence[Any]) -> list[str | None]:
-    """``gsub("\\\\", "/", x) |> basename()`` (``NA`` stays ``NA``)."""
-    return [None if is_missing(v) else _r_basename(str(v).replace("\\", "/")) for v in x]
 
 
 def location_series(values: list[Any], index: Any, like: pd.Series | None) -> pd.Series:
@@ -172,24 +161,8 @@ def _parse_text(lines: list[str | None]) -> list[str]:
     return ["NA" if v is None else v for v in lines]
 
 
-def _repo_basenames(all_files: pd.DataFrame) -> dict[Any, set[str]]:
-    """Lower-cased base names of the files listed in each repository."""
-    out: dict[Any, set[str]] = {}
-    if "repo_url" not in all_files.columns:
-        return out
-    repos = col(all_files, "repo_url")
-    names = _base_names(col(all_files, "file_name"))
-    for repo, name in zip(repos, names, strict=True):
-        if repo is None:
-            continue
-        bucket = out.setdefault(repo, set())
-        if name is not None:
-            bucket.add(_r_tolower(name))
-    return out
-
-
 def analyse_files(
-    checked_files: pd.DataFrame, all_files: pd.DataFrame
+    checked_files: pd.DataFrame,
 ) -> tuple[list[dict[str, Any]], dict[Any, list[tuple[Any, list[str | None]]]]]:
     """Run every code check on every file of *checked_files*.
 
@@ -228,10 +201,8 @@ def analyse_files(
         if "file_url" in checked_files.columns
         else [None] * n
     )
-    repos = col(checked_files, "repo_url")
     has_pid = "paper_id" in checked_files.columns
     pids = [None if v is None else str(as_character(v)) for v in col(checked_files, "paper_id")]
-    repo_names = _repo_basenames(all_files)
 
     bar = pb(n, ":what [:bar] :current/:total") if n else None
     rows: list[dict[str, Any]] = []
@@ -327,11 +298,17 @@ def analyse_files(
             row["percentage_comment"] = stats["percent_comments"]
             row["has_docstring"] = stats["has_docstring"]
 
-            refs = _base_names(code_file_refs(file_nc, lang))
-            in_repo = repo_names.get(repos[i], set()) if repos[i] is not None else set()
-            missing = [r for r in refs if r is not None and _r_tolower(r) not in in_repo]
-            row["loaded_files_missing"] = len(missing)
-            row["loaded_files_missing_names"] = ", ".join(missing)
+            # the files the code reads, and those it writes or downloads; which of the files it
+            # reads are missing is decided after every script is read (_code_missing_files()), as
+            # another script may make them (#648)
+            row["loaded_refs"] = "\u001f".join(
+                str(r) for r in code_file_refs(file_nc, lang) if r is not None
+            )
+            row["files_written"] = ", ".join(
+                dict.fromkeys(
+                    str(r) for r in code_file_refs(file_nc, lang, writes_only=True) if r is not None
+                )
+            )
         except Exception as exc:
             row["error"] = _msg(exc)
     return rows, r_text_by_paper

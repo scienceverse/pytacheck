@@ -12,6 +12,42 @@
         "nrow": 1,
         "names": [
           "Repository",
+          "Cited in",
+          "Whose",
+          "Why"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://zenodo.org/records/5559101' target='_blank'>zenodo.org/records/5559101<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "the authors', for this paper"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Repository",
           "Platform",
           "All Files",
           "Data Files",
@@ -138,7 +174,7 @@
       },
       {
         "t": "df",
-        "nrow": 5,
+        "nrow": 4,
         "names": [
           "File",
           "Rule",
@@ -152,7 +188,6 @@
               "raw data.csv",
               "données.csv",
               "données.csv",
-              "inner.zip",
               "participant_2.csv"
             ]
           },
@@ -162,14 +197,12 @@
               "spaces",
               "special-characters",
               "diacritics",
-              "unclassifiable",
               "zero-padding"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Required",
               "Required",
               "Required",
               "Required",
@@ -182,7 +215,6 @@
               "contains a space",
               "contains a character other than letters, digits, underscore, or dash",
               "contains non-ASCII characters (e.g. accented letters)",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)"
             ]
           }
@@ -376,6 +408,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -189,6 +189,7 @@ def test_unzip_skips_a_member_in_a_method_zipfile_lacks(tmp_path: Path) -> None:
 def test_expand_zip_and_tar_follow_r(tmp_path: Path) -> None:
     row = pd.DataFrame({"repo_url": ["r"], "file_name": ["x"], "file_path": ["x"]})
     for name in ("climb.zip", "hostile.tar.gz"):
+        row = row.assign(file_path=name)  # the archive's own path is the label of its files
         f = tmp_path / name
         f.write_bytes((REVIEW / name).read_bytes())
         with warnings.catch_warnings():

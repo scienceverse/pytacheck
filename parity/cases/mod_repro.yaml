@@ -125,6 +125,22 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('renv_only')})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('renv_only')"
+- "id": "reproducibility_check.archive_zip"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('archive_zip')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('archive_zip')"
+- "id": "reproducibility_check.other_writes"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('other_writes')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('other_writes')"
 - "id": "reproducibility_check.duplicates"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"

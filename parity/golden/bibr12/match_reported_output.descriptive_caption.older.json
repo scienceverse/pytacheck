@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 3,
+    "nrow": 2,
     "names": [
       "text_id",
       "grp_id",
@@ -18,21 +18,20 @@
       "source_file",
       "analysis",
       "confidence",
-      "plausible_split"
+      "plausible_split",
+      "n_sites"
     ],
     "v": [
       {
         "t": "int",
         "v": [
           2,
-          -1001001,
-          -1001002
+          -1001001
         ]
       },
       {
         "t": "int",
         "v": [
-          1,
           1,
           1
         ]
@@ -41,15 +40,13 @@
         "t": "chr",
         "v": [
           "t=3.42 df=28",
-          "mean=1.93",
-          "mean=-0.15"
+          "mean=1.93"
         ]
       },
       {
         "t": "int",
         "v": [
           2,
-          1,
           1
         ]
       },
@@ -57,7 +54,6 @@
         "t": "int",
         "v": [
           0,
-          1,
           1
         ]
       },
@@ -65,7 +61,6 @@
         "t": "lgl",
         "v": [
           false,
-          true,
           true
         ]
       },
@@ -73,15 +68,13 @@
         "t": "chr",
         "v": [
           null,
-          "mean=1.93",
-          "mean=-0.15"
+          "mean=1.93"
         ]
       },
       {
         "t": "chr",
         "v": [
           null,
-          "",
           ""
         ]
       },
@@ -89,7 +82,6 @@
         "t": "chr",
         "v": [
           null,
-          "sample.jasp",
           "sample.jasp"
         ]
       },
@@ -97,7 +89,6 @@
         "t": "chr",
         "v": [
           null,
-          "Paired Samples T-Test",
           "Paired Samples T-Test"
         ]
       },
@@ -105,7 +96,6 @@
         "t": "chr",
         "v": [
           "none",
-          "full",
           "full"
         ]
       },
@@ -113,12 +103,18 @@
         "t": "lgl",
         "v": [
           true,
-          null,
           null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          1
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -286,6 +286,7 @@ REPO_TYPES = (
     "mendeley",
     "dataone",
     "ldbase",
+    "ckan",
 )
 
 _FIGSHARE_SHARE = "private share link (figshare.com/s/...) cannot be resolved without a browser"
@@ -305,6 +306,15 @@ class Repos:
     rb_view_only: pd.DataFrame = field(default_factory=lambda: view_only_frame())
     #: ResearchBox links without a passcode to a box ResearchBox does not show
     rb_not_public: list[str] = field(default_factory=list)
+    #: R ``repo_record_type``: each DSpace, EPrints and Invenio record's own type by ``repo_url``
+    #: (the first given for a url), read by the "Publications" step (metacheck #637)
+    record_types: dict[str, Any] = field(default_factory=dict)
+
+    def add_record_types(self, urls: Sequence[Any], types: Sequence[Any]) -> None:
+        """``repo_record_type <- c(repo_record_type, setNames(types, urls))``."""
+        for u, t in zip(urls, types, strict=True):
+            if u is not None and not _na(u):
+                self.record_types.setdefault(str(u), None if _na(t) else str(t))
 
     def urls(self, repo_type: str) -> list[str]:
         """``repos |> filter(repo_type == type) |> _$repo_url |> unique()``."""
@@ -382,6 +392,7 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     private share links).
     """
     from metacheck._r import bind_rows
+    from metacheck.archives.ckan import ckan_links
     from metacheck.archives.dataone import dataone_links
     from metacheck.archives.dataverse import dataverse_links
     from metacheck.archives.dryad import dryad_links
@@ -395,8 +406,8 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     from metacheck.archives.osf import osf_links
     from metacheck.archives.psycharchives import dspace_links
     from metacheck.archives.researchbox import rbox_links
-    from metacheck.archives.reshare import reshare_links
-    from metacheck.archives.zenodo import zenodo_links
+    from metacheck.archives.reshare import eprints_links
+    from metacheck.archives.zenodo import invenio_links
 
     osf = osf_links(paper)
     if "href" in osf.columns:
@@ -409,15 +420,19 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
         "researchbox": rbox_links(paper),
         "dspace": dspace_links(paper),
         "dspace7": dspace7_links(paper),
-        "zenodo": zenodo_links(paper),
+        # Zenodo and the other Invenio installations (metacheck #636)
+        "zenodo": invenio_links(paper),
         "dataverse": dataverse_links(paper),
         "figshare": figshare_links(paper),
         "dryad": dryad_links(paper),
-        "reshare": reshare_links(paper),
+        # ReShare and the other EPrints repositories (metacheck #637)
+        "reshare": eprints_links(paper),
         "researchdata4tu": researchdata4tu_links(paper),
         "mendeley": mendeley_links(paper),
         "dataone": dataone_links(paper),
         "ldbase": ldbase_links(paper),
+        # CKAN data portals (metacheck #637)
+        "ckan": ckan_links(paper),
     }
     parts = []
     for repo_type in REPO_TYPES:
@@ -662,7 +677,9 @@ def _osf_files(info: pd.DataFrame) -> pd.DataFrame:
     return take(info, keep)
 
 
-def _osf_listing(urls: list[str], pb: Any, cache: bool) -> pd.DataFrame:
+def _osf_listing(
+    urls: list[str], pb: Any, cache: bool, max_requests: float = math.inf
+) -> pd.DataFrame:
     """``lapply(urls, osf_info(x, recursive = TRUE)) |> bind_rows()`` with ``repo_name``."""
     from metacheck._r import bind_rows
     from metacheck.archives._parallel import map_ordered
@@ -672,7 +689,8 @@ def _osf_listing(urls: list[str], pb: Any, cache: bool) -> pd.DataFrame:
     unique_urls = list(dict.fromkeys(urls))
     with _request_session():
         listings = map_ordered(
-            lambda x: osf_info(x, recursive=True, pb=pb, cache=cache), unique_urls
+            lambda x: osf_info(x, recursive=True, pb=pb, cache=cache, max_requests=max_requests),
+            unique_urls,
         )
     by_url = dict(zip(unique_urls, listings, strict=True))
     parts = []
@@ -691,8 +709,13 @@ def list_osf(
     pb: Any,
     cache: bool,
     osf_license: bool = False,
+    max_requests: float = 50,
+    cut_urls: list[str] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The OSF block: list files, follow registrations to their source projects.
+
+    A project whose listing stopped at *max_requests* is added to *cut_urls*, with the project
+    a registration of it was registered from.
 
     Returns the files and, with *osf_license*, the licence of each OSF
     repository left in ``repos`` (one ``?embed=license`` request each).
@@ -700,7 +723,16 @@ def list_osf(
     osf_files_df = placeholder()
     reg_pairs: list[tuple[Any, str]] = []
     if osf_urls:
-        osf_files_df = _list_osf_files(repos, osf_urls, osf_paper_id, pb, cache, reg_pairs)
+        osf_files_df = _list_osf_files(
+            repos,
+            osf_urls,
+            osf_paper_id,
+            pb,
+            cache,
+            reg_pairs,
+            max_requests,
+            cut_urls if cut_urls is not None else [],
+        )
     meta = meta_frame()
     if osf_license is True:
         meta = _osf_license_meta(repos, reg_pairs)
@@ -744,6 +776,9 @@ def _osf_license_meta(repos: Repos, reg_pairs: list[tuple[Any, str]]) -> pd.Data
     return meta_frame(urls, NA_SCALAR, licenses)
 
 
+_OSF_FAILED_TYPES = ("unfound", "error", "too many requests")
+
+
 def _osf_view_only(repos: Repos, osf_info_df: pd.DataFrame, otypes: list[Any]) -> None:
     """Name a private OSF project read through a view-only link, once.
 
@@ -752,6 +787,28 @@ def _osf_view_only(repos: Repos, osf_info_df: pd.DataFrame, otypes: list[Any]) -
     then not a repository that could not be checked, and is left out; the project
     is named as private instead, as the authors can now make it public.
     """
+    if "osf_id" in osf_info_df.columns:
+        # The same holds for any page the key opens, also a registration (a preregistration
+        # shared with a view-only link): the plain link the paper also gives is not a repository
+        # that could not be checked (#648: osf.io/kpngh and osf.io/4vtjq in q7pnw_v3 were
+        # "private").
+        ids = vals(osf_info_df["osf_id"])
+        urls = vals(osf_info_df["osf_url"])
+        opened = {
+            re.sub(r"[?/].*$", "", i, flags=re.S)
+            for t, i in zip(otypes, ids, strict=True)
+            if not _na(i)
+            and "view_only=" in i
+            and not _na(t)
+            and t not in ("private", *_OSF_FAILED_TYPES)
+        }
+        plain_all = {
+            u
+            for t, i, u in zip(otypes, ids, urls, strict=True)
+            if t == "private" and not _na(i) and re.sub(r"[?/].*$", "", i, flags=re.S) in opened
+        }
+        if plain_all:
+            repos.keep([u not in plain_all for u in vals(repos.df["repo_url"])])
     if not {"osf_id", "public"} <= set(osf_info_df.columns):
         return
     osf_id = vals(osf_info_df["osf_id"])
@@ -792,12 +849,17 @@ def _list_osf_files(
     pb: Any,
     cache: bool,
     reg_pairs: list[tuple[Any, str]],
+    max_requests: float = 50,
+    cut_urls: list[str] | None = None,
 ) -> pd.DataFrame:
     from metacheck._r import bind_rows
 
+    if cut_urls is None:
+        cut_urls = []
     osf_files_df = placeholder()
     try:
-        osf_info_df = _quiet(lambda: _osf_listing(osf_urls, pb, cache))
+        osf_info_df = _quiet(lambda: _osf_listing(osf_urls, pb, cache, max_requests))
+        cut_urls.extend(_cut_urls(osf_info_df))
 
         # a link OSF does not know (an invalid id) has no osf_type: when no
         # link resolved there is no osf_type column at all
@@ -807,6 +869,45 @@ def _list_osf_files(
             else [None] * len(osf_info_df)
         )
         ourls = vals(osf_info_df["osf_url"])
+
+        # Opened with a view-only key, a registration does not say which project it was
+        # registered from (the OSF hides it, as an anonymous key hides who made the page). A
+        # public registration says it without the key, so it is asked once more without it
+        # (#648: q7pnw_v3's "osf.io/ujdep/?view_only=..." came from the closed project ke24d,
+        # which was reported only while the link was also found without its key).
+        if "parent" in osf_info_df.columns and "osf_id" in osf_info_df.columns:
+            parents = vals(osf_info_df["parent"])
+            osf_ids = vals(osf_info_df["osf_id"])
+            keyed_reg = [
+                k
+                for k, (t, par, i) in enumerate(zip(otypes, parents, osf_ids, strict=True))
+                if t == "registrations" and _na(par) and not _na(i) and "view_only=" in i
+            ]
+            changed = False
+            for rid in unique(re.sub(r"[?/].*$", "", osf_ids[k], flags=re.S) for k in keyed_reg):
+                from metacheck.archives.osf import osf_info
+
+                def ask(rid: str = rid) -> pd.DataFrame:
+                    return osf_info(f"https://osf.io/{rid}", recursive=False, pb=pb, cache=cache)
+
+                try:
+                    plain_info: pd.DataFrame | None = _quiet(ask)
+                except Exception:
+                    plain_info = None
+                found = None
+                if isinstance(plain_info, pd.DataFrame) and "parent" in plain_info.columns:
+                    ok = [x for x in vals(plain_info["parent"]) if not _na(x)]
+                    found = ok[0] if ok else None
+                if found is not None:
+                    for k in keyed_reg:
+                        if re.sub(r"[?/].*$", "", osf_ids[k], flags=re.S) == rid:
+                            parents[k] = found
+                            changed = True
+            if changed:
+                osf_info_df = osf_info_df.copy()
+                osf_info_df["parent"] = pd.Series(
+                    parents, index=osf_info_df.index, dtype=osf_info_df["parent"].dtype
+                )
 
         # registration URL -> the project it was registered from (R: a named vector)
         if "parent" in osf_info_df.columns:
@@ -829,7 +930,7 @@ def _list_osf_files(
         # requests") is kept, with its reason, instead of being removed with the
         # registrations (metacheck #501): during an OSF outage every OSF link was
         # dropped, so the paper read as linking no repository at all.
-        failed_types = ("unfound", "error", "too many requests")
+        failed_types = _OSF_FAILED_TYPES
         # a link whose id is not a valid OSF id gets no osf_type (U122)
         invalid = {u for t, u in zip(otypes, ourls, strict=True) if _na(t) and u in set(osf_urls)}
         repos.fill_errors(dict.fromkeys(invalid, "not a valid OSF link"))
@@ -868,7 +969,8 @@ def _list_osf_files(
         parent_urls_new = setdiff(parent_urls_all, osf_urls)
         closed_parent_urls: list[Any] = []
         if parent_urls_new:
-            parent_info = _quiet(lambda: _osf_listing(parent_urls_new, pb, cache))
+            parent_info = _quiet(lambda: _osf_listing(parent_urls_new, pb, cache, max_requests))
+            cut_urls.extend(_cut_urls(parent_info))
             if "kind" in parent_info.columns:
                 parent_files = _osf_files(parent_info)
                 if len(parent_files) > 0:
@@ -945,7 +1047,21 @@ def _list_osf_files(
                     repo_url=pd.Series(moved, index=osf_files_df.index, dtype="string")
                 )
         repos.flag_unflagged(osf_urls, msg)
+    # A registration's files are kept under the project it was registered from, so that project
+    # counts as listed in part as well.
+    reg_map_final: dict[Any, str] = {}
+    for name, parent in reg_pairs:
+        reg_map_final.setdefault(name, parent)
+    cut_urls[:] = unique([*cut_urls, *(reg_map_final[u] for u in cut_urls if u in reg_map_final)])
     return osf_files_df
+
+
+def _cut_urls(listing: pd.DataFrame) -> list[str]:
+    """The ``repo_name`` of the OSF listings that stopped at their request limit."""
+    if "listing_cut" not in listing.columns or "repo_name" not in listing.columns:
+        return []
+    cut = listing["listing_cut"].fillna(False).to_numpy(dtype=bool)
+    return unique(u for u, c in zip(vals(listing["repo_name"]), cut, strict=True) if c)
 
 
 # -- GitHub / GitLab ----------------------------------------------------------
@@ -972,10 +1088,20 @@ def list_git(
     if not urls:
         return files_df, meta_frame()
 
+    from metacheck.archives.link_versions import _repo_link_unhyphenated
+
+    if host == "github":
+        from metacheck.archives.github import github_repo as exists
+    else:
+        from metacheck.archives.gitlab import gitlab_repo as exists
+    invalid = f"invalid or inaccessible {'GitHub' if host == 'github' else 'GitLab'} repository"
+
     results: dict[str, Any] = {}
     for url in urls:
         cached = _repo_info_cache_get(host, url) if cache is True else None
-        if cached is not None:
+        # a GitHub listing stored before the repository's own description was kept (`info`)
+        # is asked for again
+        if cached is not None and (host != "github" or cached.get("info") is not None):
             results[url] = cached
             continue
         try:
@@ -989,9 +1115,38 @@ def list_git(
             }
             if host == "gitlab":
                 result["license"] = None
+        # A repository that does not exist may have a hyphen a line break added
+        # ("Betha-nyL/DeepKoopman"): the form without it is listed instead, and `repo_url`
+        # names it (archives/link_versions.py).
+        if result.get("reason") == invalid:
+            alt = _repo_link_unhyphenated(url, exists)
+            if alt is not None:
+                try:
+                    alt_result = tree_files(alt)
+                except Exception:
+                    alt_result = None
+                if alt_result is not None and alt_result.get("gated") is not True:
+                    result = {**alt_result, "repo_url": alt}
         if cache is True and _repo_info_list_ok(result):
             _repo_info_cache_put(host, url, result)
         results[url] = result
+
+    # the links found without a hyphen take the place of the links as written
+    moved = {u: r["repo_url"] for u, r in results.items() if not _na(r.get("repo_url"))}
+    if moved:
+        repos.df = (
+            repos.df.assign(
+                repo_url=pd.Series(
+                    [moved.get(u, u) for u in vals(repos.df["repo_url"])],
+                    dtype="string",
+                    index=repos.df.index,
+                )
+            )
+            .drop_duplicates()
+            .reset_index(drop=True)
+        )
+        results = {moved.get(u, u): r for u, r in results.items()}
+        urls = unique(moved.get(u, u) for u in urls)
 
     for url in urls:
         r = results[url]
@@ -1158,6 +1313,12 @@ def _named_lookup(named: Mapping[str, Any] | None, keys: Sequence[str]) -> list[
     return [named.get(k) for k in keys]
 
 
+def _add_record_types(repos: Repos, named: Mapping[str, Any] | None) -> None:
+    """``repo_record_type <- c(repo_record_type, attr(file_list, "record_type"))``."""
+    if named:
+        repos.add_record_types(list(named.keys()), list(named.values()))
+
+
 def list_dspace(
     repos: Repos, urls: list[str], pb: Any, cache: bool
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -1177,6 +1338,7 @@ def list_dspace(
         if unfound:
             repos.flag(unfound, _DSPACE_UNFOUND)
         attrs = pa.attrs if isinstance(pa, pd.DataFrame) else {}
+        _add_record_types(repos, attrs.get("record_type"))
         rights = attrs.get("rights") or None
         if rights:
             restricted = [
@@ -1236,6 +1398,7 @@ def list_dspace7(repos: Repos, urls: list[str], pb: Any) -> tuple[pd.DataFrame, 
             repos.flag(unfound, _DSPACE_UNFOUND)
         # the items' DOI and licence, carried in the listing's attrs
         attrs = ds.attrs if isinstance(ds, pd.DataFrame) else {}
+        _add_record_types(repos, attrs.get("record_type"))
         doi = attrs.get("doi") or None
         license_ = attrs.get("license") or None
         if doi or license_:
@@ -1307,15 +1470,24 @@ def _api_listing(
     info_fn: Callable[[], pd.DataFrame],
     url_col: str,
     row_fn: Callable[[dict[str, Any], Any], dict[str, Any]],
+    record_type_col: str | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The shared shape of the Zenodo, Dataverse, Figshare, Dryad, ReShare,
-    4TU.ResearchData, Mendeley Data, DataONE and LDbase blocks."""
+    4TU.ResearchData, Mendeley Data, DataONE and LDbase blocks.
+
+    *record_type_col* names the column of the info table holding each record's own type
+    (Zenodo's ``resource_type``, ReShare's ``record_type``), kept for the "Publications" step.
+    """
+    from metacheck.utils import _col_chr
+
     files_df = placeholder()
     meta = meta_frame()
     if not urls:
         return files_df, meta
     try:
         info = info_fn()
+        if len(info) > 0 and record_type_col is not None and record_type_col in info.columns:
+            repos.add_record_types(_col_chr(info, url_col), _col_chr(info, record_type_col))
         if len(info) > 0:
             meta = _meta_from(info, url_col)
             link_errors(repos, info, url_col)
@@ -1370,6 +1542,98 @@ def list_ldbase(
                             ("file_url", vals(files_i["file_url"]), "string"),
                             ("file_location", [None] * n, "string"),
                             ("file_size", [None] * n, "float64"),
+                        ]
+                    )
+                )
+            files_df = _typed_listing(bind_rows(parts) if parts else pd.DataFrame())
+    except Exception as e:
+        repos.flag_unflagged(urls, condition_message(e))
+    return files_df, meta
+
+
+_DEPOSIT_TYPES = ("data", "code", "stats", "archive")
+
+
+def drop_publications(
+    repos: Repos, files: list[tuple[str, pd.DataFrame]], metas: list[tuple[str, pd.DataFrame]]
+) -> tuple[list[pd.DataFrame], list[pd.DataFrame]]:
+    """The "Publications" step (metacheck #636, #637): a paper, book or thesis is not a deposit.
+
+    A DSpace, EPrints, Zenodo or other Invenio record whose own type says it is a publication
+    (:func:`metacheck.archives.repo_kind._repo_publication_type`) and that holds no data or code
+    file (data, code, a statistics file or an archive) is ignored with its files. A record that
+    gives no type is ignored only when it lists files and none of them is data or code. *files*
+    and *metas* are ``(platform, table)`` pairs; only the four institutional platforms'
+    tables are filtered. Returns the tables, in order.
+    """
+    from metacheck.archives.repo_kind import _repo_publication_type
+
+    inst = ("dspace", "dspace7", "reshare", "zenodo")
+    mask = repos.df["repo_type"].isin(inst).fillna(False).to_numpy(dtype=bool)
+    inst_urls = [u for u in unique(repos.df["repo_url"][mask].tolist()) if u is not None]
+    drop: set[str] = set()
+    if inst_urls:
+        tables = [f for name, f in files if name in inst and "repo_url" in f.columns]
+        kinds = []
+        for u in inst_urls:
+            ks: list[Any] = []
+            for f in tables:
+                hit = r_in(vals(f["repo_url"]), [u])
+                ks.extend(t for t, h in zip(vals(f["file_type"]), hit, strict=True) if h)
+            kinds.append(ks)
+        is_pub = _repo_publication_type([repos.record_types.get(u) for u in inst_urls])
+        for u, pub, ks in zip(inst_urls, is_pub, kinds, strict=True):
+            no_data = not any(k in _DEPOSIT_TYPES for k in ks)
+            listed = len(ks) > 0
+            if (pub is True and no_data) or (pub is None and listed and no_data):
+                drop.add(u)
+    if drop:
+        repos.df = repos.df[~repos.df["repo_url"].isin(drop).fillna(False)].reset_index(drop=True)
+
+    def cut(name: str, df: pd.DataFrame) -> pd.DataFrame:
+        if drop and name in inst and "repo_url" in df.columns:
+            return df[~df["repo_url"].isin(drop).fillna(False)].reset_index(drop=True)
+        return df
+
+    return [cut(n, f) for n, f in files], [cut(n, m) for n, m in metas]
+
+
+def list_ckan(
+    repos: Repos, urls: list[str], pb: Any, cache: bool
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """The CKAN block (metacheck #637): ``ckan_info()`` reads each dataset's record, one request.
+
+    The files are the resources the portal holds itself, with their sizes; a resource that
+    only links to another website is not listed.
+    """
+    from metacheck._r import bind_rows
+    from metacheck.archives.ckan import ckan_info
+
+    files_df = placeholder()
+    meta = meta_frame()
+    if not urls:
+        return files_df, meta
+    try:
+        info = _quiet(lambda: ckan_info(urls, pb=pb, cache=cache))
+        if len(info) > 0:
+            meta = _meta_from(info, "ckan_url")
+            link_errors(repos, info, "ckan_url")
+        if len(info) > 0 and "files" in info.columns:
+            parts = []
+            url_col = vals(info["ckan_url"])
+            for i, files_i in enumerate(info["files"].tolist()):
+                if not isinstance(files_i, pd.DataFrame) or len(files_i) == 0:
+                    continue
+                n = len(files_i)
+                parts.append(
+                    r_frame(
+                        [
+                            ("repo_url", _as_chr(url_col[i]), "string"),
+                            ("file_name", vals(files_i["file_name"]), "string"),
+                            ("file_path", vals(files_i["file_path"]), "string"),
+                            ("file_url", vals(files_i["file_url"]), "string"),
+                            ("file_location", [None] * n, "string"),
+                            ("file_size", vals(files_i["file_size"]), "float64"),
                         ]
                     )
                 )

@@ -548,6 +548,13 @@ class Doc:
                 return False
             if name == "text" and [c for c in own if c != "paper_id"] != table.wanted:
                 return False
+            if name == "text" and any(
+                isinstance(r.get("text"), str) and r["text"] != t
+                for r, t in zip(records, doc.text, strict=True)
+            ):
+                return (
+                    False  # the records' text was changed (links repaired) after the Doc was made
+                )
             if name == "text" and table.at != (
                 own.index("paper_id") if "paper_id" in own else len(table.wanted)
             ):

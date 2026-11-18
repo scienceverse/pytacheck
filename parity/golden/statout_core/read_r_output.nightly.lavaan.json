@@ -1,0 +1,256 @@
+{
+  "id": "read_r_output.nightly.lavaan",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Model Test User Model"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Model Test User Model"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Chi-square",
+              "Degrees of freedom",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "24.361"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "8"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.002"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "User Model versus Baseline Model"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "User Model versus Baseline Model"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "CFI"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0.975"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Latent Variables"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Latent Variables"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "V1",
+              "Estimate",
+              "Std.Err",
+              "z-value",
+              "P(>|z|)"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x1",
+                  "x2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.000",
+                  "0.559"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "0.105"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "5.301"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "0.000"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

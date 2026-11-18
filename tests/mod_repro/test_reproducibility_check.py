@@ -197,6 +197,29 @@ def test_static_read_after_write_orders_pipeline(paper: pc.Paper, repro_fixture:
     assert mo.table["writes"].tolist()[0] == ["intermediate.csv"]
 
 
+def test_a_file_only_inside_a_zip_is_unpacked_where_the_authors_had_it(
+    paper: pc.Paper, tmp_path: Path, repro_fixture: Any
+) -> None:
+    """a file that is only inside a .zip is unpacked and the report says so (#520, item 2; #648)"""
+    main = tmp_path / "main.R"
+    main.write_text("d <- read.csv('data/scores.csv')\n")
+    code_tbl = code_tbl_row(paper, "main.R", str(main))
+    code_tbl["file_path"] = "main.R"
+    structure_df = pd.DataFrame(
+        {
+            "paper_id": [pc.paper_id(paper)[0]],
+            "file_name": ["scores.csv"],
+            "file_path": ["data.zip/data/scores.csv"],
+            "file_location": [repro_fixture("data.csv")],
+        }
+    )
+    mo = module_run(chain(paper, code_tbl, structure_df), "reproducibility_check")
+    text = report_text(mo)
+    assert "in_archive" not in text
+    assert "The code reads files that are only inside `data.zip`" in text
+    assert mo.summary_table["repro_missing_inputs"].iloc[0] == 0
+
+
 def test_spss_data_without_syntax_is_red(paper: pc.Paper) -> None:
     structure_df = pd.DataFrame(
         {"paper_id": ["p1"], "file_name": ["data.sav"], "file_location": [None]}
@@ -573,7 +596,7 @@ def test_execute_runs_script_and_records_ran_ok(
     assert mo.table["outcome"].tolist() == ["ran_ok"]
     assert mo.run_results["outcome"].tolist() == ["ran_ok"]
     assert "Welch Two Sample t-test" in mo.run_results["stdout"].iloc[0]
-    assert "assessed AND ran" in mo.summary_text
+    assert "for reproducibility and ran it" in mo.summary_text
     assert mo.summary_table["repro_ran_ok"].tolist() == [1]
 
 
@@ -738,13 +761,14 @@ def test_install_report_and_dependency_unavailable(
     )
     assert calls["install"] == (["dplyr", "ggplot2", "remotes"], True)
     assert calls["failed_deps"] == ["ggplot2", "lme4"]
-    # dependency_unavailable does not force red
-    assert mo.traffic_light == "green"
+    # dependency_unavailable does not force red; no script ran to the end, so it is yellow
+    # (.repro_run_light(); #648)
+    assert mo.traffic_light == "yellow"
     text = report_text(mo)
     assert "**Dependency-unavailable errors**" in text
     assert (
         "Dependencies were installed into a throwaway library before running: 2 succeeded, "
-        "2 failed. dplyr, ggplot2, oldpkg, lme4 were installed."
+        "2 failed. dplyr, oldpkg were installed."
     ) in text
     assert "**1 of these were no longer on live CRAN**" in text
     assert "**Failed:** ggplot2 [network issue] (boom); lme4 [NA]" in text

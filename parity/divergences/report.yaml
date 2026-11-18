@@ -54,8 +54,14 @@
   kind: r_bug_fixed
   ref: U244
   reason: "a title with %s keeps it (R fills the header's placeholders one after the other, so the title's %s gets the version and the DOI line is left as %s)"
-  r_text: [["100% title\\ with 0.4.3.28\"", "100% title\\ with %s\""], ["\n%s <!-- doi, if exists -->", "\nDOI: [10.1234/abc](https://doi.org/10.1234/abc) <!-- doi, if exists -->"]]
+  r_text: [["100% title\\\\ with [0-9]+(?:\\.[0-9]+)+\"", "100% title\\\\ with %s\"", "regex"], ["\n%s <!-- doi, if exists -->", "\nDOI: [10.1234/abc](https://doi.org/10.1234/abc) <!-- doi, if exists -->"]]
 "report_review/validate.duplicate_ids":
   kind: r_bug_fixed
   ref: U243
   reason: "validate() makes one paper per distinct paper_id, so ids 1, 1, 2 give 4 rows joined back to gt (R makes a paper per row, metacheck renames the second 1 to 1~2 (U208) and the module's rows for it join to nothing: 6 rows)"
+
+# metacheck 0.4.4.3: the default modules' ownership output and summary_table columns (D141)
+"report/report_repository.default_modules":
+  kind: deliberate
+  ref: D141
+  reason: "metacheck 0.4.4.3 adds the ownership table and the repo_own/repo_others/ref_others summary columns to repo_check, code_check and data_check; pytacheck does not port the ownership engine yet; 0.4.4.4 adds the `table_not_checked` output (D148)"

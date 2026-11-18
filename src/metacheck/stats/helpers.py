@@ -18,21 +18,60 @@ import re
 from types import SimpleNamespace
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from metacheck._r.base import as_character, r_round
 from metacheck._r.regex import compile_r, grepl, gsub, sub
 from metacheck._values import as_float, is_missing
+from metacheck.text.extract import _P_SUBSCRIPTS
 
 __all__ = [
+    "_p_clause",
     "_p_not_test",
     "_r_stat_pattern",
+    "_reports_test",
+    "_sci_text",
     "_stat_display_value",
     "_stat_html_escape",
     "_stato_strip_variant",
 ]
 
 _NUMBER_TEXT = r"^[-+]?[0-9.]+([eE][-+]?[0-9]+)?$"
+
+
+# ---- a number as a paper writes it (metacheck 0.4.4.3, #642) -------------------------
+
+_SCI_WS = re.compile(r"\s")
+_SCI_MINUS = re.compile("[\u2212\u00c0]")
+_SCI_TEN_POWER = re.compile(r"^([<>]?)10\^?(?=-\d)")
+_SCI_TIMES = re.compile("[x*\u00d7\u00c2\u00c3]10\\^?(?=[-+]?\\d)")
+
+
+def _sci_text_one(s: str, ten_power: bool) -> str:
+    s = _SCI_WS.sub("", s)
+    s = _SCI_MINUS.sub("-", s)
+    if ten_power:
+        s = _SCI_TEN_POWER.sub(r"\g<1>1e", s)
+    return _SCI_TIMES.sub("e", s)
+
+
+def _sci_text(x: Any, ten_power: bool = False) -> Any:
+    """Port of ``.sci_text()``: a number as a paper writes it, in the form R reads.
+
+    Spaces are removed, the Unicode minus and "A with a grave accent" (GROBID's reading of
+    the minus in some PDFs) become ``"-"``, and "x 10^", the multiplication sign or "A with a
+    circumflex or a tilde" (GROBID's readings of it) before 10 and an exponent become
+    ``"e"``: ``"1.8 x 10 -6"`` and ``"2.2Â10 À16"`` are ``"1.8e-6"`` and ``"2.2e-16"``.
+    With *ten_power*, 10 to a power with nothing before it (``"10 -15"``, where reading the
+    PDF lost the superscript) is ``"1e-15"``: only for a p-value, as elsewhere ``"10-15"``
+    can be a range. The one reader of such numbers for ``extract_p_values()`` and
+    ``_norm_value()``, so the two cannot disagree (#642). Vectorised: a list gives a list,
+    ``NA`` stays ``NA``.
+    """
+    if isinstance(x, list | tuple):
+        return [None if is_missing(v) else _sci_text_one(str(v), ten_power) for v in x]
+    return None if is_missing(x) else _sci_text_one(str(x), ten_power)
 
 
 def _format_whole(x: float) -> str:
@@ -98,6 +137,146 @@ def _stato_strip_variant(key: Any) -> Any:
     return sub(r"\[[^]]*\]$", "", key)
 
 
+# ---- the decimal point of The Lancet, and the chi of a chi-squared test ---------------------
+
+_DECIMAL_POINT = "(?<=\\d)[\u00b7\u2022\u2219](?=\\d)"
+_CHI_JOIN = "\u03c7\\s+([\u00b22\u2082])(?=\\s*[([=<>\u2264\u2265])"
+_X_JOIN = "(?<![\\w\u0370-\u03ff])X\\s+([\u00b22])(?=\\s*[([=<>\u2264\u2265])"
+_DECIMAL_ANY = re.compile("[\u00b7\u2022\u2219]|\u03c7|X")
+
+
+def _stat_decimal_point_text(x: Any) -> Any:
+    """``gsub("(?<=\\d)[·•∙](?=\\d)", ".", x)`` of strings (``None`` stays)."""
+    return [
+        s if s is None or not isinstance(s, str) else gsub(_DECIMAL_POINT, ".", s, perl=True)
+        for s in x
+    ]
+
+
+def _stat_chi_join_text(x: Any) -> Any:
+    """The chi of a chi-squared test joined to its 2 in strings (``.stat_chi_join()``)."""
+    out = []
+    for s in x:
+        if isinstance(s, str):
+            s = gsub(_CHI_JOIN, "\u03c7\\1", s, perl=True)
+            s = gsub(_X_JOIN, "X\\1", s, perl=True)
+        out.append(s)
+    return out
+
+
+def _stat_text_apply(paper: Any, fix: Any, quick: Any = None) -> Any:
+    """Apply *fix* to the text of a paper, a paper list or a text table (``.stat_text_apply()``).
+
+    *fix* maps a list of strings to a list of strings. A paper or a paper list is returned as
+    the table it is searched as, with the text changed, when the change touches any text, and
+    as it is otherwise. *quick* is a pattern that every text *fix* changes contains, so that
+    only those texts go through *fix*.
+    """
+    from metacheck.text.search import sentence_table
+
+    if isinstance(paper, str) or paper is None:
+        return paper
+    if isinstance(paper, pd.DataFrame):
+        if "text" not in paper.columns:
+            return paper
+        table = paper
+    else:
+        try:
+            table, is_strings = sentence_table(paper)
+        except Exception:  # not a paper: left to the search to complain
+            return paper
+        if is_strings:
+            return paper
+    if "text" not in table.columns:
+        return paper
+    texts = table["text"]
+    if quick is not None:
+        hit = texts.astype("string").str.contains(quick, regex=True, na=False).to_numpy(bool)
+    else:
+        hit = ~texts.isna().to_numpy(bool)
+    if not hit.any():
+        return paper
+    idx = np.flatnonzero(hit)
+    values = list(texts.to_numpy(dtype=object))
+    fixed = fix([values[i] for i in idx])
+    if all(a == b for a, b in zip(fixed, (values[i] for i in idx), strict=True)):
+        return paper
+    for i, v in zip(idx, fixed, strict=True):
+        values[i] = v
+    out = table.copy()
+    out["text"] = pd.Series(values, index=out.index, dtype=texts.dtype)
+    return out
+
+
+def _stat_decimal_point(paper: Any) -> Any:
+    """A paper's text with a raised dot between two digits read as a decimal point.
+
+    Port of ``.stat_decimal_point()``: The Lancet and medRxiv papers in its style write "p =
+    0·0079", which GROBID gives with the middle dot or the bullet, so the p-values and tests of
+    such papers were not read at all (#648).
+    """
+    return _stat_text_apply(paper, _stat_decimal_point_text, "[\u00b7\u2022\u2219]")
+
+
+def _stat_chi_join(paper: Any) -> Any:
+    """A paper's text with the chi of a chi-squared test joined to its 2 (``.stat_chi_join()``).
+
+    Reading a PDF often puts a space between them ("χ 2 (10) = 9.61", "X 2 (1) = 3.20"), and
+    the statistic was then not read (#351). Only where a test follows.
+    """
+    return _stat_text_apply(paper, _stat_chi_join_text, "\u03c7\\s|X\\s")
+
+
+# ---- p-values below 0 or above 1 (#351) ----------------------------------------------------
+#
+# Rules from all 237,000 "p <comparison> number" in 18 corpora (16,847 papers), each case read:
+# 50 were negative and 180 were read above 1.
+
+# The power of ten of a p-value in scientific notation, lost or garbled when the PDF was read,
+# right after the number: a multiplication sign ("2.4 x", GROBID's "9 10 À5" in some journals,
+# "5.0.10 -12"), "10" with an exponent, a minus with digits ("1.3 -4"), a superscript or an
+# "e". The number written is then not the p-value (99 of the 230).
+_P_LOST_POWER = (
+    "^\\s*(?:[x×X·•⋅�ÃÂ*]|9\\s+10\\b|\\.\\s*10\\b"
+    "|10\\s*(?:\\^|[-−À⁻]|\\s+[-−À]?\\d|E|e|$)"
+    "|[-−À⁻]\\s*\\d|[⁰¹²³⁴-⁹]|[eE]\\s*[-−+À]?\\s*\\d)"
+)
+
+_P_UNIT = (
+    "^\\s*(?i:%|‰|[µμnmck]?m\\b|[kmg]?hz\\b|[mun]?s\\b|ps\\b|[km]?pa\\b|bar\\b|"
+    "[mk]?w\\b|[mk]?v\\b|k\\b|°|[km]?ev\\b|m?g\\b|kg\\b|g/ml|m?l\\b|mmhg\\b|dbm?\\b|"
+    "h\\b|hr\\b|min\\b|years?\\b|days?\\b|atm\\b)"
+)
+_P_LOG = "(?i:log|\\bln)\\s*(?:\\(?\\s*10\\s*\\)?|₁₀)?\\s*\\(?\\s*$"
+_P_FORMULA = "(?:/|(?<!\\s):|\\d-)$"
+
+
+def _p_not_a_value(before: Any, after: Any) -> list[str | None]:
+    """Why a "p" with a value below 0 or above 1 is not a p-value at all (``.p_not_a_value()``).
+
+    From the text right before it (*before*) and right after its number (*after*); ``None``
+    when there is no such reason: "unit" (a unit follows the number, so P is a physical
+    quantity: "P = 2.9 µm", "P = 6.02 MPa"), "log" (a logarithm of p: "-log10 P = 7.5") or
+    "formula" (the p is part of a name or a formula, written against "/" or ":" or after a number
+    and a hyphen: "Ca/P = 1.67", "N:P = -0.41", "1-p"). 50 of the 230 were one of these, none a
+    p-value.
+    """
+    unit = compile_r(_P_UNIT, perl=True)
+    logp = compile_r(_P_LOG, perl=True)
+    formula = compile_r(_P_FORMULA, perl=True)
+    b = ["" if is_missing(x) else str(x) for x in before]
+    a = ["" if is_missing(x) else str(x) for x in after]
+    out: list[str | None] = [None] * len(b)
+    for i in range(len(b)):
+        if formula.search(b[i]):
+            out[i] = "formula"
+        if logp.search(b[i]):
+            out[i] = "log"
+        if unit.search(a[i]):
+            out[i] = "unit"
+    return out
+
+
 _OPERATORS = ("=", "<", ">", "~", "≈", "≠", "≤", "≥", "≪", "≫")
 
 
@@ -146,6 +325,26 @@ def _r_stat_pattern() -> dict[str, str]:
 
 _GREEK_RANGE = "Ͱ-Ͽ"
 
+# A test statistic with a value: t(20) =, F =, chi2 =, z =, W =, OR =, b =. Not a fit index, R
+# squared, a size or another number, which a table note can follow (``.test_stat_head``). A
+# chi-squared test in any of its written forms, also with a space before its 2, which reading a
+# PDF often adds ("χ 2 (10) =", "X 2 (1) =", "chi-square(2) =") (#351)
+_TEST_STAT_HEAD = (
+    "(?<![\\w\u0370-\u03ff-])(?:t|F|z|Z|r|rs|R(?![\u00b22])|W|U|H|D|V|Q|T|B|b|d|g|OR|HR|RR|"
+    "\u03c7\\s?[\u00b22\u2082]?|X\\s?[2\u00b2]|chi[- ]?squared?|chi\\s?[2\u00b2]|\u03c1|rho|\u03c4|\u03b2|\u03b7\u00b2?p?|\u03c9\u00b2?)"
+    "[0-9]{0,4}\\s*(?:\\([^()]{0,40}\\)|\\[[^\\]\\[]{0,40}\\])?\\s*"
+    "(?:=|<|>|\u2264|\u2265|\u00bc)\\s*[-\u2212\u00c0]?\\s*"
+)
+_TEST_STAT_PATTERN = _TEST_STAT_HEAD + "\\.?\\d"
+# the same, with a value that is not 0 ("d = 0", "T = 0.00" are left out): a p-value of exactly 0
+# needs a large statistic (#642)
+_TEST_STAT_NONZERO = _TEST_STAT_HEAD + "(?!(?:0+\\.?0*|\\.0+)(?![\\d.]))\\.?\\d"
+
+# The symbols of a table note: *, the asterisk operator, a dagger or double dagger, a section or
+# paragraph sign, #, ^, ~ and the replacement character; also the low asterisk, "@", and A with
+# a tilde, which is how GROBID reads an asterisk in some journals (#642)
+_P_NOTE_SYMBOL = "[*\u2217\u2020\u2021\u00a7#\u00b6^~\ufffd\u00c3\u204e@]"
+
 
 @functools.cache
 def _pnt() -> SimpleNamespace:
@@ -161,23 +360,24 @@ def _pnt() -> SimpleNamespace:
     # and the minus sign in some journals.
     stat_name = (
         f"(?<![\\w.{g}-])(?!(?:p|P|ps|Ps|q|n|N|k|K|df|alpha|value|values|pvalue|pvalues)(?![\\w{g}]))"
+        f"(?![pP]_?{_P_SUBSCRIPTS})"  # pFWE, padj: a p-value (#642)
         f"(?!α(?![\\w{g}]))"
-        f"(?:[A-Za-z{g}][A-Za-z{g}0-9²_]{{0,5}}|χ²?)"
+        f"(?:[A-Za-z{g}][A-Za-z{g}0-9²_]{{0,5}}|χ\\s?[²2₂]?|X\\s[2²])"
         "\\s*(?:\\([^()]{0,40}\\)|\\[[^][]{0,40}\\])?\\s*"
         "(?:=|<|>|≤|≥|¼)\\s*[-−À]?\\s*\\.?\\d"
     )
     ci = "\\bCI\\b\\s*[\\[(=:]?\\s*[-−À]?\\.?\\d|\\d+\\s*%\\s*CI\\b"
     # a test statistic, which a p-value right after it belongs to: not a fit index, R
     # squared, a size or another number, which a table note can follow
-    test_stat = (
-        f"(?<![\\w{g}-])(?:t|F|z|Z|r|rs|R(?![²2])|W|U|H|D|V|Q|T|B|b|d|g|OR|HR|RR|"
-        "χ²?|χ2|X2|chi2|chi²|ρ|rho|τ|β|η²?p?|ω²?)"
-        "[0-9]{0,4}\\s*(?:\\([^()]{0,40}\\)|\\[[^][]{0,40}\\])?\\s*"
-        "(?:=|<|>|≤|≥|¼)\\s*[-−À]?\\s*\\.?\\d"
-    )
-    p_value = "(?<![\\w])[pP]s?\\s*(?:-?values?)?\\s*(?:=|<|>|≤|≥|¼)"
-    symbol = "[*∗†‡§#¶^~�]"
+    test_stat = _TEST_STAT_PATTERN
+    # a p with a correction name is a p-value too ("pFWE < .05", #642)
+    p_value = f"(?<![\\w])[pP]s?\\s*(?:-?values?)?(?:[\\s_-]?{_P_SUBSCRIPTS})?\\s*(?:=|<|>|≤|≥|¼)"
+    symbol = _P_NOTE_SYMBOL
     marker = f"(?<![\\w)\\]/])(?:(?:{symbol}|(?<![\\w/+])\\++)\\s*)+[:=,]?\\s*$"
+    # a marker in brackets, before the p-value ("(*) p < .05", "(**) = p < .01") or after it
+    # ("p < .01 (**)") (#642)
+    marker_br_before = f"\\(\\s*(?:{symbol}\\s*)+\\)\\s*[:=,]?\\s*$"
+    marker_br_after = f"^\\s*\\(\\s*(?:{symbol}\\s*)+\\)"
     ns_marker = "(?<![\\w.])n\\.?s\\.?\\s*[:=]\\s*$"
     ns_plain = "(?<![\\w.])n\\.?s\\.?\\s*,?\\s*$"
     # threshold words, each in a form that states a threshold: "threshold" or "alpha"
@@ -234,6 +434,8 @@ def _pnt() -> SimpleNamespace:
         p_value=rx(p_value),
         symbol=rx(symbol),
         marker=rx(marker),
+        marker_br_before=rx(marker_br_before),
+        marker_br_after=rx(marker_br_after),
         ns_marker=rx(ns_marker, True),
         ns_plain=rx(ns_plain, True),
         symbol_p=rx(f"{symbol}\\s*[pP]\\b"),
@@ -269,6 +471,117 @@ def _pnt() -> SimpleNamespace:
     )
 
 
+def _reports_test(sentence: Any, nonzero: Any = False) -> list[bool]:
+    """Port of ``.reports_test()``: whether each sentence reports a statistical test.
+
+    A test statistic with a value, another p-value written with a decimal point or an
+    exponent, or a word that names a test or its outcome. ``extract_p_values()`` reads a
+    whole "p = 0" or "p = 1" as a p-value only in such a sentence; otherwise it is often a
+    probability or a model parameter ("with p = 1", "ARIMA values p = 0") (#642). With
+    *nonzero* true (for "p = 0"), a statistic counts only with a value that is not 0: "ARIMA
+    values p = 0, d = 0" has no test. *sentence* and *nonzero* are vectorised (a scalar
+    *nonzero* is recycled); ``NA`` is an empty sentence.
+    """
+    sentences = [sentence] if isinstance(sentence, str) or is_missing(sentence) else list(sentence)
+    texts = ["" if is_missing(x) else str(x) for x in sentences]
+    flags = list(nonzero) if isinstance(nonzero, list | tuple) else [nonzero] * len(texts)
+    if len(flags) < len(texts):  # rep_len()
+        flags = (
+            [flags[i % len(flags)] for i in range(len(texts))] if flags else [False] * len(texts)
+        )
+    stat = compile_r(_TEST_STAT_PATTERN, perl=True)
+    stat_nz = compile_r(_TEST_STAT_NONZERO, perl=True)
+    other_p = compile_r(_OTHER_P, perl=True)
+    words = compile_r(_TEST_WORDS, ignore_case=True, perl=True)
+    return [
+        bool(
+            (stat_nz if (flags[i] is True or flags[i] == 1) else stat).search(t)
+            or other_p.search(t)
+            or words.search(t)
+        )
+        for i, t in enumerate(texts)
+    ]
+
+
+_OTHER_P = (
+    "(?<![\\w])[pP]s?(?:-?values?)?\\s*[=<>\u2264\u2265\u2248~\u00bc]\\s*"
+    "(?:\\d?\\.\\d|\\d+\\s*(?:[eE]|[x\u00d7*\u00c2\u00c3]\\s*10)\\s*[-\u2212\u00c0]"
+    "|10\\s*\\^?\\s*[-\u2212\u00c0]\\s*\\d)"
+)
+_TEST_WORDS = (
+    "\\btest(?:s|ed|ing)?\\b|significan|\\bdiffer|Fisher|Wilcoxon|Mann.?Whitney|"
+    "Kruskal|Kolmogorov|binomial|chi.?squ|AN(?:C|M)?OVA|permut|bootstrap|"
+    "Bonferroni|\\bHolm\\b|Tukey|Dunn|Sidak|adjusted|corrected|post.?hoc|"
+    "pairwise|comparisons?\\b|likelihood.ratio|\\bLRT\\b|regression|correlat|\\bexact\\b"
+)
+
+
+def _p_clause(p: Any) -> Any:
+    """Port of ``.p_clause()``: the clause of each p-value in its sentence.
+
+    The text before it back to the last ";" or full stop (at most 120 characters), and the
+    text after it on to the next (at most 80). The k-th row of a p-value in a sentence is its
+    k-th place there, and "p < .05" is not found inside "p < .051". *p* has the columns
+    ``paper_id``, ``text_id``, ``text`` and ``expanded``. Returns a data frame with ``before``
+    and ``after``, ``NA`` where the p-value is not found. Used by ``_p_not_test()`` and
+    ``stat_p_exact`` (#604, #642).
+    """
+    before, after = _p_clause_lists(p)
+    return pd.DataFrame(
+        {
+            "before": pd.Series(before, dtype="string"),
+            "after": pd.Series(after, dtype="string"),
+        }
+    )
+
+
+def _p_clause_lists(p: Any) -> tuple[list[str | None], list[str | None]]:
+    n = len(p)
+    before: list[str | None] = [None] * n
+    after: list[str | None] = [None] * n
+    if not n:
+        return before, after
+    cols = set(p.columns)
+    sentence = [
+        "" if is_missing(x) else str(x)
+        for x in (p["expanded"] if "expanded" in cols else p["text"])
+    ]
+    ptext = [str(x).strip() if not is_missing(x) else "" for x in p["text"]]
+    paper_ids = [str(x) for x in (p["paper_id"] if "paper_id" in cols else [None] * n)]
+    text_ids = [str(x) for x in (p["text_id"] if "text_id" in cols else [None] * n)]
+
+    # the k-th row of a p-value in a sentence is its k-th place there
+    seen: dict[tuple[str, str, str, str], int] = {}
+    ks: list[int] = []
+    for i in range(n):
+        key = (paper_ids[i], text_ids[i], sentence[i], ptext[i])
+        seen[key] = seen.get(key, 0) + 1
+        ks.append(seen[key])
+
+    boundary = _pnt().boundary
+    for i in range(n):
+        s = sentence[i]
+        # not inside a longer value: "p < .05" is not found in "p < .051"
+        esc = re.sub(r"([\]\[{}()+*^$|\\.?])", r"\\\1", ptext[i])
+        at = [m.start() for m in compile_r(esc + "(?![0-9])", perl=True).finditer(s)]
+        if not at or ks[i] > len(at):
+            continue  # not found: may be a result
+        start = at[ks[i] - 1]
+        end = start + len(ptext[i])
+        b = s[max(0, start - 120) : start]
+        a = s[end : end + 80]
+        # the clause: back to the last boundary, on to the next
+        cuts = list(boundary.finditer(b))
+        if cuts:
+            b = b[cuts[-1].end() :]
+        cut_a = boundary.search(a)
+        if cut_a:
+            a = a[: cut_a.start()]
+        before[i] = b
+        after[i] = a
+    return before, after
+
+
 def _p_not_test(p: pd.DataFrame) -> list[str | None]:
     """Why each p-value of *p* is clearly not the result of a test (port of ``.p_not_test()``).
 
@@ -285,40 +598,15 @@ def _p_not_test(p: pd.DataFrame) -> list[str | None]:
         "" if is_missing(s) else str(s) for s in p["expanded" if "expanded" in p else "text"]
     ]
     ptexts = [("" if is_missing(t) else str(t)).strip(" \t\r\n") for t in p["text"]]
-    paper_ids = p["paper_id"].tolist() if "paper_id" in p else [None] * n
-    text_ids = p["text_id"].tolist() if "text_id" in p else [None] * n
-
-    # the k-th row of a p-value in a sentence is its k-th place there
-    seen: dict[tuple[str, str, str, str], int] = {}
-    ks: list[int] = []
-    for pid, tid, s, t in zip(paper_ids, text_ids, sentences, ptexts, strict=True):
-        key = (str(pid), str(tid), s, t)
-        seen[key] = seen.get(key, 0) + 1
-        ks.append(seen[key])
+    ctx_before, ctx_after = _p_clause_lists(p)
 
     r = _pnt()
     for i in range(n):
         s = sentences[i]
         ptext = ptexts[i]
-        # not inside a longer value: "p < .05" is not found in "p < .051"
-        found = list(
-            compile_r(
-                re.sub(r"([][{}()+*^$|\\.?])", r"\\\1", ptext) + "(?![0-9])", perl=True
-            ).finditer(s)
-        )
-        if not found or ks[i] > len(found):
+        before, after = ctx_before[i], ctx_after[i]
+        if before is None or after is None:
             continue  # not found: may be a result
-        start = found[ks[i] - 1].start()
-        end = start + len(ptext)
-        before = s[max(0, start - 120) : start]
-        after = s[end : end + 80]
-        # the clause: back to the last boundary, on to the next
-        cuts = list(r.boundary.finditer(before))
-        if cuts:
-            before = before[cuts[-1].end() :]
-        cut_a = r.boundary.search(after)
-        if cut_a:
-            after = after[: cut_a.start()]
         clause = f"{before} {after}"
 
         # a marker note: unless a test statistic comes right before the p-value, with no
@@ -327,6 +615,8 @@ def _p_not_test(p: pd.DataFrame) -> list[str | None]:
         if (
             r.marker.search(before)
             or r.ns_marker.search(before)
+            or r.marker_br_before.search(before)
+            or r.marker_br_after.search(after)
             or (r.ns_plain.search(before) and r.symbol_p.search(s))
         ):
             stats = list(r.test_stat.finditer(before))

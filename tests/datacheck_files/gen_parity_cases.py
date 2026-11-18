@@ -752,6 +752,85 @@ add(
     fn("data_study_roster", f"{PY}.data_study_roster", paper="Experiment 1"),
 )
 
+# -- one-letter study labels (metacheck 0.4.4.4, #648) -----------------------------------
+short_paper = {"$test_paper": {"text": ["We ran Experiment 1A, Experiment 1B and Experiment 2."]}}
+short_paths = [
+    "data/Shift_E1A_sub1-40.txt",
+    "data/Shift_E1B_sub1-20.txt",
+    "E2/RT.csv",
+    "analysis.R",
+    "dat.e01",
+]
+study_paper = {"$test_paper": {"text": ["Study 1 and Study 2 are reported here."]}}
+study_supp_paper = {
+    "$test_paper": {
+        "text": ["Study 1 and Study 2 are reported here.", "See Table S1 in the supplement."]
+    }
+}
+study_session_paper = {
+    "$test_paper": {
+        "text": [
+            "Study 1 and Study 2 are reported here.",
+            "Each person came to Session 1 and Session 2.",
+        ]
+    }
+}
+for label, paths_, paper_ in [
+    ("experiments", short_paths, short_paper),
+    ("study_letter_for_experiments", ["df_s1.csv"], short_paper),
+    ("unnamed_label", [*short_paths, "E3_RT.csv"], short_paper),
+    ("studies", ["placebo_df_s1.csv", "S2_data.xlsx"], study_paper),
+    ("supplement", ["placebo_df_s1.csv"], study_supp_paper),
+    ("sessions", ["placebo_df_s1.csv"], study_session_paper),
+]:
+    add(
+        f"data_group_from_short_label.{label}",
+        fn(
+            ".data_group_from_short_label",
+            f"{PY}._data_group_from_short_label",
+            paths={"$chr": paths_},
+            paper=paper_,
+        ),
+    )
+add(
+    "data_group_from_short_label.no_paper",
+    fn(
+        ".data_group_from_short_label",
+        f"{PY}._data_group_from_short_label",
+        paths={"$chr": short_paths},
+    ),
+)
+add(
+    "data_study_roster.words_experiment",
+    fn("data_study_roster", f"{PY}.data_study_roster", paper=short_paper, words="experiment"),
+)
+add(
+    "data_study_roster.words_study",
+    fn("data_study_roster", f"{PY}.data_study_roster", paper=short_paper, words="study"),
+)
+add(
+    "data_group_llm.short_labels",
+    fn(
+        "data_group_llm",
+        f"{PY}.data_group_llm",
+        files={
+            "$expr": {
+                "r": (
+                    'data.frame(file_name = c("Shift_E1A_sub1-40.txt", "Shift_E1B_sub1-20.txt", "RT.csv"), '
+                    'file_path = c("data/Shift_E1A_sub1-40.txt", "data/Shift_E1B_sub1-20.txt", "E2/RT.csv"), '
+                    'data_type = "data")'
+                ),
+                "py": (
+                    'pd.DataFrame({"file_name": ["Shift_E1A_sub1-40.txt", "Shift_E1B_sub1-20.txt", "RT.csv"], '
+                    '"file_path": ["data/Shift_E1A_sub1-40.txt", "data/Shift_E1B_sub1-20.txt", "E2/RT.csv"], '
+                    '"data_type": ["data"] * 3})'
+                ),
+            }
+        },
+        paper=short_paper,
+    ),
+)
+
 # -- manifests -------------------------------------------------------------------
 add(
     "manifest_merge.create",

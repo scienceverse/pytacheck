@@ -50,8 +50,10 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "significance",
-          "expanded"
+          "expanded",
+          "not_a_test"
         ],
         "v": [
           {
@@ -244,6 +246,23 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "nonsignificant",
               "nonsignificant",
               "nonsignificant",
@@ -273,6 +292,23 @@
               "Combining the data for all 24 subjects and using a difference score for number of prosocial plays to self-morphs minus non-self morphs, there were no signif icant effects of sex (F 1,23 = 0.13, p = 0.73), 'race' (white versus nonwhite; F 1,23 = 0.83, p = 0.38) or morph type (shape-colour morphs versus shape-only morphs; F 1,23 = 0.13, p = 0.73), nor were there any statistically signif icant interactions (all p Ͼ 0.50).",
               "Combining the data for all 24 subjects and using a difference score for number of prosocial plays to self-morphs minus non-self morphs, there were no signif icant effects of sex (F 1,23 = 0.13, p = 0.73), 'race' (white versus nonwhite; F 1,23 = 0.83, p = 0.38) or morph type (shape-colour morphs versus shape-only morphs; F 1,23 = 0.13, p = 0.73), nor were there any statistically signif icant interactions (all p Ͼ 0.50).",
               "Following the logic of inclusive fitness theory (Hamilton 1964), P1 is expected to be indifferent between trusting and not trusting if the coeff icient of relatedness between the players is zero (r = 0) and P2's probability of a self ish betrayal of trust is equal to the probability of reciprocating trust (that is, if p = 0.5 for both moves), because the expected pay-off is the same in each case."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           }
         ]
@@ -331,6 +367,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

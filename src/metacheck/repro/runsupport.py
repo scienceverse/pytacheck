@@ -279,11 +279,31 @@ def _repro_r_exporters(name: str, pkgs: Sequence[str]) -> set[str]:
     return {s for s in res.stdout.splitlines() if s}
 
 
+def _repro_installed_here(pkgs: Sequence[str]) -> list[bool]:
+    """``nzchar(system.file(package = p))`` for each package: whether *Rscript* has it.
+
+    Without R none is installed.
+    """
+    names = list(pkgs)
+    if not names:
+        return []
+    code = f"for (p in {_r_chr(names)}) cat(nzchar(system.file(package = p)), sep = '\\n')\n"
+    try:
+        res = _run_r(code, timeout=120)
+    except Exception:
+        return [False] * len(names)
+    if res is None or res.returncode != 0:
+        return [False] * len(names)
+    got = [x.strip() == "TRUE" for x in res.stdout.splitlines() if x.strip()]
+    return got if len(got) == len(names) else [False] * len(names)
+
+
 def _repro_missing_fn_pkgs(
     name: str,
     user: str,
     code_text_list: Mapping[str, Any],
     candidates: Sequence[str | None] | None,
+    unavailable: Sequence[str | None] = (),
 ) -> list[str]:
     """Port of ``R/reproducibility_check.R::.repro_missing_fn_pkgs()``.
 
@@ -304,7 +324,10 @@ def _repro_missing_fn_pkgs(
 
     A package provides ``X`` when it is installed here and exports ``X``, or, for ``%>%``,
     when it is one of the pipe packages, or it is ``"tidyverse"``. Returns the package
-    names to attach (empty when none).
+    names to attach (empty when none). *unavailable* are packages the run could not install:
+    never attached, as ``library()`` of such a package stops the script (in sd2hq_v2 all 23
+    packages of a project were put in R/data.R, which then stopped on ``library(mixedpower)``,
+    a package from GitHub that was not installed; #648).
     """
     known: dict[str, bool] = {}
 
@@ -326,11 +349,11 @@ def _repro_missing_fn_pkgs(
     others = _unique(
         p for f in code_text_list if f != user for p in _repro_attached_pkgs(code_text_list[f])
     )
-    others = _setdiff(others, own)
+    others = _setdiff(others, [*own, *unavailable])
     if others and any(provides_all(others)):
         return others
 
-    pkg = _repro_find_export_pkg(name, list(candidates or []))
+    pkg = _repro_find_export_pkg(name, _setdiff(list(candidates or []), list(unavailable)))
     if pkg is not None:
         return [pkg]
 

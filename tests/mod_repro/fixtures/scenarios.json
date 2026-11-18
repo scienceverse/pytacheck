@@ -591,6 +591,84 @@
     ]
    }
   },
+  "archive_zip": {
+   "code": {
+    "file_name": [
+     "zip_main.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/zip_main.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ],
+    "file_path": [
+     "main.R"
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "scores.csv"
+    ],
+    "file_path": [
+     "data.zip/data/scores.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   }
+  },
+  "other_writes": {
+   "code": {
+    "file_name": [
+     "reads_other_made.R",
+     "002_incidence.do"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/reads_other_made.R",
+     null
+    ],
+    "file_url": [
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "Stata"
+    ],
+    "packages": [
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false
+    ],
+    "files_written": [
+     null,
+     "$projectdir/output/arima_standardised.csv"
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "reads_other_made.R",
+     "002_incidence.do"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/reads_other_made.R",
+     null
+    ]
+   }
+  },
   "duplicates": {
    "code": {
     "file_name": [

@@ -18,7 +18,7 @@ import functools
 import os
 import re
 import subprocess
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
@@ -304,7 +304,67 @@ def _tre_wide(match_pattern: str, texts: list[Any]) -> bool:
     )
 
 
-def _host_links(paper: Any, host: str, host_regex: str) -> pd.DataFrame:
+def _links_in_text(
+    paper: Any, regex: str, found: pd.DataFrame, repo_of: Callable[[Any], str | None]
+) -> pd.DataFrame:
+    """Port of ``.links_in_text()``: links written in full in a paper's text.
+
+    One row per paper and repository that match *regex*, leaving out those already in *found*
+    (from the url table). *repo_of* gives a link's repository ("owner/repo"), so that
+    "https://github.com/x/y" and "github.com/x/y/tree/main" count as one; a full stop that ends
+    the sentence is not part of the link.
+
+    The text often holds the url table's link with an extraction error: its end repeated
+    ("California-Vaccine-PolicyPolicy" beside the table's "California-Vaccine-Policy"), a word
+    of the next sentence attached ("throwinglight.The"), or a hyphen lost ("attentionclusters"
+    beside "attention-clusters"). Such a link is the same repository, written wrongly, so it is
+    left out when a repository already found for the paper begins it, or is the same once
+    hyphens are removed. A found link cut off at a hyphen ("giuntoli-group/ionic-") is not a
+    whole name, and its full form in the text is kept (metacheck 0.4.4.2, #634).
+    """
+    from metacheck._r import sub
+    from metacheck.text.search import text_search
+
+    x = text_search(paper, regex, return_="match", perl=True)
+    x = x[["text", "text_id", "paper_id"]].rename(columns={"text": "href"})
+    x = x.reset_index(drop=True)
+    x["href"] = pd.Series(sub(r"[.]+$", "", x["href"].tolist()), index=x.index, dtype="string")
+
+    def repo(hrefs: list[Any]) -> list[str]:
+        out = []
+        for u in hrefs:
+            r = repo_of(u)
+            out.append((u if r is None else r).lower() if isinstance(u, str) else "NA")
+        return out
+
+    x_repo = repo(x["href"].tolist())
+    f_repo = repo(found["href"].tolist())
+    f_paper = found["paper_id"].tolist()
+    whole = [not r.endswith("-") for r in f_repo]
+    keep: list[bool] = []
+    seen: set[tuple[Any, str]] = set()
+    for i in range(len(x)):
+        pid = x["paper_id"].iloc[i]
+        here = [bool(not is_missing(fp) and fp == pid) for fp in f_paper]
+        fr = [r for r, w, h in zip(f_repo, whole, here, strict=True) if w and h]
+        same = x_repo[i] in [r for r, h in zip(f_repo, here, strict=True) if h] or any(
+            x_repo[i].startswith(r) or x_repo[i].replace("-", "") == r.replace("-", "") for r in fr
+        )
+        key = (None if is_missing(pid) else pid, x_repo[i])
+        keep.append(not same and key not in seen)
+        seen.add(key)
+    kept: pd.DataFrame = x.loc[keep].reset_index(drop=True)
+    return kept
+
+
+def _host_links(
+    paper: Any,
+    host: str,
+    host_regex: str,
+    repo_of: Callable[[Any], str | None] | None = None,
+    bare_filter: Callable[[pd.DataFrame], pd.DataFrame] | None = None,
+    accounts: pd.DataFrame | None = None,
+) -> pd.DataFrame:
     """The shared body of github_links() / gitlab_links()."""
     from metacheck._r import bind_rows, grepl
     from metacheck.archives import _paper_urls
@@ -333,6 +393,15 @@ def _host_links(paper: Any, host: str, host_regex: str) -> pd.DataFrame:
             }
         )
     found = found[["href", "text_id", "paper_id"]]
+    if accounts is not None and len(accounts):
+        found = bind_rows([found, accounts])
+
+    # A full link written in the text that the PDF did not make clickable, so it is not in the
+    # url table. A sentence with a full link was left out of the search below as well, so such
+    # a link was never found (metacheck 0.4.4.2, #634). Kept only when the url table does not
+    # have the repository already, also not written wrongly (see _links_in_text()).
+    if repo_of is not None:
+        found = bind_rows([found, _links_in_text(paper, host_regex, found, repo_of)])
 
     # repos referenced only by owner/repo near the host name (+-10 words)
     no_host_regex = r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?:\.git)?"
@@ -342,7 +411,34 @@ def _host_links(paper: Any, host: str, host_regex: str) -> pd.DataFrame:
     other = text_search(other, _plusminus(host, other["text"].tolist()), return_="match")
     other = text_search(other, no_host_regex, return_="match", perl=True)
     other = other[["text", "text_id", "paper_id"]].rename(columns={"text": "href"})
+    if bare_filter is not None:
+        other = bare_filter(other)
     return bind_rows([found, other])
+
+
+def _github_bare_filter(other: pd.DataFrame) -> pd.DataFrame:
+    """A GitHub account's name has only letters, digits and hyphens, never a full stop.
+
+    "GitHub. https://doi.org/10.5281/zenodo.7002689" gave "doi.org/10.5281", and "on github at:
+    https://zenodo.org/doi/..." gave "zenodo.org/doi" (#634). "github.com/<account>" itself
+    stays: its rest often follows after a space, which ``_repo_links_joined()`` joins. A
+    measurement or ratio near the word ("488 nm/50 mW", "and/or") has the shape "word/word" too;
+    a repository is not named by a number alone.
+    """
+    from metacheck._r import grepl
+
+    href = other["href"].tolist()
+    keep = [
+        bool(a and b and c) or bool(d)
+        for a, b, c, d in zip(
+            grepl(r"^[A-Za-z0-9][A-Za-z0-9-]*/", href),
+            [not v for v in grepl(r"/[0-9]+$", href)],
+            [not v for v in grepl(r"^(?i:and/or)$", href, perl=True)],
+            grepl(r"^(?:www\.)?github\.com/", href, ignore_case=True),
+            strict=True,
+        )
+    ]
+    return other.loc[keep].reset_index(drop=True)
 
 
 def github_links(paper: Any) -> pd.DataFrame:
@@ -353,17 +449,16 @@ def github_links(paper: Any) -> pd.DataFrame:
     that contain no GitHub URL (and no ``github.io``). Returns ``href``,
     ``text_id`` and ``paper_id``.
     """
-    from metacheck._r import bind_rows
-
-    found = _host_links(paper, "github", _GITHUB_REGEX)
-    # A link to an account ("https://github.com/OneZoom/") names no repository, but is kept
-    # so repo_check can report it as an account rather than drop it without a word (#485).
-    accounts = _account_links(paper)
-    if len(accounts):
-        # the hyperlinks come first, then the bare mentions (see _host_links)
-        n_href = _n_href_rows(paper)
-        found = bind_rows([found.iloc[:n_href], accounts, found.iloc[n_href:]])
-    return found
+    # A link to an account ("https://github.com/OneZoom/") names no repository, but is kept so
+    # repo_check can report it as an account rather than drop it without a word (#485).
+    return _host_links(
+        paper,
+        "github",
+        _GITHUB_REGEX,
+        repo_of=_github_repo_name,
+        bare_filter=_github_bare_filter,
+        accounts=_account_links(paper),
+    )
 
 
 def _account_links(paper: Any) -> pd.DataFrame:
@@ -386,17 +481,6 @@ def _account_links(paper: Any) -> pd.DataFrame:
     hit = hit.loc[[_github_account_name(u) is not None for u in hit["href"]]]
     out: pd.DataFrame = hit[["href", "text_id", "paper_id"]]
     return out
-
-
-def _n_href_rows(paper: Any) -> int:
-    """How many rows of ``_host_links(paper, "github", ...)`` come from the url table."""
-    from metacheck._r import grepl
-    from metacheck.archives import _paper_urls
-
-    urls = _paper_urls(paper)
-    if "href" not in urls.columns:
-        return 0
-    return int(grepl(_GITHUB_REGEX, urls["href"], ignore_case=True, perl=True).sum())
 
 
 # ---------------------------------------------------------------------------
@@ -571,6 +655,58 @@ def _github_key_check(key: str) -> bool | None:
     from metacheck.archives.api_keys import key_check_request
 
     return key_check_request("https://api.github.com/rate_limit", {"Authorization": f"token {key}"})
+
+
+# The name a GitHub account gives itself (a person's, "Anna Wierczeiko", or an organisation's,
+# "Bourne & Mura Computational Biosciences Lab"), one request to /users/<login> per account.
+# Its repository's record gives only the login. ``None`` when the account gives no name or the
+# request fails; kept for the session, and in the lasting cache when *cache* is true (a failed
+# request is kept in neither, so it is asked again).
+_GITHUB_OWNER_MEMO: dict[str, str | None] = {}
+
+
+def _github_owner_names(logins: Any, cache: bool = False) -> list[str | None]:
+    """Port of ``.github_owner_names()``: the self-given name of each GitHub login."""
+    from metacheck.archives.info_cache import _repo_info_cache_get, _repo_info_cache_put
+
+    values = [
+        None if is_missing(x) else str(x) for x in (logins if _is_vector(logins) else [logins])
+    ]
+    out: list[str | None] = [None] * len(values)
+    for lg in dict.fromkeys(v for v in values if v):
+        key = lg.lower()
+        found = key in _GITHUB_OWNER_MEMO
+        nm: str | None = _GITHUB_OWNER_MEMO.get(key)
+        if not found and cache:
+            hit = _repo_info_cache_get("github_user", key)
+            if isinstance(hit, dict) and "name" in hit:
+                nm, found = hit["name"], True
+        if not found:
+            try:
+                resp = _perform(
+                    "GET",
+                    f"https://api.github.com/users/{_url_encode(lg, reserved=True)}",
+                    headers=_github_config(),
+                )
+            except Exception:
+                resp = None
+            nm = None
+            if resp is not None and resp.status_code in (200, 404):
+                try:
+                    body = _body_json(resp) if resp.status_code == 200 else {}
+                except Exception:
+                    body = {}
+                v = field(body, "name")
+                if isinstance(v, list | tuple):
+                    v = v[0] if v else None
+                nm = None if is_missing(v) or not str(v).strip() else str(v)
+                _GITHUB_OWNER_MEMO[key] = nm
+                if cache:
+                    _repo_info_cache_put("github_user", key, {"name": nm})
+        for i, v in enumerate(values):
+            if v == lg:
+                out[i] = nm
+    return out
 
 
 def _github_limit(resp: httpx.Response) -> str | None:
@@ -825,16 +961,21 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
     if clean_repo is None:
         return invalid
 
-    def gated_by(limit: str, default_branch: str | None, license: str | None) -> dict[str, Any]:
-        return {
+    def gated_by(
+        limit: str, default_branch: str | None, license: str | None, info: Any = None
+    ) -> dict[str, Any]:
+        out = {
             "gated": True,
             "reason": limit,
             "files": None,
             "default_branch": default_branch,
             "license": license,
         }
+        if info is not None:
+            out["info"] = info
+        return out
 
-    def fallback(default_branch: str, license: str | None) -> dict[str, Any]:
+    def fallback(default_branch: str, license: str | None, info: Any = None) -> dict[str, Any]:
         try:
             files_df = github_files(repo, recursive=True)
         except Exception:
@@ -847,14 +988,17 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
             reason = "API rate limit exhausted: " + key_problem_message(
                 "github", "limit", problem["until"]
             )
-            return gated_by(reason, default_branch, license)
-        return {
+            return gated_by(reason, default_branch, license, info)
+        out = {
             "gated": False,
             "reason": None,
             "files": files_df,
             "default_branch": default_branch,
             "license": license,
         }
+        if info is not None:
+            out["info"] = info
+        return out
 
     # 1. repository metadata (default branch + detected licence)
     try:
@@ -880,6 +1024,10 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
     if default_branch is None:
         default_branch = "main"
     license_id = _empty_or(field_or_value(field(meta, "license"), "spdx_id"))
+    # The repository's own description, from the same response: who owns it, when it was made
+    # and last changed, how widely it is used. repo_check keeps these in repo_metadata, to tell
+    # a paper's own code from a tool it uses (metacheck 0.4.4.2, #634).
+    info = _repo_info(meta)
 
     # 2. the Git tree (recursive, one request)
     try:
@@ -892,9 +1040,9 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         tree_resp = None
     limit = None if tree_resp is None else _github_limit(tree_resp)
     if limit is not None:
-        return gated_by(limit, default_branch, license_id)
+        return gated_by(limit, default_branch, license_id, info)
     if tree_resp is None or tree_resp.status_code != 200:
-        return fallback(default_branch, license_id)
+        return fallback(default_branch, license_id, info)
 
     tree = _body_json(tree_resp)
     if field(tree, "truncated") is True:
@@ -904,6 +1052,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
             "files": None,
             "default_branch": default_branch,
             "license": license_id,
+            "info": info,
         }
 
     blobs = _filter_blobs(field(tree, "tree") or [])
@@ -934,6 +1083,40 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         "files": files_df,
         "default_branch": default_branch,
         "license": license_id,
+        "info": info,
+    }
+
+
+def _repo_info(meta: Any) -> dict[str, Any]:
+    """The ``info`` list of ``github_tree_files()``: the repository's own description."""
+
+    def chr1(v: Any) -> str | None:
+        if v is None or (isinstance(v, list | tuple | dict) and len(v) == 0):
+            return None
+        if isinstance(v, list | tuple):
+            v = v[0]
+        if isinstance(v, bool):
+            return "TRUE" if v else "FALSE"
+        return None if is_missing(v) else str(v)
+
+    topics = field(meta, "topics")
+    owner = field(meta, "owner")
+    created = chr1(field(meta, "created_at"))
+    pushed = chr1(field(meta, "pushed_at"))
+    return {
+        "full_name": chr1(field(meta, "full_name")),
+        "description": chr1(field(meta, "description")),
+        "created": None if created is None else created[:10],
+        "pushed": None if pushed is None else pushed[:10],
+        "owner": chr1(field(owner, "login")),
+        "owner_type": chr1(field(owner, "type")),
+        "homepage": chr1(field(meta, "homepage")),
+        "topics": "; ".join(str(t) for t in topics)
+        if isinstance(topics, list) and len(topics)
+        else None,
+        "stars": chr1(field(meta, "stargazers_count")),
+        "forks": chr1(field(meta, "forks_count")),
+        "fork": chr1(field(meta, "fork")),
     }
 
 

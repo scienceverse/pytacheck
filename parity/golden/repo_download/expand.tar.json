@@ -18,7 +18,9 @@
       "data_type",
       "doc_role",
       "data_format",
-      "group"
+      "group",
+      "archive_file_path",
+      "archive_file_location"
     ],
     "v": [
       {
@@ -104,9 +106,23 @@
           null,
           null
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "archive.tar.gz",
+          "archive.tar.gz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/archive.tar.gz",
+          "<TMP>/archive.tar.gz"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

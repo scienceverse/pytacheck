@@ -338,6 +338,15 @@ _RUNNER_R = r"""function(script, wd, capture_file, helpers) {
   # Nobody can answer: on Windows file.choose() opens a window and waits.
   for (ask in c("file.choose", "choose.files", "choose.dir", "tk_choose.files", "tk_choose.dir"))
     assign(ask, function(...) stop("file choice cancelled", call. = FALSE), envir = stand_ins)
+  # The command line names the script itself, so a script that finds its own folder from
+  # "--file=" finds it, not the R session callr started (#648; as in the Docker runner)
+  script_file <- normalizePath(script, winslash = "/", mustWork = FALSE)
+  assign("commandArgs", function(trailingOnly = FALSE) {
+    a <- base::commandArgs(trailingOnly)
+    if (trailingOnly) return(a)
+    if (any(grepl("^--file=", a))) sub("^--file=.*$", paste0("--file=", script_file), a)
+    else c(a, paste0("--file=", script_file))
+  }, envir = stand_ins)
   att <- get("attach", envir = baseenv())
   att(stand_ins, name = "metacheck:stand_ins", warn.conflicts = FALSE)
   for (nm in names(helpers)) assign(nm, helpers[[nm]], envir = env)

@@ -9,6 +9,8 @@ import pandas as pd
 
 from metacheck._r.base import plural
 from metacheck._r.frames import count
+from metacheck._r.regex import compile_r, grepl
+from metacheck._values import is_missing
 from metacheck.module import module
 from metacheck.report import collapse_section, format_ref, scroll_table
 
@@ -40,7 +42,13 @@ _GUIDANCE = (
 _ZERO_TEXT = (
     "*P* values are never exactly zero. A *p* value of .000 is a rounding artifact — the actual "
     "value is simply smaller than the reported precision. Very small *p* values should be "
-    "reported as *p* < .001 rather than *p* = .000."
+    "reported as *p* < .001 rather than *p* = .000. A *p* = 0 can also be a model parameter, such "
+    "as an ARIMA order; check that it is a *p* value."
+)
+_IMPOSSIBLE_TEXT = (
+    "*P* values lie between 0 and 1, so a negative *p* value or one above 1 cannot be right. "
+    "Often the value of the test statistic before it, or its minus sign, was copied into the *p* "
+    "value. Check the analysis output and report the *p* value it gives."
 )
 _ZERO_GUIDANCE = "The APA manual states: report *p* values less than .001 as *p* < .001."
 
@@ -64,19 +72,24 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: str) -> pd.DataFrame:
 @module(
     title="Exact P-Values",
     description=(
-        "List any p-values reported with insufficient precision (e.g., p < .05 or p = n.s.) or "
-        "reported as exactly zero (e.g., p = .000)."
+        "List any p-values reported with insufficient precision (e.g., p < .05 or p = n.s.), "
+        "reported as exactly zero (e.g., p = .000), or impossible (below 0 or above 1, e.g., "
+        "p = -.22)."
     ),
     details="""
         This module uses regular expressions to identify p-values. It will flag any values reported as p > ? or p < numbers greater than .001. It will also flag p-values reported as exactly zero (e.g., p = .000, p = 0.00), which are mathematically impossible — p-values are never exactly zero and should instead be reported as p < .001.
 
-        A p-value that is not the result of a test is not flagged: a table note ("* p < .05, ** p < .01"), a figure legend ("Asterisks indicate significant differences (p < .05)", "Values in bold are significant at p < .05") or a stated threshold ("p < .05 was considered significant", "thresholded at p < .001"). GROBID often puts such notes into the running text, so each p-value is judged by the words in its own clause (the text up to a ";" or a full stop), and never left out when a test statistic belongs to it ("F(1, 7) = 8.03, # p < .05"). The column `not_a_test` of the table says why a p-value was left out ("marker", "threshold" or "legend"). Notes in other forms, such as a marker after the p-value ("p < .05 (*)"), are still flagged.
+        A p-value that is not the result of a test is not flagged: a table note ("* p < .05, ** p < .01"), a figure legend ("Asterisks indicate significant differences (p < .05)", "Values in bold are significant at p < .05") or a stated threshold ("p < .05 was considered significant", "thresholded at p < .001"). GROBID often puts such notes into the running text, so each p-value is judged by the words in its own clause (the text up to a ";" or a full stop), and never left out when a test statistic belongs to it ("F(1, 7) = 8.03, # p < .05"). The column `not_a_test` of the table says why a p-value was left out ("marker", "threshold", "legend" or "named").
+
+        A p-value with the name of a correction or a test after the p ("pFWE < .05", "padj < 0.05", "p Wilcoxon = .02") is flagged only when a test statistic comes before it in its clause ("t(37) = 7.17, p FWE < .05"). Without one it is mostly the rule that decided what was significant ("genes with padj < 0.05 were selected"); such a p-value is "named" in `not_a_test`. Notes in other forms, such as a marker after the p-value ("p < .05 (*)"), are still flagged.
+
+        A p-value below 0 or above 1 is impossible; it is listed apart and not also as imprecise. Often the statistic before it, or its minus sign, was copied into it ("t(134) = -2.32, p = -.13", "Z = 3.091, P = 3.091"). A value above 1 is listed only after a test statistic in its clause: without one, a "P" above 1 was nearly always another quantity (a proportion, pH, a group's mean, a model parameter). A number in scientific notation whose power of ten was lost when the PDF was read ("p = 2.4 x 10 -9" read as 2.4) is not listed. A "p" that is the subscript of another symbol ("r p = .64", "²p = .02" for partial eta squared, "Δp = .33"), or a quantity with a unit, a logarithm or a ratio ("P = 2.9 µm", "-log10 P = 7.5", "Ca/P = 1.67"), is not read as a p-value at all (see `extract_p_values()`). Each p-value has its own row, also when the same one is written twice in a sentence.
 
         This module sometimes flags false positives when sentences discuss how p-value thresholds were set. It can also miss an imprecise p-value that is reported against a threshold ("decreased at the p < .05 significance threshold").
 
         This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables (as opposed to a table's footnote text, which the module does see and tries to exclude — see above).
 
-        <validation>In a sample of 225 papers containing 405 instances of non-exact p-values, the module correctly detected 269 cases (true positives) and incorrectly identified 78 (false positives). It missed 136 instances of imprecisely reported p-values (false negatives) and correctly identified 4557 cases of precisely reported p-values (true negative). Additionally, 78% of positive detections were correct (positive predictive value).</validation>
+        <validation>Validated on 226 Psychological Science papers with 5,019 hand-coded p-values, 438 of them imprecise (scienceverse/validation, branch stat_p_exact). Version 0.4.4.3 reported 419 p-values as imprecise, 388 of them correctly (93%), and missed 50 (89% found). Of the misses, 13 are starred table notes ("*p < .05") that the module leaves out on purpose and 11 are p-values it did not find; of the wrong reports, 20 are p-values the ground truth does not contain (such as "ps < .05") and 6 use ≤ or ≥. These figures measure agreement with the hand-coding, which has known errors in both directions (scienceverse/validation#48).</validation>
     """,
     keywords=["results"],
     # one R @author line naming both authors (metacheck's module_report() kept only the first; U6)
@@ -88,12 +101,22 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: str) -> pd.DataFrame:
 )
 def stat_p_exact(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/stat_p_exact.R::stat_p_exact()``."""
-    from metacheck.stats.helpers import _p_not_test
+    from metacheck.stats.helpers import (
+        _P_LOST_POWER,
+        _TEST_STAT_PATTERN,
+        _p_clause,
+        _p_not_test,
+    )
     from metacheck.text.expand import expand_text
-    from metacheck.text.extract import extract_p_values
+    from metacheck.text.extract import _p_extract
 
     # table ----
-    p = extract_p_values(paper)
+    p = _p_extract(paper)
+    # p-values written with a minus, which extract_p_values() does not read: they are listed here
+    # as impossible (#351)
+    negative = _p_extract(paper, negative=True)
+    if len(negative):
+        p = pd.concat([p, negative], ignore_index=True, sort=False)
 
     # Expand the sentences so the full sentence can be seen
     p = expand_text(p, paper, expand_to="sentence")
@@ -118,53 +141,113 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
     imprecise = imprecise | ~comp.isin(["=", "<"]).to_numpy(dtype=bool)
     imprecise = imprecise | value_na
 
-    # Leave out a p-value that is not the result of a test: a table note ("* p < .05,
-    # ** p < .01"), a figure legend ("Asterisks indicate significant differences
-    # (p < .05)") or a stated threshold ("p < .05 was considered significant"). Each
-    # p-value is judged in its own clause, and never when that clause holds a statistic
-    # (see _p_not_test()). Only the starred "*p < .05", ".01" or ".001" was left out
-    # before, and of a note repeated under two tables only one copy (U127, #604).
-    not_a_test = _p_not_test(p)
-    imprecise = imprecise & np.array([x is None for x in not_a_test], dtype=bool)
+    # Leave out a p-value that is not the result of a test: a table note
+    # ("* p < .05, ** p < .01"), a figure legend ("Asterisks indicate significant
+    # differences (p < .05)") or a stated threshold ("p < .05 was considered
+    # significant"). Each p-value is judged in its own clause, and never when that
+    # clause holds a statistic (metacheck 0.4.3.19, #604; before, only the starred
+    # ".05", ".01" or ".001" was left out, U127).
+    p = p.copy()
+    p["imprecise"] = pd.Series(imprecise, index=p.index, dtype="boolean")
+    p["not_a_test"] = pd.Series(_p_not_test(p), index=p.index, dtype=object)
+    # A p with a correction or test name ("pFWE < .05", "padj < 0.05") counts only when a test
+    # statistic comes before it in its clause ("t(37) = 7.17, p FWE < .05"). Without one it is
+    # mostly the rule that decided what was significant ("genes with padj < 0.05 were
+    # selected", "thresholds at the cluster level, P FWE < 0.05"), in wordings the threshold
+    # words do not all catch (#642)
+    named = (~p["p_name"].isna() & p["not_a_test"].isna()).to_numpy(dtype=bool)
+    if named.any():
+        before = _p_clause(p.loc[named])["before"].tolist()
+        stat_rx = compile_r(_TEST_STAT_PATTERN, perl=True)
+        has_stat = [not is_missing(b) and stat_rx.search(str(b)) is not None for b in before]
+        labels = ["named" if not h else None for h in has_stat]
+        p.loc[named, "not_a_test"] = pd.Series(labels, index=p.index[named], dtype=object)
+    not_test = p["not_a_test"].isna().to_numpy(dtype=bool)
+    imprecise = imprecise & not_test
 
     # Flag p-values reported as exactly zero (e.g., p = .000, p = 0.00), also
     # "p < .000", which was neither imprecise nor zero (U127)
+    # A number written with an exponent is never a zero: "p < 10 -324" is smaller than R can
+    # hold and reads as 0 (#642)
+    has_exponent = grepl(
+        "[eE]\\s*[-\u2212\u00c0]|10\\s*\\^?\\s*[-\u2212\u00c0]", p["text"].tolist()
+    )
     is_zero = (
-        comp.isin(["=", "<"]).to_numpy(dtype=bool) & ~value_na & (value.fillna(1).to_numpy() == 0)
+        comp.isin(["=", "<"]).to_numpy(dtype=bool)
+        & ~value_na
+        & (value.fillna(1).to_numpy() == 0)
+        & ~np.asarray(has_exponent, dtype=bool)
     )
     zero = pd.array(is_zero, dtype="boolean")
 
-    p = p.copy()
+    # Flag p-values that no p-value can be (#351): below 0 (a minus, often that of the statistic
+    # before it, copied into the p-value), or above 1 after a test statistic in its clause ("Z
+    # = 3.091, P = 3.091", "t(18) = 0.466, p = 2.5872"). Not above 1 when the power of ten of a
+    # number in scientific notation was lost after it ("p = 2.4 x 10 -9" read as 2.4), and not
+    # below 0 when the number is part of a longer one, a formula or a row of numbers ("N: P =
+    # -0.23*P concentration", "p < -0.6 -0.4 -0.2" on a figure's axis). In 18 corpora (16,847
+    # papers) this found 9 values below 0 and 8 above 1, each a wrong p-value as written;
+    # without a statistic, a value above 1 was nearly always no p-value (a proportion, pH, a
+    # group's mean, a model parameter).
+    below = (~value_na) & (value.to_numpy() < 0)
+    above = (~value_na) & (value.to_numpy() > 1)
+    impossible = np.zeros(len(p), dtype=bool)
+    if (below | above).any():
+        # every p-value of those sentences, so _p_clause() counts their places
+        pids = p["paper_id"].tolist() if "paper_id" in p.columns else [None] * len(p)
+        tids = p["text_id"].tolist() if "text_id" in p.columns else [None] * len(p)
+        key = [f"{a}\r{b}" for a, b in zip(pids, tids, strict=True)]
+        hit_keys = {k for k, h in zip(key, below | above, strict=True) if h}
+        in_sent = np.array([k in hit_keys for k in key], dtype=bool)
+        cl = _p_clause(p.loc[in_sent])
+        lost = compile_r(_P_LOST_POWER, perl=True)
+        stat_rx = compile_r(_TEST_STAT_PATTERN, perl=True)
+        whole = [is_missing(a) or lost.search(str(a)) is None for a in cl["after"].tolist()]
+        has_stat = [
+            not is_missing(b) and stat_rx.search(str(b)) is not None for b in cl["before"].tolist()
+        ]
+        impossible[in_sent] = [
+            w and (bl or (ab and st))
+            for w, bl, ab, st in zip(whole, below[in_sent], above[in_sent], has_stat, strict=True)
+        ]
+    # an impossible p-value is listed once, as impossible
+    imprecise = imprecise & ~impossible
+
     p["imprecise"] = pd.Series(imprecise, index=p.index, dtype="boolean")
-    p["not_a_test"] = pd.Series(not_a_test, index=p.index, dtype="string")
+    p["not_a_test"] = p["not_a_test"].astype("string")
     p["zero"] = pd.Series(zero, index=p.index, dtype="boolean")
+    p["impossible"] = pd.Series(impossible, index=p.index, dtype="boolean")
 
     imp_rows = imprecise
     zero_rows = np.asarray(p["zero"].fillna(False), dtype=bool)
+    impossible_rows = impossible
 
-    # one report row per p-value text and sentence
+    # one row per p-value: two identical p-values in one sentence are two reports, as
+    # summary_table counts them, and the same sentence in two papers is two papers' (#351)
     cols = ["text", "expanded"]
 
     def listed(rows: np.ndarray) -> pd.DataFrame:
-        sub = p.loc[rows, cols]
-        dup = sub.duplicated().to_numpy(dtype=bool)
-        out = sub.loc[~dup].reset_index(drop=True)
+        out = p.loc[rows, cols].reset_index(drop=True)
         out.columns = ["P-Value", "Text"]
         return out
 
     report_table = listed(imp_rows)
     zero_table = listed(zero_rows)
+    impossible_table = listed(impossible_rows)
 
     # summary_table ----
     imprecise_summary = count(p.loc[imp_rows], "paper_id", name="n_imprecise")
     zero_summary = count(p.loc[zero_rows], "paper_id", name="n_zero")
-    summary_table = _full_join(imprecise_summary, zero_summary, "paper_id")
+    impossible_summary = count(p.loc[impossible_rows], "paper_id", name="n_impossible")
+    summary_table = _full_join(
+        _full_join(imprecise_summary, zero_summary, "paper_id"), impossible_summary, "paper_id"
+    )
 
     # traffic light ----
-    n_p, n_imp, n_zero = len(p), len(report_table), len(zero_table)
+    n_p, n_imp, n_zero, n_imposs = len(p), len(report_table), len(zero_table), len(impossible_table)
     if n_p == 0:
         tl = "na"
-    elif n_imp == 0 and n_zero == 0:
+    elif n_imp == 0 and n_zero == 0 and n_imposs == 0:
         tl = "green"
     else:
         tl = "red"
@@ -176,16 +259,20 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
         summary_text = report
     elif tl == "green":
         report = (
-            "We found no imprecise *p* values or *p*-values of exactly zero out of "
-            f"{n_p:d} detected."
+            "We found no imprecise *p* values, *p*-values of exactly zero or impossible *p* "
+            f"values out of {n_p:d} detected."
         )
         summary_text = report
     else:
         summary_parts = []
+        if n_imposs > 0:
+            summary_parts.append(f"{n_imposs:d} impossible *p* value{plural(n_imposs)}")
         if n_imp > 0:
             summary_parts.append(f"{n_imp:d} imprecise *p* value{plural(n_imp)}")
         if n_zero > 0:
             summary_parts.append(f"{n_zero:d} *p* value{plural(n_zero)} reported as exactly zero")
+        if len(summary_parts) > 2:
+            summary_parts = [", ".join(summary_parts[:-1]), summary_parts[-1]]
         summary_text = (
             f"We found {' and '.join(summary_parts)} out of {n_p:d} detected "
             f"*p* value{plural(n_p)}."
@@ -193,6 +280,8 @@ def stat_p_exact(paper: Any) -> dict[str, Any]:
 
         # Guidance text
         report = []
+        if n_imposs > 0:
+            report.extend([_IMPOSSIBLE_TEXT, scroll_table(impossible_table, colwidths=[0.1, 0.9])])
         if n_imp > 0:
             guidance = [_GUIDANCE, format_ref(_APA_REF)]
             report.extend(

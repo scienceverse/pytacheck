@@ -15,6 +15,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._values import is_missing
+from metacheck.codecheck.core import _code_missing_files
 from metacheck.module import get_prev_outputs, module
 from metacheck.modules._code_check import (
     CHECKED_LANGS,
@@ -129,6 +130,10 @@ _COL_LABELS = {
         "max_files_per_repo": "largest file COUNT a single repository may have before it is "
         "refused outright (default `Inf`, no cap) -- see [download_repo_files()]'s own "
         "parameter of the same name.",
+        "osf_max_requests": "the largest number of requests to the OSF for listing one OSF project, "
+        "passed to `repo_check()` when this module runs it (default 50; `Inf` for no limit). A "
+        "project listed only in part is named in a warning before anything is downloaded, because "
+        "files in folders not yet opened are not downloaded either.",
         "cache": "if TRUE, keep downloaded files in a persistent on-disk cache (see "
         "[repo_cache_dir()]) so they are reused on later runs. If FALSE (the default), "
         "download to a temporary directory discarded when the session ends. Clear the cache "
@@ -157,6 +162,7 @@ def code_check(
     max_file_size: float = 100,
     max_download_size: float = 500,
     max_files_per_repo: float = math.inf,
+    osf_max_requests: float = 50,
     cache: bool = False,
     skip_on_api_limit: bool = False,
     manifest: str | os.PathLike[str] | None = None,
@@ -199,6 +205,11 @@ def code_check(
         all_files = get_prev_outputs("data_check", "structure")
         if all_files is None:
             all_files = get_prev_outputs("repo_check", "table")
+    # OSF projects repo_check listed only in part (`osf_max_requests`); warned about below,
+    # before anything is downloaded
+    listing_partial = (
+        get_prev_outputs("repo_check", "partial_repos") if local_path is None else None
+    )
     if all_files is None:
         from metacheck.module import module_run
 
@@ -211,6 +222,7 @@ def code_check(
                 local_path=local_path,
                 local_only=local_only,
                 cache=cache,
+                osf_max_requests=osf_max_requests,
                 skip_on_api_limit=skip_on_api_limit,
             )
         else:
@@ -219,8 +231,10 @@ def code_check(
                 "repo_check",
                 local_only=local_only,
                 cache=cache,
+                osf_max_requests=osf_max_requests,
                 skip_on_api_limit=skip_on_api_limit,
             )
+        listing_partial = mo.get("partial_repos")
         all_files = mo.table
         if all_files is None:
             all_files = pd.DataFrame(
@@ -231,6 +245,12 @@ def code_check(
             )
     all_files = all_files.reset_index(drop=True).copy()
     all_files.attrs = {}
+    if download is True and len(all_files) > 0:
+        from metacheck.llm.cap_prompt import _cap_report_partial
+
+        _cap_report_partial(
+            listing_partial, all_files["repo_url"].tolist() if "repo_url" in all_files else []
+        )
 
     def set_language(df: pd.DataFrame) -> pd.DataFrame:
         df["language"] = pd.Series(_file_name_languages(df), index=df.index, dtype="string")
@@ -351,7 +371,7 @@ def code_check(
             warnings.warn("NA" if m is None else str(m), stacklevel=2)
 
     # Check code ----
-    rows, r_text_by_paper = analyse_files(checked_files, all_files)
+    rows, r_text_by_paper = analyse_files(checked_files)
     if not rows:
         # nothing analysed (every repository gated, or no file locations)
         code_files = seed_analysis_cols(code_files)
@@ -361,6 +381,9 @@ def code_check(
         collected = collected_frame(checked_files, rows)
         unchecked = code_files.loc[[not c for c in is_checked]]
         code_files = bind_rows([collected, unchecked]).reset_index(drop=True)
+    # which of the files each code file reads are missing: decided once every script of the paper
+    # has been read, as another script may make them (#648)
+    code_files = _code_missing_files(code_files, all_files)
     checked = code_files["checked"].astype("boolean").fillna(False)
     code_files["checked"] = checked.astype("boolean")
 

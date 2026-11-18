@@ -1146,9 +1146,14 @@ def match_column_labels(
     for k, nv in enumerate(norm_var):
         if nv is None:
             continue
-        key = (nv, _chr(var_paper[k])) if var_paper is not None else nv
-        if var_paper is not None and var_paper[k] is None:
-            continue
+        # files checked without a paper have paper_id NA on both sides, and NA == NA matched
+        # nothing: no codebook ever labelled a column of a local folder (#651); an NA id is
+        # the same id as another NA (.same_id())
+        key = (
+            (nv, None if var_paper[k] is None else _chr(var_paper[k]))
+            if var_paper is not None
+            else nv
+        )
         by_name.setdefault(key, []).append(k)
 
     def first_present(rows: list[int | None], name: str) -> Any:
@@ -1165,9 +1170,9 @@ def match_column_labels(
         if norm_col[i] is None:
             continue
         if var_paper is not None:
-            if col_paper[i] is None:
-                continue
-            name_idx = by_name.get((norm_col[i], _chr(col_paper[i])), [])
+            name_idx = by_name.get(
+                (norm_col[i], None if col_paper[i] is None else _chr(col_paper[i])), []
+            )
         else:
             name_idx = by_name.get(norm_col[i], [])
         if not name_idx:

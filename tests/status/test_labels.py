@@ -267,7 +267,7 @@ def test_metrics_derive_ppv_and_sensitivity() -> None:
         "ppv": 0.9,
         "sensitivity": 0.75,
     }
-    assert status("stat_p_nonsig").metrics["ppv"] == 0.907
+    assert status("stat_p_nonsig").metrics["ppv"] == 0.948
     assert "sensitivity" not in status("stat_p_nonsig").metrics  # FN is not stated
     assert status("all_urls").metrics == {}
 

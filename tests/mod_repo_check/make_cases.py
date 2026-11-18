@@ -60,6 +60,8 @@ def rval(x: Any) -> str:
 
 
 def r_paper(spec: dict[str, Any]) -> str:
+    if spec.get("nopaper"):
+        return "NULL"
     parts = []
     if spec.get("read"):
         parts.append(f"read({rvec(spec['read'])})")
@@ -100,7 +102,9 @@ def r_expr(spec: dict[str, Any]) -> str:
     return (
         "(function() { .r <- httptest2::get_current_redactor(); "
         "httptest2::set_redactor(function(req) { req$url <- "
-        'gsub("[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100", "", req$url); req }); '
+        'gsub("[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100", "", req$url); '
+        'req$url <- gsub("(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$", '
+        '"\\\\1", req$url, perl = TRUE); req }); '
         'Sys.setenv(TESTTHAT = "true"); '
         'on.exit({ httptest2::set_redactor(.r); Sys.unsetenv("TESTTHAT") }); '
         "tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); "
@@ -265,6 +269,18 @@ CASES: list[tuple[str, str, dict[str, Any], dict[str, Any]]] = [
         {},
     ),
     ("local.zip", "local archives are not peeked (no URL)", local(FIX + "zip_local"), {}),
+    (
+        "local.unknown_type",
+        "a file of an unknown type is not a naming problem; build files and Stata help typed (#648)",
+        local(FIX + "unknown_type"),
+        {},
+    ),
+    (
+        "local.no_paper",
+        "naming problems of a local folder checked without a paper (#650)",
+        {"nopaper": True, "args": {"local_path": FIX + "no_paper", "local_only": True}},
+        {},
+    ),
     ("local.rpkg", "an R package tree is excluded", local(FIX + "rpkg"), {}),
     (
         "local.desc_only",
@@ -528,6 +544,17 @@ PLATFORM: list[tuple[str, str, list[str]]] = [
         "dataone.nameless",
         "a DataONE file without a name: the module fails (as in R)",
         ["https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86"],
+    ),
+    (
+        "zenodo.publications",
+        "Zenodo records that are publications (a paper alone, a preprint with data, a dataset, "
+        "no type with a pdf, no type without files): a paper without data is not a repository",
+        [f"https://zenodo.org/records/55590{i}" for i in (10, 11, 12, 13, 14)],
+    ),
+    (
+        "zenodo.only_publication",
+        "a paper whose only repository link is a publication: no repositories",
+        ["https://zenodo.org/records/5559010"],
     ),
     (
         "zenodo.nameless",
@@ -842,7 +869,8 @@ def case(cid: str, note: str, spec: dict[str, Any], ignore: Any) -> dict[str, An
     py_args = {
         k: v
         for k, v in spec.items()
-        if k in ("papers", "read", "paperlist", "args", "mocks", "report", "tables", "rbox")
+        if k
+        in ("papers", "read", "paperlist", "args", "mocks", "report", "tables", "rbox", "nopaper")
     }
     out: dict[str, Any] = {
         "id": f"repo_check.{cid}",

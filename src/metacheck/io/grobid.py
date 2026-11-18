@@ -318,46 +318,25 @@ def _html_to_text(x: str | None) -> str:
     return cast(str, sub("[\t\r\n ]+$", "", sub("^[\t\r\n ]+", "", text)))
 
 
-# Grobid sometimes keeps a PDF line wrap inside a DOI or URL as a space
-# ("https ://doi. org/10.5061/ dryad. m20hf10"), so the repository links in it
-# are not found. The space is removed only after a fixed anchor that ordinary
-# prose does not contain: the URL scheme, a DOI's "10.NNNN/" prefix, and the
-# hosts with a single fixed name (doi.org, zenodo.org, osf.io, researchbox.org)
-# and their record paths. Not the repositories with many institutional hosts
-# (Dataverse, DSpace, ...), and not any space after a URL, which would join it
-# to the prose that follows. U219 (metacheck #411, #458).
-_LINE_WRAPS = [
-    (regex.compile(pattern, flags), repl)
-    for pattern, repl, flags in (
-        (r"\b(https?)\s*:\s*//", r"\1://", regex.IGNORECASE),
-        (r"\bdoi\.\s+org\b", "doi.org", regex.IGNORECASE),
-        (r"\bdoi\.org/\s+", "doi.org/", regex.IGNORECASE),
-        (r"(\b10\.[0-9]{4,9}/)\s+", r"\1", 0),
-        (r"\bzenodo\.\s+org\b", "zenodo.org", regex.IGNORECASE),
-        (r"\bzenodo\.org/\s+", "zenodo.org/", regex.IGNORECASE),
-        (r"\bosf\.\s+io\b", "osf.io", regex.IGNORECASE),
-        (r"\bosf\.io/\s+", "osf.io/", regex.IGNORECASE),
-        (r"\bresearchbox\.\s+org\b", "researchbox.org", regex.IGNORECASE),
-        (r"\bresearchbox\.org/\s+", "researchbox.org/", regex.IGNORECASE),
-        (r"\b(records?/)\s+(?=[0-9])", r"\1", regex.IGNORECASE),
-        (r"(/dryad\.)\s+([a-z0-9])", r"\1\2", regex.IGNORECASE),
-        (r"(/zenodo\.)\s+([a-z0-9])", r"\1\2", regex.IGNORECASE),
-    )
-]
-
-
 def _join_wrapped_links(text: str) -> str:
-    """*text* without the line-wrap spaces Grobid leaves in DOIs and URLs."""
-    for rx, repl in _LINE_WRAPS:
-        text = rx.sub(repl, text)
-    return text
+    """*text* without the line-wrap spaces Grobid leaves in DOIs and URLs (``_repair_links``)."""
+    from metacheck.io.read import _repair_links
+
+    return cast(str, _repair_links(text))
 
 
 def _process_columns(cols: dict[str, list[Any]]) -> dict[str, list[Any]]:
     """``.process_full_text()`` on column lists (the non-empty branch)."""
     ft = _pull_and_split(cols)
     formatted: list[Any] = ft["formatted"]
-    text = [_join_wrapped_links(_html_to_text(f)) for f in formatted]
+    # GROBID's PDF-to-text extraction sometimes re-flows a PDF column/line-wrap boundary as a
+    # literal space instead of removing it, splitting a URL right where it happened to wrap
+    # (metacheck #411, #458, U219). The same repair now runs for every paper, however it was
+    # read (see metacheck.io.read._repair_links()); here it runs before the links' own text is
+    # replaced by their address below, as it always did.
+    from metacheck.io.read import _repair_links
+
+    text = _repair_links([_html_to_text(f) for f in formatted])
 
     # return initials and page
     formatted = gsub(r"\b([A-Z])\$%", r"\1\.", formatted)
@@ -930,7 +909,9 @@ def _print_hrefs_at(
         if k is not None and out[k] is not None:
             links.setdefault(k, []).append(i)
     for k, idx in links.items():
-        t = out[k]
+        # the sentence as the link texts below print it (the readers repair it before, so this
+        # leaves it as it is there)
+        t = _join_wrapped_links(out[k])
         pieces: list[str] = []
         pos = 0
         for i in idx:
@@ -1443,6 +1424,11 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any =
     # eq ----
     p.eq = _extract_eq(p)
 
+    # _process_columns() repairs the main text only; the reference list is repaired here, as every
+    # other reader does (see metacheck.io.read._repair_links())
+    from metacheck.io.read import _paper_repair_text
+
+    p = _paper_repair_text(p)
     return coerce_paper(p)
 
 

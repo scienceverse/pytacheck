@@ -49,10 +49,12 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "expanded",
           "imprecise",
           "not_a_test",
-          "zero"
+          "zero",
+          "impossible"
         ],
         "v": [
           {
@@ -148,6 +150,15 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "A p-value < 0.05 was considered statistically significant.",
               "The significance level was set at p <.05.",
               "All the reported clusters survived a cFWE-corrected threshold of P < 0.05.",
@@ -180,13 +191,22 @@
               false,
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
+            ]
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We found no imprecise *p* values or *p*-values of exactly zero out of 4 detected."
+          "We found no imprecise *p* values, *p*-values of exactly zero or impossible *p* values out of 4 detected."
         ]
       },
       {
@@ -198,7 +218,7 @@
       {
         "t": "chr",
         "v": [
-          "We found no imprecise *p* values or *p*-values of exactly zero out of 4 detected."
+          "We found no imprecise *p* values, *p*-values of exactly zero or impossible *p* values out of 4 detected."
         ]
       },
       {
@@ -207,13 +227,20 @@
         "names": [
           "paper_id",
           "n_imprecise",
-          "n_zero"
+          "n_zero",
+          "n_impossible"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
               "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
             ]
           },
           {
@@ -238,6 +265,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

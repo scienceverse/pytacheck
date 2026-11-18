@@ -1,0 +1,36 @@
+{
+  "id": "repair_line_numbers.nightly.none",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "We tested 120 children and 130 adults in 2020.",
+      "Of these, 140 children and 150 adults came back, and 160 did not.",
+      "Table 2 shows the 170 tests, and Study 3 the other 180.",
+      "the participants in this study read each of the short texts on the screen and 1",
+      "the participants in this study read each of the short texts on the screen and 2",
+      "the participants in this study read each of the short texts on the screen and 3",
+      "the participants in this study read each of the short texts on the screen and 4",
+      "the participants in this study read each of the short texts on the screen and 5",
+      "the participants in this study read each of the short texts on the screen and 6",
+      "the participants in this study read each of the short texts on the screen and 7",
+      "the participants in this study read each of the short texts on the screen and 8",
+      "the participants in this study read each of the short texts on the screen and 9",
+      "the participants in this study read each of the short texts on the screen and 10",
+      "the participants in this study read each of the short texts on the screen and 11",
+      "the participants in this study read each of the short texts on the screen and 12",
+      "the participants in this study read each of the short texts on the screen and 13",
+      "the participants in this study read each of the short texts on the screen and 14",
+      "the participants in this study read each of the short texts on the screen and 15",
+      "the participants in this study read each of the short texts on the screen and 16",
+      "the participants in this study read each of the short texts on the screen and 17",
+      "the participants in this study read each of the short texts on the screen and 18",
+      "the participants in this study read each of the short texts on the screen and 19",
+      "the participants in this study read each of the short texts on the screen and 20"
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

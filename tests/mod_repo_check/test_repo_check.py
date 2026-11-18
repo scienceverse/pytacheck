@@ -22,9 +22,10 @@ HERE = Path(__file__).resolve().parent
 CODE_FILES = ROOT / "upstream" / "metacheck" / "tests" / "testthat" / "fixtures" / "code_files"
 BIBR12 = ROOT / "upstream" / "metacheck" / "tests" / "testthat" / "fixtures" / "bibr12"
 NO_REPOS = (
-    "We found no links to repositories on the Open Science Framework, Github, ResearchBox, "
-    "DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, "
-    "DataONE, or LDbase."
+    "We found no links to repositories on the Open Science Framework, Github, GitLab, "
+    "ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), "
+    "Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, or CKAN "
+    "data portals."
 )
 SUMMARY_COLS = [
     "paper_id",
@@ -96,6 +97,40 @@ def test_module_metadata() -> None:
 # -- OSF (recorded) ----------------------------------------------------------------------
 
 
+def test_a_plain_link_to_a_registration_a_view_only_key_opens_is_not_private() -> None:
+    """A preregistration shared with a view-only link: the plain link is no failed check (#648)."""
+    from metacheck.modules import _repo_check as rc
+
+    repos = rc.Repos(
+        pd.concat(
+            [
+                rc.repo_rows("p", "https://osf.io/kpngh", "osf", "private"),
+                rc.repo_rows("p", "https://osf.io/kpngh/?view_only=1e70", "osf", None),
+                rc.repo_rows("p", "https://osf.io/other", "osf", "private"),
+            ],
+            ignore_index=True,
+        )
+    )
+    info = pd.DataFrame(
+        {
+            "osf_id": pd.Series(["kpngh", "kpngh/?view_only=1e70", "other"], dtype="string"),
+            "osf_url": pd.Series(
+                [
+                    "https://osf.io/kpngh",
+                    "https://osf.io/kpngh/?view_only=1e70",
+                    "https://osf.io/other",
+                ],
+                dtype="string",
+            ),
+        }
+    )
+    rc._osf_view_only(repos, info, ["private", "registrations", "private"])
+    assert repos.df["repo_url"].tolist() == [
+        "https://osf.io/kpngh/?view_only=1e70",
+        "https://osf.io/other",
+    ]
+
+
 def test_osf_view_only_link() -> None:
     osf_url = "https://osf.io/t9j8e/? view_only=f171281f212f4435917b16a9e581a73b"
     mo = run(pc.test_paper(url=osf_url))
@@ -164,8 +199,8 @@ def test_osf() -> None:
         "files_code": 2,
         "files_readme": 0,
         "files_zip": 1,
-        "files_unknown": 1,
-        "naming_issues": 1,
+        "files_unknown": 0,  # an archive is neither unclassified nor a naming problem (#648)
+        "naming_issues": 0,
         "repo_view_only": 0,
         "roster_mismatch": False,
     }
@@ -476,6 +511,41 @@ def test_messy_folder_reports() -> None:
     assert lic["group"].isna().all()
 
 
+def test_unknown_file_type_is_not_a_naming_problem(tmp_path: Path) -> None:
+    """Port of "repo_check: an unknown file type is not a naming problem (#648)"."""
+    d = tmp_path / "dep"
+    d.mkdir()
+    (d / "data.csv").write_text("x,y\n1,2\n")
+    (d / "analysis.R").write_text("x <- 1\n")
+    (d / "model.joblib").write_text("")  # a type metacheck does not know
+    (d / ".gitattributes").write_text("* text=auto\n")  # a tool's settings
+    (d / "Makefile").write_text("all:\n")
+    (d / "asdoc.sthlp").write_text("help\n")
+    mo = pc.module_run(pc.test_paper(), "repo_check", local_path=str(d))
+    # only model.joblib is listed as unclassified; nothing is a naming problem
+    assert mo.summary_table["files_unknown"].tolist() == [1]
+    assert mo.summary_table["naming_issues"].tolist() == [0]
+    assert "unclassifiable" not in set(mo["naming_issues"].get("rule", []))
+    assert "We could not classify 1 file" in mo.summary_text
+    t = mo.table
+    assert t.loc[t["file_name"] == "Makefile", "data_type"].tolist() == ["code"]
+    assert t.loc[t["file_name"] == "asdoc.sthlp", "data_type"].tolist() == ["documentation"]
+
+
+def test_naming_problems_of_a_local_folder_without_a_paper(tmp_path: Path) -> None:
+    """Port of "repo_check counts naming problems of a local folder without a paper (#650)"."""
+    d = tmp_path / "dep"
+    d.mkdir()
+    (d / "my data.csv").write_text("x,y\n1,2\n")
+    (d / "analysis two.R").write_text("x <- 1\n")
+    (d / "clean.R").write_text("x <- 1\n")
+    mo = pc.module_run(None, "repo_check", local_path=str(d), local_only=True)
+    assert "2 file naming problems" in mo.summary_text
+    assert mo.summary_table["naming_issues"].tolist() == [2]
+    nm = mo["naming_issues"]
+    assert set(nm.loc[nm["rule"] == "spaces", "file_name"]) == {"my data.csv", "analysis two.R"}
+
+
 def test_restricted_and_closed_sources() -> None:
     urls = [
         "https://bonndoc.ulb.uni-bonn.de/xmlui/handle/20.500.11811/5678",
@@ -690,7 +760,9 @@ def test_failed_registration_source_restores_only_registrations(
         }
     )
 
-    def fake_listing(urls: list[str], pb: object, cache: bool) -> pd.DataFrame:
+    def fake_listing(
+        urls: list[str], pb: object, cache: bool, max_requests: float = 50
+    ) -> pd.DataFrame:
         if urls == [reg, user]:
             return listing
         raise RuntimeError("source lookup failed")
@@ -700,6 +772,81 @@ def test_failed_registration_source_restores_only_registrations(
     rc.list_osf(repos, [reg, user], "p1", None, False)
     assert repos.df["repo_url"].tolist() == [reg]
     assert repos.df["repo_error"].tolist() == ["source lookup failed"]
+
+
+def test_private_project_read_through_a_view_only_link_is_named_once(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # metacheck 0.4.3.15 (8dn4g_v1): the paper links osf.io/j9sdn plainly and with the
+    # view-only key; the plain link is not "could not check ... (private)"
+    from metacheck.modules import _repo_check as rc
+
+    key = "0123456789abcdef0123456789abcdef"
+    vo = f"https://osf.io/j9sdn/overview?view_only={key}"
+    plain = "https://osf.io/j9sdn"
+    state = {"public": False}
+
+    def info(url: str) -> pd.DataFrame:
+        if "view_only=" in url:
+            return pd.DataFrame(
+                {
+                    "osf_url": [url, url],
+                    "osf_id": [f"j9sdn?view_only={key}"] * 2,
+                    "osf_type": ["nodes", "files"],
+                    "parent": [None, None],
+                    "kind": [None, "file"],
+                    "public": pd.array([state["public"], None], dtype="boolean"),
+                    "name": ["A study", "data.csv"],
+                    "path": [None, "/data.csv"],
+                    "download_url": [None, "https://osf.io/download/abcde"],
+                    "size": [None, 10],
+                    "filetype": [None, "data"],
+                    "provider": [None, "osfstorage"],
+                }
+            )
+        return pd.DataFrame(
+            {
+                "osf_url": [url],
+                "osf_id": ["j9sdn"],
+                "osf_type": ["private"],
+                "public": pd.array([False], dtype="boolean"),
+            }
+        )
+
+    def fake_listing(
+        urls: list[str], pb: object, cache: bool, max_requests: float = 50
+    ) -> pd.DataFrame:
+        parts = []
+        for u in urls:
+            f = info(u)
+            f["repo_name"] = u
+            parts.append(f)
+        return pd.concat(parts, ignore_index=True)
+
+    monkeypatch.setattr(rc, "_osf_listing", fake_listing)
+    for both in (True, False):
+        paper = pc.test_paper(
+            text="Data: https://osf.io/j9sdn" if both else "Data: see the link.", url=vo
+        )
+        mo = run(paper, peek_zips=False)
+        assert len(mo["gated_repos"]) == 0, both
+        st = summary_row(mo)
+        assert st["repo_n"] == 1 and st["repo_unchecked"] == 0 and st["repo_view_only"] == 1
+        assert mo["view_only"]["project"].tolist() == [plain]
+        assert (
+            f"The OSF project {plain} is private. Metacheck examined the files through the "
+            "view_only link."
+        ) in mo.summary_text
+        assert (
+            "Private repositories checked through a view-only or peer-review link"
+            in pc.module_report(mo)
+        )
+        assert mo.traffic_light == "yellow"
+    # a public project read through a view-only link is not named
+    state["public"] = True
+    mo = run(pc.test_paper(text="Data: see the link.", url=vo), peek_zips=False)
+    assert len(mo["view_only"]) == 0
+    assert "view_only link" not in mo.summary_text
 
 
 def test_private_osf_file_rows_are_excluded_per_row() -> None:
@@ -982,3 +1129,75 @@ def test_no_advice_for_another_failure_or_a_link_with_its_passcode(
     mo = run(tp([url], "p_rb"))
     assert "We could not check 1 repository" in mo.summary_text
     assert "readers who follow the link cannot open it" not in mo.summary_text
+
+
+# -- publications are not deposits (metacheck 0.4.4.1, #636, #637) ---------------------------
+
+
+def _fake_zenodo(
+    monkeypatch: pytest.MonkeyPatch, records: dict[str, tuple[str | None, list[str]]]
+) -> None:
+    """Stand in for ``zenodo_info()``: ``{url: (resource_type, file names)}``."""
+    from metacheck.archives import zenodo
+
+    def info(urls: object, pb: object = None, cache: bool = False) -> pd.DataFrame:
+        rows = []
+        for u in urls:  # type: ignore[attr-defined]
+            rtype, names = records[u]
+            rows.append(
+                {
+                    "zenodo_url": u,
+                    "zenodo_id": u.rsplit("/", 1)[-1],
+                    "title": "t",
+                    "doi": None,
+                    "license": None,
+                    "error": None,
+                    "resource_type": rtype,
+                    "files": [
+                        {"key": n, "size": 10, "links": {"self": f"https://zenodo.org/f/{n}"}}
+                        for n in names
+                    ],
+                }
+            )
+        return pd.DataFrame(rows)
+
+    monkeypatch.setattr(zenodo, "zenodo_info", info)
+
+
+def test_a_publication_without_data_is_not_a_repository(monkeypatch: pytest.MonkeyPatch) -> None:
+    url = "https://zenodo.org/records/9000001"
+    _fake_zenodo(monkeypatch, {url: ("publication", ["paper.pdf"])})
+    mo = run(pc.test_paper(url=url))
+    assert mo.summary_text == NO_REPOS
+    assert mo.traffic_light == "na"
+
+
+def test_a_publication_with_its_data_is_kept(monkeypatch: pytest.MonkeyPatch) -> None:
+    url = "https://zenodo.org/records/9000002"
+    _fake_zenodo(monkeypatch, {url: ("publication-preprint", ["paper.pdf", "data.csv"])})
+    mo = run(pc.test_paper(url=url))
+    assert mo.summary_table["repo_n"].tolist() == [1]
+    assert set(mo.table["file_name"]) == {"paper.pdf", "data.csv"}
+
+
+def test_a_dataset_is_kept_without_data_files(monkeypatch: pytest.MonkeyPatch) -> None:
+    url = "https://zenodo.org/records/9000003"
+    _fake_zenodo(monkeypatch, {url: ("dataset", ["readme.txt"])})
+    mo = run(pc.test_paper(url=url))
+    assert mo.summary_table["repo_n"].tolist() == [1]
+
+
+def test_a_record_without_a_type_is_ignored_only_when_it_lists_files_but_no_data(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    only_pdf = "https://zenodo.org/records/9000004"
+    empty = "https://zenodo.org/records/9000005"
+    with_data = "https://zenodo.org/records/9000006"
+    _fake_zenodo(
+        monkeypatch,
+        {only_pdf: (None, ["paper.pdf"]), empty: (None, []), with_data: (None, ["d.csv"])},
+    )
+    mo = run(pc.test_paper(["See " + " ".join([only_pdf, empty, with_data])]))
+    assert set(mo.table["repo_url"]) == {with_data}
+    # the pdf-only record is gone from the metadata too; the empty one is kept
+    assert set(mo["repo_metadata"]["repo_url"]) == {empty, with_data}

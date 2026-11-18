@@ -16,6 +16,8 @@
       "creators",
       "keywords",
       "resource_type",
+      "resource_subtype",
+      "related",
       "journal",
       "owners",
       "license",
@@ -86,6 +88,18 @@
         ]
       },
       {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
         "t": "list",
         "names": null,
         "v": [
@@ -138,13 +152,49 @@
               {
                 "t": "list",
                 "names": [
-                  "key"
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
                 ],
                 "v": [
                   {
                     "t": "chr",
                     "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
                       "a.txt"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          null
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -155,6 +205,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

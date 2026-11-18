@@ -282,7 +282,7 @@
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "*Executing the code is a separate, opt-in phase (run with `execute = TRUE`). This report describes what a run would involve; it did not run anything.*",
           "#### Duplicate files across repo mirrors",
-          "1 file is byte-identical to another file already in the run (the paper links more than one repository/component that mirrors the same materials). It was only run once, from its first occurrence, to avoid wasted duplicate execution: `ok.R` (same as `ok.R`)."
+          "1 file is byte-identical to another file already in the run (the paper links more than one repository/component that mirrors the same materials). It was only run once, from its first occurrence, to avoid wasted duplicate execution: `ok.R` at `ok.R` (same as `ok.R` at `ok.R`)."
         ]
       },
       {
@@ -317,6 +317,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -456,12 +457,19 @@
             "v": [
               0
             ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
           0,
           0,
           0,
@@ -496,6 +504,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -562,6 +571,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

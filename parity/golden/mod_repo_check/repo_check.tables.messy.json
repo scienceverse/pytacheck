@@ -154,7 +154,7 @@
       },
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 5,
         "names": [
           "File",
           "Rule",
@@ -168,7 +168,6 @@
               "notes (final)!.docx",
               "notes (final)!.docx",
               "raw data.csv",
-              "weird.xyz123",
               "fig1.png",
               "fig2.png"
             ]
@@ -179,7 +178,6 @@
               "spaces",
               "special-characters",
               "spaces",
-              "unclassifiable",
               "zero-padding",
               "zero-padding"
             ]
@@ -187,7 +185,6 @@
           {
             "t": "chr",
             "v": [
-              "Required",
               "Required",
               "Required",
               "Required",
@@ -201,7 +198,6 @@
               "contains a space",
               "contains a character other than letters, digits, underscore, or dash",
               "contains a space",
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
               "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
               "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)"
             ]
@@ -408,6 +404,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -33,6 +33,10 @@ HERE = Path(__file__).resolve().parent
 MOCKS = HERE / "mocks"
 FIXTURES = HERE / "fixtures"
 _REDACT = re.compile(r"[?&]page(%5[Bb]size%5[Dd]|\[size\])=100")
+# the contributors osf_info() asks for with each guid: the recordings predate it
+_REDACT_EMBED = re.compile(
+    r"(/v2/guids/[^/?&]+/?(?:\?[^&]*)?)[?&]embed=bibliographic_contributors$"
+)
 _FILE_REF = re.compile(r'find_mock_file\("([^"]+)"\)')
 # a table: an R chunk in R, a raw HTML block in pytacheck (D75)
 _R_CHUNK = re.compile(r'\n```(?:\{r\}|\{=html\}\n<div class="datatables).*?\n```\n', re.S)
@@ -40,7 +44,7 @@ _R_CHUNK = re.compile(r'\n```(?:\{r\}|\{=html\}\n<div class="datatables).*?\n```
 
 def mock_path(request: httpx.Request) -> str:
     """``httptest2::build_mock_url()`` after metacheck's ``page[size]`` redactor."""
-    url = _REDACT.sub("", str(request.url))
+    url = _REDACT_EMBED.sub(r"\1", _REDACT.sub("", str(request.url)))
     url = re.sub(r"^.*?://", "", url, count=1)
     parts = url.split("?")
     if len(parts) > 1 and parts[-1] == "":
@@ -185,8 +189,11 @@ def run_repo(
     report: bool = False,
     tables: bool = False,
     rbox: str | None = None,
+    nopaper: bool = False,
 ) -> Any:
     """``module_run(<paper>, "repo_check", ...)`` on recorded responses (a parity case).
+
+    With *nopaper*, the paper is ``NULL``: a local folder checked without a paper.
 
     The paper is made of test papers (*papers*) or read from *read*
     (repository-relative paths). *args* are passed to the module; a
@@ -197,7 +204,9 @@ def run_repo(
     """
     import metacheck as pc
 
-    if read:
+    if nopaper:
+        paper = None
+    elif read:
         got = pc.read([ROOT / r for r in read])
         items = list(got) if isinstance(got, pc.PaperList) else [got]
         items.extend(make_paper(papers, paperlist=True) if papers else [])

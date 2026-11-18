@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -32,7 +33,7 @@ from metacheck.statout.match_reported import (
 DATA = Path(__file__).resolve().parent / "data"
 COLUMNS = [
     "text_id", "grp_id", "reported", "n_components", "n_matched", "found", "match_values",
-    "not_matched", "source_file", "analysis", "confidence", "plausible_split",
+    "not_matched", "source_file", "analysis", "confidence", "plausible_split", "n_sites",
 ]  # fmt: skip
 
 
@@ -231,7 +232,7 @@ def test_whole_test_signature_is_matched() -> None:
             "Partly right: t(8) = 5.05, p = .20.",
         ]
     )
-    res = match_reported_output(paper, _long(TTEST))
+    res = match_reported_output(paper, _long(TTEST), evidence="any")
     assert list(res.columns) == COLUMNS
     # the third test is re-split by the output evidence: its p sits nowhere
     # near its t/df, so it becomes its own (unplausible) group
@@ -263,9 +264,9 @@ def test_whole_test_signature_is_matched() -> None:
 def test_precision_aware_and_min_components() -> None:
     paper = pc.test_paper("The effect size was d = .68.")
     long = _long([("a", "d", "0.6810"), ("a", "p", "0.2")])
-    res = match_reported_output(paper, long)
+    res = match_reported_output(paper, long, evidence="any")
     assert res["found"].tolist() == [True]
-    res2 = match_reported_output(paper, long, min_components=2)
+    res2 = match_reported_output(paper, long, min_components=2, evidence="any")
     assert res2["found"].tolist() == [False]
     assert res2["n_matched"].tolist() == [0]
 
@@ -345,3 +346,134 @@ def test_many_sites_is_fast() -> None:
     assert len(res) == 300
     assert res["found"].mean() > 0.9
     assert elapsed < 20
+
+
+# ---- evidence = "informative" (metacheck 0.4.4.4, #648; tests/testthat/test-reproducibility_check.R) ----
+
+
+def _eq(
+    lhs: list[str], rhs: list[str], comp: list[str] | None = None, df: Any = None, grp: int = 1
+):
+    n = len(lhs)
+    return pd.DataFrame(
+        {
+            "text_id": [grp] * n,
+            "grp_id": [grp] * n,
+            "lhs": lhs,
+            "df": df if df is not None else [None] * n,
+            "comp": comp or ["="] * n,
+            "rhs": rhs,
+            "paper_id": ["p"] * n,
+        }
+    )
+
+
+def _out(stat: list[str], value: list[str], analysis: str = "a1") -> pd.DataFrame:
+    n = len(stat)
+    return pd.DataFrame(
+        {
+            "source_file": ["a.R"] * n,
+            "analysis": [analysis] * n,
+            "statistic": stat,
+            "value": value,
+        }
+    )
+
+
+def _found(e: pd.DataFrame, o: pd.DataFrame, **kw: Any) -> bool:
+    return bool(match_reported_output(e, o, **kw)["found"].iloc[0])
+
+
+def test_only_values_that_are_evidence_of_the_test_count() -> None:
+    # a precise test statistic with its p: found
+    assert _found(
+        _eq(["F", "p"], ["72.28", ".001"], ["=", "<"]),
+        _out(["F", "p"], ["72.284", "0.00001"]),
+    )
+    # only a df and a bound matched, the t not: not found (it was, with evidence = "any")
+    e = _eq(["t", "p"], ["20.22", ".001"], ["=", "<"], ["(801)", None])
+    o = _out(["t", "df", "p"], ["-1.607", "801", "0.00001"])
+    assert not _found(e, o)
+    assert _found(e, o, evidence="any")
+    # every value matched, one of them informative: found
+    assert _found(
+        _eq(["chi2", "p"], [".05", ".82"], df=["(1)", None]),
+        _out(["chi2", "df", "p"], ["0.05", "1", "0.823"]),
+    )
+    # t compared without its sign
+    assert _found(
+        _eq(["t", "p"], ["5.55", ".001"], ["=", "<"], ["(160.18)", None]),
+        _out(["t", "df", "p"], ["-5.546", "160.177571", "1.18e-07"]),
+    )
+    # a standard error counts only where its estimate matches too
+    assert not _found(
+        _eq(["M", "SE", "p"], ["2.95", "0.11", ".021"]),
+        _out(["F", "SE", "p"], ["5.39", "0.11", "0.021"]),
+    )
+
+
+def test_a_single_value_that_cannot_be_told_from_chance_is_left_out() -> None:
+    e = pd.DataFrame(
+        {
+            "text_id": range(1, 6),
+            "grp_id": range(1, 6),
+            "lhs": ["p", "p", "r", "BF10", "B"],
+            "df": [None] * 5,
+            "comp": ["=", "<", "=", "=", "="],
+            "rhs": [".023", ".001", ".17", ".01", "-0.323"],
+            "paper_id": ["p"] * 5,
+        }
+    )
+    o = pd.DataFrame(
+        {
+            "source_file": ["a.R"] * 5,
+            "analysis": ["a1", "a1", "a2", "a2", "a3"],
+            "statistic": ["p", "r", "p", "BF10", "b"],
+            "value": ["0.0231", "0.171", "0.0004", "0.01", "-0.3234"],
+        }
+    )
+    m = match_reported_output(e, o)
+    # p < .001, r = .17 and BF10 = .01 take no part: not in the result, nor in the count
+    assert sorted(m["reported"]) == sorted(["p=0.023", "B=-0.323"])
+    assert m["found"].all()
+    assert m.attrs["summary"]["n_tests"] == 2
+    # a single value matching two different numbers is not found; the same number printed twice
+    # is
+    o2 = pd.DataFrame(
+        {
+            "source_file": ["a.R"] * 2,
+            "analysis": ["a1", "a2"],
+            "statistic": ["p", "p"],
+            "value": ["0.0231", "0.0226"],
+        }
+    )
+    assert not match_reported_output(e.iloc[:1], o2)["found"].iloc[0]
+    o3 = o2.assign(value=["0.0231", "0.0231"])
+    assert match_reported_output(e.iloc[:1], o3)["found"].iloc[0]
+    assert match_reported_output(e.iloc[:1], o3)["n_sites"].iloc[0] == 2
+
+
+def test_a_test_none_of_whose_values_is_evidence_takes_no_part() -> None:
+    e = pd.DataFrame(
+        {
+            "text_id": [1, 1, 2, 2, 3, 3],
+            "grp_id": [1, 1, 2, 2, 3, 3],
+            "lhs": ["alpha", "N", "p", "p", "alpha", "F"],
+            "df": [None] * 6,
+            "comp": ["=", "=", "<", "<", "=", "="],
+            "rhs": [".05", "55", ".05", ".0002", ".86", "4.21"],
+            "paper_id": ["p"] * 6,
+        }
+    )
+    o = pd.DataFrame(
+        {
+            "source_file": ["a.R"] * 2,
+            "analysis": ["a1"] * 2,
+            "statistic": ["F", "p"],
+            "value": ["4.2", "0.04"],
+        }
+    )
+    m = match_reported_output(e, o)
+    # a power analysis and two bounds take no part; a reliability alpha with an F does
+    assert len(m) == 1
+    assert "alpha=0.86" in m["reported"].iloc[0]

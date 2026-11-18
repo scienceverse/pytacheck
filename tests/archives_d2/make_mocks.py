@@ -708,6 +708,151 @@ def write_pytacheck_variants(root: Path) -> None:
             dest.write_bytes(text)
 
 
+def eprints_hosts() -> None:
+    """Another EPrints repository answers the same /id/eprint/<id> request as ReShare."""
+    base = "datacompass.lshtm.ac.uk"
+    put(
+        f"{base}/id/eprint/4333",
+        {
+            "eprintid": 4333,
+            "type": "data_collection",
+            "title": "Surveillance data of a clinical study",
+            "doi": "10.17037/DATA.00004333",
+            "datestamp": "2020-01-01 10:00:00",
+            "lastmod": "2021-02-03 04:05:06",
+            "creators": [{"name": {"given": "Jane", "family": "Doe"}}],
+            "documents": [
+                {
+                    "content": "data",
+                    "files": [
+                        {
+                            "fileid": 77,
+                            "filename": "survey.csv",
+                            "filesize": 1200,
+                            "hash": md5(b"survey"),
+                            "hash_type": "MD5",
+                            "uri": f"http://{base}/id/file/77",
+                        }
+                    ],
+                }
+            ],
+        },
+    )
+    put(
+        f"{base}/id/eprint/1411",
+        {
+            "eprintid": 1411,
+            "type": "thesis",
+            "title": "A thesis",
+            "documents": [
+                {
+                    "content": "text",
+                    "files": [
+                        {
+                            "fileid": 78,
+                            "filename": "thesis.pdf",
+                            "filesize": 90000,
+                            "uri": f"http://{base}/id/file/78",
+                        }
+                    ],
+                }
+            ],
+        },
+    )
+    r404(
+        f"{base}/id/eprint/9999",
+        f"https://{base}/id/eprint/9999",
+    )
+
+
+def invenio_hosts() -> None:
+    """InvenioRDM: files under files.entries, the bytes at links.content."""
+    base = "data.caltech.edu/api/records"
+    put(
+        f"{base}/j4k4w-p8331",
+        {
+            "id": "j4k4w-p8331",
+            "pids": {"doi": {"identifier": "10.22002/j4k4w-p8331"}},
+            "updated": "2024-05-06T07:08:09",
+            "metadata": {
+                "title": "Calibration data",
+                "resource_type": {"id": "dataset", "title": {"en": "Dataset"}},
+            },
+            "files": {
+                "enabled": True,
+                "count": 2,
+                "entries": {
+                    "a.csv": {
+                        "id": "f1",
+                        "key": "a.csv",
+                        "size": 10,
+                        "checksum": "md5:1",
+                        "links": {
+                            "self": "https://data.caltech.edu/api/records/j4k4w-p8331/files/a.csv",
+                            "content": "https://data.caltech.edu/api/records/j4k4w-p8331/files/a.csv/content",
+                        },
+                    },
+                    "b.R": {
+                        "id": "f2",
+                        "key": "b.R",
+                        "size": 20,
+                        "checksum": "md5:2",
+                        "links": {
+                            "self": "https://data.caltech.edu/api/records/j4k4w-p8331/files/b.R",
+                            "content": "https://data.caltech.edu/api/records/j4k4w-p8331/files/b.R/content",
+                        },
+                    },
+                },
+            },
+        },
+    )
+    r404(f"{base}/nothing-here", "https://data.caltech.edu/api/records/nothing-here")
+
+
+def ckan() -> None:
+    """A CKAN portal's package_show."""
+    base = "data.cnra.ca.gov/api/3/action/package_show"
+    put(
+        q(base, "id=statewide-crop-mapping"),
+        {
+            "success": True,
+            "result": {
+                "title": "Statewide Crop Mapping",
+                "license_title": "Creative Commons Attribution",
+                "doi": "10.1/x",
+                "author": "California DWR",
+                "maintainer": "",
+                "resources": [
+                    {
+                        "name": "Crop map 2024",
+                        "format": "ZIP",
+                        "size": 176115282,
+                        "url_type": "upload",
+                        "url": "https://data.cnra.ca.gov/dataset/6c3d/resource/1/download/i15_crop_2024.zip",
+                    },
+                    {
+                        "name": "Map service",
+                        "format": "Data",
+                        "url_type": "",
+                        "url": "https://www.arcgis.com/home/item.html?id=39b6",
+                    },
+                    {
+                        "name": "Readme",
+                        "format": "PDF",
+                        "size": 2000,
+                        "url_type": "",
+                        "url": "https://data.cnra.ca.gov/dataset/6c3d/resource/2/download",
+                    },
+                ],
+            },
+        },
+    )
+    r404(
+        q(base, "id=none"),
+        "https://data.cnra.ca.gov/api/3/action/package_show?id=none",
+    )
+
+
 def main() -> None:
     if ROOT.exists():
         shutil.rmtree(ROOT)
@@ -719,6 +864,9 @@ def main() -> None:
     fsd()
     dspace_legacy()
     researchbox()
+    eprints_hosts()
+    invenio_hosts()
+    ckan()
 
 
 if __name__ == "__main__":

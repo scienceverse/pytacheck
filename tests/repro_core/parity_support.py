@@ -208,9 +208,13 @@ def _namespace() -> types.SimpleNamespace:
     import pandas as pd
 
     import metacheck as pc
-    from metacheck.repro import core, docker, tables
+    from metacheck.repro import core, docker, layout, outcomes, recorded, section, tables
 
     return types.SimpleNamespace(
+        layout=layout,
+        outcomes=outcomes,
+        recorded=recorded,
+        section=section,
         core=core,
         docker=docker,
         tables=tables,

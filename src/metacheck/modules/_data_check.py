@@ -486,6 +486,21 @@ def dv_careless_block(
     cols = [_as_num_chr(block.iloc[:, j]) for j in range(block.shape[1])]
     n_items = len(cols)
     rows = [[c[i] for c in cols] for i in range(len(block))]
+    # A file that repeats a person's answers on several rows (a log with one row per trial, and
+    # the questionnaire on each) holds one response: each copy was flagged, so one person was
+    # "flagged in 20 blocks" (#648, 5b3xh_v3: 5,085 rows for 255 ids). Rows that repeat an id
+    # and its answers are left out.
+    seen: set[tuple[Any, ...]] = set()
+    first: list[int] = []
+    for i, r in enumerate(rows):
+        key = (None if ids[i] is None else str(ids[i]), *r)
+        if key in seen:
+            continue
+        seen.add(key)
+        first.append(i)
+    if len(first) < len(rows):
+        rows = [rows[i] for i in first]
+        ids = [ids[i] for i in first]
     ls = _longstring(rows)
     straight_cut = max(5, math.ceil(0.8 * n_items))
     flagged = [i for i, v in enumerate(ls) if v >= straight_cut]
@@ -614,7 +629,8 @@ def dv_careless_by_respondent(
             {
                 "respondent": key[0],
                 "source_file": key[1],
-                "n_blocks_flagged": len(g),
+                # scales, not rows: one scale flagged on two rows of a person is one block (#648)
+                "n_blocks_flagged": len(dict.fromkeys(scale[i] for i in g)),
                 "scales": "; ".join(
                     sorted(_unique([scale[i] for i in g if scale[i] is not None]), key=r_sort_key)
                 ),

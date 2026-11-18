@@ -1044,16 +1044,19 @@ def test_a_bare_name_read_directly_is_pointed_to_its_file_in_a_folder_below() ->
     ).iloc[0]
     assert not rw["as_written"]
     assert rw["target"] == "data/x.csv"
-    # in a joining call it stays as written: the code joins it to a folder of its own
+    # in a joining call it stays as written: the code joins it to a folder of its own; decided
+    # at each place, so a direct read in the same script is still pointed to the file (#648)
+    code2 = ['d <- read.csv(file.path(dir, "x.csv"))', 'e <- read.csv("x.csv")']
     rw2 = _repro_keep_working_refs(
-        repro_rewrite_paths(
-            'd <- read.csv(file.path(dir, "x.csv"))', "m.R", plan, script_path="scripts/m.R"
-        ),
+        repro_rewrite_paths(code2, "m.R", plan, script_path="scripts/m.R"),
         plan,
         "scripts/m.R",
         ".",
     )
-    assert rw2.loc[rw2["ref"] == "x.csv", "as_written"].all()
+    assert _repro_apply_rewrites(code2, rw2) == [
+        'd <- read.csv(file.path(dir, "x.csv"))',
+        'e <- read.csv("data/x.csv")',
+    ]
 
 
 def test_a_name_still_ambiguous_is_counted_not_kept_as_written() -> None:

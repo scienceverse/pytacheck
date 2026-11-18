@@ -35,6 +35,8 @@ FULL = [
     "creators",
     "keywords",
     "resource_type",
+    "resource_subtype",
+    "related",
     "journal",
     "owners",
     "license",

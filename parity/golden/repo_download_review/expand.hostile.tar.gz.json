@@ -15,7 +15,9 @@
       "file_size",
       "data_type",
       "doc_role",
-      "data_format"
+      "data_format",
+      "archive_file_path",
+      "archive_file_location"
     ],
     "v": [
       {
@@ -98,9 +100,27 @@
           "tabular",
           "tabular"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "hostile.tar.gz",
+          "hostile.tar.gz",
+          "hostile.tar.gz",
+          "hostile.tar.gz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/hostile.tar.gz",
+          "<TMP>/hostile.tar.gz",
+          "<TMP>/hostile.tar.gz",
+          "<TMP>/hostile.tar.gz"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

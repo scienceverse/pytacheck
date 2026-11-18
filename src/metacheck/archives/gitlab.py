@@ -41,7 +41,7 @@ def gitlab_links(paper: Any) -> pd.DataFrame:
     """
     from metacheck.archives.github import _host_links
 
-    return _host_links(paper, "gitlab", _GITLAB_REGEX)
+    return _host_links(paper, "gitlab", _GITLAB_REGEX, repo_of=_gitlab_repo_path)
 
 
 def gitlab_repo(repo: Any) -> Any:

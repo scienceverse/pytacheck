@@ -96,6 +96,7 @@
                         "t": "list",
                         "names": [
                           "slope",
+                          "intercept",
                           "rvalue",
                           "pvalue",
                           "stderr"
@@ -125,6 +126,34 @@
                                 "t": "chr",
                                 "v": [
                                   "http://purl.obolibrary.org/obo/STATO_0000656"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "value",
+                              "stato_label",
+                              "stato_iri"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  46.43
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "intercept"
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "http://purl.obolibrary.org/obo/STATO_0000657"
                                 ]
                               }
                             ]
@@ -1318,6 +1347,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

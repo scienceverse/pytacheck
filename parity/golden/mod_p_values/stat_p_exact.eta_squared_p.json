@@ -49,10 +49,12 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "expanded",
           "imprecise",
           "not_a_test",
-          "zero"
+          "zero",
+          "impossible"
         ],
         "v": [
           {
@@ -168,6 +170,17 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "F(2, 63) = 590, p < .001, ƞ²p = .95",
               "t = 2, η² P = 0.029, p = .04",
               "η 2 p = .10 and p < .001",
@@ -196,6 +209,17 @@
               null,
               null,
               null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
             ]
           },
           {
@@ -238,7 +262,8 @@
         "names": [
           "paper_id",
           "n_imprecise",
-          "n_zero"
+          "n_zero",
+          "n_impossible"
         ],
         "v": [
           {
@@ -258,6 +283,12 @@
             "v": [
               0
             ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
           }
         ]
       },
@@ -269,6 +300,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

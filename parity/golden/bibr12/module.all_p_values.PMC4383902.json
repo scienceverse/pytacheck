@@ -49,7 +49,8 @@
           "header",
           "section_type",
           "p_comp",
-          "p_value"
+          "p_value",
+          "p_name"
         ],
         "v": [
           {
@@ -89,12 +90,15 @@
             "v": []
           },
           {
-            "t": "list",
-            "names": null,
+            "t": "chr",
             "v": []
           },
           {
             "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           }
         ]
@@ -103,7 +107,7 @@
         "t": "chr",
         "v": [
           "",
-          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
+          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2, 5.0e-2, 5E-2 or 10^-15, and a p with a correction name such as pFWE or p adj. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
         ]
       },
       {
@@ -148,6 +152,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

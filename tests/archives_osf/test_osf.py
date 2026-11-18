@@ -39,6 +39,20 @@ def test_osf_links() -> None:
     assert list(obs.columns) == ["href", "link_text", "text_id", "paper_id"]
 
 
+def test_osf_links_keeps_a_view_only_key() -> None:
+    """A view-only key in the text stays part of the link (#648)."""
+    paper = pc.test_paper(
+        [
+            "Preregistered (https://osf.io/kpngh/?view_only=1e703c84a2414650b44ce1be9c98a189).",
+            "See osf.io/abcde/ for the data.",
+        ]
+    )
+    assert osf_links(paper)["href"].tolist() == [
+        "https://osf.io/kpngh/?view_only=1e703c84a2414650b44ce1be9c98a189",
+        "osf.io/abcde",
+    ]
+
+
 def test_osf_links_body_text_and_dedup() -> None:
     paper = pc.test_paper(
         ["see osf.io/abcde/ and https://osf.io/abcde", "none"], url=["https://osf.io/abcde"]

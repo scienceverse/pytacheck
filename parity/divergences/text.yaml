@@ -70,10 +70,6 @@
 # in prose.yaml). Cases of the io lane's generated files (bibr12, grobid12) that
 # run these modules are listed here because the module change, not the
 # conversion, makes them differ.
-"mod_ref_accuracy_review/ref_consistency.xml_fixtures": &u83_likley_tei
-  kind: r_bug_fixed
-  ref: U83
-  reason: "the caveat says 'likely' (metacheck: 'likley'); the reference and citation text read from the TEI also differs (io fix U16: 'Henry, 2019', '24 July 2025')"
 "mod_power/power.psychsci": &u16_power
   kind: r_bug_fixed
   ref: U16

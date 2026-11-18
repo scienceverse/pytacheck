@@ -50,10 +50,12 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "expanded",
           "imprecise",
           "not_a_test",
-          "zero"
+          "zero",
+          "impossible"
         ],
         "v": [
           {
@@ -422,6 +424,39 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "A significant group difference was found in suppression-induced forgetting, as revealed by a significant condition-by-group interaction, F(1, 30) = 7.556, p = .010, ηp² = .201.",
               "This interaction was driven by a significant inversion of suppression-induced forgetting in the PTSD group (i.e., better memory performance for suppress items compared with baseline items; M = -5.2%), F(1, 15) = 5.288, p = .036, ηp² = .261 (Bayes factor favoring the alternative hypothesis = 2.09), in the absence of significant suppression in the control group (M = 3.5%, n.s.).",
               "Although the PTSD group showed a significant facilitation effect (M = 5.9%), F(1, 15) = 7.525, p = .015, ηp² = .334, and the control group did not (M = 2.8%, n.s.), there was no significant group difference in facilitation, F(1, 30) = 1.215, p = .279, ηp² = .039 (Fig. 3a).",
@@ -550,13 +585,46 @@
               false,
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We found no imprecise *p* values or *p*-values of exactly zero out of 28 detected."
+          "We found no imprecise *p* values, *p*-values of exactly zero or impossible *p* values out of 28 detected."
         ]
       },
       {
@@ -568,7 +636,7 @@
       {
         "t": "chr",
         "v": [
-          "We found no imprecise *p* values or *p*-values of exactly zero out of 28 detected."
+          "We found no imprecise *p* values, *p*-values of exactly zero or impossible *p* values out of 28 detected."
         ]
       },
       {
@@ -577,13 +645,20 @@
         "names": [
           "paper_id",
           "n_imprecise",
-          "n_zero"
+          "n_zero",
+          "n_impossible"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
               "0956797615569889"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
             ]
           },
           {
@@ -608,6 +683,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

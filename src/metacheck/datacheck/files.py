@@ -473,7 +473,43 @@ def data_classify_files(
             r"^(requirements|constraints)([_.-][a-z0-9]+)*\.(txt|in)$|^pipfile(\.lock)?$", base_lc
         ):
             types[i] = "code"
-    return [t if t is not None else "unknown" for t in types]
+        # A file that builds or runs the analysis has a fixed name without an extension
+        # (Makefile, Dockerfile, Snakefile, Binder's postBuild), and a project's notices are
+        # named like its licence (NOTICE, NEWS, CHANGELOG); all were "unknown" (#648: 290 files
+        # in 68 of 563 papers had no extension). Only files nothing else typed
+        # ("makefile.txt" stays documentation).
+        if types[i] is None:
+            if grepl(
+                r"^(makefile|gnumakefile|dockerfile|containerfile|snakefile|vagrantfile|justfile"
+                r"|postbuild)([_.-][a-z0-9_]+)?$",
+                base_lc,
+            ):
+                types[i] = "code"
+            elif grepl(
+                r"^(notice|news|changelog|changes|authors|contributors|citation|copyright)$",
+                base_lc,
+            ):
+                types[i] = "documentation"
+    out = [t if t is not None else "unknown" for t in types]
+    # A single compressed file ("scan.nii.gz", "trials.csv.gz", not a .tar.gz) holds one file,
+    # which is what it is (see the crosswalk); as an archive it was "unknown" until data_check
+    # opened it. data_check still downloads and opens it by its name (_is_single_compress()).
+    from metacheck.archives.zip_peek import _is_single_compress
+
+    gz = [t == "unknown" and g for t, g in zip(out, _is_single_compress(names), strict=True)]
+    if any(gz):
+
+        def strip(x: str | None) -> str | None:
+            return None if x is None else re.sub(r"\.(gz|bz2|xz)$", "", x, flags=re.IGNORECASE)
+
+        idx = [i for i, g in enumerate(gz) if g]
+        inner = data_classify_files(
+            [strip(names[i]) for i in idx],
+            [strip(path_for_kw[i]) for i in idx] if file_path is not None else None,
+        )
+        for i, t in zip(idx, inner, strict=True):
+            out[i] = t
+    return out
 
 
 def _is_r_package_service_file(path: str) -> bool:
@@ -1285,21 +1321,27 @@ def data_group_llm(
     return _data_group_llm_impl(files, model, params, batch_size, paper)
 
 
-def data_study_roster(paper: Any) -> list[str]:
+def data_study_roster(
+    paper: Any, words: Sequence[str] = ("study", "experiment", "pilot")
+) -> list[str]:
     """The studies a paper names (``Experiment 1`` -> ``ex1``), as group codes.
 
-    Port of ``R/data_check_helpers.R::data_study_roster()``.
+    Port of ``R/data_check_helpers.R::data_study_roster()``. *words* are the words that name a
+    study (study, experiment and pilot by default); give one word to learn which numbers the
+    paper uses for that word only (used to read short labels such as ``E1A`` in file names).
     """
     from metacheck.papers.model import is_paper
 
     if not is_paper(paper):
         return []
+    if isinstance(words, str):  # R: paste(words, collapse = "|") takes a bare string too
+        words = (words,)
     try:
         from metacheck.text.search import text_search
 
         hits = text_search(
             paper,
-            r"\b(?:study|experiment|pilot)[ ._-]?[0-9]{1,2}[a-z]?\b",
+            "\\b(?:" + "|".join(words) + ")[ ._-]?[0-9]{1,2}[a-z]?\\b",
             return_="match",
             ignore_case=True,
             perl=True,
@@ -1429,6 +1471,70 @@ def _data_group_from_path(paths: Sequence[str | None]) -> list[str | None]:
     return out
 
 
+def _data_group_from_short_label(
+    paths: Sequence[str | None], paper: Any = None
+) -> list[str | None]:
+    """Port of ``.data_group_from_short_label()``: a one-letter study label in a file path.
+
+    "Shift_E1A.csv" (Experiment 1A) or "df_s1.csv" (Study 1) is read as a study code, or
+    ``None`` (#648). One letter is ambiguous: "s1" is also session 1, subject 1 or
+    supplementary file 1, and "e1" an electrode. So a letter is read as a study only when the
+    paper itself settles it:
+
+    * E stands for "experiment" and S for "study", and the paper names numbered studies with
+      that word;
+    * every label with that letter in the deposit is a study the paper names (one s9 in a paper
+      with Studies 1 and 2 means the letter counts something else, and then no file is placed by
+      it);
+    * for S, the paper names no numbered session and does not use S<n> itself ("Table S1", "S2
+      Fig" label supplementary material).
+
+    The filename is searched first, then its folders from the innermost out, as in
+    :func:`_data_group_from_path`; a file extension is never read as a label.
+    """
+    from metacheck.papers.model import is_paper
+
+    paths = _as_list(paths)
+    out: list[str | None] = [None] * len(paths)
+    if not paths or paper is None or not is_paper(paper):
+        return out
+
+    def label_of(letter: str) -> list[str | None]:
+        tok = f"(?<![a-z0-9]){letter}([0-9]{{1,2}})([a-z]?)(?![a-z0-9])"
+        labels: list[str | None] = []
+        for path in paths:
+            found: str | None = None
+            if path is not None and path != "":
+                parts = strsplit(_tolower(gsub("\\\\", "/", path)), "/", fixed=True)
+                if parts:
+                    parts[-1] = sub(r"^(.+?)\.[A-Za-z0-9]+$", r"\1", parts[-1])
+                for part in reversed(parts):
+                    m = regexec(tok, part, perl=True)
+                    if m:
+                        found = f"ex{int(m[1])}{m[2]}"
+                        break
+            labels.append(found)
+        return labels
+
+    try:
+        text = " ".join("" if t is None else str(t) for t in paper.text["text"].tolist())
+    except Exception:
+        text = ""
+    for letter, word in (("e", "experiment"), ("s", "study")):
+        lab = label_of(letter)
+        if all(x is None for x in lab):
+            continue
+        if letter == "s" and grepl(
+            r"(?i)\bsessions? ?[0-9]|\bS[0-9]{1,2}[a-z]?\b", text, perl=True
+        ):
+            continue
+        roster = data_study_roster(paper, words=(word,))
+        if not roster or not all(x in roster for x in lab if x is not None):
+            continue
+        out = [o if o is not None else x for o, x in zip(out, lab, strict=True)]
+    return out
+
+
 def _data_group_normalize(x: Sequence[Any]) -> list[str | None]:
     """Normalize LLM-returned study codes; anything off-scheme is ``None``."""
     out: list[str | None] = []
@@ -1555,6 +1661,10 @@ def _data_group_llm_impl(
     group: list[str | None] = list(repo_grp)
 
     pre = _data_group_from_path(paths)
+    # A one-letter label ("Shift_E1A", "df_s1") counts only where the paper's own study names
+    # confirm it (see _data_group_from_short_label()).
+    short = _data_group_from_short_label(paths, paper)
+    pre = [p if p is not None else sh for p, sh in zip(pre, short, strict=True)]
     for i in range(n):
         if send[i] and pre[i] is not None:
             group[i] = pre[i]

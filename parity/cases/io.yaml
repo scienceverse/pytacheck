@@ -11,13 +11,11 @@
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml"}
 - "id": ".grobid_to_bibr.debruine.debruine-fret"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"}
 - "id": ".grobid_to_bibr.debruine.debruine-sex"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
@@ -38,7 +36,6 @@
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"}
 - "id": ".grobid_to_bibr.formats.preprint.pdf.tei"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
@@ -49,7 +46,6 @@
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"}
 - "id": ".grobid_to_bibr.formats.published.pdf.tei"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
@@ -67,7 +63,6 @@
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"}
 - "id": ".grobid_to_bibr.problems.203020"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
@@ -83,7 +78,6 @@
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml"}
 - "id": ".grobid_to_bibr.grobid.pfd-1181af"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
@@ -104,7 +98,6 @@
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml"}
 - "id": ".grobid_to_bibr.grobid.pfd-9c61e4"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
@@ -125,13 +118,11 @@
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-06d588-POST.xml"}
 - "id": ".grobid_to_bibr.grobidorg.pfd-1181af"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-1181af-POST.xml"}
 - "id": ".grobid_to_bibr.grobidorg.pfd-9c61e4"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": ".grobid_to_bibr"
   "py": "metacheck.io.grobid._grobid_to_bibr"
   "args":
@@ -226,7 +217,6 @@
   "args":
     "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
 - "id": "read.xml_and_json"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "the TEI clean-up no longer treats the '<' of a tag as an operator, so numbers before a tag keep their space (R: 'Hamilton1964', 'p =.27.', 'Table1'; U16); also the paper DOI comes from the header, not the first reference (U17), reference DOIs broken by line breaks are joined, and URL link texts are handled in their own row only (U28)"}
   "r": "read"
   "py": "metacheck.read"
   "args":

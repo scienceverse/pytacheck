@@ -28,6 +28,10 @@ ROOT = Path(__file__).resolve().parents[2]
 # a table: an R chunk in R, a raw HTML block in pytacheck (D75)
 _R_CHUNK = re.compile(r'\n```(?:\{r\}|\{=html\}\n<div class="datatables).*?\n```\n', re.S)
 _REDACT = re.compile(r"[?&]page(%5[Bb]size%5[Dd]|\[size\])=100")
+# the contributors osf_info() asks for with each guid: the recordings predate it
+_REDACT_EMBED = re.compile(
+    r"(/v2/guids/[^/?&]+/?(?:\?[^&]*)?)[?&]embed=bibliographic_contributors$"
+)
 
 
 def mock_path(request: httpx.Request) -> str:
@@ -38,7 +42,7 @@ def mock_path(request: httpx.Request) -> str:
     ``?view_only=`` inside ``.../guids/<id>/?resolve=false``) is hashed up to
     its second ``?``.
     """
-    url = _REDACT.sub("", str(request.url))
+    url = _REDACT_EMBED.sub(r"\1", _REDACT.sub("", str(request.url)))
     url = re.sub(r"^.*?://", "", url, count=1)
     parts = url.split("?")
     if len(parts) > 1 and parts[-1] == "":

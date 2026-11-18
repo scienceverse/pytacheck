@@ -10,7 +10,8 @@
       "reason",
       "files",
       "default_branch",
-      "license"
+      "license",
+      "info"
     ],
     "v": [
       {
@@ -135,9 +136,93 @@
         "v": [
           "MIT"
         ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "full_name",
+          "description",
+          "created",
+          "pushed",
+          "owner",
+          "owner_type",
+          "homepage",
+          "topics",
+          "stars",
+          "forks",
+          "fork"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "gzorg/treerepo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

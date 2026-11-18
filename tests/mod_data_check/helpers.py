@@ -331,26 +331,32 @@ def norm_paths(out: Any) -> Any:
     """
     import re
 
-    st = out.get("structure")
     root = ROOT.as_posix() + "/"
-    if isinstance(st, pd.DataFrame) and "file_location" in st.columns:
-        locs = [
-            None
-            if v is None or v is pd.NA
-            else re.sub(
-                r"^.*[/\\]metacheck-archives(?:-[^/\\]*)?[/\\]([0-9a-f]+)[/\\]",
-                r"<tempdir>/metacheck-archives/\1/",
-                re.sub(
-                    r"^.*/metacheck-repo-files/",
-                    "<cache>/",
-                    re.sub(r"^.*/dcrepo_[^/]*/", "<copy>/", str(v).removeprefix(root)),
-                ),
-            )
-            for v in st["file_location"].tolist()
-        ]
-        st = st.copy()
-        st["file_location"] = pd.Series(locs, index=st.index, dtype="string")
-        out.extras["structure"] = st
+    for tab in ("structure", "doc_sheets"):
+        tbl = out.get(tab)
+        if not isinstance(tbl, pd.DataFrame):
+            continue
+        for col in ("file_location", "archive_file_location"):
+            if col not in tbl.columns:
+                continue
+            locs = [
+                None
+                if v is None or v is pd.NA
+                else re.sub(
+                    r"^.*[/\\]metacheck-archives(?:-[^/\\]*)?[/\\]([0-9a-f]+)[/\\]",
+                    r"<tempdir>/metacheck-archives/\1/",
+                    re.sub(
+                        r"^.*/metacheck-repo-files/",
+                        "<cache>/",
+                        re.sub(r"^.*/dcrepo_[^/]*/", "<copy>/", str(v).removeprefix(root)),
+                    ),
+                )
+                for v in tbl[col].tolist()
+            ]
+            tbl = tbl.copy()
+            tbl[col] = pd.Series(locs, index=tbl.index, dtype="string")
+            out.extras[tab] = tbl
+    st = out.get("structure")
     if isinstance(st, pd.DataFrame) and "file_url" in st.columns:
         urls = [
             None

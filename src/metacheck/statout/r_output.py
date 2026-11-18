@@ -562,7 +562,18 @@ _TITLE_RE = (
     "(?i)(t-test|correlation|chi-squared|proportion|wilcoxon|shapiro|anova|fisher|"
     "kruskal|bartlett|mann-whitney|test)$"
 )
-_STAT_NAME_RE = "(?i)^(t|z|f|r|w|u|h|d|p|p-value|df|chi|x-squared|bf|rho|tau|s|v|estimate|mean)"
+# keep only recognisable statistic names (avoid matching prose), the whole name, as a name that only
+# began with one of these letters passed: scale1, sample_num, size, shape ("s"), width ("w"),
+# height ("h") and res ("r") of code such as png(width = 1480, res = 300) were stored as
+# statistics (#648). A name the vocabulary types as a statistic (SD, SE, Chisq, R²) is kept as
+# well; W, S and V are typed later from the call. statistic, pvalue, dof, correlation, slope,
+# intercept, rvalue and stderr are the fields of scipy's results (TtestResult(statistic=4.9,
+# pvalue=6.8e-05, df=22)), read by .ipynb_stat_line().
+_STAT_NAME_RE = (
+    "(?i)^(t|z|f|r|w|u|h|d|p|p-value|p\\.value|p-val|df|chi|chi-squared|x-squared|"
+    "bf|bf10|bf01|rho|tau|s|v|estimate|mean|statistic(_[a-z]+)?|pvalue|p_value|pval|dof|"
+    "correlation|slope|intercept|rvalue|stderr|intercept_stderr)$"
+)
 
 
 def _r_output_oneline(
@@ -580,7 +591,9 @@ def _r_output_oneline(
     pattern = _stat_pattern()
     rx = compile_r(pattern, perl=True)
     title_rx = compile_r(_TITLE_RE)
-    name_rx = compile_r(_STAT_NAME_RE)
+    from metacheck.statout.stato_map import stato_type_column
+
+    name_rx = compile_r(_STAT_NAME_RE, perl=True)
     results: list[dict[str, Any]] = []
     cur_title: str | None = None
     cur: list[tuple[str, str]] = []
@@ -609,7 +622,9 @@ def _r_output_oneline(
             nm = m.group(1)
             dfp = m.group(2) or ""
             val = m.group(4)
-            if name_rx.search(nm):
+            if name_rx.search(trimws(nm) or "") or (
+                stato_type_column(trimws(nm) or "").get("termSource") or ""
+            ):
                 cur.append((nm, val))
                 if dfp:
                     cur.append(("df", gsub("[()]", "", dfp)))
@@ -830,16 +845,106 @@ _SECTION_RE = "^[A-Za-z][A-Za-z0-9 .()|>-]*:$"
 _STOP_RE = "(?i)^(---|signif|residual standard|multiple r-|f-statistic|call:|data:|alternative)"
 
 
+# -- Lines made readable for the table reader (#648) --------------------------------------
+# - A pipe table, as knitr::kable() prints by default ("|term | estimate|", "|:----|-------:|"):
+#   the rule line is left out and every "|" becomes a space, which keeps the columns where they
+#   were, so the fixed-width split reads it like any printed table.
+# - A superscript mark after a word ("pval¹ ci.lb¹", metafor's mark for the Knapp-Hartung test)
+#   becomes a space, which keeps the columns too. The superscript two is left, as it belongs to
+#   R², eta² and chi².
+# - A group line inside a lavaan table ("  visual =~", "  textual ~~") is left out: it has no
+#   number, so the table ended at it before its first row.
+_PIPE_RULE = "^\\s*\\|?(\\s*:?-{3,}:?\\s*\\|)+\\s*(:?-{3,}:?)?\\s*\\|?\\s*$"
+_PIPE_ROW = "^\\s*\\|.*\\|\\s*$"
+_SUPERSCRIPT = "(?<=[A-Za-z0-9.])[\u00b9\u00b3\u2070\u2074-\u2079\u2020\u2021]"
+_GROUP_LINE = "^\\s*\\S+\\s+(=~|~~|<~|~)\\s*$"
+
+
+def _r_output_normalise(lines: Sequence[str | None]) -> list[str | None]:
+    """Port of ``.r_output_normalise()``."""
+    out = list(lines)
+    if not out:
+        return out
+    rule = compile_r(_PIPE_RULE)
+    row = compile_r(_PIPE_ROW)
+    is_rule = [x is not None and rule.search(x) is not None for x in out]
+    if any(is_rule):
+        out = [
+            x.replace("|", " ") if x is not None and row.search(x) is not None else x for x in out
+        ]
+        out = [x for x, r in zip(out, is_rule, strict=True) if not r]
+    sup = compile_r(_SUPERSCRIPT, perl=True)
+    group = compile_r(_GROUP_LINE)
+    out = [None if x is None else sup.sub(" ", x) for x in out]
+    return [x for x in out if x is None or group.search(x) is None]
+
+
+_KV_RE = (
+    "^\\s*((?:[A-Za-z]|[0-9]+ [A-Za-z])[^\\s]*(?: (?!-?[0-9.]+(?:\\s|$))[^\\s]+)*?)\\s{2,}"
+    "(-?[0-9]*\\.?[0-9]+(?:e[-+]?[0-9]+)?|<\\s*[0-9.]+)\\s*$"
+)
+
+
+def _r_output_kv_block(
+    lines: Sequence[str | None], i: int, section: str | None = None
+) -> tuple[dict[str, Any], int] | None:
+    """Port of ``.r_output_kv_block()``: a block of "label   value" lines starting at line *i*.
+
+    Two or more lines in a row, each a label of words, two or more spaces, and one number
+    (lavaan's "Test statistic   24.361", "Comparative Fit Index (CFI)   0.975"). Returns
+    ``(table, end)`` (*i* and *end* are 0-based line positions, *end* the last line of the block)
+    with one row and a column per label, or ``None``. A label with a short form in brackets is
+    named by it ("CFI", "AIC"); "Test statistic" in a "Model Test ..." section is lavaan's
+    chi-square, and a "P-value" there its p.
+    """
+    # a label starts with a letter, or with a number and a word ("90 Percent confidence
+    # interval - lower"), and holds no number standing alone after that: a printed data frame's
+    # row ("1     a  3.2") and a table's ("a 13  7") are no labels
+    kv = compile_r(_KV_RE, perl=True)
+    n = len(lines)
+    j = i
+    while j < n and lines[j] is not None and kv.search(lines[j] or "") is not None:
+        j += 1
+    # one line is enough right under a section heading ("SRMR   0.047"), with blank lines
+    # between them as lavaan prints them
+    k = i - 1
+    while k >= 0 and not (trimws(lines[k] or "") or ""):
+        k -= 1
+    under_heading = k >= 0 and grepl(_SECTION_RE, [trimws(lines[k] or "")])[0]
+    if j - i < 2 and not (j - i == 1 and under_heading):
+        return None
+    ms = [kv.search(lines[q] or "") for q in range(i, j)]
+    label = [m.group(1) for m in ms if m is not None]
+    value = [m.group(2) for m in ms if m is not None]
+    # a short form of two or more capitals (CFI, AIC, SABIC), not "(H0)"
+    short_rx = compile_r("\\(([A-Z]{2,}[A-Za-z0-9-]*)\\)\\s*$")
+    name = []
+    for lab in label:
+        sm = short_rx.search(lab)
+        name.append(sm.group(1) if sm is not None and not lab.startswith("P-value") else lab)
+    if section is not None and section.startswith("Model Test"):
+        name = [
+            "Chi-square" if lab == "Test statistic" else ("p" if lab.startswith("P-value") else nm)
+            for lab, nm in zip(label, name, strict=True)
+        ]
+    df = _one_row_frame(list(zip(_make_unique(name), value, strict=True)))
+    sec = section if section is not None else None
+    return {"analysis": sec, "title": sec, "data": df}, j - 1
+
+
 def _r_output_tables(lines: Sequence[str | None]) -> list[dict[str, Any]]:
     """Parse fixed-width text tables (``summary(lm)``, ``aov``, ``anova``, ...).
 
     Port of ``R/r-output.R::.r_output_tables()``: columns are split at the
     character positions that are blank in every line of the block.
     """
-    lines = list(lines)
+    lines = _r_output_normalise(lines)
     n = len(lines)
     section_rx = compile_r(_SECTION_RE)
-    dash_rx = compile_r("^-{3,}\\s*$")
+    # also a rule of several dash runs, one per column, as knitr::kable(format = "simple") and
+    # pandoc print under the header: it was taken as the header itself, so every column was named
+    # "---------" (#648)
+    dash_rx = compile_r("^-{3,}(\\s+-{3,})*\\s*$")
     stop_rx = compile_r(_STOP_RE)
     digit_rx = compile_r("[0-9]")
     tables: list[dict[str, Any]] = []
@@ -850,6 +955,16 @@ def _r_output_tables(lines: Sequence[str | None]) -> list[dict[str, Any]]:
         tl = trimws(cur) or ""
         if cur is not None and section_rx.search(tl):
             section = sub(":$", "", tl)
+
+        # A block of "label   value" lines, as lavaan prints its fit measures ("Test statistic
+        # 24.361", "Degrees of freedom   8"): its first line looked like a header, so the first
+        # value became a column name and the paper's chi2 = 1.40 was never compared (#648)
+        kv = _r_output_kv_block(lines, i, section)
+        if kv is not None:
+            tables.append(kv[0])
+            i = kv[1] + 1
+            continue
+
         if _looks_header(cur) and not _is_quantile_hdr(strsplit(tl, "\\s+")):
             j = i + 1
             if j < n and _is_tibble_type_row(lines[j]):

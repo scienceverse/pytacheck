@@ -48,7 +48,8 @@
           "header",
           "section_type",
           "p_comp",
-          "p_value"
+          "p_value",
+          "p_name"
         ],
         "v": [
           {
@@ -270,6 +271,28 @@
               0.031,
               0.1
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
           }
         ]
       },
@@ -277,7 +300,7 @@
         "t": "chr",
         "v": [
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p < .05\", \"p > 0.10\", \"p = 5.0 x 10^-2\", \n\"p = 5.0e-2\", \"p < 2.2e-16\", \"P = .5\", \"p ≤ .001\", \"p ≈ .05\", \n\"p ≠ .04\", \"p ≥ .9\", \"p ≪ .01\", \"p ~ .3\", \"p <= .02\", \"p = n.s.\", \n\"p=ns \", \"p-value = .031\", \"pvalue < .1\"), Sentence = c(\"Bad p-value example (p < .05) and p > 0.10.\", \n\"Bad p-value example (p < .05) and p > 0.10.\", \"Scientific: p = 5.0 x 10^-2, p = 5.0e-2, p < 2.2e-16 and P = .5.\", \n\"Scientific: p = 5.0 x 10^-2, p = 5.0e-2, p < 2.2e-16 and P = .5.\", \n\"Scientific: p = 5.0 x 10^-2, p = 5.0e-2, p < 2.2e-16 and P = .5.\", \n\"Scientific: p = 5.0 x 10^-2, p = 5.0e-2, p < 2.2e-16 and P = .5.\", \n\"Odd comparators: p ≤ .001, p ≈ .05, p ≠ .04, p ≥ .9, p ≪ .01, p ~ .3, p <= .02.\", \n\"Odd comparators: p ≤ .001, p ≈ .05, p ≠ .04, p ≥ .9, p ≪ .01, p ~ .3, p <= .02.\", \n\"Odd comparators: p ≤ .001, p ≈ .05, p ≠ .04, p ≥ .9, p ≪ .01, p ~ .3, p <= .02.\", \n\"Odd comparators: p ≤ .001, p ≈ .05, p ≠ .04, p ≥ .9, p ≪ .01, p ~ .3, p <= .02.\", \n\"Odd comparators: p ≤ .001, p ≈ .05, p ≠ .04, p ≥ .9, p ≪ .01, p ~ .3, p <= .02.\", \n\"Odd comparators: p ≤ .001, p ≈ .05, p ≠ .04, p ≥ .9, p ≪ .01, p ~ .3, p <= .02.\", \n\"Odd comparators: p ≤ .001, p ≈ .05, p ≠ .04, p ≥ .9, p ≪ .01, p ~ .3, p <= .02.\", \n\"Non-significant p = n.s., p=ns and p-value = .031, pvalue < .1.\", \n\"Non-significant p = n.s., p=ns and p-value = .031, pvalue < .1.\", \n\"Non-significant p = n.s., p=ns and p-value = .031, pvalue < .1.\", \n\"Non-significant p = n.s., p=ns and p-value = .031, pvalue < .1.\"\n)), row.names = c(NA, -17L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
-          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
+          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2, 5.0e-2, 5E-2 or 10^-15, and a p with a correction name such as pFWE or p adj. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
         ]
       },
       {
@@ -322,6 +345,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

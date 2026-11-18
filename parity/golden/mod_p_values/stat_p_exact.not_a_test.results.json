@@ -49,10 +49,12 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "expanded",
           "imprecise",
           "not_a_test",
-          "zero"
+          "zero",
+          "impossible"
         ],
         "v": [
           {
@@ -228,6 +230,23 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "More importantly, there was a significant interaction [F(1,18) ¼ 6.05, P < 0.05, g2 ¼ 0.25].",
               "The indirect effect through hopelessness was significant (β = 0.115*, p < 0.05).",
               "Trials were more variable (paired t-test, n = 95, t52 = 6.92, ***p<<0.001, and for monkey D).",
@@ -292,6 +311,23 @@
               false,
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
           }
         ]
       },
@@ -322,7 +358,8 @@
         "names": [
           "paper_id",
           "n_imprecise",
-          "n_zero"
+          "n_zero",
+          "n_impossible"
         ],
         "v": [
           {
@@ -342,6 +379,12 @@
             "v": [
               0
             ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
           }
         ]
       },
@@ -353,6 +396,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

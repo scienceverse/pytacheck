@@ -67,16 +67,17 @@ def expand(fn: str, fixture: str, skip_types: Any = "materials", minimal: bool =
         if minimal:
             row = row[["repo_url", "file_name"]]
         out = getattr(zip_peek, fn)(f, row, skip_types=skip_types)
-        if "file_location" in out.columns:
-            out["file_location"] = pd.Series(
-                [
-                    None
-                    if v is None or v is pd.NA
-                    else str(v).replace(d, "<TMP>").replace(_session_tempdir(), "<tempdir>")
-                    for v in out["file_location"].tolist()
-                ],
-                dtype="string",
-            )
+        for col in ("file_location", "archive_file_location"):
+            if col in out.columns:
+                out[col] = pd.Series(
+                    [
+                        None
+                        if v is None or v is pd.NA
+                        else str(v).replace(d, "<TMP>").replace(_session_tempdir(), "<tempdir>")
+                        for v in out[col].tolist()
+                    ],
+                    dtype="string",
+                )
         return out
     finally:
         shutil.rmtree(d, ignore_errors=True)

@@ -66,6 +66,7 @@
           "code_lines",
           "percentage_comment",
           "has_docstring",
+          "files_written",
           "loaded_files_missing",
           "loaded_files_missing_names"
         ],
@@ -227,15 +228,21 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
             "t": "chr",
             "v": [
-              "data.csv"
+              ""
             ]
           }
         ]
@@ -244,12 +251,12 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = \"analysis.R\", \"% Comments\" = \"43%\", \n    \"Missing Files\" = 1L, \"Absolute Paths\" = 0L, \"Code Between Libraries\" = 1L), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = \"analysis.R\", \"% Comments\" = \"43%\", \n    \"Missing Files\" = 0L, \"Absolute Paths\" = 0L, \"Code Between Libraries\" = 1L), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",
-          "The scripts load files, but 1 script loaded 1 file that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"analysis.R\", \"Missing Files\" = \"data.csv\"), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "All files loaded in the code were present in the repository.",
+          "",
           "#### Absolute Paths",
           "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
           "",
@@ -339,7 +346,7 @@
           {
             "t": "int",
             "v": [
-              1
+              0
             ]
           },
           {
@@ -517,6 +524,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

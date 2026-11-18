@@ -1,0 +1,18 @@
+{
+  "id": "code_file_refs.review.include_writes_python",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "vzv_{COMPARATOR}_model.csv",
+      "o.txt",
+      "in.csv",
+      "https://x/y.zip",
+      "y.zip"
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

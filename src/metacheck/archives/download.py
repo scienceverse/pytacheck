@@ -719,6 +719,9 @@ def _osf_file_server_url(url: str, pat: str) -> str:
     host = (urlsplit(url).hostname or "").lower()
     if host not in ("osf.io", "www.osf.io"):
         return url
+    known = _osf_file_server_known(url)
+    if known is not None:
+        return known
     try:
         resp = http.request(
             "GET",
@@ -737,7 +740,36 @@ def _osf_file_server_url(url: str, pat: str) -> str:
         to = (urlsplit(location).hostname or "").lower()
     except ValueError:
         return url
-    return location if re.search(r"(^|\.)osf\.io$", to) else url
+    if not re.search(r"(^|\.)osf\.io$", to):
+        return url
+    # asked once per file: a zip whose index needs a second, larger read asked twice before
+    _osf_file_server_remember([url], [location])
+    return location
+
+
+# The file server of each file in OSF Storage, by its download address (osf.io/download/<id>/ ->
+# files.osf.io/v1/resources/<node>/providers/osfstorage/<id>, or the region's server). Every
+# file's listing names it (links$upload), so the request to osf.io that only redirects there can
+# be skipped. Only files in OSF Storage: an add-on's file is served by its own provider. Kept for
+# the session, like the listings themselves (osf_cache_clear() forgets it).
+_OSF_FILE_SERVER_MEMO: dict[str, str] = {}
+
+
+def _osf_file_server_remember(download: Sequence[Any], server: Sequence[Any]) -> int:
+    """Port of ``.osf_file_server_remember()``."""
+    n = 0
+    for d, s in zip(download, server, strict=False):
+        if isinstance(d, str) and d and isinstance(s, str) and s:
+            _OSF_FILE_SERVER_MEMO[d] = s
+            n += 1
+    return n
+
+
+def _osf_file_server_known(url: Any) -> str | None:
+    """Port of ``.osf_file_server_known()``: the remembered file server of a download address."""
+    if not isinstance(url, str) or not url:
+        return None
+    return _OSF_FILE_SERVER_MEMO.get(url)
 
 
 def _host_rate_limit_record(host: str, reset: float) -> None:
@@ -752,6 +784,13 @@ def _host_rate_limit_record(host: str, reset: float) -> None:
     service = key_service_for_host(host)
     if service is not None:
         key_problem_record(service, "limit", dt.datetime.fromtimestamp(reset, dt.UTC))
+
+
+def _eprints_hosts_list() -> list[str]:
+    """The EPrints repositories that take no token (ReShare and the others, metacheck #637)."""
+    from metacheck.archives.reshare import _eprints_hosts
+
+    return _eprints_hosts()
 
 
 def _auth_for_url(req: Mapping[str, Any]) -> dict[str, Any]:
@@ -780,6 +819,13 @@ def _auth_for_url(req: Mapping[str, Any]) -> dict[str, Any]:
             pat = key_use("osf", check=_osf_key_check)
         except Exception:
             pat = ""
+        if not pat:
+            # A file in OSF Storage whose file-server address its listing gave goes there
+            # directly, without a token: the request to osf.io that only answers with that
+            # address is not needed.
+            known = _osf_file_server_known(url)
+            if known is not None:
+                spec["url"] = known
         if pat:
             spec["url"] = _osf_file_server_url(url, pat)
             spec = _with_headers(spec, {"Authorization": f"Bearer {pat}"})
@@ -805,7 +851,8 @@ def _auth_for_url(req: Mapping[str, Any]) -> dict[str, Any]:
             from metacheck.archives.dryad import _dryad_headers
 
             spec = _dryad_headers(spec)
-        elif _url_host_is(url, "reshare.ukdataservice.ac.uk"):
+        elif _url_host_is(url, _eprints_hosts_list()):
+            # ReShare and the other EPrints data repositories (metacheck #637)
             from metacheck.archives.reshare import _reshare_headers
 
             spec = _reshare_headers(spec)

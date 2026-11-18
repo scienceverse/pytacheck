@@ -121,7 +121,7 @@ def test_include_tables_matches_table_rows() -> None:
     )
     off = match_reported_output(p, long)
     assert len(off) == 0
-    on = match_reported_output(p, long, include_tables=True)
+    on = match_reported_output(p, long, include_tables=True, evidence="any")
     assert on["reported"].tolist()[:3] == ["α=0.86 M=2.1", "α=0.81 M=1.95", "r=0.45"]
     # the alpha alone is not enough for a two-component row; each matrix cell
     # is its own single-value test

@@ -31,8 +31,10 @@ import pandas as pd
 
 from metacheck._r import as_character, compile_r, grepl, gsub, plural, r_round, sub
 from metacheck._values import as_float, field, field_or_value, is_missing
+from metacheck.archives import _repo_tables as _tables
 from metacheck.archives._atomic import atomic_write
 from metacheck.archives._memo import session_memo
+from metacheck.utils import _meta_orcids, _meta_text
 
 if TYPE_CHECKING:
     import httpx
@@ -50,9 +52,9 @@ __all__ = [
 # allowlists (data, copied verbatim from R/archive-dataverse.R)
 # ---------------------------------------------------------------------------
 
-#: R ``.dataverse_hosts()``: known Dataverse installations, in R's order (the
-#: order matters: the host regex is an alternation tried left to right).
-DATAVERSE_HOSTS: tuple[str, ...] = (
+#: R ``.dataverse_hosts()``'s hand-written list: known Dataverse installations, in R's order
+#: (the order matters: the host regex is an alternation tried left to right).
+_DATAVERSE_HOSTS_LISTED: tuple[str, ...] = (
     "dataverse.harvard.edu",  # Harvard Dataverse, the flagship instance
     "demo.dataverse.org",  # Dataverse demo/test instance
     "dataverse.nl",  # DataverseNL
@@ -184,10 +186,14 @@ DATAVERSE_HOSTS: tuple[str, ...] = (
     "redata.anii.org.uy",  # Redata (Uruguay)
 )
 
+#: R ``.dataverse_hosts()``: the hand-written list and the hosts the repository survey found
+#: (metacheck #636; ``scripts/convert_repo_tables.py`` writes ``_repo_tables.py``).
+DATAVERSE_HOSTS: tuple[str, ...] = (*_DATAVERSE_HOSTS_LISTED, *_tables.dataverse_hosts_survey)
+
 #: R ``.dataverse_doi_prefix_hosts()``: host -> DOI prefixes individually
 #: verified to belong to that installation, in R's order. A DOI under a prefix
 #: shared by several hosts is resolved through doi.org (_dataverse_host_from_doi()).
-DATAVERSE_DOI_PREFIX_HOSTS: dict[str, tuple[str, ...]] = {
+_DATAVERSE_DOI_PREFIX_HOSTS_LISTED: dict[str, tuple[str, ...]] = {
     "agh.rodbuk.pl": ("10.58032",),
     "akf.rodbuk.pl": ("10.58145",),
     "arcadados.fiocruz.br": ("10.35078",),
@@ -288,6 +294,24 @@ DATAVERSE_DOI_PREFIX_HOSTS: dict[str, tuple[str, ...]] = {
     "uwr.rodbuk.pl": ("10.34616",),
     "www.sodha.be": ("10.34934",),
 }
+
+
+#: R ``.dataverse_doi_prefix_hosts()``: host -> DOI prefixes, the hand-written table plus the
+#: prefixes the repository survey found (metacheck #636), appended under the hand-written
+#: entry's name when it writes the host with ``www.``.
+def _merged_prefix_hosts() -> dict[str, tuple[str, ...]]:
+    out = dict(_DATAVERSE_DOI_PREFIX_HOSTS_LISTED)
+    keys = [h.lower().removeprefix("www.") for h in out]
+    for host, prefixes in _tables.dataverse_doi_prefix_hosts_survey.items():
+        if host in keys:
+            name = list(out)[keys.index(host)]
+            out[name] = tuple(dict.fromkeys((*out[name], *prefixes)))
+        else:
+            out[host] = tuple(prefixes)
+    return out
+
+
+DATAVERSE_DOI_PREFIX_HOSTS: dict[str, tuple[str, ...]] = _merged_prefix_hosts()
 
 
 # ---------------------------------------------------------------------------
@@ -1546,7 +1570,9 @@ def dataverse_info(
             valid["dataverse_host"].tolist(), valid["dataverse_doi"].tolist(), strict=True
         ):
             ckey = f"{h} {d}"
-            cached = _repo_info_cache_get("dataverse", ckey) if cache is True else None
+            cached = (
+                _repo_info_cache_get("dataverse", ckey, need=["related"]) if cache is True else None
+            )
             if cached is not None:
                 id_info.append(cached)
                 continue
@@ -1630,6 +1656,37 @@ def _dataverse_info(host: Any, doi: Any, pb: Any = None) -> pd.DataFrame:
         obj["publication_date"] = _field_cell(pub)
         obj["updated_date"] = _field_cell(_empty_or(field(version, "lastUpdateTime"), None))
         obj["authors"] = _list_cell(authors)
+        # who made it (ORCID iDs), what it says, and the publication it belongs to
+        # (relatedPublication): they tell the paper's own deposit from one it reuses (#634), and
+        # come in this same answer
+        obj["orcids"] = _cell(
+            _meta_orcids(
+                [
+                    field(a, "authorIdentifier", "value")
+                    for a in (
+                        _elements(authors_field) if isinstance(authors_field, list | dict) else []
+                    )
+                ]
+            )
+        )
+        obj["description"] = _cell(
+            _meta_text(
+                [
+                    field(d, "dsDescriptionValue", "value")
+                    for d in _elements(_empty_or(field_val("dsDescription"), []))
+                ]
+            )
+        )
+        pubs = _empty_or(field_val("publication"), [])
+        related = []
+        for pub_ in _elements(pubs) if isinstance(pubs, list | dict) else []:
+            i = _empty_or(
+                field(pub_, "publicationIDNumber", "value"),
+                _empty_or(field(pub_, "publicationURL", "value"), ""),
+            )
+            if i not in ("", None):
+                related.append(f"IsSupplementTo:{i}")
+        obj["related"] = _cell(" | ".join(dict.fromkeys(related)) if related else None)
         # older installations give the licence as a plain string ("CC0"), which
         # metacheck's `license$name` cannot read (U34)
         licence = field_or_value(field(version, "license"), "name")

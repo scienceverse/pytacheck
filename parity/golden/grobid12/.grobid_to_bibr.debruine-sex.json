@@ -534,7 +534,7 @@
               "Bornstein, R. F. 1989 Exposure and affect: overview and meta-analysis of research, 1968-1987. Psychol. Bull. 106, 265-289.",
               "Facial resemblance increases attractiveness L. M. DeBruine 2089 Proc. R. Soc. Lond. B (2004) Downloaded from https://royalsocietypublishing.org/ on 24 July 2025",
               "Buston, P. M. & Emlen, S. T. 2003 Cognitive processes underlying human mate choice: the relationship between self-perception and mate preference in Western society. Proc. Natl Acad. Sci. USA 100, 8805-8810.",
-              "DeBruine, L. M. 2002 Facial resemblance enhances trust. Proc. R. Soc. Lond. B 269, 1307-1312. (doi:10.1098/rspb. 2002.2034)",
+              "DeBruine, L. M. 2002 Facial resemblance enhances trust. Proc. R. Soc. Lond. B 269, 1307-1312. (doi:10.1098/rspb.2002.2034)",
               "Dion, K., Berscheid, E. & Walster, E. 1972 What is beautiful is good. J. Person. Social Psychol. 24, 285-290.",
               "Eagly, A. H., Ashmore, R. D., Makhijani, M. G. & Longo, L. C. 1991 What is beautiful is good, but. . .: a meta-analytic review of research on the physical attractiveness stereotype. Psychol. Bull. 110, 109-128.",
               "Griffths, R. & Kunz, P. 1973 Assortative mating: a study of physiognomic homogamy. Social Biol. 20, 448-453.",
@@ -548,7 +548,7 @@
               "Keller, M., Thiessen, D. & Young, R. K. 1996 Mate assort- ment in dating and married couples. Person. Indiv. Diff. 21, 217-221.",
               "Langlois, J. & Roggman, L. 1990 Attractive faces are only average. Psychol. Sci. 1, 115-121.",
               "Langlois, J. H., Kalakanis, L., Rubenstein, A. J., Larson, A., Hallam, M. & Smoot, M. 2000 Maxims or myths of beauty? A meta-analytic and theoretical review. Psychol. Bull. 126, 390-423.",
-              "Little, A. C., Burt, D. M., Penton-Voak, I. S. & Perrett, D. I. 2001 Self-perceived attractiveness influences human female preferences for sexual dimorphism and symmetry in male faces. Proc. R. Soc. Lond. B 268, 39-44. (doi:10.1098/ rspb.2000.1327)",
+              "Little, A. C., Burt, D. M., Penton-Voak, I. S. & Perrett, D. I. 2001 Self-perceived attractiveness influences human female preferences for sexual dimorphism and symmetry in male faces. Proc. R. Soc. Lond. B 268, 39-44. (doi:10.1098/rspb.2000.1327)",
               "Little, A. C., Jones, B. C., Penton-Voak, I. S., Burt, D. M. & Perrett, D. I. 2002 Partnership status and the temporal context of relationships influence human female preferences for sexual dimorphism in male face shape. Proc. R. Soc. Lond. B 269, 1095-1103. (doi:10.1098/rspb.2002.1984)",
               "Penn, D. & Potts, W. 1998 MHC-disassortative mating pre- ferences reversed by cross-fostering. Proc. R. Soc. Lond. B 265, 1299-1306. (doi:10.1098/rspb.1998.0433)",
               "Penton-Voak, I. S., Perrett, D. I. & Peirce, J. W. 1999a Com- puter graphic studies of the role of facial similarity in judge- ments of attractiveness. Curr. Psychol. 18, 104-117.",
@@ -4059,7 +4059,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "0.4.3.28"
+                  "0.4.4.6"
                 ]
               },
               {
@@ -4110,6 +4110,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

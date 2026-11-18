@@ -216,9 +216,16 @@ def data_check_pii_values(x: Any, broad_min_frac: float = 0.30) -> dict[str, Any
             continue
         validate = spec.get("validate")
         if validate is not None:
+            # Every real card number passes the validator, while long codes pass by chance
+            # (about one in ten for the checksum, fewer with the issuer's prefix): so most of
+            # the values that look like one must pass. A column of clinical codes (SNOMED,
+            # dm+d) had 3 to 14 such values among hundreds (#648: 6 columns of OpenSAFELY
+            # codelists, 0.8% to 4% passing, the only card flags in the 2,359 tabular files of
+            # 141 deposits).
             vfun = _VALIDATORS[validate]
+            n_looked = sum(counts[s] for s in matched)
             matched = [s for s in matched if vfun(s)]
-            if not matched:
+            if not matched or sum(counts[s] for s in matched) < 0.5 * n_looked:
                 continue
         n_valid = sum(counts[s] for s in matched)
         frac = n_valid / n_total
@@ -359,17 +366,38 @@ def data_check_pii_geo(col_name: Any, x: Any, sibling_names: Any = None) -> dict
     }
 
 
+#: A file path or a web address (``data_check_pii_freetext()``): a drive, a root, a home or a
+#: relative folder, a URL, or a value that ends in a file name with an extension.
+_ADDRESS_START = r"^\s*(?:[A-Za-z]:[\\/]|[/~]|[.]{1,2}[\\/]|https?://|www[.])"
+_ADDRESS_END = r"[\\/][^\\/]*[.][A-Za-z0-9]{2,4}\s*$"
+
+#: A word of the first person (I, me, my, we, us, our and their forms) in English, Dutch,
+#: German, French, Spanish and Italian (``.first_person_rx``).
+_FIRST_PERSON_RX = (
+    "(?i)(?<![\\p{L}'])(?:j'|(?:i(?![.]e)|i'm|i've|i'd|i'll|me|my|mine|myself|"
+    "we|us|our|ours|ourselves|"
+    "ik|mij|mijn|wij|ons|onze|ich|mich|mir|mein|meine|meinen|meiner|wir|uns|unser|unsere|"
+    "je|moi|mon|ma|mes|nous|notre|nos|yo|mis|nosotros|nuestro|nuestra|"
+    "io|mio|mia|miei|noi|nostro)(?![\\p{L}']))"
+)
+
+
 def data_check_pii_freetext(
     x: Any,
     min_median_chars: float = 40,
     min_unique_frac: float = 0.8,
     min_multiword_frac: float = 0.6,
     min_alpha_frac: float = 0.5,
+    min_first_person_frac: float = 0.1,
 ) -> dict[str, Any]:
     """Flag a free-text column that may contain incidental personal information.
 
-    Port of ``R/data_check_helpers.R::data_check_pii_freetext()``: long,
-    varied, multi-word, predominantly alphabetic values.
+    Port of ``R/data_check_helpers.R::data_check_pii_freetext()``: long, varied, multi-word,
+    predominantly alphabetic values, not file paths or web addresses (fewer than half of the
+    values), and written in the first person (at least *min_first_person_frac* of the values
+    contain "I", "my", "we" or a like word, also in Dutch, German, French, Spanish and
+    Italian). People write about themselves in the first person, which is where personal detail
+    comes in; a code list's terms, titles or rules are prose that describes things (#648).
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
     col = column(x)
@@ -378,6 +406,19 @@ def data_check_pii_freetext(
     counts = trimmed_counts(col)
     n_total = counts.total()
     if n_total < 5:
+        return none
+    # A file path or a web address is not writing, however long and varied it is and even when
+    # its folder names hold spaces (#648).
+    addr_vals = list(counts)
+    addr = [
+        a or b
+        for a, b in zip(
+            grepl(_ADDRESS_START, addr_vals, perl=True),
+            grepl(_ADDRESS_END, addr_vals, perl=True),
+            strict=True,
+        )
+    ]
+    if sum(counts[s] for s, hit in zip(addr_vals, addr, strict=True) if hit) > 0.5 * n_total:
         return none
     med = statistics.median(len(s) for s in counts.elements())
     uniq_frac = len(counts) / n_total
@@ -396,12 +437,20 @@ def data_check_pii_freetext(
     alpha_frac = n_alpha / len(typical) if typical else 0
     if alpha_frac < min_alpha_frac:
         return none
+    # People write about themselves in the first person, and that is where names, places and
+    # other personal detail come in. Text that describes things (a code list's terms, titles,
+    # rules, registry fields, notes in a table) is long, varied prose too, but rarely says "I",
+    # "my" or "we" (#648).
+    fp = grepl(_FIRST_PERSON_RX, uniq, perl=True)
+    fp_frac = sum(counts[s] for s, hit in zip(uniq, fp, strict=True) if hit) / n_total
+    if fp_frac < min_first_person_frac:
+        return none
     return {
         "problem": True,
         "message": (
             f"Free-text column (median {med:.0f} characters, "
-            f"{100 * uniq_frac:.0f}% distinct) may contain names or other personal "
-            "detail. Review before sharing."
+            f"{100 * uniq_frac:.0f}% distinct, {100 * fp_frac:.0f}% written in the first "
+            "person) may contain names or other personal detail. Review before sharing."
         ),
         "values": None,
     }

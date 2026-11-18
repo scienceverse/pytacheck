@@ -139,7 +139,9 @@ def test_pii_freetext_flags_prose_only() -> None:
     ]
     r = data_check_pii_freetext(prose)
     assert r["problem"]
-    assert r["message"].startswith("Free-text column (median 71 characters, 100% distinct)")
+    assert r["message"].startswith(
+        "Free-text column (median 71 characters, 100% distinct, 80% written in the first person)"
+    )
     assert not data_check_pii_freetext(["yes", "no", "yes", "maybe", "no", "yes", "no"])["problem"]
     assert not data_check_pii_freetext([f"{1000 + i * 13.1234:.4f}" for i in range(30)])["problem"]
     assert not data_check_pii_freetext(

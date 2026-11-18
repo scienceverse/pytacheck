@@ -295,6 +295,7 @@ def match(
     include_tables: bool = False,
     min_components: int = 1,
     what: str = "table",
+    evidence: str = "informative",
 ) -> Any:
     """``match_reported_output()`` (``what = "summary"``: its summary attribute)."""
     from metacheck.statout.match_reported import match_reported_output
@@ -304,6 +305,7 @@ def match(
         output_of(output),
         include_tables=include_tables,
         min_components=min_components,
+        evidence=evidence,  # type: ignore[arg-type]
     )
     return res.attrs["summary"] if what == "summary" else res
 

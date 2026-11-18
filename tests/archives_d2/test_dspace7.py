@@ -21,8 +21,8 @@ GT_URL = f"https://repository.gatech.edu/entities/publication/{GT}"
 
 
 def test_host_list() -> None:
-    assert len(DSPACE7_HOSTS) == 66
-    assert _dspace7_host_regex().count("|") == 65
+    assert len(DSPACE7_HOSTS) == 166
+    assert _dspace7_host_regex().count("|") == 165
     # metacheck #461: Cornell runs DSpace 8, not legacy DSpace; dspace.ut.ee
     # runs DSpace 7 and is no longer listed as legacy too
     from metacheck.archives.psycharchives import _dspace_legacy_hosts
@@ -129,7 +129,11 @@ def test_file_download_edge_cases(mock_api: object) -> None:
     assert list(empty.columns) == [
         "dspace7_url", "name", "file_url", "file_location", "size", "isdir", "ext", "type"
     ]  # fmt: skip
-    assert empty.attrs == {"license": {no_files: None}, "doi": {no_files: None}}
+    assert empty.attrs == {
+        "license": {no_files: None},
+        "doi": {no_files: None},
+        "record_type": {no_files: None},
+    }
     both = dspace7_file_download([GT_URL, no_files, None])
     assert both["dspace7_url"].iloc[-2] == no_files
     assert pd.isna(both["dspace7_url"].iloc[-1])
@@ -158,7 +162,11 @@ def test_file_download_carries_doi_and_licence(mock_api: object) -> None:
     lic = "http://creativecommons.org/licenses/by/4.0/"
     one = dspace7_file_download(GT_URL)
     assert one is not None
-    assert one.attrs == {"license": {GT_URL: lic}, "doi": {GT_URL: None}}
+    assert one.attrs == {
+        "license": {GT_URL: lic},
+        "doi": {GT_URL: None},
+        "record_type": {GT_URL: None},
+    }
     no_files = "https://scholarworks.umass.edu/items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
     both = dspace7_file_download([GT_URL, no_files, "https://example.org/x"])
     assert both.attrs["license"] == {GT_URL: lic, no_files: None}
@@ -329,6 +337,10 @@ def _doi_api(doi: str) -> str:
     return "https://doi.org/api/handles/" + doi.replace("/", "%2F") + "?type=URL"
 
 
+def _dc_api(doi: str) -> str:
+    return "https://api.datacite.org/dois/" + doi
+
+
 def _hdl_api(handle: str) -> str:
     return "https://hdl.handle.net/api/handles/" + handle.replace("/", "%2F") + "?type=URL"
 
@@ -393,13 +405,15 @@ def test_resolve_doi_url_reads_the_handle_api(serve: object) -> None:
         _dspace7_resolve_doi_url("10.13020/q3y6-h459")
         == "https://conservancy.umn.edu/handle/11299/208294"
     )
-    assert len(requests) == 2
+    # DataCite first (not found here), then the handle service twice
+    assert str(requests[0].url) == _dc_api("10.13020/q3y6-h459")
+    assert len(requests) == 3
     # the same DOI again, in another case: answered from the session memo
     assert (
         _dspace7_resolve_doi_url("10.13020/Q3Y6-H459")
         == "https://conservancy.umn.edu/handle/11299/208294"
     )
-    assert len(requests) == 2
+    assert len(requests) == 3
     assert (
         _dspace7_resolve_doi_url("10.35090/gatech/5981")
         == "https://repository.gatech.edu/handle/1853/70320"
@@ -416,7 +430,7 @@ def test_resolve_doi_url_reads_the_handle_api(serve: object) -> None:
     assert _dspace7_resolve_doi_url("10.9999/error") is None
     assert "10.9999/error" not in _DOI_CACHE
     # no request leaves for the landing pages themselves
-    assert all("/api/handles/" in str(r.url) for r in requests)
+    assert all("/api/handles/" in str(r.url) or "api.datacite.org" in str(r.url) for r in requests)
 
 
 def test_links_skip_the_papers_own_doi_and_other_detectors(serve: object) -> None:
@@ -438,7 +452,10 @@ def test_links_skip_the_papers_own_doi_and_other_detectors(serve: object) -> Non
     paper.info["doi"] = "10.1177/09567976231234567"
     links = dspace7_links(paper)
     assert links["href"].tolist() == ["https://conservancy.umn.edu/handle/11299/208294"]
-    assert [str(r.url) for r in requests] == [_doi_api("10.13020/q3y6-h459")]
+    assert [str(r.url) for r in requests] == [
+        _dc_api("10.13020/q3y6-h459"),
+        _doi_api("10.13020/q3y6-h459"),
+    ]
 
 
 def test_links_resolve_doi_mentions(serve: object) -> None:
@@ -453,8 +470,112 @@ def test_links_resolve_doi_mentions(serve: object) -> None:
     )
     links = dspace7_links(paper)
     # the mentions' href is the registered URL (one row per sentence); each
-    # distinct DOI is looked up once
+    # distinct DOI under a DSpace 7 prefix is looked up once, at DataCite and then at the
+    # handle service (10.1234 is no DSpace prefix: not looked up)
     assert links["href"].tolist() == [target, target]
     assert links["text_id"].tolist() == [1, 2]
     asked = sorted(str(r.url) for r in requests)
-    assert asked == [_doi_api("10.1234/other"), _doi_api("10.35090/gatech/1")]
+    assert asked == [_dc_api("10.35090/gatech/1"), _doi_api("10.35090/gatech/1")]
+
+
+def test_links_look_up_only_dois_under_a_dspace7_prefix(serve: object) -> None:
+    requests = serve(  # type: ignore[operator]
+        {
+            _doi_api("10.13020/q3y6-h459"): _handle_json(
+                "https://conservancy.umn.edu/handle/11299/208294"
+            )
+        }
+    )
+    # a journal's figure DOI and an article DOI: never DSpace, never looked up
+    paper = pc.test_paper(
+        [
+            "Data are at https://doi.org/10.13020/q3y6-h459.",
+            "See Fig 1 (https://doi.org/10.1371/journal.pone.0000001.g001) and "
+            "10.1016/j.cognition.2020.104.",
+            "Its source is 10.7554/eLife.12345.",
+        ]
+    )
+    links = dspace7_links(paper)
+    assert links["href"].tolist() == ["https://conservancy.umn.edu/handle/11299/208294"]
+    assert [str(r.url) for r in requests] == [
+        _dc_api("10.13020/q3y6-h459"),
+        _doi_api("10.13020/q3y6-h459"),
+    ]
+
+
+def test_doi_prefixes_are_the_survey_and_shared_hosts_ones() -> None:
+    from metacheck.archives.dspace7 import _dspace7_doi_prefixes
+
+    p = _dspace7_doi_prefixes()
+    for prefix in ("10.83384", "10.13020", "10.35090", "10.7298", "10.3929", "10.5441", "10.17863"):
+        assert prefix in p
+    # never a journal's prefix
+    assert not {"10.1371", "10.7554", "10.1016", "10.1177"} & set(p)
+    # every generated host passes the same host regex as the hand-written ones
+    import re
+
+    from metacheck.archives import _repo_tables
+
+    rx = re.compile(_dspace7_host_regex(), re.IGNORECASE)
+    assert all(rx.search(f"https://{h}/handle/1/2") for h in _repo_tables.dspace7_hosts_survey)
+
+
+def test_datacite_says_before_reading_whether_a_doi_is_a_publication(serve: object) -> None:
+    import httpx
+
+    from metacheck.archives.dspace7 import _dspace7_resolve_doi_url
+
+    def dc(url: str, kind: str) -> httpx.Response:
+        return httpx.Response(
+            200, json={"data": {"attributes": {"url": url, "types": {"resourceTypeGeneral": kind}}}}
+        )
+
+    requests = serve(  # type: ignore[operator]
+        {
+            _dc_api("10.13020/thesis1"): dc(
+                "https://conservancy.umn.edu/handle/11299/1", "Dissertation"
+            ),
+            _dc_api("10.13020/data1"): dc("https://conservancy.umn.edu/handle/11299/2", "Dataset"),
+        }
+    )
+    # a thesis: no further request, not a deposit
+    assert _dspace7_resolve_doi_url("10.13020/thesis1") is None
+    # a dataset: DataCite's address, without the handle service
+    assert (
+        _dspace7_resolve_doi_url("10.13020/data1") == "https://conservancy.umn.edu/handle/11299/2"
+    )
+    assert [str(r.url) for r in requests] == [
+        _dc_api("10.13020/thesis1"),
+        _dc_api("10.13020/data1"),
+    ]
+
+
+def test_repo_publication_type_reads_eprints_dspace_and_datacite_types() -> None:
+    from metacheck.archives.repo_kind import _repo_publication_type
+
+    assert (
+        _repo_publication_type(
+            ["data_collection", "dataset", "Dataset", "Software", "artefact", "Data paper"]
+        )
+        == [False] * 6
+    )
+    assert (
+        _repo_publication_type(
+            [
+                "article",
+                "thesis",
+                "book_section",
+                "Doctoral thesis",
+                "Journal Article",
+                "Text",
+                "JournalArticle",
+                "conference_item",
+                "Working paper",
+            ]
+        )
+        == [True] * 9
+    )
+    assert _repo_publication_type([None, ""]) == [None, None]
+    assert _repo_publication_type("publication") is True
+    assert _repo_publication_type("publication-article") is True
+    assert _repo_publication_type(None) is None

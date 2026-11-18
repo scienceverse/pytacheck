@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "result": {
+    "title": "Statewide Crop Mapping",
+    "license_title": "Creative Commons Attribution",
+    "doi": "10.1/x",
+    "author": "California DWR",
+    "maintainer": "",
+    "resources": [
+      {
+        "name": "Crop map 2024",
+        "format": "ZIP",
+        "size": 176115282,
+        "url_type": "upload",
+        "url": "https://data.cnra.ca.gov/dataset/6c3d/resource/1/download/i15_crop_2024.zip"
+      },
+      {
+        "name": "Map service",
+        "format": "Data",
+        "url_type": "",
+        "url": "https://www.arcgis.com/home/item.html?id=39b6"
+      },
+      {
+        "name": "Readme",
+        "format": "PDF",
+        "size": 2000,
+        "url_type": "",
+        "url": "https://data.cnra.ca.gov/dataset/6c3d/resource/2/download"
+      }
+    ]
+  }
+}

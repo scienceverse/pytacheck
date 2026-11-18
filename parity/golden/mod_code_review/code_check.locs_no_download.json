@@ -66,9 +66,10 @@
           "code_lines",
           "percentage_comment",
           "has_docstring",
+          "files_written",
+          "error",
           "loaded_files_missing",
-          "loaded_files_missing_names",
-          "error"
+          "loaded_files_missing_names"
         ],
         "v": [
           {
@@ -306,15 +307,6 @@
             ]
           },
           {
-            "t": "int",
-            "v": [
-              0,
-              null,
-              null,
-              null
-            ]
-          },
-          {
             "t": "chr",
             "v": [
               "",
@@ -330,6 +322,24 @@
               "Could not resolve hostname [NA]:\nCould not resolve host: NA",
               "Could not resolve hostname [NA]:\nCould not resolve host: NA",
               "Could not resolve hostname [NA]:\nCould not resolve host: NA"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              null,
+              null,
+              null
             ]
           }
         ]
@@ -611,6 +621,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

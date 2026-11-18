@@ -14,6 +14,46 @@
         "nrow": 2,
         "names": [
           "Repository",
+          "Cited in",
+          "Whose",
+          "Why"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>",
+              "<a href='https://github.com/gzorg/bigrepo' target='_blank'>github.com/gzorg/bigrepo<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "the authors', for this paper",
+              "the authors', for this paper"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a link in the main text, not shown to be anyone else's",
+              "a link in the main text, not shown to be anyone else's"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Repository",
           "Platform",
           "Error",
           "All Files",
@@ -131,42 +171,6 @@
       },
       {
         "t": "df",
-        "nrow": 1,
-        "names": [
-          "File",
-          "Rule",
-          "Severity",
-          "Detail"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "Archive.zip"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "unclassifiable"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Required"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
-            ]
-          }
-        ]
-      },
-      {
-        "t": "df",
         "nrow": 2,
         "names": [
           "File",
@@ -257,6 +261,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

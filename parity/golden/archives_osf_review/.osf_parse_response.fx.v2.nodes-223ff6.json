@@ -19,7 +19,11 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "date_created",
+      "date_modified",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -125,9 +129,41 @@
           "mjrpy",
           "mjrpy"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2019-10-24T13:55:29.873709",
+          "2020-05-24T13:38:46.519702",
+          "2020-10-14T08:40:19.423239"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-10-19T14:43:20.388346",
+          "2020-10-19T14:43:20.229787",
+          "2020-10-19T14:43:20.106732"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

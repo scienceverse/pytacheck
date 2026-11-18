@@ -2841,10 +2841,10 @@ def codebook_match_llm(
         )
     )
     for pid in _unique(pids):
-        if pid is None:
-            continue  # labels_df$paper_id == NA selects nothing
+        # %in%, not ==: a local folder checked without a paper has paper_id NA (#651), and NA ==
+        # NA selects nothing
         labels_paper_idx = [i for i, p in enumerate(pids) if p == pid]
-        cbk_paper_idx = [i for i, p in enumerate(cb_pids) if p is not None and p == pid]
+        cbk_paper_idx = [i for i, p in enumerate(cb_pids) if p == pid]
         documented = [s in ("labelled", "llm") for s in status]
         unlabelled_idx = [i for i in labels_paper_idx if status[i] == "unlabelled"]
         matched_norm = set(

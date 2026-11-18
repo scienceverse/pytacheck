@@ -1,0 +1,32 @@
+{
+  "id": "repro_archive_text.cases",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "The code reads files that are only inside `behaviour_data.zip`, and no script unpacks it. We unpacked it in its folder before the run. So that others can run the code as deposited, start the code with a line that unpacks it (such as `unzip(\"behaviour_data.zip\")` in R), or upload the files unpacked."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

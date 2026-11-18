@@ -15,6 +15,8 @@ from metacheck.archives.api_keys import openalex_key as openalex_key
 from metacheck.archives.aspredicted import aspredicted_info as aspredicted_info
 from metacheck.archives.aspredicted import aspredicted_links as aspredicted_links
 from metacheck.archives.cache import metacheck_cache_info as metacheck_cache_info
+from metacheck.archives.ckan import ckan_info as ckan_info
+from metacheck.archives.ckan import ckan_links as ckan_links
 from metacheck.archives.dataone import dataone_info as dataone_info
 from metacheck.archives.dataone import dataone_links as dataone_links
 from metacheck.archives.dataverse import dataverse_file_download as dataverse_file_download
@@ -83,9 +85,11 @@ from metacheck.archives.researchbox import rbox_info as rbox_info
 from metacheck.archives.researchbox import rbox_links as rbox_links
 from metacheck.archives.researchbox import rbox_search as rbox_search
 from metacheck.archives.researchbox import rbox_token as rbox_token
+from metacheck.archives.reshare import eprints_links as eprints_links
 from metacheck.archives.reshare import reshare_file_download as reshare_file_download
 from metacheck.archives.reshare import reshare_info as reshare_info
 from metacheck.archives.reshare import reshare_links as reshare_links
+from metacheck.archives.zenodo import invenio_links as invenio_links
 from metacheck.archives.zenodo import zenodo_file_download as zenodo_file_download
 from metacheck.archives.zenodo import zenodo_info as zenodo_info
 from metacheck.archives.zenodo import zenodo_links as zenodo_links

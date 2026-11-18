@@ -17,7 +17,12 @@
       "children",
       "files",
       "parent",
-      "project"
+      "project",
+      "description",
+      "date_created",
+      "date_registered",
+      "contributors",
+      "contributor_orcids"
     ],
     "v": [
       {
@@ -85,9 +90,39 @@
         "v": [
           "vzb48"
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "In a previous study, we examined whether differences in the facial 'trait space' across groups were partially explained by concomitant differences in stereotype content across these groups. Specifically, we used RSA to compare the similarity of trait-pair associations from face ratings (e.g., \"How trustworthy is this person?\") of targets from different race/gender groups with trait-pair associations from ratings of meta-perceptions of each group (e.g., \"Please indicate how people in society see Black Women\"). In our original study, we found a correlation of r = .818 between the face trait space and the group-level trait space. This preregistration is for a direct replication of this study."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2019-01-13T21:45:05.587829"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2019-01-13T21:45:05.563874"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

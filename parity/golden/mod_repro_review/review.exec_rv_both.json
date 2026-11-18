@@ -328,7 +328,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 3 R code files for reproducibility (each in an isolated subprocess).\n-  3 of 3 scripts ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed 3 R code files for reproducibility and ran them (each in an isolated subprocess).\n-  3 of 3 scripts ran without error when executed.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -351,6 +351,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -490,12 +491,19 @@
             "v": [
               0
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
           0,
           0,
           0,
@@ -530,6 +538,7 @@
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
+          "repro_fail_settings",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -742,6 +751,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

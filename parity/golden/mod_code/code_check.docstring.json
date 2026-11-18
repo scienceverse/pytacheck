@@ -66,6 +66,7 @@
           "code_lines",
           "percentage_comment",
           "has_docstring",
+          "files_written",
           "loaded_files_missing",
           "loaded_files_missing_names"
         ],
@@ -302,6 +303,15 @@
               false,
               false,
               true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -601,6 +611,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

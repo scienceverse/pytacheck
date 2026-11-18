@@ -10,7 +10,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://aspredicted.org/by8i8v.pdf\"), \"paper_b\")), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://aspredicted.org/by8i8v.pdf\"), \"paper_b\")), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -30,7 +30,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/48ncu\"), \"p_ap_twice\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/48ncu\"), \"p_ap_twice\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -48,7 +48,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"https://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://osf.io/48ncu\", \"https://osf.io/5xysn\"), \"paper_b\")), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"https://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://osf.io/48ncu\", \"https://osf.io/5xysn\"), \"paper_b\")), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -68,7 +68,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"http://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://osf.io/5xysn\"), \"paper_b\")), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"http://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://osf.io/5xysn\"), \"paper_b\")), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -87,7 +87,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/3cz2e\"), \"p_ap_inacc\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/3cz2e\"), \"p_ap_inacc\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -104,7 +104,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/ve2qn.pdf\", \"https://osf.io/8c3kb\"), \"p_ap_fetch\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/ve2qn.pdf\", \"https://osf.io/8c3kb\"), \"p_ap_fetch\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -121,7 +121,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/3cz2e\"), \"p_inacc2\", c(\"Registered at osf.io/3cz2e.\")), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/3cz2e\"), \"p_inacc2\", c(\"Registered at osf.io/3cz2e.\")), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -139,7 +139,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/3cz2e\", \"https://osf.io/8c3kb\"), \"p_inacc_all\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io/3cz2e\", \"https://osf.io/8c3kb\"), \"p_inacc_all\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -156,7 +156,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"https://osf.io/3cz2e\"), \"paper_a\"), tp(c(\"https://osf.io/48ncu\", \"https://osf.io/8c3kb\"), \"paper_b\"), tp(character(0), \"paper_c\")), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(tp(c(\"https://osf.io/3cz2e\"), \"paper_a\"), tp(c(\"https://osf.io/48ncu\", \"https://osf.io/8c3kb\"), \"paper_b\"), tp(character(0), \"paper_c\")), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -178,7 +178,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io\", \"https://osf.io/abc\"), \"p_invalid\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://osf.io\", \"https://osf.io/abc\"), \"p_invalid\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -195,7 +195,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/emptd\"), \"p_emptd\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/emptd\"), \"p_emptd\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -212,7 +212,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/emptd\", \"https://osf.io/blkss\"), \"p_emptd2\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/emptd\", \"https://osf.io/blkss\"), \"p_emptd2\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -230,7 +230,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/pidsl\"), \"p_pidsl\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/pidsl\"), \"p_pidsl\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -247,7 +247,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/arrys\"), \"p_arrys\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/arrys\"), \"p_arrys\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -264,7 +264,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/prspz\"), \"p_prspz\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/prspz\"), \"p_prspz\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -281,7 +281,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/unicd\"), \"p_unicd\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/unicd\"), \"p_unicd\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -298,7 +298,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/pgbnd\"), \"p_pgbnd\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/pgbnd\"), \"p_pgbnd\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -315,7 +315,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/vwonl/?view_only=abc123\"), \"p_vwonl\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/vwonl/?view_only=abc123\"), \"p_vwonl\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -332,7 +332,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(paperlist(tp(c(\"https://osf.io/vwonl/?view_only=abc123\"), \"paper_a\"), tp(c(\"https://osf.io/blkss\"), \"paper_b\")), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(paperlist(tp(c(\"https://osf.io/vwonl/?view_only=abc123\"), \"paper_a\"), tp(c(\"https://osf.io/blkss\"), \"paper_b\")), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -352,7 +352,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(demopaper(), \"prereg_check\"))) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(demopaper(), \"prereg_check\"))) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -365,7 +365,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/bdvxs\", \"https://osf.io/wrh4x\", \"https://osf.io/trwb4\", \"https://osf.io/z2bsa\", \"https://osf.io/jez3g\", \"https://osf.io/9bg3z\", \"https://osf.io/7qcxa\", \"https://osf.io/a6y7r\"), \"p_many\"), \"prereg_check\"))) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/bdvxs\", \"https://osf.io/wrh4x\", \"https://osf.io/trwb4\", \"https://osf.io/z2bsa\", \"https://osf.io/jez3g\", \"https://osf.io/9bg3z\", \"https://osf.io/7qcxa\", \"https://osf.io/a6y7r\"), \"p_many\"), \"prereg_check\"))) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -388,7 +388,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/48ncu\", \"https://osf.io/3cz2e\", \"https://osf.io/8c3kb\"), \"p_mixed\"), \"prereg_check\"))) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/48ncu\", \"https://osf.io/3cz2e\", \"https://osf.io/8c3kb\"), \"p_mixed\"), \"prereg_check\"))) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -406,7 +406,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://aspredicted.org/ve2qn.pdf\", \"https://osf.io/5xysn\"), \"p_ap_tables\"), \"prereg_check\"))) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://aspredicted.org/ve2qn.pdf\", \"https://osf.io/5xysn\"), \"p_ap_tables\"), \"prereg_check\"))) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -424,7 +424,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/5xysn\"), \"p_oer\"), \"prereg_check\"))) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/5xysn\"), \"p_oer\"), \"prereg_check\"))) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -440,7 +440,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(paperlist(tp(c(\"https://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://osf.io/48ncu\"), \"paper_b\")), \"prereg_check\"))) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(paperlist(tp(c(\"https://osf.io/48ncu\"), \"paper_a\"), tp(c(\"https://osf.io/48ncu\"), \"paper_b\")), \"prereg_check\"))) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -459,7 +459,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(paperlist(tp(c(\"https://osf.io/blkss\", \"https://osf.io/wdrwn\"), \"p_one\"), tp(c(\"https://osf.io/pagss\", \"https://osf.io/prspx\"), \"p_two\")), \"prereg_check\"))) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(paperlist(tp(c(\"https://osf.io/blkss\", \"https://osf.io/wdrwn\"), \"p_one\"), tp(c(\"https://osf.io/pagss\", \"https://osf.io/prspx\"), \"p_two\")), \"prereg_check\"))) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -481,7 +481,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/prspz\", \"https://osf.io/arrys\"), \"p_prspz\"), \"prereg_check\"))) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/prspz\", \"https://osf.io/arrys\"), \"p_prspz\"), \"prereg_check\"))) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -499,7 +499,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://osf.io/5xysn\"), \"p_oer\"), \"prereg_check\")), perl = TRUE)) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://osf.io/5xysn\"), \"p_oer\"), \"prereg_check\")), perl = TRUE)) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -516,7 +516,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(paperlist(), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -529,7 +529,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/abc\"), \"p_ap_invalid\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/abc\"), \"p_ap_invalid\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -546,7 +546,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/pngda\"), \"p_ap_node\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", module_run(tp(c(\"https://aspredicted.org/by8i8v.pdf\", \"https://osf.io/pngda\"), \"p_ap_node\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -563,7 +563,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/escps\"), \"p_escps\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/escps\"), \"p_escps\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -580,7 +580,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/escps\"), \"p_escps\"), \"prereg_check\"))) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", (function(mo) { rep <- unlist(mo$report); m <- regmatches(rep, regexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE)); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://osf.io/escps\"), \"p_escps\"), \"prereg_check\"))) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -597,7 +597,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/lblsc\"), \"p_lblsc\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/lblsc\"), \"p_lblsc\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -614,7 +614,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/lblnc\"), \"p_lblnc\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/lblnc\"), \"p_lblnc\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"
@@ -631,7 +631,7 @@
   "args":
     "x":
       "$expr":
-        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/lblpg\"), \"p_lblpg\"), \"prereg_check\")) })()"
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/lblpg\"), \"p_lblpg\"), \"prereg_check\")) })()"
         "py": "None"
   "py_drop":
   - "x"

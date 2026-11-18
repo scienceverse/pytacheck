@@ -366,9 +366,9 @@
           null,
           null,
           null,
+          null,
           111,
-          111,
-          178,
+          null,
           72,
           65,
           50,
@@ -443,9 +443,9 @@
           null,
           null,
           null,
-          167,
+          null,
           168,
-          235,
+          null,
           134,
           120,
           112,
@@ -557,6 +557,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

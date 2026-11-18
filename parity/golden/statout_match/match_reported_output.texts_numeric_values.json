@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 14,
+    "nrow": 11,
     "names": [
       "text_id",
       "grp_id",
@@ -18,7 +18,8 @@
       "source_file",
       "analysis",
       "confidence",
-      "plausible_split"
+      "plausible_split",
+      "n_sites"
     ],
     "v": [
       {
@@ -27,12 +28,9 @@
           1,
           1,
           2,
-          2,
           3,
           3,
           4,
-          5,
-          5,
           6,
           6,
           7,
@@ -46,12 +44,9 @@
           1,
           1,
           2,
-          2,
           3,
           3,
           5,
-          6,
-          6,
           8,
           8,
           10,
@@ -65,12 +60,9 @@
           "t=6.9 df=8 p=<0.001 d=2.3",
           "ci_lower=1.38 ci_upper=2.77",
           "M=1.93 SD=0.86",
-          "N=9",
           "t=5.05 df=8 p=0.001 d=1.68",
           "t=9.99 df=8 p=0.5",
           "t=5.05 df=8 p=0.01 d=2",
-          "r=0.43",
-          "d=2.3",
           "M=-0.15 SD=1.19",
           "M=0.7 SD=0.96",
           "t=6.9 df=8",
@@ -84,12 +76,9 @@
           4,
           2,
           2,
-          1,
           4,
           3,
           4,
-          1,
-          1,
           2,
           2,
           2,
@@ -103,11 +92,8 @@
           4,
           0,
           2,
-          0,
           1,
           1,
-          1,
-          0,
           1,
           0,
           0,
@@ -128,11 +114,8 @@
           false,
           false,
           true,
-          false,
-          false,
           true,
-          true,
-          true
+          false
         ]
       },
       {
@@ -146,12 +129,9 @@
           null,
           null,
           null,
-          "d=2.3",
-          null,
-          null,
           "t=6.9, df=8",
           "t=6.9, df=8, p=<0.001",
-          "df=8, p=<0.001"
+          null
         ]
       },
       {
@@ -166,19 +146,13 @@
           null,
           null,
           "",
-          null,
-          null,
           "",
-          "",
-          "t=5.05"
+          null
         ]
       },
       {
         "t": "chr",
         "v": [
-          null,
-          null,
-          null,
           null,
           null,
           null,
@@ -204,11 +178,8 @@
           null,
           null,
           "(all)",
-          null,
-          null,
           "(all)",
-          "(all)",
-          "(all)"
+          null
         ]
       },
       {
@@ -223,11 +194,8 @@
           "none",
           "none",
           "full",
-          "none",
-          "none",
           "full",
-          "full",
-          "partial"
+          "none"
         ]
       },
       {
@@ -236,9 +204,6 @@
           false,
           false,
           false,
-          false,
-          true,
-          true,
           true,
           true,
           true,
@@ -248,9 +213,25 @@
           true,
           true
         ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

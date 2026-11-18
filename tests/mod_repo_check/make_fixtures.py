@@ -82,6 +82,22 @@ FILES: dict[str, dict[str, str | bytes]] = {
         "stroop.TXT": "Subject\tRT\n",
         "README.txt": "# readme\n",
     },
+    # a type metacheck does not know is not a naming problem; build files, Stata help files and
+    # a tool's hidden settings file (#648)
+    "unknown_type": {
+        "data.csv": "x,y\n1,2\n",
+        "analysis.R": "x <- 1\n",
+        "model.joblib": "",
+        ".gitattributes": "# settings of a tool\n",
+        "Makefile": "all:\n",
+        "asdoc.sthlp": "help\n",
+    },
+    # a folder checked without a paper: its naming problems are counted (#650)
+    "no_paper": {
+        "my data.csv": "x,y\n1,2\n",
+        "analysis two.R": "x <- 1\n",
+        "clean.R": "x <- 1\n",
+    },
     # local archives are never peeked (no URL): a .zip and a .7z
     "zip_local": {
         "README.md": "# zip deposit\n",

@@ -16,7 +16,8 @@
       "header",
       "section_type",
       "p_comp",
-      "p_value"
+      "p_value",
+      "p_name"
     ],
     "v": [
       {
@@ -108,9 +109,18 @@
           0.2,
           null
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

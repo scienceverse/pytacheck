@@ -1,7 +1,12 @@
 {
 "triples": [
 [
-"(?:[ηƞ]\\s*[²2₂]?\\s*)?\\b[pP]-?(values?|s|['’]s)?\\s*[=<>~≈≠≤≥≪≫]{1,2}\\s*(n\\.?s\\.?|\\d?\\.\\d+)\\s*(e\\s*[-−]\\d+)?(\\s*[x\\*×]\\s*10\\s*\\^?\\s*[-−]\\d+)?",
+"(?:[ηƞ]\\s*[²2₂]?\\s*|(?<![\\w.'’-])[rRΑ-Ωα-ω]\\s+|²\\s*|[Δ∆])?\\b[pP]-?(values?|s|['’]s)?(?:[\\s_-]?(?i:adj(?:usted)?|corr(?:ected)?|uncorr(?:ected)?|unc|fwer?|fdr|bonf(?:erroni)?|holm|tukey|perm(?:uted|utation)?|boot|mcmc|int(?:eraction)?|trend|het(?:erogeneity)?|cluster|svc|anova|mantel|wilcox(?:on)?|mann.?whitney|mwu?|kruskal(?:.?wallis)?|kw|kolmogorov(?:.?smirnov)?|ks|fisher|binom(?:ial)?|chi.?(?:2|sq(?:uared?)?)|χ²?2?|lrt|wald|log.?rank|t.?test|welch|dunn|games.?howell|spearman|pearson)(?![\\w]))?\\s*[=<>~≈≠≤≥≪≫]{1,2}\\s*([-−–À]\\s*\\d?\\.\\d+)",
+false,
+true
+],
+[
+"(?:[ηƞ]\\s*[²2₂]?\\s*|(?<![\\w.'’-])[rRΑ-Ωα-ω]\\s+|²\\s*|[Δ∆])?\\b[pP]-?(values?|s|['’]s)?(?:[\\s_-]?(?i:adj(?:usted)?|corr(?:ected)?|uncorr(?:ected)?|unc|fwer?|fdr|bonf(?:erroni)?|holm|tukey|perm(?:uted|utation)?|boot|mcmc|int(?:eraction)?|trend|het(?:erogeneity)?|cluster|svc|anova|mantel|wilcox(?:on)?|mann.?whitney|mwu?|kruskal(?:.?wallis)?|kw|kolmogorov(?:.?smirnov)?|ks|fisher|binom(?:ial)?|chi.?(?:2|sq(?:uared?)?)|χ²?2?|lrt|wald|log.?rank|t.?test|welch|dunn|games.?howell|spearman|pearson)(?![\\w]))?\\s*[=<>~≈≠≤≥≪≫]{1,2}\\s*(n\\.?s\\.?|\\d?\\.\\d+|[1-9](?=\\s*(?:[eE]\\s*[-−À]\\d+|[x\\*×ÂÃ]\\s*10\\s*\\^?\\s*[-−À]\\s*\\d+))|10\\s*\\^?\\s*[-−À]\\s*\\d+|0(?=\\s*(?:[)\\];]|,(?!\\s*\\d)))|1(?=\\s*(?:[)\\];]|,(?!\\s*\\d))|\\s*\\.(?!\\s*\\d)|\\s*$))\\s*([eE]\\s*[-−À]\\d+)?(\\s*[x\\*×ÂÃ]\\s*10\\s*\\^?\\s*[-−À]\\s*\\d+)?",
 false,
 true
 ],
@@ -271,7 +276,17 @@ true,
 false
 ],
 [
+"[=<>~≈≠≤≥≪≫]\\s*[01]$",
+false,
+false
+],
+[
 "[\\.\\?\\!\\\"]$",
+false,
+false
+],
+[
+"[eE]\\s*[-−À]|10\\s*\\^?\\s*[-−À]",
 false,
 false
 ],
@@ -521,6 +536,11 @@ true,
 false
 ],
 [
+"^(?:(?<![\\w.'’-])[rRΑ-Ωα-ω]\\s+|²\\s*|[Δ∆])",
+false,
+true
+],
+[
 "^(cohen.{0,3})?d(_?(z|s|av|rm))?$",
 false,
 false
@@ -594,6 +614,11 @@ false
 "^[A-Z]",
 false,
 false
+],
+[
+"^[pP](?:s|-?values?|['’]s)?(?:[\\s_-]?(?i:adj(?:usted)?|corr(?:ected)?|uncorr(?:ected)?|unc|fwer?|fdr|bonf(?:erroni)?|holm|tukey|perm(?:uted|utation)?|boot|mcmc|int(?:eraction)?|trend|het(?:erogeneity)?|cluster|svc|anova|mantel|wilcox(?:on)?|mann.?whitney|mwu?|kruskal(?:.?wallis)?|kw|kolmogorov(?:.?smirnov)?|ks|fisher|binom(?:ial)?|chi.?(?:2|sq(?:uared?)?)|χ²?2?|lrt|wald|log.?rank|t.?test|welch|dunn|games.?howell|spearman|pearson)(?![\\w]))?$",
+false,
+true
 ],
 [
 "^[ηƞ]",

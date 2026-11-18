@@ -573,7 +573,7 @@
  },
  ".announce_rate_limit_wait": {
   "file": "R/repo-download.R",
-  "line": 631,
+  "line": 672,
   "python": "metacheck.archives.download:_announce_rate_limit_wait"
  },
  ".ap_anonymous_authors": {
@@ -618,7 +618,7 @@
  },
  ".archive_dest": {
   "file": "R/zip-peek.R",
-  "line": 1539,
+  "line": 1558,
   "python": "metacheck.archives.zip_peek:_archive_dest"
  },
  ".archive_keep": {
@@ -626,9 +626,14 @@
   "line": 1449,
   "python": "metacheck.archives.zip_peek:_archive_keep"
  },
+ ".archive_label": {
+  "file": "R/zip-peek.R",
+  "line": 1493,
+  "python": "metacheck.archives.zip_peek:_archive_label"
+ },
  ".archive_rows": {
   "file": "R/zip-peek.R",
-  "line": 1486,
+  "line": 1503,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_archive_rows"
  },
@@ -646,7 +651,7 @@
  },
  ".as_num_safe": {
   "file": "R/data_check_helpers.R",
-  "line": 7011,
+  "line": 7147,
   "ported": true,
   "python": "metacheck.datacheck.checks:_as_num_safe"
  },
@@ -680,19 +685,19 @@
  },
  ".batch_query": {
   "file": "R/utils.R",
-  "line": 132,
+  "line": 215,
   "ported": true,
   "python": "metacheck.http:batch_query"
  },
  ".bh_is_trial_level_file": {
   "file": "R/data_check_helpers.R",
-  "line": 7305,
+  "line": 7441,
   "ported": true,
   "python": "metacheck.datacheck.checks:_bh_is_trial_level_file"
  },
  ".bibr12_bib_type": {
   "file": "R/import-bibr12.R",
-  "line": 475,
+  "line": 478,
   "ported": true,
   "python": "metacheck.io.bibr12:_bibr12_bib_type"
  },
@@ -704,7 +709,7 @@
  },
  ".bibr12_doi": {
   "file": "R/import-bibr12.R",
-  "line": 463,
+  "line": 466,
   "ported": true,
   "python": "metacheck.io.bibr12:_bibr12_doi"
  },
@@ -734,7 +739,7 @@
  },
  ".bibr12_sha256": {
   "file": "R/import-bibr12.R",
-  "line": 500,
+  "line": 503,
   "ported": true,
   "python": "metacheck.io.bibr12:_bibr12_sha256"
  },
@@ -815,15 +820,20 @@
   "ported": true,
   "python": "metacheck.llm.cap_prompt:cap_report"
  },
+ ".cap_report_partial": {
+  "file": "R/cap-prompt.R",
+  "line": 23,
+  "python": "metacheck.llm.cap_prompt:_cap_report_partial"
+ },
  ".cap_size_str": {
   "file": "R/cap-prompt.R",
-  "line": 18,
+  "line": 42,
   "ported": true,
   "python": "metacheck.llm.cap_prompt:_cap_size_str"
  },
  ".cb_is_definition_line": {
   "file": "R/data_check_helpers.R",
-  "line": 4162,
+  "line": 4244,
   "ported": true,
   "python": "metacheck.datacheck.columns:_cb_is_definition_line"
  },
@@ -911,33 +921,73 @@
   "ported": true,
   "python": "metacheck.report.checklist:_section_id"
  },
+ ".ckan_api_base": {
+  "file": "R/archive-ckan.R",
+  "line": 30,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_api_base"
+ },
+ ".ckan_doi_prefixes": {
+  "file": "R/repo-tables.R",
+  "line": 384,
+  "python": "metacheck.archives._repo_tables:_ckan_doi_prefixes"
+ },
+ ".ckan_doi_prefixes_all": {
+  "file": "R/archive-ckan.R",
+  "line": 39,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_doi_prefixes_all"
+ },
+ ".ckan_hosts": {
+  "file": "R/archive-ckan.R",
+  "line": 24,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_hosts"
+ },
+ ".ckan_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 355,
+  "python": "metacheck.archives._repo_tables:_ckan_hosts_survey"
+ },
+ ".ckan_id": {
+  "file": "R/archive-ckan.R",
+  "line": 101,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_id"
+ },
+ ".ckan_info": {
+  "file": "R/archive-ckan.R",
+  "line": 161,
+  "ported": true,
+  "python": "metacheck.archives.ckan:_ckan_info"
+ },
  ".code_blank_mplus_savedata": {
   "file": "R/code_check.R",
-  "line": 2605,
+  "line": 2726,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_blank_mplus_savedata"
  },
  ".code_blank_write_opens": {
   "file": "R/code_check.R",
-  "line": 2550,
+  "line": 2671,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_blank_write_opens"
  },
  ".code_char_vector_vars": {
   "file": "R/code_check.R",
-  "line": 1999,
+  "line": 2120,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_char_vector_vars"
  },
  ".code_comment_flags": {
   "file": "R/code_check.R",
-  "line": 1537,
+  "line": 1658,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_comment_flags"
  },
  ".code_env_pinned": {
   "file": "R/code_check.R",
-  "line": 2462,
+  "line": 2583,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_env_pinned"
  },
@@ -967,43 +1017,58 @@
  },
  ".code_expand_zip": {
   "file": "R/code_check.R",
-  "line": 729,
+  "line": 741,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_expand_zip"
  },
  ".code_has_docstring": {
   "file": "R/code_check.R",
-  "line": 1629,
+  "line": 1750,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_has_docstring"
  },
+ ".code_is_abs_path": {
+  "file": "R/code_check.R",
+  "line": 1237,
+  "python": "metacheck.codecheck.core:_code_is_abs_path"
+ },
+ ".code_missing_files": {
+  "file": "R/code_check.R",
+  "line": 2752,
+  "python": "metacheck.codecheck.core:_code_missing_files"
+ },
+ ".code_name_match": {
+  "file": "R/code_check.R",
+  "line": 2791,
+  "python": "metacheck.codecheck.core:_code_name_match"
+ },
  ".code_notebook_cell": {
   "file": "R/code_check.R",
-  "line": 960,
+  "line": 972,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_notebook_cell"
  },
  ".code_notebook_parts": {
   "file": "R/code_check.R",
-  "line": 930,
+  "line": 942,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_notebook_parts"
  },
  ".code_open_calls": {
   "file": "R/code_check.R",
-  "line": 2486,
+  "line": 2607,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_open_calls"
  },
  ".code_pin_dates": {
   "file": "R/code_check.R",
-  "line": 2412,
+  "line": 2533,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_pin_dates"
  },
  ".code_pos_in_string": {
   "file": "R/code_check.R",
-  "line": 1354,
+  "line": 1475,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_pos_in_string"
  },
@@ -1015,27 +1080,32 @@
  },
  ".code_renv_remote": {
   "file": "R/code_check.R",
-  "line": 2330,
+  "line": 2451,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_renv_remote"
  },
  ".code_session_packages": {
   "file": "R/code_check.R",
-  "line": 2353,
+  "line": 2474,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_session_packages"
  },
  ".code_strip_inline_comment": {
   "file": "R/code_check.R",
-  "line": 1373,
+  "line": 1494,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_strip_inline_comment"
  },
  ".code_version_pin_check": {
   "file": "R/code_check.R",
-  "line": 2135,
+  "line": 2256,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_version_pin_check"
+ },
+ ".code_write_regex": {
+  "file": "R/code_check.R",
+  "line": 2847,
+  "python": "metacheck.codecheck.core:_code_write_regex"
  },
  ".codebook_duplicate_name_warnings": {
   "file": "",
@@ -1069,37 +1139,37 @@
  },
  ".coltype_to_facets": {
   "file": "R/data_check_helpers.R",
-  "line": 6515,
+  "line": 6651,
   "ported": true,
   "python": "metacheck.datacheck.checks:_coltype_to_facets"
  },
  ".concept_is_accuracy": {
   "file": "R/data_check_helpers.R",
-  "line": 6361,
+  "line": 6497,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_accuracy"
  },
  ".concept_is_condition": {
   "file": "R/data_check_helpers.R",
-  "line": 6377,
+  "line": 6513,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_condition"
  },
  ".concept_is_date": {
   "file": "R/data_check_helpers.R",
-  "line": 6454,
+  "line": 6590,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_date"
  },
  ".concept_is_rt": {
   "file": "R/data_check_helpers.R",
-  "line": 6350,
+  "line": 6486,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_rt"
  },
  ".concept_is_timestamp": {
   "file": "R/data_check_helpers.R",
-  "line": 6444,
+  "line": 6580,
   "ported": true,
   "python": "metacheck.datacheck.checks:_concept_is_timestamp"
  },
@@ -1121,13 +1191,13 @@
  },
  ".copy_into_place": {
   "file": "R/repo-download.R",
-  "line": 1325,
+  "line": 1366,
   "ported": true,
   "python": "metacheck.archives._atomic:atomic_write"
  },
  ".count_fields": {
   "file": "R/data_check_helpers.R",
-  "line": 2209,
+  "line": 2286,
   "ported": true,
   "python": "metacheck.datacheck.files:_count_fields"
  },
@@ -1156,67 +1226,72 @@
  },
  ".csv_is_space_separated": {
   "file": "R/data_check_helpers.R",
-  "line": 2155,
+  "line": 2232,
   "ported": true,
   "python": "metacheck.datacheck.files:_csv_is_space_separated"
  },
  ".data_check_write_manifest": {
   "file": "R/data_check_helpers.R",
-  "line": 1096,
+  "line": 1121,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_check_write_manifest"
  },
  ".data_code_refs": {
   "file": "R/data_check_helpers.R",
-  "line": 1557,
+  "line": 1587,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_code_refs"
  },
  ".data_doc_role": {
   "file": "R/data_check_helpers.R",
-  "line": 881,
+  "line": 906,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_doc_role"
  },
  ".data_file_sheets": {
   "file": "R/data_check_helpers.R",
-  "line": 2717,
+  "line": 2794,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_file_sheets"
  },
  ".data_group_check_roster": {
   "file": "R/data_check_helpers.R",
-  "line": 1527,
+  "line": 1557,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_check_roster"
  },
  ".data_group_from_path": {
   "file": "R/data_check_helpers.R",
-  "line": 1598,
+  "line": 1628,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_from_path"
  },
  ".data_group_from_repo": {
   "file": "R/data_check_helpers.R",
-  "line": 1657,
+  "line": 1730,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_from_repo"
  },
+ ".data_group_from_short_label": {
+  "file": "R/data_check_helpers.R",
+  "line": 1662,
+  "python": "metacheck.datacheck.files:_data_group_from_short_label"
+ },
  ".data_group_llm_impl": {
   "file": "R/data_check_helpers.R",
-  "line": 1692,
+  "line": 1765,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_llm_impl"
  },
  ".data_group_normalize": {
   "file": "R/data_check_helpers.R",
-  "line": 1625,
+  "line": 1698,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_normalize"
  },
  ".data_group_sort": {
   "file": "R/data_check_helpers.R",
-  "line": 1515,
+  "line": 1545,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_group_sort"
  },
@@ -1228,7 +1303,7 @@
  },
  ".data_source_keys": {
   "file": "R/data_check_helpers.R",
-  "line": 848,
+  "line": 873,
   "ported": true,
   "python": "metacheck.datacheck.files:_data_source_keys"
  },
@@ -1275,42 +1350,47 @@
  },
  ".dataverse_doi_prefix_hosts": {
   "file": "R/archive-dataverse.R",
-  "line": 265,
+  "line": 267,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_doi_prefix_hosts"
  },
+ ".dataverse_doi_prefix_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 170,
+  "python": "metacheck.archives._repo_tables:_dataverse_doi_prefix_hosts_survey"
+ },
  ".dataverse_doi_prefix_regex": {
   "file": "R/archive-dataverse.R",
-  "line": 360,
+  "line": 371,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_doi_prefix_regex"
  },
  ".dataverse_file_entry": {
   "file": "R/archive-dataverse.R",
-  "line": 904,
+  "line": 931,
   "python": "metacheck.archives.dataverse:_dataverse_file_entry"
  },
  ".dataverse_guestbook_hint": {
   "file": "R/repo-download.R",
-  "line": 914,
+  "line": 955,
   "ported": true,
   "python": "metacheck.archives.download:_dataverse_guestbook_hint"
  },
  ".dataverse_headers": {
   "file": "R/archive-dataverse.R",
-  "line": 836,
+  "line": 863,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_headers"
  },
  ".dataverse_host_from_doi": {
   "file": "R/archive-dataverse.R",
-  "line": 376,
+  "line": 387,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_host_from_doi"
  },
  ".dataverse_host_regex": {
   "file": "R/archive-dataverse.R",
-  "line": 204,
+  "line": 206,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_host_regex"
  },
@@ -1320,45 +1400,50 @@
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_hosts"
  },
+ ".dataverse_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 136,
+  "python": "metacheck.archives._repo_tables:_dataverse_hosts_survey"
+ },
  ".dataverse_info": {
   "file": "R/archive-dataverse.R",
-  "line": 752,
+  "line": 763,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_info"
  },
  ".dataverse_parse": {
   "file": "R/archive-dataverse.R",
-  "line": 544,
+  "line": 555,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_parse"
  },
  ".dataverse_pat": {
   "file": "R/archive-dataverse.R",
-  "line": 876,
+  "line": 903,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_pat"
  },
  ".dataverse_resolve_doi_host": {
   "file": "R/archive-dataverse.R",
-  "line": 435,
+  "line": 446,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_resolve_doi_host"
  },
  ".dataverse_verify_downloads": {
   "file": "R/archive-dataverse.R",
-  "line": 1317,
+  "line": 1344,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_verify_downloads"
  },
  ".dataverse_zip_members": {
   "file": "R/archive-dataverse.R",
-  "line": 1280,
+  "line": 1307,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_zip_members"
  },
  ".decode_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3446,
+  "line": 3523,
   "ported": true,
   "python": "metacheck.datacheck.columns:_decode_value_labels"
  },
@@ -1376,102 +1461,102 @@
  },
  ".demographic_values_ok": {
   "file": "R/data_check_helpers.R",
-  "line": 6205,
+  "line": 6341,
   "ported": true,
   "python": "metacheck.datacheck.checks:_demographic_values_ok"
  },
  ".detect_accuracy_blocks": {
   "file": "R/data_check_helpers.R",
-  "line": 7599,
+  "line": 7735,
   "ported": true,
   "python": "metacheck.datacheck.checks:_detect_accuracy_blocks"
  },
  ".detect_header": {
   "file": "R/data_check_helpers.R",
-  "line": 2173,
+  "line": 2250,
   "ported": true,
   "python": "metacheck.datacheck.files:_detect_header"
  },
  ".detect_header_row": {
   "file": "R/data_check_helpers.R",
-  "line": 7117,
+  "line": 7253,
   "ported": true,
   "python": "metacheck.datacheck.checks:_detect_header_row"
  },
  ".detect_likert_scale": {
   "file": "R/data_check_helpers.R",
-  "line": 2819,
+  "line": 2896,
   "ported": true,
   "python": "metacheck.datacheck.files:_detect_likert_scale"
  },
  ".detect_live_data": {
   "file": "R/text-extractors.R",
-  "line": 318,
+  "line": 506,
   "ported": true,
   "python": "metacheck.text.extract:_detect_live_data"
  },
  ".detect_no_participants": {
   "file": "R/text-extractors.R",
-  "line": 387,
+  "line": 575,
   "ported": true,
   "python": "metacheck.text.extract:_detect_no_participants"
  },
  ".detect_scale_blocks": {
   "file": "R/data_check_helpers.R",
-  "line": 7652,
+  "line": 7788,
   "ported": true,
   "python": "metacheck.datacheck.checks:_detect_scale_blocks"
  },
  ".detect_task_columns": {
   "file": "R/data_check_helpers.R",
-  "line": 7531,
+  "line": 7667,
   "ported": true,
   "python": "metacheck.datacheck.checks:_detect_task_columns"
  },
  ".download_capped": {
   "file": "R/repo-download.R",
-  "line": 767,
+  "line": 808,
   "python": "metacheck.archives.download:_download_capped"
  },
  ".download_for_run": {
   "file": "R/repo-download.R",
-  "line": 1340,
+  "line": 1381,
   "ported": true,
   "python": "metacheck.archives.download:_download_for_run"
  },
  ".download_many_parallel": {
   "file": "R/repo-download.R",
-  "line": 953,
+  "line": 994,
   "ported": true,
   "python": "metacheck.archives.download:_download_many_parallel"
  },
  ".download_one": {
   "file": "R/repo-download.R",
-  "line": 823,
+  "line": 864,
   "ported": true,
   "python": "metacheck.archives.download:_download_one"
  },
  ".download_zip_to_cache": {
   "file": "R/repo-download.R",
-  "line": 1148,
+  "line": 1189,
   "ported": true,
   "python": "metacheck.archives.download:_download_zip_to_cache"
  },
  ".dryad_401_hint": {
   "file": "R/repo-download.R",
-  "line": 411,
+  "line": 452,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_401_hint"
  },
  ".dryad_auth": {
   "file": "R/archive-dryad.R",
-  "line": 614,
+  "line": 623,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_auth"
  },
  ".dryad_doi": {
   "file": "R/archive-dryad.R",
-  "line": 104,
+  "line": 106,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_doi"
  },
@@ -1483,93 +1568,98 @@
  },
  ".dryad_download_one_file": {
   "file": "R/archive-dryad.R",
-  "line": 684,
+  "line": 693,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_http_failure"
  },
  ".dryad_headers": {
   "file": "R/archive-dryad.R",
-  "line": 513,
+  "line": 522,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_headers"
  },
  ".dryad_info": {
   "file": "R/archive-dryad.R",
-  "line": 323,
+  "line": 326,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_info"
  },
  ".dryad_list_files": {
   "file": "R/archive-dryad.R",
-  "line": 440,
+  "line": 449,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_list_files"
  },
  ".dryad_oauth_client": {
   "file": "R/archive-dryad.R",
-  "line": 646,
+  "line": 655,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_oauth_client"
  },
  ".dryad_pat": {
   "file": "R/archive-dryad.R",
-  "line": 561,
+  "line": 570,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_pat"
  },
  ".dryad_share_doi": {
   "file": "R/archive-dryad.R",
-  "line": 157,
+  "line": 160,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_share_doi"
  },
  ".dryad_share_token": {
   "file": "R/archive-dryad.R",
-  "line": 144,
+  "line": 147,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_share_token"
  },
  ".dryad_verify_downloads": {
   "file": "R/archive-dryad.R",
-  "line": 1082,
+  "line": 1091,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_verify_downloads"
  },
  ".dryad_warn_if_no_key": {
   "file": "R/archive-dryad.R",
-  "line": 659,
+  "line": 668,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_warn_if_no_key"
  },
  ".dryad_zip_members": {
   "file": "R/archive-dryad.R",
-  "line": 1045,
+  "line": 1054,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_zip_members"
  },
  ".dspace7_api_host_aliases": {
   "file": "R/archive-dspace7.R",
-  "line": 131,
+  "line": 133,
   "python": "metacheck.archives.dspace7:_dspace7_api_host_aliases"
  },
  ".dspace7_bitstreams": {
   "file": "R/archive-dspace7.R",
-  "line": 505,
+  "line": 515,
   "python": "metacheck.archives.dspace7:_dspace7_bitstreams"
  },
  ".dspace7_doi_key": {
   "file": "R/archive-dspace7.R",
-  "line": 294,
+  "line": 300,
   "python": "metacheck.archives.dspace7:_dspace7_doi_key"
+ },
+ ".dspace7_doi_prefixes": {
+  "file": "R/repo-tables.R",
+  "line": 85,
+  "python": "metacheck.archives._repo_tables:_dspace7_doi_prefixes"
  },
  ".dspace7_find_uuid": {
   "file": "R/archive-dspace7.R",
-  "line": 458,
+  "line": 468,
   "python": "metacheck.archives.dspace7:_dspace7_find_uuid"
  },
  ".dspace7_host_regex": {
   "file": "R/archive-dspace7.R",
-  "line": 117,
+  "line": 119,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_host_regex"
  },
@@ -1579,49 +1669,54 @@
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_hosts"
  },
+ ".dspace7_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 14,
+  "python": "metacheck.archives._repo_tables:_dspace7_hosts_survey"
+ },
  ".dspace7_info": {
   "file": "R/archive-dspace7.R",
-  "line": 537,
+  "line": 547,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_info"
  },
  ".dspace7_item": {
   "file": "R/archive-dspace7.R",
-  "line": 491,
+  "line": 501,
   "python": "metacheck.archives.dspace7:_dspace7_item"
  },
  ".dspace7_on_known_host": {
   "file": "R/archive-dspace7.R",
-  "line": 341,
+  "line": 347,
   "ported": true,
   "python": "metacheck.archives.dspace7:_on_known_host"
  },
  ".dspace7_parse": {
   "file": "R/archive-dspace7.R",
-  "line": 146,
+  "line": 148,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_parse"
  },
  ".dspace7_resolve_doi_url": {
   "file": "R/archive-dspace7.R",
-  "line": 400,
+  "line": 406,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_resolve_doi_url"
  },
  ".dspace7_rest": {
   "file": "R/archive-dspace7.R",
-  "line": 438,
+  "line": 448,
   "ported": true,
   "python": "metacheck.archives.dspace7:_dspace7_rest"
  },
  ".dspace7_skip_doi_prefixes": {
   "file": "R/archive-dspace7.R",
-  "line": 314,
+  "line": 320,
   "python": "metacheck.archives.dspace7:_dspace7_skip_doi_prefixes"
  },
  ".dspace_legacy_host_regex": {
   "file": "R/archive-psycharchives.R",
-  "line": 56,
+  "line": 58,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_dspace_legacy_host_regex"
  },
@@ -1631,9 +1726,14 @@
   "ported": true,
   "python": "metacheck.archives.psycharchives:_dspace_legacy_hosts"
  },
+ ".dspace_legacy_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 69,
+  "python": "metacheck.archives._repo_tables:_dspace_legacy_hosts_survey"
+ },
  ".dspace_legacy_parse": {
   "file": "R/archive-psycharchives.R",
-  "line": 71,
+  "line": 73,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_dspace_legacy_parse"
  },
@@ -1831,7 +1931,7 @@
  },
  ".empty_codebook_vars": {
   "file": "R/data_check_helpers.R",
-  "line": 3225,
+  "line": 3302,
   "ported": true,
   "python": "metacheck.datacheck.columns:_empty_codebook_vars"
  },
@@ -1855,21 +1955,49 @@
  },
  ".encode_missing_values": {
   "file": "R/data_check_helpers.R",
-  "line": 3456,
+  "line": 3533,
   "ported": true,
   "python": "metacheck.datacheck.columns:_encode_missing_values"
  },
  ".encode_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3435,
+  "line": 3512,
   "ported": true,
   "python": "metacheck.datacheck.columns:_encode_value_labels"
  },
  ".eprime_is_export": {
   "file": "R/data_check_helpers.R",
-  "line": 7291,
+  "line": 7427,
   "ported": true,
   "python": "metacheck.datacheck.checks:_eprime_is_export"
+ },
+ ".eprints_doi_prefixes": {
+  "file": "R/repo-tables.R",
+  "line": 285,
+  "python": "metacheck.archives._repo_tables:_eprints_doi_prefixes"
+ },
+ ".eprints_host_regex": {
+  "file": "R/archive-reshare.R",
+  "line": 53,
+  "ported": true,
+  "python": "metacheck.archives.reshare:_eprints_host_regex"
+ },
+ ".eprints_hosts": {
+  "file": "R/archive-reshare.R",
+  "line": 44,
+  "ported": true,
+  "python": "metacheck.archives.reshare:_eprints_hosts"
+ },
+ ".eprints_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 241,
+  "python": "metacheck.archives._repo_tables:_eprints_hosts_survey"
+ },
+ ".eprints_resolve_doi_url": {
+  "file": "R/archive-reshare.R",
+  "line": 122,
+  "ported": true,
+  "python": "metacheck.archives.reshare:_eprints_resolve_doi_url"
  },
  ".exact_double_json": {
   "file": "R/paper.R",
@@ -1878,61 +2006,61 @@
  },
  ".expand_compressed": {
   "file": "R/zip-peek.R",
-  "line": 1691,
+  "line": 1712,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_expand_compressed"
  },
  ".expand_tar": {
   "file": "R/zip-peek.R",
-  "line": 1641,
+  "line": 1661,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_expand_tar"
  },
  ".expand_zip": {
   "file": "R/zip-peek.R",
-  "line": 1602,
+  "line": 1621,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_expand_zip"
  },
  ".extract_codebook_positional": {
   "file": "R/data_check_helpers.R",
-  "line": 3799,
+  "line": 3876,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_codebook_positional"
  },
  ".extract_haven_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 4131,
+  "line": 4213,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_haven_labels"
  },
  ".extract_json_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 3949,
+  "line": 4026,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_json_codebook"
  },
  ".extract_markdown_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 3859,
+  "line": 3936,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_markdown_codebook"
  },
  ".extract_rich_text": {
   "file": "R/data_check_helpers.R",
-  "line": 4274,
+  "line": 4356,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_rich_text"
  },
  ".extract_spreadsheet_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 4010,
+  "line": 4087,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_spreadsheet_codebook"
  },
  ".extract_structured_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 4040,
+  "line": 4122,
   "ported": true,
   "python": "metacheck.datacheck.columns:_extract_structured_codebook"
  },
@@ -1944,40 +2072,40 @@
  },
  ".figshare_article_files": {
   "file": "R/archive-figshare.R",
-  "line": 966,
+  "line": 985,
   "python": "metacheck.archives.figshare:_figshare_article_files"
  },
  ".figshare_collection_articles": {
   "file": "R/archive-figshare.R",
-  "line": 615,
+  "line": 618,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_collection_articles"
  },
  ".figshare_collection_id": {
   "file": "R/archive-figshare.R",
-  "line": 590,
+  "line": 593,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_collection_id"
  },
  ".figshare_doi_lookup": {
   "file": "R/archive-figshare.R",
-  "line": 459,
+  "line": 462,
   "python": "metacheck.archives.figshare:_figshare_doi_lookup"
  },
  ".figshare_doi_lookup_doi": {
   "file": "R/archive-figshare.R",
-  "line": 436,
+  "line": 439,
   "python": "metacheck.archives.figshare:_figshare_doi_lookup_doi"
  },
  ".figshare_doi_lookup_fallback_prefixes": {
   "file": "R/archive-figshare.R",
-  "line": 425,
+  "line": 428,
   "ported": true,
   "python": "metacheck.archives.figshare:_FIGSHARE_DOI_LOOKUP_FALLBACK_PREFIXES"
  },
  ".figshare_doi_lookup_prefixes": {
   "file": "R/archive-figshare.R",
-  "line": 407,
+  "line": 410,
   "ported": true,
   "python": "metacheck.archives.figshare:_FIGSHARE_DOI_LOOKUP_PREFIXES"
  },
@@ -1989,12 +2117,12 @@
  },
  ".figshare_file_path": {
   "file": "R/archive-figshare.R",
-  "line": 948,
+  "line": 967,
   "python": "metacheck.archives.figshare:_figshare_file_path"
  },
  ".figshare_headers": {
   "file": "R/archive-figshare.R",
-  "line": 1009,
+  "line": 1028,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_headers"
  },
@@ -2006,31 +2134,36 @@
  },
  ".figshare_id": {
   "file": "R/archive-figshare.R",
-  "line": 272,
+  "line": 275,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_id"
  },
  ".figshare_info": {
   "file": "R/archive-figshare.R",
-  "line": 853,
+  "line": 856,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_info"
  },
+ ".figshare_item_exists": {
+  "file": "R/repo-link-versions.R",
+  "line": 62,
+  "python": "metacheck.archives.link_versions:_figshare_item_exists"
+ },
  ".figshare_pat": {
   "file": "R/archive-figshare.R",
-  "line": 1041,
+  "line": 1060,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_pat"
  },
  ".figshare_project_articles": {
   "file": "R/archive-figshare.R",
-  "line": 526,
+  "line": 529,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_project_articles"
  },
  ".figshare_project_id": {
   "file": "R/archive-figshare.R",
-  "line": 494,
+  "line": 497,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_project_id"
  },
@@ -2042,31 +2175,31 @@
  },
  ".figshare_verify_downloads": {
   "file": "R/archive-figshare.R",
-  "line": 1455,
+  "line": 1474,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_verify_downloads"
  },
  ".figshare_zip_members": {
   "file": "R/archive-figshare.R",
-  "line": 1417,
+  "line": 1436,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_zip_members"
  },
  ".file_naming_check_length": {
   "file": "R/file-naming.R",
-  "line": 232,
+  "line": 226,
   "ported": true,
   "python": "metacheck.fileinfo.naming:_file_naming_check_length"
  },
  ".file_naming_check_one": {
   "file": "R/file-naming.R",
-  "line": 132,
+  "line": 137,
   "ported": true,
   "python": "metacheck.fileinfo.naming:_file_naming_check_one"
  },
  ".file_naming_check_padding": {
   "file": "R/file-naming.R",
-  "line": 185,
+  "line": 179,
   "ported": true,
   "python": "metacheck.fileinfo.naming:_file_naming_check_padding"
  },
@@ -2120,37 +2253,37 @@
  },
  ".find_codebook_cols": {
   "file": "R/data_check_helpers.R",
-  "line": 3210,
+  "line": 3287,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_codebook_cols"
  },
  ".find_coding_instruction_col": {
   "file": "R/data_check_helpers.R",
-  "line": 3766,
+  "line": 3843,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_coding_instruction_col"
  },
  ".find_missing_value_col": {
   "file": "R/data_check_helpers.R",
-  "line": 3700,
+  "line": 3777,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_missing_value_col"
  },
  ".find_question_col": {
   "file": "R/data_check_helpers.R",
-  "line": 3740,
+  "line": 3817,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_question_col"
  },
  ".find_value_label_col": {
   "file": "R/data_check_helpers.R",
-  "line": 3711,
+  "line": 3788,
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_value_label_col"
  },
  ".format_wait_duration": {
   "file": "R/repo-download.R",
-  "line": 598,
+  "line": 639,
   "ported": true,
   "python": "metacheck.http:_format_wait_duration"
  },
@@ -2174,78 +2307,83 @@
  },
  ".github_account_name": {
   "file": "R/archive-github.R",
-  "line": 176,
+  "line": 236,
   "python": "metacheck.archives.github:_github_account_name"
  },
  ".github_config": {
   "file": "R/archive-github.R",
-  "line": 554,
+  "line": 671,
   "ported": true,
   "python": "metacheck.archives.github:_github_config"
  },
  ".github_crawl": {
   "file": "R/archive-github.R",
-  "line": 511,
+  "line": 589,
   "ported": true,
   "python": "metacheck.archives.github:github_tree_files"
  },
  ".github_key_check": {
   "file": "R/archive-github.R",
-  "line": 572,
+  "line": 689,
   "ported": true,
   "python": "metacheck.archives.github:_github_key_check"
  },
  ".github_limit": {
   "file": "R/archive-github.R",
-  "line": 529,
+  "line": 646,
   "ported": true,
   "python": "metacheck.archives.github:_github_limit"
  },
+ ".github_owner_names": {
+  "file": "R/archive-github.R",
+  "line": 614,
+  "python": "metacheck.archives.github:_github_owner_names"
+ },
  ".github_repo_name": {
   "file": "R/archive-github.R",
-  "line": 149,
+  "line": 209,
   "ported": true,
   "python": "metacheck.archives.github:_github_repo_name"
  },
  ".gitlab_blob_sizes": {
   "file": "R/archive-gitlab.R",
-  "line": 431,
+  "line": 437,
   "ported": true,
   "python": "metacheck.archives.gitlab:_gitlab_blob_sizes"
  },
  ".gitlab_config": {
   "file": "R/archive-gitlab.R",
-  "line": 174,
+  "line": 180,
   "ported": true,
   "python": "metacheck.archives.gitlab:_gitlab_config"
  },
  ".gitlab_key_check": {
   "file": "R/archive-gitlab.R",
-  "line": 185,
+  "line": 191,
   "ported": true,
   "python": "metacheck.archives.gitlab:_gitlab_key_check"
  },
  ".gitlab_limit": {
   "file": "R/archive-gitlab.R",
-  "line": 194,
+  "line": 200,
   "ported": true,
   "python": "metacheck.archives.gitlab:_gitlab_limit"
  },
  ".gitlab_pat": {
   "file": "R/archive-gitlab.R",
-  "line": 226,
+  "line": 232,
   "ported": true,
   "python": "metacheck.archives.gitlab:_gitlab_pat"
  },
  ".gitlab_project_id": {
   "file": "R/archive-gitlab.R",
-  "line": 160,
+  "line": 166,
   "ported": true,
   "python": "metacheck.archives.gitlab:_gitlab_project_id"
  },
  ".gitlab_repo_path": {
   "file": "R/archive-gitlab.R",
-  "line": 138,
+  "line": 144,
   "ported": true,
   "python": "metacheck.archives.gitlab:_gitlab_repo_path"
  },
@@ -2274,18 +2412,18 @@
  },
  ".handle_registered_url": {
   "file": "R/archive-dspace7.R",
-  "line": 361,
+  "line": 367,
   "python": "metacheck.archives.dspace7:_handle_registered_url"
  },
  ".haven_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3541,
+  "line": 3618,
   "ported": true,
   "python": "metacheck.datacheck.columns:_haven_value_labels"
  },
  ".head_keep_attrs": {
   "file": "R/data_check_helpers.R",
-  "line": 2705,
+  "line": 2782,
   "python": "metacheck.datacheck.columns:_head_keep_attrs"
  },
  ".head_size": {
@@ -2296,13 +2434,13 @@
  },
  ".host_rate_limit_record": {
   "file": "R/repo-download.R",
-  "line": 567,
+  "line": 608,
   "ported": true,
   "python": "metacheck.archives.download:_host_rate_limit_record"
  },
  ".host_rate_limit_remaining": {
   "file": "R/repo-download.R",
-  "line": 584,
+  "line": 625,
   "python": "metacheck.archives.download:_host_rate_limit_remaining"
  },
  ".html_export_r_source": {
@@ -2379,7 +2517,7 @@
  },
  ".in_download_folder": {
   "file": "R/zip-peek.R",
-  "line": 1548,
+  "line": 1567,
   "ported": true,
   "python": "metacheck.report.html_output:_in_download_folder"
  },
@@ -2397,15 +2535,49 @@
  },
  ".infer_group": {
   "file": "R/data_check_helpers.R",
-  "line": 4774,
+  "line": 4867,
   "ported": true,
   "python": "metacheck.datacheck.columns:_infer_group"
  },
  ".inner_file_type": {
   "file": "R/zip-peek.R",
-  "line": 1523,
+  "line": 1542,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_ext_type"
+ },
+ ".invenio_doi_prefixes": {
+  "file": "R/repo-tables.R",
+  "line": 338,
+  "python": "metacheck.archives._repo_tables:_invenio_doi_prefixes"
+ },
+ ".invenio_files": {
+  "file": "R/archive-zenodo.R",
+  "line": 471,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:_invenio_files"
+ },
+ ".invenio_host_regex": {
+  "file": "R/archive-zenodo.R",
+  "line": 46,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:_invenio_host_regex"
+ },
+ ".invenio_hosts": {
+  "file": "R/archive-zenodo.R",
+  "line": 37,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:_invenio_hosts"
+ },
+ ".invenio_hosts_survey": {
+  "file": "R/repo-tables.R",
+  "line": 310,
+  "python": "metacheck.archives._repo_tables:_invenio_hosts_survey"
+ },
+ ".invenio_record_url": {
+  "file": "R/archive-zenodo.R",
+  "line": 120,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:_invenio_record_url"
  },
  ".ipynb_is_noise": {
   "file": "R/stat-tables.R",
@@ -2457,7 +2629,7 @@
  },
  ".is_accuracy_item": {
   "file": "R/data_check_helpers.R",
-  "line": 7575,
+  "line": 7711,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_accuracy_item"
  },
@@ -2475,19 +2647,19 @@
  },
  ".is_geotiff": {
   "file": "R/data_check_helpers.R",
-  "line": 534,
+  "line": 538,
   "ported": true,
   "python": "metacheck.datacheck.files:_is_geotiff"
  },
  ".is_junk_above_header": {
   "file": "R/data_check_helpers.R",
-  "line": 7073,
+  "line": 7209,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_junk_above_header"
  },
  ".is_likert_item": {
   "file": "R/data_check_helpers.R",
-  "line": 7451,
+  "line": 7587,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_likert_item"
  },
@@ -2499,7 +2671,7 @@
  },
  ".is_login_page": {
   "file": "R/repo-download.R",
-  "line": 432,
+  "line": 473,
   "ported": true,
   "python": "metacheck.archives.download:_is_login_page"
  },
@@ -2517,7 +2689,7 @@
  },
  ".is_placeholder_name": {
   "file": "R/data_check_helpers.R",
-  "line": 7019,
+  "line": 7155,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_placeholder_name"
  },
@@ -2529,13 +2701,13 @@
  },
  ".is_r_package_file": {
   "file": "R/data_check_helpers.R",
-  "line": 759,
+  "line": 784,
   "ported": true,
   "python": "metacheck.datacheck.files:_is_r_package_file"
  },
  ".is_r_package_service_file": {
   "file": "R/data_check_helpers.R",
-  "line": 695,
+  "line": 720,
   "ported": true,
   "python": "metacheck.datacheck.files:_is_r_package_service_file"
  },
@@ -2559,7 +2731,7 @@
  },
  ".is_single_field_blob": {
   "file": "R/data_check_helpers.R",
-  "line": 2222,
+  "line": 2299,
   "ported": true,
   "python": "metacheck.datacheck.files:_is_single_field_blob"
  },
@@ -2577,13 +2749,13 @@
  },
  ".is_task_data": {
   "file": "R/data_check_helpers.R",
-  "line": 7622,
+  "line": 7758,
   "ported": true,
   "python": "metacheck.datacheck.checks:_is_task_data"
  },
  ".is_useless_file": {
   "file": "R/file-naming.R",
-  "line": 113,
+  "line": 119,
   "ported": true,
   "python": "metacheck.archives._useless:is_useless_file"
  },
@@ -2595,7 +2767,7 @@
  },
  ".item_text_key": {
   "file": "R/data_check_helpers.R",
-  "line": 3385,
+  "line": 3462,
   "ported": true,
   "python": "metacheck.datacheck.columns:_item_text_key"
  },
@@ -2672,13 +2844,13 @@
  },
  ".json_field": {
   "file": "R/data_check_helpers.R",
-  "line": 3901,
+  "line": 3978,
   "ported": true,
   "python": "metacheck.datacheck.columns:_json_field"
  },
  ".json_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3922,
+  "line": 3999,
   "ported": true,
   "python": "metacheck.datacheck.columns:_json_value_labels"
  },
@@ -2903,6 +3075,16 @@
   "line": 27,
   "python": "metacheck.archives.zip_peek:_le_int"
  },
+ ".line_step_ok": {
+  "file": "R/import-read.R",
+  "line": 452,
+  "python": "metacheck.io.read:_line_step_ok"
+ },
+ ".links_in_text": {
+  "file": "R/archive-github.R",
+  "line": 28,
+  "python": "metacheck.archives.github:_links_in_text"
+ },
  ".llm_apply_reasoning": {
   "file": "R/llm.R",
   "line": 1014,
@@ -2941,7 +3123,7 @@
  },
  ".llm_classify_batched": {
   "file": "R/data_check_helpers.R",
-  "line": 1373,
+  "line": 1398,
   "ported": true,
   "python": "metacheck.datacheck.files:_llm_classify_batched"
  },
@@ -2998,33 +3180,63 @@
  },
  ".looks_like_accuracy": {
   "file": "R/data_check_helpers.R",
-  "line": 7510,
+  "line": 7646,
   "ported": true,
   "python": "metacheck.datacheck.checks:_looks_like_accuracy"
  },
  ".looks_like_freetext_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3527,
+  "line": 3604,
   "ported": true,
   "python": "metacheck.datacheck.columns:_looks_like_freetext_labels"
  },
  ".looks_like_rt": {
   "file": "R/data_check_helpers.R",
-  "line": 7489,
+  "line": 7625,
   "ported": true,
   "python": "metacheck.datacheck.checks:_looks_like_rt"
  },
  ".looks_like_varnames": {
   "file": "R/data_check_helpers.R",
-  "line": 3778,
+  "line": 3855,
   "ported": true,
   "python": "metacheck.datacheck.columns:_looks_like_varnames"
  },
  ".looks_like_wording": {
   "file": "R/data_check_helpers.R",
-  "line": 3787,
+  "line": 3864,
   "ported": true,
   "python": "metacheck.datacheck.columns:_looks_like_wording"
+ },
+ ".match_informative": {
+  "file": "R/match-reported.R",
+  "line": 1201,
+  "python": "metacheck.statout.match_reported:_match_informative"
+ },
+ ".match_sig_digits": {
+  "file": "R/match-reported.R",
+  "line": 1191,
+  "python": "metacheck.statout.match_reported:_match_sig_digits"
+ },
+ ".match_single_ok": {
+  "file": "R/match-reported.R",
+  "line": 1234,
+  "python": "metacheck.statout.match_reported:_match_single_ok"
+ },
+ ".match_strong": {
+  "file": "R/match-reported.R",
+  "line": 1215,
+  "python": "metacheck.statout.match_reported:_match_strong"
+ },
+ ".match_threshold": {
+  "file": "R/match-reported.R",
+  "line": 1223,
+  "python": "metacheck.statout.match_reported:_match_threshold"
+ },
+ ".match_value_key": {
+  "file": "R/match-reported.R",
+  "line": 1248,
+  "python": "metacheck.statout.match_reported:_match_value_key"
  },
  ".max_words": {
   "file": "",
@@ -3034,13 +3246,13 @@
  },
  ".mc_request": {
   "file": "R/utils.R",
-  "line": 98,
+  "line": 181,
   "ported": true,
   "python": "metacheck.http:request"
  },
  ".median_nchar": {
   "file": "R/data_check_helpers.R",
-  "line": 995,
+  "line": 1020,
   "python": "metacheck.datacheck.files:_median_nchar"
  },
  ".mendeley_id": {
@@ -3054,6 +3266,31 @@
   "line": 230,
   "ported": true,
   "python": "metacheck.archives.mendeley:_mendeley_info"
+ },
+ ".meta_col": {
+  "file": "R/utils.R",
+  "line": 81,
+  "python": "metacheck.utils:_meta_col"
+ },
+ ".meta_orcids": {
+  "file": "R/utils.R",
+  "line": 120,
+  "python": "metacheck.utils:_meta_orcids"
+ },
+ ".meta_people": {
+  "file": "R/utils.R",
+  "line": 97,
+  "python": "metacheck.utils:_meta_people"
+ },
+ ".meta_related": {
+  "file": "R/utils.R",
+  "line": 130,
+  "python": "metacheck.utils:_meta_related"
+ },
+ ".meta_text": {
+  "file": "R/utils.R",
+  "line": 146,
+  "python": "metacheck.utils:_meta_text"
  },
  ".metacheck_cache_root": {
   "file": "R/cache.R",
@@ -3081,7 +3318,7 @@
  },
  ".missing_from_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 3687,
+  "line": 3764,
   "ported": true,
   "python": "metacheck.datacheck.columns:_missing_from_value_labels"
  },
@@ -3144,7 +3381,7 @@
  },
  ".move_extracted": {
   "file": "R/zip-peek.R",
-  "line": 1574,
+  "line": 1593,
   "python": "metacheck.archives.zip_peek:_move_extracted"
  },
  ".mplus_export_syntax": {
@@ -3268,7 +3505,7 @@
  },
  ".norm_interval": {
   "file": "R/stat_helpers.R",
-  "line": 177,
+  "line": 198,
   "ported": true,
   "python": "metacheck.statout.match_reported:_norm_interval"
  },
@@ -3280,19 +3517,19 @@
  },
  ".norm_value": {
   "file": "R/stat_helpers.R",
-  "line": 153,
+  "line": 171,
   "ported": true,
   "python": "metacheck.statout.match_reported:_norm_value"
  },
  ".normalize_header": {
   "file": "R/data_check_helpers.R",
-  "line": 3175,
+  "line": 3252,
   "ported": true,
   "python": "metacheck.datacheck.columns:_normalize_header"
  },
  ".numeric_col_fraction": {
   "file": "R/data_check_helpers.R",
-  "line": 7041,
+  "line": 7177,
   "ported": true,
   "python": "metacheck.datacheck.checks:_numeric_col_fraction"
  },
@@ -3353,7 +3590,7 @@
  },
  ".osd_code_and_provenance": {
   "file": "R/data_check_helpers.R",
-  "line": 3290,
+  "line": 3367,
   "ported": true,
   "python": "metacheck.datacheck.columns:_osd_code_and_provenance"
  },
@@ -3371,21 +3608,26 @@
  },
  ".osd_safe_code": {
   "file": "R/data_check_helpers.R",
-  "line": 3262,
+  "line": 3339,
   "ported": true,
   "python": "metacheck.datacheck.columns:_osd_safe_code"
  },
  ".osd_slug": {
   "file": "R/data_check_helpers.R",
-  "line": 3244,
+  "line": 3321,
   "ported": true,
   "python": "metacheck.datacheck.columns:_osd_slug"
  },
  ".osf_cache_key": {
   "file": "R/archive-osf.R",
-  "line": 114,
+  "line": 124,
   "ported": true,
   "python": "metacheck.archives.osf:_osf_cache_key"
+ },
+ ".osf_contributors": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 582,
+  "python": "metacheck.archives.osf_helpers:_osf_contributors"
  },
  ".osf_download_addons": {
   "file": "R/archive-osf-all.R",
@@ -3413,43 +3655,53 @@
  },
  ".osf_error_result": {
   "file": "R/archive-osf.R",
-  "line": 522,
+  "line": 679,
   "ported": true,
   "python": "metacheck.archives.osf:_osf_error_result"
  },
  ".osf_expand_user_ids": {
   "file": "R/archive-osf-helpers.R",
-  "line": 881,
+  "line": 946,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_expand_user_ids"
  },
  ".osf_file_data": {
   "file": "R/archive-osf-helpers.R",
-  "line": 592,
+  "line": 640,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_file_data"
  },
+ ".osf_file_server_known": {
+  "file": "R/repo-download.R",
+  "line": 437,
+  "python": "metacheck.archives.download:_osf_file_server_known"
+ },
+ ".osf_file_server_remember": {
+  "file": "R/repo-download.R",
+  "line": 431,
+  "python": "metacheck.archives.download:_osf_file_server_remember"
+ },
  ".osf_file_server_url": {
   "file": "R/repo-download.R",
-  "line": 386,
+  "line": 395,
   "ported": true,
   "python": "metacheck.archives.download:_osf_file_server_url"
  },
  ".osf_get_one_page": {
   "file": "R/archive-osf.R",
-  "line": 702,
+  "line": 859,
   "ported": true,
   "python": "metacheck.archives.osf:_osf_get_one_page"
  },
  ".osf_get_pages_parallel": {
   "file": "R/archive-osf.R",
-  "line": 733,
+  "line": 891,
   "ported": true,
   "python": "metacheck.archives.osf:_osf_get_pages_parallel"
  },
  ".osf_github_files": {
   "file": "R/archive-osf-helpers.R",
-  "line": 391,
+  "line": 413,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_github_files"
  },
@@ -3478,7 +3730,7 @@
  },
  ".osf_max_page_size": {
   "file": "R/archive-osf.R",
-  "line": 501,
+  "line": 658,
   "ported": true,
   "python": "metacheck.archives.osf:_osf_max_page_size"
  },
@@ -3502,7 +3754,7 @@
  },
  ".osf_node_data": {
   "file": "R/archive-osf-helpers.R",
-  "line": 560,
+  "line": 601,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_node_data"
  },
@@ -3520,13 +3772,13 @@
  },
  ".osf_parent_project": {
   "file": "R/archive-osf-helpers.R",
-  "line": 987,
+  "line": 1052,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_parent_project"
  },
  ".osf_parse_response": {
   "file": "R/archive-osf-helpers.R",
-  "line": 469,
+  "line": 491,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_parse_response"
  },
@@ -3538,43 +3790,43 @@
  },
  ".osf_preprint_data": {
   "file": "R/archive-osf-helpers.R",
-  "line": 646,
+  "line": 702,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_preprint_data"
  },
  ".osf_reg_data": {
   "file": "R/archive-osf-helpers.R",
-  "line": 681,
+  "line": 740,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_reg_data"
  },
  ".osf_status_error": {
   "file": "R/archive-osf.R",
-  "line": 511,
+  "line": 668,
   "ported": true,
   "python": "metacheck.archives.osf:_osf_status_error"
  },
  ".osf_tree": {
   "file": "R/archive-osf-helpers.R",
-  "line": 325,
+  "line": 347,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_tree"
  },
  ".osf_user_data": {
   "file": "R/archive-osf-helpers.R",
-  "line": 711,
+  "line": 776,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_user_data"
  },
  ".osf_user_nodes": {
   "file": "R/archive-osf-helpers.R",
-  "line": 864,
+  "line": 929,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_user_nodes"
  },
  ".osf_verify_downloads": {
   "file": "R/archive-osf-helpers.R",
-  "line": 941,
+  "line": 1006,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:_osf_verify_downloads"
  },
@@ -3596,9 +3848,139 @@
   "ported": true,
   "python": "metacheck.archives.zenodo_upload:_osf_zenodo_metadata"
  },
+ ".own_ascii": {
+  "file": "R/repo-ownership.R",
+  "line": 437,
+  "python": "metacheck.archives.ownership:_own_ascii"
+ },
+ ".own_classify": {
+  "file": "R/repo-ownership.R",
+  "line": 379,
+  "python": "metacheck.archives.ownership:_own_classify"
+ },
+ ".own_core": {
+  "file": "R/repo-ownership.R",
+  "line": 129,
+  "python": "metacheck.archives.ownership:_own_core"
+ },
+ ".own_cwords": {
+  "file": "R/repo-ownership.R",
+  "line": 488,
+  "python": "metacheck.archives.ownership:_own_cwords"
+ },
+ ".own_dep_type": {
+  "file": "R/repo-ownership.R",
+  "line": 406,
+  "python": "metacheck.archives.ownership:_own_dep_type"
+ },
+ ".own_doi_in": {
+  "file": "R/repo-ownership.R",
+  "line": 504,
+  "python": "metacheck.archives.ownership:_own_doi_in"
+ },
+ ".own_facts": {
+  "file": "R/repo-ownership.R",
+  "line": 291,
+  "python": "metacheck.archives.ownership:_own_facts"
+ },
+ ".own_fam_words": {
+  "file": "R/repo-ownership.R",
+  "line": 440,
+  "python": "metacheck.archives.ownership:_own_fam_words"
+ },
+ ".own_full_match": {
+  "file": "R/repo-ownership.R",
+  "line": 473,
+  "python": "metacheck.archives.ownership:_own_full_match"
+ },
+ ".own_mark_publications": {
+  "file": "R/repo-ownership.R",
+  "line": 397,
+  "python": "metacheck.archives.ownership:_own_mark_publications"
+ },
+ ".own_names_author": {
+  "file": "R/repo-ownership.R",
+  "line": 449,
+  "python": "metacheck.archives.ownership:_own_names_author"
+ },
+ ".own_not_this": {
+  "file": "R/repo-ownership.R",
+  "line": 360,
+  "python": "metacheck.archives.ownership:_own_not_this"
+ },
+ ".own_overlap": {
+  "file": "R/repo-ownership.R",
+  "line": 458,
+  "python": "metacheck.archives.ownership:_own_overlap"
+ },
+ ".own_paper_facts": {
+  "file": "R/repo-ownership.R",
+  "line": 41,
+  "python": "metacheck.archives.ownership:_own_paper_facts"
+ },
+ ".own_preprint_link": {
+  "file": "R/repo-ownership.R",
+  "line": 238,
+  "python": "metacheck.archives.ownership:_own_preprint_link"
+ },
+ ".own_reference_links": {
+  "file": "R/repo-ownership.R",
+  "line": 172,
+  "python": "metacheck.archives.ownership:_own_reference_links"
+ },
+ ".own_reference_paper": {
+  "file": "R/repo-ownership.R",
+  "line": 248,
+  "python": "metacheck.archives.ownership:_own_reference_paper"
+ },
+ ".own_rel_dois": {
+  "file": "R/repo-ownership.R",
+  "line": 508,
+  "python": "metacheck.archives.ownership:_own_rel_dois"
+ },
+ ".own_text_authors": {
+  "file": "R/repo-ownership.R",
+  "line": 94,
+  "python": "metacheck.archives.ownership:_own_text_authors"
+ },
+ ".own_text_context": {
+  "file": "R/repo-ownership.R",
+  "line": 134,
+  "python": "metacheck.archives.ownership:_own_text_context"
+ },
+ ".own_title_in": {
+  "file": "R/repo-ownership.R",
+  "line": 499,
+  "python": "metacheck.archives.ownership:_own_title_in"
+ },
+ ".own_tw": {
+  "file": "R/repo-ownership.R",
+  "line": 494,
+  "python": "metacheck.archives.ownership:_own_tw"
+ },
+ ".p_clause": {
+  "file": "R/stat_helpers.R",
+  "line": 413,
+  "python": "metacheck.stats.helpers:_p_clause"
+ },
+ ".p_extract": {
+  "file": "R/text-extractors.R",
+  "line": 112,
+  "python": "metacheck.text.extract:_p_extract"
+ },
+ ".p_name": {
+  "file": "R/text-extractors.R",
+  "line": 54,
+  "python": "metacheck.text.extract:_p_name"
+ },
+ ".p_not_a_value": {
+  "file": "R/stat_helpers.R",
+  "line": 470,
+  "python": "metacheck.stats.helpers:_p_not_a_value"
+ },
  ".p_not_test": {
   "file": "R/stat_helpers.R",
-  "line": 328,
+  "line": 522,
   "ported": true,
   "python": "metacheck.stats.helpers:_p_not_test"
  },
@@ -3620,6 +4002,16 @@
   "ported": true,
   "python": "metacheck.modules._empty:paper_is_empty"
  },
+ ".paper_link_hrefs": {
+  "file": "R/repo-link-versions.R",
+  "line": 133,
+  "python": "metacheck.archives.link_versions:_paper_link_hrefs"
+ },
+ ".paper_repair_text": {
+  "file": "R/import-read.R",
+  "line": 607,
+  "python": "metacheck.io.read:_paper_repair_text"
+ },
  ".paper_schema": {
   "file": "R/paper.R",
   "line": 8,
@@ -3634,19 +4026,19 @@
  },
  ".paper_to_bibr12": {
   "file": "R/import-bibr12.R",
-  "line": 328,
+  "line": 331,
   "ported": true,
   "python": "metacheck.io.bibr12:paper_to_bibr12"
  },
  ".papers_cache_dir": {
   "file": "R/import-papers.R",
-  "line": 221,
+  "line": 222,
   "ported": true,
   "python": "metacheck.io.corpus:_papers_cache_dir"
  },
  ".papers_release_assets": {
   "file": "R/import-papers.R",
-  "line": 239,
+  "line": 240,
   "ported": true,
   "python": "metacheck.io.corpus:_papers_release_assets"
  },
@@ -3682,18 +4074,18 @@
  },
  ".parse_comma_numeric": {
   "file": "R/data_check_helpers.R",
-  "line": 985,
+  "line": 1010,
   "python": "metacheck.datacheck.files:_parse_comma_numeric"
  },
  ".parse_frac": {
   "file": "R/data_check_helpers.R",
-  "line": 6404,
+  "line": 6540,
   "ported": true,
   "python": "metacheck.datacheck.checks:_parse_frac"
  },
  ".parse_value_label_text": {
   "file": "R/data_check_helpers.R",
-  "line": 3659,
+  "line": 3736,
   "ported": true,
   "python": "metacheck.datacheck.columns:_parse_value_label_text"
  },
@@ -3740,7 +4132,7 @@
  },
  ".pdf_codebook_lines": {
   "file": "R/data_check_helpers.R",
-  "line": 4186,
+  "line": 4268,
   "ported": true,
   "python": "metacheck.datacheck.columns:_pdf_codebook_lines"
  },
@@ -3764,13 +4156,13 @@
  },
  ".pii_card_ok": {
   "file": "R/data_check_helpers.R",
-  "line": 5762,
+  "line": 5859,
   "ported": true,
   "python": "metacheck.datacheck.checks:_pii_card_ok"
  },
  ".pii_luhn_ok": {
   "file": "R/data_check_helpers.R",
-  "line": 5744,
+  "line": 5841,
   "ported": true,
   "python": "metacheck.datacheck.checks:_pii_luhn_ok"
  },
@@ -3782,7 +4174,7 @@
  },
  ".pii_split_name": {
   "file": "R/data_check_helpers.R",
-  "line": 5943,
+  "line": 6047,
   "ported": true,
   "python": "metacheck.datacheck.checks:_pii_split_name"
  },
@@ -3794,27 +4186,30 @@
  },
  ".pkg_github_hint": {
   "file": "R/utils.R",
-  "line": 562,
+  "line": 645,
+  "ported": true,
   "python": "metacheck.utils:_pkg_github_hint"
  },
  ".pkg_name": {
   "file": "R/utils.R",
-  "line": 558,
+  "line": 641,
+  "ported": true,
   "python": "metacheck.utils:_pkg_name"
  },
  ".pkg_problem": {
   "file": "R/utils.R",
-  "line": 540,
+  "line": 623,
+  "ported": true,
   "python": "metacheck.utils:_pkg_problem"
  },
  ".plain_number": {
   "file": "R/data_check_helpers.R",
-  "line": 981,
+  "line": 1006,
   "python": "metacheck.datacheck.files:_plain_number"
  },
  ".plain_s4_columns": {
   "file": "R/data_check_helpers.R",
-  "line": 2684,
+  "line": 2761,
   "ported": true,
   "python": "metacheck.datacheck._files_rdata:_plain_s4_columns"
  },
@@ -3844,12 +4239,12 @@
  },
  ".portable_name": {
   "file": "R/utils.R",
-  "line": 418,
+  "line": 501,
   "python": "metacheck.utils:_portable_name"
  },
  ".portable_path": {
   "file": "R/utils.R",
-  "line": 432,
+  "line": 515,
   "python": "metacheck.utils:_portable_path"
  },
  ".power_llm_extract": {
@@ -3866,7 +4261,7 @@
  },
  ".process_full_text": {
   "file": "R/import-grobid.R",
-  "line": 543,
+  "line": 546,
   "ported": true,
   "python": "metacheck.io.grobid:_process_full_text"
  },
@@ -3878,25 +4273,25 @@
  },
  ".psycharchives_handle": {
   "file": "R/archive-psycharchives.R",
-  "line": 99,
+  "line": 101,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_psycharchives_handle"
  },
  ".psycharchives_info": {
   "file": "R/archive-psycharchives.R",
-  "line": 291,
+  "line": 293,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_psycharchives_info"
  },
  ".psycharchives_rest": {
   "file": "R/archive-psycharchives.R",
-  "line": 441,
+  "line": 445,
   "ported": true,
   "python": "metacheck.archives.psycharchives:_psycharchives_rest"
  },
  ".py_open_writes": {
   "file": "R/reproducibility_check.R",
-  "line": 2092,
+  "line": 2124,
   "ported": true,
   "python": "metacheck.repro.core:_py_open_writes"
  },
@@ -3914,49 +4309,49 @@
  },
  ".qsf_export_col": {
   "file": "R/data_check_helpers.R",
-  "line": 4624,
+  "line": 4717,
   "ported": true,
   "python": "metacheck.datacheck.columns:_qsf_export_col"
  },
  ".qsf_option_display": {
   "file": "R/data_check_helpers.R",
-  "line": 4590,
+  "line": 4683,
   "ported": true,
   "python": "metacheck.datacheck.columns:_qsf_option_display"
  },
  ".qsf_strip_html": {
   "file": "R/data_check_helpers.R",
-  "line": 4574,
+  "line": 4667,
   "ported": true,
   "python": "metacheck.datacheck.columns:_qsf_strip_html"
  },
  ".qsf_value_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 4599,
+  "line": 4692,
   "ported": true,
   "python": "metacheck.datacheck.columns:_qsf_value_labels"
  },
  ".qualtrics_col_stem": {
   "file": "R/data_check_helpers.R",
-  "line": 6834,
+  "line": 6970,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_col_stem"
  },
  ".qualtrics_is_display_order": {
   "file": "R/data_check_helpers.R",
-  "line": 6851,
+  "line": 6987,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_is_display_order"
  },
  ".qualtrics_is_header_row": {
   "file": "R/data_check_helpers.R",
-  "line": 6910,
+  "line": 7046,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_is_header_row"
  },
  ".qualtrics_key": {
   "file": "R/data_check_helpers.R",
-  "line": 6821,
+  "line": 6957,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_key"
  },
@@ -3968,7 +4363,7 @@
  },
  ".qualtrics_tag_cols": {
   "file": "R/data_check_helpers.R",
-  "line": 6824,
+  "line": 6960,
   "ported": true,
   "python": "metacheck.datacheck.checks:_qualtrics_tag_cols"
  },
@@ -4040,7 +4435,7 @@
  },
  ".r_captures_to_tables": {
   "file": "R/r-capture.R",
-  "line": 442,
+  "line": 452,
   "ported": true,
   "python": "metacheck.statout.r_capture:_r_captures_to_tables"
  },
@@ -4058,37 +4453,47 @@
  },
  ".r_merge_captures": {
   "file": "R/r-capture.R",
-  "line": 504,
+  "line": 514,
   "ported": true,
   "python": "metacheck.statout.r_capture:_r_merge_captures"
  },
  ".r_method_to_fn": {
   "file": "R/r-capture.R",
-  "line": 533,
+  "line": 543,
   "ported": true,
   "python": "metacheck.statout.r_capture:_r_method_to_fn"
  },
  ".r_output_cohend": {
   "file": "R/r-output.R",
-  "line": 517,
+  "line": 591,
   "ported": true,
   "python": "metacheck.statout.r_output:_r_output_cohend"
  },
  ".r_output_effectsize_d": {
   "file": "R/r-output.R",
-  "line": 571,
+  "line": 645,
   "ported": true,
   "python": "metacheck.statout.r_output:_r_output_effectsize_d"
  },
+ ".r_output_kv_block": {
+  "file": "R/r-output.R",
+  "line": 472,
+  "python": "metacheck.statout.r_output:_r_output_kv_block"
+ },
+ ".r_output_normalise": {
+  "file": "R/r-output.R",
+  "line": 454,
+  "python": "metacheck.statout.r_output:_r_output_normalise"
+ },
  ".r_output_oneline": {
   "file": "R/r-output.R",
-  "line": 446,
+  "line": 507,
   "ported": true,
   "python": "metacheck.statout.r_output:_r_output_oneline"
  },
  ".r_output_tables": {
   "file": "R/r-output.R",
-  "line": 608,
+  "line": 682,
   "ported": true,
   "python": "metacheck.statout.r_output:_r_output_tables"
  },
@@ -4100,7 +4505,7 @@
  },
  ".r_stat_pattern": {
   "file": "R/stat_helpers.R",
-  "line": 279,
+  "line": 341,
   "ported": true,
   "python": "metacheck.stats.helpers:_r_stat_pattern"
  },
@@ -4136,7 +4541,7 @@
  },
  ".rate_limit_wait": {
   "file": "R/repo-download.R",
-  "line": 510,
+  "line": 551,
   "ported": true,
   "python": "metacheck.archives.download:_rate_limit_wait"
  },
@@ -4148,6 +4553,7 @@
  ".rbox_box_meta": {
   "file": "R/archive-researchbox.R",
   "line": 589,
+  "ported": true,
   "python": "metacheck.archives.researchbox:_rbox_box_meta"
  },
  ".rbox_cached_files": {
@@ -4255,7 +4661,7 @@
  },
  ".rds_is_workspace": {
   "file": "R/data_check_helpers.R",
-  "line": 2667,
+  "line": 2744,
   "ported": true,
   "python": "metacheck.datacheck.files:_rds_is_workspace"
  },
@@ -4267,13 +4673,13 @@
  },
  ".read_bibr12": {
   "file": "R/import-bibr12.R",
-  "line": 284,
+  "line": 287,
   "ported": true,
   "python": "metacheck.io.bibr12:read_bibr12"
  },
  ".read_delim_fast": {
   "file": "R/data_check_helpers.R",
-  "line": 2244,
+  "line": 2321,
   "ported": true,
   "python": "metacheck.datacheck.files:_read_delim_fast"
  },
@@ -4291,25 +4697,25 @@
  },
  ".read_rdata_isolated": {
   "file": "R/data_check_helpers.R",
-  "line": 2741,
+  "line": 2818,
   "ported": true,
   "python": "metacheck.datacheck.files:_read_rdata_isolated"
  },
  ".read_sav_any": {
   "file": "R/data_check_helpers.R",
-  "line": 2428,
+  "line": 2505,
   "ported": true,
   "python": "metacheck.datacheck._files_readers:read_stat_file"
  },
  ".recompose_eq": {
   "file": "R/match-reported.R",
-  "line": 252,
+  "line": 253,
   "ported": true,
   "python": "metacheck.statout.match_reported:_recompose_eq"
  },
  ".recovered_code_dir": {
   "file": "R/zip-peek.R",
-  "line": 1564,
+  "line": 1583,
   "ported": true,
   "python": "metacheck.report.html_output:_recovered_code_dir"
  },
@@ -4351,7 +4757,7 @@
  },
  ".regroup_by_evidence": {
   "file": "R/match-reported.R",
-  "line": 442,
+  "line": 444,
   "ported": true,
   "python": "metacheck.statout.match_reported:_regroup_by_evidence"
  },
@@ -4361,11 +4767,41 @@
   "ported": true,
   "python": "metacheck.archives.download:_remote_size"
  },
+ ".removed_positions": {
+  "file": "R/import-read.R",
+  "line": 584,
+  "python": "metacheck.io.read:_removed_positions"
+ },
  ".render_test": {
   "file": "R/extract-tests.R",
   "line": 390,
   "ported": true,
   "python": "metacheck.text.extract_tests:_render_test"
+ },
+ ".repair_bib_dois": {
+  "file": "R/import-read.R",
+  "line": 379,
+  "python": "metacheck.io.read:_repair_bib_dois"
+ },
+ ".repair_line_numbers": {
+  "file": "R/import-read.R",
+  "line": 458,
+  "python": "metacheck.io.read:_repair_line_numbers"
+ },
+ ".repair_link_names": {
+  "file": "R/import-read.R",
+  "line": 266,
+  "python": "metacheck.io.read:_repair_link_names"
+ },
+ ".repair_link_rules": {
+  "file": "R/import-read.R",
+  "line": 295,
+  "python": "metacheck.io.read:_repair_link_rules"
+ },
+ ".repair_links": {
+  "file": "R/import-read.R",
+  "line": 283,
+  "python": "metacheck.io.read:_repair_links"
  },
  ".repo_cache_dir": {
   "file": "R/repo-download.R",
@@ -4391,6 +4827,18 @@
   "ported": true,
   "python": "metacheck.archives.download:_repo_cache_subdir"
  },
+ ".repo_doi_records": {
+  "file": "R/repo-kind.R",
+  "line": 52,
+  "ported": true,
+  "python": "metacheck.archives.repo_kind:_repo_doi_records"
+ },
+ ".repo_doi_url": {
+  "file": "R/repo-kind.R",
+  "line": 84,
+  "ported": true,
+  "python": "metacheck.archives.repo_kind:_repo_doi_url"
+ },
  ".repo_info_cache_dir": {
   "file": "R/repo-info-cache.R",
   "line": 57,
@@ -4399,7 +4847,7 @@
  },
  ".repo_info_cache_get": {
   "file": "R/repo-info-cache.R",
-  "line": 78,
+  "line": 81,
   "ported": true,
   "python": "metacheck.archives.info_cache:_repo_info_cache_get"
  },
@@ -4417,21 +4865,92 @@
  },
  ".repo_info_cache_put": {
   "file": "R/repo-info-cache.R",
-  "line": 86,
+  "line": 91,
   "ported": true,
   "python": "metacheck.archives.info_cache:_repo_info_cache_put"
  },
  ".repo_info_list_ok": {
   "file": "R/repo-info-cache.R",
-  "line": 110,
+  "line": 115,
   "ported": true,
   "python": "metacheck.archives.info_cache:_repo_info_list_ok"
  },
  ".repo_info_ok": {
   "file": "R/repo-info-cache.R",
-  "line": 99,
+  "line": 104,
   "ported": true,
   "python": "metacheck.archives.info_cache:_repo_info_ok"
+ },
+ ".repo_link_exists": {
+  "file": "R/repo-link-versions.R",
+  "line": 30,
+  "python": "metacheck.archives.link_versions:_repo_link_exists"
+ },
+ ".repo_link_joined": {
+  "file": "R/repo-link-versions.R",
+  "line": 102,
+  "python": "metacheck.archives.link_versions:_repo_link_joined"
+ },
+ ".repo_link_same_key": {
+  "file": "R/repo-link-versions.R",
+  "line": 183,
+  "python": "metacheck.archives.link_versions:_repo_link_same_key"
+ },
+ ".repo_link_undoubled": {
+  "file": "R/repo-link-versions.R",
+  "line": 145,
+  "python": "metacheck.archives.link_versions:_repo_link_undoubled"
+ },
+ ".repo_link_unhyphenated": {
+  "file": "R/repo-link-versions.R",
+  "line": 349,
+  "python": "metacheck.archives.link_versions:_repo_link_unhyphenated"
+ },
+ ".repo_link_unwrapped": {
+  "file": "R/repo-link-versions.R",
+  "line": 290,
+  "python": "metacheck.archives.link_versions:_repo_link_unwrapped"
+ },
+ ".repo_link_without_hyphen": {
+  "file": "R/repo-link-versions.R",
+  "line": 77,
+  "python": "metacheck.archives.link_versions:_repo_link_without_hyphen"
+ },
+ ".repo_links_cut_short": {
+  "file": "R/repo-link-versions.R",
+  "line": 276,
+  "python": "metacheck.archives.link_versions:_repo_links_cut_short"
+ },
+ ".repo_links_joined": {
+  "file": "R/repo-link-versions.R",
+  "line": 312,
+  "python": "metacheck.archives.link_versions:_repo_links_joined"
+ },
+ ".repo_links_tidy": {
+  "file": "R/repo-link-versions.R",
+  "line": 191,
+  "python": "metacheck.archives.link_versions:_repo_links_tidy"
+ },
+ ".repo_ownership": {
+  "file": "R/repo-ownership.R",
+  "line": 541,
+  "python": "metacheck.archives.ownership:_repo_ownership"
+ },
+ ".repo_publication_type": {
+  "file": "R/repo-kind.R",
+  "line": 27,
+  "ported": true,
+  "python": "metacheck.archives.repo_kind:_repo_publication_type"
+ },
+ ".repo_readme_from_listing": {
+  "file": "R/repo-ownership.R",
+  "line": 275,
+  "python": "metacheck.archives.ownership:_repo_readme_from_listing"
+ },
+ ".repo_readme_text": {
+  "file": "R/repo-ownership.R",
+  "line": 258,
+  "python": "metacheck.archives.ownership:_repo_readme_text"
  },
  ".repo_session_dir": {
   "file": "R/repo-download.R",
@@ -4539,9 +5058,14 @@
   "ported": true,
   "python": "metacheck.report.brief:validation_table"
  },
+ ".reports_test": {
+  "file": "R/stat_helpers.R",
+  "line": 382,
+  "python": "metacheck.stats.helpers:_reports_test"
+ },
  ".repro_absent_report": {
   "file": "R/reproducibility_check.R",
-  "line": 4129,
+  "line": 4684,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_absent_report"
  },
@@ -4553,25 +5077,30 @@
  },
  ".repro_apply_folder_vars": {
   "file": "R/reproducibility_check.R",
-  "line": 3349,
+  "line": 3623,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_apply_folder_vars"
  },
  ".repro_apply_rewrites": {
   "file": "R/reproducibility_check.R",
-  "line": 3678,
+  "line": 4120,
   "ported": true,
   "python": "metacheck.repro.core:_repro_apply_rewrites"
  },
+ ".repro_archive_text": {
+  "file": "R/reproducibility_check.R",
+  "line": 3108,
+  "python": "metacheck.repro.core:_repro_archive_text"
+ },
  ".repro_assigned_names": {
   "file": "R/reproducibility_check.R",
-  "line": 1144,
+  "line": 1157,
   "ported": true,
   "python": "metacheck.repro.core:_repro_assigned_names"
  },
  ".repro_attached_pkgs": {
   "file": "R/reproducibility_check.R",
-  "line": 1888,
+  "line": 1917,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_attached_pkgs"
  },
@@ -4583,7 +5112,7 @@
  },
  ".repro_binary_kind": {
   "file": "R/reproducibility_check.R",
-  "line": 2422,
+  "line": 2454,
   "ported": true,
   "python": "metacheck.repro.core:_repro_binary_kind"
  },
@@ -4595,85 +5124,90 @@
  },
  ".repro_bracket_depth": {
   "file": "R/reproducibility_check.R",
-  "line": 3796,
+  "line": 4274,
   "ported": true,
   "python": "metacheck.repro.core:_repro_bracket_depth"
  },
+ ".repro_bracket_owner": {
+  "file": "R/reproducibility_check.R",
+  "line": 3964,
+  "python": "metacheck.repro.core:_repro_bracket_owner"
+ },
  ".repro_built_names": {
   "file": "R/reproducibility_check.R",
-  "line": 2203,
+  "line": 2235,
   "ported": true,
   "python": "metacheck.repro.core:_repro_built_names"
  },
  ".repro_by_repository": {
   "file": "R/reproducibility_check.R",
-  "line": 4112,
+  "line": 4667,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_by_repository"
  },
  ".repro_call_parts": {
   "file": "R/reproducibility_check.R",
-  "line": 1167,
+  "line": 1180,
   "ported": true,
   "python": "metacheck.repro.core:_r_call_parts"
  },
  ".repro_cell": {
   "file": "R/reproducibility_check_section.R",
-  "line": 290,
+  "line": 333,
   "ported": true,
   "python": "metacheck.repro.section:_repro_cell"
  },
  ".repro_checklist_section": {
   "file": "R/reproducibility_check_section.R",
-  "line": 308,
+  "line": 353,
   "ported": true,
   "python": "metacheck.repro.section:_repro_checklist_section"
  },
  ".repro_classify_install_message": {
   "file": "R/reproducibility_check.R",
-  "line": 5915,
+  "line": 6513,
   "ported": true,
   "python": "metacheck.repro.core:_repro_classify_install_message"
  },
  ".repro_clock_deadline": {
   "file": "R/reproducibility_check.R",
-  "line": 6207,
+  "line": 6806,
   "ported": true,
   "python": "metacheck.repro.core:_repro_clock_deadline"
  },
  ".repro_common_pkgs": {
   "file": "R/reproducibility_check.R",
-  "line": 2154,
+  "line": 2186,
   "ported": true,
   "python": "metacheck.repro.core:_repro_common_pkgs"
  },
  ".repro_content_sniff": {
   "file": "R/reproducibility_check.R",
-  "line": 2452,
+  "line": 2484,
   "ported": true,
   "python": "metacheck.repro.core:_repro_content_sniff"
  },
  ".repro_cran_archive_install": {
   "file": "R/reproducibility_check.R",
-  "line": 5987,
+  "line": 6585,
   "ported": true,
   "python": "metacheck.repro.core:_repro_cran_archive_install"
  },
  ".repro_date_versions": {
   "file": "R/reproducibility_check.R",
-  "line": 5057,
+  "line": 5634,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_date_versions"
  },
  ".repro_deadline": {
   "file": "R/reproducibility_check.R",
-  "line": 6135,
+  "line": 6734,
   "ported": true,
   "python": "metacheck.repro.core:_repro_deadline"
  },
  ".repro_deadline_text": {
   "file": "R/reproducibility_check.R",
-  "line": 6142,
+  "line": 6741,
   "ported": true,
   "python": "metacheck.repro.core:_repro_deadline_text"
  },
@@ -4818,7 +5352,7 @@
  },
  ".repro_download_failed_msg": {
   "file": "R/reproducibility_check.R",
-  "line": 5011,
+  "line": 5588,
   "ported": true,
   "python": "metacheck.repro.core:_repro_download_failed_msg"
  },
@@ -4830,19 +5364,19 @@
  },
  ".repro_download_stop_text": {
   "file": "R/reproducibility_check.R",
-  "line": 3932,
+  "line": 4410,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_download_stop_text"
  },
  ".repro_drop_author_lib_loc": {
   "file": "R/reproducibility_check.R",
-  "line": 3781,
+  "line": 4259,
   "ported": true,
   "python": "metacheck.repro.core:_repro_drop_author_lib_loc"
  },
  ".repro_duration": {
   "file": "R/reproducibility_check.R",
-  "line": 6170,
+  "line": 6769,
   "ported": true,
   "python": "metacheck.repro.core:_repro_duration"
  },
@@ -4854,37 +5388,37 @@
  },
  ".repro_error_message": {
   "file": "R/reproducibility_check.R",
-  "line": 3967,
+  "line": 4450,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_error_message"
  },
  ".repro_failure_reason": {
   "file": "R/reproducibility_check.R",
-  "line": 4002,
+  "line": 4485,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_failure_reason"
  },
  ".repro_fetch_files": {
   "file": "R/reproducibility_check.R",
-  "line": 1580,
+  "line": 1604,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_fetch_files"
  },
  ".repro_fetchable": {
   "file": "R/reproducibility_check.R",
-  "line": 1232,
+  "line": 1245,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_fetchable"
  },
  ".repro_fill_file_choice": {
   "file": "R/reproducibility_check.R",
-  "line": 3852,
+  "line": 4330,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_fill_file_choice"
  },
  ".repro_find_export_pkg": {
   "file": "R/reproducibility_check.R",
-  "line": 2186,
+  "line": 2218,
   "ported": true,
   "python": "metacheck.repro.core:_repro_find_export_pkg"
  },
@@ -4896,13 +5430,13 @@
  },
  ".repro_folder_vars": {
   "file": "R/reproducibility_check.R",
-  "line": 3132,
+  "line": 3406,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_folder_vars"
  },
  ".repro_folders_made_text": {
   "file": "R/reproducibility_check.R",
-  "line": 1436,
+  "line": 1453,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_folders_made_text"
  },
@@ -4914,49 +5448,49 @@
  },
  ".repro_function_names": {
   "file": "R/reproducibility_check.R",
-  "line": 2570,
+  "line": 2602,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_function_names"
  },
  ".repro_function_users": {
   "file": "R/reproducibility_check.R",
-  "line": 2595,
+  "line": 2627,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_function_users"
  },
  ".repro_groundhog_as_library": {
   "file": "R/reproducibility_check.R",
-  "line": 3817,
+  "line": 4295,
   "ported": true,
   "python": "metacheck.repro.core:_repro_groundhog_as_library"
  },
  ".repro_here_roots": {
   "file": "R/reproducibility_check.R",
-  "line": 3232,
+  "line": 3506,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_here_roots"
  },
  ".repro_here_start": {
   "file": "R/reproducibility_check.R",
-  "line": 3103,
+  "line": 3377,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_here_start"
  },
  ".repro_highest_version": {
   "file": "R/reproducibility_check.R",
-  "line": 4978,
+  "line": 5555,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_highest_version"
  },
  ".repro_inputs_after_run": {
   "file": "R/reproducibility_check.R",
-  "line": 2253,
+  "line": 2285,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_inputs_after_run"
  },
  ".repro_inputs_to_report": {
   "file": "R/reproducibility_check.R",
-  "line": 2245,
+  "line": 2277,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_inputs_to_report"
  },
@@ -4968,60 +5502,70 @@
  },
  ".repro_install_limit": {
   "file": "R/reproducibility_check.R",
-  "line": 6191,
+  "line": 6790,
   "ported": true,
   "python": "metacheck.repro.core:_repro_install_limit"
  },
  ".repro_install_order": {
   "file": "R/reproducibility_check.R",
-  "line": 5615,
+  "line": 6213,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_install_order"
  },
+ ".repro_install_sentence": {
+  "file": "R/reproducibility_check.R",
+  "line": 4573,
+  "python": "metacheck.repro.core:_repro_install_sentence"
+ },
  ".repro_install_what": {
   "file": "R/reproducibility_check.R",
-  "line": 6180,
+  "line": 6779,
   "ported": true,
   "python": "metacheck.repro.core:_repro_install_what"
  },
  ".repro_installed_version": {
   "file": "R/reproducibility_check.R",
-  "line": 5046,
+  "line": 5623,
   "python": "metacheck.repro.core:_repro_installed_version"
  },
  ".repro_internet_text": {
   "file": "R/reproducibility_check.R",
-  "line": 3916,
+  "line": 4394,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_internet_text"
  },
  ".repro_is_font_family": {
   "file": "R/reproducibility_check.R",
-  "line": 4857,
+  "line": 5428,
   "ported": true,
   "python": "metacheck.repro.core:_repro_is_font_family"
  },
  ".repro_is_jags_model": {
   "file": "R/reproducibility_check.R",
-  "line": 2533,
+  "line": 2565,
   "ported": true,
   "python": "metacheck.repro.core:_repro_is_jags_model"
  },
  ".repro_is_py_test": {
   "file": "R/reproducibility_check.R",
-  "line": 2614,
+  "line": 2646,
   "ported": true,
   "python": "metacheck.repro.software:_repro_is_py_test"
  },
  ".repro_is_r_test": {
   "file": "R/reproducibility_check.R",
-  "line": 2608,
+  "line": 2640,
   "ported": true,
   "python": "metacheck.repro.software:_repro_is_r_test"
  },
+ ".repro_joining_function": {
+  "file": "R/reproducibility_check.R",
+  "line": 4099,
+  "python": "metacheck.repro.core:_repro_joining_function"
+ },
  ".repro_keep_working_refs": {
   "file": "R/reproducibility_check.R",
-  "line": 3011,
+  "line": 3279,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_keep_working_refs"
  },
@@ -5033,67 +5577,67 @@
  },
  ".repro_later_pass": {
   "file": "R/reproducibility_check.R",
-  "line": 6153,
+  "line": 6752,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_later_pass"
  },
  ".repro_lfs_stopped": {
   "file": "R/reproducibility_check.R",
-  "line": 2871,
+  "line": 2903,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_lfs_stopped"
  },
  ".repro_lfs_stopped_text": {
   "file": "R/reproducibility_check.R",
-  "line": 2894,
+  "line": 2926,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_lfs_stopped_text"
  },
  ".repro_lfs_swaps": {
   "file": "R/reproducibility_check.R",
-  "line": 2907,
+  "line": 2939,
   "ported": true,
   "python": "metacheck.repro.core:_repro_lfs_swaps"
  },
  ".repro_listed_folders": {
   "file": "R/reproducibility_check.R",
-  "line": 3285,
+  "line": 3559,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_listed_folders"
  },
  ".repro_load_check": {
   "file": "R/reproducibility_check.R",
-  "line": 5767,
+  "line": 6365,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_load_check"
  },
  ".repro_load_check_apply": {
   "file": "R/reproducibility_check.R",
-  "line": 5825,
+  "line": 6423,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_load_check_apply"
  },
  ".repro_load_check_lines": {
   "file": "R/reproducibility_check.R",
-  "line": 5647,
+  "line": 6245,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_load_check_lines"
  },
  ".repro_load_error": {
   "file": "R/reproducibility_check.R",
-  "line": 5862,
+  "line": 6460,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_load_error"
  },
  ".repro_make_failed_write_folders": {
   "file": "R/reproducibility_check.R",
-  "line": 1404,
+  "line": 1421,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_make_failed_write_folders"
  },
  ".repro_make_write_folders": {
   "file": "R/reproducibility_check.R",
-  "line": 4368,
+  "line": 4931,
   "ported": true,
   "python": "metacheck.repro.core:_repro_make_write_folders"
  },
@@ -5105,7 +5649,7 @@
  },
  ".repro_md5": {
   "file": "R/reproducibility_check.R",
-  "line": 633,
+  "line": 634,
   "ported": true,
   "python": "metacheck.repro.core:_repro_md5"
  },
@@ -5117,115 +5661,115 @@
  },
  ".repro_min_prep_time": {
   "file": "R/reproducibility_check.R",
-  "line": 6219,
+  "line": 6818,
   "ported": true,
   "python": "metacheck.repro.core:_repro_min_prep_time"
  },
  ".repro_missing_fn_pkgs": {
   "file": "R/reproducibility_check.R",
-  "line": 1929,
+  "line": 1962,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_missing_fn_pkgs"
  },
  ".repro_missing_program": {
   "file": "R/reproducibility_check.R",
-  "line": 3942,
+  "line": 4420,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_missing_program"
  },
  ".repro_name_corrections": {
   "file": "R/reproducibility_check.R",
-  "line": 1189,
+  "line": 1202,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_name_corrections"
  },
  ".repro_name_key": {
   "file": "R/reproducibility_check.R",
-  "line": 1176,
+  "line": 1189,
   "ported": true,
   "python": "metacheck.repro.core:_repro_name_key"
  },
  ".repro_name_report": {
   "file": "R/reproducibility_check.R",
-  "line": 1213,
+  "line": 1226,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_name_report"
  },
  ".repro_named_files": {
   "file": "R/reproducibility_check.R",
-  "line": 1247,
+  "line": 1263,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_named_files"
  },
  ".repro_names_corrected": {
   "file": "R/reproducibility_check.R",
-  "line": 1204,
+  "line": 1217,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_names_corrected"
  },
  ".repro_nearest_copy": {
   "file": "R/reproducibility_check.R",
-  "line": 1110,
+  "line": 1123,
   "ported": true,
   "python": "metacheck.repro.core:_repro_nearest_copy"
  },
  ".repro_needs_arguments": {
   "file": "R/reproducibility_check.R",
-  "line": 4158,
+  "line": 4713,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_needs_arguments"
  },
  ".repro_needs_internet_error": {
   "file": "R/reproducibility_check.R",
-  "line": 3902,
+  "line": 4380,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_needs_internet_error"
  },
  ".repro_needs_internet_text": {
   "file": "R/reproducibility_check.R",
-  "line": 3924,
+  "line": 4402,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_needs_internet_text"
  },
  ".repro_needs_person_error": {
   "file": "R/reproducibility_check.R",
-  "line": 4174,
+  "line": 4737,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_needs_person_error"
  },
  ".repro_neutralise_env_calls": {
   "file": "R/reproducibility_check.R",
-  "line": 4197,
+  "line": 4760,
   "ported": true,
   "python": "metacheck.repro.core:_repro_neutralise_env_calls"
  },
  ".repro_neutralise_rprofile": {
   "file": "R/reproducibility_check.R",
-  "line": 4256,
+  "line": 4819,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_neutralise_rprofile"
  },
  ".repro_neutralise_setwd": {
   "file": "R/reproducibility_check.R",
-  "line": 3727,
+  "line": 4205,
   "ported": true,
   "python": "metacheck.repro.core:_repro_neutralise_setwd"
  },
  ".repro_no_prep_text": {
   "file": "R/reproducibility_check.R",
-  "line": 6225,
+  "line": 6824,
   "ported": true,
   "python": "metacheck.repro.core:_repro_no_prep_text"
  },
  ".repro_norm_rel": {
   "file": "R/reproducibility_check.R",
-  "line": 3544,
+  "line": 3826,
   "ported": true,
   "python": "metacheck.repro.core:_repro_norm_rel"
  },
  ".repro_normalize_basename": {
   "file": "R/reproducibility_check.R",
-  "line": 1962,
+  "line": 1995,
   "ported": true,
   "python": "metacheck.repro.core:_repro_normalize_basename"
  },
@@ -5237,49 +5781,49 @@
  },
  ".repro_not_downloaded": {
   "file": "R/reproducibility_check.R",
-  "line": 1532,
+  "line": 1556,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_not_downloaded"
  },
  ".repro_not_downloaded_text": {
   "file": "R/reproducibility_check.R",
-  "line": 1563,
+  "line": 1587,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_not_downloaded_text"
  },
  ".repro_not_loadable_msg": {
   "file": "R/reproducibility_check.R",
-  "line": 5854,
+  "line": 6452,
   "ported": true,
   "python": "metacheck.repro.core:_repro_not_loadable_msg"
  },
  ".repro_not_run_report": {
   "file": "R/reproducibility_check.R",
-  "line": 2631,
+  "line": 2663,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_not_run_report"
  },
  ".repro_old_default_lines": {
   "file": "R/reproducibility_check.R",
-  "line": 4332,
+  "line": 4895,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_old_default_lines"
  },
  ".repro_old_defaults": {
   "file": "R/reproducibility_check.R",
-  "line": 4310,
+  "line": 4873,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_old_defaults"
  },
  ".repro_old_defaults_text": {
   "file": "R/reproducibility_check.R",
-  "line": 4347,
+  "line": 4910,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_old_defaults_text"
  },
  ".repro_on_cran": {
   "file": "R/reproducibility_check.R",
-  "line": 4999,
+  "line": 5576,
   "python": "metacheck.repro.core:_repro_on_cran"
  },
  ".repro_oom_text": {
@@ -5290,7 +5834,7 @@
  },
  ".repro_order_path": {
   "file": "R/reproducibility_check.R",
-  "line": 6103,
+  "line": 6701,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_order_path"
  },
@@ -5302,25 +5846,25 @@
  },
  ".repro_output_cut_note": {
   "file": "R/reproducibility_check.R",
-  "line": 3533,
+  "line": 3815,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_output_cut_note"
  },
  ".repro_output_head": {
   "file": "R/reproducibility_check.R",
-  "line": 3519,
+  "line": 3801,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_output_head"
  },
  ".repro_p_load_as_library": {
   "file": "R/reproducibility_check.R",
-  "line": 3833,
+  "line": 4311,
   "ported": true,
   "python": "metacheck.repro.core:_repro_p_load_as_library"
  },
  ".repro_package_plan": {
   "file": "R/reproducibility_check.R",
-  "line": 2951,
+  "line": 2983,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_package_plan"
  },
@@ -5332,43 +5876,53 @@
  },
  ".repro_path_fix_text": {
   "file": "R/reproducibility_check.R",
-  "line": 1599,
+  "line": 1628,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_path_fix_text"
  },
  ".repro_path_named": {
   "file": "R/reproducibility_check.R",
-  "line": 1073,
+  "line": 1086,
   "ported": true,
   "python": "metacheck.repro.core:_repro_path_named"
  },
+ ".repro_path_piece": {
+  "file": "R/reproducibility_check.R",
+  "line": 4022,
+  "python": "metacheck.repro.core:_repro_path_piece"
+ },
  ".repro_place_files": {
   "file": "R/reproducibility_check.R",
-  "line": 1313,
+  "line": 1330,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_place_files"
  },
  ".repro_place_from_deposit": {
   "file": "R/reproducibility_check.R",
-  "line": 1301,
+  "line": 1318,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_place_from_deposit"
  },
  ".repro_place_written": {
   "file": "R/reproducibility_check.R",
-  "line": 1287,
+  "line": 1304,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_place_written"
  },
  ".repro_placed_text": {
   "file": "R/reproducibility_check.R",
-  "line": 1449,
+  "line": 1466,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_placed_text"
  },
+ ".repro_plan_rewrites": {
+  "file": "R/reproducibility_check.R",
+  "line": 3149,
+  "python": "metacheck.repro.core:_repro_plan_rewrites"
+ },
  ".repro_plan_sources": {
   "file": "R/reproducibility_check.R",
-  "line": 2692,
+  "line": 2724,
   "ported": true,
   "python": "metacheck.repro.core:_repro_plan_sources"
  },
@@ -5398,25 +5952,25 @@
  },
  ".repro_py_import_links": {
   "file": "R/reproducibility_check.R",
-  "line": 3579,
+  "line": 3861,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_py_import_links"
  },
  ".repro_py_import_names": {
   "file": "R/reproducibility_check.R",
-  "line": 3589,
+  "line": 3871,
   "ported": true,
   "python": "metacheck.repro.software:_repro_py_import_names"
  },
  ".repro_py_imported": {
   "file": "R/reproducibility_check.R",
-  "line": 3617,
+  "line": 3899,
   "ported": true,
   "python": "metacheck.repro.software:_repro_py_imported"
  },
  ".repro_py_local_closure": {
   "file": "R/reproducibility_check.R",
-  "line": 3563,
+  "line": 3845,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_py_local_closure"
  },
@@ -5452,7 +6006,7 @@
  },
  ".repro_py_starts_server": {
   "file": "R/reproducibility_check.R",
-  "line": 3890,
+  "line": 4368,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_py_starts_server"
  },
@@ -5470,67 +6024,72 @@
  },
  ".repro_read_failed_msg": {
   "file": "R/reproducibility_check.R",
-  "line": 5026,
+  "line": 5603,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_read_failed_msg"
  },
  ".repro_recorded_advice": {
   "file": "R/reproducibility_check.R",
-  "line": 5288,
+  "line": 5886,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_advice"
  },
  ".repro_recorded_counts": {
   "file": "R/reproducibility_check.R",
-  "line": 5220,
+  "line": 5808,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_counts"
  },
  ".repro_recorded_limits": {
   "file": "R/reproducibility_check.R",
-  "line": 5183,
+  "line": 5771,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_limits"
  },
  ".repro_recorded_n": {
   "file": "R/reproducibility_check.R",
-  "line": 5277,
+  "line": 5875,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_n"
  },
  ".repro_recorded_plan": {
   "file": "R/reproducibility_check.R",
-  "line": 5102,
+  "line": 5679,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_plan"
  },
  ".repro_recorded_preview": {
   "file": "R/reproducibility_check.R",
-  "line": 5302,
+  "line": 5900,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_preview"
  },
+ ".repro_recorded_r_used": {
+  "file": "R/reproducibility_check.R",
+  "line": 5764,
+  "python": "metacheck.repro.core:_repro_recorded_r_used"
+ },
  ".repro_recorded_report": {
   "file": "R/reproducibility_check.R",
-  "line": 5243,
+  "line": 5841,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_report"
  },
  ".repro_recorded_sources": {
   "file": "R/reproducibility_check.R",
-  "line": 5170,
+  "line": 5747,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_sources"
  },
  ".repro_recorded_summary": {
   "file": "R/reproducibility_check.R",
-  "line": 5232,
+  "line": 5822,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_summary"
  },
  ".repro_recorded_warning": {
   "file": "R/reproducibility_check.R",
-  "line": 5203,
+  "line": 5791,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_warning"
  },
@@ -5542,85 +6101,95 @@
  },
  ".repro_ref_checkable": {
   "file": "R/reproducibility_check.R",
-  "line": 2235,
+  "line": 2267,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_ref_checkable"
  },
  ".repro_rel_from": {
   "file": "R/reproducibility_check.R",
-  "line": 3361,
+  "line": 3643,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_rel_from"
  },
  ".repro_relocate_relative_paths": {
   "file": "R/reproducibility_check.R",
-  "line": 3451,
+  "line": 3733,
   "ported": true,
   "python": "metacheck.repro.core:_repro_relocate_relative_paths"
  },
  ".repro_repos_lines": {
   "file": "R/reproducibility_check.R",
-  "line": 5602,
+  "line": 6200,
   "ported": true,
   "python": "metacheck.repro.docker:_REPOS_LINES"
  },
+ ".repro_rewrite_preview": {
+  "file": "R/reproducibility_check.R",
+  "line": 3199,
+  "python": "metacheck.repro.core:_repro_rewrite_preview"
+ },
  ".repro_run_after_lines": {
   "file": "R/reproducibility_check.R",
-  "line": 4274,
+  "line": 4837,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_run_after_lines"
  },
  ".repro_run_by_source": {
   "file": "R/reproducibility_check.R",
-  "line": 1864,
+  "line": 1893,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_run_by_source"
  },
  ".repro_run_counts": {
   "file": "R/reproducibility_check.R",
-  "line": 4090,
+  "line": 4645,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_run_counts"
  },
  ".repro_run_folders": {
   "file": "R/reproducibility_check.R",
-  "line": 3383,
+  "line": 3665,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_run_folders"
  },
+ ".repro_run_light": {
+  "file": "R/reproducibility_check.R",
+  "line": 4624,
+  "python": "metacheck.repro.core:_repro_run_light"
+ },
  ".repro_same_version": {
   "file": "R/reproducibility_check.R",
-  "line": 4990,
+  "line": 5567,
   "ported": true,
   "python": "metacheck.repro.core:_repro_same_version"
  },
  ".repro_sandbox_names": {
   "file": "R/reproducibility_check.R",
-  "line": 1273,
+  "line": 1290,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_sandbox_names"
  },
  ".repro_script_path": {
   "file": "R/reproducibility_check.R",
-  "line": 6064,
+  "line": 6662,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_script_path"
  },
  ".repro_script_places": {
   "file": "R/reproducibility_check.R",
-  "line": 6110,
+  "line": 6708,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_script_places"
  },
  ".repro_short_of_time": {
   "file": "R/reproducibility_check.R",
-  "line": 6201,
+  "line": 6800,
   "ported": true,
   "python": "metacheck.repro.core:_repro_short_of_time"
  },
  ".repro_shown_location": {
   "file": "R/reproducibility_check.R",
-  "line": 6123,
+  "line": 6721,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_shown_location"
  },
@@ -5632,19 +6201,19 @@
  },
  ".repro_slash_paths": {
   "file": "R/reproducibility_check.R",
-  "line": 4917,
+  "line": 5488,
   "ported": true,
   "python": "metacheck.repro.core:_repro_slash_paths"
  },
  ".repro_slash_report": {
   "file": "R/reproducibility_check.R",
-  "line": 4963,
+  "line": 5540,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_slash_report"
  },
  ".repro_slash_rows": {
   "file": "R/reproducibility_check.R",
-  "line": 4946,
+  "line": 5523,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_slash_rows"
  },
@@ -5680,43 +6249,43 @@
  },
  ".repro_source_unknown": {
   "file": "R/reproducibility_check.R",
-  "line": 4059,
+  "line": 4563,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_source_unknown"
  },
  ".repro_source_unknown_text": {
   "file": "R/reproducibility_check.R",
-  "line": 4066,
+  "line": 4582,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_source_unknown_text"
  },
  ".repro_sourced_file": {
   "file": "R/reproducibility_check.R",
-  "line": 1839,
+  "line": 1868,
   "ported": true,
   "python": "metacheck.repro.core:_repro_sourced_file"
  },
  ".repro_split_args": {
   "file": "R/reproducibility_check.R",
-  "line": 602,
+  "line": 603,
   "ported": true,
   "python": "metacheck.statout.r_output:_repro_split_args"
  },
  ".repro_starts_app": {
   "file": "R/reproducibility_check.R",
-  "line": 3877,
+  "line": 4355,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_starts_app"
  },
  ".repro_static_light": {
   "file": "R/reproducibility_check.R",
-  "line": 2264,
+  "line": 2296,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_static_light"
  },
  ".repro_strip_setwd_folder": {
   "file": "R/reproducibility_check.R",
-  "line": 4878,
+  "line": 5449,
   "ported": true,
   "python": "metacheck.repro.core:_repro_strip_setwd_folder"
  },
@@ -5836,7 +6405,7 @@
  },
  ".repro_time_left": {
   "file": "R/reproducibility_check.R",
-  "line": 6165,
+  "line": 6764,
   "ported": true,
   "python": "metacheck.repro.core:_repro_time_left"
  },
@@ -5848,49 +6417,59 @@
  },
  ".repro_unique_script_names": {
   "file": "R/reproducibility_check.R",
-  "line": 6080,
+  "line": 6678,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_unique_script_names"
  },
  ".repro_unopened_files": {
   "file": "R/reproducibility_check.R",
-  "line": 1509,
+  "line": 1526,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_unopened_files"
  },
+ ".repro_unpack_archives": {
+  "file": "R/reproducibility_check.R",
+  "line": 3068,
+  "python": "metacheck.repro.core:_repro_unpack_archives"
+ },
+ ".repro_unpacked_paths": {
+  "file": "R/reproducibility_check.R",
+  "line": 3016,
+  "python": "metacheck.repro.core:_repro_unpacked_paths"
+ },
  ".repro_upgrade_stan": {
   "file": "R/reproducibility_check.R",
-  "line": 4694,
+  "line": 5265,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_upgrade_stan"
  },
  ".repro_upgrade_stan_files": {
   "file": "R/reproducibility_check.R",
-  "line": 4835,
+  "line": 5406,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_upgrade_stan_files"
  },
  ".repro_upgrade_stan_in_r": {
   "file": "R/reproducibility_check.R",
-  "line": 4800,
+  "line": 5371,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_upgrade_stan_in_r"
  },
  ".repro_write_failed_folders": {
   "file": "R/reproducibility_check.R",
-  "line": 1368,
+  "line": 1385,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_write_failed_folders"
  },
  ".repro_written_later": {
   "file": "R/reproducibility_check.R",
-  "line": 1469,
+  "line": 1486,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_written_later"
  },
  ".repro_written_later_text": {
   "file": "R/reproducibility_check.R",
-  "line": 1484,
+  "line": 1501,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_written_later_text"
  },
@@ -5920,31 +6499,31 @@
  },
  ".reshare_headers": {
   "file": "R/archive-reshare.R",
-  "line": 301,
+  "line": 425,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_headers"
  },
  ".reshare_id": {
   "file": "R/archive-reshare.R",
-  "line": 77,
+  "line": 179,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_id"
  },
  ".reshare_info": {
   "file": "R/archive-reshare.R",
-  "line": 224,
+  "line": 342,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_info"
  },
  ".reshare_verify_downloads": {
   "file": "R/archive-reshare.R",
-  "line": 675,
+  "line": 799,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_verify_downloads"
  },
  ".reshare_zip_members": {
   "file": "R/archive-reshare.R",
-  "line": 638,
+  "line": 762,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_zip_members"
  },
@@ -5967,19 +6546,19 @@
  },
  ".row_duplication": {
   "file": "R/data_check_helpers.R",
-  "line": 7056,
+  "line": 7192,
   "ported": true,
   "python": "metacheck.datacheck.checks:_row_duplication"
  },
  ".run_download_want": {
   "file": "R/repo-download.R",
-  "line": 1350,
+  "line": 1391,
   "ported": true,
   "python": "metacheck.archives.download:_run_download_want"
  },
  ".safe_write_path": {
   "file": "R/utils.R",
-  "line": 449,
+  "line": 532,
   "ported": true,
   "python": "metacheck.utils:_safe_write_path"
  },
@@ -5991,13 +6570,13 @@
  },
  ".scale_block_is_ratinglike": {
   "file": "R/data_check_helpers.R",
-  "line": 7694,
+  "line": 7830,
   "ported": true,
   "python": "metacheck.datacheck.checks:_scale_block_is_ratinglike"
  },
  ".scale_block_range": {
   "file": "R/data_check_helpers.R",
-  "line": 7639,
+  "line": 7775,
   "ported": true,
   "python": "metacheck.datacheck.checks:_scale_block_range"
  },
@@ -6039,7 +6618,7 @@
  },
  ".scale_match_items": {
   "file": "R/data_check_helpers.R",
-  "line": 3404,
+  "line": 3481,
   "ported": true,
   "python": "metacheck.datacheck.columns:_scale_match_items"
  },
@@ -6057,7 +6636,7 @@
  },
  ".scale_name_prefix": {
   "file": "R/data_check_helpers.R",
-  "line": 7631,
+  "line": 7767,
   "ported": true,
   "python": "metacheck.datacheck.checks:_scale_name_prefix"
  },
@@ -6081,7 +6660,7 @@
  },
  ".scale_ref_code": {
   "file": "R/data_check_helpers.R",
-  "line": 3353,
+  "line": 3430,
   "ported": true,
   "python": "metacheck.datacheck.columns:_scale_ref_code"
  },
@@ -6093,7 +6672,7 @@
  },
  ".scale_reference": {
   "file": "R/data_check_helpers.R",
-  "line": 3367,
+  "line": 3444,
   "ported": true,
   "python": "metacheck.datacheck.columns:_scale_reference"
  },
@@ -6135,7 +6714,7 @@
  },
  ".scale_typo_of": {
   "file": "R/data_check_helpers.R",
-  "line": 5110,
+  "line": 5207,
   "ported": true,
   "python": "metacheck.datacheck.columns:_scale_typo_of"
  },
@@ -6163,6 +6742,16 @@
   "ported": true,
   "python": "metacheck.modules._codebook:_scan_paper_with_dict"
  },
+ ".sci_text": {
+  "file": "R/stat_helpers.R",
+  "line": 159,
+  "python": "metacheck.stats.helpers:_sci_text"
+ },
+ ".search_kept": {
+  "file": "R/text_search.R",
+  "line": 236,
+  "python": "metacheck.text.search:_search_kept"
+ },
  ".selfgen_merge_synonyms": {
   "file": "",
   "line": 0,
@@ -6171,13 +6760,13 @@
  },
  ".sheet_is_notes": {
   "file": "R/data_check_helpers.R",
-  "line": 2729,
+  "line": 2806,
   "ported": true,
   "python": "metacheck.datacheck.files:_sheet_is_notes"
  },
  ".sites_share_variable": {
   "file": "R/match-reported.R",
-  "line": 405,
+  "line": 407,
   "ported": true,
   "python": "metacheck.statout.match_reported:_sites_share_variable"
  },
@@ -6213,7 +6802,7 @@
  },
  ".sniff_delimiter": {
   "file": "R/data_check_helpers.R",
-  "line": 2129,
+  "line": 2206,
   "ported": true,
   "python": "metacheck.datacheck.files:_sniff_delimiter"
  },
@@ -6691,6 +7280,16 @@
   "ported": true,
   "python": "metacheck.statout.spv:_spvviz_resolve_variable"
  },
+ ".stat_chi_join": {
+  "file": "R/stat_helpers.R",
+  "line": 317,
+  "python": "metacheck.stats.helpers:_stat_chi_join"
+ },
+ ".stat_decimal_point": {
+  "file": "R/stat_helpers.R",
+  "line": 306,
+  "python": "metacheck.stats.helpers:_stat_decimal_point"
+ },
  ".stat_display_value": {
   "file": "R/stat_helpers.R",
   "line": 58,
@@ -6711,13 +7310,13 @@
  },
  ".stat_is_label_col": {
   "file": "R/stat_helpers.R",
-  "line": 231,
+  "line": 252,
   "ported": true,
   "python": "metacheck.statout.stat_output:_stat_is_label_col"
  },
  ".stat_is_placeholder": {
   "file": "R/stat_helpers.R",
-  "line": 210,
+  "line": 231,
   "ported": true,
   "python": "metacheck.statout.stat_output:_stat_is_placeholder"
  },
@@ -6756,6 +7355,11 @@
   "line": 95,
   "ported": true,
   "python": "metacheck.statout.stat_output:_stat_test_id"
+ },
+ ".stat_text_apply": {
+  "file": "R/stat_helpers.R",
+  "line": 327,
+  "python": "metacheck.stats.helpers:_stat_text_apply"
  },
  ".stata_is_numlike": {
   "file": "R/stata.R",
@@ -6807,34 +7411,34 @@
  },
  ".storage_backoff": {
   "file": "R/repo-download.R",
-  "line": 481,
+  "line": 522,
   "python": "metacheck.archives.download:_storage_backoff"
  },
  ".storage_is_transient": {
   "file": "R/repo-download.R",
-  "line": 472,
+  "line": 513,
   "ported": true,
   "python": "metacheck.archives.download:_storage_is_transient"
  },
  ".storage_is_transient_factory": {
   "file": "R/repo-download.R",
-  "line": 700,
+  "line": 741,
   "python": "metacheck.archives.download:_storage_is_transient_factory"
  },
  ".storage_retry_after_factory": {
   "file": "R/repo-download.R",
-  "line": 664,
+  "line": 705,
   "python": "metacheck.archives.download:_storage_retry_after_factory"
  },
  ".strip_llm_wrapper": {
   "file": "R/data_check_helpers.R",
-  "line": 1637,
+  "line": 1710,
   "ported": true,
   "python": "metacheck.datacheck.files:_strip_llm_wrapper"
  },
  ".strip_rtf": {
   "file": "R/data_check_helpers.R",
-  "line": 4216,
+  "line": 4298,
   "ported": true,
   "python": "metacheck.datacheck.columns:_strip_rtf"
  },
@@ -6862,7 +7466,7 @@
  },
  ".table_header_ambiguous": {
   "file": "R/stat_helpers.R",
-  "line": 271,
+  "line": 292,
   "ported": true,
   "python": "metacheck.statout.match_table:_table_header_ambiguous"
  },
@@ -6910,7 +7514,7 @@
  },
  ".tabular_usable": {
   "file": "R/data_check_helpers.R",
-  "line": 6742,
+  "line": 6878,
   "ported": true,
   "python": "metacheck.datacheck.checks:_tabular_usable"
  },
@@ -6970,49 +7574,49 @@
  },
  ".tei_authors": {
   "file": "R/import-grobid.R",
-  "line": 897,
+  "line": 864,
   "ported": true,
   "python": "metacheck.io.grobid:_tei_authors"
  },
  ".tei_bib": {
   "file": "R/import-grobid.R",
-  "line": 1004,
+  "line": 971,
   "ported": true,
   "python": "metacheck.io.grobid:_tei_bib"
  },
  ".tei_table_contents": {
   "file": "R/import-grobid.R",
-  "line": 1083,
+  "line": 1050,
   "ported": true,
   "python": "metacheck.io.grobid:_tei_table_contents"
  },
  ".tei_text": {
   "file": "R/import-grobid.R",
-  "line": 749,
+  "line": 716,
   "ported": true,
   "python": "metacheck.io.grobid:_tei_text"
  },
  ".tei_url": {
   "file": "R/import-grobid.R",
-  "line": 970,
+  "line": 937,
   "ported": true,
   "python": "metacheck.io.grobid:_tei_url"
  },
  ".tei_xrefs": {
   "file": "R/import-grobid.R",
-  "line": 929,
+  "line": 896,
   "ported": true,
   "python": "metacheck.io.grobid:_tei_xrefs"
  },
  ".tests_from_extract": {
   "file": "R/match-reported.R",
-  "line": 319,
+  "line": 321,
   "ported": true,
   "python": "metacheck.statout.match_reported:_tests_from_extract"
  },
  ".text_counts": {
   "file": "R/data_check_helpers.R",
-  "line": 965,
+  "line": 990,
   "python": "metacheck.datacheck.files:_text_counts"
  },
  ".title": {
@@ -7047,12 +7651,12 @@
  },
  ".url_decode": {
   "file": "R/utils.R",
-  "line": 80,
+  "line": 163,
   "python": "metacheck.utils:_url_decode"
  },
  ".url_host_is": {
   "file": "R/repo-download.R",
-  "line": 373,
+  "line": 382,
   "ported": true,
   "python": "metacheck.archives.download:_url_host_is"
  },
@@ -7064,43 +7668,43 @@
  },
  ".useless_file_kind": {
   "file": "R/file-naming.R",
-  "line": 54,
+  "line": 60,
   "ported": true,
   "python": "metacheck.archives._useless:useless_file_kind"
  },
  ".useless_file_severity": {
   "file": "R/file-naming.R",
-  "line": 107,
+  "line": 113,
   "ported": true,
   "python": "metacheck.archives._useless:useless_file_severity"
  },
  ".utf16_as_utf8": {
   "file": "R/data_check_helpers.R",
-  "line": 2387,
+  "line": 2464,
   "ported": true,
   "python": "metacheck.datacheck._files_delim:read_delim"
  },
  ".utf8_lines": {
   "file": "R/data_check_helpers.R",
-  "line": 1996,
+  "line": 2073,
   "ported": true,
   "python": "metacheck.datacheck.files:_utf8_lines"
  },
  ".utf8_repair_df": {
   "file": "R/data_check_helpers.R",
-  "line": 2293,
+  "line": 2370,
   "ported": true,
   "python": "metacheck.datacheck.files:_utf8_repair_df"
  },
  ".vl_is_numeric": {
   "file": "R/data_check_helpers.R",
-  "line": 3588,
+  "line": 3665,
   "ported": true,
   "python": "metacheck.datacheck.columns:_vl_is_numeric"
  },
  ".vl_split_pairs": {
   "file": "R/data_check_helpers.R",
-  "line": 3592,
+  "line": 3669,
   "ported": true,
   "python": "metacheck.datacheck.columns:_vl_split_pairs"
  },
@@ -7112,7 +7716,7 @@
  },
  ".wait_out_known_rate_limit": {
   "file": "R/repo-download.R",
-  "line": 729,
+  "line": 770,
   "python": "metacheck.archives.download:_wait_out_known_rate_limit"
  },
  ".where_acknows_txt": {
@@ -7134,12 +7738,12 @@
  },
  ".xls_readable": {
   "file": "R/data_check_helpers.R",
-  "line": 2409,
-  "python": "metacheck.datacheck.files:_xls_readable"
+  "line": 2486,
+  "python": "metacheck.datacheck.columns:_xls_readable"
  },
  ".xml2bib": {
   "file": "R/import-grobid.R",
-  "line": 1180,
+  "line": 1147,
   "ported": true,
   "python": "metacheck.io.grobid:_xml2bib"
  },
@@ -7205,13 +7809,13 @@
  },
  ".zenodo_id": {
   "file": "R/archive-zenodo.R",
-  "line": 56,
+  "line": 166,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_id"
  },
  ".zenodo_info": {
   "file": "R/archive-zenodo.R",
-  "line": 257,
+  "line": 385,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_info"
  },
@@ -7220,6 +7824,11 @@
   "line": 200,
   "ported": true,
   "python": "metacheck.archives.zenodo_upload:_zenodo_license_id"
+ },
+ ".zenodo_links_only": {
+  "file": "R/archive-zenodo.R",
+  "line": 128,
+  "python": "metacheck.archives.zenodo:_zenodo_links_only"
  },
  ".zenodo_meta_from_folder": {
   "file": "R/archive-zenodo-upload.R",
@@ -7235,19 +7844,19 @@
  },
  ".zenodo_unread": {
   "file": "R/archive-zenodo.R",
-  "line": 220,
+  "line": 346,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_unread"
  },
  ".zenodo_verify_downloads": {
   "file": "R/archive-zenodo.R",
-  "line": 795,
+  "line": 958,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_verify_downloads"
  },
  ".zenodo_zip_members": {
   "file": "R/archive-zenodo.R",
-  "line": 744,
+  "line": 907,
   "ported": true,
   "python": "metacheck.archives.zenodo:_zenodo_zip_members"
  },
@@ -7362,7 +7971,7 @@
  },
  ".zip_timeout_for_size": {
   "file": "R/repo-download.R",
-  "line": 1142,
+  "line": 1183,
   "ported": true,
   "python": "metacheck.archives.download:_zip_timeout_for_size"
  },
@@ -7493,7 +8102,7 @@
  },
  "check_file_naming": {
   "file": "R/file-naming.R",
-  "line": 300,
+  "line": 292,
   "ported": true,
   "python": "metacheck.fileinfo.naming:check_file_naming"
  },
@@ -7503,39 +8112,51 @@
   "ported": true,
   "python": "metacheck.db.orcid:check_orcid"
  },
+ "ckan_info": {
+  "file": "R/archive-ckan.R",
+  "line": 135,
+  "ported": true,
+  "python": "metacheck.archives.ckan:ckan_info"
+ },
+ "ckan_links": {
+  "file": "R/archive-ckan.R",
+  "line": 61,
+  "ported": true,
+  "python": "metacheck.archives.ckan:ckan_links"
+ },
  "code_abs_path": {
   "file": "R/code_check.R",
-  "line": 1107,
+  "line": 1140,
   "ported": true,
   "python": "metacheck.codecheck.core:code_abs_path"
  },
  "code_extract_py": {
   "file": "R/code_check.R",
-  "line": 909,
+  "line": 921,
   "ported": true,
   "python": "metacheck.codecheck.core:code_extract_py"
  },
  "code_extract_qmd_py": {
   "file": "R/code_check.R",
-  "line": 1004,
+  "line": 1033,
   "ported": true,
   "python": "metacheck.codecheck.core:code_extract_qmd_py"
  },
  "code_extract_r": {
   "file": "R/code_check.R",
-  "line": 806,
+  "line": 818,
   "ported": true,
   "python": "metacheck.codecheck.core:code_extract_r"
  },
  "code_file_refs": {
   "file": "R/code_check.R",
-  "line": 2640,
+  "line": 2883,
   "ported": true,
   "python": "metacheck.codecheck.core:code_file_refs"
  },
  "code_install_packages": {
   "file": "R/code_check.R",
-  "line": 1276,
+  "line": 1397,
   "ported": true,
   "python": "metacheck.codecheck.core:code_install_packages"
  },
@@ -7547,31 +8168,31 @@
  },
  "code_library_lines": {
   "file": "R/code_check.R",
-  "line": 1703,
+  "line": 1824,
   "ported": true,
   "python": "metacheck.codecheck.core:code_library_lines"
  },
  "code_library_names": {
   "file": "R/code_check.R",
-  "line": 1812,
+  "line": 1933,
   "ported": true,
   "python": "metacheck.codecheck.core:code_library_names"
  },
  "code_line_stats": {
   "file": "R/code_check.R",
-  "line": 1653,
+  "line": 1774,
   "ported": true,
   "python": "metacheck.codecheck.core:code_line_stats"
  },
  "code_packages": {
   "file": "R/code_check.R",
-  "line": 2045,
+  "line": 2166,
   "ported": true,
   "python": "metacheck.codecheck.core:code_packages"
  },
  "code_parse_r": {
   "file": "R/code_check.R",
-  "line": 1063,
+  "line": 1096,
   "ported": true,
   "python": "metacheck.codecheck.core:code_parse_r"
  },
@@ -7583,13 +8204,13 @@
  },
  "code_remove_comments": {
   "file": "R/code_check.R",
-  "line": 1416,
+  "line": 1537,
   "ported": true,
   "python": "metacheck.codecheck.core:code_remove_comments"
  },
  "code_setwd": {
   "file": "R/code_check.R",
-  "line": 1201,
+  "line": 1322,
   "ported": true,
   "python": "metacheck.codecheck.core:code_setwd"
  },
@@ -7667,157 +8288,157 @@
  },
  "data_check_case_issues": {
   "file": "R/data_check_helpers.R",
-  "line": 5473,
+  "line": 5570,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_case_issues"
  },
  "data_check_colname": {
   "file": "R/data_check_helpers.R",
-  "line": 5600,
+  "line": 5697,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_colname"
  },
  "data_check_colname_collisions": {
   "file": "R/data_check_helpers.R",
-  "line": 5660,
+  "line": 5757,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_colname_collisions"
  },
  "data_check_constant": {
   "file": "R/data_check_helpers.R",
-  "line": 5364,
+  "line": 5461,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_constant"
  },
  "data_check_demographic": {
   "file": "R/data_check_helpers.R",
-  "line": 6283,
+  "line": 6419,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_demographic"
  },
  "data_check_design_name": {
   "file": "R/data_check_helpers.R",
-  "line": 5425,
+  "line": 5522,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_design_name"
  },
  "data_check_empty": {
   "file": "R/data_check_helpers.R",
-  "line": 5395,
+  "line": 5492,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_empty"
  },
  "data_check_is_behaverse": {
   "file": "R/data_check_helpers.R",
-  "line": 7377,
+  "line": 7513,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_behaverse"
  },
  "data_check_is_inquisit": {
   "file": "R/data_check_helpers.R",
-  "line": 7394,
+  "line": 7530,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_inquisit"
  },
  "data_check_is_jspsych": {
   "file": "R/data_check_helpers.R",
-  "line": 7404,
+  "line": 7540,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_jspsych"
  },
  "data_check_is_psychopy": {
   "file": "R/data_check_helpers.R",
-  "line": 7414,
+  "line": 7550,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_psychopy"
  },
  "data_check_is_qualtrics": {
   "file": "R/data_check_helpers.R",
-  "line": 6876,
+  "line": 7012,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_is_qualtrics"
  },
  "data_check_numeric_in_text": {
   "file": "R/data_check_helpers.R",
-  "line": 5534,
+  "line": 5631,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_numeric_in_text"
  },
  "data_check_outliers": {
   "file": "R/data_check_helpers.R",
-  "line": 5327,
+  "line": 5424,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_outliers"
  },
  "data_check_pii_freetext": {
   "file": "R/data_check_helpers.R",
-  "line": 6132,
+  "line": 6244,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_pii_freetext"
  },
  "data_check_pii_geo": {
   "file": "R/data_check_helpers.R",
-  "line": 6058,
+  "line": 6162,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_pii_geo"
  },
  "data_check_pii_name": {
   "file": "R/data_check_helpers.R",
-  "line": 5993,
+  "line": 6097,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_pii_name"
  },
  "data_check_pii_values": {
   "file": "R/data_check_helpers.R",
-  "line": 5878,
+  "line": 5975,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_pii_values"
  },
  "data_check_scale_values": {
   "file": "R/data_check_helpers.R",
-  "line": 5200,
+  "line": 5297,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_scale_values"
  },
  "data_check_spss_filter": {
   "file": "R/data_check_helpers.R",
-  "line": 5446,
+  "line": 5543,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_spss_filter"
  },
  "data_check_whitespace": {
   "file": "R/data_check_helpers.R",
-  "line": 5501,
+  "line": 5598,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_check_whitespace"
  },
  "data_classify_files": {
   "file": "R/data_check_helpers.R",
-  "line": 582,
+  "line": 586,
   "ported": true,
   "python": "metacheck.datacheck.files:data_classify_files"
  },
  "data_col_concept": {
   "file": "R/data_check_helpers.R",
-  "line": 6485,
+  "line": 6621,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_col_concept"
  },
  "data_col_facets": {
   "file": "R/data_check_helpers.R",
-  "line": 6565,
+  "line": 6701,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_col_facets"
  },
  "data_col_stats": {
   "file": "R/data_check_helpers.R",
-  "line": 3051,
+  "line": 3128,
   "ported": true,
   "python": "metacheck.datacheck.columns:data_col_stats"
  },
  "data_col_type": {
   "file": "R/data_check_helpers.R",
-  "line": 2953,
+  "line": 3030,
   "ported": true,
   "python": "metacheck.datacheck.columns:data_col_type"
  },
@@ -7829,43 +8450,43 @@
  },
  "data_format": {
   "file": "R/data_check_helpers.R",
-  "line": 951,
+  "line": 976,
   "ported": true,
   "python": "metacheck.datacheck.files:data_format"
  },
  "data_group_llm": {
   "file": "R/data_check_helpers.R",
-  "line": 1464,
+  "line": 1489,
   "ported": true,
   "python": "metacheck.datacheck.files:data_group_llm"
  },
  "data_is_manifest": {
   "file": "R/data_check_helpers.R",
-  "line": 1030,
+  "line": 1055,
   "ported": true,
   "python": "metacheck.datacheck.files:data_is_manifest"
  },
  "data_promote_header_row": {
   "file": "R/data_check_helpers.R",
-  "line": 7213,
+  "line": 7349,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_promote_header_row"
  },
  "data_read_head": {
   "file": "R/data_check_helpers.R",
-  "line": 2460,
+  "line": 2537,
   "ported": true,
   "python": "metacheck.datacheck.files:data_read_head"
  },
  "data_strip_qualtrics_header": {
   "file": "R/data_check_helpers.R",
-  "line": 6972,
+  "line": 7108,
   "ported": true,
   "python": "metacheck.datacheck.checks:data_strip_qualtrics_header"
  },
  "data_study_roster": {
   "file": "R/data_check_helpers.R",
-  "line": 1493,
+  "line": 1522,
   "ported": true,
   "python": "metacheck.datacheck.files:data_study_roster"
  },
@@ -7895,25 +8516,25 @@
  },
  "dataverse_file_download": {
   "file": "R/archive-dataverse.R",
-  "line": 979,
+  "line": 1006,
   "ported": true,
   "python": "metacheck.archives.dataverse:dataverse_file_download"
  },
  "dataverse_info": {
   "file": "R/archive-dataverse.R",
-  "line": 650,
+  "line": 661,
   "ported": true,
   "python": "metacheck.archives.dataverse:dataverse_info"
  },
  "dataverse_links": {
   "file": "R/archive-dataverse.R",
-  "line": 487,
+  "line": 498,
   "ported": true,
   "python": "metacheck.archives.dataverse:dataverse_links"
  },
  "dataverse_pat": {
   "file": "R/archive-dataverse.R",
-  "line": 872,
+  "line": 899,
   "ported": true,
   "python": "metacheck.archives.dataverse:dataverse_pat"
  },
@@ -7961,25 +8582,25 @@
  },
  "download_repo_files": {
   "file": "R/repo-download.R",
-  "line": 1463,
+  "line": 1504,
   "ported": true,
   "python": "metacheck.archives.download:download_repo_files"
  },
  "dryad_auth": {
   "file": "R/archive-dryad.R",
-  "line": 609,
+  "line": 618,
   "ported": true,
   "python": "metacheck.archives.dryad:dryad_auth"
  },
  "dryad_file_download": {
   "file": "R/archive-dryad.R",
-  "line": 764,
+  "line": 773,
   "ported": true,
   "python": "metacheck.archives.dryad:dryad_file_download"
  },
  "dryad_info": {
   "file": "R/archive-dryad.R",
-  "line": 206,
+  "line": 209,
   "ported": true,
   "python": "metacheck.archives.dryad:dryad_info"
  },
@@ -7991,31 +8612,31 @@
  },
  "dryad_pat": {
   "file": "R/archive-dryad.R",
-  "line": 557,
+  "line": 566,
   "ported": true,
   "python": "metacheck.archives.dryad:dryad_pat"
  },
  "dspace7_file_download": {
   "file": "R/archive-dspace7.R",
-  "line": 652,
+  "line": 665,
   "ported": true,
   "python": "metacheck.archives.dspace7:dspace7_file_download"
  },
  "dspace7_links": {
   "file": "R/archive-dspace7.R",
-  "line": 208,
+  "line": 210,
   "ported": true,
   "python": "metacheck.archives.dspace7:dspace7_links"
  },
  "dspace_links": {
   "file": "R/archive-psycharchives.R",
-  "line": 123,
+  "line": 125,
   "ported": true,
   "python": "metacheck.archives.psycharchives:dspace_links"
  },
  "email": {
   "file": "R/utils.R",
-  "line": 284,
+  "line": 367,
   "ported": true,
   "python": "metacheck.config:email"
  },
@@ -8030,6 +8651,12 @@
   "line": 0,
   "ported": true,
   "python": "metacheck.modules.codebook_check:_empty_summary"
+ },
+ "eprints_links": {
+  "file": "R/archive-reshare.R",
+  "line": 81,
+  "ported": true,
+  "python": "metacheck.archives.reshare:eprints_links"
  },
  "expand_text": {
   "file": "",
@@ -8069,13 +8696,13 @@
  },
  "extract_eq": {
   "file": "R/text-extractors.R",
-  "line": 126,
+  "line": 290,
   "ported": true,
   "python": "metacheck.text.extract:extract_eq"
  },
  "extract_p_values": {
   "file": "R/text-extractors.R",
-  "line": 52,
+  "line": 88,
   "ported": true,
   "python": "metacheck.text.extract:extract_p_values"
  },
@@ -8098,13 +8725,13 @@
  },
  "figshare_file_download": {
   "file": "R/archive-figshare.R",
-  "line": 1113,
+  "line": 1132,
   "ported": true,
   "python": "metacheck.archives.figshare:figshare_file_download"
  },
  "figshare_info": {
   "file": "R/archive-figshare.R",
-  "line": 669,
+  "line": 672,
   "ported": true,
   "python": "metacheck.archives.figshare:figshare_info"
  },
@@ -8116,7 +8743,7 @@
  },
  "figshare_pat": {
   "file": "R/archive-figshare.R",
-  "line": 1037,
+  "line": 1056,
   "ported": true,
   "python": "metacheck.archives.figshare:figshare_pat"
  },
@@ -8410,49 +9037,49 @@
  },
  "github_files": {
   "file": "R/archive-github.R",
-  "line": 252,
+  "line": 312,
   "ported": true,
   "python": "metacheck.archives.github:github_files"
  },
  "github_info": {
   "file": "R/archive-github.R",
-  "line": 82,
+  "line": 142,
   "ported": true,
   "python": "metacheck.archives.github:github_info"
  },
  "github_languages": {
   "file": "R/archive-github.R",
-  "line": 630,
+  "line": 747,
   "ported": true,
   "python": "metacheck.archives.github:github_languages"
  },
  "github_links": {
   "file": "R/archive-github.R",
-  "line": 23,
+  "line": 61,
   "ported": true,
   "python": "metacheck.archives.github:github_links"
  },
  "github_pat": {
   "file": "R/archive-github.R",
-  "line": 599,
+  "line": 716,
   "ported": true,
   "python": "metacheck.archives.api_keys:github_pat"
  },
  "github_readme": {
   "file": "R/archive-github.R",
-  "line": 205,
+  "line": 265,
   "ported": true,
   "python": "metacheck.archives.github:github_readme"
  },
  "github_repo": {
   "file": "R/archive-github.R",
-  "line": 111,
+  "line": 171,
   "ported": true,
   "python": "metacheck.archives.github:github_repo"
  },
  "github_tree_files": {
   "file": "R/archive-github.R",
-  "line": 390,
+  "line": 455,
   "ported": true,
   "python": "metacheck.archives.github:github_tree_files"
  },
@@ -8464,19 +9091,19 @@
  },
  "gitlab_pat": {
   "file": "R/archive-gitlab.R",
-  "line": 222,
+  "line": 228,
   "ported": true,
   "python": "metacheck.archives.gitlab:gitlab_pat"
  },
  "gitlab_repo": {
   "file": "R/archive-gitlab.R",
-  "line": 102,
+  "line": 108,
   "ported": true,
   "python": "metacheck.archives.gitlab:gitlab_repo"
  },
  "gitlab_tree_files": {
   "file": "R/archive-gitlab.R",
-  "line": 274,
+  "line": 280,
   "ported": true,
   "python": "metacheck.archives.gitlab:gitlab_tree_files"
  },
@@ -8521,6 +9148,12 @@
   "line": 402,
   "ported": true,
   "python": "metacheck.statout.stata:import_stata_smcl"
+ },
+ "invenio_links": {
+  "file": "R/archive-zenodo.R",
+  "line": 70,
+  "ported": true,
+  "python": "metacheck.archives.zenodo:invenio_links"
  },
  "json_expand": {
   "file": "R/text-json_expand.R",
@@ -8631,19 +9264,19 @@
  },
  "manifest_merge": {
   "file": "R/data_check_helpers.R",
-  "line": 1345,
+  "line": 1370,
   "ported": true,
   "python": "metacheck.datacheck.files:manifest_merge"
  },
  "match_column_labels": {
   "file": "R/data_check_helpers.R",
-  "line": 4817,
+  "line": 4910,
   "ported": true,
   "python": "metacheck.datacheck.columns:match_column_labels"
  },
  "match_reported_output": {
   "file": "R/match-reported.R",
-  "line": 682,
+  "line": 699,
   "ported": true,
   "python": "metacheck.statout.match_reported:match_reported_output"
  },
@@ -8944,13 +9577,13 @@
  },
  "normalize_label": {
   "file": "R/data_check_helpers.R",
-  "line": 3158,
+  "line": 3235,
   "ported": true,
   "python": "metacheck.datacheck.columns:normalize_label"
  },
  "normalize_varname": {
   "file": "R/data_check_helpers.R",
-  "line": 3126,
+  "line": 3203,
   "ported": true,
   "python": "metacheck.datacheck.columns:normalize_varname"
  },
@@ -9003,37 +9636,37 @@
  },
  "osf_cache_clear": {
   "file": "R/archive-osf.R",
-  "line": 126,
+  "line": 138,
   "ported": true,
   "python": "metacheck.archives.osf:osf_cache_clear"
  },
  "osf_check_id": {
   "file": "R/archive-osf.R",
-  "line": 362,
+  "line": 519,
   "ported": true,
   "python": "metacheck.archives.osf:osf_check_id"
  },
  "osf_delay": {
   "file": "R/archive-osf.R",
-  "line": 770,
+  "line": 929,
   "ported": true,
   "python": "metacheck.archives.osf:osf_delay"
  },
  "osf_file_download": {
   "file": "R/archive-osf.R",
-  "line": 916,
+  "line": 1075,
   "ported": true,
   "python": "metacheck.archives.osf:osf_file_download"
  },
  "osf_get_all_pages": {
   "file": "R/archive-osf.R",
-  "line": 554,
+  "line": 711,
   "ported": true,
   "python": "metacheck.archives.osf:osf_get_all_pages"
  },
  "osf_info": {
   "file": "R/archive-osf.R",
-  "line": 160,
+  "line": 187,
   "ported": true,
   "python": "metacheck.archives.osf:osf_info"
  },
@@ -9075,7 +9708,7 @@
  },
  "osf_preprint_list": {
   "file": "R/archive-osf.R",
-  "line": 1771,
+  "line": 1930,
   "ported": true,
   "python": "metacheck.archives.osf:osf_preprint_list"
  },
@@ -9099,13 +9732,13 @@
  },
  "osf_type": {
   "file": "R/archive-osf.R",
-  "line": 452,
+  "line": 609,
   "ported": true,
   "python": "metacheck.archives.osf:osf_type"
  },
  "osf_user_projects": {
   "file": "R/archive-osf-helpers.R",
-  "line": 773,
+  "line": 838,
   "ported": true,
   "python": "metacheck.archives.osf_helpers:osf_user_projects"
  },
@@ -9159,31 +9792,31 @@
  },
  "papers_metadata": {
   "file": "R/import-papers.R",
-  "line": 187,
+  "line": 188,
   "ported": true,
   "python": "metacheck.io.corpus:papers_metadata"
  },
  "papers_remove": {
   "file": "R/import-papers.R",
-  "line": 145,
+  "line": 146,
   "ported": true,
   "python": "metacheck.io.corpus:papers_remove"
  },
  "parse_codebook": {
   "file": "R/data_check_helpers.R",
-  "line": 4343,
+  "line": 4429,
   "ported": true,
   "python": "metacheck.datacheck.columns:parse_codebook"
  },
  "parse_qsf": {
   "file": "R/data_check_helpers.R",
-  "line": 4672,
+  "line": 4765,
   "ported": true,
   "python": "metacheck.datacheck.columns:parse_qsf"
  },
  "path_sanitize": {
   "file": "R/utils.R",
-  "line": 316,
+  "line": 399,
   "ported": true,
   "python": "metacheck.utils:path_sanitize"
  },
@@ -9250,19 +9883,19 @@
  },
  "psycharchives_file_download": {
   "file": "R/archive-psycharchives.R",
-  "line": 476,
+  "line": 480,
   "ported": true,
   "python": "metacheck.archives.psycharchives:psycharchives_file_download"
  },
  "psycharchives_info": {
   "file": "R/archive-psycharchives.R",
-  "line": 203,
+  "line": 205,
   "ported": true,
   "python": "metacheck.archives.psycharchives:psycharchives_info"
  },
  "psycharchives_links": {
   "file": "R/archive-psycharchives.R",
-  "line": 159,
+  "line": 161,
   "ported": true,
   "python": "metacheck.archives.psycharchives:psycharchives_links"
  },
@@ -9456,7 +10089,7 @@
  },
  "repro_defined_vars": {
   "file": "R/reproducibility_check.R",
-  "line": 2119,
+  "line": 2151,
   "ported": true,
   "python": "metacheck.repro.core:repro_defined_vars"
  },
@@ -9480,13 +10113,13 @@
  },
  "repro_file_io": {
   "file": "R/reproducibility_check.R",
-  "line": 1999,
+  "line": 2032,
   "ported": true,
   "python": "metacheck.repro.core:repro_file_io"
  },
  "repro_install_deps": {
   "file": "R/reproducibility_check.R",
-  "line": 5379,
+  "line": 5977,
   "ported": true,
   "python": "metacheck.repro.core:repro_install_deps"
  },
@@ -9510,31 +10143,31 @@
  },
  "repro_materialize_layout": {
   "file": "R/reproducibility_check.R",
-  "line": 2769,
+  "line": 2801,
   "ported": true,
   "python": "metacheck.repro.core:repro_materialize_layout"
  },
  "repro_missing_inputs": {
   "file": "R/reproducibility_check.R",
-  "line": 2298,
+  "line": 2330,
   "ported": true,
   "python": "metacheck.repro.core:repro_missing_inputs"
  },
  "repro_rewrite_paths": {
   "file": "R/reproducibility_check.R",
-  "line": 750,
+  "line": 751,
   "ported": true,
   "python": "metacheck.repro.core:repro_rewrite_paths"
  },
  "repro_run_order": {
   "file": "R/reproducibility_check.R",
-  "line": 1674,
+  "line": 1703,
   "ported": true,
   "python": "metacheck.repro.core:repro_run_order"
  },
  "repro_run_scripts": {
   "file": "R/reproducibility_check.R",
-  "line": 6286,
+  "line": 6885,
   "ported": true,
   "python": "metacheck.repro.core:repro_run_scripts"
  },
@@ -9558,7 +10191,7 @@
  },
  "repro_write_scripts": {
   "file": "R/reproducibility_check.R",
-  "line": 4501,
+  "line": 5064,
   "ported": true,
   "python": "metacheck.repro.core:repro_write_scripts"
  },
@@ -9588,19 +10221,19 @@
  },
  "reshare_file_download": {
   "file": "R/archive-reshare.R",
-  "line": 355,
+  "line": 479,
   "ported": true,
   "python": "metacheck.archives.reshare:reshare_file_download"
  },
  "reshare_info": {
   "file": "R/archive-reshare.R",
-  "line": 136,
+  "line": 249,
   "ported": true,
   "python": "metacheck.archives.reshare:reshare_info"
  },
  "reshare_links": {
   "file": "R/archive-reshare.R",
-  "line": 43,
+  "line": 144,
   "ported": true,
   "python": "metacheck.archives.reshare:reshare_links"
  },
@@ -9617,7 +10250,7 @@
  },
  "rscript_path": {
   "file": "R/data_check_helpers.R",
-  "line": 2785,
+  "line": 2862,
   "ported": true,
   "python": "metacheck.datacheck.files:rscript_path"
  },
@@ -9743,19 +10376,19 @@
  },
  "stat_output_json": {
   "file": "R/stat-output.R",
-  "line": 377,
+  "line": 386,
   "ported": true,
   "python": "metacheck.statout.stat_output:stat_output_json"
  },
  "stat_output_validate": {
   "file": "R/stat-output.R",
-  "line": 479,
+  "line": 488,
   "ported": true,
   "python": "metacheck.statout.stat_output:stat_output_validate"
  },
  "stat_output_write": {
   "file": "R/stat-output.R",
-  "line": 570,
+  "line": 579,
   "ported": true,
   "python": "metacheck.statout.stat_output:stat_output_write"
  },
@@ -9899,7 +10532,7 @@
  },
  "text_peek": {
   "file": "R/data_check_helpers.R",
-  "line": 2025,
+  "line": 2102,
   "ported": true,
   "python": "metacheck.datacheck.files:text_peek"
  },
@@ -9917,7 +10550,7 @@
  },
  "txt_classify_content": {
   "file": "R/data_check_helpers.R",
-  "line": 2095,
+  "line": 2172,
   "ported": true,
   "python": "metacheck.datacheck.files:txt_classify_content"
  },
@@ -9995,13 +10628,13 @@
  },
  "zenodo_file_download": {
   "file": "R/archive-zenodo.R",
-  "line": 370,
+  "line": 530,
   "ported": true,
   "python": "metacheck.archives.zenodo:zenodo_file_download"
  },
  "zenodo_info": {
   "file": "R/archive-zenodo.R",
-  "line": 111,
+  "line": 233,
   "ported": true,
   "python": "metacheck.archives.zenodo:zenodo_info"
  },
@@ -10025,7 +10658,7 @@
  },
  "zip_decision": {
   "file": "R/zip-peek.R",
-  "line": 1768,
+  "line": 1789,
   "ported": true,
   "python": "metacheck.archives.zip_peek:zip_decision"
  },

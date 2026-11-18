@@ -490,7 +490,7 @@
               "Zajonc, R. B., Adelmann, P. K., Murphy, S. T. & Niendenthal, P. M. 1987 Convergence in the physical appearance of spouses. Motiv. Emotion 11, 335-346.",
               "Figure 1. Other-sex transforms were made by applying 50% of the shape difference between a participant's face and the same-sex composite face to an other-sex composite face. Transforms retained 100% of the colour information from the other-sex composite face. See Electronic Appendix A for a high resolution colour version of this image.",
               "Proc. R. Soc.B (2005)",
-              "The supplementary Electronic Appendix is available at http://dx.doi. org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.",
+              "The supplementary Electronic Appendix is available at http://dx.doi.org/10.1098/rspb.2004.3003 or via http://www.journals.royalsoc. ac.uk.",
               "Proc. R. Soc. B (2005)Downloaded from https://royalsocietypublishing.org/ on 24 July 2025"
             ]
           },
@@ -3231,7 +3231,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "0.4.3.28"
+                  "0.4.4.6"
                 ]
               },
               {
@@ -3303,6 +3303,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

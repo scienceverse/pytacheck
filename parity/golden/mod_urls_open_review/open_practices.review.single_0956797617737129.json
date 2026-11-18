@@ -64,8 +64,8 @@
               "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (osf.io/a5bmw/).",
               "As in Study 2b, we preregistered our hypothesis, methods, participant recruitment strategy, and analysis before running the studies and analyzing the data (osf.io/zmf4c).",
               "In a pilot study, another set of participants (N = 40) rated both strangers (liked and disliked) on likability (likability, generosity, warmth, blameworthiness, morality, friendliness; see the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 for factor analyses confirming one general-likability dimension) as well as intelligence and health.",
-              "All data and materials have been made publicly available via the Open Science Framework and can be accessed at file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag.",
-              "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67 Study 3: http://www.osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be).",
+              "All data and materials have been made publicly available via the Open Science Framework and can be accessed at osf.io/6b4ag.",
+              "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67 Study 3: osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be).",
               "Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
             ]
           },
@@ -256,7 +256,7 @@
       {
         "t": "chr",
         "v": [
-          "Data was openly shared for this article, based on the following text:\n\n> All data and materials have been made publicly available via the Open Science Framework and can be accessed at file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag.",
+          "Data was openly shared for this article, based on the following text:\n\n> All data and materials have been made publicly available via the Open Science Framework and can be accessed at osf.io/6b4ag.",
           "Code was openly shared for this article, based on the following text:\n\n> Detailed descriptions of our planned analyses as well as the full set of materials, including all additional measures, can be found at the Open Science Framework (osf.io/6b4ag).\n\n> In a pilot study, another set of participants (N = 40) rated both strangers (liked and disliked) on likability (likability, generosity, warmth, blameworthiness, morality, friendliness; see the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 for factor analyses confirming one general-likability dimension) as well as intelligence and health.\n\n> Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
         ]
       },
@@ -331,7 +331,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "All data and materials have been made publicly available via the Open Science Framework and can be accessed at file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag."
+                  "All data and materials have been made publicly available via the Open Science Framework and can be accessed at osf.io/6b4ag."
                 ]
               }
             ]
@@ -358,7 +358,7 @@
                 "t": "chr",
                 "v": [
                   "Detailed descriptions of our planned analyses as well as the full set of materials, including all additional measures, can be found at the Open Science Framework (osf.io/6b4ag).",
-                  "All data and materials have been made publicly available via the Open Science Framework and can be accessed at file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag.",
+                  "All data and materials have been made publicly available via the Open Science Framework and can be accessed at osf.io/6b4ag.",
                   "Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
                 ]
               }
@@ -375,7 +375,7 @@
                   "We report the preregistered analyses in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 which produced the same results as reported here.",
                   "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (osf.io/a5bmw/).",
                   "As in Study 2b, we preregistered our hypothesis, methods, participant recruitment strategy, and analysis before running the studies and analyzing the data (osf.io/zmf4c).",
-                  "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67 Study 3: http://www.osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be).",
+                  "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67 Study 3: osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be).",
                   "Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
                 ]
               }
@@ -406,6 +406,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

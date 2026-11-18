@@ -52,6 +52,9 @@ _DTYPES: dict[str, str] = {
     "is_published": "boolean",
     "date_created": "string",
     "date_modified": "string",
+    "date_registered": "string",
+    "contributors": "string",
+    "contributor_orcids": "string",
     "primary_file": "string",
     "orcid": "string",
     "osf_url": "string",
@@ -550,7 +553,13 @@ def _osf_info_ids(osf_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
         for v, g, o in zip(valid, is_guid, is_vo, strict=True)
         if not g and not o and v is not None
     ]
-    all_urls = [f"{osf_api}/guids/{g}" for g in guid_ids] + [f"{osf_api}/files/{w}" for w in wb_ids]
+    # The contributors come in the same answer (embed=bibliographic_contributors): they tell
+    # a paper's own project from one it reuses, at no extra request.
+    guid_urls = [
+        f"{osf_api}/guids/{g}{'&' if '?' in g else '?'}embed=bibliographic_contributors"
+        for g in guid_ids
+    ]
+    all_urls = guid_urls + [f"{osf_api}/files/{w}" for w in wb_ids]
     all_ids = guid_ids + wb_ids
 
     results: list[pd.DataFrame | None] = [None] * len(all_ids)
@@ -558,6 +567,14 @@ def _osf_info_ids(osf_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
     if cache is True:
         for i, ident in enumerate(all_ids):
             hit = _repo_info_cache_get("osf", ident)
+            # a project, registration or preprint stored before its contributors were read is
+            # asked for again; so is a refusal (401/403, "private"), which is not kept any more
+            if isinstance(hit, pd.DataFrame):
+                kinds = set(hit["osf_type"].dropna()) if "osf_type" in hit else set()
+                if (
+                    kinds & {"nodes", "registrations", "preprints"} and "contributors" not in hit
+                ) or "private" in kinds:
+                    hit = None
             if hit is not None:
                 results[i] = hit
                 need_fetch[i] = False
@@ -573,7 +590,17 @@ def _osf_info_ids(osf_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
                 results[i] = _osf_parse_response(resp, pb=pb, osf_id=ident)
             except Exception:
                 results[i] = _frame({"osf_id": [ident], "osf_type": "error"}, 1)
-            if cache is True and _repo_info_ok(results[i]):
+            # A refusal (401/403, read as "private") is not kept: the OSF also refuses public
+            # projects for a while, and a kept refusal made a paper's own project look empty in
+            # every later run.
+            r_i = results[i]
+            if (
+                cache is True
+                and _repo_info_ok(r_i)
+                and not (
+                    r_i is not None and "osf_type" in r_i and (r_i["osf_type"] == "private").any()
+                )
+            ):
                 _repo_info_cache_put("osf", ident, results[i])
 
     info_table = bind_rows(results)
@@ -940,6 +967,43 @@ def _osf_github_files(node: str) -> pd.DataFrame | None:
 # ---------------------------------------------------------------------------
 
 
+def _osf_contributors(recs: list[dict[str, Any]]) -> tuple[list[str | None], list[str | None]]:
+    """Port of ``.osf_contributors()``: each record's contributors and their ORCID iDs.
+
+    The bibliographic contributors OSF lists in a node's, registration's or preprint's
+    citation, as ``"Name; Name"`` and ``"id; id"``. ``.osf_info()`` asks for them in the
+    request it makes anyway (``?embed=bibliographic_contributors``); they tell a paper's
+    own project from one it reuses. ``None`` (``NA``) where the answer holds none (a
+    listing of child nodes, or an answer from before they were asked for).
+    """
+    from metacheck.utils import _meta_orcids
+
+    names: list[str | None] = []
+    orcids: list[str | None] = []
+    for rec in recs:
+        users = _get(rec, "embeds", "bibliographic_contributors", "data")
+        if not isinstance(users, list) or not users:
+            names.append(None)
+            orcids.append(None)
+            continue
+        nm: list[str] = []
+        orc: list[str] = []
+        for u in users:
+            att = _get(u, "embeds", "users", "data", "attributes")
+            if not isinstance(att, dict):
+                continue
+            full = att.get("full_name")
+            if isinstance(full, str) and full:
+                nm.append(full)
+            social = att.get("social")
+            o = social.get("orcid") if isinstance(social, dict) else None
+            if o is not None:
+                orc.append(o if isinstance(o, str) else str(o))
+        names.append("; ".join(dict.fromkeys(nm)) if nm else None)
+        orcids.append(_meta_orcids(orc))
+    return names, orcids
+
+
 def _osf_node_data(data: Any, _context: list[dict[str, Any]] | None = None) -> pd.DataFrame:
     """Port of R/archive-osf-helpers.R::.osf_node_data(): node records -> a table."""
     recs = _records(data)
@@ -961,6 +1025,12 @@ def _osf_node_data(data: Any, _context: list[dict[str, Any]] | None = None) -> p
             "files": c.first(("relationships", "files", "links", "related", "href")),
             "parent": c.first(("relationships", "parent", "data", "id")),
             "project": c.first(("relationships", "root", "data", "id")),
+            # in the same response; repo_check keeps them, to tell a paper's own
+            # project from an older one it reuses
+            "date_created": c.first(("attributes", "date_created")),
+            "date_modified": c.first(("attributes", "date_modified")),
+            "contributors": _osf_contributors(recs)[0],
+            "contributor_orcids": _osf_contributors(recs)[1],
         },
         len(recs),
     )
@@ -1016,6 +1086,27 @@ def _osf_file_data(
         it = iter(types)
         cols["filetype"] = [next(it) if f else None for f in is_file]
 
+    # each OSF Storage file's own file server, so a later read of it skips the request to osf.io
+    # that only redirects there; its address ends in the file's own path ("/<id>")
+    from metacheck.archives.download import _osf_file_server_remember
+
+    own = []
+    for i, rec in enumerate(recs):
+        server = _get(rec, "links", "upload")
+        att_path = _get(rec, "attributes", "path")
+        if (
+            kind[i] == "file"
+            and cols["provider"][i] == "osfstorage"
+            and isinstance(server, str)
+            and isinstance(att_path, str)
+            and server.endswith(att_path)
+        ):
+            own.append(i)
+    if own:
+        _osf_file_server_remember(
+            [cols["download_url"][i] for i in own], [_get(recs[i], "links", "upload") for i in own]
+        )
+
     folders = [i for i, k in enumerate(kind) if k == "folder"]
     if folders:
         name = list(cols["name"])
@@ -1057,6 +1148,8 @@ def _osf_preprint_data(data: Any, _context: list[dict[str, Any]] | None = None) 
             "parent": c.first(("relationships", "node", "data", "id")),
             "project": c.first(("relationships", "root", "data", "id")),
             "primary_file": c.first(("relationships", "primary_file", "links", "related", "href")),
+            "contributors": _osf_contributors(recs)[0],
+            "contributor_orcids": _osf_contributors(recs)[1],
         },
         len(recs),
     )
@@ -1081,6 +1174,11 @@ def _osf_reg_data(data: Any, _context: list[dict[str, Any]] | None = None) -> pd
             "files": c.first(("relationships", "files", "links", "related", "href")),
             "parent": c.first(("relationships", "registered_from", "data", "id")),
             "project": c.first(("relationships", "root", "data", "id")),
+            "description": c.first(("attributes", "description")),
+            "date_created": c.first(("attributes", "date_created")),
+            "date_registered": c.first(("attributes", "date_registered")),
+            "contributors": _osf_contributors(recs)[0],
+            "contributor_orcids": _osf_contributors(recs)[1],
         },
         len(recs),
     )

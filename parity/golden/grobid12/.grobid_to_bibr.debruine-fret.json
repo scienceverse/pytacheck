@@ -529,7 +529,7 @@
               "Holmes, W. G. & Sherman, P. W. 1982 The ontogeny of kin recognition in two species of ground squirrels. Am. Zool. 22, 491-517.",
               "McCabe, K. A., Rassenti, S. J. & Smith, V. L. 1996 Game theory and reciprocity in some extensive form experimental games. Proc. Natl Acad. Sci. USA 93, 13 421-13 428.",
               "McLain, D. K., Setters, D., Moulton, M. P. & Pratt, A. E. 2000 Ascription of resemblance of newborns by parents and non-relatives. Evol. Hum. Behav. 21, 11-23.",
-              "Mateo, J. M. & Johnston, R. E. 2000 Kin recognition and the 'armpit effect': evidence of self-referent phenotype matching. Proc. R. Soc. Lond. B 267, 695-700. (DOI 10.1098/rspb. 2000.1058.)",
+              "Mateo, J. M. & Johnston, R. E. 2000 Kin recognition and the 'armpit effect': evidence of self-referent phenotype matching. Proc. R. Soc. Lond. B 267, 695-700. (DOI 10.1098/rspb.2000.1058.)",
               "Meikle, D. B. & Vessey, S. H. 1981 Nepotism among rhesus monkey brothers. Nature 294, 160-161.",
               "Nesse, R. M., Silverman, A. & Bortz, A. 1990 Sex differences in ability to recognize family resemblance. Ethol. Sociobiol. 11, 11-21.",
               "Penton-Voak, I. S., Perrett, D. I. & Pierce, J. 1999 Computer graphic studies of the role of facial similarity in judgements of attractiveness. Curr. Psychol. 18, 104-117.",
@@ -3511,7 +3511,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "0.4.3.28"
+                  "0.4.4.6"
                 ]
               },
               {
@@ -3562,6 +3562,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1503,6 +1503,7 @@ def _archive_rows(
     archive_row: pd.DataFrame,
     label: str,
     skip_types: Any,
+    archive: Any = None,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.archive_rows()``: rows for the files of an extracted archive.
 
@@ -1518,6 +1519,10 @@ def _archive_rows(
     ``file_type`` is the file's own extension type when the extension has
     one (``NA`` otherwise); R keeps the archive's type, so a CSV from a zip
     was typed "archive" (UPSTREAM_ISSUES U213).
+
+    The files get the archive's path in ``archive_file_path`` (*label*) and its file on disk in
+    ``archive_file_location`` (*archive*), as ``data_check`` drops the archive's row once it is
+    unpacked, and ``reproducibility_check`` puts the archive itself in the run folder (#648).
     """
     import pandas as pd
 
@@ -1567,7 +1572,36 @@ def _archive_rows(
         rows["file_url"] = pd.Series([None] * len(loc), dtype="string")
     if "file_type" in rows.columns:
         rows["file_type"] = pd.Series(_ext_type(base), dtype="string")
+    rows["archive_file_path"] = pd.Series([label] * len(loc), dtype="string")
+    rows["archive_file_location"] = pd.Series([_archive_loc(archive)] * len(loc), dtype="string")
     return rows
+
+
+def _archive_loc(archive: Any) -> str | None:
+    """The archive's file on disk as a string (``NA`` for none)."""
+    return (
+        None
+        if archive is None or (isinstance(archive, float) and math.isnan(archive))
+        else str(archive)
+    )
+
+
+def _archive_label(archive_row: pd.DataFrame, path: Any) -> str:
+    """Port of ``.archive_label()``: the path an archive's files are listed under.
+
+    The archive's own path in the repository ("templates/ref-bounti/res-t2.nii.gz"), else its
+    file name. With only the file name, the folder the archive was in was lost, and
+    reproducibility_check put its files at the top of the run folder (#648).
+    """
+    import pandas as pd
+
+    fp = None
+    if "file_path" in archive_row.columns and len(archive_row):
+        v = archive_row["file_path"].iloc[0]
+        fp = None if pd.isna(v) else str(v)
+    if fp is None or not fp:
+        return os.path.basename(str(path))
+    return re.sub(r"^(\./|/)+", "", fp.replace("\\", "/"))
 
 
 def _ext_type(names: Sequence[str]) -> list[str | None]:
@@ -1810,6 +1844,7 @@ def _with_oversize(
     label: str,
     name: Sequence[str],
     file_size: Sequence[float],
+    archive: Any = None,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.with_oversize()``: *rows* plus a row per inner file not unpacked.
 
@@ -1844,6 +1879,9 @@ def _with_oversize(
         extra["file_url"] = pd.Series([None] * n, dtype="string")
     if "file_type" in extra.columns:
         extra["file_type"] = pd.Series(_ext_type(base), dtype="string")
+    # the archive itself was downloaded; only its file was too large to unpack
+    extra["archive_file_path"] = pd.Series([label] * n, dtype="string")
+    extra["archive_file_location"] = pd.Series([_archive_loc(archive)] * n, dtype="string")
     out = pd.concat([rows, extra], ignore_index=True) if len(rows) else extra
     out.attrs["oversize"] = pd.DataFrame(
         {
@@ -1909,14 +1947,15 @@ def _expand_zip(
             raise
         os.makedirs(dest, exist_ok=True)
         _move_extracted(part, dest, [_zip_disk_name(n) for n in missing])
-    label = os.path.basename(zip_path)
-    rows = _archive_rows(dest, zip_row, label, skip_types) if want else empty
+    label = _archive_label(zip_row, zip_path)
+    rows = _archive_rows(dest, zip_row, label, skip_types, archive=zip_path) if want else empty
     return _with_oversize(
         rows,
         zip_row,
         label,
         [n for n, o in zip(names, over, strict=True) if o],
         [s for s, o in zip(sizes, over, strict=True) if o],
+        archive=zip_path,
     )
 
 
@@ -2023,9 +2062,9 @@ def _expand_tar(
             sizes[i] = float(os.path.getsize(got))
             over[i] = True
             _unlink(dest, n)
-    label = os.path.basename(tar_path)
+    label = _archive_label(tar_row, tar_path)
     rows = (
-        _archive_rows(dest, tar_row, label, skip_types)
+        _archive_rows(dest, tar_row, label, skip_types, archive=tar_path)
         if any(k and not o for k, o in zip(keep, over, strict=True))
         else empty
     )
@@ -2035,6 +2074,7 @@ def _expand_tar(
         label,
         [n for n, o in zip(names, over, strict=True) if o],
         [s for s, o in zip(sizes, over, strict=True) if o],
+        archive=tar_path,
     )
 
 
@@ -2097,7 +2137,7 @@ def _expand_compressed(
     out = os.path.join(dest, inner_name)
     if os.path.exists(out) and os.path.getsize(out) > max_bytes:
         _unlink(dest, inner_name)
-    label = os.path.basename(gz_path)
+    label = _archive_label(gz_row, gz_path)
     if not os.path.exists(out):
         # written beside `dest` and moved in when complete: a decompression that
         # was stopped left a partial file, reused as complete (U203)
@@ -2128,14 +2168,16 @@ def _expand_compressed(
         if status != "ok":
             shutil.rmtree(part, ignore_errors=True)
             if status == "over":
-                return _with_oversize(empty, gz_row, label, [inner_name], [math.nan])
+                return _with_oversize(
+                    empty, gz_row, label, [inner_name], [math.nan], archive=gz_path
+                )
             return empty
         os.makedirs(dest, exist_ok=True)
         _move_extracted(part, dest, [inner_name])
     # the file is closed before its size is read (metacheck reads it before the
     # last buffer is flushed, so the size is rounded down to the block size,
     # 0 for a small file: U69)
-    return _archive_rows(dest, gz_row, label, skip_types)
+    return _archive_rows(dest, gz_row, label, skip_types, archive=gz_path)
 
 
 # -- zip_decision() ------------------------------------------------------------

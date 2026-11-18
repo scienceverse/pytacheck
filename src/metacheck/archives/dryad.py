@@ -51,6 +51,7 @@ from metacheck.archives.dataverse import (
     _verify_file_table,
     _zip_members,
 )
+from metacheck.utils import _meta_orcids, _meta_related, _meta_text
 
 __all__ = [
     "DRYAD_DOI_PREFIXES",
@@ -125,7 +126,9 @@ def dryad_links(paper: Any) -> pd.DataFrame:
         # a sharing link, resolved to its DOI by dryad_info() (#484)
         "|(?:https?://)?(?:www\\.)?datadryad\\.org/(?:stash/)?share/[A-Za-z0-9_-]+"
         "|(?:https?://)?(?:doi\\.org/)?10\\.5061/dryad\\.[A-Za-z0-9]+"
-        f"|(?:https?://)?(?:doi\\.org/)?(?:{alt})/[A-Za-z0-9]+"
+        # the newer prefixes' suffixes can hold a hyphen ("10.15146/5xcp-0d46"), which cut the
+        # link short before (#634)
+        f"|(?:https?://)?(?:doi\\.org/)?(?:{alt})/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*"
     )
     other_dryad = _link_matches(paper, dryad_bare_regex, _dryad_prefilter())
 
@@ -137,7 +140,11 @@ def dryad_links(paper: Any) -> pd.DataFrame:
 
 @functools.cache
 def _dryad_doi_patterns() -> tuple[Any, ...]:
-    patterns = (r"(10\.5061/dryad\.[A-Za-z0-9]+)", f"((?:{_alt_prefix_regex()})/[A-Za-z0-9]+)")
+    # with a hyphen inside, as in dryad_links() ("10.15146/5xcp-0d46")
+    patterns = (
+        r"(10\.5061/dryad\.[A-Za-z0-9]+)",
+        f"((?:{_alt_prefix_regex()})/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)",
+    )
     return tuple(compile_r(p, ignore_case=True, perl=True) for p in patterns)
 
 
@@ -306,7 +313,7 @@ def dryad_info(
         _tick(bar, f"Starting Dryad retrieval for {nv} dataset{'' if nv == 1 else 's'}...")
         id_info = []
         for doi in valid_dois:
-            cached = _repo_info_cache_get("dryad", doi) if cache is True else None
+            cached = _repo_info_cache_get("dryad", doi, need=["related"]) if cache is True else None
             # A listing stored before the paging fix (0.3.3.1) has no `files_total`: it holds
             # only Dryad's first page of 20 files, so it is not reused, and Dryad is asked
             # again (metacheck #506). Neither is one marked incomplete.
@@ -377,6 +384,18 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
         obj["publication_date"] = _field_cell(_empty_or(field(rec, "publicationDate"), None))
         obj["updated_date"] = _field_cell(_empty_or(field(rec, "lastModificationDate"), None))
         obj["authors"] = _list_cell(authors)
+        # who made it (ORCID iDs), what it says, and the article it belongs to
+        # ("primary_article"): they tell the paper's own deposit from one it reuses (#634), and
+        # come in this same answer
+        obj["orcids"] = _cell(
+            _meta_orcids(
+                [field(a, "orcid") for a in (_elements(authors_field) if authors_field else [])]
+            )
+        )
+        obj["description"] = _cell(_meta_text(_empty_or(field(rec, "abstract"), "")))
+        obj["related"] = _cell(
+            _meta_related(field(rec, "relatedWorks"), "relationship", "identifier")
+        )
         obj["license"] = _field_cell(_empty_or(field(rec, "license"), None))
         obj["files"] = _list_cell(listing.files)
         # storageSize is Dryad's own total for the dataset, independent of the

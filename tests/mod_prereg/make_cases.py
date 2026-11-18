@@ -54,7 +54,9 @@ def r_expr(spec):
     return (
         "(function() { .r <- httptest2::get_current_redactor(); "
         "httptest2::set_redactor(function(req) { req$url <- "
-        'gsub("[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100", "", req$url); req }); '
+        'gsub("[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100", "", req$url); '
+        'req$url <- gsub("(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$", '
+        '"\\\\1", req$url, perl = TRUE); req }); '
         'Sys.setenv(TESTTHAT = "true"); '
         'on.exit({ httptest2::set_redactor(.r); Sys.unsetenv("TESTTHAT") }); '
         "tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; "

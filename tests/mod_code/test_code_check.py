@@ -104,7 +104,9 @@ def test_offline_no_code(stub_repo_check: list[dict[str, Any]]) -> None:
     # R: "code_check offline" -- test_paper("no text") has no repositories
     paper = pc.test_paper(["no text"])
     mo = module_run(paper, "code_check")
-    assert stub_repo_check == [{"local_only": False, "cache": False, "skip_on_api_limit": False}]
+    assert stub_repo_check == [
+        {"local_only": False, "cache": False, "osf_max_requests": 50, "skip_on_api_limit": False}
+    ]
     assert mo.traffic_light == "na"
     assert len(mo.table) == 0
     assert {"file_name", "repo_url", "language"} <= set(mo.table.columns)
@@ -657,6 +659,8 @@ def test_parse_errors() -> None:
         "code_lines": [4, 2, 2, 3, 1, 7, 1, 1],
         "percentage_comment": [0.2, 1 / 3, 1 / 3, 0.5, 0.5, 2 / 9, 0.8, 0.8],
         "has_docstring": [None] * 8,
+        # none of the fixture files writes a file (metacheck 0.4.4.4, #648)
+        "files_written": [""] * 8,
         "loaded_files_missing": [0, 0, 0, 1, 0, 0, 0, 0],
         "loaded_files_missing_names": ["", "", "", "file.csv", "", "", "", ""],
     }
@@ -764,6 +768,7 @@ def test_local_path_forces_a_fresh_repo_check(stub_repo_check: list[dict[str, An
             "local_path": str(CODE_FILES / "subdir"),
             "local_only": True,
             "cache": False,
+            "osf_max_requests": 50,
             "skip_on_api_limit": False,
         }
     ]
@@ -1035,7 +1040,7 @@ def test_na_file_url_is_read_as_the_path_na() -> None:
 def test_case_insensitive_match_uses_r_tolower() -> None:
     # R's tolower() (towlower) maps "İ" to "i": "İNDEX.csv" is the repository's
     # index.csv, "DATÉ.CSV" its daté.csv; only Ümlaut.csv is missing
-    from metacheck.modules._code_check import _r_tolower
+    from metacheck.codecheck.core import _lower as _r_tolower
 
     assert _r_tolower("İNDEX.CSV") == "index.csv"
     assert _r_tolower("DATÉ.CSV ΣΑΣ Ǆ") == "daté.csv σασ ǆ"

@@ -28,6 +28,7 @@ import pandas as pd
 from metacheck._r.base import r_round
 from metacheck._r.regex import sub
 from metacheck.datacheck._files_rdata import NA_INTEGER, RObject, read_rds
+from metacheck.io.read import _paper_repair_text
 
 __all__ = ["papers_available", "papers_load", "papers_metadata", "papers_remove"]
 
@@ -172,7 +173,8 @@ def papers_load(
     cache_path = cache_dir / f"{name}.rds"
     if cache and cache_path.exists() and not overwrite:
         _message(f"Loading cached {name} ...")
-        return _read_rds(cache_path)
+        # a corpus saved before the repair of split links (see _repair_links())
+        return _paper_repair_text(_read_rds(cache_path))
 
     assets = _papers_release_assets(repo)
     names = [_file_path_sans_ext(n) for n in assets["name"]]
@@ -214,7 +216,7 @@ def papers_load(
             shutil.copyfile(tmp, cache_path)
             _message(f"Cached to {cache_path}")
         _message(f"Loading {name} ...")
-        return _read_rds(tmp)
+        return _paper_repair_text(_read_rds(tmp))
 
 
 def papers_remove(name: str) -> bool:

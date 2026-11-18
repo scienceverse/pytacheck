@@ -381,6 +381,9 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         "max_download_size": "largest total download per repository, in MB (default 500).",
         "max_files_per_repo": "largest file COUNT a single repository may have\n"
         "before it is refused outright (default `Inf`, no cap).",
+        "osf_max_requests": "the largest number of requests to the OSF for listing one OSF project,\n"
+        "passed to `repo_check()` when this module runs it (default 50; `Inf` for no limit). A\n"
+        "project listed only in part is named in a warning before anything is downloaded.",
         "cache": "if `TRUE`, keep downloaded files in a persistent on-disk cache.",
         "skip_on_api_limit": "if `TRUE`, a 429 that carries a confirmed\n"
         "rate-limit-exhausted signal skips that file instead of waiting. Also\n"
@@ -411,6 +414,7 @@ def data_check(
     max_file_size: float = 100,
     max_download_size: float = 500,
     max_files_per_repo: float = math.inf,
+    osf_max_requests: float = 50,
     cache: Any = False,
     skip_on_api_limit: bool = False,
     manifest: str | os.PathLike[str] | None = None,
@@ -483,6 +487,9 @@ def data_check(
     # Files that do not belong in a repository, which repo_check leaves out of its table;
     # the file tree marks them (junk: remove / keep only on purpose).
     tree_useless = get_prev_outputs("repo_check", "useless_files")
+    # OSF projects repo_check listed only in part (`osf_max_requests`); warned about below, before
+    # anything is downloaded
+    listing_partial = get_prev_outputs("repo_check", "partial_repos")
     if all_files is None:
         from metacheck.module import module_run
 
@@ -495,8 +502,10 @@ def data_check(
             **rc_args,
             local_only=local_only,
             cache=cache,
+            osf_max_requests=osf_max_requests,
             skip_on_api_limit=skip_on_api_limit,
         )
+        listing_partial = mo.get("partial_repos")
         all_files = mo.table
         if all_files is None:
             all_files = pd.DataFrame(
@@ -510,6 +519,12 @@ def data_check(
         tree_naming_issues = mo.get("naming_issues")
         tree_useless = mo.get("useless_files")
     all_files = all_files.copy().reset_index(drop=True)
+    if download != "none" and len(all_files) > 0:
+        from metacheck.llm.cap_prompt import _cap_report_partial
+
+        _cap_report_partial(
+            listing_partial, all_files["repo_url"].tolist() if "repo_url" in all_files else []
+        )
 
     # -- 2. classify every file --------------------------------------------------
     if len(all_files) == 0:
@@ -825,6 +840,9 @@ def data_check(
         # one row per key found in the repository's files: file, line, type and
         # only the beginning of the key
         "keys": key_found,
+        # sheets of notes or a codebook beside the data in a spreadsheet, which codebook_check
+        # reads (#651)
+        "doc_sheets": ex["doc_sheets"],
     }
 
 
@@ -1554,6 +1572,10 @@ def _extract(
         n_no_local = sum(1 for t, hl in zip(is_tab, has_local, strict=True) if t and not hl)
 
     manifest_files: list[Any] = []
+    # Sheets of notes or a codebook that a data spreadsheet holds beside its data, set aside
+    # below as documentation: one row per sheet. Returned as `doc_sheets`, so codebook_check
+    # reads them (#651).
+    doc_sheets: list[dict[str, Any]] = []
     workspace_files: list[Any] = []
     rds_workspace_files: list[Any] = []
     non_tabular: dict[str, Any] = {}
@@ -1663,6 +1685,18 @@ def _extract(
                 ]
                 if not keep:
                     keep = [k for k, t in enumerate(is_table) if t][:1]
+                set_aside = [k for k, d in enumerate(is_doc) if d and k not in keep]
+                if set_aside and keep:
+                    doc_sheets.extend(
+                        {
+                            "paper_id": None if f.get("paper_id") is None else str(f["paper_id"]),
+                            "source_file": f.get("source_file"),
+                            "file_location": f.get("file_location"),
+                            "sheet": sheets[k],
+                            "group": None if f.get("group") is None else str(f["group"]),
+                        }
+                        for k in set_aside
+                    )
                 if not keep:
                     if first["manifest"]:
                         manifest_files.append(skey)
@@ -1772,6 +1806,12 @@ def _extract(
         "n_data_files": len(data_rows),
         "n_extracted": n_extracted,
         "manifest_files": manifest_files,
+        "doc_sheets": pd.DataFrame(
+            {
+                c: pd.Series([r[c] for r in doc_sheets], dtype="string")
+                for c in ("paper_id", "source_file", "file_location", "sheet", "group")
+            }
+        ),
         "workspace_files": workspace_files,
         "rds_workspace_files": rds_workspace_files,
         "non_tabular": non_tabular,

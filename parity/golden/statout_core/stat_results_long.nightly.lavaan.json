@@ -1,0 +1,196 @@
+{
+  "id": "stat_results_long.nightly.lavaan",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "paper_id",
+      "source_file",
+      "test_id",
+      "result_id",
+      "analysis",
+      "table_title",
+      "row_label",
+      "statistic",
+      "stato_label",
+      "stato_iri",
+      "value",
+      "model_ref"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R",
+          "s.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s_r_model_test_user_model",
+          "s_r_model_test_user_model",
+          "s_r_model_test_user_model",
+          "s_r_user_model_versus_baseline_model",
+          "s_r_latent_variables_x1",
+          "s_r_latent_variables_x2",
+          "s_r_latent_variables_x2",
+          "s_r_latent_variables_x2",
+          "s_r_latent_variables_x2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s_r_model_test_user_model_r1_chi_square",
+          "s_r_model_test_user_model_r1_degrees_of_freedom",
+          "s_r_model_test_user_model_r1_p",
+          "s_r_user_model_versus_baseline_model_r1_cfi",
+          "s_r_latent_variables_r1_estimate",
+          "s_r_latent_variables_r2_estimate",
+          "s_r_latent_variables_r2_std_err",
+          "s_r_latent_variables_r2_z_value",
+          "s_r_latent_variables_r2_p_z"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Model Test User Model",
+          "Model Test User Model",
+          "Model Test User Model",
+          "User Model versus Baseline Model",
+          "Latent Variables",
+          "Latent Variables",
+          "Latent Variables",
+          "Latent Variables",
+          "Latent Variables"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Model Test User Model",
+          "Model Test User Model",
+          "Model Test User Model",
+          "User Model versus Baseline Model",
+          "Latent Variables",
+          "Latent Variables",
+          "Latent Variables",
+          "Latent Variables",
+          "Latent Variables"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "x1",
+          "x2",
+          "x2",
+          "x2",
+          "x2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Chi-square",
+          "Degrees of freedom",
+          "p",
+          "CFI",
+          "Estimate",
+          "Estimate",
+          "Std.Err",
+          "z-value",
+          "P(>|z|)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Chi-Squared statistic",
+          "number of degrees of freedom",
+          "p-value",
+          "CFI",
+          "estimate",
+          "estimate",
+          "Std.Err",
+          "z-value",
+          "P(>|z|)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://purl.obolibrary.org/obo/STATO_0000030",
+          "http://purl.obolibrary.org/obo/STATO_0000069",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "",
+          "http://purl.obolibrary.org/obo/STATO_0000471",
+          "http://purl.obolibrary.org/obo/STATO_0000471",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "24.361",
+          "8",
+          "0.002",
+          "0.975",
+          "1.000",
+          "0.559",
+          "0.105",
+          "5.301",
+          "0.000"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.6",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

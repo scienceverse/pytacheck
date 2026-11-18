@@ -49,10 +49,12 @@
           "section_type",
           "p_comp",
           "p_value",
+          "p_name",
           "expanded",
           "imprecise",
           "not_a_test",
-          "zero"
+          "zero",
+          "impossible"
         ],
         "v": [
           {
@@ -328,6 +330,33 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "A p < .05 with *p<.01 note.",
               "A p < .05 with *p<.01 note.",
               "B p < .05 with * P < 0.001 note.",
@@ -432,6 +461,33 @@
               false,
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
           }
         ]
       },
@@ -442,7 +498,7 @@
           "This module sometimes flags false positives when sentences discuss how p-value thresholds were set. It can also miss an imprecise p-value that is reported against a threshold (e.g., \"decreased at the *p* < .05 significance threshold\").",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = c(\"p < .05\", \"p < .05\", \"p < .05\", \n\"p < .05\", \"p < .05\", \"p < .05\", \"p < .05\", \"p < .05\", \"p > .05\", \n\"p < .05\", \"p < .05\"), Text = c(\"A p < .05 with *p<.01 note.\", \n\"B p < .05 with * P < 0.001 note.\", \"C p < .05 with *p < .0005 note.\", \n\"D p < .05 with *p < .025 note.\", \"E p < .05 with **p<.05 note.\", \n\"F p < .05 with *p < 00.05 note.\", \"G p < .05 with *p ≤ .05 note.\", \n\"H p < .05 with *p <.1 note.\", \"J p > .05 with * p < .15 note.\", \n\"K p < .05 with *p = .05 note.\", \"L p < .05 with a trailing star*\"\n)), row.names = c(NA, -11L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nThe APA manual states: Report exact *p* values (e.g., *p* = .031) to two or three decimal places. However, report *p* values less than .001 as *p* < .001. However, 2 decimals is too imprecise for many use-cases (e.g., a *p* value meta-analysis), so report *p* values with three digits.\n\nAmerican Psychological Association (2020). <em>Publication manual of the American Psychological Association<\/em>, 7 edition. American Psychological Association.\n\n:::\n",
-          "*P* values are never exactly zero. A *p* value of .000 is a rounding artifact — the actual value is simply smaller than the reported precision. Very small *p* values should be reported as *p* < .001 rather than *p* = .000.",
+          "*P* values are never exactly zero. A *p* value of .000 is a rounding artifact — the actual value is simply smaller than the reported precision. Very small *p* values should be reported as *p* < .001 rather than *p* = .000. A *p* = 0 can also be a model parameter, such as an ARIMA order; check that it is a *p* value.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"P-Value\" = \"p = .000\", Text = \"I p = .000 with *p < .05 note is still zero.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nThe APA manual states: report *p* values less than .001 as *p* < .001.\n\nAmerican Psychological Association (2020). <em>Publication manual of the American Psychological Association<\/em>, 7 edition. American Psychological Association.\n\n:::\n"
         ]
@@ -465,7 +521,8 @@
         "names": [
           "paper_id",
           "n_imprecise",
-          "n_zero"
+          "n_zero",
+          "n_impossible"
         ],
         "v": [
           {
@@ -485,6 +542,12 @@
             "v": [
               1
             ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
           }
         ]
       },
@@ -496,6 +559,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

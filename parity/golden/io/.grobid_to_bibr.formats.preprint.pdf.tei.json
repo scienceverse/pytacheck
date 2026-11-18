@@ -743,7 +743,7 @@
               "We also pretested low-status objects for different purposes.",
               "The entire stimulus and data sets are available on OSF.",
               "Adam, H., Shirako, A., & Maddux, W. W. (2010). Cultural variance in the interpersonal effects of anger in negotiations. Psychological Science, 21(6), 882-889. https://doi.org/10.1177/0956797610370755",
-              "Adams, R. B., & Kleck, R. E. (2005). Effects of direct and averted gaze on the perception of facially communicated emotion. Emotion, 5(1), 3-11. https://doi.org/10.1037/1528- 3542.5.1.",
+              "Adams, R. B., & Kleck, R. E. (2005). Effects of direct and averted gaze on the perception of facially communicated emotion. Emotion, 5(1), 3-11. https://doi.org/10.1037/1528-3542.5.1.",
               "Anderson, C., Hildreth, J. A. D., & Howland, L. (2015). Is the desire for status a fundamental human motive? A review of the empirical literature. Psychological Bulletin, 141(3), 574-601. https://doi.org/10.1037/a0038781",
               "Anderson, K. (2016). gsDesign: Group sequential design. https://CRAN.R- project.org/package=gsDesign",
               "Atias, D., Todorov, A., Liraz, S., Eidinger, A., Dror, I., Maymon, Y., & Aviezer, H. (2019). Loud and unclear: Intense real-life vocalizations during affective situations are perceptually ambiguous and contextually malleable. Journal of Experimental Psychology: General, 148(10), 1842-1848. https://doi.org/10.1037/xge0000535",
@@ -790,7 +790,7 @@
               "Plutchik, R. (1982). A psychoevolutionary theory of emotions. Social Science Information, 21(4-5), 529-553. https://doi.org/10.1177/053901882021004003",
               "Puranik, H., Koopman, J., Vough, H. C., & Gamache, D. L. (2019). They want what I've got (I think): The causes and consequences of attributing coworker behavior to envy. Academy of Management Review, 44(2), 424-449. https://doi.org/10.5465/amr.2016.0191",
               "R Core Team. (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing. https://www.R-project.org/",
-              "Reisenzein, R., Bördgen, S., Holtbernd, T., & Matz, D. (2006). Evidence for strong dissociation between emotion and facial displays: The case of surprise. Journal of Personality and Social Psychology, 91(2), 295-315. https://doi.org/10.1037/0022- 3514.91.2.295",
+              "Reisenzein, R., Bördgen, S., Holtbernd, T., & Matz, D. (2006). Evidence for strong dissociation between emotion and facial displays: The case of surprise. Journal of Personality and Social Psychology, 91(2), 295-315. https://doi.org/10.1037/0022-3514.91.2.295",
               "Rentzsch, K., Schröder-Abé, M., & Schütz, A. (2015). Envy mediates the relation between low academic self-esteem and hostile tendencies. Journal of Research in Personality, 58, 143-153. https://doi.org/10.1016/j.jrp.2015.08.001",
               "Revelle, W. (2018). psych: Procedures for personality and psychological research. Northwestern University. https://CRAN.R-project.org/package=psych",
               "Rodriguez Mosquera, P. M., Parrott, W. G., & Hurtado de Mendoza, A. (2010). I fear your envy, I rejoice in your coveting: On the ambivalent experience of being envied by others. Journal of Personality and Social Psychology, 99(5), 842-854. https://doi.org/10.1037/a0020965",
@@ -808,7 +808,7 @@
               "Van de Ven, N. (2016). Envy and its consequences: Why it is useful to distinguish between benign and malicious envy. Social and Personality Psychology Compass, 10(6), 337- 349. https://doi.org/10.1111/spc3.12253",
               "Van de Ven, N., Zeelenberg, M., & Pieters, R. (2009). Leveling up and down: The experiences of benign and malicious envy. Emotion, 9(3), 419-429. https://doi.org/10.1037/a0015669",
               "Van de Ven, N., Zeelenberg, M., & Pieters, R. (2011). Why envy outperforms admiration. Personality and Social Psychology Bulletin, 37(6), 784-795. https://doi.org/10.1177/0146167211400421",
-              "Van de Ven, N., Zeelenberg, M., & Pieters, R. (2012). Appraisal patterns of envy and related emotions. Motivation and Emotion, 36(2), 195-204. https://doi.org/10.1007/s11031- 011-9235-8",
+              "Van de Ven, N., Zeelenberg, M., & Pieters, R. (2012). Appraisal patterns of envy and related emotions. Motivation and Emotion, 36(2), 195-204. https://doi.org/10.1007/s11031-011-9235-8",
               "Van der Schalk, J., Hawk, S. T., Fischer, A. H., & Doosje, B. (2011). Moving faces, looking places: Validation of the Amsterdam Dynamic Facial Expression Set (ADFES). Emotion, 11(4), 907-920. https://doi.org/10.1037/a0023853",
               "Van Dijk, W. W., & Zeelenberg, M. (2002). Investigating the appraisal patterns of regret and disappointment. Motivation and Emotion, 26(4), 321-331. https://doi.org/10.1023/A:1022823221146",
               "Van Dijk, W. W., Zeelenberg, M., & Van der Pligt, J. (1999). Not having what you want versus having what you do not want: The impact of type of negative outcome on the experience of disappointment and related emotions. Cognition and Emotion, 13(2), 129-148. https://doi.org/10.1080/026999399379302",
@@ -9446,6 +9446,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.3.28",
+  "metacheck_version": "0.4.4.6",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

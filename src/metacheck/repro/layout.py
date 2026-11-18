@@ -30,7 +30,6 @@ from metacheck._r import (
     regextract_all,
     strsplit,
     sub,
-    trimws,
 )
 from metacheck._values import field, is_missing
 from metacheck.codecheck._rcoerce import r_unlist_chr
@@ -209,27 +208,9 @@ def _code_notebook_cell(lines: Sequence[str | None]) -> dict[str, list[str]]:
     commands IPython accepts without a ``%``: ``cd folder``, and ``name?`` for help.
     Returns ``{"lines": ..., "removed": ...}``.
     """
-    ls = list(lines)
-    nonblank = [x for x in ls if _nzchar(trimws(x))]
-    first = nonblank[0] if nonblank else None
-    if (
-        first is not None
-        and grepl(r"^\s*%%", first)
-        and not grepl(r"^\s*%%(time|timeit|capture|prun)\b", first)
-    ):
-        return {"lines": [], "removed": [trimws(first)]}
-    magic = grepl(r"^\s*[%!?]", ls)
-    cd = grepl(r"^\s*cd(\s+[^=(\s].*)?$", ls, perl=True)
-    help_ = grepl(r"^\s*[A-Za-z_][A-Za-z0-9_.]*\?{1,2}\s*$", ls)
-    is_cmd = [bool(a or b or c) for a, b, c in zip(magic, cd, help_, strict=True)]
-    indented = [c and bool(grepl(r"^\s", x)) for c, x in zip(is_cmd, ls, strict=True)]
-    removed = [trimws(x) for x, c in zip(ls, is_cmd, strict=True) if c]
-    kept: list[str] = []
-    for x, c, ind in zip(ls, is_cmd, indented, strict=True):
-        if ind:
-            kept.append(cast(str, sub(r"^(\s*).*$", r"\1pass", x)))
-        elif not c:
-            kept.append(cast(str, x))
+    from metacheck.codecheck.core import _code_notebook_cell as cell
+
+    kept, removed = cell(list(lines))
     return {"lines": kept, "removed": removed}
 
 
@@ -434,7 +415,9 @@ def _repro_fetchable(structure_df: pd.DataFrame | None) -> list[bool]:
 
 
 def _repro_named_files(
-    structure_df: pd.DataFrame | None, code_text: str | Sequence[str | None] | None
+    structure_df: pd.DataFrame | None,
+    code_text: str | Sequence[str | None] | None,
+    by_extension: bool = True,
 ) -> list[bool]:
     """Port of ``R/reproducibility_check.R::.repro_named_files()``.
 
@@ -442,7 +425,9 @@ def _repro_named_files(
     the code names, by file name, or by extension in a pattern such as
     ``list.files(pattern = "\\.wav$")`` or ``glob("*.tif")``. The first download leaves
     out images, sound, video and documents from hosts that send files one by one; a
-    script that reads one gets it here (#568).
+    script that reads one gets it here (#568). With ``by_extension=False`` only names count: for
+    the files of deposits that are not the paper's own (#648), where a pattern such as
+    ``"\\.csv$"`` fetched all 1,327 files of another team's repository.
     """
     want = _repro_fetchable(structure_df)
     code = _chr_list(code_text)
@@ -466,6 +451,8 @@ def _repro_named_files(
         if b is not None
         and (b in words if grepl(r"^[a-z0-9._+-]+$", b) else b in txt)  # fixed=TRUE
     }
+    if not by_extension:
+        return [w and b in found for b, w in zip(base, want, strict=True)]
     exts = _unique(e for e, w in zip(ext, want, strict=True) if w and e)
     ext_named = {
         e
@@ -501,8 +488,19 @@ def _repro_fetch_files(
             if u is not None:
                 counts[u] = counts.get(u, 0) + 1
     try:
+        # downloaded under the path in the deposit, where the cache keeps it, not where
+        # unpacking its archive puts it in the run (#648)
+        want = structure_df.loc[mask].copy()
+        if "file_path_deposit" in want.columns:
+            deposit = list(want["file_path_deposit"])
+            current = list(want["file_path"]) if "file_path" in want.columns else deposit
+            want["file_path"] = pd.Series(
+                [d if not is_missing(d) else c for d, c in zip(deposit, current, strict=True)],
+                index=want.index,
+                dtype="string",
+            )
         dl = download.download_repo_files(
-            structure_df.loc[mask],
+            want,
             max_file_size=max_file_size,
             max_download_size=max_download_size,
             repo_file_counts=counts,
@@ -1392,9 +1390,11 @@ def _repro_keep_working_refs(
     ]
     relocate = [not in_place[i] and not is_call[i] and from_script[i] is not None for i in range(n)]
     up = [bool(_GOES_UP.search(r)) for r in ref]
-    # a path built by sprintf()/file.path() is kept unless it holds an absolute path
+    # a path built by sprintf()/file.path() is kept unless it holds an absolute path ("/" alone
+    # is a separator, as in paste(dir, "x.csv", sep = "/"), not a path from the top of the
+    # computer: such a call was rewritten as a whole; #648)
     absolute_call = [
-        is_call[i] and bool(re.search(r"""["']([A-Za-z]:[/\\]|/|~)""", raw_ref[i]))
+        is_call[i] and bool(re.search(r"""["']([A-Za-z]:[/\\]|/[^"'/]|~)""", raw_ref[i]))
         for i in range(n)
     ]
     keep = [
@@ -1432,10 +1432,13 @@ def _repro_keep_working_refs(
     joined = [
         found[i] and cast(str, tgt[i]).lower().endswith("/" + ref[i].lower()) for i in range(n)
     ]
-    # a bare name counts as joined only when it stands in a joining call
-    if "in_join" in rw.columns:
-        in_join = _is_true_col(rw, "in_join")
-        joined = [j and ("/" in ref[i] or in_join[i]) for i, j in enumerate(joined)]
+    # A bare name is not joined as a whole: where it stands in a joining call
+    # (file.path(dir, "x.csv")), that place is left as written when the rewrite is applied
+    # (_repro_path_piece() in _repro_apply_rewrites()), while the same name read directly
+    # elsewhere in the script is still pointed to its file. Kept or rewritten for the whole
+    # script, one joined place kept a direct read.csv("x.csv") from being pointed to the file
+    # (#648).
+    joined = [j and "/" in ref[i] for i, j in enumerate(joined)]
     # the one argument of here() is joined to nothing but where here() starts
     joined = [j and not in_here[i] for i, j in enumerate(joined)]
     keep = [
@@ -1916,11 +1919,29 @@ def _repro_apply_folder_vars(rw: pd.DataFrame, fv: pd.DataFrame | None) -> pd.Da
     if len(rw):
         refs = _chr_or_none(rw, "ref")
         rw = rw.loc[[r not in dropped for r in refs]]
+    # such a piece is now joined to the run folder, so it is rewritten although it is a piece
+    # of a path (_repro_path_piece()), as before #648
+    kept = {
+        p
+        for pcs, keep in zip(_col(fv, "pieces"), _col(fv, "keep_pieces"), strict=True)
+        if _is_true(keep)
+        for p in (pcs or [])
+    }
+    if len(rw) and kept:
+        rw = rw.copy()
+        old_whole = [w is True for w in rw["whole"]] if "whole" in rw.columns else [False] * len(rw)
+        refs = _chr_or_none(rw, "ref")
+        rw["whole"] = pd.Series(
+            [w or (r in kept) for w, r in zip(old_whole, refs, strict=True)],
+            index=rw.index,
+            dtype="boolean",
+        )
     values = _chr_list(fv["value"])
     targets = _chr_list(fv["target"])
     add = _rewrite_columns(
         [_folder_row(v or "", t or "") for v, t in zip(values, targets, strict=True)]
     )
+    add["whole"] = pd.Series([True] * len(add), index=add.index, dtype="boolean")
     return bind_rows([rw, add])
 
 
@@ -2300,9 +2321,15 @@ def _repro_shown_location(files: pd.DataFrame, idx: int | Sequence[int]) -> list
     rows = [idx] if isinstance(idx, int) else list(idx)
     url_all = _chr_or_none(files, "file_url")
     path_all = _chr_or_none(files, "file_path")
+    # the path in the deposit, not where unpacking its archive put the file (#648)
+    deposit_all = (
+        _chr_or_none(files, "file_path_deposit") if "file_path_deposit" in files.columns else None
+    )
     out: list[str | None] = []
     for i in rows:
         url, path = url_all[i], path_all[i]
+        if deposit_all is not None and deposit_all[i] is not None:
+            path = deposit_all[i]
         if url is not None and grepl(r"^https?://", url):
             out.append(url)
         elif _nzchar(path):
@@ -2310,3 +2337,408 @@ def _repro_shown_location(files: pd.DataFrame, idx: int | Sequence[int]) -> list
         else:
             out.append(None)
     return out
+
+
+# ---------------------------------------------------------------------------
+# archives unpacked in their own folder (#648)
+# ---------------------------------------------------------------------------
+
+_REPRO_ARCHIVE_EXT = r"\.(zip|tar|tgz|tbz2?|txz|tar\.(gz|bz2|xz)|7z|rar)$"
+_REPRO_COMPRESS_EXT = r"\.(gz|bz2|xz)$"
+
+
+def _repro_unpacked_paths(paths: Sequence[str | None]) -> list[str | None]:
+    """Port of ``R/reproducibility_check.R::.repro_unpacked_paths()``.
+
+    Where each file of an archive is once the archive is unpacked where it is, as the
+    authors had it on their computer (#648). data_check, code_check and the download list a
+    file inside an archive under the archive's path
+    (``data/behaviour_data.zip/behaviour_data/p01.json``); copied to the run folder like
+    that, the files sat in a folder named after the archive, where no code looks. Unpacked
+    as Archive Utility on a Mac does: a zip or tar whose files are all in one folder is
+    unpacked beside itself (``data/behaviour_data/p01.json``), one with loose files into a
+    folder named after it (``data/behaviour_data/``); a single compressed file (.gz, .bz2,
+    .xz) beside itself (``x.json.gz`` gives ``x.json``). A path that a file outside archives
+    already has is not taken: that file stays, and the archive's copy keeps its path. An
+    archive inside an archive is unpacked in turn. Paths are compared without case, as on
+    the authors' Windows or Mac computer.
+    """
+    out: list[str | None] = [
+        None if p is None else re.sub(r"^(\./|/)+", "", str(p).replace("\\", "/")) for p in paths
+    ]
+    if not out:
+        return out
+
+    def is_arch(x: str) -> bool:
+        return bool(re.search(_REPRO_ARCHIVE_EXT, x, re.IGNORECASE)) or bool(
+            re.search(_REPRO_COMPRESS_EXT, x, re.IGNORECASE)
+        )
+
+    def strip_contents(x: str) -> str:
+        return re.sub(r"\.contents$", "", x, flags=re.IGNORECASE)
+
+    def first_arch(parts: list[str]) -> int:
+        # 1-based position of the first folder (not the file) that is an archive; 0 for none
+        for k, x in enumerate(parts[:-1], 1):
+            if is_arch(strip_contents(x)):
+                return k
+        return 0
+
+    # paths outside every archive: never taken by a file from an archive
+    taken = {o.lower() for o in out if o is not None and first_arch(o.split("/")) == 0}
+    for _ in range(5):
+        parts = [("" if o is None else o).split("/") for o in out]
+        pos = [first_arch(x) if len(x) >= 2 else 0 for x in parts]
+        idx = [i for i, k in enumerate(pos) if k > 0]
+        if not idx:
+            break
+        prefix = {i: "/".join(parts[i][: pos[i]]) for i in idx}
+        inner = {i: "/".join(parts[i][pos[i] :]) for i in idx}
+        for pf in dict.fromkeys(prefix[i] for i in idx):
+            m = [i for i in idx if prefix[i] == pf]
+            arch = strip_contents(os.path.basename(pf))
+            d = os.path.dirname(pf)
+            d = "" if d in (".", "") else d + "/"
+            if not re.search(_REPRO_ARCHIVE_EXT, arch, re.IGNORECASE):
+                new = [d + inner[i] for i in m]
+            else:
+                first = [inner[i].split("/", 1)[0] for i in m]
+                one_folder = (
+                    all("/" in inner[i] for i in m) and len({f.lower() for f in first}) == 1
+                )
+                if one_folder:
+                    new = [d + inner[i] for i in m]
+                else:
+                    stem = re.sub(_REPRO_ARCHIVE_EXT, "", arch, count=1, flags=re.IGNORECASE)
+                    new = [f"{d}{stem}/{inner[i]}" for i in m]
+            # a path already taken: the archive's copy goes to a folder of its own beside the
+            # archive ("data/x.zip_files/a.csv")
+            for i, nw in zip(m, new, strict=True):
+                if nw.lower() not in taken:
+                    out[i] = nw
+                else:
+                    out[i] = f"{strip_contents(pf)}_files/{inner[i]}"
+            taken.update(
+                nw.lower() for i, nw in zip(m, new, strict=True) if nw.lower() not in taken
+            )
+    return out
+
+
+def _repro_unpack_archives(
+    structure_df: pd.DataFrame | None, code_tbl: pd.DataFrame | None
+) -> dict[str, Any]:
+    """Port of ``R/reproducibility_check.R::.repro_unpack_archives()``.
+
+    The module's file tables with every file of an archive at its place once the archive is
+    unpacked (:func:`_repro_unpacked_paths`), decided for data and code together, as they
+    share the archives. ``file_path`` is changed; the deposit's own path is kept in
+    ``file_path_deposit`` for the report. Also returns the archives that are on disk
+    (``archives``: ``file_name``, ``file_path``, ``file_location``), which go into the run
+    folder at their own path too, so code that unpacks an archive itself, or reads a .gz as
+    it is, finds it. Returns ``structure_df``, ``code_tbl`` and ``archives``.
+    """
+
+    def get_paths(d: pd.DataFrame | None) -> list[str | None]:
+        if d is None or len(d) == 0:
+            return []
+        names = _chr_or_none(d, "file_name")
+        paths = _chr_or_none(d, "file_path") if "file_path" in d.columns else list(names)
+        return [nm if (p is None or p == "") else p for p, nm in zip(paths, names, strict=True)]
+
+    ps = get_paths(structure_df)
+    pc = get_paths(code_tbl)
+    # the archives on disk
+    a_path: list[str] = []
+    a_loc: list[str] = []
+    if (
+        structure_df is not None
+        and len(structure_df)
+        and {"archive_file_path", "archive_file_location"} <= set(structure_df.columns)
+    ):
+        seen: set[tuple[str | None, str | None]] = set()
+        low: set[str] = set()
+        for ap, al in zip(
+            _chr_or_none(structure_df, "archive_file_path"),
+            _chr_or_none(structure_df, "archive_file_location"),
+            strict=True,
+        ):
+            if al is None or ap is None or not os.path.exists(al) or (ap, al) in seen:
+                continue
+            seen.add((ap, al))
+            if ap.lower() in low:
+                continue
+            low.add(ap.lower())
+            a_path.append(ap)
+            a_loc.append(al)
+    # an archive inside another archive is one of that archive's files
+    new = _repro_unpacked_paths([*ps, *pc, *a_path])
+
+    def set_(d: pd.DataFrame | None, nw: Sequence[str | None]) -> pd.DataFrame | None:
+        if d is None or len(d) == 0:
+            return d
+        d = d.copy()
+        if "file_path_deposit" not in d.columns:
+            d["file_path_deposit"] = pd.array(get_paths(d), dtype="string")
+        d["file_path"] = pd.array(list(nw), dtype="string")
+        return d
+
+    structure_out = set_(structure_df, new[: len(ps)])
+    code_out = set_(code_tbl, new[len(ps) : len(ps) + len(pc)])
+    archives = _frame(
+        {
+            "file_name": ("string", [os.path.basename(x) for x in a_path]),
+            "file_path": ("string", new[len(ps) + len(pc) :]),
+            "file_location": ("string", a_loc),
+        }
+    )
+    return {"structure_df": structure_out, "code_tbl": code_out, "archives": archives}
+
+
+def _repro_archive_text(
+    structure_df: pd.DataFrame | None, code_text: Sequence[Sequence[str | None]]
+) -> str:
+    """Port of ``R/reproducibility_check.R::.repro_archive_text()``.
+
+    The report's sentence on the zip and tar files the run unpacked because the code reads
+    files that are only inside them, while no script unpacks them itself: as deposited, the
+    code does not find those files (#648). The code reads a file of the archive when it
+    names the file, or the folder the archive unpacks to (``behaviour_data/*.json``); it
+    unpacks the archive itself when it names the archive. ``""`` when there is no such
+    archive.
+    """
+    from metacheck.repro.software import _sw_escape
+
+    if (
+        structure_df is None
+        or len(structure_df) == 0
+        or not {"file_path_deposit", "file_path"} <= set(structure_df.columns)
+    ):
+        return ""
+    dep = [
+        None if x is None else x.replace("\\", "/")
+        for x in _chr_or_none(structure_df, "file_path_deposit")
+    ]
+    now = _chr_or_none(structure_df, "file_path")
+    arch_re = re.compile(
+        r"^((?:[^/]*/)*?[^/]*?\.(?:zip|tar|tgz|tbz2?|txz|7z|rar|tar\.(?:gz|bz2|xz)))"
+        r"(?:\.contents)?/.*$",
+        re.IGNORECASE,
+    )
+    arch: list[str | None] = []
+    for d in dep:
+        m = None if d is None else arch_re.match(d)
+        arch.append(None if d is None else (m.group(1) if m else d))
+    ok = [
+        a is not None and a != d and n is not None and n != d
+        for a, d, n in zip(arch, dep, now, strict=True)
+    ]
+    if not any(ok):
+        return ""
+    txt = "\n".join(str(x) for lines in code_text for x in lines if x is not None).lower()
+    if not txt:
+        return ""
+
+    def named(x: str) -> bool:
+        pat = "(^|[\"'/\\\\])" + _sw_escape(x.lower()) + "([\"'/\\\\]|$)"
+        return bool(re.search(pat, txt))
+
+    used: list[str] = []
+    for a in dict.fromkeys(x for x, o in zip(arch, ok, strict=True) if o and x is not None):
+        i = [k for k, o in enumerate(ok) if o and arch[k] == a]
+        if os.path.basename(a).lower() in txt:
+            continue
+        top = os.path.dirname(a)
+        rel = [
+            cast(str, now[k]) if top in (".", "") else cast(str, now[k])[len(top) + 1 :] for k in i
+        ]
+        first = list(dict.fromkeys(r.split("/", 1)[0] for r in rel if "/" in r))
+        if any(named(x) for x in [os.path.basename(cast(str, now[k])) for k in i] + first):
+            used.append(a)
+    if not used:
+        return ""
+    k = len(used)
+    names = ", ".join(f"`{u}`" for u in used)
+    return (
+        f"The code reads files that are only inside {names}, and no script unpacks "
+        f"{plural(k, 'it', 'them')}. We unpacked {plural(k, 'it', 'them')} in "
+        f"{plural(k, 'its', 'their')} folder before the run. So that others can run the code as "
+        "deposited, start the code with a line that unpacks "
+        f'{plural(k, "it", "them")} (such as `unzip("{os.path.basename(used[0])}")` in R), or '
+        "upload the files unpacked."
+    )
+
+
+# ---------------------------------------------------------------------------
+# the path rewrites of one language, and the preview of a run
+# ---------------------------------------------------------------------------
+
+
+def _repro_plan_rewrites(
+    code_text_list: Any,
+    files: pd.DataFrame,
+    plan: pd.DataFrame | None,
+    structure_df: pd.DataFrame | None = None,
+    lang: str = "R",
+) -> dict[str, Any]:
+    """Port of ``R/reproducibility_check.R::.repro_plan_rewrites()``.
+
+    The path rewrites reproducibility_check works out for the scripts of one language before
+    a run, and the folder each script runs from: what the module does for R and for Python,
+    kept in one place so :func:`_repro_rewrite_preview` and the tests see exactly what a run
+    would. *code_text_list* is the code per script (an R Markdown file's chunks, a
+    notebook's cells), named by file; *files* has ``file_name`` and ``file_path``
+    (code_check's table); *plan* and *structure_df* as in the module. Returns a dict with
+    ``io``, ``script_paths``, ``rewrite_list`` (a list of frames, one per script),
+    ``order_tbl``, ``script_places``, ``run_dirs``, and for R ``here_roots`` and
+    ``here_dirs`` (``None`` for Python).
+    """
+    from metacheck.repro.core import repro_file_io, repro_rewrite_paths, repro_run_order
+
+    texts = list(code_text_list.values())
+    n = len(texts)
+    names = [str(x) for x in _chr_or_none(files, "file_name")]
+    is_r = lang == "R"
+    io = repro_file_io(code_text_list, lang)
+    if is_r:
+        io["file_path"] = pd.array(_repro_order_path(files), dtype="string")
+    script_paths = _repro_script_path(files)
+    rewrites = [
+        repro_rewrite_paths(
+            texts[i], names[i], plan, lang, structure_df=structure_df, script_path=script_paths[i]
+        )
+        for i in range(n)
+    ]
+    order_tbl = repro_run_order(io)
+    script_places = _repro_script_places(files)
+    # the folder each script runs from
+    run_dirs = _repro_run_folders(script_places, code_text_list, plan, order_tbl, lang)
+    here_roots: list[str | None] | None = None
+    here_dirs: list[str] | None = None
+    if is_r:
+        # where here() starts for each script (see _repro_here_roots() and the .here marks the
+        # module writes with the scripts): a path given to here() counts from there (a named
+        # vector in R: by position here)
+        here_roots = list(_repro_here_roots(code_text_list, run_dirs, plan).values())
+        here_dirs = [_repro_here_start(run_dirs[i], here_roots[i], plan) for i in range(n)]
+    # a reference that works as written stays as it is
+    rewrites = [
+        _repro_keep_working_refs(
+            rewrites[i],
+            plan,
+            script_paths[i],
+            run_dirs[i],
+            here_dir="." if here_dirs is None else here_dirs[i],
+        )
+        for i in range(n)
+    ]
+    # a folder on the authors' computer held in a variable gets the deposit's folder
+    if is_r:
+        rewrites = [
+            _repro_apply_folder_vars(
+                rewrites[i], _repro_folder_vars(texts[i], plan, run_dirs[i], rw=rewrites[i])
+            )
+            for i in range(n)
+        ]
+    # a folder the script lists, where the deposit holds it (#578, item 2)
+    for i in range(n):
+        d = rewrites[i]
+        lf = _repro_listed_folders(texts[i], plan, run_dirs[i], lang)
+        if lf is not None and len(lf):
+            have_refs = set(_chr_list(d["ref"])) if len(d) else set()
+            extra = lf[[ref not in have_refs for ref in _chr_list(lf["ref"])]]
+            if len(extra):
+                rewrites[i] = bind_rows([d, extra]) if len(d.columns) else extra
+    return {
+        "io": io,
+        "script_paths": script_paths,
+        "rewrite_list": rewrites,
+        "order_tbl": order_tbl,
+        "script_places": script_places,
+        "run_dirs": run_dirs,
+        "here_roots": here_roots,
+        "here_dirs": here_dirs,
+    }
+
+
+def _repro_rewrite_preview(dir: str | os.PathLike[str]) -> pd.DataFrame:
+    """Port of ``R/reproducibility_check.R::.repro_rewrite_preview()``.
+
+    What reproducibility_check would run, without running it: each R and Python script of
+    the folder *dir* (a deposit) as written and as the module rewrites it (paths,
+    ``setwd()``, writes, Windows slashes), from :func:`_repro_plan_rewrites` and
+    ``repro_write_scripts()``. For tests and for checking a change to the rewrites on many
+    deposits. Returns a frame with ``file_name``, ``lang``, ``run_dir``, ``original`` and
+    ``rewritten`` (each the code joined by ``"\\n"``).
+    """
+    import tempfile
+
+    from metacheck.codecheck.core import code_extract_py, code_extract_r, code_read
+    from metacheck.repro.core import repro_write_scripts
+
+    root_dir = os.path.realpath(str(dir)).replace("\\", "/")
+    rel: list[str] = []
+    for base, _dirs, fnames in os.walk(root_dir):
+        rel.extend(
+            os.path.relpath(os.path.join(base, f), root_dir).replace(os.sep, "/") for f in fnames
+        )
+    # list.files() sorts its result
+    rel = [x for x in r_sorted(rel) if not re.search(r"(^|/)(\.git|__MACOSX)/", x)]
+    structure_df = _frame(
+        {
+            "file_name": ("string", [os.path.basename(x) for x in rel]),
+            "file_path": ("string", rel),
+            "file_location": ("string", [f"{root_dir}/{x}" for x in rel]),
+        }
+    )
+    plan = _repro_package_plan(structure_df)
+    out: list[pd.DataFrame] = []
+    for lang in ("R", "Python"):
+        rx = r"\.(r|rmd|qmd)$" if lang == "R" else r"\.(py|ipynb)$"
+        k = [bool(re.search(rx, x, re.IGNORECASE)) for x in rel]
+        if not any(k):
+            continue
+        sel = structure_df.loc[k].reset_index(drop=True)
+        sel["file_name"] = sel["file_path"]
+        code: dict[str, list[str]] = {}
+        for nm, loc in zip(
+            _chr_list(sel["file_name"]), _chr_list(sel["file_location"]), strict=True
+        ):
+            p = cast(str, loc)
+            if re.search(r"\.(rmd|qmd)$", p, re.IGNORECASE):
+                lines = code_extract_r(p)
+            elif re.search(r"\.ipynb$", p, re.IGNORECASE):
+                lines = code_extract_py(p)
+            else:
+                lines = code_read(p)
+            code[cast(str, nm)] = [str(x) for x in lines]
+        rp = _repro_plan_rewrites(code, sel, plan, structure_df, lang)
+        names = list(code)
+        with tempfile.TemporaryDirectory(prefix="rewrite_preview_") as root:
+            wt = repro_write_scripts(
+                code,
+                dict(zip(names, rp["rewrite_list"], strict=True)),
+                plan,
+                root,
+                lang=lang,
+                script_paths=rp["script_places"],
+                writes_in_place=True,
+                run_dirs=rp["run_dirs"],
+            )
+            wt_names = _chr_list(wt["file_name"])
+            rewritten = ["\n".join(_read_lines(cast(str, p))) for p in _chr_list(wt["script_path"])]
+        out.append(
+            _frame(
+                {
+                    "file_name": ("string", wt_names),
+                    "lang": ("string", [lang] * len(wt_names)),
+                    "run_dir": ("string", list(rp["run_dirs"])),
+                    "original": ("string", ["\n".join(code[x]) for x in cast(list[str], wt_names)]),
+                    "rewritten": ("string", rewritten),
+                }
+            )
+        )
+    if not out:
+        return _frame(
+            {c: ("string", []) for c in ("file_name", "lang", "run_dir", "original", "rewritten")}
+        )
+    return bind_rows(out)

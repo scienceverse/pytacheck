@@ -26,12 +26,18 @@ import respx
 from tests.httpmock import UPSTREAM_TESTS, fixture_response, r_digest
 
 _REDACT = re.compile(r"[?&]page(%5[Bb]size%5[Dd]|\[size\])=100")
+# the contributors osf_info() asks for with each guid (#634): the recordings of /v2/guids/<id>
+# predate it. Only the guid request's own embed is taken out, so osf_metadata()'s node request
+# (embed=license&embed=...) keeps its name.
+_REDACT_EMBED = re.compile(
+    r"(/v2/guids/[^/?&]+/?(?:\?[^&]*)?)[?&]embed=bibliographic_contributors$"
+)
 _FILE_REF = re.compile(r'find_mock_file\("([^"]+)"\)')
 
 
 def osf_mock_path(request: httpx.Request) -> str:
     """``httptest2::build_mock_url()`` after metacheck's ``page[size]`` redactor."""
-    url = _REDACT.sub("", str(request.url))
+    url = _REDACT_EMBED.sub(r"\1", _REDACT.sub("", str(request.url)))
     url = re.sub(r"^.*?://", "", url, count=1)
     base, _, query = url.partition("?")
     path = re.sub(r"/$", "", base).replace(":", "-")

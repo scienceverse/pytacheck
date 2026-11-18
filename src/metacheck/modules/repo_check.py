@@ -1,8 +1,9 @@
 """Repository Check (port of ``inst/modules/repo_check.R``).
 
 Lists the files in the repositories a paper links (OSF, GitHub, GitLab,
-ResearchBox, DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare,
-4TU.ResearchData, Mendeley Data, DataONE) and in local folders, without
+ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), Dataverse,
+Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, CKAN data portals) and in
+local folders, without
 downloading them; peeks inside ``.zip`` archives; classifies and groups the
 files by name; and reports missing READMEs, opaque archives, proprietary
 E-Prime files, restricted or closed sources, unclassifiable files, a
@@ -26,9 +27,10 @@ from metacheck.module import module
 from metacheck.modules import _repo_check as rc
 
 _NO_REPOS = (
-    "We found no links to repositories on the Open Science Framework, Github, ResearchBox, "
-    "DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, "
-    "DataONE, or LDbase."
+    "We found no links to repositories on the Open Science Framework, Github, GitLab, "
+    "ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), "
+    "Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, or CKAN "
+    "data portals."
 )
 
 _README_REPORT = (
@@ -184,6 +186,12 @@ _NAMING_SEVERITY_LABEL = {"bad": "Required", "suggestion": "Suggestion"}
         "(Dryad, confirmed live 2026-09-08) has its quota re-spent on every restart "
         "re-listing repositories nothing new needs fetching for, rather than on the actual "
         "(usually much smaller) download workload.",
+        "osf_max_requests": "the largest number of requests to the OSF for listing the components and "
+        "folders of one OSF project (default 50; `Inf` for no limit). The OSF needs one request per "
+        "folder, and a project with many components or folders, or one the OSF answers slowly for, can "
+        "take an hour to list in full. A project that reaches the limit is listed in part: it is named "
+        "in `partial_repos` and in the report. With `cache = TRUE`, the next run goes on where the "
+        "listing stopped (see [osf_info()]).",
         "model": "the LLM model name (`provider/model`, for example `groq/openai/gpt-oss-20b`), used only when `llm_use(TRUE)` "
         "for study grouping the deterministic passes cannot place",
         "params": "a named list passed to `llm()`, used only when `llm_use(TRUE)`",
@@ -201,6 +209,7 @@ def repo_check(
     peek_zips: bool = True,
     osf_license: bool = False,
     cache: bool = False,
+    osf_max_requests: float = 50,
     model: str | None = None,
     params: Mapping[str, Any] | None = None,
     skip_on_api_limit: bool = False,
@@ -214,6 +223,13 @@ def repo_check(
     grouping when ``llm_use(TRUE)``. *cache* also reuses zip listings
     peeked before, and *skip_on_api_limit* skips a zip whose host's rate limit
     is exhausted instead of waiting for its reset.
+
+    *osf_max_requests* is the largest number of requests to the OSF for listing the components
+    and folders of one OSF project (default 50; ``math.inf`` for no limit). The OSF needs one
+    request per folder, and a project with many components or folders, or one the OSF answers
+    slowly for, can take an hour to list in full. A project that reaches the limit is listed in
+    part: it is named in ``partial_repos`` and in the report. With *cache*, the next run goes on
+    where the listing stopped (see :func:`~metacheck.osf_info`).
 
     Listing needs no API key. Dryad, however, needs one to download file
     contents (:func:`~metacheck.dryad_pat` or :func:`~metacheck.dryad_auth`),
@@ -240,6 +256,7 @@ def repo_check(
             params,
             bar,
             skip_on_api_limit,
+            osf_max_requests,
         )
     finally:
         _tick(bar, "Repo Check Complete")
@@ -258,6 +275,7 @@ def _repo_check(
     params: Mapping[str, Any] | None,
     bar: Any,
     skip_on_api_limit: bool = False,
+    osf_max_requests: float = 50,
 ) -> dict[str, Any]:
     """The body of :func:`repo_check` (*bar* is the module's progress spinner)."""
     from metacheck.papers.tables import as_paper_list
@@ -289,14 +307,30 @@ def _repo_check(
         repos = rc.Repos(rc.empty_links())
     else:
         links, fs_links = rc.collect_links(paper)
+        # Damage from reading the PDF: a link in a security wrapper, two links run together, a
+        # home page alone, a link cut inside a name beside its longer form; then a link that a
+        # space split, with the rest after it in the text, is replaced by the joined form when
+        # only that form exists (metacheck/archives/link_versions.py, #634).
+        from metacheck.archives import _tick
+        from metacheck.archives.link_versions import _repo_links_joined, _repo_links_tidy
+
+        links = _repo_links_tidy(links, paper)
+        if len(links) > 0:
+            _tick(bar, "Checking links that may be split")
+            links = _repo_links_joined(links, paper)
         repos = rc.Repos(links)
         rc.flag_figshare_share_links(repos, fs_links)
 
+    # OSF projects whose listing stopped at `osf_max_requests`
+    osf_cut_urls: list[str] = []
+
     # get files ----
     if len(repos.df) > 0:
-        file_parts, meta_parts = _online_listings(repos, osf_license, cache, bar, first_pid)
+        file_named, meta_named = _online_listings(
+            repos, osf_license, cache, bar, first_pid, osf_max_requests, osf_cut_urls
+        )
     else:  # local_only, or no repository links: every platform's listing is empty
-        file_parts, meta_parts = [rc.placeholder()], [rc.meta_frame()]
+        file_named, meta_named = [("osf", rc.placeholder())], [("osf", rc.meta_frame())]
 
     local_files_df = rc.placeholder()
     if local_path is not None:
@@ -305,6 +339,13 @@ def _repo_check(
         paths = [local_path] if isinstance(local_path, str) else list(dict.fromkeys(local_path))
         pid = first_pid()
         repos.add(rc.repo_rows(rc.NA_SCALAR if pid is None else pid, paths, "local", rc.NA_SCALAR))
+
+    # publications ----
+    # A paper, book or thesis in a repository that also holds them (DSpace, EPrints, Zenodo and
+    # the other Invenio installations) is not a deposit, and is ignored with its files
+    # (metacheck #636, #637). Before the check below, so a paper whose only links are
+    # publications has no repositories.
+    file_parts, meta_parts = rc.drop_publications(repos, file_named, meta_named)
 
     # no repos found ----
     if len(repos.df) == 0:
@@ -370,6 +411,7 @@ def _repo_check(
         repos.osf_view_only,
         repos.rb_view_only,
         repos.rb_not_public,
+        osf_cut_urls,
     )
 
     # traffic_light ----
@@ -401,6 +443,10 @@ def _repo_check(
         "table": all_files,
         "summary_table": summary_table,
         "gated_repos": gated_repos,
+        # OSF projects listed only in part, because their listing stopped at `osf_max_requests`:
+        # paper_id, repo_url and files_listed. data_check and code_check warn that their files
+        # may be missing from what they download.
+        "partial_repos": flags["partial_repos"],
         "naming_issues": flags["naming_issues_by_paper"],
         "repo_metadata": repo_metadata,
         "roster_check": roster_check,
@@ -425,14 +471,23 @@ def _repo_check(
 
 
 def _online_listings(
-    repos: rc.Repos, osf_license: bool, cache: bool, bar: Any, first_pid: Callable[[], Any]
-) -> tuple[list[pd.DataFrame], list[pd.DataFrame]]:
-    """Every platform's file listing and metadata, in R's order (for ``bind_rows()``)."""
+    repos: rc.Repos,
+    osf_license: bool,
+    cache: bool,
+    bar: Any,
+    first_pid: Callable[[], Any],
+    osf_max_requests: float = 50,
+    osf_cut_urls: list[str] | None = None,
+) -> tuple[list[tuple[str, pd.DataFrame]], list[tuple[str, pd.DataFrame]]]:
+    """Every platform's ``(platform, file listing)`` and ``(platform, metadata)``, in R's order
+    (for ``bind_rows()``)."""
     osf_urls = repos.urls("osf")
     osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
     osf_paper_id = osf_ids[0] if osf_ids else first_pid()
 
-    osf_files, osf_meta = rc.list_osf(repos, osf_urls, osf_paper_id, bar, cache, osf_license)
+    osf_files, osf_meta = rc.list_osf(
+        repos, osf_urls, osf_paper_id, bar, cache, osf_license, osf_max_requests, osf_cut_urls
+    )
 
     github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
     gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
@@ -441,18 +496,40 @@ def _online_listings(
     dspace7_files, dspace7_meta = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
     listings = _api_listings(repos, cache, bar)
     ldbase_files, ldbase_meta = rc.list_ldbase(repos, repos.urls("ldbase"), bar, cache)
-    files = [osf_files, github_files, gitlab_files, rb_files, pa_files, dspace7_files]
-    meta = [osf_meta, github_meta, gitlab_meta, rb_meta, pa_meta, dspace7_meta]
+    ckan_files, ckan_meta = rc.list_ckan(repos, repos.urls("ckan"), bar, cache)
+    files = [
+        ("osf", osf_files),
+        ("github", github_files),
+        ("gitlab", gitlab_files),
+        ("researchbox", rb_files),
+        ("dspace", pa_files),
+        ("dspace7", dspace7_files),
+    ]
+    meta = [
+        ("osf", osf_meta),
+        ("github", github_meta),
+        ("gitlab", gitlab_meta),
+        ("researchbox", rb_meta),
+        ("dspace", pa_meta),
+        ("dspace7", dspace7_meta),
+    ]
     return (
-        files + [f for f, _ in listings.values()] + [ldbase_files],
-        meta + [m for _, m in listings.values()] + [ldbase_meta],
+        files
+        + [(k, f) for k, (f, _) in listings.items()]
+        + [("ldbase", ldbase_files)]
+        + [("ckan", ckan_files)],
+        meta
+        + [(k, m) for k, (_, m) in listings.items()]
+        + [("ldbase", ldbase_meta)]
+        + [("ckan", ckan_meta)],
     )
 
 
 def _api_listings(
     repos: rc.Repos, cache: bool, bar: Any = None
 ) -> dict[str, tuple[pd.DataFrame, pd.DataFrame]]:
-    """The Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU, Mendeley and DataONE blocks."""
+    """The Zenodo (and Invenio), Dataverse, Figshare, Dryad, ReShare (and EPrints), 4TU, Mendeley
+    and DataONE blocks."""
     from metacheck.archives import (
         dataone,
         dataverse,
@@ -472,6 +549,7 @@ def _api_listings(
         lambda: zenodo.zenodo_info(urls, pb=bar, cache=cache),
         "zenodo_url",
         rc.zenodo_row,
+        "resource_type",
     )
     dv = repos.urls("dataverse")
     out["dataverse"] = rc._api_listing(
@@ -930,6 +1008,7 @@ def _report(
     osf_view_only: pd.DataFrame | None = None,
     rb_view_only: pd.DataFrame | None = None,
     not_public: Sequence[str] = (),
+    osf_cut_urls: Sequence[str] = (),
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
     from metacheck.report.blocks import collapse_section, link, scroll_table
@@ -997,6 +1076,46 @@ def _report(
             "#### Private repositories checked through a view-only or peer-review link",
             summary_view_only,
         ]
+
+    # OSF projects listed only in part ----
+    # The listing of these stopped at `osf_max_requests` (see `listing_cut` in a listing).
+    in_tables = set(rc.vals(repos["repo_url"])) | (
+        set(rc.vals(all_files["repo_url"])) if "repo_url" in all_files else set()
+    )
+    cut_urls = [u for u in dict.fromkeys(osf_cut_urls) if u in in_tables]
+    first_paper: dict[Any, Any] = {}
+    for u, pid in zip(rc.vals(repos["repo_url"]), rc.vals(repos["paper_id"]), strict=True):
+        first_paper.setdefault(u, pid)
+    file_urls = rc.vals(all_files["repo_url"]) if "repo_url" in all_files else []
+    listed = [sum(1 for f in file_urls if f == u) for u in cut_urls]
+    partial_repos = pd.DataFrame(
+        {
+            "paper_id": pd.Series([first_paper.get(u) for u in cut_urls], dtype="string"),
+            "repo_url": pd.Series(cut_urls, dtype="string"),
+            "files_listed": pd.Series(listed, dtype="Int64"),
+        }
+    )
+    summary_partial = None
+    report_partial: list[str] = []
+    if len(partial_repos) > 0:
+        n_cut = len(partial_repos)
+        one = n_cut == 1
+        counts = ", ".join(f"{n} {plural(n, 'file', 'files')}" for n in listed)
+        report_partial = [
+            "#### Partly Listed Repositories\n\n"
+            f"{n_cut} {plural(n_cut, 'OSF project', 'OSF projects')} "
+            f"({', '.join(cut_urls)}) {'has' if one else 'have'} more folders than metacheck lists "
+            f"by default, so only part of {'its' if one else 'their'} files "
+            f"{'was' if sum(listed) == 1 else 'were'} listed "
+            f"({counts}), and what this "
+            f"report says about {'its' if one else 'their'} files describes only that part. Run "
+            "the check again with `cache = TRUE` to list the next part, or raise "
+            "`osf_max_requests`."
+        ]
+        summary_partial = (
+            f"We listed only part of {n_cut} OSF {plural(n_cut, 'project', 'projects')} "
+            "(the request limit was reached)."
+        )
 
     # ResearchBox boxes that readers cannot open (#621): still repositories that
     # could not be checked (above); the authors are told how to make the link open
@@ -1165,8 +1284,14 @@ def _report(
         )
 
     # unclassifiable files
+    # Two kinds are left out, as no name the authors could choose would help (#648): an archive,
+    # which is a container whose files are typed once it is opened (and which "Archive Files"
+    # already reports), and a hidden settings file (".gitattributes", ".Rbuildignore",
+    # ".gitkeep"), whose name the tool that reads it fixes. Hidden settings files were unknown in
+    # 83 of 563 papers.
     dtypes = rc.vals(all_files["data_type"])
-    unknown = [n for n, d in zip(names, dtypes, strict=True) if not rc._na(d) and d == "unknown"]
+    is_unknown = _is_unknown(all_files)
+    unknown = [n for n, u in zip(names, is_unknown, strict=True) if u]
     n_unknown = len(unknown)
     summary_unknown = report_unknown = None
     if n_unknown > 0:
@@ -1296,6 +1421,7 @@ def _report(
 
     blocks: tuple[Any, ...] = (
         *report_unchecked,
+        *report_partial,
         *report_not_public,
         *report_view_only,
         report_repo,
@@ -1320,6 +1446,7 @@ def _report(
         s
         for s in (
             summary_unchecked,
+            summary_partial,
             summary_not_public,
             summary_view_only,
             summary_repo,
@@ -1344,6 +1471,7 @@ def _report(
         "n_naming_bad": n_naming_bad,
         "n_closed_unreachable": len(unreachable),
         "n_unchecked": n_unchecked,
+        "partial_repos": partial_repos,
         "unchecked": unchecked,
         "n_useless_problem": useless["n_problem"],
         "n_useless_suggestion": useless["n_suggestion"],
@@ -1471,23 +1599,46 @@ def _check_naming(names: list[Any], paths: list[Any], dtypes: list[Any]) -> pd.D
     )
 
 
+def _is_unknown(all_files: pd.DataFrame) -> list[bool]:
+    """The files ``data_classify_files()`` could not place at all, as repo_check lists them.
+
+    ``data_type == "unknown"``, except an archive (readable by name, or typed "archive") and a
+    hidden settings file (#648).
+    """
+    from metacheck.archives.zip_peek import _is_readable_archive
+
+    n = len(all_files)
+    dtypes = rc.vals(all_files["data_type"])
+    names = rc.vals(all_files["file_name"])
+    ftypes = rc.vals(all_files["file_type"]) if "file_type" in all_files.columns else [None] * n
+    arch = _is_readable_archive(["" if rc._na(x) else x for x in names])
+    return [
+        (not rc._na(d) and d == "unknown")
+        and not a
+        and not (not rc._na(f) and f == "archive")
+        and not (not rc._na(nm) and str(nm).startswith("."))
+        for d, a, f, nm in zip(dtypes, arch, ftypes, names, strict=True)
+    ]
+
+
 def _naming_by_paper(all_files: pd.DataFrame, naming_issues: pd.DataFrame) -> pd.DataFrame:
     """``check_file_naming()`` per paper, tagged with ``paper_id`` (R: ``split()`` by paper)."""
     if len(all_files) == 0:
         return naming_issues.iloc[0:0].copy()
     pids = rc.vals(all_files["paper_id"])
     levels = _split_levels(pids)
-    if not levels:
-        return naming_issues.iloc[0:0].copy()
     names = rc.vals(all_files["file_name"])
     paths = rc.vals(all_files["file_path"])
     dtypes = rc.vals(all_files["data_type"])
     rows_of: dict[Any, list[int]] = {}
     for i, p in enumerate(pids):
-        if p is not None:
-            rows_of.setdefault(p, []).append(i)
+        rows_of.setdefault(p, []).append(i)
+    # Files of a local folder checked without a paper have paper_id NA, which split() drops:
+    # the summary named the naming problems, while summary_table$naming_issues was 0 and
+    # naming_issues had no rows, so data_check saw none either (#650). NA is kept as a group of
+    # its own, after the others.
     parts = []
-    for pid in levels:
+    for pid in [*levels, *([None] if None in rows_of else [])]:
         idx = rows_of[pid]
         pf = _check_naming(
             [names[i] for i in idx], [paths[i] for i in idx], [dtypes[i] for i in idx]
@@ -1521,9 +1672,9 @@ def _summary_table(
             row[c] += int(v)
 
     unknown: dict[Any, int] = {}
-    for pid, d in zip(rc.vals(all_files["paper_id"]), rc.vals(all_files["data_type"]), strict=True):
+    for pid, u in zip(rc.vals(all_files["paper_id"]), _is_unknown(all_files), strict=True):
         key = None if rc._na(pid) else pid
-        unknown[key] = unknown.get(key, 0) + (1 if (not rc._na(d) and d == "unknown") else 0)
+        unknown[key] = unknown.get(key, 0) + (1 if u else 0)
     naming = flags["naming_issues_by_paper"]
     bad: dict[Any, int] = {}
     if len(naming) > 0 and "paper_id" in naming.columns:

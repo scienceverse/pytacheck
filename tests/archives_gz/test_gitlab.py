@@ -42,8 +42,13 @@ def test_gitlab_links() -> None:
     )
     links = gitlab_links(paper)
     assert list(links.columns) == ["href", "text_id", "paper_id"]
-    assert links["href"].tolist() == ["https://gitlab.com/gzorg/sub/glproj", "lab/project"]
-    assert links["text_id"].tolist() == [1, 1]
+    # `gitlab.com/x/y` written in full in the text is found too (metacheck 0.4.4.2)
+    assert links["href"].tolist() == [
+        "https://gitlab.com/gzorg/sub/glproj",
+        "gitlab.com/x/y",
+        "lab/project",
+    ]
+    assert links["text_id"].tolist() == [1, 2, 1]
 
 
 def test_gitlab_links_none() -> None:
