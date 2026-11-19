@@ -8,6 +8,7 @@ network.
 from __future__ import annotations
 
 import math
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -24,8 +25,9 @@ BIBR12 = ROOT / "upstream" / "metacheck" / "tests" / "testthat" / "fixtures" / "
 NO_REPOS = (
     "We found no links to repositories on the Open Science Framework, Github, GitLab, "
     "ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), "
-    "Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, or CKAN "
-    "data portals."
+    "Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, CKAN "
+    "data portals, GEO, SRA, ENA, DDBJ, ArrayExpress, CRAN, or ICPSR (openICPSR, AEA Data and "
+    "Code Repository)."
 )
 SUMMARY_COLS = [
     "paper_id",
@@ -38,6 +40,7 @@ SUMMARY_COLS = [
     "files_zip",
     "files_unknown",
     "naming_issues",
+    "file_share_n",
     "repo_view_only",
     "roster_mismatch",
 ]
@@ -76,9 +79,11 @@ def test_repo_check_offline() -> None:
         "files_code",
         "files_readme",
         "files_zip",
+        "file_share_n",
     ]
     assert st["paper_id"].tolist() == [paper.paper_id]
     assert st["repo_n"].tolist() == [0]
+    assert st["file_share_n"].tolist() == [0]
     assert (
         st[["files_n", "files_data", "files_code", "files_readme", "files_zip"]].isna().all().all()
     )
@@ -156,6 +161,7 @@ def test_osf_no_files() -> None:
         "files_zip": 0,
         "files_unknown": 0,
         "naming_issues": 0,
+        "file_share_n": 0,
         "repo_view_only": 0,
         "roster_mismatch": False,
     }
@@ -180,6 +186,7 @@ def test_no_code_files() -> None:
         "files_zip": 1,
         "files_unknown": 0,
         "naming_issues": 0,
+        "file_share_n": 0,
         "repo_view_only": 0,
         "roster_mismatch": False,
     }
@@ -201,6 +208,7 @@ def test_osf() -> None:
         "files_zip": 1,
         "files_unknown": 0,  # an archive is neither unclassified nor a naming problem (#648)
         "naming_issues": 0,
+        "file_share_n": 0,
         "repo_view_only": 0,
         "roster_mismatch": False,
     }
@@ -530,6 +538,82 @@ def test_unknown_file_type_is_not_a_naming_problem(tmp_path: Path) -> None:
     t = mo.table
     assert t.loc[t["file_name"] == "Makefile", "data_type"].tolist() == ["code"]
     assert t.loc[t["file_name"] == "asdoc.sthlp", "data_type"].tolist() == ["documentation"]
+
+
+def test_repo_check_counts_files_with_the_classification_it_reports(tmp_path: Path) -> None:
+    """Port of the local-folder part of "repo_check counts files with the classification it reports"."""
+    from metacheck.archives._useless import useless_file_kind
+    from metacheck.datacheck.files import data_classify_files
+    from metacheck.fileinfo.category import _repo_file_kind
+
+    f = [
+        "run.sh",
+        "data.nc",
+        "x.log.gz",
+        "scan.nii.gz",
+        "a.tar.gz",
+        "b.7z",
+        "c.zip",
+        "t.jar",
+        "README.md",
+        "LICENSE_code_MIT.txt",
+        "data_report.html",
+    ]
+    dt = data_classify_files(f, f)
+    sizes = [10] * 8 + [0, 10, 10]
+    assert list(_repo_file_kind(f, dt, sizes)) == [
+        "code",
+        "data",
+        "documentation",
+        "data",
+        "archive",
+        "archive",
+        "archive",
+        "materials",
+        "documentation",
+        "documentation",
+        "documentation",
+    ]
+    assert list(_repo_file_kind(["README.md"], ["documentation"], [None])) == ["readme"]
+    # files R leaves behind
+    assert useless_file_kind([".RDataTmp", ".Rapp.history"]) == ["temporary files", "R history"]
+
+    d = tmp_path / "dep"
+    d.mkdir()
+    for rel in [
+        "data.csv",
+        "analysis.R",
+        "run.sh",
+        "model.joblib",
+        "run.log.gz",
+        "b.tar.gz",
+        "analysis/extra_ados/asdoc.ado",
+        "task/jspsych-6.3.1/jspsych.js",
+    ]:
+        (d / rel).parent.mkdir(parents=True, exist_ok=True)
+        (d / rel).write_text("x\n")
+    mo = pc.module_run(None, "repo_check", local_path=str(d), local_only=True)
+    st = mo.summary_table
+    assert st["files_code"].tolist() == [2]  # analysis.R and run.sh
+    assert st["files_zip"].tolist() == [1]  # b.tar.gz, not run.log.gz
+    # model.joblib, listed for information
+    assert st["files_unknown"].tolist() == [1]
+    rep = "\n".join(str(x) for x in mo.report)
+    assert "This is no problem in itself" in rep
+    assert "Add a recognisable keyword" not in rep
+    assert not re.search("not ZIP archives: [^.]*run.log.gz", rep)
+
+
+def test_repo_check_lists_the_files_r_leaves_behind(tmp_path: Path) -> None:
+    d = tmp_path / "dep"
+    d.mkdir()
+    (d / "data.csv").write_text("a,b\n1,2\n")
+    (d / ".Rapp.history").write_text("q()\n")
+    (d / ".RDataTmp1").write_text("x\n")
+    (d / ".gitignore").write_text("data/\n")  # hidden, not useless: stays out
+    mo = pc.module_run(pc.test_paper(), "repo_check", local_path=str(d))
+    assert set(mo.table["file_name"]) == {"data.csv"}
+    assert set(mo.useless_files["kind"]) == {"R history", "temporary files"}
 
 
 def test_naming_problems_of_a_local_folder_without_a_paper(tmp_path: Path) -> None:

@@ -1,0 +1,43 @@
+{
+  "id": ".repo_links_tidy.osf_forms",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "paper_id",
+      "repo_type",
+      "repo_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p",
+          "p",
+          "p"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osf",
+          "osf",
+          "osf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/qhwds/overview?view_only=abc",
+          "osf.io/pcjnb",
+          "https://osf.io/zzzzz/files/osfstorage/1"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.18",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

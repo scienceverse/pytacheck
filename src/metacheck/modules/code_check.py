@@ -9,12 +9,14 @@ from __future__ import annotations
 
 import math
 import os
+import re
 import warnings
 from typing import Any
 
 import pandas as pd
 
 from metacheck._values import is_missing
+from metacheck.archives.download import _download_failed_text
 from metacheck.codecheck.core import _code_missing_files
 from metacheck.module import get_prev_outputs, module
 from metacheck.modules._code_check import (
@@ -192,6 +194,7 @@ def code_check(
         _code_expand_spv,
         _code_expand_zip,
         _code_predownload,
+        _in_others_code_folder,
         _in_renv_folder,
         _repo_file_counts,
         _version_pin_scan,
@@ -209,6 +212,10 @@ def code_check(
     # before anything is downloaded
     listing_partial = (
         get_prev_outputs("repo_check", "partial_repos") if local_path is None else None
+    )
+    # the authors' own deposits in sequence and expression archives (#660)
+    archive_deposits = (
+        get_prev_outputs("repo_check", "archive_deposits") if local_path is None else None
     )
     if all_files is None:
         from metacheck.module import module_run
@@ -235,6 +242,7 @@ def code_check(
                 skip_on_api_limit=skip_on_api_limit,
             )
         listing_partial = mo.get("partial_repos")
+        archive_deposits = mo.get("archive_deposits")
         all_files = mo.table
         if all_files is None:
             all_files = pd.DataFrame(
@@ -307,10 +315,16 @@ def code_check(
     ## find relevant code files ----
     language = col(all_files, "language")
     # renv's own files (renv/activate.R, renv/library/) are not the paper's code; see
-    # _in_renv_folder()
+    # _in_renv_folder(); nor is code by others the deposit bundles, such as Stata packages in
+    # extra_ados/ (#648; see _is_others_code_path())
     relevant = [
-        lang in LISTED_LANGS and not r
-        for lang, r in zip(language, _in_renv_folder(all_files), strict=True)
+        lang in LISTED_LANGS and not r and not o
+        for lang, r, o in zip(
+            language,
+            _in_renv_folder(all_files),
+            _in_others_code_folder(all_files),
+            strict=True,
+        )
     ]
     code_files = all_files.loc[relevant].reset_index(drop=True)
     code_langs = col(code_files, "language")
@@ -509,8 +523,23 @@ def code_check(
     missing_rows = which("loaded_files_missing", lambda v: v > 0)
     missingfiles_issue = [names[i] for i in missing_rows]
     report_table_files_missing = None
+    # Only the code files that were read count for "all present": a file that did not parse or
+    # was not downloaded was not looked at (#648, "all files present" for code the check could
+    # not look at, 7 preprints)
+    n_read = sum(1 for v in nums("loaded_files_missing") if v is not None and not math.isnan(v))
+    n_code = len(code_files)
     if not missingfiles_issue:
-        report_missingfiles = "All files loaded in the code were present in the repository."
+        if n_read == 0:
+            report_missingfiles = (
+                "We could not read any code file, so we could not check which files the code loads."
+            )
+        elif n_read == n_code:
+            report_missingfiles = "All files loaded in the code were present in the repository."
+        else:
+            report_missingfiles = (
+                f"All files loaded in the {n_read:d} of {n_code:d} code files we could read were "
+                "present in the repository."
+            )
     else:
         n_missing = int(sum(v for v in nums("loaded_files_missing") if v is not None))
         k = len(missingfiles_issue)
@@ -525,6 +554,47 @@ def code_check(
             missing_rows,
             {"file_name": "File name", "loaded_files_missing_names": "Missing Files"},
         )
+    # files not in the deposit that code of the paper may download or unpack
+    fetched: list[str] = []
+    if has("loaded_files_fetched_names"):
+        for v in col(code_files, "loaded_files_fetched_names"):
+            if v is not None and str(v) != "":
+                fetched.extend(x for x in re.split(r",[ \t\r\n\f\v]*", str(v)) if x != "")
+    fetched = list(dict.fromkeys(fetched))
+    if fetched:
+        k = len(fetched)
+        fetched_text = (
+            f"{k:d} file{plural(k)} the code reads {plural(k, 'is', 'are')} not in the "
+            "repository, but the code downloads or unpacks files without naming them (such as "
+            "<code>osf_download()</code> or <code>unzip()</code>), so "
+            f"{plural(k, 'it', 'they')} may be made by it and {plural(k, 'is', 'are')} not "
+            f"counted as missing: {', '.join(fetched[:10])}."
+        )
+        if not missingfiles_issue:
+            report_missingfiles = re.sub(r"^All files", "All other files", report_missingfiles)
+        report_missingfiles = f"{report_missingfiles} {fetched_text}"
+    # Files the code reads are missing, and the authors deposited raw data in a sequence or
+    # expression archive (#660): in 16 papers (13 BES, 3 medRxiv) the missing files were never
+    # the archive's own files, and in 11 they included tables a processing pipeline makes from
+    # them (OTU, ASV and count tables, alignments, genotype files). File names cannot tell which
+    # ones, so the sentence is conditional.
+    if missingfiles_issue and isinstance(archive_deposits, pd.DataFrame) and len(archive_deposits):
+        paper_ids = col(code_files, "paper_id")
+        ids = list(dict.fromkeys(paper_ids[i] for i in missing_rows))
+        ad = archive_deposits
+        if ids and "paper_id" in ad.columns:
+            ad = ad[ad["paper_id"].isin(ids)]
+        if len(ad):
+            arch = "; ".join(
+                f"{a}: {c}"
+                for a, c in zip(ad["archive"].tolist(), ad["accession"].tolist(), strict=True)
+            )
+            report_missingfiles = (
+                f"{report_missingfiles} The paper deposited raw data in {arch}. If some of these "
+                "files were made from those raw data by a processing pipeline (for example OTU, "
+                "ASV or count tables, alignments, or genotype files), deposit them as well, so "
+                "the analysis can be rerun without the pipeline."
+            )
 
     ## table of code file links ----
     report_table = _files_table(code_files)
@@ -582,8 +652,12 @@ def code_check(
     if manifest is not None:
         merge_manifests(manifest, code_files, paper, all_packages, _bind(failed_parts))
 
+    # code files whose download failed: not checked (metacheck #667)
+    failed_files = _bind(failed_parts)
+    failed_text = _download_failed_text(failed_files)
     report = [
         _INTRO,
+        *(failed_text["report"] or []),
         scroll_table(report_table, maxrows=5),
         "#### Code Comments",
         report_comments,
@@ -638,6 +712,7 @@ def code_check(
         cache=cache,
         skip_on_api_limit=skip_on_api_limit,
         max_files_per_repo=max_files_per_repo,
+        failed_files=failed_files,
     )
 
     # the summary names what to fix; missing files, absolute paths and parse
@@ -648,6 +723,7 @@ def code_check(
         f"\n-  {s}"
         for s in (
             summary_code,
+            *([failed_text["summary"]] if failed_text["summary"] else []),
             summary_comments,
             *([summary_setwd] if setwd_issues else []),
             *([summary_install_packages] if install_packages_issues else []),

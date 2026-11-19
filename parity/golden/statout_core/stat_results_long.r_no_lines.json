@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 134,
+    "nrow": 132,
     "names": [
       "paper_id",
       "source_file",
@@ -155,16 +155,12 @@
           null,
           null,
           null,
-          null,
-          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
-          null,
-          null,
           null,
           null,
           null,
@@ -369,8 +365,6 @@
           "result_coefficients_4_wt",
           "result_coefficients_4_wt",
           "result_coefficients_4_wt",
-          "result_coefficients_5_residual_deviance_on_degrees_of_freedom",
-          "result_coefficients_5_residual_deviance_on_degrees_of_freedom",
           "result_sample_estimates_7",
           "result_sample_estimates_7",
           "result_sample_estimates_8",
@@ -508,8 +502,6 @@
           "result_coefficients_4_r2_std_error",
           "result_coefficients_4_r2_z_value",
           "result_coefficients_4_r2_pr_z",
-          "result_coefficients_5_r1_43_230",
-          "result_coefficients_5_r1_31",
           "result_sample_estimates_7_r1_mean_in_group_0",
           "result_sample_estimates_7_r1_mean_in_group_1",
           "result_sample_estimates_8_r1_mean_in_group_0",
@@ -647,8 +639,6 @@
           "Coefficients",
           "Coefficients",
           "Coefficients",
-          "Coefficients",
-          "Coefficients",
           "sample estimates",
           "sample estimates",
           "sample estimates",
@@ -786,8 +776,6 @@
           "Coefficients",
           "Coefficients",
           "Coefficients",
-          "Coefficients",
-          "Coefficients",
           "sample estimates",
           "sample estimates",
           "sample estimates",
@@ -925,8 +913,6 @@
           "wt",
           "wt",
           "wt",
-          "Residual deviance: on degrees of freedom",
-          "Residual deviance: on degrees of freedom",
           "",
           "",
           "",
@@ -1064,8 +1050,6 @@
           "Std. Error",
           "z value",
           "Pr(>|z|)",
-          "43.230",
-          "31",
           "mean in group 0",
           "mean in group 1",
           "mean in group 0",
@@ -1203,8 +1187,6 @@
           "standard error of the mean",
           "Z-statistic",
           "p-value",
-          "43.230",
-          "31",
           "sample mean",
           "sample mean",
           "sample mean",
@@ -1342,8 +1324,6 @@
           "http://purl.obolibrary.org/obo/STATO_0000037",
           "http://purl.obolibrary.org/obo/STATO_0000376",
           "http://purl.obolibrary.org/obo/STATO_0000700",
-          "",
-          "",
           "http://purl.obolibrary.org/obo/STATO_0000401",
           "http://purl.obolibrary.org/obo/STATO_0000401",
           "http://purl.obolibrary.org/obo/STATO_0000401",
@@ -1481,8 +1461,6 @@
           "1.436",
           "-2.801",
           "0.00509",
-          "19.176",
-          "30",
           "17.14737",
           "24.39231",
           "3.768895",
@@ -1684,13 +1662,11 @@
           null,
           null,
           null,
-          null,
-          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

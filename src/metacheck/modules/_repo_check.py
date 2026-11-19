@@ -287,7 +287,18 @@ REPO_TYPES = (
     "dataone",
     "ldbase",
     "ckan",
+    # sequence and expression archives and the Handles that lead to a repository (each row names
+    # its own type), R packages on CRAN, ICPSR and openICPSR (metacheck #660)
+    "seq",
+    "handle",
+    "cran",
+    "icpsr",
 )
+
+#: the types whose rows name their own repository type (R: ``handle_links_found$repo_type``)
+_OWN_TYPE = ("seq", "handle")
+#: the types that are listed, not checked: their files are not read (metacheck #660)
+SET_ASIDE_TYPES = ("geo", "ena", "arrayexpress", "cran", "icpsr")
 
 _FIGSHARE_SHARE = "private share link (figshare.com/s/...) cannot be resolved without a browser"
 #: a DSpace item its host does not know (or a link that names no item)
@@ -393,6 +404,7 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     from metacheck._r import bind_rows
     from metacheck.archives.ckan import ckan_links
+    from metacheck.archives.cran import cran_links
     from metacheck.archives.dataone import dataone_links
     from metacheck.archives.dataverse import dataverse_links
     from metacheck.archives.dryad import dryad_links
@@ -401,12 +413,15 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     from metacheck.archives.fourtu import researchdata4tu_links
     from metacheck.archives.github import github_links
     from metacheck.archives.gitlab import gitlab_links
+    from metacheck.archives.handle import handle_links
+    from metacheck.archives.icpsr import icpsr_links
     from metacheck.archives.ldbase import ldbase_links
     from metacheck.archives.mendeley import mendeley_links
     from metacheck.archives.osf import osf_links
     from metacheck.archives.psycharchives import dspace_links
     from metacheck.archives.researchbox import rbox_links
     from metacheck.archives.reshare import eprints_links
+    from metacheck.archives.seq import seq_archive_links
     from metacheck.archives.zenodo import invenio_links
 
     osf = osf_links(paper)
@@ -434,18 +449,38 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
         # CKAN data portals (metacheck #637)
         "ckan": ckan_links(paper),
     }
+    # GEO, the INSDC archives (BioProject, SRA, ENA, DDBJ) and ArrayExpress, mostly named by
+    # accession number (each row names its archive); a deposit cited by its Handle, as the
+    # address the Handle leads to, when that is a repository read here (metacheck #660, #466);
+    # R packages on CRAN, the paper's own or ones it uses (#478, #660); replication packages at
+    # ICPSR and openICPSR, with the AEA Data and Code Repository. An error is no link, as in R.
+    for key, finder in (
+        ("seq", seq_archive_links),
+        ("handle", handle_links),
+        ("cran", cran_links),
+        ("icpsr", icpsr_links),
+    ):
+        try:
+            found[key] = finder(paper)
+        except Exception:
+            found[key] = empty_links().drop(columns="repo_error")
     parts = []
     for repo_type in REPO_TYPES:
         df = found[repo_type]
         missing = [c for c in ("paper_id", "href") if c not in df.columns]
         if missing:
             raise RError("undefined columns selected")
+        types = (
+            _chr(vals(df["repo_type"]))
+            if repo_type in _OWN_TYPE
+            else pd.Series([repo_type] * len(df), dtype="string")
+        )
         parts.append(
             pd.DataFrame(
                 {
                     "paper_id": _chr(vals(df["paper_id"])),
                     "href": _chr(vals(df["href"])),
-                    "repo_type": pd.Series([repo_type] * len(df), dtype="string"),
+                    "repo_type": types,
                 }
             )
         )
@@ -644,6 +679,7 @@ def _osf_file_frame(files: pd.DataFrame, repo_url: list[Any]) -> pd.DataFrame:
     n = len(files)
     path = _col(files, "path")
     provider = _col(files, "provider")
+    node = _col(files, "project")
     return r_frame(
         [
             ("repo_url", repo_url, "string"),
@@ -654,6 +690,9 @@ def _osf_file_frame(files: pd.DataFrame, repo_url: list[Any]) -> pd.DataFrame:
             ("file_size", _col(files, "size"), "float64"),
             ("file_type", _col(files, "filetype"), "string"),
             ("provider", NA_SCALAR if provider is None else provider, "string"),
+            # the component the file is stored in: its storage is downloaded as one zip per
+            # component (metacheck #675)
+            ("osf_node", NA_SCALAR if node is None else node, "string"),
         ]
     )
 
@@ -736,7 +775,11 @@ def list_osf(
     meta = meta_frame()
     if osf_license is True:
         meta = _osf_license_meta(repos, reg_pairs)
-    return osf_files_df, meta
+    # each OSF storage's listed size and number of files, which decide whether it is downloaded
+    # as one archive (metacheck #675)
+    from metacheck.archives.download import _osf_storage_totals
+
+    return _osf_storage_totals(osf_files_df), meta
 
 
 def _osf_license_meta(repos: Repos, reg_pairs: list[tuple[Any, str]]) -> pd.DataFrame:

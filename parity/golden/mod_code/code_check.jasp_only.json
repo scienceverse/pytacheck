@@ -69,6 +69,7 @@
           "files_written",
           "loaded_files_missing",
           "loaded_files_missing_names",
+          "loaded_files_fetched_names",
           "error"
         ],
         "v": [
@@ -247,6 +248,12 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               null
@@ -262,7 +269,7 @@
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). None of the files found could be checked for comments.",
           "#### Missing Files",
-          "All files loaded in the code were present in the repository.",
+          "We could not read any code file, so we could not check which files the code loads.",
           "",
           "#### Absolute Paths",
           "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
@@ -278,7 +285,7 @@
           "#### Packages / Dependencies",
           "No packages/libraries were detected as loaded in the code files. (This check reads R and Python imports; other languages are not scanned for packages.) Even when no imports are detected, it is good practice to record the exact package versions the analysis depended on — see \"Reproducible Environment\" below.",
           "#### Reproducible Environment",
-          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or a `groundhog`/`checkpoint` date-pin alongside the code.",
+          "",
           "",
           "#### Parsable code",
           "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.",
@@ -294,7 +301,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 0 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 1 JASP code file.\n-  No code files could be checked for comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility."
+          "\n-  We found 0 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 1 JASP code file.\n-  No code files could be checked for comments.\n-  All libraries/imports were loaded in one block."
         ]
       },
       {
@@ -311,6 +318,7 @@
           "code_min_comments",
           "code_parse_errors",
           "code_packages_n",
+          "code_files_failed",
           "code_version_pinned"
         ],
         "v": [
@@ -360,6 +368,12 @@
             "t": "dbl",
             "v": [
               null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -531,6 +545,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

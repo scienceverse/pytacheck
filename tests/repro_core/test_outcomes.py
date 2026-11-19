@@ -5,6 +5,7 @@ from __future__ import annotations
 import pandas as pd
 
 from metacheck.repro.outcomes import (
+    _REPRO_CHECK_GROUPS,
     _REPRO_REASON_LEVELS,
     _repro_absent_report,
     _repro_by_repository,
@@ -297,8 +298,11 @@ def test_run_counts_give_a_papers_scripts_its_software_and_its_reasons() -> None
         "repro_scripts_n",
         "repro_not_analysis_n",
         "repro_not_downloaded_n",
+        *(f"repro_{g}_n" for g in _REPRO_CHECK_GROUPS),
         *(f"repro_fail_{r}" for r in _REPRO_REASON_LEVELS),
     }
+    # the groups of the scripts counted (#580): the not downloaded one is counted apart
+    assert [rc[f"repro_{g}_n"][0] for g in _REPRO_CHECK_GROUPS] == [1, 2, 1, 0, 0]
     # the reason column is read when the run results have one
     rr["reason"] = _repro_failure_reason(rr["outcome"].tolist(), rr["error"].tolist())
     rr.loc[1, "reason"] = "undefined"

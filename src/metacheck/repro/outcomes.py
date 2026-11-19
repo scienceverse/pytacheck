@@ -665,11 +665,27 @@ def _failure_reason_one(outcome: str | None, full: str) -> str | None:
     # a download still arriving when the time ran out
     if outcome == "timed_out" and "while a download was still arriving" in full:
         reason = "download"
-    if outcome != "errored":
-        return reason
 
     def has(pat: str, text: str) -> bool:
         return bool(grepl(pat, text, perl=True))
+
+    # A file of a package of the code, which imports its other files with "from .", run on
+    # its own: Python runs such a file only as a module of its package (python -m
+    # package.module), so this says how the run started it, not that a package was missing
+    # (#580, #648; 8 of 620 medRxiv papers)
+    if outcome == "errored" and has(
+        "attempted relative import (?:with no known parent package|beyond top-level package)",
+        full,
+    ):
+        return "how_to_run"
+    # A Python module that exists only on one platform (Google Colab, Kaggle, Windows,
+    # OpenSAFELY): the script can be checked only there, so neither a package that was
+    # not available nor an error of the code (#580, #648; in the medRxiv runs google.colab,
+    # win32com and ehrql).
+    if outcome in ("errored", "dependency_unavailable") and _repro_platform_of([full])[0]:
+        return "platform"
+    if outcome != "errored":
+        return reason
 
     # stopped by the memory limit of the run (see _repro_oom_text()), before any
     # message the script's own output happens to contain
@@ -696,9 +712,19 @@ def _failure_reason_one(outcome: str | None, full: str) -> str | None:
         "\\b[A-Z][A-Z0-9]*_[A-Z0-9_]+\\b[^\n]{0,40}?\\b(?:is not set|not set\\b|is required|must be set)|"
         "environment variable[^\n]{0,60}?\\b(?:is not set|not set|is required|must be set|missing)|"
         "[Ss]et the [^\n]{0,40}?environment variable|Missing credentials|"
-        "api[_ ]?key[^\n]{0,40}?(?:not set|missing|required)",
+        "api[_ ]?key[^\n]{0,40}?(?:not set|missing|required)|"
+        # a key, token or password the authors' own message asks for ("ERROR: set
+        # ZENODO_TOKEN", "Either set OPENAI_API_KEY"), a cloud sign-in (Google's "default
+        # credentials were not found"), and a variable a platform sets, read from the
+        # environment (All of Us: KeyError: 'WORKSPACE_CDR') (#648, K4)
+        "(?i:\\b(?:set|provide|missing|export|define)\\b)[^\n]{0,40}?\\b[A-Z][A-Z0-9]*_(?:[A-Z0-9]+_)*"
+        "(?:KEY|TOKEN|SECRET|PASSWORD|CREDENTIALS?|API)\\b|"
+        "DefaultCredentialsError|default credentials were not found|"
+        "could not automatically determine credentials",
         msg,
     ):
+        return "settings"
+    if has("KeyError: '[A-Z][A-Z0-9_]{2,}'", msg) and has("environ|os\\.py", full):
         return "settings"
     if has(
         "there is no package called|ModuleNotFoundError|No module named|ImportError|"
@@ -726,11 +752,23 @@ def _failure_reason_one(outcome: str | None, full: str) -> str | None:
     if has(_FILE_PAT, msg):
         return "file"
     for pat, label in (
+        # a function only R for Windows has, which the run's Linux lacks: the plot windows
+        # (windows(), win.graph(), bringToTop()), its own plot files and fonts. Without
+        # this, 'could not find function "windows"' counted as something the code does not
+        # define (#580).
+        (
+            'could not find function "(?:windows|win\\.graph|win\\.metafile|win\\.print|'
+            'bringToTop|msgWindow|windowsFonts?)"',
+            "environment",
+        ),
+        # names Jupyter itself provides to a notebook, run here as plain Python (ufpgn_v1's
+        # display(); #648)
+        ("name '(?:display|get_ipython)' is not defined", "environment"),
         ("object '[^']*' not found|could not find function|NameError|is not defined", "undefined"),
         ("SyntaxError|IndentationError", "syntax"),
         (
             "shared object|ImproperlyConfigured|cannot cache function|cannot open display|X11|"
-            "can only print from a screen device",
+            "can only print from a screen device|unable to start data viewer",
             "environment",
         ),
         # R itself crashed, in a package's compiled code: rgeos, installed from the CRAN
@@ -743,6 +781,102 @@ def _failure_reason_one(outcome: str | None, full: str) -> str | None:
         if has(pat, msg):
             return label
     return "no_message" if not grepl(r"\S", msg) else "other"
+
+
+def _repro_from_report_names(code_tbl: pd.DataFrame | None) -> list[str]:
+    """The scripts code_check recovered from a knitted report (``.html``).
+
+    The module's ``from_report``: the report leaves out the chunks it does not show, so the
+    recovered code is incomplete, and its failure was blamed on the code (#648, K8a: 17 of 132
+    preprints). Their ``file_name``\\s; empty when there are none.
+    """
+    if code_tbl is None or len(code_tbl) == 0 or "recovered_from" not in code_tbl.columns:
+        return []
+    return [
+        str(fn)
+        for fn, rf in zip(
+            code_tbl["file_name"].tolist(), code_tbl["recovered_from"].tolist(), strict=True
+        )
+        if not is_missing(rf) and re.search(r"\.html?$", str(rf), re.IGNORECASE)
+    ]
+
+
+def _repro_from_report_failed(
+    run_results: pd.DataFrame | None, from_report: Sequence[str]
+) -> list[bool]:
+    """Port of R/reproducibility_check.R::.repro_from_report_failed().
+
+    Which run results are of code recovered from a knitted report (*from_report*, file
+    names) and stopped on what would otherwise count against the code: a file, a name not
+    defined, a syntax error, or another error. A knitted report leaves out the chunks it
+    does not show (``echo = FALSE``, ``include = FALSE``), so such code is incomplete, and
+    its failure says nothing about the authors' analysis (#648, K8a).
+    """
+    if run_results is None or len(run_results) == 0:
+        return []
+    if len(from_report) == 0:
+        return [False] * len(run_results)
+    reason = (
+        run_results["reason"].tolist()
+        if "reason" in run_results.columns
+        else [None] * len(run_results)
+    )
+    keep = set(from_report)
+    return [
+        oc == "errored"
+        and fn in keep
+        and not is_missing(r)
+        and r in ("file", "undefined", "syntax", "other", "no_message")
+        for oc, fn, r in zip(
+            run_results["outcome"].tolist(), run_results["file_name"].tolist(), reason, strict=True
+        )
+    ]
+
+
+_PLATFORM_MODULE = re.compile(r"No module named ['\"]([A-Za-z0-9_.]+)['\"]")
+_WINDOWS_MODULES = frozenset(
+    {
+        "win32com",
+        "win32api",
+        "win32con",
+        "win32gui",
+        "win32file",
+        "win32process",
+        "win32clipboard",
+        "pywintypes",
+        "pythoncom",
+        "winreg",
+        "_winreg",
+        "msvcrt",
+    }
+)
+
+
+def _repro_platform_of(msg: Sequence[str | None]) -> list[str | None]:
+    """Port of R/reproducibility_check.R::.repro_platform_of().
+
+    The platform a Python module that exists only there belongs to, from an error "No
+    module named '<module>'": "Google Colab" (google.colab), "Kaggle" (kaggle_secrets and
+    the like), "Windows" (pywin32's win32com, win32api and the like; winreg and msvcrt of
+    Python on Windows) or "OpenSAFELY" (ehrql, cohortextractor). ``None`` for any other
+    message.
+    """
+    out: list[str | None] = []
+    for m in msg:
+        found = _PLATFORM_MODULE.search("" if is_missing(m) else str(m))
+        mod = found.group(1) if found else ""
+        top = mod.split(".", 1)[0]
+        label: str | None = None
+        if re.match(r"^google\.colab(\.|$)", mod):
+            label = "Google Colab"
+        elif re.match(r"^kaggle_(secrets|datasets|web_client|gcp)$", top):
+            label = "Kaggle"
+        elif top in _WINDOWS_MODULES:
+            label = "Windows"
+        elif top in ("ehrql", "cohortextractor"):
+            label = "OpenSAFELY"
+        out.append(label)
+    return out
 
 
 def _repro_source_unknown(install_results: pd.DataFrame | None) -> list[str]:
@@ -804,6 +938,9 @@ _REPRO_REASON_LEVELS = (
     "syntax",
     "environment",
     "settings",
+    "platform",
+    "how_to_run",
+    "from_report",
     "internet",
     "download",
     "interactive",
@@ -862,50 +999,181 @@ _NOT_SCRIPTS = frozenset(
 )
 
 
+#: What the run of each script says about the code (#580): ``ran``, ``code_error``,
+#: ``dependency``, ``time`` and ``not_checkable`` (``.repro_check_groups``).
+_REPRO_CHECK_GROUPS = ("ran", "code_error", "dependency", "time", "not_checkable")
+
+
+def _repro_check_group(
+    outcome: Sequence[str | None],
+    reason: Sequence[str | None] | None = None,
+    msg: Sequence[str | None] | str | None = None,
+) -> list[str | None]:
+    """Port of R/reproducibility_check.R::.repro_check_group().
+
+    What the run of each script says about the code (#580), in five groups, so that a script
+    that does not reproduce is kept apart from one the check could not test:
+
+    - ``ran``: it ran to the end;
+    - ``code_error``: it did not reproduce: it stopped with an error of the code or the
+      deposit (a file it reads, something it does not define), could not be read, is Python 2
+      code, or needs a file the deposit does not hold;
+    - ``dependency``: a package or a program was not available: a package that could not be
+      installed or was not loaded ("there is no package called"), a program outside R and
+      Python, a system library ("shared object"), or R crashing in a package's compiled code,
+      which comes from a system library of our computer that does not match the package (#652);
+    - ``time``: it did not finish within the time limit for one script, or was not started
+      because the time for all scripts together had run out;
+    - ``not_checkable``: it could not be checked automatically, because it needs a person, the
+      internet, a key or another setting of the authors' computer, one platform (Google Colab,
+      Kaggle, Windows, OpenSAFELY), more memory than the run allows, a download that was too
+      large, a file we did not download, a screen, or a program that runs it (Snakemake), or it
+      is a file of a package of the code that Python runs only as a module of that package.
+
+    ``None`` for what is not a result of the script itself: a file run inside another script, a
+    file that is not an analysis, a file not read, and a Docker failure, which says nothing about
+    the code. *reason* is :func:`_repro_failure_reason`'s, and *msg* the script's output, which
+    tells a missing program or system library apart from the other needs of the reason
+    ``environment``.
+    """
+    n = len(outcome)
+    if n == 0:
+        return []
+    reasons = _recycle(reason, n, None)
+    msgs = ["" if is_missing(m) else str(m) for m in _recycle(msg, n, "")]
+    out: list[str | None] = []
+    for oc, rs, m in zip(outcome, reasons, msgs, strict=True):
+        err = oc == "errored"
+        group: str | None = None
+        if oc == "ran_ok":
+            group = "ran"
+        elif oc in ("errored", "not_parsed", "python2", "skipped_missing_inputs"):
+            group = "code_error"
+        if oc == "dependency_unavailable" or (err and rs == "package"):
+            group = "dependency"
+        if oc in ("timed_out", "skipped_time_limit"):
+            group = "time"
+        if oc in (
+            "needs_a_person",
+            "needs_internet",
+            "out_of_memory",
+            "download_too_large",
+            "not_downloaded",
+        ) or (err and rs in ("settings", "internet", "interactive", "download")):
+            group = "not_checkable"
+        # a module of one platform, or a file of a package run on its own, also when the
+        # install tried to find the module as a package
+        if oc in ("errored", "dependency_unavailable") and rs in (
+            "platform",
+            "how_to_run",
+            "from_report",
+        ):
+            group = "not_checkable"
+        if err and rs == "environment":
+            missing_software = not _repro_out_of_memory([m])[0] and (
+                _repro_missing_program([m])[0] is not None
+                or bool(
+                    grepl(
+                        "shared object|caught segfault|Segmentation fault|core dumped|"
+                        "caught illegal operation",
+                        m,
+                        perl=True,
+                    )
+                )
+            )
+            group = "dependency" if missing_software else "not_checkable"
+        out.append(group)
+    return out
+
+
+def _recycle(x: Any, n: int, default: Any) -> list[Any]:
+    """R's ``rep_len(x %||% default, n)``: a missing *x* is *default*, a scalar is repeated."""
+    if x is None:
+        x = default
+    if isinstance(x, str) or not isinstance(x, Sequence):
+        x = [x]
+    items = list(x)
+    if not items:
+        return [default] * n
+    return [items[i % len(items)] for i in range(n)]
+
+
+def _checked_groups(
+    run_results: pd.DataFrame, reason: Sequence[str | None] | None = None
+) -> list[str | None]:
+    """``run_results$checked``, or what :func:`_repro_check_group` gives for the results.
+
+    *reason* is the reason of each script when it is not in ``run_results["reason"]``.
+    """
+    if "checked" in run_results.columns:
+        return [None if is_missing(v) else str(v) for v in run_results["checked"].tolist()]
+    if reason is None and "reason" in run_results.columns:
+        reason = [None if is_missing(v) else v for v in run_results["reason"].tolist()]
+    return _repro_check_group(
+        [None if is_missing(v) else v for v in run_results["outcome"].tolist()],
+        reason,
+        [
+            f"{e} {s}"
+            for e, s in zip(
+                _texts(run_results, "error"), _texts(run_results, "stderr"), strict=True
+            )
+        ],
+    )
+
+
+def _repro_groups_sentence(run_results: pd.DataFrame | None) -> str | None:
+    """Port of R/reproducibility_check.R::.repro_groups_sentence().
+
+    The module summary's sentence on the scripts that did not run to the end, by group (#580):
+    "Of the others, 2 did not reproduce, 1 could not run because a package or program was not
+    available, and 1 could not be checked automatically." Only scripts with a result of their
+    own count (as in "3 of 6 scripts ran without error"), and not a Docker failure. ``None``
+    when there are none.
+    """
+    if run_results is None or len(run_results) == 0:
+        return None
+    oc = [None if is_missing(v) else v for v in run_results["outcome"].tolist()]
+    group = _checked_groups(run_results)
+    own = [o not in _REPRO_NOT_OWN_OUTCOMES for o in oc]
+    labels = {
+        "code_error": "did not reproduce",
+        "dependency": "could not run because a package or program was not available",
+        "time": "did not finish within the time limit",
+        "not_checkable": "could not be checked automatically",
+    }
+    parts = []
+    for g, text in labels.items():
+        k = sum(o and gr == g for o, gr in zip(own, group, strict=True))
+        if k > 0:
+            parts.append(f"{k:d} {text}")
+    if not parts:
+        return None
+    if len(parts) > 1:
+        parts = [*parts[:-1], f"and {parts[-1]}"]
+    return "Of the others, " + (", " if len(parts) > 2 else " ").join(parts) + "."
+
+
 def _repro_run_light(tl: str, run_results: pd.DataFrame | None) -> str:
     """Port of ``.repro_run_light()``: the light after a run of one language.
 
     From the light before it (*tl*, from the files the code reads) and the scripts' outcomes
     and reasons. A script that stopped on an error of the code makes it red. Yellow, when
-    nothing is red: a script that ran past the time limit (a slow analysis is not an error of
-    the code; a time-out alone made 5 papers red, #648), one that stopped only on something our
-    run lacks or a deposit cannot hold (a program such as git or Chrome, software outside R and
-    Python, a setting such as a key or the place of restricted data; reasons "environment" and
-    "settings"), the other outcomes the check could not finish, and a run in which no script ran
-    to the end, which was green when every script was set aside or could not install its
-    packages (#648).
+    nothing is red: a script whose package or program was not available, that ran past a time
+    limit (a slow analysis is not an error of the code; a time-out alone made 5 papers red,
+    #648), or that could not be checked automatically (see :func:`_repro_check_group`; #580);
+    a Docker failure or a file not read on our side; and a run in which no script ran to the
+    end, which was green when every script was set aside or could not install its packages
+    (#648).
     """
     if run_results is None or len(run_results) == 0:
         return tl
     oc = [None if is_missing(v) else v for v in run_results["outcome"].tolist()]
-    reason = (
-        [None if is_missing(v) else v for v in run_results["reason"].tolist()]
-        if "reason" in run_results.columns
-        else [None] * len(oc)
-    )
-    ours = [
-        o == "errored" and r in ("environment", "settings") for o, r in zip(oc, reason, strict=True)
-    ]
-    if any(o == "errored" and not u for o, u in zip(oc, ours, strict=True)):
+    group = _checked_groups(run_results)
+    if any(o == "errored" and g == "code_error" for o, g in zip(oc, group, strict=True)):
         return "red"
     unfinished = (
-        any(ours)
-        or any(
-            o
-            in (
-                "timed_out",
-                "skipped_time_limit",
-                "docker_failed",
-                "needs_a_person",
-                "needs_internet",
-                "download_too_large",
-                "not_downloaded",
-                "out_of_memory",
-                "not_read",
-                "dependency_unavailable",
-            )
-            for o in oc
-        )
+        any(g in ("dependency", "time", "not_checkable") for g in group)
+        or any(o in ("docker_failed", "not_read") for o in oc)
         or not any(o in ("ran_ok", "run_by_source", "run_by_import") for o in oc)
     )
     return "yellow" if unfinished and tl == "green" else tl
@@ -945,6 +1213,7 @@ def _repro_run_counts(run_results: pd.DataFrame | None) -> pd.DataFrame:
         "repro_scripts_n",
         "repro_not_analysis_n",
         "repro_not_downloaded_n",
+        *(f"repro_{g}_n" for g in _REPRO_CHECK_GROUPS),
         *(f"repro_fail_{r}" for r in _REPRO_REASON_LEVELS),
     ]
     if run_results is None or len(run_results) == 0 or "outcome" not in run_results.columns:
@@ -967,10 +1236,16 @@ def _repro_run_counts(run_results: pd.DataFrame | None) -> pd.DataFrame:
         sum(c and r == level for c, r in zip(counted, reason, strict=True))
         for level in _REPRO_REASON_LEVELS
     ]
+    group = _checked_groups(run_results, reason)
+    groups = [
+        sum(c and g == level for c, g in zip(counted, group, strict=True))
+        for level in _REPRO_CHECK_GROUPS
+    ]
     values = [
         sum(counted),
         sum(oc == "not_analysis" for oc in outcome),
         sum(oc == "not_downloaded" for oc in outcome),
+        *groups,
         *fails,
     ]
     return pd.DataFrame(

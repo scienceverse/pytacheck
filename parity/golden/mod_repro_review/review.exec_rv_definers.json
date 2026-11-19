@@ -491,7 +491,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 8 R code files for reproducibility and ran them (each in an isolated subprocess).\n-  6 of 8 scripts ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed 8 R code files for reproducibility and ran them (each in an isolated subprocess).\n-  6 of 8 scripts ran without error when executed.\n-  Of the others, 2 did not reproduce.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -509,12 +509,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -575,6 +583,36 @@
             "t": "int",
             "v": [
               8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -660,12 +698,38 @@
             "v": [
               0
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0,
           0,
           0,
@@ -696,12 +760,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -730,7 +802,8 @@
           "elapsed",
           "script_lines",
           "captures",
-          "reason"
+          "reason",
+          "checked"
         ],
         "v": [
           {
@@ -952,6 +1025,19 @@
               "undefined",
               null
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran",
+              "ran",
+              "code_error",
+              "ran",
+              "ran",
+              "ran",
+              "code_error",
+              "ran"
+            ]
           }
         ]
       },
@@ -993,7 +1079,7 @@
       {
         "t": "chr",
         "v": [
-          "We ran the paper's 8 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**6 of 8 scripts ran to the end**: 2 stopped with an error.\n\n| Script | Result | What happened |\n|---|---|---|\n| def&#95;a.R | Ran to the end |  |\n| def&#95;b.R | Ran to the end |  |\n| fn&#95;user.R | Stopped with an error | <code>Error in nonexistent&#95;fun&#95;xyz(1) : could not find function \"nonexistent&#95;fun&#95;xyz\"<\/code> |\n| msg&#95;only.R | Ran to the end |  |\n| quiet.R | Ran to the end |  |\n| setwd&#95;var.R | Ran to the end |  |\n| user.R | Stopped with an error | <code>Error in eval(e, envir = env) : object 'shared&#95;x' not found<\/code> |\n| warn.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A script uses something it does not create or load itself.**\n\n- <code>fn&#95;user.R<\/code>\n- <code>user.R<\/code>\n\nUsually the object was still in your R session from earlier work, or another script made it.\n\n1. Restart R (in RStudio: Session > Restart R).\n2. Run each script from top to bottom, and fix what is missing.\n3. If a script needs results of another, save them to a file in the first script and read them in the second.\n4. Load every package with <code>library()<\/code> at the top.\n\n### Other problems in the files\n\n- setwd&#95;var.R calls setwd(), which ties the script to a folder on the author's computer. We replaced the call with one that does nothing so the script could run; it should be removed from the script.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+          "We ran the paper's 8 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**6 of 8 scripts ran to the end**: 2 did not reproduce.\n\n| Script | Result | What happened |\n|---|---|---|\n| def&#95;a.R | Ran to the end |  |\n| def&#95;b.R | Ran to the end |  |\n| fn&#95;user.R | Stopped with an error | <code>Error in nonexistent&#95;fun&#95;xyz(1) : could not find function \"nonexistent&#95;fun&#95;xyz\"<\/code> |\n| msg&#95;only.R | Ran to the end |  |\n| quiet.R | Ran to the end |  |\n| setwd&#95;var.R | Ran to the end |  |\n| user.R | Stopped with an error | <code>Error in eval(e, envir = env) : object 'shared&#95;x' not found<\/code> |\n| warn.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A script uses something it does not create or load itself.**\n\n- <code>fn&#95;user.R<\/code>\n- <code>user.R<\/code>\n\nUsually the object was still in your R session from earlier work, or another script made it.\n\n1. Restart R (in RStudio: Session > Restart R).\n2. Run each script from top to bottom, and fix what is missing.\n3. If a script needs results of another, save them to a file in the first script and read them in the second.\n4. Load every package with <code>library()<\/code> at the top.\n\n### Other problems in the files\n\n- setwd&#95;var.R calls setwd(), which sets the folder the script runs in. We replaced the call with one that does nothing, so the script ran from the top folder of the project. A folder on your own computer does not exist on another; paths written from the project's top folder work everywhere.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -1004,6 +1090,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

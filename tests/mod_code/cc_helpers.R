@@ -95,7 +95,9 @@ cc_prev <- function(name, paper = NULL) {
   if (is.null(paper)) paper <- cc_paper(name)
   pids <- unlist(sc$papers %||% list("p1"))
   table <- cc_table(name)
-  repo <- .cc_output("repo_check", paper, pids, list(), table = table)
+  extra <- if (is.null(sc$archive_deposits)) list() else
+    list(archive_deposits = .cc_frame(sc$archive_deposits, character(0)))
+  repo <- do.call(.cc_output, c(list("repo_check", paper, pids, list(), table = table), extra))
   if (is.null(sc$structure)) return(repo)
   structure_tbl <- dplyr::bind_rows(table, .cc_frame(sc$structure, sc$drop %||% character(0)))
   stripped <- repo

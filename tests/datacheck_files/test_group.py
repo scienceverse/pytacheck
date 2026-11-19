@@ -91,13 +91,17 @@ def test_llm_classify_batched_drops_invalid_values(monkeypatch: pytest.MonkeyPat
                            "results.value": ["banana"] * n})  # fmt: skip
 
     monkeypatch.setattr(F, "_llm", fake_llm)
-    res = F._llm_classify_batched(["a", "b"], system_prompt="p", value_desc="v",
-                                  valid=["continuous", "text"], batch_size=50)  # fmt: skip
+    # asked again in halves, then counted as unanswered (#673)
+    with pytest.warns(UserWarning, match="2 of 2 items got no usable answer"):
+        res = F._llm_classify_batched(["a", "b"], system_prompt="p", value_desc="v",
+                                      valid=["continuous", "text"], batch_size=50)  # fmt: skip
     assert res.isna().all()
+    assert res.attrs["llm_unanswered"] == [1, 2]
 
 
 def test_llm_classify_batched_survives_llm_errors(no_llm: None) -> None:
-    res = F._llm_classify_batched(["a", "b", "c"], system_prompt="p", value_desc="v")
+    with pytest.warns(UserWarning, match="3 of 3 items got no usable answer"):
+        res = F._llm_classify_batched(["a", "b", "c"], system_prompt="p", value_desc="v")
     assert len(res) == 3
     assert res.isna().all()
     assert res.attrs["llm_model"] is None

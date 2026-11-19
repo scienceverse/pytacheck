@@ -141,10 +141,11 @@ def test_validate_na_text_and_key_types(test_module):
         validate(pd.DataFrame({"paper_id": [1, 2], "text": ["It was significant.", "No."]}), mod)
 
 
-def test_html_sniff_ignores_invalid_utf8(tmp_path):
+def test_html_sniff_reads_invalid_utf8_as_latin1(tmp_path):
+    # metacheck 0.4.4.9: .utf8_lines() on the lines read; before, the file never matched
     f = tmp_path / "a.html"
     f.write_bytes(b'<meta name="generator" content="pandoc" />\n<p>caf\xe9</p>\n')
-    assert _html_sniff_kind(str(f)) is None
+    assert _html_sniff_kind(str(f)) == "rmd"
     g = tmp_path / "b.html"
     g.write_bytes(b"<pre>\n. regress y x\ncaf\xe9\n</pre>\n")
     assert _html_sniff_kind(str(g)) == "stata"

@@ -990,6 +990,18 @@ def _execute(
     r_lfs_stopped = layout._repro_lfs_stopped(run_results, sandbox_root)
     reason = ["file" if f in r_lfs_stopped else r for f, r in zip(rr_names, reason, strict=True)]
     _set_col(run_results, "reason", reason)
+    # code recovered from a knitted report, which leaves out the chunks it does not show, is
+    # not blamed for stopping (#648, K8a)
+    from_report_failed = outcomes._repro_from_report_failed(
+        run_results, outcomes._repro_from_report_names(code_tbl)
+    )
+    reason = ["from_report" if ff else r for ff, r in zip(from_report_failed, reason, strict=True)]
+    _set_col(run_results, "reason", reason)
+    # ran, did not reproduce, a package or program not available, out of time, or could not
+    # be checked automatically (#580)
+    _set_col(
+        run_results, "checked", outcomes._repro_check_group(outcome, reason, _msgs(run_results))
+    )
     run_results.attrs["reran_for_order"] = reran
     run_results.attrs["reran_for_reorder"] = reran_for_reorder
 

@@ -177,3 +177,30 @@ def test_source_prefix_is_result_without_a_usable_source_file() -> None:
         assert _source_prefix(missing) == "result"
     assert _source_prefix("My File.jasp") == "my_file_jasp"
     assert _source_prefix("_a_") == "a"
+
+
+def test_headerless_columns_and_numbered_listings_are_no_results(stato: None) -> None:
+    """metacheck 0.4.4.8 (#648, K8e): a column without a header or with a number as header, and a
+    numbered listing of more than 20 rows naming no statistic, store nothing."""
+    from metacheck.statout.stat_output import stat_results_long
+
+    tb = [
+        {
+            "analysis": "b",
+            "title": None,
+            "data": pd.DataFrame({"V1": ["5", "7"], "t": ["2.1", "3.3"], "0.61": ["1", "2"]}),
+        }
+    ]
+    long = stat_results_long(tb)
+    assert set(long["statistic"]) == {"t"}
+    assert long["value"].tolist() == ["2.1", "3.3"]
+    big = pd.DataFrame(
+        {
+            "V1": [str(i) for i in range(1, 26)],
+            "subjID": [str(i % 5 + 1) for i in range(25)],
+            "gain": [f"{i / 10:g}" for i in range(1, 26)],
+        }
+    )
+    assert len(stat_results_long([{"analysis": "d", "title": None, "data": big}])) == 0
+    big["t"] = "2.1"
+    assert len(stat_results_long([{"analysis": "d", "title": None, "data": big}])) > 0

@@ -1449,6 +1449,26 @@ def _is_readable_archive(name: Any) -> list[bool]:
     ]
 
 
+def _is_archive_name(name: Any) -> list[bool]:
+    """Port of ``R/zip-peek.R::.is_archive_name()``: an archive, a container of several files.
+
+    A ``.zip``, a tar (also compressed), a ``.7z`` or a ``.rar``. A single compressed file
+    (``scan.nii.gz``, ``run.log.gz``) is not one, as it holds one file, which is what it is;
+    repo_check counted 280 compressed logs of one deposit as archives and advised the ``.zip``
+    format for them (metacheck #648).
+    """
+    names = _chr_list(name)
+    return [
+        a or b or c
+        for a, b, c in zip(
+            _is_zip(names),
+            _is_tar_archive(names),
+            _grepl("[.](7z|rar)$", names, ignore_case=True),
+            strict=True,
+        )
+    ]
+
+
 # -- expanding downloaded archives ---------------------------------------------
 
 
@@ -2013,7 +2033,7 @@ def _expand_tar(
     """
     import tarfile
 
-    from metacheck.archives.tar_peek import _tar_list_file
+    from metacheck.archives.tar_peek import _tar_list_file, _utf8_names
 
     empty = tar_row.iloc[0:0].copy()
     if _missing_path(tar_path):
@@ -2027,7 +2047,12 @@ def _expand_tar(
         return empty
     if not members:
         return empty
-    names = [m.name for m in members]
+    # A tar records no character set for its names: a name that is not valid UTF-8 is
+    # read as Latin-1, as other text files are (metacheck's `.utf8_lines()`); text
+    # functions stopped on it, as on a zip's old DOS names. The member is unpacked under
+    # its stored name and then given the readable one.
+    stored = [m.name for m in members]
+    names = _utf8_names(stored)
     plain = bool(re.search(r"[.]tar$", tar_path, re.IGNORECASE))
     listing = _tar_list_file(tar_path) if plain else None
     if listing is None:
@@ -2035,7 +2060,7 @@ def _expand_tar(
     else:
         # the sizes of a plain tar come from its headers (a link has none)
         by_member = dict(zip(listing["member"].tolist(), listing["size"].tolist(), strict=True))
-        sizes = [float(by_member.get(n, math.nan)) for n in names]
+        sizes = [float(by_member.get(n, math.nan)) for n in stored]
     keep = _archive_keep(names, skip_types)
     over = [k and not math.isnan(s) and s > max_bytes for k, s in zip(keep, sizes, strict=True)]
     for n, o in zip(names, over, strict=True):
@@ -2046,13 +2071,27 @@ def _expand_tar(
     if missing:
         part = f"{dest}.part"
         shutil.rmtree(part, ignore_errors=True)
+        stored_of = dict(zip(names, stored, strict=True))
         try:
-            _untar_all(tar_path, part, members=set(missing))
+            _untar_all(tar_path, part, members={stored_of[n] for n in missing})
         except Exception:  # noqa: S110 - R: tryCatch(untar(...), error = NULL)
             pass
         except BaseException:  # a stop: the half-written folder is not left in the cache
             shutil.rmtree(part, ignore_errors=True)
             raise
+        # a converted name: the file unpacked under the stored bytes is renamed (where
+        # such a member cannot be unpacked at all, it is left out)
+        for n in missing:
+            if stored_of[n] == n:
+                continue
+            try:
+                src = f"{part}/{stored_of[n]}"
+                if os.path.exists(src):
+                    to = f"{part}/{n}"
+                    os.makedirs(os.path.dirname(to), exist_ok=True)
+                    os.rename(src, to)
+            except OSError:  # R: tryCatch(..., error = NULL)
+                pass
         os.makedirs(dest, exist_ok=True)
         _move_extracted(part, dest, missing)
     # sizes only known once unpacked (compressed tar)

@@ -260,7 +260,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 1 R code file for reproducibility and ran it (each in an isolated subprocess).\n-  0 of 1 script ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed 1 R code file for reproducibility and ran it (each in an isolated subprocess).\n-  0 of 1 script ran without error when executed.\n-  Of the others, 1 did not finish within the time limit.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -278,12 +278,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -344,6 +352,54 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -454,6 +510,14 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -465,12 +529,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -499,7 +571,8 @@
           "elapsed",
           "script_lines",
           "captures",
-          "reason"
+          "reason",
+          "checked"
         ],
         "v": [
           {
@@ -577,6 +650,12 @@
             "v": [
               "time"
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "time"
+            ]
           }
         ]
       },
@@ -618,7 +697,7 @@
       {
         "t": "chr",
         "v": [
-          "We ran the paper's 1 R script in the order they depend on each other, each in a separate R or Python session, for at most 0.2 minutes per script. We did not install packages the scripts need.\n\n**0 of 1 script ran to the end**: 1 ran out of time.\n\n| Script | Result | What happened |\n|---|---|---|\n| sleep.R | Ran out of time | It was still running after 10 seconds, our time limit per script. |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A script runs longer than our limit of 0.2 minutes.**\n\n- <code>sleep.R<\/code>\n\nState in the README how long each script runs. If some steps take hours, save their results (such as fitted models) to files, add those to the deposit, and let the script read them, so readers can check the rest without waiting.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+          "We ran the paper's 1 R script in the order they depend on each other, each in a separate R or Python session, for at most 0.2 minutes per script. We did not install packages the scripts need.\n\n**0 of 1 script ran to the end**: 1 did not finish within our time limit.\n\n| Script | Result | What happened |\n|---|---|---|\n| sleep.R | Ran out of time | It was still running after 10 seconds, our time limit per script. |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A script runs longer than our limit of 0.2 minutes.**\n\n- <code>sleep.R<\/code>\n\nState in the README how long each script runs. If some steps take hours, save their results (such as fitted models) to files, add those to the deposit, and let the script read them, so readers can check the rest without waiting.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -629,6 +708,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

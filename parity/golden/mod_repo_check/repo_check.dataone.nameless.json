@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -59,6 +60,7 @@
           "file_type",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -146,6 +148,14 @@
           {
             "t": "chr",
             "v": [
+              "data",
+              "readme",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "ex1",
               null,
               null
@@ -171,7 +181,7 @@
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86\", \n\"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86\", \n\"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86\"), \n    File = c(\"<a href='https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aabc-123' target='_blank'>soil_temp.csv<\/a>\", \n    \"readme.txt\", NA), Size = c(\"20.5 kB\", \"—\", \"1 kB\"), Type = c(\"data\", \n    \"readme\", NA)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
-          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: NA. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Unclassified Files\n\n1 file is of a kind metacheck does not know, so it is not counted as data, code or documentation: NA. This is no problem in itself.",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"soil_temp.csv\", Group = \"ex1\", Path = \"soil_temp.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"readme.txt\", Group = \"—\", Path = \"readme.txt\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = NA_character_, Group = \"—\", Path = NA_character_), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -179,7 +189,7 @@
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "green"
         ]
       },
       {
@@ -205,6 +215,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -294,6 +309,36 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
@@ -310,6 +355,34 @@
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -391,6 +464,7 @@
           "resource_type",
           "resource_subtype",
           "related",
+          "organisation",
           "paper_id",
           "ownership",
           "ownership_group",
@@ -472,6 +546,12 @@
           {
             "t": "chr",
             "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "p_dataone_nameless"
             ]
           },
@@ -511,6 +591,7 @@
           "dep_creators",
           "dep_orcids",
           "dep_type",
+          "dep_org",
           "dep_related",
           "dep_date",
           "dep_year",
@@ -610,6 +691,12 @@
             "t": "chr",
             "v": [
               "Dataset"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
             ]
           },
           {
@@ -789,7 +876,8 @@
           "file_size",
           "file_type",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -818,6 +906,10 @@
           },
           {
             "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           },
           {
@@ -937,6 +1029,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

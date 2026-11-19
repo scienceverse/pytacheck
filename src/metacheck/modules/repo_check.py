@@ -29,8 +29,9 @@ from metacheck.modules import _repo_check as rc
 _NO_REPOS = (
     "We found no links to repositories on the Open Science Framework, Github, GitLab, "
     "ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), "
-    "Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, or CKAN "
-    "data portals."
+    "Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, CKAN data "
+    "portals, GEO, SRA, ENA, DDBJ, ArrayExpress, CRAN, or ICPSR (openICPSR, AEA Data and Code "
+    "Repository)."
 )
 
 _README_REPORT = (
@@ -97,11 +98,13 @@ _MIRROR_SUMMARY = (
     "retrieved from the OSF registration instead."
 )
 
+# A type metacheck does not know is no fault of the deposit: a trained model (.joblib, .pth), a
+# genome file (.bed), an R package's DESCRIPTION. Advice to rename such files, and a yellow light
+# for them, were wrong in 40 of 132 preprints (metacheck #648, K5), so they are listed for
+# information only, whatever their type.
 _UNKNOWN_REPORT = (
-    "#### Unclassified Files\n\nWe could not classify {n} file{s} by name or extension: "
-    "{files}. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, "
-    "`output`) to the file name, or use a common extension, so both humans and machines can "
-    "tell what kind of file it is."
+    "#### Unclassified Files\n\n{n} file{is_are} of a kind metacheck does not know, so {it_they} "
+    "not counted as data, code or documentation: {files}. This is no problem in itself."
 )
 
 _ROSTER_REPORT = (
@@ -321,6 +324,11 @@ def _repo_check(
         repos = rc.Repos(links)
         rc.flag_figshare_share_links(repos, fs_links)
 
+    # links to file-sharing services (metacheck #660) ----
+    # Google Drive, Dropbox, OneDrive and the like are not repositories: every such link gets a
+    # warning and makes the light yellow. Their files are not read (see file_share_links()).
+    file_share = _file_share_table(paper, local_only, pids)
+
     # OSF projects whose listing stopped at `osf_max_requests`
     osf_cut_urls: list[str] = []
 
@@ -351,26 +359,40 @@ def _repo_check(
     if len(repos.df) == 0:
         ids = pids()
         n = len(ids)
-        return {
-            "traffic_light": "na",
-            "summary_text": _NO_REPOS,
-            "summary_table": pd.DataFrame(
-                {
-                    "paper_id": pd.Series(ids, dtype="string"),
-                    "repo_n": pd.Series([0.0] * n, dtype="float64"),
-                    **{
-                        c: pd.Series([pd.NA] * n, dtype="boolean")
-                        for c in (
-                            "files_n",
-                            "files_data",
-                            "files_code",
-                            "files_readme",
-                            "files_zip",
-                        )
-                    },
-                }
+        n_fs = len(file_share)
+        summary_table = pd.DataFrame(
+            {
+                "paper_id": pd.Series(ids, dtype="string"),
+                "repo_n": pd.Series([0.0] * n, dtype="float64"),
+                **{
+                    c: pd.Series([pd.NA] * n, dtype="boolean")
+                    for c in ("files_n", "files_data", "files_code", "files_readme", "files_zip")
+                },
+            }
+        )
+        summary_table["file_share_n"] = pd.Series(_file_share_n_of(file_share, ids), dtype="Int64")
+        info: dict[str, Any] = {
+            # a link to a file-sharing service is something to fix (metacheck #660)
+            "traffic_light": "yellow" if n_fs > 0 else "na",
+            "summary_text": (
+                "".join(f"\n-  {x}" for x in (_NO_REPOS, _file_share_text(file_share)[1]))
+                if n_fs > 0
+                else _NO_REPOS
             ),
+            "summary_table": summary_table,
         }
+        if n_fs > 0:
+            info["report"] = [_NO_REPOS, *_file_share_text(file_share)[0]]
+        return info
+
+    # set aside: listed, not checked (metacheck #660) ----
+    # GEO, the INSDC archives (SRA, ENA, DDBJ) and ArrayExpress keep raw data such as sequencing
+    # reads, often hundreds of GB, in their own formats and without READMEs; R packages on CRAN
+    # are checked by CRAN, and a package is not the paper's analysis; the files of ICPSR and
+    # openICPSR cannot be read (their site answers automatic requests with a browser check).
+    # metacheck lists the authors' own of these, which needs the ownership engine pytacheck
+    # does not have (D141): here none is listed and every link of these types is set aside.
+    n_aside = int(repos.df["repo_type"].isin(rc.SET_ASIDE_TYPES).sum())
 
     # file numbers and types ----
     all_files = bind_rows([*file_parts, local_files_df]).reset_index(drop=True)
@@ -398,6 +420,9 @@ def _repo_check(
         repo_metadata = repo_metadata.copy()
         repo_metadata["paper_id"] = pd.Series([], dtype="string")
 
+    # (after the metadata above has its paper_id, as in R)
+    repos.keep(list(~repos.df["repo_type"].isin(rc.SET_ASIDE_TYPES).to_numpy(dtype=bool)))
+
     repo_sum = _summarise_repos(repos.df, all_files)
 
     view_only = bind_rows([repos.osf_view_only, repos.rb_view_only]).reset_index(drop=True)
@@ -412,6 +437,8 @@ def _repo_check(
         repos.rb_view_only,
         repos.rb_not_public,
         osf_cut_urls,
+        file_share,
+        n_aside,
     )
 
     # traffic_light ----
@@ -421,7 +448,6 @@ def _repo_check(
     green = (
         flags["zip_n"] == 0
         and flags["repo_no_readme"] == 0
-        and flags["n_unknown"] == 0
         and not flags["roster"]
         and flags["n_naming_bad"] == 0
         and flags["n_closed_unreachable"] == 0
@@ -429,9 +455,20 @@ def _repo_check(
         and flags["n_useless_suggestion"] == 0
         and flags["n_view_only"] == 0
     )
-    tl = "red" if flags["n_useless_problem"] > 0 else "green" if green else "yellow"
+    # Every linked deposit holds other people's or the authors' earlier work, or is one that is
+    # listed and not checked (a sequence archive, a CRAN package, ICPSR): there is nothing of this
+    # paper's to judge, as when no repository is linked.
+    if len(repo_sum) == 0 and n_aside > 0:
+        tl = "na"
+    else:
+        tl = "red" if flags["n_useless_problem"] > 0 else "green" if green else "yellow"
+    # a link to a file-sharing service is something to fix (metacheck #660)
+    if len(file_share) > 0 and tl in ("green", "na"):
+        tl = "yellow"
 
-    summary_table = _summary_table(repo_sum, all_files, flags, roster_check, view_only)
+    summary_table = _summary_table(
+        repo_sum, all_files, flags, roster_check, view_only, file_share, pids()
+    )
     summary_text = "".join(f"\n-  {s}" for s in summary)
 
     error_rows = repo_sum["repo_error"].notna().to_numpy(dtype=bool)
@@ -470,6 +507,73 @@ def _repo_check(
 # ---------------------------------------------------------------------------
 
 
+def _file_share_table(paper: Any, local_only: bool, pids: Callable[[], list[Any]]) -> pd.DataFrame:
+    """The links to file-sharing services: ``paper_id``, ``href``, ``service`` (R: ``file_share``).
+
+    None for ``local_only``, and none where the lookup fails (R: ``tryCatch(..., error = NULL)``).
+    """
+    from metacheck.archives.file_share import file_share_links
+
+    empty = pd.DataFrame(
+        {
+            "paper_id": pd.Series([], dtype="string"),
+            "href": pd.Series([], dtype="string"),
+            "service": pd.Series([], dtype="string"),
+        }
+    )
+    if local_only is True:
+        return empty
+    try:
+        fs = file_share_links(paper)
+    except Exception:
+        return empty
+    if not isinstance(fs, pd.DataFrame) or len(fs) == 0:
+        return empty
+    fs = fs.copy()
+    if "paper_id" not in fs.columns:
+        ids = pids()
+        fs["paper_id"] = pd.Series(
+            [ids[0] if ids else None] * len(fs), index=fs.index, dtype="string"
+        )
+    return fs.reset_index(drop=True)
+
+
+def _file_share_none() -> pd.DataFrame:
+    return pd.DataFrame({"paper_id": pd.Series([], dtype="string")})
+
+
+def _file_share_n_of(file_share: pd.DataFrame, ids: Sequence[Any]) -> list[int]:
+    """R ``file_share_n_of()``: the number of file-sharing links of each paper (``%in%``: NA matches NA)."""
+    have = [None if rc._na(v) else v for v in rc.vals(file_share["paper_id"])]
+    return [sum(1 for h in have if h == (None if rc._na(i) else i)) for i in ids]
+
+
+def _file_share_text(file_share: pd.DataFrame) -> tuple[list[str], str]:
+    """The report block and the summary line for the links to file-sharing services."""
+    n = len(file_share)
+    services = rc.vals(file_share["service"])
+    fs_list = "; ".join(
+        f"{s}: {h}" for s, h in zip(services, rc.vals(file_share["href"]), strict=True)
+    )
+    report = [
+        "#### File-sharing services",
+        (
+            f"The paper links to {plural(n, 'a file-sharing service', 'file-sharing services')} "
+            f"({fs_list}). Such services are not repositories: files can be changed or deleted at "
+            "any time, they get no DOI, and the link stops working when the account is closed. "
+            "Share data and code in a stable repository such as Zenodo."
+        ),
+    ]
+    summary = (
+        f"The paper links to "
+        f"{plural(n, 'a file-sharing service', f'{n} file-sharing services')} "
+        f"({', '.join(rc.unique(services))}), which "
+        f"{plural(n, 'is not a repository', 'are not repositories')}; share data and code in a "
+        "stable repository such as Zenodo."
+    )
+    return report, summary
+
+
 def _online_listings(
     repos: rc.Repos,
     osf_license: bool,
@@ -497,6 +601,9 @@ def _online_listings(
     listings = _api_listings(repos, cache, bar)
     ldbase_files, ldbase_meta = rc.list_ldbase(repos, repos.urls("ldbase"), bar, cache)
     ckan_files, ckan_meta = rc.list_ckan(repos, repos.urls("ckan"), bar, cache)
+    # sequence and expression archives, CRAN, ICPSR (metacheck #660): one record each, read for
+    # the metadata and the link's own reason; their files are not listed
+    info_only = _info_only_listings(repos, cache, bar)
     files = [
         ("osf", osf_files),
         ("github", github_files),
@@ -517,12 +624,49 @@ def _online_listings(
         files
         + [(k, f) for k, (f, _) in listings.items()]
         + [("ldbase", ldbase_files)]
-        + [("ckan", ckan_files)],
+        + [("ckan", ckan_files)]
+        + [(k, f) for k, (f, _) in info_only.items()],
         meta
         + [(k, m) for k, (_, m) in listings.items()]
         + [("ldbase", ldbase_meta)]
-        + [("ckan", ckan_meta)],
+        + [("ckan", ckan_meta)]
+        + [(k, m) for k, (_, m) in info_only.items()],
     )
+
+
+def _info_only_listings(
+    repos: rc.Repos, cache: bool, bar: Any
+) -> dict[str, tuple[pd.DataFrame, pd.DataFrame]]:
+    """The "Sequence and expression archives", "CRAN" and "ICPSR" blocks of R: records, no files."""
+    from metacheck.archives import cran, icpsr, seq
+
+    seq_urls = [u for t in ("geo", "ena", "arrayexpress") for u in repos.urls(t)]
+    seq_urls = list(dict.fromkeys(seq_urls))
+    out: dict[str, tuple[pd.DataFrame, pd.DataFrame]] = {}
+    out["seq"] = rc._api_listing(
+        repos,
+        seq_urls,
+        lambda: rc._quiet(lambda: seq.seq_archive_info(seq_urls, pb=bar, cache=cache)),
+        "seq_url",
+        rc.zenodo_row,
+    )
+    cran_urls = repos.urls("cran")
+    out["cran"] = rc._api_listing(
+        repos,
+        cran_urls,
+        lambda: rc._quiet(lambda: cran.cran_info(cran_urls, pb=bar, cache=cache)),
+        "cran_url",
+        rc.zenodo_row,
+    )
+    icpsr_urls = repos.urls("icpsr")
+    out["icpsr"] = rc._api_listing(
+        repos,
+        icpsr_urls,
+        lambda: rc._quiet(lambda: icpsr.icpsr_info(icpsr_urls, pb=bar, cache=cache)),
+        "icpsr_url",
+        rc.zenodo_row,
+    )
+    return out
 
 
 def _api_listings(
@@ -855,14 +999,25 @@ def _classify(
         data_classify_files,
         data_group_llm,
     )
+    from metacheck.fileinfo.category import _repo_file_kind
 
     all_files = all_files.copy()
     names = rc.vals(all_files["file_name"])
     paths = rc.vals(all_files["file_path"])
     names_l = [None if rc._na(n) else n for n in names]
     paths_l = [None if rc._na(p) else p for p in paths]
-    all_files["data_type"] = pd.Series(data_classify_files(names_l, paths_l), dtype="string")
+    repo_urls = rc.vals(all_files["repo_url"])
+    all_files["data_type"] = pd.Series(
+        data_classify_files(names_l, paths_l, group=[None if rc._na(u) else u for u in repo_urls]),
+        dtype="string",
+    )
     all_files["doc_role"] = pd.Series(_data_doc_role(names_l), dtype="string")
+    # what each file is for the counts per repository and the archive advice: the same
+    # classification, so the two parts of the report agree (metacheck #648, K8d)
+    all_files["file_kind"] = pd.Series(
+        _repo_file_kind(names_l, rc.vals(all_files["data_type"]), rc.vals(all_files["file_size"])),
+        dtype="string",
+    )
 
     path_for_group = [
         n if (p is None or p == "") else p for p, n in zip(paths_l, names_l, strict=True)
@@ -926,7 +1081,7 @@ def _summarise_repos(repos: pd.DataFrame, all_files: pd.DataFrame) -> pd.DataFra
     file_pid = [key(v) for v in rc.vals(all_files["paper_id"])]
     file_url = [key(v) for v in rc.vals(all_files["repo_url"])]
     file_name = rc.vals(all_files["file_name"])
-    file_type = rc.vals(all_files["file_type"])
+    file_type = rc.vals(all_files["file_kind"])
     by_key: dict[tuple[Any, Any], list[int]] = {}
     for i, k in enumerate(zip(file_pid, file_url, strict=True)):
         by_key.setdefault(k, []).append(i)
@@ -1009,6 +1164,8 @@ def _report(
     rb_view_only: pd.DataFrame | None = None,
     not_public: Sequence[str] = (),
     osf_cut_urls: Sequence[str] = (),
+    file_share: pd.DataFrame | None = None,
+    n_aside: int = 0,
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
     from metacheck.report.blocks import collapse_section, link, scroll_table
@@ -1139,6 +1296,12 @@ def _report(
         )
         report_not_public = ["#### Repositories that readers cannot open", summary_not_public]
 
+    # links to file-sharing services (metacheck #660)
+    report_file_share: list[str] = []
+    summary_file_share: str | None = None
+    if file_share is not None and len(file_share) > 0:
+        report_file_share, summary_file_share = _file_share_text(file_share)
+
     # empty repos
     repo_no_files = int(((repos["files_n"] == 0).to_numpy(dtype=bool) & ~unchecked).sum())
     summary_repo = report_repo = None
@@ -1152,16 +1315,20 @@ def _report(
     readme_n = sum(is_readme)
     # only repositories that were listed (see `unchecked` above)
     repo_no_readme = int(((repos["files_readme"] == 0).to_numpy(dtype=bool) & ~unchecked).sum())
-    summary_readme = (
+    summary_readme: str | None = (
         f"We found {readme_n} README file{plural(readme_n)} and {repo_no_readme} "
         f"{plural(repo_no_readme, 'repository', 'repositories')} without READMEs."
     )
+    # no repository left to have one (all set aside, or in sequence archives)
+    if n_repos == 0:
+        summary_readme = None
     report_readme = (
         _README_REPORT if repo_no_readme > 0 else "README files were found in all repositories."
     )
 
     names = rc.vals(all_files["file_name"])
-    ftypes = rc.vals(all_files["file_type"])
+    # what each file is for the counts and the archive advice (R: `file_kind`)
+    ftypes = rc.vals(all_files["file_kind"])
 
     # zip files
     zip_n = int(repos["files_zip"].sum())
@@ -1296,7 +1463,10 @@ def _report(
     summary_unknown = report_unknown = None
     if n_unknown > 0:
         report_unknown = _UNKNOWN_REPORT.format(
-            n=n_unknown, s=plural(n_unknown), files=", ".join(_na_str(u) for u in unknown[:10])
+            n=n_unknown,
+            is_are=plural(n_unknown, " is", "s are"),
+            it_they=plural(n_unknown, "it is", "they are"),
+            files=", ".join(_na_str(u) for u in unknown[:10]),
         )
         summary_unknown = f"We could not classify {n_unknown} file{plural(n_unknown)}."
 
@@ -1425,6 +1595,7 @@ def _report(
         *report_not_public,
         *report_view_only,
         report_repo,
+        *report_file_share,
         "#### Repositories" if len(repo_tbl) else None,
         scroll_table(repo_tbl, maxrows=10),
         "#### Files" if len(report_tbl) else None,
@@ -1450,7 +1621,9 @@ def _report(
             summary_not_public,
             summary_view_only,
             summary_repo,
-            summary_files,
+            # nothing to count where every deposit was set aside
+            summary_files if (n_repos > 0 or n_aside == 0) else None,
+            summary_file_share,
             summary_readme,
             summary_zip,
             summary_edat,
@@ -1489,13 +1662,14 @@ _USELESS_REMOVE = (
     "command line with `zip -r -X`, or remove them afterwards with "
     '`zip -d archive.zip "__MACOSX/*" "*.DS_Store"`. '
     "*RStudio session files* (`.Rproj.user/`) hold open tabs and unsaved "
-    "edits; *R history* (`.Rhistory`) lists the commands typed in a session "
+    "edits; *R history* (`.Rhistory`, `.Rapp.history`) lists the commands typed in a session "
     "and can hold file paths and passwords; *Jupyter checkpoints* "
     "(`.ipynb_checkpoints/`) are automatic copies of notebooks; *compiled "
     "Python files* (`__pycache__/`, `.pyc`) are recreated when the code runs; "
     "*open-document lock files* (`~$...docx`, `.~lock...#`) are left while a "
     "document is open; *editor backups* (`file~`, `.bak`, `.swp`) and "
-    "*temporary files* (`.tmp`, `.temp`) are copies a program made by itself."
+    "*temporary files* (`.tmp`, `.temp`, an interrupted save of R's workspace, `.RDataTmp`) are "
+    "copies a program made by itself."
 )
 _USELESS_KEEP = (
     "*Keep only on purpose:* *version control* folders (`.git`, `.svn`, `.hg`) "
@@ -1610,7 +1784,7 @@ def _is_unknown(all_files: pd.DataFrame) -> list[bool]:
     n = len(all_files)
     dtypes = rc.vals(all_files["data_type"])
     names = rc.vals(all_files["file_name"])
-    ftypes = rc.vals(all_files["file_type"]) if "file_type" in all_files.columns else [None] * n
+    ftypes = rc.vals(all_files["file_kind"]) if "file_kind" in all_files.columns else [None] * n
     arch = _is_readable_archive(["" if rc._na(x) else x for x in names])
     return [
         (not rc._na(d) and d == "unknown")
@@ -1656,6 +1830,8 @@ def _summary_table(
     flags: dict[str, Any],
     roster_check: Any,
     view_only: pd.DataFrame | None = None,
+    file_share: pd.DataFrame | None = None,
+    paper_ids: Sequence[Any] = (),
 ) -> pd.DataFrame:
     """One row per paper: repository and file counts, unknown files, naming problems."""
     counts = ["files_n", "files_data", "files_code", "files_readme", "files_zip"]
@@ -1670,6 +1846,13 @@ def _summary_table(
         row["repo_unchecked"] += int(unchecked[k])
         for c, v in zip(counts, rec[1:], strict=True):
             row[c] += int(v)
+
+    # every paper has its row, also one whose deposits were all set aside (a sequence archive, a
+    # CRAN package, ICPSR): it was left out here and filled with zeros later, so its counts of
+    # whose deposits were lost
+    for pid in paper_ids:
+        key = None if rc._na(pid) else pid
+        rows.setdefault(key, {"repo_n": 0, "repo_unchecked": 0, **dict.fromkeys(counts, 0)})
 
     unknown: dict[Any, int] = {}
     for pid, u in zip(rc.vals(all_files["paper_id"]), _is_unknown(all_files), strict=True):
@@ -1696,6 +1879,7 @@ def _summary_table(
 
     pids = list(rows)
     mismatch = _roster_mismatch(roster_check)
+    fs_counts = _file_share_n_of(file_share if file_share is not None else _file_share_none(), pids)
     return pd.DataFrame(
         {
             "paper_id": pd.Series(pids, dtype="string"),
@@ -1704,6 +1888,8 @@ def _summary_table(
             **{c: pd.Series([rows[p][c] for p in pids], dtype="Int64") for c in counts},
             "files_unknown": pd.Series([unknown.get(p, 0) for p in pids], dtype="Int64"),
             "naming_issues": pd.Series([bad.get(p, 0) for p in pids], dtype="Int64"),
+            # links to file-sharing services (metacheck #660)
+            "file_share_n": pd.Series(fs_counts, dtype="Int64"),
             "repo_view_only": pd.Series([len(by_paper.get(p, ())) for p in pids], dtype="Int64"),
             "roster_mismatch": pd.Series([mismatch] * len(pids), dtype="boolean"),
         }

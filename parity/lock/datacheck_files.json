@@ -1,5 +1,4 @@
 {
-"data_code_refs.latin1": {"r": "da9c38c96ce1cf5b", "py": "038ed00a09bcad54", "diff": ["[]"]},
 "data_read_head.quoted.csv": {"r": "ef2c31d76b88c5cb", "py": "77c8ba552bf8b1ba", "diff": ["text[]"]},
 "data_read_head.whitespace.csv": {"r": "804f5706f67497dc", "py": "02e697ca0a223709", "diff": ["<root>"]},
 "txt_classify_content.utf16_table.txt": {"r": "d12272df8f3952a3", "py": "4206a2c7c746fd8c", "diff": ["[]"]}

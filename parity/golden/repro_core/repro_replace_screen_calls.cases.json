@@ -1,0 +1,49 @@
+{
+  "id": "repro_replace_screen_calls.cases",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "calls"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "plot(x)",
+          "(function(device = grDevices::postscript, ...) { .d <- grDevices::dev.cur(); grDevices::dev.copy(device = device, ...); grDevices::dev.off(); if (.d %in% grDevices::dev.list()) grDevices::dev.set(.d); invisible(.d) })(pdf, file = 'a.pdf')",
+          "(function(..., out.type = \"pdf\") { .d <- grDevices::dev.cur(); grDevices::dev.copy(device = grDevices::pdf, ...); grDevices::dev.off(); if (.d %in% grDevices::dev.list()) grDevices::dev.set(.d); invisible(.d) })(file = 'b.pdf')",
+          "(function(...) { .d <- grDevices::dev.cur(); grDevices::dev.copy(device = grDevices::postscript, ...); grDevices::dev.off(); if (.d %in% grDevices::dev.list()) grDevices::dev.set(.d); invisible(.d) })(file = 'c.eps')",
+          "(function(filename = \"Rplot\", type = \"png\", device = grDevices::dev.cur(), ...) { type <- type[[1]]; to <- switch(type, jpg = , jpeg = grDevices::jpeg, tif = , tiff = grDevices::tiff, bmp = grDevices::bmp, pdf = grDevices::pdf, ps = , eps = grDevices::postscript, grDevices::png); if (!grepl(\".\", basename(filename), fixed = TRUE)) filename <- paste0(filename, \".\", type); .d <- grDevices::dev.cur(); grDevices::dev.set(device); grDevices::dev.copy(device = to, filename); grDevices::dev.off(); if (.d %in% grDevices::dev.list()) grDevices::dev.set(.d); invisible(NULL) })('fig', type = 'png')",
+          "(function(...) invisible(\"reproducibility_check removed windows(), which needs a screen\"))(width = 7, height = 5)",
+          "(function(...) invisible(\"reproducibility_check removed x11(), which needs a screen\"))(); (function(...) invisible(\"reproducibility_check removed X11(), which needs a screen\"))(); (function(...) invisible(\"reproducibility_check removed quartz(), which needs a screen\"))()",
+          "(function(...) invisible(\"reproducibility_check removed View(), which needs a screen\"))(df)",
+          "# dev.print(png)",
+          "my.dev.print(x); obj$View(1); (function(...) invisible(\"reproducibility_check removed View(), which needs a screen\"))(df)",
+          "(function(...) invisible(\"reproducibility_check removed win.graph(), which needs a screen\"))()"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dev.print()",
+          "dev.copy2pdf()",
+          "dev.copy2eps()",
+          "savePlot()",
+          "windows()",
+          "win.graph()",
+          "x11()",
+          "X11()",
+          "quartz()",
+          "View()",
+          "View()"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.18",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

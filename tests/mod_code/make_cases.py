@@ -105,6 +105,8 @@ REVIEW_MODULE_CASES: list[tuple[str, str, dict[str, Any]]] = [
     ("dupname", "review_dupname", {}),
     ("dupname_rev", "review_dupname_rev", {}),
     ("refs", "review_refs", {}),
+    # 0.4.4.18 (#660): the authors' own deposits in sequence and expression archives
+    ("archive", "review_archive", {}),
     ("gaps", "review_gaps", {}),
     ("nopin", "review_nopin", {}),
     ("mixed_repo", "review_mixed_repo", {}),
@@ -138,6 +140,10 @@ REVIEW_LOCAL_CASES: list[tuple[str, str, dict[str, Any]]] = [
     # green needs the package versions recorded: an renv.lock beside the code
     ("clean_pinned", "tests/mod_code/fixtures/review/local_clean", {}),
     ("parse_error_pinned", "tests/mod_code/fixtures/review/local_parse_bad", {}),
+    # 0.4.4.18 (#648): files a download may make, code by others, other languages
+    ("fetched_names", "tests/mod_code/fixtures/review/local_fetch", {}),
+    ("others_code", "tests/mod_code/fixtures/review/local_others", {}),
+    ("stata_only", "tests/mod_code/fixtures/review/local_stata", {}),
 ]
 
 REVIEW_ERROR_CASES: list[tuple[str, str, dict[str, Any]]] = [

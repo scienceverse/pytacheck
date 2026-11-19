@@ -2313,6 +2313,124 @@
     ]
    }
   },
+  "exec_groups": {
+   "code": {
+    "file_name": [
+     "ok.R",
+     "errors.R",
+     "keyed.R",
+     "screen.R",
+     "needs_stringr.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/errors.R",
+     "tests/mod_repro/fixtures/scripts/keyed.R",
+     "tests/mod_repro/fixtures/scripts/screen.R",
+     "tests/mod_repro/fixtures/scripts/needs_stringr.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_groups_py": {
+   "code": {
+    "file_name": [
+     "ok.py",
+     "errors.py",
+     "colab.py",
+     "relative.py"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.py",
+     "upstream/metacheck/tests/testthat/fixtures/repro/errors.py",
+     "tests/mod_repro/fixtures/scripts/py/colab.py",
+     "tests/mod_repro/fixtures/scripts/py/relative.py"
+    ],
+    "file_url": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "Python",
+     "Python",
+     "Python",
+     "Python"
+    ],
+    "packages": [
+     "",
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
   "exec_total_timeout": {
    "code": {
     "file_name": [

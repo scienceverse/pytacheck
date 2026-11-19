@@ -106,14 +106,19 @@ def test_docker_failure_is_not_counted_as_the_scripts() -> None:
     out = _section(tb, rr)
     assert "says nothing about the script" in out
     assert "stopped with an error" not in out
-    assert "**0 of 1 script ran to the end**: 1 could not run on our server." in out
+    assert "**0 of 1 script ran to the end**: 1 could not be run because Docker failed." in out
 
 
-def test_both_kinds_of_scripts_that_could_not_run_on_our_server_are_one_group() -> None:
+def test_a_missing_package_and_a_docker_failure_are_told_apart() -> None:
+    # metacheck 0.4.4.18 (#580): a package or program that was not available is its own group,
+    # and a Docker failure is no result of the script
     files = ["a.R", "b.R"]
     outcome = ["dependency_unavailable", "docker_failed"]
     out = _section(_table(files, outcome), _results(files, outcome))
-    assert "**0 of 2 scripts ran to the end**: 2 could not run on our server." in out
+    assert (
+        "**0 of 2 scripts ran to the end**: 1 could not run because a package or program was "
+        "not available, and 1 could not be run because Docker failed." in out
+    )
 
 
 def test_a_corrected_name_is_noted() -> None:
@@ -128,7 +133,8 @@ def test_other_problems_in_the_files() -> None:
     tb["setwd_removed"] = [2]
     out = _section(tb, rr)
     assert "### Other problems in the files" in out
-    assert "- m.R calls setwd(), which ties the script to a folder" in out
+    assert "- m.R calls setwd(), which sets the folder the script runs in." in out
+    assert "paths written from the project's top folder work everywhere." in out
     assert "holds notebook commands that are not Python (!pip install x)" in out
 
 
@@ -152,7 +158,10 @@ def test_the_comparison_with_the_paper() -> None:
     assert "We found no statistical tests" in _section(tb, rr)
     out = _section(tb, rr, n_tests=3, n_found=1)
     assert "Of the 3 statistical tests reported in the paper, 1 was found in the output" in out
-    assert "No script ran to the end, so most results were never produced." in out
+    assert (
+        "No script ran to the end, so the results the scripts would have printed after the point "
+        "where they stopped are missing from the comparison." in out
+    )
     ok, rr_ok = _one("ran_ok")
     out = _section(ok, rr_ok, n_tests=1, n_found=0)
     assert "Of the 1 statistical test reported in the paper, 0 were found" in out
@@ -223,7 +232,10 @@ def test_the_internet_is_named_when_scripts_could_use_it() -> None:
     assert _repro_internet_text(net) in out
     assert "a file of 120 MB" in out
     assert "while it was still downloading" in out
-    assert "1 downloaded too much" in out
+    assert (
+        "1 did not finish within our time limit, and 1 could not be checked automatically "
+        "(1 downloaded more than our limit)" in out
+    )
     # with the network off, nothing about the internet
     assert "could use the internet" not in _section(tb.iloc[[1]], rr.iloc[[1]], timeout=60)
 
@@ -296,7 +308,7 @@ def test_a_script_that_ran_out_of_memory_says_how_much_it_could_use() -> None:
     gpp = "g++: fatal error: Killed signal terminated program cc1plus"
     tb, rr = _one("out_of_memory", stderr=gpp)
     out = _section(tb, rr, memory_gb=4)
-    assert "1 ran out of memory" in out
+    assert "1 could not be checked automatically (1 needed more memory than our limit)" in out
     assert "It needed more than the 4 GB of memory it could use here." in out
     assert "**A script needs more memory than our limit of 4 GB.**" in out
     out = _section(tb, rr)

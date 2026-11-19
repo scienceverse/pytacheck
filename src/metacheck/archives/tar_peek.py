@@ -53,6 +53,22 @@ def _tar_str(r: bytes) -> str:
     return r.decode("utf-8", errors="surrogateescape")
 
 
+_INVALID_UTF8 = re.compile("[\udc80-\udcff]")
+
+
+def _utf8_names(names: Any) -> list[str]:
+    """``.utf8_lines()`` of tar names: bytes that are not valid UTF-8 are read as Latin-1.
+
+    A tar records no character set, and metacheck's text functions stop on a name that is
+    not valid UTF-8 (``.tar_list_file()``: "input string 1 is invalid", metacheck 0.4.4.18).
+    Invalid bytes are the lone surrogates of :func:`_tar_str`.
+    """
+    return [
+        n.encode("utf-8", "surrogateescape").decode("latin-1") if _INVALID_UTF8.search(n) else n
+        for n in names
+    ]
+
+
 def _tar_num(r: bytes) -> float:
     """A numeric header field: octal digits, or base-256 when the first byte's high bit is set.
 
@@ -169,6 +185,16 @@ def _tar_entries(path: str) -> list[tuple[str, float, int]] | None:
     return out
 
 
+def _member_series(members: list[str]) -> pd.Series:
+    """The ``member`` column: names as stored. A name with undecodable bytes (lone surrogates)
+    cannot be held by pandas' string type, so the column is then plain objects."""
+    import pandas as pd
+
+    if any(_INVALID_UTF8.search(m) for m in members):
+        return pd.Series(members, dtype=object)
+    return pd.Series(members, dtype="string")
+
+
 def _tar_list_file(path: str) -> pd.DataFrame | None:
     """Port of ``R/tar-peek.R::.tar_list_file()``: the regular files of a ``.tar`` on disk.
 
@@ -184,11 +210,13 @@ def _tar_list_file(path: str) -> pd.DataFrame | None:
     entries = _tar_entries(path)
     if entries is None:
         return None
+    # a name that is not valid UTF-8 is read as Latin-1; `member` keeps it as stored
+    readable = _utf8_names([e[0] for e in entries])
     return pd.DataFrame(
         {
-            "name": pd.Series([re.sub(r"^(\./)+", "", e[0]) for e in entries], dtype="string"),
+            "name": pd.Series([re.sub(r"^(\./)+", "", n) for n in readable], dtype="string"),
             "size": pd.Series([e[1] for e in entries], dtype="float64"),
-            "member": pd.Series([e[0] for e in entries], dtype="string"),
+            "member": _member_series([e[0] for e in entries]),
         }
     )
 

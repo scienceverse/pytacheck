@@ -106,6 +106,30 @@ def _read_lines(path: str | os.PathLike[str], n: int = -1) -> list[str]:
     return lines if n < 0 else lines[:n]
 
 
+def _read_utf8_lines(path: str | os.PathLike[str], n: int = -1) -> list[str]:
+    """``readLines()`` then ``.utf8_lines()``: a line that is not valid UTF-8 is read as Latin-1.
+
+    Port of ``R/data_check_helpers.R::.utf8_lines()`` as used by the Mplus and Stata readers
+    (metacheck 0.4.4.9): a log written in a Latin-1 locale is read, with the lines that are
+    valid UTF-8 left as they were.
+    """
+    lines = _read_lines(path)
+    data = Path(path).read_bytes()
+    if "\ufffd" not in data.decode("utf-8", errors="replace"):
+        return lines if n < 0 else lines[:n]
+    out: list[str] = []
+    raw = _LINE_SPLIT.split(data.decode("latin-1"))
+    if raw and raw[-1] == "":
+        raw.pop()
+    for ln in raw:
+        b = ln.encode("latin-1").split(b"\x00", 1)[0]
+        try:
+            out.append(b.decode("utf-8"))
+        except UnicodeDecodeError:
+            out.append(b.decode("latin-1"))
+    return out if n < 0 else out[:n]
+
+
 def _write_lines(lines: str | Sequence[str], path: str | os.PathLike[str]) -> None:
     """R ``writeLines(x, path, useBytes = TRUE)``: every element + ``"\\n"``.
 

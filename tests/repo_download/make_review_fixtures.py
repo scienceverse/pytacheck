@@ -67,6 +67,16 @@ def _tar(
     path.write_bytes(gzip.compress(buf.getvalue(), mtime=0))
 
 
+def _latin1_tar(path: Path, members: list[tuple[str, bytes]]) -> None:
+    """A plain .tar whose names are written in Latin-1 (a tar records no character set)."""
+    with tarfile.open(path, mode="w", format=tarfile.GNU_FORMAT, encoding="latin-1") as tf:
+        for name, data in members:
+            info = tarfile.TarInfo(name)
+            info.size = len(data)
+            info.mtime = EPOCH
+            tf.addfile(info, io.BytesIO(data))
+
+
 def _walk_cd(raw: bytes) -> list[int]:
     """Offsets of the central-directory headers."""
     eocd = raw.rfind(b"PK\x05\x06")
@@ -233,6 +243,8 @@ def main() -> None:
         links=[("rel_link.csv", "ok/data.csv")],
         tail=[("last.csv", CSV)],
     )
+    # a tar whose names are Latin-1 (metacheck 0.4.4.18 reads them as such)
+    _latin1_tar(OUT / "latin1.tar", [("Th\u00fcringen.csv", CSV), ("plain.csv", CSV)])
     _tar(
         OUT / "abslink.tar.gz",
         [("first.csv", CSV)],

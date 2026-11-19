@@ -1,0 +1,1588 @@
+{
+  "id": "reproducibility_check.exec_groups",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "brief",
+      "run_results",
+      "install_results",
+      "recorded_versions",
+      "stat_output",
+      "match_table",
+      "modifications",
+      "checklist_section",
+      "sandbox"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reproducibility_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "file_name",
+          "file_path",
+          "parses",
+          "run_order",
+          "order_basis",
+          "depends_on",
+          "paths_rewritten",
+          "paths_ambiguous",
+          "setwd_removed",
+          "runnable",
+          "not_runnable_reason",
+          "unresolved_inputs",
+          "outcome",
+          "error_type",
+          "undefined_var",
+          "reads",
+          "writes",
+          "names_corrected",
+          "used_by",
+          "not_analysis_why",
+          "paper_link",
+          "repo_name",
+          "reason",
+          "error_message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.R",
+              "errors.R",
+              "keyed.R",
+              "screen.R",
+              "needs_stringr.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.R",
+              "errors.R",
+              "keyed.R",
+              "screen.R",
+              "needs_stringr.R"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              1,
+              2,
+              5,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none",
+              "none",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran_ok",
+              "errored",
+              "errored",
+              "ran_ok",
+              "ran_ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "runtime",
+              "runtime",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "data.csv"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data.csv"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "other",
+              "settings",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "! deliberate failure for testing",
+              "! OPENAI_API_KEY is not set",
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module assesses whether the paper's code could be run on its data, and — because `execute = TRUE` — **actually ran it**. We examined 5 R code files.",
+          "#### Run order",
+          "No ordering signal (no data dependency, `source()` call, or numeric filename prefix) distinguishes the run order of these files. They may need to run in a specific order that could not be determined automatically — check this before running.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:5, File = c(\"errors.R\", \"keyed.R\", \"needs_stringr.R\", \n\"ok.R\", \"screen.R\"), \"Runs after\" = c(\"—\", \"—\", \"—\", \"—\", \n\"—\"), Basis = c(\"none\", \"none\", \"none\", \"none\", \"none\")), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File paths",
+          "Every data path in the code works in the repository as deposited.",
+          "#### Execution",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the repository, in the run order above, with a 60-second per-script timeout. Of 5 scripts: 3 ran without error, 2 errored, 0 timed out, 0 could not run because one of its own dependencies is unavailable, 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions. \n\n*a script hit a `could not find function \"...\"` error; we added the `library()` calls it needs (see below), and re-ran once. The outcomes above are from that corrected run.*",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"errors.R\", \"keyed.R\", \"needs_stringr.R\", \n\"ok.R\", \"screen.R\"), Outcome = c(\"errored\", \"errored\", \"ran_ok\", \n\"ran_ok\", \"ran_ok\"), Detail = c(\"runtime\", \"runtime\", \"\", \"\", \n\"\"), \"Time (s)\" = 0), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "**`library()` calls added**",
+          "**1 script uses functions from packages it does not load itself.** The packages are usually loaded in another script of the project, which only helps when the scripts run in one R session in the right order. To run it we added the `library()` calls below at the top. Any such script that then ran is **reproducible only after adding `library()` calls it should make itself**.",
+          "Reproducible after adding `library()` calls: needs_stringr.R.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"needs_stringr.R\", \"library() calls added\" = \"library(stringr)\"), row.names = \"needs_stringr.R\", class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "*Expand a row below to see the output each script produced.*",
+          "::: {.callout-tip title=\"Output — errors.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"data.csv\")\n> stop(\"deliberate failure for testing\")\n````\n**Messages / errors (stderr):**\n````\nError in eval(e, envir = env) : deliberate failure for testing\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — keyed.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> key <- Sys.getenv(\"OPENAI_API_KEY\")\n> if (!nzchar(key)) stop(\"OPENAI_API_KEY is not set\")\n````\n**Messages / errors (stderr):**\n````\nError in eval(e, envir = env) : OPENAI_API_KEY is not set\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — needs_stringr.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> library(stringr)\n> x <- c(\"apple\", \"banana\")\n> print(str_detect(x, \"an\"))\n[1] FALSE  TRUE\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — ok.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"data.csv\")\n> t.test(dat$x ~ dat$g)\n\n\tWelch Two Sample t-test\n\ndata:  dat$x by dat$g\nt = -4.0415, df = 4.9592, p-value = 0.01008\nalternative hypothesis: true difference in means between group a and group b is not equal to 0\n95 percent confidence interval:\n -5.731711 -1.268289\nsample estimates:\nmean in group a mean in group b \n            2.0             5.5 \n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — screen.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> x <- c(1, 2, 3)\n> plot(x)\n> (function(device = grDevices::postscript, ...) { .d <- grDevices::dev.cur(); grDevices::dev.copy(device = device, ...); grDevices::dev.off(); if (.d %in% grDevices::dev.list()) grDevices::dev.set(.d); invisible(.d) })(pdf, file = \"fig.pdf\")\n> cat(\"saved\\n\")\nsaved\n> (function(...) invisible(\"reproducibility_check removed View(), which needs a screen\"))(data.frame(x = x))\n````\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We assessed 5 R code files for reproducibility and ran them (each in an isolated subprocess).\n-  3 of 5 scripts ran without error when executed.\n-  Of the others, 1 did not reproduce and 1 could not be checked automatically.\n-  0 installable dependencies detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok",
+          "repro_tests_reported",
+          "repro_tests_matched",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "file_name",
+          "outcome",
+          "error",
+          "error_type",
+          "undefined_var",
+          "stdout",
+          "stderr",
+          "elapsed",
+          "script_lines",
+          "captures",
+          "reason",
+          "checked"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "errors.R",
+              "keyed.R",
+              "needs_stringr.R",
+              "ok.R",
+              "screen.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "errored",
+              "errored",
+              "ran_ok",
+              "ran_ok",
+              "ran_ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "! in callr subprocess.\nCaused by error in `eval(e, envir = env)`:\n! deliberate failure for testing",
+              "! in callr subprocess.\nCaused by error in `eval(e, envir = env)`:\n! OPENAI_API_KEY is not set",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "runtime",
+              "runtime",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "> dat <- read.csv(\"data.csv\")\n> stop(\"deliberate failure for testing\")",
+              "> key <- Sys.getenv(\"OPENAI_API_KEY\")\n> if (!nzchar(key)) stop(\"OPENAI_API_KEY is not set\")",
+              "> library(stringr)\n> x <- c(\"apple\", \"banana\")\n> print(str_detect(x, \"an\"))\n[1] FALSE  TRUE",
+              "> dat <- read.csv(\"data.csv\")\n> t.test(dat$x ~ dat$g)\n\n\tWelch Two Sample t-test\n\ndata:  dat$x by dat$g\nt = -4.0415, df = 4.9592, p-value = 0.01008\nalternative hypothesis: true difference in means between group a and group b is not equal to 0\n95 percent confidence interval:\n -5.731711 -1.268289\nsample estimates:\nmean in group a mean in group b \n            2.0             5.5 \n",
+              "> x <- c(1, 2, 3)\n> plot(x)\n> (function(device = grDevices::postscript, ...) { .d <- grDevices::dev.cur(); grDevices::dev.copy(device = device, ...); grDevices::dev.off(); if (.d %in% grDevices::dev.list()) grDevices::dev.set(.d); invisible(.d) })(pdf, file = \"fig.pdf\")\n> cat(\"saved\\n\")\nsaved\n> (function(...) invisible(\"reproducibility_check removed View(), which needs a screen\"))(data.frame(x = x))"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Error in eval(e, envir = env) : deliberate failure for testing",
+              "Error in eval(e, envir = env) : OPENAI_API_KEY is not set",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "dat <- read.csv(\"data.csv\")",
+                  "stop(\"deliberate failure for testing\")"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "key <- Sys.getenv(\"OPENAI_API_KEY\")",
+                  "if (!nzchar(key)) stop(\"OPENAI_API_KEY is not set\")"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "library(stringr)  # [reproducibility_check injected]",
+                  "x <- c(\"apple\", \"banana\")",
+                  "print(str_detect(x, \"an\"))"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "dat <- read.csv(\"data.csv\")",
+                  "t.test(dat$x ~ dat$g)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "x <- c(1, 2, 3)",
+                  "plot(x)",
+                  "(function(device = grDevices::postscript, ...) { .d <- grDevices::dev.cur(); grDevices::dev.copy(device = device, ...); grDevices::dev.off(); if (.d %in% grDevices::dev.list()) grDevices::dev.set(.d); invisible(.d) })(pdf, file = \"fig.pdf\")",
+                  "cat(\"saved\\n\")",
+                  "(function(...) invisible(\"reproducibility_check removed View(), which needs a screen\"))(data.frame(x = x))"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "analysis",
+                      "method",
+                      "rows",
+                      "line",
+                      "call_text"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Welch Two Sample t-test"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Welch Two Sample t-test"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "list",
+                            "names": [
+                              "label",
+                              "stats"
+                            ],
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "dat$x by dat$g"
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "t",
+                                  "df",
+                                  "p",
+                                  "mean in group a",
+                                  "mean in group b",
+                                  "conf.low",
+                                  "conf.high"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      -4.04145188432738
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      4.95918367346939
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      0.0100769433479889
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      2
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      5.5
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      -5.73171148133879
+                                    ]
+                                  },
+                                  {
+                                    "t": "dbl",
+                                    "v": [
+                                      -1.26828851866121
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          2
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "t.test(dat$x ~ dat$g)"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "other",
+              "settings",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code_error",
+              "not_checkable",
+              "ran",
+              "ran",
+              "ran"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "file",
+              "n_tables",
+              "source",
+              "n_captured",
+              "json",
+              "long"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "ok.R"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "r_output"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "schema",
+                  "schema_version",
+                  "paper_id",
+                  "source_file",
+                  "source_format",
+                  "analyses"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "metacheck-statistical-output"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1.0"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok.R"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "R"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "analysis",
+                          "results"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "Welch Two Sample t-test"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "ok_r_l2_1_r1"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "ok_r_l2_1_dat_x_by_dat_g"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "dat$x by dat$g"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "t",
+                                      "df",
+                                      "p",
+                                      "mean_in_group_a",
+                                      "mean_in_group_b",
+                                      "conf_low",
+                                      "conf_high"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              -4.04145188432738
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "t-statistic"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000176"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              4.95918367346939
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "number of degrees of freedom"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000069"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              0.0100769433479889
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "p-value"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000700"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              2
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "sample mean"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000401"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              5.5
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "sample mean"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000401"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              -5.73171148133879
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "confidence interval"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000196"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              -1.26828851866121
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "confidence interval"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000196"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 7,
+                "names": [
+                  "paper_id",
+                  "source_file",
+                  "test_id",
+                  "result_id",
+                  "analysis",
+                  "table_title",
+                  "row_label",
+                  "statistic",
+                  "stato_label",
+                  "stato_iri",
+                  "value",
+                  "model_ref"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok.R",
+                      "ok.R",
+                      "ok.R",
+                      "ok.R",
+                      "ok.R",
+                      "ok.R",
+                      "ok.R"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok_r_l2_1_dat_x_by_dat_g",
+                      "ok_r_l2_1_dat_x_by_dat_g",
+                      "ok_r_l2_1_dat_x_by_dat_g",
+                      "ok_r_l2_1_dat_x_by_dat_g",
+                      "ok_r_l2_1_dat_x_by_dat_g",
+                      "ok_r_l2_1_dat_x_by_dat_g",
+                      "ok_r_l2_1_dat_x_by_dat_g"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok_r_l2_1_r1_t",
+                      "ok_r_l2_1_r1_df",
+                      "ok_r_l2_1_r1_p",
+                      "ok_r_l2_1_r1_mean_in_group_a",
+                      "ok_r_l2_1_r1_mean_in_group_b",
+                      "ok_r_l2_1_r1_conf_low",
+                      "ok_r_l2_1_r1_conf_high"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test",
+                      "Welch Two Sample t-test"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "dat$x by dat$g",
+                      "dat$x by dat$g",
+                      "dat$x by dat$g",
+                      "dat$x by dat$g",
+                      "dat$x by dat$g",
+                      "dat$x by dat$g",
+                      "dat$x by dat$g"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t",
+                      "df",
+                      "p",
+                      "mean in group a",
+                      "mean in group b",
+                      "conf.low",
+                      "conf.high"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t-statistic",
+                      "number of degrees of freedom",
+                      "p-value",
+                      "sample mean",
+                      "sample mean",
+                      "confidence interval",
+                      "confidence interval"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "http://purl.obolibrary.org/obo/STATO_0000176",
+                      "http://purl.obolibrary.org/obo/STATO_0000069",
+                      "http://purl.obolibrary.org/obo/STATO_0000700",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000196",
+                      "http://purl.obolibrary.org/obo/STATO_0000196"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "-4.04145188432738",
+                      "4.95918367346939",
+                      "0.0100769433479889",
+                      "2",
+                      "5.5",
+                      "-5.73171148133879",
+                      "-1.26828851866121"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "file_name",
+          "change_type",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ok.R",
+              "errors.R",
+              "needs_stringr.R",
+              "screen.R",
+              "screen.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "path_rewrite",
+              "path_rewrite",
+              "library_injected",
+              "screen_call_replaced",
+              "screen_call_replaced"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "\"data.csv\" -> \"data.csv\"",
+              "\"data.csv\" -> \"data.csv\"",
+              "library(stringr)",
+              "dev.print()",
+              "View()"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We ran the paper's 5 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**3 of 5 scripts ran to the end**: 1 did not reproduce, and 1 could not be checked automatically (1 needed a key or a setting of your computer).\n\n| Script | Result | What happened |\n|---|---|---|\n| errors.R | Stopped with an error | <code>Error in eval(e, envir = env) : deliberate failure for testing<\/code> |\n| keyed.R | Stopped with an error | <code>Error in eval(e, envir = env) : OPENAI&#95;API&#95;KEY is not set<\/code> |\n| needs&#95;stringr.R | Ran to the end |  |\n| ok.R | Ran to the end |  |\n| screen.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A script needs a setting from your computer that the deposit does not hold, such as a personal key or the place of data.**\n\n- <code>keyed.R<\/code>: \"\"\n\nWe could not check these scripts. Say in the README what each setting is and how readers get it. For an online service, also save the data the script downloads, add it to the deposit, and let the script read the saved copy, as services change or close. For data that cannot be shared, say where and how readers can apply for it.\n\n**Metacheck can't automatically establish what caused the error, or how it should be improved.**\n\n- <code>errors.R<\/code>\n\nThe error message of each script is in the table above.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<root>"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.18",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

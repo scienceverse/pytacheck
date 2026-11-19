@@ -68,7 +68,8 @@
           "has_docstring",
           "files_written",
           "loaded_files_missing",
-          "loaded_files_missing_names"
+          "loaded_files_missing_names",
+          "loaded_files_fetched_names"
         ],
         "v": [
           {
@@ -534,6 +535,22 @@
               "survey.sav",
               null
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
           }
         ]
       },
@@ -561,7 +578,7 @@
           "#### Packages / Dependencies",
           "The code files load 8 distinct packages/libraries: dplyr, ggplot2, lme4, numpy, pandas, readr, scipy, tidyr. These are the names found in the source (no version information is available from static analysis).",
           "#### Reproducible Environment",
-          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or a `groundhog`/`checkpoint` date-pin alongside the code.\n\nNo list of the Python packages the code needs (a `requirements.txt`, `environment.yml`, `Pipfile.lock`, `poetry.lock`, `uv.lock` or `pyproject.toml`) was found anywhere in the repository. Without one, the package versions used for the analysis are not recoverable, and they may drift between when this analysis was run and any later reproduction attempt. Consider depositing a `requirements.txt` that lists each package with its version (for example the output of `pip freeze`).",
+          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or a `groundhog`/`checkpoint` date-pin alongside the code.\n\nNo list of the Python packages the code needs (a `requirements.txt`, `environment.yml`, `Pipfile.lock`, `poetry.lock`, `uv.lock` or `pyproject.toml`) was found anywhere in the repository. Without one, the package versions used for the analysis are not recoverable, and they may drift between when this analysis was run and any later reproduction attempt. Consider depositing a `requirements.txt` that lists each package with its version (for example the output of `pip freeze`).\n\nThe repository holds Stata and MATLAB and Mplus and SAS and SPSS code. State the version of Stata and MATLAB and Mplus and SAS and SPSS used in the README, and list any add-ons the code needs (for Stata, the user-written commands installed with `ssc install`; for MATLAB, the toolboxes), so that readers can run the code with the same software.",
           "",
           "#### Parsable code",
           "We encountered parsing issues when trying to read in R-type code files. The following errors were found in 1 code file:",
@@ -594,6 +611,7 @@
           "code_min_comments",
           "code_parse_errors",
           "code_packages_n",
+          "code_files_failed",
           "code_version_pinned"
         ],
         "v": [
@@ -655,6 +673,12 @@
             "t": "int",
             "v": [
               8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -819,6 +843,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

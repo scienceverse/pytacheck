@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -59,6 +60,7 @@
           "file_path",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -196,6 +198,19 @@
           {
             "t": "chr",
             "v": [
+              "code",
+              "data",
+              "data",
+              "data",
+              "readme",
+              "code",
+              "readme",
+              "materials"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "ex1",
               "ex1",
               "ex1",
@@ -266,6 +281,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -278,101 +298,136 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               2,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               8,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               3,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               2,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               2,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
             ]
           }
         ]
@@ -386,6 +441,34 @@
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -540,7 +623,8 @@
           "gh_owner_name",
           "gh_stars",
           "gh_forks",
-          "cff_dois"
+          "cff_dois",
+          "dep_org"
         ],
         "v": [
           {
@@ -569,6 +653,10 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           },
           {
@@ -710,7 +798,8 @@
           "file_type",
           "file_path",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -735,6 +824,10 @@
           },
           {
             "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           },
           {
@@ -860,6 +953,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

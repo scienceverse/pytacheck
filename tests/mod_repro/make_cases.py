@@ -465,6 +465,29 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "structure": DATA,
         "plan": PLAN,
     },
+    # 0.4.4.18 (#580, #648): the five groups of "checked", the key a script needs, a call that needs a
+    # screen, a module of another platform, a file of a package run on its own
+    "exec_groups": {
+        "code": code(
+            r("ok.R"),
+            r("errors.R"),
+            r("keyed.R", S + "keyed.R"),
+            r("screen.R", S + "screen.R"),
+            r("needs_stringr.R", S + "needs_stringr.R"),
+        ),
+        "structure": DATA,
+        "plan": PLAN,
+    },
+    "exec_groups_py": {
+        "code": code(
+            r("ok.py", language="Python"),
+            r("errors.py", language="Python"),
+            r("colab.py", S + "py/colab.py", language="Python"),
+            r("relative.py", S + "py/relative.py", language="Python"),
+        ),
+        "structure": DATA,
+        "plan": PLAN,
+    },
     # total_timeout runs out during the first script: it is stopped, the second not started
     "exec_total_timeout": {
         "code": code(r("sleep.R", S + "sleep.R"), r("sleep_b.R", S + "sleep_b.R")),

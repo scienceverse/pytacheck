@@ -426,7 +426,7 @@
               1,
               0,
               1,
-              0,
+              1,
               0,
               0,
               0,
@@ -670,7 +670,7 @@
               "<a href='https://osf.io/download/56420fcf747801c28a4eb4b1/' target='_blank'>example2.csv<\/a>",
               "<a href='https://osf.io/download/74d22799339fdc0d61a5d280/' target='_blank'>Archive.zip<\/a>",
               "<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md' target='_blank'>README.md<\/a>",
-              "<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study 1.csv' target='_blank'>study 1.csv<\/a>",
+              "<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study%201.csv' target='_blank'>study 1.csv<\/a>",
               "<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/analysis.R' target='_blank'>analysis.R<\/a>",
               "<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json' target='_blank'>config.json<\/a>",
               "<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/LICENSE' target='_blank'>LICENSE<\/a>",
@@ -1831,6 +1831,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

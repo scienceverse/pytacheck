@@ -281,7 +281,7 @@
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:2, File = c(\"01_prep.R\", \"02_analysis.R\"\n), \"Runs after\" = c(\"—\", \"01_prep.R\"), Basis = c(\"numeric\", \n\"dependency\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "Every data path in the code works in the repository as deposited.",
+          "The data paths in the code to files the repository holds work as deposited, but 2 paths name a file the repository does not hold: `clean_data.csv`, `not_shared.csv`.",
           "#### Files the deposit does not hold",
           "The scripts that did not run through read 1 data file that is not in the deposit, and no script of the deposit writes: `not_shared.csv`.",
           "#### Execution",
@@ -301,7 +301,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 2 R code files for reproducibility and ran them (each in an isolated subprocess).\n-  1 of 2 scripts ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed 2 R code files for reproducibility and ran them (each in an isolated subprocess).\n-  1 of 2 scripts ran without error when executed.\n-  Of the others, 1 did not reproduce.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -315,6 +315,9 @@
           "col_numeric",
           "col_text",
           "key_n",
+          "files_failed",
+          "llm_cols_unanswered",
+          "llm_files_unanswered",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n",
@@ -332,6 +335,7 @@
           "code_min_comments",
           "code_parse_errors",
           "code_packages_n",
+          "code_files_failed",
           "code_version_pinned",
           "repro_code_n",
           "repro_runnable",
@@ -343,12 +347,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -397,6 +409,24 @@
             "t": "int",
             "v": [
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
             ]
           },
           {
@@ -502,6 +532,12 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
@@ -571,6 +607,54 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -663,6 +747,14 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -674,12 +766,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -708,7 +808,8 @@
           "elapsed",
           "script_lines",
           "captures",
-          "reason"
+          "reason",
+          "checked"
         ],
         "v": [
           {
@@ -925,6 +1026,13 @@
             "v": [
               null,
               "file"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran",
+              "code_error"
             ]
           }
         ]
@@ -1492,7 +1600,7 @@
       {
         "t": "chr",
         "v": [
-          "We ran the paper's 2 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**1 of 2 scripts ran to the end**: 1 stopped with an error.\n\n| Script | Result | What happened |\n|---|---|---|\n| 01&#95;prep.R | Ran to the end |  |\n| 02&#95;analysis.R | Stopped with an error | <code>Error in file(file, \"rt\") : cannot open the connection<\/code> |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**Files are missing from your deposit.**\n\n- <code>02&#95;analysis.R<\/code> reads <code>not&#95;shared.csv<\/code>.\n\nThe script stops at the line that reads the file.\n\n1. Find the file on your computer.\n2. Add it to the deposit, in the folder where the script looks for it.\n3. If you cannot share it, for example for privacy reasons, say so in the README, and explain where readers can get it and where to put it.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+          "We ran the paper's 2 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**1 of 2 scripts ran to the end**: 1 did not reproduce.\n\n| Script | Result | What happened |\n|---|---|---|\n| 01&#95;prep.R | Ran to the end |  |\n| 02&#95;analysis.R | Stopped with an error | <code>Error in file(file, \"rt\") : cannot open the connection<\/code> |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**Files are missing from your deposit.**\n\n- <code>02&#95;analysis.R<\/code> reads <code>not&#95;shared.csv<\/code>.\n\nThe script stops at the line that reads the file.\n\n1. Find the file on your computer.\n2. Add it to the deposit, in the folder where the script looks for it.\n3. If you cannot share it, for example for privacy reasons, say so in the README, and explain where readers can get it and where to put it.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -1503,6 +1611,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

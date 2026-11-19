@@ -663,6 +663,8 @@ def test_parse_errors() -> None:
         "files_written": [""] * 8,
         "loaded_files_missing": [0, 0, 0, 1, 0, 0, 0, 0],
         "loaded_files_missing_names": ["", "", "", "file.csv", "", "", "", ""],
+        # no fixture downloads or unpacks files it does not name (metacheck 0.4.4.18, #648)
+        "loaded_files_fetched_names": [None] * 8,
     }
     for name, values in exp.items():
         got = [None if pd.isna(v) else v for v in obs[name].tolist()]
@@ -682,8 +684,96 @@ def test_parse_errors() -> None:
         "code_min_comments": 0.2,
         "code_parse_errors": 4,
         "code_packages_n": 2,
+        "code_files_failed": 0,
         "code_version_pinned": False,
     }
+
+
+def test_files_a_download_or_unpacking_in_the_code_may_make_are_not_missing(
+    tmp_path: Path,
+) -> None:
+    # R: "files a download or unpacking in the code may make are not missing (#648, K3a)"
+    from metacheck.codecheck.core import _code_fetches_unnamed
+
+    assert _code_fetches_unnamed(
+        ['osf_retrieve_node("x") %>% osf_ls_files(pattern = "a.Rda") %>% osf_download()']
+    )
+    assert _code_fetches_unnamed(['unzip("data.zip")'])
+    assert _code_fetches_unnamed(['zipfile.ZipFile(p).extractall("data")'])
+    assert not _code_fetches_unnamed(['x <- read.csv("a.csv")'])
+    write(
+        tmp_path / "0_fetch.R",
+        ['osf_retrieve_node("abcde") %>% osf_ls_files(pattern = "VIA.Rda") %>% osf_download()'],
+    )
+    write(tmp_path / "1_fit.R", ['load("VIA.Rda")', 'x <- read.csv("present.csv")'])
+    write(tmp_path / "present.csv", ["a,b"])
+    mo = run_dir(tmp_path)
+    t = mo.table.sort_values("file_name").reset_index(drop=True)
+    assert t["loaded_files_missing"].tolist() == [0, 0]
+    assert t.loc[t["file_name"] == "1_fit.R", "loaded_files_fetched_names"].tolist() == ["VIA.Rda"]
+    assert "fetches_unnamed" not in t.columns
+    rep = report_text(mo)
+    assert "All other files loaded in the code were present" in rep
+    assert "is not counted as missing: VIA.Rda" in rep
+    # without the script that downloads, the file is missing
+    (tmp_path / "0_fetch.R").unlink()
+    mo = run_dir(tmp_path)
+    assert mo.table["loaded_files_missing_names"].tolist() == ["VIA.Rda"]
+
+
+def test_all_present_is_said_only_of_the_files_that_were_read(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # #648: "all files present" for code the check could not look at (7 preprints)
+    import metacheck.archives.download as dl
+
+    monkeypatch.setattr(dl, "download_repo_files", _failing_download(with_paper_id=False))
+    write(tmp_path / "ok.R", ["x <- 1"])
+    paper = pc.test_paper(["x"])
+    table = _remote_listing(
+        [
+            {
+                "paper_id": paper.paper_id,
+                "file_name": name,
+                "repo_url": "https://osf.io/x",
+                "file_url": f"file://{tmp_path}/{name}",
+                "file_location": loc,
+            }
+            for name, loc in (("ok.R", str(tmp_path / "ok.R")), ("gone.R", None))
+        ]
+    )
+    mo = module_run(fake_repo_check(table, paper=paper), "code_check")
+    assert mo.table.set_index("file_name")["loaded_files_missing"].isna().tolist() == [False, True]
+    assert (
+        "All files loaded in the 1 of 2 code files we could read were present in the repository."
+        in report_text(mo)
+    )
+    # nothing could be read
+    none = _remote_listing([{**table.iloc[1].to_dict()}])
+    mo = module_run(fake_repo_check(none, paper=paper), "code_check")
+    assert (
+        "We could not read any code file, so we could not check which files the code loads."
+        in report_text(mo)
+    )
+
+
+def test_code_by_others_the_deposit_bundles_is_not_the_authors(tmp_path: Path) -> None:
+    # #648, K5: Stata packages in extra_ados/, minified JavaScript
+    write(tmp_path / "analysis.do", ["use data"])
+    write(tmp_path / "extra_ados" / "pkg.ado", ["program define pkg"])
+    write(tmp_path / "vendor" / "lib.R", ["y <- 2"])
+    mo = run_dir(tmp_path)
+    assert mo.table["file_name"].tolist() == ["analysis.do"]
+
+
+def test_the_r_part_of_the_advice_needs_r_code_and_other_software_gets_a_note(
+    tmp_path: Path,
+) -> None:
+    # #648, K2c: a deposit of Stata code was told to add an renv.lock
+    write(tmp_path / "analysis.do", ["use data"])
+    rep = report_text(run_dir(tmp_path))
+    assert "No `renv.lock` file, `sessionInfo()`" not in rep
+    assert "The repository holds Stata code. State the version of Stata used in the README" in rep
 
 
 def test_green_light_and_parse_errors(tmp_path: Path) -> None:

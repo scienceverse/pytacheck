@@ -1303,16 +1303,18 @@ def read_rds_head(path: str, n_rows: float) -> pd.DataFrame | None:
     """``obj <- readRDS(path); if (is.data.frame(obj)) head(obj, n_rows) else NULL``.
 
     Column attributes (variable and value labels, formats, classes) are kept
-    as stored. (R's ``head()`` drops the ``label`` of unclassed and factor
-    columns, and keeps a ``haven_labelled`` column's labels only when vctrs
-    happens to be loaded, so there the result depends on the session.)
+    as stored. A table is a plain data frame (``.plain_table()``, metacheck 0.4.4.15): a
+    column of another package's class loses the class and every attribute but its label.
+    (R's ``head()`` drops the ``label`` of unclassed and factor columns, and keeps a
+    ``haven_labelled`` column's labels only when vctrs happens to be loaded; metacheck
+    restores them all, ``.head_keep_attrs()``.)
     """
     from metacheck.datacheck._files_rdata import is_data_frame, r_frame_to_pandas, read_rds
 
     obj = read_rds(path)
     if not is_data_frame(obj):
         return None
-    return r_frame_to_pandas(obj, n_rows, subset=False)
+    return r_frame_to_pandas(obj, n_rows, subset=False, plain=True)
 
 
 def read_rdata_first_df(path: str | os.PathLike[str], n_rows: float) -> pd.DataFrame | None:
@@ -1327,7 +1329,7 @@ def read_rdata_first_df(path: str | os.PathLike[str], n_rows: float) -> pd.DataF
     obj = workspace_first_data_frame(Path(path))
     if obj is None:
         return None
-    return r_frame_to_pandas(obj, n_rows, subset=False)
+    return r_frame_to_pandas(obj, n_rows, subset=False, plain=True)
 
 
 __all__ = [

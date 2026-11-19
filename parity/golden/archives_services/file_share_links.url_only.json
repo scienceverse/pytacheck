@@ -1,0 +1,44 @@
+{
+  "id": "file_share_links.url_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "paper_id",
+      "href",
+      "text_id",
+      "service"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://www.dropbox.com/s/abc123/data.csv?dl=0"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Dropbox"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.18",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

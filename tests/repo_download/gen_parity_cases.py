@@ -718,6 +718,20 @@ def _new_helper_cases() -> list[dict[str, Any]]:
             "'https://gitlab.com/a/b']}))",
         ),
         _expr_case(
+            "run_download_want.github_raw_address",
+            'metacheck:::.run_download_want(data.frame(file_name = c("a.R", "b.png", "c.png", "d.pdf"), '
+            'file_url = c("https://raw.githubusercontent.com/o/r/main/a.R", '
+            '"https://raw.githubusercontent.com/o/r/main/b.png", "https://osf.io/download/x/", '
+            '"https://RAW.githubusercontent.com/o/r/main/d.pdf"), '
+            'repo_url = rep("https://osf.io/abcde", 4)))',
+            f"{dl}._run_download_want(__import__('pandas').DataFrame("
+            "{'file_name': ['a.R', 'b.png', 'c.png', 'd.pdf'], "
+            "'file_url': ['https://raw.githubusercontent.com/o/r/main/a.R', "
+            "'https://raw.githubusercontent.com/o/r/main/b.png', 'https://osf.io/download/x/', "
+            "'https://RAW.githubusercontent.com/o/r/main/d.pdf'], "
+            "'repo_url': ['https://osf.io/abcde'] * 4}))",
+        ),
+        _expr_case(
             "run_download_want.empty",
             "metacheck:::.run_download_want(data.frame(file_name = character(0), repo_url = character(0)))",
             f"{dl}._run_download_want(__import__('pandas').DataFrame("
@@ -726,10 +740,222 @@ def _new_helper_cases() -> list[dict[str, Any]]:
     ]
 
 
+def _osf_archive_cases() -> list[dict[str, Any]]:
+    """metacheck 0.4.4.12 and 0.4.4.17: failed-download text, storage archives (#667, #675)."""
+    dl = "__import__('metacheck.archives.download', fromlist=['x'])"
+    pd_ = "__import__('pandas')"
+    mb = "1024^2"
+    cases: list[dict[str, Any]] = []
+
+    def failed(cid: str, repos: list[str], names: list[str], errors: list[str]) -> None:
+        r = (
+            f"metacheck:::.download_failed_text(data.frame(repo_url = {_r_chr(repos)}, "
+            f"file_name = {_r_chr(names)}, error = {_r_chr(errors)}, stringsAsFactors = FALSE))"
+        )
+        py = (
+            f"{dl}._download_failed_text({pd_}.DataFrame({{'repo_url': {repos!r}, "
+            f"'file_name': {names!r}, 'error': {errors!r}}}))"
+        )
+        cases.append(_expr_case(f"download_failed_text.{cid}", r, py))
+
+    failed(
+        "two_files",
+        ["https://osf.io/abcde"] * 2,
+        ["statcheck output.csv", "notes.txt"],
+        ["Failed to parse URL: Malformed input to a URL function\nmore", "HTTP 503"],
+    )
+    many = [f"file {i}.csv" for i in range(1, 13)]
+    failed(
+        "many_files_grouped",
+        ["https://github.com/o/r"] * 12,
+        many,
+        ["HTTP 503"] * 5
+        + ["HTTP 404 Not Found."] * 3
+        + [
+            "Failed to perform HTTP request.\nCaused by error in `curl::curl_fetch_disk()`:\n! Timeout was reached: [x]"
+        ]
+        * 2
+        + ["HTTP 410", "HTTP 400:"],
+    )
+    failed(
+        "tied_reasons_alphabetical",
+        ["r"] * 6,
+        ["a", "b", "c", "d", "e", "f"],
+        ["zeta", "alpha", "Zeta", "alpha", "zeta", "Zeta"],
+    )
+    failed("same_file_twice", ["r", "r", "r"], ["a.csv", "a.csv", "b.csv"], ["HTTP 500"] * 3)
+    failed("one_file", ["r"], ["a.csv"], ["empty response"])
+    failed("only_noise_lines", ["r"], ["a.csv"], ["Failed to perform HTTP request."])
+    cases.append(
+        _expr_case(
+            "download_failed_text.null",
+            "metacheck:::.download_failed_text(NULL)",
+            f"{dl}._download_failed_text(None)",
+        )
+    )
+    cases.append(
+        _expr_case(
+            "download_failed_text.no_rows",
+            "metacheck:::.download_failed_text(data.frame(repo_url = character(0), "
+            "file_name = character(0), error = character(0)))",
+            f"{dl}._download_failed_text({pd_}.DataFrame("
+            "{'repo_url': [], 'file_name': [], 'error': []}))",
+        )
+    )
+
+    for cid, args in (
+        ("enough_files", {"n_wanted": 3, "record_n": 3, "wanted_bytes": 100, "archive_bytes": 100}),
+        (
+            "many_wanted",
+            {"n_wanted": 60, "record_n": 500, "wanted_bytes": 1e6, "archive_bytes": 1.5e6},
+        ),
+        (
+            "too_few_files",
+            {"n_wanted": 3, "record_n": 500, "wanted_bytes": 1e6, "archive_bytes": 1.1e6},
+        ),
+        (
+            "too_much_data",
+            {"n_wanted": 60, "record_n": 61, "wanted_bytes": 1e6, "archive_bytes": 1e9},
+        ),
+        ("sizes_unknown", {"n_wanted": 3, "record_n": 3, "wanted_bytes": 0, "archive_bytes": 100}),
+        (
+            "archive_size_na",
+            {
+                "n_wanted": 3,
+                "record_n": 3,
+                "wanted_bytes": 100,
+                "archive_bytes": {"$expr": {"r": "NA_real_", "py": "float('nan')"}},
+            },
+        ),
+        (
+            "exactly_twice",
+            {"n_wanted": 3, "record_n": 6, "wanted_bytes": 100, "archive_bytes": 200},
+        ),
+    ):
+        cases.append(
+            fn_case(f"archive_worth_it.{cid}", ".archive_worth_it", DL + "_archive_worth_it", args)
+        )
+
+    def skip(cid: str, cols: dict[str, list[Any]], max_dl: float = 100) -> None:
+        n = len(next(iter(cols.values())))
+        r_cols = ", ".join(f"{k} = {_r_num(v)}" for k, v in cols.items())
+        py_cols = repr(cols).replace("None", "float('nan')")
+        cases.append(
+            _expr_case(
+                f"storage_archive_skip.{cid}",
+                f"metacheck:::.storage_archive_skip(data.frame({r_cols}), seq_len({n}), "
+                f"{max_dl}, {mb})",
+                f"{dl}._storage_archive_skip({pd_}.DataFrame({py_cols}), "
+                f"list(range({n})), {max_dl}, 1024**2)",
+            )
+        )
+
+    skip("worth_it", {"file_size": [1000, 1000], "storage_size": [2000, 2000], "storage_n": [2, 2]})
+    skip("component_too_large", {"file_size": [1000], "storage_size": [1e6], "storage_n": [400]})
+    skip(
+        "thousands_of_files",
+        {"file_size": [1000], "storage_size": [3e9], "storage_n": [12345]},
+        max_dl=100000,
+    )
+    skip("over_budget", {"file_size": [1000] * 3, "storage_size": [5e8] * 3, "storage_n": [3] * 3})
+    skip("no_storage_columns", {"file_size": [1000, 2000]})
+    skip("sizes_unknown", {"file_size": [None, None]})
+    skip("storage_n_unknown", {"file_size": [1000, 1000], "storage_size": [1500, 1500]})
+    skip(
+        "storage_size_unknown_uses_files",
+        {"file_size": [1000, 1000], "storage_size": [None, None], "storage_n": [2, 2]},
+    )
+
+    cases.append(
+        _expr_case(
+            "storage_size_estimate.listed_total",
+            "metacheck:::.storage_size_estimate(data.frame(file_size = c(10, 20), "
+            "storage_size = c(NA, 500)), 1:2)",
+            f"{dl}._storage_size_estimate({pd_}.DataFrame({{'file_size': [10, 20], "
+            "'storage_size': [float('nan'), 500]}), [0, 1])",
+        )
+    )
+    cases.append(
+        _expr_case(
+            "storage_size_estimate.sum_of_files",
+            "metacheck:::.storage_size_estimate(data.frame(file_size = c(10, NA, 5)), 1:3)",
+            f"{dl}._storage_size_estimate({pd_}.DataFrame({{'file_size': [10, float('nan'), 5]}}), "
+            "[0, 1, 2])",
+        )
+    )
+    cases.append(
+        _expr_case(
+            "storage_size_estimate.nothing_known",
+            "metacheck:::.storage_size_estimate(data.frame(file_size = c(NA_real_, NA_real_)), 1:2)",
+            f"{dl}._storage_size_estimate({pd_}.DataFrame({{'file_size': "
+            "[float('nan'), float('nan')]}), [0, 1])",
+        )
+    )
+
+    totals_r = (
+        'data.frame(osf_node = c("n1", "n1", "n1", "n2", "n1", NA), '
+        'provider = c("osfstorage", "osfstorage", "github", "osfstorage", "osfstorage", "osfstorage"), '
+        'file_path = c("a.csv", "b.csv", "c.R", "a.csv", "a.csv", "x.csv"), '
+        "file_size = c(100, 50, 10, NA, 100, 5))"
+    )
+    totals_py = (
+        f"{pd_}.DataFrame({{'osf_node': ['n1', 'n1', 'n1', 'n2', 'n1', None], "
+        "'provider': ['osfstorage', 'osfstorage', 'github', 'osfstorage', 'osfstorage', 'osfstorage'], "
+        "'file_path': ['a.csv', 'b.csv', 'c.R', 'a.csv', 'a.csv', 'x.csv'], "
+        "'file_size': [100, 50, 10, float('nan'), 100, 5]})"
+    )
+    cases.append(
+        _expr_case(
+            "osf_storage_totals.counts_each_file_once",
+            f"metacheck:::.osf_storage_totals({totals_r})",
+            f"{dl}._osf_storage_totals({totals_py})",
+        )
+    )
+    cases.append(
+        _expr_case(
+            "osf_storage_totals.no_columns",
+            'metacheck:::.osf_storage_totals(data.frame(repo_name = "a"))',
+            f"{dl}._osf_storage_totals({pd_}.DataFrame({{'repo_name': ['a']}}))",
+        )
+    )
+    urls = [
+        "https://raw.githubusercontent.com/Lakens/open_peer_review/master/peerj/10.txt",
+        "https://raw.githubusercontent.com/o/r/main/data%20raw/a%20b.csv",
+        "https://raw.githubusercontent.com/o/r/feature%2Fx/a%23b/c%3Fd%25e%2Bf.csv",
+        "http://RAW.githubusercontent.com/O/R/v1.0/x.R",
+        "https://raw.githubusercontent.com/o/r/main",
+        "https://osf.io/download/abcde/",
+        "https://github.com/o/r/blob/main/a.R",
+    ]
+    cases.append(
+        _expr_case(
+            "github_raw_parts.addresses",
+            f"metacheck:::.github_raw_parts(c({', '.join(chr(34) + u + chr(34) for u in urls)}, NA))",
+            f"{dl}._github_raw_parts({urls!r} + [None])",
+        )
+    )
+    return cases
+
+
+def _r_chr(v: list[str]) -> str:
+    return (
+        "c("
+        + ", ".join(
+            '"' + x.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"' for x in v
+        )
+        + ")"
+    )
+
+
+def _r_num(v: list[Any]) -> str:
+    return "c(" + ", ".join("NA_real_" if x is None else repr(x) for x in v) + ")"
+
+
 def main() -> None:
     text = TARGET.read_text(encoding="utf-8")
     head = text.split(MARKER)[0].rstrip() + "\n\n"
     cases = zip_cases() + download_cases()
+    cases += _osf_archive_cases()
     body = yaml.dump(cases, Dumper=_Dumper, allow_unicode=True, sort_keys=False, width=100)
     TARGET.write_text(
         head + MARKER + " by tests/repo_download/gen_parity_cases.py -- do not edit below\n" + body,

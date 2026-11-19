@@ -1400,6 +1400,7 @@ def _assess_r(
         _REPRO_STARTED_OUTCOMES,
         _repro_absent_report,
         _repro_error_message,
+        _repro_groups_sentence,
         _repro_read_failed_msg,
         _repro_run_light,
         _repro_starts_app,
@@ -1857,6 +1858,10 @@ def _assess_r(
         install_results = ex["install_results"]
         run_tbl = ex["run_tbl"]
         order_tbl = ex["order_tbl"]
+        # and say of the corrected order what its table shows: the text kept the first
+        # order's "no ordering signal" or cycle beside the corrected table (#648, K8f)
+        cycle = [str(x) for x in h._as_list(order_tbl.attrs.get("cycle"))]
+        ambiguous_order = ambiguous_order and h._is_true(order_tbl.attrs.get("ambiguous"))
         stat_output = ex["stat_output"]
         structure_df = ex["structure_df"]
         plan = ex["plan"]
@@ -1967,7 +1972,7 @@ def _assess_r(
     report_order, order_table = _order_report(order_tbl, cycle, ambiguous_order, fuzzy_sources)
 
     total_ambiguous = sum(ambiguous_n)
-    report_paths = _repro_path_fix_text(rewrite_list, execute)
+    report_paths = _repro_path_fix_text(rewrite_list, execute, absent=unresolved_refs)
     # archives the run unpacked because the code reads files inside them (#648)
     arch_txt = _repro_archive_text(structure_df, code_texts)
     if arch_txt:
@@ -2056,7 +2061,6 @@ def _assess_r(
     # 10. Summary ----------------------------------------------------------------------
     outcomes_all = h._chr_col(run_results, "outcome") if run_results is not None else []
     n_ran_ok = sum(o == "ran_ok" for o in outcomes_all) if run_results is not None else None
-    n_nodep_sum = sum(o == "dependency_unavailable" for o in outcomes_all)
     n_by_src_sum = sum(o == "run_by_source" for o in outcomes_all)
     # the scripts with a result of their own, and those that were started: files of software
     # or of functions only were counted as scripts run (#648)
@@ -2108,12 +2112,12 @@ def _assess_r(
             f"{n_ran_ok:d} of {n_run_own:d} script{plural(n_run_own)} ran without error when "
             f"executed{more}."
         )
-    if n_nodep_sum > 0:
-        lines.append(
-            f"{n_nodep_sum:d} script{plural(n_nodep_sum)} could not run because "
-            f"{plural(n_nodep_sum, 'its', 'their')} own dependency is unavailable (not counted "
-            "as an error of the code)."
-        )
+    # did not reproduce, lacked a package or program, out of time, or could not be checked
+    # automatically (#580)
+    if execute and n_run_own > 0:
+        groups_sentence = _repro_groups_sentence(run_results)
+        if groups_sentence is not None:
+            lines.append(groups_sentence)
     if len(reported_inputs) > 0:
         nr = len(reported_inputs)
         lines.append(
@@ -2256,6 +2260,17 @@ def _r_modifications(
                             f"{int(n):d} groundhog, checkpoint or renv call{plural(int(n))}",
                         )
                     )
+        # calls that need a screen, replaced so they run without one (#580)
+        if run_tbl is not None and "screen_calls_replaced" in run_tbl.columns:
+            for fn, calls in zip(
+                h._chr_col(run_tbl, "file_name"),
+                h._chr_col(run_tbl, "screen_calls_replaced"),
+                strict=True,
+            ):
+                if h._nzchar(calls):
+                    rows += [
+                        (fn, "screen_call_replaced", x) for x in strsplit(calls, "; ", fixed=True)
+                    ]
         tail: list[tuple[Any, str, Any]] = []
         for fn, kinds in (ex.get("old_defaults_used") or {}).items():
             tail += [(fn, "old_default", _OLD_DEFAULT_DETAIL.get(k)) for k in kinds]

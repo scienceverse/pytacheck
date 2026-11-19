@@ -244,6 +244,47 @@ def is_readme_name(x: Sequence[str | None]) -> list[bool]:
     return [p or q for p, q in zip(a, b, strict=True)]
 
 
+def _repo_file_kind(
+    file_name: Sequence[Any],
+    data_type: Sequence[Any],
+    file_size: Sequence[Any] | None = None,
+) -> list[str | None]:
+    """What a file is for repo_check's counts and archive advice (port of ``.repo_file_kind()``).
+
+    ``data_classify_files()``'s class (*data_type*), a README by its name, and an archive by
+    ``.is_archive_name()``. The counts (``files_data``, ``files_code``, ``files_readme``,
+    ``files_zip``) were taken from :func:`filetype`, a second table of extensions that disagreed
+    with the File Classification of the same report: ``data.nc`` and ``eeg.set`` were none there
+    and data here, ``run.sh`` code there and materials here, a ``.jar`` and a ``.log.gz``
+    archives there (metacheck #648, K8d). A README inside a ``.zip`` whose listing was read
+    counts too, as its rows are classified here (11 of 132 preprints had "no README" for one),
+    and an empty file named README does not (*file_size* 0; NA counts, as many hosts give no
+    size).
+    """
+    from metacheck.archives.zip_peek import _is_archive_name
+
+    names = list(file_name)
+    out: list[str | None] = [None if is_missing(t) else str(t) for t in data_type]
+    sizes: list[Any] = list(file_size) if file_size is not None else [None] * len(names)
+    for i, readme in enumerate(is_readme_name([None if is_missing(n) else str(n) for n in names])):
+        if readme and not _size_is_zero(sizes[i]):
+            out[i] = "readme"
+    for i, arch in enumerate(_is_archive_name([None if is_missing(n) else str(n) for n in names])):
+        if arch:
+            out[i] = "archive"
+    return out
+
+
+def _size_is_zero(x: Any) -> bool:
+    """``size %in% 0`` (NA, an unparseable size, counts as not zero)."""
+    if is_missing(x):
+        return False
+    try:
+        return float(x) == 0.0
+    except (TypeError, ValueError):
+        return False
+
+
 # -- filetype() ----------------------------------------------------------------
 
 

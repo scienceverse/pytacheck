@@ -182,6 +182,8 @@ _EXPORTS: dict[str, str] = {
     "metacheck_cache_info": "metacheck.archives.cache",
     "ckan_info": "metacheck.archives.ckan",
     "ckan_links": "metacheck.archives.ckan",
+    "cran_info": "metacheck.archives.cran",
+    "cran_links": "metacheck.archives.cran",
     "dataone_info": "metacheck.archives.dataone",
     "dataone_links": "metacheck.archives.dataone",
     "dataverse_file_download": "metacheck.archives.dataverse",
@@ -203,6 +205,7 @@ _EXPORTS: dict[str, str] = {
     "figshare_info": "metacheck.archives.figshare",
     "figshare_links": "metacheck.archives.figshare",
     "figshare_pat": "metacheck.archives.figshare",
+    "file_share_links": "metacheck.archives.file_share",
     "researchdata4tu_file_download": "metacheck.archives.fourtu",
     "researchdata4tu_info": "metacheck.archives.fourtu",
     "researchdata4tu_links": "metacheck.archives.fourtu",
@@ -220,6 +223,9 @@ _EXPORTS: dict[str, str] = {
     "gitlab_pat": "metacheck.archives.gitlab",
     "gitlab_repo": "metacheck.archives.gitlab",
     "gitlab_tree_files": "metacheck.archives.gitlab",
+    "handle_links": "metacheck.archives.handle",
+    "icpsr_info": "metacheck.archives.icpsr",
+    "icpsr_links": "metacheck.archives.icpsr",
     "repo_info_cache_clear": "metacheck.archives.info_cache",
     "ldbase_info": "metacheck.archives.ldbase",
     "ldbase_links": "metacheck.archives.ldbase",
@@ -252,6 +258,9 @@ _EXPORTS: dict[str, str] = {
     "reshare_file_download": "metacheck.archives.reshare",
     "reshare_info": "metacheck.archives.reshare",
     "reshare_links": "metacheck.archives.reshare",
+    "seq_archive_info": "metacheck.archives.seq",
+    "seq_archive_links": "metacheck.archives.seq",
+    "seq_archive_size": "metacheck.archives.seq",
     "invenio_links": "metacheck.archives.zenodo",
     "zenodo_file_download": "metacheck.archives.zenodo",
     "zenodo_info": "metacheck.archives.zenodo",
@@ -555,6 +564,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from metacheck.archives.aspredicted import aspredicted_info, aspredicted_links
     from metacheck.archives.cache import metacheck_cache_info
     from metacheck.archives.ckan import ckan_info, ckan_links
+    from metacheck.archives.cran import cran_info, cran_links
     from metacheck.archives.dataone import dataone_info, dataone_links
     from metacheck.archives.dataverse import (
         dataverse_file_download,
@@ -582,6 +592,7 @@ if TYPE_CHECKING:  # pragma: no cover
         figshare_links,
         figshare_pat,
     )
+    from metacheck.archives.file_share import file_share_links
     from metacheck.archives.fourtu import (
         researchdata4tu_file_download,
         researchdata4tu_info,
@@ -599,6 +610,8 @@ if TYPE_CHECKING:  # pragma: no cover
         github_tree_files,
     )
     from metacheck.archives.gitlab import gitlab_links, gitlab_pat, gitlab_repo, gitlab_tree_files
+    from metacheck.archives.handle import handle_links
+    from metacheck.archives.icpsr import icpsr_info, icpsr_links
     from metacheck.archives.info_cache import repo_info_cache_clear
     from metacheck.archives.ldbase import ldbase_info, ldbase_links
     from metacheck.archives.local import local_files
@@ -636,6 +649,7 @@ if TYPE_CHECKING:  # pragma: no cover
         reshare_info,
         reshare_links,
     )
+    from metacheck.archives.seq import seq_archive_info, seq_archive_links, seq_archive_size
     from metacheck.archives.zenodo import (
         invenio_links,
         zenodo_file_download,

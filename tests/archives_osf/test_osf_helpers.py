@@ -381,3 +381,58 @@ def test_no_http_at_import() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         assert osf_helpers.__name__ == "metacheck.archives.osf_helpers"
+
+
+# -- #672: a refused OSF request is not "not found"; a file is asked for without contributors
+
+
+def _osf_json(status: int, body: str) -> httpx.Response:
+    return httpx.Response(
+        status, content=body.encode(), headers={"Content-Type": "application/vnd.api+json"}
+    )
+
+
+def test_a_refused_osf_request_is_not_reported_as_not_found_and_a_file_is_asked_for_again() -> None:
+    from metacheck.archives.osf_helpers import _osf_embed_refused, _osf_parse_response
+
+    embed = _osf_json(
+        400,
+        '{"errors":[{"source":{"parameter":"embed"},"detail":"The following fields are not '
+        'embeddable: bibliographic_contributors","status":"400"}]}',
+    )
+    other = _osf_json(400, '{"errors":[{"detail":"Bad filter"}]}')
+    assert _osf_embed_refused(embed) is True
+    assert _osf_embed_refused(other) is False
+    assert _osf_embed_refused(httpx.Response(404)) is False
+    assert _osf_embed_refused(RuntimeError("no answer")) is False
+
+    with pytest.warns(UserWarning, match="refused the request"):
+        r = _osf_parse_response(other, osf_id="abcde")
+    assert r is not None
+    assert r["osf_type"].tolist() == ["error"]
+    assert r["error"].tolist() == ["the OSF refused the request (HTTP 400): Bad filter"]
+    from metacheck.archives.info_cache import _repo_info_ok
+
+    assert _repo_info_ok(r) is False
+
+    # _osf_info() asks for a file again without the contributors
+    asked: list[str] = []
+    file_json = (
+        '{"data":{"id":"64db83e25e739d047b39b61e","type":"files","attributes":{"kind":"file",'
+        '"name":"a.docx","size":10},"links":{"download":"https://osf.io/download/abcde/"},'
+        '"relationships":{}}}'
+    )
+    with respx.mock(assert_all_called=False) as router:
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            asked.append(str(request.url))
+            return embed if "embed=" in str(request.url) else _osf_json(200, file_json)
+
+        router.get(url__regex=r"https://api\.osf\.io/v2/guids/abcde.*").mock(side_effect=handler)
+        info = _osf_info("abcde")
+    assert asked == [
+        "https://api.osf.io/v2/guids/abcde?embed=bibliographic_contributors",
+        "https://api.osf.io/v2/guids/abcde",
+    ]
+    assert info["osf_type"].tolist() == ["files"]
+    assert info["name"].tolist() == ["a.docx"]

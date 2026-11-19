@@ -18,6 +18,7 @@ import pandas as pd
 from metacheck._r import grepl, plural, r_round
 from metacheck._values import is_true
 from metacheck.archives._useless import is_useless_file
+from metacheck.archives.download import _download_failed_text, _failed_counts
 from metacheck.module import module
 from metacheck.modules import _data_check as h
 from metacheck.report.file_tree import file_tree_block
@@ -730,6 +731,9 @@ def data_check(
         ]
 
     report: list[Any] = [_INTRO]
+    # files whose download failed: the checks below did not see them (metacheck #667)
+    failed_text = _download_failed_text(dl["failed_files"])
+    report.extend(failed_text["report"] or [])
     tree_block = file_tree_block(all_files, tree_naming_issues, tree_useless)
     if tree_block is not None:
         report.extend(tree_block)
@@ -749,6 +753,23 @@ def data_check(
             f"column{plural(ex['llm_col_updates'])}) and assigned study groups "
             f"({n_groups:d} study group{plural(n_groups)} detected)."
         )
+        # items the model gave no usable answer for, also when asked again (#673)
+        n_un_cols = len(ex["llm_col_unanswered"])
+        n_un_files = len(state["llm_file_unanswered"])
+        if n_un_cols + n_un_files > 0:
+            what = " and ".join(
+                p
+                for p in (
+                    f"{n_un_cols:d} column{plural(n_un_cols)}" if n_un_cols else None,
+                    f"{n_un_files:d} file{plural(n_un_files)}" if n_un_files else None,
+                )
+                if p is not None
+            )
+            report[-1] += (
+                f" The model gave no usable answer for {what}, also when asked again in "
+                "smaller batches; the rules alone classified "
+                f"{'it' if n_un_cols + n_un_files == 1 else 'them'}."
+            )
     if state["concept_model_used"] is not None:
         n_clf = ex["concept_col_updates"]
         report.append(
@@ -767,7 +788,19 @@ def data_check(
         tl = "red"
     summary_table = _summary_table(all_files, columns_df, n_columns, ex, paper)
     summary_table["key_n"] = _key_counts(key_found, summary_table["paper_id"].tolist())
+    # files whose download failed, per paper (metacheck #667)
+    summary_table["files_failed"] = pd.Series(
+        _failed_counts(dl["failed_files"], summary_table["paper_id"].tolist()), dtype="int64"
+    )
+    # columns and files the model gave no usable answer for, per paper (#673); NA when the
+    # model was not used, so a run without it does not read as one without failures
+    for col, pids in (
+        ("llm_cols_unanswered", ex["llm_col_unanswered"]),
+        ("llm_files_unanswered", state["llm_file_unanswered"]),
+    ):
+        summary_table[col] = _count_by_paper(pids, summary_table["paper_id"].tolist())
     parts = [
+        *([failed_text["summary"]] if failed_text["summary"] else []),
         *summary_keys,
         summary_files,
         summary_data,
@@ -844,6 +877,17 @@ def data_check(
         # reads (#651)
         "doc_sheets": ex["doc_sheets"],
     }
+
+
+def _count_by_paper(pids: Sequence[Any], paper_ids: list[Any]) -> pd.Series:
+    """Items per paper (``count_by_paper()``), ``NA`` for every paper when the model was not used."""
+    from metacheck.llm.core import llm_use
+
+    if not llm_use():
+        return pd.Series([pd.NA] * len(paper_ids), dtype="Int64")
+    if len(paper_ids) == 1:
+        return pd.Series([len(pids)], dtype="Int64")
+    return pd.Series([sum(1 for p in pids if p == i) for i in paper_ids], dtype="Int64")
 
 
 def _keys_in_files(
@@ -1021,7 +1065,7 @@ def _classify(
     n = len(all_files)
     names = h._col(all_files, "file_name") or [None] * n
     paths = h._col(all_files, "file_path")
-    data_type = list(data_classify_files(names, paths))
+    data_type = list(data_classify_files(names, paths, group=h._col(all_files, "repo_url")))
     _set(all_files, "data_type", data_type)
     doc_role = list(_data_doc_role(names))
     _set(all_files, "doc_role", doc_role)
@@ -1037,6 +1081,9 @@ def _classify(
 
     llm_file_updates = 0
     llm_model_used: str | None = None
+    # files the model gave no usable answer for, also when asked again (#673): the paper
+    # each belongs to, for the report and summary_table
+    llm_file_unanswered: list[Any] = []
     if use_llm:
         amb = [i for i, t in enumerate(data_type) if t == "unknown"]
         if amb:
@@ -1058,6 +1105,8 @@ def _classify(
                 phase="Classifying file types",
             )
             llm_model_used = pred.attrs.get("llm_model")
+            f_pid = h._col(all_files, "paper_id") or [None] * n
+            llm_file_unanswered = [f_pid[amb[k - 1]] for k in pred.attrs.get("llm_unanswered", [])]
             vals = [None if h._na(v) else v for v in pred.tolist()]
             ok = [v is not None for v in vals]
             if any(ok):
@@ -1109,6 +1158,7 @@ def _classify(
     return {
         "all_files": all_files,
         "llm_file_updates": llm_file_updates,
+        "llm_file_unanswered": llm_file_unanswered,
         "llm_model_used": llm_model_used,
         "group_unresolved": group_unresolved,
         "group_no_evidence": group_no_evidence,
@@ -1583,6 +1633,9 @@ def _extract(
     scale_blocks: dict[str, list[list[int]]] = {}
     columns_df: pd.DataFrame | None = None
     llm_col_updates = 0
+    # columns the model gave no usable answer for, also when asked again (#673): the paper
+    # each belongs to
+    llm_col_unanswered: list[Any] = []
     concept_col_updates = 0
     n_extracted = 0
     # the full reads by file basename, before Qualtrics header stripping: the concept
@@ -1764,13 +1817,15 @@ def _extract(
         if clf is not None:
             cascade = tier == "cascade" and llm_use()
             concept_col_updates, llm_col_updates, model_used = _model_concepts(
-                columns_df, header_sig, raw_reads, clf, cascade, model, params
+                columns_df, header_sig, raw_reads, clf, cascade, model, params, llm_col_unanswered
             )
             state["concept_model_used"] = clf.name
             if model_used is not None and state["llm_model_used"] is None:
                 state["llm_model_used"] = model_used
         elif len(columns_df) > 0 and llm_use() and tier == "llm":
-            llm_col_updates, model_used = _llm_concepts(columns_df, header_sig, model, params)
+            llm_col_updates, model_used = _llm_concepts(
+                columns_df, header_sig, model, params, unanswered=llm_col_unanswered
+            )
             if state["llm_model_used"] is None:
                 state["llm_model_used"] = model_used
 
@@ -1819,6 +1874,7 @@ def _extract(
         "is_tab": is_tab,
         "is_trial": is_trial,
         "llm_col_updates": llm_col_updates,
+        "llm_col_unanswered": llm_col_unanswered,
         "concept_col_updates": concept_col_updates,
     }
 
@@ -1849,6 +1905,7 @@ def _llm_concepts(
     params: dict[str, Any],
     only: set[int] | None = None,
     answers: dict[int, str | None] | None = None,
+    unanswered: list[Any] | None = None,
 ) -> tuple[int, Any]:
     """The LLM concept tier (in place): fill concepts the rules left blank.
 
@@ -1883,6 +1940,12 @@ def _llm_concepts(
         phase="Classifying column concepts",
     )
     model_used = pred.attrs.get("llm_model")
+    if unanswered is not None:
+        c_pid = columns_df["paper_id"].tolist() if "paper_id" in columns_df.columns else None
+        for k in pred.attrs.get("llm_unanswered", []):
+            unanswered.append(
+                None if c_pid is None or h._na(c_pid[gap_idx[k - 1]]) else c_pid[gap_idx[k - 1]]
+            )
     vals = [None if h._na(v) else v for v in pred.tolist()]
     updates = 0
     for k, i in enumerate(gap_idx):
@@ -1931,6 +1994,7 @@ def _model_concepts(
     cascade: bool,
     model: Any,
     params: dict[str, Any],
+    unanswered: list[Any] | None = None,
 ) -> tuple[int, int, Any]:
     """The local classifier's concept tier (in place; pytacheck only).
 
@@ -1961,7 +2025,13 @@ def _model_concepts(
     if low:
         answers: dict[int, str | None] = {}
         n_llm, model_used = _llm_concepts(
-            columns_df, header_sig, model, params, only=set(low), answers=answers
+            columns_df,
+            header_sig,
+            model,
+            params,
+            only=set(low),
+            answers=answers,
+            unanswered=unanswered,
         )
         concept = [None if h._na(v) else v for v in columns_df["concept"].tolist()]
         for i, label in low.items():
@@ -2626,7 +2696,8 @@ def _column_findings(
             pv = data_check_pii_values(x)
             if pv["problem"]:
                 finds["Personal info (values)"] = pv["message"]
-            pn = data_check_pii_name(col)
+            # with the values, which confirm a word such as "phone" or "ip" (#648)
+            pn = data_check_pii_name(col, x)
             if pn["problem"]:
                 finds["Personal info (column name)"] = pn["message"]
             pg = data_check_pii_geo(col, x, sibling_names=names)

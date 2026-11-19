@@ -1,0 +1,14 @@
+{
+  "id": "repro_groups_sentence.one_group",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Of the others, 1 did not reproduce."
+    ]
+  },
+  "metacheck_version": "0.4.4.18",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

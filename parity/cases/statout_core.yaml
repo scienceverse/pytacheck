@@ -303,8 +303,8 @@
   "args":
     "x":
       "$expr":
-        "r": "vapply(c('head(df)', 'utils::head(df, 3)', 'dplyr::glimpse(d)', 'print(summary(m))', 'View(d)', 'names (d)', 'x <- head(d)', 'summary(d)', '', 'base::nrow(d)', 'stats::head(d)', 'headache(x)'), metacheck:::.r_is_preview_call, logical(1), USE.NAMES = FALSE)"
-        "py": "[__import__('metacheck.statout.r_output', fromlist=['_'])._r_is_preview_call(s) for s in ['head(df)', 'utils::head(df, 3)', 'dplyr::glimpse(d)', 'print(summary(m))', 'View(d)', 'names (d)', 'x <- head(d)', 'summary(d)', '', 'base::nrow(d)', 'stats::head(d)', 'headache(x)']]"
+        "r": "vapply(c('head(df)', 'utils::head(df, 3)', 'dplyr::glimpse(d)', 'print(summary(m))', 'View(d)', 'names (d)', 'x <- head(d)', 'summary(d)', '', 'base::nrow(d)', 'stats::head(d)', 'headache(x)', 'gc()', 'grDevices::dev.off()', 'system.time(f(x))', 'utils::packageVersion(x)', 'sessionInfo()', 'set.seed(1)', 'gcinfo(1)', 'dev.offx()'), metacheck:::.r_is_preview_call, logical(1), USE.NAMES = FALSE)"
+        "py": "[__import__('metacheck.statout.r_output', fromlist=['_'])._r_is_preview_call(s) for s in ['head(df)', 'utils::head(df, 3)', 'dplyr::glimpse(d)', 'print(summary(m))', 'View(d)', 'names (d)', 'x <- head(d)', 'summary(d)', '', 'base::nrow(d)', 'stats::head(d)', 'headache(x)', 'gc()', 'grDevices::dev.off()', 'system.time(f(x))', 'utils::packageVersion(x)', 'sessionInfo()', 'set.seed(1)', 'gcinfo(1)', 'dev.offx()']]"
 - "id": "r_call_object_ref.all"
   "r": "base::identity"
   "py": "copy.copy"
@@ -982,3 +982,27 @@
       "$expr":
         "r": "list(list(analysis = 'a', title = NA, data = data.frame(grp = c('Human', 'AI'), V1 = c('1', '2'), M = c('3.36', '4.08'))), list(analysis = 'b', title = NA, data = data.frame(V1 = c('5', '7'), t = c('2.1', '3.3'))))"
         "py": "[{'analysis': 'a', 'title': None, 'data': __import__('pandas').DataFrame({'grp': ['Human', 'AI'], 'V1': ['1', '2'], 'M': ['3.36', '4.08']})}, {'analysis': 'b', 'title': None, 'data': __import__('pandas').DataFrame({'V1': ['5', '7'], 't': ['2.1', '3.3']})}]"
+- "id": "stat_results_long.nightly.no_header_columns"
+  "r": "stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables":
+      "$expr":
+        "r": "list(list(analysis = 'a', title = NA, data = data.frame(grp = c('Human', 'AI'), V1 = c('1', '2'), M = c('3.36', '4.08'))), list(analysis = 'b', title = NA, data = data.frame(V1 = c('5', '7'), t = c('2.1', '3.3'), `0.61` = c('1', '2'), check.names = FALSE)), list(analysis = 'c', title = NA, data = data.frame(V3 = c('4', '5'), `<2e-16` = c('1', '2'), p = c('0.1', '0.2'), check.names = FALSE)))"
+        "py": "[{'analysis': 'a', 'title': None, 'data': __import__('pandas').DataFrame({'grp': ['Human', 'AI'], 'V1': ['1', '2'], 'M': ['3.36', '4.08']})}, {'analysis': 'b', 'title': None, 'data': __import__('pandas').DataFrame({'V1': ['5', '7'], 't': ['2.1', '3.3'], '0.61': ['1', '2']})}, {'analysis': 'c', 'title': None, 'data': __import__('pandas').DataFrame({'V3': ['4', '5'], '<2e-16': ['1', '2'], 'p': ['0.1', '0.2']})}]"
+- "id": "stat_results_long.nightly.numbered_listing"
+  "r": "stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables":
+      "$expr":
+        "r": "list(list(analysis = 'd', title = NA, data = data.frame(V1 = as.character(1:25), subjID = as.character(rep(1:5, 5)), gain = as.character(1:25 / 10))))"
+        "py": "[{'analysis': 'd', 'title': None, 'data': __import__('pandas').DataFrame({'V1': [str(i) for i in range(1, 26)], 'subjID': [str(i) for i in [1,2,3,4,5]*5], 'gain': [f'{i / 10:g}' for i in range(1, 26)]})}]"
+- "id": "stat_results_long.nightly.numbered_listing_typed"
+  "r": "stat_results_long"
+  "py": "metacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables":
+      "$expr":
+        "r": "list(list(analysis = 'd', title = NA, data = data.frame(V1 = as.character(1:25), subjID = as.character(rep(1:5, 5)), gain = as.character(1:25 / 10), t = '2.1')))"
+        "py": "[{'analysis': 'd', 'title': None, 'data': __import__('pandas').DataFrame({'V1': [str(i) for i in range(1, 26)], 'subjID': [str(i) for i in [1,2,3,4,5]*5], 'gain': [f'{i / 10:g}' for i in range(1, 26)], 't': ['2.1']*25})}]"

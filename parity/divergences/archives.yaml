@@ -62,11 +62,7 @@
   kind: deliberate
   ref: D68
   reason: "the second file, asked for after the host's limit is known, is not requested: its error says 'known rate-limited host, skip_on_api_limit' (R sends it and reports 'HTTP 429 Too Many Requests.')"
-# U76
-"repo_download_review/expand.cp437.zip":
-  kind: r_bug_fixed
-  ref: U76
-  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+# U76 (metacheck 0.4.4.18 reads zip names in CP437 as well, so expand.cp437.zip matches now)
 "repo_download_review/invalid.is_readable_archive":
   kind: r_bug_fixed
   ref: U76

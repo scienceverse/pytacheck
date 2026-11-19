@@ -584,6 +584,22 @@ def _osf_info_ids(osf_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
         resps = http.batch_query(
             [all_urls[i] for i in fetch_idx], msg="OSF Info", req_func=_osf_headers
         )
+        # An OSF item without contributors (a single file) cannot have them added: the OSF
+        # refuses the whole request (HTTP 400, "not embeddable"), and every link to a file was
+        # reported as not found (metacheck #672). Such an item is asked for again without
+        # them, one extra request for each.
+        refused = [k for k, r in enumerate(resps) if _osf_embed_refused(r)]
+        if refused:
+            again = http.batch_query(
+                [
+                    re.sub(r"[?&]embed=bibliographic_contributors$", "", all_urls[fetch_idx[k]])
+                    for k in refused
+                ],
+                msg="OSF Info",
+                req_func=_osf_headers,
+            )
+            for k, r in zip(refused, again, strict=True):
+                resps[k] = r
         for i, resp in zip(fetch_idx, resps, strict=True):
             ident = all_ids[i]
             try:
@@ -619,6 +635,50 @@ def _osf_info_ids(osf_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
             [info_table, _frame({"osf_id": invalid, "osf_type": "invalid"}, len(invalid))]
         )
     return info_table
+
+
+def _osf_errors(resp: Any) -> list[Any] | None:
+    """Port of ``R/archive-osf-helpers.R::.osf_errors()``: the errors in an OSF API answer that
+    is not a success (the body's ``errors``, each with a ``detail`` and a ``source``), or ``None``
+    when the body has none or cannot be read."""
+    if resp is None or not hasattr(resp, "status_code"):
+        return None
+    try:
+        body = _resp_body_json(resp)
+    except Exception:
+        return None
+    errors = body.get("errors") if isinstance(body, dict) else None
+    return errors if isinstance(errors, list) else None
+
+
+def _osf_error_detail(resp: Any) -> str:
+    """Port of ``R/archive-osf-helpers.R::.osf_error_detail()``: the OSF's own reason in an
+    answer that is not a success, as one text, or ``""``."""
+    out: list[str] = []
+    for e in _osf_errors(resp) or []:
+        d = e.get("detail") if isinstance(e, dict) else None
+        text = (
+            d
+            if isinstance(d, str)
+            else (d[0] if isinstance(d, list) and d and isinstance(d[0], str) else "")
+        )
+        if text and text not in out:
+            out.append(text)
+    return "; ".join(out)
+
+
+def _osf_embed_refused(resp: Any) -> bool:
+    """Port of ``R/archive-osf-helpers.R::.osf_embed_refused()``: whether the OSF refused a
+    request because of its ``embed`` parameter (HTTP 400 with an error whose source is
+    ``embed``): an item without contributors, such as a single file, cannot have them added
+    (metacheck #672)."""
+    if resp is None or not hasattr(resp, "status_code") or resp.status_code != 400:
+        return False
+    for e in _osf_errors(resp) or []:
+        src = e.get("source") if isinstance(e, dict) else None
+        if isinstance(src, dict) and src.get("parameter") == "embed":
+            return True
+    return False
 
 
 def _osf_parse_response(
@@ -657,6 +717,21 @@ def _osf_parse_response(
             single = isinstance(all_data, dict)
         elif sc in (401, 403):
             return _frame({"osf_id": [ident], "osf_type": "private", "public": False}, 1)
+        elif sc == 400:
+            # The OSF refused the request itself, which says nothing about whether the item
+            # exists: it was reported as "not found" (metacheck #672)
+            detail = _osf_error_detail(resp)
+            what = "An OSF resource" if ident is None else ident
+            tail = f": {detail}" if detail else ""
+            warnings.warn(f"{what}: the OSF refused the request (HTTP 400){tail}", stacklevel=2)
+            return _frame(
+                {
+                    "osf_id": [ident],
+                    "osf_type": "error",
+                    "error": f"the OSF refused the request (HTTP 400){tail}",
+                },
+                1,
+            )
         elif sc == 429:
             # The OSF sends no time at which its limit ends (100 requests per hour without
             # a key, 10,000 per day with one), so an hour is assumed. `error` marks the row

@@ -580,6 +580,94 @@ def _in_renv_folder(files: pd.DataFrame) -> list[bool]:
     return _in_folder(files, "renv")
 
 
+#: Folders that by convention hold other people's software (``.others_code_folder_pat``).
+_OTHERS_CODE_FOLDER = re.compile(
+    r"(^|/)(node_modules|bower_components|vendor|vendored|third[_ -]?party|external|extern|"
+    r"site-packages|dist-packages|ados?|[a-z0-9]+_ados?|toolboxes)/",
+    re.IGNORECASE,
+)
+#: A folder named after a release of a program: "jspsych-6.3.1", "ants-2.4.3" (``.release_folder_pat``).
+_RELEASE_FOLDER = re.compile(r"^[a-z][a-z0-9_.]*-v?[0-9]+(?:[.][0-9]+)+$")
+
+
+def _is_others_code_path(
+    path: Sequence[Any],
+    is_code: Sequence[Any] | None = None,
+    group: Sequence[Any] | None = None,
+) -> list[bool]:
+    """Whether each path is code by others that a deposit bundles.
+
+    Port of ``R/code_check.R::.is_others_code_path()``. It is not judged as the authors' own code
+    (metacheck 0.4.4.18, #648, K5): a folder that by convention holds other people's software
+    (node_modules, vendor, third_party, external, site-packages, Stata's ado folders such as
+    extra_ados/, MATLAB toolboxes/), a folder named after a release of a program
+    ("jspsych-6.3.1/", "ANTs-2.4.3/", unpacked rather than written), or minified JavaScript
+    (".min.js", which no one writes by hand). In 8 of 132 preprints such code was counted and
+    checked as the authors': 52 of 56 code files in one were jsPsych, 27 of 43 in another Stata
+    packages. *path* is a file's path in its deposit (or its name).
+
+    A folder named after a release is by others only when the repository (*group*) also holds code
+    (*is_code*) outside it: the authors' own code released from GitHub unpacks into such a folder as
+    well ("takotsubo_ami_ai_ecg-v0.4.0/", "Coronial-NLP-Analysis-v2.1.0/": the only two such
+    folders in 620 medRxiv papers, both the authors' code), while a library sits beside the code
+    that uses it. ``is_code`` ``None`` counts every path as code, ``group`` ``None`` every path as
+    one repository.
+    """
+    n = len(path)
+    p = ["" if is_missing(x) else str(x).replace("\\", "/") for x in path]
+    out = [
+        _OTHERS_CODE_FOLDER.search(x) is not None or re.search(r"[.]min[.]js$", x, re.I) is not None
+        for x in p
+    ]
+
+    def folders_of(x: str) -> list[str]:
+        # strsplit(tolower(x), "/", fixed = TRUE), without the file name (a trailing "" is dropped)
+        parts = x.lower().split("/")
+        if parts and parts[-1] == "":
+            parts.pop()
+        return parts[:-1]
+
+    folders = [folders_of(x) for x in p]
+    # the innermost folder named after a release, in small letters (None: none)
+    release: list[str | None] = []
+    for s in folders:
+        hit = [f for f in s if _RELEASE_FOLDER.search(f)]
+        release.append(hit[-1] if hit else None)
+    cand = [i for i in range(n) if not out[i] and release[i] is not None]
+    if not cand:
+        return out
+    code = [True] * n if is_code is None else [v is True or v == 1 for v in is_code]
+    grp = [""] * n if group is None else ["" if is_missing(g) else str(g) for g in group]
+    own = [c and not o for c, o in zip(code, out, strict=True)]
+    keys = {i: f"{grp[i]}\r{release[i]}" for i in cand}
+    for k in dict.fromkeys(keys[i] for i in cand):
+        idx = [i for i in cand if keys[i] == k]
+        g, r = grp[idx[0]], release[idx[0]]
+        others = [i for i in range(n) if own[i] and grp[i] == g]
+        flag = any(r not in folders[i] for i in others)
+        for i in idx:
+            out[i] = flag
+    return out
+
+
+def _in_others_code_folder(files: pd.DataFrame) -> list[bool]:
+    """Whether each file of a listing is code by others that the deposit bundles.
+
+    Port of ``R/code_check.R::.in_others_code_folder()``; see :func:`_is_others_code_path`.
+    """
+    if len(files) == 0:
+        return []
+    paths = _col(files, "file_path")
+    names = _col(files, "file_name")
+    where = [n if is_missing(p) or str(p) == "" else p for p, n in zip(paths, names, strict=True)]
+    language = _col(files, "language")
+    if "repo_url" in files.columns:
+        group = _col(files, "repo_url")
+    else:
+        group = _col(files, "paper_id")
+    return _is_others_code_path(where, [not is_missing(v) for v in language], group)
+
+
 def _empty_loc(values: list[Any]) -> list[bool]:
     """``is.na(x) | !nzchar(x %||% "")``."""
     return [is_missing(v) or str(v) == "" for v in values]
@@ -958,7 +1046,9 @@ def _code_expand_html(
     all_repos = (
         _col(all_files, "repo_url") if "repo_url" in all_files.columns else [""] * len(all_names)
     )
-    is_src = grepl(r"\.(rmd|qmd)$", all_names, ignore_case=True)
+    # also a plain .R script, which rmarkdown::render() knits as well (r89cq_v1:
+    # MOS01_osf_raport.R beside MOS01_osf_raport.html; #648)
+    is_src = grepl(r"\.(rmd|qmd|r)$", all_names, ignore_case=True)
     src_key = {key(r, n) for r, n, f in zip(all_repos, all_names, is_src, strict=True) if f}
     h_repos = (
         _col(html_files, "repo_url") if "repo_url" in html_files.columns else [""] * len(html_files)
@@ -1486,6 +1576,11 @@ def _code_is_abs_path(line: str | None, path: str | None) -> bool:
       (``?name=``): a regular expression, a web route. On Windows, a character Windows does not
       allow in a name or a second ":" marks a message, and a network path with mixed single and
       double backslashes is a regular expression escaped in R.
+    - it is a web route or address (0.4.4.18, #648): the first thing given to a call that serves
+      or requests one (``@app.route("/api/v1/login")``, ``client.get("/api/health")``,
+      ``requests.post()``, ``fetch()``, ``url_for()``, httr's ``GET()``; h5py's ``f.get("/Data")``
+      names a data set), or what is assigned to a name that says it is one (``API_PREFIX =
+      "/api/v1"``, ``url = "/api/v1/x/%d"``; not "prefix" or "path", which also name folders).
     - it names a device or the system (/dev/null, /proc/...).
     - it is a key in square brackets (an HDF5 data set ``f["/Data/MAG"]``) or the name inside a
       file that ``h5read()`` and the like take after the file.
@@ -1521,6 +1616,27 @@ def _code_is_abs_path(line: str | None, path: str | None) -> bool:
         # Round brackets, {}, * and ? are left out of the signs: "Dropbox (Personal)",
         # f"/Users/{user}/data" and "/Users/me/data/*.csv" are paths. "?name=" is the query of a
         # web address ("/api/audit?limit=50").
+        return False
+    # a web route or address, the first thing given to a call that serves or requests one:
+    # Flask's @app.route("/api/v1/auth/login"), a test client's client.get("/api/health"),
+    # requests.post(), fetch(), url_for(), httr's GET(); h5py's f.get("/Data") names a data
+    # set. In one deposit these were all 12 of 41 Python files flagged (#648)
+    if slash and re.search(
+        r"(?:^|[^A-Za-z0-9_])(?:[A-Za-z_][A-Za-z0-9_]*\.)*"
+        r"(?:route|api_route|get|post|put|patch|delete|head|options|fetch|url_for|"
+        r"redirect|add_url_rule|websocket|GET|POST|PUT|PATCH|DELETE|HEAD|VERB)"
+        r"\s*\(\s*[rfbu]?$",
+        before,
+    ):
+        return False
+    # or assigned to a name that says it is one (API_PREFIX = "/api/v1", url =
+    # "/api/v1/examinations/%d"); not "prefix" or "path", which also name folders (data_prefix =
+    # "/home/me/data")
+    if slash and re.search(
+        r"\b[a-z0-9_]*(?:url|uri|route|endpoint|api|href)[a-z0-9_]*\s*(?:=|<-)\s*[rfbu]?$",
+        before,
+        re.IGNORECASE,
+    ):
         return False
     if re.match(r"/(dev|proc|sys)(/|$)", path):
         return False
@@ -3138,6 +3254,30 @@ def _code_name_match(names: Sequence[Any], candidates: Sequence[Any]) -> list[bo
     return out
 
 
+#: Calls that download or unpack files without naming them (``.code_fetch_unnamed_re``).
+_CODE_FETCH_UNNAMED = re.compile(
+    r"\b(?:osf_download|osf_retrieve_[a-z]+|unzip|untar|archive_extract|extractall|unpack_archive|"
+    r"download_zenodo|zenodo_get|snapshot_download|hf_hub_download|pb_download|drive_download|"
+    r"get_dataframe_by_name|get_file_by_name|fs_download|dataset_download_files|"
+    r"download_and_extract)\s*\(|"
+    r"\bkaggle\s+datasets\s+download\b|^\s*unzipfile\b",
+    re.IGNORECASE,
+)
+
+
+def _code_fetches_unnamed(code_text: Sequence[str | None] | None, lang: Any = None) -> bool:  # noqa: ARG001
+    """Whether code downloads or unpacks files without naming them in the call.
+
+    Port of ``R/code_check.R::.code_fetches_unnamed()``. The files it makes cannot be listed: an
+    osfr download (``osf_ls_files(pattern = "x.Rda") %>% osf_download()``), an archive unpacked
+    with ``unzip()``, ``untar()``, ``archive_extract()``, Python's ``extractall()`` or
+    ``unpack_archive()``, or a whole record fetched (Zenodo, Hugging Face, Kaggle, figshare,
+    Dataverse, Google Drive, a GitHub release). The files such code reads were reported as missing
+    from the deposit (#648, K3a: sjtp3_v2's VIA_merged_unfiltered.Rda); they may well be made by it.
+    """
+    return any(x is not None and _CODE_FETCH_UNNAMED.search(x) is not None for x in code_text or ())
+
+
 def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd.DataFrame:
     """Port of ``.code_missing_files()``: the files each code file reads that are missing.
 
@@ -3151,6 +3291,10 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
     the repository counted, so files a script writes a few lines earlier, files a Stata script
     writes, and patterns such as "vzv_aou_ac_%s_model.csv" were reported as missing.
     ``code_files`` holds ``loaded_refs`` (the files read, joined by "\u001f"), which is dropped.
+    When a code file of the same paper downloads or unpacks files without naming them
+    (``fetches_unnamed``, see :func:`_code_fetches_unnamed`), the files not found are listed in
+    ``loaded_files_fetched_names`` instead, as files that code may make, and are not counted as
+    missing (#648, K3a).
     """
     if "loaded_refs" not in code_files.columns:
         return code_files
@@ -3158,6 +3302,12 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
     n = len(out)
     n_missing: list[Any] = [None] * n
     names_missing: list[Any] = [None] * n
+    names_fetched: list[Any] = [None] * n
+    fetches = (
+        [v is True or (not is_missing(v) and bool(v)) for v in out["fetches_unnamed"].tolist()]
+        if "fetches_unnamed" in out.columns
+        else [False] * n
+    )
     paper = (
         [None if is_missing(v) else v for v in out["paper_id"].tolist()]
         if "paper_id" in out.columns
@@ -3179,8 +3329,11 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
     for r, nme in zip(all_repo, all_name, strict=False):
         by_repo.setdefault(r, []).append(nme)
     by_paper: dict[Any, list[str]] = {}
-    for pid, w in zip(paper, written, strict=True):
+    fetching: set[Any] = set()
+    for pid, w, f in zip(paper, written, fetches, strict=True):
         by_paper.setdefault(pid, []).extend(w)
+        if f:
+            fetching.add(pid)
     for i in range(n):
         refs = refs_col[i]
         if is_missing(refs):
@@ -3200,11 +3353,15 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
         made = by_paper.get(paper[i], [])
         ok = _code_name_match(parts, [*in_repo, *made])
         miss = [r for r, k in zip(parts, ok, strict=True) if not k]
+        if miss and paper[i] in fetching:
+            names_fetched[i] = ", ".join(miss)
+            miss = []
         n_missing[i] = len(miss)
         names_missing[i] = ", ".join(miss)
     out["loaded_files_missing"] = pd.Series(n_missing, index=out.index, dtype="Int64")
     out["loaded_files_missing_names"] = pd.Series(names_missing, index=out.index, dtype="string")
-    return out.drop(columns=["loaded_refs"])
+    out["loaded_files_fetched_names"] = pd.Series(names_fetched, index=out.index, dtype="string")
+    return out.drop(columns=[c for c in ("loaded_refs", "fetches_unnamed") if c in out.columns])
 
 
 # kept for callers that want the positions R's gregexpr() gives

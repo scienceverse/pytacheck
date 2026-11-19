@@ -1,17 +1,126 @@
 {
   "id": "expand.cp437.zip",
-  "ok": false,
-  "error": "input string 1 is invalid",
-  "warnings": [
-    "unable to translate 'donn<82>es/' to a wide string",
-    "input string 1 is invalid",
-    "unable to translate 'donn<82>es/r<82>sum<82>.csv' to a wide string",
-    "input string 2 is invalid",
-    "unable to translate 'caf<82>.R' to a wide string",
-    "input string 3 is invalid",
-    "unable to translate 'donn<82>es/' to a wide string"
-  ],
-  "value": null,
-  "metacheck_version": "0.4.4.6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "data_type",
+      "doc_role",
+      "data_format",
+      "archive_file_path",
+      "archive_file_location"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r",
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "café.R",
+          "résumé.csv",
+          "nul.csv",
+          "plain.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cp437.zip/café.R",
+          "cp437.zip/données/résumé.csv",
+          "cp437.zip/nul.csv",
+          "cp437.zip/plain.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<tempdir>/metacheck-archives/de4cc9f8c69a4a83044627064a1985b3/café.R",
+          "<tempdir>/metacheck-archives/de4cc9f8c69a4a83044627064a1985b3/données/résumé.csv",
+          "<tempdir>/metacheck-archives/de4cc9f8c69a4a83044627064a1985b3/nul.csv",
+          "<tempdir>/metacheck-archives/de4cc9f8c69a4a83044627064a1985b3/plain.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          7,
+          817,
+          8,
+          817
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "data",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "raw",
+          "tabular",
+          "tabular",
+          "tabular"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cp437.zip",
+          "cp437.zip",
+          "cp437.zip",
+          "cp437.zip"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/cp437.zip",
+          "<TMP>/cp437.zip",
+          "<TMP>/cp437.zip",
+          "<TMP>/cp437.zip"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

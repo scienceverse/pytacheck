@@ -1,7 +1,6 @@
 {
 "download.rate_limit_skip": {"r": "767d2b09fbacd241", "py": "4c47f9225261bbe0", "diff": ["failed.error[]"]},
 "expand.climb.zip": {"r": "1b336105761a252f", "py": "9992195cf1af29bb", "diff": ["<root>"]},
-"expand.cp437.zip": {"r": "ac5146cf65ca52a8", "py": "f24ffcfdee30fff5", "diff": ["<R error, Python value>"]},
 "expand.crc.zip": {"r": "0360e9f8ff689451", "py": "e0e9d636d1941f07", "diff": ["<root>"]},
 "expand.hostile.tar.gz": {"r": "ce4bdd24713c31df", "py": "60c4a987c2d49671", "diff": ["<root>"]},
 "expand.lzma.zip": {"r": "221eee6731309dd8", "py": "2f317e3db6d7dee1", "diff": ["<root>"]},

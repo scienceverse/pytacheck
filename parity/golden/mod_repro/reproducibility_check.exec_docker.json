@@ -300,7 +300,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 2 R code files for reproducibility and ran 1 of them (each in an isolated Docker container).\n-  1 of 2 scripts ran without error when executed.\n-  1 script could not run because its own dependency is unavailable (not counted as an error of the code).\n-  1 installable dependency detected."
+          "\n-  We assessed 2 R code files for reproducibility and ran 1 of them (each in an isolated Docker container).\n-  1 of 2 scripts ran without error when executed.\n-  Of the others, 1 could not run because a package or program was not available.\n-  1 installable dependency detected."
         ]
       },
       {
@@ -318,12 +318,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -401,6 +409,12 @@
           {
             "t": "int",
             "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               0
             ]
           },
@@ -408,6 +422,48 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -494,6 +550,14 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -505,12 +569,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -539,7 +611,8 @@
           "elapsed",
           "script_lines",
           "captures",
-          "reason"
+          "reason",
+          "checked"
         ],
         "v": [
           {
@@ -753,6 +826,13 @@
             "v": [
               "package",
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dependency",
+              "ran"
             ]
           }
         ]
@@ -1379,7 +1459,7 @@
       {
         "t": "chr",
         "v": [
-          "We ran the paper's 2 R scripts in the order they depend on each other, each in an isolated container, for at most 1 minute per script.\n\n**1 of 2 scripts ran to the end**: 1 could not run on our server.\n\n| Script | Result | What happened |\n|---|---|---|\n| needs&#95;missing&#95;pkg.R | Could not run on our server | It needs the R package notapkg123, which we could not install. This is not an error in the script. |\n| ok.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A package could not be installed.**\n\n- <code>needs&#95;missing&#95;pkg.R<\/code> needs <code>notapkg123<\/code>.\n\n<code>notapkg123<\/code> is not on CRAN, and your code does not say where it comes from. If it comes from GitHub or Bioconductor, install it at the top of the script, or name the command in the README, for example <code>remotes::install&#95;github(\"user/notapkg123\")<\/code> or <code>BiocManager::install(\"notapkg123\")<\/code>, with the version you used.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+          "We ran the paper's 2 R scripts in the order they depend on each other, each in an isolated container, for at most 1 minute per script.\n\n**1 of 2 scripts ran to the end**: 1 could not run because a package or program was not available.\n\n| Script | Result | What happened |\n|---|---|---|\n| needs&#95;missing&#95;pkg.R | Could not run on our server | It needs the R package notapkg123, which we could not install. This is not an error in the script. |\n| ok.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A package could not be installed.**\n\n- <code>needs&#95;missing&#95;pkg.R<\/code> needs <code>notapkg123<\/code>.\n\n<code>notapkg123<\/code> is not on CRAN, and your code does not say where it comes from. If it comes from GitHub or Bioconductor, install it at the top of the script, or name the command in the README, for example <code>remotes::install&#95;github(\"user/notapkg123\")<\/code> or <code>BiocManager::install(\"notapkg123\")<\/code>, with the version you used.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -1390,6 +1470,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.18",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

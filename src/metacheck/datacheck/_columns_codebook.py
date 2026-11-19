@@ -102,6 +102,17 @@ def _read_lines(path: str | os.PathLike[str], n: int = -1) -> list[str]:
     return [ln.decode("utf-8", "surrogateescape") for ln in _read_lines_bytes(path, n)]
 
 
+def _read_utf8_lines(path: str | os.PathLike[str], n: int = -1) -> list[str]:
+    """``.utf8_lines(readLines(path, warn = FALSE))``: invalid UTF-8 lines read as Latin-1.
+
+    A text codebook in an older encoding no longer stops the string operations that follow
+    (metacheck 0.4.4.18).
+    """
+    from metacheck.datacheck.files import _utf8_lines
+
+    return cast(list[str], _utf8_lines(_read_lines(path, n)))
+
+
 def _seq_len(n: float) -> range:
     """R ``seq_len(n)`` as 0-based indices (a negative or NA *n* is an error)."""
     if n != n or n < 0:
@@ -142,7 +153,10 @@ def _extract_markdown_codebook(
         return None
     if not raw:
         return None
-    ln = [b.decode("utf-8", "ignore") for b in raw]
+    from metacheck.datacheck.files import _utf8_lines
+
+    # `iconv(ln, to = "UTF-8", sub = "")` of lines made valid by .utf8_lines() changes nothing
+    ln = cast(list[str], _utf8_lines([b.decode("utf-8", "surrogateescape") for b in raw]))
     rules = [i for i in grep(_RX_MD_RULE, ln) if i > 0]
     if not rules:
         return None
@@ -784,7 +798,7 @@ def _extract_rich_text(path: str | os.PathLike[str], ext: str) -> str:
                 return ""
             return "\n".join(pages)
         if ext == "rtf":
-            return _strip_rtf("\n".join(_read_lines(path)))
+            return _strip_rtf("\n".join(_read_utf8_lines(path)))
         if ext == "odt":
             return _odt_text(path)
     except Exception:
@@ -970,7 +984,7 @@ def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookah
     from metacheck.datacheck.files import _delimiter
 
     try:
-        h = [trimws(x) for x in _read_lines(path, 5)]
+        h = [trimws(x) for x in _read_utf8_lines(path, 5)]
         h = [x for x in h if x != ""]
         first = h[0][:1] if h else ""
     except Exception:
@@ -1086,7 +1100,13 @@ def _dispatch(
             src=src, observed=observed, header_lookahead=header_lookahead, only=only,
         ))  # fmt: skip
     if ext in ("sav", "dta", "sas7bdat"):
-        res = _extract_haven_labels(_haven_frame(path, ext), src)
+        # labels in another encoding repaired (_utf8_repair_df()), as when the file is read
+        # as data
+        from metacheck.datacheck.files import _utf8_repair_df
+
+        res = _extract_haven_labels(
+            cast(pd.DataFrame, _utf8_repair_df(_haven_frame(path, ext))), src
+        )
         return ("haven", res)
     if ext in ("jasp", "omv"):
         df = _import_data(path, ext)
@@ -1158,6 +1178,6 @@ def parse_codebook(
     if ext in ("xlsx", "xls", "ods", "sav", "dta", "sas7bdat", "jasp", "omv", "zip"):
         return None
     try:
-        return _read_lines(p)
+        return _read_utf8_lines(p)
     except OSError:
         return None

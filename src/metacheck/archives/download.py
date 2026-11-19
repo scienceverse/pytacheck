@@ -38,7 +38,7 @@ import tempfile
 import time
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 from metacheck._env import env_get
 from metacheck._r import grepl, gsub, plural, sub
@@ -464,7 +464,6 @@ def _host(url: Any) -> str | None:
 
 
 def _file_url_path(url: str) -> str:
-    from urllib.parse import unquote
     from urllib.request import url2pathname
 
     parts = urlsplit(url)
@@ -615,6 +614,101 @@ def _storage_request(
     return resp
 
 
+def _download_failed_text(failed: Any) -> dict[str, Any]:
+    """Port of ``R/repo-download.R::.download_failed_text()`` (metacheck #667).
+
+    The report section and summary sentence for the files whose download
+    failed. Until metacheck 0.4.4.12 a failure was said only in a message
+    during the run, not in the report or the results, so a fault that lost
+    the same kind of file in every repository (an address with a space) went
+    unnoticed for three months. *failed* is the ``failed`` attribute of
+    :func:`download_repo_files` (``repo_url``, ``file_name``, ``error``).
+    Returns ``{"report": [...], "summary": "..."}``, both ``None`` when no
+    file failed.
+    """
+    from metacheck._r import r_sort_key
+
+    if failed is None or not hasattr(failed, "columns") or len(failed) == 0:
+        return {"report": None, "summary": None}
+    repos = failed["repo_url"].tolist() if "repo_url" in failed.columns else [None] * len(failed)
+    names = failed["file_name"].tolist() if "file_name" in failed.columns else [None] * len(failed)
+    errors = failed["error"].tolist() if "error" in failed.columns else [None] * len(failed)
+    seen: set[str] = set()
+    rows: list[tuple[str, str]] = []
+    for r, f, e in zip(repos, names, errors, strict=True):
+        key = f"{as_str(r) or 'NA'} {as_str(f) or 'NA'}"  # paste() of the two columns
+        if key in seen:
+            continue
+        seen.add(key)
+        rows.append((as_str(f) or "NA", as_str(e) or ""))
+    n = len(rows)
+
+    # the first line that says why: httr2 starts with "Failed to perform HTTP
+    # request." and "Caused by error in ...:", and gives the reason after them
+    def why_of(error: str) -> str:
+        lines = [re.sub(r"^! ", "", ln).strip(" \t\r\n") for ln in error.split("\n")]
+        keep = [
+            ln
+            for ln in lines
+            if ln != ""
+            and not re.search(r"^Failed to perform HTTP request\.?$|^Caused by error", ln)
+        ]
+        first = keep[0] if keep else (lines[0] if lines else "")
+        # an empty or missing error text: metacheck stops on "" ("subscript out of bounds")
+        # and gives a blank reason for NA (U256)
+        return re.sub(r":$", "", first) or "no reason given"
+
+    errs = [why_of(e) for _, e in rows]
+    counts: dict[str, int] = {}
+    for e in errs:
+        counts[e] = counts.get(e, 0) + 1
+    # table() sorts the reasons, sort(decreasing = TRUE) keeps ties in that order
+    kinds = sorted(counts, key=r_sort_key)
+    kinds = sorted(kinds, key=lambda k: -counts[k])
+    why = "; ".join(f"{k} ({counts[k]})" for k in kinds[:3])
+    shown = [name for name, _ in rows[:10]]
+    more = f", and {n - 10} more" if n > 10 else ""
+    listed = ", ".join(f"`{s}`" for s in shown)
+    report = [
+        "#### Files that could not be downloaded",
+        f"{n} file{plural(n)} could not be downloaded, so the checks did not see "
+        f"{plural(n, 'it', 'them')}: {listed}{more}. "
+        f"The reason{plural(len(kinds), '', 's')} given: {why}. "
+        "Re-running the check fetches only the missing files.",
+    ]
+    summary = (
+        f"{n} file{plural(n)} could not be downloaded, so the checks did not see "
+        f"{plural(n, 'it', 'them')}."
+    )
+    return {"report": report, "summary": summary}
+
+
+def _failed_counts(failed: Any, paper_ids: Sequence[Any]) -> list[int]:
+    """``files_failed`` and ``code_files_failed``: the files whose download failed, per paper
+    (metacheck #667).
+
+    A file is counted once however often it failed (``repo_url`` and ``file_name``); with one
+    paper in the table, or no ``paper_id`` in *failed*, every failed file is its own.
+    """
+    n = len(paper_ids)
+    if failed is None or not hasattr(failed, "columns") or len(failed) == 0:
+        return [0] * n
+    cols = failed.columns
+    repos = failed["repo_url"].tolist() if "repo_url" in cols else [None] * len(failed)
+    names = failed["file_name"].tolist() if "file_name" in cols else [None] * len(failed)
+    seen: set[str] = set()
+    keep: list[int] = []
+    for i, (r, f) in enumerate(zip(repos, names, strict=True)):
+        key = f"{as_str(r) or 'NA'} {as_str(f) or 'NA'}"  # paste() of the two columns
+        if key not in seen:
+            seen.add(key)
+            keep.append(i)
+    if n == 1 or "paper_id" not in cols:
+        return [len(keep)] * n
+    owners = [failed["paper_id"].iloc[i] for i in keep]
+    return [sum(1 for o in owners if not is_missing(o) and o == pid) for pid in paper_ids]
+
+
 def _remote_size(url: str) -> float:
     """Port of ``R/repo-download.R::.remote_size()``: a remote file's size before download.
 
@@ -677,6 +771,188 @@ def _archive_size_refusal(zip_bytes: float, max_download_size: float, mb: float)
             f"{_cap_num(max_download_size)} MB budget"
         )
     return None
+
+
+def _storage_size_estimate(files: pd.DataFrame, idx: Sequence[int]) -> float:
+    """Port of ``R/repo-download.R::.storage_size_estimate()`` (metacheck #675).
+
+    The estimated size (bytes) of the archive of the storage that rows *idx*
+    belong to: the storage's own listed total (repo_check's ``storage_size``,
+    which does not depend on *files* holding every row), else the sum of
+    these rows' sizes, or ``nan`` when neither is known.
+    """
+    if "storage_size" in files.columns:
+        sel = files["storage_size"].tolist()
+        totals = [t for t in _nums(sel[i] for i in idx) if math.isfinite(t) and t > 0]
+        if totals:
+            return float(max(totals))
+    sizes = files["file_size"].tolist() if "file_size" in files.columns else []
+    est = sum(s for s in _nums(sizes[i] for i in idx) if not is_missing(s))
+    return float(est) if est > 0 else math.nan
+
+
+def _archive_worth_it(
+    n_wanted: float, record_n: float, wanted_bytes: float, archive_bytes: float
+) -> bool:
+    """Port of ``R/repo-download.R::.archive_worth_it()`` (metacheck #675).
+
+    Whether the archive of a storage is worth downloading for the files
+    wanted from it: it must save requests (more than 50 files wanted, or at
+    least half of the storage's files) without bringing much data nobody
+    asked for (at most twice the bytes of the wanted files): counting files
+    alone would take a storage's whole archive for 51 small files beside one
+    large file nobody wants. Wanted files of unknown size, or an archive of
+    unknown size, are fetched one by one.
+    """
+    return bool(
+        (n_wanted > 50 or record_n <= 2 * n_wanted)
+        and math.isfinite(archive_bytes)
+        and wanted_bytes > 0
+        and archive_bytes <= 2 * wanted_bytes
+    )
+
+
+def _fmt_big(x: float) -> str:
+    """``format(x, big.mark = ",")`` of a number."""
+    from metacheck._r import format_num
+
+    out = format_num(x)
+    if "e" in out or out in ("NA", "NaN", "Inf", "-Inf"):
+        return out
+    whole, dot, frac = out.partition(".")
+    sign = "-" if whole.startswith("-") else ""
+    digits = whole.lstrip("-")
+    return sign + f"{int(digits):,}" + dot + frac
+
+
+def _storage_archive_skip(
+    files: pd.DataFrame, idx: Sequence[int], max_download_size: float, mb: float
+) -> str | None:
+    """Port of ``R/repo-download.R::.storage_archive_skip()`` (metacheck #675).
+
+    Why the archive of the storage that rows *idx* belong to is not
+    downloaded for them, or ``None`` (R ``NA``) when it is: refused on size
+    (:func:`_archive_size_refusal`) or not worth it (:func:`_archive_worth_it`).
+    Used for the storages of an OSF project, whose size and number of files
+    repo_check records (``storage_size``, ``storage_n``; else those of the
+    rows passed).
+    """
+    from metacheck._r import format_num, r_round
+
+    archive_bytes = _storage_size_estimate(files, idx)
+    size_why = _archive_size_refusal(archive_bytes, max_download_size, mb)
+    if size_why is not None:
+        return size_why
+    n_wanted = len(idx)
+    record_n = math.nan
+    if "storage_n" in files.columns:
+        col = files["storage_n"].tolist()
+        counts = [c for c in _nums(col[i] for i in idx) if not is_missing(c)]
+        if counts:
+            record_n = max(counts)
+    if not math.isfinite(record_n):
+        record_n = float(n_wanted)
+    sizes = files["file_size"].tolist() if "file_size" in files.columns else []
+    wanted_bytes = sum(s for s in _nums(sizes[i] for i in idx) if not is_missing(s))
+    if _archive_worth_it(n_wanted, record_n, wanted_bytes, archive_bytes):
+        return None
+    return (
+        f"the archive holds {_fmt_big(record_n)} files "
+        f"({format_num(float(r_round(archive_bytes / mb, 1)))} MB) for {n_wanted} wanted "
+        f"({format_num(float(r_round(wanted_bytes / mb, 1)))} MB)"
+    )
+
+
+def _osf_storage_totals(files: Any) -> Any:
+    """Port of ``R/repo-download.R::.osf_storage_totals()`` (metacheck #675).
+
+    Each OSF file's storage (its component and provider, such as osfstorage or
+    a linked GitHub repository): its listed total size (``storage_size``,
+    ``NA`` when no size is listed) and number of files (``storage_n``).
+    :func:`download_repo_files` decides from these whether to fetch the
+    storage as one archive; it is passed only the files a check wants, so it
+    cannot count the storage itself. A file listed twice (through a
+    registration and its project) counts once. A table without ``osf_node``
+    and ``provider`` is returned as it is.
+    """
+    import pandas as pd
+
+    if (
+        not isinstance(files, pd.DataFrame)
+        or len(files) == 0
+        or not {"osf_node", "provider", "file_size"} <= set(files.columns)
+    ):
+        return files
+    node = files["osf_node"].tolist()
+    provider = files["provider"].tolist()
+    paths = files["file_path"].tolist() if "file_path" in files.columns else [None] * len(files)
+    key: list[str | None] = [
+        None if is_missing(a) or is_missing(b) else f"{a} {b}"
+        for a, b in zip(node, provider, strict=True)
+    ]
+    sizes = _nums(files["file_size"].tolist())
+    seen: set[str] = set()
+    total: dict[str, float] = {}
+    count: dict[str, int] = {}
+    for k, p, sz in zip(key, paths, sizes, strict=True):
+        dup_key = f"{k if k is not None else 'NA'} {as_str(p) or ('NA' if is_missing(p) and 'file_path' in files.columns else '')}"
+        dup = dup_key in seen
+        seen.add(dup_key)
+        if k is None or dup:
+            continue
+        count[k] = count.get(k, 0) + 1
+        prev = total.get(k, math.nan)
+        if not is_missing(sz):
+            total[k] = sz if is_missing(prev) else prev + sz
+        else:
+            total.setdefault(k, math.nan)
+    out = files.copy()
+    out["storage_size"] = pd.Series(
+        [math.nan if k is None else total.get(k, math.nan) for k in key], dtype="float64"
+    )
+    out["storage_n"] = pd.Series([pd.NA if k is None else count.get(k) for k in key], dtype="Int64")
+    return out
+
+
+_GITHUB_RAW_RX = re.compile(
+    r"^https?://raw\.githubusercontent\.com/([^/]+)/([^/]+)/([^/]+)/(.+)$",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _github_raw_parts(urls: Any) -> Any:
+    """Port of ``R/repo-download.R::.github_raw_parts()`` (metacheck #675).
+
+    The GitHub repository (``owner/repo``), branch and path in the repository
+    of each file address on raw.githubusercontent.com, as GitHub's listing
+    gives them (``_osf_github_files()``, ``github_tree_files()``); ``NA`` for
+    any other address. The path is decoded, as the address encodes it (#667).
+    A branch with a ``/`` in its name cannot be told from the path here; its
+    archive then matches no file, and the files are fetched one by one.
+    """
+    import pandas as pd
+
+    values = [] if urls is None else list(urls)
+    repo: list[str | None] = []
+    ref: list[str | None] = []
+    path: list[str | None] = []
+    for u in values:
+        m = None if is_missing(u) else _GITHUB_RAW_RX.match(str(u))
+        if m is None:
+            repo.append(None)
+            ref.append(None)
+            path.append(None)
+        else:
+            repo.append(f"{m.group(1)}/{m.group(2)}")
+            ref.append(unquote(m.group(3), errors="surrogateescape"))
+            path.append(unquote(m.group(4), errors="surrogateescape"))
+    return pd.DataFrame(
+        {
+            "repo": pd.Series(repo, dtype="string"),
+            "ref": pd.Series(ref, dtype="string"),
+            "path": pd.Series(path, dtype="string"),
+        }
+    )
 
 
 def _with_headers(spec: dict[str, Any], extra: Mapping[str, str]) -> dict[str, Any]:
@@ -1079,6 +1355,8 @@ _MEDIA_RX = re.compile(
     re.IGNORECASE,
 )
 _WHOLE_ARCHIVE_RX = re.compile(r"github\.com|gitlab\.com|datadryad\.org", re.IGNORECASE)
+_GITHUB_COM_RX = re.compile(r"github\.com", re.IGNORECASE)
+_GITHUB_RAW_HOST_RX = re.compile(r"^https?://raw\.githubusercontent\.com/", re.IGNORECASE)
 _RENV_RX = re.compile(r"(^|/)renv/", re.IGNORECASE)
 
 
@@ -1101,10 +1379,15 @@ def _run_download_want(files: pd.DataFrame | None) -> list[bool]:
         return files[name].tolist() if name in files.columns else [None] * n
 
     names, urls, paths = column("file_name"), column("repo_url"), column("file_path")
+    file_urls = column("file_url")
     out: list[bool] = []
-    for name, url, path in zip(names, urls, paths, strict=True):
+    for name, url, path, file_url in zip(names, urls, paths, file_urls, strict=True):
         media = bool(_MEDIA_RX.search("" if is_missing(name) else str(name)))
-        whole = bool(_WHOLE_ARCHIVE_RX.search("" if is_missing(url) else str(url)))
+        # a GitHub repository linked to an OSF project is fetched as one archive too,
+        # known by its files' addresses (metacheck #675)
+        whole = bool(_WHOLE_ARCHIVE_RX.search("" if is_missing(url) else str(url))) or bool(
+            _GITHUB_RAW_HOST_RX.search("" if is_missing(file_url) else str(file_url))
+        )
         where = str(name) if is_missing(path) or str(path) == "" else str(path)
         if is_missing(path) and is_missing(name):
             where = "NA"  # R: grepl() on NA is FALSE
@@ -1352,6 +1635,7 @@ def _download_zip_to_cache(
     max_bytes: float = math.inf,
     skip_on_api_limit: bool = False,
     expected_bytes: float = math.nan,
+    rel_paths: Sequence[Any] | None = None,
     _inplace: bool = False,
 ) -> pd.DataFrame:
     """Port of ``R/repo-download.R::.download_zip_to_cache()``.
@@ -1365,7 +1649,9 @@ def _download_zip_to_cache(
     *timeout_s*; it is retried like any request (:func:`metacheck.http.request`:
     a 429 waits for the host's reset unless ``skip_on_api_limit``). Rows not filled are left for the caller's
     file-by-file fallback. *req_func* adds the host's headers to the request
-    spec.
+    spec. *rel_paths* gives each row's path inside the archive, one per
+    *row_idx*, when it is not the row's ``file_path`` (a GitHub repository
+    behind an OSF project, whose path is read from the file's address, #675).
     """
     import zipfile
 
@@ -1474,8 +1760,9 @@ def _download_zip_to_cache(
             cache = files[".cache_path"].tolist()
             loc_col = int(files.columns.get_loc("file_location"))  # type: ignore[arg-type]
             matched: list[int | None] = []
-            for i in row_idx:
-                rel = paths[i]
+            use_rel = rel_paths is not None and len(rel_paths) == len(row_idx)
+            for k, i in enumerate(row_idx):
+                rel = rel_paths[k] if use_rel and rel_paths is not None else paths[i]
                 if is_missing(rel) or rel == "":
                     rel = fnames[i]
                 if is_missing(rel):
@@ -2177,6 +2464,98 @@ def download_repo_files(
                     req_func=req_func,
                     max_bytes=archive_cap,
                     expected_bytes=expected,
+                    **zip_kw,
+                )
+
+        # GitHub storage behind an OSF project: API zipball (metacheck #675). A GitHub
+        # repository linked to an OSF component is listed through GitHub
+        # (``_osf_github_files()``), so each file's address names the repository and
+        # branch (raw.githubusercontent.com/<owner>/<repo>/<branch>/<path>), but its
+        # repo_url is the OSF project the paper links, which the GitHub loop above does
+        # not take. Such files were fetched one request each: 10,313 for osf.io/9526a,
+        # at about 80 a minute. They are fetched as the repository's archive, matched by
+        # the path in each address, when the archive is worth it
+        # (:func:`_storage_archive_skip`: enough files wanted, and not much more data
+        # than they hold), else one by one.
+        rows_left = remaining_rows()
+        gh_raw = _github_raw_parts([file_urls[i] for i in rows_left])
+        gh_repo = gh_raw["repo"].tolist()
+        gh_ref = gh_raw["ref"].tolist()
+        gh_path = gh_raw["path"].tolist()
+        behind = [
+            not is_missing(gh_repo[k])
+            and not bool(_GITHUB_COM_RX.search(as_str(repo_list[i]) or ""))
+            for k, i in enumerate(rows_left)
+        ]
+        gh_key = [f"{gh_repo[k]}@{gh_ref[k]}" for k in range(len(rows_left))]
+        for key in dict.fromkeys(gh_key[k] for k, b in enumerate(behind) if b):
+            sel = [k for k, b in enumerate(behind) if b and gh_key[k] == key]
+            ridx = [rows_left[k] for k in sel]
+            repo_name = gh_repo[sel[0]]
+            zip_url = (
+                f"https://api.github.com/repos/{repo_name}/zipball/"
+                f"{_url_encode_reserved(gh_ref[sel[0]])}"
+            )
+            label = f"github.com/{repo_name} (linked to {as_str(repo_list[ridx[0]]) or 'NA'})"
+            skip_why = _storage_archive_skip(df, ridx, max_download_size, _MB)
+            if skip_why is not None:
+                _message(
+                    f"Skipping zip for {label} ({skip_why}); downloading its files individually."
+                )
+                continue  # leaves ridx in `remaining` for the file-by-file loop below
+            _message(f"Downloading {label} as zip ({len(ridx)} file{plural(len(ridx))})...")
+            run_zip(
+                ridx,
+                zip_url,
+                strip_dir=True,
+                req_func=_headers_fn(_github_config),
+                max_bytes=archive_cap,
+                expected_bytes=expected_of(ridx),
+                rel_paths=[gh_path[k] for k in sel],
+                **zip_kw,
+            )
+
+        # OSF Storage: one zip per component (metacheck #675). The OSF builds a zip of one
+        # component's OSF Storage on request
+        # (files.osf.io/v1/resources/<component>/providers/osfstorage/?zip=), with the files
+        # under their paths in that storage and no folder above them. It was removed
+        # (#424) because it gives no size in advance; it now follows the rule above, with
+        # the size repo_check listed for the storage (``storage_size``, which includes any
+        # zip file in it, though its members are fetched by byte range). The zip holds
+        # only that component's storage, not its components or other storages, so each
+        # component is asked for on its own, when the archive is worth it
+        # (:func:`_storage_archive_skip`: more than 50 of the storage's files wanted or at
+        # least half of them, and an archive at most twice the size of the wanted files):
+        # data_check wanting 3 data files of a storage of 500 fetches the 3. Rows of a
+        # listing made before repo_check recorded the component (``osf_node``) are fetched
+        # one by one.
+        from metacheck.archives.osf_helpers import _osf_headers
+
+        osf_node = _col(df, "osf_node")
+        if osf_node is not None:
+            osf_zip_rows = [
+                i for i in remaining_rows() if not is_missing(osf_node[i]) and is_osfstorage(i)
+            ]
+            for node in dict.fromkeys(osf_node[i] for i in osf_zip_rows):
+                ridx = [i for i in osf_zip_rows if osf_node[i] == node]
+                n_wanted = len(ridx)
+                label = f"OSF Storage of osf.io/{node}"
+                skip_why = _storage_archive_skip(df, ridx, max_download_size, _MB)
+                if skip_why is not None:
+                    _message(
+                        f"Skipping zip for {label} ({skip_why}); "
+                        "downloading its files individually."
+                    )
+                    continue  # leaves ridx in `remaining` for the file-by-file loop below
+                zip_url = f"https://files.osf.io/v1/resources/{node}/providers/osfstorage/?zip="
+                _message(f"Downloading {label} as zip ({n_wanted} file{plural(n_wanted)})...")
+                run_zip(
+                    ridx,
+                    zip_url,
+                    strip_dir=False,
+                    req_func=_osf_headers,
+                    max_bytes=archive_cap,
+                    expected_bytes=expected_of(ridx),
                     **zip_kw,
                 )
 

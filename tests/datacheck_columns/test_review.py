@@ -79,16 +79,16 @@ def test_numeric_paths_are_vectorised() -> None:
     assert time.process_time() - start < 5
 
 
-def test_invalid_utf8_files_fall_back_to_raw_lines() -> None:
-    # R: jsonlite rejects the bytes / gsub() fails, so parse_codebook() returns
-    # readLines() -- the raw bytes kept (here as surrogate escapes)
+def test_invalid_utf8_files_fall_back_to_lines_read_as_latin1() -> None:
+    # R: jsonlite rejects the bytes / gsub() fails, so parse_codebook() returns the lines,
+    # read as Latin-1 (.utf8_lines(), metacheck 0.4.4.18: before, the raw bytes)
     rtf = parse_codebook(REV / "latin1.rtf")
-    assert rtf == ["{\\rtf1\\ansi age:\\tab Alter in Jahren\\par caf\udce9 = coffee shop\\par}"]
+    assert rtf == ["age: Alter in Jahren", "caf\u00e9 = coffee shop"]
     js = parse_codebook(REV / "latin1.json")
-    assert js == ['[{"name": "a", "label": "caf\udce9"}, {"name": "b", "label": "B"}]']
+    assert js == ['[{"name": "a", "label": "caf\u00e9"}, {"name": "b", "label": "B"}]']
     assert parse_qsf(REV / "latin1.qsf") is None
     qsf = parse_codebook(REV / "latin1.qsf")
-    assert isinstance(qsf, list) and len(qsf) == 1 and "caf\udce9?" in qsf[0]
+    assert isinstance(qsf, list) and len(qsf) == 1 and "caf\u00e9?" in qsf[0]
 
 
 def test_negative_lookahead_is_an_error_caught_by_parse_codebook() -> None:

@@ -65,6 +65,7 @@ from metacheck._r.regex import gregexpr_all, grepl, gsub, regexec, strsplit, sub
 from metacheck._values import as_float, is_missing
 from metacheck.datacheck._files_registry import EXT_REGISTRY
 from metacheck.datacheck._strings import RAW_STRING, file_ext
+from metacheck.fileinfo.category import is_readme_name
 
 __all__ = [
     "data_classify_files",
@@ -352,8 +353,71 @@ _KEYWORD_RULES = (
 
 
 #: Text-document formats the "data" name keyword never turns into data (see
-#: :func:`data_classify_files`).
-_DOCUMENT_EXTS = frozenset({"doc", "docx", "odt", "pdf", "rtf"})
+#: :func:`data_classify_files`). A web page or Markdown file is a document too:
+#: "data_report.html", a knitted report, was classed as data for the word in its
+#: name (metacheck 0.4.4.8, #648 K8d).
+_DOCUMENT_EXTS = frozenset({"doc", "docx", "odt", "pdf", "rtf", "html", "htm", "md"})
+
+#: Folders that by convention hold other people's software (R:
+#: ``.others_code_folder_pat``).
+_OTHERS_CODE_FOLDER_PAT = (
+    r"(^|/)(node_modules|bower_components|vendor|vendored|third[_ -]?party|external|extern|"
+    r"site-packages|dist-packages|ados?|[a-z0-9]+_ados?|toolboxes)/"
+)
+
+#: A folder named after a release of a program, in small letters (R:
+#: ``.release_folder_pat``).
+_RELEASE_FOLDER_RX = re.compile(r"^[a-z][a-z0-9_.]*-v?[0-9]+(?:[.][0-9]+)+$")
+
+
+def _is_others_code_path(
+    path: Sequence[str | None],
+    is_code: Sequence[bool | None] | None = None,
+    group: Sequence[str | None] | None = None,
+) -> list[bool]:
+    """Whether each path is code by others that a deposit bundles (``.is_others_code_path()``).
+
+    A folder that by convention holds other people's software (``node_modules``,
+    ``vendor``, Stata's ``ado`` folders, MATLAB ``toolboxes``), a folder named
+    after a release of a program (``"jspsych-6.3.1/"``), or minified JavaScript
+    (``.min.js``) is not the authors' own code (metacheck 0.4.4.8, #648 K5). A
+    folder named after a release counts only when the repository (``group``)
+    also holds code (``is_code``) outside it: the authors' own code released from
+    GitHub unpacks into such a folder as well (0.4.4.10). ``is_code`` ``None``
+    counts every path as code, ``group`` ``None`` every path as one repository.
+    """
+    n = len(path)
+    p = ["" if v is None else v.replace("\\", "/") for v in path]
+    out = [
+        bool(re.search(_OTHERS_CODE_FOLDER_PAT, x, re.IGNORECASE))
+        or bool(re.search(r"[.]min[.]js$", x, re.IGNORECASE))
+        for x in p
+    ]
+    folders: list[list[str]] = []
+    release: list[str | None] = []
+    for x in p:
+        parts = _tolower(x).split("/") if x else []
+        if parts and parts[-1] == "":  # R's strsplit() drops a trailing empty piece
+            parts.pop()
+        dirs = parts[:-1]
+        folders.append(dirs)
+        hit = [d for d in dirs if _RELEASE_FOLDER_RX.match(d)]
+        release.append(hit[-1] if hit else None)
+    cand = [i for i in range(n) if not out[i] and release[i] is not None]
+    if not cand:
+        return out
+    code = [True] * n if is_code is None else [v is True for v in is_code]
+    grp = [""] * n if group is None else ["" if is_missing(g) else str(g) for g in group]
+    own = [code[i] and not out[i] for i in range(n)]  # code that may be the authors' own
+    keys = list(dict.fromkeys((grp[i], release[i]) for i in cand))
+    for g, r in keys:
+        idx = [i for i in cand if grp[i] == g and release[i] == r]
+        others = [i for i in range(n) if own[i] and grp[i] == g]
+        hit_any = any(r not in folders[j] for j in others)
+        for i in idx:
+            out[i] = hit_any
+    return out
+
 
 _GIS_RX = (
     r"\.(shp|shx|prj|cpg|sbn|sbx|gpkg|geojson|tfw|tifw|ovr|nc|grd|gri|bil|vrt|kml|kmz)$"
@@ -383,7 +447,9 @@ def _tok(pattern: str) -> str:
 
 
 def data_classify_files(
-    file_name: Sequence[str | None] | str, file_path: Sequence[str | None] | str | None = None
+    file_name: Sequence[str | None] | str,
+    file_path: Sequence[str | None] | str | None = None,
+    group: Sequence[str | None] | str | None = None,
 ) -> list[str]:
     """Classify repository files into data_check semantic types.
 
@@ -391,7 +457,10 @@ def data_classify_files(
     extensions first, then category keywords anywhere in the (folder) path, then
     metacheck's coarse file-type crosswalk. Returns one of ``"data"``,
     ``"code"``, ``"documentation"``, ``"materials"``, ``"output"`` or
-    ``"unknown"`` per file.
+    ``"unknown"`` per file. ``group`` is the repository each file is in: code in a
+    folder named after a release of a program (``"jspsych-6.3.1/"``) is material by
+    others only when its repository also holds code outside that folder
+    (:func:`_is_others_code_path`); ``None`` counts all files as one repository.
     """
     # a name whose bytes are not valid UTF-8 is classified from its Latin-1 reading,
     # as R's .utf8_lines() does, so nothing below fails on it
@@ -467,6 +536,20 @@ def data_classify_files(
         # recognised it, and it was "unknown".
         if grepl(r"^(licen[sc]e|copying)$", base_lc):
             types[i] = "documentation"
+        # A licence that names what it covers ("LICENSE_code_MIT.txt", "license_data.txt")
+        # is a licence too, not code or data for the word in its name (metacheck 0.4.4.8,
+        # #648 K8d); only as a text document.
+        if grepl(r"^(licen[sc]e|copying)[_. -]", base_lc) and ext[i] in (
+            "",
+            "txt",
+            "md",
+            "rst",
+            "html",
+            "htm",
+            "pdf",
+            "rtf",
+        ):
+            types[i] = "documentation"
         # A list of the packages a program needs (requirements.txt, Pipfile) belongs
         # with the code that uses it; as a .txt it was classified as documentation.
         if grepl(
@@ -491,6 +574,13 @@ def data_classify_files(
             ):
                 types[i] = "documentation"
     out = [t if t is not None else "unknown" for t in types]
+    # Code by others that the deposit bundles (a library, a toolbox, Stata packages; see
+    # _is_others_code_path()) is material the analysis uses, not the authors' code
+    # (#648, K5). Only code: data in such a folder stays data.
+    is_code = [t == "code" for t in out]
+    for i, others in enumerate(_is_others_code_path(path_for_kw, is_code=is_code, group=group)):
+        if is_code[i] and others:
+            out[i] = "materials"
     # A single compressed file ("scan.nii.gz", "trials.csv.gz", not a .tar.gz) holds one file,
     # which is what it is (see the crosswalk); as an archive it was "unknown" until data_check
     # opened it. data_check still downloads and opens it by its name (_is_single_compress()).
@@ -547,8 +637,9 @@ def _is_r_package_file(file_path: Sequence[str | None] | str) -> list[bool]:
 
     Port of ``.is_r_package_file()``: a folder holding both ``DESCRIPTION`` and
     ``NAMESPACE`` is a package; its own files and standard subdirectories are
-    flagged, except that a package at the repository root is only excluded when
-    real data or code exists outside it.
+    flagged, except that packages are only excluded when real data or code is in the
+    repository outside every package, wherever a package sits (metacheck 0.4.4.12, #505:
+    a paper's own package one folder down, with nothing beside it, is the deposit).
     """
     fp = _as_list(file_path)
     n = len(fp)
@@ -587,24 +678,25 @@ def _is_r_package_file(file_path: Sequence[str | None] | str) -> list[bool]:
 
     owner = [member_of(i) for i in range(n)]
     is_member = [k and o is not None for k, o in zip(known, owner, strict=True)]
-    for pd_ in pkg_dirs:
-        if pd_ != ".":
-            continue
-        outside = [i for i in range(n) if not is_member[i] and known[i]]
-        outside = [i for i in outside if not _tolower(_r_basename(path[i])).endswith(".rproj")]
-        # The same holds for the configuration files of a package's build, test and
-        # website services (Travis, AppVeyor, CI workflows, codecov, pkgdown, ...):
-        # .yml files classify as "code" by extension, so a .travis.yml or codecov.yml
-        # next to a root-level package made the package look vendored and discarded
-        # all of its real files (#469). They stay in the file list.
-        outside = [i for i in outside if not _is_r_package_service_file(path[i])]
-        types = data_classify_files(
-            [_r_basename(path[i]) for i in outside], [path[i] for i in outside]
-        )
-        if not any(t in ("data", "code") for t in types):
-            for i in range(n):
-                if owner[i] == pd_:
-                    is_member[i] = False
+    outside = [i for i in range(n) if not is_member[i] and known[i]]
+    # an RStudio project marker ("BaBA.Rproj") is packaging config, not an analysis script
+    outside = [i for i in outside if not _tolower(_r_basename(path[i])).endswith(".rproj")]
+    # The same holds for the configuration files of a package's build, test and website
+    # services (Travis, AppVeyor, CI workflows, codecov, pkgdown, ...): .yml files classify
+    # as "code" by extension, so a .travis.yml or codecov.yml next to a root-level package
+    # made the package look vendored and discarded all of its real files (#469). They stay
+    # in the file list.
+    outside = [i for i in outside if not _is_r_package_service_file(path[i])]
+    # A README is not data or code, also when written as R Markdown (the README.Rmd from
+    # which a package's README.md is made classifies as code by its extension); repo_check
+    # counts it as a README (is_readme_name()).
+    readme = is_readme_name([_r_basename(path[i]) for i in outside])
+    outside = [i for i, r in zip(outside, readme, strict=True) if not r]
+    types = data_classify_files([_r_basename(path[i]) for i in outside], [path[i] for i in outside])
+    if not any(t in ("data", "code") for t in types):
+        # nothing data/code-shaped outside the packages, wherever they sit: the packages ARE
+        # the deposit, so none of their files is excluded (#505)
+        is_member = [False] * n
     return is_member
 
 
@@ -1250,38 +1342,67 @@ def _llm_classify_batched(
     reordered answers never misalign. Returns a string Series aligned with
     *item_texts* (``NA`` where no valid value came back) whose
     ``attrs["llm_model"]`` is the model the provider reported.
+
+    A batch whose answer was cut off at the length limit is asked again with four times
+    the limit, unless the caller set ``max_tokens`` itself (metacheck 0.4.4.16, #673: a
+    reasoning model can spend the whole limit reasoning before it answers); what is
+    still unanswered is asked ONCE more at half the batch size, as ``.llm_assign_groups()``
+    does. ``attrs["llm_unanswered"]`` holds the 1-based positions of the items no request
+    gave a usable value for, and one warning reports their count.
     """
     items = list(item_texts)
     n = len(items)
     out: list[str | None] = [None] * n
     model_used: str | None = None
+    unanswered: list[int] = []  # items no request (or retry) gave a usable value
     if n:
         type_spec = _llm_schema("results", "The item's number in the list", "value", value_desc)
-        for start in range(0, n, batch_size):
-            rows = list(range(start, min(start + batch_size, n)))
+        params = dict(params or {})
+        # The answer's length limit: the caller's own, else the session's, else llm()'s
+        # default. A cut-off answer is asked again with four times it: the answer for 50
+        # items needs about a fifth of 4,096.
+        from metacheck.llm.core import llm_max_tokens
+
+        own = params.get("max_tokens")
+        limit = own if own is not None else (llm_max_tokens() or 4096)
+        raised = {**params, "max_tokens": limit * 4}
+
+        def ask(rows: list[int], prm: dict[str, Any]) -> tuple[list[int], bool]:
+            """Ask about one batch; the items left without a usable value, and whether
+            the answer was cut off at the length limit. llm()'s own note on a failed
+            answer is not shown: the item is asked again, and what is still unanswered
+            at the end is counted and reported once."""
+            nonlocal model_used
             listing = "\n".join(  # paste(): NA is "NA"
                 f"{k}. {'NA' if is_missing(items[r]) else _r_as_character(items[r])}"
                 for k, r in enumerate(rows, 1)
             )
             try:
-                resp = _llm(
-                    text=pd.DataFrame({"text": [listing]}),
-                    text_col="text",
-                    system_prompt=system_prompt,
-                    type=type_spec,
-                    model=model if model is not None else _llm_model(),
-                    params=dict(params or {}),
-                    phase=phase,
-                )
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("ignore", message=r"Note \(not fatal\)")
+                    resp = _llm(
+                        text=pd.DataFrame({"text": [listing]}),
+                        text_col="text",
+                        system_prompt=system_prompt,
+                        type=type_spec,
+                        model=model if model is not None else _llm_model(),
+                        params=dict(prm),
+                        phase=phase,
+                    )
             except Exception:
                 resp = None
+            cut = (
+                isinstance(resp, pd.DataFrame)
+                and ".error_msg" in resp.columns
+                and any("max_tokens" in str(m) for m in resp[".error_msg"].tolist())
+            )
             resp = _strip_llm_wrapper(resp, "results")
             if (
                 not isinstance(resp, pd.DataFrame)
                 or len(resp) == 0
                 or not {"index", "value"} <= set(resp.columns)
             ):
-                continue
+                return rows, cut
             if model_used is None:
                 model_used = _llm_response_model(resp)
             idx = [_as_integer(v) for v in resp["index"].tolist()]
@@ -1289,14 +1410,41 @@ def _llm_classify_batched(
                 None if is_missing(v) else _tolower(str(_r_as_character(v)).strip(" \t\r\n"))
                 for v in resp["value"].tolist()
             ]
+            got: set[int] = set()
             for i, v in zip(idx, vals, strict=True):
                 good = i is not None and 1 <= i <= len(rows) and (v is None or v != "")
                 if valid is not None:
                     good = good and v in list(valid)
                 if good and i is not None:
                     out[rows[i - 1]] = v
+                    got.add(i)
+            return [r for k, r in enumerate(rows, 1) if k not in got], bool(cut)
+
+        for start in range(0, n, batch_size):
+            rows = list(range(start, min(start + batch_size, n)))
+            left, cut = ask(rows, params)
+            # cut off at the length limit: once more with the higher limit, unless the
+            # caller set the limit itself
+            if cut and left and own is None:
+                left, cut = ask(left, raised)
+            # ONE retry at half the batch size, as .llm_assign_groups() does: a shorter
+            # list is less to reason about and a shorter answer
+            if len(left) > 1:
+                size = -(-len(left) // 2)
+                halves = [left[k : k + size] for k in range(0, len(left), size)]
+                left = [r for h in halves for r in ask(h, params)[0]]
+            unanswered.extend(left)
+        if unanswered:
+            k = len(unanswered)
+            warnings.warn(
+                f"{phase if phase is not None else 'LLM classification'}: {k} of {n} "
+                f"item{plural(n)} got no usable answer from the model, also when asked again "
+                f"in smaller batches, and {'was' if k == 1 else 'were'} left to the rules.",
+                stacklevel=2,
+            )
     s = pd.Series(out, dtype="string")
     s.attrs["llm_model"] = model_used
+    s.attrs["llm_unanswered"] = sorted({r + 1 for r in unanswered})
     return s
 
 
@@ -1448,7 +1596,25 @@ def _data_code_refs(path: str | None, max_bytes: float = 2e6) -> list[str]:
     return list(dict.fromkeys(_tolower(_r_basename(r.replace("\\", "/"))) for r in refs))
 
 
-_EX_PAT = "(?:experiment|study|(?<![a-z])expt?|(?<![a-z])ex)[ ._-]?([0-9]{1,2})([a-z](?![a-z]))?"
+# The number must end there and not run on into a code (metacheck 0.4.4.8, #648 K7):
+# "study104" (an id) was study 10, "study03032026" (a date) study 3 and "STUDY-20-00338" (a
+# protocol number) study 20. Five digits or more after it make a protocol or record number,
+# not a year ("study2_2019.csv" stays study 2) and not a date of eight digits, the year first
+# or last ("study1_20230512.csv" stays study 1; 0.4.4.10).
+_DM = "(?:(?:0[1-9]|[12][0-9]|3[01])(?:0[1-9]|1[0-2])|(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01]))"
+_DATE8 = "(?:(?:19|20)[0-9]{2}" + _DM + "|" + _DM + "(?:19|20)[0-9]{2})(?![0-9])"
+_NUM_END = "(?![0-9])(?![ ._-]?(?!" + _DATE8 + ")[0-9]{5,})"
+_EX_PAT = (
+    "(?:experiment|study|(?<![a-z])expt?|(?<![a-z])ex)[ ._-]?([0-9]{1,2})"
+    + _NUM_END
+    + "([a-z](?![a-z]))?"
+)
+# a pilot named before its study word, "Pilot Study 1A", is a pilot, not study 1A
+_PILOT_STUDY_PAT = (
+    "(?<![a-z])pilot[ ._-]?(?:study|experiment|expt?)?[ ._-]?([0-9]{1,2})"
+    + _NUM_END
+    + "([a-z](?![a-z]))?"
+)
 _PILOT_PAT = "(?<![a-z])pilot[ ._-]?([0-9]{1,2})?"
 
 
@@ -1459,6 +1625,10 @@ def _data_group_from_path(paths: Sequence[str | None]) -> list[str | None]:
         code: str | None = None
         if path is not None and path != "":
             for part in reversed(strsplit(_tolower(path), "/", fixed=True)):
+                m = regexec(_PILOT_STUDY_PAT, part, perl=True)
+                if m:
+                    code = "pilot" + m[1] + m[2]
+                    break
                 m = regexec(_EX_PAT, part, perl=True)
                 if m:
                     code = "ex" + m[1] + m[2]
@@ -2242,7 +2412,46 @@ def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
                     repaired[name] = sum(bad)
         if repaired:
             df.attrs["utf8_repaired"] = repaired
+        df = _utf8_repair_labels(df)
     return _default_strings(df)
+
+
+def _utf8_repair_labels(df: pd.DataFrame) -> pd.DataFrame:
+    """The variable and value labels (``col_attrs`` ``label`` / ``labels``) as valid UTF-8.
+
+    Part of ``.utf8_repair_df()`` (metacheck 0.4.4.15): an older Stata file (version 13 and
+    earlier) or SPSS file stores them in its own encoding, haven gives them as stored, and
+    codebook_check searches them with text patterns, which stop on text that is not valid UTF-8.
+    The names and the codes of the value labels are repaired, the codes only when text.
+    """
+    from metacheck.datacheck._colattrs import ColAttrs, col_attrs_at
+
+    if not isinstance(df.attrs.get("col_attrs"), Mapping):
+        return df
+    per: list[dict[str, Any]] = []
+    changed = False
+    for j in range(df.shape[1]):
+        a = dict(col_attrs_at(df, j))
+        lab = a.get("label")
+        if isinstance(lab, str) and _has_invalid_utf8(lab):
+            a["label"] = _latin1_fix(lab)
+            changed = True
+        vl = a.get("labels")
+        if isinstance(vl, list | tuple) and vl:
+            fixed = [
+                tuple(_latin1_fix(x) if isinstance(x, str) else x for x in pair)
+                if isinstance(pair, tuple)
+                else pair
+                for pair in vl
+            ]
+            if fixed != list(vl):
+                a["labels"] = fixed
+                changed = True
+        per.append(a)
+    if changed:
+        df = df.copy(deep=False)
+        df.attrs["col_attrs"] = ColAttrs(list(df.columns), per)
+    return df
 
 
 def _default_strings(df: pd.DataFrame) -> pd.DataFrame:

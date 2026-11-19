@@ -56,6 +56,7 @@ from metacheck.repro.core import (
     _r_is_true,
     _read_cap,
     _read_lines,
+    _read_utf8_lines,
     _repro_bioc_packages,
     _repro_classify_install_message,
     _repro_script_limit,
@@ -958,7 +959,7 @@ def repro_install_deps_docker(
         )
         if res is not None:
             try:
-                txt = "\n".join(_read_lines(out_file))
+                txt = "\n".join(_read_utf8_lines(out_file))
             except OSError:
                 txt = ""
             # A failed install whose message gives no reason, only "had non-zero exit
@@ -1802,7 +1803,7 @@ def repro_install_deps_py_docker(
             msg = f"docker install timed out after {as_character(r_round(timeout))}s"
         else:
             try:
-                txt = "\n".join(_read_lines(out_file))
+                txt = "\n".join(_read_utf8_lines(out_file))
             except OSError:
                 txt = ""
             status = as_character(res.get("status")) or "NA"
