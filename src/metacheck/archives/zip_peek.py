@@ -1987,7 +1987,12 @@ def _unlink(dest: str, name: str) -> None:
         os.unlink(f"{dest}/{name}")
 
 
-def _untar_all(tar_path: str, exdir: str, members: set[str] | None = None) -> None:
+def _untar_all(
+    tar_path: str,
+    exdir: str,
+    members: set[str] | None = None,
+    rename: dict[str, str] | None = None,
+) -> None:
     """``utils::untar(tar_path, exdir = exdir)`` as metacheck runs it (GNU ``tar -xf``).
 
     Member by member, as GNU tar does: a member whose name has a ``..``
@@ -1995,7 +2000,9 @@ def _untar_all(tar_path: str, exdir: str, members: set[str] | None = None) -> No
     removed, and a member that cannot be extracted does not stop the others.
     Unlike GNU tar, links that point outside *exdir* are not extracted
     (:mod:`tarfile`'s ``data`` filter): an archive from a repository must not
-    write outside the cache. With *members*, only those members.
+    write outside the cache. With *members*, only those members. A file in *rename* is
+    written under the readable name it maps to (a stored name that is not valid UTF-8 cannot
+    be a file name on every system).
     """
     import tarfile
 
@@ -2007,6 +2014,17 @@ def _untar_all(tar_path: str, exdir: str, members: set[str] | None = None) -> No
             if members is not None and member.name not in members:
                 continue
             try:
+                if rename and member.name in rename and member.isfile():
+                    to = os.path.join(exdir, rename[member.name].lstrip("/"))
+                    if ".." in rename[member.name].split("/"):
+                        continue
+                    src = tf.extractfile(member)
+                    if src is None:
+                        continue
+                    os.makedirs(os.path.dirname(to), exist_ok=True)
+                    with src, open(to, "wb") as out:
+                        shutil.copyfileobj(src, out)
+                    continue
                 tf.extract(member, exdir, filter="data")
             except Exception:  # noqa: S112 - GNU tar reports the member and goes on
                 continue
@@ -2050,7 +2068,7 @@ def _expand_tar(
     # A tar records no character set for its names: a name that is not valid UTF-8 is
     # read as Latin-1, as other text files are (metacheck's `.utf8_lines()`); text
     # functions stopped on it, as on a zip's old DOS names. The member is unpacked under
-    # its stored name and then given the readable one.
+    # its readable name.
     stored = [m.name for m in members]
     names = _utf8_names(stored)
     plain = bool(re.search(r"[.]tar$", tar_path, re.IGNORECASE))
@@ -2073,25 +2091,17 @@ def _expand_tar(
         shutil.rmtree(part, ignore_errors=True)
         stored_of = dict(zip(names, stored, strict=True))
         try:
-            _untar_all(tar_path, part, members={stored_of[n] for n in missing})
+            _untar_all(
+                tar_path,
+                part,
+                members={stored_of[n] for n in missing},
+                rename={stored_of[n]: n for n in missing if stored_of[n] != n},
+            )
         except Exception:  # noqa: S110 - R: tryCatch(untar(...), error = NULL)
             pass
         except BaseException:  # a stop: the half-written folder is not left in the cache
             shutil.rmtree(part, ignore_errors=True)
             raise
-        # a converted name: the file unpacked under the stored bytes is renamed (where
-        # such a member cannot be unpacked at all, it is left out)
-        for n in missing:
-            if stored_of[n] == n:
-                continue
-            try:
-                src = f"{part}/{stored_of[n]}"
-                if os.path.exists(src):
-                    to = f"{part}/{n}"
-                    os.makedirs(os.path.dirname(to), exist_ok=True)
-                    os.rename(src, to)
-            except OSError:  # R: tryCatch(..., error = NULL)
-                pass
         os.makedirs(dest, exist_ok=True)
         _move_extracted(part, dest, missing)
     # sizes only known once unpacked (compressed tar)
