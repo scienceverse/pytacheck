@@ -15,7 +15,10 @@
       "stdout",
       "stderr",
       "script_lines",
-      "captures"
+      "captures",
+      "started_at",
+      "ended_at",
+      "exit_status"
     ],
     "v": [
       {
@@ -225,9 +228,33 @@
             "t": "null"
           }
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<time>",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<time>",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          null,
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.18",
+  "metacheck_version": "0.4.4.27",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

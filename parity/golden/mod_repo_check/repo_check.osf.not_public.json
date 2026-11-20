@@ -122,6 +122,7 @@
       {
         "t": "chr",
         "v": [
+          "#### Partly Listed Repositories\n\nThe OSF refused part of the listing of https://osf.io/ybm3c (0 files listed), also when asked again, so what this report says about its files describes only the part that was listed. Run the check again later.",
           "Double-check permissions on repositories with no detectable files.",
           "#### Whose Deposits",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://osf.io/ybm3c' target='_blank'>osf.io/ybm3c<\/a>\", \n    \"Cited in\" = \"text\", Whose = \"the authors', for this paper\", \n    Why = \"a link in the main text, not shown to be anyone else's\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
@@ -140,7 +141,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 1 empty repository.\n-  We found 0 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs."
+          "\n-  We listed only part of 1 OSF project, because the OSF refused part of the listing; run the check again.\n-  We found 1 empty repository.\n-  We found 0 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs."
         ]
       },
       {
@@ -295,11 +296,16 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -344,24 +350,37 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "p_ybm3c"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://osf.io/ybm3c"
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "refused by the OSF"
+            ]
           }
         ]
       },
@@ -521,6 +540,8 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
           "dep_org",
           "dep_related",
@@ -549,7 +570,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -604,6 +626,18 @@
             "t": "chr",
             "v": [
               "Testing private components"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
             ]
           },
           {
@@ -791,6 +825,12 @@
             "v": [
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
           }
         ]
       },
@@ -925,6 +965,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.18",
+  "metacheck_version": "0.4.4.27",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

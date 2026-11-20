@@ -26,6 +26,7 @@ attributes on a returned data frame are kept in ``DataFrame.attrs``.
 from __future__ import annotations
 
 import contextlib
+import datetime as _dt
 import functools
 import hashlib
 import json
@@ -4636,10 +4637,14 @@ def _driver_source(
 class _RunError(Exception):
     """A failed script run (callr's error condition); ``timeout`` for a timeout."""
 
-    def __init__(self, message: str, timeout: bool = False) -> None:
+    def __init__(self, message: str, timeout: bool = False, status: int | None = None) -> None:
         super().__init__(message)
         self.message = message
         self.timeout = timeout
+        # the exit status of the process, as callr reports it: a crash has its own, a script
+        # stopped at its time limit -9 (killed), an error raised in R 0 (the process ended
+        # normally having saved it)
+        self.status = status
 
 
 def _read_cap(path: str | os.PathLike[str]) -> str:
@@ -4697,12 +4702,13 @@ def _callr_run(
                     check=False,
                 )
             except subprocess.TimeoutExpired as exc:
-                raise _RunError(_CALLR_TIMEOUT, timeout=True) from exc
+                raise _RunError(_CALLR_TIMEOUT, timeout=True, status=-9) from exc
         if os.path.exists(error_file):
             msg = Path(error_file).read_text(encoding="utf-8", errors="replace")
-            raise _RunError(msg[:-1] if msg.endswith("\n") else msg)
+            # the process itself ended normally, having saved the error it caught (status 0)
+            raise _RunError(msg[:-1] if msg.endswith("\n") else msg, status=0)
         if proc.returncode != 0:
-            raise _RunError(_CALLR_CRASH)
+            raise _RunError(_CALLR_CRASH, status=proc.returncode)
 
 
 # R quotes names with sQuote()/dQuote(), which are typographic quotes in a
@@ -4763,8 +4769,20 @@ _RUN_COLUMNS = {
 }
 
 
-def _run_frame(rows: Sequence[Mapping[str, Any]]) -> pd.DataFrame:
-    return _frame({c: (t, [r[c] for r in rows]) for c, t in _RUN_COLUMNS.items()})
+def _run_frame(
+    rows: Sequence[Mapping[str, Any]], clocks: Mapping[str, Mapping[str, Any]] | None = None
+) -> pd.DataFrame:
+    """``run_results`` rows as a table, with ``started_at``, ``ended_at`` and ``exit_status``.
+
+    *clocks* maps a script's name to what its runner noted while it ran (``started``,
+    ``ended``, ``status``; see :func:`metacheck.repro.provenance._repro_add_run_clock`).
+    """
+    from metacheck.repro.provenance import _repro_add_run_clock
+
+    out = _frame({c: (t, [r[c] for r in rows]) for c, t in _RUN_COLUMNS.items()})
+    done = _repro_add_run_clock(out, clocks)
+    assert done is not None
+    return done
 
 
 def _run_row(
@@ -4906,6 +4924,9 @@ def repro_run_scripts(
 
     bar = pb(len(ordered), ":what [:bar] :current/:total")
     rows: list[dict[str, Any]] = []
+    # each script's start, end and exit status, for run_results' started_at, ended_at and
+    # exit_status (see metacheck.repro.provenance)
+    clocks: dict[str, dict[str, Any]] = {}
     try:
         bar.tick(0, {"what": ""})
         for fn in ordered:
@@ -4935,12 +4956,15 @@ def repro_run_scripts(
                 err_file = os.path.join(tmp, "err.txt")
                 cap_file = os.path.join(tmp, "captures.json")
                 t0 = time.monotonic()
+                clock = clocks[fn] = {"started": _dt.datetime.now(_dt.UTC)}
                 error: _RunError | None = None
                 try:
                     _callr_run(paths[i], dirs[i], cap_file, lib, run_timeout, out_file, err_file)
                 except _RunError as exc:
                     error = exc
                 elapsed = time.monotonic() - t0
+                clock["ended"] = _dt.datetime.now(_dt.UTC)
+                clock["status"] = 0 if error is None else error.status
                 captures = _read_captures(cap_file) if os.path.exists(cap_file) else None
                 so, se = _read_cap(out_file), _read_cap(err_file)
             _message(
@@ -4988,4 +5012,4 @@ def repro_run_scripts(
                 )
     finally:
         bar.terminate()
-    return _run_frame(rows)
+    return _run_frame(rows, clocks)

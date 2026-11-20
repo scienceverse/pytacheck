@@ -765,6 +765,11 @@ def _entry_table(infos: Sequence[zipfile.ZipInfo]) -> pd.DataFrame:
             "name_bytes": pd.Series(
                 [float(_zip_stored_name_len(i)) for _, i in kept], dtype="float64"
             ),
+            # encrypted: flag bit 0, or AES (method 99)
+            "encrypted": pd.Series(
+                [bool(i.flag_bits & 0x1) or i.compress_type == 99 for _, i in kept],
+                dtype="bool",
+            ),
         }
     )
 
@@ -1664,31 +1669,10 @@ def _zip_name(info: Any) -> str:
     return _decode_zip_name(_zip_raw_name(info), bool(info.flag_bits & 0x800))
 
 
-def _r_member_path(raw: bytes, windows: bool = os.name == "nt") -> bytes:
-    """R's internal unzip drops ``../`` path components (with a warning).
-
-    On Windows a ``"\\"`` in a name separates folders (``..\\x`` would climb out
-    of the destination) and a drive (``C:/``) cannot be a folder name, so
-    backslashes are read as ``"/"`` and a leading drive is dropped first.
-    """
-    if windows:
-        raw = raw.replace(b"\\", b"/")
-        if len(raw) >= 2 and raw[1:2] == b":" and raw[:1].isalpha():
-            raw = raw[2:].lstrip(b"/")
-    if raw.startswith(b"../") or b"/../" in raw:
-        shown = raw.decode("utf-8", "replace")
-        warnings.warn(f"skipped \"../\" path component(s) in '{shown}'", stacklevel=4)
-        while raw.startswith(b"../"):
-            raw = raw[3:]
-        while b"/../" in raw:
-            raw = raw.replace(b"/../", b"/", 1)
-    return raw
-
-
 def _zip_disk_name(name: str, windows: bool = os.name == "nt") -> str:
     """The name :func:`_unzip_all` writes member *name* under, below its folder: on
     Windows with ``"/"`` for ``"\\"`` and without a leading drive (``C:/x.csv`` is
-    ``x.csv``), as :func:`_r_member_path` does; elsewhere *name* itself."""
+    ``x.csv``); elsewhere *name* itself."""
     if not windows:
         return name
     name = name.replace("\\", "/")
@@ -1697,57 +1681,165 @@ def _zip_disk_name(name: str, windows: bool = os.name == "nt") -> str:
     return name
 
 
-def _unzip_all(zip_path: str, exdir: str, members: set[str] | None = None) -> None:
-    """``utils::unzip(zip_path, exdir = exdir)``: extract a zip below *exdir*.
+def _zip_unsafe_path(rel: str) -> bool:
+    """Port of ``R/zip-peek.R::.zip_unsafe_path()``: would a member's name (with ``/`` between
+    folders) write outside the folder it is unpacked into: a ``..`` folder, or a path from the
+    root or a drive letter. Such a member is never unpacked."""
+    return bool(re.match(r"^([A-Za-z]:)?/", rel)) or ".." in rel.split("/")
 
-    Member names are used byte for byte (a backslash is part of the file name,
-    ``C:/x`` makes a folder ``C:``, a leading ``/`` is harmless), except that
-    ``../`` components are dropped. Parent folders are made as needed; a
-    member that cannot be written (a file is in the way) is an error that
-    ends the extraction. A member :mod:`zipfile` cannot read (a compression
-    method it lacks, a damaged local header) is skipped with a warning, and
-    the CRC of the data itself is not checked, as R's unzip does not check it.
-    With *members*, only the members of those names (``unzip(files = ...)``).
+
+_ZIP_METHODS = {
+    9: "Deflate64",
+    12: "bzip2",
+    14: "LZMA",
+    93: "Zstandard",
+    95: "XZ",
+    98: "PPMd",
+}
+
+
+def _zip_unpack_reason(method: Any, flags: Any = None) -> str:
+    """Port of ``R/zip-peek.R::.zip_unpack_reason()``: why a member of a zip could not be
+    unpacked, from its compression method and its flags (``None`` when unknown).
+
+    :mod:`zipfile` reads stored, deflate, bzip2 and lzma members, so the methods named here are
+    the others (Deflate64, which Windows uses for large files, Zstandard, XZ, PPMd; D154).
     """
-    ex = os.fsencode(exdir)
-    os.makedirs(ex, exist_ok=True)
-    with zipfile.ZipFile(zip_path) as zf:
+    if flags is not None and int(flags) & 1:
+        return "it is encrypted"
+    if method is not None and not is_missing(method) and int(method) == 99:
+        return "it is encrypted (AES)"
+    if method is not None and not is_missing(method) and int(method) not in (0, 8, 12, 14):
+        what = _ZIP_METHODS.get(int(method), f"method {int(method)}")
+        return f"it is compressed with {what}, which metacheck cannot unpack"
+    return "its contents did not unpack to the size the archive records"
+
+
+def _unzip_all(path: str, exdir: str, files: Sequence[str] | None = None) -> pd.DataFrame | None:
+    """Port of ``R/zip-peek.R::.unzip_all()``: unpack a zip on disk into *exdir*.
+
+    Every file in it, or only the members named in *files* (as :func:`_zip_name` names them, in
+    valid UTF-8; a name in the old DOS characters, CP437, is a readable name). A member that
+    cannot be unpacked (encrypted, compressed with a method that cannot be read, a path outside
+    *exdir*, not in the archive) does not stop the others and is reported with its reason.
+
+    Returns a data frame with one row per member: ``name``, ``path`` (the written file, ``None``
+    when not written) and ``reason`` (why not, ``None`` when written); ``None`` when the file is
+    not a readable zip. :func:`_unzip_failed_note` turns the members not written into a
+    sentence for a message.
+    """
+    import pandas as pd
+
+    try:
+        zf = zipfile.ZipFile(path)
+    except Exception:  # not a zip, or a damaged one
+        return None
+    with zf:
+        infos: dict[str, zipfile.ZipInfo] = {}
         for info in zf.infolist():
-            if members is not None and _zip_name(info) not in members:
+            name = _zip_name(info)
+            if not name.endswith("/"):
+                infos.setdefault(name, info)
+        names = list(infos) if files is None else [str(f) for f in files]
+        paths: list[str | None] = [None] * len(names)
+        reasons: list[str | None] = [None] * len(names)
+        if names:
+            os.makedirs(exdir, exist_ok=True)
+        for k, name in enumerate(names):
+            found = infos.get(name)
+            rel = name.replace("\\", "/")
+            if found is None:
+                reasons[k] = "not in the archive"
                 continue
-            # a CP437 name is written as UTF-8, so the files on disk have
-            # readable names (R writes the raw bytes: U76)
-            name = _zip_name(info).encode("utf-8", "surrogateescape")
-            out = ex + b"/" + _r_member_path(name)
-            if out.endswith(b"/"):  # a directory entry
-                if not os.path.exists(out):
-                    try:
-                        os.makedirs(out, exist_ok=True)
-                    except OSError:
-                        pass
+            info = found
+            if _zip_unsafe_path(rel):
+                reasons[k] = "its path leads outside the folder"
                 continue
-            pp = len(ex) + 1
-            while (k := out.find(b"/", pp)) >= 0:
-                parent = out[:k]
-                if not os.path.exists(parent):
-                    try:
-                        os.mkdir(parent)
-                    except OSError:
-                        pass
-                pp = k + 1
-            try:
-                src = zf.open(info)
-            except (NotImplementedError, RuntimeError, zipfile.BadZipFile):
-                warnings.warn(f"zip file is corrupt: cannot read '{_zip_name(info)}'", stacklevel=3)
+            if info.flag_bits & 1 or info.compress_type == 99:
+                reasons[k] = _zip_unpack_reason(info.compress_type, info.flag_bits)
                 continue
             try:
-                fout = open(out, "wb")  # noqa: SIM115
-            except OSError as e:
-                src.close()
-                raise RuntimeError(f"cannot open file '{os.fsdecode(out)}': {e.strerror}") from e
-            with fout, src:
-                src._expected_crc = None  # type: ignore[attr-defined]  # R ignores CRCs
-                shutil.copyfileobj(src, fout)
+                with zf.open(info) as src:
+                    src._expected_crc = None  # type: ignore[attr-defined]  # R ignores CRCs
+                    data = src.read()
+            except Exception:
+                reasons[k] = _zip_unpack_reason(info.compress_type, info.flag_bits)
+                continue
+            if len(data) != info.file_size:
+                reasons[k] = _zip_unpack_reason(info.compress_type, info.flag_bits)
+                continue
+            target = os.path.join(exdir, _zip_disk_name(name))
+            try:
+                os.makedirs(os.path.dirname(target), exist_ok=True)
+                with open(target, "wb") as fh:
+                    fh.write(data)
+                paths[k] = target
+            except OSError:
+                reasons[k] = "the file could not be written to disk"
+    return pd.DataFrame(
+        {
+            "name": pd.Series(names, dtype="object"),
+            "path": pd.Series(paths, dtype="object"),
+            "reason": pd.Series(reasons, dtype="object"),
+        }
+    )
+
+
+def _unzip_failed_note(unpacked: Any, archive: str) -> str | None:
+    """Port of ``R/zip-peek.R::.unzip_failed_note()``: a sentence naming the members
+    :func:`_unzip_all` could not write and why, for a message or a warning; ``None`` when every
+    member was written. *archive* names the zip in the sentence. At most five members are named."""
+    if unpacked is None:
+        return None
+    bad = unpacked[unpacked["path"].isna()]
+    if len(bad) == 0:
+        return None
+    n = len(bad)
+    shown = [
+        f"{nm} ({why})" for nm, why in zip(bad["name"].head(5), bad["reason"].head(5), strict=True)
+    ]
+    more = f"; and {n - 5} more" if n > 5 else ""
+    return (
+        f"{n} file{'s' if n != 1 else ''} in {archive} could not be unpacked: "
+        f"{'; '.join(shown)}{more}"
+    )
+
+
+def _unzip_failed_text(failed: Any) -> dict[str, Any]:
+    """Port of ``R/zip-peek.R::.unzip_failed_text()``: the report section and summary sentence
+    for members of zips that data_check could not unpack (encrypted, or compressed with a method
+    that cannot be read).
+
+    *failed* has the columns ``archive``, ``file_name`` and ``reason`` (the attribute
+    ``unpack_failed`` of :func:`_expand_zip`'s rows). Returns ``{"report": ..., "summary": ...}``,
+    both ``None`` when there are none.
+    """
+    import pandas as pd
+
+    none: dict[str, Any] = {"report": None, "summary": None}
+    if not isinstance(failed, pd.DataFrame) or len(failed) == 0:
+        return none
+    failed = failed[~failed.duplicated(subset=["archive", "file_name"])]
+    n = len(failed)
+    lines = []
+    for archive in dict.fromkeys(failed["archive"].tolist()):
+        f = failed[failed["archive"] == archive]
+        note = _unzip_failed_note(
+            pd.DataFrame({"name": f["file_name"], "path": None, "reason": f["reason"]}),
+            f"`{archive}`",
+        )
+        lines.append(f"- {note}.")
+    s = "s" if n != 1 else ""
+    it = "it" if n == 1 else "them"
+    return {
+        "report": [
+            "#### Files that could not be unpacked",
+            f"{n} file{s} in the repository's archives could not be unpacked, so the checks did not see {it}:",
+            "",
+            *lines,
+        ],
+        "summary": f"{n} file{s} in the repository's archives could not be unpacked, so the checks did not see {it}.",
+    }
 
 
 def _in_download_folder(path: str) -> bool:
@@ -1955,11 +2047,21 @@ def _expand_zip(
             _unlink(dest, _zip_disk_name(n))
     want = [n for n, k, o in zip(names, keep, over, strict=True) if k and not o]
     missing = [n for n in want if not os.path.exists(f"{dest}/{_zip_disk_name(n)}")]
+    failed = None
     if missing:
         part = f"{dest}.part"
         shutil.rmtree(part, ignore_errors=True)
         try:
-            _unzip_all(zip_path, part, members=set(missing))
+            # a member that cannot be unpacked (encrypted, or compressed with a method that
+            # cannot be read) is named, not left out without a word
+            unpacked = _unzip_all(zip_path, part, files=missing)
+            note = _unzip_failed_note(unpacked, os.path.basename(zip_path))
+            if note is not None:
+                from metacheck.archives import _message
+
+                _message(note)
+            if unpacked is not None:
+                failed = unpacked[unpacked["path"].isna()][["name", "reason"]]
         except Exception:  # noqa: S110 - R: tryCatch(unzip(...), error = NULL)
             pass
         except BaseException:  # a stop: the half-written folder is not left in the cache
@@ -1969,7 +2071,7 @@ def _expand_zip(
         _move_extracted(part, dest, [_zip_disk_name(n) for n in missing])
     label = _archive_label(zip_row, zip_path)
     rows = _archive_rows(dest, zip_row, label, skip_types, archive=zip_path) if want else empty
-    return _with_oversize(
+    out = _with_oversize(
         rows,
         zip_row,
         label,
@@ -1977,6 +2079,19 @@ def _expand_zip(
         [s for s, o in zip(sizes, over, strict=True) if o],
         archive=zip_path,
     )
+    # and given to data_check, which names them in its report (attribute "unpack_failed", see
+    # :func:`_unzip_failed_text`)
+    if failed is not None and len(failed) > 0:
+        import pandas as pd
+
+        out.attrs["unpack_failed"] = pd.DataFrame(
+            {
+                "archive": [label] * len(failed),
+                "file_name": failed["name"].tolist(),
+                "reason": failed["reason"].tolist(),
+            }
+        )
+    return out
 
 
 def _unlink(dest: str, name: str) -> None:

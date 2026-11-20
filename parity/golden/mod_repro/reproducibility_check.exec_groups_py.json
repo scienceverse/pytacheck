@@ -22,6 +22,8 @@
       "stat_output",
       "match_table",
       "modifications",
+      "artifacts",
+      "environment",
       "checklist_section",
       "sandbox"
     ],
@@ -675,6 +677,9 @@
           "elapsed",
           "script_lines",
           "captures",
+          "started_at",
+          "ended_at",
+          "exit_status",
           "reason",
           "checked"
         ],
@@ -822,6 +827,33 @@
           {
             "t": "chr",
             "v": [
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "platform",
               "other",
               null,
@@ -857,7 +889,9 @@
         "names": [
           "file_name",
           "change_type",
-          "detail"
+          "detail",
+          "sha256_before",
+          "sha256_after"
         ],
         "v": [
           {
@@ -880,6 +914,230 @@
               "\"data.csv\" -> \"data.csv\"",
               "\"data.csv\" -> \"data.csv\""
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "c6bddd1637cba3b2a59b10de84580c45e47b644ab33316c764cd3b0382e530b6",
+              "cb168129d47f7de7a4e3af416ef3045c0c74e941721faa17cc5df7cad95514ac"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "stage",
+          "path",
+          "size",
+          "sha256",
+          "mime_type",
+          "source",
+          "status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "deposit",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "colab.py",
+              "data.csv",
+              "errors.py",
+              "ok.py",
+              "relative.py"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              32,
+              62,
+              32,
+              141,
+              329,
+              38
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "306d5452f50d78b2e36c5637248dd31bd8075c2c63b55780040edc6735c36634",
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "cb168129d47f7de7a4e3af416ef3045c0c74e941721faa17cc5df7cad95514ac",
+              "c6bddd1637cba3b2a59b10de84580c45e47b644ab33316c764cd3b0382e530b6",
+              "f5b6be95ab2e52a17e249ad27c924611717d97f0306f2a28aa42233ac5954fdb"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text/csv",
+              "text/x-python",
+              "text/csv",
+              "text/x-python",
+              "text/x-python",
+              "text/x-python"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "metacheck_version",
+          "started_at",
+          "ended_at",
+          "host",
+          "sandbox",
+          "network_isolated",
+          "internet",
+          "timeout_per_script",
+          "total_timeout",
+          "python_local",
+          "docker"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0.4.4.27"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "r_version",
+              "platform",
+              "os"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "R version 4.5.3 (2026-03-11)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "x86_64-conda-linux-gnu"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Linux 6.18.44-fc-v726"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "process"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              60
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3600
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "executable",
+              "version"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "/usr/local/bin/python"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Python 3.13.18"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
           }
         ]
       },
@@ -897,6 +1155,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.18",
+  "metacheck_version": "0.4.4.27",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

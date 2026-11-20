@@ -1306,7 +1306,8 @@ def test_archive_members_may_take_the_whole_archive(
         download_repo_files(files, max_download_size=2)
     dryad, zenodo = seen
     assert dryad["request_bytes"] == math.inf and zenodo["request_bytes"] == 1048576
-    assert dryad["max_whole_bytes"] == 2 * 1048576
+    # a whole copy may use what is left of the repository's budget after its 10-byte member (#698)
+    assert dryad["max_whole_bytes"] == 2 * 1048576 - 10
     assert dryad["size"] == 12345.0
     # kept beside its members' folder, so a restarted run does not ask for it again
     assert dryad["dest"] == dryad["archive_path"] + ".contents"

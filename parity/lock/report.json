@@ -1,5 +1,5 @@
 {
-"report_repository.default_modules": {"r": "4267b5df8a33bebf", "py": "35a26774729339db", "diff": ["file[]", "output.codebook_check.summary_table", "output.repo_check.archive_deposits", "output.repo_check.ownership", "output.repo_check.table_not_checked"]},
+"report_repository.default_modules": {"r": "59e5b82feca8c322", "py": "7f0b772cf3c8af02", "diff": ["file[]", "output.codebook_check.summary_table", "output.repo_check.archive_deposits", "output.repo_check.ownership", "output.repo_check.table_not_checked"]},
 "scroll_table.colwidths_chr": {"r": "319830222b3434b0", "py": "7a175577a340a8df", "diff": ["[]"]},
 "scroll_table.colwidths_frac": {"r": "2801c1e6b1322064", "py": "8000d14c62316070", "diff": ["[]"]},
 "scroll_table.colwidths_na": {"r": "50804e5d58f42f38", "py": "d2867b75a7331987", "diff": ["[]"]},

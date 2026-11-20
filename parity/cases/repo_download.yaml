@@ -2305,3 +2305,273 @@
           \ 'https://raw.githubusercontent.com/o/r/main/data%20raw/a%20b.csv', 'https://raw.githubusercontent.com/o/r/feature%2Fx/a%23b/c%3Fd%25e%2Bf.csv',\
           \ 'http://RAW.githubusercontent.com/O/R/v1.0/x.R', 'https://raw.githubusercontent.com/o/r/main',\
           \ 'https://osf.io/download/abcde/', 'https://github.com/o/r/blob/main/a.R'] + [None])"
+- "id": "osf_storage_totals.complete_flags"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_storage_totals(data.frame(osf_node = c(\"n1\", \"n1\", \"n1\", \"n2\", \"n2\", \"n1\"), provider = \"osfstorage\", file_path = c(\"a.csv\", \"b.csv\", \"c.R\", \"x.R\", \"y.R\", \"a.csv\"), file_size = c(100, 50, 10, 20, 30, 100)), complete = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE))"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._osf_storage_totals(__import__('pandas').DataFrame({'osf_node': ['n1', 'n1', 'n1', 'n2', 'n2', 'n1'], 'provider': 'osfstorage', 'file_path': ['a.csv', 'b.csv', 'c.R', 'x.R', 'y.R', 'a.csv'], 'file_size': [100, 50, 10, 20, 30, 100]}), complete=[True, True, True, False, False, False])"
+- "id": "osf_storage_totals.counted_copy_after_uncounted"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_storage_totals(data.frame(osf_node = \"n1\", provider = \"osfstorage\", file_path = c(\"a.csv\", \"a.csv\", \"b.csv\", \"c.R\"), file_size = c(100, 100, 50, 10)), complete = c(FALSE, TRUE, TRUE, TRUE))"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._osf_storage_totals(__import__('pandas').DataFrame({'osf_node': 'n1', 'provider': 'osfstorage', 'file_path': ['a.csv', 'a.csv', 'b.csv', 'c.R'], 'file_size': [100, 100, 50, 10]}), complete=[False, True, True, True])"
+- "id": "osf_storage_totals.none_complete"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_storage_totals(data.frame(osf_node = \"n1\", provider = \"osfstorage\", file_path = c(\"a.csv\", \"b.csv\"), file_size = c(100, 50)), complete = c(FALSE, FALSE))"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._osf_storage_totals(__import__('pandas').DataFrame({'osf_node': 'n1', 'provider': 'osfstorage', 'file_path': ['a.csv', 'b.csv'], 'file_size': [100, 50]}), complete=[False, False])"
+- "id": "storage_archive_skip.not_listed_in_full"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.storage_archive_skip(data.frame(file_size = c(1000, 1000), storage_size = NA_real_, storage_n = NA_integer_), seq_len(2), 100, 1024^2)"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._storage_archive_skip(__import__('pandas').DataFrame({'file_size': [1000, 1000], 'storage_size': float('nan'), 'storage_n': __import__('pandas').Series([None, None], dtype='Int64')}), list(range(2)), 100, 1024**2)"
+- "id": "storage_archive_skip.one_row_listed"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.storage_archive_skip(data.frame(file_size = c(1000, 1000, 1000), storage_size = c(NA, 3000, NA), storage_n = c(NA, 3L, NA)), seq_len(3), 100, 1024^2)"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._storage_archive_skip(__import__('pandas').DataFrame({'file_size': [1000, 1000, 1000], 'storage_size': [float('nan'), 3000.0, float('nan')], 'storage_n': __import__('pandas').Series([None, 3, None], dtype='Int64')}), list(range(3)), 100, 1024**2)"
+- "id": "github_raw_parts.empty"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.github_raw_parts(character(0))"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._github_raw_parts([])"
+- "id": "repo_cache_rel.storage0"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.repo_cache_rel(\"https://osf.io/haz6u\", \"Data/a.csv\", \"github\")"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._repo_cache_rel('https://osf.io/haz6u', 'Data/a.csv', 'github')"
+- "id": "repo_cache_rel.storage1"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.repo_cache_rel(\"https://osf.io/haz6u\", \"Data/a.csv\", \"osfstorage\")"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._repo_cache_rel('https://osf.io/haz6u', 'Data/a.csv', 'osfstorage')"
+- "id": "repo_cache_rel.storage2"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.repo_cache_rel(\"https://osf.io/haz6u\", \"Data/a.csv\", NA_character_)"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._repo_cache_rel('https://osf.io/haz6u', 'Data/a.csv', None)"
+- "id": "repo_cache_rel.storage3"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.repo_cache_rel(\"https://osf.io/haz6u\", \"Data/a.csv\", \"Google Drive\")"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._repo_cache_rel('https://osf.io/haz6u', 'Data/a.csv', 'Google Drive')"
+- "id": "repo_cache_rel.storage4"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.repo_cache_rel(\"https://osf.io/haz6u\", \"x.R\", \"\")"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._repo_cache_rel('https://osf.io/haz6u', 'x.R', '')"
+- "id": "repo_cache_rel.storage_vector"
+  "r": "identity"
+  "py": "tests.repo_download._parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.repo_cache_rel(\"https://github.com/o/r\", c(\"x.R\", \"y.R\"), NA)"
+        "py": "__import__('metacheck.archives.download', fromlist=['x'])._repo_cache_rel('https://github.com/o/r', ['x.R', 'y.R'], None)"
+- "id": "zip_timeout_for_size.files"
+  "r": ".zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
+  "args":
+    "timeout_s": 120
+    "expected_files": 1000
+- "id": "zip_timeout_for_size.files_and_bytes"
+  "r": ".zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
+  "args":
+    "timeout_s": 120
+    "expected_bytes": 8463365
+    "expected_files": 612
+- "id": "zip_timeout_for_size.files_below_floor"
+  "r": ".zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
+  "args":
+    "timeout_s": 120
+    "expected_bytes": 1024
+    "expected_files": 10
+- "id": "zip_timeout_for_size.files_rate"
+  "r": ".zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
+  "args":
+    "timeout_s": 10
+    "expected_files": 100
+    "s_per_file": 1
+- "id": "zip_timeout_for_size.files_na"
+  "r": ".zip_timeout_for_size"
+  "py": "metacheck.archives.download._zip_timeout_for_size"
+  "args":
+    "timeout_s": 120
+    "expected_bytes": 1048576000
+    "expected_files":
+      "$dbl":
+      - null
+- "id": "download_repo_files.archive_members_one_budget"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/parity_helpers.R'), local = TRUE); rd_download})"
+        "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).download"
+    "args":
+      "files":
+        "$df":
+          "repo_url":
+          - "https://example.org/repo-698"
+          - "https://example.org/repo-698"
+          - "https://example.org/repo-698"
+          - "https://example.org/repo-698"
+          - "https://example.org/repo-698"
+          - "https://example.org/repo-698"
+          "file_name":
+          - "data.csv"
+          - "notes.txt"
+          - "empty.txt"
+          - "a.png"
+          - "b.jpg"
+          - "readme.txt"
+          "file_path":
+          - "stored.zip/data.csv"
+          - "stored.zip/notes.txt"
+          - "stored.zip/empty.txt"
+          - "stimuli.zip/a.png"
+          - "stimuli.zip/b.jpg"
+          - "stimuli.zip/readme.txt"
+          "file_url":
+          - null
+          - null
+          - null
+          - null
+          - null
+          - null
+          "file_size":
+          - 1440
+          - 6
+          - 0
+          - 72
+          - 72
+          - 8
+          "archive_url":
+          - "https://mock.example.org/zips/stored.zip"
+          - "https://mock.example.org/zips/stored.zip"
+          - "https://mock.example.org/zips/stored.zip"
+          - "https://mock.example.org/zips/stimuli.zip"
+          - "https://mock.example.org/zips/stimuli.zip"
+          - "https://mock.example.org/zips/stimuli.zip"
+          "archive_member":
+          - "data.csv"
+          - "notes.txt"
+          - "empty.txt"
+          - "a.png"
+          - "b.jpg"
+          - "readme.txt"
+      "max_file_size": 100
+      "max_download_size": 0.0001
+  "mock_dir": "tests/repo_download/mocks"
+- "id": "download_repo_files.storage_apart"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/parity_helpers.R'), local = TRUE); rd_download})"
+        "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).download"
+    "args":
+      "files":
+        "$df":
+          "repo_url":
+          - "https://osf.io/haz6u"
+          - "https://osf.io/haz6u"
+          - "https://osf.io/haz6u"
+          "file_name":
+          - "a.csv"
+          - "a.csv"
+          - "b.csv"
+          "file_path":
+          - "Data/a.csv"
+          - "Data/a.csv"
+          - "Data/b.csv"
+          "file_url":
+          - "x"
+          - "x"
+          - "x"
+          "file_size":
+          - 714
+          - 40
+          - 40
+          "provider":
+          - "github"
+          - "osfstorage"
+          - null
+      "file_url":
+      - "data/results.csv.gz"
+      - "data/page.html"
+      - "data/page.html"
+      "max_file_size": 10
+      "max_download_size": 100
+- "id": "download_repo_files.restricted_file"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/parity_helpers.R'), local = TRUE); rd_download})"
+        "py": "__import__('tests.repo_download._parity_helpers', fromlist=['x']).download"
+    "args":
+      "files":
+        "$df":
+          "repo_url":
+          - "https://example.org/repo-restricted"
+          - "https://example.org/repo-restricted"
+          "file_name":
+          - "results.csv.gz"
+          - "page.html"
+          "file_path":
+          - "data/results.csv.gz"
+          - "page.html"
+          "file_url":
+          - "x"
+          - "x"
+          "file_size":
+          - 714
+          - 40
+          "file_restricted":
+          - true
+          - false
+      "file_url":
+      - "data/results.csv.gz"
+      - "data/page.html"
+      "max_file_size": 10
+      "max_download_size": 100

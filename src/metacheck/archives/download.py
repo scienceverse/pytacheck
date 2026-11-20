@@ -207,26 +207,35 @@ def _rel_one(key: str, file_path: Any) -> str:
     return _file_path(key, rel)
 
 
-def _repo_cache_rel(repo_url: Any, file_path: Any) -> Any:
+def _repo_cache_rel(repo_url: Any, file_path: Any, storage: Any = None) -> Any:
     """Port of ``R/repo-download.R::.repo_cache_rel()``: ``<repo key>/<repo-relative path>``.
 
     Backslashes become ``/`` and leading slashes are dropped. Vectorised over
     *file_path* (a sequence gives a list).
+
+    *storage* is an OSF file's storage (``provider``): a storage other than OSF Storage, such as a
+    GitHub repository linked to the project, gets a folder of its own (``_storage_github``), as
+    its paths can be the same as OSF Storage's under the same repository address. osf.io/haz6u
+    holds 458 files under the same paths in both, not always the same file; with one place for
+    both, one copy replaced the other (metacheck #679). Any other file keeps its path.
     """
     key = _repo_key(repo_url)
+    st = "" if storage is None or is_missing(storage) else str(storage)
+    if st != "" and st.lower() != "osfstorage":
+        key = _file_path(key, "_storage_" + gsub("[^A-Za-z0-9._-]+", "_", st))
     if isinstance(file_path, str) or is_missing(file_path):
         return _rel_one(key, file_path)
     return [_rel_one(key, p) for p in file_path]
 
 
-def _repo_cache_path(repo_url: Any, file_path: Any, cache: bool = True) -> Any:
+def _repo_cache_path(repo_url: Any, file_path: Any, cache: bool = True, storage: Any = None) -> Any:
     """Port of ``R/repo-download.R::.repo_cache_path()``: a file's cache path.
 
     In the persistent cache, or with ``cache=False`` in the session's
     temporary one (:func:`_repo_session_dir`), with the same layout.
     """
     root = _repo_cache_dir() if cache is True else _repo_session_dir()
-    rel = _repo_cache_rel(repo_url, file_path)
+    rel = _repo_cache_rel(repo_url, file_path, storage)
     if isinstance(rel, list):
         return [_file_path(root, r) for r in rel]
     return _file_path(root, rel)
@@ -839,6 +848,18 @@ def _storage_archive_skip(
     """
     from metacheck._r import format_num, r_round
 
+    # Without the storage's own totals, the archive's size is not known: the rows passed are only
+    # the files wanted, and when the paper linked single files they are not the storage either
+    # (#679: 6 linked files, 35 KB, of a storage of 612 files, 8.5 MB). repo_check records the
+    # totals only for a storage it listed in full (_osf_storage_totals).
+    def _finite(col: str) -> bool:
+        if col not in files.columns:
+            return False
+        vals = files[col].tolist()
+        return any(math.isfinite(v) for v in _nums(vals[i] for i in idx) if not is_missing(v))
+
+    if not _finite("storage_size") or not _finite("storage_n"):
+        return "the size of the whole storage is not known, as it was not listed in full"
     archive_bytes = _storage_size_estimate(files, idx)
     size_why = _archive_size_refusal(archive_bytes, max_download_size, mb)
     if size_why is not None:
@@ -863,7 +884,7 @@ def _storage_archive_skip(
     )
 
 
-def _osf_storage_totals(files: Any) -> Any:
+def _osf_storage_totals(files: Any, complete: Any = None) -> Any:
     """Port of ``R/repo-download.R::.osf_storage_totals()`` (metacheck #675).
 
     Each OSF file's storage (its component and provider, such as osfstorage or
@@ -874,6 +895,13 @@ def _osf_storage_totals(files: Any) -> Any:
     cannot count the storage itself. A file listed twice (through a
     registration and its project) counts once. A table without ``osf_node``
     and ``provider`` is returned as it is.
+
+    *complete* (a logical per row; default all ``True``) marks the rows of a listing that holds
+    whole storages (a linked project, component or registration listed in full); only those are
+    counted (#679). Rows from a link to a single file or folder are not the storage: six linked
+    files of 35 KB were counted as a storage that holds 612 files and 8.5 MB, and its zip was
+    fetched for them. A storage with no complete rows gets ``NA``, and its files are fetched one
+    by one (:func:`_storage_archive_skip`).
     """
     import pandas as pd
 
@@ -891,14 +919,20 @@ def _osf_storage_totals(files: Any) -> Any:
         for a, b in zip(node, provider, strict=True)
     ]
     sizes = _nums(files["file_size"].tolist())
+    comp = [True] * len(files) if complete is None else [v is True or v == 1 for v in complete]
     seen: set[str] = set()
     total: dict[str, float] = {}
     count: dict[str, int] = {}
-    for k, p, sz in zip(key, paths, sizes, strict=True):
-        dup_key = f"{k if k is not None else 'NA'} {as_str(p) or ('NA' if is_missing(p) and 'file_path' in files.columns else '')}"
+    for k, p, sz, ok in zip(key, paths, sizes, comp, strict=True):
+        # a row that is not counted never hides a counted copy of the same file
+        if k is None or not ok:
+            continue
+        dup_key = (
+            f"{k} {as_str(p) or ('NA' if is_missing(p) and 'file_path' in files.columns else '')}"
+        )
         dup = dup_key in seen
         seen.add(dup_key)
-        if k is None or dup:
+        if dup:
             continue
         count[k] = count.get(k, 0) + 1
         prev = total.get(k, math.nan)
@@ -1208,17 +1242,32 @@ def _rate_limit_wait(resp: Any) -> float:
 
 
 def _zip_timeout_for_size(
-    timeout_s: float, expected_bytes: float = math.nan, min_bytes_per_s: float = 200 * 1024
+    timeout_s: float,
+    expected_bytes: float = math.nan,
+    min_bytes_per_s: float = 200 * 1024,
+    expected_files: float = math.nan,
+    s_per_file: float = 0.4,
 ) -> float:
     """Port of ``R/repo-download.R::.zip_timeout_for_size()``: scale a timeout to the size.
 
     *timeout_s* is a floor; with a known *expected_bytes* the timeout is at
-    least the time the transfer takes at *min_bytes_per_s* (200 KB/s).
+    least the time the transfer takes at *min_bytes_per_s* (200 KB/s), and
+    with a known *expected_files* the time the files take besides: the OSF
+    builds its zips file by file, and sent zips of many small files at about
+    0.3 to 0.4 seconds per file (612 files, 8.5 MB in 178 s; 458 files, 9.8 MB
+    in 190 s; metacheck #679), far below the byte rate.
     """
     expected_bytes = _scalar(expected_bytes, "expected_bytes")
-    if is_missing(expected_bytes) or expected_bytes <= 0:
-        return timeout_s
-    return max(timeout_s, expected_bytes / min_bytes_per_s)
+    expected_files = _scalar(expected_files, "expected_files")
+    bytes_s = (
+        0.0
+        if is_missing(expected_bytes) or expected_bytes <= 0
+        else expected_bytes / min_bytes_per_s
+    )
+    files_s = (
+        0.0 if is_missing(expected_files) or expected_files <= 0 else expected_files * s_per_file
+    )
+    return max(timeout_s, bytes_s + files_s)
 
 
 # ---------------------------------------------------------------------------
@@ -1636,6 +1685,7 @@ def _download_zip_to_cache(
     skip_on_api_limit: bool = False,
     expected_bytes: float = math.nan,
     rel_paths: Sequence[Any] | None = None,
+    expected_files: float = math.nan,
     _inplace: bool = False,
 ) -> pd.DataFrame:
     """Port of ``R/repo-download.R::.download_zip_to_cache()``.
@@ -1656,14 +1706,20 @@ def _download_zip_to_cache(
     import zipfile
 
     import httpx
+    import pandas as pd
 
     from metacheck import http
     from metacheck._r import r_round
+    from metacheck.archives.zip_peek import (
+        _unzip_failed_note,
+        _zip_unpack_reason,
+        _zip_unsafe_path,
+    )
     from metacheck.report.blocks import _cap_num
 
     if "file_path" not in files.columns and "file_name" not in files.columns:
         return files  # nothing to match the archive's members on: no download
-    timeout_s = _zip_timeout_for_size(timeout_s, expected_bytes)
+    timeout_s = _zip_timeout_for_size(timeout_s, expected_bytes, expected_files=expected_files)
     fd, zip_tmp = tempfile.mkstemp(suffix=".zip")
     os.close(fd)
     extract_dir: str | None = None
@@ -1775,15 +1831,29 @@ def _download_zip_to_cache(
 
             if not _inplace:  # download_repo_files() passes its own copy
                 files = files.copy()
+            # a member that cannot be unpacked (encrypted, compressed with a method that cannot
+            # be read, a path outside the folder) is named, and its row is left for the
+            # file-by-file download (.unzip_all(), #680)
+            not_unpacked: dict[str, str] = {}
             for i, m in zip(row_idx, matched, strict=True):
                 if m is None:
                     continue
                 info = entries[m][1]
                 dest = str(cache[i])
+                name = entries[m][0]
+                if name in not_unpacked:
+                    continue
+                if _zip_unsafe_path(gsub(r"\\", "/", name)):
+                    not_unpacked[name] = "its path leads outside the folder"
+                    continue
+                if info.flag_bits & 1 or info.compress_type == 99:
+                    not_unpacked[name] = _zip_unpack_reason(info.compress_type, info.flag_bits)
+                    continue
                 try:
                     with zf.open(info) as src:
                         data = src.read()
-                except Exception:  # noqa: S112 - R: an entry unzip() could not extract
+                except Exception:  # an entry that could not be extracted
+                    not_unpacked[name] = _zip_unpack_reason(info.compress_type, info.flag_bits)
                     continue
                 # an empty member is an empty file, as the archive itself states
                 # (metacheck #575, item 5)
@@ -1796,6 +1866,18 @@ def _download_zip_to_cache(
                 except OSError:
                     continue
                 files.iat[i, loc_col] = dest
+            if not_unpacked:
+                note = _unzip_failed_note(
+                    pd.DataFrame(
+                        {
+                            "name": list(not_unpacked),
+                            "path": [None] * len(not_unpacked),
+                            "reason": list(not_unpacked.values()),
+                        }
+                    ),
+                    zip_url,
+                )
+                _message(f"{note} (downloaded file by file instead)")
         return files
     finally:
         _unlink(zip_tmp)
@@ -1853,11 +1935,14 @@ def _url_encode_reserved(x: str) -> str:
     return _url_encode(x, reserved=True)
 
 
-def _r_order(keys: list[tuple[float, str]]) -> list[int]:
-    """``order(size, path)``: by size, ties by path in R's string collation."""
+def _r_order(keys: Sequence[tuple[Any, ...]]) -> list[int]:
+    """``order(size, path, ...)``: by size, ties by the strings in R's string collation."""
     from metacheck._r import r_sort_key
 
-    return sorted(range(len(keys)), key=lambda k: (keys[k][0], r_sort_key(keys[k][1])))
+    return sorted(
+        range(len(keys)),
+        key=lambda k: (keys[k][0], *(r_sort_key(x) for x in keys[k][1:])),
+    )
 
 
 def download_repo_files(
@@ -1923,10 +2008,12 @@ def download_repo_files(
 
     cache_root = None if cache is True else _repo_session_dir()
 
-    def cache_path(repo_url: Any, file_path: Any) -> str:
+    def cache_path(repo_url: Any, file_path: Any, storage: Any = None) -> str:
         if cache_root is None:
-            return str(_repo_cache_path(repo_url, file_path))
-        return _file_path(cache_root, str(_repo_cache_rel(repo_url, file_path)))
+            return str(_repo_cache_path(repo_url, file_path, storage=storage))
+        return _file_path(cache_root, str(_repo_cache_rel(repo_url, file_path, storage)))
+
+    storages: list[Any] = df["provider"].tolist() if "provider" in df.columns else [None] * n
 
     # a missing repo_url column is R's NULL (cache key "unknown"); a missing value is NA
     repo_urls: list[Any] = (
@@ -1940,7 +2027,9 @@ def download_repo_files(
         rel_path = list(file_names)
     rel_path = [fn if p is None else p for p, fn in zip(rel_path, file_names, strict=True)]
     _sweep_repo_cache_once()
-    cache_paths = [_safe_write_path(cache_path(repo_urls[i], rel_path[i])) or "" for i in range(n)]
+    cache_paths = [
+        _safe_write_path(cache_path(repo_urls[i], rel_path[i], storages[i])) or "" for i in range(n)
+    ]
     df[".cache_path"] = pd.Series(cache_paths, dtype=object)
 
     already = [os.path.exists(p) for p in cache_paths]
@@ -2006,24 +2095,76 @@ def download_repo_files(
         )
         size_by_url = dict(zip(unknown, map_ordered(_remote_size, unknown), strict=True))
 
+    # -- one budget per repository (max_download_size) ------------------------
+    # Shared by archive members and by files with their own address (the loop further below),
+    # and counted from what the repository already has in the cache (metacheck #698). It was
+    # applied to each archive on its own, from zero: a Dryad repository with many archives
+    # fetched 30 GB in one call under a 2,000 MB budget. Bytes of archive members and archive
+    # copies kept for a repository, which the loop for files with their own address adds to its
+    # own count:
+    member_bytes: dict[Any, float] = {}
+    file_urls = _col(df, "file_url") or [None] * n
+    restricted = _col(df, "file_restricted") or [None] * n
+    has_url = [
+        u is not None and str(u) != "" and restricted[i] is not True
+        for i, u in enumerate(file_urls)
+    ]
+    cap_bytes = max_download_size * _MB if math.isfinite(max_download_size) else math.inf
+
+    def cached_url_bytes(repo: Any) -> float:
+        """The cached files with their own address of a repository, counted as the loop below
+        counts them: the listed size, or the size on disk, and not a file over max_file_size."""
+        total = 0.0
+        for i in rows_for(repo):
+            if not (has_url[i] and already[i]):
+                continue
+            s = _num(sizes_col[i])
+            if is_missing(s):
+                try:
+                    s = float(os.path.getsize(cache_paths[i]))
+                except OSError:
+                    continue
+            if math.isfinite(max_file_size) and s > max_file_size * _MB:
+                continue
+            total += s
+        return total
+
+    def arc_paths(arc: Any, repo: Any) -> tuple[str, str]:
+        """Where the members of an archive are kept (``.archive_members/<key>.contents``, keyed
+        off the archive's own address so it cannot collide with a real file's path) and where a
+        whole copy of the archive is kept."""
+        arc_key = gsub("[^A-Za-z0-9._-]+", "_", gsub("^https?://", "", str(arc)))
+        arc_path = cache_path(repo, f".archive_members/{arc_key}")
+        arc_path = _safe_write_path(arc_path) or arc_path
+        member_dest = _safe_write_path(f"{arc_path}.contents") or f"{arc_path}.contents"
+        return arc_path, member_dest
+
+    def file_bytes(path: str) -> float:
+        try:
+            return float(os.path.getsize(path))
+        except OSError:
+            return 0.0
+
     # -- archive members (repo_check's zip-peek expansion) --------------------
     if "archive_url" in df.columns:
         from metacheck.archives.tar_peek import _tar_fetch_members
-        from metacheck.archives.zip_peek import _whole_request_bytes, _zip_fetch_members
+        from metacheck.archives.zip_peek import (
+            _safe_member_path,
+            _whole_request_bytes,
+            _zip_fetch_members,
+        )
 
         arcs = _col(df, "archive_url") or [None] * n
         members = _col(df, "archive_member") or [None] * n
-        is_member = [
-            not already[i] and arcs[i] is not None and str(arcs[i]) != "" and members[i] is not None
-            for i in range(n)
+        is_arc_row = [
+            arcs[i] is not None and str(arcs[i]) != "" and members[i] is not None for i in range(n)
         ]
-        by_arc: dict[Any, list[int]] = {}
-        for i in range(n):
-            if is_member[i]:
-                by_arc.setdefault(arcs[i], []).append(i)
-        for arc, idx in by_arc.items():
-            if sizes_col is None:
-                continue  # R: as.numeric(NULL) leaves no candidates
+        # every repository with archive members, also one whose members are all cached, so that
+        # they are counted for its files with their own address
+        for repo in dict.fromkeys(repo_urls[i] for i in range(n) if is_arc_row[i]):
+            if is_missing(repo):
+                continue
+            idx = [i for i in rows_for(repo) if is_arc_row[i] and not already[i]]
             member_sizes = [_num(sizes_col[i]) for i in idx]
             over = [not is_missing(s) and s > max_file_size * _MB for s in member_sizes]
             for i, s, o in zip(idx, member_sizes, over, strict=True):
@@ -2037,138 +2178,158 @@ def download_repo_files(
                         (
                             repo_urls[i],
                             file_names[i],
-                            arc,
+                            arcs[i],
                             paper_id(i),
                             "the archive's list of contents gives no size for this file",
                         )
                     )
-            cand = [
-                i
-                for i, s, o in zip(idx, member_sizes, over, strict=True)
-                if not o and not is_missing(s)
+            ok = [not o and not is_missing(s) for s, o in zip(member_sizes, over, strict=True)]
+            cand = [i for i, k in zip(idx, ok, strict=True) if k]
+            cand_size = [s for s, k in zip(member_sizes, ok, strict=True) if k]
+
+            # A member saved by an earlier run is used as it is (metacheck #561): it is stored
+            # under its archive's ".contents" folder, where `already` does not look.
+            dest_of: dict[Any, str] = {}
+            saved = [False] * len(cand)
+            for j, i in enumerate(cand):
+                if arcs[i] not in dest_of:
+                    dest_of[arcs[i]] = arc_paths(arcs[i], repo)[1]
+                rel = _safe_member_path(str(members[i]))
+                target = None if rel is None else _file_path(dest_of[arcs[i]], rel)
+                if target is not None and os.path.isfile(target):
+                    size_on_disk = os.path.getsize(target)
+                    if size_on_disk > 0 and size_on_disk == cand_size[j]:
+                        df.iat[i, loc_col] = target
+                        saved[j] = True
+
+            # What the repository already has counts first: its cached files with their own
+            # address, members cached at their ordinary path, members saved by an earlier run,
+            # and whole archive copies kept by one.
+            kept_plain = 0.0
+            for i in rows_for(repo):
+                if is_arc_row[i] and already[i]:
+                    s = _num(sizes_col[i])
+                    if is_missing(s):
+                        s = (
+                            file_bytes(cache_paths[i])
+                            if os.path.exists(cache_paths[i])
+                            else math.nan
+                        )
+                    if not is_missing(s):
+                        kept_plain += s
+            repo_arcs = dict.fromkeys(arcs[i] for i in rows_for(repo) if is_arc_row[i])
+            copies = sum(file_bytes(arc_paths(a, repo)[0]) for a in repo_arcs)
+            kept = kept_plain + sum(s for s, v in zip(cand_size, saved, strict=True) if v) + copies
+            used = cached_url_bytes(repo) + kept
+
+            # Then the smallest missing members, from all archives of the repository, until the
+            # budget is spent.
+            miss = [j for j, v in enumerate(saved) if not v]
+            miss = [
+                miss[o]
+                for o in _r_order(
+                    [(cand_size[j], str(arcs[cand[j]]), str(members[cand[j]])) for j in miss]
+                )
             ]
-            cand_size = [
-                s for s, o in zip(member_sizes, over, strict=True) if not o and not is_missing(s)
-            ]
-            if not cand:
-                continue
-            cap_bytes = max_download_size * _MB if math.isfinite(max_download_size) else math.inf
-            order = sorted(range(len(cand)), key=lambda k: cand_size[k])
-            used = 0.0
-            keep = [False] * len(cand)
-            for k in order:
-                if used + cand_size[k] <= cap_bytes:
-                    keep[k] = True
-                    used += cand_size[k]
-            if not all(keep) and math.isfinite(cap_bytes):
-                n_out = keep.count(False)
+            take = [False] * len(cand)
+            for j in miss:
+                if used + cand_size[j] <= cap_bytes:
+                    take[j] = True
+                    used += cand_size[j]
+            member_bytes[repo] = kept + sum(s for s, t in zip(cand_size, take, strict=True) if t)
+            n_omitted = sum(1 for v, t in zip(saved, take, strict=True) if not v and not t)
+            if n_omitted > 0 and math.isfinite(cap_bytes):
                 msg = (
-                    f"An archive in repository {as_str(repo_urls[idx[0]]) or 'NA'} exceeds the "
+                    f"Repository {as_str(repo) or 'NA'} exceeds the "
                     f"{_cap_num(max_download_size)} MB per-repository budget: fetched the "
-                    f"smallest members up to the cap, {n_out} member{plural(n_out)} omitted. "
+                    f"smallest archive members up to the cap, {n_omitted} "
+                    f"member{plural(n_omitted)} omitted. "
                     "Raise `max_download_size` to include more."
                 )
                 _cap_report(msg)
-                gated_rows.append((repo_urls[idx[0]], msg))
-            idx = [i for i, k in zip(cand, keep, strict=True) if k]
-            if not idx:
-                continue
-            arc_key = gsub("[^A-Za-z0-9._-]+", "_", gsub("^https?://", "", str(arc)))
-            arc_path = cache_path(repo_urls[idx[0]], f".archive_members/{arc_key}")
-            arc_path = _safe_write_path(arc_path) or arc_path
-            member_dest = _safe_write_path(f"{arc_path}.contents") or f"{arc_path}.contents"
-            _dir_create(member_dest)
-            # A member saved by an earlier run is used as it is (metacheck #561): it is
-            # stored under ".contents", where `already` does not look.
-            from metacheck.archives.zip_peek import _safe_member_path
+                gated_rows.append((repo, msg))
+            to_fetch = [i for i, t in zip(cand, take, strict=True) if t]
 
-            unsaved = []
-            for i in idx:
-                rel = _safe_member_path(str(members[i]))
-                target = None if rel is None else _file_path(member_dest, rel)
-                if target is not None and os.path.isfile(target):
-                    sz = _num(sizes_col[i])
-                    if (
-                        not is_missing(sz)
-                        and os.path.getsize(target) > 0
-                        and os.path.getsize(target) == sz
-                    ):
-                        df.iat[i, loc_col] = target
-                        continue
-                unsaved.append(i)
-            idx = unsaved
-            if not idx:
-                continue
-            # The archive's own size, carried from repo_check's listing, saves the
-            # peek a HEAD request in a new session. Within the budget the archive
-            # may be downloaded once instead of fetched by range, when that is
-            # cheaper (always on Dryad, which counts every request against a
-            # daily quota: metacheck #471); it is kept at `arc_path`, so a
-            # restarted run does not request it again.
-            arc_sizes = _col(df, "archive_size")
-            # why a member was not fetched is recorded in `failed` (#429)
-            # a member of a plain .tar (listed by downloading the archive whole, see
-            # tar_peek._tar_peek) comes from that session copy or one new download:
-            # a tar has no index to fetch members by byte range from
-            arc_formats = _col(df, "archive_format")
-            is_tar_arc = arc_formats is not None and arc_formats[idx[0]] == "tar"
-            fetched: pd.DataFrame | None
-            try:
-                if is_tar_arc:
-                    fetched = _tar_fetch_members(
-                        str(arc),
-                        names=[str(members[i]) for i in idx],
-                        dest=member_dest,
-                        archive_path=arc_path,
-                        size=None if arc_sizes is None else arc_sizes[idx[0]],
-                        max_whole_bytes=cap_bytes,
-                        skip_on_api_limit=skip_on_api_limit,
-                    )
+            for arc in dict.fromkeys(arcs[i] for i in to_fetch):
+                idx = [i for i in to_fetch if arcs[i] == arc]
+                arc_path, member_dest = arc_paths(arc, repo)
+                _dir_create(member_dest)
+                had_copy = os.path.exists(arc_path)
+                # The archive's own size, carried from repo_check's listing, saves the peek a
+                # HEAD request in a new session. The archive may be downloaded once instead of
+                # fetched by range, when that is cheaper (always on Dryad, which counts every
+                # request against a daily quota: metacheck #471); it is kept at `arc_path`, so
+                # a restarted run does not request it again. As that copy stays on disk, it is
+                # taken only when it fits in what is left of the repository's budget (#698).
+                whole_bytes = max(cap_bytes - used, 0.0)
+                arc_sizes = _col(df, "archive_size")
+                # why a member was not fetched is recorded in `failed` (#429)
+                # a member of a plain .tar (listed by downloading the archive whole, see
+                # tar_peek._tar_peek) comes from that session copy or one new download:
+                # a tar has no index to fetch members by byte range from
+                arc_formats = _col(df, "archive_format")
+                is_tar_arc = arc_formats is not None and arc_formats[idx[0]] == "tar"
+                fetched: pd.DataFrame | None
+                try:
+                    if is_tar_arc:
+                        fetched = _tar_fetch_members(
+                            str(arc),
+                            names=[str(members[i]) for i in idx],
+                            dest=member_dest,
+                            archive_path=arc_path,
+                            size=None if arc_sizes is None else arc_sizes[idx[0]],
+                            max_whole_bytes=whole_bytes,
+                            skip_on_api_limit=skip_on_api_limit,
+                        )
+                    else:
+                        fetched = _zip_fetch_members(
+                            str(arc),
+                            names=[str(members[i]) for i in idx],
+                            dest=member_dest,
+                            cache=cache,
+                            skip_on_api_limit=skip_on_api_limit,
+                            max_whole_bytes=whole_bytes,
+                            archive_path=arc_path,
+                            request_bytes=_whole_request_bytes(arc),
+                            size=None if arc_sizes is None else arc_sizes[idx[0]],
+                        )
+                except Exception as e:
+                    why: str | None = str(e)
+                    fetched = None
                 else:
-                    fetched = _zip_fetch_members(
-                        str(arc),
-                        names=[str(members[i]) for i in idx],
-                        dest=member_dest,
-                        cache=cache,
-                        skip_on_api_limit=skip_on_api_limit,
-                        max_whole_bytes=cap_bytes,
-                        archive_path=arc_path,
-                        request_bytes=_whole_request_bytes(arc),
-                        size=None if arc_sizes is None else arc_sizes[idx[0]],
+                    why = "could not list the archive (host may not support range requests)"
+                # a whole copy of the archive kept by this fetch counts against the budget, for
+                # the files with their own address below (#698)
+                if not had_copy and os.path.exists(arc_path):
+                    copy_size = file_bytes(arc_path)
+                    used += copy_size
+                    member_bytes[repo] = member_bytes[repo] + copy_size
+                if fetched is None:
+                    # R: repo_url of the archive's first row, the rest per row
+                    failed_rows.extend(
+                        (repo_urls[idx[0]], file_names[i], arc, paper_id(i), why) for i in idx
                     )
-            except Exception as e:
-                why: str | None = str(e)
-                fetched = None
-            else:
-                why = "could not list the archive (host may not support range requests)"
-            if fetched is None:
-                # R: repo_url of the archive's first row, the rest per row
-                failed_rows.extend(
-                    (repo_urls[idx[0]], file_names[i], arc, paper_id(i), why) for i in idx
+                    continue
+                f_names = fetched["name"].tolist()
+                f_ok = fetched["ok"].tolist() if "ok" in fetched.columns else [None] * len(fetched)
+                f_path = (
+                    fetched["path"].tolist() if "path" in fetched.columns else [None] * len(fetched)
                 )
-                continue
-            f_names = fetched["name"].tolist()
-            f_ok = fetched["ok"].tolist() if "ok" in fetched.columns else [None] * len(fetched)
-            f_path = (
-                fetched["path"].tolist() if "path" in fetched.columns else [None] * len(fetched)
-            )
-            f_error = fetched["error"].tolist() if "error" in fetched.columns else None
-            # fetched[fetched$name == member, ][1, ]
-            first: dict[Any, int] = {}
-            for j, name in enumerate(f_names):
-                first.setdefault(name, j)
-            for k in idx:
-                j = first.get(members[k])  # type: ignore[assignment]
-                if j is None:
-                    continue
-                if f_ok[j] is not True or is_missing(f_path[j]):
-                    why = "unknown failure" if f_error is None else as_str(f_error[j])
-                    failed_rows.append((repo_urls[k], file_names[k], arc, paper_id(k), why))
-                    continue
-                df.iat[k, loc_col] = f_path[j]
+                f_error = fetched["error"].tolist() if "error" in fetched.columns else None
+                # fetched[fetched$name == member, ][1, ]
+                first: dict[Any, int] = {}
+                for j, name in enumerate(f_names):
+                    first.setdefault(name, j)
+                for k in idx:
+                    j = first.get(members[k])  # type: ignore[assignment]
+                    if j is None:
+                        continue
+                    if f_ok[j] is not True or is_missing(f_path[j]):
+                        why = "unknown failure" if f_error is None else as_str(f_error[j])
+                        failed_rows.append((repo_urls[k], file_names[k], arcs[k], paper_id(k), why))
+                        continue
+                    df.iat[k, loc_col] = f_path[j]
 
-    file_urls = _col(df, "file_url") or [None] * n
-    has_url = [u is not None and str(u) != "" for u in file_urls]
     to_get: list[int] = []
 
     # the byte limit of a file of unknown size (see below); absent for the others
@@ -2224,6 +2385,9 @@ def download_repo_files(
 
         cap_bytes = max_download_size * _MB if math.isfinite(max_download_size) else math.inf
         used = sum(s for s, cc in zip(c_size, c_cached, strict=True) if cc)
+        # plus the repository's archive members and archive copies, kept or fetched above: one
+        # budget for the whole repository (#698)
+        used += member_bytes.get(repo, 0.0)
         missing = [k for k, cc in enumerate(c_cached) if not cc]
         order = _r_order([(c_size[k], cache_paths[c_idx[k]]) for k in missing])
         missing_order = [missing[o] for o in order]
@@ -2497,6 +2661,8 @@ def download_repo_files(
                 f"{_url_encode_reserved(gh_ref[sel[0]])}"
             )
             label = f"github.com/{repo_name} (linked to {as_str(repo_list[ridx[0]]) or 'NA'})"
+            # the archive holds the whole repository, not only the files wanted (#679)
+            storage_bytes = _storage_size_estimate(df, ridx)
             skip_why = _storage_archive_skip(df, ridx, max_download_size, _MB)
             if skip_why is not None:
                 _message(
@@ -2510,7 +2676,7 @@ def download_repo_files(
                 strip_dir=True,
                 req_func=_headers_fn(_github_config),
                 max_bytes=archive_cap,
-                expected_bytes=expected_of(ridx),
+                expected_bytes=storage_bytes,
                 rel_paths=[gh_path[k] for k in sel],
                 **zip_kw,
             )
@@ -2548,6 +2714,15 @@ def download_repo_files(
                     )
                     continue  # leaves ridx in `remaining` for the file-by-file loop below
                 zip_url = f"https://files.osf.io/v1/resources/{node}/providers/osfstorage/?zip="
+                # the time limit follows the whole storage, which the zip holds, and its number
+                # of files, as the OSF builds the zip file by file (#679)
+                storage_bytes = _storage_size_estimate(df, ridx)
+                storage_files = math.nan
+                if "storage_n" in df.columns:
+                    col = df["storage_n"].tolist()
+                    counts = [c for c in _nums(col[i] for i in ridx) if not is_missing(c)]
+                    if counts:
+                        storage_files = max(counts)
                 _message(f"Downloading {label} as zip ({n_wanted} file{plural(n_wanted)})...")
                 run_zip(
                     ridx,
@@ -2555,7 +2730,8 @@ def download_repo_files(
                     strip_dir=False,
                     req_func=_osf_headers,
                     max_bytes=archive_cap,
-                    expected_bytes=expected_of(ridx),
+                    expected_bytes=storage_bytes,
+                    expected_files=storage_files,
                     **zip_kw,
                 )
 
@@ -2696,3 +2872,90 @@ def _rround(x: float) -> float:
     from metacheck._r import r_round
 
     return float(r_round(x))
+
+
+def _repos_not_listed_text(partial: Any, gated: Any, repo_urls: Any) -> dict[str, Any]:
+    """Port of ``.repos_not_listed_text()``: the report section and summary sentence for repositories
+    repo_check could not list in full (metacheck #681), for code_check and data_check.
+
+    OSF projects listed only in part (repo_check's ``partial_repos``, with ``reason`` "request
+    limit" or "refused by the OSF"), and repositories that could not be listed at all (its
+    ``gated_repos``, with ``repo_error``) and have no files in *repo_urls*, the repositories of the
+    files the check has; repo_check's own report names the same ones as "could not be checked".
+    Until metacheck 0.4.4.22 these checks said nothing of either, so a check on part of the files
+    read as a check on all of them. Returns ``{"report": [...] or None, "summary": str or None}``.
+    """
+    import pandas as pd
+
+    none: dict[str, Any] = {"report": None, "summary": None}
+    if not isinstance(partial, pd.DataFrame) or "repo_url" not in partial:
+        partial = None
+    if not isinstance(gated, pd.DataFrame) or "repo_url" not in gated:
+        gated = None
+    if partial is not None:
+        partial = partial.drop_duplicates("repo_url")
+    if gated is not None:
+        have = set(repo_urls) if repo_urls is not None else set()
+        listed_part = set(partial["repo_url"]) if partial is not None else set()
+        keep = [
+            not is_missing(u) and u not in have and u not in listed_part for u in gated["repo_url"]
+        ]
+        gated = gated[keep].drop_duplicates("repo_url")
+    n_part = 0 if partial is None else len(partial)
+    n_gated = 0 if gated is None else len(gated)
+    if n_part + n_gated == 0:
+        return none
+
+    part_line: list[str] = []
+    part_why: list[str] = []
+    if partial is not None and n_part > 0:
+        reasons = (
+            partial["reason"].tolist() if "reason" in partial else [None] * n_part  # type: ignore[list-item]
+        )
+        counts = (
+            partial["files_listed"].tolist() if "files_listed" in partial else [None] * n_part  # type: ignore[list-item]
+        )
+        for url, why, n in zip(partial["repo_url"], reasons, counts, strict=True):
+            refused = why == "refused by the OSF"
+            listed = "" if is_missing(n) else f" ({int(n)} file{'' if int(n) == 1 else 's'} listed)"
+            if refused:
+                part_line.append(
+                    f"- {url}: the OSF refused part of the listing, also when asked again{listed}. "
+                    "Run the check again later."
+                )
+                part_why.append(f"{url} (the OSF refused part of the listing)")
+            else:
+                part_line.append(
+                    f"- {url}: the listing stopped at the request limit{listed}. Run the check "
+                    "again with `cache = TRUE` to list the next part, or raise `osf_max_requests`."
+                )
+                part_why.append(f"{url} (listed in part: the request limit was reached)")
+    gated_line: list[str] = []
+    gated_why: list[str] = []
+    if gated is not None and n_gated > 0:
+        errs = gated["repo_error"].tolist() if "repo_error" in gated else [None] * n_gated  # type: ignore[list-item]
+        for url, e in zip(gated["repo_url"], errs, strict=True):
+            err = "no reason given" if is_missing(e) or str(e) == "" else str(e)
+            gated_line.append(
+                f"- {url}: could not be listed ({err}), so none of its files were checked."
+            )
+            gated_why.append(f"{url} (could not be listed: {err})")
+    n_all = n_part + n_gated
+    report = [
+        "#### Repositories not listed in full",
+        " ".join(
+            [
+                "The checks below did not see every file of",
+                "this repository, because it" if n_all == 1 else "these repositories, because they",
+                "could not be listed in full:",
+            ]
+        ),
+        *part_line,
+        *gated_line,
+    ]
+    summary = (
+        f"We could not list every file of {n_all} {plural(n_all, 'repository', 'repositories')}, "
+        f"so the checks did not see all {'its' if n_all == 1 else 'their'} files: "
+        f"{'; '.join([*part_why, *gated_why])}."
+    )
+    return {"report": report, "summary": summary}

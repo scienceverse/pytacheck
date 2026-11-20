@@ -29,7 +29,6 @@ from metacheck.archives.zip_peek import (
     _expand_tar,
     _expand_zip,
     _is_readable_archive,
-    _unzip_all,
     _zip_fetch_members,
     zip_decision,
     zip_peek,
@@ -114,78 +113,6 @@ def _extracted(root: Path) -> list[str]:
     return sorted(str(p.relative_to(root)) for p in root.rglob("*") if p.is_file())
 
 
-def test_unzip_drops_dotdot_components_and_keeps_other_bytes(tmp_path: Path) -> None:
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-        if os.name == "nt":
-            # Windows cannot make a folder named "....": unzip stops at
-            # "x/..../y2.csv", as at any member it cannot open
-            with pytest.raises(RuntimeError, match="cannot open file"):
-                _unzip_all(str(REVIEW / "climb.zip"), str(tmp_path))
-        else:
-            _unzip_all(str(REVIEW / "climb.zip"), str(tmp_path))
-    assert sum("skipped" in str(x.message) for x in w) == 4
-    got = [p.replace(os.sep, "/") for p in _extracted(tmp_path)]
-    assert "evil.csv" in got and "z/up.csv" in got and "a/b/c.csv" in got
-    if os.name == "nt":  # "\\" separates folders and a drive is no folder name
-        assert "sub/win.csv" in got and "drive.csv" in got
-    else:
-        assert "sub\\win.csv" in got  # a backslash is part of the name
-        assert "C:/drive.csv" in got  # a folder named "C:"
-        assert "x/..../y2.csv" in got and "..../z.csv" in got and "k..csv" in got
-
-
-def test_unzip_member_paths_cannot_climb_out_on_windows() -> None:
-    # on Windows "..\\" climbs as "../" does, and "C:/x" would leave the destination
-    w = zpm._r_member_path
-    with pytest.warns(UserWarning, match="skipped"):
-        assert w(b"..\\evil.csv", windows=True) == b"evil.csv"
-    with pytest.warns(UserWarning, match="skipped"):
-        assert w(b"a\\..\\..\\up.csv", windows=True) == b"a/up.csv"
-    assert w(b"C:/drive.csv", windows=True) == b"drive.csv"
-    assert w(b"d:\\x\\y.csv", windows=True) == b"x/y.csv"
-    assert w(b"sub\\win.csv", windows=False) == b"sub\\win.csv"
-    assert w(b"C:/drive.csv", windows=False) == b"C:/drive.csv"
-
-
-def test_unzip_stops_at_a_member_it_cannot_write(tmp_path: Path) -> None:
-    with pytest.raises(RuntimeError, match="cannot open file"):
-        _unzip_all(str(REVIEW / "dots.zip"), str(tmp_path / "d"))
-    assert "after.csv" not in _extracted(tmp_path / "d")
-
-
-def test_unzip_reads_what_zipfile_reads(tmp_path: Path) -> None:
-    # R's unzip stopped at an lzma member, or at one whose local header disagreed with
-    # the central directory ("zip file is corrupt"); zipfile reads them, CRCs unchecked
-    for name, got in (
-        ("lzma.zip", ["first.csv", "last.csv", "lz.csv"]),
-        ("crc.zip", ["badcrc.csv", "badsize.csv", "empty.csv", "good.csv", "stored.txt"]),
-        ("bzcrc.zip", ["badcrc.csv", "bz.csv", "last.csv"]),
-    ):
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            _unzip_all(str(REVIEW / name), str(tmp_path / name))
-        assert _extracted(tmp_path / name) == got
-
-
-def test_unzip_skips_a_member_in_a_method_zipfile_lacks(tmp_path: Path) -> None:
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", zipfile.ZIP_STORED) as zf:
-        zf.writestr("first.csv", "a\n1\n")
-        zf.writestr("odd.csv", "b\n2\n")
-        zf.writestr("last.csv", "c\n3\n")
-    data = bytearray(buf.getvalue())
-    local = data.index(b"odd.csv") - 30
-    central = data.rindex(b"odd.csv") - 46
-    for at in (local + 8, central + 10):  # the method field of both headers: 9, Deflate64
-        data[at : at + 2] = (9).to_bytes(2, "little")
-    z = tmp_path / "odd.zip"
-    z.write_bytes(bytes(data))
-    with pytest.warns(UserWarning, match="zip file is corrupt"):
-        _unzip_all(str(z), str(tmp_path / "out"))
-    assert _extracted(tmp_path / "out") == ["first.csv", "last.csv"]  # the rest is extracted
-
-
 def test_expand_zip_and_tar_follow_r(tmp_path: Path) -> None:
     row = pd.DataFrame({"repo_url": ["r"], "file_name": ["x"], "file_path": ["x"]})
     for name in ("climb.zip", "hostile.tar.gz"):
@@ -207,10 +134,15 @@ def test_expand_zip_and_tar_follow_r(tmp_path: Path) -> None:
                 "hostile.tar.gz/sub/win.csv" if os.name == "nt" else "hostile.tar.gz/sub\\win.csv",
             ]
         else:
-            if os.name == "nt":
-                assert "climb.zip/drive.csv" in paths and "climb.zip/sub/win.csv" in paths
-            else:
-                assert "climb.zip/C:/drive.csv" in paths and "climb.zip/sub\\win.csv" in paths
+            # a path from the root or a drive letter, or with a ".." folder, is never unpacked:
+            # it is named in `unpack_failed` instead (metacheck #680)
+            assert not any("drive.csv" in p or "evil" in p or "abs.csv" in p for p in paths)
+            failed = out.attrs["unpack_failed"]
+            assert "C:/drive.csv" in failed["file_name"].tolist()
+            assert set(failed["reason"]) == {"its path leads outside the folder"}
+            assert (
+                "climb.zip/sub/win.csv" if os.name == "nt" else "climb.zip/sub\\win.csv"
+            ) in paths
 
 
 # -- httr2's error messages -----------------------------------------------------
@@ -251,7 +183,6 @@ def _files(tmp_path: Path, rel: list[object]) -> pd.DataFrame:
 
 
 def _zip(members: dict[str, bytes]) -> bytes:
-    import io
 
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w") as zf:

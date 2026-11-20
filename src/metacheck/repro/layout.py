@@ -1183,8 +1183,14 @@ def _repro_ref_checkable(d: pd.DataFrame, built: Sequence[str | None] = ()) -> l
         b = base[i]
         piece = bool(grepl(r"^[._]", b)) or "." not in (b or "")
         placeholder = bool(grepl(r"[%{}$*]|: ", ref[i]))
+        # a file read from a web address is not one the deposit should hold (#695)
+        web = "://" in (ref[i] or "")
         out.append(
-            not is_call[i] and not piece and not placeholder and _tolower(b) not in built_set
+            not is_call[i]
+            and not piece
+            and not placeholder
+            and not web
+            and _tolower(b) not in built_set
         )
     return out
 

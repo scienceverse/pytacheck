@@ -85,6 +85,18 @@ def test_osf_type_inaccessible() -> None:
         assert osf_type("abcde") == "inaccessible"
 
 
+def test_osf_type_tells_a_failed_request_from_a_refusal(monkeypatch: pytest.MonkeyPatch) -> None:
+    from metacheck.archives.osf import _osf_error_result, osf_type
+
+    monkeypatch.setattr(
+        "metacheck.archives.osf.osf_get_all_pages",
+        lambda url, page_end=float("inf"): _osf_error_result(
+            "request_failed" if "abcde" in url else "not_found"
+        ),
+    )
+    assert [osf_type("abcde"), osf_type("fghij")] == ["unreachable", "inaccessible"]
+
+
 def test_osf_type_puts_a_view_only_key_at_the_end_of_the_address() -> None:
     """Port of test-module-repo_check.R: osf_type() with a view-only key (8dn4g_v1)."""
     asked: list[str] = []
@@ -234,8 +246,8 @@ def test_osf_get_all_pages_errors() -> None:
         assert osf_get_all_pages(f"{API}/nodes/priv/").osf_error == "forbidden"
         failed = osf_get_all_pages(f"{API}/nodes/boom/")
         assert failed.osf_error == "request_failed"
-        # retried twice after the first refusal
-        assert router.routes[2].call_count == 3
+        # a server error is asked again at once (3 tries), and the whole page twice more
+        assert router.routes[2].call_count == 9
 
 
 def test_osf_status_error() -> None:

@@ -1055,18 +1055,20 @@ def _extract_archive(
     zip_path: str, temppath: str, ids: list[Any], keys: list[Any], downloaded: list[bool]
 ) -> bool:
     """Unpack the whole-record archive and stage each wanted file under its id."""
-    import zipfile
+    from metacheck.archives.zip_peek import _unzip_all
 
+    # a name in the old DOS characters (CP437) stopped a whole-zip utils::unzip() on Windows after
+    # writing no file, so every file was downloaded again one by one (#680); _unzip_all() names
+    # a member it cannot unpack, which is still downloaded on its own below
+    extract_dir = os.path.join(temppath, "extracted")
     try:
-        with zipfile.ZipFile(zip_path) as zf:
-            entries = zf.infolist()
-            if not entries:
-                return False
-            extract_dir = os.path.join(temppath, "extracted")
-            os.mkdir(extract_dir)
-            with contextlib.suppress(Exception):
-                zf.extractall(extract_dir)
-    except (zipfile.BadZipFile, OSError):
+        os.mkdir(extract_dir)
+    except FileExistsError:
+        pass
+    except OSError:
+        return False
+    unpacked = _unzip_all(zip_path, extract_dir)
+    if unpacked is None or len(unpacked) == 0:
         return False
     for i, key in enumerate(keys):
         src = os.path.join(extract_dir, _na(key))

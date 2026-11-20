@@ -723,6 +723,27 @@ case(
         "all_files": {"$df": {"repo_url": ["r"], "file_name": ["raw.csv"]}},
     },
 )
+# metacheck 0.4.4.27 (#695): a file read from a web address is not missing from the repository
+case(
+    "code_missing_files.review.web_address",
+    "metacheck:::.code_missing_files",
+    "_code_missing_files",
+    {
+        "code_files": {
+            "$df": {
+                "paper_id": ["p"],
+                "repo_url": ["r"],
+                "file_name": ["a.R"],
+                "loaded_refs": [
+                    "http://journal.sjdm.org/16/1234/study1.sav\u001fgone.csv"
+                    "\u001fhttps://x.org/d/web.csv"
+                ],
+                "files_written": [""],
+            }
+        },
+        "all_files": {"$df": {"repo_url": ["r"], "file_name": ["raw.csv"]}},
+    },
+)
 case(
     "code_missing_files.review.sync_no_refs_column",
     "metacheck:::.code_missing_files",

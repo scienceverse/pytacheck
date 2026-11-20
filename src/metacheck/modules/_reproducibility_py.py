@@ -27,6 +27,7 @@ from metacheck._values import as_str
 from metacheck.modules import _reproducibility as h
 from metacheck.modules import reproducibility_check as rc
 from metacheck.report import collapse_section, scroll_table
+from metacheck.repro.provenance import _repro_prov_note_before_run, _repro_prov_note_materialised
 from metacheck.repro.python import repro_dependencies_py
 
 # ---------------------------------------------------------------------------
@@ -1123,12 +1124,18 @@ def _execute_py(
     # any: one shared tree, not two.
     if sandbox_root is None:
         sandbox_root = rc._new_sandbox(h._is_true(keep_sandbox), cleanup)
-        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline)
+        _repro_prov_note_materialised(
+            a.get("prov"),
+            repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline),
+        )
     elif not has_r:
         # the R block's own materialise call never ran, so a Python-only paper still needs the
         # layout built into whatever sandbox_root the JASP/jamovi step above created (that
         # step only writes statistical_output/, never the data/ tree)
-        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline)
+        _repro_prov_note_materialised(
+            a.get("prov"),
+            repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline),
+        )
     ex["sandbox_root"] = sandbox_root
     lib_dir = os.path.join(sandbox_root, "_pylib")
 
@@ -1348,6 +1355,12 @@ def _execute_py(
             f"[repro/py] running {len(run_order_names)} script(s) in order: "
             + " -> ".join(run_order_names)
         )
+        # the run folder before the first script runs, unless R scripts ran first; before the
+        # scripts' time starts
+        prov = a.get("prov")
+        _repro_prov_note_before_run(prov, run_tbl, sandbox_root)
+        if prov is not None and not docker:
+            prov["python_bin"] = parse_bin or None
         names_before = _repro_sandbox_names(sandbox_root)
         run_results = run_py(run_tbl, run_order_names)
         # A file a script could not open, which the repository lists but which was not

@@ -316,11 +316,16 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -369,7 +374,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -382,6 +388,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -542,6 +552,8 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
           "dep_org",
           "dep_related",
@@ -570,7 +582,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -625,6 +638,18 @@
             "t": "chr",
             "v": [
               "This is my test description"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
             ]
           },
           {
@@ -810,7 +835,13 @@
           {
             "t": "lgl",
             "v": [
-              false
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
             ]
           }
         ]
@@ -1388,30 +1419,6 @@
           {
             "t": "dbl",
             "v": [
-              1564266,
-              1564266,
-              867,
-              null,
-              null,
-              3613,
-              3613,
-              185,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              2590,
-              9271,
-              9271,
               null,
               null,
               null,
@@ -1439,72 +1446,96 @@
               null,
               null,
               null,
-              9271,
-              9271,
-              9271,
-              9271,
-              9271
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
             "t": "int",
             "v": [
-              2,
-              2,
-              1,
-              29,
-              29,
-              2,
-              2,
-              1,
-              14,
-              14,
-              14,
-              14,
-              14,
-              14,
-              14,
-              14,
-              14,
-              14,
-              14,
-              14,
-              14,
-              14,
-              7,
-              7,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              29,
-              7,
-              7,
-              7,
-              7,
-              7
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -1821,6 +1852,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.18",
+  "metacheck_version": "0.4.4.27",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

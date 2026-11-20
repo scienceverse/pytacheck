@@ -131,6 +131,22 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('renv_only')})"
         "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('renv_only')"
+- "id": "tables.archive_zip"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('archive_zip')})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('archive_zip')"
+- "id": "tables.other_writes"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('other_writes')})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('other_writes')"
 - "id": "tables.duplicates"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -179,6 +195,38 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('structure_lookup')})"
         "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('structure_lookup')"
+- "id": "tables.functions_and_tests"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('functions_and_tests')})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('functions_and_tests')"
+- "id": "tables.starts_app"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('starts_app')})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('starts_app')"
+- "id": "tables.file_choice"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('file_choice')})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('file_choice')"
+- "id": "tables.py_software"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('py_software')})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('py_software')"
 - "id": "tables.stata_no_data"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -403,6 +451,38 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_jasp', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_jasp', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
+- "id": "tables.exec_lib_repair_exec"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_lib_repair', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_lib_repair', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
+- "id": "tables.exec_groups_exec"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_groups', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_groups', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
+- "id": "tables.exec_groups_py_exec"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_groups_py', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_groups_py', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
+- "id": "tables.exec_total_timeout_exec"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_run('exec_total_timeout', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
+        "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_run('exec_total_timeout', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
 - "id": "review.rv_demo_jasp"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -588,7 +668,9 @@
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_rv_latin1', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_rv_latin1', execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
   "compare":
-    "ignore": &id001 []
+    "ignore": &id001
+    - "environment.metacheck_version"
+    - "environment.host"
 - "id": "tables.exec_rv_latin1_exec"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -675,6 +757,8 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_chain(execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_chain(execute=True, timeout=60, keep_sandbox=True, sandbox=\"process\")"
+  "compare":
+    "ignore": *id001
 - "id": "review.chain_proc"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -683,3 +767,5 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rv_helpers.R', local = TRUE); rv_chain(sandbox = \"proc\")})"
         "py": "__import__('tests.mod_repro.rv_helpers', fromlist=['_']).rv_chain(sandbox=\"proc\")"
+  "compare":
+    "ignore": *id001

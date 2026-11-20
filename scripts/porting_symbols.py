@@ -95,6 +95,7 @@ FILE_MODULES: dict[str, str | list[tuple[int, str]]] = {
     "R/mplus.R": "metacheck.statout.mplus",
     "R/omv.R": "metacheck.statout.omv",
     "R/paper.R": "metacheck.papers",
+    "R/provenance.R": "metacheck.repro.provenance",
     "R/psychds-file-plan.R": "metacheck.datacheck.psychds",
     "R/r-capture.R": "metacheck.statout.r_capture",
     "R/r-output.R": "metacheck.statout.r_output",

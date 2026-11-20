@@ -38,6 +38,7 @@ from metacheck.modules.reproducibility_check import (
     _tail_cap,
 )
 from metacheck.report import collapse_section, scroll_table
+from metacheck.repro.provenance import _repro_prov_note_before_run, _repro_prov_note_materialised
 
 #: R's ``layout_name``: what the scripts run against
 _LAYOUT_NAME = "the repository"
@@ -325,6 +326,7 @@ def _execute(
         sandbox_root,
         deadline=time.time() if no_time else core._repro_clock_deadline(total_timeout),
     )
+    _repro_prov_note_materialised(a.get("prov"), ml)
     not_copied = getattr(ml, "attrs", {}).get("not_copied_time") or 0
     dbg(
         f"  materialised {_n_ok(ml)}/{_n_rows(ml)} files."
@@ -564,6 +566,8 @@ def _execute(
     dbg(f"running {len(run_order_names)} script(s) in order: ", " -> ".join(run_order_names))
     if state.get("script_deadline") is None:
         state["script_deadline"] = core._repro_deadline(total_timeout)
+    # the run folder before the first script runs, hashed; before the scripts' time starts
+    _repro_prov_note_before_run(a.get("prov"), run_tbl, sandbox_root)
     # the files there before the run, to see which a script wrote (see the end)
     r_names_before = layout._repro_sandbox_names(sandbox_root)
     run_results = run_r_scripts(run_tbl, run_order_names)

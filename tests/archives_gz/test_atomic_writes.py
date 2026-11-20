@@ -5,9 +5,9 @@ from __future__ import annotations
 import gzip
 import os
 import re
-import shutil
 import tarfile
 import time
+import warnings
 import zipfile
 from collections.abc import Iterator
 from pathlib import Path
@@ -168,21 +168,26 @@ def _tree(folder: Path) -> list[str]:
 _MEMBERS = {"a.csv": b"a,b\n1,2\n", "b.csv": b"c,d\n3,4\n", "c.csv": b"e\n5\n"}
 
 
+def _fail_second_member(monkeypatch: pytest.MonkeyPatch, error: BaseException) -> None:
+    """The read of the second member of a zip raises *error*."""
+    real = zipfile.ZipExtFile.read
+    calls: list[int] = []
+
+    def read(self: Any, *a: Any) -> bytes:
+        calls.append(1)
+        if len(calls) == 2:
+            raise error
+        return real(self, *a)
+
+    monkeypatch.setattr(zipfile.ZipExtFile, "read", read)
+
+
 def test_a_stopped_zip_extraction_leaves_nothing_and_the_next_run_extracts_all(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     zpath = tmp_path / "z.zip"
     _zip(zpath, _MEMBERS)
-    real = shutil.copyfileobj
-    calls = []
-
-    def copy(src: Any, dst: Any, *a: Any) -> None:
-        calls.append(1)
-        if len(calls) == 2:
-            raise _Stop
-        real(src, dst, *a)
-
-    monkeypatch.setattr(shutil, "copyfileobj", copy)
+    _fail_second_member(monkeypatch, _Stop())
     with pytest.raises(_Stop):
         zp._expand_zip(str(zpath), _row())
     assert list(tmp_path.iterdir()) == [zpath]  # no .contents, no temp folder
@@ -193,28 +198,27 @@ def test_a_stopped_zip_extraction_leaves_nothing_and_the_next_run_extracts_all(
     assert _leftovers(tmp_path) == []
 
 
-def test_an_ordinary_error_mid_zip_extraction_keeps_the_partial_folder(
+def test_an_ordinary_error_in_one_zip_member_leaves_the_others_and_names_it(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    # a member that cannot be read does not stop the others (metacheck #680): it is named
     zpath = tmp_path / "z.zip"
     _zip(zpath, _MEMBERS)
-    real = shutil.copyfileobj
-    calls = []
-
-    def copy(src: Any, dst: Any, *a: Any) -> None:
-        calls.append(1)
-        if len(calls) == 2:
-            raise ValueError("boom")
-        real(src, dst, *a)
-
-    monkeypatch.setattr(shutil, "copyfileobj", copy)
-    zp._expand_zip(str(zpath), _row())
-    assert (tmp_path / "z.zip.contents" / "a.csv").read_bytes() == _MEMBERS["a.csv"]
-    assert not (tmp_path / "z.zip.contents" / "c.csv").exists()
+    _fail_second_member(monkeypatch, ValueError("boom"))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        rows = zp._expand_zip(str(zpath), _row())
+    out = tmp_path / "z.zip.contents"
+    assert (out / "a.csv").read_bytes() == _MEMBERS["a.csv"]
+    assert (out / "c.csv").read_bytes() == _MEMBERS["c.csv"]
+    assert not (out / "b.csv").exists()
+    assert len(rows) == 2
+    assert rows.attrs["unpack_failed"]["file_name"].tolist() == ["b.csv"]
     assert _leftovers(tmp_path) == []
 
 
-def test_a_corrupt_zip_member_is_kept_partial_as_r_keeps_it(tmp_path: Path) -> None:
+def test_a_corrupt_zip_member_is_not_left_behind_as_if_complete(tmp_path: Path) -> None:
+    # R unlinks a member utils::unzip() wrote only in part, and names it (metacheck #680)
     zpath = tmp_path / "z.zip"
     good = b"x,y\n" + b"1,2\n" * 200
     _zip(zpath, {"bad.csv": good, "good.csv": good}, zipfile.ZIP_DEFLATED)
@@ -223,10 +227,13 @@ def test_a_corrupt_zip_member_is_kept_partial_as_r_keeps_it(tmp_path: Path) -> N
     for i in range(start + 2, start + 12):
         raw[i] ^= 0xFF
     zpath.write_bytes(bytes(raw))
-    zp._expand_zip(str(zpath), _row())
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        rows = zp._expand_zip(str(zpath), _row())
     out = tmp_path / "z.zip.contents"
-    assert (out / "bad.csv").exists()
-    assert len((out / "bad.csv").read_bytes()) < len(good)
+    assert not (out / "bad.csv").exists()
+    assert (out / "good.csv").read_bytes() == good
+    assert rows.attrs["unpack_failed"]["file_name"].tolist() == ["bad.csv"]
     assert _leftovers(tmp_path) == []
 
 

@@ -991,11 +991,13 @@ def test_repo_check_local_only_false_is_the_default() -> None:
 
 @needs_repo_check
 def test_repo_check_osf_without_code() -> None:
-    from tests.httpmock import replay
+    from tests.archives_osf.osfmock import replay_osf
 
+    # (metacheck's OSF recordings, with its redactor: an unrecorded listing is a failed one, which
+    # code_check now names and answers with a yellow light, #681)
     for url in ("https://osf.io/y6a34", "https://osf.io/m4nbv"):
         paper = pc.test_paper(["x"], url=[url])
-        with replay("apis"), warnings.catch_warnings():
+        with replay_osf("apis"), warnings.catch_warnings():
             warnings.simplefilter("ignore")
             mo = module_run(paper, "code_check")
         assert mo.traffic_light == "na"
@@ -1471,3 +1473,54 @@ def test_summary_names_the_files_to_fix(tmp_path: Path) -> None:
     text = run_dir(tmp_path).summary_text
     assert "setwd() calls were found." in text
     assert "install.packages() calls were found." in text
+
+
+def test_a_missing_file_may_be_in_a_repository_not_listed_in_full(tmp_path: Path) -> None:
+    # metacheck 0.4.4.22, #681
+    p = pc.test_paper()
+    script = tmp_path / "analysis.R"
+    script.write_text("# read the data\ndat <- read.csv('results.csv')\n", encoding="utf-8")
+    tbl = pd.DataFrame(
+        {
+            "paper_id": [p.paper_id],
+            "repo_url": ["https://osf.io/abcde"],
+            "repo_type": ["osf"],
+            "file_name": ["analysis.R"],
+            "file_path": ["analysis.R"],
+            "file_url": pd.Series([None], dtype="string"),
+            "file_size": [100.0],
+            "file_type": ["code"],
+            "file_location": [str(script)],
+        }
+    )
+    partial = pd.DataFrame(
+        {
+            "paper_id": [p.paper_id],
+            "repo_url": ["https://osf.io/abcde"],
+            "files_listed": pd.Series([1], dtype="Int64"),
+            "reason": ["refused by the OSF"],
+        }
+    )
+    prev = ModuleOutput(
+        module="repo_check",
+        title="Repository Check",
+        section="general",
+        table=tbl,
+        paper=p,
+        summary_table=pd.DataFrame({"paper_id": [p.paper_id]}),
+        extras={"partial_repos": partial},
+    )
+    mo = module_run(prev, "code_check", download=False)
+    report = " ".join(str(x) for x in mo.report)
+    assert (
+        "could not be automatically identified in the repository. This may be because a "
+        "repository was listed only in part or not at all" in report
+    )
+    assert "We could not list every file of 1 repository" in mo.summary_text
+
+    # listed in full: the sentence is as before
+    prev.extras.pop("partial_repos")
+    mo = module_run(prev, "code_check", download=False)
+    report = " ".join(str(x) for x in mo.report)
+    assert "could not be automatically identified in the repository. Check if" in report
+    assert "not listed in full" not in report

@@ -2,7 +2,9 @@
   "id": "osf_info.recursive.629bx",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "The OSF refused part of the listing of 629bx, also when asked again (1 folder), with 4 files listed: files in those folders are missing from it. Run again later."
+  ],
   "value": {
     "t": "df",
     "nrow": 6,
@@ -25,13 +27,16 @@
       "date_modified",
       "contributors",
       "contributor_orcids",
+      "contributor_families",
+      "n_contributors",
       "provider",
       "kind",
       "filetype",
       "size",
       "downloads",
       "path",
-      "download_url"
+      "download_url",
+      "listing_short"
     ],
     "v": [
       {
@@ -236,6 +241,28 @@
         "t": "chr",
         "v": [
           null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
           "osfstorage",
           "osfstorage",
           "osfstorage",
@@ -308,9 +335,20 @@
           "https://osf.io/download/6935c4679ca0f02ea72a1a31/",
           "https://osf.io/download/6976438ff9da155d0565c720/"
         ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.18",
+  "metacheck_version": "0.4.4.27",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

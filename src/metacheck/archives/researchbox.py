@@ -1442,7 +1442,13 @@ def _rbox_download_one(
             if not is_zip and single:
                 shutil.copyfile(zip_path, os.path.join(stage, os.path.basename(single)))
             else:
-                _unzip(zip_path, stage)
+                # A member that cannot be unpacked is named; a file that is not a readable zip
+                # leaves no files, which is reported below (#680)
+                from metacheck.archives.zip_peek import _unzip_all, _unzip_failed_note
+
+                note = _unzip_failed_note(_unzip_all(zip_path, stage), os.path.basename(zip_path))
+                if note is not None:
+                    warnings.warn(f"{shown}: {note}", stacklevel=3)
             # the checksums from the zip's table of contents, which is not one of the
             # box's files and is moved next to the zip
             listed = _rbox_take_toc(stage, tmp_dir)
@@ -1531,22 +1537,6 @@ def _write_checks(path: str, checks: dict[str, Any]) -> None:
             fh.write(json.dumps(checks).encode("utf-8"))
     except OSError:
         pass
-
-
-def _unzip(zip_path: str, exdir: str) -> None:
-    """``utils::unzip(zip_path, exdir = exdir)``, refusing members that would escape *exdir*."""
-    import zipfile
-
-    try:
-        with zipfile.ZipFile(zip_path) as zf:
-            base = os.path.realpath(exdir)
-            for member in zf.infolist():
-                target = os.path.realpath(os.path.join(exdir, member.filename))
-                if target != base and not target.startswith(base + os.sep):
-                    continue  # divergence: R would write outside exdir
-                zf.extract(member, exdir)
-    except zipfile.BadZipFile:
-        warnings.warn("error 1 in extracting from zip file", stacklevel=3)
 
 
 def _file_ext(name: str) -> str:

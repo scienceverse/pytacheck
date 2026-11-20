@@ -663,6 +663,14 @@ def test_ref_checkable_keeps_only_complete_literal_names() -> None:
         pd.DataFrame({"ref": ["/X.csv"], "basename": ["x.csv"]}), ["x.csv"]
     ) == [False]
     assert _repro_ref_checkable(d.iloc[0:0]) == []
+    # a file read from a web address (#695)
+    web = pd.DataFrame(
+        {
+            "ref": ["http://journal.sjdm.org/16/1234/study1.sav", "x.csv"],
+            "basename": ["study1.sav", "x.csv"],
+        }
+    )
+    assert _repro_ref_checkable(web) == [False, True]
 
 
 def test_inputs_to_report_keeps_what_a_run_cannot_show() -> None:

@@ -329,13 +329,22 @@ def _repo_check(
     # warning and makes the light yellow. Their files are not read (see file_share_links()).
     file_share = _file_share_table(paper, local_only, pids)
 
-    # OSF projects whose listing stopped at `osf_max_requests`
+    # OSF projects whose listing stopped at `osf_max_requests`, and those part of whose listing
+    # the OSF refused, also when asked again (`listing_short`, metacheck #681)
     osf_cut_urls: list[str] = []
+    osf_short_urls: list[str] = []
 
     # get files ----
     if len(repos.df) > 0:
         file_named, meta_named = _online_listings(
-            repos, osf_license, cache, bar, first_pid, osf_max_requests, osf_cut_urls
+            repos,
+            osf_license,
+            cache,
+            bar,
+            first_pid,
+            osf_max_requests,
+            osf_cut_urls,
+            osf_short_urls,
         )
     else:  # local_only, or no repository links: every platform's listing is empty
         file_named, meta_named = [("osf", rc.placeholder())], [("osf", rc.meta_frame())]
@@ -439,6 +448,7 @@ def _repo_check(
         osf_cut_urls,
         file_share,
         n_aside,
+        osf_short_urls,
     )
 
     # traffic_light ----
@@ -472,17 +482,21 @@ def _repo_check(
     summary_text = "".join(f"\n-  {s}" for s in summary)
 
     error_rows = repo_sum["repo_error"].notna().to_numpy(dtype=bool)
-    gated_repos = repo_sum.loc[error_rows, ["repo_url", "repo_type", "repo_error"]].reset_index(
-        drop=True
-    )
+    # (with `paper_id`, as a paper list's run holds the repositories of every paper: code_check and
+    # data_check name the ones with no files in their reports, metacheck #681)
+    gated_cols = [
+        c for c in ("paper_id", "repo_url", "repo_type", "repo_error") if c in repo_sum.columns
+    ]
+    gated_repos = repo_sum.loc[error_rows, gated_cols].reset_index(drop=True)
 
     return {
         "table": all_files,
         "summary_table": summary_table,
         "gated_repos": gated_repos,
-        # OSF projects listed only in part, because their listing stopped at `osf_max_requests`:
-        # paper_id, repo_url and files_listed. data_check and code_check warn that their files
-        # may be missing from what they download.
+        # OSF projects listed only in part, because their listing stopped at `osf_max_requests`
+        # or the OSF refused part of it: paper_id, repo_url, files_listed and reason ("request
+        # limit", "refused by the OSF"). data_check and code_check warn that their files may be
+        # missing from what they download, and name them in their reports (metacheck #681).
         "partial_repos": flags["partial_repos"],
         "naming_issues": flags["naming_issues_by_paper"],
         "repo_metadata": repo_metadata,
@@ -582,6 +596,7 @@ def _online_listings(
     first_pid: Callable[[], Any],
     osf_max_requests: float = 50,
     osf_cut_urls: list[str] | None = None,
+    osf_short_urls: list[str] | None = None,
 ) -> tuple[list[tuple[str, pd.DataFrame]], list[tuple[str, pd.DataFrame]]]:
     """Every platform's ``(platform, file listing)`` and ``(platform, metadata)``, in R's order
     (for ``bind_rows()``)."""
@@ -590,7 +605,15 @@ def _online_listings(
     osf_paper_id = osf_ids[0] if osf_ids else first_pid()
 
     osf_files, osf_meta = rc.list_osf(
-        repos, osf_urls, osf_paper_id, bar, cache, osf_license, osf_max_requests, osf_cut_urls
+        repos,
+        osf_urls,
+        osf_paper_id,
+        bar,
+        cache,
+        osf_license,
+        osf_max_requests,
+        osf_cut_urls,
+        osf_short_urls,
     )
 
     github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
@@ -1166,6 +1189,7 @@ def _report(
     osf_cut_urls: Sequence[str] = (),
     file_share: pd.DataFrame | None = None,
     n_aside: int = 0,
+    osf_short_urls: Sequence[str] = (),
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
     from metacheck.report.blocks import collapse_section, link, scroll_table
@@ -1235,44 +1259,75 @@ def _report(
         ]
 
     # OSF projects listed only in part ----
-    # The listing of these stopped at `osf_max_requests` (see `listing_cut` in a listing).
+    # The listing of these stopped at `osf_max_requests` (reason "request limit"), or the OSF
+    # refused part of it, also when asked again (reason "refused by the OSF", metacheck #681); see
+    # `listing_cut` and `listing_short` in a listing. A project with both is named for the refusal:
+    # the part listed is then not kept for a next run to go on with, so running the check again is
+    # what helps.
     in_tables = set(rc.vals(repos["repo_url"])) | (
         set(rc.vals(all_files["repo_url"])) if "repo_url" in all_files else set()
     )
-    cut_urls = [u for u in dict.fromkeys(osf_cut_urls) if u in in_tables]
+    part_urls = [u for u in dict.fromkeys([*osf_short_urls, *osf_cut_urls]) if u in in_tables]
     first_paper: dict[Any, Any] = {}
     for u, pid in zip(rc.vals(repos["repo_url"]), rc.vals(repos["paper_id"]), strict=True):
         first_paper.setdefault(u, pid)
     file_urls = rc.vals(all_files["repo_url"]) if "repo_url" in all_files else []
-    listed = [sum(1 for f in file_urls if f == u) for u in cut_urls]
+    listed = [sum(1 for f in file_urls if f == u) for u in part_urls]
+    short_set = set(osf_short_urls)
     partial_repos = pd.DataFrame(
         {
-            "paper_id": pd.Series([first_paper.get(u) for u in cut_urls], dtype="string"),
-            "repo_url": pd.Series(cut_urls, dtype="string"),
+            "paper_id": pd.Series([first_paper.get(u) for u in part_urls], dtype="string"),
+            "repo_url": pd.Series(part_urls, dtype="string"),
             "files_listed": pd.Series(listed, dtype="Int64"),
+            "reason": pd.Series(
+                ["refused by the OSF" if u in short_set else "request limit" for u in part_urls],
+                dtype="string",
+            ),
         }
     )
-    summary_partial = None
+    summary_partial: list[str] = []
     report_partial: list[str] = []
     if len(partial_repos) > 0:
-        n_cut = len(partial_repos)
-        one = n_cut == 1
-        counts = ", ".join(f"{n} {plural(n, 'file', 'files')}" for n in listed)
-        report_partial = [
-            "#### Partly Listed Repositories\n\n"
-            f"{n_cut} {plural(n_cut, 'OSF project', 'OSF projects')} "
-            f"({', '.join(cut_urls)}) {'has' if one else 'have'} more folders than metacheck lists "
-            f"by default, so only part of {'its' if one else 'their'} files "
-            f"{'was' if sum(listed) == 1 else 'were'} listed "
-            f"({counts}), and what this "
-            f"report says about {'its' if one else 'their'} files describes only that part. Run "
-            "the check again with `cache = TRUE` to list the next part, or raise "
-            "`osf_max_requests`."
-        ]
-        summary_partial = (
-            f"We listed only part of {n_cut} OSF {plural(n_cut, 'project', 'projects')} "
-            "(the request limit was reached)."
-        )
+        is_short = [u in short_set for u in part_urls]
+        cut_urls = [u for u, k in zip(part_urls, is_short, strict=True) if not k]
+        cut_listed = [n for n, k in zip(listed, is_short, strict=True) if not k]
+        short_urls = [u for u, k in zip(part_urls, is_short, strict=True) if k]
+        short_listed = [n for n, k in zip(listed, is_short, strict=True) if k]
+        paragraphs = ["#### Partly Listed Repositories"]
+        if cut_urls:
+            n_cut = len(cut_urls)
+            one = n_cut == 1
+            counts = ", ".join(f"{n} {plural(n, 'file', 'files')}" for n in cut_listed)
+            paragraphs.append(
+                f"{n_cut} {plural(n_cut, 'OSF project', 'OSF projects')} "
+                f"({', '.join(cut_urls)}) {'has' if one else 'have'} more folders than metacheck "
+                f"lists by default, so only part of {'its' if one else 'their'} files "
+                f"{'was' if sum(cut_listed) == 1 else 'were'} listed "
+                f"({counts}), and what this "
+                f"report says about {'its' if one else 'their'} files describes only that part. "
+                "Run the check again with `cache = TRUE` to list the next part, or raise "
+                "`osf_max_requests`."
+            )
+            summary_partial.append(
+                f"We listed only part of {n_cut} OSF {plural(n_cut, 'project', 'projects')} "
+                "(the request limit was reached)."
+            )
+        if short_urls:
+            n_short = len(short_urls)
+            named = ", ".join(
+                f"{u} ({n} {plural(n, 'file', 'files')} listed)"
+                for u, n in zip(short_urls, short_listed, strict=True)
+            )
+            paragraphs.append(
+                f"The OSF refused part of the listing of {named}, also when asked again, so what "
+                f"this report says about {'its' if n_short == 1 else 'their'} files describes "
+                "only the part that was listed. Run the check again later."
+            )
+            summary_partial.append(
+                f"We listed only part of {n_short} OSF {plural(n_short, 'project', 'projects')}, "
+                "because the OSF refused part of the listing; run the check again."
+            )
+        report_partial = ["\n\n".join(paragraphs)]
 
     # ResearchBox boxes that readers cannot open (#621): still repositories that
     # could not be checked (above); the authors are told how to make the link open
@@ -1617,7 +1672,7 @@ def _report(
         s
         for s in (
             summary_unchecked,
-            summary_partial,
+            *summary_partial,
             summary_not_public,
             summary_view_only,
             summary_repo,

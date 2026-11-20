@@ -2572,3 +2572,12 @@
         "r": "paperlist(test_paper(\"No statistics.\"), test_paper(\"None here either.\"))"
         "py": "pc.PaperList([pc.test_paper(\"No statistics.\"), pc.test_paper(\"None here either.\")])"
   "compare": *id010
+- "id": "stat_check.nightly.one_sided"
+  "module": "stat_check"
+  "args": {"paper": {"$test_paper": {"text": ["The effect was positive, t(28) = 1.80, p = .041 (one-tailed)."]}}}
+- "id": "stat_check.nightly.two_sided_text"
+  "module": "stat_check"
+  "args": {"paper": {"$test_paper": {"text": ["The effect was positive, t(28) = 1.80, p = .041."]}}}
+- "id": "stat_check.nightly.one_sided_other_sentence"
+  "module": "stat_check"
+  "args": {"paper": {"$test_paper": {"text": ["We tested one-sided hypotheses.", "The effect was positive, t(28) = 1.80, p = .041."]}}}

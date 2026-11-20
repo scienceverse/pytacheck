@@ -1,0 +1,102 @@
+{
+  "id": "tables.functions_and_tests",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fn_helpers.R",
+              "fn_main.R",
+              "tests/testthat/test-helpers.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—",
+              "fn_helpers.R",
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "dependency",
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Used by"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "fn_helpers.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fn_main.R, tests/testthat/test-helpers.R"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Why"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "tests/testthat/test-helpers.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "It is a test of a package or the file that installs it, not part of the analysis."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.27",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

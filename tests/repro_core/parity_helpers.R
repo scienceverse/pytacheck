@@ -67,6 +67,8 @@ rc_run_scripts <- function(scripts, order = NULL, extra = NULL, lib = FALSE, ...
   }
   out <- repro_run_scripts(run_tbl, order = order %||% names, lib_dir = lib_dir, ...)
   out$elapsed <- NULL
+  # when each script ran (metacheck 0.4.4.20) varies between runs
+  for (col in c("started_at", "ended_at")) out[[col]][!is.na(out[[col]])] <- "<time>"
   for (col in c("error", "stdout", "stderr")) out[[col]] <- rc_unroot(out[[col]], root)
   out$script_lines <- lapply(out$script_lines, rc_unroot, root = root)
   out

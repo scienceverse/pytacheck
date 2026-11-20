@@ -441,11 +441,16 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -494,7 +499,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -507,6 +513,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -644,7 +654,9 @@
           "gh_stars",
           "gh_forks",
           "cff_dois",
-          "dep_org"
+          "dep_org",
+          "dep_creator_families",
+          "dep_n_creators"
         ],
         "v": [
           {
@@ -673,6 +685,14 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           },
           {
@@ -971,6 +991,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.18",
+  "metacheck_version": "0.4.4.27",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

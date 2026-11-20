@@ -459,11 +459,21 @@
         "t": "df",
         "nrow": 4,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural",
+              "p_osf_reg_closed_plural"
+            ]
+          },
           {
             "t": "chr",
             "v": [
@@ -527,7 +537,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -540,6 +551,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -745,6 +760,8 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
           "dep_org",
           "dep_related",
@@ -773,7 +790,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -855,6 +873,24 @@
               "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs.",
               "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs.",
               "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -1135,6 +1171,15 @@
               false,
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
+            ]
           }
         ]
       },
@@ -1326,6 +1371,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.18",
+  "metacheck_version": "0.4.4.27",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

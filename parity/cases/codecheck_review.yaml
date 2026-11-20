@@ -2941,6 +2941,28 @@
         - "r"
         "file_name":
         - "raw.csv"
+- "id": "code_missing_files.review.web_address"
+  "r": "metacheck:::.code_missing_files"
+  "py": "metacheck.codecheck.core._code_missing_files"
+  "args":
+    "code_files":
+      "$df":
+        "paper_id":
+        - "p"
+        "repo_url":
+        - "r"
+        "file_name":
+        - "a.R"
+        "loaded_refs":
+        - "http://journal.sjdm.org/16/1234/study1.sav\x1Fgone.csv\x1Fhttps://x.org/d/web.csv"
+        "files_written":
+        - ""
+    "all_files":
+      "$df":
+        "repo_url":
+        - "r"
+        "file_name":
+        - "raw.csv"
 - "id": "code_missing_files.review.sync_no_refs_column"
   "r": "metacheck:::.code_missing_files"
   "py": "metacheck.codecheck.core._code_missing_files"

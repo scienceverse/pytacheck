@@ -30,6 +30,11 @@ from metacheck._values import as_str
 from metacheck.module import module
 from metacheck.modules import _reproducibility as h
 from metacheck.report import scroll_table
+from metacheck.repro.provenance import (
+    _repro_prov_finish,
+    _repro_prov_note_materialised,
+    _repro_prov_state,
+)
 
 _NA_REPLACE_EMPTY = {
     "repro_code_n": 0.0,
@@ -652,6 +657,9 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     a["net"] = _repro_download_limits(a["internet"], a["max_file_size"], a["max_download_size"])
     # set when the first script starts, R or Python (see total_timeout)
     a["run_state"] = {"script_deadline": None, "prep_skipped_left": None}
+    # what a TRO needs of this run (metacheck.repro.provenance): when the check started, the
+    # files copied from the deposit, the run folder before the first script, the scripts
+    a["prov"] = _repro_prov_state()
 
     def pid(*dfs: Any) -> str | None:
         return h._pid(paper, *dfs)
@@ -824,7 +832,9 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         from metacheck.statout.stat_output import stat_output_write
 
         sandbox_root = _new_sandbox(keep_sandbox, cleanup)
-        repro_materialize_layout(plan, structure_df, sandbox_root)
+        _repro_prov_note_materialised(
+            a["prov"], repro_materialize_layout(plan, structure_df, sandbox_root)
+        )
         stat_output_write(stat_output, sandbox_root)
 
     # Non-R code with no way to check its results ------------------------------
@@ -970,6 +980,7 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         keep_sandbox=keep_sandbox,
         code_tbl=code_tbl,
         version_pin=version_pin,
+        structure_df=structure_df,
     )
 
 
@@ -1111,6 +1122,7 @@ def _finish(
     keep_sandbox: bool,
     code_tbl: pd.DataFrame | None = None,
     version_pin: Any = None,
+    structure_df: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     """Combine the R and Python blocks, with the sections shared across languages."""
     from metacheck.repro.outcomes import (
@@ -1186,6 +1198,23 @@ def _finish(
             r["install_results"] if r["install_results"] is not None else py["install_results"]
         )
     modifications = _bind(r["modifications"], py["modifications"])
+    # Provenance for a TRO (metacheck.repro.provenance): every file as downloaded, just before
+    # the first script ran, and what the scripts made, changed or removed; the system that
+    # ran them; each modified script's hash before and after metacheck changed it. Only when
+    # code was run.
+    artifacts: pd.DataFrame | None = None
+    environment: dict[str, Any] | None = None
+    if execute:
+        artifacts, modifications, environment = _repro_prov_finish(
+            a.get("prov"),
+            modifications,
+            structure_df,
+            sandbox_root,
+            sandbox=a["sandbox"],
+            timeout=a["timeout"],
+            total_timeout=a.get("total_timeout"),
+            internet=a.get("net") is not None,
+        )
     # the scripts, the software not run, and why scripts did not run through (#568, item 24)
     run_counts = _repro_run_counts(run_results)
     summary_table = pd.concat([summary_table, run_counts.reset_index(drop=True)], axis=1)
@@ -1210,6 +1239,10 @@ def _finish(
         "stat_output": stat_output or None,
         "match_table": match_table_raw,
         "modifications": modifications,
+        # Provenance for a TRO: one row per file (stage deposit / before_run / after_run) and
+        # the system that ran the code; None when no code was run.
+        "artifacts": artifacts,
+        "environment": environment,
         # The checklist report's own section on this check (None when no code ran).
         # Returned as a module-specific output until ModuleOutput has the field.
         "checklist_section": _checklist(

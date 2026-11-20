@@ -91,7 +91,17 @@ def test_zip_peek_lists_names_sizes_and_fetch_fields() -> None:
         router.route(url=URL).mock(side_effect=handler)
         cd = zip_peek(URL)
     assert cd is not None
-    assert list(cd.columns) == ["name", "size", "method", "csize", "offset", "crc", "name_bytes"]
+    assert list(cd.columns) == [
+        "name",
+        "size",
+        "method",
+        "csize",
+        "offset",
+        "crc",
+        "name_bytes",
+        "encrypted",
+    ]
+    assert cd["encrypted"].tolist() == [False, False]
     assert cd["name"].tolist() == ["data.csv", "notes.txt"]
     assert cd["size"].tolist() == [1000.0, 6.0]
     assert cd["offset"].min() == 0

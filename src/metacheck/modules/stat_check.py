@@ -69,7 +69,7 @@ def _paper_ids(paper: Any) -> pd.DataFrame:
 
         Statcheck was developed by Michèle Nuijten and Sascha Epskamp.
 
-        Statcheck considers p = 0.000 an error, as you should report p < 0.001. Furthermore, p < 0.03 is an error if the p-value was 0.031, and one should simply report exact p-values (p = 0.031). Statcheck might miss one-sided tests, and falsely assume the p-value is incorrect. For more information, see [StatCheck](https://statcheck.io/).
+        Statcheck considers p = 0.000 an error, as you should report p < 0.001. Furthermore, p < 0.03 is an error if the p-value was 0.031, and one should simply report exact p-values (p = 0.031). When the sentence of a test says it is one-sided ("one-tailed", "one-sided" or "directional"), a p-value that fits a one-sided test counts as consistent (statcheck's `OneTailedTxt` setting; #695). Statcheck might still miss one-sided tests that are described in another sentence, and falsely assume the p-value is incorrect. For more information, see [StatCheck](https://statcheck.io/).
 
         This module only checks statistical results reported in the running text of the manuscript. It cannot (yet) process statistics reported only in tables.
 
@@ -87,7 +87,9 @@ def stat_check(paper: Any) -> dict[str, Any]:
     from metacheck.stats.core import stats
 
     # detailed table of results ----
-    stat_table = stats(paper)
+    # a test whose own sentence says it is one-sided is checked as one (metacheck 0.4.4.26,
+    # #695)
+    stat_table = stats(paper, OneTailedTxt=True)
 
     # handle no stats
     if len(stat_table) == 0:

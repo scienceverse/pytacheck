@@ -19,6 +19,7 @@ from metacheck._r import grepl, plural, r_round
 from metacheck._values import is_true
 from metacheck.archives._useless import is_useless_file
 from metacheck.archives.download import _download_failed_text, _failed_counts
+from metacheck.archives.zip_peek import _unzip_failed_text
 from metacheck.module import module
 from metacheck.modules import _data_check as h
 from metacheck.report.file_tree import file_tree_block
@@ -526,6 +527,15 @@ def data_check(
         _cap_report_partial(
             listing_partial, all_files["repo_url"].tolist() if "repo_url" in all_files else []
         )
+    # repositories listed only in part or not at all: the checks below do not see all their files,
+    # which the report and summary say (metacheck #681)
+    from metacheck.archives.download import _repos_not_listed_text
+
+    not_listed = _repos_not_listed_text(
+        listing_partial,
+        listing_gated,
+        all_files["repo_url"].tolist() if "repo_url" in all_files else [],
+    )
 
     # -- 2. classify every file --------------------------------------------------
     if len(all_files) == 0:
@@ -556,11 +566,18 @@ def data_check(
                 max_download_size=max_download_size,
                 skip_types=skip_types,
             )
-        return {
+        out: dict[str, Any] = {
             "table": all_files,
             "structure": all_files,
-            "traffic_light": "na",
-            "summary_text": "We found no files to analyse.",
+            # yellow when a repository was not listed in full: its data may exist unseen (#681)
+            "traffic_light": "na" if not_listed["summary"] is None else "yellow",
+            "summary_text": (
+                "We found no files to analyse."
+                if not_listed["summary"] is None
+                else "".join(
+                    f"\n-  {x}" for x in ("We found no files to analyse.", not_listed["summary"])
+                )
+            ),
             "gated_repos": listing_gated,
             "manifest_path": manifest_path,
             "summary_table": pd.DataFrame(
@@ -571,6 +588,9 @@ def data_check(
                 }
             ),
         }
+        if not_listed["report"] is not None:
+            out["report"] = not_listed["report"]
+        return out
 
     state = _classify(all_files, paper, model, params, llm_use())
     state["concepts"] = concept_tier
@@ -734,6 +754,9 @@ def data_check(
     # files whose download failed: the checks below did not see them (metacheck #667)
     failed_text = _download_failed_text(dl["failed_files"])
     report.extend(failed_text["report"] or [])
+    report.extend(not_listed["report"] or [])
+    unpack_text = _unzip_failed_text(dl["unpack_failed"])
+    report.extend(unpack_text["report"] or [])
     tree_block = file_tree_block(all_files, tree_naming_issues, tree_useless)
     if tree_block is not None:
         report.extend(tree_block)
@@ -801,6 +824,8 @@ def data_check(
         summary_table[col] = _count_by_paper(pids, summary_table["paper_id"].tolist())
     parts = [
         *([failed_text["summary"]] if failed_text["summary"] else []),
+        *([not_listed["summary"]] if not_listed["summary"] else []),
+        *([unpack_text["summary"]] if unpack_text["summary"] else []),
         *summary_keys,
         summary_files,
         summary_data,
@@ -851,6 +876,10 @@ def data_check(
     rank = {"na": 0, "green": 1, "yellow": 2, "red": 3}
     both = [t for t in (tl, dv["traffic_light"]) if t in rank]
     final_tl = max(both, key=lambda t: rank[t]) if both else "na"
+    # at least yellow when a repository was listed only in part or not at all: files went
+    # unchecked, so neither "no issues" nor "nothing to check" holds (#681)
+    if not_listed["summary"] is not None and final_tl in ("na", "green"):
+        final_tl = "yellow"
 
     dv_summary = dv["summary_table"]
     dv_summary = dv_summary.loc[:, [c for c in dv_summary.columns if c != "column_n"]]
@@ -1265,6 +1294,8 @@ def _download(
     gated_repos = None
     oversize_files = None
     failed_files = None
+    # members of zips that could not be unpacked (_expand_zip(), #680)
+    unpack_failed = None
     if download != "none":
         locs = h._col(all_files, "file_location")
         if file_url is not None and locs is not None:
@@ -1380,6 +1411,15 @@ def _download(
                             if oversize_files is None
                             else bind_rows([oversize_files, add]).reset_index(drop=True)
                         )
+                    uf = rows_x.attrs.get("unpack_failed") if rows_x is not None else None
+                    if uf is not None and len(uf) > 0:
+                        from metacheck._r import bind_rows
+
+                        unpack_failed = (
+                            uf
+                            if unpack_failed is None
+                            else bind_rows([unpack_failed, uf]).reset_index(drop=True)
+                        )
                     if rows_x is not None and len(rows_x) > 0:
                         extracted.append(rows_x)
                 drop = set(da)
@@ -1453,6 +1493,7 @@ def _download(
         "gated_repos": gated_repos,
         "oversize_files": oversize_files,
         "failed_files": failed_files,
+        "unpack_failed": unpack_failed,
         "zip_peek_reason": zip_peek_reason,
     }
 

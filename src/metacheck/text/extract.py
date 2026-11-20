@@ -83,6 +83,10 @@ _P_SUBSCRIPTS = (
     "spearman|pearson)(?![\\w])"
 )
 
+# The sides of a test, written after the p, in brackets or not: "p one-sided = .014", "p
+# (two-tailed) = .048" (metacheck 0.4.4.26, #695). Port of ``.p_sides``.
+_P_SIDES = r"(?:\(?\s*(?i:one|two|1|2)[\s-]?(?i:sided|tailed)\s*\)?\s*)"
+
 # Numbers without a decimal point (#642): a whole first number before scientific notation
 # ("p < 1e-10", "p = 5 x 10 -8"), a capital E ("p = 2.4E-08" was read as 2.4), 10 to a power with
 # nothing before it ("p < 10 -15"), and a whole 0 or 1 ("p = 1")
@@ -124,6 +128,7 @@ def _p_pattern(negative: bool = False) -> str:
         f"(?:{_ETA_P_PREFIX}|{_P_SYMBOL_PREFIX})?"
         r"\b[pP]-?(values?|s|['’]s)?"  # ways to write p (or P)
         f"(?:[\\s_-]?{_P_SUBSCRIPTS})?\\s*"  # pFWE, p adj
+        f"{_P_SIDES}?"  # "p one-sided", "p (two-tailed)" (#695)
         f"[{_OPS}]{{1,2}}\\s*"  # 1-2 operators
         f"({number})"  # ns or valid numbers
         f"{sci}"
@@ -155,6 +160,8 @@ _BARE_SUBSCRIPT += f"|{_ETA_P_PREFIX}[pP](?=\\s*[{_OPS}])"
 # a p with a correction or test name after a space, "p adj = .034", is one statistic: the name
 # was "adj" (#642)
 _BARE_SUBSCRIPT += f"|\\b[pP]s?[\\s_-]{_P_SUBSCRIPTS}(?=\\s*[{_OPS}])"
+# and a p with the sides of its test, "p one-sided = .014" (#695)
+_BARE_SUBSCRIPT += f"|\\b[pP]s?\\s*{_P_SIDES}(?=[{_OPS}])"
 _EQ_PATTERN = (
     r"(?:(Hedge.{0,3}|Cronbach.{0,2}|Cohen.{0,2}|\d{1,2}%)\s+)?"  # common prefix
     f"(?:{_BARE_SUBSCRIPT}|"

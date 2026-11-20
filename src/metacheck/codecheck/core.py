@@ -3338,10 +3338,13 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
         refs = refs_col[i]
         if is_missing(refs):
             continue
+        # a file read from a web address is not one the repository should hold:
+        # read.spss("http://journal.sjdm.org/.../study1.sav") was reported as the missing file
+        # study1.sav (#695), as .repro_ref_checkable() also leaves out
         parts = [
             r.replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
             for r in str(refs).split("\u001f")
-            if str(refs) != ""
+            if str(refs) != "" and "://" not in r
         ]
         # a piece, and a name with a placeholder ("Ax1_s{seed}.jsonl"), are no file names, as
         # reproducibility_check also leaves them out (.repro_ref_checkable())

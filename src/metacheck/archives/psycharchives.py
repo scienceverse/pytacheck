@@ -27,7 +27,7 @@ from typing import Any, cast
 
 import pandas as pd
 
-from metacheck._r import regextract, sub
+from metacheck._r import grepl, regextract, sub
 from metacheck._values import field, is_missing
 from metacheck.archives import _repo_tables as _tables
 
@@ -152,7 +152,53 @@ def dspace_links(paper: Any) -> pd.DataFrame:
         r"|(?:https?://)?(?:hdl\.handle\.net/)?20\.500\.12034/[0-9]+"
     )
     literals = [*(f"{h}/" for h in DSPACE_LEGACY_HOSTS), "20.500.12034/"]
-    return _collect_links([found_href, _scan_links(paper, bare, literals)])
+    return _collect_links(
+        [found_href, _scan_links(paper, bare, literals), _dspace_legacy_doi_links(paper)]
+    )
+
+
+_PSYCHARCHIVES_DOI_RX = (
+    r"(?:https?://)?(?:dx\.)?(?:doi\.org/)?(10\.23668/[-._;()/:A-Za-z0-9]+[A-Za-z0-9])"
+)
+
+
+def _dspace_legacy_doi_links(paper: Any) -> pd.DataFrame:
+    """Port of R/archive-psycharchives.R::.dspace_legacy_doi_links(): PsychArchives DOIs by address.
+
+    PsychArchives' DOIs (prefix 10.23668), each replaced by the address it is registered with when
+    that is on a legacy-DSpace host (metacheck #695). A paper may give its data only as a DOI
+    (``doi.org/10.23668/psycharchives.12959``), and the number in the DOI is not the item's handle:
+    that DOI leads to ``www.psycharchives.org/jspui/handle/20.500.12034/8459``, so the address has
+    to be looked up, as :func:`metacheck.archives.zenodo.invenio_links` does for DOIs of
+    InvenioRDM installations. A DOI that leads elsewhere, that DataCite calls a publication, or
+    that could not be looked up, gives no row.
+    """
+    from metacheck._r import bind_rows, regexec
+    from metacheck.archives import _paper_urls
+    from metacheck.archives.dataverse import _link_matches
+    from metacheck.archives.repo_kind import _repo_doi_url
+
+    urls = _paper_urls(paper)
+    if "href" in urls.columns and len(urls) > 0:
+        hit = grepl(_PSYCHARCHIVES_DOI_RX, urls["href"].tolist(), ignore_case=True, perl=True)
+        in_url = urls.loc[[bool(h) for h in hit]]
+    else:
+        in_url = urls.iloc[0:0]
+    in_text = _link_matches(paper, _PSYCHARCHIVES_DOI_RX, "10\\.23668/")
+    found = bind_rows([in_url, in_text])
+    if len(found) == 0 or "href" not in found.columns:
+        return found
+    host_regex = _dspace_legacy_host_regex()
+    hrefs: list[str | None] = []
+    for href in found["href"].tolist():
+        groups = regexec(_PSYCHARCHIVES_DOI_RX, str(href), perl=True, ignore_case=True)
+        u = _repo_doi_url(str(groups[1]))[0] if len(groups) >= 2 else None
+        hrefs.append(
+            u if u is not None and grepl(host_regex, u, ignore_case=True, perl=True) else None
+        )
+    out = found.copy()
+    out["href"] = pd.Series(hrefs, index=out.index, dtype="string")
+    return out[out["href"].notna()]
 
 
 def psycharchives_links(paper: Any) -> pd.DataFrame:
@@ -172,7 +218,16 @@ def psycharchives_links(paper: Any) -> pd.DataFrame:
         r"|(?:https?://)?(?:hdl\.handle\.net/)?20\.500\.12034/[0-9]+"
     )
     other = _scan_links(paper, bare, ["psycharchives.org/", "20.500.12034/"])
-    return _collect_links([found_href, other])
+    # a PsychArchives DOI, by the address it is registered with (#695)
+    by_doi = _dspace_legacy_doi_links(paper)
+    if len(by_doi) > 0 and "href" in by_doi.columns:
+        by_doi = by_doi[
+            [
+                bool(h)
+                for h in grepl(r"psycharchives\.org", by_doi["href"].tolist(), ignore_case=True)
+            ]
+        ]
+    return _collect_links([found_href, other, by_doi])
 
 
 # ---------------------------------------------------------------------------

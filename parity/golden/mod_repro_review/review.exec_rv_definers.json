@@ -22,6 +22,8 @@
       "stat_output",
       "match_table",
       "modifications",
+      "artifacts",
+      "environment",
       "checklist_section",
       "sandbox"
     ],
@@ -802,6 +804,9 @@
           "elapsed",
           "script_lines",
           "captures",
+          "started_at",
+          "ended_at",
+          "exit_status",
           "reason",
           "checked"
         ],
@@ -1016,6 +1021,45 @@
           {
             "t": "chr",
             "v": [
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               null,
               null,
               "undefined",
@@ -1059,7 +1103,9 @@
         "names": [
           "file_name",
           "change_type",
-          "detail"
+          "detail",
+          "sha256_before",
+          "sha256_after"
         ],
         "v": [
           {
@@ -1073,6 +1119,234 @@
           {
             "t": "chr",
             "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "stage",
+          "path",
+          "size",
+          "sha256",
+          "mime_type",
+          "source",
+          "status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "deposit",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "data.csv",
+              "def_a.R",
+              "def_b.R",
+              "fn_user.R",
+              "msg_only.R",
+              "quiet.R",
+              "setwd_var.R",
+              "user.R",
+              "warn.R"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              32,
+              32,
+              14,
+              14,
+              28,
+              29,
+              7,
+              87,
+              16,
+              33
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "0061fcc84d05b381b01b6766db1194568e481de694a5ab52a61bf3e6d83da11e",
+              "cdc9fd30f7bc12779995e418198d31acf41bd54545ef8402e51762bc3543b701",
+              "9946bf6a45d39ef2de5132d2d18bad2e660a8292af23ac6523d66b416e9d5f8e",
+              "33f4368a752f6468ce0c95576d3fcd4e52005ab0d6bdd1e772daedd96e09ac59",
+              "66b7dd2c95677966d7e30532fe17ac4642554f6ca9c4165274d8438fd9c5a283",
+              "b8487593c42d6345d532c908eb2cf67bfdbadad3bf0c245225d05195a236bb36",
+              "52911b4377dacea33492253a7e1be274fe50be6a75456158056d83c0f7b9b300",
+              "9189965b15c321ac2e3a8b3e12436085b22545b0469a2e3c2d61a2b8bc848237"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text/csv",
+              "text/csv",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/x-r-source"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "metacheck_version",
+          "started_at",
+          "ended_at",
+          "host",
+          "sandbox",
+          "network_isolated",
+          "internet",
+          "timeout_per_script",
+          "total_timeout",
+          "python_local",
+          "docker"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0.4.4.27"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "r_version",
+              "platform",
+              "os"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "R version 4.5.3 (2026-03-11)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "x86_64-conda-linux-gnu"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Linux 6.18.44-fc-v726"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "process"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              60
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3600
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
           }
         ]
       },
@@ -1090,6 +1364,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.18",
+  "metacheck_version": "0.4.4.27",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

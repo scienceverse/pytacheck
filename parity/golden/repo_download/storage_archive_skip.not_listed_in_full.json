@@ -1,0 +1,14 @@
+{
+  "id": "storage_archive_skip.not_listed_in_full",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "the size of the whole storage is not known, as it was not listed in full"
+    ]
+  },
+  "metacheck_version": "0.4.4.27",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

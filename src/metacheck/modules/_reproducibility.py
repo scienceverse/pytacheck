@@ -858,6 +858,9 @@ def _reproducibility_check_batch(
                 _message(f"[repro]   x  '{pid}' failed: {exc}")
                 err = str(exc)
                 res = {
+                    # named as the module, or the stored result is named by its position
+                    # ("module_1") and the error lost its check (#695)
+                    "module": "reproducibility_check",
                     "traffic_light": "error",
                     "summary_text": "Docker reproducibility check failed: "
                     + (err if err else "unknown error"),

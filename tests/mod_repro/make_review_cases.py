@@ -30,7 +30,8 @@ EXEC_PY = "execute=True, timeout=60, keep_sandbox=True"
 # in metacheck. These cases compare what the code produces, not where it ran, so the Python call
 # names the sandbox metacheck defaults to (R's call strings are left as they are).
 EXEC_PROCESS_PY = EXEC_PY + ', sandbox="process"'
-EXEC_IGNORE: list[str] = []
+# the version of the program and the host's language version name what ran the code (D153)
+EXEC_IGNORE: list[str] = ["environment.metacheck_version", "environment.host"]
 
 U = "upstream/metacheck/tests/testthat/fixtures/repro/"
 RV = "tests/mod_repro/fixtures/review/"
@@ -326,6 +327,7 @@ def main() -> None:
                         "tests.mod_repro.rv_helpers",
                     )
                 },
+                **({"compare": {"ignore": EXEC_IGNORE}} if r_args else {}),
             }
         )
 

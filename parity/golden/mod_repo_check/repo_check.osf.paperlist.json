@@ -252,14 +252,14 @@
           {
             "t": "dbl",
             "v": [
-              7000,
-              7000,
-              7000,
-              7000,
-              7000,
-              7000,
-              7000,
-              7000,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
               9271,
               9271,
               9271,
@@ -272,14 +272,14 @@
           {
             "t": "int",
             "v": [
-              4,
-              4,
-              4,
-              4,
-              4,
-              4,
-              4,
-              4,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
               7,
               7,
               7,
@@ -414,6 +414,7 @@
       {
         "t": "chr",
         "v": [
+          "#### Partly Listed Repositories\n\nThe OSF refused part of the listing of https://osf.io/629bx (8 files listed), also when asked again, so what this report says about its files describes only the part that was listed. Run the check again later.",
           "#### Whose Deposits",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://osf.io/j3gcx' target='_blank'>osf.io/j3gcx<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\", \"text\"), Whose = c(\"the authors', for this paper\", \n\"the authors', for this paper\", \"the authors', for this paper\"\n), Why = c(\"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\", \"a link in the main text, not shown to be anyone else's\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
@@ -434,7 +435,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 15 files in 3 repositories.\n-  We found 2 README files and 2 repositories without READMEs.\n-  We found 2 archive files."
+          "\n-  We listed only part of 1 OSF project, because the OSF refused part of the listing; run the check again.\n-  We found 15 files in 3 repositories.\n-  We found 2 README files and 2 repositories without READMEs.\n-  We found 2 archive files."
         ]
       },
       {
@@ -629,11 +630,16 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -678,24 +684,37 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "paper_a"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "https://osf.io/629bx"
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "refused by the OSF"
+            ]
           }
         ]
       },
@@ -885,6 +904,8 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
           "dep_org",
           "dep_related",
@@ -913,7 +934,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -986,6 +1008,22 @@
               "",
               "",
               "The raw data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
             ]
           },
           {
@@ -1235,6 +1273,14 @@
               false,
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              false
+            ]
           }
         ]
       },
@@ -1426,6 +1472,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.18",
+  "metacheck_version": "0.4.4.27",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

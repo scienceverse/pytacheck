@@ -213,6 +213,9 @@ def code_check(
     listing_partial = (
         get_prev_outputs("repo_check", "partial_repos") if local_path is None else None
     )
+    # repositories repo_check found but could not list (#501); named in the report with the ones
+    # above (metacheck #681)
+    listing_gated = get_prev_outputs("repo_check", "gated_repos") if local_path is None else None
     # the authors' own deposits in sequence and expression archives (#660)
     archive_deposits = (
         get_prev_outputs("repo_check", "archive_deposits") if local_path is None else None
@@ -242,6 +245,7 @@ def code_check(
                 skip_on_api_limit=skip_on_api_limit,
             )
         listing_partial = mo.get("partial_repos")
+        listing_gated = mo.get("gated_repos")
         archive_deposits = mo.get("archive_deposits")
         all_files = mo.table
         if all_files is None:
@@ -259,6 +263,15 @@ def code_check(
         _cap_report_partial(
             listing_partial, all_files["repo_url"].tolist() if "repo_url" in all_files else []
         )
+    # repositories listed only in part or not at all: the checks below do not see all their files,
+    # which the report and summary say (metacheck #681)
+    from metacheck.archives.download import _repos_not_listed_text
+
+    not_listed = _repos_not_listed_text(
+        listing_partial,
+        listing_gated,
+        all_files["repo_url"].tolist() if "repo_url" in all_files else [],
+    )
 
     def set_language(df: pd.DataFrame) -> pd.DataFrame:
         df["language"] = pd.Series(_file_name_languages(df), index=df.index, dtype="string")
@@ -342,10 +355,15 @@ def code_check(
 
         # paper = None (local files only) is one paper of unknown id
         pids: list[Any] = [None] if paper is None else list(paper_id(paper))
-        return {
+        out: dict[str, Any] = {
             "table": code_files,
-            "traffic_light": "na",
-            "summary_text": summary_code,
+            # yellow when a repository was not listed in full: its code may exist unseen (#681)
+            "traffic_light": "na" if not_listed["summary"] is None else "yellow",
+            "summary_text": (
+                summary_code
+                if not_listed["summary"] is None
+                else "".join(f"\n-  {x}" for x in (summary_code, not_listed["summary"]))
+            ),
             "summary_table": pd.DataFrame(
                 {
                     "paper_id": pd.Series(pids, dtype="string"),
@@ -354,6 +372,9 @@ def code_check(
             ),
             "na_replace": {"code_n": 0},
         }
+        if not_listed["report"] is not None:
+            out["report"] = not_listed["report"]
+        return out
 
     # download the code files the pre-pass could not classify yet
     if download is True and "file_url" in checked_files.columns:
@@ -546,7 +567,15 @@ def code_check(
         report_missingfiles = (
             f"The scripts load files, but {k} script{plural(k)} loaded {n_missing} "
             f"file{plural(n_missing)} that could not be automatically identified in the "
-            "repository. Check if the following files are made available, so that others can "
+            "repository."
+            # a file may be in a folder that was not listed (#681)
+            + (
+                ""
+                if not_listed["report"] is None
+                else " This may be because a repository was listed only in part or not at all (see "
+                "Repositories not listed in full above)."
+            )
+            + " Check if the following files are made available, so that others can "
             "reproduce your code, or that the files are missing:"
         )
         report_table_files_missing = _subtable(
@@ -658,6 +687,7 @@ def code_check(
     report = [
         _INTRO,
         *(failed_text["report"] or []),
+        *(not_listed["report"] or []),
         scroll_table(report_table, maxrows=5),
         "#### Code Comments",
         report_comments,
@@ -701,6 +731,10 @@ def code_check(
         tl = "green"
     else:
         tl = "yellow"
+    # at least yellow when a repository was listed only in part or not at all: files went
+    # unchecked, so neither "no issues" nor "nothing to check" holds (#681)
+    if not_listed["summary"] is not None and tl in ("na", "green"):
+        tl = "yellow"
 
     summary = summary_table(
         code_files,
@@ -724,6 +758,7 @@ def code_check(
         for s in (
             summary_code,
             *([failed_text["summary"]] if failed_text["summary"] else []),
+            *([not_listed["summary"]] if not_listed["summary"] else []),
             summary_comments,
             *([summary_setwd] if setwd_issues else []),
             *([summary_install_packages] if install_packages_issues else []),
