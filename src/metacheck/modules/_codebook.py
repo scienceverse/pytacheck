@@ -339,8 +339,14 @@ def codebook_file_tabset(tbl: pd.DataFrame) -> list[Any] | None:
     for i, f in enumerate(_vals(tbl, "source_file") or []):
         rows.setdefault(f, []).append(i)
     rest = [j for j, c in enumerate(tbl.columns) if c != "source_file"]
-    blocks: list[Any] = ["::: {.panel-tabset}"]
-    for f, idx in rows.items():
+    # at most `_report_file_tabs()` files, with a note when there are more (metacheck 0.4.4.19)
+    from metacheck.report.blocks import _report_file_tabs
+
+    shown, note = _report_file_tabs(list(rows))
+    blocks: list[Any] = [note] if note is not None else []
+    blocks.append("::: {.panel-tabset}")
+    for f in shown:
+        idx = rows[f]
         sub_tbl = tbl.iloc[idx, rest].reset_index(drop=True)
         blocks += [f"## {_pstr(f)}", scroll_table(sub_tbl, maxrows=25)]
     blocks.append(":::")

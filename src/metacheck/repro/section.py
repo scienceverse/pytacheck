@@ -33,13 +33,16 @@ from metacheck._values import as_int, is_missing, is_true
 from metacheck.codecheck.core import _code_name_match
 from metacheck.repro.core import _basename
 from metacheck.repro.outcomes import (
+    _REPRO_CHECK_GROUPS,
     _REPRO_NOT_OWN_OUTCOMES,
+    _repro_check_group,
     _repro_error_line,
     _repro_failure_reason,
     _repro_internet_text,
     _repro_memory_limit_text,
     _repro_missing_program,
     _repro_out_of_memory,
+    _repro_platform_of,
     _repro_unopened_files,
 )
 from metacheck.repro.software import _repro_not_analysis_why
@@ -68,18 +71,6 @@ _PKG_PAT = (
     f"[Tt]he package {_Q1}([^'\"`\u2019]+){_Q2} (?:\\([^)]*\\) )?is required|"
     f"requires the {_Q1}([^'\"`\u2019]+){_Q2} package"
 )
-
-#: What happened to the scripts of the groups of the headline.
-_HEADLINE_GROUPS = {
-    "errored": "stopped with an error",
-    "timed_out": "ran out of time",
-    "dependency_unavailable": "could not run on our server",
-    "docker_failed": "could not run on our server",
-    "needs_a_person": "needed a person",
-    "needs_internet": "needed the internet",
-    "out_of_memory": "ran out of memory",
-    "download_too_large": "downloaded too much",
-}
 
 
 def _strs(df: pd.DataFrame | None, name: str, n: int) -> list[str | None]:
@@ -414,7 +405,8 @@ def _repro_advice(
         ):
             if not is_true(ok):
                 category.setdefault(pk, cat if "category" in install_results.columns else None)
-    dep = rows_where(lambda i: outcome[i] == "dependency_unavailable")
+    # not a module that exists only on one platform (see the block "platform")
+    dep = rows_where(lambda i: outcome[i] == "dependency_unavailable" and reason[i] != "platform")
     if dep:
         dp = [pkg_of(msg[i]) for i in dep]
         pkgs = list(dict.fromkeys(p for p in dp if p is not None))
@@ -544,6 +536,48 @@ def _repro_advice(
         [_code(name[i]) for i in windows],
         ["Export the tables to CSV files, add them to the deposit, and read those instead."],
     )
+    # a module that exists only on one platform (#580)
+    platform = rows_where(
+        lambda i: reason[i] == "platform" and outcome[i] in ("errored", "dependency_unavailable")
+    )
+    block(
+        "platform",
+        platform,
+        "A script runs only on one platform.",
+        [f"{_code(name[i])} needs {_repro_platform_of([msg[i]])[0]}." for i in platform],
+        [
+            "We could not check these scripts, because the computer we run the code on is not "
+            "that platform. Say in the README which platform the code needs. Where you can, let "
+            "the analysis also run without it, for example by reading the data from files in "
+            "the deposit."
+        ],
+    )
+    # code recovered from a knitted report whose source is not deposited (#648, K8a)
+    from_report = rows_where(lambda i: err[i] and reason[i] == "from_report")
+    block(
+        "from_report",
+        from_report,
+        "A script's code was taken from a knitted report, as its source is not in the deposit.",
+        [_code(name[i]) for i in from_report],
+        [
+            "A knitted report (.html) shows only the code chunks it was set to show, so code is "
+            "missing from it, and we could not check the analysis. Add the R Markdown or Quarto "
+            "file the report was knitted from to the deposit."
+        ],
+    )
+    # a file of a package of the code, run on its own (#580)
+    module = rows_where(lambda i: err[i] and reason[i] == "how_to_run")
+    block(
+        "module",
+        module,
+        "A script is part of a package of your code, and Python cannot run it on its own.",
+        [_code(name[i]) for i in module],
+        [
+            "It imports other files of its package with <code>from .</code>, which works only "
+            "when it is started as a module, as <code>python -m package.module</code> from the "
+            "folder above the package. Put the command that starts it in the README."
+        ],
+    )
 
     # What the code itself does.
     undefined = not_covered(rows_where(lambda i: err[i] and reason[i] == "undefined"))
@@ -555,14 +589,19 @@ def _repro_advice(
             key[i],
         )
         objects.append(next((g for g in hit[1:] if g), None))
+    # The steps in the language of the scripts: Python notebooks were told to restart R and
+    # use library() (#648, K2c)
+    und_lines = [
+        _code(name[i]) if o is None else f"{_code(name[i])}: {_code(o)}"
+        for i, o in zip(undefined, objects, strict=True)
+    ]
+    und_r = [k for k, i in enumerate(undefined) if not is_py[i]]
+    und_py = [k for k, i in enumerate(undefined) if is_py[i]]
     block(
         "undefined",
-        undefined,
+        [undefined[k] for k in und_r],
         "A script uses something it does not create or load itself.",
-        [
-            _code(name[i]) if o is None else f"{_code(name[i])}: {_code(o)}"
-            for i, o in zip(undefined, objects, strict=True)
-        ],
+        [und_lines[k] for k in und_r],
         [
             "Usually the object was still in your R session from earlier work, or another script made it."
         ],
@@ -572,6 +611,24 @@ def _repro_advice(
             "If a script needs results of another, save them to a file in the first script "
             "and read them in the second.",
             "Load every package with <code>library()</code> at the top.",
+        ],
+    )
+    block(
+        "undefined_py",
+        [undefined[k] for k in und_py],
+        "A Python script or notebook uses something it does not create or import itself.",
+        [und_lines[k] for k in und_py],
+        [
+            "Usually the name was still defined in your Python session or notebook kernel from "
+            "earlier work, or another script made it."
+        ],
+        [
+            "Restart the kernel and run every cell from the top (in Jupyter: Kernel > Restart & "
+            "Run All), or run the script in a new Python session.",
+            "Fix what is missing.",
+            "If a script needs results of another, save them to a file in the first script "
+            "and read them in the second.",
+            "Import every module at the top with <code>import</code>.",
         ],
     )
     syntax = rows_where(
@@ -683,12 +740,16 @@ def _repro_advice(
         "env",
         "keys",
         "windows",
+        "platform",
+        "from_report",
         "undefined",
+        "undefined_py",
         "syntax",
         "slow",
         "memory",
         "online",
         "person",
+        "module",
         "unknown",
     )
     return [blocks[k] for k in order if k in blocks], sorted(covered)
@@ -711,8 +772,13 @@ def _repro_script_result(
     input_reason: Callable[[str], str],
     memory_gb: float | None,
     error_message: str | None = None,
+    platform: str | None = None,
 ) -> tuple[str, str]:
-    """What happened to one script, as the *Result* and *What happened* cells."""
+    """What happened to one script, as the *Result* and *What happened* cells.
+
+    *platform* is the platform a Python module that exists only there belongs to (see
+    :func:`~metacheck.repro.outcomes._repro_platform_of`), for a script that needs one.
+    """
     error = error or ""
     match oc:
         case "ran_ok":
@@ -751,6 +817,11 @@ def _repro_script_result(
             )
             return "Stopped", f"It downloaded more than our limits allow{stopped}."
         case "dependency_unavailable":
+            if platform is not None:
+                return "Could not be checked", (
+                    f"It needs {platform}, which our computer is not. "
+                    "This is not an error in the script."
+                )
             if pkg in source_unknown:
                 why = (
                     "is not on CRAN or Bioconductor, and the code does not say where it comes from"
@@ -948,6 +1019,7 @@ def _repro_checklist_section(
             input_reason=input_reason,
             memory_gb=memory_gb,
             error_message=error_message[i],
+            platform=_repro_platform_of([f"{error[i] or ''} {stderr[i] or ''}"])[0],
         )
         rows.append(f"| {_repro_cell(name[i])} | {result} | {happened} |")
 
@@ -991,19 +1063,70 @@ def _repro_checklist_section(
             f"other links in the paper lead to, {plural(n_dup, 'was', 'were')} not run again."
         )
 
-    # the headline: how many ran to the end, and what happened to the others
-    counted_outcomes = [o for o, c in zip(oc, counted, strict=True) if c]
-    n_counted = len(counted_outcomes)
-    n_ok = sum(o == "ran_ok" for o in counted_outcomes)
-    by_label: dict[str, int] = {}
-    for group, label in _HEADLINE_GROUPS.items():
-        k = sum(o == group for o in counted_outcomes)
-        if k:
-            by_label[label] = by_label.get(label, 0) + k
-    parts = [f"{k:d} {label}" for label, k in by_label.items()]
-    n_not_run = n_counted - n_ok - sum(o in _HEADLINE_GROUPS for o in counted_outcomes)
+    # the headline: how many ran to the end, and for the others whether they did not
+    # reproduce, lacked a package or program, ran out of time, or could not be checked
+    # automatically (#580; see _repro_check_group())
+    msg = [f"{e or ''} {s or ''}" for e, s in zip(error, stderr, strict=True)]
+    given = _strs(rr, "reason", n)
+    reason = given if any(r is not None for r in given) else _repro_failure_reason(outcome, msg)
+    if "checked" in rr.columns:
+        group = _strs(rr, "checked", n)
+    else:
+        group = _repro_check_group(outcome, reason, msg)
+    group = [None if o is None else g for o, g in zip(rr_outcome, group, strict=True)]
+    n_counted = sum(counted)
+    n_ok = sum(c and g == "ran" for c, g in zip(counted, group, strict=True))
+
+    def n_of(g: str) -> int:
+        return sum(c and x == g for c, x in zip(counted, group, strict=True))
+
+    # what kept the scripts that could not be checked from being checked
+    oom = _repro_out_of_memory(msg)
+    platform_of = _repro_platform_of(msg)
+
+    def why_of(i: int) -> str:
+        if oc[i] == "needs_a_person" or reason[i] == "interactive":
+            return "needed a person"
+        if oc[i] == "needs_internet" or reason[i] == "internet":
+            return "needed the internet"
+        if oc[i] == "out_of_memory" or oom[i]:
+            return "needed more memory than our limit"
+        if oc[i] == "download_too_large" or reason[i] == "download":
+            return "downloaded more than our limit"
+        if reason[i] == "settings":
+            return "needed a key or a setting of your computer"
+        if reason[i] == "platform":
+            return f"needed {platform_of[i]}"
+        if reason[i] == "how_to_run":
+            return "needed to be started as part of its package"
+        if reason[i] == "from_report":
+            return "was taken from a knitted report, which leaves out code"
+        return "needed something our computer does not have, such as a screen"
+
+    why_n: dict[str, int] = {}
+    for i in range(n):
+        if counted[i] and group[i] == "not_checkable":
+            why_n[why_of(i)] = why_n.get(why_of(i), 0) + 1
+    parts = []
+    if n_of("code_error"):
+        parts.append(f"{n_of('code_error'):d} did not reproduce")
+    if n_of("dependency"):
+        parts.append(
+            f"{n_of('dependency'):d} could not run because a package or program was not available"
+        )
+    if n_of("time"):
+        parts.append(f"{n_of('time'):d} did not finish within our time limit")
+    if n_of("not_checkable"):
+        detail = ", ".join(f"{k:d} {w}" for w, k in why_n.items())
+        parts.append(f"{n_of('not_checkable'):d} could not be checked automatically ({detail})")
+    n_docker = sum(c and o == "docker_failed" for c, o in zip(counted, oc, strict=True))
+    n_not_run = n_counted - n_ok - sum(n_of(g) for g in _REPRO_CHECK_GROUPS[1:]) - n_docker
+    if n_docker:
+        parts.append(f"{n_docker:d} could not be run because Docker failed")
     if n_not_run:
         parts.append(f"{n_not_run:d} {plural(n_not_run, 'was', 'were')} not run")
+    if len(parts) > 1:
+        parts = [*parts[:-1], f"and {parts[-1]}"]
     headline = (
         f"**{n_ok:d} of {n_counted:d} script{plural(n_counted)} ran to the end**"
         + (": " + ", ".join(parts) if parts else "")
@@ -1023,9 +1146,13 @@ def _repro_checklist_section(
         if (as_int(value) or 0) > 0:
             fun = "os.chdir()" if is_py[i] else "setwd()"
             problems.append(
-                f"- {_repro_cell(name[i])} calls {fun}, which ties the script to a folder on the "
-                "author's computer. We replaced the call with one that does nothing so the "
-                "script could run; it should be removed from the script."
+                # Not every such call names a folder on the author's computer:
+                # setwd(here::here("S3", "data")) and a folder next to the script work
+                # anywhere, and were called so (#648, 7 of 132 preprints)
+                f"- {_repro_cell(name[i])} calls {fun}, which sets the folder the script runs in. "
+                "We replaced the call with one that does nothing, so the script ran from the "
+                "top folder of the project. A folder on your own computer does not exist on "
+                "another; paths written from the project's top folder work everywhere."
             )
     # file names spelled otherwise in the code than in the deposit
     for i, fixed in enumerate(_strs(tbl, "names_corrected", n)):
@@ -1055,7 +1182,8 @@ def _repro_checklist_section(
             f"Of the {int(n_tests):d} statistical test{plural(n_tests)} reported in the paper, "
             f"{found:d} {plural(found, 'was', 'were')} found in the output of the code."
             + (
-                " No script ran to the end, so most results were never produced."
+                " No script ran to the end, so the results the scripts would have printed after "
+                "the point where they stopped are missing from the comparison."
                 if n_ok == 0
                 else ""
             )

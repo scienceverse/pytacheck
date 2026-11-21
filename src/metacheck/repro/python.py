@@ -19,6 +19,7 @@ statistics a script prints from its output instead.
 from __future__ import annotations
 
 import ast
+import datetime
 import os
 import re
 import shutil
@@ -549,6 +550,8 @@ def repro_run_scripts_py(
 
     bar = pb(len(ordered), ":what [:bar] :current/:total")
     rows: list[dict[str, Any]] = []
+    # each script's start, end and exit status (see metacheck.repro.provenance)
+    clocks: dict[str, dict[str, Any]] = {}
     try:
         bar.tick(0, {"what": ""})
         for fn in ordered:
@@ -588,6 +591,7 @@ def repro_run_scripts_py(
                 out_file = os.path.join(tmp, "out.txt")
                 err_file = os.path.join(tmp, "err.txt")
                 t0 = time.monotonic()
+                clock = clocks[fn] = {"started": datetime.datetime.now(datetime.UTC)}
                 returncode: int | None = None
                 condition: str | None = None
                 is_timeout = False
@@ -609,6 +613,8 @@ def repro_run_scripts_py(
                     except OSError as exc:
                         condition = str(exc)
                 elapsed = time.monotonic() - t0
+                clock["ended"] = datetime.datetime.now(datetime.UTC)
+                clock["status"] = returncode
                 so, se = str(trimws(_read_cap(out_file))), str(trimws(_read_cap(err_file)))
             secs = as_character(round(elapsed, 1))
             if condition is not None:
@@ -643,7 +649,7 @@ def repro_run_scripts_py(
             )
     finally:
         bar.terminate()
-    return _run_frame(rows)
+    return _run_frame(rows, clocks)
 
 
 # ---------------------------------------------------------------------------

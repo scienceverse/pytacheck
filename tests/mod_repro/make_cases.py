@@ -465,6 +465,29 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "structure": DATA,
         "plan": PLAN,
     },
+    # 0.4.4.18 (#580, #648): the five groups of "checked", the key a script needs, a call that needs a
+    # screen, a module of another platform, a file of a package run on its own
+    "exec_groups": {
+        "code": code(
+            r("ok.R"),
+            r("errors.R"),
+            r("keyed.R", S + "keyed.R"),
+            r("screen.R", S + "screen.R"),
+            r("needs_stringr.R", S + "needs_stringr.R"),
+        ),
+        "structure": DATA,
+        "plan": PLAN,
+    },
+    "exec_groups_py": {
+        "code": code(
+            r("ok.py", language="Python"),
+            r("errors.py", language="Python"),
+            r("colab.py", S + "py/colab.py", language="Python"),
+            r("relative.py", S + "py/relative.py", language="Python"),
+        ),
+        "structure": DATA,
+        "plan": PLAN,
+    },
     # total_timeout runs out during the first script: it is stopped, the second not started
     "exec_total_timeout": {
         "code": code(r("sleep.R", S + "sleep.R"), r("sleep_b.R", S + "sleep_b.R")),
@@ -473,7 +496,9 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     },
 }
 
-EXEC_IGNORE: list[str] = []
+# What names the machine and the program that ran the code, and so differs by design (D153):
+# the version of the program, and the host's language version.
+EXEC_IGNORE: list[str] = ["environment.metacheck_version", "environment.host"]
 
 # (case id, scenario, R args, Python args, extra case keys)
 CASES: list[tuple[str, str, str, str, dict[str, Any]]] = []
@@ -539,6 +564,7 @@ for name in SCENARIOS:
             f"{EXEC}, {r_extra}",
             f"{EXEC_PY}, {py_extra}",
             mocked=True,
+            compare={"ignore": EXEC_IGNORE},
         )
         continue
     if name == "exec_timeout":
@@ -562,7 +588,16 @@ for name in SCENARIOS:
             compare={"ignore": [*EXEC_IGNORE, "run_results.stdout", "run_results.stderr"]},
         )
         continue
-    add(f"reproducibility_check.{name}", name, EXEC, EXEC_PY + PROCESS_PY)
+    add(
+        f"reproducibility_check.{name}",
+        name,
+        EXEC,
+        EXEC_PY + PROCESS_PY,
+        # the PDFs the scripts draw hold the time they were made: their hashes differ per run
+        compare={
+            "ignore": [*EXEC_IGNORE, *(["artifacts.sha256"] if name == "exec_groups" else [])]
+        },
+    )
 # execution without keeping the sandbox: the throwaway root is removed (element absent)
 add(
     "reproducibility_check.exec_ok_no_keep",

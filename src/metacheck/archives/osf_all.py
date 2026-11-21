@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import contextlib
 import os
-import zipfile
 from typing import Any
 
 import pandas as pd
@@ -211,6 +210,7 @@ def _osf_download_all(
     from metacheck.archives import _message, _tick
     from metacheck.archives.osf import _cap_helpers, _normalize, _stream_to_file
     from metacheck.archives.osf_metadata import _osf_metadata_download
+    from metacheck.archives.zip_peek import _unzip_all, _unzip_failed_note
     from metacheck.utils import path_sanitize
 
     _cap_report, cap_size_str, _cap_num = _cap_helpers()
@@ -241,14 +241,24 @@ def _osf_download_all(
             ok = False
 
         if ok and os.path.exists(zip_path) and os.path.getsize(zip_path) > 0:
-            try:
-                with zipfile.ZipFile(zip_path) as zf:
-                    entries = zf.namelist()
-                    if entries:
-                        os.makedirs(node_dir, exist_ok=True)
-                        zf.extractall(node_dir)
-            except (zipfile.BadZipFile, OSError):
-                pass
+            # An empty archive is 22 bytes (a zip with no entries), which a node with no
+            # osfstorage files legitimately returns. The OSF stores a name with an accented
+            # letter in the old DOS characters (CP437), on which a whole-zip utils::unzip()
+            # stopped on Windows, after writing no file at all; the node was reported as
+            # downloaded with none of its files (#680, osf.io/9gju4). _unzip_all() takes such a
+            # member out, and names any member it cannot unpack.
+            unpacked = _unzip_all(zip_path, node_dir)
+            if unpacked is None:
+                # anything that cannot be opened and is not an empty archive is not a zip, and
+                # the download failed
+                with open(zip_path, "rb") as fh:
+                    empty = fh.read(4) == b"PK\x05\x06"
+                if not empty:
+                    ok = False
+            elif len(unpacked) > 0:
+                note = _unzip_failed_note(unpacked, f"{node}.zip")
+                if note is not None:
+                    warnings.warn(f"{node}: {note}", stacklevel=2)
         if os.path.exists(zip_path):
             os.remove(zip_path)
 

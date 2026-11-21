@@ -1339,3 +1339,369 @@
       - "Yo creo que la tarea fue larga pero nosotros pudimos terminar a tiempo"
       - "Io penso che il compito fosse lungo ma noi abbiamo finito in tempo comunque"
       - "The study took more than an hour and the instructions were rather unclear"
+- "id": "data_check_pii_name.sync04418.phone_device"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "phone"
+    "x":
+      "$expr":
+        "r": "c(\"iPhone\", \"Android\")"
+        "py": "[\"iPhone\", \"Android\"]"
+- "id": "data_check_pii_name.sync04418.phone_numbers"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "phone"
+    "x":
+      "$expr":
+        "r": "c(\"+31 6 12345678\", \"06-87654321\")"
+        "py": "[\"+31 6 12345678\", \"06-87654321\"]"
+- "id": "data_check_pii_name.sync04418.phone_short"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "phone"
+    "x":
+      "$expr":
+        "r": "c(\"12345\", \"6789\")"
+        "py": "[\"12345\", \"6789\"]"
+- "id": "data_check_pii_name.sync04418.ward_ip"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "hosp_ward_IP"
+    "x":
+      "$expr":
+        "r": "c(3, 5, 0)"
+        "py": "[3.0, 5.0, 0.0]"
+- "id": "data_check_pii_name.sync04418.ip_values"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "ip_address"
+    "x":
+      "$expr":
+        "r": "c(\"192.168.0.1\", \"10.0.0.2\")"
+        "py": "[\"192.168.0.1\", \"10.0.0.2\"]"
+- "id": "data_check_pii_name.sync04418.ip_v6"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "ipaddress"
+    "x":
+      "$expr":
+        "r": "c(\"2001:db8::1\", \"fe80::1\")"
+        "py": "[\"2001:db8::1\", \"fe80::1\"]"
+- "id": "data_check_pii_name.sync04418.mac_values"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "mac"
+    "x":
+      "$expr":
+        "r": "c(\"00:1A:2B:3C:4D:5E\")"
+        "py": "[\"00:1A:2B:3C:4D:5E\"]"
+- "id": "data_check_pii_name.sync04418.mac_word"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "mac"
+    "x":
+      "$expr":
+        "r": "c(\"Apple\", \"Dell\")"
+        "py": "[\"Apple\", \"Dell\"]"
+- "id": "data_check_pii_name.sync04418.siphy"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "SiPhy_29way_logOdds"
+    "x":
+      "$expr":
+        "r": "c(1.2, 3.4)"
+        "py": "[1.2, 3.4]"
+- "id": "data_check_pii_name.sync04418.hla_dob"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "HLA-DOB"
+    "x":
+      "$expr":
+        "r": "c(\"DOB*01:01\", \"DOB*01:02\")"
+        "py": "[\"DOB*01:01\", \"DOB*01:02\"]"
+- "id": "data_check_pii_name.sync04418.hla_dob_numbers"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "HLA-DOB"
+    "x":
+      "$expr":
+        "r": "c(1985.34, 2001.7, 12.5)"
+        "py": "[1985.34, 2001.7, 12.5]"
+- "id": "data_check_pii_name.sync04418.dob_iso"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "dob"
+    "x":
+      "$expr":
+        "r": "c(\"1985-03-12\", \"1990-11-02\")"
+        "py": "[\"1985-03-12\", \"1990-11-02\"]"
+- "id": "data_check_pii_name.sync04418.birthyear"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "birthyear"
+    "x":
+      "$expr":
+        "r": "c(1985, 1990)"
+        "py": "[1985.0, 1990.0]"
+- "id": "data_check_pii_name.sync04418.dob_text_month"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "dob"
+    "x":
+      "$expr":
+        "r": "c(\"15-Mar-1985\")"
+        "py": "[\"15-Mar-1985\"]"
+- "id": "data_check_pii_name.sync04418.dob_long_month"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "dob"
+    "x":
+      "$expr":
+        "r": "c(\"March 15, 1985\")"
+        "py": "[\"March 15, 1985\"]"
+- "id": "data_check_pii_name.sync04418.dob_eight_digits"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "dob"
+    "x":
+      "$expr":
+        "r": "c(\"19850315\")"
+        "py": "[\"19850315\"]"
+- "id": "data_check_pii_name.sync04418.dob_short_year"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "dob"
+    "x":
+      "$expr":
+        "r": "c(\"15 Mar 85\")"
+        "py": "[\"15 Mar 85\"]"
+- "id": "data_check_pii_name.sync04418.dob_dots"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "dob"
+    "x":
+      "$expr":
+        "r": "c(\"12.03.1985\")"
+        "py": "[\"12.03.1985\"]"
+- "id": "data_check_pii_name.sync04418.dob_dutch_month"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "dob"
+    "x":
+      "$expr":
+        "r": "c(\"15 mei 1985\")"
+        "py": "[\"15 mei 1985\"]"
+- "id": "data_check_pii_name.sync04418.dob_date_column"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "date_of_birth"
+    "x":
+      "$expr":
+        "r": "as.Date(c(\"1985-03-12\", \"1990-11-02\"))"
+        "py": "pd.Series(pd.to_datetime(['1985-03-12', '1990-11-02']))"
+- "id": "data_check_pii_name.sync04418.village"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "GEO_LOCATION_VILLAGE"
+    "x":
+      "$expr":
+        "r": "c(\"Kibera\", \"Mathare\")"
+        "py": "[\"Kibera\", \"Mathare\"]"
+- "id": "data_check_pii_name.sync04418.first_name"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "first_name"
+    "x":
+      "$expr":
+        "r": "c(\"Anna\", \"Ben\")"
+        "py": "[\"Anna\", \"Ben\"]"
+- "id": "data_check_pii_name.sync04418.lat_left_to_geo"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "latitude"
+    "x":
+      "$expr":
+        "r": "c(\"52.1\", \"52.2\")"
+        "py": "[\"52.1\", \"52.2\"]"
+- "id": "data_check_pii_name.sync04418.no_values"
+  "r": "data_check_pii_name"
+  "py": "metacheck.datacheck.checks.data_check_pii_name"
+  "args":
+    "col_name": "phone"
+- "id": "data_check_pii_values.sync04418.time_after_date"
+  "r": "data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "rep(\"06.04.2026 15.34.46.182\", 5)"
+        "py": "[\"06.04.2026 15.34.46.182\"] * 5"
+- "id": "data_check_pii_values.sync04418.user_agent"
+  "r": "data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "rep(\"Mozilla/5.0 AppleWebKit/537.36 Chrome/84.0.4147.89\", 3)"
+        "py": "[\"Mozilla/5.0 AppleWebKit/537.36 Chrome/84.0.4147.89\"] * 3"
+- "id": "data_check_pii_values.sync04418.chrome_version"
+  "r": "data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "rep(\"Chrome 131.0.0.0\", 4)"
+        "py": "[\"Chrome 131.0.0.0\"] * 4"
+- "id": "data_check_pii_values.sync04418.longer_run"
+  "r": "data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "rep(\"1.2.3.4.5\", 4)"
+        "py": "[\"1.2.3.4.5\"] * 4"
+- "id": "data_check_pii_values.sync04418.real_ips"
+  "r": "data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(\"192.168.0.1\", \"10.0.0.2\", \"10.0.0.3\")"
+        "py": "[\"192.168.0.1\", \"10.0.0.2\", \"10.0.0.3\"]"
+- "id": "data_check_pii_values.sync04418.ip_beside_version"
+  "r": "data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "rep(\"Chrome/84.0.4147.89 via 10.1.2.3\", 3)"
+        "py": "[\"Chrome/84.0.4147.89 via 10.1.2.3\"] * 3"
+- "id": "data_check_pii_values.sync04418.mostly_versions"
+  "r": "data_check_pii_values"
+  "py": "metacheck.datacheck.checks.data_check_pii_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(rep(\"Chrome 131.0.0.0\", 4), \"10.0.0.2\")"
+        "py": "[\"Chrome 131.0.0.0\"] * 4 + [\"10.0.0.2\"]"
+- "id": "pii_ip_ok.sync04418.time"
+  "r": ".pii_ip_ok"
+  "py": "metacheck.datacheck.checks._pii_ip_ok"
+  "args":
+    "value": "06.04.2026 15.34.46.182"
+- "id": "pii_ip_ok.sync04418.chrome"
+  "r": ".pii_ip_ok"
+  "py": "metacheck.datacheck.checks._pii_ip_ok"
+  "args":
+    "value": "Chrome 131.0.0.0"
+- "id": "pii_ip_ok.sync04418.run"
+  "r": ".pii_ip_ok"
+  "py": "metacheck.datacheck.checks._pii_ip_ok"
+  "args":
+    "value": "1.2.3.4.5"
+- "id": "pii_ip_ok.sync04418.plain"
+  "r": ".pii_ip_ok"
+  "py": "metacheck.datacheck.checks._pii_ip_ok"
+  "args":
+    "value": "from 10.0.0.2 today"
+- "id": "pii_ip_ok.sync04418.none"
+  "r": ".pii_ip_ok"
+  "py": "metacheck.datacheck.checks._pii_ip_ok"
+  "args":
+    "value": "no address here"
+- "id": "pii_token_shape.sync04418.tokens"
+  "r": ".pii_token_shape"
+  "py": "metacheck.datacheck.checks._pii_token_shape"
+  "args":
+    "token":
+      "$chr":
+      - "phone"
+      - "mobilenumber"
+      - "telefoon"
+      - "ip"
+      - "ipaddress"
+      - "mac"
+      - "dob"
+      - "birthyear"
+      - "geboortedatum"
+      - "latitude"
+      - "gps"
+      - "firstname"
+      - "email"
+- "id": "pii_values_have_shape.sync04418.phone"
+  "r": ".pii_values_have_shape"
+  "py": "metacheck.datacheck.checks._pii_values_have_shape"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(\"+31 6 12345678\", \"x\")"
+        "py": "[\"+31 6 12345678\", \"x\"]"
+    "shape": "phone"
+- "id": "pii_values_have_shape.sync04418.phone_long"
+  "r": ".pii_values_have_shape"
+  "py": "metacheck.datacheck.checks._pii_values_have_shape"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(\"1234567890123456\")"
+        "py": "[\"1234567890123456\"]"
+    "shape": "phone"
+- "id": "pii_values_have_shape.sync04418.geo"
+  "r": ".pii_values_have_shape"
+  "py": "metacheck.datacheck.checks._pii_values_have_shape"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(\"52.1\", \"4.3\")"
+        "py": "[\"52.1\", \"4.3\"]"
+    "shape": "geo"
+- "id": "pii_values_have_shape.sync04418.birth_year_in_text"
+  "r": ".pii_values_have_shape"
+  "py": "metacheck.datacheck.checks._pii_values_have_shape"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(\"born 1985\")"
+        "py": "[\"born 1985\"]"
+    "shape": "birth"
+- "id": "pii_values_have_shape.sync04418.birth_decimals"
+  "r": ".pii_values_have_shape"
+  "py": "metacheck.datacheck.checks._pii_values_have_shape"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(1985.34, 12.5)"
+        "py": "[1985.34, 12.5]"
+    "shape": "birth"
+- "id": "pii_values_have_shape.sync04418.birth_empty"
+  "r": ".pii_values_have_shape"
+  "py": "metacheck.datacheck.checks._pii_values_have_shape"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(\"\", NA)"
+        "py": "[\"\", None]"
+    "shape": "birth"

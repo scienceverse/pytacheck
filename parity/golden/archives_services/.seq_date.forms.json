@@ -1,0 +1,17 @@
+{
+  "id": ".seq_date.forms",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "2024-09-24",
+      "2024-09-24",
+      null,
+      "2020-05-03"
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

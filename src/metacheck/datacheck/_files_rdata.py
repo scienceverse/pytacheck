@@ -752,6 +752,42 @@ def _attrs_after_subset(attrs: dict[str, Any], classes: list[str], vctrs: bool) 
     return {}
 
 
+# The classes of a column that data_check reads as they are: base R's factors, dates and
+# times, and haven's labelled values (with the classes these build on).
+_PLAIN_COLUMN_CLASSES = frozenset({
+    "factor", "ordered", "Date", "POSIXct", "POSIXt", "difftime", "hms",
+    "haven_labelled", "haven_labelled_spss", "labelled", "vctrs_vctr",
+    "double", "integer", "character", "logical", "numeric",
+})  # fmt: skip
+
+
+def _plain_column_attrs(kept: dict[str, Any], classes: list[str]) -> dict[str, Any]:
+    """The attributes of a column of an .rds or .RData table as plain values (``.plain_column()``).
+
+    A table from such a file can hold a table made by any R package, with that package's classes
+    still attached (loo's model comparison, a data.table date column, a marginaleffects table
+    carrying its fitted model: PsyArXiv nm3wd_v1, v2x3b_v4, c3skb_v4), and what data_check does
+    later acts on those classes. A column without a class, or with only classes of
+    ``_PLAIN_COLUMN_CLASSES``, keeps its attributes. A date or time of another package's class
+    becomes R's own (data.table's ``IDate`` a ``Date``), a factor keeps its levels, and any other
+    column becomes its plain values; the column's label is kept (metacheck 0.4.4.15).
+    """
+    if not classes or all(c in _PLAIN_COLUMN_CLASSES for c in classes):
+        return kept
+    out: dict[str, Any] = {}
+    if "POSIXct" in classes or "POSIXlt" in classes:
+        out["class"] = ["POSIXct", "POSIXt"]
+        if "tzone" in kept:
+            out["tzone"] = kept["tzone"]
+    elif "Date" in classes:
+        out["class"] = ["Date"]
+    elif "factor" in classes:
+        out["class"] = ["ordered", "factor"] if "ordered" in classes else ["factor"]
+    if "label" in kept:
+        out["label"] = kept["label"]
+    return out
+
+
 def _is_flattened(col: RObject) -> bool:
     """Columns ``.utf8_repair_df()`` renders as text (data frames, matrices, lists)."""
     if col.type in (VECSXP, EXPRSXP):
@@ -1058,7 +1094,11 @@ def _plain_s4_columns(cols: list[Any], names: list[str | None], n: int) -> dict[
 
 
 def r_frame_to_pandas(
-    df: RObject, n_rows: float = math.inf, subset: bool = True, vctrs: bool = True
+    df: RObject,
+    n_rows: float = math.inf,
+    subset: bool = True,
+    vctrs: bool = True,
+    plain: bool = False,
 ) -> pd.DataFrame:
     """Convert a deserialized data frame to pandas (``head(df, n_rows)``).
 
@@ -1066,7 +1106,9 @@ def r_frame_to_pandas(
     are kept in ``attrs["col_attrs"]``. With *subset* the columns go through
     ``head()``'s ``[`` as in R, which drops the attributes of classes without a
     ``[`` method (see :func:`_attrs_after_subset`); *vctrs* says whether the
-    vctrs methods are available. Data-frame, matrix and list columns are
+    vctrs methods are available. With *plain* the table is a plain data frame as
+    ``.plain_table()`` makes of a table from an .rds or .RData file: a column of another
+    package's class loses it (see :func:`_plain_column_attrs`). Data-frame, matrix and list columns are
     flattened to text (as ``.utf8_repair_df()`` does) and keep no attributes.
     """
     n = _nrow(df)
@@ -1089,6 +1131,8 @@ def r_frame_to_pandas(
             if subset:
                 kept = _attrs_after_subset(kept, col.classes, vctrs)
             kept.pop("levels", None)
+            if plain:
+                kept = _plain_column_attrs(kept, col.classes)
             per.append(kept)
         else:
             per.append(None)

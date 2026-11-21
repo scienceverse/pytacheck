@@ -271,8 +271,8 @@ def run_missing(
     """Run an upstream module whose output the chain does not carry (R ``run_missing()``).
 
     ``model``/``params`` go only to ``data_check`` and ``psychds_check``,
-    ``cache``/``skip_on_api_limit`` to all three, the download arguments only
-    to ``data_check``; LLM use is switched off for the call (this module never
+    ``cache``/``skip_on_api_limit`` to all three, the size limits to ``data_check`` and
+    ``code_check``, the other download arguments only to ``data_check``; LLM use is switched off for the call (this module never
     uses the LLM-refined results) and restored afterwards.
     """
     from metacheck.llm.core import llm_model, llm_use
@@ -287,14 +287,12 @@ def run_missing(
     if mod in ("data_check", "code_check", "psychds_check"):
         args["cache"] = cache
         args["skip_on_api_limit"] = skip_on_api_limit
+    # The size limits go to code_check too: it used its own defaults whatever this module was
+    # given (#699).
+    if mod in ("data_check", "code_check"):
+        args.update(max_file_size=max_file_size, max_download_size=max_download_size)
     if mod == "data_check":
-        args.update(
-            download=download,
-            skip_types=skip_types,
-            peek_zips=peek_zips,
-            max_file_size=max_file_size,
-            max_download_size=max_download_size,
-        )
+        args.update(download=download, skip_types=skip_types, peek_zips=peek_zips)
     prev_llm_use = llm_use()
     llm_use(False)
     try:
@@ -858,6 +856,9 @@ def _reproducibility_check_batch(
                 _message(f"[repro]   x  '{pid}' failed: {exc}")
                 err = str(exc)
                 res = {
+                    # named as the module, or the stored result is named by its position
+                    # ("module_1") and the error lost its check (#695)
+                    "module": "reproducibility_check",
                     "traffic_light": "error",
                     "summary_text": "Docker reproducibility check failed: "
                     + (err if err else "unknown error"),

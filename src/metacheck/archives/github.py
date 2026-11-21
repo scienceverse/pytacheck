@@ -228,6 +228,23 @@ def _url_encode(url: str, reserved: bool = False) -> str:
     return url_encode(url, reserved=reserved)
 
 
+def _url_encode_paths(paths: list[str]) -> list[str]:
+    """Each part of a file's path encoded (``utils::URLencode(reserved = TRUE)``), the slashes kept.
+
+    A space, ``#``, ``?``, ``%`` or ``+`` in a folder or file name would otherwise
+    make an address the host refuses; ``path`` and ``name`` stay as they are, as the
+    cache's file names and the paths a paper's code reads are built from them
+    (metacheck #667, which lost 184 files of one OSF project's GitHub storage).
+    """
+    out: list[str] = []
+    for p in paths:
+        parts = p.split("/") if p != "" else []
+        if parts and parts[-1] == "":  # strsplit() drops a trailing empty piece
+            parts.pop()
+        out.append("/".join(_url_encode(x, reserved=True) for x in parts))
+    return out
+
+
 @functools.cache
 def _file_types_table() -> pd.DataFrame:
     """One row per extension of ``metacheck::file_types``: ``ext`` and ``type``.
@@ -1062,6 +1079,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
     else:
         repo_str = _as_list(repo)[0] if _is_vector(repo) else repo
         raw_base = f"https://raw.githubusercontent.com/{clean_repo}/{default_branch}/"
+        enc_paths = _url_encode_paths(paths)
         names = [_r_basename(p) for p in paths]
         files_df = pd.DataFrame(
             {
@@ -1069,7 +1087,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
                 "clean_repo": pd.Series([clean_repo] * len(blobs), dtype="string"),
                 "name": pd.Series(names, dtype="string"),
                 "path": pd.Series(paths, dtype="string"),
-                "download_url": pd.Series([raw_base + p for p in paths], dtype="string"),
+                "download_url": pd.Series([raw_base + p for p in enc_paths], dtype="string"),
                 "size": pd.Series([_vapply_num(field(x, "size")) for x in blobs], dtype="float64"),
                 "ft": pd.Series(["file"] * len(blobs), dtype="string"),
             }

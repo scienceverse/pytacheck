@@ -29,8 +29,8 @@ _LINE_END = re.compile(rb"\r\n|\r|\n")
 def _read_lines(path: str, n: int) -> list[str | None]:
     """R ``readLines(path, n = n, warn = FALSE, encoding = "UTF-8")``.
 
-    A line that is not valid UTF-8 is ``None``: R keeps it, but ``grepl()``
-    (fixed, TRE or PCRE) never matches an invalid string.
+    A line that is not valid UTF-8 is read as Latin-1 (``.utf8_lines()``, metacheck
+    0.4.4.9): before that R kept it, and ``grepl()`` never matches an invalid string.
     """
     raw_lines: list[bytes] = []
     try:
@@ -51,7 +51,7 @@ def _read_lines(path: str, n: int) -> list[str | None]:
         try:
             out.append(line.decode("utf-8"))
         except UnicodeDecodeError:
-            out.append(None)
+            out.append(line.decode("latin-1"))
     return out
 
 
@@ -67,8 +67,8 @@ def _html_sniff_kind(path: str | os.PathLike[str] | None) -> str | None:
 
     Returns ``"rmd"`` (R Markdown/Quarto via pandoc), ``"stata"`` (a Stata
     log rendered to HTML; provisional) or ``None`` when neither fingerprint
-    is found or the file cannot be read. As in R, text that is not valid
-    UTF-8 never matches a fingerprint.
+    is found or the file cannot be read. A line that is not valid UTF-8 is
+    read as Latin-1, as in R since metacheck 0.4.4.9.
     """
     if is_missing(path):
         return None

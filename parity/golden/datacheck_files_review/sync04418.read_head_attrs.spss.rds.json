@@ -1,0 +1,95 @@
+{
+  "id": "sync04418.read_head_attrs.spss.rds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "q"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "q"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "label",
+              "labels",
+              "na_values"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "haven_labelled_spss",
+                  "haven_labelled",
+                  "vctrs_vctr",
+                  "double"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Question"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "yes",
+                  "no",
+                  "missing"
+                ],
+                "v": [
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      99
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  99
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -244,11 +244,6 @@
   kind: r_bug_fixed
   ref: U140
   reason: a Stata command is its '. ' line and the echo lines right after it; R counts echo-looking lines anywhere in the chunk (as .r_echo_chunks(), U140)
-"statout_readers_review/import_stata_smcl.latin1": &d25_latin1
-  kind: better_logic
-  ref: D25
-  reason: 'latin1 bytes: R''s regex functions reject the invalid UTF-8 strings readLines() returns ("input string N is invalid UTF-8"), so metacheck cannot read a latin1 log at all; pytacheck decodes it with replacement characters instead of failing'
-"statout_readers_review/import_mplus_output.latin1": *d25_latin1
 
 # --- match_reported_output() (R/match-reported.R, R/match-table.R) -----------
 "statout_match_review/match_reported_output.tt.na_sentence_pos":
@@ -353,3 +348,17 @@
 "statout_match_review/match_reported_output.tt.inf_value_hit_first": *u255_all_dropped
 "statout_match_review/match_reported_output.derived.apa_xml": *u255_all_dropped
 "statout_match_review/match_reported_output.derived.apa_xml.summary": *u255_all_dropped
+
+# --- repo_check: services of metacheck 0.4.4.18 (#660) -----------------------
+"mod_repo_check/repo_check.file_share.dropbox": *d141_ownership
+"mod_repo_check/repo_check.file_share.two": *d141_ownership
+"mod_repo_check/repo_check.file_share.with_local": *d141_ownership
+"mod_repo_check/repo_check.file_share.none": *d141_ownership
+"mod_repo_check/repo_check.local.kinds": *d141_ownership
+"mod_repo_check/repo_check.seq.geo_only": &d152_own_deposits
+  kind: deliberate
+  ref: D152
+  reason: "metacheck 0.4.4.18 lists the authors' own GEO / SRA / ENA / ArrayExpress / CRAN / ICPSR deposits in a report block and the summary and counts them (archive_own_n, cran_own_n, icpsr_own_n, ref_own, archive_deposits); they rest on the ownership engine (D141), so pytacheck sets every such link aside and lists none"
+"mod_repo_check/repo_check.seq.with_local": *d152_own_deposits
+"mod_repo_check/repo_check.cran.only": *d152_own_deposits
+"mod_repo_check/repo_check.icpsr.only": *d152_own_deposits

@@ -1,0 +1,39 @@
+{
+  "id": ".osf_parse_response.status.400.detail",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "zz: the OSF refused the request (HTTP 400): Bad filter"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "osf_type",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "zz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "error"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "the OSF refused the request (HTTP 400): Bad filter"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

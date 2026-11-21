@@ -7,7 +7,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.base import plural, trimws
-from metacheck._r.regex import grepl, gsub
+from metacheck._r.regex import grepl, gsub, sub
 from metacheck._values import is_missing
 from metacheck.module import module
 from metacheck.report import link, scroll_table
@@ -127,6 +127,13 @@ def _summarise_n(table: pd.DataFrame, name: str) -> pd.DataFrame:
     )
 
 
+def _bare_doi(x: Any) -> str | None:
+    """A DOI without its resolver address, in lower case (R's ``bare_doi()``)."""
+    if is_missing(x):
+        return None
+    return str(sub(r"^https?://(dx\.)?doi\.org/", "", str(x).strip().lower()))
+
+
 @module(
     title="Replication Check",
     description=(
@@ -193,6 +200,24 @@ def ref_replication(paper: Any, show_outcomes: bool = False) -> dict[str, Any]:
     ]
     already_cited = has_rep_doi & pd.Series(in_paper, index=table.index, dtype=bool)
     table = table.loc[~already_cited.to_numpy(dtype=bool)].reset_index(drop=True)
+
+    ## remove rows whose replication is the citing paper itself: a replication report cites the
+    ## original it replicates, and was told to cite itself (metacheck 0.4.4.26, #695)
+    from metacheck.papers.tables import paper_table
+
+    own = paper_table(paper, "info", ["doi"])
+    own_by_paper = dict(
+        zip(own["paper_id"].tolist(), [_bare_doi(v) for v in own["doi"].tolist()], strict=True)
+    )
+    is_self = [
+        (own_doi := own_by_paper.get(pid)) is not None
+        and own_doi != ""
+        and _bare_doi(rd) == own_doi
+        for pid, rd in zip(
+            table["paper_id"].tolist(), table["replication_doi"].tolist(), strict=True
+        )
+    ]
+    table = table.loc[[not x for x in is_self]].reset_index(drop=True)
 
     # Remove trailing URLs from reference text to avoid duplication with link
     refs = trimws(gsub(r"https?://[^[:space:]]+$", "", table["replication_ref"], ignore_case=True))

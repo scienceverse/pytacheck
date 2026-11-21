@@ -27,6 +27,7 @@ from metacheck._values import as_str
 from metacheck.modules import _reproducibility as h
 from metacheck.modules import reproducibility_check as rc
 from metacheck.report import collapse_section, scroll_table
+from metacheck.repro.provenance import _repro_prov_note_before_run, _repro_prov_note_materialised
 from metacheck.repro.python import repro_dependencies_py
 
 # ---------------------------------------------------------------------------
@@ -221,6 +222,7 @@ def assess_py(
         _REPRO_STARTED_OUTCOMES,
         _repro_absent_report,
         _repro_error_message,
+        _repro_groups_sentence,
         _repro_py_starts_server,
         _repro_read_failed_msg,
         _repro_run_light,
@@ -694,7 +696,7 @@ def assess_py(
     report_order, order_table = _order_text(order_tbl, cycle, ambiguous_order)
 
     total_ambiguous = sum(ambiguous_n)
-    report_paths = _repro_path_fix_text(rewrite_list, execute)
+    report_paths = _repro_path_fix_text(rewrite_list, execute, absent=unresolved_refs)
     py_arch_txt = _repro_archive_text(structure_df, code_texts)
     if py_arch_txt:
         report_paths = f"{report_paths} " + re.sub(
@@ -897,6 +899,12 @@ def assess_py(
                 f"{n_ran_ok:d} of {n_own:d} Python script{plural(n_own)} ran without error "
                 f"when executed{more}."
             )
+    # did not reproduce, lacked a package or program, out of time, or could not be checked
+    # automatically (#580)
+    if execute and run_results is not None and n_own > 0:
+        groups_sentence = _repro_groups_sentence(run_results)
+        if groups_sentence is not None:
+            lines.append(groups_sentence)
     if len(reported_inputs) > 0:
         nr = len(reported_inputs)
         lines.append(
@@ -1059,8 +1067,11 @@ def _execute_py(
         _repro_written_later,
     )
     from metacheck.repro.outcomes import (
+        _repro_check_group,
         _repro_docker_failed,
         _repro_failure_reason,
+        _repro_from_report_failed,
+        _repro_from_report_names,
         _repro_needs_arguments,
         _repro_needs_internet_error,
         _repro_needs_person_error,
@@ -1113,12 +1124,18 @@ def _execute_py(
     # any: one shared tree, not two.
     if sandbox_root is None:
         sandbox_root = rc._new_sandbox(h._is_true(keep_sandbox), cleanup)
-        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline)
+        _repro_prov_note_materialised(
+            a.get("prov"),
+            repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline),
+        )
     elif not has_r:
         # the R block's own materialise call never ran, so a Python-only paper still needs the
         # layout built into whatever sandbox_root the JASP/jamovi step above created (that
         # step only writes statistical_output/, never the data/ tree)
-        repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline)
+        _repro_prov_note_materialised(
+            a.get("prov"),
+            repro_materialize_layout(plan, structure_df, sandbox_root, deadline=copy_deadline),
+        )
     ex["sandbox_root"] = sandbox_root
     lib_dir = os.path.join(sandbox_root, "_pylib")
 
@@ -1338,6 +1355,12 @@ def _execute_py(
             f"[repro/py] running {len(run_order_names)} script(s) in order: "
             + " -> ".join(run_order_names)
         )
+        # the run folder before the first script runs, unless R scripts ran first; before the
+        # scripts' time starts
+        prov = a.get("prov")
+        _repro_prov_note_before_run(prov, run_tbl, sandbox_root)
+        if prov is not None and not docker:
+            prov["python_bin"] = parse_bin or None
         names_before = _repro_sandbox_names(sandbox_root)
         run_results = run_py(run_tbl, run_order_names)
         # A file a script could not open, which the repository lists but which was not
@@ -1665,6 +1688,24 @@ def _execute_py(
         lfs_stopped = _repro_lfs_stopped(run_results, sandbox_root)
         reason = ["file" if fn_col[i] in lfs_stopped else r for i, r in enumerate(reason)]
         run_results["reason"] = pd.array(reason, dtype="string")
+        # code recovered from a knitted report is not blamed for stopping (#648, K8a)
+        reason = [
+            "from_report" if ff else r
+            for ff, r in zip(
+                _repro_from_report_failed(run_results, _repro_from_report_names(code_tbl)),
+                reason,
+                strict=True,
+            )
+        ]
+        run_results["reason"] = pd.array(reason, dtype="string")
+        # ran, did not reproduce, a package or program not available, out of time, or could
+        # not be checked automatically (#580)
+        run_results["checked"] = pd.array(
+            _repro_check_group(
+                outcome, reason, [_paste2(error[i], stderr[i]) for i in range(len(outcome))]
+            ),
+            dtype="string",
+        )
         _message(
             "[repro/py] execution finished. outcomes: "
             + "; ".join(f"{f}={o}" for f, o in zip(fn_col, outcome, strict=True))
@@ -1825,11 +1866,14 @@ def _execution_report_py(
     n_import, n_late = count("run_by_import"), count("skipped_time_limit")
     n_scripts = sum(o not in ("not_analysis", "not_downloaded", "empty") for o in oc)
     imported: Mapping[str, Sequence[str]] = ex["imported"]
+    # only the files counted: the list named every file another imports, also those with
+    # another outcome ("2 more files are imported" beside a list of 19; #648, K8f)
+    by_import = {fn for fn, o in zip(rnames, oc, strict=True) if o == "run_by_import"}
     import_text = (
         f" {n_import:d} {plural(n_import, 'file was', 'files were')} not run on "
         f"{plural(n_import, 'its', 'their')} own, because other files import "
         f"{plural(n_import, 'it', 'them')}: "
-        + "; ".join(f"{m} (by {', '.join(v)})" for m, v in imported.items())
+        + "; ".join(f"{m} (by {', '.join(v)})" for m, v in imported.items() if m in by_import)
         + "."
         if n_import
         else ""

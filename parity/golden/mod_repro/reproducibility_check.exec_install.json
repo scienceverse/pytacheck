@@ -22,6 +22,8 @@
       "stat_output",
       "match_table",
       "modifications",
+      "artifacts",
+      "environment",
       "checklist_section",
       "sandbox"
     ],
@@ -266,7 +268,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 1 R code file for reproducibility and ran none of them (each in an isolated subprocess).\n-  0 of 1 script ran without error when executed.\n-  1 script could not run because its own dependency is unavailable (not counted as an error of the code).\n-  1 installable dependency detected."
+          "\n-  We assessed 1 R code file for reproducibility and ran none of them (each in an isolated subprocess).\n-  0 of 1 script ran without error when executed.\n-  Of the others, 1 could not run because a package or program was not available.\n-  1 installable dependency detected."
         ]
       },
       {
@@ -284,12 +286,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -373,7 +383,55 @@
           {
             "t": "int",
             "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -460,6 +518,14 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -471,12 +537,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -505,7 +579,11 @@
           "elapsed",
           "script_lines",
           "captures",
-          "reason"
+          "started_at",
+          "ended_at",
+          "exit_status",
+          "reason",
+          "checked"
         ],
         "v": [
           {
@@ -583,7 +661,31 @@
           {
             "t": "chr",
             "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "package"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dependency"
             ]
           }
         ]
@@ -671,9 +773,19 @@
         "names": [
           "file_name",
           "change_type",
-          "detail"
+          "detail",
+          "sha256_before",
+          "sha256_after"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -689,9 +801,180 @@
         ]
       },
       {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "stage",
+          "path",
+          "size",
+          "sha256",
+          "mime_type",
+          "source",
+          "status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "deposit",
+              "before_run",
+              "before_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "data.csv",
+              "fake_dep.R"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              32,
+              32,
+              51
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "9f587f65bd0a44ef44e7d447dc8e71908cf9f7584eca612f9d4f6025bb1ad762"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text/csv",
+              "text/csv",
+              "text/x-r-source"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "metacheck_version",
+          "started_at",
+          "ended_at",
+          "host",
+          "sandbox",
+          "network_isolated",
+          "internet",
+          "timeout_per_script",
+          "total_timeout",
+          "python_local",
+          "docker"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0.4.4.28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "r_version",
+              "platform",
+              "os"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "process"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              60
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3600
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
         "t": "chr",
         "v": [
-          "We ran the paper's 1 R script in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script.\n\n**0 of 1 script ran to the end**: 1 could not run on our server.\n\n| Script | Result | What happened |\n|---|---|---|\n| fake&#95;dep.R | Could not run on our server | It needs the R package oddpkg, which we could not install. This is not an error in the script. |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A package could not be installed.**\n\n- <code>fake&#95;dep.R<\/code> needs <code>oddpkg<\/code>.\n\n<code>oddpkg<\/code> could not be installed in our run. Record the versions you used (in R, <code>renv::init()<\/code> writes them to a <code>renv.lock<\/code> file) and your R version, and say in the README where any package that is not on CRAN comes from.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+          "We ran the paper's 1 R script in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script.\n\n**0 of 1 script ran to the end**: 1 could not run because a package or program was not available.\n\n| Script | Result | What happened |\n|---|---|---|\n| fake&#95;dep.R | Could not run on our server | It needs the R package oddpkg, which we could not install. This is not an error in the script. |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A package could not be installed.**\n\n- <code>fake&#95;dep.R<\/code> needs <code>oddpkg<\/code>.\n\n<code>oddpkg<\/code> could not be installed in our run. Record the versions you used (in R, <code>renv::init()<\/code> writes them to a <code>renv.lock<\/code> file) and your R version, and say in the README where any package that is not on CRAN comes from.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -702,6 +985,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

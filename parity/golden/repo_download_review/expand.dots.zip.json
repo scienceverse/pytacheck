@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 4,
+    "nrow": 3,
     "names": [
       "repo_url",
       "file_name",
@@ -25,14 +25,12 @@
         "v": [
           "r",
           "r",
-          "r",
           "r"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "..\\win.csv",
           "b.csv",
           "after.csv",
           "first.csv"
@@ -41,7 +39,6 @@
       {
         "t": "chr",
         "v": [
-          "dots.zip/..\\win.csv",
           "dots.zip/a../b.csv",
           "dots.zip/after.csv",
           "dots.zip/first.csv"
@@ -52,14 +49,12 @@
         "v": [
           null,
           null,
-          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
-          "<tempdir>/metacheck-archives/7222e9faa45b127fc0fadff73845552b/..\\win.csv",
           "<tempdir>/metacheck-archives/7222e9faa45b127fc0fadff73845552b/a../b.csv",
           "<tempdir>/metacheck-archives/7222e9faa45b127fc0fadff73845552b/after.csv",
           "<tempdir>/metacheck-archives/7222e9faa45b127fc0fadff73845552b/first.csv"
@@ -70,14 +65,12 @@
         "v": [
           817,
           817,
-          817,
           817
         ]
       },
       {
         "t": "chr",
         "v": [
-          "data",
           "data",
           "data",
           "data"
@@ -88,14 +81,12 @@
         "v": [
           null,
           null,
-          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
-          "tabular",
           "tabular",
           "tabular",
           "tabular"
@@ -106,7 +97,6 @@
         "v": [
           "dots.zip",
           "dots.zip",
-          "dots.zip",
           "dots.zip"
         ]
       },
@@ -115,12 +105,11 @@
         "v": [
           "<TMP>/dots.zip",
           "<TMP>/dots.zip",
-          "<TMP>/dots.zip",
           "<TMP>/dots.zip"
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

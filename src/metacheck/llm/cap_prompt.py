@@ -26,8 +26,9 @@ def _cap_report_partial(partial: object, repo_urls: object) -> None:
     """Port of ``.cap_report_partial()``: warn, once per repository, that one whose files are about
     to be downloaded was listed only in part.
 
-    repo_check's listing of an OSF project stopped at ``osf_max_requests`` (its ``partial_repos``),
-    so files in folders not yet opened are not downloaded either. *partial* is that table,
+    repo_check's listing of an OSF project stopped at ``osf_max_requests``, or the OSF refused part
+    of it (its ``partial_repos``, with ``reason`` "request limit" or "refused by the OSF", metacheck
+    #681), so files in folders not listed are not downloaded either. *partial* is that table,
     *repo_urls* the repositories this download uses. Reported like a size cap (:func:`cap_report`),
     so a missing file is never missing without a word.
     """
@@ -44,12 +45,20 @@ def _cap_report_partial(partial: object, repo_urls: object) -> None:
             if n is None or pd.isna(n)
             else f" ({int(n)} file{'' if int(n) == 1 else 's'} listed)"
         )
-        cap_report(
-            f"Repository {row['repo_url']} was listed only in part{listed}: the OSF listing "
-            "stopped at the request limit, so files in folders not yet opened are not "
-            "downloaded. Run again with `cache = TRUE` to list the next part, or raise "
-            "`osf_max_requests`."
-        )
+        refused = row.get("reason") == "refused by the OSF"
+        if refused:
+            cap_report(
+                f"Repository {row['repo_url']} was listed only in part{listed}: the OSF refused "
+                "part of the listing, also when asked again, so files in the folders it refused "
+                "are not downloaded. Run the check again later."
+            )
+        else:
+            cap_report(
+                f"Repository {row['repo_url']} was listed only in part{listed}: the OSF listing "
+                "stopped at the request limit, so files in folders not yet opened are not "
+                "downloaded. Run again with `cache = TRUE` to list the next part, or raise "
+                "`osf_max_requests`."
+            )
 
 
 def _cap_size_str(bytes: float | None) -> str:

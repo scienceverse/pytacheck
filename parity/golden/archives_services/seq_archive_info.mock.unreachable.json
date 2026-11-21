@@ -1,0 +1,124 @@
+{
+  "id": "seq_archive_info.mock.unreachable",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "seq_url",
+      "accession",
+      "repo_type",
+      "title",
+      "creators",
+      "organisation",
+      "publication_date",
+      "description",
+      "resource_type",
+      "related",
+      "error",
+      "study"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149523",
+          "https://www.ebi.ac.uk/ena/browser/view/PRJNA770129",
+          "https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-6487"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "GSE149523",
+          "PRJNA770129",
+          "E-MTAB-6487"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "geo",
+          "ena",
+          "arrayexpress"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Dataset",
+          "Dataset",
+          "Dataset"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unreachable",
+          "unreachable",
+          "unreachable"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

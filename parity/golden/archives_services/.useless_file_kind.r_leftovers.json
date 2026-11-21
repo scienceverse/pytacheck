@@ -1,0 +1,21 @@
+{
+  "id": ".useless_file_kind.r_leftovers",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "R history",
+      "R history",
+      "temporary files",
+      "temporary files",
+      "temporary files",
+      null,
+      "temporary files",
+      "editor backups"
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

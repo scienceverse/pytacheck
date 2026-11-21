@@ -426,6 +426,9 @@
           "col_numeric",
           "col_text",
           "key_n",
+          "files_failed",
+          "llm_cols_unanswered",
+          "llm_files_unanswered",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
@@ -471,6 +474,24 @@
             "t": "int",
             "v": [
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
             ]
           },
           {
@@ -631,6 +652,7 @@
           "file_path",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id",
           "data_format",
@@ -727,6 +749,15 @@
               null,
               null,
               null,
+              "readme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "data",
+              "materials",
               "readme"
             ]
           },
@@ -928,11 +959,16 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -1060,6 +1096,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -59,6 +60,7 @@
           "file_type",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -136,6 +138,13 @@
           {
             "t": "chr",
             "v": [
+              "data",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "ex1",
               null
             ]
@@ -159,7 +168,7 @@
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://zenodo.org/records/5559002\", \n\"https://zenodo.org/records/5559002\"), File = c(\"<a href='https://zenodo.org/api/records/5559002/files/data.csv/content' target='_blank'>data.csv<\/a>\", \nNA), Size = c(\"10 B\", \"1 B\"), Type = c(\"data\", NA)), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
-          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: NA. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Unclassified Files\n\n1 file is of a kind metacheck does not know, so it is not counted as data, code or documentation: NA. This is no problem in itself.",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**data** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"data.csv\", Group = \"ex1\", Path = \"data.csv\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = NA_character_, Group = \"—\", Path = NA_character_), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -193,6 +202,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -282,6 +296,36 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
@@ -293,11 +337,44 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -318,7 +395,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -331,6 +409,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -379,6 +461,7 @@
           "resource_type",
           "resource_subtype",
           "related",
+          "organisation",
           "paper_id",
           "ownership",
           "ownership_group",
@@ -460,6 +543,12 @@
           {
             "t": "chr",
             "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "p_zenodo_nameless"
             ]
           },
@@ -498,7 +587,10 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
+          "dep_org",
           "dep_related",
           "dep_date",
           "dep_year",
@@ -525,7 +617,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -580,6 +673,24 @@
             "t": "chr",
             "v": [
               "NA"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
             ]
           },
           {
@@ -761,6 +872,12 @@
             "v": [
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
           }
         ]
       },
@@ -777,7 +894,8 @@
           "file_size",
           "file_type",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -806,6 +924,10 @@
           },
           {
             "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           },
           {
@@ -925,6 +1047,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

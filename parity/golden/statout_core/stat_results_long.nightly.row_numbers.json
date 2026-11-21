@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 6,
+    "nrow": 4,
     "names": [
       "paper_id",
       "source_file",
@@ -27,16 +27,12 @@
           null,
           null,
           null,
-          null,
-          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
-          null,
-          null,
           null,
           null,
           null,
@@ -49,8 +45,6 @@
           "result_a_human",
           "result_a_ai",
           "result_b",
-          "result_b",
-          "result_b",
           "result_b"
         ]
       },
@@ -59,9 +53,7 @@
         "v": [
           "result_a_r1_m",
           "result_a_r2_m",
-          "result_b_r1_v1",
           "result_b_r1_t",
-          "result_b_r2_v1",
           "result_b_r2_t"
         ]
       },
@@ -71,16 +63,12 @@
           "a",
           "a",
           "b",
-          "b",
-          "b",
           "b"
         ]
       },
       {
         "t": "lgl",
         "v": [
-          null,
-          null,
           null,
           null,
           null,
@@ -93,8 +81,6 @@
           "Human",
           "AI",
           "",
-          "",
-          "",
           ""
         ]
       },
@@ -103,9 +89,7 @@
         "v": [
           "M",
           "M",
-          "V1",
           "t",
-          "V1",
           "t"
         ]
       },
@@ -114,9 +98,7 @@
         "v": [
           "M",
           "M",
-          "V1",
           "t-statistic",
-          "V1",
           "t-statistic"
         ]
       },
@@ -125,9 +107,7 @@
         "v": [
           "",
           "",
-          "",
           "http://purl.obolibrary.org/obo/STATO_0000176",
-          "",
           "http://purl.obolibrary.org/obo/STATO_0000176"
         ]
       },
@@ -136,9 +116,7 @@
         "v": [
           "3.36",
           "4.08",
-          "5",
           "2.1",
-          "7",
           "3.3"
         ]
       },
@@ -148,13 +126,11 @@
           null,
           null,
           null,
-          null,
-          null,
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -287,7 +287,18 @@ REPO_TYPES = (
     "dataone",
     "ldbase",
     "ckan",
+    # sequence and expression archives and the Handles that lead to a repository (each row names
+    # its own type), R packages on CRAN, ICPSR and openICPSR (metacheck #660)
+    "seq",
+    "handle",
+    "cran",
+    "icpsr",
 )
+
+#: the types whose rows name their own repository type (R: ``handle_links_found$repo_type``)
+_OWN_TYPE = ("seq", "handle")
+#: the types that are listed, not checked: their files are not read (metacheck #660)
+SET_ASIDE_TYPES = ("geo", "ena", "arrayexpress", "cran", "icpsr")
 
 _FIGSHARE_SHARE = "private share link (figshare.com/s/...) cannot be resolved without a browser"
 #: a DSpace item its host does not know (or a link that names no item)
@@ -393,6 +404,7 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     from metacheck._r import bind_rows
     from metacheck.archives.ckan import ckan_links
+    from metacheck.archives.cran import cran_links
     from metacheck.archives.dataone import dataone_links
     from metacheck.archives.dataverse import dataverse_links
     from metacheck.archives.dryad import dryad_links
@@ -401,12 +413,15 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     from metacheck.archives.fourtu import researchdata4tu_links
     from metacheck.archives.github import github_links
     from metacheck.archives.gitlab import gitlab_links
+    from metacheck.archives.handle import handle_links
+    from metacheck.archives.icpsr import icpsr_links
     from metacheck.archives.ldbase import ldbase_links
     from metacheck.archives.mendeley import mendeley_links
     from metacheck.archives.osf import osf_links
     from metacheck.archives.psycharchives import dspace_links
     from metacheck.archives.researchbox import rbox_links
     from metacheck.archives.reshare import eprints_links
+    from metacheck.archives.seq import seq_archive_links
     from metacheck.archives.zenodo import invenio_links
 
     osf = osf_links(paper)
@@ -434,18 +449,38 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
         # CKAN data portals (metacheck #637)
         "ckan": ckan_links(paper),
     }
+    # GEO, the INSDC archives (BioProject, SRA, ENA, DDBJ) and ArrayExpress, mostly named by
+    # accession number (each row names its archive); a deposit cited by its Handle, as the
+    # address the Handle leads to, when that is a repository read here (metacheck #660, #466);
+    # R packages on CRAN, the paper's own or ones it uses (#478, #660); replication packages at
+    # ICPSR and openICPSR, with the AEA Data and Code Repository. An error is no link, as in R.
+    for key, finder in (
+        ("seq", seq_archive_links),
+        ("handle", handle_links),
+        ("cran", cran_links),
+        ("icpsr", icpsr_links),
+    ):
+        try:
+            found[key] = finder(paper)
+        except Exception:
+            found[key] = empty_links().drop(columns="repo_error")
     parts = []
     for repo_type in REPO_TYPES:
         df = found[repo_type]
         missing = [c for c in ("paper_id", "href") if c not in df.columns]
         if missing:
             raise RError("undefined columns selected")
+        types = (
+            _chr(vals(df["repo_type"]))
+            if repo_type in _OWN_TYPE
+            else pd.Series([repo_type] * len(df), dtype="string")
+        )
         parts.append(
             pd.DataFrame(
                 {
                     "paper_id": _chr(vals(df["paper_id"])),
                     "href": _chr(vals(df["href"])),
-                    "repo_type": pd.Series([repo_type] * len(df), dtype="string"),
+                    "repo_type": types,
                 }
             )
         )
@@ -635,15 +670,41 @@ class _NaScalar:
 NA_SCALAR: Any = _NaScalar()
 
 
-def _osf_file_frame(files: pd.DataFrame, repo_url: list[Any]) -> pd.DataFrame:
+def _osf_full_listings(info: pd.DataFrame, cut: list[Any]) -> list[Any]:
+    """The links whose listing holds whole storages (metacheck #679).
+
+    The linked item is a project, component or registration (not a single file or folder), listed
+    with its contents and in full (*cut*: the links whose listing stopped short). Only their
+    files count towards a storage's size and number of files, which decide whether its archive is
+    fetched (:func:`metacheck.archives.download._osf_storage_totals`).
+    """
+    if not {"osf_url", "osf_type", "repo_name"} <= set(info.columns):
+        return []
+    top = [
+        (not _na(u)) and u == r and t in ("nodes", "registrations")
+        for u, r, t in zip(
+            vals(info["osf_url"]), vals(info["repo_name"]), vals(info["osf_type"]), strict=True
+        )
+    ]
+    return setdiff(unique(r for r, k in zip(vals(info["repo_name"]), top, strict=True) if k), cut)
+
+
+def _osf_file_frame(
+    files: pd.DataFrame, repo_url: list[Any], full_urls: list[Any] | None = None
+) -> pd.DataFrame:
     """The OSF ``data.frame()`` of listed files (``provider`` kept for downloads).
 
-    ``provider`` is R's ``osf_file_list$provider %||% NA_character_``: a
-    missing column is a recycled ``NA`` (and R's row-count error on 0 rows).
+    ``provider`` and ``osf_node`` are R's ``.col_chr(osf_file_list, ...)``: a missing column is
+    one ``NA`` per row (``%||% NA_character_`` gave a single ``NA``, and R's row-count error on 0
+    rows: metacheck #679). ``storage_listed`` marks the files that come from a listing of whole
+    storages (*full_urls*); it is dropped after the storage totals are made.
     """
     n = len(files)
     path = _col(files, "path")
     provider = _col(files, "provider")
+    node = _col(files, "project")
+    listed_from = vals(files["repo_name"]) if "repo_name" in files.columns else [None] * n
+    full = set(full_urls or [])
     return r_frame(
         [
             ("repo_url", repo_url, "string"),
@@ -653,7 +714,11 @@ def _osf_file_frame(files: pd.DataFrame, repo_url: list[Any]) -> pd.DataFrame:
             ("file_location", [None] * n, "string"),
             ("file_size", _col(files, "size"), "float64"),
             ("file_type", _col(files, "filetype"), "string"),
-            ("provider", NA_SCALAR if provider is None else provider, "string"),
+            ("provider", [None] * n if provider is None else provider, "string"),
+            # the component the file is stored in: its storage is downloaded as one zip per
+            # component (metacheck #675)
+            ("osf_node", [None] * n if node is None else node, "string"),
+            ("storage_listed", [r in full for r in listed_from], "bool"),
         ]
     )
 
@@ -711,11 +776,13 @@ def list_osf(
     osf_license: bool = False,
     max_requests: float = 50,
     cut_urls: list[str] | None = None,
+    short_urls: list[str] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The OSF block: list files, follow registrations to their source projects.
 
     A project whose listing stopped at *max_requests* is added to *cut_urls*, with the project
-    a registration of it was registered from.
+    a registration of it was registered from; one part of whose listing the OSF refused, also
+    when asked again, is added to *short_urls* in the same way (metacheck #681).
 
     Returns the files and, with *osf_license*, the licence of each OSF
     repository left in ``repos`` (one ``?embed=license`` request each).
@@ -732,11 +799,25 @@ def list_osf(
             reg_pairs,
             max_requests,
             cut_urls if cut_urls is not None else [],
+            short_urls if short_urls is not None else [],
         )
     meta = meta_frame()
     if osf_license is True:
         meta = _osf_license_meta(repos, reg_pairs)
-    return osf_files_df, meta
+    # each OSF storage's listed size and number of files, which decide whether it is downloaded
+    # as one archive (metacheck #675)
+    # (only from listings of whole storages, #679)
+    from metacheck.archives.download import _osf_storage_totals
+
+    complete = (
+        [v is True for v in vals(osf_files_df["storage_listed"])]
+        if "storage_listed" in osf_files_df.columns
+        else [False] * len(osf_files_df)
+    )
+    out = _osf_storage_totals(osf_files_df, complete=complete)
+    if "storage_listed" in out.columns:
+        out = out.drop(columns="storage_listed")
+    return out, meta
 
 
 def _osf_license_meta(repos: Repos, reg_pairs: list[tuple[Any, str]]) -> pd.DataFrame:
@@ -851,15 +932,19 @@ def _list_osf_files(
     reg_pairs: list[tuple[Any, str]],
     max_requests: float = 50,
     cut_urls: list[str] | None = None,
+    short_urls: list[str] | None = None,
 ) -> pd.DataFrame:
     from metacheck._r import bind_rows
 
     if cut_urls is None:
         cut_urls = []
+    if short_urls is None:
+        short_urls = []
     osf_files_df = placeholder()
     try:
         osf_info_df = _quiet(lambda: _osf_listing(osf_urls, pb, cache, max_requests))
         cut_urls.extend(_cut_urls(osf_info_df))
+        short_urls.extend(_short_urls(osf_info_df))
 
         # a link OSF does not know (an invalid id) has no osf_type: when no
         # link resolved there is no osf_type column at all
@@ -924,7 +1009,11 @@ def _list_osf_files(
             # files found via a registration belong to the project it was registered from
             file_list = _osf_files(osf_info_df)
             file_repo_url = [reg_map.get(u, u) for u in vals(file_list["repo_name"])]
-            osf_files_df = _osf_file_frame(file_list, file_repo_url)
+            osf_files_df = _osf_file_frame(
+                file_list,
+                file_repo_url,
+                _osf_full_listings(osf_info_df, [*cut_urls, *short_urls]),
+            )
 
         # A link the OSF could not look up ("unfound", "error", "too many
         # requests") is kept, with its reason, instead of being removed with the
@@ -971,13 +1060,18 @@ def _list_osf_files(
         if parent_urls_new:
             parent_info = _quiet(lambda: _osf_listing(parent_urls_new, pb, cache, max_requests))
             cut_urls.extend(_cut_urls(parent_info))
+            short_urls.extend(_short_urls(parent_info))
             if "kind" in parent_info.columns:
                 parent_files = _osf_files(parent_info)
                 if len(parent_files) > 0:
                     osf_files_df = bind_rows(
                         [
                             osf_files_df,
-                            _osf_file_frame(parent_files, vals(parent_files["repo_name"])),
+                            _osf_file_frame(
+                                parent_files,
+                                vals(parent_files["repo_name"]),
+                                _osf_full_listings(parent_info, [*cut_urls, *short_urls]),
+                            ),
                         ]
                     )
             # a parent OSF cannot list (no osf_type) counts as closed
@@ -1053,6 +1147,9 @@ def _list_osf_files(
     for name, parent in reg_pairs:
         reg_map_final.setdefault(name, parent)
     cut_urls[:] = unique([*cut_urls, *(reg_map_final[u] for u in cut_urls if u in reg_map_final)])
+    short_urls[:] = unique(
+        [*short_urls, *(reg_map_final[u] for u in short_urls if u in reg_map_final)]
+    )
     return osf_files_df
 
 
@@ -1062,6 +1159,14 @@ def _cut_urls(listing: pd.DataFrame) -> list[str]:
         return []
     cut = listing["listing_cut"].fillna(False).to_numpy(dtype=bool)
     return unique(u for u, c in zip(vals(listing["repo_name"]), cut, strict=True) if c)
+
+
+def _short_urls(listing: pd.DataFrame) -> list[str]:
+    """The ``repo_name`` of the OSF listings part of which the OSF refused (``listing_short``)."""
+    if "listing_short" not in listing.columns or "repo_name" not in listing.columns:
+        return []
+    short = listing["listing_short"].fillna(False).to_numpy(dtype=bool)
+    return unique(u for u, c in zip(vals(listing["repo_name"]), short, strict=True) if c)
 
 
 # -- GitHub / GitLab ----------------------------------------------------------
@@ -1199,14 +1304,19 @@ def _filter_not_dir(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def list_researchbox(
-    repos: Repos, urls: list[str], pb: Any, cache: bool = False
+    repos: Repos,
+    urls: list[str],
+    pb: Any,
+    cache: bool = False,
+    max_file_size: float = 100,
+    max_download_size: float = 500,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The ResearchBox block (the box is downloaded and unzipped to list it).
 
     Returns the files and the licence of each box that was downloaded (one
     ``box_meta`` request per box; a box that could not be downloaded is not
     asked about again). ResearchBox puts every box under CC BY 4.0, but names
-    it in each box's metadata since 2026-10.
+    it in each box's metadata since 2026-10. The download limits apply to the boxes too (#699).
     """
     from metacheck.archives.researchbox import (
         _rbox_box_meta,
@@ -1220,7 +1330,14 @@ def list_researchbox(
     if not urls:
         return files_df, meta
     try:
-        rb = rbox_file_download(urls, pb=pb, cache=cache)
+        # the download limits apply to the boxes too (#699)
+        rb = rbox_file_download(
+            urls,
+            pb=pb,
+            cache=cache,
+            max_file_size=max_file_size,
+            max_download_size=max_download_size,
+        )
         if rb is None:
             raise RError("no applicable method for 'filter' applied to an object of class \"NULL\"")
         # Each box that could not be retrieved (refused, removed, ResearchBox's
@@ -1233,7 +1350,14 @@ def list_researchbox(
                 vals(failed["rb_url"]), vals(failed["error"]), vals(failed["name"]), strict=True
             ):
                 if _na(n):
-                    reasons.setdefault(u, f"ResearchBox did not serve the box: {e}")
+                    # a box the download limits left out was served, but not downloaded
+                    over = not _na(e) and re.search("download budget|download limits", e)
+                    reasons.setdefault(
+                        u,
+                        f"The box was not downloaded: {e}"
+                        if over
+                        else f"ResearchBox did not serve the box: {e}",
+                    )
             repos.fill_errors(reasons)
             # the API answers "does not exist or is not public"; the web page asks
             # for a captcha. A link with its passcode that fails this way is not a

@@ -1,0 +1,16 @@
+{
+  "id": ".seq_url.types",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE1",
+      "https://www.ebi.ac.uk/ena/browser/view/PRJNA2",
+      "https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-3"
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

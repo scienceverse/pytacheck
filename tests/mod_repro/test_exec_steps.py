@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import datetime as dt
 import os
+import sys
 import time
 import warnings
 from collections.abc import Callable, Mapping
@@ -75,6 +76,7 @@ class Runner:
         self.calls.append(call)
         parses = kw.get("parses") if self.parses else None
         rows = []
+        clocks: dict[str, dict[str, Any]] = {}
         for f in order:
             if f not in paths:
                 continue
@@ -82,8 +84,14 @@ class Runner:
                 rows.append(_run_row(f, "not_parsed", "the file does not parse"))
                 continue
             fields = dict(self.respond(n, f, call) or {})
+            # when the script ran and its exit status (metacheck 0.4.4.20): a script that
+            # was started has them, `clock = False` leaves them NA
+            status = fields.pop("exit_status", 0)
+            if fields.pop("clock", True):
+                now = dt.datetime.now(dt.UTC)
+                clocks[f] = {"started": now, "ended": now, "status": status}
             rows.append(_run_row(f, **{"outcome": "ran_ok", **fields}))
-        return _run_frame(rows)
+        return _run_frame(rows, clocks)
 
     def files(self, n: int) -> list[str]:
         return sorted(self.calls[n].files)
@@ -981,6 +989,8 @@ def _golden_rows(golden: dict[str, Any]) -> dict[str, dict[str, Any]]:
             "stdout": cols["stdout"][i],
             "stderr": cols["stderr"][i],
             "script_lines": list(lines.get("v") or []) if isinstance(lines, dict) else [],
+            "exit_status": cols["exit_status"][i],
+            "clock": cols["started_at"][i] is not None,
         }
     return rows
 
@@ -1009,6 +1019,13 @@ def test_rs_recorded_outcomes_give_rs_report(
     ignore = ["run_results.captures"]
     if name in _CAPTURED:
         ignore += ["stat_output", "summary_text"]
+    if name == "exec_mixed":
+        # the fake runs nothing, so the files R's scripts wrote are not in the run folder
+        ignore.append("artifacts")
+    if sys.platform == "win32":
+        # a rewritten script is written with the platform's line ends (R's writeLines() does the
+        # same), so its size and hash differ from the goldens made on Linux
+        ignore += ["artifacts.size", "artifacts.sha256", "modifications.sha256_after"]
     spec["ignore"] = [*spec.get("ignore", []), *ignore]
     assert compare(golden["value"], canonical(result), Options.from_case(spec)) == []
     assert len(runner.calls) == (2 if first else 1)

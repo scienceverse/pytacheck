@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -59,6 +60,7 @@
           "file_path",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -176,6 +178,17 @@
           {
             "t": "chr",
             "v": [
+              "documentation",
+              "readme",
+              "data",
+              "readme",
+              "data",
+              "readme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               null,
               null,
               "ex1",
@@ -238,6 +251,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -327,6 +345,36 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
@@ -338,11 +386,44 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -363,7 +444,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -376,6 +458,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -477,7 +563,10 @@
           "gh_owner_name",
           "gh_stars",
           "gh_forks",
-          "cff_dois"
+          "cff_dois",
+          "dep_org",
+          "dep_creator_families",
+          "dep_n_creators"
         ],
         "v": [
           {
@@ -506,6 +595,18 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           },
           {
@@ -647,7 +748,8 @@
           "file_type",
           "file_path",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -672,6 +774,10 @@
           },
           {
             "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           },
           {
@@ -797,6 +903,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

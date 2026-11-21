@@ -24,7 +24,7 @@ import pandas as pd
 from metacheck._r.base import as_character, r_round
 from metacheck._r.regex import compile_r, grepl, gsub, sub
 from metacheck._values import as_float, is_missing
-from metacheck.text.extract import _P_SUBSCRIPTS
+from metacheck.text.extract import _P_SIDES, _P_SUBSCRIPTS
 
 __all__ = [
     "_p_clause",
@@ -371,7 +371,11 @@ def _pnt() -> SimpleNamespace:
     # squared, a size or another number, which a table note can follow
     test_stat = _TEST_STAT_PATTERN
     # a p with a correction name is a p-value too ("pFWE < .05", #642)
-    p_value = f"(?<![\\w])[pP]s?\\s*(?:-?values?)?(?:[\\s_-]?{_P_SUBSCRIPTS})?\\s*(?:=|<|>|≤|≥|¼)"
+    p_value = (
+        f"(?<![\\w])[pP]s?\\s*(?:-?values?)?(?:[\\s_-]?{_P_SUBSCRIPTS})?"
+        f"\\s*{_P_SIDES}?"  # "p one-sided =" (#695)
+        "(?:=|<|>|≤|≥|¼)"
+    )
     symbol = _P_NOTE_SYMBOL
     marker = f"(?<![\\w)\\]/])(?:(?:{symbol}|(?<![\\w/+])\\++)\\s*)+[:=,]?\\s*$"
     # a marker in brackets, before the p-value ("(*) p < .05", "(**) = p < .01") or after it

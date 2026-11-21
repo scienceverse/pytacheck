@@ -1,0 +1,88 @@
+{
+  "id": "cran_info.mock.records",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "cran_url",
+      "package",
+      "title",
+      "creators",
+      "version",
+      "publication_date",
+      "description",
+      "resource_type",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://CRAN.R-project.org/package=Reol",
+          "https://CRAN.R-project.org/package=notapackagexyz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reol",
+          "notapackagexyz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Programmatic Interface to the Encyclopedia of Life",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Barb Banbury; Brian O'Meara",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0.1.2",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2013-05-11",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Programmatic interface to EOL.",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Software",
+          "Software"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -130,6 +130,17 @@ def test_key_remove_replaces_each_key_in_a_result_in_tables_and_names_too() -> N
     assert out2 is plain and n2 == 0
 
 
+def test_key_remove_keeps_what_a_module_noted_on_its_table() -> None:
+    # R's attributes (a table's notes: run_results' "reran_for_order") are not text to clean;
+    # a table with a list column is rebuilt whenever the result holds a key word
+    table = pd.DataFrame({"f": ["a.R"], "lines": pd.Series([["x <- 1"]], dtype=object)})
+    table.attrs["reran_for_order"] = True
+    out, n = k._key_remove({"run_results": table, "note": "path /tmp/pytest/test_x"})
+    assert n == 0
+    assert out["run_results"] is not table  # rebuilt, as a result that holds a key word is
+    assert out["run_results"].attrs == {"reran_for_order": True}
+
+
 def test_module_run_removes_a_key_from_any_modules_result(tmp_path: Path) -> None:
     key = fake_keys(4)["openrouter-api-key"]
 

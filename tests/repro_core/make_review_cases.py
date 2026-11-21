@@ -477,10 +477,22 @@ expr(
     "repro_run_scripts.relative_paths",
     f"(function() {{ out <- repro_run_scripts(data.frame(file_name = c('a.R', 'b.R'),"
     f" script_path = c('ok.R', '{REL}/ok.R'), run_dir = '{REL}'), order = NULL, timeout = 60);"
-    " out$elapsed <- NULL; out })()",
+    " out$elapsed <- out$started_at <- out$ended_at <- NULL; out })()",
     f"lambda m: (m.need_r(), m.core.repro_run_scripts(m.pd.DataFrame({{'file_name': ['a.R', 'b.R'],"
     f" 'script_path': ['ok.R', '{REL}/ok.R'], 'run_dir': ['{REL}', '{REL}']}}), order=None,"
-    " timeout=60).drop(columns=['elapsed']))[1]",
+    " timeout=60).drop(columns=['elapsed', 'started_at', 'ended_at']))[1]",
+)
+
+# metacheck 0.4.4.27 (#695): a file read from a web address is not one the deposit should hold
+expr(
+    "repro_ref_checkable.web_address",
+    "metacheck:::.repro_ref_checkable(data.frame(ref = c('http://journal.sjdm.org/16/1234/study1.sav',"
+    " 'x.csv', 'https://x.org/a.csv', 'sub/y.csv'),"
+    " basename = c('study1.sav', 'x.csv', 'a.csv', 'y.csv')))",
+    "lambda m: __import__('metacheck.repro.layout', fromlist=['_'])._repro_ref_checkable("
+    "m.pd.DataFrame({'ref': ['http://journal.sjdm.org/16/1234/study1.sav', 'x.csv',"
+    " 'https://x.org/a.csv', 'sub/y.csv'],"
+    " 'basename': ['study1.sav', 'x.csv', 'a.csv', 'y.csv']}))",
 )
 
 # ---------------------------------------------------------------------------

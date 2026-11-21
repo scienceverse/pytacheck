@@ -188,10 +188,14 @@ def prereg_check(paper: Any, cache: bool = False) -> dict[str, Any]:
     link_types = _parallel_map(osf_type, osf_ids)
     reg_ids = [i for i, t in zip(osf_ids, link_types, strict=True) if t == "registrations"]
     inaccessible_ids = {i for i, t in zip(osf_ids, link_types, strict=True) if t == "inaccessible"}
+    # A link the OSF did not answer for (no connection, a server error, too many requests) could
+    # not be checked at all: it may be a registration, and it is not known to be private or
+    # withdrawn (metacheck #541)
+    unreachable_ids = {i for i, t in zip(osf_ids, link_types, strict=True) if t == "unreachable"}
 
     ## no registrations ----
     n_osf = len(links_osf)
-    if not reg_ids and not inaccessible_ids and len(table_ap) == 0:
+    if not reg_ids and not inaccessible_ids and not unreachable_ids and len(table_ap) == 0:
         return {
             "traffic_light": "na",
             "summary_text": f"We found {n_osf} OSF link{plural(n_osf)}, but no registrations.",
@@ -205,6 +209,11 @@ def prereg_check(paper: Any, cache: bool = False) -> dict[str, Any]:
         href
         for href, cid in zip(osf_hrefs, checked, strict=True)
         if cid is not None and cid in inaccessible_ids
+    ]
+    unreachable_regs = [
+        href
+        for href, cid in zip(osf_hrefs, checked, strict=True)
+        if cid is not None and cid in unreachable_ids
     ]
     reg_infos = _parallel_map(osf_get_all_pages, urls)
 
@@ -228,12 +237,18 @@ def prereg_check(paper: Any, cache: bool = False) -> dict[str, Any]:
     ps: list[dict[str, str]] = []
     for rid, reg_info in zip(reg_ids, reg_infos, strict=True):
         if len(reg_info) == 0:
-            if getattr(reg_info, "osf_error", None) is not None:
+            err = getattr(reg_info, "osf_error", None)
+            if err is not None:
                 # the paper's own link, not the API URL metacheck reports (U110)
                 own = next(
                     (h for h, cid in zip(osf_hrefs, checked, strict=True) if cid == rid), None
                 )
-                inaccessible_regs.append(own if own is not None else _REG_API % rid)
+                own = own if own is not None else _REG_API % rid
+                # a failed request is not a refusal (metacheck #541)
+                if err == "request_failed":
+                    unreachable_regs.append(own)
+                else:
+                    inaccessible_regs.append(own)
             continue
         extracted = _prereg.osf_prereg_extract(reg_info, fetch_schema)
         ps.append(_prereg.flatten_schema(extracted))
@@ -244,6 +259,7 @@ def prereg_check(paper: Any, cache: bool = False) -> dict[str, Any]:
     # make sure all items are not lists
     prereg_info = _rows_frame([*ps, *ap_rows])
     n_inacc = len(inaccessible_regs)
+    n_unreach = len(unreachable_regs)
     n_inacc_ap = len(inaccessible_ap)
     # The sentences naming the links that could not be read
     inaccessible_summary = []
@@ -256,6 +272,17 @@ def prereg_check(paper: Any, cache: bool = False) -> dict[str, Any]:
         inaccessible_text.append(
             f"The following registration link{plural(n_inacc)} could not be accessed and may be "
             f"private, embargoed, or withdrawn: {', '.join(inaccessible_regs)}."
+        )
+    if n_unreach > 0:
+        inaccessible_summary.append(
+            f"{n_unreach} OSF link{plural(n_unreach)} could not be checked, because the OSF did "
+            "not answer."
+        )
+        inaccessible_text.append(
+            f"The OSF did not answer for the following link{plural(n_unreach)} (no connection, a "
+            f"server error, or too many requests), so {plural(n_unreach, 'it', 'they')} could not "
+            f"be checked; it may be a registration. Run the check again later, or open the "
+            f"link{plural(n_unreach)}: {', '.join(unreachable_regs)}."
         )
     if n_inacc_ap > 0:
         inaccessible_summary.append(
@@ -281,7 +308,7 @@ def prereg_check(paper: Any, cache: bool = False) -> dict[str, Any]:
             f"(make one at {KEY_SERVICES['researchbox'].url})."
         )
 
-    if len(prereg_info) == 0 and (n_inacc > 0 or n_inacc_ap > 0):
+    if len(prereg_info) == 0 and (n_inacc > 0 or n_unreach > 0 or n_inacc_ap > 0):
         n_links = n_osf + len(links_ap)
         return {
             "traffic_light": "na",

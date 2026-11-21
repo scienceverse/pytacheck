@@ -68,7 +68,8 @@
           "has_docstring",
           "files_written",
           "loaded_files_missing",
-          "loaded_files_missing_names"
+          "loaded_files_missing_names",
+          "loaded_files_fetched_names"
         ],
         "v": [
           {
@@ -360,6 +361,16 @@
               "low.csv, UP.csv",
               "low.sav, UP.sav"
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
           }
         ]
       },
@@ -387,7 +398,7 @@
           "#### Packages / Dependencies",
           "No packages/libraries were detected as loaded in the code files. (This check reads R and Python imports; other languages are not scanned for packages.) Even when no imports are detected, it is good practice to record the exact package versions the analysis depended on — see \"Reproducible Environment\" below.",
           "#### Reproducible Environment",
-          "No list of the Python packages the code needs (a `requirements.txt`, `environment.yml`, `Pipfile.lock`, `poetry.lock`, `uv.lock` or `pyproject.toml`) was found anywhere in the repository. Without one, the package versions used for the analysis are not recoverable, and they may drift between when this analysis was run and any later reproduction attempt. Consider depositing a `requirements.txt` that lists each package with its version (for example the output of `pip freeze`).",
+          "No list of the Python packages the code needs (a `requirements.txt`, `environment.yml`, `Pipfile.lock`, `poetry.lock`, `uv.lock` or `pyproject.toml`) was found anywhere in the repository. Without one, the package versions used for the analysis are not recoverable, and they may drift between when this analysis was run and any later reproduction attempt. Consider depositing a `requirements.txt` that lists each package with its version (for example the output of `pip freeze`).\n\nThe repository holds MATLAB and Mplus and SAS and SPSS code. State the version of MATLAB and Mplus and SAS and SPSS used in the README, and list any add-ons the code needs (for Stata, the user-written commands installed with `ssc install`; for MATLAB, the toolboxes), so that readers can run the code with the same software.",
           "",
           "#### Parsable code",
           "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.",
@@ -420,6 +431,7 @@
           "code_min_comments",
           "code_parse_errors",
           "code_packages_n",
+          "code_files_failed",
           "code_version_pinned"
         ],
         "v": [
@@ -467,6 +479,12 @@
           },
           {
             "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
             "v": [
               0
             ]
@@ -640,6 +658,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

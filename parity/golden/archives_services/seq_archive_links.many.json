@@ -1,0 +1,71 @@
+{
+  "id": "seq_archive_links.many",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "paper_id",
+      "href",
+      "accession",
+      "repo_type",
+      "text_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE999999",
+          "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE1001",
+          "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE1002",
+          "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE1003",
+          "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE1004"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "GSE999999",
+          "GSE1001",
+          "GSE1002",
+          "GSE1003",
+          "GSE1004"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "geo",
+          "geo",
+          "geo",
+          "geo",
+          "geo"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

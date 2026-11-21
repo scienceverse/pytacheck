@@ -122,7 +122,16 @@ rc_tables_dir <- function(name, td, tables) {
 # execution table's "Time (s)", deparsed into the report's R chunk) so the
 # goldens are reproducible.
 rc_untime <- function(mo) {
+  # the clock times kept for a TRO (metacheck 0.4.4.20) vary as well
+  if (!is.null(mo$environment)) {
+    for (k in c("started_at", "ended_at")) if (!is.null(mo$environment[[k]])) mo$environment[[k]] <- "<time>"
+    # the machine and the Python found on it differ between the machines that make the goldens
+    for (k in names(mo$environment$host)) mo$environment$host[[k]] <- "<host>"
+    for (k in names(mo$environment$python_local)) mo$environment$python_local[[k]] <- "<python>"
+  }
   if (!is.null(mo$run_results) && nrow(mo$run_results)) {
+    for (k in c("started_at", "ended_at"))
+      mo$run_results[[k]][!is.na(mo$run_results[[k]])] <- "<time>"
     mo$run_results$elapsed <- 0
     mo$report <- gsub('"Time \\(s\\)" = (c\\([^)]*\\)|[0-9.e+-]+)', '"Time (s)" = 0',
                       mo$report)

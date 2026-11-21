@@ -24,6 +24,7 @@ pytacheck's R unserializer.
 from __future__ import annotations
 
 import contextlib
+import datetime as _dt
 import math
 import os
 import re
@@ -56,6 +57,7 @@ from metacheck.repro.core import (
     _r_is_true,
     _read_cap,
     _read_lines,
+    _read_utf8_lines,
     _repro_bioc_packages,
     _repro_classify_install_message,
     _repro_script_limit,
@@ -64,6 +66,7 @@ from metacheck.repro.core import (
     _script_lines,
     _setdiff,
 )
+from metacheck.repro.provenance import _repro_exit_status, _repro_prov_note_docker
 
 __all__ = [
     "repro_docker_available",
@@ -933,6 +936,8 @@ def repro_install_deps_docker(
             "-v", f"{_normalize_path(lib)}:/rlib",
             image, "Rscript", "/sandbox/install.R",
         ]  # fmt: skip
+        # kept for the environment element of the output (metacheck.repro.provenance)
+        _repro_prov_note_docker("r_install", args, image)
         n = len(install_deps)
         versions = (
             _chr_list(install_deps["version"]) if "version" in install_deps.columns else [None] * n
@@ -958,7 +963,7 @@ def repro_install_deps_docker(
         )
         if res is not None:
             try:
-                txt = "\n".join(_read_lines(out_file))
+                txt = "\n".join(_read_utf8_lines(out_file))
             except OSError:
                 txt = ""
             # A failed install whose message gives no reason, only "had non-zero exit
@@ -1459,6 +1464,8 @@ def repro_run_scripts_docker(
 
     bar = pb(len(ordered), ":what [:bar] :current/:total")
     rows: list[dict[str, Any]] = []
+    # each script's start, end and exit status (see metacheck.repro.provenance)
+    clocks: dict[str, dict[str, Any]] = {}
     run_started = time.monotonic()
     try:
         bar.tick(0, {"what": ""})
@@ -1518,16 +1525,20 @@ def repro_run_scripts_docker(
             if lib_norm is not None:
                 args += ["-v", f"{lib_norm}:/rlib:ro"]
             args += [image, *_repro_docker_counted_cmd(["Rscript", container_wrapper], net)]
+            _repro_prov_note_docker("r_run", args, image)
 
             with tempfile.TemporaryDirectory(prefix="pytacheck_docker_") as tmp:
                 out_file = os.path.join(tmp, "out.txt")
                 err_file = os.path.join(tmp, "err.txt")
                 t0 = time.monotonic()
+                clock = clocks[fn] = {"started": _dt.datetime.now(_dt.UTC)}
                 watched = _repro_docker_run_watched(
                     args, container_name, run_timeout, out_file, err_file, root, net
                 )
                 res = watched["res"]
                 elapsed = time.monotonic() - t0
+                clock["ended"] = _dt.datetime.now(_dt.UTC)
+                clock["status"] = _repro_exit_status(res)
                 is_timeout = (
                     isinstance(res, Exception)
                     and bool(grepl("timed? ?out", str(res), ignore_case=True))
@@ -1622,7 +1633,7 @@ def repro_run_scripts_docker(
             )
     finally:
         bar.terminate()
-    return _run_frame(rows)
+    return _run_frame(rows, clocks)
 
 
 # ---------------------------------------------------------------------------
@@ -1789,6 +1800,7 @@ def repro_install_deps_py_docker(
             "-v", f"{_normalize_path(lib)}:/pylib",
             image, "sh", _repro_docker_container_path(driver, sandbox_dir),
         ]  # fmt: skip
+        _repro_prov_note_docker("python_install", args, image)
         raw = _docker(args, timeout=timeout, stdout=out_file, merge_stderr=True)
         res = None if isinstance(raw, Exception) else raw
         if res is None or res.get("timeout"):
@@ -1802,7 +1814,7 @@ def repro_install_deps_py_docker(
             msg = f"docker install timed out after {as_character(r_round(timeout))}s"
         else:
             try:
-                txt = "\n".join(_read_lines(out_file))
+                txt = "\n".join(_read_utf8_lines(out_file))
             except OSError:
                 txt = ""
             status = as_character(res.get("status")) or "NA"
@@ -1894,6 +1906,7 @@ def repro_run_scripts_py_docker(
 
     bar = pb(len(ordered), ":what [:bar] :current/:total")
     rows: list[dict[str, Any]] = []
+    clocks: dict[str, dict[str, Any]] = {}
     try:
         bar.tick(0, {"what": ""})
         for fn in ordered:
@@ -1949,16 +1962,20 @@ def repro_run_scripts_py_docker(
                 args += ["-e", "PYTHONPATH=" + ":".join(py_path)]
             container_script = _repro_docker_container_path(paths[i] or "", root)
             args += [image, *_repro_docker_counted_cmd(["python", container_script], net)]
+            _repro_prov_note_docker("python_run", args, image)
 
             with tempfile.TemporaryDirectory(prefix="pytacheck_docker_") as tmp:
                 out_file = os.path.join(tmp, "out.txt")
                 err_file = os.path.join(tmp, "err.txt")
                 t0 = time.monotonic()
+                clock = clocks[fn] = {"started": _dt.datetime.now(_dt.UTC)}
                 watched = _repro_docker_run_watched(
                     args, container_name, run_timeout, out_file, err_file, root, net
                 )
                 res = watched["res"]
                 elapsed = time.monotonic() - t0
+                clock["ended"] = _dt.datetime.now(_dt.UTC)
+                clock["status"] = _repro_exit_status(res)
                 is_timeout = (
                     isinstance(res, Exception)
                     and bool(grepl("timed? ?out", str(res), ignore_case=True))
@@ -2031,4 +2048,4 @@ def repro_run_scripts_py_docker(
             )
     finally:
         bar.terminate()
-    return _run_frame(rows)
+    return _run_frame(rows, clocks)

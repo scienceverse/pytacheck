@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -57,9 +58,13 @@
           "file_size",
           "file_type",
           "provider",
+          "osf_node",
+          "storage_size",
+          "storage_n",
           "repo_name",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -245,6 +250,66 @@
             ]
           },
           {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              9271,
+              9271,
+              9271,
+              9271,
+              9271,
+              9271,
+              9271
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              7,
+              7,
+              7,
+              7,
+              7,
+              7,
+              7
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "629bx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx"
+            ]
+          },
+          {
             "t": "chr",
             "v": [
               "code",
@@ -282,6 +347,26 @@
               "supplemental",
               "supplemental",
               "supplemental"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "code",
+              "code",
+              "data",
+              "data",
+              "archive",
+              "archive",
+              "data",
+              "readme",
+              "documentation",
+              "readme",
+              "documentation",
+              "documentation",
+              "documentation"
             ]
           },
           {
@@ -329,6 +414,7 @@
       {
         "t": "chr",
         "v": [
+          "#### Partly Listed Repositories\n\nThe OSF refused part of the listing of https://osf.io/629bx (8 files listed), also when asked again, so what this report says about its files describes only the part that was listed. Run the check again later.",
           "#### Whose Deposits",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n\"<a href='https://osf.io/j3gcx' target='_blank'>osf.io/j3gcx<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\", \"text\"), Whose = c(\"the authors', for this paper\", \n\"the authors', for this paper\", \"the authors', for this paper\"\n), Why = c(\"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\", \"a link in the main text, not shown to be anyone else's\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
@@ -349,7 +435,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 15 files in 3 repositories.\n-  We found 2 README files and 2 repositories without READMEs.\n-  We found 2 archive files."
+          "\n-  We listed only part of 1 OSF project, because the OSF refused part of the listing; run the check again.\n-  We found 15 files in 3 repositories.\n-  We found 2 README files and 2 repositories without READMEs.\n-  We found 2 archive files."
         ]
       },
       {
@@ -369,6 +455,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -382,7 +473,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               2,
@@ -390,7 +481,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -398,7 +489,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               4,
               11,
@@ -406,7 +497,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               2,
@@ -414,7 +505,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               2,
               2,
@@ -422,7 +513,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               2,
@@ -430,7 +521,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               1,
@@ -438,7 +529,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -446,7 +537,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -454,7 +545,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               2,
@@ -462,7 +553,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -470,7 +561,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -478,7 +569,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -486,11 +577,51 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
             ]
           }
         ]
@@ -499,11 +630,16 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -523,8 +659,9 @@
         "nrow": 0,
         "names": [
           "paper_id",
-          "repo_url",
-          "files_listed"
+          "accession",
+          "archive",
+          "repo_url"
         ],
         "v": [
           {
@@ -536,8 +673,48 @@
             "v": []
           },
           {
-            "t": "int",
+            "t": "chr",
             "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "files_listed",
+          "reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "paper_a"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/629bx"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "refused by the OSF"
+            ]
           }
         ]
       },
@@ -727,7 +904,10 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
+          "dep_org",
           "dep_related",
           "dep_date",
           "dep_year",
@@ -754,7 +934,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -827,6 +1008,30 @@
               "",
               "",
               "The raw data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
             ]
           },
           {
@@ -1068,6 +1273,14 @@
               false,
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              false
+            ]
           }
         ]
       },
@@ -1083,9 +1296,13 @@
           "file_size",
           "file_type",
           "provider",
+          "osf_node",
+          "storage_size",
+          "storage_n",
           "repo_name",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -1114,6 +1331,22 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "int",
             "v": []
           },
           {
@@ -1239,6 +1472,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

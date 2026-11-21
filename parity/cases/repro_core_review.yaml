@@ -324,8 +324,16 @@
   "args":
     "x":
       "$expr":
-        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); (function() { out <- repro_run_scripts(data.frame(file_name = c('a.R', 'b.R'), script_path = c('ok.R', 'upstream/metacheck/tests/testthat/fixtures/repro/ok.R'), run_dir = 'upstream/metacheck/tests/testthat/fixtures/repro'), order = NULL, timeout = 60); out$elapsed <- NULL; out })() }"
-        "py": "lambda m: (m.need_r(), m.core.repro_run_scripts(m.pd.DataFrame({'file_name': ['a.R', 'b.R'], 'script_path': ['ok.R', 'upstream/metacheck/tests/testthat/fixtures/repro/ok.R'], 'run_dir': ['upstream/metacheck/tests/testthat/fixtures/repro', 'upstream/metacheck/tests/testthat/fixtures/repro']}), order=None, timeout=60).drop(columns=['elapsed']))[1]"
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); (function() { out <- repro_run_scripts(data.frame(file_name = c('a.R', 'b.R'), script_path = c('ok.R', 'upstream/metacheck/tests/testthat/fixtures/repro/ok.R'), run_dir = 'upstream/metacheck/tests/testthat/fixtures/repro'), order = NULL, timeout = 60); out$elapsed <- out$started_at <- out$ended_at <- NULL; out })() }"
+        "py": "lambda m: (m.need_r(), m.core.repro_run_scripts(m.pd.DataFrame({'file_name': ['a.R', 'b.R'], 'script_path': ['ok.R', 'upstream/metacheck/tests/testthat/fixtures/repro/ok.R'], 'run_dir': ['upstream/metacheck/tests/testthat/fixtures/repro', 'upstream/metacheck/tests/testthat/fixtures/repro']}), order=None, timeout=60).drop(columns=['elapsed', 'started_at', 'ended_at']))[1]"
+- "id": "repro_ref_checkable.web_address"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_ref_checkable(data.frame(ref = c('http://journal.sjdm.org/16/1234/study1.sav', 'x.csv', 'https://x.org/a.csv', 'sub/y.csv'), basename = c('study1.sav', 'x.csv', 'a.csv', 'y.csv'))) }"
+        "py": "lambda m: __import__('metacheck.repro.layout', fromlist=['_'])._repro_ref_checkable(m.pd.DataFrame({'ref': ['http://journal.sjdm.org/16/1234/study1.sav', 'x.csv', 'https://x.org/a.csv', 'sub/y.csv'], 'basename': ['study1.sav', 'x.csv', 'a.csv', 'y.csv']}))"
 - "id": "repro_docker_resource_args.partial"
   "r": "identity"
   "py": "tests.repro_core.parity_support.run"

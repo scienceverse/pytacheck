@@ -22,6 +22,8 @@
       "stat_output",
       "match_table",
       "modifications",
+      "artifacts",
+      "environment",
       "checklist_section",
       "sandbox"
     ],
@@ -282,12 +284,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -348,6 +358,54 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -458,6 +516,14 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -469,12 +535,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -503,7 +577,11 @@
           "elapsed",
           "script_lines",
           "captures",
-          "reason"
+          "started_at",
+          "ended_at",
+          "exit_status",
+          "reason",
+          "checked"
         ],
         "v": [
           {
@@ -582,7 +660,31 @@
           {
             "t": "chr",
             "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran"
             ]
           }
         ]
@@ -605,7 +707,9 @@
         "names": [
           "file_name",
           "change_type",
-          "detail"
+          "detail",
+          "sha256_before",
+          "sha256_after"
         ],
         "v": [
           {
@@ -625,6 +729,196 @@
             "v": [
               "library(stringr)"
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5bef732c60f2f47ed3f1b34eeb1a3e70d58b2e26e3d3caa1fe1c20744a805c22"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "stage",
+          "path",
+          "size",
+          "sha256",
+          "mime_type",
+          "source",
+          "status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "deposit",
+              "before_run",
+              "before_run",
+              "after_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "data.csv",
+              "needs_stringr.R",
+              "needs_stringr.R"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              32,
+              32,
+              53,
+              106
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "5bef732c60f2f47ed3f1b34eeb1a3e70d58b2e26e3d3caa1fe1c20744a805c22",
+              "14483ef1a5be43ece2a51857fcda7c76f1258c200a868808776b209eed139cf6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text/csv",
+              "text/csv",
+              "text/x-r-source",
+              "text/x-r-source"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "changed"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "metacheck_version",
+          "started_at",
+          "ended_at",
+          "host",
+          "sandbox",
+          "network_isolated",
+          "internet",
+          "timeout_per_script",
+          "total_timeout",
+          "python_local",
+          "docker"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0.4.4.28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "r_version",
+              "platform",
+              "os"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "process"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              60
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3600
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
           }
         ]
       },
@@ -642,6 +936,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

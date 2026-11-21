@@ -656,6 +656,9 @@
           "col_numeric",
           "col_text",
           "key_n",
+          "files_failed",
+          "llm_cols_unanswered",
+          "llm_files_unanswered",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
@@ -701,6 +704,24 @@
             "t": "int",
             "v": [
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
             ]
           },
           {
@@ -1731,6 +1752,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

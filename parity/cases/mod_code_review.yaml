@@ -53,6 +53,13 @@
       "$expr":
         "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('review_refs')})"
         "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('review_refs')"
+- "id": "code_check.archive"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('review_archive')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('review_archive')"
 - "id": "code_check.gaps"
   "module": "code_check"
   "args":
@@ -257,6 +264,30 @@
       "$expr":
         "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_local('tests/mod_code/fixtures/review/local_parse_bad')})"
         "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_local('tests/mod_code/fixtures/review/local_parse_bad')"
+- "id": "local_path.fetched_names"
+  "r": "identity"
+  "py": "tests.mod_code.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_local('tests/mod_code/fixtures/review/local_fetch')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_local('tests/mod_code/fixtures/review/local_fetch')"
+- "id": "local_path.others_code"
+  "r": "identity"
+  "py": "tests.mod_code.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_local('tests/mod_code/fixtures/review/local_others')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_local('tests/mod_code/fixtures/review/local_others')"
+- "id": "local_path.stata_only"
+  "r": "identity"
+  "py": "tests.mod_code.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_local('tests/mod_code/fixtures/review/local_stata')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_local('tests/mod_code/fixtures/review/local_stata')"
 - "id": "manifest.paperlist"
   "r": "identity"
   "py": "tests.mod_code.helpers.identity"
@@ -369,6 +400,14 @@
       "$expr":
         "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_report_tables('review_refs')})"
         "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_report_tables('review_refs')"
+- "id": "report_tables.archive"
+  "r": "identity"
+  "py": "tests.mod_code.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_report_tables('review_archive')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_report_tables('review_archive')"
 - "id": "report_tables.gaps"
   "r": "identity"
   "py": "tests.mod_code.helpers.identity"

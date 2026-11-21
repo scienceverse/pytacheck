@@ -51,6 +51,40 @@ def test_psycharchives_links() -> None:
     assert len(psycharchives_links(paper2)) == 1
 
 
+def test_a_psycharchives_doi_is_found_by_the_address_it_is_registered_with(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # 10.23668/psycharchives.12959 leads to handle 20.500.12034/8459 (DataCite): the number in the
+    # DOI is not the handle. Mocked, so the test needs no connection.
+    import re
+
+    from metacheck.archives import repo_kind
+
+    addr = "https://www.psycharchives.org/jspui/handle/20.500.12034/8459"
+
+    def reg(doi: object) -> tuple[str | None, bool, bool]:
+        hit = re.match(r"^10\.23668/psycharchives\.12959$", str(doi), re.I)
+        return (addr if hit else "https://example.org/x"), True, False
+
+    monkeypatch.setattr(repo_kind, "_repo_doi_url", reg)
+    paper = pc.test_paper(
+        [
+            "Data are at https://doi.org/10.23668/psycharchives.12959.",
+            "Another DOI 10.23668/other.1 leads elsewhere.",
+        ]
+    )
+    assert dspace_links(paper)["href"].tolist() == [addr]
+    assert psycharchives_links(paper)["href"].tolist() == [addr]
+
+    # also as a hyperlink
+    paper = pc.test_paper(url=["https://doi.org/10.23668/psycharchives.12959"])
+    assert dspace_links(paper)["href"].drop_duplicates().tolist() == [addr]
+
+    # a DOI that could not be looked up gives no row
+    monkeypatch.setattr(repo_kind, "_repo_doi_url", lambda doi: (None, False, False))
+    assert len(dspace_links(paper)) == 0
+
+
 def test_private_psycharchives_info(apis: object) -> None:
     info = _psycharchives_info(PA)
     assert info["pa_url"].iloc[0] == PA

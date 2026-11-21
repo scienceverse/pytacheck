@@ -1,0 +1,5 @@
+x <- c(1, 2, 3)
+plot(x)
+dev.print(pdf, file = "fig.pdf")
+cat("saved\n")
+View(data.frame(x = x))

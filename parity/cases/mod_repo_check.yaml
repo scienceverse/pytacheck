@@ -2135,3 +2135,161 @@
     - "url":
       - "https://repository.gatech.edu/entities/publication/00000000-0000-4000-8000-000000000000"
       "id": "p_dspace7_unfound"
+- "id": "repo_check.file_share.dropbox"
+  "note": "a link to Dropbox and no repository: yellow, with the warning"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"p_fs1\", c(\"All data and code are available at https://www.dropbox.com/s/abc123/project.zip?dl=0.\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_fs1"
+      "text":
+      - "All data and code are available at https://www.dropbox.com/s/abc123/project.zip?dl=0."
+- "id": "repo_check.file_share.two"
+  "note": "two file-sharing services, one of them a hyperlink only"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://drive.google.com/drive/folders/1AbC?usp=sharing\"), \"p_fs2\", c(\"Data are at https://www.dropbox.com/s/abc123/project.zip?dl=0 and code at https://app.box.com/s/xyz9.\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://drive.google.com/drive/folders/1AbC?usp=sharing"
+      "id": "p_fs2"
+      "text":
+      - "Data are at https://www.dropbox.com/s/abc123/project.zip?dl=0 and code at https://app.box.com/s/xyz9."
+- "id": "repo_check.file_share.with_local"
+  "note": "a file-sharing link beside a checked local folder: the light is yellow"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"p_fs3\", c(\"Materials are on https://www.dropbox.com/s/abc123/project.zip?dl=0.\")), \"repo_check\", local_path = \"tests/mod_repo_check/fixtures/tidy\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_fs3"
+      "text":
+      - "Materials are on https://www.dropbox.com/s/abc123/project.zip?dl=0."
+    "args":
+      "local_path": "tests/mod_repo_check/fixtures/tidy"
+- "id": "repo_check.file_share.none"
+  "note": "no such link: no warning, a zero count"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"p_fs4\", c(\"Data are at https://osf.io/abcde.\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_fs4"
+      "text":
+      - "Data are at https://osf.io/abcde."
+- "id": "repo_check.seq.geo_only"
+  "note": "a GEO accession and nothing else: set aside, the light is na"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"p_seq1\", c(\"RNA-seq data are deposited in GEO (GSE149523).\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_seq1"
+      "text":
+      - "RNA-seq data are deposited in GEO (GSE149523)."
+- "id": "repo_check.seq.with_local"
+  "note": "a GEO accession beside a checked local folder: only the folder is checked"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"p_seq2\", c(\"RNA-seq data are deposited in GEO (GSE149523).\")), \"repo_check\", local_path = \"tests/mod_repo_check/fixtures/tidy\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_seq2"
+      "text":
+      - "RNA-seq data are deposited in GEO (GSE149523)."
+    "args":
+      "local_path": "tests/mod_repo_check/fixtures/tidy"
+- "id": "repo_check.cran.only"
+  "note": "a CRAN package: set aside, the light is na"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"p_cran1\", c(\"Our package is on CRAN: https://CRAN.R-project.org/package=metacheck.\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_cran1"
+      "text":
+      - "Our package is on CRAN: https://CRAN.R-project.org/package=metacheck."
+- "id": "repo_check.icpsr.only"
+  "note": "an openICPSR package: set aside, the light is na"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"p_icpsr1\", c(\"Data and code: https://doi.org/10.3886/E195681V1.\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_icpsr1"
+      "text":
+      - "Data and code: https://doi.org/10.3886/E195681V1."
+- "id": "repo_check.local.kinds"
+  "note": "file kinds decide the counts: an empty README does not count, a .7z and a .jar are archives, a .log.gz is not; .Rapp.history and .RDataTmp are junk"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req$url <- gsub(\"(/v2/guids/[^/?&]+/?(?:[?][^&]*)?)[?&]embed=bibliographic_contributors$\", \"\\\\1\", req$url, perl = TRUE); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(character(0), \"p_kinds\"), \"repo_check\", local_path = \"tests/mod_repo_check/fixtures/kinds\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url": []
+      "id": "p_kinds"
+    "args":
+      "local_path": "tests/mod_repo_check/fixtures/kinds"

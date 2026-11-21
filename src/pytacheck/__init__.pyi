@@ -17,6 +17,8 @@ from metacheck.archives.aspredicted import aspredicted_links as aspredicted_link
 from metacheck.archives.cache import metacheck_cache_info as metacheck_cache_info
 from metacheck.archives.ckan import ckan_info as ckan_info
 from metacheck.archives.ckan import ckan_links as ckan_links
+from metacheck.archives.cran import cran_info as cran_info
+from metacheck.archives.cran import cran_links as cran_links
 from metacheck.archives.dataone import dataone_info as dataone_info
 from metacheck.archives.dataone import dataone_links as dataone_links
 from metacheck.archives.dataverse import dataverse_file_download as dataverse_file_download
@@ -38,6 +40,7 @@ from metacheck.archives.figshare import figshare_file_download as figshare_file_
 from metacheck.archives.figshare import figshare_info as figshare_info
 from metacheck.archives.figshare import figshare_links as figshare_links
 from metacheck.archives.figshare import figshare_pat as figshare_pat
+from metacheck.archives.file_share import file_share_links as file_share_links
 from metacheck.archives.fourtu import researchdata4tu_file_download as researchdata4tu_file_download
 from metacheck.archives.fourtu import researchdata4tu_info as researchdata4tu_info
 from metacheck.archives.fourtu import researchdata4tu_links as researchdata4tu_links
@@ -55,6 +58,9 @@ from metacheck.archives.gitlab import gitlab_links as gitlab_links
 from metacheck.archives.gitlab import gitlab_pat as gitlab_pat
 from metacheck.archives.gitlab import gitlab_repo as gitlab_repo
 from metacheck.archives.gitlab import gitlab_tree_files as gitlab_tree_files
+from metacheck.archives.handle import handle_links as handle_links
+from metacheck.archives.icpsr import icpsr_info as icpsr_info
+from metacheck.archives.icpsr import icpsr_links as icpsr_links
 from metacheck.archives.info_cache import repo_info_cache_clear as repo_info_cache_clear
 from metacheck.archives.ldbase import ldbase_info as ldbase_info
 from metacheck.archives.ldbase import ldbase_links as ldbase_links
@@ -89,6 +95,9 @@ from metacheck.archives.reshare import eprints_links as eprints_links
 from metacheck.archives.reshare import reshare_file_download as reshare_file_download
 from metacheck.archives.reshare import reshare_info as reshare_info
 from metacheck.archives.reshare import reshare_links as reshare_links
+from metacheck.archives.seq import seq_archive_info as seq_archive_info
+from metacheck.archives.seq import seq_archive_links as seq_archive_links
+from metacheck.archives.seq import seq_archive_size as seq_archive_size
 from metacheck.archives.zenodo import invenio_links as invenio_links
 from metacheck.archives.zenodo import zenodo_file_download as zenodo_file_download
 from metacheck.archives.zenodo import zenodo_info as zenodo_info

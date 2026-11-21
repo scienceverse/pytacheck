@@ -772,8 +772,8 @@
               "<span title='Values look like personal information: email (12 values, 100%). Review before sharing. Column name suggests personal information (matched: email). Review before sharing.'>🔒 Personally Identifying Information — Values look like personal information: email (12 values, 100%); Column name suggests personal information (matched: email)<\/span>",
               "<span title='Column is empty: all 12 values are missing.'>⬜ Empty column — Column is empty: all 12 values are missing<\/span>",
               "<span title='SPSS \"Select Cases\" filter variable: 10 of 12 rows are selected (value 1). The reported analyses likely used only the selected rows; re-apply this filter to reproduce them.'>🧮 SPSS filter variable — SPSS \"Select Cases\" filter variable: 10 of 12 rows are selected (va...<\/span>",
-              "<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span><br><span title='Column name suggests personal information (matched: latitude). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: latitude)<\/span>",
-              "<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span><br><span title='Column name suggests personal information (matched: longitude). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: longitude)<\/span>",
+              "<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span>",
+              "<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span>",
               "<span title='Column is 92% numeric but 1 value cannot be parsed: \"n/a\"'>#️⃣ Numeric as text — Column is 92% numeric but 1 value cannot be parsed: \"n/a\"<\/span>"
             ]
           }
@@ -781,6 +781,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

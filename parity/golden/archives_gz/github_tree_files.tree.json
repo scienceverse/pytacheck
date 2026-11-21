@@ -91,7 +91,7 @@
             "t": "chr",
             "v": [
               "https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md",
-              "https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study 1.csv",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study%201.csv",
               "https://raw.githubusercontent.com/gzorg/treerepo/dev/code/analysis.R",
               "https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json",
               "https://raw.githubusercontent.com/gzorg/treerepo/dev/LICENSE",
@@ -223,6 +223,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

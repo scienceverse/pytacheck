@@ -226,6 +226,7 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
         _perform,
         _r_basename,
         _url_encode,
+        _url_encode_paths,
     )
 
     # the path only: the metadata request below answers 404 for a project that
@@ -328,6 +329,7 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
         paths = [_empty_or(field(x, "path"), "") for x in blobs]
         repo_str = _as_list(repo)[0] if _is_vector(repo) else repo
         raw_base = f"https://gitlab.com/{clean_repo}/-/raw/{_url_encode(default_branch)}/"
+        enc_paths = _url_encode_paths(paths)  # each part of the path encoded (#667)
         names = [_r_basename(p) for p in paths]
         files_df = pd.DataFrame(
             {
@@ -335,7 +337,7 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
                 "clean_repo": pd.Series([clean_repo] * len(blobs), dtype="string"),
                 "name": pd.Series(names, dtype="string"),
                 "path": pd.Series(paths, dtype="string"),
-                "download_url": pd.Series([raw_base + p for p in paths], dtype="string"),
+                "download_url": pd.Series([raw_base + p for p in enc_paths], dtype="string"),
                 "size": pd.Series([None] * len(blobs), dtype="float64"),
                 "ft": pd.Series(["file"] * len(blobs), dtype="string"),
             }

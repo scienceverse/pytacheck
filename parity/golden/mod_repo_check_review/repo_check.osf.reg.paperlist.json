@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -57,9 +58,13 @@
           "file_size",
           "file_type",
           "provider",
+          "osf_node",
+          "storage_size",
+          "storage_n",
           "repo_name",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -144,7 +149,7 @@
               "https://osf.io/download/8c19fcc5811a9ccd677664c3/",
               "https://osf.io/download/5bfdcac066f8a8fd0457c76c/",
               "https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md",
-              "https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study 1.csv",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study%201.csv",
               "https://raw.githubusercontent.com/gzorg/treerepo/dev/code/analysis.R",
               "https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json",
               "https://raw.githubusercontent.com/gzorg/treerepo/dev/LICENSE",
@@ -243,6 +248,72 @@
           {
             "t": "chr",
             "v": [
+              "regc1",
+              "regc1",
+              "regc1",
+              "regc1",
+              "regor",
+              "regor",
+              "regor",
+              "parp3",
+              "parp3",
+              "parp3",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "parc1",
               "parc1",
               "parc1",
@@ -309,6 +380,28 @@
           {
             "t": "chr",
             "v": [
+              "code",
+              "code",
+              "data",
+              "archive",
+              "code",
+              "data",
+              "archive",
+              "code",
+              "data",
+              "archive",
+              "readme",
+              "data",
+              "code",
+              "data",
+              "documentation",
+              "archive",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "ex1",
               "ex1",
               "ex1",
@@ -360,11 +453,11 @@
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://github.com/gzorg/treerepo' target='_blank'>github.com/gzorg/treerepo<\/a>\", \n\"<a href='https://osf.io/parc1' target='_blank'>osf.io/parc1<\/a>\", \n\"<a href='https://osf.io/parp3' target='_blank'>osf.io/parp3<\/a>\", \n\"<a href='https://osf.io/regor' target='_blank'>osf.io/regor<\/a>\"\n), Platform = c(\"github\", \"osf\", \"osf\", \"osf\"), Error = c(NA, \n\"closed registration source (files retrieved from registration: https://osf.io/regc1)\", \nNA, NA), \"All Files\" = c(7L, 4L, 3L, 3L), \"Data Files\" = c(2L, \n1L, 1L, 1L), \"Code Files\" = c(1L, 2L, 1L, 1L), READMEs = c(1L, \n0L, 0L, 0L), Archives = c(1L, 1L, 1L, 1L)), row.names = c(NA, \n-4L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://osf.io/parc1\", \"https://osf.io/parc1\", \n\"https://osf.io/parc1\", \"https://osf.io/parc1\", \"https://osf.io/regor\", \n\"https://osf.io/regor\", \"https://osf.io/regor\", \"https://osf.io/parp3\", \n\"https://osf.io/parp3\", \"https://osf.io/parp3\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\"\n), File = c(\"<a href='https://osf.io/download/6306c5dabe75ef9b1a42a497/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/728f26dcbf00a4dc6ff74eaf/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/390168dd09634c23320ee85c/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/52ed19e3de0a2f84c3d8a2a6/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/56420fcf747801c28a4eb4b1/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/74d22799339fdc0d61a5d280/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/6b8e1bad978a9d503046b5f3/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/8c19fcc5811a9ccd677664c3/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/5bfdcac066f8a8fd0457c76c/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md' target='_blank'>README.md<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study 1.csv' target='_blank'>study 1.csv<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json' target='_blank'>config.json<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/LICENSE' target='_blank'>LICENSE<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/archive.tar.gz' target='_blank'>archive.tar.gz<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/weird.file-name' target='_blank'>weird.file-name<\/a>\"\n), Size = c(\"172 B\", \"413 B\", \"5 B\", \"6.4 kB\", \"172 B\", \"5 B\", \n\"6.4 kB\", \"172 B\", \"5 B\", \"6.4 kB\", \"120 B\", \"2 kB\", \"512 B\", \n\"64 B\", \"1.1 kB\", \"100 kB\", \"—\"), Type = c(\"code\", \"code\", \n\"data\", \"archive\", \"code\", \"data\", \"archive\", \"code\", \"data\", \n\"archive\", \"readme\", \"data\", \"code\", \"data\", \"file\", \"archive\", \n\"file\")), row.names = c(NA, -17L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://osf.io/parc1\", \"https://osf.io/parc1\", \n\"https://osf.io/parc1\", \"https://osf.io/parc1\", \"https://osf.io/regor\", \n\"https://osf.io/regor\", \"https://osf.io/regor\", \"https://osf.io/parp3\", \n\"https://osf.io/parp3\", \"https://osf.io/parp3\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\", \n\"https://github.com/gzorg/treerepo\", \"https://github.com/gzorg/treerepo\"\n), File = c(\"<a href='https://osf.io/download/6306c5dabe75ef9b1a42a497/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/uq347/' target='_blank'>bad.Rmd<\/a>\", \n\"<a href='https://osf.io/download/728f26dcbf00a4dc6ff74eaf/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/390168dd09634c23320ee85c/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/52ed19e3de0a2f84c3d8a2a6/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/56420fcf747801c28a4eb4b1/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/74d22799339fdc0d61a5d280/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://osf.io/download/6b8e1bad978a9d503046b5f3/' target='_blank'>bad.R<\/a>\", \n\"<a href='https://osf.io/download/8c19fcc5811a9ccd677664c3/' target='_blank'>example2.csv<\/a>\", \n\"<a href='https://osf.io/download/5bfdcac066f8a8fd0457c76c/' target='_blank'>Archive.zip<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md' target='_blank'>README.md<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study%201.csv' target='_blank'>study 1.csv<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json' target='_blank'>config.json<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/LICENSE' target='_blank'>LICENSE<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/archive.tar.gz' target='_blank'>archive.tar.gz<\/a>\", \n\"<a href='https://raw.githubusercontent.com/gzorg/treerepo/dev/weird.file-name' target='_blank'>weird.file-name<\/a>\"\n), Size = c(\"172 B\", \"413 B\", \"5 B\", \"6.4 kB\", \"172 B\", \"5 B\", \n\"6.4 kB\", \"172 B\", \"5 B\", \"6.4 kB\", \"120 B\", \"2 kB\", \"512 B\", \n\"64 B\", \"1.1 kB\", \"100 kB\", \"—\"), Type = c(\"code\", \"code\", \n\"data\", \"archive\", \"code\", \"data\", \"archive\", \"code\", \"data\", \n\"archive\", \"readme\", \"data\", \"code\", \"data\", \"file\", \"archive\", \n\"file\")), row.names = c(NA, -17L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
           "#### Archive Files\n\nThe following files are not ZIP archives: archive.tar.gz. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, `.tar` or `.tar.gz`.",
           "#### Registration's Source Project Is Closed\n\n1 OSF source project is closed. The files metacheck lists below were not read from it — they were retrieved from the OSF registration's own copy, which is separate from and unaffected by the project's access setting. Nothing is currently lost, but this is still worth fixing: a closed source project means the files only survive for as long as the registration's copy does, and anyone who follows the project link itself (rather than the registration) will find it inaccessible.\n\n- **https://osf.io/parc1** is closed; its files were retrieved from the OSF registration https://osf.io/regc1.\n\nConsider making the source project openly available.",
-          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: weird.file-name. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Unclassified Files\n\n1 file is of a kind metacheck does not know, so it is not counted as data, code or documentation: weird.file-name. This is no problem in itself.",
           "#### File Naming",
           "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"study 1.csv\", Rule = \"spaces\", Severity = \"Required\", \n    Detail = \"contains a space\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
@@ -401,6 +494,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -414,7 +512,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               3,
@@ -422,7 +520,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -430,7 +528,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               7,
               10,
@@ -438,7 +536,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               2,
               3,
@@ -446,7 +544,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               4,
@@ -454,7 +552,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               0,
@@ -462,7 +560,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               3,
@@ -470,7 +568,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               0,
@@ -478,7 +576,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               0,
@@ -486,15 +584,15 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               1,
               1,
-              0
+              2
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -502,7 +600,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -510,7 +608,7 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
@@ -518,11 +616,51 @@
             ]
           },
           {
-            "t": "dbl",
+            "t": "int",
             "v": [
               0,
               0,
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
             ]
           }
         ]
@@ -531,11 +669,18 @@
         "t": "df",
         "nrow": 1,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_reg_b"
+            ]
+          },
           {
             "t": "chr",
             "v": [
@@ -561,8 +706,37 @@
         "nrow": 0,
         "names": [
           "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -575,6 +749,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -875,7 +1053,10 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
+          "dep_org",
           "dep_related",
           "dep_date",
           "dep_year",
@@ -902,7 +1083,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -984,6 +1166,33 @@
               "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs.",
               "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs.",
               "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package). The focus will be on interpreting the LMER output in light of the simulated parameters, using this method for power calculations. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -1255,6 +1464,15 @@
               false,
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false
+            ]
           }
         ]
       },
@@ -1270,9 +1488,13 @@
           "file_size",
           "file_type",
           "provider",
+          "osf_node",
+          "storage_size",
+          "storage_n",
           "repo_name",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -1301,6 +1523,22 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "int",
             "v": []
           },
           {
@@ -1428,6 +1666,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

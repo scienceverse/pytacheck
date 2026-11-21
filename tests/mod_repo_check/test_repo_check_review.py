@@ -231,8 +231,9 @@ def test_dedup_is_per_file() -> None:
 
 
 def test_peeked_zip_members_are_listed_but_not_readmes() -> None:
-    # is_readme is decided before zips are peeked: a README inside a zip is
-    # listed, typed by its extension, and not counted as a README
+    # is_readme is decided before zips are peeked, so the sentence's README count (readme_n)
+    # leaves a README inside a zip out; the per-repository count (file_kind, 0.4.4.18) has it,
+    # so the repository is not reported as lacking one
     with mocked():
         mo = pc.module_run(tp(["https://zenodo.org/records/5559101"], "p_zip"), "repo_check")
     t = mo.table
@@ -240,8 +241,8 @@ def test_peeked_zip_members_are_listed_but_not_readmes() -> None:
     assert "deposit.zip/README.md" in set(inner["file_path"])
     assert "deposit.zip/Study 1/analysis.R" in set(inner["file_path"])
     assert not any(p.endswith("/") for p in inner["file_path"])
-    assert mo.summary_table["files_readme"].tolist() == [0]
-    assert "We found 0 README files and 1 repository without READMEs." in mo.summary_text
+    assert mo.summary_table["files_readme"].tolist() == [1]
+    assert "We found 0 README files and 0 repositories without READMEs." in mo.summary_text
 
 
 # --- file types, unfound DSpace items and empty input ----------------------------------

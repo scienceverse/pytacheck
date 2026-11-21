@@ -1,0 +1,88 @@
+{
+  "id": "icpsr_info.mock.records",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "icpsr_url",
+      "doi",
+      "title",
+      "creators",
+      "publication_date",
+      "description",
+      "resource_type",
+      "related",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.3886/E195681V1",
+          "https://doi.org/10.3886/ICPSR99999"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.3886/E195681V1",
+          "10.3886/ICPSR99999"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Replication data for: A paper",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Stephen Wu; Qi Ge",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021-03-04",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data and code.",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Dataset",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "IsSupplementTo:10.1257/aer.1",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

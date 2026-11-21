@@ -22,6 +22,8 @@
       "stat_output",
       "match_table",
       "modifications",
+      "artifacts",
+      "environment",
       "checklist_section",
       "sandbox"
     ],
@@ -375,7 +377,7 @@
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:5, File = c(\"json_dump.R\", \"missing_input.R\", \n\"parse_error.R\", \"writes_then_reads.R\", \"reads_written.R\"), \"Runs after\" = c(\"—\", \n\"—\", \"—\", \"—\", \"writes_then_reads.R\"), Basis = c(\"none\", \n\"none\", \"none\", \"none\", \"dependency\")), row.names = c(NA, -5L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "Every data path in the code works in the repository as deposited.",
+          "The data paths in the code to files the repository holds work as deposited, but 2 paths name a file the repository does not hold: `intermediate.csv`, `not_in_repo.csv`.",
           "#### Files the deposit does not hold",
           "The scripts that did not run through read 1 data file that is not in the deposit, and no script of the deposit writes: `not_in_repo.csv`.",
           "#### Parsing",
@@ -401,7 +403,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 5 R code files for reproducibility and ran 3 of them (each in an isolated subprocess).\n-  2 of 4 scripts ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed 5 R code files for reproducibility and ran 3 of them (each in an isolated subprocess).\n-  2 of 4 scripts ran without error when executed.\n-  Of the others, 2 did not reproduce.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -419,12 +421,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -502,6 +512,36 @@
           {
             "t": "int",
             "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               1
             ]
           },
@@ -521,6 +561,24 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -595,6 +653,14 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -606,12 +672,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -640,7 +714,11 @@
           "elapsed",
           "script_lines",
           "captures",
-          "reason"
+          "started_at",
+          "ended_at",
+          "exit_status",
+          "reason",
+          "checked"
         ],
         "v": [
           {
@@ -790,10 +868,50 @@
             "t": "chr",
             "v": [
               null,
+              "<time>",
+              null,
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "<time>",
+              null,
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              0,
+              null,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
               "file",
               "syntax",
               null,
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "code_error",
+              "code_error",
+              "ran",
+              "ran"
             ]
           }
         ]
@@ -816,7 +934,9 @@
         "names": [
           "file_name",
           "change_type",
-          "detail"
+          "detail",
+          "sha256_before",
+          "sha256_after"
         ],
         "v": [
           {
@@ -836,13 +956,231 @@
             "v": [
               "\"data.csv\" -> \"data.csv\""
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d2d49238bec0ad689efb1cc7c65c7429dfb6926d1b80de5d8fe2a24fe5cd3aec"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "stage",
+          "path",
+          "size",
+          "sha256",
+          "mime_type",
+          "source",
+          "status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "deposit",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "after_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "data.csv",
+              "json_dump.R",
+              "missing_input.R",
+              "parse_error.R",
+              "reads_written.R",
+              "writes_then_reads.R",
+              "intermediate.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              32,
+              32,
+              59,
+              48,
+              19,
+              56,
+              124,
+              11
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "46a877e29fb04145754881763d1f5cefecd566024dae641962f704f69fbbe97d",
+              "b692f423c2d851a0c0763cd90ccf941acb1889a4d27b505fd06022b906d245c3",
+              "700c83ab0d5a768f3668ac1cc5cb8740eb3c9623786f9a0b8ed4fd9c504e8135",
+              "56a2ff8cd8f627b21a1dc755dbda3222da7917850ec1680622d7f83cfc200b9c",
+              "d2d49238bec0ad689efb1cc7c65c7429dfb6926d1b80de5d8fe2a24fe5cd3aec",
+              "b9dd707c1d667ddbb6aac4104db8d76ede984aff1863a2818cbcc496e4c3338c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text/csv",
+              "text/csv",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/x-r-source",
+              "text/csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "new"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "metacheck_version",
+          "started_at",
+          "ended_at",
+          "host",
+          "sandbox",
+          "network_isolated",
+          "internet",
+          "timeout_per_script",
+          "total_timeout",
+          "python_local",
+          "docker"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0.4.4.28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "r_version",
+              "platform",
+              "os"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "process"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              60
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3600
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We ran the paper's 4 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**2 of 4 scripts ran to the end**: 1 stopped with an error, 1 was not run.\n\n| Script | Result | What happened |\n|---|---|---|\n| json&#95;dump.R | Not run | It is not R code that can run on its own. |\n| missing&#95;input.R | Stopped with an error | <code>Error in file(file, \"rt\") : cannot open the connection<\/code> |\n| parse&#95;error.R | Not run | R cannot read the script: it contains a syntax error. |\n| writes&#95;then&#95;reads.R | Ran to the end |  |\n| reads&#95;written.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**Files are missing from your deposit.**\n\n- <code>missing&#95;input.R<\/code> reads <code>not&#95;in&#95;repo.csv<\/code>.\n\nThe script stops at the line that reads the file.\n\n1. Find the file on your computer.\n2. Add it to the deposit, in the folder where the script looks for it.\n3. If you cannot share it, for example for privacy reasons, say so in the README, and explain where readers can get it and where to put it.\n\n**R or Python could not read a script, because of a mistake in the code itself.**\n\n- <code>parse&#95;error.R<\/code>\n\nRun each script once in a fresh session before you deposit it; the error message shows the line to fix.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+          "We ran the paper's 4 R scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**2 of 4 scripts ran to the end**: 2 did not reproduce.\n\n| Script | Result | What happened |\n|---|---|---|\n| json&#95;dump.R | Not run | It is not R code that can run on its own. |\n| missing&#95;input.R | Stopped with an error | <code>Error in file(file, \"rt\") : cannot open the connection<\/code> |\n| parse&#95;error.R | Not run | R cannot read the script: it contains a syntax error. |\n| writes&#95;then&#95;reads.R | Ran to the end |  |\n| reads&#95;written.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**Files are missing from your deposit.**\n\n- <code>missing&#95;input.R<\/code> reads <code>not&#95;in&#95;repo.csv<\/code>.\n\nThe script stops at the line that reads the file.\n\n1. Find the file on your computer.\n2. Add it to the deposit, in the folder where the script looks for it.\n3. If you cannot share it, for example for privacy reasons, say so in the README, and explain where readers can get it and where to put it.\n\n**R or Python could not read a script, because of a mistake in the code itself.**\n\n- <code>parse&#95;error.R<\/code>\n\nRun each script once in a fresh session before you deposit it; the error message shows the line to fix.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -853,6 +1191,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

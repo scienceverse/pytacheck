@@ -189,11 +189,28 @@ def _untime(mo: Any) -> None:
     """Zero the run times, which vary between runs (R: ``rc_untime()``)."""
     from metacheck.report.blocks import ReportTable
 
+    # the clock times kept for a TRO (metacheck 0.4.4.20) vary as well
+    env = mo.get("environment")
+    if isinstance(env, dict):
+        mo.extras["environment"] = {
+            **env,
+            **{k: "<time>" for k in ("started_at", "ended_at") if env.get(k) is not None},
+        }
+        # the machine and the Python found on it differ between the machines that make the goldens
+        for key, mark in (("host", "<host>"), ("python_local", "<python>")):
+            part = mo.extras["environment"].get(key)
+            if isinstance(part, dict):
+                mo.extras["environment"][key] = dict.fromkeys(part, mark)
     rr = mo.get("run_results")
     if not isinstance(rr, pd.DataFrame) or len(rr) == 0:
         return
     rr = rr.copy()
     rr["elapsed"] = 0.0
+    for col in ("started_at", "ended_at"):
+        if col in rr.columns:
+            rr[col] = pd.array(
+                [None if pd.isna(v) else "<time>" for v in rr[col].tolist()], dtype="string"
+            )
     mo.extras["run_results"] = rr
 
     def fix(x: Any) -> Any:

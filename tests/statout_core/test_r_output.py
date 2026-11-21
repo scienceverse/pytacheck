@@ -119,7 +119,14 @@ def test_r_call_fn_and_preview() -> None:
     assert _r_call_fn("") == ""
     assert _r_is_preview_call("utils::head(df, 3)")
     assert not _r_is_preview_call("x <- head(d)")
-    assert not _r_is_preview_call("stats::head(d)")
+    # any package prefix, since metacheck 0.4.4.8 (#648)
+    assert _r_is_preview_call("stats::head(d)")
+    assert _r_is_preview_call("gc()") and _r_is_preview_call("grDevices::dev.off()")
+    assert _r_is_preview_call("system.time(f(x))") and _r_is_preview_call(
+        "utils::packageVersion(x)"
+    )
+    assert not _r_is_preview_call("summary(m)")
+    assert not _r_is_preview_call("dev.offx()")  # the dot is a dot
 
 
 def test_r_call_object_ref() -> None:

@@ -2,7 +2,9 @@
   "id": "osf_info.recursive.8c3kb",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "The OSF refused part of the listing of 8c3kb, also when asked again (2 folders), with 0 files listed: files in those folders are missing from it. Run again later."
+  ],
   "value": {
     "t": "df",
     "nrow": 1,
@@ -23,7 +25,10 @@
       "date_created",
       "date_registered",
       "contributors",
-      "contributor_orcids"
+      "contributor_orcids",
+      "contributor_families",
+      "n_contributors",
+      "listing_short"
     ],
     "v": [
       {
@@ -127,9 +132,27 @@
         "v": [
           null
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

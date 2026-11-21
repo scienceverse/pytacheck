@@ -396,7 +396,7 @@
           "::: {.panel-tabset}\n\n## trials.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(pp = 1:12, q3 = c(512L, 498L, 610L, 577L, 530L, \n489L, 505L, 620L, 480L, 555L, 590L, 470L), v7 = c(1L, 2L, 3L, \n1L, 2L, 3L, 1L, 2L, 3L, 1L, 2L, 3L), label = c(\"x1\", \"y2\", \"z3\", \n\"w4\", \"x1\", \"y2\", \"z3\", \"w4\", \"x1\", \"y2\", \"z3\", \"w4\")), row.names = c(NA, \n12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
           "::: {.panel-tabset}\n\n## trials.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"label\", \"pp\", \"q3\", \"v7\"), Representation = c(\"text\", \n\"text\", \"numeric\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \n\"ratio\", \"ratio\"), Concept = c(\"\", \"id\", \"\", \"\"), Role = c(\"measure\", \n\"identifier\", \"measure\", \"measure\"), Unit = c(\"\", \"\", \"\", \"\"), \n    Rows = c(12L, 12L, 12L, 12L), \"% Missing\" = c(0, 0, 0, 0), \n    \"N Unique\" = c(4L, 12L, 12L, 3L), Mean = c(NA, NA, 536.333, \n    2), SD = c(NA, NA, 52.403, 0.853), Min = c(NA, NA, 470, 1\n    ), Max = c(NA, NA, 620, 3)), row.names = c(\"label\", \"pp\", \n\"q3\", \"v7\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
-          "LLM reviewed ambiguous cases (0 files, 0 columns) and assigned study groups (1 study group detected).",
+          "LLM reviewed ambiguous cases (0 files, 0 columns) and assigned study groups (1 study group detected). The model gave no usable answer for 3 columns and 1 file, also when asked again in smaller batches; the rules alone classified them.",
           "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 4 columns across 1 data file.",
           "#### Careless Responding",
@@ -427,6 +427,9 @@
           "col_numeric",
           "col_text",
           "key_n",
+          "files_failed",
+          "llm_cols_unanswered",
+          "llm_files_unanswered",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
@@ -472,6 +475,24 @@
             "t": "int",
             "v": [
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
             ]
           },
           {
@@ -972,6 +993,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -419,6 +419,15 @@ def main() -> None:
             {"fn": TAR_FN, "fixture": "review/hostile.tar.gz"},
         )
     )
+    # a tar whose names are Latin-1 is read as such (metacheck 0.4.4.18)
+    cases.append(
+        call(
+            "expand.latin1.tar",
+            "rv_expand",
+            "expand",
+            {"fn": TAR_FN, "fixture": "review/latin1.tar"},
+        )
+    )
     cases.append(
         call(
             "expand.dirlink.tar.gz",

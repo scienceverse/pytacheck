@@ -396,8 +396,19 @@ _R_PREVIEW_CALLS = (
     "rownames",
     "nrow",
     "ncol",
+    "gc",
+    "dev.off",
+    "graphics.off",
+    "system.time",
+    "proc.time",
+    "sessioninfo",
+    "sys.time",
+    "set.seed",
+    "packageversion",
 )
-_PREVIEW_PATTERNS = tuple("^(dplyr::|utils::|base::)?" + f + "\\s*\\(" for f in _R_PREVIEW_CALLS)
+_PREVIEW_PATTERNS = tuple(
+    "^([a-z][a-z0-9.]*::)?" + f.replace(".", "\\.") + "\\s*\\(" for f in _R_PREVIEW_CALLS
+)
 
 
 def _r_is_preview_call(call_text: str | None) -> bool:

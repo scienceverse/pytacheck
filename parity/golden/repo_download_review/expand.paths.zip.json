@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 1,
+    "nrow": 3,
     "names": [
       "repo_url",
       "file_name",
@@ -23,71 +23,93 @@
       {
         "t": "chr",
         "v": [
+          "r",
+          "r",
           "r"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "b.csv"
+          "b.csv",
+          "dup.csv",
+          "data.csv"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "paths.zip/a/b.csv"
+          "paths.zip/a/b.csv",
+          "paths.zip/dup.csv",
+          "paths.zip/ok/data.csv"
         ]
       },
       {
         "t": "chr",
         "v": [
+          null,
+          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
-          "<tempdir>/metacheck-archives/38a63f84519bd6bc3db2edac3c7fbb36/a/b.csv"
+          "<tempdir>/metacheck-archives/38a63f84519bd6bc3db2edac3c7fbb36/a/b.csv",
+          "<tempdir>/metacheck-archives/38a63f84519bd6bc3db2edac3c7fbb36/dup.csv",
+          "<tempdir>/metacheck-archives/38a63f84519bd6bc3db2edac3c7fbb36/ok/data.csv"
         ]
       },
       {
         "t": "dbl",
         "v": [
+          817,
+          6,
           817
         ]
       },
       {
         "t": "chr",
         "v": [
+          "data",
+          "data",
           "data"
         ]
       },
       {
         "t": "chr",
         "v": [
+          null,
+          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
+          "tabular",
+          "tabular",
           "tabular"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "paths.zip",
+          "paths.zip",
           "paths.zip"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "<TMP>/paths.zip",
+          "<TMP>/paths.zip",
           "<TMP>/paths.zip"
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

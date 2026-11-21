@@ -20,6 +20,7 @@ Scenario keys:
                is prefixed to the file path (``"local"``: a ``file://`` URL of it)
 ``rows``       explicit extra rows (JSON ``null`` is NA)
 ``drop``       columns to remove from the listing
+``archive_deposits``  rows of repo_check's ``archive_deposits`` (paper_id, archive, accession)
 ``structure``  extra rows that only data_check's ``structure`` has (the
                output is then data_check's, chained onto repo_check's)
 """
@@ -170,7 +171,10 @@ def cc_prev(name: str, paper: Any = None) -> Any:
         paper = cc_paper(name)
     pids = sc.get("papers", ["p1"])
     table = cc_table(name)
-    repo = _output("repo_check", paper, pids, {}, table=table)
+    extra = {}
+    if "archive_deposits" in sc:
+        extra["archive_deposits"] = _frame(sc["archive_deposits"], [])
+    repo = _output("repo_check", paper, pids, {}, table=table, **extra)
     if "structure" not in sc:
         return repo
     from metacheck._r.frames import bind_rows

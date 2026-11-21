@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 1,
+    "nrow": 3,
     "names": [
       "repo_url",
       "file_name",
@@ -23,71 +23,93 @@
       {
         "t": "chr",
         "v": [
+          "r",
+          "r",
           "r"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "badcrc.csv",
+          "empty.csv",
           "good.csv"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "crc.zip/badcrc.csv",
+          "crc.zip/empty.csv",
           "crc.zip/good.csv"
         ]
       },
       {
         "t": "chr",
         "v": [
+          null,
+          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
+          "<tempdir>/metacheck-archives/32659c72ae7fbb9737462a53276b21d3/badcrc.csv",
+          "<tempdir>/metacheck-archives/32659c72ae7fbb9737462a53276b21d3/empty.csv",
           "<tempdir>/metacheck-archives/32659c72ae7fbb9737462a53276b21d3/good.csv"
         ]
       },
       {
         "t": "dbl",
         "v": [
+          817,
+          0,
           817
         ]
       },
       {
         "t": "chr",
         "v": [
+          "data",
+          "data",
           "data"
         ]
       },
       {
         "t": "chr",
         "v": [
+          null,
+          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
+          "tabular",
+          "tabular",
           "tabular"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "crc.zip",
+          "crc.zip",
           "crc.zip"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "<TMP>/crc.zip",
+          "<TMP>/crc.zip",
           "<TMP>/crc.zip"
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

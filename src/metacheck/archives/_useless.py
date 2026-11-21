@@ -74,11 +74,16 @@ def useless_file_kind(path: Sequence[str | None]) -> list[str | None]:
             kind = "compiled Python files"
         elif base.startswith("~$") or re.search(r"^\.~lock\..*#$", base):
             kind = "open-document lock files"
-        elif base == ".Rhistory":
+        elif base in (".Rhistory", ".Rapp.history"):
+            # the R app on macOS keeps it as .Rapp.history (metacheck #648)
             kind = "R history"
         elif re.search(r"(~|\.bak|\.swp|\.swo)$", base, re.IGNORECASE):
             kind = "editor backups"
-        elif re.search(r"\.(tmp|temp)$", base, re.IGNORECASE):
+        elif re.search(r"\.(tmp|temp)$", base, re.IGNORECASE) or re.search(
+            r"^\.RDataTmp[0-9]*$", base
+        ):
+            # R writes a workspace to .RDataTmp first and renames it when saving ends, so one
+            # left behind is an interrupted save (metacheck #648: a 9 MB one)
             kind = "temporary files"
         else:
             kind = None

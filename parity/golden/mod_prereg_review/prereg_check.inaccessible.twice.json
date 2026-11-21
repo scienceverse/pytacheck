@@ -41,7 +41,7 @@
       {
         "t": "chr",
         "v": [
-          "The following registration links could not be accessed and may be private, embargoed, or withdrawn: https://osf.io/3cz2e, osf.io/3cz2e."
+          "The OSF did not answer for the following links (no connection, a server error, or too many requests), so they could not be checked; it may be a registration. Run the check again later, or open the links: https://osf.io/3cz2e, osf.io/3cz2e."
         ]
       },
       {
@@ -53,7 +53,7 @@
       {
         "t": "chr",
         "v": [
-          "We found 2 OSF links, but no accessible registrations. 2 registration links could not be accessed (private, embargoed, or withdrawn)."
+          "We found 2 OSF links, but no accessible registrations. 2 OSF links could not be checked, because the OSF did not answer."
         ]
       },
       {
@@ -86,6 +86,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

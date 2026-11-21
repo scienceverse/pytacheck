@@ -1,11 +1,9 @@
 {
 "download.rate_limit_skip": {"r": "767d2b09fbacd241", "py": "4c47f9225261bbe0", "diff": ["failed.error[]"]},
-"expand.climb.zip": {"r": "1b336105761a252f", "py": "9992195cf1af29bb", "diff": ["<root>"]},
-"expand.cp437.zip": {"r": "ac5146cf65ca52a8", "py": "f24ffcfdee30fff5", "diff": ["<R error, Python value>"]},
-"expand.crc.zip": {"r": "0360e9f8ff689451", "py": "e0e9d636d1941f07", "diff": ["<root>"]},
+"expand.climb.zip": {"r": "8e20eac86743df14", "py": "edc0fc2b0e5615f8", "diff": ["<root>"]},
 "expand.hostile.tar.gz": {"r": "ce4bdd24713c31df", "py": "60c4a987c2d49671", "diff": ["<root>"]},
-"expand.lzma.zip": {"r": "221eee6731309dd8", "py": "2f317e3db6d7dee1", "diff": ["<root>"]},
-"expand.paths.zip": {"r": "6970101e8f149b60", "py": "f8f64ee875607462", "diff": ["<root>"]},
+"expand.lzma.zip": {"r": "0cda733fe8557820", "py": "2f317e3db6d7dee1", "diff": ["<root>"]},
+"expand.paths.zip": {"r": "2b2af705cae95334", "py": "51bedafb346a363a", "diff": ["<root>"]},
 "fetch.bzip2": {"r": "7b0dfa1c7aa2cec9", "py": "ef2a7da2e8542bb1", "diff": ["files", "result.error[]", "result.ok[]", "result.path[]", "sizes"]},
 "fetch.range_ignored": {"r": "4af62df1bff80e97", "py": "211cb73ff3825922", "diff": ["files", "result.error[]", "result.ok[]", "result.path[]", "sizes"]},
 "invalid.is_readable_archive": {"r": "b5180bac7dcb6876", "py": "3ad7922bd1e6941c", "diff": ["[]"]}

@@ -1,0 +1,342 @@
+{
+  "id": "repo_check.file_share.dropbox",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "ownership"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no links to repositories on the Open Science Framework, Github, GitLab, ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, CKAN data portals, GEO, SRA, ENA, DDBJ, ArrayExpress, CRAN, or ICPSR (openICPSR, AEA Data and Code Repository).",
+          "#### File-sharing services",
+          "The paper links to a file-sharing service (Dropbox: https://www.dropbox.com/s/abc123/project.zip?dl=0). Such services are not repositories: files can be changed or deleted at any time, they get no DOI, and the link stops working when the account is closed. Share data and code in a stable repository such as Zenodo."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found no links to repositories on the Open Science Framework, Github, GitLab, ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, CKAN data portals, GEO, SRA, ENA, DDBJ, ArrayExpress, CRAN, or ICPSR (openICPSR, AEA Data and Code Repository).\n-  The paper links to a file-sharing service (Dropbox), which is not a repository; share data and code in a stable repository such as Zenodo."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "file_share_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_fs1"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "source",
+          "repo_url",
+          "repo_type",
+          "ownership",
+          "ownership_group",
+          "ownership_reason",
+          "context",
+          "sections",
+          "ref_text",
+          "ref_authors",
+          "ref_year",
+          "ref_title",
+          "citing",
+          "citing_sections",
+          "cites_others",
+          "cites_own",
+          "dep_title",
+          "dep_description",
+          "dep_creators",
+          "dep_orcids",
+          "dep_type",
+          "dep_related",
+          "dep_year",
+          "dep_date",
+          "listed",
+          "n_files",
+          "has_data",
+          "has_code",
+          "pkg_layout",
+          "file_paper_words",
+          "osf_type",
+          "osf_category",
+          "osf_contributors",
+          "gh_owner_name",
+          "gh_stars",
+          "gh_forks",
+          "cff_dois",
+          "dep_org",
+          "dep_creator_families",
+          "dep_n_creators"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

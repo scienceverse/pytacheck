@@ -140,7 +140,7 @@
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). None of the files found could be checked for comments.",
           "#### Missing Files",
-          "All files loaded in the code were present in the repository.",
+          "We could not read any code file, so we could not check which files the code loads.",
           "",
           "#### Absolute Paths",
           "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
@@ -189,6 +189,7 @@
           "code_min_comments",
           "code_parse_errors",
           "code_packages_n",
+          "code_files_failed",
           "code_version_pinned"
         ],
         "v": [
@@ -238,6 +239,12 @@
             "t": "dbl",
             "v": [
               null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -409,6 +416,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

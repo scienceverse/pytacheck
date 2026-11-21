@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -59,6 +60,7 @@
           "file_path",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -246,6 +248,24 @@
           {
             "t": "chr",
             "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "readme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               null,
               null,
               null,
@@ -289,7 +309,7 @@
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/review/unknown_many\", \n\"tests/mod_repo_check/fixtures/review/unknown_many\", \"tests/mod_repo_check/fixtures/review/unknown_many\", \n\"tests/mod_repo_check/fixtures/review/unknown_many\", \"tests/mod_repo_check/fixtures/review/unknown_many\", \n\"tests/mod_repo_check/fixtures/review/unknown_many\", \"tests/mod_repo_check/fixtures/review/unknown_many\", \n\"tests/mod_repo_check/fixtures/review/unknown_many\", \"tests/mod_repo_check/fixtures/review/unknown_many\", \n\"tests/mod_repo_check/fixtures/review/unknown_many\", \"tests/mod_repo_check/fixtures/review/unknown_many\", \n\"tests/mod_repo_check/fixtures/review/unknown_many\", \"tests/mod_repo_check/fixtures/review/unknown_many\"\n), File = c(\"blob01.qqz1\", \"blob02.qqz2\", \"blob03.qqz3\", \"blob04.qqz4\", \n\"blob05.qqz5\", \"blob06.qqz6\", \"blob07.qqz7\", \"blob08.qqz8\", \"blob09.qqz9\", \n\"blob10.qqz10\", \"blob11.qqz11\", \"blob12.qqz12\", \"README.md\"), \n    Size = c(\"5 B\", \"5 B\", \"5 B\", \"5 B\", \"5 B\", \"5 B\", \"5 B\", \n    \"5 B\", \"5 B\", \"5 B\", \"5 B\", \"5 B\", \"10 B\"), Type = c(NA, \n    NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"readme\")), row.names = c(NA, \n-13L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
-          "#### Unclassified Files\n\nWe could not classify 12 files by name or extension: blob01.qqz1, blob02.qqz2, blob03.qqz3, blob04.qqz4, blob05.qqz5, blob06.qqz6, blob07.qqz7, blob08.qqz8, blob09.qqz9, blob10.qqz10. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Unclassified Files\n\n12 files are of a kind metacheck does not know, so they are not counted as data, code or documentation: blob01.qqz1, blob02.qqz2, blob03.qqz3, blob04.qqz4, blob05.qqz5, blob06.qqz6, blob07.qqz7, blob08.qqz8, blob09.qqz9, blob10.qqz10. This is no problem in itself.",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README.md\", Group = \"—\", Path = \"README.md\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (12 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"blob01.qqz1\", \"blob02.qqz2\", \"blob03.qqz3\", \n\"blob04.qqz4\", \"blob05.qqz5\", \"blob06.qqz6\", \"blob07.qqz7\", \"blob08.qqz8\", \n\"blob09.qqz9\", \"blob10.qqz10\", \"blob11.qqz11\", \"blob12.qqz12\"\n), Group = c(\"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \n\"—\", \"—\", \"—\", \"—\", \"—\"), Path = c(\"blob01.qqz1\", \"blob02.qqz2\", \n\"blob03.qqz3\", \"blob04.qqz4\", \"blob05.qqz5\", \"blob06.qqz6\", \"blob07.qqz7\", \n\"blob08.qqz8\", \"blob09.qqz9\", \"blob10.qqz10\", \"blob11.qqz11\", \n\"blob12.qqz12\")), row.names = c(NA, -12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -297,7 +317,7 @@
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "green"
         ]
       },
       {
@@ -323,6 +343,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -412,6 +437,36 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
@@ -423,11 +478,44 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -448,7 +536,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -461,6 +550,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -562,7 +655,10 @@
           "gh_owner_name",
           "gh_stars",
           "gh_forks",
-          "cff_dois"
+          "cff_dois",
+          "dep_org",
+          "dep_creator_families",
+          "dep_n_creators"
         ],
         "v": [
           {
@@ -591,6 +687,18 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           },
           {
@@ -732,7 +840,8 @@
           "file_type",
           "file_path",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -757,6 +866,10 @@
           },
           {
             "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           },
           {
@@ -876,6 +989,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

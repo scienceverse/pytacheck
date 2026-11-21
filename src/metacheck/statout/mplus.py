@@ -24,7 +24,7 @@ from metacheck.statout.spv import (
     _file_path,
     _file_path_sans_ext,
     _html_page,
-    _read_lines,
+    _read_utf8_lines,
     _spv_html_escape,
     _spv_table_html,
     _write_lines,
@@ -462,7 +462,7 @@ def _mplus_output_labelvalue(
 def _mplus_is_genuine_output(path: str | os.PathLike[str]) -> bool:
     """Port of R/mplus.R::.mplus_is_genuine_output(): an ``Mplus VERSION`` banner."""
     try:
-        lines = _read_lines(path, n=5)
+        lines = _read_utf8_lines(path, n=5)
     except OSError:
         return False
     return any(grepl("^Mplus VERSION", lines))
@@ -494,7 +494,7 @@ def import_mplus_output(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
         raise ValueError(f"Not a .out file: {path}")
     if not _mplus_is_genuine_output(path):
         raise ValueError(f"Not a Mplus .out file: {path}")
-    lines = _read_lines(path)
+    lines = _read_utf8_lines(path)
     syntax = _mplus_syntax_lines(lines)
     sections = _mplus_sections(lines)
     out: list[dict[str, Any]] = []
@@ -558,7 +558,7 @@ def _mplus_export_syntax(
     if not _mplus_is_genuine_output(out_path):
         return None
     try:
-        lines = _read_lines(out_path)
+        lines = _read_utf8_lines(out_path)
     except OSError:
         lines = []
     if not lines:

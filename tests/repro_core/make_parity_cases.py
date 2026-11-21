@@ -1553,6 +1553,240 @@ expr(
     _REC_PY,
 )
 
+# ---------------------------------------------------------------------------
+# metacheck 0.4.4.7 to 0.4.4.18 (#580, #648, #667): groups, platforms, screen calls, paths
+# ---------------------------------------------------------------------------
+
+_PLAT_MSGS = [
+    "ModuleNotFoundError: No module named 'google.colab'",
+    "ModuleNotFoundError: No module named 'kaggle_secrets'",
+    "ModuleNotFoundError: No module named 'win32com.client'",
+    'ModuleNotFoundError: No module named "ehrql"',
+    "ModuleNotFoundError: No module named 'numpy'",
+    "Error in library(x) : there is no package called 'x'",
+    "",
+    None,
+]
+expr(
+    "repro_platform_of.cases",
+    f"metacheck:::.repro_platform_of({_rchr([m for m in _PLAT_MSGS if m is not None])[:-1]}, NA_character_))",
+    "lambda m: m.outcomes._repro_platform_of(" + repr(_PLAT_MSGS) + ")",
+)
+
+# the reasons new in these versions
+_REASON_MSGS2 = [
+    "ModuleNotFoundError: No module named 'google.colab'",
+    "ModuleNotFoundError: No module named 'win32com'",
+    "ImportError: attempted relative import with no known parent package",
+    "Error: ANTHROPIC_API_KEY is not set",
+    "KeyError: 'OPENAI_API_KEY' in os.py environ",
+    "KeyError: 'name'",
+    "Error in windows() : unable to start device",
+    "Error in View(x) : unable to start data viewer",
+    "Error in dev.print() : cannot open display",
+    "Error in file(file, \"rt\") : cannot open file 'a.csv': No such file or directory",
+    "Error in library(x) : there is no package called 'x'",
+]
+expr(
+    "repro_failure_reason.platform_and_settings",
+    f"metacheck:::.repro_failure_reason(rep('errored', {len(_REASON_MSGS2)}), {_rchr(_REASON_MSGS2)})",
+    f"lambda m: m.outcomes._repro_failure_reason(['errored'] * {len(_REASON_MSGS2)}, {_pyl(_REASON_MSGS2)})",
+)
+expr(
+    "repro_failure_reason.platform_not_errored",
+    "metacheck:::.repro_failure_reason(c('dependency_unavailable', 'ran_ok'),"
+    " c(\"ModuleNotFoundError: No module named 'google.colab'\","
+    ' "ImportError: attempted relative import with no known parent package"))',
+    "lambda m: m.outcomes._repro_failure_reason(['dependency_unavailable', 'ran_ok'],"
+    " [\"ModuleNotFoundError: No module named 'google.colab'\","
+    " 'ImportError: attempted relative import with no known parent package'])",
+)
+
+# the five groups, per outcome, reason and message
+_CG = [
+    ("ran_ok", None, ""),
+    ("errored", "file", ""),
+    ("errored", "undefined", ""),
+    ("errored", "package", ""),
+    ("errored", "settings", ""),
+    ("errored", "internet", ""),
+    ("errored", "interactive", ""),
+    ("errored", "download", ""),
+    ("errored", "platform", ""),
+    ("dependency_unavailable", "how_to_run", ""),
+    ("errored", "from_report", ""),
+    ("errored", "environment", "there is no package called 'x'"),
+    ("errored", "environment", "caught segfault"),
+    ("errored", "environment", "pandoc not found"),
+    ("errored", "environment", "unable to start device"),
+    ("timed_out", None, ""),
+    ("skipped_time_limit", None, ""),
+    ("not_parsed", None, ""),
+    ("python2", None, ""),
+    ("skipped_missing_inputs", None, ""),
+    ("needs_a_person", None, ""),
+    ("out_of_memory", None, ""),
+    ("docker_failed", None, ""),
+    ("run_by_source", None, ""),
+]
+_CG_R = "data.frame(outcome = c({}), reason = c({}), msg = c({}), stringsAsFactors = FALSE)".format(
+    ", ".join(f'"{o}"' for o, _, _ in _CG),
+    ", ".join("NA_character_" if r is None else f'"{r}"' for _, r, _ in _CG),
+    ", ".join(f'"{m}"' for _, _, m in _CG),
+)
+expr(
+    "repro_check_group.cases",
+    f"{{ d <- {_CG_R}; metacheck:::.repro_check_group(d$outcome, d$reason, d$msg) }}",
+    "lambda m: m.outcomes._repro_check_group("
+    f"{[o for o, _, _ in _CG]!r}, {[r for _, r, _ in _CG]!r}, {[x for _, _, x in _CG]!r})",
+)
+
+# the sentence on the scripts that did not run to the end, by group
+_GS = [
+    ("ran_ok", None),
+    ("errored", "file"),
+    ("errored", "undefined"),
+    ("errored", "package"),
+    ("timed_out", None),
+    ("errored", "settings"),
+    ("docker_failed", None),
+    ("run_by_source", None),
+]
+
+
+def _gs(rows: list[tuple[str, str | None]]) -> tuple[str, str]:
+    r = "data.frame(outcome = c({}), reason = c({}), stringsAsFactors = FALSE)".format(
+        ", ".join(f'"{o}"' for o, _ in rows),
+        ", ".join("NA_character_" if x is None else f'"{x}"' for _, x in rows),
+    )
+    py = f"m.pd.DataFrame({{'outcome': {[o for o, _ in rows]}, 'reason': {[x for _, x in rows]}}})"
+    return r, py
+
+
+for _name, _rows in [
+    ("all_groups", _GS),
+    ("one_group", [("ran_ok", None), ("errored", "file")]),
+    ("two_groups", [("errored", "file"), ("timed_out", None)]),
+    ("none", [("ran_ok", None), ("docker_failed", None)]),
+]:
+    _r, _py = _gs(_rows)
+    expr(
+        f"repro_groups_sentence.{_name}",
+        f"metacheck:::.repro_groups_sentence({_r})",
+        f"lambda m: m.outcomes._repro_groups_sentence({_py})",
+    )
+expr(
+    "repro_groups_sentence.checked_column",
+    "metacheck:::.repro_groups_sentence(data.frame(outcome = c('errored', 'errored', 'ran_ok'),"
+    " reason = c('file', 'platform', NA), checked = c('code_error', 'not_checkable', 'ran')))",
+    "lambda m: m.outcomes._repro_groups_sentence(m.pd.DataFrame({'outcome': ['errored', 'errored', 'ran_ok'],"
+    " 'reason': ['file', 'platform', None], 'checked': ['code_error', 'not_checkable', 'ran']}))",
+)
+expr(
+    "repro_groups_sentence.empty",
+    "metacheck:::.repro_groups_sentence(NULL)",
+    "lambda m: m.outcomes._repro_groups_sentence(None)",
+)
+
+# code recovered from a knitted report fails for what its missing chunks explain
+expr(
+    "repro_from_report_failed.cases",
+    "metacheck:::.repro_from_report_failed(data.frame(outcome = c('errored', 'errored', 'ran_ok', 'errored'),"
+    " file_name = c('a.R', 'a.R', 'a.R', 'b.R'), reason = c('file', 'package', NA, 'other')), 'a.R')",
+    "lambda m: m.outcomes._repro_from_report_failed(m.pd.DataFrame({'outcome': ['errored', 'errored', 'ran_ok', 'errored'],"
+    " 'file_name': ['a.R', 'a.R', 'a.R', 'b.R'], 'reason': ['file', 'package', None, 'other']}), ['a.R'])",
+)
+
+# calls that need a screen are replaced; each replacement is counted
+_SCREEN = [
+    "plot(x)",
+    "dev.print(pdf, file = 'a.pdf')",
+    "grDevices::dev.copy2pdf(file = 'b.pdf')",
+    "dev.copy2eps(file = 'c.eps')",
+    "savePlot('fig', type = 'png')",
+    "windows(width = 7, height = 5)",
+    "x11(); X11(); quartz()",
+    "View(df)",
+    "# dev.print(png)",
+    "my.dev.print(x); obj$View(1); utils::View(df)",
+    "win.graph()",
+]
+expr(
+    "repro_replace_screen_calls.cases",
+    f"metacheck:::.repro_replace_screen_calls({_rchr(_SCREEN)})",
+    "lambda m: (lambda r: {'txt': r[0], 'calls': r[1]})("
+    f"m.core._repro_replace_screen_calls({_pyl(_SCREEN)}))",
+)
+expr(
+    "repro_replace_screen_calls.empty",
+    "metacheck:::.repro_replace_screen_calls(character(0))",
+    "lambda m: (lambda r: {'txt': r[0], 'calls': r[1]})(m.core._repro_replace_screen_calls([]))",
+)
+ws(
+    "screen_calls",
+    f"list(plot.R = c('plot(1)', 'dev.print(pdf, file = \"a.pdf\")', 'View(x)', '# windows()')),"
+    f" list(plot.R = {EMPTY_RW_R}), data.frame(file_name = 'plot.R', target_path = 'plot.R')",
+    f"{{'plot.R': ['plot(1)', 'dev.print(pdf, file = \"a.pdf\")', 'View(x)', '# windows()']}},"
+    f" {{'plot.R': {EMPTY_RW_PY}}}, m.pd.DataFrame({{'file_name': ['plot.R'], 'target_path': ['plot.R']}})",
+)
+
+# a wildcard name keeps its pattern when the path is rewritten
+expr(
+    "repro_apply_rewrites.wildcard",
+    "{ plan <- data.frame(file_name = c('S5_a.mat', 'm.R'), target_path = c('data/S5_a.mat', 'scripts/m.R'));"
+    " code2 <- c('m <- dir(\"C:/Users/me/Data/S5*.mat\")', 'x <- load(\"S5_a.mat\")');"
+    " rw2 <- repro_rewrite_paths(code2, 'm.R', plan, script_path = 'scripts/m.R');"
+    " metacheck:::.repro_apply_rewrites(code2, rw2) }",
+    "lambda m: (lambda plan, code2: m.core._repro_apply_rewrites(code2,"
+    " m.core.repro_rewrite_paths(code2, 'm.R', plan, script_path='scripts/m.R')))"
+    "(m.pd.DataFrame({'file_name': ['S5_a.mat', 'm.R'], 'target_path': ['data/S5_a.mat', 'scripts/m.R']}),"
+    " ['m <- dir(\"C:/Users/me/Data/S5*.mat\")', 'x <- load(\"S5_a.mat\")'])",
+)
+
+# the data-path sentence names the paths the deposit does not hold
+_FIX_R = (
+    "list(`a.R` = data.frame(ref = c('d.csv', 'e.csv'), target = c('data/d.csv', NA),"
+    " matched = c(TRUE, FALSE), ambiguous = FALSE, as_written = FALSE))"
+)
+_FIX_PY = (
+    "{'a.R': m.pd.DataFrame({'ref': ['d.csv', 'e.csv'], 'target': ['data/d.csv', None],"
+    " 'matched': [True, False], 'ambiguous': [False, False], 'as_written': [False, False]})}"
+)
+_NONE_R = (
+    "list(`a.R` = data.frame(ref = character(0), target = character(0), matched = logical(0),"
+    " ambiguous = logical(0), as_written = logical(0)))"
+)
+_NONE_PY = (
+    "{'a.R': m.pd.DataFrame({'ref': m.pd.array([], dtype='string'), 'target': m.pd.array([], dtype='string'),"
+    " 'matched': m.pd.array([], dtype='boolean'), 'ambiguous': m.pd.array([], dtype='boolean'),"
+    " 'as_written': m.pd.array([], dtype='boolean')})}"
+)
+_ABS = ["gone.csv", "also_gone.csv", "gone.csv", "", None]
+for _name, _lst_r, _lst_py, _extra in [
+    ("fixes_with_absent", _FIX_R, _FIX_PY, ("c('x.csv')", "['x.csv']")),
+    (
+        "none_absent",
+        _NONE_R,
+        _NONE_PY,
+        ("c('gone.csv', 'also_gone.csv', 'gone.csv')", repr(_ABS[:3])),
+    ),
+    ("none_none_absent", _NONE_R, _NONE_PY, ("character(0)", "[]")),
+    (
+        "more_than_ten_absent",
+        _NONE_R,
+        _NONE_PY,
+        (
+            "paste0('f', 1:12, '.csv')",
+            repr([f"f{i}.csv" for i in range(1, 13)]),
+        ),
+    ),
+]:
+    expr(
+        f"repro_path_fix_text.{_name}",
+        f"metacheck:::.repro_path_fix_text({_lst_r}, execute = TRUE, absent = {_extra[0]})",
+        f"lambda m: m.layout._repro_path_fix_text({_lst_py}, True, {_extra[1]})",
+    )
+
 
 def main() -> None:
     header = (

@@ -1,0 +1,88 @@
+{
+  "id": "osf_storage_totals.complete_flags",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "osf_node",
+      "provider",
+      "file_path",
+      "file_size",
+      "storage_size",
+      "storage_n"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "n1",
+          "n1",
+          "n1",
+          "n2",
+          "n2",
+          "n1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.csv",
+          "b.csv",
+          "c.R",
+          "x.R",
+          "y.R",
+          "a.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          100,
+          50,
+          10,
+          20,
+          30,
+          100
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          160,
+          160,
+          160,
+          null,
+          null,
+          160
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          3,
+          3,
+          null,
+          null,
+          3
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.28",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

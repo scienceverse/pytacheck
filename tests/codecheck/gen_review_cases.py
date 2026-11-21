@@ -624,6 +624,12 @@ ABS_SYNC = {
     "brackets_stay": 'd <- read.csv("/Users/me/Dropbox (Personal)/x.csv")',
     "regex": 'dicom = meta.str.extract(r"/([^/]+)\\.dcm$")',
     "route": '@app.route("/users/<int:user_id>/reset")',
+    "route_blueprint": '@admin_bp.route("/api/v1/auth/login", methods=["POST"])',
+    "route_client_get": 'r = client.get("/api/health")',
+    "route_httr_get": 'd <- httr::GET("/api/x")',
+    "url_name_prefix": 'API_PREFIX = "/api/v1"',
+    "folder_prefix_stays": 'data_prefix = "/home/me/data"',
+    "fs_path_stays": 'p <- fs::path("/Users/me/data")',
     "query": 'r = client.get("/api/v1/audit?limit=50")',
     "device": 'system("cmd > /dev/null/x")',
     "hdf5_key": 'mag = f["/Data/MAG"][:]',
@@ -717,6 +723,27 @@ case(
         "all_files": {"$df": {"repo_url": ["r"], "file_name": ["raw.csv"]}},
     },
 )
+# metacheck 0.4.4.27 (#695): a file read from a web address is not missing from the repository
+case(
+    "code_missing_files.review.web_address",
+    "metacheck:::.code_missing_files",
+    "_code_missing_files",
+    {
+        "code_files": {
+            "$df": {
+                "paper_id": ["p"],
+                "repo_url": ["r"],
+                "file_name": ["a.R"],
+                "loaded_refs": [
+                    "http://journal.sjdm.org/16/1234/study1.sav\u001fgone.csv"
+                    "\u001fhttps://x.org/d/web.csv"
+                ],
+                "files_written": [""],
+            }
+        },
+        "all_files": {"$df": {"repo_url": ["r"], "file_name": ["raw.csv"]}},
+    },
+)
 case(
     "code_missing_files.review.sync_no_refs_column",
     "metacheck:::.code_missing_files",
@@ -738,6 +765,97 @@ expand(
         ["knit_classic.html", "knit_classic.qmd"],
         repo_url=["https://osf.io/abcde", "https://osf.io/zzzzz"],
     ),
+)
+
+# ---------------------------------------------------------------------------
+# 0.4.4.18 (#648): code by others, files a download may make, other languages
+# ---------------------------------------------------------------------------
+OTHERS = [
+    "extra_ados/outreg2.ado",
+    "code/extra_ados/a/b.ado",
+    "Packages\\\\x.R",
+    "site/jquery.min.js",
+    "scripts/analysis.R",
+    "v1/model.R",
+    "v1/old/model.R",
+    "code/v2/run.R",
+    "release-1.0/a.R",
+    None,
+]
+case(
+    "is_others_code_path.review.sync_paths",
+    "metacheck:::.is_others_code_path",
+    "_is_others_code_path",
+    {"path": chr_(*OTHERS)},
+)
+case(
+    "is_others_code_path.review.sync_release_group",
+    "metacheck:::.is_others_code_path",
+    "_is_others_code_path",
+    {
+        "path": chr_("v1/model.R", "v1/helpers.R", "v2/model.R", "analysis.R", "v1/model.R"),
+        "is_code": {"$lgl": [True, True, True, True, True]},
+        "group": chr_("a", "a", "a", "a", "b"),
+    },
+)
+case(
+    "is_others_code_path.review.sync_release_data_only",
+    "metacheck:::.is_others_code_path",
+    "_is_others_code_path",
+    {
+        "path": chr_("v1/data.csv", "v2/data.csv", "analysis.R"),
+        "is_code": {"$lgl": [False, False, True]},
+    },
+)
+case(
+    "in_others_code_folder.review.sync_files",
+    "metacheck:::.in_others_code_folder",
+    "_in_others_code_folder",
+    {
+        "files": {
+            "$df": {
+                "repo_url": ["r", "r", "r", "r"],
+                "file_name": ["outreg2.ado", "run.do", "x.R", "y.R"],
+                "file_path": ["extra_ados/outreg2.ado", "run.do", "v1/x.R", "y.R"],
+                "language": ["Stata", "Stata", "R", "R"],
+            }
+        }
+    },
+)
+FETCH = {
+    "osf_download": 'osf_retrieve_node("x") %>% osf_ls_files(pattern = "a.Rda") %>% osf_download()',
+    "unzip": 'unzip("data.zip")',
+    "extractall": 'zipfile.ZipFile(p).extractall("data")',
+    "plain_read": 'x <- read.csv("a.csv")',
+    "download_file": 'download.file(url, "a.zip")',
+    "untar": 'untar("a.tar.gz", exdir = "d")',
+    "urlretrieve": "urllib.request.urlretrieve(u, 'a.csv')",
+    "comment_only": "# unzip('data.zip')",
+}
+for name, text in FETCH.items():
+    case(
+        f"code_fetches_unnamed.review.sync_{name}",
+        "metacheck:::.code_fetches_unnamed",
+        "_code_fetches_unnamed",
+        {"code_text": chr_(text), "lang": "R"},
+    )
+case(
+    "code_missing_files.review.sync_fetched",
+    "metacheck:::.code_missing_files",
+    "_code_missing_files",
+    {
+        "code_files": {
+            "$df": {
+                "paper_id": ["p", "p", "p"],
+                "repo_url": ["r", "r", "r"],
+                "file_name": ["0_fetch.R", "1_fit.R", "2_plot.R"],
+                "loaded_refs": ["", "VIA.Rda\u001fpresent.csv", "gone.csv"],
+                "files_written": ["", "", ""],
+                "fetches_unnamed": [True, False, False],
+            }
+        },
+        "all_files": {"$df": {"repo_url": ["r"], "file_name": ["present.csv"]}},
+    },
 )
 
 OUT.write_text(

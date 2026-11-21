@@ -30,6 +30,11 @@ from metacheck._values import as_str
 from metacheck.module import module
 from metacheck.modules import _reproducibility as h
 from metacheck.report import scroll_table
+from metacheck.repro.provenance import (
+    _repro_prov_finish,
+    _repro_prov_note_materialised,
+    _repro_prov_state,
+)
 
 _NA_REPLACE_EMPTY = {
     "repro_code_n": 0.0,
@@ -652,6 +657,9 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     a["net"] = _repro_download_limits(a["internet"], a["max_file_size"], a["max_download_size"])
     # set when the first script starts, R or Python (see total_timeout)
     a["run_state"] = {"script_deadline": None, "prep_skipped_left": None}
+    # what a TRO needs of this run (metacheck.repro.provenance): when the check started, the
+    # files copied from the deposit, the run folder before the first script, the scripts
+    a["prov"] = _repro_prov_state()
 
     def pid(*dfs: Any) -> str | None:
         return h._pid(paper, *dfs)
@@ -824,7 +832,9 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         from metacheck.statout.stat_output import stat_output_write
 
         sandbox_root = _new_sandbox(keep_sandbox, cleanup)
-        repro_materialize_layout(plan, structure_df, sandbox_root)
+        _repro_prov_note_materialised(
+            a["prov"], repro_materialize_layout(plan, structure_df, sandbox_root)
+        )
         stat_output_write(stat_output, sandbox_root)
 
     # Non-R code with no way to check its results ------------------------------
@@ -970,6 +980,7 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         keep_sandbox=keep_sandbox,
         code_tbl=code_tbl,
         version_pin=version_pin,
+        structure_df=structure_df,
     )
 
 
@@ -1111,6 +1122,7 @@ def _finish(
     keep_sandbox: bool,
     code_tbl: pd.DataFrame | None = None,
     version_pin: Any = None,
+    structure_df: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     """Combine the R and Python blocks, with the sections shared across languages."""
     from metacheck.repro.outcomes import (
@@ -1186,6 +1198,23 @@ def _finish(
             r["install_results"] if r["install_results"] is not None else py["install_results"]
         )
     modifications = _bind(r["modifications"], py["modifications"])
+    # Provenance for a TRO (metacheck.repro.provenance): every file as downloaded, just before
+    # the first script ran, and what the scripts made, changed or removed; the system that
+    # ran them; each modified script's hash before and after metacheck changed it. Only when
+    # code was run.
+    artifacts: pd.DataFrame | None = None
+    environment: dict[str, Any] | None = None
+    if execute:
+        artifacts, modifications, environment = _repro_prov_finish(
+            a.get("prov"),
+            modifications,
+            structure_df,
+            sandbox_root,
+            sandbox=a["sandbox"],
+            timeout=a["timeout"],
+            total_timeout=a.get("total_timeout"),
+            internet=a.get("net") is not None,
+        )
     # the scripts, the software not run, and why scripts did not run through (#568, item 24)
     run_counts = _repro_run_counts(run_results)
     summary_table = pd.concat([summary_table, run_counts.reset_index(drop=True)], axis=1)
@@ -1210,6 +1239,10 @@ def _finish(
         "stat_output": stat_output or None,
         "match_table": match_table_raw,
         "modifications": modifications,
+        # Provenance for a TRO: one row per file (stage deposit / before_run / after_run) and
+        # the system that ran the code; None when no code was run.
+        "artifacts": artifacts,
+        "environment": environment,
         # The checklist report's own section on this check (None when no code ran).
         # Returned as a module-specific output until ModuleOutput has the field.
         "checklist_section": _checklist(
@@ -1400,6 +1433,7 @@ def _assess_r(
         _REPRO_STARTED_OUTCOMES,
         _repro_absent_report,
         _repro_error_message,
+        _repro_groups_sentence,
         _repro_read_failed_msg,
         _repro_run_light,
         _repro_starts_app,
@@ -1857,6 +1891,10 @@ def _assess_r(
         install_results = ex["install_results"]
         run_tbl = ex["run_tbl"]
         order_tbl = ex["order_tbl"]
+        # and say of the corrected order what its table shows: the text kept the first
+        # order's "no ordering signal" or cycle beside the corrected table (#648, K8f)
+        cycle = [str(x) for x in h._as_list(order_tbl.attrs.get("cycle"))]
+        ambiguous_order = ambiguous_order and h._is_true(order_tbl.attrs.get("ambiguous"))
         stat_output = ex["stat_output"]
         structure_df = ex["structure_df"]
         plan = ex["plan"]
@@ -1967,7 +2005,7 @@ def _assess_r(
     report_order, order_table = _order_report(order_tbl, cycle, ambiguous_order, fuzzy_sources)
 
     total_ambiguous = sum(ambiguous_n)
-    report_paths = _repro_path_fix_text(rewrite_list, execute)
+    report_paths = _repro_path_fix_text(rewrite_list, execute, absent=unresolved_refs)
     # archives the run unpacked because the code reads files inside them (#648)
     arch_txt = _repro_archive_text(structure_df, code_texts)
     if arch_txt:
@@ -2056,7 +2094,6 @@ def _assess_r(
     # 10. Summary ----------------------------------------------------------------------
     outcomes_all = h._chr_col(run_results, "outcome") if run_results is not None else []
     n_ran_ok = sum(o == "ran_ok" for o in outcomes_all) if run_results is not None else None
-    n_nodep_sum = sum(o == "dependency_unavailable" for o in outcomes_all)
     n_by_src_sum = sum(o == "run_by_source" for o in outcomes_all)
     # the scripts with a result of their own, and those that were started: files of software
     # or of functions only were counted as scripts run (#648)
@@ -2108,12 +2145,12 @@ def _assess_r(
             f"{n_ran_ok:d} of {n_run_own:d} script{plural(n_run_own)} ran without error when "
             f"executed{more}."
         )
-    if n_nodep_sum > 0:
-        lines.append(
-            f"{n_nodep_sum:d} script{plural(n_nodep_sum)} could not run because "
-            f"{plural(n_nodep_sum, 'its', 'their')} own dependency is unavailable (not counted "
-            "as an error of the code)."
-        )
+    # did not reproduce, lacked a package or program, out of time, or could not be checked
+    # automatically (#580)
+    if execute and n_run_own > 0:
+        groups_sentence = _repro_groups_sentence(run_results)
+        if groups_sentence is not None:
+            lines.append(groups_sentence)
     if len(reported_inputs) > 0:
         nr = len(reported_inputs)
         lines.append(
@@ -2256,6 +2293,17 @@ def _r_modifications(
                             f"{int(n):d} groundhog, checkpoint or renv call{plural(int(n))}",
                         )
                     )
+        # calls that need a screen, replaced so they run without one (#580)
+        if run_tbl is not None and "screen_calls_replaced" in run_tbl.columns:
+            for fn, calls in zip(
+                h._chr_col(run_tbl, "file_name"),
+                h._chr_col(run_tbl, "screen_calls_replaced"),
+                strict=True,
+            ):
+                if h._nzchar(calls):
+                    rows += [
+                        (fn, "screen_call_replaced", x) for x in strsplit(calls, "; ", fixed=True)
+                    ]
         tail: list[tuple[Any, str, Any]] = []
         for fn, kinds in (ex.get("old_defaults_used") or {}).items():
             tail += [(fn, "old_default", _OLD_DEFAULT_DETAIL.get(k)) for k in kinds]

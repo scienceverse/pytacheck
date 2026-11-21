@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 0,
+    "nrow": 6,
     "names": [
       "repo_url",
       "file_name",
@@ -15,47 +15,134 @@
       "file_size",
       "data_type",
       "doc_role",
-      "data_format"
+      "data_format",
+      "archive_file_path",
+      "archive_file_location"
     ],
     "v": [
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r"
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "z.csv",
+          "dot.csv",
+          "k..csv",
+          "data.csv",
+          "y2.csv",
+          "y.csv"
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "climb.zip/..../z.csv",
+          "climb.zip/dot.csv",
+          "climb.zip/k..csv",
+          "climb.zip/ok/data.csv",
+          "climb.zip/x/..../y2.csv",
+          "climb.zip/x/y.csv"
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "<tempdir>/metacheck-archives/d2fd512cf9a41eae3c0e67882a9b7c83/..../z.csv",
+          "<tempdir>/metacheck-archives/d2fd512cf9a41eae3c0e67882a9b7c83/dot.csv",
+          "<tempdir>/metacheck-archives/d2fd512cf9a41eae3c0e67882a9b7c83/k..csv",
+          "<tempdir>/metacheck-archives/d2fd512cf9a41eae3c0e67882a9b7c83/ok/data.csv",
+          "<tempdir>/metacheck-archives/d2fd512cf9a41eae3c0e67882a9b7c83/x/..../y2.csv",
+          "<tempdir>/metacheck-archives/d2fd512cf9a41eae3c0e67882a9b7c83/x/y.csv"
+        ]
       },
       {
         "t": "dbl",
-        "v": []
+        "v": [
+          817,
+          817,
+          817,
+          817,
+          817,
+          817
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data"
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "climb.zip",
+          "climb.zip",
+          "climb.zip",
+          "climb.zip",
+          "climb.zip",
+          "climb.zip"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/climb.zip",
+          "<TMP>/climb.zip",
+          "<TMP>/climb.zip",
+          "<TMP>/climb.zip",
+          "<TMP>/climb.zip",
+          "<TMP>/climb.zip"
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

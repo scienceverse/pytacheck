@@ -26,6 +26,7 @@ attributes on a returned data frame are kept in ``DataFrame.attrs``.
 from __future__ import annotations
 
 import contextlib
+import datetime as _dt
 import functools
 import hashlib
 import json
@@ -274,6 +275,28 @@ def _read_lines(path: str | os.PathLike[str]) -> list[str]:
     if lines and lines[-1] == "":
         lines.pop()
     return lines
+
+
+def _read_utf8_lines(path: str | os.PathLike[str], n: int = -1) -> list[str]:
+    """R ``.utf8_lines(readLines(path))``: a line that is not valid UTF-8 is read as Latin-1.
+
+    Port of ``R/data_check_helpers.R::.utf8_lines()`` as used for the lines read from authors'
+    files (scripts, the output of a run, a Git LFS pointer) since metacheck 0.4.4.18: a name
+    or a text in an older encoding no longer stops the module on "input string is invalid"
+    (the other lines of the file stay as they were). *n* is the number of lines read (all by
+    default).
+    """
+    from metacheck.datacheck.files import _utf8_lines
+
+    text = Path(path).read_bytes().decode("utf-8", errors="surrogateescape")
+    if text == "":
+        return []
+    lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    if lines and lines[-1] == "":
+        lines.pop()
+    if n >= 0:
+        lines = lines[:n]
+    return [x for x in _utf8_lines(lines) if x is not None]
 
 
 def _write_lines(lines: Sequence[str | None], path: str | os.PathLike[str]) -> None:
@@ -2393,7 +2416,7 @@ def _repro_lfs_swaps(sources: Sequence[str | None]) -> pd.DataFrame:
     stated: dict[str, int] = {}
     for f in small:
         try:
-            head = _read_lines(f)[:3]
+            head = _read_utf8_lines(f, 3)
         except (OSError, UnicodeError):
             head = []
         if not head or not head[0].startswith(_LFS_HEAD):
@@ -2657,6 +2680,15 @@ def _repro_apply_rewrites(txt: list[str | None], rw: pd.DataFrame | None) -> lis
     # ambiguous NA: R's !NA is NA, and which() drops it
     good = [g and ambiguous[k] is not None for k, g in enumerate(good)]
     tgt = [_portable_ref(target[k]) if good[k] else target[k] for k in range(n)]
+    # A pattern of names ("./images/*.jpg") that matched a file gets that file's folder, but
+    # keeps its pattern: it was replaced by the one file it matched, "../docs/images/_.jpg",
+    # so the script read one image (#648).
+    for k in range(n):
+        ref = refs[k]
+        if good[k] and not _is_true(is_call[k]) and ref is not None:
+            ref_name = _basename(ref.replace("\\", "/"))
+            if ref_name and re.search(r"[*?]", ref_name):
+                tgt[k] = f"{_r_dirname(cast(str, tgt[k]))}/{ref_name}"
     for k in range(n):
         ref = refs[k]
         unportable = (
@@ -3211,6 +3243,110 @@ def _repro_p_load_as_library(call: str, variables: Mapping[str, Sequence[str]]) 
     return "{ " + "; ".join(f'library("{p}")' for p in pkgs) + " }"
 
 
+_SCREEN_BACK = "if (.d %in% grDevices::dev.list()) grDevices::dev.set(.d)"
+
+
+def _screen_copy_to(device: str) -> str:
+    return (
+        "(function(...) { .d <- grDevices::dev.cur(); "
+        f"grDevices::dev.copy(device = {device}, ...); "
+        f"grDevices::dev.off(); {_SCREEN_BACK}; invisible(.d) }})"
+    )
+
+
+def _screen_nothing(name: str) -> str:
+    return (
+        f'(function(...) invisible("reproducibility_check removed {name}(), which needs a screen"))'
+    )
+
+
+#: The R function written in place of each call that needs a screen
+#: (``.repro_screen_replacements``), in the order the calls are replaced.
+_SCREEN_REPLACEMENTS: dict[str, str] = {
+    "dev.print": (
+        "(function(device = grDevices::postscript, ...) { .d <- grDevices::dev.cur(); "
+        "grDevices::dev.copy(device = device, ...); grDevices::dev.off(); "
+        f"{_SCREEN_BACK}; invisible(.d) }})"
+    ),
+    "dev.copy2pdf": _screen_copy_to("grDevices::pdf").replace(
+        "(function(...)", '(function(..., out.type = "pdf")', 1
+    ),
+    "dev.copy2eps": _screen_copy_to("grDevices::postscript"),
+    "savePlot": (
+        '(function(filename = "Rplot", type = "png", device = grDevices::dev.cur(), ...) { '
+        "type <- type[[1]]; to <- switch(type, jpg = , jpeg = grDevices::jpeg, tif = , "
+        "tiff = grDevices::tiff, bmp = grDevices::bmp, pdf = grDevices::pdf, ps = , "
+        "eps = grDevices::postscript, grDevices::png); "
+        'if (!grepl(".", basename(filename), fixed = TRUE)) filename <- '
+        'paste0(filename, ".", type); '
+        ".d <- grDevices::dev.cur(); grDevices::dev.set(device); "
+        "grDevices::dev.copy(device = to, filename); "
+        f"grDevices::dev.off(); {_SCREEN_BACK}; invisible(NULL) }})"
+    ),
+    "windows": _screen_nothing("windows"),
+    "win.graph": _screen_nothing("win.graph"),
+    "x11": _screen_nothing("x11"),
+    "X11": _screen_nothing("X11"),
+    "quartz": _screen_nothing("quartz"),
+    "View": _screen_nothing("View"),
+}
+
+
+def _literal(text: str) -> Callable[[re.Match[str]], str]:
+    """A ``re.sub`` replacement that is *text* as written (no group references or escapes)."""
+
+    def repl(_m: re.Match[str]) -> str:
+        return text
+
+    return repl
+
+
+def _repro_replace_screen_calls(txt: list[str | None]) -> tuple[list[str | None], list[str]]:
+    """Port of R/reproducibility_check.R::.repro_replace_screen_calls().
+
+    The calls of R code that need a screen, which the run does not have (#580). Code written in
+    RStudio or R on Windows always has one, so these calls are no error of the code, but they
+    stopped the script: ``dev.print()``, ``dev.copy2pdf()`` and ``dev.copy2eps()`` with "can only
+    print from a screen device", ``savePlot()`` with "can only copy from 'X11(type="*cairo")'
+    devices", ``x11()`` with "unable to start device X11cairo", ``View()`` with "unable to start
+    data viewer", and ``windows()`` with "could not find function". The name of each call is
+    replaced by a function written in its place, so the script's own arguments stay as they are
+    (also over several lines and in a pipe, ``df %>% View()``) and the script keeps its number of
+    lines:
+
+    - ``dev.print()``, ``dev.copy2pdf()``, ``dev.copy2eps()`` and ``savePlot()`` copy the plot to
+      the file with ``dev.copy()``, which needs no screen, close that copy, and go back to the
+      plot that was open, as the originals do; ``savePlot()``'s type chooses the device ("png"
+      when it names none we have) and is added to a file name without an extension, as R for
+      Windows does;
+    - ``windows()``, ``win.graph()``, ``x11()``, ``X11()`` and ``quartz()`` open nothing: the next
+      plot opens the run's default device, which writes to a file;
+    - ``View()`` shows nothing.
+
+    Each replacement says what it replaced. Returns the lines and the name of each call replaced,
+    once per call.
+    """
+    calls: list[str] = []
+    if not txt:
+        return txt, calls
+    out = list(txt)
+    for name, replacement in _SCREEN_REPLACEMENTS.items():
+        pat = re.compile(
+            r"(?<![A-Za-z0-9_.:$@])(?:(?:grDevices|utils)::)?" + re.escape(name) + r"(?=\s*\()"
+        )
+        n = 0
+        for k, line in enumerate(out):
+            # not in a line that is a comment, which would count a call never made
+            if line is None or re.match(r"\s*#", line):
+                continue
+            found = len(pat.findall(line))
+            if found:
+                n += found
+                out[k] = pat.sub(_literal(replacement), line)
+        calls += [f"{name}()"] * n
+    return out, calls
+
+
 def _repro_neutralise_env_calls(txt: list[str | None]) -> tuple[list[str | None], int]:
     """Port of R/reproducibility_check.R::.repro_neutralise_env_calls().
 
@@ -3481,7 +3617,9 @@ def repro_write_scripts(
     family) and (with *inject_libs*) ``library()`` calls injected; *prepend* puts lines
     first. It is written to ``<root>/<target>`` (*script_paths* gives each script's own
     path), unless a file there is not text. Returns ``file_name``, ``script_path``,
-    ``run_dir``, ``setwd_removed``, ``env_calls_replaced``, ``slashes_fixed``,
+    ``run_dir``, ``setwd_removed``, ``env_calls_replaced``, ``screen_calls_replaced`` (the calls
+    that need a screen replaced in R code, one name per call, joined by "; "; see
+    :func:`_repro_replace_screen_calls`), ``slashes_fixed``,
     ``setwd_folder_removed``, ``setwd_paths``, ``lib_loc_removed`` (a ``lib.loc`` on the
     authors' computer taken out of ``library()`` and the like, #594), ``family_replaced``,
     ``family_detail`` and ``library_injected``.
@@ -3574,6 +3712,11 @@ def repro_write_scripts(
         if replace_env_calls and is_r:
             txt, env_n = _repro_neutralise_env_calls(txt)
 
+        # calls that need a screen, which the run does not have (#580)
+        screen_calls: list[str] = []
+        if is_r:
+            txt, screen_calls = _repro_replace_screen_calls(txt)
+
         # lib.loc pointing to a folder on the authors' computer (#594)
         lib_loc_paths: list[str] = []
         if is_r:
@@ -3634,6 +3777,7 @@ def repro_write_scripts(
                 root_s if run_dir == "." else _file_path(root_s, _portable_path(run_dir)),
                 setwd_n,
                 env_n,
+                "; ".join(screen_calls),
                 "; ".join(slashes),
                 "; ".join(folder_removed),
                 ", ".join(setwd_paths),
@@ -3650,13 +3794,14 @@ def repro_write_scripts(
             "run_dir": ("string", [r[2] for r in rows]),
             "setwd_removed": ("Int64", [r[3] for r in rows]),
             "env_calls_replaced": ("Int64", [r[4] for r in rows]),
-            "slashes_fixed": ("string", [r[5] for r in rows]),
-            "setwd_folder_removed": ("string", [r[6] for r in rows]),
-            "setwd_paths": ("string", [r[7] for r in rows]),
-            "lib_loc_removed": ("string", [r[8] for r in rows]),
-            "family_replaced": ("Int64", [r[9] for r in rows]),
-            "family_detail": ("string", [r[10] for r in rows]),
-            "library_injected": ("string", [r[11] for r in rows]),
+            "screen_calls_replaced": ("string", [r[5] for r in rows]),
+            "slashes_fixed": ("string", [r[6] for r in rows]),
+            "setwd_folder_removed": ("string", [r[7] for r in rows]),
+            "setwd_paths": ("string", [r[8] for r in rows]),
+            "lib_loc_removed": ("string", [r[9] for r in rows]),
+            "family_replaced": ("Int64", [r[10] for r in rows]),
+            "family_detail": ("string", [r[11] for r in rows]),
+            "library_injected": ("string", [r[12] for r in rows]),
         }
     )
 
@@ -4492,17 +4637,21 @@ def _driver_source(
 class _RunError(Exception):
     """A failed script run (callr's error condition); ``timeout`` for a timeout."""
 
-    def __init__(self, message: str, timeout: bool = False) -> None:
+    def __init__(self, message: str, timeout: bool = False, status: int | None = None) -> None:
         super().__init__(message)
         self.message = message
         self.timeout = timeout
+        # the exit status of the process, as callr reports it: a crash has its own, a script
+        # stopped at its time limit -9 (killed), an error raised in R 0 (the process ended
+        # normally having saved it)
+        self.status = status
 
 
 def _read_cap(path: str | os.PathLike[str]) -> str:
     """``paste(readLines(f), collapse = "\\n")`` of a captured stream, ``""`` if absent."""
     if not os.path.exists(path):
         return ""
-    return "\n".join(_read_lines(path))
+    return "\n".join(_read_utf8_lines(path))
 
 
 def _callr_run(
@@ -4553,12 +4702,13 @@ def _callr_run(
                     check=False,
                 )
             except subprocess.TimeoutExpired as exc:
-                raise _RunError(_CALLR_TIMEOUT, timeout=True) from exc
+                raise _RunError(_CALLR_TIMEOUT, timeout=True, status=-9) from exc
         if os.path.exists(error_file):
             msg = Path(error_file).read_text(encoding="utf-8", errors="replace")
-            raise _RunError(msg[:-1] if msg.endswith("\n") else msg)
+            # the process itself ended normally, having saved the error it caught (status 0)
+            raise _RunError(msg[:-1] if msg.endswith("\n") else msg, status=0)
         if proc.returncode != 0:
-            raise _RunError(_CALLR_CRASH)
+            raise _RunError(_CALLR_CRASH, status=proc.returncode)
 
 
 # R quotes names with sQuote()/dQuote(), which are typographic quotes in a
@@ -4619,8 +4769,20 @@ _RUN_COLUMNS = {
 }
 
 
-def _run_frame(rows: Sequence[Mapping[str, Any]]) -> pd.DataFrame:
-    return _frame({c: (t, [r[c] for r in rows]) for c, t in _RUN_COLUMNS.items()})
+def _run_frame(
+    rows: Sequence[Mapping[str, Any]], clocks: Mapping[str, Mapping[str, Any]] | None = None
+) -> pd.DataFrame:
+    """``run_results`` rows as a table, with ``started_at``, ``ended_at`` and ``exit_status``.
+
+    *clocks* maps a script's name to what its runner noted while it ran (``started``,
+    ``ended``, ``status``; see :func:`metacheck.repro.provenance._repro_add_run_clock`).
+    """
+    from metacheck.repro.provenance import _repro_add_run_clock
+
+    out = _frame({c: (t, [r[c] for r in rows]) for c, t in _RUN_COLUMNS.items()})
+    done = _repro_add_run_clock(out, clocks)
+    assert done is not None
+    return done
 
 
 def _run_row(
@@ -4693,7 +4855,7 @@ def _pre_run_outcome(fn: str, skip: Any, parses: Any) -> dict[str, Any] | None:
 
 def _script_lines(path: str | None) -> list[str]:
     try:
-        return _read_lines(path) if path is not None else []
+        return _read_utf8_lines(path) if path is not None else []
     except OSError:
         return []
 
@@ -4762,6 +4924,9 @@ def repro_run_scripts(
 
     bar = pb(len(ordered), ":what [:bar] :current/:total")
     rows: list[dict[str, Any]] = []
+    # each script's start, end and exit status, for run_results' started_at, ended_at and
+    # exit_status (see metacheck.repro.provenance)
+    clocks: dict[str, dict[str, Any]] = {}
     try:
         bar.tick(0, {"what": ""})
         for fn in ordered:
@@ -4791,12 +4956,15 @@ def repro_run_scripts(
                 err_file = os.path.join(tmp, "err.txt")
                 cap_file = os.path.join(tmp, "captures.json")
                 t0 = time.monotonic()
+                clock = clocks[fn] = {"started": _dt.datetime.now(_dt.UTC)}
                 error: _RunError | None = None
                 try:
                     _callr_run(paths[i], dirs[i], cap_file, lib, run_timeout, out_file, err_file)
                 except _RunError as exc:
                     error = exc
                 elapsed = time.monotonic() - t0
+                clock["ended"] = _dt.datetime.now(_dt.UTC)
+                clock["status"] = 0 if error is None else error.status
                 captures = _read_captures(cap_file) if os.path.exists(cap_file) else None
                 so, se = _read_cap(out_file), _read_cap(err_file)
             _message(
@@ -4844,4 +5012,4 @@ def repro_run_scripts(
                 )
     finally:
         bar.terminate()
-    return _run_frame(rows)
+    return _run_frame(rows, clocks)

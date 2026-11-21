@@ -233,3 +233,129 @@ def test_a_cut_listing_goes_on_where_it_stopped_with_cache(
         )
         assert len(x) == len(full)
         assert _repo_info_cache_get("osf_listing_part", key) is None
+
+
+def test_osf_info_asks_again_for_a_folder_the_osf_refused_and_marks_a_short_listing(
+    mock_api: respx.MockRouter,
+    filetype_available: bool,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    waits: list[int] = []
+    monkeypatch.setattr(osf, "_osf_retry_wait", lambda: waits.append(1) or 0)
+    # the recordings have no answer for the component tree: the listing goes node by node
+    monkeypatch.setattr("metacheck.archives.osf._osf_tree", lambda *a, **k: None, raising=False)
+    monkeypatch.setattr("metacheck.archives.osf_helpers._osf_tree", lambda *a, **k: None)
+    full = osf_info("j3gcx", recursive=True)
+    osf_cache_clear()
+    folder = "685a46eb8c103f8ab307047f"
+    real = osf.osf_get_all_pages
+    asked: list[str] = []
+
+    def refuse(*answers: object) -> None:
+        asked.clear()
+        osf_cache_clear()
+        queue = list(answers)
+
+        def fake(url: str, *a: object, **k: object) -> object:
+            if folder not in url:
+                return real(url, *a, **k)
+            asked.append(url)
+            if not queue:
+                return real(url, *a, **k)
+            how = queue.pop(0)
+            if how == "short":
+                out = real(url, *a, **k)
+                out = osf.OsfResult(out[:1])
+                out.osf_incomplete = {"expected": 3, "got": 1}
+                return out
+            return osf._osf_error_result(how)
+
+        monkeypatch.setattr(osf, "osf_get_all_pages", fake)
+
+    with local_options(
+        {"metacheck.repo_info_cache.dir": str(tmp_path), "metacheck.osf.cache": True}
+    ):
+        key = osf._osf_cache_key("j3gcx", True)
+
+        # refused twice: short, with a warning, and not kept in the lasting cache
+        refuse("request_failed", "request_failed")
+        with pytest.warns(
+            UserWarning,
+            match=r"The OSF refused part of the listing of j3gcx, also when asked again \(1 folder\)",
+        ):
+            x = osf_info("j3gcx", recursive=True, cache=True)
+        assert len(asked) == 2
+        assert len(waits) == 1
+        assert x["listing_short"].all()
+        assert "listing_cut" not in x
+        assert osf._count_files(x) < osf._count_files(full)
+        assert _repo_info_cache_get("osf_tree", key) is None
+
+        # refused once, answered when asked again: complete, and kept
+        waits.clear()
+        refuse("request_failed")
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            x = osf_info("j3gcx", recursive=True, cache=True)
+        assert len(asked) == 2
+        assert len(waits) == 1
+        assert "listing_short" not in x
+        assert set(x["osf_id"]) == set(full["osf_id"])
+        assert len(x) == len(full)
+        assert _repo_info_cache_get("osf_tree", key) is not None
+
+        # answered short (one row only), then in full: the row of the short answer is not listed twice
+        refuse("short")
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            x = osf_info("j3gcx", recursive=True, cache=False)
+        assert "listing_short" not in x
+        assert len(x) == len(full)
+        assert not x["osf_id"].dropna().duplicated().any()
+
+        # refused as forbidden in a project the OSF has shown public: a refusal under load
+        refuse("forbidden", "forbidden")
+        with pytest.warns(UserWarning, match="refused part of the listing"):
+            x = osf_info("j3gcx", recursive=True, cache=False)
+        assert x["listing_short"].all()
+
+        # nothing refused: no wait
+        waits.clear()
+        refuse()
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            osf_info("j3gcx", recursive=True, cache=False)
+        assert waits == []
+
+
+def test_only_a_refusal_of_a_component_storage_list_or_osf_storage_folder_can_be_one_under_load() -> (
+    None
+):
+    api = "https://api.osf.io/v2/nodes/j3gcx"
+    assert osf._osf_refusable_url(f"{api}/children/?page[size]=100")
+    assert osf._osf_refusable_url(f"{api}/files/")
+    assert osf._osf_refusable_url(f"{api}/files/osfstorage/")
+    assert osf._osf_refusable_url(f"{api}/files/osfstorage/685a46eb8c103f8ab307047f/")
+    # a linked storage can refuse for good when its link to the account lapsed
+    assert not osf._osf_refusable_url(f"{api}/files/github/")
+    assert not osf._osf_refusable_url(f"{api}/files/googledrive/abc/")
+
+
+def test_osf_get_all_pages_marks_a_listing_short_when_a_later_page_fails_page_by_page(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # a first page without the total, so later pages are asked one by one
+    def one_page(url: str) -> object:
+        if "page=2" in url:
+            return osf._osf_error_result("forbidden")
+        return {
+            "data": [{"id": "a", "type": "files"}, {"id": "b", "type": "files"}],
+            "links": {"next": "https://api.osf.io/v2/nodes/abcde/files/osfstorage/?page=2"},
+        }
+
+    monkeypatch.setattr(osf, "_osf_get_one_page", one_page)
+    with pytest.warns(UserWarning, match="did not send every page"):
+        out = osf.osf_get_all_pages("https://api.osf.io/v2/nodes/abcde/files/osfstorage/")
+    assert len(out) == 2
+    assert out.osf_incomplete is not None

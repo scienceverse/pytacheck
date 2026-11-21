@@ -137,6 +137,34 @@ def test_registration_that_type_checks_but_fails_to_fetch_is_reported() -> None:
     assert any(guid in str(r) for r in report)
 
 
+def test_a_link_the_osf_did_not_answer_for_is_not_called_private() -> None:
+    # a failed request says nothing about the link: osf_type() gives "unreachable", and the
+    # report says the link could not be checked (metacheck #541)
+    from metacheck.archives.osf import _osf_error_result
+
+    guid = "klmno"
+    paper = osf_paper(guid)
+    with mock.patch("metacheck.archives.osf.osf_type", lambda guid: "unreachable"):
+        mo = run(paper)
+    assert "no registrations" not in mo.summary_text
+    assert "could not be checked, because the OSF did not answer" in mo.summary_text
+    report = mo.report if isinstance(mo.report, list) else [mo.report]
+    assert not any("private, embargoed, or withdrawn" in str(r) for r in report)
+    assert any(guid in str(r) for r in report)
+
+    # the same for a registration whose details fail to load
+    with (
+        mock.patch("metacheck.archives.osf.osf_type", lambda guid: "registrations"),
+        mock.patch(
+            "metacheck.archives.osf.osf_get_all_pages",
+            lambda url, page_end=float("inf"): _osf_error_result("request_failed"),
+        ),
+    ):
+        mo = run(paper)
+    assert "could not be checked, because the OSF did not answer" in mo.summary_text
+    assert "could not be accessed" not in mo.summary_text
+
+
 def test_combine_more_than_10_osf_registrations() -> None:
     # metacheck#262: >10 registrations of different templates combine
     reg_urls = [
@@ -175,14 +203,16 @@ def test_mixed_accessible_and_inaccessible() -> None:
     urls = ["https://osf.io/48ncu", "https://osf.io/3cz2e", "https://osf.io/8c3kb"]
     mo = run(tp(urls, "p_mixed"))
     assert mo.traffic_light == "info"
+    # the recordings hold no answer for these two links: the OSF "did not answer" (metacheck #541)
     assert mo.summary_text == (
-        "We found 1 preregistration. 2 registration links could not be accessed "
-        "(private, embargoed, or withdrawn)."
+        "We found 1 preregistration. 2 OSF links could not be checked, because the OSF did not "
+        "answer."
     )
     # U110: the paper's link, not the API URL metacheck names for a failed fetch
     assert (
-        "The following registration links could not be accessed and may be private, "
-        "embargoed, or withdrawn: https://osf.io/3cz2e, https://osf.io/8c3kb."
+        "The OSF did not answer for the following links (no connection, a server error, or too "
+        "many requests), so they could not be checked; it may be a registration. Run the check "
+        "again later, or open the links: https://osf.io/3cz2e, https://osf.io/8c3kb."
     ) in mo.report
 
 

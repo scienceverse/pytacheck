@@ -68,7 +68,8 @@
           "has_docstring",
           "files_written",
           "loaded_files_missing",
-          "loaded_files_missing_names"
+          "loaded_files_missing_names",
+          "loaded_files_fetched_names"
         ],
         "v": [
           {
@@ -389,6 +390,17 @@
               "",
               "scores.csv"
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
           }
         ]
       },
@@ -449,6 +461,7 @@
           "code_min_comments",
           "code_parse_errors",
           "code_packages_n",
+          "code_files_failed",
           "code_version_pinned"
         ],
         "v": [
@@ -510,6 +523,12 @@
             "t": "int",
             "v": [
               5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -669,6 +688,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

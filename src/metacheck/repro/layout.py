@@ -52,7 +52,7 @@ from metacheck.repro.core import (
     _paste_lines,
     _portable_path,
     _r_dirname,
-    _read_lines,
+    _read_utf8_lines,
     _repro_md5,
     _repro_neutralise_env_calls,
     _repro_norm_rel,
@@ -341,7 +341,9 @@ def _repro_name_report(corrections: pd.DataFrame, execute: bool = False) -> list
 
 
 def _repro_path_fix_text(
-    rewrite_list: Mapping[str, pd.DataFrame | None], execute: bool = False
+    rewrite_list: Mapping[str, pd.DataFrame | None],
+    execute: bool = False,
+    absent: Sequence[str | None] | None = None,
 ) -> str:
     """Port of ``R/reproducibility_check.R::.repro_path_fix_text()``.
 
@@ -350,7 +352,9 @@ def _repro_path_fix_text(
     path on their computer, a path from another folder, or a file that is elsewhere in
     the repository (see :func:`_repro_keep_working_refs`). One string, since the module
     adds sentences to it. *rewrite_list* holds a ``repro_rewrite_paths()`` result per
-    script, named by script.
+    script, named by script. *absent* holds the names the code reads that the repository
+    does not hold (the module's unresolved references, which leave out names the code
+    builds and files other scripts write).
     """
     fixes: list[tuple[str | None, str | None, str | None]] = []
     for f, d in rewrite_list.items():
@@ -376,6 +380,18 @@ def _repro_path_fix_text(
             and target[i] != ref[i]
         )
     n = len(fixes)
+    # paths to files the deposit does not hold: "every data path works" was said of reports
+    # whose scripts then stopped on missing files (#648, K8f)
+    missing = _unique(a for a in (absent or ()) if a is not None and a != "")
+    if n == 0 and missing:
+        k = len(missing)
+        more = f", and {k - 10} more" if k > 10 else ""
+        listed_absent = ", ".join(f"`{a}`" for a in missing[:10])
+        return (
+            "The data paths in the code to files the repository holds work as deposited, "
+            f"but {k:d} path{plural(k)} name{plural(k, 's', '')} a file the repository does "
+            f"not hold: {listed_absent}{more}."
+        )
     if n == 0:
         return "Every data path in the code works in the repository as deposited."
     shown = fixes[:10]
@@ -1099,7 +1115,7 @@ def _repro_lfs_stopped(
         try:
             if os.path.getsize(path) >= 1024:
                 continue
-            first = _read_lines(path)[:1]
+            first = _read_utf8_lines(path, 1)
         except OSError:
             continue
         if first and first[0].startswith(_LFS_HEAD):
@@ -1167,8 +1183,14 @@ def _repro_ref_checkable(d: pd.DataFrame, built: Sequence[str | None] = ()) -> l
         b = base[i]
         piece = bool(grepl(r"^[._]", b)) or "." not in (b or "")
         placeholder = bool(grepl(r"[%{}$*]|: ", ref[i]))
+        # a file read from a web address is not one the deposit should hold (#695)
+        web = "://" in (ref[i] or "")
         out.append(
-            not is_call[i] and not piece and not placeholder and _tolower(b) not in built_set
+            not is_call[i]
+            and not piece
+            and not placeholder
+            and not web
+            and _tolower(b) not in built_set
         )
     return out
 
@@ -2121,7 +2143,7 @@ def _repro_neutralise_rprofile(root: str | os.PathLike[str]) -> int:
     n = 0
     for path in sorted(paths):
         try:
-            txt: list[str | None] = list(_read_lines(path))
+            txt: list[str | None] = list(_read_utf8_lines(path))
         except OSError:
             continue
         new, k = _repro_neutralise_env_calls(txt)
@@ -2725,7 +2747,9 @@ def _repro_rewrite_preview(dir: str | os.PathLike[str]) -> pd.DataFrame:
                 run_dirs=rp["run_dirs"],
             )
             wt_names = _chr_list(wt["file_name"])
-            rewritten = ["\n".join(_read_lines(cast(str, p))) for p in _chr_list(wt["script_path"])]
+            rewritten = [
+                "\n".join(_read_utf8_lines(cast(str, p))) for p in _chr_list(wt["script_path"])
+            ]
         out.append(
             _frame(
                 {

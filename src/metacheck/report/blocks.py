@@ -114,6 +114,32 @@ def _report_is_brief(report_type: str) -> bool:
     return report_type in ("brief", "simple_brief")
 
 
+def _report_file_tabs(files: Sequence[Any]) -> tuple[list[Any], str | None]:
+    """Port of ``.report_file_tabs()``: the files that get their own table in a report.
+
+    At most ``metacheck.report_max_file_tabs`` (default 20) files, in their order, so that the
+    report's size does not grow with the number of files in a deposit (1,190 data files gave a
+    report of 2,398 tables that pandoc could not turn into HTML within an hour; metacheck
+    0.4.4.19). The module's output still has every file. Returns the files to show and the
+    line telling the reader that only part is shown (``None`` when all are shown). An unusable
+    setting (not one whole number of 1 or more) falls back to 20.
+    """
+    from metacheck.utils import get_option
+
+    n_max = 20
+    raw = get_option("metacheck.report_max_file_tabs", 20)
+    try:
+        if raw is not None and not isinstance(raw, (list, tuple)) and not isinstance(raw, bool):
+            v = int(float(raw))
+            if v >= 1:
+                n_max = v
+    except (TypeError, ValueError, OverflowError):
+        n_max = 20
+    shown = list(files)[:n_max]
+    note = f"*Showing the first {n_max:d} of {len(files):d} files.*" if len(files) > n_max else None
+    return shown, note
+
+
 @dataclass
 class ReportTable:
     """A table block in a module report (what ``scroll_table()`` produces)."""

@@ -91,7 +91,17 @@ def test_zip_peek_lists_names_sizes_and_fetch_fields() -> None:
         router.route(url=URL).mock(side_effect=handler)
         cd = zip_peek(URL)
     assert cd is not None
-    assert list(cd.columns) == ["name", "size", "method", "csize", "offset", "crc", "name_bytes"]
+    assert list(cd.columns) == [
+        "name",
+        "size",
+        "method",
+        "csize",
+        "offset",
+        "crc",
+        "name_bytes",
+        "encrypted",
+    ]
+    assert cd["encrypted"].tolist() == [False, False]
     assert cd["name"].tolist() == ["data.csv", "notes.txt"]
     assert cd["size"].tolist() == [1000.0, 6.0]
     assert cd["offset"].min() == 0
@@ -1274,3 +1284,85 @@ def test_whole_archive_mode_falls_back_to_ranges_when_the_download_fails(
         )
     assert out is not None and out["ok"].tolist() == [True, True, True]
     assert ("GET", None) in calls and not (tmp_path / "kept.zip").exists()
+
+
+# -- names in the old DOS characters (CP437), metacheck 0.4.4.18 ----------------
+
+
+def _dos_names_zip(path: Path) -> Path:
+    """A zip with two stored members, the second named "Th\\x81ringen/b.csv" (CP437, no UTF-8 flag).
+
+    medRxiv 2026.11.12.26367900v1: older releases of the German Index of Socioeconomic
+    Deprivation inside a Zenodo zip store "Baden-Wuerttemberg" as "Baden-W\\x81rttemberg".
+    Built byte by byte, as zip tools write names in UTF-8 now: stored members, no flag.
+    """
+    import struct
+
+    members = [
+        (b"data/a.csv", b"id,x\n1,2\n"),
+        (b"Th\x81ringen/b.csv", b"id,y\n3,4\n"),
+    ]
+    # central records: version made by, the local fields, then comment length, disk, attributes
+    # and the local header's offset, then the name
+    local = b""
+    central = b""
+    for name, data in members:
+        crc = zlib.crc32(data)
+        fixed = struct.pack("<HHHHHIIIHH", 20, 0, 0, 0, 0, crc, len(data), len(data), len(name), 0)
+        central += (
+            b"PK\x01\x02"
+            + struct.pack("<H", 20)
+            + fixed
+            + struct.pack("<HHHII", 0, 0, 0, 0, len(local))
+            + name
+        )
+        local += b"PK\x03\x04" + fixed + name + data
+    eocd = b"PK\x05\x06" + struct.pack("<HHHHIIH", 0, 0, 2, 2, len(central), len(local), 0)
+    path.write_bytes(local + central + eocd)
+    return path
+
+
+def test_a_zip_whose_names_are_stored_in_the_old_dos_characters_is_listed_and_unpacked(
+    tmp_path: Path,
+) -> None:
+    from metacheck.archives.zip_peek import _zip_list_local
+
+    z = _dos_names_zip(tmp_path / "dos_names.zip")
+    cd = _zip_list_local(str(z))
+    assert cd is not None
+    assert sorted(cd["name"].tolist()) == ["Thüringen/b.csv", "data/a.csv"]
+    assert all(n.isprintable() for n in cd["name"].tolist())
+
+    rows = _expand_zip(z, _zip_row(z), skip_types="materials")
+    assert set(rows["file_name"]) == {"a.csv", "b.csv"}
+    assert any("Thüringen/b.csv" in p for p in rows["file_path"])
+    b = rows.loc[rows["file_name"] == "b.csv", "file_location"].iloc[0]
+    assert Path(b).read_text().splitlines() == ["id,y", "3,4"]
+
+
+def test_a_zip_with_dos_names_downloaded_for_a_repository_is_matched_by_its_listed_path(
+    tmp_path: Path,
+) -> None:
+    """``.download_zip_to_cache()`` takes a member stored in CP437 out under its readable name."""
+    from metacheck.archives.download import _download_zip_to_cache
+
+    z = _dos_names_zip(tmp_path / "dos_names.zip")
+    data = z.read_bytes()
+    out_dir = tmp_path / "cache"
+    files = pd.DataFrame(
+        {
+            "repo_url": ["https://github.com/o/r"],
+            "file_name": ["b.csv"],
+            "file_path": ["Thüringen/b.csv"],
+            "file_url": ["u"],
+            "file_location": pd.Series([None], dtype="string"),
+            ".cache_path": [str(out_dir / "b.csv")],
+        }
+    )
+    with respx.mock(assert_all_called=False) as router:
+        router.get("https://api.github.com/repos/o/r/zipball").mock(
+            return_value=httpx.Response(200, content=data)
+        )
+        got = _download_zip_to_cache(files, [0], "https://api.github.com/repos/o/r/zipball")
+    assert got["file_location"].iloc[0] == str(out_dir / "b.csv")
+    assert (out_dir / "b.csv").read_text().splitlines() == ["id,y", "3,4"]

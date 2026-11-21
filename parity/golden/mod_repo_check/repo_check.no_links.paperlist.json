@@ -41,7 +41,7 @@
       {
         "t": "chr",
         "v": [
-          "We found no links to repositories on the Open Science Framework, Github, GitLab, ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, or CKAN data portals."
+          "We found no links to repositories on the Open Science Framework, Github, GitLab, ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, CKAN data portals, GEO, SRA, ENA, DDBJ, ArrayExpress, CRAN, or ICPSR (openICPSR, AEA Data and Code Repository)."
         ]
       },
       {
@@ -53,7 +53,7 @@
       {
         "t": "chr",
         "v": [
-          "We found no links to repositories on the Open Science Framework, Github, GitLab, ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, or CKAN data portals."
+          "We found no links to repositories on the Open Science Framework, Github, GitLab, ResearchBox, DSpace, EPrints (ReShare and others), Invenio (Zenodo and others), Dataverse, Figshare, Dryad, 4TU.ResearchData, Mendeley Data, DataONE, LDbase, CKAN data portals, GEO, SRA, ENA, DDBJ, ArrayExpress, CRAN, or ICPSR (openICPSR, AEA Data and Code Repository)."
         ]
       },
       {
@@ -66,7 +66,8 @@
           "files_data",
           "files_code",
           "files_readme",
-          "files_zip"
+          "files_zip",
+          "file_share_n"
         ],
         "v": [
           {
@@ -124,6 +125,14 @@
               null,
               null
             ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
           }
         ]
       },
@@ -168,7 +177,10 @@
           "gh_owner_name",
           "gh_stars",
           "gh_forks",
-          "cff_dois"
+          "cff_dois",
+          "dep_org",
+          "dep_creator_families",
+          "dep_n_creators"
         ],
         "v": [
           {
@@ -197,6 +209,18 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           },
           {
@@ -327,6 +351,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

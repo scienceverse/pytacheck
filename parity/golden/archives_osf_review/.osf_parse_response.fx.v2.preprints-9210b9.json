@@ -23,7 +23,9 @@
       "project",
       "primary_file",
       "contributors",
-      "contributor_orcids"
+      "contributor_orcids",
+      "contributor_families",
+      "n_contributors"
     ],
     "v": [
       {
@@ -127,9 +129,21 @@
         "v": [
           null
         ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

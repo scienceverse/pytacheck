@@ -998,6 +998,7 @@ def _harvest_labels(
     import pandas as pd
 
     from metacheck.datacheck._columns_codebook import _import_data
+    from metacheck.datacheck.files import _utf8_repair_df
 
     try:
         import pyreadstat  # noqa: F401
@@ -1022,7 +1023,9 @@ def _harvest_labels(
         if df is None:
             continue
         src = s_src[i] if s_src is not None else os.path.basename(p)
-        res = extract(df, src, group=file_group)
+        # labels in another encoding (an older Stata or SPSS file) repaired first: the
+        # extractor's text patterns stop on them (_utf8_repair_df())
+        res = extract(_utf8_repair_df(df), src, group=file_group)
         if res is None:
             continue
         res = res.copy()

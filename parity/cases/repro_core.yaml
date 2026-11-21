@@ -2056,3 +2056,155 @@
       "$expr":
         "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); { recorded <- list(deps = data.frame(package = c('a', 'b', 'c'), source = 'cran', version = c('1.0', '2.0', NA), base = FALSE, stringsAsFactors = FALSE), kept_with_r = data.frame(package = character(0), version = character(0)), dates = character(0), date_failed = FALSE); results <- data.frame(package = c('a', 'b', 'c'), installed = c(TRUE, TRUE, TRUE), version_installed = c('1.0', '2.5', '9.9')); vp <- list(r_versions = '4.3.1'); list(metacheck:::.repro_recorded_summary(recorded, results), metacheck:::.repro_recorded_summary(recorded, results, vp, 'docker', TRUE), metacheck:::.repro_recorded_summary(recorded, results, vp, 'docker', FALSE), metacheck:::.repro_recorded_summary(recorded, results, vp, 'process', TRUE), metacheck:::.repro_recorded_summary(recorded, results, list(r_versions = '4.4.2 (x)'), 'docker', TRUE)) } }"
         "py": "lambda m: (lambda recorded, results, vp: [m.recorded._repro_recorded_summary(*a) for a in [(recorded, results), (recorded, results, vp, 'docker', True), (recorded, results, vp, 'docker', False), (recorded, results, vp, 'process', True), (recorded, results, {'r_versions': ['4.4.2 (x)']}, 'docker', True)]])({'deps': m.pd.DataFrame({'package': ['a', 'b', 'c'], 'source': 'cran', 'version': ['1.0', '2.0', None], 'base': False}), 'kept_with_r': m.pd.DataFrame({'package': m.pd.array([], dtype='string'), 'version': m.pd.array([], dtype='string')}), 'dates': [], 'date_failed': False}, m.pd.DataFrame({'package': ['a', 'b', 'c'], 'installed': [True, True, True], 'version_installed': ['1.0', '2.5', '9.9']}), {'r_versions': ['4.3.1']})"
+- "id": "repro_platform_of.cases"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_platform_of(c(\"ModuleNotFoundError: No module named 'google.colab'\", \"ModuleNotFoundError: No module named 'kaggle_secrets'\", \"ModuleNotFoundError: No module named 'win32com.client'\", \"ModuleNotFoundError: No module named \\\"ehrql\\\"\", \"ModuleNotFoundError: No module named 'numpy'\", \"Error in library(x) : there is no package called 'x'\", '', NA_character_)) }"
+        "py": "lambda m: m.outcomes._repro_platform_of([\"ModuleNotFoundError: No module named 'google.colab'\", \"ModuleNotFoundError: No module named 'kaggle_secrets'\", \"ModuleNotFoundError: No module named 'win32com.client'\", 'ModuleNotFoundError: No module named \"ehrql\"', \"ModuleNotFoundError: No module named 'numpy'\", \"Error in library(x) : there is no package called 'x'\", '', None])"
+- "id": "repro_failure_reason.platform_and_settings"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_failure_reason(rep('errored', 11), c(\"ModuleNotFoundError: No module named 'google.colab'\", \"ModuleNotFoundError: No module named 'win32com'\", 'ImportError: attempted relative import with no known parent package', 'Error: ANTHROPIC_API_KEY is not set', \"KeyError: 'OPENAI_API_KEY' in os.py environ\", \"KeyError: 'name'\", 'Error in windows() : unable to start device', 'Error in View(x) : unable to start data viewer', 'Error in dev.print() : cannot open display', \"Error in file(file, \\\"rt\\\") : cannot open file 'a.csv': No such file or directory\", \"Error in library(x) : there is no package called 'x'\")) }"
+        "py": "lambda m: m.outcomes._repro_failure_reason(['errored'] * 11, [\"ModuleNotFoundError: No module named 'google.colab'\", \"ModuleNotFoundError: No module named 'win32com'\", 'ImportError: attempted relative import with no known parent package', 'Error: ANTHROPIC_API_KEY is not set', \"KeyError: 'OPENAI_API_KEY' in os.py environ\", \"KeyError: 'name'\", 'Error in windows() : unable to start device', 'Error in View(x) : unable to start data viewer', 'Error in dev.print() : cannot open display', 'Error in file(file, \"rt\") : cannot open file \\'a.csv\\': No such file or directory', \"Error in library(x) : there is no package called 'x'\"])"
+- "id": "repro_failure_reason.platform_not_errored"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_failure_reason(c('dependency_unavailable', 'ran_ok'), c(\"ModuleNotFoundError: No module named 'google.colab'\", \"ImportError: attempted relative import with no known parent package\")) }"
+        "py": "lambda m: m.outcomes._repro_failure_reason(['dependency_unavailable', 'ran_ok'], [\"ModuleNotFoundError: No module named 'google.colab'\", 'ImportError: attempted relative import with no known parent package'])"
+- "id": "repro_check_group.cases"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); { d <- data.frame(outcome = c(\"ran_ok\", \"errored\", \"errored\", \"errored\", \"errored\", \"errored\", \"errored\", \"errored\", \"errored\", \"dependency_unavailable\", \"errored\", \"errored\", \"errored\", \"errored\", \"errored\", \"timed_out\", \"skipped_time_limit\", \"not_parsed\", \"python2\", \"skipped_missing_inputs\", \"needs_a_person\", \"out_of_memory\", \"docker_failed\", \"run_by_source\"), reason = c(NA_character_, \"file\", \"undefined\", \"package\", \"settings\", \"internet\", \"interactive\", \"download\", \"platform\", \"how_to_run\", \"from_report\", \"environment\", \"environment\", \"environment\", \"environment\", NA_character_, NA_character_, NA_character_, NA_character_, NA_character_, NA_character_, NA_character_, NA_character_, NA_character_), msg = c(\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"there is no package called 'x'\", \"caught segfault\", \"pandoc not found\", \"unable to start device\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"), stringsAsFactors = FALSE); metacheck:::.repro_check_group(d$outcome, d$reason, d$msg) } }"
+        "py": "lambda m: m.outcomes._repro_check_group(['ran_ok', 'errored', 'errored', 'errored', 'errored', 'errored', 'errored', 'errored', 'errored', 'dependency_unavailable', 'errored', 'errored', 'errored', 'errored', 'errored', 'timed_out', 'skipped_time_limit', 'not_parsed', 'python2', 'skipped_missing_inputs', 'needs_a_person', 'out_of_memory', 'docker_failed', 'run_by_source'], [None, 'file', 'undefined', 'package', 'settings', 'internet', 'interactive', 'download', 'platform', 'how_to_run', 'from_report', 'environment', 'environment', 'environment', 'environment', None, None, None, None, None, None, None, None, None], ['', '', '', '', '', '', '', '', '', '', '', \"there is no package called 'x'\", 'caught segfault', 'pandoc not found', 'unable to start device', '', '', '', '', '', '', '', '', ''])"
+- "id": "repro_groups_sentence.all_groups"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_groups_sentence(data.frame(outcome = c(\"ran_ok\", \"errored\", \"errored\", \"errored\", \"timed_out\", \"errored\", \"docker_failed\", \"run_by_source\"), reason = c(NA_character_, \"file\", \"undefined\", \"package\", NA_character_, \"settings\", NA_character_, NA_character_), stringsAsFactors = FALSE)) }"
+        "py": "lambda m: m.outcomes._repro_groups_sentence(m.pd.DataFrame({'outcome': ['ran_ok', 'errored', 'errored', 'errored', 'timed_out', 'errored', 'docker_failed', 'run_by_source'], 'reason': [None, 'file', 'undefined', 'package', None, 'settings', None, None]}))"
+- "id": "repro_groups_sentence.one_group"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_groups_sentence(data.frame(outcome = c(\"ran_ok\", \"errored\"), reason = c(NA_character_, \"file\"), stringsAsFactors = FALSE)) }"
+        "py": "lambda m: m.outcomes._repro_groups_sentence(m.pd.DataFrame({'outcome': ['ran_ok', 'errored'], 'reason': [None, 'file']}))"
+- "id": "repro_groups_sentence.two_groups"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_groups_sentence(data.frame(outcome = c(\"errored\", \"timed_out\"), reason = c(\"file\", NA_character_), stringsAsFactors = FALSE)) }"
+        "py": "lambda m: m.outcomes._repro_groups_sentence(m.pd.DataFrame({'outcome': ['errored', 'timed_out'], 'reason': ['file', None]}))"
+- "id": "repro_groups_sentence.none"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_groups_sentence(data.frame(outcome = c(\"ran_ok\", \"docker_failed\"), reason = c(NA_character_, NA_character_), stringsAsFactors = FALSE)) }"
+        "py": "lambda m: m.outcomes._repro_groups_sentence(m.pd.DataFrame({'outcome': ['ran_ok', 'docker_failed'], 'reason': [None, None]}))"
+- "id": "repro_groups_sentence.checked_column"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_groups_sentence(data.frame(outcome = c('errored', 'errored', 'ran_ok'), reason = c('file', 'platform', NA), checked = c('code_error', 'not_checkable', 'ran'))) }"
+        "py": "lambda m: m.outcomes._repro_groups_sentence(m.pd.DataFrame({'outcome': ['errored', 'errored', 'ran_ok'], 'reason': ['file', 'platform', None], 'checked': ['code_error', 'not_checkable', 'ran']}))"
+- "id": "repro_groups_sentence.empty"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_groups_sentence(NULL) }"
+        "py": "lambda m: m.outcomes._repro_groups_sentence(None)"
+- "id": "repro_from_report_failed.cases"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_from_report_failed(data.frame(outcome = c('errored', 'errored', 'ran_ok', 'errored'), file_name = c('a.R', 'a.R', 'a.R', 'b.R'), reason = c('file', 'package', NA, 'other')), 'a.R') }"
+        "py": "lambda m: m.outcomes._repro_from_report_failed(m.pd.DataFrame({'outcome': ['errored', 'errored', 'ran_ok', 'errored'], 'file_name': ['a.R', 'a.R', 'a.R', 'b.R'], 'reason': ['file', 'package', None, 'other']}), ['a.R'])"
+- "id": "repro_replace_screen_calls.cases"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_replace_screen_calls(c('plot(x)', \"dev.print(pdf, file = 'a.pdf')\", \"grDevices::dev.copy2pdf(file = 'b.pdf')\", \"dev.copy2eps(file = 'c.eps')\", \"savePlot('fig', type = 'png')\", 'windows(width = 7, height = 5)', 'x11(); X11(); quartz()', 'View(df)', '# dev.print(png)', 'my.dev.print(x); obj$View(1); utils::View(df)', 'win.graph()')) }"
+        "py": "lambda m: (lambda r: {'txt': r[0], 'calls': r[1]})(m.core._repro_replace_screen_calls(['plot(x)', \"dev.print(pdf, file = 'a.pdf')\", \"grDevices::dev.copy2pdf(file = 'b.pdf')\", \"dev.copy2eps(file = 'c.eps')\", \"savePlot('fig', type = 'png')\", 'windows(width = 7, height = 5)', 'x11(); X11(); quartz()', 'View(df)', '# dev.print(png)', 'my.dev.print(x); obj$View(1); utils::View(df)', 'win.graph()']))"
+- "id": "repro_replace_screen_calls.empty"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_replace_screen_calls(character(0)) }"
+        "py": "lambda m: (lambda r: {'txt': r[0], 'calls': r[1]})(m.core._repro_replace_screen_calls([]))"
+- "id": "repro_write_scripts.screen_calls"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); rc_write_scripts(list(plot.R = c('plot(1)', 'dev.print(pdf, file = \"a.pdf\")', 'View(x)', '# windows()')), list(plot.R = data.frame(ref = character(0), basename = character(0), matched = logical(0), target = character(0), ambiguous = logical(0), n_candidates = integer(0), is_call = logical(0))), data.frame(file_name = 'plot.R', target_path = 'plot.R')) }"
+        "py": "lambda m: m.write_scripts({'plot.R': ['plot(1)', 'dev.print(pdf, file = \"a.pdf\")', 'View(x)', '# windows()']}, {'plot.R': m.core._rewrite_frame([])}, m.pd.DataFrame({'file_name': ['plot.R'], 'target_path': ['plot.R']}))"
+- "id": "repro_apply_rewrites.wildcard"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); { plan <- data.frame(file_name = c('S5_a.mat', 'm.R'), target_path = c('data/S5_a.mat', 'scripts/m.R')); code2 <- c('m <- dir(\"C:/Users/me/Data/S5*.mat\")', 'x <- load(\"S5_a.mat\")'); rw2 <- repro_rewrite_paths(code2, 'm.R', plan, script_path = 'scripts/m.R'); metacheck:::.repro_apply_rewrites(code2, rw2) } }"
+        "py": "lambda m: (lambda plan, code2: m.core._repro_apply_rewrites(code2, m.core.repro_rewrite_paths(code2, 'm.R', plan, script_path='scripts/m.R')))(m.pd.DataFrame({'file_name': ['S5_a.mat', 'm.R'], 'target_path': ['data/S5_a.mat', 'scripts/m.R']}), ['m <- dir(\"C:/Users/me/Data/S5*.mat\")', 'x <- load(\"S5_a.mat\")'])"
+- "id": "repro_path_fix_text.fixes_with_absent"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_path_fix_text(list(`a.R` = data.frame(ref = c('d.csv', 'e.csv'), target = c('data/d.csv', NA), matched = c(TRUE, FALSE), ambiguous = FALSE, as_written = FALSE)), execute = TRUE, absent = c('x.csv')) }"
+        "py": "lambda m: m.layout._repro_path_fix_text({'a.R': m.pd.DataFrame({'ref': ['d.csv', 'e.csv'], 'target': ['data/d.csv', None], 'matched': [True, False], 'ambiguous': [False, False], 'as_written': [False, False]})}, True, ['x.csv'])"
+- "id": "repro_path_fix_text.none_absent"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_path_fix_text(list(`a.R` = data.frame(ref = character(0), target = character(0), matched = logical(0), ambiguous = logical(0), as_written = logical(0))), execute = TRUE, absent = c('gone.csv', 'also_gone.csv', 'gone.csv')) }"
+        "py": "lambda m: m.layout._repro_path_fix_text({'a.R': m.pd.DataFrame({'ref': m.pd.array([], dtype='string'), 'target': m.pd.array([], dtype='string'), 'matched': m.pd.array([], dtype='boolean'), 'ambiguous': m.pd.array([], dtype='boolean'), 'as_written': m.pd.array([], dtype='boolean')})}, True, ['gone.csv', 'also_gone.csv', 'gone.csv'])"
+- "id": "repro_path_fix_text.none_none_absent"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_path_fix_text(list(`a.R` = data.frame(ref = character(0), target = character(0), matched = logical(0), ambiguous = logical(0), as_written = logical(0))), execute = TRUE, absent = character(0)) }"
+        "py": "lambda m: m.layout._repro_path_fix_text({'a.R': m.pd.DataFrame({'ref': m.pd.array([], dtype='string'), 'target': m.pd.array([], dtype='string'), 'matched': m.pd.array([], dtype='boolean'), 'ambiguous': m.pd.array([], dtype='boolean'), 'as_written': m.pd.array([], dtype='boolean')})}, True, [])"
+- "id": "repro_path_fix_text.more_than_ten_absent"
+  "r": "identity"
+  "py": "tests.repro_core.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "{ source(\"tests/repro_core/parity_helpers.R\", local = TRUE); metacheck:::.repro_path_fix_text(list(`a.R` = data.frame(ref = character(0), target = character(0), matched = logical(0), ambiguous = logical(0), as_written = logical(0))), execute = TRUE, absent = paste0('f', 1:12, '.csv')) }"
+        "py": "lambda m: m.layout._repro_path_fix_text({'a.R': m.pd.DataFrame({'ref': m.pd.array([], dtype='string'), 'target': m.pd.array([], dtype='string'), 'matched': m.pd.array([], dtype='boolean'), 'ambiguous': m.pd.array([], dtype='boolean'), 'as_written': m.pd.array([], dtype='boolean')})}, True, ['f1.csv', 'f2.csv', 'f3.csv', 'f4.csv', 'f5.csv', 'f6.csv', 'f7.csv', 'f8.csv', 'f9.csv', 'f10.csv', 'f11.csv', 'f12.csv'])"

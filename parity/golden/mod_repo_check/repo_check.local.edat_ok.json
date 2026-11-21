@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -59,6 +60,7 @@
           "file_path",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -166,6 +168,16 @@
           {
             "t": "chr",
             "v": [
+              "readme",
+              "materials",
+              "unknown",
+              "documentation",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               null,
               "ex1",
               null,
@@ -194,7 +206,7 @@
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/edat_ok\", \n\"tests/mod_repo_check/fixtures/edat_ok\", \"tests/mod_repo_check/fixtures/edat_ok\", \n\"tests/mod_repo_check/fixtures/edat_ok\", \"tests/mod_repo_check/fixtures/edat_ok\"\n), File = c(\"README.txt\", \"stroop.edat2\", \"Stroop.edat3\", \"stroop.TXT\", \n\"Stroop.txt\"), Size = c(\"9 B\", \"5 B\", \"5 B\", \"11 B\", \"11 B\"), \n    Type = c(\"readme\", NA, NA, \"text\", \"text\")), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "README files were found in all repositories.",
           "#### Proprietary E-Prime Files\n\nThe repository contains 1 E-Prime file (stroop.edat2). These are proprietary **binary** formats that only the E-Prime software can open, so metacheck does not download or read them and other researchers cannot reuse them directly. A matching .txt export was found for each, which is the readable form metacheck uses — good. Keep including the .txt export alongside any .edat file.",
-          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: Stroop.edat3. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Unclassified Files\n\n1 file is of a kind metacheck does not know, so it is not counted as data, code or documentation: Stroop.edat3. This is no problem in itself.",
           "#### File Classification",
           "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**documentation** (3 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README.txt\", \"stroop.TXT\", \"Stroop.txt\"\n), Group = c(\"—\", \"ex1\", \"ex1\"), Path = c(\"README.txt\", \"stroop.TXT\", \n\"Stroop.txt\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"stroop.edat2\", Group = \"ex1\", Path = \"stroop.edat2\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Stroop.edat3\", Group = \"—\", Path = \"Stroop.edat3\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
         ]
@@ -202,7 +214,7 @@
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "green"
         ]
       },
       {
@@ -228,6 +240,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -317,6 +334,36 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
@@ -328,11 +375,44 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -353,7 +433,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -366,6 +447,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -467,7 +552,10 @@
           "gh_owner_name",
           "gh_stars",
           "gh_forks",
-          "cff_dois"
+          "cff_dois",
+          "dep_org",
+          "dep_creator_families",
+          "dep_n_creators"
         ],
         "v": [
           {
@@ -496,6 +584,18 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           },
           {
@@ -637,7 +737,8 @@
           "file_type",
           "file_path",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -662,6 +763,10 @@
           },
           {
             "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           },
           {
@@ -785,6 +890,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.28",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

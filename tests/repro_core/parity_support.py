@@ -170,6 +170,11 @@ def run_scripts(
             run_tbl, order=list(order) if order is not None else names, lib_dir=lib_dir, **kwargs
         )
         out = out.drop(columns=["elapsed"])
+        # when each script ran (metacheck 0.4.4.20) varies between runs
+        for col in ("started_at", "ended_at"):
+            out[col] = pd.array(
+                [None if pd.isna(v) else "<time>" for v in out[col]], dtype="string"
+            )
         for col in ("error", "stdout", "stderr"):
             out[col] = out[col].map(lambda v: _unroot(v, root)).astype("string")
         out["script_lines"] = [
