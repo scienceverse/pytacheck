@@ -203,6 +203,11 @@ _NAMING_SEVERITY_LABEL = {"bad": "Required", "suggestion": "Suggestion"}
         "out the host's own reset. Default FALSE (always wait for a confirmed reset) -- see "
         "[download_repo_files()]'s parameter of the same name, which this matches for the "
         "listing-only requests `zip_peek()` makes here.",
+        "max_file_size,max_download_size": "the download limits, in MB, for ResearchBox boxes, which "
+        "are listed by downloading them (defaults 100 and 500, as in data_check and code_check). "
+        "With a ResearchBox API key only the smallest files up to `max_download_size` are "
+        "downloaded, none over `max_file_size`; without a key a box larger than "
+        "`max_download_size` is not downloaded. See [rbox_file_download()].",
     },
 )
 def repo_check(
@@ -216,6 +221,8 @@ def repo_check(
     model: str | None = None,
     params: Mapping[str, Any] | None = None,
     skip_on_api_limit: bool = False,
+    max_file_size: float = 100,
+    max_download_size: float = 500,
 ) -> dict[str, Any]:
     """Port of ``inst/modules/repo_check.R::repo_check()``.
 
@@ -233,6 +240,12 @@ def repo_check(
     slowly for, can take an hour to list in full. A project that reaches the limit is listed in
     part: it is named in ``partial_repos`` and in the report. With *cache*, the next run goes on
     where the listing stopped (see :func:`~metacheck.osf_info`).
+
+    *max_file_size* and *max_download_size* are the download limits, in MB, for ResearchBox
+    boxes, which are listed by downloading them (defaults 100 and 500, as in data_check and
+    code_check). With a ResearchBox API key only the smallest files up to *max_download_size*
+    are downloaded, none over *max_file_size*; without a key a box larger than
+    *max_download_size* is not downloaded. See :func:`~metacheck.rbox_file_download`.
 
     Listing needs no API key. Dryad, however, needs one to download file
     contents (:func:`~metacheck.dryad_pat` or :func:`~metacheck.dryad_auth`),
@@ -260,6 +273,8 @@ def repo_check(
             bar,
             skip_on_api_limit,
             osf_max_requests,
+            max_file_size,
+            max_download_size,
         )
     finally:
         _tick(bar, "Repo Check Complete")
@@ -279,6 +294,8 @@ def _repo_check(
     bar: Any,
     skip_on_api_limit: bool = False,
     osf_max_requests: float = 50,
+    max_file_size: float = 100,
+    max_download_size: float = 500,
 ) -> dict[str, Any]:
     """The body of :func:`repo_check` (*bar* is the module's progress spinner)."""
     from metacheck.papers.tables import as_paper_list
@@ -345,6 +362,8 @@ def _repo_check(
             osf_max_requests,
             osf_cut_urls,
             osf_short_urls,
+            max_file_size,
+            max_download_size,
         )
     else:  # local_only, or no repository links: every platform's listing is empty
         file_named, meta_named = [("osf", rc.placeholder())], [("osf", rc.meta_frame())]
@@ -597,6 +616,8 @@ def _online_listings(
     osf_max_requests: float = 50,
     osf_cut_urls: list[str] | None = None,
     osf_short_urls: list[str] | None = None,
+    max_file_size: float = 100,
+    max_download_size: float = 500,
 ) -> tuple[list[tuple[str, pd.DataFrame]], list[tuple[str, pd.DataFrame]]]:
     """Every platform's ``(platform, file listing)`` and ``(platform, metadata)``, in R's order
     (for ``bind_rows()``)."""
@@ -618,7 +639,14 @@ def _online_listings(
 
     github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
     gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
-    rb_files, rb_meta = rc.list_researchbox(repos, repos.urls("researchbox"), bar, cache)
+    rb_files, rb_meta = rc.list_researchbox(
+        repos,
+        repos.urls("researchbox"),
+        bar,
+        cache,
+        max_file_size=max_file_size,
+        max_download_size=max_download_size,
+    )
     pa_files, pa_meta = rc.list_dspace(repos, repos.urls("dspace"), bar, cache)
     dspace7_files, dspace7_meta = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
     listings = _api_listings(repos, cache, bar)

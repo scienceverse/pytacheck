@@ -125,6 +125,9 @@ rc_untime <- function(mo) {
   # the clock times kept for a TRO (metacheck 0.4.4.20) vary as well
   if (!is.null(mo$environment)) {
     for (k in c("started_at", "ended_at")) if (!is.null(mo$environment[[k]])) mo$environment[[k]] <- "<time>"
+    # the machine and the Python found on it differ between the machines that make the goldens
+    for (k in names(mo$environment$host)) mo$environment$host[[k]] <- "<host>"
+    for (k in names(mo$environment$python_local)) mo$environment$python_local[[k]] <- "<python>"
   }
   if (!is.null(mo$run_results) && nrow(mo$run_results)) {
     for (k in c("started_at", "ended_at"))

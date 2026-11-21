@@ -506,6 +506,8 @@ def data_check(
             cache=cache,
             osf_max_requests=osf_max_requests,
             skip_on_api_limit=skip_on_api_limit,
+            max_file_size=max_file_size,
+            max_download_size=max_download_size,
         )
         listing_partial = mo.get("partial_repos")
         all_files = mo.table

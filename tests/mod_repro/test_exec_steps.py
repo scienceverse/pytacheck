@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import datetime as dt
 import os
+import sys
 import time
 import warnings
 from collections.abc import Callable, Mapping
@@ -1021,6 +1022,10 @@ def test_rs_recorded_outcomes_give_rs_report(
     if name == "exec_mixed":
         # the fake runs nothing, so the files R's scripts wrote are not in the run folder
         ignore.append("artifacts")
+    if sys.platform == "win32":
+        # a rewritten script is written with the platform's line ends (R's writeLines() does the
+        # same), so its size and hash differ from the goldens made on Linux
+        ignore += ["artifacts.size", "artifacts.sha256", "modifications.sha256_after"]
     spec["ignore"] = [*spec.get("ignore", []), *ignore]
     assert compare(golden["value"], canonical(result), Options.from_case(spec)) == []
     assert len(runner.calls) == (2 if first else 1)

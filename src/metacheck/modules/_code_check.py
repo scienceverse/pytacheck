@@ -21,7 +21,7 @@ import pandas as pd
 from metacheck._r.base import as_character, paste, plural, slashed
 from metacheck._r.regex import grepl
 from metacheck._values import is_missing
-from metacheck.codecheck.core import _code_fetches_unnamed
+from metacheck.codecheck.core import _code_fetch_capped, _code_fetches_unnamed
 
 # R: listed_langs / checked_langs
 LISTED_LANGS = ("R", "Python", "SAS", "SPSS", "Stata", "Mplus", "MATLAB", "JASP")
@@ -168,6 +168,9 @@ def _parse_text(lines: list[str | None]) -> list[str]:
 
 def analyse_files(
     checked_files: pd.DataFrame,
+    limit_refused: Sequence[str | None] | None = None,
+    max_file_size: Any = math.inf,
+    skip_on_api_limit: bool = False,
 ) -> tuple[list[dict[str, Any]], dict[Any, list[tuple[Any, list[str | None]]]]]:
     """Run every code check on every file of *checked_files*.
 
@@ -215,6 +218,9 @@ def analyse_files(
     r_text_by_paper: dict[Any, list[tuple[Any, list[str | None]]]] = {}
     to_parse: list[int] = []
     parse_texts: list[list[str]] = []
+    # why a row was left out by a download limit (None for the others): such a file is not
+    # read from the web instead (#699)
+    refused = list(limit_refused) if limit_refused is not None else [None] * n
 
     # 1. read each file (and prepare R's parse() input)
     for i in range(n):
@@ -223,12 +229,35 @@ def analyse_files(
         lines_of.append(None)
         if bar is not None:
             bar.tick(1, {"what": names[i]})
-        path = locs[i] if locs[i] is not None else urls[i]
+        fetched_copy = False
+        path: Any = None
         try:
+            # A file left out by a download limit is not read from the web instead (#699); the
+            # reason becomes its error
+            if refused[i] is not None:
+                raise OSError(refused[i])
+            # access via URL if not local: fetched into a temporary file that stops at
+            # max_file_size (#699)
+            if locs[i] is not None:
+                path = locs[i]
+            elif urls[i] is None:
+                path = None
+            else:
+                path = _code_fetch_capped(
+                    None if urls[i] == "NA" else urls[i],
+                    names[i],
+                    max_file_size=max_file_size,
+                    skip_on_api_limit=skip_on_api_limit,
+                )
+                fetched_copy = path != urls[i]
             lines = _read_lines(path, names[i], langs[i])
         except Exception as exc:
             row["error"] = _msg(exc)
             continue
+        finally:
+            if fetched_copy and path is not None:
+                with contextlib.suppress(OSError):
+                    os.unlink(path)
         if langs[i] == "R":
             # appended, not set by file name: of two same-named R files only the last was
             # kept, and a missing paper id (NA) was never found again, so only the last such

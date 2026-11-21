@@ -1304,14 +1304,19 @@ def _filter_not_dir(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def list_researchbox(
-    repos: Repos, urls: list[str], pb: Any, cache: bool = False
+    repos: Repos,
+    urls: list[str],
+    pb: Any,
+    cache: bool = False,
+    max_file_size: float = 100,
+    max_download_size: float = 500,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The ResearchBox block (the box is downloaded and unzipped to list it).
 
     Returns the files and the licence of each box that was downloaded (one
     ``box_meta`` request per box; a box that could not be downloaded is not
     asked about again). ResearchBox puts every box under CC BY 4.0, but names
-    it in each box's metadata since 2026-10.
+    it in each box's metadata since 2026-10. The download limits apply to the boxes too (#699).
     """
     from metacheck.archives.researchbox import (
         _rbox_box_meta,
@@ -1325,7 +1330,14 @@ def list_researchbox(
     if not urls:
         return files_df, meta
     try:
-        rb = rbox_file_download(urls, pb=pb, cache=cache)
+        # the download limits apply to the boxes too (#699)
+        rb = rbox_file_download(
+            urls,
+            pb=pb,
+            cache=cache,
+            max_file_size=max_file_size,
+            max_download_size=max_download_size,
+        )
         if rb is None:
             raise RError("no applicable method for 'filter' applied to an object of class \"NULL\"")
         # Each box that could not be retrieved (refused, removed, ResearchBox's
@@ -1338,7 +1350,14 @@ def list_researchbox(
                 vals(failed["rb_url"]), vals(failed["error"]), vals(failed["name"]), strict=True
             ):
                 if _na(n):
-                    reasons.setdefault(u, f"ResearchBox did not serve the box: {e}")
+                    # a box the download limits left out was served, but not downloaded
+                    over = not _na(e) and re.search("download budget|download limits", e)
+                    reasons.setdefault(
+                        u,
+                        f"The box was not downloaded: {e}"
+                        if over
+                        else f"ResearchBox did not serve the box: {e}",
+                    )
             repos.fill_errors(reasons)
             # the API answers "does not exist or is not public"; the web page asks
             # for a captcha. A link with its passcode that fails this way is not a

@@ -4,6 +4,7 @@ their own address, counting the cache first (metacheck #698)."""
 from __future__ import annotations
 
 import math
+import os
 import secrets
 import shutil
 import warnings
@@ -89,7 +90,13 @@ def test_archive_members_share_one_budget_per_repository_with_its_other_files(
         warnings.simplefilter("ignore")
         second = download_repo_files(files, max_download_size=1)
     assert len(second.attrs["failed"]) == 0
-    assert second["file_location"].tolist() == first["file_location"].tolist()
+
+    # (the paths are the same files: on Windows the fake fetch writes "\\" where the saved
+    # members are found by "/")
+    def same(x: pd.Series) -> list[str | None]:
+        return [None if pd.isna(v) else os.path.normpath(v) for v in x.tolist()]
+
+    assert same(second["file_location"]) == same(first["file_location"])
 
     # a file with its own address shares the budget: the members kept (900,000 bytes) leave no
     # room for 200,000 bytes more

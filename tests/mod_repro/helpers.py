@@ -196,6 +196,11 @@ def _untime(mo: Any) -> None:
             **env,
             **{k: "<time>" for k in ("started_at", "ended_at") if env.get(k) is not None},
         }
+        # the machine and the Python found on it differ between the machines that make the goldens
+        for key, mark in (("host", "<host>"), ("python_local", "<python>")):
+            part = mo.extras["environment"].get(key)
+            if isinstance(part, dict):
+                mo.extras["environment"][key] = dict.fromkeys(part, mark)
     rr = mo.get("run_results")
     if not isinstance(rr, pd.DataFrame) or len(rr) == 0:
         return

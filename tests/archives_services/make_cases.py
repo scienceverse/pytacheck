@@ -53,7 +53,10 @@ def py_dict(d: dict[str, Any]) -> str:
 def seq_mock_r(call: str, answers: dict[str, str]) -> str:
     return (
         f"testthat::with_mocked_bindings({call}, .seq_get = function(url) "
-        f'{r_named_list(answers)}[[url]], .package = "metacheck")'
+        f"{r_named_list(answers)}[[url]], "
+        # the records are read through .seq_fetch() since metacheck 0.4.4.28 (#699)
+        f".seq_fetch = function(url) list(text = {r_named_list(answers)}[[url]], "
+        f'unreachable = FALSE), .package = "metacheck")'
     )
 
 
@@ -374,6 +377,16 @@ expr_case(
     "seq_archive_info.mock.records",
     seq_mock_r(f"seq_archive_info({r_chr(SEQ_URLS)})", SEQ_ANSWERS),
     f"lambda m: {seq_mock_py(f'm.seq.seq_archive_info({py_list(SEQ_URLS)})', SEQ_ANSWERS)}",
+)
+# the archive did not answer (a server error, no connection, too many requests): "unreachable",
+# not "unfound" (metacheck 0.4.4.28, #699)
+expr_case(
+    "seq_archive_info.mock.unreachable",
+    "testthat::with_mocked_bindings("
+    f"seq_archive_info({r_chr([GEO, ENA, AE])}), "
+    ".seq_fetch = function(url) list(text = NULL, unreachable = TRUE), "
+    '.package = "metacheck")',
+    f"lambda m: m.seq_unreachable(lambda: m.seq.seq_archive_info({py_list([GEO, ENA, AE])}))",
 )
 SIZE_ANSWERS = {
     f"{PORTAL}filereport?accession=PRJNA770129&result=read_run&fields=run_accession,fastq_bytes,submitted_bytes&format=tsv": (

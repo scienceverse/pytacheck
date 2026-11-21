@@ -1773,7 +1773,10 @@ def _osf_file_download_ids(
                 f"{n_big} file{plural(n_big)} in {osf_id} exceeded the {cap_num(max_file_size)} "
                 f"MB per-file limit and {'was' if n_big == 1 else 'were'} skipped (the rest of "
                 f"the repository was downloaded). Largest: {names[largest]} "
-                f"({cap_num(round(max(big_sizes) / _MB))} MB). Raise max_file_size to include them."
+                # rounded up to 0.1 MB: rounded to whole MB, a 1.4 MB file over a 1 MB limit read
+                # "(1 MB)" (#699)
+                f"({cap_num(math.ceil(max(big_sizes) / _MB * 10) / 10)} MB). Raise max_file_size "
+                "to include them."
             )
             files = files.drop(index=too_big).reset_index(drop=True)
             size_num = size_num.drop(index=too_big).reset_index(drop=True)

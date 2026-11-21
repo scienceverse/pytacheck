@@ -105,7 +105,15 @@ def test_offline_no_code(stub_repo_check: list[dict[str, Any]]) -> None:
     paper = pc.test_paper(["no text"])
     mo = module_run(paper, "code_check")
     assert stub_repo_check == [
-        {"local_only": False, "cache": False, "osf_max_requests": 50, "skip_on_api_limit": False}
+        {
+            "local_only": False,
+            "cache": False,
+            "osf_max_requests": 50,
+            "skip_on_api_limit": False,
+            # the download limits go to repo_check, for ResearchBox boxes (#699)
+            "max_file_size": 100,
+            "max_download_size": 500,
+        }
     ]
     assert mo.traffic_light == "na"
     assert len(mo.table) == 0
@@ -860,6 +868,8 @@ def test_local_path_forces_a_fresh_repo_check(stub_repo_check: list[dict[str, An
             "cache": False,
             "osf_max_requests": 50,
             "skip_on_api_limit": False,
+            "max_file_size": 100,
+            "max_download_size": 500,
         }
     ]
     assert mo.table["file_name"].tolist() == ["helper.R"]
@@ -1116,16 +1126,17 @@ def test_na_paper_id_scans_every_r_text(scenario: str) -> None:
     assert mo.summary_table["code_version_pinned"].tolist() == [False]
 
 
-def test_na_file_url_is_read_as_the_path_na() -> None:
-    # R: file_path <- the_file$file_url is NA_character_, which the readers take
-    # as the path "NA"
+def test_na_file_url_is_not_read_from_the_web() -> None:
+    # R (#699): a file without an address of its own is listed as not read, with the reason
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         mo = cc_run("review_locs", download=False)
     errors = dict(zip(mo.table["file_name"], mo.table["error"], strict=True))
     assert pd.isna(errors["clean.R"])
     for name in ("naloc.R", "naloc.Rmd", "naloc.py"):
-        assert errors[name].startswith("Could not resolve hostname [NA]")
+        # a file without an address of its own (a member of an archive) is said so at once
+        # (#699); it was read as the address "NA", which took 10 seconds to fail
+        assert errors[name].startswith("it has no web address of its own")
     assert mo.table["checked"].tolist() == [True] * 4
 
 
@@ -1244,6 +1255,7 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
         skip_on_api_limit: bool = False,
         cache: bool = False,
         max_download_size: Any = 500,
+        max_file_size: Any = 100,
     ) -> pd.DataFrame:
         member = all_files.iloc[[0]].copy()
         member["file_name"] = "member.R"
@@ -1403,12 +1415,21 @@ def test_zip_expansion_forwards_skip_on_api_limit_and_cache(
     )
     _code_expand_zip(table, skip_on_api_limit=True, cache=True)
     _code_expand_zip(table, max_download_size=1)
+    # the archive is held to max_file_size as well (#699): the smaller of the two limits
+    _code_expand_zip(table, max_download_size=50, max_file_size=20)
+    _code_expand_zip(table, max_download_size=5, max_file_size=20)
     both = {"skip_on_api_limit": True, "cache": True, "size": 2048.0}
     neither = {"skip_on_api_limit": False, "cache": False, "size": 2048.0}
-    assert [s[1] for s in seen if s[0] == "peek"] == [both, neither]
+    assert [s[1] for s in seen if s[0] == "peek"] == [both, neither, neither, neither]
     fetched = [s[1] for s in seen if s[0] == "fetch"]
-    assert [{k: f[k] for k in both} for f in fetched] == [both, neither]
-    assert [f["max_whole_bytes"] for f in fetched] == [500 * 1048576, 1048576]
+    assert [{k: f[k] for k in both} for f in fetched] == [both, neither, neither, neither]
+    # (the defaults: max_download_size 500, max_file_size 100)
+    assert [f["max_whole_bytes"] for f in fetched] == [
+        100 * 1048576,
+        1048576,
+        20 * 1048576,
+        5 * 1048576,
+    ]
     assert fetched[0]["request_bytes"] == 1048576  # not Dryad: whichever costs less
     # the archive is kept where the ordinary download would put it
     assert fetched[0]["archive_path"].endswith("code.zip")

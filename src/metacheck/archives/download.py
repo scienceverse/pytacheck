@@ -551,6 +551,7 @@ def _storage_request(
     is_transient: Callable[[Any], bool] | None = None,
     read_body: Callable[[Any], bool] | None = None,
     sink: Callable[[Any], None] | None = None,
+    content: bytes | None = None,
 ) -> Any:
     """A storage request: :func:`metacheck.http.request` with the host's authentication.
 
@@ -601,6 +602,7 @@ def _storage_request(
                     method,
                     url,
                     headers=spec["headers"],
+                    content=content,
                     timeout=httpx.Timeout(timeout if timeout is not None else 60.0, connect=20.0),
                     max_tries=max_tries,
                     is_transient=is_transient or _storage_is_transient,
@@ -1470,8 +1472,18 @@ def _download_capped(
     max_bytes: float = math.inf,
     timeout_s: float = 120,
     skip_on_api_limit: bool = False,
+    *,
+    method: str = "GET",
+    headers: Mapping[str, str] | None = None,
+    content: bytes | None = None,
+    auth: bool = True,
 ) -> tuple[str | None, bool, int]:
     """Port of ``R/repo-download.R::.download_capped()``: a file of unknown size, with a limit.
+
+    R's *url* may also be a prepared httr2 request (its own method, headers and
+    body, such as ResearchBox's download from a box's web page), sent as it is, so
+    that every download of unknown size goes through this one function (#699):
+    here that is *method*, *headers* and *content* with ``auth=False``.
 
     Stops the transfer once more than *max_bytes* have arrived (metacheck #583).
     The bytes go to ``<dest>.part`` and the file is moved into place only when
@@ -1507,13 +1519,16 @@ def _download_capped(
         is_file = url.lower().startswith("file:")
         try:
             resp = _storage_request(
-                "GET",
+                method,
                 url,
+                headers,
                 skip_on_api_limit=skip_on_api_limit,
                 timeout=timeout,
                 path=part if is_file else None,
                 max_tries=1,
+                auth=auth,
                 sink=None if is_file else write,
+                content=content,
             )
         except _RateLimitSkipped:
             return (
@@ -1969,16 +1984,23 @@ def download_repo_files(
     byte range.
 
     Size gates: ``max_file_size`` (MB) skips oversize files individually;
-    ``max_download_size`` (MB) budgets a repository's total cached footprint
-    (cached files count for free, then the smallest missing files are added
-    while they fit); ``max_files_per_repo`` refuses a repository with more
+    ``max_download_size`` (MB) is a budget per repository on the files in *files*,
+    cached and new together -- the cached ones among them count first, then the
+    smallest still-missing files are added while they fit. Only the rows passed
+    in are counted: files of the same repository downloaded by an earlier call,
+    and not passed again, do not count, so several calls can together download
+    more than ``max_download_size`` for one repository (#699);
+    ``max_files_per_repo`` refuses a repository with more
     files outright -- counted from ``repo_file_counts`` (``repo_url`` ->
     the full listing's count) when given.
 
     Returns a copy of *files* with ``file_location`` filled, and
     ``attrs["gated"]`` (``repo_url``, ``message``: repositories refused or
     partially filled by the caps), ``attrs["oversize_skipped"]``
-    (``repo_url``, ``file_name``, ``file_size``) and ``attrs["failed"]``
+    (``repo_url``, ``file_name``, ``file_size``), ``attrs["limit_refused"]``
+    (one element per row of *files*: why a file was left out by ``max_file_size``,
+    ``max_download_size`` or ``max_files_per_repo``, and ``NA`` for every other
+    row, so that a caller does not fetch such a file another way: #699) and ``attrs["failed"]``
     (``repo_url``, ``file_name``, ``file_url``, ``paper_id``, ``error``:
     downloads that errored; with ``skip_on_api_limit`` an exhausted host
     quota is reported with an ``"API rate limit exhausted: "`` prefix
@@ -2051,6 +2073,18 @@ def download_repo_files(
 
     gated_rows: list[tuple[Any, str]] = []
     oversize_rows: list[tuple[Any, Any, float]] = []
+    # Why a file was left out by a limit, per row (None for the others): returned as the
+    # attribute "limit_refused", so that a caller can tell these files from failed downloads
+    # and does not fetch them another way (#699).
+    limit_refused: list[str | None] = [None] * n
+    refused_size = (
+        "it was not downloaded, because it is larger than the "
+        f"{_cap_num(max_file_size)} MB per-file limit (max_file_size)"
+    )
+    refused_budget = (
+        "it was not downloaded, because the "
+        f"{_cap_num(max_download_size)} MB budget for its repository was spent (max_download_size)"
+    )
     # defined before the archive-member block, which records into it too (#429)
     failed_rows: list[tuple[Any, Any, Any, Any, str | None]] = []
     paper_ids = _col(df, "paper_id")
@@ -2170,6 +2204,7 @@ def download_repo_files(
             for i, s, o in zip(idx, member_sizes, over, strict=True):
                 if o:
                     oversize_rows.append((repo_urls[i], file_names[i], s))
+                    limit_refused[i] = refused_size
             # A member without a size cannot be held to the caps, so it is not fetched;
             # recorded so that the reason is not lost.
             for i, s in zip(idx, member_sizes, strict=True):
@@ -2237,6 +2272,9 @@ def download_repo_files(
                     take[j] = True
                     used += cand_size[j]
             member_bytes[repo] = kept + sum(s for s, t in zip(cand_size, take, strict=True) if t)
+            for j, i in enumerate(cand):
+                if not saved[j] and not take[j]:
+                    limit_refused[i] = refused_budget
             n_omitted = sum(1 for v, t in zip(saved, take, strict=True) if not v and not t)
             if n_omitted > 0 and math.isfinite(cap_bytes):
                 msg = (
@@ -2261,7 +2299,13 @@ def download_repo_files(
                 # request against a daily quota: metacheck #471); it is kept at `arc_path`, so
                 # a restarted run does not request it again. As that copy stays on disk, it is
                 # taken only when it fits in what is left of the repository's budget (#698).
+                # The archive is a file like any other, so it is held to max_file_size as well
+                # (#699): an OSF zip of 20.5 MB, reported as left out by a 20 MB limit, was still
+                # downloaded whole to take its members. A larger archive has its members fetched
+                # by byte range.
                 whole_bytes = max(cap_bytes - used, 0.0)
+                if math.isfinite(max_file_size):
+                    whole_bytes = min(whole_bytes, max_file_size * _MB)
                 arc_sizes = _col(df, "archive_size")
                 # why a member was not fetched is recorded in `failed` (#429)
                 # a member of a plain .tar (listed by downloading the archive whole, see
@@ -2351,6 +2395,12 @@ def download_repo_files(
                 "file-count-capped). Raise `max_files_per_repo` to include it."
             )
             _cap_report(msg)
+            for i in idx:
+                if not already[i]:
+                    limit_refused[i] = (
+                        f"it was not downloaded, because its repository holds {_fmt_int(true_n)} "
+                        f"files, more than max_files_per_repo ({_cap_num(max_files_per_repo)})"
+                    )
             gated_rows.append((repo, msg))
             continue
 
@@ -2375,6 +2425,7 @@ def download_repo_files(
         for k, i in enumerate(idx):
             if over[k] and not is_cached[k]:
                 oversize_rows.append((repo, file_names[i], sizes[k]))
+                limit_refused[i] = refused_size
 
         # Unknown-size files are not budgeted. A repository with no known-size file goes
         # on too: its unknown-size files are downloaded with a limit below (metacheck #583).
@@ -2415,6 +2466,8 @@ def download_repo_files(
                     byte_cap[i] = lim
                 to_get.extend(unknown_rows)
             else:
+                for i in unknown_rows:
+                    limit_refused[i] = refused_budget
                 msg = (
                     f"Repository {repo}: {len(unknown_rows)} file{plural(len(unknown_rows))} "
                     "of unknown size not downloaded, because the "
@@ -2426,6 +2479,8 @@ def download_repo_files(
 
         taken = set(take_missing)
         omitted = [k for k in missing_order if k not in taken]
+        for k in omitted:
+            limit_refused[c_idx[k]] = refused_budget
         if omitted and math.isfinite(cap_bytes):
             msg = (
                 f"Repository {repo} exceeds the {_cap_num(max_download_size)} MB per-repository "
@@ -2438,8 +2493,6 @@ def download_repo_files(
 
     # -- report the individually skipped oversize files -----------------------
     if oversize_rows:
-        from metacheck._r import r_round
-
         for repo in dict.fromkeys(r[0] for r in oversize_rows):
             rows = [r for r in oversize_rows if not is_missing(r[0]) and r[0] == repo]
             if is_missing(repo):
@@ -2451,7 +2504,9 @@ def download_repo_files(
                 f"{_cap_num(max_file_size)} MB per-file limit and {'was' if k == 1 else 'were'} "
                 "skipped (the rest of the repository was downloaded). Largest: "
                 f"{as_str(largest[1]) or 'NA'} "
-                f"({_cap_num(float(r_round(max(r[2] for r in rows) / _MB)))} MB). "
+                # rounded up to 0.1 MB: rounded to whole MB, a 1.4 MB file over a 1 MB limit read
+                # "(1 MB)" (#699)
+                f"({_cap_num(math.ceil(max(r[2] for r in rows) / _MB * 10) / 10)} MB). "
                 "Raise max_file_size to include them."
             )
 
@@ -2798,7 +2853,11 @@ def download_repo_files(
                         )
                     if over_cap:
                         # a file of unknown size that passed its limit: reported as over
-                        # the limit, like a file whose listed size is over it
+                        # the limit, like a file whose listed size is over it. Its limit was
+                        # the per-file limit, or what the budget had left when that is less.
+                        limit_refused[i] = (
+                            refused_budget if byte_cap[i] < max_file_size * _MB else refused_size
+                        )
                         oversize_rows.append((repo_urls[i], file_names[i], float(got_bytes)))
                         _message(
                             f"{as_str(file_names[i]) or 'NA'} in {as_str(repo_urls[i]) or 'NA'} "
@@ -2864,6 +2923,14 @@ def download_repo_files(
             "paper_id": ([as_str(r[3]) for r in failed_rows], "string"),
             "error": ([r[4] for r in failed_rows], "string"),
         }
+    )
+    # a file that is on disk after all (a copy found later) was not refused
+    out.attrs["limit_refused"] = pd.Series(
+        [
+            reason if is_missing(loc) else None
+            for loc, reason in zip(out["file_location"].tolist(), limit_refused, strict=True)
+        ],
+        dtype="string",
     )
     return out
 

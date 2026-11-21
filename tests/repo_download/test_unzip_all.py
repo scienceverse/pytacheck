@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import struct
 import warnings
 import zlib
@@ -209,7 +210,12 @@ def test_unzip_all_names_the_members_whose_path_leaves_the_folder(tmp_path: Path
     res = _unzip_all(str(REVIEW / "climb.zip"), str(tmp_path))
     assert res is not None
     bad = res[res["path"].isna()]
-    assert set(bad["reason"]) == {"its path leads outside the folder"}
+    # Windows cannot make a folder named "...." (its name loses the dots), so the members in
+    # one are not written there, as utils::unzip() in R is not either
+    expected = {"its path leads outside the folder"}
+    if os.name == "nt":
+        expected.add("the file could not be written to disk")
+    assert set(bad["reason"]) == expected
     assert {"../evil.csv", "/abs.csv", "C:/drive.csv", "z/../../up.csv"} <= set(bad["name"])
     got = _written(tmp_path)
     assert "evil.csv" not in got and "z/up.csv" not in got and "drive.csv" not in got

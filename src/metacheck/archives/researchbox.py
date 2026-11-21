@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -1255,6 +1256,8 @@ def rbox_file_download(
     file_ids: Any = "all",
     subfolders: str = "type",
     cache: bool = False,
+    max_file_size: float = math.inf,
+    max_download_size: float = math.inf,
 ) -> pd.DataFrame:
     """Port of R/archive-researchbox.R::rbox_file_download(): download a box's files.
 
@@ -1281,6 +1284,16 @@ def rbox_file_download(
     or ``"section"``); both need an API key. With *cache* the files are kept in
     the lasting on-disk cache; otherwise in a temporary folder removed when the
     process ends.
+
+    *max_file_size* (MB, default no limit) is the largest single file to download, applied
+    only with an API key, which lists each file's size before the download.
+    *max_download_size* (MB, default no limit) is the largest total download per box: with
+    an API key, the box's file list (one more request, kept for the session, and in the
+    lasting cache with *cache*) gives the sizes, and only the smallest files up to this
+    total are downloaded. Without a key the sizes are not known: the download is stopped
+    once it passes this size, and the box is then recorded as failed. A box already
+    downloaded is reused as it is. ``attrs["limit_refused"]`` lists the files the limits
+    left out (``rb_url``, ``name``, ``size``, ``reason``) (#699).
     """
     from metacheck._r import bind_rows
     from metacheck.archives import _spinner
@@ -1305,9 +1318,26 @@ def rbox_file_download(
                 best = max(idx, key=lambda i: (has_code[i], -i))
                 pick.append(unique_rb[best])
             box_lists = [
-                rbox_file_download(u, bar, file_ids=file_ids, subfolders=subfolders, cache=cache)
+                rbox_file_download(
+                    u,
+                    bar,
+                    file_ids=file_ids,
+                    subfolders=subfolders,
+                    cache=cache,
+                    max_file_size=max_file_size,
+                    max_download_size=max_download_size,
+                )
                 for u in pick
             ]
+            refused_parts: list[pd.DataFrame | None] = []
+            for k, u in enumerate(unique_rb):
+                lr = box_lists[boxes.index(box[k])].attrs.get("limit_refused")
+                if lr is not None:
+                    lr = lr.copy()
+                    if len(lr) > 0:
+                        lr["rb_url"] = pd.Series([u] * len(lr), dtype="string", index=lr.index)
+                refused_parts.append(lr)
+            limit_refused = bind_rows(refused_parts)
             file_lists = []
             failed_parts = []
             for k, u in enumerate(unique_rb):
@@ -1328,19 +1358,44 @@ def rbox_file_download(
             info = bind_rows(file_lists) if file_lists else pd.DataFrame()
             # every link failed: no rows, and each box's reason in the "failed" attribute
             if len(info) == 0:
-                return _rbox_no_files(failed_all)
+                out = _rbox_no_files(failed_all)
+                out.attrs["limit_refused"] = limit_refused
+                return out
             orig = pd.DataFrame({"rb_url": pd.Series(urls, dtype="string")})
             df = left_join(orig, info, by="rb_url")
             df.attrs["failed"] = failed_all
+            df.attrs["limit_refused"] = limit_refused
             return df
 
         if not urls:
             raise ValueError("argument is of length zero")
-        return _rbox_download_one(urls[0], bar, file_ids, subfolders, cache)
+        return _rbox_download_one(
+            urls[0], bar, file_ids, subfolders, cache, max_file_size, max_download_size
+        )
+
+
+def _refused_frame(rows: list[dict[str, Any]] | None = None) -> pd.DataFrame:
+    """The ``"limit_refused"`` table: ``rb_url``, ``name``, ``size`` and ``reason`` of the files the
+    download limits left out (#699)."""
+    rows = rows or []
+    return pd.DataFrame(
+        {
+            "rb_url": pd.Series([r["rb_url"] for r in rows], dtype="string"),
+            "name": pd.Series([r["name"] for r in rows], dtype="string"),
+            "size": pd.Series([r["size"] for r in rows], dtype="float64"),
+            "reason": pd.Series([r["reason"] for r in rows], dtype="string"),
+        }
+    )
 
 
 def _rbox_download_one(
-    url: str | None, bar: Any, file_ids: Any, subfolders: str, cache: bool
+    url: str | None,
+    bar: Any,
+    file_ids: Any,
+    subfolders: str,
+    cache: bool,
+    max_file_size: float = math.inf,
+    max_download_size: float = math.inf,
 ) -> pd.DataFrame:
     from metacheck.archives import _tick
     from metacheck.archives.dataverse import _paste
@@ -1355,26 +1410,106 @@ def _rbox_download_one(
     ids_list = list(file_ids) if isinstance(file_ids, list | tuple) else [file_ids]
     all_files = [_id_text(i) for i in ids_list] == ["all"]
     rb_id = _rbox_id(url)
-    cache_key = shown if rb_id is None else f"https://researchbox.org/{rb_id}"
-    if not all_files or subfolders != "type":
-        numeric = all(isinstance(i, int | float) and not isinstance(i, bool) for i in ids_list)
-        ordered = sorted(ids_list) if numeric else sorted(_id_text(i) for i in ids_list)
-        cache_key = f"{cache_key} {subfolders} {'-'.join(_id_text(i) for i in ordered)}"
-    tmp_dir = _cache_subdir(cache_key, cache)
+
+    def box_paths(all_files: bool, ids_list: list[Any]) -> dict[str, Any]:
+        """Where a download of the box (or of some of its files) is kept, and whether an
+        earlier one can be reused."""
+        # Keyed by the box, so every link to it (a peer-review link, or the box's link written
+        # differently) reuses one download; a plain link keeps the folder it had.
+        cache_key = shown if rb_id is None else f"https://researchbox.org/{rb_id}"
+        if not all_files or subfolders != "type":
+            numeric = all(isinstance(i, int | float) and not isinstance(i, bool) for i in ids_list)
+            ordered = sorted(ids_list) if numeric else sorted(_id_text(i) for i in ids_list)
+            cache_key = f"{cache_key} {subfolders} {'-'.join(_id_text(i) for i in ordered)}"
+        tmp_dir = _cache_subdir(cache_key, cache)
+        out_dir = f"{tmp_dir}/unzipped"
+        # the checksum results of the download, so a reused box keeps them, and a box with a
+        # missing or damaged file is downloaded again
+        check_path = f"{tmp_dir}/checksums.json"
+        checks = _read_checks(check_path)
+        return {
+            "tmp_dir": tmp_dir,
+            "zip_path": f"{tmp_dir}/archive.zip",
+            "out_dir": out_dir,
+            "check_path": check_path,
+            "checks": checks,
+            "already": os.path.isdir(out_dir)
+            and len(_list_files(out_dir)) > 0
+            and not (checks is not None and len(checks["failed"]) > 0),
+        }
+
+    p = box_paths(all_files, ids_list)
+
+    # The download limits (#699). With an API key, the box's file list gives each file's size
+    # before anything is downloaded, so only the smallest files up to max_download_size are asked
+    # for (files over max_file_size are left out), as for the files of other repositories. A box
+    # already on disk is reused as it is: nothing new is downloaded. Without a key the sizes are
+    # not known; the web page download below is then stopped at max_download_size.
+    limit_refused = _refused_frame()
+    limited = math.isfinite(max_file_size) or math.isfinite(max_download_size)
+    if not p["already"] and limited and all_files and subfolders == "type" and _rbox_use_api(url):
+        sized = _rbox_sized_files(url, cache=cache)
+        if sized is None:
+            _tick(
+                bar,
+                f"- ResearchBox did not list the files of {url}, so their sizes are not known; "
+                "the whole box is downloaded",
+            )
+        elif len(sized) > 0:
+            reason = _rbox_limit_choice(
+                sized["size"].tolist() if "size" in sized.columns else [math.nan] * len(sized),
+                max_file_size,
+                max_download_size,
+            )
+            if any(r is not None for r in reason):
+                from metacheck._r import plural
+                from metacheck.archives.download import _cap_report
+                from metacheck.report.blocks import _cap_num
+
+                out_mask = [r is not None for r in reason]
+                names = sized["name"].tolist()
+                sizes = (
+                    sized["size"].tolist() if "size" in sized.columns else [math.nan] * len(sized)
+                )
+                limit_refused = _refused_frame(
+                    [
+                        {"rb_url": url, "name": nm, "size": sz, "reason": r}
+                        for nm, sz, r, o in zip(names, sizes, reason, out_mask, strict=True)
+                        if o
+                    ]
+                )
+                _cap_report(
+                    f"ResearchBox box {url}: {sum(out_mask)} of its {len(out_mask)} "
+                    f"file{plural(len(out_mask))} not downloaded, because of max_file_size "
+                    f"({_cap_num(max_file_size)} MB) or the {_cap_num(max_download_size)} MB "
+                    "budget (max_download_size)."
+                )
+                if all(out_mask):
+                    failed_all = _failed_frame(
+                        [
+                            {
+                                "rb_url": url,
+                                "error": "every file of the box is over the download limits",
+                            }
+                        ]
+                    )
+                    out_tbl = _rbox_no_files(failed_all)
+                    out_tbl.attrs["limit_refused"] = limit_refused
+                    return out_tbl
+                ids_list = [
+                    i for i, o in zip(sized["file_id"].tolist(), out_mask, strict=True) if not o
+                ]
+                file_ids = ids_list
+                all_files = False
+                p = box_paths(all_files, ids_list)
+    tmp_dir = p["tmp_dir"]
     os.makedirs(tmp_dir, exist_ok=True)
 
-    zip_path = f"{tmp_dir}/archive.zip"
-    out_dir = f"{tmp_dir}/unzipped"
-    # the checksum results of the download, so a reused box keeps them, and a box with
-    # a missing or damaged file is downloaded again
-    check_path = f"{tmp_dir}/checksums.json"
-    checks = _read_checks(check_path)
-
-    already = (
-        os.path.isdir(out_dir)
-        and len(_list_files(out_dir)) > 0
-        and not (checks is not None and len(checks["failed"]) > 0)
-    )
+    zip_path = p["zip_path"]
+    out_dir = p["out_dir"]
+    check_path = p["check_path"]
+    checks = p["checks"]
+    already = p["already"]
 
     if not already:
         use_api = _rbox_use_api(url)
@@ -1413,7 +1548,13 @@ def _rbox_download_one(
                     bar,
                     f"- ResearchBox API: {dl['error']}; downloading through the web page instead",
                 )
-            dl = _rbox_download_page(url, zip_path)
+            dl = _rbox_download_page(
+                url,
+                zip_path,
+                max_bytes=max_download_size * 1024**2
+                if math.isfinite(max_download_size)
+                else math.inf,
+            )
             # both failed: the API's reason first, so a refusal a later run will get
             # past keeps its "API rate limit exhausted: " start
             if not dl["ok"] and api_error is not None and api_error != "unfound":
@@ -1511,7 +1652,87 @@ def _rbox_download_one(
             stacklevel=3,
         )
     df.attrs["failed"] = failed
+    df.attrs["limit_refused"] = limit_refused
     return df
+
+
+def _rbox_limit_choice(
+    size: Any, max_file_size: float = math.inf, max_download_size: float = math.inf
+) -> list[str | None]:
+    """Port of ``.rbox_limit_choice()``: which files of a box the download limits allow.
+
+    From the sizes in the box's file list (bytes): the smallest files first, until the next
+    would pass *max_download_size* (MB), and none over *max_file_size* (MB), as
+    ``download_repo_files()`` chooses (#699). Returns the reason a file is left out, ``None``
+    for each file that is downloaded. A file without a listed size cannot be held to the limits
+    and is left out, as ``download_repo_files()`` does for an archive member without a size.
+    """
+    from metacheck.report.blocks import _cap_num
+
+    mb = 1024.0**2
+    sizes = [_num_or_nan(x) for x in size]
+    reason: list[str | None] = [None] * len(sizes)
+    for i, v in enumerate(sizes):
+        if math.isnan(v):
+            reason[i] = "its size is not listed"
+    if math.isfinite(max_file_size):
+        for i, v in enumerate(sizes):
+            if reason[i] is None and v > max_file_size * mb:
+                reason[i] = (
+                    f"larger than the {_cap_num(max_file_size)} MB per-file limit (max_file_size)"
+                )
+    if math.isfinite(max_download_size):
+        used = 0.0
+        open_ = sorted((i for i, r in enumerate(reason) if r is None), key=lambda i: sizes[i])
+        for i in open_:
+            if used + sizes[i] <= max_download_size * mb:
+                used += sizes[i]
+            else:
+                reason[i] = (
+                    f"the {_cap_num(max_download_size)} MB budget for the box was spent "
+                    "(max_download_size)"
+                )
+    return reason
+
+
+def _num_or_nan(x: Any) -> float:
+    try:
+        v = float(x)
+    except (TypeError, ValueError):
+        return math.nan
+    return v
+
+
+#: A box's file list kept for the session, so that every check that downloads the box asks for it
+#: once (ResearchBox limits how often one box's files are listed per hour).
+_RBOX_LIST_MEMO: dict[str, pd.DataFrame] = {}
+
+
+def _rbox_sized_files(rb_url: Any, cache: bool = False) -> pd.DataFrame | None:
+    """Port of ``.rbox_sized_files()``: a box's file list from the API, with sizes, for
+    :func:`_rbox_limit_choice`.
+
+    Kept for the session; with ``cache=True`` also taken from and kept in the lasting cache.
+    ``None`` when ResearchBox does not list them.
+    """
+    from metacheck.archives.info_cache import _repo_info_cache_put
+
+    rb_id = _rbox_id(rb_url)
+    if rb_id is None:
+        return None
+    if rb_id in _RBOX_LIST_MEMO:
+        return _RBOX_LIST_MEMO[rb_id]
+    listed = _rbox_cached_files(rb_id) if cache is True else None
+    if listed is None:
+        listing = _rbox_api("list_files", box_id=rb_id, code=_rbox_code(rb_url))
+        if not listing["ok"]:
+            return None
+        body = listing["body"] if isinstance(listing["body"], dict) else {}
+        listed = _rbox_file_table(body.get("files"))
+        if cache is True:
+            _repo_info_cache_put("researchbox_files", rb_id, listed)
+    _RBOX_LIST_MEMO[rb_id] = listed
+    return listed
 
 
 def _read_checks(path: str) -> dict[str, Any] | None:
@@ -1591,14 +1812,15 @@ def _rbox_take_toc(directory: str, to: str) -> pd.DataFrame | None:
     )
 
 
-def _rbox_download_page(rb_url: Any, zip_path: str) -> dict[str, Any]:
+def _rbox_download_page(rb_url: Any, zip_path: str, max_bytes: float = math.inf) -> dict[str, Any]:
     """Download a whole box through its web page, as ResearchBox's own "download all"
     button does. Returns ``{"ok", "error", "single_name"}``, where ``single_name`` is the
     name of the box's only file (the page may send that file itself rather than a zip).
 
     ResearchBox generates the zip on request from a POST to ``download_files.php``, given
     the box id, the reference token and the ids of the files to include, all of which
-    are read off the box's own page by :func:`_rbox_info_page`.
+    are read off the box's own page by :func:`_rbox_info_page`. *max_bytes* stops the
+    download once it passes that many bytes (``math.inf``: no limit).
     """
     import httpx
 
@@ -1627,6 +1849,45 @@ def _rbox_download_page(rb_url: Any, zip_path: str) -> dict[str, Any]:
     body = {"files": ids, "box_id": str(box_id), "reference": str(reference)}
     headers = dict(_rbox_headers())
     headers["Content-Type"] = "application/json"
+    payload = json.dumps(body, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+
+    # The page gives no file sizes, so with a limit the box is downloaded like any file of unknown
+    # size: up to `max_bytes`, and refused when it is larger (#699). Its download is also its list
+    # of files, so a refused box has none.
+    if math.isfinite(max_bytes):
+        from metacheck.archives.download import _download_capped
+        from metacheck.report.blocks import _cap_num
+
+        err, over_cap, _got = _download_capped(
+            "https://researchbox.org/download_files.php",
+            zip_path,
+            max_bytes=max_bytes,
+            method="POST",
+            headers=headers,
+            content=payload,
+            auth=False,
+        )
+        if over_cap:
+            return {
+                "ok": False,
+                "error": f"the box is larger than the {_cap_num(max_bytes / 1024**2)} MB download "
+                "budget (max_download_size)",
+            }
+        # a 429 from this page is its request for a captcha (see below)
+        if err == "HTTP 429":
+            return {
+                "ok": False,
+                "error": "API rate limit exhausted: ResearchBox refused more downloads from its "
+                "web page (HTTP 429), as it does when it asks for a captcha; an API key "
+                "(see ?rbox_token) avoids this",
+            }
+        if err is not None:
+            return {"ok": False, "error": f"download failed ({err})"}
+        return {
+            "ok": True,
+            "error": None,
+            "single_name": str(files["name"].iloc[0]) if len(file_ids) == 1 else None,
+        }
 
     def sink(resp: Any) -> None:
         with atomic_write(zip_path) as fh:
@@ -1639,7 +1900,7 @@ def _rbox_download_page(rb_url: Any, zip_path: str) -> dict[str, Any]:
             "POST",
             "https://researchbox.org/download_files.php",
             headers=headers,
-            content=json.dumps(body, separators=(",", ":"), ensure_ascii=False).encode("utf-8"),
+            content=payload,
             max_tries=1,
             retry_on_failure=False,
             sink=sink,

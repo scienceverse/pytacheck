@@ -17,9 +17,11 @@ recovery, zip peeking) are imported lazily where they are used.
 
 from __future__ import annotations
 
+import contextlib
 import math
 import os
 import re
+import tempfile
 import urllib.parse
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
@@ -279,6 +281,65 @@ def code_read(file_path: str | os.PathLike[str]) -> list[str]:
     if binary is not None:
         return _CodeLines(binary)
     return decode_lines(raw)
+
+
+def _code_fetch_capped(
+    url: Any, file_name: Any, max_file_size: Any = math.inf, skip_on_api_limit: bool = False
+) -> str:
+    """A code file without a local copy, fetched into a temporary file that stops at *max_file_size* MB.
+
+    Port of ``R/code_check.R::.code_fetch_capped()``: code_check's read from the web stays within
+    the download limits; it read the whole file into memory, also a file left out for its size
+    (#699). Returns the temporary file's path, or *url* itself when it is not a web address;
+    raises with the reason when the file cannot be fetched, worded as :func:`code_read`'s errors.
+    The file keeps its extension, which the readers of .Rmd, .qmd and .ipynb files use.
+    """
+    from metacheck.archives.download import _download_capped
+    from metacheck.report.blocks import _cap_num
+
+    # A file inside an archive has no address of its own: it was read as the address "NA", which
+    # waited 10 seconds for the name to be looked up
+    if is_missing(url) or str(url) == "":
+        raise OSError(
+            "it has no web address of its own (such as a file inside an archive), "
+            "so it is read only when downloaded (download = TRUE)"
+        )
+    address = str(url)
+    if not re.match(r"https?://", address):
+        return address
+    url = address
+    try:
+        max_bytes = float(max_file_size) * 1024 * 1024
+    except (TypeError, ValueError):
+        max_bytes = math.inf
+    if math.isnan(max_bytes):
+        max_bytes = math.inf
+    ext = _file_ext("" if is_missing(file_name) else str(file_name))
+    fd, tmp = tempfile.mkstemp(suffix=f".{ext}" if ext else "")
+    os.close(fd)
+    try:
+        err, over_cap, _got = _download_capped(
+            url, tmp, max_bytes=max_bytes, skip_on_api_limit=skip_on_api_limit
+        )
+        if over_cap:
+            raise OSError(
+                "it was not read, because it is larger than the "
+                f"{_cap_num(max_file_size)} MB per-file limit (max_file_size)"
+            )
+        # an empty file is read as no lines, as code_read() reads it
+        if err == "empty response":
+            Path(tmp).write_bytes(b"")
+            return tmp
+        if err is not None:
+            m = re.fullmatch(r"HTTP ([0-9]+)", err)
+            if m:
+                raise OSError(f"cannot open URL '{url}': HTTP status was {m.group(1)}")
+            raise OSError(f"cannot open URL '{url}': {err}")
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
+        raise
+    return tmp
 
 
 def _try_code_read(file_name: str) -> list[str] | None:
@@ -1102,6 +1163,7 @@ def _code_expand_zip(
     skip_on_api_limit: bool = False,
     cache: bool = False,
     max_download_size: Any = 500,
+    max_file_size: Any = 100,
 ) -> pd.DataFrame:
     """Fetch the code members of every unexpanded remote ``.zip`` row.
 
@@ -1115,7 +1177,8 @@ def _code_expand_zip(
     ``file_url`` is the box's web page) is read from the file. An archive
     within *max_download_size* (MB) is downloaded once instead of fetched by
     range when that is cheaper (always on Dryad: metacheck #471), and kept
-    where the ordinary download would put it.
+    where the ordinary download would put it. The archive is held to *max_file_size* as well
+    (#699); a larger one is read by byte range.
     """
     names = _col(all_files, "file_name")
     urls = _col(all_files, "file_url")
@@ -1136,7 +1199,7 @@ def _code_expand_zip(
     local = _zip_local_source(all_files)
     sizes = _col(all_files, "file_size")
     try:
-        whole_bytes = float(max_download_size) * 1024 * 1024
+        whole_bytes = min(float(max_download_size), float(max_file_size)) * 1024 * 1024
     except (TypeError, ValueError):
         whole_bytes = 0.0  # R: isTRUE(NULL > 0) is FALSE, no whole download
     new_rows: list[pd.DataFrame] = []

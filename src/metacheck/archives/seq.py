@@ -191,17 +191,40 @@ def seq_archive_links(paper: Any, max_n: int = 25) -> pd.DataFrame:
     return out.loc[:, cols].reset_index(drop=True)
 
 
-def _seq_get(url: str) -> str | None:
-    """Port of ``.seq_get()``: a text answer from an archive (``None`` when it fails)."""
+def _seq_fetch(url: str) -> dict[str, Any]:
+    """Port of ``.seq_fetch()``: a text answer from an archive.
+
+    ``text`` (``None`` when it fails) and ``unreachable``, true when the archive did not
+    answer (no connection, a time-out, too many requests or a server error) rather than
+    answering that it has no such record. A deposit whose archive did not answer was
+    recorded as "unfound", which reads as a deposit that does not exist.
+    """
     from metacheck import http
 
     try:
         r = http.request("GET", url, max_tries=3, timeout=60)
     except Exception:
-        return None
-    if r is None or r.status_code != 200:
-        return None
-    return str(r.text)
+        r = None
+    if r is None:
+        return {"text": None, "unreachable": True}
+    status = int(r.status_code)
+    if status != 200:
+        return {"text": None, "unreachable": status in (408, 429) or status >= 500}
+    return {"text": str(r.text), "unreachable": False}
+
+
+def _seq_get(url: str) -> str | None:
+    """Port of ``.seq_get()``: a text answer from an archive (``None`` when it fails)."""
+    text: str | None = _seq_fetch(url)["text"]
+    return text
+
+
+def _seq_not_read(fetched: dict[str, Any]) -> str:
+    """Port of ``.seq_not_read()``: the error of a record that could not be read.
+
+    "unreachable" when the archive did not answer, else "unfound".
+    """
+    return "unreachable" if fetched.get("unreachable") is True else "unfound"
 
 
 def _seq_pubmed_dois(pmids: Any) -> list[str]:
@@ -298,11 +321,12 @@ def _seq_geo_info(url: str) -> pd.DataFrame:
     """Port of ``.seq_geo_info()``: one GEO series, one row."""
     acc = _seq_acc_of(url)
     obj = _info_row(url, acc, "geo")
-    txt = _seq_get(
+    got = _seq_fetch(
         f"https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={acc}&targ=self&form=text&view=brief"
     )
+    txt = got["text"]
     if txt is None or "!Series_title" not in txt:
-        obj["error"] = "unfound"
+        obj["error"] = _seq_not_read(got)
         return _frame(obj)
 
     def tag(t: str) -> list[str]:
@@ -362,20 +386,20 @@ def _seq_ena_info(url: str) -> pd.DataFrame:
             q = f"search?result=read_run&query=submission_accession=%22{acc}%22"
         else:
             q = f"filereport?accession={acc}&result=read_run"
-        t = _seq_get(f"{portal}{q}&fields=study_accession&limit=1&format=tsv")
-        tab = _read_tsv(t)
+        got = _seq_fetch(f"{portal}{q}&fields=study_accession&limit=1&format=tsv")
+        tab = _read_tsv(got["text"])
         study = tab[0].get("study_accession") if tab else None
         if not study:
-            obj["error"] = "unfound"
+            obj["error"] = _seq_not_read(got)
             return _frame(obj)
-    t = _seq_get(
+    got = _seq_fetch(
         f"{portal}search?result=study&query=study_accession=%22{study}%22%20OR%20"
         f"secondary_study_accession=%22{study}%22&fields=study_accession,secondary_study_accession,"
         "study_title,study_description,center_name,first_public&format=tsv"
     )
-    tab = _read_tsv(t, quote=False)
+    tab = _read_tsv(got["text"], quote=False)
     if not tab:
-        obj["error"] = "unfound"
+        obj["error"] = _seq_not_read(got)
         return _frame(obj)
     first = tab[0]
     obj["study"] = first.get("study_accession")
@@ -391,13 +415,13 @@ def _seq_arrayexpress_info(url: str) -> pd.DataFrame:
     """Port of ``.seq_arrayexpress_info()``: one ArrayExpress experiment (a BioStudies study), one row."""
     acc = _seq_acc_of(url)
     obj = _info_row(url, acc, "arrayexpress")
-    txt = _seq_get(f"https://www.ebi.ac.uk/biostudies/api/v1/studies/{acc}")
+    got = _seq_fetch(f"https://www.ebi.ac.uk/biostudies/api/v1/studies/{acc}")
     try:
-        j = json.loads(txt or "")
+        j = json.loads(got["text"] or "")
     except Exception:
         j = None
     if not isinstance(j, dict):
-        obj["error"] = "unfound"
+        obj["error"] = _seq_not_read(got)
         return _frame(obj)
 
     # attributes are name/value pairs, on the study and in its subsections
@@ -468,7 +492,8 @@ def seq_archive_info(
     ``repo_type``, ``title``, ``creators`` (names, separated by "; "), ``organisation`` (the
     submitting institute), ``publication_date``, ``description``, ``resource_type``,
     ``related`` (``IsSupplementTo:<DOI>`` for each paper the record belongs to), and ``error``
-    ("unfound" when the archive has no such record). With *cache*, each answer is kept (see
+    ("unfound" when the archive has no such record, "unreachable" when the archive did not
+    answer: no connection, a time-out, too many requests or a server error). With *cache*, each answer is kept (see
     ``.repo_info_cache_get()``).
     """
     from metacheck.archives import _spinner, _tick

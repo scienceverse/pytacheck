@@ -139,7 +139,11 @@ def test_expand_zip_and_tar_follow_r(tmp_path: Path) -> None:
             assert not any("drive.csv" in p or "evil" in p or "abs.csv" in p for p in paths)
             failed = out.attrs["unpack_failed"]
             assert "C:/drive.csv" in failed["file_name"].tolist()
-            assert set(failed["reason"]) == {"its path leads outside the folder"}
+            # (Windows cannot make a folder named "....", so such members are not written there)
+            expected = {"its path leads outside the folder"}
+            if os.name == "nt":
+                expected.add("the file could not be written to disk")
+            assert set(failed["reason"]) == expected
             assert (
                 "climb.zip/sub/win.csv" if os.name == "nt" else "climb.zip/sub\\win.csv"
             ) in paths

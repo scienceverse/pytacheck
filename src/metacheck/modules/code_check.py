@@ -128,7 +128,8 @@ _COL_LABELS = {
         "max_download_size": "largest total download per repository, in MB (default 500), used "
         "as a budget: files already in the cache count first, then the smallest missing files "
         "are added until the next one would not fit. A file whose size cannot be found out is "
-        "skipped on its own. Set `Inf` for no cap.",
+        "downloaded only up to `max_file_size` or what is left of the budget, whichever is "
+        "smaller, and left out if it is larger. Set `Inf` for no cap.",
         "max_files_per_repo": "largest file COUNT a single repository may have before it is "
         "refused outright (default `Inf`, no cap) -- see [download_repo_files()]'s own "
         "parameter of the same name.",
@@ -234,6 +235,8 @@ def code_check(
                 cache=cache,
                 osf_max_requests=osf_max_requests,
                 skip_on_api_limit=skip_on_api_limit,
+                max_file_size=max_file_size,
+                max_download_size=max_download_size,
             )
         else:
             mo = module_run(
@@ -243,6 +246,8 @@ def code_check(
                 cache=cache,
                 osf_max_requests=osf_max_requests,
                 skip_on_api_limit=skip_on_api_limit,
+                max_file_size=max_file_size,
+                max_download_size=max_download_size,
             )
         listing_partial = mo.get("partial_repos")
         listing_gated = mo.get("gated_repos")
@@ -313,7 +318,11 @@ def code_check(
     if _any_name(all_files, r"\.zip$"):
         all_files = set_language(
             _code_expand_zip(
-                all_files, skip_on_api_limit, cache, max_download_size=max_download_size
+                all_files,
+                skip_on_api_limit,
+                cache,
+                max_download_size=max_download_size,
+                max_file_size=max_file_size,
             ).reset_index(drop=True)
         )
     all_files.attrs = {}
@@ -376,6 +385,9 @@ def code_check(
             out["report"] = not_listed["report"]
         return out
 
+    # Why a row was left out by a download limit (None for the others), from the download below:
+    # such a file is not read from the web instead (#699)
+    limit_refused: list[str | None] = [None] * len(checked_files)
     # download the code files the pre-pass could not classify yet
     if download is True and "file_url" in checked_files.columns:
         need_dl = _need_download(checked_files)
@@ -395,6 +407,14 @@ def code_check(
                 skip_on_api_limit=skip_on_api_limit,
             )
             checked_files = _set_file_location(checked_files, need_dl, dl)
+            refused_dl = getattr(dl, "attrs", {}).get("limit_refused")
+            if refused_dl is not None and len(refused_dl) > 0:
+                refused_vals = [None if is_missing(v) else str(v) for v in refused_dl.tolist()]
+                k = 0
+                for i, m in enumerate(need_dl):
+                    if m:
+                        limit_refused[i] = refused_vals[k % len(refused_vals)]
+                        k += 1
             predl_gated.append(getattr(dl, "attrs", {}).get("gated"))
             failed_parts.append(getattr(dl, "attrs", {}).get("failed"))
 
@@ -406,7 +426,12 @@ def code_check(
             warnings.warn("NA" if m is None else str(m), stacklevel=2)
 
     # Check code ----
-    rows, r_text_by_paper = analyse_files(checked_files)
+    rows, r_text_by_paper = analyse_files(
+        checked_files,
+        limit_refused=limit_refused,
+        max_file_size=max_file_size,
+        skip_on_api_limit=skip_on_api_limit,
+    )
     if not rows:
         # nothing analysed (every repository gated, or no file locations)
         code_files = seed_analysis_cols(code_files)

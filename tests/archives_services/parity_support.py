@@ -30,7 +30,18 @@ def seq_mock(answers: dict[str, str], fn: Callable[[], Any]) -> Any:
     """``fn()`` with ``.seq_get()`` answering from *answers* (url -> text; any other url fails)."""
     from metacheck.archives import seq
 
-    with _patched(seq, "_seq_get", lambda url: answers.get(url)):
+    with (
+        _patched(seq, "_seq_get", lambda url: answers.get(url)),
+        _patched(seq, "_seq_fetch", lambda url: {"text": answers.get(url), "unreachable": False}),
+    ):
+        return fn()
+
+
+def seq_unreachable(fn: Callable[[], Any]) -> Any:
+    """``fn()`` with every archive failing to answer (``.seq_fetch()``: no text, ``unreachable``)."""
+    from metacheck.archives import seq
+
+    with _patched(seq, "_seq_fetch", lambda url: {"text": None, "unreachable": True}):
         return fn()
 
 
@@ -80,6 +91,7 @@ def _namespace() -> types.SimpleNamespace:
         category=category,
         file_tree=file_tree,
         seq_mock=seq_mock,
+        seq_unreachable=seq_unreachable,
         batch_mock=batch_mock,
         handle_mock=handle_mock,
     )

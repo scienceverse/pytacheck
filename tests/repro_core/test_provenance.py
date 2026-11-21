@@ -167,7 +167,7 @@ def test_artifacts_keep_file_names_in_other_encodings_as_valid_utf8(tmp_path: Pa
 
 
 def test_prov_utf8_keeps_other_encodings_bytes_as_xx() -> None:
-    bad = os.fsdecode(b"d\x82.R")
+    bad = "d\udc82.R"  # what os.fsdecode(b"d\x82.R") gives on POSIX; it raises on Windows
     out = prov._repro_prov_utf8(["plain.csv", bad, None])
     assert out[0] == "plain.csv"
     assert out[1] == "d<82>.R"

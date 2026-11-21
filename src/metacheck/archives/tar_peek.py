@@ -298,7 +298,8 @@ def _tar_fetch_members(
     :func:`_tar_peek` downloaded this session; *archive_path* when an earlier run
     left a readable copy there; or one new download of the whole archive to
     *archive_path* (a temporary file when ``None``), when its size is at most
-    *max_whole_bytes*.
+    *max_whole_bytes*. An archive of unknown size is downloaded only up to
+    *max_whole_bytes*, and refused if it is larger (#699).
     """
     import pandas as pd
 
@@ -336,17 +337,31 @@ def _tar_fetch_members(
     try:
         if src is None:
             known = _num(size[0] if isinstance(size, list | tuple) and size else size)
+            too_big = "the archive is larger than the download limits (max_file_size or max_download_size)"
             if known > max_whole_bytes:
-                return fail("the archive is larger than the download budget")
+                return fail(too_big)
             if archive_path is None:
                 fd, archive_path = tempfile.mkstemp(suffix=".tar", dir=dlm._session_tempdir())
                 os.close(fd)
                 own_copy = archive_path
             if os.path.exists(archive_path):
                 os.unlink(archive_path)
-            err = dlm._download_one(
-                url, archive_path, skip_on_api_limit=skip_on_api_limit, expected_bytes=known
-            )
+            # An archive of unknown size is stopped once it passes `max_whole_bytes`, as
+            # download_repo_files() does for a file of unknown size: it was downloaded whole,
+            # whatever its size (#699)
+            if math.isnan(known) and math.isfinite(max_whole_bytes):
+                err, over_cap, _got = dlm._download_capped(
+                    url,
+                    archive_path,
+                    max_bytes=max_whole_bytes,
+                    skip_on_api_limit=skip_on_api_limit,
+                )
+                if over_cap:
+                    return fail(too_big)
+            else:
+                err = dlm._download_one(
+                    url, archive_path, skip_on_api_limit=skip_on_api_limit, expected_bytes=known
+                )
             if err is not None:
                 return fail(err)
             src = archive_path

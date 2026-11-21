@@ -331,7 +331,26 @@ def test_tar_fetch_members_takes_members_from_a_local_tar_the_session_copy_or_on
     # an archive over the download budget is not downloaded
     got = _tar_fetch_members(url, want, str(tmp_path / "d5"), size=size, max_whole_bytes=10)
     assert not got["ok"].any()
-    assert set(got["error"]) == {"the archive is larger than the download budget"}
+    assert set(got["error"]) == {
+        "the archive is larger than the download limits (max_file_size or max_download_size)"
+    }
+    assert len(calls) == 1
+
+    # an archive of unknown size is downloaded only up to what the limits allow (#699), and
+    # refused when it is larger
+    capped: list[float] = []
+
+    def over(url: str, dest: str, max_bytes: float = math.inf, **kw: Any) -> tuple[Any, bool, int]:
+        capped.append(max_bytes)
+        return "over the byte limit", True, int(max_bytes) + 1
+
+    monkeypatch.setattr(dlm, "_download_capped", over)
+    got = _tar_fetch_members(url, want, str(tmp_path / "d6"), max_whole_bytes=1000)
+    assert not got["ok"].any()
+    assert set(got["error"]) == {
+        "the archive is larger than the download limits (max_file_size or max_download_size)"
+    }
+    assert capped == [1000]
     assert len(calls) == 1
 
 

@@ -18,6 +18,16 @@ package's. The R commit each release is compared against is in
 - **Not done yet:** `run_code` is off unless `--run-code` is given and Docker runs; `crossref` only reaches GROBID.
 - **Fixed:** the site's job queue woke its clean-up thread instead of a worker when a job arrived, so a job could wait until the next one came.
 
+### Compared with metacheck 0.4.4.28 (`dev` at 50f3c0c)
+
+- **Changed:** the parity checks compare pytacheck with metacheck `dev` at 50f3c0c (0.4.4.28) instead of 08c7171 (0.4.4.27): download limits, the first part of #699. The goldens of the cases whose R result changed were made again with R.
+- **Changed:** the limits `max_file_size` and `max_download_size` hold everywhere a deposit is read: ResearchBox boxes are downloaded within them (a box over the budget is named, not fetched; with an API key only the files that fit are fetched), archives downloaded whole are held to `max_file_size`, and a tar member or archive of unknown size is bounded by what is left of the budget. `repo_check()`, `code_check()`, `data_check()` and the reproducibility check pass both limits on.
+- **Changed:** `download_repo_files()` says why each file was not downloaded (`limit_refused` attribute: over `max_file_size`, the budget spent, too many files in the repository), and `code_check()` does not read such a file from its web address; it names the limit. A file inside an archive that was not downloaded (`download = FALSE`) is listed as not read.
+- **Changed:** the largest file over the limit is given rounded up to a tenth of a MB, so the figure never reads as under the limit.
+- **Changed:** `seq_archive_info()` says "unreachable" (not "unfound") for a GEO, ENA or ArrayExpress record the archive did not answer for.
+- **Changed:** the internal `_download_capped()` takes a prepared request (method, headers, body; D157).
+- **Fixed (Windows):** the tests of zip unpacking, the repository budget, provenance names and the replay of recorded runs no longer assume a folder named "...." can be made, that paths compare as strings, that every name can be decoded, or that a script is written with Unix line ends; the goldens of the reproducibility checks no longer hold the machine's R version, platform, system or Python.
+
 ### Compared with metacheck 0.4.4.27 (`dev` at 08c7171)
 
 - **Changed:** the parity checks compare pytacheck with metacheck `dev` at 08c7171 (0.4.4.27) instead of 8b1d22a (0.4.4.18): 13 commits, 0.4.4.19 to 0.4.4.27 (#404, #541, #679 to #685, #695, #698). The goldens of the cases whose R result changed were made again with R.

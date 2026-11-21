@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import warnings
+from typing import Any
 
 import pytest
 
@@ -243,6 +244,40 @@ def test_seq_archive_links_finds_sequence_and_expression_archive_deposits() -> N
     m = seq.seq_archive_links(many, max_n=5)
     assert len(m) == 5
     assert "GSE999999" in set(m["accession"])
+
+
+def test_a_record_whose_archive_did_not_answer_is_unreachable_not_unfound(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # R (#699): an archive that did not answer is not a deposit that does not exist
+    import httpx
+
+    from metacheck import http
+    from metacheck.archives import seq
+
+    geo = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149523"
+    ena = "https://www.ebi.ac.uk/ena/browser/view/PRJNA770129"
+    ae = "https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-6487"
+    status = {"code": 503}
+
+    def request(method: str, url: str, **kw: Any) -> Any:
+        if status["code"] == 0:
+            return None  # no answer at all (no connection or a time-out)
+        return httpx.Response(status["code"], text="", request=httpx.Request(method, url))
+
+    monkeypatch.setattr(http, "request", request)
+    got = seq._seq_fetch("https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE1")
+    assert got["text"] is None and got["unreachable"] is True
+    info = seq.seq_archive_info([geo, ena, ae])
+    assert info["error"].tolist() == ["unreachable"] * 3
+
+    status["code"] = 0
+    assert seq._seq_fetch("https://www.ebi.ac.uk/x")["unreachable"] is True
+
+    # the archive answered that it has no such record
+    status["code"] = 404
+    assert seq._seq_fetch("https://www.ebi.ac.uk/x")["unreachable"] is False
+    assert seq.seq_archive_info(ae)["error"].tolist() == ["unfound"]
 
 
 def test_a_sequence_archive_deposit_is_set_aside_and_the_light_is_na() -> None:
