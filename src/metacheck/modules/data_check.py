@@ -18,10 +18,20 @@ import pandas as pd
 from metacheck._r import grepl, plural, r_round
 from metacheck._values import is_true
 from metacheck.archives._useless import is_useless_file
-from metacheck.archives.download import _download_failed_text, _failed_counts
-from metacheck.archives.zip_peek import _unzip_failed_text
+from metacheck.archives.download import (
+    _budget_free,
+    _cap_report,
+    _download_failed_text,
+    _failed_counts,
+    _repo_budget,
+    _repo_cache_subdir,
+    _repo_disk_bytes,
+)
+from metacheck.archives.zip_peek import _in_download_folder, _unzip_failed_text
+from metacheck.codecheck.core import _in_renv_folder
 from metacheck.module import module
 from metacheck.modules import _data_check as h
+from metacheck.report.blocks import _cap_num
 from metacheck.report.file_tree import file_tree_block
 
 _INTRO = (
@@ -1250,7 +1260,18 @@ def _download(
         # `want` is still False for it here: keep_archive must turn it on, not
         # just survive the type filter (metacheck e4b74e1, #456; U220).
         # With download = "none" nothing is opened, so nothing is turned on.
-        keep_archive = _is_readable_archive(names) if download != "none" else [False] * n
+        # (not one in a renv folder: the source of an R package, not data, which the budget's
+        # choice of files leaves out as well, see _budget_counted())
+        keep_archive = (
+            [
+                a and not r
+                for a, r in zip(
+                    _is_readable_archive(names), _in_renv_folder(all_files), strict=True
+                )
+            ]
+            if download != "none"
+            else [False] * n
+        )
         want = [
             (w and t not in never_fetch) or bool(k)
             for w, t, k in zip(want, data_type, keep_archive, strict=True)
@@ -1320,17 +1341,17 @@ def _download(
             if any(need_dl):
                 from metacheck.archives.download import download_repo_files
 
-                repo_counts: dict[str, float] = {}
-                for r in h._col(all_files, "repo_url") or []:
-                    if r is not None:
-                        repo_counts[r] = repo_counts.get(r, 0) + 1
                 rows = [i for i, d in enumerate(need_dl) if d]
+                # The FULL listing (its file count per repository), not just the need_dl subset:
+                # download_repo_files()'s max_files_per_repo gate needs it to catch an oversized
+                # repo whose still-needed rows fall under the cap. The same listing gives the
+                # choice of files for the budget, the same choice code_check makes (#699).
                 res = download_repo_files(
                     all_files.iloc[rows].reset_index(drop=True),
                     max_file_size=max_file_size,
                     max_download_size=max_download_size,
                     max_files_per_repo=max_files_per_repo,
-                    repo_file_counts=repo_counts,
+                    repo_listing=all_files,
                     cache=cache,
                     skip_on_api_limit=skip_on_api_limit,
                 )
@@ -1366,7 +1387,13 @@ def _download(
                 _set(all_files, "data_type", data_type)
 
             # expand downloaded archives (zip only with peek_zips)
-            on_disk = [h._has_value(loc) and h._file_exists(loc) for loc in locs]
+            # An archive in a renv folder is the source of an R package renv keeps, not data, and
+            # is not unpacked: mp20233958's renv_0.17.3.tar.gz, in renv/library/ inside a Zenodo
+            # zip, failed to unpack because its path passed the Windows limit of 260 characters.
+            on_disk = [
+                h._has_value(loc) and h._file_exists(loc) and not r
+                for loc, r in zip(locs, _in_renv_folder(all_files), strict=True)
+            ]
             zips = _is_zip(names)
             tars = _is_tar_archive(names)
             gzs = _is_single_compress(names)
@@ -1383,16 +1410,68 @@ def _download(
                 # to download.
                 mfs = max_file_size if max_file_size is not None else math.inf
                 max_bytes = mfs * 1024 * 1024 if math.isfinite(mfs) else math.inf
+                # The files unpacked into a repository's download folder count for its budget too
+                # (#699): the budget saw only the archive's packed size, and osf.io/nugzb held
+                # 61 MB under a 50 MB budget. Each archive may use what is left after the
+                # repository's choice of files (_repo_budget()), the same choice
+                # download_repo_files() made above, so the files code_check still has to download
+                # keep their room. An archive of the user's own (not in a download folder) is
+                # unpacked elsewhere and not limited.
+                budgets: dict[Any, Any] = {}
                 extracted = []
                 for i in da:
                     row1 = all_files.iloc[[i]].reset_index(drop=True)
+                    repo = (h._col(row1, "repo_url") or [None])[0]
+                    bud = None
+                    if _in_download_folder(str(locs[i])) and repo is not None:
+                        if repo not in budgets:
+                            budgets[repo] = _repo_budget(
+                                repo,
+                                all_files,
+                                cache=cache,
+                                max_file_size=mfs,
+                                max_download_size=(
+                                    max_download_size if max_download_size is not None else math.inf
+                                ),
+                            )
+                        bud = budgets[repo]
+                    left = math.inf if bud is None else _budget_free(bud)
                     if i in da_zip:
-                        rows_x = _expand_zip(locs[i], row1, skip_types=st, max_bytes=max_bytes)
+                        rows_x = _expand_zip(
+                            locs[i], row1, skip_types=st, max_bytes=max_bytes, max_total=left
+                        )
                     elif i in da_tar:
-                        rows_x = _expand_tar(locs[i], row1, skip_types=st, max_bytes=max_bytes)
+                        rows_x = _expand_tar(
+                            locs[i], row1, skip_types=st, max_bytes=max_bytes, max_total=left
+                        )
                     else:
                         rows_x = _expand_compressed(
-                            locs[i], row1, skip_types=st, max_bytes=max_bytes
+                            locs[i], row1, skip_types=st, max_bytes=max_bytes, max_total=left
+                        )
+                    if bud is not None:
+                        bud.disk = _repo_disk_bytes(_repo_cache_subdir(repo, cache))
+                    nb = rows_x.attrs.get("over_budget") if rows_x is not None else None
+                    if nb is not None and len(nb) > 0:
+                        from metacheck._r import bind_rows
+
+                        msg = (
+                            f"Repository {repo} exceeds the {_cap_num(max_download_size)} MB "
+                            "per-repository budget: unpacked the smallest files from "
+                            f"{row1['file_name'].iloc[0]} up to the cap, {len(nb)} "
+                            f"file{plural(len(nb))} omitted. Raise `max_download_size` to "
+                            "include more."
+                        )
+                        _cap_report(msg)
+                        add_g = pd.DataFrame(
+                            {
+                                "repo_url": pd.Series([repo], dtype="string"),
+                                "message": pd.Series([msg], dtype="string"),
+                            }
+                        )
+                        gated_repos = (
+                            add_g
+                            if gated_repos is None
+                            else bind_rows([gated_repos, add_g]).reset_index(drop=True)
                         )
                     ov = rows_x.attrs.get("oversize") if rows_x is not None else None
                     if ov is not None and len(ov) > 0:

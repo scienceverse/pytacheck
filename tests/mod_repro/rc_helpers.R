@@ -129,6 +129,12 @@ rc_untime <- function(mo) {
     for (k in names(mo$environment$host)) mo$environment$host[[k]] <- "<host>"
     for (k in names(mo$environment$python_local)) mo$environment$python_local[[k]] <- "<python>"
   }
+  # a PDF a script draws holds the time it was made: its size and hash differ per run
+  if (!is.null(mo$artifacts) && nrow(mo$artifacts)) {
+    pdf <- grepl("\\.pdf$", mo$artifacts$path, ignore.case = TRUE) & mo$artifacts$stage == "after_run"
+    mo$artifacts$size[pdf] <- 0
+    mo$artifacts$sha256[pdf] <- "<hash>"
+  }
   if (!is.null(mo$run_results) && nrow(mo$run_results)) {
     for (k in c("started_at", "ended_at"))
       mo$run_results[[k]][!is.na(mo$run_results[[k]])] <- "<time>"

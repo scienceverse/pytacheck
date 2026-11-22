@@ -739,23 +739,18 @@ def _has_value(values: list[Any]) -> list[bool]:
     return [not is_missing(v) and str(v) != "" for v in values]
 
 
-def _repo_file_counts(all_files: pd.DataFrame) -> dict[Any, int]:
-    """``table(all_files$repo_url)`` (NA not counted)."""
-    counts: dict[Any, int] = {}
-    for v in _col(all_files, "repo_url"):
-        if not is_missing(v):
-            counts[v] = counts.get(v, 0) + 1
-    return counts
-
-
 def _download(rows: pd.DataFrame, all_files: pd.DataFrame, **kwargs: Any) -> pd.DataFrame | None:
-    """``tryCatch(download_repo_files(...), error = function(e) NULL)``."""
+    """``tryCatch(download_repo_files(...), error = function(e) NULL)``.
+
+    *all_files* is the repository's FULL listing, not just the rows wanted: it gives the file
+    count and the choice of files for the budget (#699).
+    """
     try:
         from metacheck.archives.download import download_repo_files
 
         return download_repo_files(  # type: ignore[no-any-return]
             rows.reset_index(drop=True),
-            repo_file_counts=_repo_file_counts(all_files),
+            repo_listing=all_files,
             **kwargs,
         )
     except Exception:
@@ -1164,21 +1159,28 @@ def _code_expand_zip(
     cache: bool = False,
     max_download_size: Any = 500,
     max_file_size: Any = 100,
+    max_files_per_repo: Any = math.inf,
 ) -> pd.DataFrame:
     """Fetch the code members of every unexpanded remote ``.zip`` row.
 
     Port of ``R/code_check.R::.code_expand_zip()``: the archive is peeked
     with range requests and only members :func:`code_lang` recognises are
-    fetched, one new row each (the ``.zip`` row itself is kept). Under
+    wanted, one new row each (the ``.zip`` row itself is kept). Under
     *skip_on_api_limit* a rate-limited host is skipped rather than waited
     out; both *skip_on_api_limit* and *cache* go on to the peek and to the
     member fetches. The listing's ``file_size`` saves the peek a HEAD
     request; a zip already on disk (one inside a ResearchBox, whose
-    ``file_url`` is the box's web page) is read from the file. An archive
-    within *max_download_size* (MB) is downloaded once instead of fetched by
-    range when that is cheaper (always on Dryad: metacheck #471), and kept
-    where the ordinary download would put it. The archive is held to *max_file_size* as well
-    (#699); a larger one is read by byte range.
+    ``file_url`` is the box's web page) is read from the file.
+
+    The members are fetched by :func:`~metacheck.archives.download.download_repo_files`, as
+    rows with an ``archive_url`` and ``archive_member``, so that they share the repository's
+    budget with every other download (#699): fetched on their own they were held to no budget,
+    only a whole copy of the zip to *max_file_size*. Each is held to *max_file_size*, they are
+    taken smallest first from what is left after the repository's choice of files (they are not
+    in the listing), and a zip is fetched whole instead of by byte range when that is cheaper
+    and the copy fits too (always on Dryad: metacheck #471). The new rows come back in the shape
+    the listing had, without archive columns, so that later calls make the same choice of files
+    from this listing as ``data_check`` makes from its own.
     """
     names = _col(all_files, "file_name")
     urls = _col(all_files, "file_url")
@@ -1188,21 +1190,11 @@ def _code_expand_zip(
     ]
     if not any(is_zip):
         return all_files
-    from metacheck.archives.download import _repo_cache_path
-    from metacheck.archives.zip_peek import (
-        _whole_request_bytes,
-        _zip_fetch_members,
-        _zip_local_source,
-        zip_peek,
-    )
+    from metacheck.archives.zip_peek import _zip_local_source, zip_peek
 
     local = _zip_local_source(all_files)
     sizes = _col(all_files, "file_size")
-    try:
-        whole_bytes = min(float(max_download_size), float(max_file_size)) * 1024 * 1024
-    except (TypeError, ValueError):
-        whole_bytes = 0.0  # R: isTRUE(NULL > 0) is FALSE, no whole download
-    new_rows: list[pd.DataFrame] = []
+    req: list[pd.DataFrame] = []
     for i, z in enumerate(is_zip):
         if not z:
             continue
@@ -1229,33 +1221,48 @@ def _code_expand_zip(
             base = "NA" if is_missing(fp) else str(fp)
         else:
             base = str(names[i])
-        # .repo_cache_path() is outside R's tryCatch(); the fetch is inside
-        dest = _repo_cache_path(_col(all_files, "repo_url")[i], f"{base}.contents", cache=cache)
+        code_names = [m for m, c in zip(members, is_code, strict=True) if c]
+        code_sizes = [m for m, c in zip(peek["size"].tolist(), is_code, strict=True) if c]
+        # One row per code file in the zip, as repo_check makes for the zips it opens
+        # (modules/repo_check.py), for download_repo_files() to fetch.
+        rows = all_files.iloc[[i] * len(code_names)].copy().reset_index(drop=True)
+        rows["file_name"] = [os.path.basename(str(n)) for n in code_names]
+        rows["file_path"] = [_r_file_path(str(base), str(n)) for n in code_names]
+        rows["file_url"] = pd.Series([None] * len(code_names), dtype=object)  # no URL of its own
+        rows["file_size"] = code_sizes
+        rows["file_location"] = pd.Series([None] * len(code_names), dtype=object)
+        rows["archive_url"] = pd.Series([url] * len(code_names), dtype=object)
+        rows["archive_member"] = pd.Series(code_names, dtype=object)
+        rows["archive_format"] = pd.Series(["zip"] * len(code_names), dtype=object)
         try:
-            fetched = _zip_fetch_members(
-                url,
-                names=[m for m, c in zip(members, is_code, strict=True) if c],
-                dest=dest,
-                cache=cache,
-                skip_on_api_limit=skip_on_api_limit,
-                max_whole_bytes=whole_bytes,
-                archive_path=re.sub(r"\.contents$", "", str(dest)),
-                request_bytes=_whole_request_bytes(url),
-                size=zip_size,
-            )
-        except Exception:
-            fetched = None
-        if fetched is None or not any(fetched["ok"].tolist()):
-            continue
-        got = fetched.loc[fetched["ok"].astype(bool).tolist()].reset_index(drop=True)
-        rows = all_files.iloc[[i] * len(got)].copy().reset_index(drop=True)
-        rows["file_name"] = [os.path.basename(str(n)) for n in got["name"].tolist()]
-        rows["file_path"] = [_r_file_path(str(base), str(n)) for n in got["name"].tolist()]
-        rows["file_location"] = got["path"].tolist()
-        rows["file_url"] = pd.Series([None] * len(got), dtype=object)
-        rows["file_size"] = got["size"].tolist()
-        new_rows.append(rows)
-    return _bind(all_files, new_rows)
+            arc_size = float(zip_size)
+        except (TypeError, ValueError):
+            arc_size = math.nan
+        rows["archive_size"] = [arc_size] * len(code_names)
+        req.append(rows)
+    if not req:
+        return all_files
+    from metacheck._r.frames import bind_rows
+    from metacheck.archives.download import download_repo_files
+
+    reqs = bind_rows(req).reset_index(drop=True)
+    dl = download_repo_files(
+        reqs,
+        max_file_size=max_file_size,
+        max_download_size=max_download_size,
+        max_files_per_repo=max_files_per_repo,
+        repo_listing=all_files,
+        cache=cache,
+        skip_on_api_limit=skip_on_api_limit,
+    )
+    if dl is None:
+        return all_files
+    got = [not is_missing(v) for v in dl["file_location"].tolist()]
+    if not any(got):
+        return all_files
+    keep = [c for c in all_files.columns if c in dl.columns]
+    rows = dl.loc[got, keep].reset_index(drop=True)
+    return _bind(all_files, [rows])
 
 
 # ---------------------------------------------------------------------------

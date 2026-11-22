@@ -1818,8 +1818,8 @@ def dataverse_file_download(
     host: Any,
     doi: Any,
     download_to: str = ".",
-    max_file_size: float | None = 10,
-    max_download_size: float | None = 100,
+    max_file_size: float | None = 100,
+    max_download_size: float | None = 500,
     unzip_types: Any = None,
     pb: Any = None,
 ) -> pd.DataFrame | None:
@@ -1827,8 +1827,10 @@ def dataverse_file_download(
 
     Creates a folder for the dataset under *download_to* (named from the DOI;
     ``_1``, ``_2``... when it exists) and downloads each file into it. Files
-    over *max_file_size* MB are skipped, then the largest files until the
-    total is under *max_download_size* MB (``None``/``inf``: no limit). Zips
+    over *max_file_size* MB (default 100) are skipped, and the largest files are
+    left out until the total is under *max_download_size* MB (default 500;
+    ``None``/``inf``: no limit), so the smallest are kept while they fit, as in
+    :func:`~metacheck.archives.download.download_repo_files`. Zips
     are downloaded whole unless *unzip_types* names file categories (as
     ``data_classify_files()`` does) to extract from them instead. *host* and
     *doi* may be vectors (recycled). Returns the file table (``None`` when
@@ -1956,7 +1958,7 @@ def _dataverse_zip_members(
     url: str,
     dest: str,
     keep_types: Any = ("data", "documentation"),
-    max_file_size: float | None = 10,
+    max_file_size: float | None = 100,
     size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-dataverse.R::.dataverse_zip_members(): extract wanted zip members.

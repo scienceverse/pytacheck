@@ -1,0 +1,15 @@
+{
+  "id": "repo_disk_bytes.archive_and_members",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "dbl",
+    "v": [
+      1150,
+      0
+    ]
+  },
+  "metacheck_version": "0.4.4.29",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

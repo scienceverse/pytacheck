@@ -66,7 +66,7 @@ def test_code_fetch_capped_reads_a_web_file_only_up_to_max_file_size(
 
 
 def test_code_check_does_not_read_from_the_web_a_file_left_out_by_a_download_limit(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     import metacheck.archives.download as dl_mod
     import metacheck.codecheck.core as core
@@ -98,7 +98,7 @@ def test_code_check_does_not_read_from_the_web_a_file_left_out_by_a_download_lim
 
     def fake_fetch(url: Any, file_name: Any, **kw: Any) -> str:
         fetched.append(str(file_name))
-        p = Path(os.environ.get("TMPDIR", "/tmp")) / f"limit_{file_name}"
+        p = tmp_path / f"limit_{file_name}"
         p.write_text("x <- 1\n")
         return str(p)
 

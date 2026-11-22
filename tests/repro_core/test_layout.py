@@ -316,7 +316,7 @@ def test_fetch_files_asks_for_the_rows_within_the_limits(monkeypatch: pytest.Mon
     assert out["file_location"].tolist() == ["/tmp/a.png", "/x/b.png", "/tmp/c.png"]
     assert asked["names"] == ["a.png", "c.png"]
     assert (asked["max_file_size"], asked["max_download_size"]) == (50, 200)
-    assert asked["repo_file_counts"] == {"r1": 2, "r2": 1}
+    assert asked["repo_listing"]["repo_url"].tolist() == ["r1", "r1", "r2"]
     assert asked["cache"] is True
     assert asked["skip_on_api_limit"] is True
     # the listing is not changed in place

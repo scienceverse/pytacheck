@@ -710,17 +710,18 @@ def _file_rows(files_list: list[Any]) -> pd.DataFrame:
 def zenodo_file_download(
     zenodo_id: Any,
     download_to: str = ".",
-    max_file_size: float | None = 10,
-    max_download_size: float | None = 100,
+    max_file_size: float | None = 100,
+    max_download_size: float | None = 500,
     unzip_types: Any = None,
     pb: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-zenodo.R::zenodo_file_download(): download a record's files.
 
     Files go into ``<download_to>/<zenodo_id>`` (``_1``, ``_2``... when that
-    exists). Files over *max_file_size* MB are skipped, and the largest are
-    left out until the total is under *max_download_size* MB (``None`` or
-    ``inf`` for no limit); they stay in the table with ``downloaded =
+    exists). Files over *max_file_size* MB (default 100) are skipped, and the
+    largest are left out until the total is under *max_download_size* MB (default
+    500; ``None`` or ``inf`` for no limit), so the smallest are kept while they fit,
+    as in :func:`~metacheck.archives.download.download_repo_files`; they stay in the table with ``downloaded =
     False`` (when all are, no folder is made and ``folder`` is missing).
     When every file survives, Zenodo's whole-record
     archive is tried first. With *unzip_types* (categories as
@@ -1094,7 +1095,7 @@ def _zenodo_zip_members(
     url: str,
     dest: str,
     keep_types: Any = ("data", "documentation"),
-    max_file_size: float | None = 10,
+    max_file_size: float | None = 100,
     size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-zenodo.R::.zenodo_zip_members(): pull chosen members out of a zip.

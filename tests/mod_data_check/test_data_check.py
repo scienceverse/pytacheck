@@ -953,6 +953,103 @@ def test_unopened_archive_is_fetched(monkeypatch: pytest.MonkeyPatch) -> None:
     assert fetched == []
 
 
+def test_an_archive_in_a_renv_folder_is_not_fetched_nor_unpacked(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    # metacheck 0.4.4.29: renv/library/ holds installed R packages, not data; unpacking
+    # renv_0.17.3.tar.gz stopped on a path past the Windows limit of 260 characters
+    import metacheck.archives.download as dl_mod
+    from metacheck.modules import data_check as D
+
+    fetched: list[str] = []
+
+    def fake_download(files: pd.DataFrame, **kwargs: Any) -> pd.DataFrame:
+        fetched.extend(files["file_name"].tolist())
+        out = files.copy()
+        out["file_location"] = None
+        return out
+
+    monkeypatch.setattr(dl_mod, "download_repo_files", fake_download)
+    files = pd.DataFrame(
+        {
+            "file_name": ["renv_0.17.3.tar.gz", "results.tar.gz"],
+            "file_path": ["renv/library/renv_0.17.3.tar.gz", "results.tar.gz"],
+            "file_url": ["https://example.org/a", "https://example.org/b"],
+            "file_location": [None, None],
+            "data_type": ["unknown", "unknown"],
+            "doc_role": [None, None],
+            "data_format": [None, None],
+        }
+    )
+    dl = D._download(files.copy(), "data", None, False, 100, 500, math.inf, False, False)
+    assert dl["want"] == [False, True]
+    assert fetched == ["results.tar.gz"]
+
+    # one already on disk is left as it is, not unpacked
+    tar = tmp_path / "renv_0.17.3.tar.gz"
+    shutil.copy(REPOS / "archives" / "results.tar.gz", tar)
+    on_disk = files.copy()
+    on_disk["file_location"] = [str(tar), None]
+    dl = D._download(on_disk, "data", None, False, 100, 500, math.inf, False, False)
+    assert "renv_0.17.3.tar.gz" in dl["all_files"]["file_name"].tolist()
+
+
+def test_an_archive_unpacks_within_what_is_left_of_the_repositorys_budget(
+    tmp_path: Path,
+) -> None:
+    # metacheck 0.4.4.29 (#699): the budget saw only the archive's packed size, and the files
+    # unpacked from it were not limited. Each archive is unpacked within what is left, and
+    # the repository is named among those over their budget
+    import warnings
+
+    from metacheck.archives.download import _repo_cache_subdir
+    from metacheck.modules import data_check as D
+
+    repo = "https://example.org/repo-699-budget"
+    with local_options(
+        {
+            "metacheck.repo_cache.notified": True,
+            "metacheck.repo_cache.session_dir": str(tmp_path / "session"),
+        }
+    ):
+        folder = Path(_repo_cache_subdir(repo, cache=False))
+        folder.mkdir(parents=True)
+        z = folder / "bundle.zip"
+        with zipfile.ZipFile(z, "w") as zf:
+            zf.writestr("a.csv", "a,b\n1,2\n")
+            zf.writestr("b.csv", "a,b\n3,4\n")
+        files = pd.DataFrame(
+            {
+                "repo_url": [repo],
+                "file_name": ["bundle.zip"],
+                "file_path": ["bundle.zip"],
+                "file_url": [f"{repo}/bundle.zip"],
+                "file_location": [str(z)],
+                "file_size": [float(z.stat().st_size)],
+                "data_type": ["unknown"],
+                "doc_role": [None],
+                "data_format": [None],
+            }
+        )
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            # a budget the folder already fills: no file may be unpacked
+            dl = D._download(files.copy(), "all", None, True, 100, 1e-5, math.inf, False, False)
+        gated = dl["gated_repos"]
+        assert gated is not None and gated["repo_url"].tolist() == [repo]
+        msg = gated["message"].iloc[0]
+        assert "per-repository budget: unpacked the smallest files from bundle.zip" in msg
+        assert "2 files omitted" in msg
+        assert any("per-repository budget" in str(w.message) for w in caught)
+        assert not (Path(str(z) + ".contents") / "a.csv").exists()
+        assert dl["all_files"]["file_location"].isna().all()
+
+        # a budget with room: both files are unpacked and nothing is reported
+        dl = D._download(files.copy(), "all", None, True, 100, 500, math.inf, False, False)
+        assert dl["gated_repos"] is None
+        assert sorted(dl["all_files"]["file_name"]) == ["a.csv", "b.csv"]
+
+
 def test_peek_zips_default_and_forwarded_keywords(monkeypatch: pytest.MonkeyPatch) -> None:
     """peek_zips defaults to TRUE; cache and skip_on_api_limit reach the zip peek (issue #427)."""
     import inspect

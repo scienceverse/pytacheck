@@ -1447,6 +1447,281 @@ def _run_download_want(files: pd.DataFrame | None) -> list[bool]:
     return out
 
 
+_BUDGET_COUNTED_MEMO: dict[str, list[bool]] = {}
+
+
+def _budget_counted(listing: pd.DataFrame | None) -> list[bool]:
+    """Port of ``R/repo-download.R::.budget_counted()``: the files of a listing that count for a
+    repository's download budget.
+
+    The kinds the checks download, judged by name only, so that every check, in any order, makes
+    the same choice from the same listing (#699). Code (and the output files code_check recovers
+    code from: .spv, .smcl, .out, .html), what data_check downloads with ``download = "data"``
+    (tabular data, codebooks and readmes, .txt and .iqdat, archives that can be opened) and, when
+    the code will run, what the run needs. Without the language-model step of data_check: a file
+    it later calls data is downloaded from what is left of the budget after these. renv's own
+    folder is left out, as in code_check. Kept for the session per listing:
+    :func:`download_repo_files` asks for it in each call, code_check makes about ten, and sorting
+    repo_from_hell's 10,158 entries takes 5 seconds.
+    """
+    import hashlib
+
+    if listing is None or len(listing) == 0:
+        return []
+    from metacheck.archives.zip_peek import _is_readable_archive
+    from metacheck.codecheck.core import _in_renv_folder, code_lang
+    from metacheck.datacheck.files import (
+        _data_doc_role,
+        _file_ext,
+        data_classify_files,
+        data_format,
+    )
+
+    n = len(listing)
+
+    def column(name: str) -> list[Any] | None:
+        return listing[name].tolist() if name in listing.columns else None
+
+    names_col = column("file_name")
+    paths_col = column("file_path")
+    if names_col is None:
+        names_col = [None if is_missing(p) else os.path.basename(str(p)) for p in (paths_col or [])]
+    if paths_col is None:
+        paths_col = list(names_col)
+    name = [None if is_missing(x) else str(x) for x in names_col]
+    path = [None if is_missing(x) else str(x) for x in paths_col]
+    repo_col = column("repo_url") or [None] * n
+    url_col = column("file_url") or [None] * n
+    run = _download_for_run()
+    key = hashlib.sha1(
+        repr((name, path, [as_str(x) for x in repo_col], [as_str(x) for x in url_col], run)).encode(
+            "utf-8", "surrogateescape"
+        ),
+        usedforsecurity=False,
+    ).hexdigest()
+    hit = _BUDGET_COUNTED_MEMO.get(key)
+    if hit is not None:
+        return list(hit)
+    typ = data_classify_files(name, path, group=[as_str(x) for x in repo_col])
+    ext = [(_file_ext(x) or "").lower() if x is not None else "" for x in name]
+    fmt = data_format(ext)
+    role = _data_doc_role([x or "" for x in name])
+    arch = _is_readable_archive(name)
+    renv = _in_renv_folder(listing)
+    want_run = _run_download_want(listing) if run else [False] * n
+    counted: list[bool] = []
+    for i in range(n):
+        nm = name[i]
+        lang = None if nm is None else code_lang(nm)
+        c = (
+            typ[i] in ("code", "output")
+            or lang is not None
+            or (typ[i] == "data" and fmt[i] == "tabular")
+            or (typ[i] == "documentation" and role[i] in ("codebook", "readme"))
+            or (
+                nm is not None
+                and re.search(r"[.](txt|iqdat|html?)$", nm, re.IGNORECASE) is not None
+            )
+            or bool(arch[i])
+            or want_run[i]
+        )
+        counted.append(bool(c) and not renv[i])
+    _BUDGET_COUNTED_MEMO[key] = counted
+    return list(counted)
+
+
+def _repo_disk_bytes(directory: str) -> float:
+    """Port of ``R/repo-download.R::.repo_disk_bytes()``: the bytes a repository's download
+    folder holds (*directory*, from :func:`_repo_cache_subdir`): every file, hidden ones included.
+
+    Files unpacked from an archive count at their unpacked size, and a copy of the archive kept
+    beside them counts as well, as both are on disk; a member's listed size is its unpacked size
+    too (:func:`~metacheck.archives.zip_peek.zip_peek`). Leaving out the unpacked files of an
+    archive in the folder let osf.io/nugzb hold 61 MB under a 50 MB budget: a 7.1 MB zip
+    counted, the 46.8 MB unpacked from it did not (#699).
+    """
+    if not os.path.isdir(directory):
+        return 0.0
+    total = 0.0
+    for root, _dirs, names in os.walk(directory):
+        for nm in names:
+            try:
+                total += float(os.path.getsize(os.path.join(root, nm)))
+            except OSError:
+                continue
+    return total
+
+
+def _budget_row_key(df: pd.DataFrame) -> list[str]:
+    """Port of ``.budget_row_key()``: one key per row of a listing, to tell the rows of a
+    repository's choice of files (:func:`_repo_budget`) from the others."""
+    n = len(df)
+
+    def col(name: str) -> list[str]:
+        if name not in df.columns:
+            return ["NA"] * n
+        return [("NA" if is_missing(v) else str(v)) for v in df[name].tolist()]
+
+    cols = [
+        col(c)
+        for c in ("repo_url", "file_path", "file_name", "file_url", "archive_url", "archive_member")
+    ]
+    return ["\r".join(parts) for parts in zip(*cols, strict=True)] if n else []
+
+
+def _archive_member_paths(arc: Any, repo: Any, cache: bool = False) -> tuple[str, str]:
+    """Port of ``.archive_member_paths()``: where the members of an archive at *arc* (its URL, or
+    its path on disk) are kept in *repo*'s download folder (``member_dest``), and where a whole
+    copy of the archive is kept (``arc_path``).
+
+    The members are kept in ``.archive_members/<key>.contents``, keyed off the archive's own
+    address so it cannot collide with a real file's path.
+    """
+    from metacheck.utils import _safe_write_path
+
+    arc_key = gsub("[^A-Za-z0-9._-]+", "_", gsub("^https?://", "", str(arc)))
+    # shortened below the repository's folder only, so its budget counts them
+    root = _repo_cache_subdir(repo, cache)
+    raw = str(_repo_cache_path(repo, f".archive_members/{arc_key}", cache=cache))
+    arc_path = _safe_write_path(raw, root=root) or raw
+    member_dest = _safe_write_path(f"{arc_path}.contents", root=root) or f"{arc_path}.contents"
+    return arc_path, member_dest
+
+
+class _Budget:
+    """The download budget of one repository (:func:`_repo_budget`).
+
+    ``pick`` holds the keys of the chosen files (:func:`_budget_row_key`), ``reserve`` the bytes
+    of the chosen files not yet on disk, ``disk`` the bytes the repository's folder holds plus
+    what was taken since, and ``cap`` the budget in bytes. Changed in place as files are taken.
+    """
+
+    __slots__ = ("cap", "disk", "pick", "reserve")
+
+    def __init__(self, cap: float) -> None:
+        self.cap = cap
+        self.pick: set[str] = set()
+        self.reserve = 0.0
+        self.disk = 0.0
+
+
+def _repo_budget(
+    repo: Any,
+    listing: pd.DataFrame | None,
+    cache: bool = False,
+    max_file_size: float = 100,
+    max_download_size: float = 500,
+) -> _Budget:
+    """Port of ``R/repo-download.R::.repo_budget()``: the download budget of one repository (#699).
+
+    From its full listing (*listing*, repo_check's table), the files of the kinds the checks
+    download (:func:`_budget_counted`), with a known size and none over *max_file_size*, are
+    chosen smallest first until *max_download_size* is reached. A file of the choice may be
+    downloaded while the folder stays within the budget; any other file, or the files unpacked
+    from an archive, only from what is left after the whole choice (:func:`_budget_free`), so
+    that no step crowds out a chosen file a later step still has to download. Used by
+    :func:`download_repo_files` and by data_check's unpacking of archives.
+    """
+    import warnings
+
+    import pandas as pd
+
+    from metacheck.archives.zip_peek import _safe_member_path
+    from metacheck.utils import _safe_write_path
+
+    st = _Budget(max_download_size * _MB if math.isfinite(max_download_size) else math.inf)
+    if listing is None or "repo_url" not in listing.columns:
+        sub_df = pd.DataFrame({"repo_url": pd.Series([], dtype=object)})
+    else:
+        keep = [(not is_missing(v)) and v == repo for v in listing["repo_url"].tolist()]
+        sub_df = listing.loc[keep].reset_index(drop=True)
+    n = len(sub_df)
+
+    def col(name: str, default: Any = None) -> list[Any]:
+        return sub_df[name].tolist() if name in sub_df.columns else [default] * n
+
+    size = [_num(v) for v in col("file_size", math.nan)]
+    arc_col = col("archive_url")
+    mem_col = col("archive_member")
+    is_mem = [
+        not is_missing(a) and str(a) != "" and not is_missing(m)
+        for a, m in zip(arc_col, mem_col, strict=True)
+    ]
+    url_col = col("file_url")
+    has_target = [
+        (not is_missing(u) and str(u) != "") or m for u, m in zip(url_col, is_mem, strict=True)
+    ]
+    restricted = [v is True for v in col("file_restricted", False)]
+    counted = _budget_counted(sub_df) if n else []
+    ok = [
+        has_target[j]
+        and not restricted[j]
+        and not is_missing(size[j])
+        and size[j] <= max_file_size * _MB
+        and counted[j]
+        for j in range(n)
+    ]
+    keys = _budget_row_key(sub_df)
+    pick = [False] * n
+    used = 0.0
+    cand = [j for j in range(n) if ok[j]]
+    for o in _r_order([(size[j], keys[j]) for j in cand]):
+        j = cand[o]
+        if used + size[j] <= st.cap:
+            pick[j] = True
+            used += size[j]
+    # which chosen files are on disk: at their ordinary place, or, for a file inside an archive,
+    # in the folder its archive's members are kept in
+    names = col("file_name")
+    paths = col("file_path")
+    rel = [nm if is_missing(p) else p for p, nm in zip(paths, names, strict=True)]
+    storage_col = col("provider")
+    subdir = _repo_cache_subdir(repo, cache)
+
+    def on_disk(j: int) -> bool:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            p = _safe_write_path(
+                str(_repo_cache_path(repo, rel[j], cache=cache, storage=storage_col[j])),
+                root=subdir,
+            )
+        if p and os.path.isfile(p) and os.path.getsize(p) > 0:
+            return True
+        if not is_mem[j]:
+            return False
+        rel_m = _safe_member_path(str(mem_col[j]))
+        if rel_m is None:
+            return False
+        m = _file_path(_archive_member_paths(arc_col[j], repo, cache)[1], rel_m)
+        return os.path.isfile(m) and os.path.getsize(m) > 0
+
+    chosen = [j for j in range(n) if pick[j]]
+    st.pick = {keys[j] for j in chosen}
+    st.reserve = sum(size[j] for j in chosen if not on_disk(j))
+    st.disk = _repo_disk_bytes(subdir)
+    return st
+
+
+def _budget_free(st: _Budget) -> float:
+    """Port of ``.budget_free()``: what a file outside the choice of a repository's budget
+    (:func:`_repo_budget`) may still use, in bytes."""
+    return max(st.cap - st.disk - st.reserve, 0.0)
+
+
+def _budget_take(st: _Budget, size: float, chosen: bool = False) -> bool:
+    """Port of ``.budget_take()``: whether a file of *size* bytes may be taken under a
+    repository's budget (:func:`_repo_budget`), *chosen* if it is one of the choice; if so, it
+    is counted."""
+    if chosen:
+        if st.disk + size > st.cap:
+            return False
+        st.reserve = max(st.reserve - size, 0.0)
+    elif size > _budget_free(st):
+        return False
+    st.disk += size
+    return True
+
+
 def _dataverse_guestbook_hint(resp: Any) -> str:
     """Port of ``R/repo-download.R::.dataverse_guestbook_hint()``: a guestbook, if the response names one.
 
@@ -1966,6 +2241,7 @@ def download_repo_files(
     max_download_size: float = 500,
     max_files_per_repo: float = math.inf,
     repo_file_counts: Mapping[str, float] | None = None,
+    repo_listing: pd.DataFrame | None = None,
     zip_timeout_s: float = 120,
     cache: bool = False,
     skip_on_api_limit: bool = False,
@@ -1984,15 +2260,22 @@ def download_repo_files(
     byte range.
 
     Size gates: ``max_file_size`` (MB) skips oversize files individually;
-    ``max_download_size`` (MB) is a budget per repository on the files in *files*,
-    cached and new together -- the cached ones among them count first, then the
-    smallest still-missing files are added while they fit. Only the rows passed
-    in are counted: files of the same repository downloaded by an earlier call,
-    and not passed again, do not count, so several calls can together download
-    more than ``max_download_size`` for one repository (#699);
-    ``max_files_per_repo`` refuses a repository with more
-    files outright -- counted from ``repo_file_counts`` (``repo_url`` ->
-    the full listing's count) when given.
+    ``max_download_size`` (MB) is a budget per repository, for everything its download folder
+    holds. From the repository's full listing (*repo_listing*, else the rows of *files*), the
+    files of the kinds the checks download (code, tabular data, codebooks and readmes, text
+    files, archives) are chosen smallest first, none over ``max_file_size``, until the budget is
+    reached. The same listing and limits give the same choice in every call, whichever check
+    calls and in whatever order, so code files cannot be crowded out by data files fetched
+    earlier. A requested file outside that choice (another kind, or one of unknown size) is
+    downloaded only from what is left of the budget after the whole choice. Whatever the choice,
+    nothing is downloaded once the folder holds ``max_download_size``: files from earlier calls,
+    earlier runs (with ``cache=True``), archive copies and the files unpacked from them all count,
+    a file unpacked from an archive at its unpacked size (#699). A repository may be fetched as
+    one archive of up to twice this size, to save requests; only the wanted files are kept from
+    it. ``max_files_per_repo`` refuses a repository with more files outright -- counted from
+    ``repo_file_counts`` (``repo_url`` -> the full listing's count) when given, else from
+    *repo_listing*, files repo_check found inside its archives included; a refused repository has
+    none of its files fetched, also none from inside its archives (#699).
 
     Returns a copy of *files* with ``file_location`` filled, and
     ``attrs["gated"]`` (``repo_url``, ``message``: repositories refused or
@@ -2049,8 +2332,15 @@ def download_repo_files(
         rel_path = list(file_names)
     rel_path = [fn if p is None else p for p, fn in zip(rel_path, file_names, strict=True)]
     _sweep_repo_cache_once()
+    # Only the part below the repository's folder is shortened, so the repository's budget, which
+    # counts that folder, counts the file (#699).
     cache_paths = [
-        _safe_write_path(cache_path(repo_urls[i], rel_path[i], storages[i])) or "" for i in range(n)
+        _safe_write_path(
+            cache_path(repo_urls[i], rel_path[i], storages[i]),
+            root=_repo_cache_subdir(repo_urls[i], cache),
+        )
+        or ""
+        for i in range(n)
     ]
     df[".cache_path"] = pd.Series(cache_paths, dtype=object)
 
@@ -2103,6 +2393,14 @@ def download_repo_files(
 
     sizes_col: list[Any] = _col(df, "file_size") or []
 
+    # The file count of a repository is its full listing's (#699)
+    if repo_file_counts is None and repo_listing is not None and "repo_url" in repo_listing.columns:
+        listing_counts: dict[str, float] = {}
+        for v in repo_listing["repo_url"].tolist():
+            if not is_missing(v):
+                listing_counts[v] = listing_counts.get(v, 0) + 1
+        repo_file_counts = listing_counts
+
     # Known listing sizes and cached files need no request. Fetch the remaining
     # distinct URLs concurrently; duplicates share one probe without losing rows.
     size_by_url: dict[str, float] = {}
@@ -2116,7 +2414,7 @@ def download_repo_files(
             count = (
                 _num(repo_file_counts[repo])
                 if repo_file_counts is not None and repo in repo_file_counts
-                else len(downloadable)
+                else len(repo_rows)
             )
             if not (math.isfinite(max_files_per_repo) and count > max_files_per_repo):
                 probe_rows.update(downloadable)
@@ -2129,14 +2427,6 @@ def download_repo_files(
         )
         size_by_url = dict(zip(unknown, map_ordered(_remote_size, unknown), strict=True))
 
-    # -- one budget per repository (max_download_size) ------------------------
-    # Shared by archive members and by files with their own address (the loop further below),
-    # and counted from what the repository already has in the cache (metacheck #698). It was
-    # applied to each archive on its own, from zero: a Dryad repository with many archives
-    # fetched 30 GB in one call under a 2,000 MB budget. Bytes of archive members and archive
-    # copies kept for a repository, which the loop for files with their own address adds to its
-    # own count:
-    member_bytes: dict[Any, float] = {}
     file_urls = _col(df, "file_url") or [None] * n
     restricted = _col(df, "file_restricted") or [None] * n
     has_url = [
@@ -2145,33 +2435,86 @@ def download_repo_files(
     ]
     cap_bytes = max_download_size * _MB if math.isfinite(max_download_size) else math.inf
 
-    def cached_url_bytes(repo: Any) -> float:
-        """The cached files with their own address of a repository, counted as the loop below
-        counts them: the listed size, or the size on disk, and not a file over max_file_size."""
-        total = 0.0
-        for i in rows_for(repo):
-            if not (has_url[i] and already[i]):
-                continue
-            s = _num(sizes_col[i])
-            if is_missing(s):
-                try:
-                    s = float(os.path.getsize(cache_paths[i]))
-                except OSError:
-                    continue
-            if math.isfinite(max_file_size) and s > max_file_size * _MB:
-                continue
-            total += s
-        return total
+    # -- one budget per repository, one choice of files (metacheck #698, #699) ------------
+    # The budget (max_download_size) is shared by archive members and by files with their own
+    # address (#698): it was applied to each archive on its own, from zero, and a Dryad
+    # repository with many archives fetched 30 GB in one call under a 2,000 MB budget. It was
+    # also counted per call, over the rows passed in only, and code_check, data_check and
+    # reproducibility_check make several calls each, so one repository could receive several
+    # times the budget; on the Meta-Psychology papers, four repositories held 51 to 53 MB under
+    # a 50 MB budget (#699).
+    #
+    # Now each repository's files are chosen once, from its full listing (repo_listing, else
+    # `files`): the kinds the checks download (_budget_counted()), with a known size and none
+    # over max_file_size, smallest first, until the budget is reached. Every call makes the same
+    # choice, so the order of the checks does not matter. A file of the choice is downloaded as
+    # long as the folder stays within the budget; any other file (another kind, a file the
+    # listing does not hold, a file of unknown size) only from what is left after the whole
+    # choice, the part not yet on disk included. What the repository's folder holds counts first
+    # (_repo_disk_bytes()), so no call, rerun or earlier run takes it past the budget.
+    listing = repo_listing if repo_listing is not None else df
+    files_key = _budget_row_key(df)
+    budgets: dict[Any, _Budget] = {}
+
+    def budget_of(repo: Any) -> _Budget:
+        """The budget of a repository (:func:`_repo_budget`), worked out on first use and kept
+        for the rest of this call."""
+        if repo not in budgets:
+            budgets[repo] = _repo_budget(
+                repo,
+                listing,
+                cache=cache,
+                max_file_size=max_file_size,
+                max_download_size=max_download_size,
+            )
+        return budgets[repo]
 
     def arc_paths(arc: Any, repo: Any) -> tuple[str, str]:
-        """Where the members of an archive are kept (``.archive_members/<key>.contents``, keyed
-        off the archive's own address so it cannot collide with a real file's path) and where a
-        whole copy of the archive is kept."""
-        arc_key = gsub("[^A-Za-z0-9._-]+", "_", gsub("^https?://", "", str(arc)))
-        arc_path = cache_path(repo, f".archive_members/{arc_key}")
-        arc_path = _safe_write_path(arc_path) or arc_path
-        member_dest = _safe_write_path(f"{arc_path}.contents") or f"{arc_path}.contents"
-        return arc_path, member_dest
+        return _archive_member_paths(arc, repo, cache)
+
+    # -- repositories over max_files_per_repo ---------------------------------------------
+    # A repo with an extreme file count (e.g. a global multi-site database -- confirmed live
+    # 2026-09-07 against a real Zenodo record, SAPFLUXNET, with ~4000 files) is refused before
+    # anything else, before any per-file size resolution (which would itself mean thousands of
+    # HEAD probes / cache-size checks). Beyond the download cost, data_check's own full-content
+    # read of every file does not scale to this many files for one paper's repo either.
+    #
+    # Counted from repo_file_counts (the TRUE total of the repository, worked out from
+    # repo_listing), not from the rows of `files`: `files` is routinely a caller-filtered subset
+    # (only rows still needing a download), which undercounts a repository whose remaining rows
+    # fall under the cap although its real size does not (SAPFLUXNET again: slipped through on
+    # the row count, then several hundred files individually hit a host returning a persistent
+    # 403, each retried, compounding into a multi-hour stall).
+    #
+    # Refused here, before the archive members below, for its files inside archives as well:
+    # when the refusal came after them, a repository of 41 files under max_files_per_repo = 20
+    # was reported as "skipped entirely", while the two scripts in its zip and tar were fetched
+    # (#699).
+    count_gated: set[Any] = set()
+    if math.isfinite(max_files_per_repo):
+        for repo in dict.fromkeys(repo_urls[i] for i in range(n) if not is_missing(repo_urls[i])):
+            idx = rows_for(repo)
+            true_n = (
+                _num(repo_file_counts[repo])
+                if repo_file_counts is not None and repo in repo_file_counts
+                else float(len(idx))
+            )
+            if true_n <= max_files_per_repo:
+                continue
+            msg = (
+                f"Repository {repo} holds {_fmt_int(true_n)} files, exceeding the "
+                f"{_fmt_int(max_files_per_repo)}-file cap: skipped entirely (not size-capped, "
+                "file-count-capped). Raise `max_files_per_repo` to include it."
+            )
+            _cap_report(msg)
+            for i in idx:
+                if not already[i]:
+                    limit_refused[i] = (
+                        f"it was not downloaded, because its repository holds {_fmt_int(true_n)} "
+                        f"files, more than max_files_per_repo ({_cap_num(max_files_per_repo)})"
+                    )
+            gated_rows.append((repo, msg))
+            count_gated.add(repo)
 
     def file_bytes(path: str) -> float:
         try:
@@ -2196,7 +2539,7 @@ def download_repo_files(
         # every repository with archive members, also one whose members are all cached, so that
         # they are counted for its files with their own address
         for repo in dict.fromkeys(repo_urls[i] for i in range(n) if is_arc_row[i]):
-            if is_missing(repo):
+            if is_missing(repo) or repo in count_gated:
                 continue
             idx = [i for i in rows_for(repo) if is_arc_row[i] and not already[i]]
             member_sizes = [_num(sizes_col[i]) for i in idx]
@@ -2237,28 +2580,12 @@ def download_repo_files(
                         df.iat[i, loc_col] = target
                         saved[j] = True
 
-            # What the repository already has counts first: its cached files with their own
-            # address, members cached at their ordinary path, members saved by an earlier run,
-            # and whole archive copies kept by one.
-            kept_plain = 0.0
-            for i in rows_for(repo):
-                if is_arc_row[i] and already[i]:
-                    s = _num(sizes_col[i])
-                    if is_missing(s):
-                        s = (
-                            file_bytes(cache_paths[i])
-                            if os.path.exists(cache_paths[i])
-                            else math.nan
-                        )
-                    if not is_missing(s):
-                        kept_plain += s
-            repo_arcs = dict.fromkeys(arcs[i] for i in rows_for(repo) if is_arc_row[i])
-            copies = sum(file_bytes(arc_paths(a, repo)[0]) for a in repo_arcs)
-            kept = kept_plain + sum(s for s, v in zip(cand_size, saved, strict=True) if v) + copies
-            used = cached_url_bytes(repo) + kept
-
-            # Then the smallest missing members, from all archives of the repository, until the
-            # budget is spent.
+            # What the repository's folder holds counts first; then the missing members, smallest
+            # first: a member of the repository's choice of files while the folder stays within
+            # the budget, any other member from what is left after the whole choice (see
+            # budget_of() above, #699)
+            st = budget_of(repo)
+            chosen = [files_key[i] in st.pick for i in cand]
             miss = [j for j, v in enumerate(saved) if not v]
             miss = [
                 miss[o]
@@ -2268,10 +2595,7 @@ def download_repo_files(
             ]
             take = [False] * len(cand)
             for j in miss:
-                if used + cand_size[j] <= cap_bytes:
-                    take[j] = True
-                    used += cand_size[j]
-            member_bytes[repo] = kept + sum(s for s, t in zip(cand_size, take, strict=True) if t)
+                take[j] = _budget_take(st, cand_size[j], chosen[j])
             for j, i in enumerate(cand):
                 if not saved[j] and not take[j]:
                     limit_refused[i] = refused_budget
@@ -2299,11 +2623,15 @@ def download_repo_files(
                 # request against a daily quota: metacheck #471); it is kept at `arc_path`, so
                 # a restarted run does not request it again. As that copy stays on disk, it is
                 # taken only when it fits in what is left of the repository's budget (#698).
+                # The members unpacked from the copy are counted already (_budget_take() above,
+                # at their unpacked size), and stay on disk beside the copy, so the copy must fit
+                # in what is free after them (#699): counting the copy in place of its members let
+                # osf.io/nugzb hold 61 MB under a 50 MB budget.
                 # The archive is a file like any other, so it is held to max_file_size as well
                 # (#699): an OSF zip of 20.5 MB, reported as left out by a 20 MB limit, was still
                 # downloaded whole to take its members. A larger archive has its members fetched
                 # by byte range.
-                whole_bytes = max(cap_bytes - used, 0.0)
+                whole_bytes = _budget_free(st)
                 if math.isfinite(max_file_size):
                     whole_bytes = min(whole_bytes, max_file_size * _MB)
                 arc_sizes = _col(df, "archive_size")
@@ -2342,12 +2670,10 @@ def download_repo_files(
                     fetched = None
                 else:
                     why = "could not list the archive (host may not support range requests)"
-                # a whole copy of the archive kept by this fetch counts against the budget, for
-                # the files with their own address below (#698)
+                # a whole copy of the archive kept by this fetch counts against the budget, beside
+                # its members (#698, #699)
                 if not had_copy and os.path.exists(arc_path):
-                    copy_size = file_bytes(arc_path)
-                    used += copy_size
-                    member_bytes[repo] = member_bytes[repo] + copy_size
+                    st.disk += file_bytes(arc_path)
                 if fetched is None:
                     # R: repo_url of the archive's first row, the rest per row
                     failed_rows.extend(
@@ -2384,24 +2710,8 @@ def download_repo_files(
         idx = [i for i in rows_for(repo) if has_url[i]]
         if not idx:
             continue
-        if repo_file_counts is not None and repo in repo_file_counts:
-            true_n = _num(repo_file_counts[repo])
-        else:
-            true_n = float(len(idx))
-        if math.isfinite(max_files_per_repo) and true_n > max_files_per_repo:
-            msg = (
-                f"Repository {repo} holds {_fmt_int(true_n)} files, exceeding the "
-                f"{_fmt_int(max_files_per_repo)}-file cap: skipped entirely (not size-capped, "
-                "file-count-capped). Raise `max_files_per_repo` to include it."
-            )
-            _cap_report(msg)
-            for i in idx:
-                if not already[i]:
-                    limit_refused[i] = (
-                        f"it was not downloaded, because its repository holds {_fmt_int(true_n)} "
-                        f"files, more than max_files_per_repo ({_cap_num(max_files_per_repo)})"
-                    )
-            gated_rows.append((repo, msg))
+        # refused above for its number of files (see "repositories over max_files_per_repo")
+        if repo in count_gated:
             continue
 
         is_cached = [already[i] for i in idx]
@@ -2434,32 +2744,35 @@ def download_repo_files(
         c_size = [s for s, c in zip(sizes, cand, strict=True) if c]
         c_cached = [x for x, c in zip(is_cached, cand, strict=True) if c]
 
-        cap_bytes = max_download_size * _MB if math.isfinite(max_download_size) else math.inf
-        used = sum(s for s, cc in zip(c_size, c_cached, strict=True) if cc)
-        # plus the repository's archive members and archive copies, kept or fetched above: one
-        # budget for the whole repository (#698)
-        used += member_bytes.get(repo, 0.0)
+        # What the repository's folder holds counts first (cached files, archive members and
+        # archive copies, those fetched above included); then the missing files, smallest first:
+        # a file of the repository's choice while the folder stays within the budget, any other
+        # file from what is left after the whole choice (see budget_of() above, #698, #699)
+        st = budget_of(repo)
+        chosen = [files_key[c_idx[k]] in st.pick for k in range(len(c_idx))]
         missing = [k for k, cc in enumerate(c_cached) if not cc]
         order = _r_order([(c_size[k], cache_paths[c_idx[k]]) for k in missing])
         missing_order = [missing[o] for o in order]
         take_missing: list[int] = []
         for k in missing_order:
-            if used + c_size[k] <= cap_bytes:
-                take_missing.append(k)
-                used += c_size[k]
+            if _budget_take(st, c_size[k], chosen[k]):
+                take_missing.append(k)  # noqa: PERF401 - each take changes the budget
+            # keep scanning: a later, smaller file may still fit under the budget
         to_get.extend(c_idx[k] for k in take_missing)
 
         # A still-missing file whose size neither the listing nor the host gives is
         # downloaded with a limit: the per-file cap, or what the budget has left if
         # that is less. The transfer stops once the limit is passed and the file is
-        # reported as over the limit.
+        # reported as over the limit. Such a file is outside the choice (its size is not
+        # known), so it may use what is left after the whole choice; the limit is worked out
+        # again for each file as it is downloaded, so that together they stay within it (#699).
         unknown_rows = [
             i
             for k, i in enumerate(idx)
             if not over[k] and is_missing(sizes[k]) and not is_cached[k]
         ]
         if unknown_rows:
-            left = max(cap_bytes - used, 0.0)
+            left = _budget_free(st)
             lim = min(max_file_size * _MB if math.isfinite(max_file_size) else math.inf, left)
             if lim > 0:
                 for i in unknown_rows:
@@ -2835,6 +3148,16 @@ def download_repo_files(
                             pb.tick()
                 for i in remaining_seq:
                     over_cap, got_bytes = False, 0
+                    # A file of unknown size gets what is left after the files of unknown size
+                    # before it (#699)
+                    st_i = budget_of(repo_urls[i]) if i in byte_cap else None
+                    if st_i is not None:
+                        byte_cap[i] = min(byte_cap[i], _budget_free(st_i))
+                        if byte_cap[i] <= 0:
+                            limit_refused[i] = refused_budget
+                            if pb is not None:
+                                pb.tick()
+                            continue
                     if i in byte_cap:
                         err, over_cap, got_bytes = _download_capped(
                             str(file_urls[i]),
@@ -2867,6 +3190,8 @@ def download_repo_files(
                         )
                     elif err is None:
                         df.iat[i, _loc(df)] = cache_now[i]
+                        if st_i is not None:
+                            st_i.disk += file_bytes(cache_now[i])
                     else:
                         fail(i, err)
                     if pb is not None:

@@ -1032,6 +1032,24 @@
   "py": "metacheck.utils._safe_write_path"
   "args":
     "path": "some/dir/file.csv"
+- "id": ".safe_write_path.root_below"
+  "r": ".safe_write_path"
+  "py": "metacheck.utils._safe_write_path"
+  "args":
+    "path": "some/repo/dir/file.csv"
+    "root": "some/repo"
+- "id": ".safe_write_path.root_not_below"
+  "r": ".safe_write_path"
+  "py": "metacheck.utils._safe_write_path"
+  "args":
+    "path": "some/dir/file.csv"
+    "root": "other/repo"
+- "id": ".safe_write_path.root_long_leaf"
+  "r": ".safe_write_path"
+  "py": "metacheck.utils._safe_write_path"
+  "args":
+    "path": "some/repo/dir/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.txt"
+    "root": "some/repo"
 - "id": ".safe_write_path.empty"
   "r": ".safe_write_path"
   "py": "metacheck.utils._safe_write_path"

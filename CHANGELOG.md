@@ -18,6 +18,17 @@ package's. The R commit each release is compared against is in
 - **Not done yet:** `run_code` is off unless `--run-code` is given and Docker runs; `crossref` only reaches GROBID.
 - **Fixed:** the site's job queue woke its clean-up thread instead of a worker when a job arrived, so a job could wait until the next one came.
 
+### Compared with metacheck 0.4.4.29 (`dev` at 4150b31)
+
+- **Changed:** the parity checks compare pytacheck with metacheck `dev` at 4150b31 (0.4.4.29) instead of 50f3c0c (0.4.4.28): the rest of #699. The goldens were made again with R.
+- **Changed:** each repository's files are chosen once, from its full listing: the kinds of files the checks download, smallest first, none over `max_file_size`, up to `max_download_size`. Every call makes the same choice, so data_check, code_check and the reproducibility check keep one repository within one budget, in any order and however often they ask. What the repository's folder already holds counts first, archive copies and the files unpacked from them included.
+- **Changed:** code_check's zips are fetched through `download_repo_files()`, within the repository's budget, `max_file_size` and `max_files_per_repo`; each zip was allowed the whole budget.
+- **Changed:** data_check unpacks a downloaded zip, tar or .gz only within what is left of its repository's budget, smallest files first, and names the repository among those over their budget. Archives in an renv folder are left alone.
+- **Changed:** a long path is shortened only below its repository's folder, so the files of a repository's archives no longer go to a second folder the budget did not count. A file cached at such a shortened place is downloaded once more.
+- **Changed:** a repository refused for `max_files_per_repo` has no files fetched from its archives either.
+- **Changed:** `zenodo_file_download()`, `dryad_file_download()`, `figshare_file_download()`, `dataverse_file_download()`, `reshare_file_download()` and `researchdata4tu_file_download()` default to 100 MB per file and 500 MB in total, as `download_repo_files()` does.
+- **Fixed (Windows, CI):** the goldens of the reproducibility checks no longer hold the size and hash of a PDF a script draws, and a test no longer assumes a `/tmp` folder.
+
 ### Compared with metacheck 0.4.4.28 (`dev` at 50f3c0c)
 
 - **Changed:** the parity checks compare pytacheck with metacheck `dev` at 50f3c0c (0.4.4.28) instead of 08c7171 (0.4.4.27): download limits, the first part of #699. The goldens of the cases whose R result changed were made again with R.

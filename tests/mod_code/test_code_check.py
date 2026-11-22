@@ -1212,9 +1212,10 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
 
     counts: list[dict[Any, int]] = []
 
-    def fake(files: pd.DataFrame, repo_file_counts: Any = None, **kwargs: Any) -> pd.DataFrame:
-        counts.append(dict(repo_file_counts))
-        n = repo_file_counts["https://osf.io/x"]
+    def fake(files: pd.DataFrame, repo_listing: Any = None, **kwargs: Any) -> pd.DataFrame:
+        # the whole listing is passed, from which the counts are taken (#699)
+        counts.append(repo_listing["repo_url"].value_counts().to_dict())
+        n = int((repo_listing["repo_url"] == "https://osf.io/x").sum())
         out = files.copy()
         out["file_location"] = None
         out.attrs["gated"] = pd.DataFrame(
@@ -1256,6 +1257,7 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
         cache: bool = False,
         max_download_size: Any = 500,
         max_file_size: Any = 100,
+        max_files_per_repo: Any = float("inf"),
     ) -> pd.DataFrame:
         member = all_files.iloc[[0]].copy()
         member["file_name"] = "member.R"
@@ -1415,7 +1417,6 @@ def test_zip_expansion_forwards_skip_on_api_limit_and_cache(
     )
     _code_expand_zip(table, skip_on_api_limit=True, cache=True)
     _code_expand_zip(table, max_download_size=1)
-    # the archive is held to max_file_size as well (#699): the smaller of the two limits
     _code_expand_zip(table, max_download_size=50, max_file_size=20)
     _code_expand_zip(table, max_download_size=5, max_file_size=20)
     both = {"skip_on_api_limit": True, "cache": True, "size": 2048.0}
@@ -1423,12 +1424,15 @@ def test_zip_expansion_forwards_skip_on_api_limit_and_cache(
     assert [s[1] for s in seen if s[0] == "peek"] == [both, neither, neither, neither]
     fetched = [s[1] for s in seen if s[0] == "fetch"]
     assert [{k: f[k] for k in both} for f in fetched] == [both, neither, neither, neither]
-    # (the defaults: max_download_size 500, max_file_size 100)
+    # (the defaults: max_download_size 500, max_file_size 100). The members are fetched by
+    # download_repo_files() (#699): a whole copy may use what is left of the repository's budget
+    # after the zip's own place in the choice of files (2048 bytes) and the member (1 byte), and
+    # is held to max_file_size as well
     assert [f["max_whole_bytes"] for f in fetched] == [
         100 * 1048576,
-        1048576,
+        1048576 - 2048 - 1,
         20 * 1048576,
-        5 * 1048576,
+        5 * 1048576 - 2048 - 1,
     ]
     assert fetched[0]["request_bytes"] == 1048576  # not Dryad: whichever costs less
     # the archive is kept where the ordinary download would put it

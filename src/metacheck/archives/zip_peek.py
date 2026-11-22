@@ -1957,6 +1957,7 @@ def _with_oversize(
     name: Sequence[str],
     file_size: Sequence[float],
     archive: Any = None,
+    attr_name: str = "oversize",
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.with_oversize()``: *rows* plus a row per inner file not unpacked.
 
@@ -1964,12 +1965,17 @@ def _with_oversize(
     (``file_location`` ``NA``), the way a file too large to download is
     listed. The same files are attached as ``attrs["oversize"]`` (``file_name``,
     ``file_size`` in bytes, ``NaN`` when unknown), which ``data_check`` adds to
-    its record of files over the limit.
+    its record of files over the limit. With ``attr_name = "over_budget"`` they are the files
+    that did not fit in what was left of the repository's download budget (#699).
     """
     import pandas as pd
 
     if len(name) == 0:
         return rows
+    # concatenating drops the attributes an earlier call set
+    kept = {
+        a: rows.attrs[a] for a in ("oversize", "over_budget", "unpack_failed") if a in rows.attrs
+    }
     from metacheck.datacheck.files import _data_doc_role, data_classify_files, data_format
 
     n = len(name)
@@ -1995,7 +2001,9 @@ def _with_oversize(
     extra["archive_file_path"] = pd.Series([label] * n, dtype="string")
     extra["archive_file_location"] = pd.Series([_archive_loc(archive)] * n, dtype="string")
     out = pd.concat([rows, extra], ignore_index=True) if len(rows) else extra
-    out.attrs["oversize"] = pd.DataFrame(
+    for a, v in kept.items():
+        out.attrs[a] = v
+    out.attrs[attr_name] = pd.DataFrame(
         {
             "file_name": pd.Series(base, dtype="string"),
             "file_size": pd.Series([float(s) for s in file_size], dtype="float64"),
@@ -2004,11 +2012,43 @@ def _with_oversize(
     return out
 
 
+def _fit_budget(
+    size: Sequence[float], max_total: float, name: Sequence[str] | None = None
+) -> list[bool]:
+    """Port of ``R/zip-peek.R::.fit_budget()``: which files of sizes *size* fit in *max_total* bytes.
+
+    Taken smallest first (ties by *name*): the files of an archive unpacked within what is
+    left of its repository's download budget (#699). A file of unknown size does not fit
+    unless there is no limit.
+    """
+    from metacheck._r import r_sort_key
+
+    n = len(size)
+    if not math.isfinite(max_total):
+        return [True] * n
+    names = list(range(n)) if name is None else list(name)
+    fit = [False] * n
+    used = 0.0
+    for k in sorted(
+        range(n),
+        key=lambda k: (
+            math.isnan(size[k]),
+            0.0 if math.isnan(size[k]) else size[k],
+            r_sort_key(names[k]),
+        ),
+    ):
+        if not math.isnan(size[k]) and used + size[k] <= max_total:
+            fit[k] = True
+            used += size[k]
+    return fit
+
+
 def _expand_zip(
     zip_path: Any,
     zip_row: pd.DataFrame,
     skip_types: Any = "materials",
     max_bytes: float = math.inf,
+    max_total: float = math.inf,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_zip()``: rows for the data files inside a zip.
 
@@ -2023,6 +2063,11 @@ def _expand_zip(
     reported in ``attrs["oversize"]``, like a file too large to download, and
     a copy left by an earlier run is removed, so the cache never holds more
     than the limits.
+
+    The files not yet unpacked are also held to *max_total*, the bytes left in the
+    repository's download budget (#699): taken smallest first, the rest reported in
+    ``attrs["over_budget"]``. The budget counted the zip at its packed size only, so its files
+    could take the folder past the budget.
     """
     empty = zip_row.iloc[0:0].copy()
     if _missing_path(zip_path):
@@ -2047,6 +2092,12 @@ def _expand_zip(
             _unlink(dest, _zip_disk_name(n))
     want = [n for n, k, o in zip(names, keep, over, strict=True) if k and not o]
     missing = [n for n in want if not os.path.exists(f"{dest}/{_zip_disk_name(n)}")]
+    size_of = dict(zip(names, sizes, strict=True))
+    fit = _fit_budget([size_of[n] for n in missing], max_total, missing)
+    no_room = [n for n, f in zip(missing, fit, strict=True) if not f]
+    no_room_size = [size_of[n] for n in no_room]
+    missing = [n for n, f in zip(missing, fit, strict=True) if f]
+    want = [n for n in want if n not in set(no_room)]
     failed = None
     if missing:
         part = f"{dest}.part"
@@ -2078,6 +2129,9 @@ def _expand_zip(
         [n for n, o in zip(names, over, strict=True) if o],
         [s for s, o in zip(sizes, over, strict=True) if o],
         archive=zip_path,
+    )
+    out = _with_oversize(
+        out, zip_row, label, no_room, no_room_size, archive=zip_path, attr_name="over_budget"
     )
     # and given to data_check, which names them in its report (attribute "unpack_failed", see
     # :func:`_unzip_failed_text`)
@@ -2150,6 +2204,7 @@ def _expand_tar(
     tar_row: pd.DataFrame,
     skip_types: Any = "materials",
     max_bytes: float = math.inf,
+    max_total: float = math.inf,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_tar()``: rows for the data files inside a tarball.
 
@@ -2163,6 +2218,10 @@ def _expand_tar(
     member's size from its headers before anything is written; a compressed
     tar gives only names without reading it all, so its kept members are
     unpacked and any over the limit removed again straight away.
+
+    The files not yet unpacked are also held to *max_total*, the bytes left in the
+    repository's download budget, as in :func:`_expand_zip` (#699). A compressed tar's files
+    are unpacked first and those that do not fit removed again.
     """
     import tarfile
 
@@ -2201,6 +2260,16 @@ def _expand_tar(
             _unlink(dest, n)
     want = [n for n, k, o in zip(names, keep, over, strict=True) if k and not o]
     missing = [n for n in want if not os.path.exists(f"{dest}/{n}")]
+    # a plain tar gives the sizes before anything is unpacked
+    no_room: list[str] = []
+    no_room_size: list[float] = []
+    if missing and plain:
+        size_of = dict(zip(names, sizes, strict=True))
+        fit = _fit_budget([size_of[n] for n in missing], max_total, missing)
+        no_room = [n for n, f in zip(missing, fit, strict=True) if not f]
+        no_room_size = [size_of[n] for n in no_room]
+        missing = [n for n, f in zip(missing, fit, strict=True) if f]
+    new_files = list(missing)
     if missing:
         part = f"{dest}.part"
         shutil.rmtree(part, ignore_errors=True)
@@ -2226,19 +2295,35 @@ def _expand_tar(
             sizes[i] = float(os.path.getsize(got))
             over[i] = True
             _unlink(dest, n)
+    # a compressed tar: of the files just unpacked, those that do not fit are removed again
+    if not plain and new_files and math.isfinite(max_total):
+        got_size = [
+            float(os.path.getsize(f"{dest}/{n}")) if os.path.isfile(f"{dest}/{n}") else math.nan
+            for n in new_files
+        ]
+        within = _fit_budget(got_size, max_total, new_files)
+        # a file that is not there is not counted (R: !there | .fit_budget(...))
+        fit = [math.isnan(g) or w for g, w in zip(got_size, within, strict=True)]
+        no_room = [n for n, f in zip(new_files, fit, strict=True) if not f]
+        no_room_size = [g for g, f in zip(got_size, fit, strict=True) if not f]
+        for n in no_room:
+            _unlink(dest, n)
     label = _archive_label(tar_row, tar_path)
     rows = (
         _archive_rows(dest, tar_row, label, skip_types, archive=tar_path)
         if any(k and not o for k, o in zip(keep, over, strict=True))
         else empty
     )
-    return _with_oversize(
+    out = _with_oversize(
         rows,
         tar_row,
         label,
         [n for n, o in zip(names, over, strict=True) if o],
         [s for s, o in zip(sizes, over, strict=True) if o],
         archive=tar_path,
+    )
+    return _with_oversize(
+        out, tar_row, label, no_room, no_room_size, archive=tar_path, attr_name="over_budget"
     )
 
 
@@ -2271,6 +2356,7 @@ def _expand_compressed(
     gz_row: pd.DataFrame,
     skip_types: Any = "materials",
     max_bytes: float = math.inf,
+    max_total: float = math.inf,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_compressed()``: a single-file ``.gz``/``.bz2``/``.xz``.
 
@@ -2286,6 +2372,9 @@ def _expand_compressed(
     is reported in ``attrs["oversize"]`` (size ``NaN``, since only "more than
     the limit" is known). A copy over the limit left by an earlier run is
     removed.
+
+    Decompression also stops at *max_total*, the bytes left in the repository's download budget
+    (#699); a file stopped there is reported in ``attrs["over_budget"]`` instead.
     """
     empty = gz_row.iloc[0:0].copy()
     if _missing_path(gz_path):
@@ -2323,6 +2412,9 @@ def _expand_compressed(
                     if written > max_bytes:
                         status = "over"
                         break
+                    if written > max_total:
+                        status = "no_room"
+                        break
                     oc.write(chunk)
         except Exception:
             status = "failed"
@@ -2334,6 +2426,16 @@ def _expand_compressed(
             if status == "over":
                 return _with_oversize(
                     empty, gz_row, label, [inner_name], [math.nan], archive=gz_path
+                )
+            if status == "no_room":
+                return _with_oversize(
+                    empty,
+                    gz_row,
+                    label,
+                    [inner_name],
+                    [math.nan],
+                    archive=gz_path,
+                    attr_name="over_budget",
                 )
             return empty
         os.makedirs(dest, exist_ok=True)

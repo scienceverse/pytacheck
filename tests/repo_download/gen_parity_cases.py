@@ -517,6 +517,53 @@ def download_cases() -> list[dict[str, Any]]:
         max_files_per_repo=3,
         repo_file_counts={repo_a: 4000},
     )
+    # #699: the file count and the choice of files for the budget come from the full listing
+    listing_extra = {
+        "$df": {
+            "repo_url": [repo_a, repo_a],
+            "file_name": ["analysis.R", "d.csv"],
+            "file_path": ["analysis.R", "d.csv"],
+            "file_url": ["x", "x"],
+            "file_size": [300, 5000000],
+        }
+    }
+    dl(
+        "listing_counts",
+        {
+            "repo_url": [repo_a],
+            "file_name": ["a.csv"],
+            "file_path": ["a.csv"],
+            "file_url": ["x"],
+            "file_size": [714],
+        },
+        file_url=["data/results.csv.gz"],
+        max_files_per_repo=2,
+        listing_extra=listing_extra,
+    )
+    dl(
+        "listing_choice",
+        {
+            "repo_url": [repo_a, repo_a],
+            "file_name": ["b.csv", "c.csv"],
+            "file_path": ["b.csv", "c.csv"],
+            "file_url": ["x", "x"],
+            "file_size": [557, 452],
+        },
+        file_url=["data/results.csv.bz2", "data/results.csv.xz"],
+        max_file_size=10,
+        # 1,100 bytes: the choice is the script (300) and c.csv (452); b.csv (557) is not in it
+        # and fits only what is left after them, which it does not
+        max_download_size=0.00105,
+        listing_extra={
+            "$df": {
+                "repo_url": [repo_a],
+                "file_name": ["analysis.R"],
+                "file_path": ["analysis.R"],
+                "file_url": ["x"],
+                "file_size": [300],
+            }
+        },
+    )
     dl(
         "unknown_sizes_probed",
         {
@@ -740,6 +787,103 @@ def _new_helper_cases() -> list[dict[str, Any]]:
     ]
 
 
+def _budget_cases() -> list[dict[str, Any]]:
+    """metacheck 0.4.4.29: one choice of files per repository (#699)."""
+    dl = "__import__('metacheck.archives.download', fromlist=['x'])"
+    zp = "__import__('metacheck.archives.zip_peek', fromlist=['x'])"
+    dv = "__import__('metacheck.archives.dataverse', fromlist=['x'])"
+    mb = "1024 * 1024"
+    pb_py = "type('Pb', (), {'tick': lambda self, *a, **k: None})()"
+    pb_r = "list(tick = function(...) invisible(NULL))"
+    out: list[dict[str, Any]] = []
+    sizes_r = f"c(4, 1, 3, 2, NA, 30) * {mb}"
+    sizes_py = f"[4 * {mb}, 1 * {mb}, 3 * {mb}, 2 * {mb}, float('nan'), 30 * {mb}]"
+    names_r = 'c("d", "a", "c", "b", "unknown", "big")'
+    names_py = '["d", "a", "c", "b", "unknown", "big"]'
+    ex_r = "c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)"
+    ex_py = "[False, False, False, False, False, True]"
+    for cid, mfs, mds in (
+        ("budget_6", 10, 6),
+        ("budget_4_5", 10, 4.5),
+        ("file_limit", 3.5, "Inf"),
+        ("no_limits", "Inf", "Inf"),
+    ):
+        mds_py = "float('inf')" if mds == "Inf" else str(mds)
+        mfs_py = "float('inf')" if mfs == "Inf" else str(mfs)
+        out.append(
+            _expr_case(
+                f"omit_for_size.{cid}",
+                f"metacheck:::.omit_for_size({sizes_r}, {names_r}, {ex_r}, max_file_size = {mfs}, "
+                f"max_download_size = {mds}, pb = {pb_r})",
+                f"{dv}._omit_for_size({sizes_py}, {names_py}, {ex_py}, {mfs_py}, {mds_py}, "
+                f"{pb_py})",
+            )
+        )
+    for cid, size_r, size_py, total_r, total_py in (
+        ("smallest_first", "c(5, 1, 3, NA)", "[5, 1, 3, float('nan')]", "4", "4"),
+        ("no_limit", "c(5, NA)", "[5, float('nan')]", "Inf", "float('inf')"),
+        ("ties_by_name", "c(2, 2, 2)", "[2, 2, 2]", "4", "4"),
+        ("empty", "numeric(0)", "[]", "10", "10"),
+    ):
+        out.append(
+            _expr_case(
+                f"fit_budget.{cid}",
+                f"metacheck:::.fit_budget({size_r}, {total_r})",
+                f"{zp}._fit_budget({size_py}, {total_py})",
+            )
+        )
+    names = [
+        "a.R", "b.csv", "c.sav", "README.md", "codebook.pdf", "notes.txt", "run.iqdat",
+        "out.spv", "report.html", "data.zip", "photo.png", "paper.pdf", "talk.mp4", "lib.R",
+    ]  # fmt: skip
+    paths = [*names[:-1], "renv/library/lib.R"]
+
+    def r_chr(v: list[str]) -> str:
+        return "c(" + ", ".join('"' + x + '"' for x in v) + ")"
+
+    def py_chr(v: list[str]) -> str:
+        return "[" + ", ".join('"' + x + '"' for x in v) + "]"
+
+    out.append(
+        _expr_case(
+            "budget_counted.kinds",
+            f'metacheck:::.budget_counted(data.frame(repo_url = "r", file_name = {r_chr(names)}, '
+            f"file_path = {r_chr(paths)}))",
+            f"{dl}._budget_counted(__import__('pandas').DataFrame("
+            f"{{'repo_url': 'r', 'file_name': {py_chr(names)}, 'file_path': {py_chr(paths)}}}))",
+        )
+    )
+    out.append(
+        _expr_case(
+            "budget_counted.empty",
+            "metacheck:::.budget_counted(data.frame(repo_url = character(0), "
+            "file_name = character(0)))",
+            f"{dl}._budget_counted(__import__('pandas').DataFrame("
+            "{'repo_url': [], 'file_name': []}))",
+        )
+    )
+    out.append(
+        _expr_case(
+            "repo_disk_bytes.archive_and_members",
+            "local({d <- tempfile(); on.exit(unlink(d, recursive = TRUE)); "
+            'dir.create(file.path(d, "a.zip.contents", "sub"), recursive = TRUE); '
+            'writeBin(raw(100), file.path(d, "a.zip")); '
+            'writeBin(raw(1000), file.path(d, "a.zip.contents", "sub", "x.csv")); '
+            'dir.create(file.path(d, ".archive_members", "b.zip.contents"), recursive = TRUE); '
+            'writeBin(raw(50), file.path(d, ".archive_members", "b.zip.contents", "y.csv")); '
+            'c(metacheck:::.repo_disk_bytes(d), metacheck:::.repo_disk_bytes(file.path(d, "absent")))})',
+            "(lambda d: [__import__('os').makedirs(d + '/a.zip.contents/sub'), "
+            "__import__('os').makedirs(d + '/.archive_members/b.zip.contents'), "
+            "open(d + '/a.zip', 'wb').write(bytes(100)), "
+            "open(d + '/a.zip.contents/sub/x.csv', 'wb').write(bytes(1000)), "
+            "open(d + '/.archive_members/b.zip.contents/y.csv', 'wb').write(bytes(50)), "
+            f"[{dl}._repo_disk_bytes(d), {dl}._repo_disk_bytes(d + '/absent')]][-1])"
+            "(__import__('tempfile').mkdtemp())",
+        )
+    )
+    return out
+
+
 def _osf_archive_cases() -> list[dict[str, Any]]:
     """metacheck 0.4.4.12 and 0.4.4.17: failed-download text, storage archives (#667, #675)."""
     dl = "__import__('metacheck.archives.download', fromlist=['x'])"
@@ -956,6 +1100,7 @@ def main() -> None:
     head = text.split(MARKER)[0].rstrip() + "\n\n"
     cases = zip_cases() + download_cases()
     cases += _osf_archive_cases()
+    cases += _budget_cases()
     body = yaml.dump(cases, Dumper=_Dumper, allow_unicode=True, sort_keys=False, width=100)
     TARGET.write_text(
         head + MARKER + " by tests/repo_download/gen_parity_cases.py -- do not edit below\n" + body,

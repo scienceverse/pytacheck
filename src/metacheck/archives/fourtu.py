@@ -254,8 +254,8 @@ def _researchdata4tu_pat(pat: Any = None) -> str:
 def researchdata4tu_file_download(
     researchdata4tu_id: Any,
     download_to: str = ".",
-    max_file_size: float | None = 10,
-    max_download_size: float | None = 100,
+    max_file_size: float | None = 100,
+    max_download_size: float | None = 500,
     unzip_types: Any = None,
     pb: Any = None,
 ) -> pd.DataFrame | None:

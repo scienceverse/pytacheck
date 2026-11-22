@@ -567,13 +567,13 @@
  },
  ".all_omitted_table": {
   "file": "R/repo-download.R",
-  "line": 340,
+  "line": 342,
   "ported": true,
   "python": "metacheck.archives.dataverse:_download_file_table"
  },
  ".announce_rate_limit_wait": {
   "file": "R/repo-download.R",
-  "line": 889,
+  "line": 891,
   "python": "metacheck.archives.download:_announce_rate_limit_wait"
  },
  ".ap_anonymous_authors": {
@@ -618,7 +618,7 @@
  },
  ".archive_dest": {
   "file": "R/zip-peek.R",
-  "line": 1803,
+  "line": 1825,
   "python": "metacheck.archives.zip_peek:_archive_dest"
  },
  ".archive_keep": {
@@ -628,30 +628,35 @@
  },
  ".archive_label": {
   "file": "R/zip-peek.R",
-  "line": 1738,
+  "line": 1760,
   "python": "metacheck.archives.zip_peek:_archive_label"
+ },
+ ".archive_member_paths": {
+  "file": "R/repo-download.R",
+  "line": 1731,
+  "python": "metacheck.archives.download:_archive_member_paths"
  },
  ".archive_rows": {
   "file": "R/zip-peek.R",
-  "line": 1748,
+  "line": 1770,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_archive_rows"
  },
  ".archive_size_estimate": {
   "file": "R/repo-download.R",
-  "line": 365,
+  "line": 367,
   "ported": true,
   "python": "metacheck.archives.download:_archive_size_estimate"
  },
  ".archive_size_refusal": {
   "file": "R/repo-download.R",
-  "line": 486,
+  "line": 488,
   "ported": true,
   "python": "metacheck.archives.download:_archive_size_refusal"
  },
  ".archive_worth_it": {
   "file": "R/repo-download.R",
-  "line": 395,
+  "line": 397,
   "python": "metacheck.archives.download:_archive_worth_it"
  },
  ".as_num_safe": {
@@ -684,7 +689,7 @@
  },
  ".auth_for_url": {
   "file": "R/repo-download.R",
-  "line": 511,
+  "line": 513,
   "ported": true,
   "python": "metacheck.archives.download:_auth_for_url"
  },
@@ -812,6 +817,26 @@
   "line": 0,
   "ported": true,
   "python": "metacheck.report.file_tree:brief_insert_after_summary"
+ },
+ ".budget_counted": {
+  "file": "R/repo-download.R",
+  "line": 1683,
+  "python": "metacheck.archives.download:_budget_counted"
+ },
+ ".budget_free": {
+  "file": "R/repo-download.R",
+  "line": 1804,
+  "python": "metacheck.archives.download:_budget_free"
+ },
+ ".budget_row_key": {
+  "file": "R/repo-download.R",
+  "line": 1720,
+  "python": "metacheck.archives.download:_budget_row_key"
+ },
+ ".budget_take": {
+  "file": "R/repo-download.R",
+  "line": 1808,
+  "python": "metacheck.archives.download:_budget_take"
  },
  ".cap_num": {
   "file": "R/report-helpers.R",
@@ -968,61 +993,61 @@
  },
  ".code_blank_mplus_savedata": {
   "file": "R/code_check.R",
-  "line": 2837,
+  "line": 2836,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_blank_mplus_savedata"
  },
  ".code_blank_write_opens": {
   "file": "R/code_check.R",
-  "line": 2782,
+  "line": 2781,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_blank_write_opens"
  },
  ".code_char_vector_vars": {
   "file": "R/code_check.R",
-  "line": 2231,
+  "line": 2232,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_char_vector_vars"
  },
  ".code_comment_flags": {
   "file": "R/code_check.R",
-  "line": 1769,
+  "line": 1770,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_comment_flags"
  },
  ".code_env_pinned": {
   "file": "R/code_check.R",
-  "line": 2694,
+  "line": 2693,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_env_pinned"
  },
  ".code_expand_html": {
   "file": "R/code_check.R",
-  "line": 724,
+  "line": 720,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_expand_html"
  },
  ".code_expand_mplus": {
   "file": "R/code_check.R",
-  "line": 657,
+  "line": 654,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_expand_mplus"
  },
  ".code_expand_smcl": {
   "file": "R/code_check.R",
-  "line": 596,
+  "line": 594,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_expand_smcl"
  },
  ".code_expand_spv": {
   "file": "R/code_check.R",
-  "line": 532,
+  "line": 531,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_expand_spv"
  },
  ".code_expand_zip": {
   "file": "R/code_check.R",
-  "line": 837,
+  "line": 833,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_expand_zip"
  },
@@ -1033,57 +1058,57 @@
  },
  ".code_fetches_unnamed": {
   "file": "R/code_check.R",
-  "line": 2863,
+  "line": 2862,
   "python": "metacheck.codecheck.core:_code_fetches_unnamed"
  },
  ".code_has_docstring": {
   "file": "R/code_check.R",
-  "line": 1861,
+  "line": 1862,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_has_docstring"
  },
  ".code_is_abs_path": {
   "file": "R/code_check.R",
-  "line": 1334,
+  "line": 1335,
   "python": "metacheck.codecheck.core:_code_is_abs_path"
  },
  ".code_missing_files": {
   "file": "R/code_check.R",
-  "line": 2884,
+  "line": 2883,
   "python": "metacheck.codecheck.core:_code_missing_files"
  },
  ".code_name_match": {
   "file": "R/code_check.R",
-  "line": 2935,
+  "line": 2934,
   "python": "metacheck.codecheck.core:_code_name_match"
  },
  ".code_notebook_cell": {
   "file": "R/code_check.R",
-  "line": 1069,
+  "line": 1070,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_notebook_cell"
  },
  ".code_notebook_parts": {
   "file": "R/code_check.R",
-  "line": 1039,
+  "line": 1040,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_notebook_parts"
  },
  ".code_open_calls": {
   "file": "R/code_check.R",
-  "line": 2718,
+  "line": 2717,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_open_calls"
  },
  ".code_pin_dates": {
   "file": "R/code_check.R",
-  "line": 2644,
+  "line": 2643,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_pin_dates"
  },
  ".code_pos_in_string": {
   "file": "R/code_check.R",
-  "line": 1586,
+  "line": 1587,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_pos_in_string"
  },
@@ -1095,31 +1120,31 @@
  },
  ".code_renv_remote": {
   "file": "R/code_check.R",
-  "line": 2562,
+  "line": 2561,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_renv_remote"
  },
  ".code_session_packages": {
   "file": "R/code_check.R",
-  "line": 2585,
+  "line": 2584,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_session_packages"
  },
  ".code_strip_inline_comment": {
   "file": "R/code_check.R",
-  "line": 1605,
+  "line": 1606,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_strip_inline_comment"
  },
  ".code_version_pin_check": {
   "file": "R/code_check.R",
-  "line": 2367,
+  "line": 2368,
   "ported": true,
   "python": "metacheck.codecheck.core:_code_version_pin_check"
  },
  ".code_write_regex": {
   "file": "R/code_check.R",
-  "line": 2991,
+  "line": 2990,
   "python": "metacheck.codecheck.core:_code_write_regex"
  },
  ".codebook_duplicate_name_warnings": {
@@ -1206,7 +1231,7 @@
  },
  ".copy_into_place": {
   "file": "R/repo-download.R",
-  "line": 1628,
+  "line": 1630,
   "ported": true,
   "python": "metacheck.archives._atomic:atomic_write"
  },
@@ -1402,7 +1427,7 @@
  },
  ".dataverse_guestbook_hint": {
   "file": "R/repo-download.R",
-  "line": 1189,
+  "line": 1191,
   "ported": true,
   "python": "metacheck.archives.download:_dataverse_guestbook_hint"
  },
@@ -1461,13 +1486,13 @@
  },
  ".dataverse_verify_downloads": {
   "file": "R/archive-dataverse.R",
-  "line": 1344,
+  "line": 1345,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_verify_downloads"
  },
  ".dataverse_zip_members": {
   "file": "R/archive-dataverse.R",
-  "line": 1307,
+  "line": 1308,
   "ported": true,
   "python": "metacheck.archives.dataverse:_dataverse_zip_members"
  },
@@ -1545,7 +1570,7 @@
  },
  ".download_capped": {
   "file": "R/repo-download.R",
-  "line": 1029,
+  "line": 1031,
   "python": "metacheck.archives.download:_download_capped"
  },
  ".download_failed_text": {
@@ -1555,31 +1580,31 @@
  },
  ".download_for_run": {
   "file": "R/repo-download.R",
-  "line": 1643,
+  "line": 1645,
   "ported": true,
   "python": "metacheck.archives.download:_download_for_run"
  },
  ".download_many_parallel": {
   "file": "R/repo-download.R",
-  "line": 1228,
+  "line": 1230,
   "ported": true,
   "python": "metacheck.archives.download:_download_many_parallel"
  },
  ".download_one": {
   "file": "R/repo-download.R",
-  "line": 1094,
+  "line": 1096,
   "ported": true,
   "python": "metacheck.archives.download:_download_one"
  },
  ".download_zip_to_cache": {
   "file": "R/repo-download.R",
-  "line": 1434,
+  "line": 1436,
   "ported": true,
   "python": "metacheck.archives.download:_download_zip_to_cache"
  },
  ".dryad_401_hint": {
   "file": "R/repo-download.R",
-  "line": 669,
+  "line": 671,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_401_hint"
  },
@@ -1651,7 +1676,7 @@
  },
  ".dryad_verify_downloads": {
   "file": "R/archive-dryad.R",
-  "line": 1091,
+  "line": 1092,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_verify_downloads"
  },
@@ -1663,7 +1688,7 @@
  },
  ".dryad_zip_members": {
   "file": "R/archive-dryad.R",
-  "line": 1054,
+  "line": 1055,
   "ported": true,
   "python": "metacheck.archives.dryad:_dryad_zip_members"
  },
@@ -2046,19 +2071,19 @@
  },
  ".expand_compressed": {
   "file": "R/zip-peek.R",
-  "line": 1992,
+  "line": 2061,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_expand_compressed"
  },
  ".expand_tar": {
   "file": "R/zip-peek.R",
-  "line": 1919,
+  "line": 1959,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_expand_tar"
  },
  ".expand_zip": {
   "file": "R/zip-peek.R",
-  "line": 1866,
+  "line": 1893,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_expand_zip"
  },
@@ -2215,13 +2240,13 @@
  },
  ".figshare_verify_downloads": {
   "file": "R/archive-figshare.R",
-  "line": 1474,
+  "line": 1475,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_verify_downloads"
  },
  ".figshare_zip_members": {
   "file": "R/archive-figshare.R",
-  "line": 1436,
+  "line": 1437,
   "ported": true,
   "python": "metacheck.archives.figshare:_figshare_zip_members"
  },
@@ -2336,9 +2361,14 @@
   "ported": true,
   "python": "metacheck.datacheck.columns:_find_value_label_col"
  },
+ ".fit_budget": {
+  "file": "R/zip-peek.R",
+  "line": 1743,
+  "python": "metacheck.archives.zip_peek:_fit_budget"
+ },
  ".format_wait_duration": {
   "file": "R/repo-download.R",
-  "line": 856,
+  "line": 858,
   "ported": true,
   "python": "metacheck.http:_format_wait_duration"
  },
@@ -2396,7 +2426,7 @@
  },
  ".github_raw_parts": {
   "file": "R/repo-download.R",
-  "line": 465,
+  "line": 467,
   "python": "metacheck.archives.download:_github_raw_parts"
  },
  ".github_repo_name": {
@@ -2499,13 +2529,13 @@
  },
  ".host_rate_limit_record": {
   "file": "R/repo-download.R",
-  "line": 825,
+  "line": 827,
   "ported": true,
   "python": "metacheck.archives.download:_host_rate_limit_record"
  },
  ".host_rate_limit_remaining": {
   "file": "R/repo-download.R",
-  "line": 842,
+  "line": 844,
   "python": "metacheck.archives.download:_host_rate_limit_remaining"
  },
  ".html_export_r_source": {
@@ -2587,7 +2617,7 @@
  },
  ".in_download_folder": {
   "file": "R/zip-peek.R",
-  "line": 1812,
+  "line": 1834,
   "ported": true,
   "python": "metacheck.report.html_output:_in_download_folder"
  },
@@ -2616,7 +2646,7 @@
  },
  ".inner_file_type": {
   "file": "R/zip-peek.R",
-  "line": 1787,
+  "line": 1809,
   "ported": true,
   "python": "metacheck.archives.zip_peek:_ext_type"
  },
@@ -2751,7 +2781,7 @@
  },
  ".is_login_page": {
   "file": "R/repo-download.R",
-  "line": 690,
+  "line": 692,
   "ported": true,
   "python": "metacheck.archives.download:_is_login_page"
  },
@@ -3466,7 +3496,7 @@
  },
  ".move_extracted": {
   "file": "R/zip-peek.R",
-  "line": 1838,
+  "line": 1860,
   "python": "metacheck.archives.zip_peek:_move_extracted"
  },
  ".mplus_export_syntax": {
@@ -3620,7 +3650,7 @@
  },
  ".omit_for_size": {
   "file": "R/repo-download.R",
-  "line": 304,
+  "line": 306,
   "ported": true,
   "python": "metacheck.archives.dataverse:_omit_for_size"
  },
@@ -3783,17 +3813,17 @@
  },
  ".osf_file_server_known": {
   "file": "R/repo-download.R",
-  "line": 654,
+  "line": 656,
   "python": "metacheck.archives.download:_osf_file_server_known"
  },
  ".osf_file_server_remember": {
   "file": "R/repo-download.R",
-  "line": 648,
+  "line": 650,
   "python": "metacheck.archives.download:_osf_file_server_remember"
  },
  ".osf_file_server_url": {
   "file": "R/repo-download.R",
-  "line": 612,
+  "line": 614,
   "ported": true,
   "python": "metacheck.archives.download:_osf_file_server_url"
  },
@@ -3933,7 +3963,7 @@
  },
  ".osf_storage_totals": {
   "file": "R/repo-download.R",
-  "line": 443,
+  "line": 445,
   "python": "metacheck.archives.download:_osf_storage_totals"
  },
  ".osf_tree": {
@@ -4361,19 +4391,19 @@
  },
  ".pkg_github_hint": {
   "file": "R/utils.R",
-  "line": 648,
+  "line": 671,
   "ported": true,
   "python": "metacheck.utils:_pkg_github_hint"
  },
  ".pkg_name": {
   "file": "R/utils.R",
-  "line": 644,
+  "line": 667,
   "ported": true,
   "python": "metacheck.utils:_pkg_name"
  },
  ".pkg_problem": {
   "file": "R/utils.R",
-  "line": 626,
+  "line": 649,
   "ported": true,
   "python": "metacheck.utils:_pkg_problem"
  },
@@ -4476,7 +4506,7 @@
  },
  ".py_open_writes": {
   "file": "R/reproducibility_check.R",
-  "line": 2136,
+  "line": 2140,
   "ported": true,
   "python": "metacheck.repro.core:_py_open_writes"
  },
@@ -4726,7 +4756,7 @@
  },
  ".rate_limit_wait": {
   "file": "R/repo-download.R",
-  "line": 768,
+  "line": 770,
   "ported": true,
   "python": "metacheck.archives.download:_rate_limit_wait"
  },
@@ -4910,7 +4940,7 @@
  },
  ".recovered_code_dir": {
   "file": "R/zip-peek.R",
-  "line": 1828,
+  "line": 1850,
   "ported": true,
   "python": "metacheck.report.html_output:_recovered_code_dir"
  },
@@ -4998,6 +5028,11 @@
   "line": 283,
   "python": "metacheck.io.read:_repair_links"
  },
+ ".repo_budget": {
+  "file": "R/repo-download.R",
+  "line": 1756,
+  "python": "metacheck.archives.download:_repo_budget"
+ },
  ".repo_cache_dir": {
   "file": "R/repo-download.R",
   "line": 11,
@@ -5021,6 +5056,11 @@
   "line": 22,
   "ported": true,
   "python": "metacheck.archives.download:_repo_cache_subdir"
+ },
+ ".repo_disk_bytes": {
+  "file": "R/repo-download.R",
+  "line": 1711,
+  "python": "metacheck.archives.download:_repo_disk_bytes"
  },
  ".repo_doi_records": {
   "file": "R/repo-kind.R",
@@ -5285,7 +5325,7 @@
  },
  ".repro_absent_report": {
   "file": "R/reproducibility_check.R",
-  "line": 4848,
+  "line": 4852,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_absent_report"
  },
@@ -5302,19 +5342,19 @@
  },
  ".repro_apply_folder_vars": {
   "file": "R/reproducibility_check.R",
-  "line": 3637,
+  "line": 3641,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_apply_folder_vars"
  },
  ".repro_apply_rewrites": {
   "file": "R/reproducibility_check.R",
-  "line": 4134,
+  "line": 4138,
   "ported": true,
   "python": "metacheck.repro.core:_repro_apply_rewrites"
  },
  ".repro_archive_text": {
   "file": "R/reproducibility_check.R",
-  "line": 3122,
+  "line": 3126,
   "python": "metacheck.repro.core:_repro_archive_text"
  },
  ".repro_artifact_cols": {
@@ -5340,7 +5380,7 @@
  },
  ".repro_attached_pkgs": {
   "file": "R/reproducibility_check.R",
-  "line": 1929,
+  "line": 1933,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_attached_pkgs"
  },
@@ -5352,7 +5392,7 @@
  },
  ".repro_binary_kind": {
   "file": "R/reproducibility_check.R",
-  "line": 2468,
+  "line": 2472,
   "ported": true,
   "python": "metacheck.repro.core:_repro_binary_kind"
  },
@@ -5364,24 +5404,24 @@
  },
  ".repro_bracket_depth": {
   "file": "R/reproducibility_check.R",
-  "line": 4294,
+  "line": 4298,
   "ported": true,
   "python": "metacheck.repro.core:_repro_bracket_depth"
  },
  ".repro_bracket_owner": {
   "file": "R/reproducibility_check.R",
-  "line": 3978,
+  "line": 3982,
   "python": "metacheck.repro.core:_repro_bracket_owner"
  },
  ".repro_built_names": {
   "file": "R/reproducibility_check.R",
-  "line": 2247,
+  "line": 2251,
   "ported": true,
   "python": "metacheck.repro.core:_repro_built_names"
  },
  ".repro_by_repository": {
   "file": "R/reproducibility_check.R",
-  "line": 4831,
+  "line": 4835,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_by_repository"
  },
@@ -5399,7 +5439,7 @@
  },
  ".repro_check_group": {
   "file": "R/reproducibility_check.R",
-  "line": 4722,
+  "line": 4726,
   "python": "metacheck.repro.core:_repro_check_group"
  },
  ".repro_checklist_section": {
@@ -5410,49 +5450,49 @@
  },
  ".repro_classify_install_message": {
   "file": "R/reproducibility_check.R",
-  "line": 6745,
+  "line": 6749,
   "ported": true,
   "python": "metacheck.repro.core:_repro_classify_install_message"
  },
  ".repro_clock_deadline": {
   "file": "R/reproducibility_check.R",
-  "line": 7038,
+  "line": 7042,
   "ported": true,
   "python": "metacheck.repro.core:_repro_clock_deadline"
  },
  ".repro_common_pkgs": {
   "file": "R/reproducibility_check.R",
-  "line": 2198,
+  "line": 2202,
   "ported": true,
   "python": "metacheck.repro.core:_repro_common_pkgs"
  },
  ".repro_content_sniff": {
   "file": "R/reproducibility_check.R",
-  "line": 2498,
+  "line": 2502,
   "ported": true,
   "python": "metacheck.repro.core:_repro_content_sniff"
  },
  ".repro_cran_archive_install": {
   "file": "R/reproducibility_check.R",
-  "line": 6817,
+  "line": 6821,
   "ported": true,
   "python": "metacheck.repro.core:_repro_cran_archive_install"
  },
  ".repro_date_versions": {
   "file": "R/reproducibility_check.R",
-  "line": 5866,
+  "line": 5870,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_date_versions"
  },
  ".repro_deadline": {
   "file": "R/reproducibility_check.R",
-  "line": 6966,
+  "line": 6970,
   "ported": true,
   "python": "metacheck.repro.core:_repro_deadline"
  },
  ".repro_deadline_text": {
   "file": "R/reproducibility_check.R",
-  "line": 6973,
+  "line": 6977,
   "ported": true,
   "python": "metacheck.repro.core:_repro_deadline_text"
  },
@@ -5607,7 +5647,7 @@
  },
  ".repro_download_failed_msg": {
   "file": "R/reproducibility_check.R",
-  "line": 5820,
+  "line": 5824,
   "ported": true,
   "python": "metacheck.repro.core:_repro_download_failed_msg"
  },
@@ -5619,19 +5659,19 @@
  },
  ".repro_download_stop_text": {
   "file": "R/reproducibility_check.R",
-  "line": 4430,
+  "line": 4434,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_download_stop_text"
  },
  ".repro_drop_author_lib_loc": {
   "file": "R/reproducibility_check.R",
-  "line": 4279,
+  "line": 4283,
   "ported": true,
   "python": "metacheck.repro.core:_repro_drop_author_lib_loc"
  },
  ".repro_duration": {
   "file": "R/reproducibility_check.R",
-  "line": 7001,
+  "line": 7005,
   "ported": true,
   "python": "metacheck.repro.core:_repro_duration"
  },
@@ -5648,7 +5688,7 @@
  },
  ".repro_error_message": {
   "file": "R/reproducibility_check.R",
-  "line": 4470,
+  "line": 4474,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_error_message"
  },
@@ -5659,7 +5699,7 @@
  },
  ".repro_failure_reason": {
   "file": "R/reproducibility_check.R",
-  "line": 4505,
+  "line": 4509,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_failure_reason"
  },
@@ -5682,13 +5722,13 @@
  },
  ".repro_fill_file_choice": {
   "file": "R/reproducibility_check.R",
-  "line": 4350,
+  "line": 4354,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_fill_file_choice"
  },
  ".repro_find_export_pkg": {
   "file": "R/reproducibility_check.R",
-  "line": 2230,
+  "line": 2234,
   "ported": true,
   "python": "metacheck.repro.core:_repro_find_export_pkg"
  },
@@ -5700,7 +5740,7 @@
  },
  ".repro_folder_vars": {
   "file": "R/reproducibility_check.R",
-  "line": 3420,
+  "line": 3424,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_folder_vars"
  },
@@ -5718,59 +5758,59 @@
  },
  ".repro_from_report_failed": {
   "file": "R/reproducibility_check.R",
-  "line": 4618,
+  "line": 4622,
   "python": "metacheck.repro.core:_repro_from_report_failed"
  },
  ".repro_function_names": {
   "file": "R/reproducibility_check.R",
-  "line": 2616,
+  "line": 2620,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_function_names"
  },
  ".repro_function_users": {
   "file": "R/reproducibility_check.R",
-  "line": 2641,
+  "line": 2645,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_function_users"
  },
  ".repro_groundhog_as_library": {
   "file": "R/reproducibility_check.R",
-  "line": 4315,
+  "line": 4319,
   "ported": true,
   "python": "metacheck.repro.core:_repro_groundhog_as_library"
  },
  ".repro_groups_sentence": {
   "file": "R/reproducibility_check.R",
-  "line": 4756,
+  "line": 4760,
   "python": "metacheck.repro.core:_repro_groups_sentence"
  },
  ".repro_here_roots": {
   "file": "R/reproducibility_check.R",
-  "line": 3520,
+  "line": 3524,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_here_roots"
  },
  ".repro_here_start": {
   "file": "R/reproducibility_check.R",
-  "line": 3391,
+  "line": 3395,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_here_start"
  },
  ".repro_highest_version": {
   "file": "R/reproducibility_check.R",
-  "line": 5787,
+  "line": 5791,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_highest_version"
  },
  ".repro_inputs_after_run": {
   "file": "R/reproducibility_check.R",
-  "line": 2299,
+  "line": 2303,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_inputs_after_run"
  },
  ".repro_inputs_to_report": {
   "file": "R/reproducibility_check.R",
-  "line": 2291,
+  "line": 2295,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_inputs_to_report"
  },
@@ -5782,59 +5822,59 @@
  },
  ".repro_install_limit": {
   "file": "R/reproducibility_check.R",
-  "line": 7022,
+  "line": 7026,
   "ported": true,
   "python": "metacheck.repro.core:_repro_install_limit"
  },
  ".repro_install_order": {
   "file": "R/reproducibility_check.R",
-  "line": 6445,
+  "line": 6449,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_install_order"
  },
  ".repro_install_sentence": {
   "file": "R/reproducibility_check.R",
-  "line": 4656,
+  "line": 4660,
   "python": "metacheck.repro.core:_repro_install_sentence"
  },
  ".repro_install_what": {
   "file": "R/reproducibility_check.R",
-  "line": 7011,
+  "line": 7015,
   "ported": true,
   "python": "metacheck.repro.core:_repro_install_what"
  },
  ".repro_installed_version": {
   "file": "R/reproducibility_check.R",
-  "line": 5855,
+  "line": 5859,
   "python": "metacheck.repro.core:_repro_installed_version"
  },
  ".repro_internet_text": {
   "file": "R/reproducibility_check.R",
-  "line": 4414,
+  "line": 4418,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_internet_text"
  },
  ".repro_is_font_family": {
   "file": "R/reproducibility_check.R",
-  "line": 5660,
+  "line": 5664,
   "ported": true,
   "python": "metacheck.repro.core:_repro_is_font_family"
  },
  ".repro_is_jags_model": {
   "file": "R/reproducibility_check.R",
-  "line": 2579,
+  "line": 2583,
   "ported": true,
   "python": "metacheck.repro.core:_repro_is_jags_model"
  },
  ".repro_is_py_test": {
   "file": "R/reproducibility_check.R",
-  "line": 2660,
+  "line": 2664,
   "ported": true,
   "python": "metacheck.repro.software:_repro_is_py_test"
  },
  ".repro_is_r_test": {
   "file": "R/reproducibility_check.R",
-  "line": 2654,
+  "line": 2658,
   "ported": true,
   "python": "metacheck.repro.software:_repro_is_r_test"
  },
@@ -5845,12 +5885,12 @@
  },
  ".repro_joining_function": {
   "file": "R/reproducibility_check.R",
-  "line": 4113,
+  "line": 4117,
   "python": "metacheck.repro.core:_repro_joining_function"
  },
  ".repro_keep_working_refs": {
   "file": "R/reproducibility_check.R",
-  "line": 3293,
+  "line": 3297,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_keep_working_refs"
  },
@@ -5862,55 +5902,55 @@
  },
  ".repro_later_pass": {
   "file": "R/reproducibility_check.R",
-  "line": 6984,
+  "line": 6988,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_later_pass"
  },
  ".repro_lfs_stopped": {
   "file": "R/reproducibility_check.R",
-  "line": 2917,
+  "line": 2921,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_lfs_stopped"
  },
  ".repro_lfs_stopped_text": {
   "file": "R/reproducibility_check.R",
-  "line": 2940,
+  "line": 2944,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_lfs_stopped_text"
  },
  ".repro_lfs_swaps": {
   "file": "R/reproducibility_check.R",
-  "line": 2953,
+  "line": 2957,
   "ported": true,
   "python": "metacheck.repro.core:_repro_lfs_swaps"
  },
  ".repro_listed_folders": {
   "file": "R/reproducibility_check.R",
-  "line": 3573,
+  "line": 3577,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_listed_folders"
  },
  ".repro_load_check": {
   "file": "R/reproducibility_check.R",
-  "line": 6597,
+  "line": 6601,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_load_check"
  },
  ".repro_load_check_apply": {
   "file": "R/reproducibility_check.R",
-  "line": 6655,
+  "line": 6659,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_load_check_apply"
  },
  ".repro_load_check_lines": {
   "file": "R/reproducibility_check.R",
-  "line": 6477,
+  "line": 6481,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_load_check_lines"
  },
  ".repro_load_error": {
   "file": "R/reproducibility_check.R",
-  "line": 6692,
+  "line": 6696,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_load_error"
  },
@@ -5922,7 +5962,7 @@
  },
  ".repro_make_write_folders": {
   "file": "R/reproducibility_check.R",
-  "line": 5155,
+  "line": 5159,
   "ported": true,
   "python": "metacheck.repro.core:_repro_make_write_folders"
  },
@@ -5946,19 +5986,19 @@
  },
  ".repro_min_prep_time": {
   "file": "R/reproducibility_check.R",
-  "line": 7050,
+  "line": 7054,
   "ported": true,
   "python": "metacheck.repro.core:_repro_min_prep_time"
  },
  ".repro_missing_fn_pkgs": {
   "file": "R/reproducibility_check.R",
-  "line": 1974,
+  "line": 1978,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_missing_fn_pkgs"
  },
  ".repro_missing_program": {
   "file": "R/reproducibility_check.R",
-  "line": 4440,
+  "line": 4444,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_missing_program"
  },
@@ -6005,61 +6045,61 @@
  },
  ".repro_needs_arguments": {
   "file": "R/reproducibility_check.R",
-  "line": 4877,
+  "line": 4881,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_needs_arguments"
  },
  ".repro_needs_internet_error": {
   "file": "R/reproducibility_check.R",
-  "line": 4400,
+  "line": 4404,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_needs_internet_error"
  },
  ".repro_needs_internet_text": {
   "file": "R/reproducibility_check.R",
-  "line": 4422,
+  "line": 4426,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_needs_internet_text"
  },
  ".repro_needs_person_error": {
   "file": "R/reproducibility_check.R",
-  "line": 4901,
+  "line": 4905,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_needs_person_error"
  },
  ".repro_neutralise_env_calls": {
   "file": "R/reproducibility_check.R",
-  "line": 4924,
+  "line": 4928,
   "ported": true,
   "python": "metacheck.repro.core:_repro_neutralise_env_calls"
  },
  ".repro_neutralise_rprofile": {
   "file": "R/reproducibility_check.R",
-  "line": 5043,
+  "line": 5047,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_neutralise_rprofile"
  },
  ".repro_neutralise_setwd": {
   "file": "R/reproducibility_check.R",
-  "line": 4225,
+  "line": 4229,
   "ported": true,
   "python": "metacheck.repro.core:_repro_neutralise_setwd"
  },
  ".repro_no_prep_text": {
   "file": "R/reproducibility_check.R",
-  "line": 7056,
+  "line": 7060,
   "ported": true,
   "python": "metacheck.repro.core:_repro_no_prep_text"
  },
  ".repro_norm_rel": {
   "file": "R/reproducibility_check.R",
-  "line": 3840,
+  "line": 3844,
   "ported": true,
   "python": "metacheck.repro.core:_repro_norm_rel"
  },
  ".repro_normalize_basename": {
   "file": "R/reproducibility_check.R",
-  "line": 2007,
+  "line": 2011,
   "ported": true,
   "python": "metacheck.repro.core:_repro_normalize_basename"
  },
@@ -6083,37 +6123,37 @@
  },
  ".repro_not_loadable_msg": {
   "file": "R/reproducibility_check.R",
-  "line": 6684,
+  "line": 6688,
   "ported": true,
   "python": "metacheck.repro.core:_repro_not_loadable_msg"
  },
  ".repro_not_run_report": {
   "file": "R/reproducibility_check.R",
-  "line": 2677,
+  "line": 2681,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_not_run_report"
  },
  ".repro_old_default_lines": {
   "file": "R/reproducibility_check.R",
-  "line": 5119,
+  "line": 5123,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_old_default_lines"
  },
  ".repro_old_defaults": {
   "file": "R/reproducibility_check.R",
-  "line": 5097,
+  "line": 5101,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_old_defaults"
  },
  ".repro_old_defaults_text": {
   "file": "R/reproducibility_check.R",
-  "line": 5134,
+  "line": 5138,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_old_defaults_text"
  },
  ".repro_on_cran": {
   "file": "R/reproducibility_check.R",
-  "line": 5808,
+  "line": 5812,
   "python": "metacheck.repro.core:_repro_on_cran"
  },
  ".repro_oom_text": {
@@ -6124,7 +6164,7 @@
  },
  ".repro_order_path": {
   "file": "R/reproducibility_check.R",
-  "line": 6933,
+  "line": 6937,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_order_path"
  },
@@ -6136,25 +6176,25 @@
  },
  ".repro_output_cut_note": {
   "file": "R/reproducibility_check.R",
-  "line": 3829,
+  "line": 3833,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_output_cut_note"
  },
  ".repro_output_head": {
   "file": "R/reproducibility_check.R",
-  "line": 3815,
+  "line": 3819,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_output_head"
  },
  ".repro_p_load_as_library": {
   "file": "R/reproducibility_check.R",
-  "line": 4331,
+  "line": 4335,
   "ported": true,
   "python": "metacheck.repro.core:_repro_p_load_as_library"
  },
  ".repro_package_plan": {
   "file": "R/reproducibility_check.R",
-  "line": 2997,
+  "line": 3001,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_package_plan"
  },
@@ -6166,7 +6206,7 @@
  },
  ".repro_path_fix_text": {
   "file": "R/reproducibility_check.R",
-  "line": 1631,
+  "line": 1635,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_path_fix_text"
  },
@@ -6178,7 +6218,7 @@
  },
  ".repro_path_piece": {
   "file": "R/reproducibility_check.R",
-  "line": 4036,
+  "line": 4040,
   "python": "metacheck.repro.core:_repro_path_piece"
  },
  ".repro_place_files": {
@@ -6207,18 +6247,18 @@
  },
  ".repro_plan_rewrites": {
   "file": "R/reproducibility_check.R",
-  "line": 3163,
+  "line": 3167,
   "python": "metacheck.repro.core:_repro_plan_rewrites"
  },
  ".repro_plan_sources": {
   "file": "R/reproducibility_check.R",
-  "line": 2738,
+  "line": 2742,
   "ported": true,
   "python": "metacheck.repro.core:_repro_plan_sources"
  },
  ".repro_platform_of": {
   "file": "R/reproducibility_check.R",
-  "line": 4629,
+  "line": 4633,
   "python": "metacheck.repro.core:_repro_platform_of"
  },
  ".repro_prov_files": {
@@ -6272,25 +6312,25 @@
  },
  ".repro_py_import_links": {
   "file": "R/reproducibility_check.R",
-  "line": 3875,
+  "line": 3879,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_py_import_links"
  },
  ".repro_py_import_names": {
   "file": "R/reproducibility_check.R",
-  "line": 3885,
+  "line": 3889,
   "ported": true,
   "python": "metacheck.repro.software:_repro_py_import_names"
  },
  ".repro_py_imported": {
   "file": "R/reproducibility_check.R",
-  "line": 3913,
+  "line": 3917,
   "ported": true,
   "python": "metacheck.repro.software:_repro_py_imported"
  },
  ".repro_py_local_closure": {
   "file": "R/reproducibility_check.R",
-  "line": 3859,
+  "line": 3863,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_py_local_closure"
  },
@@ -6326,7 +6366,7 @@
  },
  ".repro_py_starts_server": {
   "file": "R/reproducibility_check.R",
-  "line": 4388,
+  "line": 4392,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_py_starts_server"
  },
@@ -6349,72 +6389,72 @@
  },
  ".repro_read_failed_msg": {
   "file": "R/reproducibility_check.R",
-  "line": 5835,
+  "line": 5839,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_read_failed_msg"
  },
  ".repro_recorded_advice": {
   "file": "R/reproducibility_check.R",
-  "line": 6118,
+  "line": 6122,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_advice"
  },
  ".repro_recorded_counts": {
   "file": "R/reproducibility_check.R",
-  "line": 6040,
+  "line": 6044,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_counts"
  },
  ".repro_recorded_limits": {
   "file": "R/reproducibility_check.R",
-  "line": 6003,
+  "line": 6007,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_limits"
  },
  ".repro_recorded_n": {
   "file": "R/reproducibility_check.R",
-  "line": 6107,
+  "line": 6111,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_n"
  },
  ".repro_recorded_plan": {
   "file": "R/reproducibility_check.R",
-  "line": 5911,
+  "line": 5915,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_plan"
  },
  ".repro_recorded_preview": {
   "file": "R/reproducibility_check.R",
-  "line": 6132,
+  "line": 6136,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_preview"
  },
  ".repro_recorded_r_used": {
   "file": "R/reproducibility_check.R",
-  "line": 5996,
+  "line": 6000,
   "python": "metacheck.repro.core:_repro_recorded_r_used"
  },
  ".repro_recorded_report": {
   "file": "R/reproducibility_check.R",
-  "line": 6073,
+  "line": 6077,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_report"
  },
  ".repro_recorded_sources": {
   "file": "R/reproducibility_check.R",
-  "line": 5979,
+  "line": 5983,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_sources"
  },
  ".repro_recorded_summary": {
   "file": "R/reproducibility_check.R",
-  "line": 6054,
+  "line": 6058,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_summary"
  },
  ".repro_recorded_warning": {
   "file": "R/reproducibility_check.R",
-  "line": 6023,
+  "line": 6027,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_recorded_warning"
  },
@@ -6426,70 +6466,70 @@
  },
  ".repro_ref_checkable": {
   "file": "R/reproducibility_check.R",
-  "line": 2279,
+  "line": 2283,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_ref_checkable"
  },
  ".repro_rel_from": {
   "file": "R/reproducibility_check.R",
-  "line": 3657,
+  "line": 3661,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_rel_from"
  },
  ".repro_relocate_relative_paths": {
   "file": "R/reproducibility_check.R",
-  "line": 3747,
+  "line": 3751,
   "ported": true,
   "python": "metacheck.repro.core:_repro_relocate_relative_paths"
  },
  ".repro_replace_screen_calls": {
   "file": "R/reproducibility_check.R",
-  "line": 5023,
+  "line": 5027,
   "python": "metacheck.repro.core:_repro_replace_screen_calls"
  },
  ".repro_repos_lines": {
   "file": "R/reproducibility_check.R",
-  "line": 6432,
+  "line": 6436,
   "ported": true,
   "python": "metacheck.repro.docker:_REPOS_LINES"
  },
  ".repro_rewrite_preview": {
   "file": "R/reproducibility_check.R",
-  "line": 3213,
+  "line": 3217,
   "python": "metacheck.repro.core:_repro_rewrite_preview"
  },
  ".repro_run_after_lines": {
   "file": "R/reproducibility_check.R",
-  "line": 5061,
+  "line": 5065,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_run_after_lines"
  },
  ".repro_run_by_source": {
   "file": "R/reproducibility_check.R",
-  "line": 1905,
+  "line": 1909,
   "ported": true,
   "python": "metacheck.repro.runsupport:_repro_run_by_source"
  },
  ".repro_run_counts": {
   "file": "R/reproducibility_check.R",
-  "line": 4805,
+  "line": 4809,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_run_counts"
  },
  ".repro_run_folders": {
   "file": "R/reproducibility_check.R",
-  "line": 3679,
+  "line": 3683,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_run_folders"
  },
  ".repro_run_light": {
   "file": "R/reproducibility_check.R",
-  "line": 4783,
+  "line": 4787,
   "python": "metacheck.repro.core:_repro_run_light"
  },
  ".repro_same_version": {
   "file": "R/reproducibility_check.R",
-  "line": 5799,
+  "line": 5803,
   "ported": true,
   "python": "metacheck.repro.core:_repro_same_version"
  },
@@ -6501,25 +6541,25 @@
  },
  ".repro_script_path": {
   "file": "R/reproducibility_check.R",
-  "line": 6894,
+  "line": 6898,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_script_path"
  },
  ".repro_script_places": {
   "file": "R/reproducibility_check.R",
-  "line": 6940,
+  "line": 6944,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_script_places"
  },
  ".repro_short_of_time": {
   "file": "R/reproducibility_check.R",
-  "line": 7032,
+  "line": 7036,
   "ported": true,
   "python": "metacheck.repro.core:_repro_short_of_time"
  },
  ".repro_shown_location": {
   "file": "R/reproducibility_check.R",
-  "line": 6953,
+  "line": 6957,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_shown_location"
  },
@@ -6531,19 +6571,19 @@
  },
  ".repro_slash_paths": {
   "file": "R/reproducibility_check.R",
-  "line": 5720,
+  "line": 5724,
   "ported": true,
   "python": "metacheck.repro.core:_repro_slash_paths"
  },
  ".repro_slash_report": {
   "file": "R/reproducibility_check.R",
-  "line": 5772,
+  "line": 5776,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_slash_report"
  },
  ".repro_slash_rows": {
   "file": "R/reproducibility_check.R",
-  "line": 5755,
+  "line": 5759,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_slash_rows"
  },
@@ -6579,19 +6619,19 @@
  },
  ".repro_source_unknown": {
   "file": "R/reproducibility_check.R",
-  "line": 4646,
+  "line": 4650,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_source_unknown"
  },
  ".repro_source_unknown_text": {
   "file": "R/reproducibility_check.R",
-  "line": 4665,
+  "line": 4669,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_source_unknown_text"
  },
  ".repro_sourced_file": {
   "file": "R/reproducibility_check.R",
-  "line": 1880,
+  "line": 1884,
   "ported": true,
   "python": "metacheck.repro.core:_repro_sourced_file"
  },
@@ -6603,19 +6643,19 @@
  },
  ".repro_starts_app": {
   "file": "R/reproducibility_check.R",
-  "line": 4375,
+  "line": 4379,
   "ported": true,
   "python": "metacheck.repro.outcomes:_repro_starts_app"
  },
  ".repro_static_light": {
   "file": "R/reproducibility_check.R",
-  "line": 2310,
+  "line": 2314,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_static_light"
  },
  ".repro_strip_setwd_folder": {
   "file": "R/reproducibility_check.R",
-  "line": 5681,
+  "line": 5685,
   "ported": true,
   "python": "metacheck.repro.core:_repro_strip_setwd_folder"
  },
@@ -6735,7 +6775,7 @@
  },
  ".repro_time_left": {
   "file": "R/reproducibility_check.R",
-  "line": 6996,
+  "line": 7000,
   "ported": true,
   "python": "metacheck.repro.core:_repro_time_left"
  },
@@ -6747,7 +6787,7 @@
  },
  ".repro_unique_script_names": {
   "file": "R/reproducibility_check.R",
-  "line": 6910,
+  "line": 6914,
   "ported": true,
   "python": "metacheck.repro.layout:_repro_unique_script_names"
  },
@@ -6759,29 +6799,29 @@
  },
  ".repro_unpack_archives": {
   "file": "R/reproducibility_check.R",
-  "line": 3082,
+  "line": 3086,
   "python": "metacheck.repro.core:_repro_unpack_archives"
  },
  ".repro_unpacked_paths": {
   "file": "R/reproducibility_check.R",
-  "line": 3030,
+  "line": 3034,
   "python": "metacheck.repro.core:_repro_unpacked_paths"
  },
  ".repro_upgrade_stan": {
   "file": "R/reproducibility_check.R",
-  "line": 5497,
+  "line": 5501,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_upgrade_stan"
  },
  ".repro_upgrade_stan_files": {
   "file": "R/reproducibility_check.R",
-  "line": 5638,
+  "line": 5642,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_upgrade_stan_files"
  },
  ".repro_upgrade_stan_in_r": {
   "file": "R/reproducibility_check.R",
-  "line": 5603,
+  "line": 5607,
   "ported": true,
   "python": "metacheck.repro.recorded:_repro_upgrade_stan_in_r"
  },
@@ -6847,13 +6887,13 @@
  },
  ".reshare_verify_downloads": {
   "file": "R/archive-reshare.R",
-  "line": 799,
+  "line": 800,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_verify_downloads"
  },
  ".reshare_zip_members": {
   "file": "R/archive-reshare.R",
-  "line": 762,
+  "line": 763,
   "ported": true,
   "python": "metacheck.archives.reshare:_reshare_zip_members"
  },
@@ -6864,7 +6904,7 @@
  },
  ".resp_bytes": {
   "file": "R/repo-download.R",
-  "line": 332,
+  "line": 334,
   "ported": true,
   "python": "metacheck.archives.dataverse:_fetch_file_status"
  },
@@ -6882,13 +6922,13 @@
  },
  ".run_download_want": {
   "file": "R/repo-download.R",
-  "line": 1653,
+  "line": 1655,
   "ported": true,
   "python": "metacheck.archives.download:_run_download_want"
  },
  ".safe_write_path": {
   "file": "R/utils.R",
-  "line": 535,
+  "line": 539,
   "ported": true,
   "python": "metacheck.utils:_safe_write_path"
  },
@@ -7801,33 +7841,33 @@
  },
  ".storage_archive_skip": {
   "file": "R/repo-download.R",
-  "line": 406,
+  "line": 408,
   "python": "metacheck.archives.download:_storage_archive_skip"
  },
  ".storage_backoff": {
   "file": "R/repo-download.R",
-  "line": 739,
+  "line": 741,
   "python": "metacheck.archives.download:_storage_backoff"
  },
  ".storage_is_transient": {
   "file": "R/repo-download.R",
-  "line": 730,
+  "line": 732,
   "ported": true,
   "python": "metacheck.archives.download:_storage_is_transient"
  },
  ".storage_is_transient_factory": {
   "file": "R/repo-download.R",
-  "line": 958,
+  "line": 960,
   "python": "metacheck.archives.download:_storage_is_transient_factory"
  },
  ".storage_retry_after_factory": {
   "file": "R/repo-download.R",
-  "line": 922,
+  "line": 924,
   "python": "metacheck.archives.download:_storage_retry_after_factory"
  },
  ".storage_size_estimate": {
   "file": "R/repo-download.R",
-  "line": 380,
+  "line": 382,
   "python": "metacheck.archives.download:_storage_size_estimate"
  },
  ".strip_llm_wrapper": {
@@ -8081,7 +8121,7 @@
  },
  ".url_host_is": {
   "file": "R/repo-download.R",
-  "line": 599,
+  "line": 601,
   "ported": true,
   "python": "metacheck.archives.download:_url_host_is"
  },
@@ -8141,7 +8181,7 @@
  },
  ".wait_out_known_rate_limit": {
   "file": "R/repo-download.R",
-  "line": 987,
+  "line": 989,
   "python": "metacheck.archives.download:_wait_out_known_rate_limit"
  },
  ".where_acknows_txt": {
@@ -8411,7 +8451,7 @@
  },
  ".zip_timeout_for_size": {
   "file": "R/repo-download.R",
-  "line": 1426,
+  "line": 1428,
   "ported": true,
   "python": "metacheck.archives.download:_zip_timeout_for_size"
  },
@@ -8576,37 +8616,37 @@
  },
  "code_abs_path": {
   "file": "R/code_check.R",
-  "line": 1237,
+  "line": 1238,
   "ported": true,
   "python": "metacheck.codecheck.core:code_abs_path"
  },
  "code_extract_py": {
   "file": "R/code_check.R",
-  "line": 1018,
+  "line": 1019,
   "ported": true,
   "python": "metacheck.codecheck.core:code_extract_py"
  },
  "code_extract_qmd_py": {
   "file": "R/code_check.R",
-  "line": 1130,
+  "line": 1131,
   "ported": true,
   "python": "metacheck.codecheck.core:code_extract_qmd_py"
  },
  "code_extract_r": {
   "file": "R/code_check.R",
-  "line": 915,
+  "line": 916,
   "ported": true,
   "python": "metacheck.codecheck.core:code_extract_r"
  },
  "code_file_refs": {
   "file": "R/code_check.R",
-  "line": 3027,
+  "line": 3026,
   "ported": true,
   "python": "metacheck.codecheck.core:code_file_refs"
  },
  "code_install_packages": {
   "file": "R/code_check.R",
-  "line": 1508,
+  "line": 1509,
   "ported": true,
   "python": "metacheck.codecheck.core:code_install_packages"
  },
@@ -8618,31 +8658,31 @@
  },
  "code_library_lines": {
   "file": "R/code_check.R",
-  "line": 1935,
+  "line": 1936,
   "ported": true,
   "python": "metacheck.codecheck.core:code_library_lines"
  },
  "code_library_names": {
   "file": "R/code_check.R",
-  "line": 2044,
+  "line": 2045,
   "ported": true,
   "python": "metacheck.codecheck.core:code_library_names"
  },
  "code_line_stats": {
   "file": "R/code_check.R",
-  "line": 1885,
+  "line": 1886,
   "ported": true,
   "python": "metacheck.codecheck.core:code_line_stats"
  },
  "code_packages": {
   "file": "R/code_check.R",
-  "line": 2277,
+  "line": 2278,
   "ported": true,
   "python": "metacheck.codecheck.core:code_packages"
  },
  "code_parse_r": {
   "file": "R/code_check.R",
-  "line": 1193,
+  "line": 1194,
   "ported": true,
   "python": "metacheck.codecheck.core:code_parse_r"
  },
@@ -8654,13 +8694,13 @@
  },
  "code_remove_comments": {
   "file": "R/code_check.R",
-  "line": 1648,
+  "line": 1649,
   "ported": true,
   "python": "metacheck.codecheck.core:code_remove_comments"
  },
  "code_setwd": {
   "file": "R/code_check.R",
-  "line": 1433,
+  "line": 1434,
   "ported": true,
   "python": "metacheck.codecheck.core:code_setwd"
  },
@@ -8976,7 +9016,7 @@
  },
  "dataverse_file_download": {
   "file": "R/archive-dataverse.R",
-  "line": 1006,
+  "line": 1007,
   "ported": true,
   "python": "metacheck.archives.dataverse:dataverse_file_download"
  },
@@ -9042,7 +9082,7 @@
  },
  "download_repo_files": {
   "file": "R/repo-download.R",
-  "line": 1780,
+  "line": 1951,
   "ported": true,
   "python": "metacheck.archives.download:download_repo_files"
  },
@@ -9054,7 +9094,7 @@
  },
  "dryad_file_download": {
   "file": "R/archive-dryad.R",
-  "line": 773,
+  "line": 774,
   "ported": true,
   "python": "metacheck.archives.dryad:dryad_file_download"
  },
@@ -9185,7 +9225,7 @@
  },
  "figshare_file_download": {
   "file": "R/archive-figshare.R",
-  "line": 1132,
+  "line": 1133,
   "ported": true,
   "python": "metacheck.archives.figshare:figshare_file_download"
  },
@@ -10569,7 +10609,7 @@
  },
  "repro_defined_vars": {
   "file": "R/reproducibility_check.R",
-  "line": 2163,
+  "line": 2167,
   "ported": true,
   "python": "metacheck.repro.core:repro_defined_vars"
  },
@@ -10593,13 +10633,13 @@
  },
  "repro_file_io": {
   "file": "R/reproducibility_check.R",
-  "line": 2044,
+  "line": 2048,
   "ported": true,
   "python": "metacheck.repro.core:repro_file_io"
  },
  "repro_install_deps": {
   "file": "R/reproducibility_check.R",
-  "line": 6209,
+  "line": 6213,
   "ported": true,
   "python": "metacheck.repro.core:repro_install_deps"
  },
@@ -10623,13 +10663,13 @@
  },
  "repro_materialize_layout": {
   "file": "R/reproducibility_check.R",
-  "line": 2815,
+  "line": 2819,
   "ported": true,
   "python": "metacheck.repro.core:repro_materialize_layout"
  },
  "repro_missing_inputs": {
   "file": "R/reproducibility_check.R",
-  "line": 2344,
+  "line": 2348,
   "ported": true,
   "python": "metacheck.repro.core:repro_missing_inputs"
  },
@@ -10641,13 +10681,13 @@
  },
  "repro_run_order": {
   "file": "R/reproducibility_check.R",
-  "line": 1715,
+  "line": 1719,
   "ported": true,
   "python": "metacheck.repro.core:repro_run_order"
  },
  "repro_run_scripts": {
   "file": "R/reproducibility_check.R",
-  "line": 7121,
+  "line": 7125,
   "ported": true,
   "python": "metacheck.repro.core:repro_run_scripts"
  },
@@ -10671,7 +10711,7 @@
  },
  "repro_write_scripts": {
   "file": "R/reproducibility_check.R",
-  "line": 5290,
+  "line": 5294,
   "ported": true,
   "python": "metacheck.repro.core:repro_write_scripts"
  },
@@ -10701,7 +10741,7 @@
  },
  "reshare_file_download": {
   "file": "R/archive-reshare.R",
-  "line": 479,
+  "line": 480,
   "ported": true,
   "python": "metacheck.archives.reshare:reshare_file_download"
  },
@@ -11153,7 +11193,7 @@
  },
  "zip_decision": {
   "file": "R/zip-peek.R",
-  "line": 2069,
+  "line": 2144,
   "ported": true,
   "python": "metacheck.archives.zip_peek:zip_decision"
  },

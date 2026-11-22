@@ -498,28 +498,25 @@ def _repro_fetch_files(
     from metacheck.archives import download
 
     mask = [bool(r) for r in rows]
-    counts: dict[str, float] = {}
-    if "repo_url" in structure_df.columns:
-        for u in _chr_list(structure_df["repo_url"]):
-            if u is not None:
-                counts[u] = counts.get(u, 0) + 1
     try:
         # downloaded under the path in the deposit, where the cache keeps it, not where
-        # unpacking its archive puts it in the run (#648)
-        want = structure_df.loc[mask].copy()
-        if "file_path_deposit" in want.columns:
-            deposit = list(want["file_path_deposit"])
-            current = list(want["file_path"]) if "file_path" in want.columns else deposit
-            want["file_path"] = pd.Series(
+        # unpacking its archive puts it in the run (#648). The whole listing, under the same
+        # paths, gives the file counts and the choice of files for the budget (#699).
+        listing = structure_df.copy()
+        if "file_path_deposit" in listing.columns:
+            deposit = list(listing["file_path_deposit"])
+            current = list(listing["file_path"]) if "file_path" in listing.columns else deposit
+            listing["file_path"] = pd.Series(
                 [d if not is_missing(d) else c for d, c in zip(deposit, current, strict=True)],
-                index=want.index,
+                index=listing.index,
                 dtype="string",
             )
+        want = listing.loc[mask]
         dl = download.download_repo_files(
             want,
             max_file_size=max_file_size,
             max_download_size=max_download_size,
-            repo_file_counts=counts,
+            repo_listing=listing,
             cache=cache,
             skip_on_api_limit=skip_on_api_limit,
         )

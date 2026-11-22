@@ -161,8 +161,9 @@ def test_the_files_of_a_repository_with_their_own_address_start_from_what_is_cac
         warnings.simplefilter("ignore")
         dl = download_repo_files(files, max_download_size=1, cache=True)
     assert [n for n, _ in seen] == [["a.csv"]]
-    # a whole copy of the archive may use only what is left of the budget
-    assert seen[0][1] == 1024 * 1024 - 600000 - 300000
+    # a whole copy of the archive may use only what is left of the budget after its member and
+    # the places of the files still chosen (b.csv and c.csv): none, so by byte range (#699)
+    assert seen[0][1] == 0
     assert dl["file_location"].notna().tolist() == [True, True, False, False]
     assert math.isfinite(seen[0][1])
     shutil.rmtree(_repo_cache_subdir(repo), ignore_errors=True)

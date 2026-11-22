@@ -442,7 +442,7 @@ def _import_failure(label: str, exc: BaseException, dependencies: Sequence[str] 
     return f"The module '{label}' cannot run: {problem}{hint}."
 
 
-def _safe_write_path(path: str | None) -> str | None:
+def _safe_write_path(path: str | None, root: str | None = None) -> str | None:
     """Port of R/utils.R::.safe_write_path(): shorten an over-long path.
 
     Over-long components (or, when the absolute path exceeds the platform
@@ -450,6 +450,9 @@ def _safe_write_path(path: str | None) -> str | None:
     hash of the original so the result stays unique; the leaf keeps its
     extension. Every part is first made portable (:func:`_portable_name`). Warns when a
     path was shortened (or is still too long).
+
+    *root*, when given, is a folder whose names are kept (a repository's download folder): only
+    the part of the path below it is shortened, unless that is not enough (metacheck #699).
     """
     if path is None or is_missing(path) or not isinstance(path, str) or path == "":
         return path
@@ -481,17 +484,41 @@ def _safe_write_path(path: str | None) -> str | None:
         except OSError:
             return len(joined)
 
-    if abs_len() > _MAX_PATH_CHARS:
-        for j, p in enumerate(parts):
-            if len(p) > long_comp:
-                parts[j] = _shorten_component(p, long_comp)
+    # The folders of `root` are kept as they are, when the path lies below it: a repository's
+    # folder shortened like any other put the files taken out of its archives in a second
+    # folder beside it (github.com_Lakens_metacheck-dow-2eda7281 next to
+    # github.com_Lakens_metacheck-download-test), where the repository's download budget, which
+    # counts its own folder, did not see them (#699). Only when the path cannot be made short
+    # enough below `root` are the folders of `root` shortened as well.
+    n_fixed = 0
+    if isinstance(root, str) and root != "":
+        rp: list[str] = [p if p is not None else "NA" for p in strsplit(root, r"[/\\]")]
+        rp_portable = _portable_name(rp)
+        rp = [
+            p if i == 0 and re.match("^[A-Za-z]:$", p) else str(q)
+            for i, (p, q) in enumerate(zip(rp, rp_portable, strict=True))
+        ]
+        if len(rp) < len(parts) and parts[: len(rp)] == rp:
+            n_fixed = len(rp)
+
+    def shorten(free: list[bool]) -> None:
+        nonlocal changed
+        for j in range(len(parts)):
+            if free[j] and len(parts[j]) > long_comp:
+                parts[j] = _shorten_component(parts[j], long_comp)
                 changed = True
-        while abs_len() > _MAX_PATH_CHARS and parts:
-            j = max(range(len(parts)), key=lambda k: (len(parts[k]), -k))
+        # Still over (very deep tree of moderate components): tighten the longest.
+        while abs_len() > _MAX_PATH_CHARS and any(free):
+            j = max((k for k in range(len(parts)) if free[k]), key=lambda k: (len(parts[k]), -k))
             if len(parts[j]) <= min_comp:
                 break
             parts[j] = _shorten_component(parts[j], len(parts[j]) - 1)
             changed = True
+
+    if abs_len() > _MAX_PATH_CHARS:
+        shorten([k >= n_fixed for k in range(len(parts))])
+        if abs_len() > _MAX_PATH_CHARS and n_fixed > 0:
+            shorten([True] * len(parts))
     new_path = "/".join(parts)
 
     if abs_len() > _MAX_PATH_CHARS:

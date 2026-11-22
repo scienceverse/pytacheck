@@ -197,7 +197,6 @@ def code_check(
         _code_predownload,
         _in_others_code_folder,
         _in_renv_folder,
-        _repo_file_counts,
         _version_pin_scan,
         code_packages,
     )
@@ -283,9 +282,9 @@ def code_check(
         return df
 
     set_language(all_files)
-    # each repository's whole listing, counted before the archive/output
-    # expansions add rows: the size caps' messages quote it
-    listing_counts = _repo_file_counts(all_files)
+    # each repository's whole listing, before the expand steps add archive members: the catch-up
+    # download counts with it too, and makes its choice of files for the budget from it (#699)
+    listing = all_files.copy()
 
     # one download pass for everything the steps below might need
     predl_gated: list[pd.DataFrame | None] = []
@@ -323,6 +322,7 @@ def code_check(
                 cache,
                 max_download_size=max_download_size,
                 max_file_size=max_file_size,
+                max_files_per_repo=max_files_per_repo,
             ).reset_index(drop=True)
         )
     all_files.attrs = {}
@@ -399,10 +399,10 @@ def code_check(
                 max_file_size=max_file_size,
                 max_download_size=max_download_size,
                 max_files_per_repo=max_files_per_repo,
-                # the repository's whole listing, as in the pre-pass: R
-                # counts only its code files, so a refused repository was
-                # reported twice with different counts (UPSTREAM_ISSUES U88)
-                repo_file_counts=listing_counts,
+                # the repository's whole listing, as in the pre-pass: its file count and the
+                # choice of files for the budget (#699); R once counted only its code files, so
+                # a refused repository was reported twice with different counts (U88)
+                repo_listing=listing,
                 cache=cache,
                 skip_on_api_limit=skip_on_api_limit,
             )
