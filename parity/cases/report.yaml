@@ -536,6 +536,16 @@
   "py": "tests.report.parity_helpers.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('no_paths')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('no_paths')"}}
+- "id": "file_tree.block.junk_only"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('junk_only')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('junk_only')"}}
+- "id": "file_tree.block.many"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/checklist_helpers.R'); rc_ft_block('many')}", "py": "__import__('tests.report.checklist_helpers', fromlist=['x']).rc_ft_block('many')"}}
 - "id": "file_tree.block.local"
   "r": "identity"
   "py": "tests.report.parity_helpers.identity"

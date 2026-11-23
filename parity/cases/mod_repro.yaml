@@ -269,6 +269,38 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('stata_with_do')})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('stata_with_do')"
+- "id": "reproducibility_check.spss_read_by_code"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('spss_read_by_code')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('spss_read_by_code')"
+- "id": "reproducibility_check.stata_read_by_code"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('stata_read_by_code')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('stata_read_by_code')"
+- "id": "reproducibility_check.sav_not_read_by_code"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('sav_not_read_by_code')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('sav_not_read_by_code')"
+- "id": "reproducibility_check.no_code_refused"
+  "r": "identity"
+  "py": "tests.mod_repro.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('no_code_refused')})"
+        "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('no_code_refused')"
 - "id": "reproducibility_check.nonr_only"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"

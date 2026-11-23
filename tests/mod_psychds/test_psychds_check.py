@@ -500,13 +500,13 @@ REPO_EXPECTED = {
     ),
     "noncompliant": (
         "yellow",
-        [2, 1, 0, 3, 3],
+        [1, 2, 0, 3, 3],  # the data/ item needs a data file under data/ (#695, point 33)
         ["analysis/analysis.R", "documentation/notes.txt", "data/study-survey_data.csv"],
         True,
     ),
     "multistudy": (
         "yellow",
-        [2, 1, 1, 2, 2],
+        [1, 2, 1, 2, 2],
         [
             "README.md",
             "study-ex1/data/study-data_data.csv",

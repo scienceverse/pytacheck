@@ -15,7 +15,8 @@
       "summary_text",
       "summary_table",
       "na_replace",
-      "version_pin"
+      "version_pin",
+      "count_refused"
     ],
     "v": [
       {
@@ -644,6 +645,9 @@
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"analysis.do\", \"analysis.R\", \"fit.m\", \n\"model.inp\", \"model.sas\", \"notebook.ipynb\", \"notes.qmd\", \"report.Rmd\", \n\"script.py\", \"syntax.sps\", \"results.jasp\"), \"% Comments\" = c(\"50%\", \n\"8%\", \"25%\", \"20%\", \"33%\", \"25%\", \"0%\", \"25%\", \"0%\", \"33%\", \"\"\n), \"Missing Files\" = c(1L, 2L, 1L, 0L, 1L, 1L, 0L, 0L, 1L, 1L, \nNA), \"Absolute Paths\" = c(0L, 2L, 0L, 0L, 1L, 0L, 0L, 0L, 1L, \n0L, NA), \"Code Between Libraries\" = c(NA, 9L, NA, NA, NA, 1L, \nNA, NA, 1L, NA, NA)), row.names = c(NA, 11L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code files not checked",
+          "We did not check 1 code file, for the reason given with each:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"results.jasp\", Reason = \"JASP files are listed, not checked: a .jasp file is a binary archive\"), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). Note: this percentage counts only `#` comments; 1 of these Python file is documented via docstrings (`\"\"\"...\"\"\"`), which are not counted as comments here since they are string literals, not comment syntax.",
           "#### Missing Files",
@@ -679,7 +683,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 3 R, 2 Python, 1 SAS, 1 SPSS, 1 Stata, 1 Mplus, 1 MATLAB, and 1 JASP code files.\n-  2 code files (notes.qmd, script.py) had no comments.\n-  setwd() calls were found.\n-  install.packages() calls were found.\n-  Libraries/imports were loaded in multiple places in analysis.R.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility.\n-  No list of Python package versions (requirements.txt or similar) was found. Consider adding one to improve computational reproducibility."
+          "\n-  We found 3 R, 2 Python, 1 SAS, 1 SPSS, 1 Stata, 1 Mplus, 1 MATLAB, and 1 JASP code files.\n-  1 code file was not checked; the report names it and says why.\n-  2 code files (notes.qmd, script.py) had no comments.\n-  setwd() calls were found.\n-  install.packages() calls were found.\n-  Libraries/imports were loaded in multiple places in analysis.R.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility.\n-  No list of Python package versions (requirements.txt or similar) was found. Consider adding one to improve computational reproducibility."
         ]
       },
       {
@@ -925,9 +929,32 @@
             ]
           }
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

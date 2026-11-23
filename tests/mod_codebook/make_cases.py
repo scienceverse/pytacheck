@@ -174,6 +174,14 @@ def cases() -> list[dict[str, Any]]:
             f"cbc_prev('scales_mixed', paper=__import__('metacheck').read('{BIBR12}'))",
         )
     )
+    # data_check refused a repository for its number of files: yellow, naming it (#706)
+    out.append(
+        module_case(
+            "codebook_check.count_refused",
+            "cbc_prev_refused('empty')",
+            "cbc_prev_refused('empty')",
+        )
+    )
     # data_check output with a zero-row structure table and no previews
     out.append(
         module_case(

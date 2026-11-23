@@ -2,7 +2,10 @@
   "id": "code_check.all_failed",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "cannot open file '/does/not/exist/analysis.R': No such file or directory",
+    "cannot open file '/does/not/exist/helpers.R': No such file or directory"
+  ],
   "value": {
     "t": "module_output",
     "names": [
@@ -15,7 +18,8 @@
       "summary_text",
       "summary_table",
       "na_replace",
-      "version_pin"
+      "version_pin",
+      "count_refused"
     ],
     "v": [
       {
@@ -137,6 +141,9 @@
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"<a href='/does/not/exist/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='/does/not/exist/helpers.R' target='_blank'>helpers.R<\/a>\"\n)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code files not checked",
+          "We did not check 2 code files, for the reason given with each:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"analysis.R\", \"helpers.R\"), Reason = c(\"URL using bad/illegal format or missing URL:<br>URL rejected: No host present\", \n\"URL using bad/illegal format or missing URL:<br>URL rejected: No host present\"\n)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). None of the files found could be checked for comments.",
           "#### Missing Files",
@@ -172,7 +179,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 2 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  No code files could be checked for comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility."
+          "\n-  We found 2 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  2 code files were not checked; the report names them and says why.\n-  No code files could be checked for comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility."
         ]
       },
       {
@@ -413,9 +420,32 @@
             "v": []
           }
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

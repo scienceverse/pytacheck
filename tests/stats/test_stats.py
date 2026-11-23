@@ -183,3 +183,76 @@ def test_stat_check_does_not_mutate(demo: pc.Paper) -> None:
     before = pc.paper_table(demo, "text").copy()
     module_run(demo, "stat_check")
     pd.testing.assert_frame_equal(pc.paper_table(demo, "text"), before)
+
+
+# ------------------------------------------------ test-module-stat_check.R (#695)
+
+
+def test_stat_check_counts_one_sided_tests_when_the_paper_says_so() -> None:
+    from metacheck.stats.core import _paper_says_one_sided, _stat_one_sided_fits
+
+    t = pd.DataFrame(
+        {
+            "test_type": ["t", "t", "t", "F"],
+            "df1": [None, None, None, 1],
+            "df2": [507.82, 40, 40, 40],
+            "test_value": [-1.93, 1.93, 1.93, 3.72],
+            "p_comp": "=",
+            "reported_p": [0.973, 0.03, 0.30, 0.03],
+            "raw": [
+                "t(507.82) = -1.93, p = .973",
+                "t(40) = 1.93, p = .03",
+                "t(40) = 1.93, p = .30",
+                "F(1, 40) = 3.72, p = .03",
+            ],
+        }
+    )
+    # the other direction, half the two-sided p, not a wrong p, and F(1, df) as t squared
+    assert _stat_one_sided_fits(t) == [True, True, False, True]
+    one = pc.test_paper(
+        [
+            "All hypothesis tests were one-sided.",
+            "The effect went the other way, t(507.82) = -1.93, p = .973.",
+        ]
+    )
+    two = pc.test_paper("The effect went the other way, t(507.82) = -1.93, p = .973.")
+    assert _paper_says_one_sided(one).tolist() == [True]
+    assert module_run(one, "stat_check").traffic_light == "green"
+    assert module_run(two, "stat_check").traffic_light != "green"
+    # an equivalence test is left out
+    tost = pc.test_paper("The equivalence test was significant, t(507.82) = 1.93, p = .973.")
+    assert len(module_run(tost, "stat_check").table) == 0
+
+
+def test_stat_check_reads_a_bound_and_a_variance_tests_two_sided_p() -> None:
+    from metacheck.stats.core import _stat_bound_or_variance_fits
+
+    t = pd.DataFrame(
+        {
+            "test_type": ["F", "F", "F", "t"],
+            "df1": [1, 20, 20, None],
+            "df2": [104, 20, 20, 30],
+            "test_comp": ["<", "=", "=", ">"],
+            "test_value": [0.01, 1.4, 1.4, 3],
+            "p_comp": ["=", "=", "=", "<"],
+            "reported_p": [0.939, 0.458, 0.458, 0.01],
+            "raw": [
+                "F(1, 104) < 0.01, p = .939",
+                "F(20, 20) = 1.40, p = .458",
+                "F(20, 20) = 1.40, p = .458",
+                "t(30) > 3, p < .01",
+            ],
+            "text": [
+                "x",
+                "The variances were equal, F(20, 20) = 1.40, p = .458.",
+                "An effect, F(20, 20) = 1.40, p = .458.",
+                "y",
+            ],
+        }
+    )
+    # a bound fits; twice the p fits only in a sentence about equal variances
+    assert _stat_bound_or_variance_fits(t) == [True, True, None, True]
+    green = module_run(
+        pc.test_paper("There was no effect, F(1, 104) < 0.01, p = .939."), "stat_check"
+    )
+    assert green.traffic_light == "green"

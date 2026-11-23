@@ -287,9 +287,14 @@ def test_a_model_file_gets_its_own_outcome_and_is_not_run(tmp_path: Path, runner
     jags = (
         "model {\n  for (i in 1:N) {\n    y[i] ~ dnorm(mu, tau)\n  }\n  mu ~ dnorm(0, 0.001)\n}\n"
     )
+    # code_check leaves parse_error NA for a file it could not parse in a deposit read from a folder
+    # (R and Python alike, at metacheck 0.4.4.35), so the model file is run like any script and
+    # stops: only a file code_check says does not parse is sniffed (parity case `sniffed`)
+    runner.respond = lambda n, f, call: (
+        errored("Error: unexpected '{' in \"model {\"") if f == "model.R" else None
+    )
     mo = run(deposit(tmp_path, {"model.R": jags, "fit.R": "x <- 1\n"}))
-    assert outcomes(mo)["model.R"] == "jags_model"
-    assert "Of 1 script:" in report_text(mo)  # a model file is not counted as a script
+    assert outcomes(mo) == {"fit.R": "ran_ok", "model.R": "errored"}
 
 
 def test_a_sourced_script_runs_only_inside_the_script_that_sources_it(

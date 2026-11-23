@@ -57,6 +57,7 @@ from metacheck._r.regex import (
     sub,
 )
 from metacheck._values import as_float, as_str, is_missing
+from metacheck.utils import _lfs_pointer_size
 from metacheck.utils import _portable_name as _utils_portable_name
 from metacheck.utils import _portable_path as _utils_portable_path
 
@@ -2387,9 +2388,6 @@ def _portable_path(path: str | None) -> str | None:
     return _utils_portable_path([path])[0]
 
 
-_LFS_HEAD = "version https://git-lfs.github.com/spec/"
-
-
 def _repro_lfs_swaps(sources: Sequence[str | None]) -> pd.DataFrame:
     """Port of R/reproducibility_check.R::.repro_lfs_swaps().
 
@@ -2412,18 +2410,12 @@ def _repro_lfs_swaps(sources: Sequence[str | None]) -> pd.DataFrame:
             size[f] = None if os.path.isdir(f) else os.path.getsize(f)
         except OSError:
             size[f] = None
-    small = [f for f in src if size[f] is not None and cast(int, size[f]) < 1024]
+    # a pointer that states no size has no file to swap in
     stated: dict[str, int] = {}
-    for f in small:
-        try:
-            head = _read_utf8_lines(f, 3)
-        except (OSError, UnicodeError):
-            head = []
-        if not head or not head[0].startswith(_LFS_HEAD):
-            continue
-        sizes = [ln for ln in head if re.fullmatch(r"size [0-9]+", ln)]
-        if sizes:
-            stated[f] = int(sizes[0][5:])
+    for f, st in zip(src, _lfs_pointer_size(src), strict=True):
+        if not math.isnan(st) and st >= 0:
+            stated[f] = int(st)
+    small = [f for f in src if f in stated]
     for p in small:
         if p not in stated:
             continue

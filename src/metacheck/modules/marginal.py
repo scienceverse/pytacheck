@@ -18,10 +18,49 @@ _MARG_REF = (
     '<a href="https://doi.org/10.1177/0956797619830326">doi:10.1177/0956797619830326</a>.'
 )
 
-_PATTERN = (
-    r"margin\w* (?:\w+\s+){0,5}significan\w*|trend\w* (?:\w+\s+){0,1}significan\w*"
-    r"|almost (?:\w+\s+){0,2}significan\w*|approach\w* (?:\w+\s+){0,2}significan\w*"
-    r"|border\w* (?:\w+\s+){0,2}significan\w*|close to (?:\w+\s+){0,2}significan\w*"
+# "significan..." has to follow the trigger word closely (metacheck #695, point 9)
+_STAT = r"(?:statistical(?:ly)?\s+)?"
+_PATTERN = "".join(
+    [
+        r"(?<!sub)marginal(?:ly)?\s+(?:(?:above\s+the\s+threshold\s+for|failed\s+to\s+(?:be|reach)|",
+        r"and\s+probably\s+not|short\s+of|or\s+not|or\s+non-?|but\s+not|and\s+not|above|below|over|",
+        r"under|outside|not)\s*)?(?:the\s+)?(?:levels?\s+of\s+)?",
+        _STAT,
+        r"(?:non-?)?significan\w*|",
+        r"\btrend(?:s|ed|ing)?\s+(?:towards?|to)\s+",
+        _STAT,
+        r"significan\w*|",
+        r"\b(?:a|the)\s+trend\s+(?:of|for)\s+",
+        _STAT,
+        r"significan\w*|",
+        r"\btrend(?:-|\s)?level\s+",
+        _STAT,
+        r"significan\w*|\btrending\s+(?:towards?\s+)?",
+        _STAT,
+        r"significan\w*|",
+        r"\bapproach(?:ed|ing)\s+(?:a\s+|the\s+)?(?:(?:conventional|nominal|genome-?wide|traditional)\s+)?",
+        r"(?:levels?\s+of\s+)?",
+        _STAT,
+        r"significan\w*|",
+        r"\bapproach(?:es)?\s+",
+        _STAT,
+        r"significance\b(?!\s+test)|",
+        r"\bborderline\s+(?:of\s+)?(?:the\s+)?",
+        _STAT,
+        r"(?:non-?)?significan\w*|",
+        r"\bborder(?:ed|ing)?\s+(?:on|at|of|to)\s+(?:the\s+)?(?:level\s+of\s+)?",
+        _STAT,
+        r"significan\w*|",
+        r"\bborder(?:ed|ing)\s+",
+        _STAT,
+        r"significance\b|",
+        r"\balmost\s+(?:reach(?:ed|ing)?\s+|achiev(?:ed|ing)\s+|attain(?:ed|ing)\s+)?",
+        _STAT,
+        r"significan\w*|",
+        r"\bclose\s+to\s+(?:reaching\s+|achieving\s+|being\s+|be\s+)?(?:the\s+)?",
+        _STAT,
+        r"significan\w*",
+    ]
 )
 
 _HANKINS = (
@@ -39,7 +78,7 @@ _HANKINS = (
 
         Some of the terms identified might not be problematic in some contexts, and there are ways to describe ‘marginal significance’ that are not detected by the module.
 
-        <validation>In a sample of 51 papers with 87 statements, this module correctly identified 38 statements (true positives) and incorrectly flagged 22 statements (false positives). It failed to detect 27 statements. Thus, among all statements flagged by the module, 63% were genuine cases (positive predictive value). However, the module missed 42% of all true statements (false negative rate).</validation>
+        <validation>In a sample of 51 papers with 87 statements, this module correctly identified 38 statements (true positives) and incorrectly flagged 22 statements (false positives). It failed to detect 27 statements. Thus, among all statements flagged by the module, 63% were genuine cases (positive predictive value). However, the module missed 42% of all true statements (false negative rate). This validation was made with an earlier, looser pattern; the pattern now requires "significant" or "significance" to follow the trigger word closely (#695).</validation>
     """,
     keywords=["results"],
     author=["Daniel Lakens <D.Lakens@tue.nl>"],
@@ -47,7 +86,7 @@ _HANKINS = (
 def marginal(paper: Any) -> dict[str, Any]:
     if paper_is_empty(paper):
         return empty_input_result(paper)
-    table = text_search(paper, _PATTERN)
+    table = text_search(paper, _PATTERN, perl=True)
     summary_table = count(table, "paper_id", name="marginal")
     n = len(table)
     # no such terms: nothing to check, so "na" (not applicable), not green

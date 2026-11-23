@@ -15,7 +15,8 @@
       "summary_text",
       "summary_table",
       "na_replace",
-      "version_pin"
+      "version_pin",
+      "count_refused"
     ],
     "v": [
       {
@@ -289,6 +290,9 @@
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"pkgs.R\", \"analysis.jasp\"), \"% Comments\" = c(\"9%\", \n\"\"), \"Missing Files\" = c(0L, NA), \"Absolute Paths\" = c(0L, NA\n), \"Code Between Libraries\" = c(1L, NA)), row.names = 1:2, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code files not checked",
+          "We did not check 1 code file, for the reason given with each:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"analysis.jasp\", Reason = \"JASP files are listed, not checked: a .jasp file is a binary archive\"), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",
@@ -324,7 +328,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 1 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 1 JASP code files.\n-  All your code files had comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility."
+          "\n-  We found 1 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 1 JASP code files.\n-  1 code file was not checked; the report names it and says why.\n-  All your code files had comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility."
         ]
       },
       {
@@ -589,9 +593,32 @@
             "v": []
           }
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

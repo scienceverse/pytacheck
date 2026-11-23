@@ -39,7 +39,7 @@ def test_ethics_skips_a_review() -> None:
 
 def test_ethics_checks_an_empirical_paper_and_an_unsure_label() -> None:
     for paper in (_paper([LIVE], "empirical"), _paper([LIVE], "review", 0.4)):
-        assert pc.module_run(paper, "ethics_check").traffic_light == "red"
+        assert pc.module_run(paper, "ethics_check").traffic_light == "yellow"
 
 
 def test_open_practices_skips_a_commentary() -> None:

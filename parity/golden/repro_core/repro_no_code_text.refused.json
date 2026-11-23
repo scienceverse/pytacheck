@@ -1,0 +1,17 @@
+{
+  "id": "repro_no_code_text.refused",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "We found no R or Python code files to assess for reproducibility.",
+      "We found no R or Python code files to assess for reproducibility. Note.",
+      "We found no R or Python code files to assess for reproducibility. Note. Repo a is big. Repo b too.",
+      "We found no R or Python code files to assess for reproducibility."
+    ]
+  },
+  "metacheck_version": "0.4.4.35",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

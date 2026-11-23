@@ -1091,7 +1091,11 @@ def _execute_py(
         _repro_py_import_links,
         _repro_py_local_closure,
     )
-    from metacheck.repro.software import _repro_py_import_names, _repro_py_imported
+    from metacheck.repro.software import (
+        _repro_py_import_names,
+        _repro_py_imported,
+        _repro_py_with_imports,
+    )
     from metacheck.statout.stat_output import stat_output_json, stat_output_write, stat_results_long
     from metacheck.statout.stat_tables import _ipynb_is_noise, _ipynb_stat_line, _ipynb_stat_table
 
@@ -1510,8 +1514,13 @@ def _execute_py(
             lib2 = os.path.join(sandbox_root, "_pylib2")
             py2_failed: list[str | None] = []
             if install_is_true:
+                # the packages of the local modules these scripts import as well, and of the
+                # modules those import: numpy, imported only by genomics.py, was installed for
+                # Python 3 alone, and calculate_FST.py stopped on "No module named numpy"
+                # (10.1111/2041-210X.13324; #593)
+                py2_code = _repro_py_with_imports(py2_names, code_text_list, file_paths)
                 py2_deps = repro_dependencies_py(
-                    h.RNamedList(py2_names, [code_text_list[n] for n in py2_names]), manifest_text
+                    h.RNamedList(py2_code, [code_text_list[n] for n in py2_code]), manifest_text
                 )
                 py2_deps = py2_deps[
                     [

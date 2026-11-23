@@ -96,6 +96,41 @@
       "$expr":
         "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('empty')})"
         "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('empty')"
+- "id": "psychds_check.empty_refused"
+  "module": "psychds_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('empty_refused')})"
+        "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('empty_refused')"
+- "id": "psychds_check.data_dir_top"
+  "module": "psychds_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('data_dir_top')})"
+        "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('data_dir_top')"
+- "id": "psychds_check.data_dir_in"
+  "module": "psychds_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('data_dir_in')})"
+        "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('data_dir_in')"
+- "id": "psychds_check.data_dir_wrapped"
+  "module": "psychds_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('data_dir_wrapped')})"
+        "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('data_dir_wrapped')"
+- "id": "psychds_check.data_dir_deep"
+  "module": "psychds_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('data_dir_deep')})"
+        "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('data_dir_deep')"
 - "id": "psychds_check.psychsci"
   "module": "psychds_check"
   "args":

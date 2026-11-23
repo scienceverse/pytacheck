@@ -626,6 +626,41 @@
           \ copy = 'archives_nopeek', peek_zips = FALSE)})"
         "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_local('archives', copy='archives_nopeek',\
           \ peek_zips=False)"
+- "id": "data_check.local.lfs_nested"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_local('lfs_nested',\
+          \ copy = 'lfs_nested')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_local('lfs_nested', copy='lfs_nested')"
+- "id": "data_check.local.unopened"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_local('unopened',\
+          \ copy = 'unopened')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_local('unopened', copy='unopened')"
+- "id": "data_check.local.count_refused"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_local('many', max_files_per_repo\
+          \ = 3)})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_local('many', max_files_per_repo=3)"
+- "id": "data_check.local.count_ok"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_local('many')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_local('many')"
 - "id": "dv_issue_cell.merge"
   "r": "base::identity"
   "py": "tests.mod_data_check.helpers.identity"

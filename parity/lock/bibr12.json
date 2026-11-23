@@ -14,7 +14,7 @@
 "module.funding_check_oi.full": {"r": "73f8fc42c25929d9", "py": "ce0acb5a17faa74f", "diff": ["report[]", "summary_table.funding_found[]", "summary_text[]", "table", "traffic_light[]"]},
 "module.funding_check_oi.mixed": {"r": "5c766ef1fb749747", "py": "bad8753c2d4d2064", "diff": ["summary_table.funding_found[]", "table"]},
 "module.open_practices.PMC4383902": {"r": "924536cdb29d1bd9", "py": "ccafc020455ccca5", "diff": ["na_replace.no_data", "summary_table"]},
-"module.open_practices.full": {"r": "1bfa3027a35145cf", "py": "95bc7dfa5ae13934", "diff": ["na_replace.no_data", "report[]", "summary_table", "summary_table.data_open[]", "summary_table.data_statements[][]", "summary_text[]", "table", "traffic_light[]"]},
+"module.open_practices.full": {"r": "0e6998b3853e2c05", "py": "95bc7dfa5ae13934", "diff": ["na_replace.no_data", "report[]", "summary_table", "summary_table.data_open[]", "summary_table.data_statements[][]", "summary_text[]", "table"]},
 "module.open_practices.mixed": {"r": "e2dc533dc9e25c21", "py": "db5412e08628fe9e", "diff": ["na_replace.no_data", "report[]", "summary_table", "summary_table.data_open[]", "summary_table.data_statements[][]", "summary_text[]", "table"]},
 "module.open_practices.preprint": {"r": "390933d3bf18cc10", "py": "e07e8e6061d583ff", "diff": ["na_replace.no_data", "summary_table"]},
 "paper_write.text.PMC4383902": {"r": "abe5d7e0dce3fab0", "py": "6722fe2134ef7e7e", "diff": ["<root>"]},

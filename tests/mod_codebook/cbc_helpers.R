@@ -111,6 +111,17 @@ cbc_prev <- function(scenario, paper = NULL, pid = NULL, drop = character(0)) {
   out
 }
 
+# data_check's output for `scenario` that also refused a repository for its number of files (#706).
+cbc_prev_refused <- function(scenario) {
+  prev <- cbc_prev(scenario)
+  repo <- "https://doi.org/10.5281/zenodo.3826426"
+  prev$count_refused <- data.frame(
+    repo_url = repo, n_files = 369548L,
+    message = metacheck:::.repo_count_message(repo, 369548, 100000),
+    stringsAsFactors = FALSE)
+  prev
+}
+
 # data_check's output for a paper list: one scenario per paper (ids p1, p2, ...).
 cbc_prev_list <- function(scenarios) {
   pids <- paste0("p", seq_along(scenarios))

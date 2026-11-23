@@ -19,7 +19,8 @@
       "summary_text",
       "summary_table",
       "na_replace",
-      "version_pin"
+      "version_pin",
+      "count_refused"
     ],
     "v": [
       {
@@ -394,6 +395,9 @@
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.do' target='_blank'>analysis.do<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/report.Rmd' target='_blank'>report.Rmd<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/script.py' target='_blank'>script.py<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/results.jasp' target='_blank'>results.jasp<\/a>\"\n), \"% Comments\" = c(\"\", \"50%\", \"\", \"\", \"\"), \"Missing Files\" = c(NA, \n1L, NA, NA, NA), \"Absolute Paths\" = c(NA, 0L, NA, NA, NA), \"Code Between Libraries\" = c(NA_integer_, \nNA_integer_, NA_integer_, NA_integer_, NA_integer_)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code files not checked",
+          "We did not check 4 code files, for the reason given with each:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"analysis.R\", \"report.Rmd\", \"script.py\", \n\"results.jasp\"), Reason = c(\"it was not downloaded, because the 0.0 MB budget for its repository was spent (max_download_size)\", \n\"it was not downloaded, because the 0.0 MB budget for its repository was spent (max_download_size)\", \n\"it was not downloaded, because the 0.0 MB budget for its repository was spent (max_download_size)\", \n\"JASP files are listed, not checked: a .jasp file is a binary archive\"\n)), row.names = c(NA, 4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",
@@ -429,7 +433,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 2 R, 1 Python, 0 SAS, 0 SPSS, 1 Stata, 0 Mplus, 0 MATLAB, and 1 JASP code files. Repository https://osf.io/dlmixed exceeds the 0.0 MB per-repository budget: downloaded the smallest files up to the cap, 3 files omitted. Raise `max_download_size` to include more.\n-  All your code files had comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility.\n-  No list of Python package versions (requirements.txt or similar) was found. Consider adding one to improve computational reproducibility."
+          "\n-  We found 2 R, 1 Python, 0 SAS, 0 SPSS, 1 Stata, 0 Mplus, 0 MATLAB, and 1 JASP code files. Repository https://osf.io/dlmixed exceeds the 0.0 MB per-repository budget: downloaded the smallest files up to the cap, 3 files omitted. Raise `max_download_size` to include more.\n-  4 code files were not checked; the report names them and says why.\n-  All your code files had comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility.\n-  No list of Python package versions (requirements.txt or similar) was found. Consider adding one to improve computational reproducibility."
         ]
       },
       {
@@ -670,9 +674,32 @@
             "v": []
           }
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

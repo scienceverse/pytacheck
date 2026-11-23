@@ -239,6 +239,29 @@
       "$expr":
         "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('writes')})"
         "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('writes')"
+- "id": "code_check.not_checked"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('not_checked')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('not_checked')"
+- "id": "code_check.not_checked_max_code_size"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('not_checked')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('not_checked')"
+    "max_code_size": !!float "0.0001"
+- "id": "code_check.count_refused"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('code_files')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('code_files')"
+    "max_files_per_repo": !!int "3"
 - "id": "code_check.download"
   "r": "identity"
   "py": "tests.mod_code.helpers.identity"
@@ -427,3 +450,11 @@
       "$expr":
         "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_report_tables('writes')})"
         "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_report_tables('writes')"
+- "id": "report_tables.not_checked"
+  "r": "identity"
+  "py": "tests.mod_code.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_report_tables('not_checked', max_code_size = 0.0001)})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_report_tables('not_checked', max_code_size=0.0001)"

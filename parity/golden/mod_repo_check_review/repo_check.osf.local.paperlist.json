@@ -24,6 +24,7 @@
       "roster_check",
       "group_no_evidence",
       "useless_files",
+      "symlinks",
       "view_only",
       "na_replace"
     ],
@@ -864,6 +865,7 @@
           "dep_org",
           "dep_related",
           "dep_date",
+          "dep_updated",
           "dep_year",
           "osf_type",
           "osf_category",
@@ -1009,6 +1011,13 @@
             "v": [
               "2024-05-27",
               "2024-05-27"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2026-01-25",
+              "2026-01-25"
             ]
           },
           {
@@ -1353,6 +1362,9 @@
         ]
       },
       {
+        "t": "null"
+      },
+      {
         "t": "df",
         "nrow": 0,
         "names": [
@@ -1383,6 +1395,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

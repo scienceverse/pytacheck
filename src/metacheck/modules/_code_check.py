@@ -122,6 +122,56 @@ def _msg(exc: BaseException) -> str:
 # ---------------------------------------------------------------------------
 
 
+def _refuse_unreadable(path: Any, file_name: Any, max_code_size: Any) -> None:
+    """Raise, with the reason as its message, for a file that is not read (#700): one over
+    ``max_code_size`` MB, a Git LFS pointer, or (a notebook aside) a file whose content is no
+    code: binary, compressed, an image, an HTML page. A .jasp is not tested here, as it is
+    not read at all."""
+    from metacheck.codecheck.core import _code_not_text
+    from metacheck.llm.cap_prompt import _cap_size_str
+    from metacheck.report.blocks import _cap_num
+    from metacheck.utils import _lfs_pointer_size
+
+    if path is None or not os.path.isfile(path):
+        return
+    try:
+        nbytes: float = os.path.getsize(path)
+    except OSError:
+        nbytes = math.nan
+    if nbytes > float(max_code_size) * 1024**2:
+        raise ValueError(
+            f"it was not checked, because it is {_cap_size_str(nbytes)}, more than "
+            f"max_code_size ({_cap_num(max_code_size)} MB)"
+        )
+    if not math.isnan(_lfs_pointer_size([path])[0]):
+        raise ValueError(
+            "it was not checked, because it is a Git LFS pointer: the repository holds a "
+            "small text file in place of the file itself, which was not deposited"
+        )
+    name = None if is_missing(file_name) else str(file_name)
+    if not (name is not None and grepl(r"\.ipynb$", name, ignore_case=True)):
+        not_text = _code_not_text(path)
+        if not_text is not None:
+            raise ValueError(f"it was not checked, because {not_text}")
+
+
+def _refuse_jags(lines: Sequence[str | None], file_name: Any, language: Any) -> None:
+    """A JAGS or BUGS model saved with an .R ending is no R code (``model {`` first): it was
+    reported as R that does not parse (metacheck #695 point 29)."""
+    from metacheck.repro.core import _repro_is_jags_model
+
+    name = None if is_missing(file_name) else str(file_name)
+    if language != "R" or name is None:
+        return
+    if grepl(r"\.(rmd|qmd)$", name, ignore_case=True):
+        return
+    if _repro_is_jags_model(list(lines), name):
+        raise ValueError(
+            "it was not checked, because it is a JAGS or BUGS model saved with an .R "
+            "ending, not R code"
+        )
+
+
 def _read_lines(path: Any, file_name: Any, language: Any) -> list[str | None]:
     """The code of one file, extracted the way ``code_check()`` picks it."""
     from metacheck.codecheck.core import (
@@ -171,6 +221,7 @@ def analyse_files(
     limit_refused: Sequence[str | None] | None = None,
     max_file_size: Any = math.inf,
     skip_on_api_limit: bool = False,
+    max_code_size: Any = 5,
 ) -> tuple[list[dict[str, Any]], dict[Any, list[tuple[Any, list[str | None]]]]]:
     """Run every code check on every file of *checked_files*.
 
@@ -250,7 +301,9 @@ def analyse_files(
                     skip_on_api_limit=skip_on_api_limit,
                 )
                 fetched_copy = path != urls[i]
+            _refuse_unreadable(path, names[i], max_code_size)
             lines = _read_lines(path, names[i], langs[i])
+            _refuse_jags(lines, names[i], langs[i])
         except Exception as exc:
             row["error"] = _msg(exc)
             continue

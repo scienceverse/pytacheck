@@ -24,6 +24,7 @@
       "roster_check",
       "group_no_evidence",
       "useless_files",
+      "symlinks",
       "view_only",
       "na_replace"
     ],
@@ -486,6 +487,7 @@
           "dep_related",
           "dep_year",
           "dep_date",
+          "dep_updated",
           "listed",
           "n_files",
           "has_data",
@@ -530,6 +532,10 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           },
           {
@@ -806,6 +812,9 @@
         ]
       },
       {
+        "t": "null"
+      },
+      {
         "t": "df",
         "nrow": 0,
         "names": [
@@ -836,6 +845,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

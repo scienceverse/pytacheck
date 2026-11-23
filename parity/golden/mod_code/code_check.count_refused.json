@@ -1,0 +1,176 @@
+{
+  "id": "code_check.count_refused",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Repository https://osf.io/abcde holds 7 files, exceeding the 3-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "count_refused"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "code_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Code Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "language"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 0 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  Repository https://osf.io/abcde holds 7 files, exceeding the 3-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 0 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  Repository https://osf.io/abcde holds 7 files, exceeding the 3-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "code_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "code_n"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/abcde"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Repository https://osf.io/abcde holds 7 files, exceeding the 3-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.35",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

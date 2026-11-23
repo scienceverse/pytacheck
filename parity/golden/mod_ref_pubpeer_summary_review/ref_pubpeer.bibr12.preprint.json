@@ -80,7 +80,7 @@
             "t": "dbl",
             "v": [
               4,
-              2
+              1
             ]
           },
           {
@@ -94,7 +94,7 @@
             "t": "chr",
             "v": [
               "Reviewer One",
-              "Reviewer Two, Statcheck"
+              "Reviewer Two"
             ]
           }
         ]
@@ -103,7 +103,7 @@
         "t": "chr",
         "v": [
           "We checked 69 references with DOIs. You cited 2 references with comments in PubPeer.\n\nPubpeer is a platform for post-publication peer review. We have filtered out Pubpeer comments by 'Statcheck'. You can check out the comments by visiting the URLs below:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Adams, R. B., & Kleck, R. E. (2005). Effects of direct and averted gaze on the perception of facially communicated emotion. Emotion, 5(1), 3–11. https://doi.org/10.1037/1528-3542.5.1.3\", \n\"Meade, A. W., & Craig, S. B. (2012). Identifying careless responses in survey data. Psychological Methods, 17(3), 437–455. https://doi.org/10.1037/a0028085\"\n), Comments = c(4, 2), \"PubPeer Link\" = c(\"<a href='https://pubpeer.com/publications/1528-3542.5.1.3' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/A0028085' target='_blank'>link<\/a>\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Adams, R. B., & Kleck, R. E. (2005). Effects of direct and averted gaze on the perception of facially communicated emotion. Emotion, 5(1), 3–11. https://doi.org/10.1037/1528-3542.5.1.3\", \n\"Meade, A. W., & Craig, S. B. (2012). Identifying careless responses in survey data. Psychological Methods, 17(3), 437–455. https://doi.org/10.1037/a0028085\"\n), Comments = c(4, 1), Commenters = c(\"Reviewer One\", \"Reviewer Two\"\n), \"PubPeer Link\" = c(\"<a href='https://pubpeer.com/publications/1528-3542.5.1.3' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/A0028085' target='_blank'>link<\/a>\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
         ]
       },
       {
@@ -135,7 +135,7 @@
           {
             "t": "dbl",
             "v": [
-              6
+              5
             ]
           }
         ]
@@ -148,6 +148,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

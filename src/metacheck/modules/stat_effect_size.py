@@ -49,9 +49,15 @@ _D_PATTERN = (
 
 # A subscripted Hedges' g (g_av, g z, grm, gs), whatever word comes before it:
 # without an apostrophe ("Hedges g av") the label is the whole phrase. Differs
-# from metacheck (D87): "gav", "gz" and "grm" written together count too
+# from metacheck (D87): "gav" and "grm" written together count too (g_z is checked,
+# as in metacheck since 0.4.4.35)
 _D_PREFIX = re.compile(r"^(?:hedge.{0,3}s|cohen.{0,2}s)\s+")
-_SUBSCRIPTED_G = re.compile(r"g[ _]?(?:av|z|rm)$|gs$")
+_SUBSCRIPTED_G = re.compile(r"g[ _]?(?:av|rm)$|gs$")
+
+# "eta squared" / "partial omega-squared" written in words (the sentence's own wording)
+_SQUARED_WORDS = re.compile(r"\b(?:partial\s+)?(?:eta|omega)[\s-]+squared\b", re.I)
+# what follows "t = 3" when it counts: "t = 1, ..., T", "t = 1, 2,", "t = 1...", "t = 1 to T"
+_T_COUNTER_TAIL = r"\s*(?:,\s*(?:\.\.\.|…|[0-9]+\s*,)|\.\.\.|…|to\s+[A-Z]\b)"
 
 # parse_f_stats(): perl = TRUE
 _F_PATTERN = r"\bF\s*\(\s*([0-9]+(?:\.[0-9]+)?)\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)\s*=\s*" + _NUM
@@ -105,6 +111,8 @@ _D_COLUMNS = (
     "d_implied_indep_equal_n",
     "d_implied_indep_unequal_min",
     "d_implied_indep_unequal_max",
+    "d_implied_paired_gz",
+    "d_implied_indep_equal_n_g",
     "d_implied_n",
     "d_coherence",
     "d_coherence_assumption",
@@ -695,6 +703,14 @@ def _classify_d_coherence(
     out["d_implied_paired_dz"] = _chr(d_paired_dz)
     out["d_implied_paired_drm_r05"] = _chr(d_paired_drm)
     out["d_implied_indep_equal_n"] = _chr(d_equal)
+    # Hedges' small-sample correction, J = 1 - 3 / (4 df - 1): Hedges' g_z for a
+    # paired design (dz times J), g_s for independent groups (metacheck #695, point 10)
+    hedges_j: float | None = 1 - 3 / (4 * df - 1) if math.isfinite(df) and df > 1 else None
+    g_paired_z = math.nan if hedges_j is None else d_paired_dz * hedges_j
+    g_equal = math.nan if hedges_j is None else d_equal * hedges_j
+    if hedges_j is not None:
+        out["d_implied_paired_gz"] = _chr(g_paired_z)
+        out["d_implied_indep_equal_n_g"] = _chr(g_equal)
 
     n_total_f = df + 2
     use_unequal = (
@@ -727,6 +743,20 @@ def _classify_d_coherence(
     if use_unequal:
         in_range = [_fits(d.d_value, d.comp, d_unequal_min, d_unequal_max, tol) for d in d_stats]
         unequal_match = _any(in_range)
+    # the same with Hedges' correction, tried after the uncorrected d
+    paired_g_match: bool | None = False
+    equal_g_match: bool | None = False
+    unequal_g_match: bool | None = False
+    if hedges_j is not None:
+        paired_g_match = _any(
+            _fits(d.d_value, d.comp, g_paired_z, g_paired_z, tol) for d in d_stats
+        )
+        equal_g_match = _any(_fits(d.d_value, d.comp, g_equal, g_equal, tol) for d in d_stats)
+        if use_unequal:
+            unequal_g_match = _any(
+                _fits(d.d_value, d.comp, d_unequal_min * hedges_j, d_unequal_max * hedges_j, tol)
+                for d in d_stats
+            )
 
     if _cond(paired_match):
         # Within-subjects design: n = df + 1. This is obvious from the df, so it
@@ -764,6 +794,28 @@ def _classify_d_coherence(
         out["d_coherence_note"] = (
             f"Match under independent-samples unequal-n range assumption (closest split {split})."
         )
+    elif _cond(paired_g_match):
+        out["d_coherence"] = "match_under_assumptions"
+        out["d_coherence_assumption"] = "paired_gz"
+        out["d_implied_n"] = f"n = {int(df + 1):d}"
+        out["d_coherence_note"] = (
+            "Match under paired-samples Hedges' g_z (dz with the small-sample correction)."
+        )
+    elif _cond(equal_g_match):
+        out["d_coherence"] = "match_under_assumptions"
+        out["d_coherence_assumption"] = "independent_equal_n_g"
+        out["d_implied_n"] = f"n1 = n2 = {_format((df + 2) / 2)}, N = {_format(df + 2)}"
+        out["d_coherence_note"] = (
+            "Match under independent-samples Hedges' g_s, equal n (d with the small-sample "
+            f"correction; n1 = n2 = {_format((df + 2) / 2)})."
+        )
+    elif _cond(unequal_g_match):
+        out["d_coherence"] = "match_under_assumptions"
+        out["d_coherence_assumption"] = "independent_unequal_n_range_g"
+        out["d_coherence_note"] = (
+            "Match under independent-samples Hedges' g_s, unequal n range (d with the "
+            "small-sample correction)."
+        )
     elif _SUBSCRIPTED_G.match(_D_PREFIX.sub("", d_stats[0].label)):
         # Hedges' g_av (Cumming, 2012) also depends on the condition SDs and the
         # correlation between them, which t(df) does not give, so a correct g_av
@@ -783,8 +835,9 @@ def _classify_d_coherence(
         out["d_coherence_assumption"] = "none"
         out["d_coherence_note"] = (
             "No match under tested assumptions (paired dz, independent equal-n, "
-            f"independent unequal-n range). Tolerance = {_chr(tol)}. A no-match can occur "
-            "when fewer than 2 decimal places are reported."
+            "independent unequal-n range, each also with Hedges' small-sample correction). "
+            f"Tolerance = {_chr(tol)}. A no-match can occur when fewer than 2 decimal places "
+            "are reported."
         )
 
     return out
@@ -1157,7 +1210,43 @@ def stat_effect_size(paper: Any) -> dict[str, Any]:
     if len(eq) == 0:
         table = pd.DataFrame()
     else:
+        # the sentence of each equation row
+        sentence_of: dict[tuple[Any, Any], Any] = {}
+        for pid, tid, txt in zip(
+            text_tbl["paper_id"], text_tbl["text_id"], text_tbl["text"], strict=True
+        ):
+            sentence_of.setdefault((pid, tid), txt)
+        eq_text = [
+            sentence_of.get((pid, tid))
+            for pid, tid in zip(eq["paper_id"], eq["text_id"], strict=True)
+        ]
+        eq_text = [None if is_missing(x) else str(x) for x in eq_text]
+        # "eta squared" written in words: extract_eq() names the value "squared"
+        # only, so it was no effect size (metacheck #695, point 10). The words
+        # before it are taken from the sentence ("partial eta squared").
+        lhs_col = [None if is_missing(x) else str(x) for x in eq["lhs"]]
+        for k, name in enumerate(lhs_col):
+            if name is not None and name.lower() == "squared" and eq_text[k] is not None:
+                w = _SQUARED_WORDS.search(cast(str, eq_text[k]))
+                if w is not None:
+                    lhs_col[k] = re.sub(r"\s+", " ", w.group(0).lower())
+        eq = eq.assign(lhs=pd.Series(lhs_col, index=eq.index, dtype=eq["lhs"].dtype))
         kinds = _label_lhs(eq["lhs"].tolist(), eq["df"].tolist())
+        # "t = 1, ..., T" counts, it reports no test: a t without degrees of
+        # freedom and with a whole number, followed by a list
+        for k, kind in enumerate(kinds):
+            rhs_k = eq["rhs"].iloc[k]
+            if (
+                kind == "t-test"
+                and is_missing(eq["df"].iloc[k])
+                and not is_missing(rhs_k)
+                and re.fullmatch(r"[0-9]+", str(rhs_k))
+                and eq_text[k] is not None
+                and re.search(
+                    r"\bt\s*=\s*" + str(rhs_k) + _T_COUNTER_TAIL, cast(str, eq_text[k]), re.I
+                )
+            ):
+                kinds[k] = None
         built = _build_rows(eq, kinds)
         if built is None:
             table = pd.DataFrame()

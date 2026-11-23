@@ -156,6 +156,22 @@ def cbc_prev(
     return _output(paper, pieces, [pid])
 
 
+def cbc_prev_refused(scenario: str) -> Any:
+    """:func:`cbc_prev` that also refused a repository for its number of files (#706)."""
+    from metacheck.modules._count_refused import _repo_count_message
+
+    prev = cbc_prev(scenario)
+    repo = "https://doi.org/10.5281/zenodo.3826426"
+    prev.extras["count_refused"] = pd.DataFrame(
+        {
+            "repo_url": [repo],
+            "n_files": pd.Series([369548], dtype="int32"),
+            "message": [_repo_count_message(repo, 369548, 100000)],
+        }
+    )
+    return prev
+
+
 def cbc_prev_list(scenarios: Sequence[str]) -> Any:
     """data_check's output for a paper list: one scenario per paper (ids p1, p2, ...)."""
     import metacheck as pc

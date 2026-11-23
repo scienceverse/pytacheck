@@ -29,7 +29,7 @@ def _refs_with_doi(paper: Any) -> pd.DataFrame:
 
 
 def _commented(pp: pd.DataFrame | None) -> pd.DataFrame:
-    """``pp[pp$total_comments > 0 & pp$users != "Statcheck", ]``.
+    """``pp[pp$total_comments > 0, ]``, once Statcheck's comment is taken out of the count.
 
     Rows where the condition is ``NA`` become all-``NA`` rows in R; their
     ``NA`` DOI can never join a reference with a DOI, so they are dropped.
@@ -40,8 +40,28 @@ def _commented(pp: pd.DataFrame | None) -> pd.DataFrame:
         raise TypeError("`x` and `y` must share the same src.")
     if "total_comments" not in pp.columns or "users" not in pp.columns:
         return pp.iloc[0:0]  # R: `NULL > 0` is logical(0), which selects no rows
-    tc = pd.to_numeric(pp["total_comments"], errors="coerce")
-    keep = ((tc > 0) & (pp["users"].astype("string") != "Statcheck")).fillna(False)
+    # Statcheck posted one automatic comment on each paper it scanned. Where others commented
+    # too, that comment was in the count, so "excluding Statcheck" held only for papers
+    # Statcheck alone commented on: 14 rows in the Meta-Psychology run (#695, point 14).
+    # PubPeer gives the commenters and the total, not a count per commenter, so one comment is
+    # taken off, and Statcheck off the commenters.
+    pp = pp.copy()
+    users = [None if pd.isna(u) else [x.strip() for x in str(u).split(",")] for u in pp["users"]]
+    by_statcheck = pd.Series(
+        [u is not None and "statcheck" in [x.lower() for x in u] for u in users],
+        index=pp.index,
+        dtype=int,
+    )
+    tc = pd.to_numeric(pp["total_comments"], errors="coerce") - by_statcheck
+    pp["total_comments"] = tc
+    pp["users"] = pd.array(
+        [
+            ", ".join(x for x in u if x != "" and x.lower() != "statcheck") if u is not None else ""
+            for u in users
+        ],
+        dtype="string",
+    )
+    keep = (tc > 0).fillna(False)
     out = pp.loc[keep.to_numpy(dtype=bool)]
     # pubpeer_comments() returns a row per requested DOI, so a DOI cited k times
     # joined k * k rows (U118): one row per DOI
@@ -149,11 +169,14 @@ def ref_pubpeer(paper: Any) -> dict[str, Any]:
         # (metacheck leaves out references without a URL, U118)
         if "url" not in table.columns:
             table = table.assign(url=pd.Series([None] * len(table), dtype="string"))
-        report_table = table.loc[:, ["text", "total_comments", "url"]].reset_index(drop=True)
+        # who commented, so a reader can tell a discussion from a single remark (#695)
+        report_table = table.loc[:, ["text", "total_comments", "users", "url"]].reset_index(
+            drop=True
+        )
         urls = report_table["url"].tolist()
         links = [x if isinstance(x, str) else "" for x in (link(urls, "link") if urls else [])]
         report_table["url"] = pd.array(links, dtype="string")
-        report_table.columns = ["Reference", "Comments", "PubPeer Link"]
+        report_table.columns = ["Reference", "Comments", "Commenters", "PubPeer Link"]
 
         ## report ----
         report = [report_text, scroll_table(report_table, maxrows=10)]

@@ -128,11 +128,13 @@ def test_safe_write_path() -> None:
 def test_safe_write_path_keeps_the_folders_of_root_unless_that_is_not_enough(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    # (#699) The 250-character limit is Windows' only: set here as it is there.
-    monkeypatch.setattr(utils, "_MAX_PATH_CHARS", 250)
     base = tmp_path.as_posix() + "/" + "b" * 50
     root = base + "/repo_" + "r" * 50  # a folder name over 40
     path = root + "/" + "m" * 100 + "/" + "f" * 80 + ".csv"
+    # (#699) The 250-character limit is Windows' only: here a limit that leaves 80 characters
+    # below the folder, whatever the length of the temporary folder of the machine
+    limit = len(os.path.abspath(root)) + 80
+    monkeypatch.setattr(utils, "_MAX_PATH_CHARS", limit)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         # without root, the repository's folder is shortened too
@@ -141,7 +143,7 @@ def test_safe_write_path_keeps_the_folders_of_root_unless_that_is_not_enough(
         # with root, only the part below it
         p1 = _safe_write_path(path, root=root)
         assert p1 is not None and p1.startswith(root + "/")
-        assert len(os.path.abspath(p1)) <= 250
+        assert len(os.path.abspath(p1)) <= limit
         assert p1.endswith(".csv")
         # a root that alone is too long: shortened as before
         long_root = base + "/" + "q" * 250

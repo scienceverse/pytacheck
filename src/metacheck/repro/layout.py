@@ -12,6 +12,7 @@ files copied to where a script looked for them, and the report sentences on each
 
 from __future__ import annotations
 
+import math
 import os
 import re
 from collections.abc import Mapping, Sequence
@@ -37,7 +38,6 @@ from metacheck.codecheck.core import _json_load
 from metacheck.datacheck.files import _utf8_lines
 from metacheck.report.blocks import scroll_table
 from metacheck.repro.core import (
-    _LFS_HEAD,
     _basename,
     _bs2fs,
     _chr_list,
@@ -64,6 +64,7 @@ from metacheck.repro.core import (
     _write_lines,
 )
 from metacheck.repro.outcomes import _repro_mb, _repro_unopened_files
+from metacheck.utils import _lfs_pointer_size
 
 # ---------------------------------------------------------------------------
 # small helpers
@@ -779,12 +780,44 @@ def _repro_place_files(
                 and len(set(_repro_md5([f"{root_s}/{q}" for q in cand]))) == 1
             ):
                 cand = cand[:1]
+            # Of several that differ, the one in the folders the path names: the deposit of
+            # 10.1111/1365-2745.14340 has popmap_Cm.txt in two folders, and the script asked
+            # for output/ADMIXTURE/popmap/popmap_Cm.txt (#590). Only when one matches more
+            # folders than every other, and at least one.
+            if len(cand) > 1:
+                depth = _repro_path_tail_match(p, cand)
+                top = max(depth)
+                best = [j for j, d in enumerate(depth) if d == top]
+                if top >= 2 and len(best) == 1:
+                    cand = [cand[best[0]]]
             if len(cand) != 1:
                 continue
             _dir_create(os.path.dirname(dest))
             if _copy_file(f"{root_s}/{cand[0]}", dest):
                 rows.append((s, cast(str, _basename(p)), cand[0], to))
     return _placed_frame(rows)
+
+
+def _repro_path_tail_match(want: str, cand: Sequence[str]) -> list[int]:
+    """Port of ``.repro_path_tail_match()``.
+
+    For each path of *cand*, how many of its last parts (the file name and the folders
+    above it) are the same as the last parts of *want*, without regard to capitals: 3 for
+    ``"x/output/RAxML/popmap_HC.txt"`` against ``"output/RAxML/popmap_HC.txt"``.
+    """
+
+    def parts(x: str) -> list[str]:
+        return [q for q in reversed(x.replace("\\", "/").lower().split("/")) if q and q != "."]
+
+    w = parts(want)
+    out: list[int] = []
+    for cp in cand:
+        c2 = parts(cp)
+        k = 0
+        while k < min(len(w), len(c2)) and w[k] == c2[k]:
+            k += 1
+        out.append(k)
+    return out
 
 
 def _repro_place_written(
@@ -926,6 +959,8 @@ def _repro_make_failed_write_folders(
     t_name = _chr_or_none(run_tbl, "file_name")
     t_dir = _chr_or_none(run_tbl, "run_dir")
     rows: list[tuple[str, str]] = []
+    # folders made here, for this or another script, now or in a pass before
+    made_by_us: list[str] = _unique(f for v in seen.values() for f in v)
     for s in [n for n, o in zip(r_name, r_outcome, strict=True) if o == "errored"]:
         if s is None or s not in r_name or s not in t_name:
             continue
@@ -945,13 +980,20 @@ def _repro_make_failed_write_folders(
             if not to or to == "." or to in list(seen.get(s, [])):
                 continue
             dest = f"{root_s}/{_portable_path(to)}"
+            # A folder made for another script that stopped on it too: this script runs
+            # once more as well. In 10.1111/1365-2664.14445 four figure scripts stopped on
+            # "Figures/", which was made for the first, and the other three were not run
+            # again (#590)
             if os.path.isdir(dest):
+                if to in made_by_us:
+                    rows.append((s, to))
                 continue
             try:
                 os.makedirs(dest, exist_ok=True)
             except OSError:
                 continue
             rows.append((s, to))
+            made_by_us.append(to)
     return _frame(
         {
             "script": ("string", [r[0] for r in rows]),
@@ -970,7 +1012,8 @@ def _repro_folders_made_text(made: pd.DataFrame | None) -> str:
         return ""
     scripts = _chr_list(made["script"])
     n_s = len(_unique(scripts))
-    n = len(made)
+    # one folder made for several scripts counts once (#590)
+    n = len(_unique(_chr_list(made["folder"])))
     listed = "; ".join(
         f"`{f}` for `{s}`" for f, s in zip(_chr_list(made["folder"]), scripts, strict=True)
     )
@@ -1104,19 +1147,17 @@ def _repro_lfs_stopped(
     if results is None or len(results) == 0:
         return {}
     top = os.fspath(root)
-    pointers: list[str] = []
-    for rel in _list_files(top):
-        if grepl(r"/(_rlib|_pylib2?)/", _bs2fs(f"{top}/{rel}")):
-            continue
-        path = f"{top}/{rel}"
-        try:
-            if os.path.getsize(path) >= 1024:
-                continue
-            first = _read_utf8_lines(path, 1)
-        except OSError:
-            continue
-        if first and first[0].startswith(_LFS_HEAD):
-            pointers.append(cast(str, _basename(path)))
+    files = [
+        f"{top}/{rel}"
+        for rel in _list_files(top)
+        if not grepl(r"/(_rlib|_pylib2?)/", _bs2fs(f"{top}/{rel}"))
+    ]
+    # a pointer that states no size (-1) is still a pointer
+    pointers = [
+        cast(str, _basename(f))
+        for f, st in zip(files, _lfs_pointer_size(files), strict=True)
+        if not math.isnan(st)
+    ]
     ptr = _unique(pointers)
     if not ptr:
         return {}

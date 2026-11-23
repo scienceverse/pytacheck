@@ -123,9 +123,11 @@ def rc_input(name: str, paper: Any = None, absolute: bool = False) -> Any:
     if code is not None:
         if structure is not None:
             prev["data_check"] = {"structure": structure}
-        extras = {}
+        extras: dict[str, Any] = {}
         if spec.get("version_pin") is not None:
             extras["version_pin"] = {"r_versions": list(spec["version_pin"])}
+        if spec.get("count_refused") is not None:
+            extras["count_refused"] = rc_df(spec["count_refused"])
         return ModuleOutput(
             module="code_check",
             title="Code Check",
@@ -144,7 +146,7 @@ def rc_input(name: str, paper: Any = None, absolute: bool = False) -> Any:
         summary_table=summary,
         paper=paper,
         prev_outputs=prev,
-        extras={"structure": structure},
+        extras={"structure": structure, "count_refused": rc_df(spec.get("count_refused"))},
     )
 
 

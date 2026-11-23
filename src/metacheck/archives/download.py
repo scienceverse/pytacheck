@@ -1569,6 +1569,71 @@ def _budget_row_key(df: pd.DataFrame) -> list[str]:
     return ["\r".join(parts) for parts in zip(*cols, strict=True)] if n else []
 
 
+def _case_clash_rename(
+    repo: Sequence[Any], rel: Sequence[Any], listing: pd.DataFrame | None = None
+) -> list[Any]:
+    """Port of ``.case_clash_rename()``: the paths to store the rows' files under (#700).
+
+    Paths of one repository that differ only in capital letters ("data.csv", "Data.csv",
+    "DATA.CSV") are one file on Windows and macOS: every row was given the first one's copy, so
+    the others silently carried its content. The second and later of each such set get a name of
+    their own on disk, "~2", "~3" before the extension ("data~2.csv"), in the order of their paths,
+    so the first keeps its name. Done on every system, as :func:`_portable_name` is, so a result
+    does not depend on the computer. The sets are found in the full listing (*listing*, else the
+    rows themselves), so every call gives a file the same name. *repo* and *rel* are the rows'
+    repositories and paths.
+    """
+    out = list(rel)
+    if not len(out):
+        return out
+    all_repo: list[Any] = list(repo)
+    all_rel: list[Any] = list(rel)
+    if listing is not None and len(listing) and "repo_url" in listing.columns:
+        names = (
+            listing["file_name"].tolist()
+            if "file_name" in listing.columns
+            else [None] * len(listing)
+        )
+        lp = listing["file_path"].tolist() if "file_path" in listing.columns else list(names)
+        lp = [nm if is_missing(p) else p for p, nm in zip(lp, names, strict=True)]
+        all_repo = list(listing["repo_url"].tolist()) + all_repo
+        all_rel = lp + all_rel
+    seen: list[Any] = []
+    for r in repo:
+        if not is_missing(r) and r not in seen:
+            seen.append(r)
+    for r in seen:
+        # sort(method = "radix"): by bytes
+        paths = sorted(
+            {
+                str(a)
+                for a, b in zip(all_rel, all_repo, strict=True)
+                if not is_missing(a) and not is_missing(b) and b == r
+            },
+            key=lambda x: x.encode("utf-8", "surrogateescape"),
+        )
+        low = [x.replace("\\", "/").lower() for x in paths]
+        count: dict[str, int] = {}
+        for k in low:
+            count[k] = count.get(k, 0) + 1
+        keep = [i for i, k in enumerate(low) if count[k] > 1]
+        if not keep:
+            continue
+        seq: dict[str, int] = {}
+        new: dict[str, str] = {}
+        for i in keep:
+            x, k = paths[i], low[i]
+            seq[k] = seq.get(k, 0) + 1
+            ext_m = re.search(r"\.([^\W_]+)$", x)
+            ext = ext_m.group(1) if ext_m else ""
+            stem = x[: len(x) - len(ext) - 1] if ext else x
+            new[x] = x if seq[k] == 1 else f"{stem}~{seq[k]}{('.' + ext) if ext else ''}"
+        for i, (rp, rr) in enumerate(zip(rel, repo, strict=True)):
+            if not is_missing(rr) and rr == r and not is_missing(rp) and str(rp) in new:
+                out[i] = new[str(rp)]
+    return out
+
+
 def _archive_member_paths(arc: Any, repo: Any, cache: bool = False) -> tuple[str, str]:
     """Port of ``.archive_member_paths()``: where the members of an archive at *arc* (its URL, or
     its path on disk) are kept in *repo*'s download folder (``member_dest``), and where a whole
@@ -1675,6 +1740,8 @@ def _repo_budget(
     names = col("file_name")
     paths = col("file_path")
     rel = [nm if is_missing(p) else p for p, nm in zip(paths, names, strict=True)]
+    # under the names download_repo_files() stores them by (#700)
+    rel = _case_clash_rename([repo] * n, rel)
     storage_col = col("provider")
     subdir = _repo_cache_subdir(repo, cache)
 
@@ -2239,7 +2306,7 @@ def download_repo_files(
     files: pd.DataFrame | None,
     max_file_size: float = 100,
     max_download_size: float = 500,
-    max_files_per_repo: float = math.inf,
+    max_files_per_repo: float = 100000,
     repo_file_counts: Mapping[str, float] | None = None,
     repo_listing: pd.DataFrame | None = None,
     zip_timeout_s: float = 120,
@@ -2331,6 +2398,9 @@ def download_repo_files(
     if rel_path is None:
         rel_path = list(file_names)
     rel_path = [fn if p is None else p for p, fn in zip(rel_path, file_names, strict=True)]
+    # a name of its own for each of the paths that differ only in capital letters, chosen from the
+    # full listing (#700)
+    rel_path = _case_clash_rename(repo_urls, rel_path, repo_listing)
     _sweep_repo_cache_once()
     # Only the part below the repository's folder is shortened, so the repository's budget, which
     # counts that folder, counts the file (#699).
@@ -2696,6 +2766,15 @@ def download_repo_files(
                         continue
                     if f_ok[j] is not True or is_missing(f_path[j]):
                         why = "unknown failure" if f_error is None else as_str(f_error[j])
+                        # a file whose path would leave its folder ("../escape.txt") is refused on
+                        # purpose: reported as "failed after retries ... Re-run to retry", which
+                        # cannot help (#700), it is named with its reason among the files left
+                        # out, as a limit's are
+                        if re.search(r"path traversal|leads outside the folder", why or ""):
+                            limit_refused[k] = (
+                                "it was not unpacked, because its path leads outside its folder"
+                            )
+                            continue
                         failed_rows.append((repo_urls[k], file_names[k], arcs[k], paper_id(k), why))
                         continue
                     df.iat[k, loc_col] = f_path[j]

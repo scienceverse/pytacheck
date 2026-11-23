@@ -22,6 +22,7 @@ import datetime
 import math
 import os
 import platform
+import re
 import subprocess
 from collections.abc import Callable, Iterator, Mapping, Sequence
 from typing import Any
@@ -312,19 +313,74 @@ _SPSS_REC_NONE = (
 _SPSS_REC_SELF = " (A jamovi/JASP/SPSS-Viewer file is also present, which is self-reproducible.)"
 
 
+def _repro_named_in_code(
+    fnames: Sequence[str | None], code_text: Sequence[str | None]
+) -> list[bool]:
+    """Port of ``R/reproducibility_check.R::.repro_named_in_code()``.
+
+    Which of the files *fnames* the code names: the file's name in quotes, alone or at the
+    end of a path (``"../data/rawdata.sav"``), without regard to capitals (#695, point 42).
+    *code_text* is the lines of all the code.
+    """
+    if not len(fnames):
+        return []
+    txt = "\n".join("NA" if x is None else str(x) for x in code_text).lower()
+    out: list[bool] = []
+    for f in fnames:
+        b = os.path.basename(("NA" if f is None else str(f)).replace("\\", "/")).lower()
+        out.append(re.search("[\"'/\\\\]" + re.escape(b) + "[\"']", txt) is not None)
+    return out
+
+
+def _repro_no_code_text(non_r_note: str = "", count_refused: Any = None) -> str:
+    """Port of ``R/reproducibility_check.R::.repro_no_code_text()``.
+
+    The summary of a paper with no R or Python code to run, which names the repositories an
+    earlier check refused for their number of files (#706): such a repository may hold code
+    that was never looked at.
+    """
+    refused = ""
+    if (
+        isinstance(count_refused, pd.DataFrame)
+        and len(count_refused)
+        and "message" in count_refused.columns
+    ):
+        refused = " " + " ".join(str(m) for m in count_refused["message"])
+    return f"We found no R or Python code files to assess for reproducibility.{non_r_note}{refused}"
+
+
 def spss_stata(
-    fnames_all: Sequence[str | None], code_fnames: Sequence[str | None]
+    fnames_all: Sequence[str | None],
+    code_fnames: Sequence[str | None],
+    read_code_txt: Sequence[str | None] = (),
 ) -> dict[str, Any]:
-    """The SPSS/Stata data-without-syntax findings and their report sections."""
+    """The SPSS/Stata data-without-syntax findings and their report sections.
+
+    *read_code_txt*: the lines of the deposit's own code. An SPSS or Stata data file that
+    code reads (``read_sav()``, ``read.dta()``, ``rio::import()``, ...) is data for that code,
+    not a sign that the analysis was left out: three Meta-Psychology papers were red although
+    every script ran, because their R code read a ``.sav`` (#695, point 42).
+    """
     both = [*fnames_all, *code_fnames]
     has_sav = _lgl_any(r"\.(sav|zsav|por)$", fnames_all)
     has_sps = _lgl_any(r"\.sps$", both)
     has_selfcontained = _lgl_any(r"\.(omv|jasp|spv)$", fnames_all)
-    spss_red = has_sav and not has_sps
+    sav_files = [
+        f for f in fnames_all if f is not None and grepl(r"\.(sav|zsav|por)$", f, ignore_case=True)
+    ]
+    sav_unread = len(sav_files) > 0 and not all(_repro_named_in_code(sav_files, read_code_txt))
+    spss_red = sav_unread and not has_sps
     spss_report: list[str] | None = None
     if has_sav:
         rec = _SPSS_REC_SELF if has_selfcontained else _SPSS_REC_NONE
-        if not has_sps:
+        if not has_sps and not sav_unread:
+            n = len(sav_files)
+            spss_report = [
+                "#### SPSS data",
+                f"The SPSS data file{plural(n)} (`.sav`/`.por`) {plural(n, 'is', 'are')} read by "
+                "the deposit's own code, so the analysis is in that code, not in SPSS syntax.",
+            ]
+        elif not has_sps:
             spss_report = [
                 "#### SPSS data without syntax",
                 "An SPSS data file (`.sav`/`.por`) is present but **no SPSS syntax file "
@@ -343,10 +399,19 @@ def spss_stata(
 
     has_dta = _lgl_any(r"\.dta$", fnames_all)
     has_do = _lgl_any(r"\.(do|ado)$", both)
-    stata_red = has_dta and not has_do
+    dta_files = [f for f in fnames_all if f is not None and grepl(r"\.dta$", f, ignore_case=True)]
+    dta_unread = len(dta_files) > 0 and not all(_repro_named_in_code(dta_files, read_code_txt))
+    stata_red = dta_unread and not has_do
     stata_report: list[str] | None = None
     if has_dta:
-        if not has_do:
+        if not has_do and not dta_unread:
+            n = len(dta_files)
+            stata_report = [
+                "#### Stata data",
+                f"The Stata data file{plural(n)} (`.dta`) {plural(n, 'is', 'are')} read by the "
+                "deposit's own code, so the analysis is in that code, not in a Stata do-file.",
+            ]
+        elif not has_do:
             stata_report = [
                 "#### Stata data without syntax",
                 "A Stata data file (`.dta`) is present but **no Stata syntax file (`.do`) "

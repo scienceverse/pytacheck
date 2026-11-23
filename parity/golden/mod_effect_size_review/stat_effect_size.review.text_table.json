@@ -56,6 +56,8 @@
           "d_implied_indep_equal_n",
           "d_implied_indep_unequal_min",
           "d_implied_indep_unequal_max",
+          "d_implied_paired_gz",
+          "d_implied_indep_equal_n_g",
           "d_implied_n",
           "d_coherence",
           "d_coherence_assumption",
@@ -117,6 +119,18 @@
             "t": "chr",
             "v": [
               "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
             ]
           },
           {
@@ -335,6 +349,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

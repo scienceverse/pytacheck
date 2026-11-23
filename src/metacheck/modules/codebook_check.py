@@ -136,6 +136,7 @@ def codebook_check(
     structure_df = get_prev_outputs("data_check", "structure")
     previews = get_prev_outputs("data_check", "previews")
     doc_sheets = get_prev_outputs("data_check", "doc_sheets")
+    mo: Any = None
     if columns_df is None or structure_df is None:
         kwargs: dict[str, Any] = {"local_only": local_only}
         if local_path is not None:
@@ -146,12 +147,18 @@ def codebook_check(
         previews = mo.get("previews")
         doc_sheets = mo.get("doc_sheets")
 
+    # repositories data_check refused for their number of files (#706)
+    count_refused = get_prev_outputs("data_check", "count_refused")
+    if count_refused is None and mo is not None:
+        count_refused = mo.get("count_refused")
+
     if columns_df is None or len(columns_df) == 0:
         return _empty_summary(
             paper,
             columns_df,
             structure_df,
             "We found no extracted data columns to check against a codebook.",
+            count_refused,
         )
     return _codebook_check(
         paper,
@@ -184,11 +191,17 @@ def _pid(paper: Any, *dfs: Any) -> Any:
     return ids[0] if ids else None
 
 
-def _empty_summary(paper: Any, columns_df: Any, structure_df: Any, text: str) -> dict[str, Any]:
-    """``empty_summary()``: the ``na`` result when there are no data columns."""
+def _empty_summary(
+    paper: Any, columns_df: Any, structure_df: Any, text: str, count_refused: Any = None
+) -> dict[str, Any]:
+    """``empty_summary()``: the ``na`` result when there are no data columns (yellow, naming
+    them, when data_check refused a repository for its number of files, #706)."""
     import pandas as pd
 
     from metacheck.modules._codebook import _unique, _vals
+    from metacheck.modules._count_refused import _count_refused_note
+
+    refused_note = _count_refused_note(text, count_refused)
 
     struct_pids = _vals(structure_df, "paper_id")
     pids = _unique(struct_pids) if struct_pids else []
@@ -202,8 +215,8 @@ def _empty_summary(paper: Any, columns_df: Any, structure_df: Any, text: str) ->
         "table": columns_df if columns_df is not None else pd.DataFrame(),
         "summary_table": summary,
         "na_replace": dict(_NA_REPLACE_EMPTY),
-        "traffic_light": "na",
-        "summary_text": text,
+        "traffic_light": refused_note["traffic_light"] if refused_note else "na",
+        "summary_text": refused_note["summary_text"] if refused_note else text,
         "report": [],
     }
 
@@ -720,14 +733,14 @@ def _codebook_check(
         )
 
     # ── 6. traffic light ─────────────────────────────────────────────────────
+    # yellow, not red, until a validation shows people agree with most of its red findings (#695,
+    # point 2)
     if n_codebook_vars == 0:
-        tl = "red"
+        tl = "yellow"  # no codebook at all
     elif n_unmatched == 0 and n_conflicted == 0:
-        tl = "green"
-    elif pct_matched >= 80:
-        tl = "yellow"
+        tl = "green"  # all matched, all clean
     else:
-        tl = "red"
+        tl = "yellow"  # coverage gaps or conflicts
     if len(scale_violation_df) > 0 and tl == "green":
         tl = "yellow"
 
@@ -895,9 +908,10 @@ def _codebook_check(
         report += [f"- {g}" for g in gate_msgs]
 
     # ── 8. summary table ─────────────────────────────────────────────────────
-    pids = (
-        _unique(l_pid) if l_pid is not None else [_pid(paper, labels_df, columns_df, structure_df)]
-    )
+    # (`%empty_or%`: a labels table with no rows has no paper ids either)
+    pids = (_unique(l_pid) if l_pid is not None else []) or [
+        _pid(paper, labels_df, columns_df, structure_df)
+    ]
     summary = pd.DataFrame({"paper_id": pd.Series(pids, dtype="string")})
     cols_int: dict[str, list[int]] = {
         "column_n": [coverage.get(p, [0, 0, 0, 0])[0] for p in pids],

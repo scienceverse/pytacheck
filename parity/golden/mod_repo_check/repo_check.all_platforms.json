@@ -30,6 +30,7 @@
       "roster_check",
       "group_no_evidence",
       "useless_files",
+      "symlinks",
       "view_only",
       "na_replace"
     ],
@@ -5194,6 +5195,7 @@
           "dep_org",
           "dep_related",
           "dep_date",
+          "dep_updated",
           "dep_year",
           "osf_type",
           "osf_category",
@@ -5934,6 +5936,48 @@
               null,
               "2020-01-01",
               "2021-03-04"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "2026-01-25",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
             ]
           },
           {
@@ -7245,6 +7289,9 @@
         ]
       },
       {
+        "t": "null"
+      },
+      {
         "t": "df",
         "nrow": 0,
         "names": [
@@ -7275,6 +7322,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

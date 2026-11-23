@@ -1,0 +1,85 @@
+{
+  "id": "repro_deposit_packages.deposit_copies",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "found",
+      "inside",
+      "files",
+      "none",
+      "no_root"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "lay",
+          "mypkg"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<root>/_archive/lay_0.10.1.tar.gz"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>/rel.zip/owner-mypkg-1a2b"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "lay",
+          "mypkg"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "/sandbox/deposit_pkgs/lay_0.10.1.tar.gz"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/sandbox/deposit_pkgs/mypkg"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "deposit_pkgs",
+          "deposit_pkgs/lay_0.10.1.tar.gz",
+          "deposit_pkgs/mypkg",
+          "deposit_pkgs/mypkg/DESCRIPTION",
+          "deposit_pkgs/mypkg/R",
+          "deposit_pkgs/mypkg/R/f.R"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.35",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

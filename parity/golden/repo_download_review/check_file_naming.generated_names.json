@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 345,
+    "nrow": 347,
     "names": [
       "file_name",
       "rule",
@@ -360,7 +360,9 @@
           "数据.xml",
           "数据.xml",
           "数据_m",
-          "数据_m"
+          "数据_m",
+          "DATA.PY",
+          "DATA.py"
         ]
       },
       {
@@ -710,12 +712,16 @@
           "special-characters",
           "diacritics",
           "special-characters",
-          "diacritics"
+          "diacritics",
+          "case-clash",
+          "case-clash"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "bad",
+          "bad",
           "bad",
           "bad",
           "bad",
@@ -1410,11 +1416,13 @@
           "contains a character other than letters, digits, underscore, or dash",
           "contains non-ASCII characters (e.g. accented letters)",
           "contains a character other than letters, digits, underscore, or dash",
-          "contains non-ASCII characters (e.g. accented letters)"
+          "contains non-ASCII characters (e.g. accented letters)",
+          "The path differs only in capital letters from DATA.py: on Windows and macOS the two cannot be stored side by side, so one replaces the other",
+          "The path differs only in capital letters from DATA.PY: on Windows and macOS the two cannot be stored side by side, so one replaces the other"
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

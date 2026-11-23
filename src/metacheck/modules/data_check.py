@@ -31,8 +31,10 @@ from metacheck.archives.zip_peek import _in_download_folder, _unzip_failed_text
 from metacheck.codecheck.core import _in_renv_folder
 from metacheck.module import module
 from metacheck.modules import _data_check as h
+from metacheck.modules._count_refused import _repos_over_count
 from metacheck.report.blocks import _cap_num
 from metacheck.report.file_tree import file_tree_block
+from metacheck.utils import _lfs_pointer_size, _lfs_pointer_text
 
 _INTRO = (
     "This module classifies repository files and, for tabular data files available "
@@ -392,7 +394,8 @@ def _sample_values(df: pd.DataFrame, j: int) -> str:
         "max_file_size": "largest single file to download, in MB (default 100).",
         "max_download_size": "largest total download per repository, in MB (default 500).",
         "max_files_per_repo": "largest file COUNT a single repository may have\n"
-        "before it is refused outright (default `Inf`, no cap).",
+        "before it is refused outright (default 100,000; `Inf` for no cap), before\n"
+        "data_check looks at its files one by one (#702).",
         "osf_max_requests": "the largest number of requests to the OSF for listing one OSF project,\n"
         "passed to `repo_check()` when this module runs it (default 50; `Inf` for no limit). A\n"
         "project listed only in part is named in a warning before anything is downloaded.",
@@ -425,7 +428,7 @@ def data_check(
     peek_zips: bool = True,
     max_file_size: float = 100,
     max_download_size: float = 500,
-    max_files_per_repo: float = math.inf,
+    max_files_per_repo: float = 100000,
     osf_max_requests: float = 50,
     cache: Any = False,
     skip_on_api_limit: bool = False,
@@ -533,6 +536,15 @@ def data_check(
         tree_naming_issues = mo.get("naming_issues")
         tree_useless = mo.get("useless_files")
     all_files = all_files.copy().reset_index(drop=True)
+    # Repositories with more files than max_files_per_repo are refused here, before the steps below
+    # that take time for every file (#702)
+    count_refused = _repos_over_count(all_files, max_files_per_repo)
+    if len(count_refused):
+        for m in count_refused["message"].tolist():
+            _cap_report(m)
+        all_files = all_files[~all_files["repo_url"].isin(count_refused["repo_url"])].reset_index(
+            drop=True
+        )
     if download != "none" and len(all_files) > 0:
         from metacheck.llm.cap_prompt import _cap_report_partial
 
@@ -582,15 +594,24 @@ def data_check(
             "table": all_files,
             "structure": all_files,
             # yellow when a repository was not listed in full: its data may exist unseen (#681)
-            "traffic_light": "na" if not_listed["summary"] is None else "yellow",
+            # (and when a repository was refused for its number of files, #702)
+            "traffic_light": (
+                "na" if not_listed["summary"] is None and not len(count_refused) else "yellow"
+            ),
             "summary_text": (
                 "We found no files to analyse."
-                if not_listed["summary"] is None
+                if not_listed["summary"] is None and not len(count_refused)
                 else "".join(
-                    f"\n-  {x}" for x in ("We found no files to analyse.", not_listed["summary"])
+                    f"\n-  {x}"
+                    for x in (
+                        "We found no files to analyse.",
+                        *([not_listed["summary"]] if not_listed["summary"] is not None else []),
+                        *count_refused["message"].tolist(),
+                    )
                 )
             ),
             "gated_repos": listing_gated,
+            "count_refused": count_refused,
             "manifest_path": manifest_path,
             "summary_table": pd.DataFrame(
                 {
@@ -620,6 +641,7 @@ def data_check(
         max_files_per_repo=max_files_per_repo,
         cache=cache,
         skip_on_api_limit=skip_on_api_limit,
+        count_refused=count_refused,
     )
     all_files = dl["all_files"]
     want = dl["want"]
@@ -654,10 +676,13 @@ def data_check(
         if t in counts:
             counts[t] += 1
     n_files = len(all_files)
+    # no files left: every file was an archive that could not be opened (#703)
     summary_files = (
         f"We classified {n_files:d} file{plural(n_files)}: "
         + ", ".join(f"{n:d} {t}" for t, n in counts.items() if n > 0)
         + "."
+        if n_files
+        else "We found no files to analyse."
     )
     n_tabular_all = ex["n_tabular_all"]
     n_no_local = ex["n_no_local"]
@@ -669,8 +694,12 @@ def data_check(
     else:
         n_extracted = ex["n_data_files"] - len(ex["manifest_files"]) - len(ex["non_tabular"])
     summary_data = (
-        f"We found {n_tabular_all:d} tabular data file{plural(n_tabular_all)} and extracted "
-        f"{n_columns:d} column{plural(n_columns)} from {n_extracted:d} of them."
+        (
+            f"We found {n_tabular_all:d} tabular data file{plural(n_tabular_all)} and extracted "
+            f"{n_columns:d} column{plural(n_columns)} from {n_extracted:d} of them."
+        )
+        if n_files
+        else None
     )
 
     study_grp = h._col(all_files, "group") or [None] * n_files
@@ -768,7 +797,9 @@ def data_check(
     report.extend(failed_text["report"] or [])
     report.extend(not_listed["report"] or [])
     unpack_text = _unzip_failed_text(dl["unpack_failed"])
+    lfs_report, lfs_summary = ex["lfs_text"]
     report.extend(unpack_text["report"] or [])
+    report.extend(lfs_report or [])
     tree_block = file_tree_block(all_files, tree_naming_issues, tree_useless)
     if tree_block is not None:
         report.extend(tree_block)
@@ -838,9 +869,10 @@ def data_check(
         *([failed_text["summary"]] if failed_text["summary"] else []),
         *([not_listed["summary"]] if not_listed["summary"] else []),
         *([unpack_text["summary"]] if unpack_text["summary"] else []),
+        *([lfs_summary] if lfs_summary else []),
         *summary_keys,
         summary_files,
-        summary_data,
+        *([summary_data] if summary_data is not None else []),
         *summary_studies,
         *summary_ungrouped,
         *summary_nolocal,
@@ -889,8 +921,13 @@ def data_check(
     both = [t for t in (tl, dv["traffic_light"]) if t in rank]
     final_tl = max(both, key=lambda t: rank[t]) if both else "na"
     # at least yellow when a repository was listed only in part or not at all: files went
-    # unchecked, so neither "no issues" nor "nothing to check" holds (#681)
-    if not_listed["summary"] is not None and final_tl in ("na", "green"):
+    # unchecked, so neither "no issues" nor "nothing to check" holds (#681); also when an archive,
+    # or files in one, could not be unpacked (#703), or a file is a Git LFS pointer (#700)
+    if (
+        not_listed["summary"] is not None
+        or unpack_text["summary"] is not None
+        or lfs_summary is not None
+    ) and final_tl in ("na", "green"):
         final_tl = "yellow"
 
     dv_summary = dv["summary_table"]
@@ -904,6 +941,9 @@ def data_check(
         "structure": all_files,
         "previews": file_previews,
         "gated_repos": listing_gated,
+        # repos refused for their number of files (max_files_per_repo), whose rows `structure` no
+        # longer has: the later checks name them (#706)
+        "count_refused": count_refused,
         "manifest_path": manifest_path,
         "group_no_evidence": state["group_no_evidence"],
         "summary_table": _merge_all(summary_table, dv_summary),
@@ -1158,21 +1198,25 @@ def _classify(
                 llm_file_updates = sum(ok)
 
     # 2b. study groups: the collection-level readme / licence gets none
-    if paths is None:
-        # R: `all_files$file_path %||% ""` makes every per-row vector zero-length
-        is_root: list[bool] | None = None
-    else:
-        pfg = [nm if (p is None or p == "") else p for p, nm in zip(paths, names, strict=True)]
-        from_path = _data_group_from_path(pfg)
-        study_rx = grepl(
-            "study[-_]?[0-9]|/ex[0-9]|/pilot[0-9]",
-            [None if p is None else p.lower() for p in pfg],
-        )
-        is_root = [
-            r is not None and r in ("readme", "license") and fp is None and not bool(s)
-            for r, fp, s in zip(doc_role, from_path, study_rx, strict=True)
-        ]
-    sel = [] if is_root is None else [i for i, r in enumerate(is_root) if not r]
+    # Without a file_path column R's path vector is zero-length, so indexing it by the readme and
+    # licence rows gives NA for each: the path names no study, and those rows are root (#702).
+    pfg: list[str | None] = (
+        [None] * n
+        if paths is None
+        else [nm if (p is None or p == "") else p for p, nm in zip(paths, names, strict=True)]
+    )
+    # (the path is read only for the readme and licence rows: for every file it took 14 minutes in
+    # a repository of 369,548 files, #702)
+    is_root = [r is not None and r in ("readme", "license") for r in doc_role]
+    at = [i for i, r in enumerate(is_root) if r]
+    from_path = _data_group_from_path([pfg[i] for i in at])
+    study_rx = grepl(
+        "study[-_]?[0-9]|/ex[0-9]|/pilot[0-9]",
+        [None if pfg[i] is None else str(pfg[i]).lower() for i in at],
+    )
+    for i, fp, st in zip(at, from_path, study_rx, strict=True):
+        is_root[i] = fp is None and not bool(st)
+    sel = [i for i, r in enumerate(is_root) if not r]
     grp = data_group_llm(
         all_files.iloc[sel].reset_index(drop=True), model=model, params=params, paper=paper
     )
@@ -1222,6 +1266,7 @@ def _download(
     max_files_per_repo: float,
     cache: Any,
     skip_on_api_limit: bool,
+    count_refused: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     from metacheck.archives.download import _download_for_run, _run_download_want
     from metacheck.archives.zip_peek import (
@@ -1314,7 +1359,12 @@ def _download(
                 want[i] = False
                 zip_peek_reason[i] = f"zip skipped: {h._dquote_free(d.get('reason'))}"
 
-    gated_repos = None
+    # (the repositories refused above for their number of files first)
+    gated_repos = (
+        count_refused[["repo_url", "message"]].reset_index(drop=True)
+        if count_refused is not None and len(count_refused)
+        else None
+    )
     oversize_files = None
     failed_files = None
     # members of zips that could not be unpacked (_expand_zip(), #680)
@@ -1361,7 +1411,15 @@ def _download(
                     new_locs[i] = got[k] if got is not None else None
                 _set(all_files, "file_location", new_locs)
                 if res is not None:
-                    gated_repos = res.attrs.get("gated")
+                    from metacheck._r import bind_rows
+
+                    gd = res.attrs.get("gated")
+                    if gd is not None:
+                        gated_repos = (
+                            gd
+                            if gated_repos is None
+                            else bind_rows([gated_repos, gd]).reset_index(drop=True)
+                        )
                     oversize_files = res.attrs.get("oversize_skipped")
                     failed_files = res.attrs.get("failed")
 
@@ -1387,153 +1445,164 @@ def _download(
                 _set(all_files, "data_type", data_type)
 
             # expand downloaded archives (zip only with peek_zips)
-            # An archive in a renv folder is the source of an R package renv keeps, not data, and
-            # is not unpacked: mp20233958's renv_0.17.3.tar.gz, in renv/library/ inside a Zenodo
-            # zip, failed to unpack because its path passed the Windows limit of 260 characters.
-            on_disk = [
-                h._has_value(loc) and h._file_exists(loc) and not r
-                for loc, r in zip(locs, _in_renv_folder(all_files), strict=True)
-            ]
-            zips = _is_zip(names)
-            tars = _is_tar_archive(names)
-            gzs = _is_single_compress(names)
-            da_zip = [i for i in range(n) if is_true(peek_zips) and on_disk[i] and zips[i]]
-            da_tar = [i for i in range(n) if on_disk[i] and tars[i]]
-            da_gz = [i for i in range(n) if on_disk[i] and gzs[i]]
-            da = da_zip + da_tar + da_gz
-            if da:
-                st = skip_types if skip_types is not None else "materials"
-                # The per-file limit also holds for a file inside an archive (metacheck
-                # #472): the download limits saw only the archive's own, compressed size,
-                # so a 74 MB .gz could become a 1.2 GB copy in the cache. An inner file
-                # over the limit is not unpacked, and is listed with the files too large
-                # to download.
-                mfs = max_file_size if max_file_size is not None else math.inf
-                max_bytes = mfs * 1024 * 1024 if math.isfinite(mfs) else math.inf
-                # The files unpacked into a repository's download folder count for its budget too
-                # (#699): the budget saw only the archive's packed size, and osf.io/nugzb held
-                # 61 MB under a 50 MB budget. Each archive may use what is left after the
-                # repository's choice of files (_repo_budget()), the same choice
-                # download_repo_files() made above, so the files code_check still has to download
-                # keep their room. An archive of the user's own (not in a download folder) is
-                # unpacked elsewhere and not limited.
-                budgets: dict[Any, Any] = {}
-                extracted = []
-                for i in da:
-                    row1 = all_files.iloc[[i]].reset_index(drop=True)
-                    repo = (h._col(row1, "repo_url") or [None])[0]
-                    bud = None
-                    if _in_download_folder(str(locs[i])) and repo is not None:
-                        if repo not in budgets:
-                            budgets[repo] = _repo_budget(
-                                repo,
-                                all_files,
-                                cache=cache,
-                                max_file_size=mfs,
-                                max_download_size=(
-                                    max_download_size if max_download_size is not None else math.inf
-                                ),
-                            )
-                        bud = budgets[repo]
-                    left = math.inf if bud is None else _budget_free(bud)
-                    if i in da_zip:
-                        rows_x = _expand_zip(
-                            locs[i], row1, skip_types=st, max_bytes=max_bytes, max_total=left
-                        )
-                    elif i in da_tar:
-                        rows_x = _expand_tar(
-                            locs[i], row1, skip_types=st, max_bytes=max_bytes, max_total=left
-                        )
-                    else:
-                        rows_x = _expand_compressed(
-                            locs[i], row1, skip_types=st, max_bytes=max_bytes, max_total=left
-                        )
-                    if bud is not None:
-                        bud.disk = _repo_disk_bytes(_repo_cache_subdir(repo, cache))
-                    nb = rows_x.attrs.get("over_budget") if rows_x is not None else None
-                    if nb is not None and len(nb) > 0:
-                        from metacheck._r import bind_rows
-
-                        msg = (
-                            f"Repository {repo} exceeds the {_cap_num(max_download_size)} MB "
-                            "per-repository budget: unpacked the smallest files from "
-                            f"{row1['file_name'].iloc[0]} up to the cap, {len(nb)} "
-                            f"file{plural(len(nb))} omitted. Raise `max_download_size` to "
-                            "include more."
-                        )
-                        _cap_report(msg)
-                        add_g = pd.DataFrame(
-                            {
-                                "repo_url": pd.Series([repo], dtype="string"),
-                                "message": pd.Series([msg], dtype="string"),
-                            }
-                        )
-                        gated_repos = (
-                            add_g
-                            if gated_repos is None
-                            else bind_rows([gated_repos, add_g]).reset_index(drop=True)
-                        )
-                    ov = rows_x.attrs.get("oversize") if rows_x is not None else None
-                    if ov is not None and len(ov) > 0:
-                        from metacheck._r import bind_rows
-
-                        repo_of = h._col(row1, "repo_url") or [None]
-                        add = pd.DataFrame(
-                            {
-                                "repo_url": pd.Series([repo_of[0]] * len(ov), dtype="string"),
-                                "file_name": ov["file_name"]
-                                .astype("string")
-                                .reset_index(drop=True),
-                                "file_size": ov["file_size"].reset_index(drop=True),
-                            }
-                        )
-                        oversize_files = (
-                            add
-                            if oversize_files is None
-                            else bind_rows([oversize_files, add]).reset_index(drop=True)
-                        )
-                    uf = rows_x.attrs.get("unpack_failed") if rows_x is not None else None
-                    if uf is not None and len(uf) > 0:
-                        from metacheck._r import bind_rows
-
-                        unpack_failed = (
-                            uf
-                            if unpack_failed is None
-                            else bind_rows([unpack_failed, uf]).reset_index(drop=True)
-                        )
-                    if rows_x is not None and len(rows_x) > 0:
-                        extracted.append(rows_x)
-                drop = set(da)
-                keep_rows = [i for i in range(n) if i not in drop]
-                all_files = all_files.iloc[keep_rows].reset_index(drop=True)
-                want = [want[i] for i in keep_rows]
-                # keep the zip-peek reasons aligned with the rows (R does not,
-                # so the manifest can give a file another file's reason)
-                zip_peek_reason = [zip_peek_reason[i] for i in keep_rows]
-                if extracted:
-                    from metacheck._r import bind_rows
-
-                    added = bind_rows(extracted)
-                    all_files = bind_rows([all_files, added]).reset_index(drop=True)
-                    want = want + [True] * len(added)
-                    zip_peek_reason = zip_peek_reason + [None] * len(added)
-                # Files that do not belong in a repository (__MACOSX/, "._" files,
-                # .DS_Store, .Rproj.user/, ...; see useless_file_kind()) are left out, as
-                # repo_check does for the zips it opens: a "._" copy of a .csv would
-                # otherwise be read as data.
+            # Archives inside an unpacked archive are opened in turn, up to three levels deep,
+            # within the same limits: zips inside zips were not opened (#700). Each pass opens only
+            # the archives the pass before unpacked, as the archives it opens leave the file list.
+            for _archive_level in range(3):
                 n = len(all_files)
                 names = h._col(all_files, "file_name") or [None] * n
-                fpaths = h._col(all_files, "file_path") or names
-                sysf = is_useless_file(
-                    [p if p is not None else nm for p, nm in zip(fpaths, names, strict=True)]
-                )
-                if any(sysf):
-                    keep_rows = [i for i in range(n) if not sysf[i]]
+                locs = h._col(all_files, "file_location") or [None] * n
+                # An archive in a renv folder is the source of an R package renv keeps, not data, and
+                # is not unpacked: mp20233958's renv_0.17.3.tar.gz, in renv/library/ inside a Zenodo
+                # zip, failed to unpack because its path passed the Windows limit of 260 characters.
+                on_disk = [
+                    h._has_value(loc) and h._file_exists(loc) and not r
+                    for loc, r in zip(locs, _in_renv_folder(all_files), strict=True)
+                ]
+                zips = _is_zip(names)
+                tars = _is_tar_archive(names)
+                gzs = _is_single_compress(names)
+                da_zip = [i for i in range(n) if is_true(peek_zips) and on_disk[i] and zips[i]]
+                da_tar = [i for i in range(n) if on_disk[i] and tars[i]]
+                da_gz = [i for i in range(n) if on_disk[i] and gzs[i]]
+                da = da_zip + da_tar + da_gz
+                if not da:
+                    break
+                if da:
+                    st = skip_types if skip_types is not None else "materials"
+                    # The per-file limit also holds for a file inside an archive (metacheck
+                    # #472): the download limits saw only the archive's own, compressed size,
+                    # so a 74 MB .gz could become a 1.2 GB copy in the cache. An inner file
+                    # over the limit is not unpacked, and is listed with the files too large
+                    # to download.
+                    mfs = max_file_size if max_file_size is not None else math.inf
+                    max_bytes = mfs * 1024 * 1024 if math.isfinite(mfs) else math.inf
+                    # The files unpacked into a repository's download folder count for its budget too
+                    # (#699): the budget saw only the archive's packed size, and osf.io/nugzb held
+                    # 61 MB under a 50 MB budget. Each archive may use what is left after the
+                    # repository's choice of files (_repo_budget()), the same choice
+                    # download_repo_files() made above, so the files code_check still has to download
+                    # keep their room. An archive of the user's own (not in a download folder) is
+                    # unpacked elsewhere and not limited.
+                    budgets: dict[Any, Any] = {}
+                    extracted = []
+                    for i in da:
+                        row1 = all_files.iloc[[i]].reset_index(drop=True)
+                        repo = (h._col(row1, "repo_url") or [None])[0]
+                        bud = None
+                        if _in_download_folder(str(locs[i])) and repo is not None:
+                            if repo not in budgets:
+                                budgets[repo] = _repo_budget(
+                                    repo,
+                                    all_files,
+                                    cache=cache,
+                                    max_file_size=mfs,
+                                    max_download_size=(
+                                        max_download_size
+                                        if max_download_size is not None
+                                        else math.inf
+                                    ),
+                                )
+                            bud = budgets[repo]
+                        left = math.inf if bud is None else _budget_free(bud)
+                        if i in da_zip:
+                            rows_x = _expand_zip(
+                                locs[i], row1, skip_types=st, max_bytes=max_bytes, max_total=left
+                            )
+                        elif i in da_tar:
+                            rows_x = _expand_tar(
+                                locs[i], row1, skip_types=st, max_bytes=max_bytes, max_total=left
+                            )
+                        else:
+                            rows_x = _expand_compressed(
+                                locs[i], row1, skip_types=st, max_bytes=max_bytes, max_total=left
+                            )
+                        if bud is not None:
+                            bud.disk = _repo_disk_bytes(_repo_cache_subdir(repo, cache))
+                        nb = rows_x.attrs.get("over_budget") if rows_x is not None else None
+                        if nb is not None and len(nb) > 0:
+                            from metacheck._r import bind_rows
+
+                            msg = (
+                                f"Repository {repo} exceeds the {_cap_num(max_download_size)} MB "
+                                "per-repository budget: unpacked the smallest files from "
+                                f"{row1['file_name'].iloc[0]} up to the cap, {len(nb)} "
+                                f"file{plural(len(nb))} omitted. Raise `max_download_size` to "
+                                "include more."
+                            )
+                            _cap_report(msg)
+                            add_g = pd.DataFrame(
+                                {
+                                    "repo_url": pd.Series([repo], dtype="string"),
+                                    "message": pd.Series([msg], dtype="string"),
+                                }
+                            )
+                            gated_repos = (
+                                add_g
+                                if gated_repos is None
+                                else bind_rows([gated_repos, add_g]).reset_index(drop=True)
+                            )
+                        ov = rows_x.attrs.get("oversize") if rows_x is not None else None
+                        if ov is not None and len(ov) > 0:
+                            from metacheck._r import bind_rows
+
+                            repo_of = h._col(row1, "repo_url") or [None]
+                            add = pd.DataFrame(
+                                {
+                                    "repo_url": pd.Series([repo_of[0]] * len(ov), dtype="string"),
+                                    "file_name": ov["file_name"]
+                                    .astype("string")
+                                    .reset_index(drop=True),
+                                    "file_size": ov["file_size"].reset_index(drop=True),
+                                }
+                            )
+                            oversize_files = (
+                                add
+                                if oversize_files is None
+                                else bind_rows([oversize_files, add]).reset_index(drop=True)
+                            )
+                        uf = rows_x.attrs.get("unpack_failed") if rows_x is not None else None
+                        if uf is not None and len(uf) > 0:
+                            from metacheck._r import bind_rows
+
+                            unpack_failed = (
+                                uf
+                                if unpack_failed is None
+                                else bind_rows([unpack_failed, uf]).reset_index(drop=True)
+                            )
+                        if rows_x is not None and len(rows_x) > 0:
+                            extracted.append(rows_x)
+                    drop = set(da)
+                    keep_rows = [i for i in range(n) if i not in drop]
                     all_files = all_files.iloc[keep_rows].reset_index(drop=True)
                     want = [want[i] for i in keep_rows]
+                    # keep the zip-peek reasons aligned with the rows (R does not,
+                    # so the manifest can give a file another file's reason)
                     zip_peek_reason = [zip_peek_reason[i] for i in keep_rows]
+                    if extracted:
+                        from metacheck._r import bind_rows
+
+                        added = bind_rows(extracted)
+                        all_files = bind_rows([all_files, added]).reset_index(drop=True)
+                        want = want + [True] * len(added)
+                        zip_peek_reason = zip_peek_reason + [None] * len(added)
+                    # Files that do not belong in a repository (__MACOSX/, "._" files,
+                    # .DS_Store, .Rproj.user/, ...; see useless_file_kind()) are left out, as
+                    # repo_check does for the zips it opens: a "._" copy of a .csv would
+                    # otherwise be read as data.
                     n = len(all_files)
                     names = h._col(all_files, "file_name") or [None] * n
+                    fpaths = h._col(all_files, "file_path") or names
+                    sysf = is_useless_file(
+                        [p if p is not None else nm for p, nm in zip(fpaths, names, strict=True)]
+                    )
+                    if any(sysf):
+                        keep_rows = [i for i in range(n) if not sysf[i]]
+                        all_files = all_files.iloc[keep_rows].reset_index(drop=True)
+                        want = [want[i] for i in keep_rows]
+                        zip_peek_reason = [zip_peek_reason[i] for i in keep_rows]
+                        n = len(all_files)
+                        names = h._col(all_files, "file_name") or [None] * n
 
             # reclassify downloaded .txt files from their content
             from metacheck.datacheck.files import txt_classify_content
@@ -1718,6 +1787,8 @@ def _extract(
     if locs is None:
         # R: every file_location-based vector is zero-length without the column
         has_local: list[bool] = []
+        is_lfs = [False] * n
+        lfs_text: tuple[list[str] | None, str | None] = (None, None)
         is_trial: list[bool] = []
         n_tabular_all = 0
         n_no_local = 0
@@ -1725,6 +1796,23 @@ def _extract(
         trial_level_files: list[Any] = []
     else:
         has_local = [h._has_value(loc) and h._file_exists(loc) for loc in locs]
+        # A Git LFS pointer stands in for a file that was not deposited: it is not read as data (a
+        # 134-byte text read as the CSV it names), and the report names it (#700)
+        lfs_size = [math.nan] * n
+        at = [i for i in range(n) if has_local[i]]
+        for i, sz in zip(at, _lfs_pointer_size([locs[i] for i in at]), strict=True):
+            lfs_size[i] = sz
+        is_lfs = [sz == sz for sz in lfs_size]
+        has_local = [hl and not lf for hl, lf in zip(has_local, is_lfs, strict=True)]
+        fpaths = h._col(all_files, "file_path") or names
+        lfs_text = _lfs_pointer_text(
+            [
+                (fp if fp is not None else nm)
+                for fp, nm, lf in zip(fpaths, names, is_lfs, strict=True)
+                if lf
+            ],
+            [sz for sz, lf in zip(lfs_size, is_lfs, strict=True) if lf],
+        )
 
         def trial(p: Any) -> bool:
             try:
@@ -1741,7 +1829,11 @@ def _extract(
             _set(all_files, "data_format", data_format)
         data_rows = [i for i in range(n) if is_tab[i] and has_local[i] and not is_trial[i]]
         n_tabular_all = sum(1 for t, tr in zip(is_tab, is_trial, strict=True) if t and not tr)
-        n_no_local = sum(1 for t, hl in zip(is_tab, has_local, strict=True) if t and not hl)
+        n_no_local = sum(
+            1
+            for t, hl, lf in zip(is_tab, has_local, is_lfs, strict=True)
+            if t and not hl and not lf
+        )
 
     manifest_files: list[Any] = []
     # Sheets of notes or a codebook that a data spreadsheet holds beside its data, set aside
@@ -1980,6 +2072,7 @@ def _extract(
         "scale_blocks": scale_blocks,
         "n_tabular_all": n_tabular_all,
         "n_no_local": n_no_local,
+        "lfs_text": lfs_text,
         "n_data_files": len(data_rows),
         "n_extracted": n_extracted,
         "manifest_files": manifest_files,
@@ -2347,7 +2440,8 @@ def _summary_table(
     else:
         column_n = _frame_by("column_n", [], [])
         empty_n = _frame_by("empty_col_n", [], [])
-    ids = h._unique(af_pid) if n > 0 else [_pid(paper, all_files)]
+    # no rows left (every file was an archive that could not be opened): every paper's id (#703)
+    ids = h._unique(af_pid) if n > 0 else _pids_all(paper, all_files)
     st = pd.DataFrame({"paper_id": _str_series(ids)})
     for y in (data_file_n, column_n, empty_n, coltype_wide):
         st = _left_join(st, y)

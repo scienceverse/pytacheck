@@ -16,7 +16,8 @@ so it only gave false positives (metacheck 8c1f6c1, #462; D91).
 
 Like metacheck, this deliberately does not check letter case or
 underscore-vs-dash separator consistency: metacheck's own classifiers match
-keywords anywhere in a name with any separator, so nothing depends on them.
+keywords anywhere in a name with any separator, so nothing depends on them. Two paths that differ
+ONLY in case are a different matter (``case-clash``, #700).
 """
 
 from __future__ import annotations
@@ -43,6 +44,7 @@ FILE_NAMING_SEVERITY: dict[str, str] = {
     "path-length-228": "suggestion",
     "directory-length-100": "suggestion",
     "filename-length-50": "suggestion",
+    "case-clash": "bad",
 }
 
 _SPECIAL_RX = "[^A-Za-z0-9._ -]"
@@ -257,6 +259,54 @@ def _file_naming_check_length(file_path: Any) -> pd.DataFrame:
     return _frame(_length_rows(_chr_list(file_path)), ["file_name", "rule", "detail"])
 
 
+def _file_naming_check_case(file_path: Any, repo: Any = None) -> pd.DataFrame:
+    """Port of ``R/file-naming.R::.file_naming_check_case()``.
+
+    Paths of one repository that differ only in capital letters ("data.csv", "Data.csv"): on
+    Windows and macOS they cannot be stored side by side, so unpacked or downloaded there one
+    replaces the other (#700). *repo* groups the paths by repository (``None``: all one
+    repository). Returns ``file_name``, ``rule``, ``detail``, one row per such path.
+    """
+    from metacheck._r import r_sorted
+    from metacheck.datacheck.files import _tolower
+
+    paths = _chr_list(file_path)
+    if repo is None:
+        repos: list[str | None] = [""] * len(paths)
+    else:
+        rv = _chr_list(repo)
+        repos = [rv[i % len(rv)] for i in range(len(paths))] if rv else [""] * len(paths)
+    by_repo: dict[str | None, list[str]] = {}
+    for fp, r in zip(paths, repos, strict=True):
+        if fp is not None:
+            by_repo.setdefault(r, []).append(fp)
+    # split() by the repository's factor: its levels in sorted order, a missing one last
+    levels = r_sorted([r for r in by_repo if r is not None])
+    order = [*levels, *([None] if None in by_repo else [])]
+    rows: list[Row] = []
+    for r in order:
+        uniq = list(dict.fromkeys(by_repo[r]))
+        low = [_tolower(x) for x in uniq]
+        seen: set[str] = set()
+        dup: set[str] = set()
+        for lo in low:
+            (dup if lo in seen else seen).add(lo)
+        clash = [lo in dup for lo in low]
+        pc = [x for x, c in zip(uniq, clash, strict=True) if c]
+        lc = [x for x, c in zip(low, clash, strict=True) if c]
+        for x, lo in zip(pc, lc, strict=True):
+            others = ", ".join(y for y, ly in zip(pc, lc, strict=True) if ly == lo and y != x)
+            rows.append(
+                (
+                    x,
+                    "case-clash",
+                    f"The path differs only in capital letters from {others}: on Windows and "
+                    "macOS the two cannot be stored side by side, so one replaces the other",
+                )
+            )
+    return _frame(rows, ["file_name", "rule", "detail"])
+
+
 # -- check_file_naming() -------------------------------------------------------
 
 
@@ -267,7 +317,9 @@ def _rep_len(x: Any, n: int) -> list[str | None]:
     return [values[i % len(values)] for i in range(n)]
 
 
-def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = None) -> pd.DataFrame:
+def check_file_naming(
+    file_name: Any, file_path: Any = None, data_type: Any = None, repo: Any = None
+) -> pd.DataFrame:
     """Check repository files against the FAIR file-naming conventions.
 
     Port of ``R/file-naming.R::check_file_naming()``.
@@ -284,6 +336,9 @@ def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = No
         ``data_classify_files()``); not used any more: it was only used for a rule that made a file
         of an unknown type a naming problem, which was removed (#648).
         ``None`` is R's ``NA_character_``.
+    repo:
+        optional repository of each file: paths that differ only in capital letters are looked
+        for within each repository (default: all files are one repository).
 
     Returns
     -------
@@ -294,8 +349,9 @@ def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = No
 
     Notes
     -----
-    ``"bad"`` rules: spaces, special characters, diacritics and the hard 255-character path
-    limit. ``"suggestion"``
+    ``"bad"`` rules: spaces, special characters, diacritics, the hard 255-character path
+    limit, and a path that differs only in capital letters from another in the same repository
+    (``case-clash``). ``"suggestion"``
     rules: unpadded sibling numbering and the 228/100/50-character budgets. A file
     without a name or a path has nothing to check and is left out.
     """
@@ -312,6 +368,10 @@ def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = No
     rows = _check_rows([names[i] for i in keep])
     rows += _padding_rows([nm for nm in names if nm is not None])
     rows += _length_rows([p for p in paths if p is not None])
+    rows += [
+        (f, rule, detail)
+        for f, rule, detail in _file_naming_check_case(paths, repo).itertuples(index=False)
+    ]
     return _frame(
         [(f, rule, FILE_NAMING_SEVERITY.get(rule), detail) for f, rule, detail in rows],
         _COLUMNS,

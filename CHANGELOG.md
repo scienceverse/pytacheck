@@ -18,6 +18,22 @@ package's. The R commit each release is compared against is in
 - **Not done yet:** `run_code` is off unless `--run-code` is given and Docker runs; `crossref` only reaches GROBID.
 - **Fixed:** the site's job queue woke its clean-up thread instead of a worker when a job arrived, so a job could wait until the next one came.
 
+### Compared with metacheck 0.4.4.35 (`dev` at 991f766)
+
+- **Changed:** the parity checks compare pytacheck with metacheck `dev` at 991f766 (0.4.4.35) instead of 4150b31 (0.4.4.29): six commits, 0.4.4.30 to 0.4.4.35. The goldens, including the accuracy goldens, were made again with R.
+- **Changed:** the default for `max_files_per_repo` is 100,000 in data_check, code_check and the reproducibility check. A repository over it is named in a "not checked" note (`count_refused`, shared in `_count_refused.py`) and gives a yellow light, not a red one.
+- **Added:** Git LFS pointers are told apart from files: a file kept in Git LFS is named with its real size in data_check, code_check and the reproducibility check ("Files kept in Git LFS"), and is no longer read as a file that could not be opened. Nested zips (up to three levels) are opened; an archive that cannot be opened is named.
+- **Added:** code_check refuses files over `max_code_size`, non-text files and JAGS models saved as `.R`, and lists them in "Code files not checked"; it knows more package-loading functions and strings in `for` loops over literals.
+- **Added:** repo_check leaves the symbolic links of a GitHub repository out of the files and reports them (`symlinks`, with the broken ones marked; D159). A project and its registration on the OSF are listed once; a Figshare answer without title, DOI or files is an `empty_response` and is not cached; `aspredicted_links()` also reads links from the text.
+- **Added:** `check_file_naming()` flags names that differ only in case ("case-clash") within a repository; a path-traversal member of an archive is named among the files left out; the file tree is cut at 2,000 lines; trailing blank columns of a data file are dropped (D161). codebook_check and psychds_check mention what was not checked; psychds_check requires a `data/` folder.
+- **Added:** the reproducibility check places files that failed to write by their longest matching path tail, installs the deposit's own packages first and tries R-Forge before R-universe, installs a package named in an error once and runs the script again, and stops a later script for downloading only while it is downloading (more than 64 KB). SPSS and Stata files read by the deposit's own code are reported separately. Scripts that stopped at a missing argument are told apart from real errors.
+- **Added:** coi_check reads the statement under a conflict-of-interest, competing-interests or disclosure heading, and the report shows at most 5 sentences or 1,000 characters (the table keeps the whole statement). stat_effect_size checks Hedges' g_z and g_s (D87 narrowed, U126), reads "partial eta squared" written in words and ignores "t = 1, ..., T" counters. marginal wants "significant" close to the trigger word. stat_check counts one-sided p-values as consistent in a paper that says its tests are one-sided, reads "<" and ">" statistics as bounds, accepts a variance F-test's two-sided p, leaves out equivalence tests, and has the columns `one_sided_fit` and `bound_or_variance_fit`.
+- **Changed:** ref_consistency, ethics_check, open_practices, power and codebook_check give a yellow light where they gave a red one (#695 point 2). ref_pubpeer leaves PubPeer's Statcheck comments out of the count and the list of commenters (column "Commenters").
+- **Changed:** the names of known sites broken by a hyphen at the end of a line ("aspre-dicted.org") are joined in the text table.
+- **Fixed:** `match_reported_output()` returns an empty result when every test lacks a `text_id` (U255 fixed upstream, U142 reworded).
+- **Not ported:** the ownership engine of #710 (D158, as D141), the speed-only parts of #702 (D160), and R's recount of `n_no_local` after a manifest (U258).
+- **Fixed (macOS, Windows, CI):** the two tests of the path limit made it relative to the temp folder, so a long temp folder no longer pushes paths past a fixed 250 characters.
+
 ### Compared with metacheck 0.4.4.29 (`dev` at 4150b31)
 
 - **Changed:** the parity checks compare pytacheck with metacheck `dev` at 4150b31 (0.4.4.29) instead of 50f3c0c (0.4.4.28): the rest of #699. The goldens were made again with R.

@@ -20,7 +20,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from metacheck._r import as_character, grepl, gsub, slashed, sub
+from metacheck._r import as_character, grepl, gsub, r_sort_key, slashed, sub
 from metacheck._values import is_missing
 
 # ---------------------------------------------------------------------------
@@ -320,6 +320,9 @@ class Repos:
     #: R ``repo_record_type``: each DSpace, EPrints and Invenio record's own type by ``repo_url``
     #: (the first given for a url), read by the "Publications" step (metacheck #637)
     record_types: dict[str, Any] = field(default_factory=dict)
+    #: the symbolic links of GitHub repositories, left out of the files (metacheck #700):
+    #: repo_url, path, target (missing when it could not be read) and broken; ``None`` when none
+    symlinks: pd.DataFrame | None = None
 
     def add_record_types(self, urls: Sequence[Any], types: Sequence[Any]) -> None:
         """``repo_record_type <- c(repo_record_type, setNames(types, urls))``."""
@@ -690,14 +693,19 @@ def _osf_full_listings(info: pd.DataFrame, cut: list[Any]) -> list[Any]:
 
 
 def _osf_file_frame(
-    files: pd.DataFrame, repo_url: list[Any], full_urls: list[Any] | None = None
+    files: pd.DataFrame,
+    repo_url: list[Any],
+    full_urls: list[Any] | None = None,
+    reg_source: list[Any] | None = None,
 ) -> pd.DataFrame:
     """The OSF ``data.frame()`` of listed files (``provider`` kept for downloads).
 
     ``provider`` and ``osf_node`` are R's ``.col_chr(osf_file_list, ...)``: a missing column is
     one ``NA`` per row (``%||% NA_character_`` gave a single ``NA``, and R's row-count error on 0
     rows: metacheck #679). ``storage_listed`` marks the files that come from a listing of whole
-    storages (*full_urls*); it is dropped after the storage totals are made.
+    storages (*full_urls*); it is dropped after the storage totals are made. ``reg_source``
+    (given for the files of the first listing) is the registration a file was listed from, when
+    it was put under its project: the choice between a project and its registration (#695).
     """
     n = len(files)
     path = _col(files, "path")
@@ -705,6 +713,7 @@ def _osf_file_frame(
     node = _col(files, "project")
     listed_from = vals(files["repo_name"]) if "repo_name" in files.columns else [None] * n
     full = set(full_urls or [])
+    extra = [] if reg_source is None else [("reg_source", reg_source, "string")]
     return r_frame(
         [
             ("repo_url", repo_url, "string"),
@@ -719,6 +728,7 @@ def _osf_file_frame(
             # component (metacheck #675)
             ("osf_node", [None] * n if node is None else node, "string"),
             ("storage_listed", [r in full for r in listed_from], "bool"),
+            *extra,
         ]
     )
 
@@ -1000,6 +1010,23 @@ def _list_osf_files(
                 if t == "registrations" and not _na(parent) and not _na(url):
                     reg_pairs.append((url, f"https://osf.io/{parent}"))
 
+        # the project as the paper links it, when it does, in whatever form: mp20233960 linked
+        # 10.17605/OSF.IO/62NXB and its registration 9NZQG, whose files went under
+        # "https://osf.io/62nxb", so the project was listed twice (metacheck #695, point 27)
+        if reg_pairs:
+            from metacheck.archives.link_versions import _repo_link_same_key
+
+            link_keys = _repo_link_same_key(osf_urls)
+            first_at: dict[str, int] = {}
+            for at, key in enumerate(link_keys):
+                first_at.setdefault(key, at)
+            reg_pairs[:] = [
+                (name, osf_urls[first_at[pk]] if pk in first_at else parent)
+                for (name, parent), pk in zip(
+                    reg_pairs, _repo_link_same_key([par for _, par in reg_pairs]), strict=True
+                )
+            ]
+
         # R: reg_url_to_parent[file_repo_url] -- a name matches its first entry
         reg_map: dict[Any, str] = {}
         for name, parent in reg_pairs:
@@ -1008,11 +1035,14 @@ def _list_osf_files(
         if "kind" in osf_info_df.columns:
             # files found via a registration belong to the project it was registered from
             file_list = _osf_files(osf_info_df)
-            file_repo_url = [reg_map.get(u, u) for u in vals(file_list["repo_name"])]
+            listed_from = vals(file_list["repo_name"])
+            file_repo_url = [reg_map.get(u, u) for u in listed_from]
             osf_files_df = _osf_file_frame(
                 file_list,
                 file_repo_url,
                 _osf_full_listings(osf_info_df, [*cut_urls, *short_urls]),
+                # the registration a file was listed from, when it was put under the project
+                [u if u in reg_map else None for u in listed_from],
             )
 
         # A link the OSF could not look up ("unfound", "error", "too many
@@ -1088,6 +1118,34 @@ def _list_osf_files(
                 if isin and (_na(t) or t == "private")
             )
             closed_parent_urls = unique([*closed_parent_urls, *setdiff(parent_urls_new, p_urls)])
+
+        # A project and a registration made from it, both with files under the project's
+        # address: a registration is a frozen copy of the project, and listing both repeated
+        # their files. Of the project's own files and each registration's, the group with the
+        # most files is kept; on a tie the project, which is the later state (#695, point 27).
+        if reg_pairs and len(osf_files_df) > 0 and "reg_source" in osf_files_df.columns:
+            drop = [False] * len(osf_files_df)
+            f_repo = vals(osf_files_df["repo_url"])
+            f_src = vals(osf_files_df["reg_source"])
+            for p in unique(par for _, par in reg_pairs):
+                rows = [i for i, u in enumerate(f_repo) if u == p]
+                if not rows:
+                    continue
+                group = ["" if _na(f_src[i]) else f_src[i] for i in rows]
+                counts: dict[str, int] = {}
+                for g in group:
+                    counts[g] = counts.get(g, 0) + 1
+                if len(counts) < 2:
+                    continue
+                top = max(counts.values())
+                keep_names = sorted((g for g, c in counts.items() if c == top), key=r_sort_key)
+                keep = "" if "" in keep_names else keep_names[0]
+                for i, g in zip(rows, group, strict=True):
+                    if g != keep:
+                        drop[i] = True
+            osf_files_df = take(osf_files_df, [not d for d in drop])
+        if "reg_source" in osf_files_df.columns:
+            osf_files_df = osf_files_df.drop(columns="reg_source")
 
         if parent_urls_all:
             missing = setdiff(parent_urls_all, vals(repos.df["repo_url"]))
@@ -1261,6 +1319,17 @@ def list_git(
             warnings.warn(f"Repository {url} was not listed: {reason}.", stacklevel=3)
             label = "GitHub" if host == "github" else "GitLab"
             _tick(pb, f"Skipping {label} repo ({reason}): {url}")
+
+    # symbolic links of GitHub repositories, left out of the files (#700)
+    link_frames = [
+        pd.concat(
+            [pd.DataFrame({"repo_url": pd.Series([u] * len(lk), dtype="string")}), lk], axis=1
+        )
+        for u, r in results.items()
+        if (lk := r.get("links")) is not None and len(lk) > 0
+    ]
+    if link_frames:
+        repos.symlinks = bind_rows(link_frames).reset_index(drop=True)
 
     good = [
         r.get("files")

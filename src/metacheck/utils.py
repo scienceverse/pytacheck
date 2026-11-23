@@ -442,6 +442,68 @@ def _import_failure(label: str, exc: BaseException, dependencies: Sequence[str] 
     return f"The module '{label}' cannot run: {problem}{hint}."
 
 
+def _lfs_pointer_size(paths: Sequence[str | None]) -> list[float]:
+    """Port of ``.lfs_pointer_size()``: the size a Git LFS pointer states, for each file.
+
+    ``-1`` when the pointer states no size, NaN when the file is no such pointer. A repository
+    that keeps a file in Git LFS holds a small text file in its place ("version
+    https://git-lfs.github.com/spec/v1", "oid sha256:...", "size 734003200"), and so do
+    GitHub's archives and a Zenodo copy made from one: the file itself was never deposited
+    (#568, #700).
+    """
+    out: list[float] = []
+    for p in paths:
+        val = float("nan")
+        try:
+            if (
+                p is not None
+                and not is_missing(p)
+                and os.path.isfile(p)
+                and os.path.getsize(p) < 1024
+            ):
+                with open(p, "rb") as fh:
+                    raw = fh.read(1024)
+                lines = raw.decode("utf-8", "replace").splitlines()[:3]
+                if lines and lines[0].startswith("version https://git-lfs.github.com/spec/"):
+                    stated = [
+                        m.group(1) for ln in lines if (m := re.fullmatch(r"size ([0-9]+)", ln))
+                    ]
+                    # a pointer that states no size is still a pointer
+                    val = float(stated[0]) if stated else -1.0
+        except OSError:
+            pass
+        out.append(val)
+    return out
+
+
+def _lfs_pointer_text(
+    names: Sequence[str], sizes: Sequence[float | None]
+) -> tuple[list[str] | None, str | None]:
+    """Port of ``.lfs_pointer_text()``: the report section and summary sentence for the files
+    that are Git LFS pointers (:func:`_lfs_pointer_size`), for data_check and code_check.
+
+    *names* are the files' paths in the repository, *sizes* the sizes their pointers state.
+    Returns ``(report, summary)``, both ``None`` when there are none.
+    """
+    from metacheck.llm.cap_prompt import _cap_size_str
+
+    if not len(names):
+        return None, None
+    n = len(names)
+    sent = (
+        f"{n} file{'' if n == 1 else 's'} {'is' if n == 1 else 'are'} a Git LFS pointer: the "
+        "repository holds a small text file in place of the file itself, which was not "
+        f"deposited, so the checks did not see {'it' if n == 1 else 'them'}"
+    )
+    items = []
+    for nm, sz in zip(names, sizes, strict=True):
+        stated = (
+            "" if sz is None or sz != sz or sz < 0 else f" (the file itself is {_cap_size_str(sz)})"
+        )
+        items.append(f"- `{nm}`{stated}")
+    return ["#### Files kept in Git LFS", sent + ":", "", *items], sent + "."
+
+
 def _safe_write_path(path: str | None, root: str | None = None) -> str | None:
     """Port of R/utils.R::.safe_write_path(): shorten an over-long path.
 

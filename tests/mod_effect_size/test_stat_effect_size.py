@@ -293,8 +293,9 @@ def test_output_structure(demo) -> None:
         "paragraph_id",
         "text",
     ]
-    assert list(t.columns[8:21]) == list(ses._D_COLUMNS)
-    assert list(t.columns[21:]) == list(ses._F_COLUMNS)
+    n_d = len(ses._D_COLUMNS)
+    assert list(t.columns[8 : 8 + n_d]) == list(ses._D_COLUMNS)
+    assert list(t.columns[8 + n_d :]) == list(ses._F_COLUMNS)
     assert t["test_text"].tolist() == ["t(97.7) = 2.9", "t(97.2) = -1.96"]
     assert t["d_coherence_note"].tolist() == [
         "Non-integer df indicates Welch's t-test (unequal variances); sample sizes cannot be "
@@ -585,8 +586,8 @@ def test_classify_d_coherence_values() -> None:
     no = ses._classify_d_coherence("t-test", "t(20) = 1.00", "d = 3.00")
     assert no["d_coherence_note"] == (
         "No match under tested assumptions (paired dz, independent equal-n, independent "
-        "unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal "
-        "places are reported."
+        "unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. "
+        "A no-match can occur when fewer than 2 decimal places are reported."
     )
 
 
@@ -778,3 +779,23 @@ def test_unicode_minus_t_test_and_its_d() -> None:
     assert out.table["test_text"].tolist() == ["t(28) = -2.15"]
     assert out.table["es"].tolist() == ["d = -0.80"]
     assert out.table["d_reported"].tolist() == ["-0.8"]
+
+
+def test_hedges_corrected_d_eta_squared_in_words_and_a_t_counter() -> None:
+    # metacheck #695, point 10
+    txt = [
+        "The effect was large, t(19) = 4.04, p < .001, g_z = .87.",
+        "The groups differed, t(38) = 2.5, p = .017, g = .78.",
+        "There was an effect, F(1, 40) = 6.5, p = .015, partial eta squared = .14.",
+        "We repeat this for t = 1, ..., T datasets.",
+        "Time points t = 1, 2, 3 were used.",
+    ]
+    t = _run(txt).table
+    # Hedges' g_z (dz times J) and g_s (equal-n d times J) match
+    assert t["d_coherence_assumption"][t["text_id"] == 1].tolist() == ["paired_gz"]
+    assert t["d_coherence_assumption"][t["text_id"] == 2].tolist() == ["independent_equal_n_g"]
+    # "partial eta squared" written in words is read and checked
+    assert "partial eta squared" in t["es"][t["text_id"] == 3].iloc[0]
+    assert t["eta_coherence"][t["text_id"] == 3].tolist() == ["match_under_assumptions"]
+    # a counter is no test
+    assert not t["text_id"].isin([4, 5]).any()

@@ -100,4 +100,5 @@ validate = "metacheck.validate:validate"
 emojis = "metacheck.report.emojis:emojis"
 message = "metacheck.utils:message"
 pb = "metacheck.utils:pb"
+".path_ancestors" = "metacheck.report.file_tree:_path_ancestors"
 

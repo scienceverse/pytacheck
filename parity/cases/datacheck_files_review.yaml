@@ -1413,6 +1413,89 @@
       - "Pilot experiment 3b/x.csv"
       - "study12/a.csv"
       - "study_1/a.csv"
+- "id": "sync04435.data_group_from_path.prefilter"
+  "r": ".data_group_from_path"
+  "py": "metacheck.datacheck.files._data_group_from_path"
+  "args":
+    "paths":
+      "$chr":
+      - "Study 1/data.csv"
+      - "pilot/x.csv"
+      - "Pilot Study 1A/a.csv"
+      - "exp2/b.csv"
+      - "text1.csv"
+      - "study2_2019.csv"
+      - "a/b/c"
+      - null
+      - ""
+      - "index2.csv"
+      - "Study 1/data.csv"
+- "id": "sync04435.data_group_from_path.empty"
+  "r": ".data_group_from_path"
+  "py": "metacheck.datacheck.files._data_group_from_path"
+  "args":
+    "paths":
+      "$chr": []
+- "id": "review.read_head_typed.wide_blank.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.read_head_typed"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/wide_blank.csv\"),\
+          \ n_rows = Inf); if (is.null(d)) return(NULL); types <- unname(lapply(d, function(x) c(typeof(x),\
+          \ class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]);\
+          \ if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
+          \ list(names = names(d), types = types, data = d)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/wide_blank.csv"
+    "n_rows": null
+- "id": "sync04435.blank_cols_dropped.wide_blank.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.blank_cols_dropped"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/wide_blank.csv\"),\
+          \ n_rows = Inf); list(ncol = ncol(d), dropped = attr(d, \"blank_cols_dropped\"))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/wide_blank.csv"
+- "id": "review.read_head_typed.wide_blank_stop.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.read_head_typed"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/wide_blank_stop.csv\"\
+          ), n_rows = Inf); if (is.null(d)) return(NULL); types <- unname(lapply(d, function(x) c(typeof(x),\
+          \ class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]);\
+          \ if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
+          \ list(names = names(d), types = types, data = d)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/wide_blank_stop.csv"
+    "n_rows": null
+- "id": "sync04435.blank_cols_dropped.wide_blank_stop.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.blank_cols_dropped"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/wide_blank_stop.csv\"\
+          ), n_rows = Inf); list(ncol = ncol(d), dropped = attr(d, \"blank_cols_dropped\"))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/wide_blank_stop.csv"
 - "id": "sync04418.read_head_attrs.loo.rds"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.read_head_attrs"

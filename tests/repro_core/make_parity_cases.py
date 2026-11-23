@@ -8,6 +8,7 @@ and ``parity_helpers.R`` (R).
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -1786,6 +1787,159 @@ for _name, _lst_r, _lst_py, _extra in [
         f"metacheck:::.repro_path_fix_text({_lst_r}, execute = TRUE, absent = {_extra[0]})",
         f"lambda m: m.layout._repro_path_fix_text({_lst_py}, True, {_extra[1]})",
     )
+
+
+# ---------------------------------------------------------------------------
+# metacheck 0.4.4.30 to 0.4.4.35
+# ---------------------------------------------------------------------------
+def _s(x: str) -> str:
+    """A string literal valid in R and in Python."""
+    return json.dumps(x, ensure_ascii=False)
+
+
+def _rv(xs: list[str]) -> str:
+    return "c(" + ", ".join(_s(x) for x in xs) + ")"
+
+
+def _rl(xss: list[list[str]]) -> str:
+    return "list(" + ", ".join(_rv(x) for x in xss) + ")"
+
+
+_ARG_OWN = [
+    [
+        "args = commandArgs(trailingOnly = T)",
+        "if(length(args)!=3) {",
+        '  stop("Provide (only) signal strength for the analysis", call.=F)',
+        "}",
+    ],
+    ["args = commandArgs(trailingOnly = T)", "x <- 1", 'stop("Something else broke")'],
+]
+_ARG_ERR = [
+    "Error: Provide (only) signal strength for the analysis\nExecution halted",
+    "Error: Something else broke\nExecution halted",
+]
+_ARG_UN = [
+    ['#args="" #init', "if(dir.exists(args[1])) x <- 1"],
+    ["args <- c('a', 'b')", "f(args[3])"],
+]
+_ARG_ERR2 = ["Error in args[1] : object of type 'closure' is not subsettable"] * 2
+expr(
+    "repro_needs_arguments.own_check_and_closure",
+    f"c(metacheck:::.repro_needs_arguments({_rl(_ARG_OWN)}, {_rv(_ARG_ERR)}, 'R'),"
+    f" metacheck:::.repro_needs_arguments({_rl(_ARG_UN)}, {_rv(_ARG_ERR2)}, 'R'))",
+    f"lambda m: m.outcomes._repro_needs_arguments({json.dumps(_ARG_OWN)}, {json.dumps(_ARG_ERR)}, 'R')"
+    f" + m.outcomes._repro_needs_arguments({json.dumps(_ARG_UN)}, {json.dumps(_ARG_ERR2)}, 'R')",
+)
+_CHECK_MSG = "Error: Provide the first argument\nExecution halted"
+_CHECK_CODE = [
+    "a <- commandArgs(trailingOnly = TRUE)",
+    "if (length(a) < 1) {",
+    '  stop("Provide the first argument")',
+    "}",
+]
+expr(
+    "repro_stopped_at_arg_check.variety",
+    f"c(metacheck:::.repro_stopped_at_arg_check({_rv(_CHECK_CODE)}, {_s(_CHECK_MSG)}),"
+    f" metacheck:::.repro_stopped_at_arg_check({_rv(_CHECK_CODE)}, NA_character_),"
+    f" metacheck:::.repro_stopped_at_arg_check({_rv(_CHECK_CODE)}, 'Error: ab'),"
+    f" metacheck:::.repro_stopped_at_arg_check({_rv(_CHECK_CODE[:1] + _CHECK_CODE[3:])}, {_s(_CHECK_MSG)}),"
+    f" metacheck:::.repro_stopped_at_arg_check({_rv(['x <- 1'])}, {_s(_CHECK_MSG)}),"
+    f" metacheck:::.repro_stopped_at_arg_check(character(0), {_s(_CHECK_MSG)}))",
+    f"lambda m: [m.outcomes._repro_stopped_at_arg_check({json.dumps(_CHECK_CODE)}, {_s(_CHECK_MSG)}),"
+    f" m.outcomes._repro_stopped_at_arg_check({json.dumps(_CHECK_CODE)}, None),"
+    f" m.outcomes._repro_stopped_at_arg_check({json.dumps(_CHECK_CODE)}, 'Error: ab'),"
+    f" m.outcomes._repro_stopped_at_arg_check({json.dumps(_CHECK_CODE[:1] + _CHECK_CODE[3:])}, {_s(_CHECK_MSG)}),"
+    f" m.outcomes._repro_stopped_at_arg_check(['x <- 1'], {_s(_CHECK_MSG)}),"
+    f" m.outcomes._repro_stopped_at_arg_check([], {_s(_CHECK_MSG)})]",
+)
+_NAMED_CODE = [
+    'rawdata <- read_sav("../data/rawdata.sav")',
+    "x <- read_spss('Data for SPSS.sav')",
+    "# notes about otherdata.sav",
+]
+_NAMED_FILES = ["data/RawData.sav", "other.sav", "Data for SPSS.sav", "data.sav", "otherdata.sav"]
+expr(
+    "repro_named_in_code.names",
+    f"list(metacheck:::.repro_named_in_code({_rv(_NAMED_FILES)}, {_rv(_NAMED_CODE)}),"
+    f" length(metacheck:::.repro_named_in_code(character(0), {_rv(_NAMED_CODE)})))",
+    f"lambda m: [m.repmod._repro_named_in_code({json.dumps(_NAMED_FILES)}, {json.dumps(_NAMED_CODE)}),"
+    f" len(m.repmod._repro_named_in_code([], {json.dumps(_NAMED_CODE)}))]",
+)
+_REFUSED_R = (
+    "data.frame(repo_url = c('a', 'b'), n_files = c(1L, 2L),"
+    " message = c('Repo a is big.', 'Repo b too.'))"
+)
+expr(
+    "repro_no_code_text.refused",
+    f"c(metacheck:::.repro_no_code_text(), metacheck:::.repro_no_code_text(' Note.', NULL),"
+    f" metacheck:::.repro_no_code_text(' Note.', {_REFUSED_R}),"
+    f" metacheck:::.repro_no_code_text('', {_REFUSED_R}[0, ]))",
+    "lambda m: [m.repmod._repro_no_code_text(), m.repmod._repro_no_code_text(' Note.', None),"
+    " m.repmod._repro_no_code_text(' Note.', m.pd.DataFrame({'repo_url': ['a', 'b'], 'n_files': [1, 2],"
+    " 'message': ['Repo a is big.', 'Repo b too.']})),"
+    " m.repmod._repro_no_code_text('', m.pd.DataFrame({'repo_url': ['a'], 'n_files': [1],"
+    " 'message': ['x']}).iloc[0:0])]",
+)
+_PYCTL = {
+    "calculate_FST.py": ["import genomics", "print(genomics.f())"],
+    "genomics.py": ["import numpy as np", "import helper", "def f(): return np.mean([1, 2])"],
+    "helper.py": ["import scipy"],
+    "other.py": ["import pandas"],
+}
+_PYCTL_R = "list(" + ", ".join(f"{k} = {_rv(v)}" for k, v in _PYCTL.items()) + ")"
+expr(
+    "repro_py_with_imports.local_modules",
+    f"{{ ctl <- {_PYCTL_R}; list(metacheck:::.repro_py_with_imports('calculate_FST.py', ctl, names(ctl)),"
+    " metacheck:::.repro_py_with_imports('other.py', ctl, names(ctl)),"
+    " metacheck:::.repro_py_with_imports(c('helper.py', 'calculate_FST.py'), ctl)) }",
+    f"lambda m: (lambda ctl: [m.software._repro_py_with_imports(['calculate_FST.py'], ctl, list(ctl)),"
+    " m.software._repro_py_with_imports(['other.py'], ctl, list(ctl)),"
+    " m.software._repro_py_with_imports(['helper.py', 'calculate_FST.py'], ctl)])"
+    f"({json.dumps(_PYCTL)})",
+)
+_MISSING_PKG = [
+    "Error in loadNamespace(x) : there is no package called ‘foo’",
+    "Error: there is no package called 'a.b'",
+    "Package `performance` required for this function.",
+    'Error: The package "broom.helpers" is required.',
+    "The rnaturalearthdata package needs to be installed",
+    'Error in read.csv("x.csv") : cannot open file',
+    "Error: package 'x' is required",
+    "first there is no package called 'one' then Package `two` required",
+]
+expr(
+    "repro_missing_pkg_names.variety",
+    f"c(metacheck:::.repro_missing_pkg_names({_rv(_MISSING_PKG)}),"
+    " metacheck:::.repro_missing_pkg_names(NA_character_))",
+    f"lambda m: m.runsupport._repro_missing_pkg_names({json.dumps(_MISSING_PKG, ensure_ascii=False)})"
+    " + m.runsupport._repro_missing_pkg_names([None])",
+)
+expr(
+    "repro_path_tail_match.variety",
+    "list(metacheck:::.repro_path_tail_match('output/RAxML/popmap_HC.txt',"
+    " c('x/output/RAxML/popmap_HC.txt', 'y/popmap_HC.txt')),"
+    " metacheck:::.repro_path_tail_match('Out\\\\A\\\\f.txt', c('x/out/a/F.TXT', './f.txt', 'g/h.txt')),"
+    " metacheck:::.repro_path_tail_match('./a.csv', 'a.csv'))",
+    "lambda m: [m.layout._repro_path_tail_match('output/RAxML/popmap_HC.txt',"
+    " ['x/output/RAxML/popmap_HC.txt', 'y/popmap_HC.txt']),"
+    " m.layout._repro_path_tail_match('Out\\\\A\\\\f.txt', ['x/out/a/F.TXT', './f.txt', 'g/h.txt']),"
+    " m.layout._repro_path_tail_match('./a.csv', ['a.csv'])]",
+)
+expr(
+    "repro_deposit_packages.deposit_copies",
+    "rc_deposit_packages()",
+    "lambda m: m.deposit_packages()",
+)
+expr(
+    "repro_make_failed_write_folders.one_folder_several_scripts",
+    "rc_failed_folders()",
+    "lambda m: m.failed_folders()",
+)
+expr(
+    "repro_place_from_deposit.folders_the_path_names",
+    "rc_place_by_tail()",
+    "lambda m: m.place_by_tail()",
+)
 
 
 def main() -> None:

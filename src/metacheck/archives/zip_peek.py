@@ -40,7 +40,7 @@ from contextvars import ContextVar
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
 
-from metacheck._r import grepl, gsub, strsplit, sub
+from metacheck._r import grepl, gsub, plural, strsplit, sub
 from metacheck._values import is_missing
 from metacheck.archives._atomic import atomic_write
 
@@ -1820,26 +1820,62 @@ def _unzip_failed_text(failed: Any) -> dict[str, Any]:
     if not isinstance(failed, pd.DataFrame) or len(failed) == 0:
         return none
     failed = failed[~failed.duplicated(subset=["archive", "file_name"])]
-    n = len(failed)
+    whole = failed["file_name"].isna()
+    arch = failed[whole]
+    memb = failed[~whole]
+    n = len(memb)
     lines = []
-    for archive in dict.fromkeys(failed["archive"].tolist()):
-        f = failed[failed["archive"] == archive]
+    for archive in dict.fromkeys(memb["archive"].tolist()):
+        f = memb[memb["archive"] == archive]
         note = _unzip_failed_note(
             pd.DataFrame({"name": f["file_name"], "path": None, "reason": f["reason"]}),
             f"`{archive}`",
         )
         lines.append(f"- {note}.")
-    s = "s" if n != 1 else ""
-    it = "it" if n == 1 else "them"
+    na = len(arch)
+    sent = []
+    if na:
+        sent.append(
+            f"{na} archive{plural(na)} in the repository could not be opened, so the checks did "
+            f"not see {plural(na, 'its', 'their')} files"
+        )
+    if n:
+        sent.append(
+            f"{n} file{plural(n)} in the repository's archives could not be unpacked, so the "
+            f"checks did not see {plural(n, 'it', 'them')}"
+        )
+    joined = "; ".join(sent)
     return {
         "report": [
             "#### Files that could not be unpacked",
-            f"{n} file{s} in the repository's archives could not be unpacked, so the checks did not see {it}:",
+            f"{joined}:",
             "",
+            *[
+                f"- `{a}` could not be opened ({r})."
+                for a, r in zip(arch["archive"].tolist(), arch["reason"].tolist(), strict=True)
+            ],
             *lines,
         ],
-        "summary": f"{n} file{s} in the repository's archives could not be unpacked, so the checks did not see {it}.",
+        "summary": f"{joined}.",
     }
+
+
+def _archive_unopened(empty: pd.DataFrame, row: Any, path: Any) -> pd.DataFrame:
+    """Port of ``.archive_unopened()``: an archive that could not be opened at all (damaged, or
+    cut off: a zip without its central directory, #703), as the empty result of
+    :func:`_expand_zip`, :func:`_expand_tar` or :func:`_expand_compressed` with the attribute
+    ``unpack_failed``: before, it was dropped without a word, and a repository holding only such
+    an archive was reported as having no files."""
+    import pandas as pd
+
+    empty.attrs["unpack_failed"] = pd.DataFrame(
+        {
+            "archive": [_archive_label(row, path)],
+            "file_name": pd.Series([None], dtype="object"),
+            "reason": ["it is damaged or incomplete"],
+        }
+    )
+    return empty
 
 
 def _in_download_folder(path: str) -> bool:
@@ -1917,12 +1953,25 @@ def _archive_keep(name: Sequence[str | None], skip_types: Any) -> list[bool]:
     roles = _data_doc_role(base)
     skip = set(_chr_list(skip_types))
     useless = is_useless_file(path)
+    # an archive inside the archive is kept too, so data_check opens it in turn (zips inside zips
+    # were not opened, #700)
+    inner = [
+        a or b or c
+        for a, b, c in zip(
+            _is_zip(base), _is_tar_archive(base), _is_single_compress(base), strict=True
+        )
+    ]
     return [
-        (t in ("data", "code") or (t == "documentation" and r in ("codebook", "readme")))
-        and t not in skip
+        (
+            (
+                (t in ("data", "code") or (t == "documentation" and r in ("codebook", "readme")))
+                and t not in skip
+            )
+            or ia
+        )
         and not re.search("(^|/)__MACOSX/", str(p))
         and not u
-        for t, r, p, u in zip(types, roles, path, useless, strict=True)
+        for t, r, p, u, ia in zip(types, roles, path, useless, inner, strict=True)
     ]
 
 
@@ -2078,7 +2127,7 @@ def _expand_zip(
         with zipfile.ZipFile(zip_path) as zf:
             infos = zf.infolist()
     except Exception:
-        return empty
+        return _archive_unopened(empty, zip_row, zip_path)
     entries = [(_zip_name(i), float(i.file_size)) for i in infos]
     entries = [(n, s) for n, s in entries if not n.endswith("/")]
     if not infos or not entries:
@@ -2236,7 +2285,7 @@ def _expand_tar(
         with tarfile.open(tar_path, "r:*") as tf:
             members = [m for m in tf.getmembers() if not m.isdir()]
     except Exception:
-        return empty
+        return _archive_unopened(empty, tar_row, tar_path)
     if not members:
         return empty
     # A tar records no character set for its names: a name that is not valid UTF-8 is
@@ -2437,7 +2486,7 @@ def _expand_compressed(
                     archive=gz_path,
                     attr_name="over_budget",
                 )
-            return empty
+            return _archive_unopened(empty, gz_row, gz_path)
         os.makedirs(dest, exist_ok=True)
         _move_extracted(part, dest, [inner_name])
     # the file is closed before its size is read (metacheck reads it before the

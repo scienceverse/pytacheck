@@ -284,3 +284,13 @@
         "r": "local({p1 <- test_paper(c('The effect was significant, t(20) = 2.5, p = .02.', 'The result was F(1, 30) = 5.1, p = .03.')); p2 <- test_paper(c('A second paper found t(15) = 3.1, p = .007, d = 0.8.')); p2$paper_id <- p1$paper_id; p2$text$paper_id <- p1$paper_id; paperlist(p1, p2)})"
         "py": "(lambda p1, p2: (p2.__setitem__('paper_id', p1.paper_id), p2.__setitem__('text', p2['text'].assign(paper_id=p1.paper_id)), pc.PaperList([p1, p2]))[-1])(pc.test_paper(['The effect was significant, t(20) = 2.5, p = .02.', 'The result was F(1, 30) = 5.1, p = .03.']), pc.test_paper(['A second paper found t(15) = 3.1, p = .007, d = 0.8.']))"
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.hedges_words_counter"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["The effect was large, t(19) = 4.04, p < .001, g_z = .87.", "The groups differed, t(38) = 2.5, p = .017, g = .78.", "There was an effect, F(1, 40) = 6.5, p = .015, partial eta squared = .14.", "We repeat this for t = 1, ..., T datasets.", "Time points t = 1, 2, 3 were used."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_effect_size.hedges_variants"
+  "module": "stat_effect_size"
+  "args":
+    "paper": {"$test_paper": {"text": ["The groups differed, t(30) = 2.5, p = .017, g = 0.40.", "Paired, t(24) = 3.0, p = .006, Hedges' g = 0.59.", "Small df, t(1) = 5.0, p = .12, g = 1.0.", "Subscripted, t(38) = 2.5, p = .017, g_av = 0.2.", "Another, t(38) = 2.5, p = .017, g_z = 0.2.", "Omega, F(1, 40) = 6.5, p = .015, omega squared = .12.", "Partial omega-squared, F(1, 40) = 6.5, p = .015, partial omega squared = .12.", "Counter, t = 5 to T, and t = 4..."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}

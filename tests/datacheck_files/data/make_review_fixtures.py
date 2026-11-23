@@ -68,6 +68,14 @@ w("rt_fallback_latin1.csv", b'v\0x\n"a"b\nNA\ncaf\xc3\xa9\n')
 w("rt_nrows.csv", 'v\n"x"y\n' + "".join(f"r{i}\n" for i in range(10)))
 # duplicated column names: each keeps its own class (IDate, integer64)
 w("dup_names.csv", "d,d,x\n2020-01-01,5000000000,1\n2020-02-01,6000000000,2\n")
+# a spreadsheet saved with every column it can hold: the unnamed, empty columns at the right end
+# of the table are left out (#695, point 31); one with a name or a value stops it
+_pad = "," * 50
+w("wide_blank.csv", f"id,score{_pad}\n1,3{_pad}\n2,4{_pad}\n")
+w(
+    "wide_blank_stop.csv",
+    f"id,score{',' * 20},kept{',' * 30}\n1,3{',' * 20},x{',' * 30}\n2,4{',' * 51}\n",
+)
 
 
 # readxl's isDateFormat() ends its scan at any "g" followed by six characters

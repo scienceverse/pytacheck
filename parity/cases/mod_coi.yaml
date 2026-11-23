@@ -1237,3 +1237,15 @@
     - "paper_id"
     - "table.paper_id"
     - "summary_table.paper_id"
+- "id": "coi_check.section_headers"
+  "module": "coi_check"
+  "args":
+    "paper": {"$read": ["tests/mod_coi/fixtures/coi_headers.json"]}
+- "id": "coi_check.heading_section"
+  "module": "coi_check"
+  "args":
+    "paper": {"$read": ["tests/mod_coi/fixtures/coi_heading_section.json"]}
+- "id": "coi_check.refs_only"
+  "module": "coi_check"
+  "args":
+    "paper": {"$read": ["tests/mod_coi/fixtures/coi_refs_only.json"]}

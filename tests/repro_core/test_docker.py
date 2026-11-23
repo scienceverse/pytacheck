@@ -774,21 +774,21 @@ def test_run_scripts_docker_net_stops_what_downloads_too_much(
     root = tmp_path / "sb"
     root.mkdir()
     tbl = _run_tbl(root, ["dl.R", "next.R"])
-    seen = _watched_docker(monkeypatch, [300 * MB, 600 * MB, 1])
+    # the second script downloads next to nothing: it keeps its own outcome (#593)
+    seen = _watched_docker(monkeypatch, [300 * MB, 600 * MB, 1, 1, 1, 1], ends_after=5)
     net = {"max_file": math.inf, "max_total": 500 * MB, "used": {"bytes": 0}}
     out = repro_run_scripts_docker(tbl, ["dl.R", "next.R"], root, image="img", net=net)
-    assert out["outcome"].tolist() == ["download_too_large", "download_too_large"]
-    assert out["error"].tolist() == [
+    assert out["outcome"].tolist()[0] == "download_too_large"
+    assert out["outcome"].tolist()[1] != "download_too_large"
+    assert out["error"].tolist()[0] == (
         "stopped: the paper's scripts downloaded 600 MB, more than the limit of 500 MB "
-        "(max_download_size)",
-        # the scripts share the limit: the next one is stopped at its first check
-        "stopped: the paper's scripts downloaded 600 MB, more than the limit of 500 MB "
-        "(max_download_size)",
-    ]
+        "(max_download_size)"
+    )
     assert out["stdout"].tolist()[0] == "> download.file(u, 'big.zip')"  # the output is kept
-    assert _na(out["error_type"]) == [None, None]
+    assert _na(out["error_type"])[0] is None
+    # the scripts share the limit: what the next one downloads is counted on top
     assert net["used"]["bytes"] == 600 * MB + 1
-    assert seen["stops"] == 2
+    assert seen["stops"] == 1
     run = seen["runs"][0]
     _locked_down(run)
     assert "--network" not in run  # the internet is on
@@ -800,6 +800,21 @@ def test_run_scripts_docker_net_stops_what_downloads_too_much(
         "Rscript",
         "/sandbox/.runner_dl.R.R",
     ]
+
+
+def test_run_scripts_docker_net_stops_a_later_script_that_downloads(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    root = tmp_path / "sb"
+    root.mkdir()
+    tbl = _run_tbl(root, ["dl.R", "next.R"])
+    # more than the 64 KB between two checks that counts as downloading, after the limit
+    seen = _watched_docker(monkeypatch, [300 * MB, 600 * MB, 200_000])
+    net = {"max_file": math.inf, "max_total": 500 * MB, "used": {"bytes": 0}}
+    out = repro_run_scripts_docker(tbl, ["dl.R", "next.R"], root, image="img", net=net)
+    assert out["outcome"].tolist() == ["download_too_large", "download_too_large"]
+    assert all("max_download_size" in e for e in out["error"].tolist())
+    assert seen["stops"] == 2
 
 
 def test_run_scripts_docker_net_stops_a_file_too_large(

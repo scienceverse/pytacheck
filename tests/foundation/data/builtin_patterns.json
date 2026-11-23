@@ -11,6 +11,11 @@ false,
 true
 ],
 [
+"(?<!sub)marginal(?:ly)?\\s+(?:(?:above\\s+the\\s+threshold\\s+for|failed\\s+to\\s+(?:be|reach)|and\\s+probably\\s+not|short\\s+of|or\\s+not|or\\s+non-?|but\\s+not|and\\s+not|above|below|over|under|outside|not)\\s*)?(?:the\\s+)?(?:levels?\\s+of\\s+)?(?:statistical(?:ly)?\\s+)?(?:non-?)?significan\\w*|\\btrend(?:s|ed|ing)?\\s+(?:towards?|to)\\s+(?:statistical(?:ly)?\\s+)?significan\\w*|\\b(?:a|the)\\s+trend\\s+(?:of|for)\\s+(?:statistical(?:ly)?\\s+)?significan\\w*|\\btrend(?:-|\\s)?level\\s+(?:statistical(?:ly)?\\s+)?significan\\w*|\\btrending\\s+(?:towards?\\s+)?(?:statistical(?:ly)?\\s+)?significan\\w*|\\bapproach(?:ed|ing)\\s+(?:a\\s+|the\\s+)?(?:(?:conventional|nominal|genome-?wide|traditional)\\s+)?(?:levels?\\s+of\\s+)?(?:statistical(?:ly)?\\s+)?significan\\w*|\\bapproach(?:es)?\\s+(?:statistical(?:ly)?\\s+)?significance\\b(?!\\s+test)|\\bborderline\\s+(?:of\\s+)?(?:the\\s+)?(?:statistical(?:ly)?\\s+)?(?:non-?)?significan\\w*|\\bborder(?:ed|ing)?\\s+(?:on|at|of|to)\\s+(?:the\\s+)?(?:level\\s+of\\s+)?(?:statistical(?:ly)?\\s+)?significan\\w*|\\bborder(?:ed|ing)\\s+(?:statistical(?:ly)?\\s+)?significance\\b|\\balmost\\s+(?:reach(?:ed|ing)?\\s+|achiev(?:ed|ing)\\s+|attain(?:ed|ing)\\s+)?(?:statistical(?:ly)?\\s+)?significan\\w*|\\bclose\\s+to\\s+(?:reaching\\s+|achieving\\s+|being\\s+|be\\s+)?(?:the\\s+)?(?:statistical(?:ly)?\\s+)?significan\\w*",
+true,
+true
+],
+[
 "(F(?i)inancial support(|s)(?-i)(|:|\\.)|F(?i)inancial source(|s)(?-i)(|:|\\.)|S(?i)ource(|s) of financial support(|s)(?-i)(|:|\\.)|F(?i)inancial or other support(|s)(?-i)(|:|\\.)|F(?i)inancial assistance(?-i)(|:|\\.)|F(?i)inancial aid(?-i)(|:|\\.)|F(?i)inancial sponsorship(|s)(?-i)(|:|\\.)|F(?i)inancial support(|s) and sponsorship(|s)(?-i)(|:|\\.)|F(?i)inancial source(|s) for the stud(y|ies)(?-i)(|:|\\.)|F(?i)inancial information(?-i)(|:|\\.)|F(?i)inancial statement(|s)(?-i)(|:|\\.)|F(?i)inanciamento(?-i)(|:|\\.))",
 false,
 true
@@ -389,6 +394,11 @@ false
 "\\bdetailed\\b",
 true,
 false
+],
+[
+"\\bequivalence\\s+(?:tests?|testing|bounds?|margins?|intervals?|ranges?)\\b|\\bTOST\\b|\\btwo\\s+one[- ]sided\\s+tests?\\b",
+true,
+true
 ],
 [
 "\\bfigures?\\b",
@@ -1037,11 +1047,6 @@ false
 ],
 [
 "manuscript",
-true,
-false
-],
-[
-"margin\\w* (?:\\w+\\s+){0,5}significan\\w*|trend\\w* (?:\\w+\\s+){0,1}significan\\w*|almost (?:\\w+\\s+){0,2}significan\\w*|approach\\w* (?:\\w+\\s+){0,2}significan\\w*|border\\w* (?:\\w+\\s+){0,2}significan\\w*|close to (?:\\w+\\s+){0,2}significan\\w*",
 true,
 false
 ],

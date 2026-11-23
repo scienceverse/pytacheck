@@ -95,9 +95,12 @@ rc_input <- function(name, absolute = FALSE) {
     if (!is.null(spec$version_pin)) {
       head$version_pin <- list(r_versions = unlist(spec$version_pin))
     }
+    # repositories refused for their number of files (#706)
+    if (!is.null(spec$count_refused)) head$count_refused <- rc_df(spec$count_refused)
   } else {
     head <- list(module = "data_check", table = data.frame(), paper = paper,
-                 summary_table = data.frame(paper_id = ids), structure = structure_df)
+                 summary_table = data.frame(paper_id = ids), structure = structure_df,
+                 count_refused = rc_df(spec$count_refused))
   }
   head$prev_outputs <- prev
   class(head) <- "metacheck_module_output"
@@ -200,7 +203,7 @@ rc_run_mocked <- function(name, ...) {
     repro_install_deps = function(install_deps, lib_dir, cran_to_main_lib = FALSE,
                                   deadline = NULL)
       rc_fake_install(install_deps),
-    repro_install_deps_docker = function(install_deps, lib_dir, image = "", timeout = 600)
+    repro_install_deps_docker = function(install_deps, lib_dir, image = "", timeout = 600, deposit_pkgs = NULL)
       rc_fake_install(install_deps),
     repro_docker_available = function() list(ok = TRUE, msg = ""),
     repro_run_scripts_docker = function(run_tbl, order, sandbox_root, lib_dir = NULL,

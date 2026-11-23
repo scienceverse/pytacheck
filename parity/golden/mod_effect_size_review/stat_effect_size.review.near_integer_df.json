@@ -56,6 +56,8 @@
           "d_implied_indep_equal_n",
           "d_implied_indep_unequal_min",
           "d_implied_indep_unequal_max",
+          "d_implied_paired_gz",
+          "d_implied_indep_equal_n_g",
           "d_implied_n",
           "d_coherence",
           "d_coherence_assumption",
@@ -320,6 +322,36 @@
               "1.44829588676132",
               null,
               "2.10124962819747",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.444358552694321",
+              "0.444358552694425",
+              "0.302926822011503",
+              "0.302926822008002",
+              null,
+              "0.444358552689169",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.878073402803049",
+              "0.87807340280325",
+              "0.598767392717042",
+              "0.598767392710289",
+              null,
+              "0.878073402793121",
               null,
               null,
               null,
@@ -597,6 +629,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

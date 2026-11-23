@@ -308,6 +308,46 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "structure": table(file_name=["data.dta", "analysis.do"], file_location=[None, None]),
         "plan": PLAN,
     },
+    # -- metacheck 0.4.4.30 to 0.4.4.35 -------------------------------------------
+    # an SPSS or Stata data file the deposit's own R code reads is data for that code, not a
+    # sign that the analysis was left out (#695, point 42)
+    "spss_read_by_code": {
+        "code": code(r("reads_sav.R", S + "reads_sav.R")),
+        "structure": table(
+            file_name=["reads_sav.R", "data.sav"], file_location=[S + "reads_sav.R", None]
+        ),
+        "plan": PLAN,
+    },
+    "stata_read_by_code": {
+        "code": code(r("reads_dta.R", S + "reads_dta.R")),
+        "structure": table(
+            file_name=["reads_dta.R", "data.dta"], file_location=[S + "reads_dta.R", None]
+        ),
+        "plan": PLAN,
+    },
+    "sav_not_read_by_code": {
+        "code": code(r("reads_sav.R", S + "reads_sav.R")),
+        "structure": table(
+            file_name=["reads_sav.R", "data.sav", "other.sav"],
+            file_location=[S + "reads_sav.R", None, None],
+        ),
+        "plan": PLAN,
+    },
+    # no code left, but data_check refused a repository for its number of files (#706)
+    "no_code_refused": {
+        "code": EMPTY_CODE,
+        "structure": DATA,
+        "plan": PLAN,
+        "count_refused": table(
+            repo_url=["https://github.com/a/b"],
+            n_files=["5000"],
+            message=[
+                "Repository https://github.com/a/b holds 5000 files, exceeding the 2000-file "
+                "cap: skipped entirely (not size-capped, file-count-capped). Raise "
+                "`max_files_per_repo` to include it."
+            ],
+        ),
+    },
     "nonr_only": {
         "code": code(
             {"file_name": "model.sas", "file_location": None, "language": "SAS"},

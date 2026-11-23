@@ -136,8 +136,16 @@ def test_code_read_binary_is_not_code(tmp_path: Path, data: bytes, kind: str) ->
 # ---------------------------------------------------------------------------
 
 
-def test_code_lang_trailing_newline() -> None:
-    assert core.code_lang(["a.R\n", "b.py", "d.R "]) == [None, "Python", None]
+def test_code_lang_trailing_whitespace() -> None:
+    # a space, tab or line end after the extension is trimmed (metacheck 0.4.4.30, #700); other
+    # white space (a form feed) still hides it
+    assert core.code_lang(["a.R\n", "b.py", "d.R ", "e.R\t", "g.R\x0c"]) == [
+        "R",
+        "Python",
+        "R",
+        "R",
+        None,
+    ]
 
 
 # ---------------------------------------------------------------------------

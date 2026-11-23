@@ -343,6 +343,33 @@ add("sync04418.data_group_from_path.study_numbers", r=".data_group_from_path",
         "study1_20230512.csv", "Study2_15032021_data.csv", "study3_12345678.csv",
         "Pilot experiment 3b/x.csv", "study12/a.csv", "study_1/a.csv"]}})  # fmt: skip
 
+# only a path that can hold a study label is read, with the same results (#702)
+add("sync04435.data_group_from_path.prefilter", r=".data_group_from_path",
+    py=f"{PY}._data_group_from_path",
+    args={"paths": {"$chr": [
+        "Study 1/data.csv", "pilot/x.csv", "Pilot Study 1A/a.csv", "exp2/b.csv", "text1.csv",
+        "study2_2019.csv", "a/b/c", None, "", "index2.csv", "Study 1/data.csv"]}})  # fmt: skip
+add(
+    "sync04435.data_group_from_path.empty",
+    r=".data_group_from_path",
+    py=f"{PY}._data_group_from_path",
+    args={"paths": {"$chr": []}},
+)
+
+# the unnamed, empty columns at the right end of a table are left out of a whole file (#695, #31)
+for name in ("wide_blank.csv", "wide_blank_stop.csv"):
+    typed_head(name)
+    add(
+        f"sync04435.blank_cols_dropped.{name}",
+        r="identity",
+        py=f"{HELP}.blank_cols_dropped",
+        args={"x": {"$expr": {"r": (
+            f'local({{d <- data_read_head(rpath("{REVIEW}/{name}"), n_rows = Inf); '
+            "list(ncol = ncol(d), dropped = attr(d, \"blank_cols_dropped\"))})"), "py": "None"}}},
+        py_drop=["x"],
+        py_args={"path": f"{REVIEW}/{name}"},
+    )  # fmt: skip
+
 # a table from an .rds or .RData file is a plain data frame (0.4.4.15)
 for name in ("loo.rds", "idate.rds", "mixed.rds", "spss.rds", "predictions.rds",
              "predictions.RData"):  # fmt: skip

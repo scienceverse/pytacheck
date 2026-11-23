@@ -174,8 +174,8 @@ def test_documented_range_violation_downgrades_green_to_yellow() -> None:
         ("pl_a", "green"),
         ("partial", "yellow"),
         ("qualtrics", "yellow"),
-        ("conflict", "red"),
-        ("nocb", "red"),
+        ("conflict", "yellow"),  # yellow, not red (#695, point 2)
+        ("nocb", "yellow"),
         ("empty", "na"),
     ],
 )
@@ -608,7 +608,7 @@ def test_no_codebook_says_so_instead_of_an_empty_table() -> None:
     rpt = report_text(cc)
     assert "No codebook or README documentation was found" in rpt
     assert "#### Column Documentation" not in rpt
-    assert cc.traffic_light == "red"
+    assert cc.traffic_light == "yellow"  # yellow, not red (#695, point 2)
 
 
 def test_one_tab_per_data_file() -> None:
@@ -734,7 +734,7 @@ def test_bibr12_paper_matches_the_legacy_paper(scenario: str) -> None:
 def test_default_reader_paper_runs() -> None:
     p = pc.read(BIBR12_PREPRINT)
     cc = module_run(cbc_prev("task", paper=p), "codebook_check")
-    assert cc.traffic_light == "red"
+    assert cc.traffic_light == "yellow"
     assert st(cc)["task_named_n"] == 0  # the preprint does not describe a Stroop task
 
 

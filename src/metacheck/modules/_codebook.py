@@ -2861,6 +2861,14 @@ def codebook_match_llm(
             )
         )
         unmatched = [i for i in cbk_paper_idx if cb_norm[i] not in matched_norm]
+        # A codebook variable without a label does not label a column, as in the match by name
+        # (match_column_labels()): 2,403 of the 2,533 columns this step matched in the
+        # Meta-Psychology run got no label and still counted as documented (#695, point 32)
+        unmatched = [
+            i
+            for i in unmatched
+            if cb_labels[i] is not None and str(cb_labels[i]).strip(" \t\r\n") != ""
+        ]
         if not unlabelled_idx or not unmatched:
             continue
         unlab_cols = _unique(col_names[i] for i in unlabelled_idx)

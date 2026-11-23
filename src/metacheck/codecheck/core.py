@@ -572,10 +572,45 @@ def _ext_code_lang(ext: str) -> str | None:
     return None
 
 
+def _code_not_text(path: str | os.PathLike[str] | None) -> str | None:
+    """Why a file named as code is not code, from its first bytes, or ``None`` when it is text.
+
+    Port of ``R/code_check.R::.code_not_text()``. A file was taken for what its name says: saved
+    R data and a PNG image named ``.R`` showed 0 code lines and no error, and an HTML page
+    named ``.py`` was read as Python (metacheck #700). A file starting with a byte order mark
+    of UTF-16 is text (it has zero bytes between its letters).
+    """
+    try:
+        with open(path, "rb") as fh:  # type: ignore[arg-type]
+            b = fh.read(8192)
+    except (OSError, TypeError, ValueError):
+        return None
+    if not b:
+        return None
+    if b[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        return None
+    if b[:2] == b"\x1f\x8b" or b[:3] == b"BZh" or b[:5] == b"\xfd7zXZ":
+        return "it is a compressed file (such as saved R data), not code"
+    if b[:4] == b"\x89PNG":
+        return "it is a PNG image, not code"
+    if b[:4] == b"%PDF":
+        return "it is a PDF file, not code"
+    if b[:4] == b"PK\x03\x04":
+        return "it is a zip archive, not code"
+    if b"\x00" in b:
+        return "it holds binary data, not text"
+    head = b[:1024].decode("latin-1")
+    if re.match(r"^[ \t\n\r\f\v]*<(!doctype html|html)", head, flags=re.IGNORECASE):
+        return "it is an HTML page, not code"
+    return None
+
+
 def _code_lang1(file_name: Any) -> str | None:
     if is_missing(file_name):
         raise ValueError("missing value where TRUE/FALSE needed")
-    ext = _file_ext(str(file_name)).lower()
+    # a space at the end of a name ("analysis.R ", which Windows cannot even store) hid the
+    # extension (metacheck #700)
+    ext = _file_ext(str(file_name).rstrip(" \t\r\n")).lower()
     if ext == "ipynb":
         return _ipynb_lang(file_name)
     if ext == "qmd":
@@ -1190,7 +1225,7 @@ def _code_expand_zip(
     ]
     if not any(is_zip):
         return all_files
-    from metacheck.archives.zip_peek import _zip_local_source, zip_peek
+    from metacheck.archives.zip_peek import _is_zip, _zip_local_source, zip_peek
 
     local = _zip_local_source(all_files)
     sizes = _col(all_files, "file_size")
@@ -1210,9 +1245,14 @@ def _code_expand_zip(
         members = peek["name"].tolist()
         # renv's own files are left out of code_check, so they are not fetched
         in_renv = _in_renv_folder(pd.DataFrame({"file_path": pd.Series(members, dtype=object)}))
+        # A zip inside the zip is fetched too, and its code files are taken out of it below (zips
+        # inside zips were not opened, metacheck #700).
+        member_zip = _is_zip(members)
         is_code = [
-            lang is not None and not r
-            for lang, r in zip(_as_lang_list(code_lang(members)), in_renv, strict=True)
+            (lang is not None or z) and not r
+            for lang, z, r in zip(
+                _as_lang_list(code_lang(members)), member_zip, in_renv, strict=True
+            )
         ]
         if not any(is_code):
             continue
@@ -1262,7 +1302,87 @@ def _code_expand_zip(
         return all_files
     keep = [c for c in all_files.columns if c in dl.columns]
     rows = dl.loc[got, keep].reset_index(drop=True)
+    inner = _is_zip(_col(rows, "file_name"))
+    from metacheck._r.frames import bind_rows as _bind_rows
+
+    rows = _bind_rows(
+        [
+            rows.loc[[not v for v in inner]],
+            _code_expand_inner_zips(
+                rows.loc[inner].reset_index(drop=True),
+                all_files,
+                cache=cache,
+                max_file_size=max_file_size,
+                max_download_size=max_download_size,
+            ),
+        ]
+    ).reset_index(drop=True)
     return _bind(all_files, [rows])
+
+
+def _code_expand_inner_zips(
+    zips: pd.DataFrame,
+    listing: pd.DataFrame,
+    cache: bool = False,
+    max_file_size: Any = 100,
+    max_download_size: Any = 500,
+    levels: int = 2,
+) -> pd.DataFrame:
+    """The code files inside zips that are themselves inside a zip.
+
+    Port of ``R/code_check.R::.code_expand_inner_zips()``: *zips* are rows of zips on disk,
+    fetched by :func:`_code_expand_zip`, taken out on disk two more levels deep (metacheck
+    #700), as data_check opens them: code and inner zips only, each file no larger than
+    *max_file_size*, within what is left of the repository's budget (``_repo_budget()``, from
+    *listing*). Returns the code files' rows.
+    """
+    from metacheck._r.frames import bind_rows
+    from metacheck.archives.download import _budget_free, _repo_budget
+    from metacheck.archives.zip_peek import _expand_zip, _in_download_folder, _is_zip
+
+    out: list[pd.DataFrame] = []
+    max_bytes = float(max_file_size) * 1024**2 if math.isfinite(float(max_file_size)) else math.inf
+    skip = ["data", "documentation", "materials", "output", "unknown"]
+    for _level in range(levels):
+        if zips is None or len(zips) == 0:
+            break
+        nxt: list[pd.DataFrame] = []
+        for j in range(len(zips)):
+            z = zips.iloc[[j]].reset_index(drop=True)
+            loc = z["file_location"].iloc[0] if "file_location" in z.columns else None
+            repo = z["repo_url"].iloc[0] if "repo_url" in z.columns else None
+            left = math.inf
+            if not is_missing(loc) and _in_download_folder(str(loc)) and not is_missing(repo):
+                left = _budget_free(
+                    _repo_budget(
+                        repo,
+                        listing,
+                        cache=cache,
+                        max_file_size=max_file_size,
+                        max_download_size=math.inf
+                        if max_download_size is None
+                        else max_download_size,
+                    )
+                )
+            try:
+                ex = _expand_zip(loc, z, skip_types=skip, max_bytes=max_bytes, max_total=left)
+            except Exception:
+                ex = z.iloc[0:0]
+            ok = [not is_missing(v) for v in _col(ex, "file_location") or []]
+            ex = ex.loc[ok].reset_index(drop=True)
+            if len(ex) == 0:
+                continue
+            ex_names = _col(ex, "file_name")
+            is_inner = _is_zip(ex_names)
+            langs = _as_lang_list(code_lang(ex_names))
+            out.append(
+                ex.loc[[(not i) and lg is not None for i, lg in zip(is_inner, langs, strict=True)]]
+            )
+            nxt.append(ex.loc[is_inner])
+        zips = bind_rows(nxt).reset_index(drop=True) if nxt else zips.iloc[0:0]
+    if not out:
+        return zips.iloc[0:0]
+    return bind_rows(out).reset_index(drop=True)
 
 
 # ---------------------------------------------------------------------------
@@ -2172,7 +2292,72 @@ def _code_char_vector_vars(code_text: Sequence[str | None]) -> dict[str, list[st
         parts = regexec(rf"\(\s*({ident})\s+in\s+({ident})\s*\)", loop, perl=True)
         if parts[2] in out:
             out[parts[1]] = out[parts[2]]
+    # a loop over a literal vector, `for (p in c("fGarch", "dplyr"))` (metacheck #695, point 34)
+    lit_loops = regextract_all(
+        rf"\bfor\s*\(\s*({ident})\s+in\s+c\s*\([^()]*\)\s*\)", joined, perl=True
+    )
+    for loop in lit_loops:
+        v = str(sub(rf"^for\s*\(\s*({ident})\s+in.*$", r"\1", loop, perl=True))
+        strs = _code_literal_strings(str(sub(r"^[^(]*\(\s*[^ ]+\s+in\s+", "", loop, perl=True)))
+        if strs:
+            out[v] = strs
     return out
+
+
+def _code_literal_strings(x: str) -> list[str]:
+    """The quoted strings of a literal ``c("a", "b")`` (or ``"a"``), when it holds nothing else;
+    an empty list otherwise (``.code_literal_strings()``)."""
+    value = str(sub(r"(?s)^\s*c\s*\((.*)\)\s*\)?\s*$", r"\1", x, perl=True))
+    strs = regextract_all(r"(['\"])[^'\"\n]*\1", value, perl=True)
+    rest = gsub(r"(['\"])[^'\"\n]*\1", "", value, perl=True)
+    if not strs or grepl(r"[^[:space:],)]", rest):
+        return []
+    return [str(gsub(r"^['\"]|['\"]$", "", q)) for q in strs]
+
+
+def _code_loader_functions(code_text: Sequence[str | None]) -> list[str]:
+    """Functions a script defines that load or install the packages they are given
+    (``.code_loader_functions()``): a paper's own install-and-load helper, ``ipak <- function(pkg)
+    { ... install.packages(new.pkg); sapply(pkg, require, character.only = TRUE) }``. Its body
+    calls library(), require(), install.packages() or p_load() on its argument rather than on a
+    name (character.only, or install.packages() of a variable). Gmisc and epitools, given to such
+    a function in mp20212909, were never installed (metacheck #695, point 34). Returns the
+    functions' names."""
+    joined = "\n".join("NA" if s is None else s for s in code_text)
+    ident = "[.A-Za-z][.A-Za-z0-9_]*"
+    n = len(joined)
+    out: list[str] = []
+    for m in re.finditer(rf"({ident})\s*(?:<-|=)\s*function\s*\(", joined):
+        name = m.group(1)
+        # the body: from the first "{" after the arguments to its matching "}", or the rest of
+        # the line for a body without braces; at most 5,000 characters
+        seg = joined[m.end() : min(n, m.end() + 5001)]
+        opn = seg.find("{")
+        nl = seg.find("\n")
+        if opn >= 0 and (nl < 0 or opn < nl + 200):
+            depth = 0
+            end = -1
+            for i, ch in enumerate(seg):
+                if ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                if depth == 0 and i > opn:
+                    end = i
+                    break
+            body = seg[opn : (end + 1 if end >= 0 else len(seg))]
+        else:
+            body = seg[: nl + 1] if nl >= 0 else seg
+        loads_arg = (
+            re.search(r"(?:library|require)\s*\([^)]*character\.only\s*=\s*(?:TRUE|T)\b", body)
+            or re.search(
+                r"\b(?:lapply|sapply|vapply|walk|map)\s*\([^,]+,\s*(?:library|require)\b", body
+            )
+            or re.search(r"\binstall\.packages\s*\(\s*[.A-Za-z][.A-Za-z0-9_]*\s*[,)\[]", body)
+        )
+        if loads_arg:
+            out.append(name)
+    return list(dict.fromkeys(out))
 
 
 def code_library_names(
@@ -2234,7 +2419,14 @@ def code_library_names(
 
     char_only = r"character\.only\s*=\s*(TRUE|T)\b"
 
+    # Only a line with one of these words can hold a hit below: only those go through the
+    # patterns one line at a time. On every line, the patterns took most of code_check's time,
+    # 0.3 ms a line: minutes for a script of 800,000 lines (metacheck #700).
+    r_words = re.compile("library|require|p_load|install|::")
+    py_words = re.compile(r"^\s*(?:from|import)\s")
     for ln, L in enumerate(lines, start=1):
+        if L is None or not (r_words if lang == "R" else py_words).search(L):
+            continue
         if lang == "R":
             # a bare word is a package name for library()/require() unless the
             # call sets character.only = TRUE; requireNamespace() always
@@ -2326,6 +2518,44 @@ def code_library_names(
                 pkgs.extend(variables[tok] if tok in variables else arg_packages(tok, True))
             ln = joined[: start - 1].count("\n") + 1
             add([sub(r"@.*$", "", sub(r"^.*/", "", p)) for p in pkgs], "groundhog", ln)
+
+        def line_of(pos: int) -> int:
+            return joined[: pos - 1].count("\n") + 1
+
+        # c("a", "b") given straight to lapply()/sapply() with library or require, not through a
+        # variable (metacheck #695, point 34)
+        lpat = (
+            r"\b(?:lapply|sapply|vapply|walk|map)\s*\(\s*(c\s*\([^()]*\))\s*,\s*"
+            r"(?:FUN\s*=\s*)?(?:function\s*\([^)]*\)\s*\{?\s*)?(library|require)\b"
+        )
+        for (start, _length), call in zip(
+            gregexpr_all(lpat, joined, perl=True),
+            regextract_all(lpat, joined, perl=True),
+            strict=True,
+        ):
+            vec = str(sub(r"(?s)^[^(]*\(\s*(c\s*\([^()]*\)).*$", r"\1", call, perl=True))
+            fn = str(sub(r"(?s)^.*\b(library|require)$", r"\1", call, perl=True))
+            add(_code_literal_strings(vec), fn, line_of(start))
+        # the script's own install-and-load functions, called with a variable or a literal vector
+        # (see _code_loader_functions())
+        for f in _code_loader_functions(lines):
+            fpat = (
+                rf"(?<![\w.]){re.escape(f)}\s*\(\s*(c\s*\([^()]*\)|[.A-Za-z][.A-Za-z0-9_]*)\s*[,)]"
+            )
+            for (start, _length), call in zip(
+                gregexpr_all(fpat, joined, perl=True),
+                regextract_all(fpat, joined, perl=True),
+                strict=True,
+            ):
+                arg = trimws(
+                    str(sub(rf"(?s)^{re.escape(f)}\s*\(\s*(.*?)\s*[,)]$", r"\1", call, perl=True))
+                )
+                loaded = (
+                    _code_literal_strings(arg)
+                    if grepl(r"^c\s*\(", arg)
+                    else list(variables.get(arg, []))
+                )
+                add(loaded, "loader", line_of(start))
 
     if not pkgs_out:
         return _empty_packages()

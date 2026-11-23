@@ -451,6 +451,12 @@ def test_a_single_value_that_cannot_be_told_from_chance_is_left_out() -> None:
     o3 = o2.assign(value=["0.0231", "0.0231"])
     assert match_reported_output(e.iloc[:1], o3)["found"].iloc[0]
     assert match_reported_output(e.iloc[:1], o3)["n_sites"].iloc[0] == 2
+    # every test weak, with output: the empty result, not an error (#707)
+    none = match_reported_output(e.iloc[1:3], o)
+    assert len(none) == 0
+    assert {"reported", "found", "confidence"} <= set(none.columns)
+    assert none.attrs["summary"]["n_tests"] == 0
+    assert none.attrs["summary"]["pct_found"] == 0
 
 
 def test_a_test_none_of_whose_values_is_evidence_takes_no_part() -> None:

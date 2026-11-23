@@ -1616,29 +1616,41 @@ _PILOT_STUDY_PAT = (
     + "([a-z](?![a-z]))?"
 )
 _PILOT_PAT = "(?<![a-z])pilot[ ._-]?([0-9]{1,2})?"
+_STUDY_PREFILTER = re.compile("pilot|(?:experiment|study|(?<![a-z])expt?|(?<![a-z])ex)[ ._-]?[0-9]")
 
 
 def _data_group_from_path(paths: Sequence[str | None]) -> list[str | None]:
     """A study group named by a file's own path, or ``None`` (``.data_group_from_path()``)."""
-    out: list[str | None] = []
-    for path in _as_list(paths):
-        code: str | None = None
-        if path is not None and path != "":
-            for part in reversed(strsplit(_tolower(path), "/", fixed=True)):
-                m = regexec(_PILOT_STUDY_PAT, part, perl=True)
-                if m:
-                    code = "pilot" + m[1] + m[2]
-                    break
-                m = regexec(_EX_PAT, part, perl=True)
-                if m:
-                    code = "ex" + m[1] + m[2]
-                    break
-                m = regexec(_PILOT_PAT, part, perl=True)
-                if m:
-                    code = "pilot" + (m[1] if m[1] else "1")
-                    break
-        out.append(code)
+    plist = _as_list(paths)
+    # Only a path with "pilot", or a study word followed by a digit, can match one of the patterns
+    # below; one test finds those, and each distinct one is read once. Before, every path went
+    # through the patterns one part at a time: 14 minutes for 369,548 files, four times per paper
+    # (#702).
+    out: list[str | None] = [None] * len(plist)
+    todo: dict[str, str | None] = {}
+    for i, path in enumerate(plist):
+        if path is None or path == "":
+            continue
+        if path not in todo:
+            low = _tolower(path)
+            todo[path] = _data_group_of_path(low) if _STUDY_PREFILTER.search(low) else None
+        out[i] = todo[path]
     return out
+
+
+def _data_group_of_path(low: str) -> str | None:
+    """The study group of one path in lower case: its parts from the innermost out."""
+    for part in reversed(strsplit(low, "/", fixed=True)):
+        m = regexec(_PILOT_STUDY_PAT, part, perl=True)
+        if m:
+            return str("pilot" + m[1] + m[2])
+        m = regexec(_EX_PAT, part, perl=True)
+        if m:
+            return str("ex" + m[1] + m[2])
+        m = regexec(_PILOT_PAT, part, perl=True)
+        if m:
+            return str("pilot" + (m[1] if m[1] else "1"))
+    return None
 
 
 def _data_group_from_short_label(
@@ -2568,13 +2580,59 @@ def data_read_head(
             df = _read_rdata_isolated(path, n_rows)
         else:
             df = None
-        return _utf8_repair_df(df)
+        df = _utf8_repair_df(df)
+        # only on a whole file: the first rows alone cannot show a column is empty
+        if df is not None and not math.isfinite(n_rows):
+            df = _drop_trailing_blank_cols(df)
+        return df
     except Exception as exc:
         msg = str(exc)
         if "time limit" in msg.lower():
             raise
         warnings.warn(f"Could not read {_r_basename(path)}: {msg}", stacklevel=2)
         return None
+
+
+def _drop_trailing_blank_cols(df: pd.DataFrame) -> pd.DataFrame:
+    """Port of ``.drop_trailing_blank_cols()``: leave out the columns at the right end of a table
+    that have neither a name (one the reader invented, see ``_is_placeholder_name()``) nor any
+    value.
+
+    A spreadsheet saved with every column it can hold (16,384 in Excel) gave a CSV of 16,383
+    fields, of which about 140 had a name, and data_check reported 16,296 empty columns for that
+    one file (#695, point 31). Only from the right end, and only while both hold: a column with a
+    name or a value, and every column left of it, stays. ``df.attrs["blank_cols_dropped"]`` is the
+    number left out.
+    """
+    from metacheck.datacheck._checks_format import _is_placeholder_name
+
+    ncol = df.shape[1]
+    if ncol < 2:
+        return df
+
+    def blank(j: int) -> bool:
+        col = df.iloc[:, j]
+        if col.dtype == object or isinstance(col.dtype, pd.StringDtype | pd.CategoricalDtype):
+            na = col.isna().to_numpy()
+            txt = col.astype(object).where(~col.isna(), "").astype(str).str.strip(" \t\r\n")
+            return bool(((txt == "").to_numpy() | na).all())
+        return bool(col.isna().all())
+
+    nms = [str(c) for c in df.columns]
+    keep_to = ncol
+    while keep_to > 1 and _is_placeholder_name(nms[keep_to - 1])[0] and blank(keep_to - 1):
+        keep_to -= 1
+    if keep_to == ncol:
+        return df
+    attrs = dict(df.attrs)
+    out = df.iloc[:, :keep_to].copy()
+    out.attrs = attrs
+    col_attrs = attrs.get("col_attrs")
+    if isinstance(col_attrs, dict):
+        kept = set(nms[:keep_to])
+        out.attrs["col_attrs"] = {k: v for k, v in col_attrs.items() if k in kept}
+    out.attrs["blank_cols_dropped"] = ncol - keep_to
+    return out
 
 
 def _rds_is_workspace(path: str | os.PathLike[str]) -> bool:

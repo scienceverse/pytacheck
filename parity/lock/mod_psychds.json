@@ -7,7 +7,7 @@
 "psychds_check.minimal_cols": {"r": "099ffd4dd842e01a", "py": "a72b89349f7c98b8", "diff": ["report[]", "summary_table.misplaced_n[]", "table.status[]", "table.target_path[]"]},
 "psychds_check.multi": {"r": "f28f730724aa2bca", "py": "526dac67f32edfdd", "diff": ["report[]", "summary_table.misplaced_n[]", "summary_text[]", "table.status[]", "table.target_path[]"]},
 "psychds_check.no_name_col": {"r": "ac5146cf65ca52a8", "py": "eba0374008807a42", "diff": ["<R error, Python value>"]},
-"psychds_check.no_name_col_data": {"r": "ac5146cf65ca52a8", "py": "3be49924c762ef11", "diff": ["<R error, Python value>"]},
+"psychds_check.no_name_col_data": {"r": "ac5146cf65ca52a8", "py": "77cf73eef9bfd081", "diff": ["<R error, Python value>"]},
 "psychds_check.no_type_col": {"r": "ac5146cf65ca52a8", "py": "735ac472d3311543", "diff": ["<R error, Python value>"]},
 "psychds_check.paper_none": {"r": "ac5146cf65ca52a8", "py": "c3f028fe8d5ed6f1", "diff": ["<R error, Python value>"]},
 "psychds_check.paper_none_empty": {"r": "ac5146cf65ca52a8", "py": "b1639224e3170ee4", "diff": ["<R error, Python value>"]},
@@ -15,8 +15,8 @@
 "psychds_check.psychsci": {"r": "112d77e761f9c535", "py": "f0b6c00b3ec04a11", "diff": ["report[]", "summary_table.misplaced_n[]", "table.status[]", "table.target_path[]"]},
 "psychds_check.psychsci_last_paper": {"r": "7e7d87cbbe27ce68", "py": "08cf064b4bdcbc4d", "diff": ["report[]", "summary_table.misplaced_n[]", "table.status[]", "table.target_path[]"]},
 "psychds_check.psychsci_two_papers": {"r": "c9e70487d01a3b25", "py": "d699e2601452c122", "diff": ["report[]", "summary_table.misplaced_n[]", "table.status[]", "table.target_path[]"]},
-"psychds_check.red_nocols": {"r": "ea8fce8401533341", "py": "3a4ddda48dc861ad", "diff": ["report[]", "summary_table.misplaced_n[]", "summary_text[]", "table.status[]", "table.target_path[]"]},
+"psychds_check.red_nocols": {"r": "64fad976ff93a251", "py": "534a702b364a857d", "diff": ["report[]", "summary_table.misplaced_n[]", "summary_text[]", "table.status[]", "table.target_path[]"]},
 "psychds_check.red_nodata": {"r": "127e8341809ecd3f", "py": "dce155ac5fdc1439", "diff": ["report[]", "summary_table.misplaced_n[]", "summary_text[]", "table.status[]", "table.target_path[]"]},
-"psychds_check.single_named": {"r": "21dfc2a85b73cc80", "py": "270f3f1289afaed2", "diff": ["report[]", "summary_table.misplaced_n[]", "table.status[]", "table.target_path[]"]},
+"psychds_check.single_named": {"r": "f78bdca563c11a15", "py": "f40198c3578de7da", "diff": ["report[]", "summary_table.misplaced_n[]", "summary_text[]", "table.status[]", "table.target_path[]"]},
 "psychds_check.test_paper": {"r": "1c8fd62b16b5f564", "py": "ef9219bbaaae336a", "diff": ["report[]", "summary_table.misplaced_n[]", "summary_text[]", "table.status[]", "table.target_path[]"]}
 }

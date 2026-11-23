@@ -15,6 +15,7 @@ R block's execution step) and ``_reproducibility_py`` (the Python block).
 
 from __future__ import annotations
 
+import contextlib
 import os
 import re
 import shutil
@@ -27,8 +28,10 @@ import pandas as pd
 
 from metacheck._r import bind_rows, grepl, plural, strsplit
 from metacheck._values import as_str
+from metacheck.codecheck.core import code_read
 from metacheck.module import module
 from metacheck.modules import _reproducibility as h
+from metacheck.modules._count_refused import _count_refused_add
 from metacheck.report import scroll_table
 from metacheck.repro.provenance import (
     _repro_prov_finish,
@@ -705,12 +708,21 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
             max_download_size=a["max_download_size"],
         )
 
+    # repositories data_check or code_check refused for their number of files: a paper with
+    # no code left says so, not only "no code files" (#706)
+    count_refused = _count_refused_add(
+        get_prev_outputs("code_check", "count_refused"),
+        get_prev_outputs("data_check", "count_refused"),
+    )
     if structure_df is None:
-        structure_df = run_missing("data_check").get("structure")
+        dc = run_missing("data_check")
+        structure_df = dc.get("structure")
+        count_refused = _count_refused_add(count_refused, dc.get("count_refused"))
     if code_tbl is None:
         cc = run_missing("code_check")
         code_tbl = cc.table
         version_pin = cc.get("version_pin")
+        count_refused = _count_refused_add(count_refused, cc.get("count_refused"))
     # Deposits linked in the paper that hold other people's work or the authors' earlier work
     # are not checked (repo_check's `table_not_checked`, #648), but the paper's own code may
     # read their files, as a re-analysis of another team's data does. The files of theirs that
@@ -818,7 +830,17 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     # SPSS / Stata data without syntax ------------------------------------------
     fnames_all = h._chr_col(structure_df, "file_name")
     code_fnames = h._chr_col(code_tbl, "file_name")
-    ss = h.spss_stata(fnames_all, code_fnames)
+    # An SPSS or Stata data file the deposit's own code reads (read_sav(), read.dta(),
+    # rio::import(), ...) is data for that code, not a sign that the analysis was left out
+    # (#695, point 42).
+    read_code_txt: list[str | None] = []
+    if code_tbl is not None and "file_location" in code_tbl.columns:
+        for loc in h._chr_col(code_tbl, "file_location"):
+            if loc is None or not os.path.exists(loc):
+                continue
+            with contextlib.suppress(Exception):  # tryCatch(error = function(e) character(0))
+                read_code_txt.extend(code_read(loc))
+    ss = h.spss_stata(fnames_all, code_fnames, read_code_txt)
     spss_red, stata_red = ss["spss_red"], ss["stata_red"]
     spss_report, stata_report = ss["spss_report"], ss["stata_report"]
 
@@ -896,9 +918,11 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     extra = [*(spss_report or []), *(stata_report or []), *(nonr_report or [])]
 
     # R and Python are handled in this phase.
-    no_code = "We found no R or Python code files to assess for reproducibility."
+    no_code = h._repro_no_code_text(note, count_refused)
+    if empty_tl == "na" and count_refused is not None and len(count_refused):
+        empty_tl = "yellow"
     if code_tbl is None or len(code_tbl) == 0 or "language" not in code_tbl.columns:
-        return empty(no_code + note, empty_tl, extra)
+        return empty(no_code, empty_tl, extra)
     langs = h._chr_col(code_tbl, "language")
     if "file_name" in code_tbl.columns:
         # renv's own files (renv/activate.R, renv/library/) are not the paper's analysis
@@ -913,7 +937,7 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     py_files = code_tbl.iloc[keep_py].reset_index(drop=True)
     has_r, has_py = len(r_files) > 0, len(py_files) > 0
     if not has_r and not has_py:
-        return empty(no_code + note, empty_tl, extra)
+        return empty(no_code, empty_tl, extra)
     if execute and a["sandbox"] == "process":
         _require_process(has_r=has_r, has_py=has_py)
 
@@ -2353,6 +2377,19 @@ def _r_modifications(
                 )
                 for s, f in zip(
                     h._chr_col(folders, "script"), h._chr_col(folders, "folder"), strict=True
+                )
+            ]
+        pkgs_inst = ex.get("r_pkgs_installed")
+        if pkgs_inst is not None and len(pkgs_inst):
+            later += [
+                (
+                    s,
+                    "package_installed",
+                    f"installed {p}, which the error named and no script loads, and ran it "
+                    "once more",
+                )
+                for s, p in zip(
+                    h._chr_col(pkgs_inst, "script"), h._chr_col(pkgs_inst, "package"), strict=True
                 )
             ]
         # bind_rows(rw_rows, setwd, lib_loc, font, library, env, slash, old_default, stan,

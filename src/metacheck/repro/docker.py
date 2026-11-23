@@ -468,6 +468,8 @@ _REPOS_LINES = [
 
 def _deparse1_named_chr(values: Mapping[str, str]) -> str:
     """``deparse1()`` of a named character vector whose names are syntactic."""
+    if not values:
+        return "structure(character(0), names = character(0))"
     return _deparse1_c([f"{k} = {_deparse1_chr([v])}" for k, v in values.items()])
 
 
@@ -591,10 +593,11 @@ _INSTALL_LOOP = [
 
 #: The part of the install script for packages that are not on CRAN
 #: (``.repro_docker_elsewhere_lines()``): a second pass after every package has had its
-#: turn, since one time limit covers the whole install. First Bioconductor, then the
+#: turn, since one time limit covers the whole install. First the deposit's own copy of the
+#: package, when it has one (see :func:`_repro_deposit_packages`); then Bioconductor, then the
 #: latest version in the CRAN Archive (two rounds, because a package can need another
-#: archived one), then a table of known places and R-universe (#568). Runs inside the
-#: container, without this package.
+#: archived one), then a table of known places, R-Forge and R-universe (#568). Runs inside
+#: the container, without this package.
 _ELSEWHERE_SCRIPT = [
     # This R treats a warning old packages cause as an error, and has dropped
     # Calloc() and the like, so maptools did not compile. Only for this pass.
@@ -608,7 +611,17 @@ _ELSEWHERE_SCRIPT = [
     "last_log <- character(0)",
     'logged <- function(expr) withCallingHandlers(expr, warning = function(w) { last_log <<- c(last_log, conditionMessage(w)); invokeRestart("muffleWarning") }, error = function(e) last_log <<- c(last_log, conditionMessage(e)))',
     "bioc_known <- NULL",
+    # the deposit's own copy of a package, copied to /sandbox by repro_install_deps_docker()
+    # (#588)
+    'deposit_pkgs <- if (exists(".repro_docker_deposit")) .repro_docker_deposit else character(0)',
     "in_elsewhere <- function(pkg, depth = 1) {",
+    # First the deposit: a paper's own package, not on CRAN, that its scripts load (7 papers
+    # in the BES run of 0.4.4.27, such as phenotools and TREX)
+    "  if (pkg %in% names(deposit_pkgs)) {",
+    '    if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes", lib = lib, quiet = TRUE)',
+    '    logged(remotes::install_local(deposit_pkgs[[pkg]], lib = lib, upgrade = "never", dependencies = TRUE, quiet = TRUE))',
+    '    if (file.exists(file.path(lib, pkg, "DESCRIPTION"))) return("the deposit")',
+    "  }",
     "  if (is.null(bioc_known)) bioc_known <<- tryCatch({",
     '    if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager", lib = lib, quiet = TRUE)',
     "    rownames(utils::available.packages(repos = BiocManager::repositories()))",
@@ -661,6 +674,8 @@ _ELSEWHERE_SCRIPT = [
     # Packages only elsewhere (#568, item 12): a table of known places, then
     # R-universe's search for that exact name. A GitHub tarball needs no token.
     "known_places <- " + _deparse1_named_chr(_REPRO_KNOWN_PACKAGE_PLACES),
+    'rforge <- "https://R-Forge.R-project.org"',
+    "rforge_known <- NULL",
     "in_known_place <- function(pkg) {",
     "  place <- unname(known_places[pkg])",
     '  if (!is.na(place) && startsWith(place, "https://")) {',
@@ -671,6 +686,14 @@ _ELSEWHERE_SCRIPT = [
     '    if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes", lib = lib, quiet = TRUE)',
     '    logged(remotes::install_url(paste0("https://github.com/", place, "/archive/HEAD.tar.gz"), lib = lib, upgrade = "never", dependencies = TRUE, quiet = TRUE))',
     '    return(paste0("github.com/", place))',
+    "  }",
+    # R-Forge, a repository of packages that R-universe does not search: in the BES run of
+    # 0.4.4.27, countreg (2 papers), gradientForest and extendedForest were found nowhere, and
+    # R-Forge has all three
+    '  if (is.null(rforge_known)) rforge_known <<- tryCatch(rownames(utils::available.packages(repos = rforge, type = "source")), error = function(e) character(0))',
+    "  if (pkg %in% rforge_known) {",
+    '    logged(install.packages(pkg, lib = lib, repos = c(rforge, getOption("repos")), type = "source", quiet = TRUE))',
+    "    return(rforge)",
     "  }",
     # a search that fails is not a package R-universe lacks (#389); a bare
     # rocker/r-ver image has no jsonlite, so the search always failed there
@@ -698,7 +721,7 @@ _ELSEWHERE_SCRIPT = [
     '  if (!usable() && round == 2 && !length(stopped) && length(last_log)) out[[i]]$message <- paste0(out[[i]]$message, "; installing it from ", c(from, tried)[!is.na(c(from, tried))][1], " failed: ", substr(paste(unique(last_log), collapse = " | "), 1, 400))',
     # Found in none of the places: the code does not say where the package comes
     # from, which authors can act on (#389). See .repro_classify_install_message().
-    '  if (!usable() && round == 2 && is.na(tried) && is.na(from)) out[[i]]$message <- paste0(out[[i]]$message, "; found nowhere else: not on Bioconductor, in the CRAN Archive, in our list of known places or on R-universe")',
+    '  if (!usable() && round == 2 && is.na(tried) && is.na(from)) out[[i]]$message <- paste0(out[[i]]$message, "; found nowhere else: not on Bioconductor, in the CRAN Archive, in our list of known places, on R-Forge or on R-universe")',
     "  if (usable()) {",
     "    out[[i]]$installed <- TRUE",
     '    out[[i]]$message <- ""',
@@ -712,7 +735,9 @@ _ELSEWHERE_SCRIPT = [
 ]
 
 
-def _install_script(install_deps: pd.DataFrame) -> list[str]:
+def _install_script(
+    install_deps: pd.DataFrame, deposit_container: Mapping[str, str] | None = None
+) -> list[str]:
     """The ``install.R`` a :func:`repro_install_deps_docker` container runs.
 
     Each package is installed in turn (a recorded version through
@@ -734,6 +759,8 @@ def _install_script(install_deps: pd.DataFrame) -> list[str]:
         # (#598)
         ".repro_docker_bioc <- "
         + _deparse1_lgl([p in bioc for p in _chr_list(install_deps["package"])]),
+        # the deposit's own copies of packages, at their place in the container (#588)
+        ".repro_docker_deposit <- " + _deparse1_named_chr(deposit_container or {}),
     ]
     return header + _INSTALL_LOOP + _ELSEWHERE_SCRIPT
 
@@ -891,11 +918,144 @@ def _repro_docker_run_install(
         bar.terminate()
 
 
+def _read_dcf_first(path: str, fields: Sequence[str]) -> dict[str, str] | None:
+    """The first record of a DCF file, the *fields* it has (``read.dcf(f, fields = )[1, ]``)."""
+    try:
+        raw = Path(path).read_bytes()
+    except OSError:
+        return None
+    try:
+        txt = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        txt = raw.decode("latin-1")
+    out: dict[str, str] = {}
+    cur: str | None = None
+    for line in txt.replace("\r\n", "\n").split("\n"):
+        if not line.strip():
+            if out or cur is not None:
+                break
+            continue
+        if line[0] in " \t":
+            if cur is not None:
+                out[cur] = out[cur] + "\n" + line.strip()
+            continue
+        key, sep, val = line.partition(":")
+        if not sep:
+            return None  # not a DCF file
+        cur = key if key in fields else None
+        if cur is not None:
+            out[cur] = val.strip()
+    return out
+
+
+def _repro_deposit_packages(
+    root: str | os.PathLike[str] | None, pkgs: Sequence[str | None]
+) -> dict[str, str]:
+    """Port of ``R/reproducibility_check_docker.R::.repro_deposit_packages()``.
+
+    The deposit's own copies of packages the code loads (#588): a folder whose
+    ``DESCRIPTION`` names the package, or a source tarball ``<package>_<version>.tar.gz``.
+    Of several copies of one package, the highest version. In the BES run of 0.4.4.27, 7
+    papers' scripts loaded the paper's own package, which is not on CRAN, and the deposit
+    held it, mostly inside the zip of a GitHub release. A dict of paths under *root*, with
+    the package names as keys; empty when there are none.
+    """
+    from metacheck.repro.recorded import _package_version
+
+    wanted = {p for p in pkgs if p is not None}
+    if not wanted or root is None or not os.path.isdir(root):
+        return {}
+    top = os.fspath(root)
+    files: list[str] = []
+    for dirpath, dirs, names in os.walk(top):
+        # list.files() leaves out hidden files and folders
+        dirs[:] = [d for d in dirs if not d.startswith(".")]
+        files.extend(os.path.join(dirpath, n) for n in names if not n.startswith("."))
+    files.sort()
+    found: list[tuple[str, str | None, str]] = []  # package, version, path
+    for f in files:
+        if os.path.basename(f) != "DESCRIPTION":
+            continue
+        d = _read_dcf_first(f, ("Package", "Version", "Built"))
+        # an installed package (a renv library in the deposit) has "Built", and is no
+        # source to install from
+        if d is None or "Package" not in d or "Built" in d:
+            continue
+        found.append(
+            (d["Package"].strip(), d.get("Version", "").strip() or None, os.path.dirname(f))
+        )
+    tgz_pat = re.compile(r"^([A-Za-z][A-Za-z0-9.]*)_([0-9][0-9.-]*)\.tar\.gz$")
+    for f in files:
+        m = tgz_pat.match(os.path.basename(f))
+        if m:
+            found.append((m.group(1), m.group(2), f))
+    best: dict[str, tuple[str, str | None, str]] = {}
+    for rec in found:
+        if rec[0] not in wanted:
+            continue
+        cur = best.get(rec[0])
+        if cur is None:
+            best[rec[0]] = rec
+            continue
+        # the first of the highest version; one without a version only while none has
+        v_new, v_cur = _package_version(rec[1]), _package_version(cur[1])
+        if v_new is not None and (v_cur is None or v_new > v_cur):
+            best[rec[0]] = rec
+    return {k: best[k][2] for k in sorted(best)}
+
+
+def _repro_copy_deposit_packages(
+    deposit_pkgs: Mapping[str, str] | None, sandbox_dir: str | os.PathLike[str]
+) -> dict[str, str]:
+    """Port of ``R/reproducibility_check_docker.R::.repro_copy_deposit_packages()``.
+
+    Copy the deposit's packages (see :func:`_repro_deposit_packages`) into the install's
+    own folder, which the container sees as ``/sandbox``: a tarball as it is, a folder with
+    only the parts a package install reads, since a paper's own package can be the whole
+    deposit, with its data beside it. Returns their places in the container, with the
+    package names as keys.
+    """
+    out: dict[str, str] = {}
+    if not deposit_pkgs:
+        return out
+    to_dir = os.path.join(os.fspath(sandbox_dir), "deposit_pkgs")
+    os.makedirs(to_dir, exist_ok=True)
+    parts = {
+        "DESCRIPTION", "NAMESPACE", "R", "src", "inst", "data", "man", "exec", "tools",
+        "demo", "configure", "cleanup", "LICENSE", "LICENCE",
+    }  # fmt: skip
+    for k, src in deposit_pkgs.items():
+        if src.endswith(".tar.gz"):
+            try:
+                shutil.copyfile(src, os.path.join(to_dir, os.path.basename(src)))
+            except OSError:
+                continue
+            out[k] = f"/sandbox/deposit_pkgs/{os.path.basename(src)}"
+        else:
+            to = os.path.join(to_dir, k)
+            os.makedirs(to, exist_ok=True)
+            have = sorted(n for n in os.listdir(src) if n in parts)
+            if "DESCRIPTION" not in have:
+                continue
+            try:
+                for n in have:
+                    s_path = os.path.join(src, n)
+                    if os.path.isdir(s_path):
+                        shutil.copytree(s_path, os.path.join(to, n), dirs_exist_ok=True)
+                    else:
+                        shutil.copyfile(s_path, os.path.join(to, n))
+            except OSError:
+                continue
+            out[k] = f"/sandbox/deposit_pkgs/{k}"
+    return out
+
+
 def repro_install_deps_docker(
     install_deps: pd.DataFrame | None,
     lib_dir: str | os.PathLike[str],
     image: str = "rocker/r-ver:latest",
     timeout: float = 600,
+    deposit_pkgs: Mapping[str, str] | None = None,
 ) -> pd.DataFrame:
     """Install R dependencies inside a throwaway Docker container.
 
@@ -905,7 +1065,10 @@ def repro_install_deps_docker(
     the packages that finished; packages without a result are recorded as
     failed with the run's message. Same columns as
     :func:`~metacheck.repro.core.repro_install_deps` (``via_archive`` is
-    always false).
+    always false). *deposit_pkgs*: the deposit's own copies of packages, as
+    :func:`_repro_deposit_packages` gives them (package -> folder or source tarball on the
+    host); a package that is not on CRAN is installed from its copy first (#588); ``None``
+    for none.
     """
     from metacheck.repro.core import _install_frame
 
@@ -919,8 +1082,9 @@ def repro_install_deps_docker(
     os.close(out_fd)
     try:
         script_path = os.path.join(sandbox_dir, "install.R")
+        deposit_container = _repro_copy_deposit_packages(deposit_pkgs, sandbox_dir)
         Path(script_path).write_bytes(
-            ("\n".join(_install_script(install_deps)) + "\n").encode("utf-8")
+            ("\n".join(_install_script(install_deps, deposit_container)) + "\n").encode("utf-8")
         )
         _repro_docker_hand_over(sandbox_dir)
         _repro_docker_hand_over(lib, tree=False)  # what is in it was written by the container
@@ -1327,7 +1491,14 @@ def _repro_docker_run_watched(
         if seen["bytes"] is None:
             continue
         rx_prev, rx = rx, float(seen["bytes"])
-        if before + rx > max_total:
+        # Stopped for the total: the script whose download took the paper's scripts over
+        # the limit, or a later script while it downloads (more than 64 KB since the check
+        # before, as for `arriving`). A script that starts after the limit was reached was
+        # stopped at its first check whatever it did, and lost its own outcome (#593: 17
+        # scripts in 4 BES papers, which stopped on a missing package or file within
+        # seconds).
+        over = before + rx > max_total
+        if over and (before + rx_prev <= max_total or rx - rx_prev > 64 * 1024):
             stopped = (
                 f"stopped: the paper's scripts downloaded {_repro_mb(before + rx)} MB, more "
                 f"than the limit of {_repro_mb(max_total)} MB (max_download_size)"

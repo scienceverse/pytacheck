@@ -62,7 +62,9 @@
           "formatted",
           "paper_id",
           "header",
-          "section_type"
+          "section_type",
+          "one_sided_fit",
+          "bound_or_variance_fit"
         ],
         "v": [
           {
@@ -196,6 +198,18 @@
             "v": [
               "intro"
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
           }
         ]
       },
@@ -261,6 +275,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

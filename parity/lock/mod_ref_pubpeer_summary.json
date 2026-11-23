@@ -1,5 +1,5 @@
 {
-"ref_pubpeer.paperlist": {"r": "825aa0abee0c00d7", "py": "e730e5ad0602983c", "diff": ["table"]},
-"ref_pubpeer.paperlist.report_table": {"r": "481a9ef3d6946730", "py": "4edc6e373947f43e", "diff": ["table"]},
+"ref_pubpeer.paperlist": {"r": "3356d45785a3b3ef", "py": "e730e5ad0602983c", "diff": ["table"]},
+"ref_pubpeer.paperlist.report_table": {"r": "cd836fa63dc5d24e", "py": "e55ce5063f3f27a9", "diff": ["table"]},
 "ref_summary.paperlist.chain_all": {"r": "8d9571638fd70b4f", "py": "20e136046d8d1078", "diff": ["table.pubpeer[]"]}
 }

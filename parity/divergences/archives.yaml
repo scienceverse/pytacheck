@@ -79,12 +79,11 @@
   reason: "PA_license is the licence (dc.rights.license, else dc.rights.uri), not dc.rights' access status ('restrictedAccess'), which moves to the new PA_rights; a bitstream link from the REST root gets /rest in front (metacheck 0.3.3)"
 
 # metacheck 0.4.4.2 (figshare_info's ORCID iDs, .zenodo_info's host)
+# (figshare_info.review.empty_fields and .project_mixed_ids matched R from 0.4.4.35: an answer without title, DOI or files is an empty_response in both)
 "archives_d1_review/figshare_info.review.string_license_error": &u254_figshare_authors
   kind: r_bug_fixed
   ref: U254
   reason: "a record whose authors field is a plain string stops figshare_info() with '$ operator is invalid for atomic vectors'; pytacheck reads it as a record without authors"
-"archives_d1_review/figshare_info.review.empty_fields": *u254_figshare_authors
-"archives_d1_review/figshare_info.review.project_mixed_ids": *u254_figshare_authors
 "archives_gz_review/.zenodo_info.review.vector": &d148_zenodo_vector
   kind: deliberate
   ref: D146

@@ -57,6 +57,11 @@ MODULE_CASES: list[tuple[str, str, dict[str, Any]]] = [
     ("na_repo", "na_repo", {}),
     ("urls", "urls", {}),
     ("writes", "writes", {}),
+    # code files not checked, each with the reason (#700, #695 point 29)
+    ("not_checked", "not_checked", {}),
+    ("not_checked_max_code_size", "not_checked", {"max_code_size": 0.0001}),
+    # a repository refused for its number of files, before any step on its files (#702, #706)
+    ("count_refused", "code_files", {"max_files_per_repo": 3}),
 ]
 
 # download cases (file:// URLs): paths normalised by cc_norm() (the repository
@@ -90,6 +95,7 @@ TABLE_CASES: list[tuple[str, str, dict[str, Any]]] = [
     ("windows", "windows", {}),
     ("urls", "urls", {}),
     ("writes", "writes", {}),
+    ("not_checked", "not_checked", {"max_code_size": 0.0001}),
 ]
 
 

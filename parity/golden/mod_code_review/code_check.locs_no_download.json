@@ -15,7 +15,8 @@
       "summary_text",
       "summary_table",
       "na_replace",
-      "version_pin"
+      "version_pin",
+      "count_refused"
     ],
     "v": [
       {
@@ -359,6 +360,9 @@
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"clean.R\", \"naloc.R\", \"naloc.Rmd\", \n\"naloc.py\"), \"% Comments\" = c(\"33%\", \"\", \"\", \"\"), \"Missing Files\" = c(0L, \nNA, NA, NA), \"Absolute Paths\" = c(0L, NA, NA, NA), \"Code Between Libraries\" = c(NA_integer_, \nNA_integer_, NA_integer_, NA_integer_)), row.names = c(NA, 4L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code files not checked",
+          "We did not check 3 code files, for the reason given with each:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"naloc.R\", \"naloc.Rmd\", \"naloc.py\"), \n    Reason = c(\"it has no web address of its own (such as a file inside an archive), so it is read only when downloaded (download = TRUE)\", \n    \"it has no web address of its own (such as a file inside an archive), so it is read only when downloaded (download = TRUE)\", \n    \"it has no web address of its own (such as a file inside an archive), so it is read only when downloaded (download = TRUE)\"\n    )), row.names = c(NA, 3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",
@@ -394,7 +398,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 3 R, 1 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  All your code files had comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility.\n-  No list of Python package versions (requirements.txt or similar) was found. Consider adding one to improve computational reproducibility."
+          "\n-  We found 3 R, 1 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  3 code files were not checked; the report names them and says why.\n-  All your code files had comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility.\n-  No list of Python package versions (requirements.txt or similar) was found. Consider adding one to improve computational reproducibility."
         ]
       },
       {
@@ -635,9 +639,32 @@
             "v": []
           }
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

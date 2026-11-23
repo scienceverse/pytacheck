@@ -497,7 +497,9 @@ def open_practices(paper: Any) -> dict[str, Any]:
             )
     elif not single:
         summary_text = "Neither shared data nor code detected."
-        tl = "red"
+        # yellow, not red, until a validation shows people agree with most of its red findings:
+        # red for 70 of 149 Meta-Psychology papers (#695, point 2)
+        tl = "yellow"
     else:
         data_open = bool(summary_table["data_open"].iloc[0])
         code_open = bool(summary_table["code_open"].iloc[0])
@@ -512,7 +514,7 @@ def open_practices(paper: Any) -> dict[str, Any]:
             tl = "yellow"
         else:
             summary_text = "Neither shared data nor code detected."
-            tl = "red"
+            tl = "yellow"  # see above (#695, point 2)
         if not data_open and bool(summary_table["no_data"].iloc[0]):
             # data that do not exist cannot be shared: only code is missing
             summary_text = (
@@ -521,7 +523,7 @@ def open_practices(paper: Any) -> dict[str, Any]:
             tl = "green" if code_open else "yellow"
         if bool(summary_table["on_request"].iloc[0]):
             summary_text = gsub(r"\.$", "; some sharing is only on request.", summary_text)
-            tl = "red"
+            tl = "yellow"  # see above (#695, point 2)
 
     # D85: a commentary, correction or retraction reports no research of its own, so
     # missing data and code are not flagged

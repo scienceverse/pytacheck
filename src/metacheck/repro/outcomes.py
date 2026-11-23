@@ -447,7 +447,88 @@ def _repro_needs_arguments(
         [f"{t} {o}" for t, o in zip(texts, outs, strict=False)],
         perl=True,
     )
-    return [r and (p or u) for r, p, u in zip(reads, points, usage, strict=False)]
+    if python:
+        return [r and (p or u) for r, p, u in zip(reads, points, usage, strict=False)]
+    # In R, a script that stopped at its own check of how many arguments it got, whatever its
+    # message says: `if (length(args) != 3) stop("...")`. Its message ("Provide (only) signal
+    # strength for the analysis") named no argument (#593)
+    own_check = [_repro_stopped_at_arg_check(c, t) for c, t in zip(code, texts, strict=False)]
+    # A script that indexes `args` it never assigned, as a file a driver script sources after
+    # setting `args`: R then finds its own args() function, and the script stops on "object of
+    # type 'closure' is not subsettable" (#593)
+    closure = [
+        bool(
+            grepl(
+                "Error in args\\[[^\n]*object of type 'closure' is not subsettable",
+                t,
+                perl=True,
+            )
+        )
+        and _repro_indexes_unassigned_args(c)
+        for c, t in zip(code, texts, strict=False)
+    ]
+    return [
+        (r and (p or u or o)) or c
+        for r, p, u, o, c in zip(reads, points, usage, own_check, closure, strict=False)
+    ]
+
+
+def _code_lines(code: str | Sequence[str | None]) -> list[str]:
+    """The lines of one script given as a text or as lines (R's ``paste(collapse)``/``strsplit``)."""
+    joined = (
+        code if isinstance(code, str) else "\n".join("NA" if v is None else str(v) for v in code)
+    )
+    lines = joined.split("\n")
+    if lines and lines[-1] == "":
+        lines.pop()
+    return lines
+
+
+def _repro_indexes_unassigned_args(code: str | Sequence[str | None]) -> bool:
+    """A script that indexes ``args[`` and never assigns ``args`` (#593)."""
+    lines = [re.sub("#.*$", "", x) for x in _code_lines(code)]
+    indexes = any(bool(grepl(r"\bargs\s*\[", x, perl=True)) for x in lines)
+    assigns = any(
+        bool(
+            grepl(
+                r"(^|[^A-Za-z0-9._])args\s*(<-|=[^=])|assign\(\s*['\"]args['\"]",
+                x,
+                perl=True,
+            )
+        )
+        for x in lines
+    )
+    return indexes and not assigns
+
+
+def _repro_stopped_at_arg_check(lines: str | Sequence[str | None], txt: str | None) -> bool:
+    """Port of R/reproducibility_check.R::.repro_stopped_at_arg_check().
+
+    Whether an R script stopped at its own check of the number of command-line
+    arguments: the message it stopped with is in a ``stop()`` or ``quit()`` call within
+    three lines after a test of ``length()`` of the variable it assigned from
+    ``commandArgs()``. *lines* are the script's lines, *txt* its error (#593).
+    """
+    if txt is None or is_missing(txt) or not txt or not len(lines):
+        return False
+    rows = _code_lines(lines)
+    var_pat = r"([A-Za-z.][A-Za-z0-9._]*)\s*(?:<-|=)\s*commandArgs\s*\("
+    vars_ = _unique(m.group(1) for m in (re.search(var_pat, x) for x in rows) if m)
+    if not vars_:
+        return False
+    found = re.search(r"(?m)^Error: [^\n]+", txt)
+    if not found:
+        return False
+    msg = found.group(0)[len("Error: ") :][:40].strip(" \t\r\n")
+    if len(msg) < 5:
+        return False
+    stops = [
+        i for i, x in enumerate(rows) if grepl(r"\b(stop|quit)\s*\(", x, perl=True) and msg in x
+    ]
+    len_pat = r"\blength\s*\(\s*(" + "|".join(v.replace(".", r"\.") for v in vars_) + r")\s*\)"
+    return any(
+        any(bool(grepl(len_pat, x, perl=True)) for x in rows[max(0, i - 3) : i + 1]) for i in stops
+    )
 
 
 def _per_script(x: str | Sequence[str | None] | None, n: int) -> list[str]:
@@ -923,7 +1004,7 @@ def _repro_source_unknown_text(pkgs: Sequence[str]) -> str | None:
         f"**{n:d} package{plural(n)} the code loads {plural(n, 'is', 'are')} not on CRAN or "
         "Bioconductor, and the code does not say where "
         f"{plural(n, 'it comes', 'they come')} from**: {names}. We also looked in the CRAN "
-        "Archive, on R-universe and in a list of known places. Saying where to install "
+        "Archive, on R-Forge, on R-universe and in a list of known places. Saying where to install "
         f"{plural(n, 'it', 'them')} from, such as with `remotes::install_github()` or in the "
         "README, solves this."
     )

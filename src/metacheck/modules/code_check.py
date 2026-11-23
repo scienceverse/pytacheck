@@ -11,7 +11,7 @@ import math
 import os
 import re
 import warnings
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -31,6 +31,7 @@ from metacheck.modules._code_check import (
     summary_table,
     version_pin_report,
 )
+from metacheck.modules._count_refused import _count_refused_add, _repos_over_count
 from metacheck.report import link, plural, scroll_table
 
 _INTRO = (
@@ -131,8 +132,12 @@ _COL_LABELS = {
         "downloaded only up to `max_file_size` or what is left of the budget, whichever is "
         "smaller, and left out if it is larger. Set `Inf` for no cap.",
         "max_files_per_repo": "largest file COUNT a single repository may have before it is "
-        "refused outright (default `Inf`, no cap) -- see [download_repo_files()]'s own "
-        "parameter of the same name.",
+        "refused outright (default 100,000; `Inf` for no cap). Such a repository is refused "
+        "before code_check looks at its files one by one (#702). See [download_repo_files()]'s "
+        "own parameter of the same name.",
+        "max_code_size": "largest code file to analyse, in MB (default 5). A larger file is "
+        "listed with the reason but not read: a script of 800,000 lines kept code_check busy "
+        "for 16 minutes (#700). Set `Inf` for no limit.",
         "osf_max_requests": "the largest number of requests to the OSF for listing one OSF project, "
         "passed to `repo_check()` when this module runs it (default 50; `Inf` for no limit). A "
         "project listed only in part is named in a warning before anything is downloaded, because "
@@ -164,7 +169,8 @@ def code_check(
     download: bool = True,
     max_file_size: float = 100,
     max_download_size: float = 500,
-    max_files_per_repo: float = math.inf,
+    max_files_per_repo: float = 100000,
+    max_code_size: float = 5,
     osf_max_requests: float = 50,
     cache: bool = False,
     skip_on_api_limit: bool = False,
@@ -261,6 +267,26 @@ def code_check(
             )
     all_files = all_files.reset_index(drop=True).copy()
     all_files.attrs = {}
+    # Repositories with more files than max_files_per_repo are refused here, before the steps
+    # below that take time for every file (metacheck #702)
+    from metacheck.archives.download import _cap_report
+
+    own_refused = _repos_over_count(all_files, max_files_per_repo)
+    for m in own_refused["message"].tolist():
+        _cap_report(m)
+    # data_check's `structure` no longer has the rows of a repository it refused, so the count
+    # above cannot see it: its refusal is taken over, without a second warning (#706)
+    count_refused = cast(
+        pd.DataFrame,
+        _count_refused_add(
+            own_refused,
+            get_prev_outputs("data_check", "count_refused") if local_path is None else None,
+        ),
+    )
+    if len(count_refused) > 0:
+        all_files = all_files.loc[~all_files["repo_url"].isin(count_refused["repo_url"])].copy()
+        all_files = all_files.reset_index(drop=True)
+        all_files.attrs = {}
     if download is True and len(all_files) > 0:
         from metacheck.llm.cap_prompt import _cap_report_partial
 
@@ -287,7 +313,10 @@ def code_check(
     listing = all_files.copy()
 
     # one download pass for everything the steps below might need
-    predl_gated: list[pd.DataFrame | None] = []
+    # (the repositories refused above for their number of files first)
+    predl_gated: list[pd.DataFrame | None] = (
+        [count_refused[["repo_url", "message"]]] if len(count_refused) > 0 else []
+    )
     failed_parts: list[pd.DataFrame | None] = []
     if download is True:
         all_files = _code_predownload(
@@ -367,11 +396,21 @@ def code_check(
         out: dict[str, Any] = {
             "table": code_files,
             # yellow when a repository was not listed in full: its code may exist unseen (#681)
-            "traffic_light": "na" if not_listed["summary"] is None else "yellow",
+            # (also when one was refused for its number of files, #702, which is said here too)
+            "traffic_light": (
+                "na" if not_listed["summary"] is None and len(count_refused) == 0 else "yellow"
+            ),
             "summary_text": (
                 summary_code
-                if not_listed["summary"] is None
-                else "".join(f"\n-  {x}" for x in (summary_code, not_listed["summary"]))
+                if not_listed["summary"] is None and len(count_refused) == 0
+                else "".join(
+                    f"\n-  {x}"
+                    for x in (
+                        summary_code,
+                        *([not_listed["summary"]] if not_listed["summary"] is not None else []),
+                        *count_refused["message"].tolist(),
+                    )
+                )
             ),
             "summary_table": pd.DataFrame(
                 {
@@ -380,6 +419,8 @@ def code_check(
                 }
             ),
             "na_replace": {"code_n": 0},
+            # for reproducibility_check, which names them too (#706)
+            "count_refused": count_refused,
         }
         if not_listed["report"] is not None:
             out["report"] = not_listed["report"]
@@ -431,6 +472,7 @@ def code_check(
         limit_refused=limit_refused,
         max_file_size=max_file_size,
         skip_on_api_limit=skip_on_api_limit,
+        max_code_size=max_code_size,
     )
     if not rows:
         # nothing analysed (every repository gated, or no file locations)
@@ -446,6 +488,25 @@ def code_check(
     code_files = _code_missing_files(code_files, all_files)
     checked = code_files["checked"].astype("boolean").fillna(False)
     code_files["checked"] = checked.astype("boolean")
+
+    ## code files not checked, each with the reason (#700) ----
+    not_checked = _not_checked_table(code_files, all_files)
+    n_nc = len(not_checked)
+    summary_not_checked = (
+        f"{n_nc} code file{plural(n_nc)} {plural(n_nc, 'was', 'were')} not checked; the report "
+        f"names {plural(n_nc, 'it', 'them')} and says why."
+        if n_nc
+        else None
+    )
+    report_not_checked = (
+        [
+            "#### Code files not checked",
+            f"We did not check {n_nc} code file{plural(n_nc)}, for the reason given with each:",
+            scroll_table(not_checked, maxrows=5),
+        ]
+        if n_nc
+        else []
+    )
 
     # Reporting ----
     names = col(code_files, "file_name")
@@ -714,6 +775,7 @@ def code_check(
         *(failed_text["report"] or []),
         *(not_listed["report"] or []),
         scroll_table(report_table, maxrows=5),
+        *report_not_checked,
         "#### Code Comments",
         report_comments,
         "#### Missing Files",
@@ -784,6 +846,7 @@ def code_check(
             summary_code,
             *([failed_text["summary"]] if failed_text["summary"] else []),
             *([not_listed["summary"]] if not_listed["summary"] else []),
+            *([summary_not_checked] if summary_not_checked else []),
             summary_comments,
             *([summary_setwd] if setwd_issues else []),
             *([summary_install_packages] if install_packages_issues else []),
@@ -801,12 +864,63 @@ def code_check(
         "report": report,
         "summary_text": summary_text,
         "version_pin": version_pin,
+        # repositories refused for their number of files, for reproducibility_check (#706)
+        "count_refused": count_refused,
     }
 
 
 # ---------------------------------------------------------------------------
 # helpers
 # ---------------------------------------------------------------------------
+
+
+def _not_checked_table(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd.DataFrame:
+    """The code files not checked, each with the reason (``File``, ``Reason``; metacheck #700).
+
+    Before, such a file was in the table with empty cells, or not at all: a file over a limit,
+    one that could not be read or is no code, a JASP file, and code in a language metacheck
+    recognises but does not check (Julia, jamovi, NetLogo).
+    """
+    from metacheck.codecheck.core import _in_others_code_folder, _in_renv_folder
+
+    def shown_path(df: pd.DataFrame) -> list[str | None]:
+        names = col(df, "file_name")
+        paths = col(df, "file_path") if "file_path" in df.columns else names
+        return [
+            nm if p is None or str(p) == "" else str(p) for p, nm in zip(paths, names, strict=True)
+        ]
+
+    errs = col(code_files, "error")
+    langs = col(code_files, "language")
+    reasons: list[str | None] = [
+        e
+        if e is not None
+        else (
+            "JASP files are listed, not checked: a .jasp file is a binary archive"
+            if lg == "JASP"
+            else None
+        )
+        for e, lg in zip(errs, langs, strict=True)
+    ]
+    others = [
+        lang is not None and lang not in LISTED_LANGS and not r and not o
+        for lang, r, o in zip(
+            col(all_files, "language"),
+            _in_renv_folder(all_files),
+            _in_others_code_folder(all_files),
+            strict=True,
+        )
+    ]
+    other_lang = all_files.loc[others]
+    shown = shown_path(code_files)
+    files = [f for f, r in zip(shown, reasons, strict=True) if r is not None]
+    why = [r for r in reasons if r is not None]
+    files += shown_path(other_lang)
+    why += [f"{lg} code is recognised, but not checked" for lg in col(other_lang, "language")]
+    table = pd.DataFrame(
+        {"File": pd.Series(files, dtype="string"), "Reason": pd.Series(why, dtype="string")}
+    )
+    return table.drop_duplicates().reset_index(drop=True)
 
 
 def _file_name_languages(df: pd.DataFrame) -> list[str | None]:

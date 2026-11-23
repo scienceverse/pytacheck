@@ -227,7 +227,7 @@ def test_power_with_llm_structured(llm_on: None, mock_chat: MockChat) -> None:
         )
     )
     mo = module_run(paper, "power")
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
     assert len(mo.table) == 1
     assert values(mo.table["sample_size"]) == [30]
     assert values(mo.table["power"]) == [0.8]
@@ -277,7 +277,7 @@ def test_power_with_llm_structured(llm_on: None, mock_chat: MockChat) -> None:
         )
     )
     mo = module_run(paper, "power")
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
     assert len(mo.table) == 2
     assert mo.table["statistical_test"].tolist() == ["unpaired t-test", "1-way ANOVA"]
     assert values(mo.table["sample_size"]) == [300, 350]
@@ -372,7 +372,7 @@ def test_power_with_llm_structured(llm_on: None, mock_chat: MockChat) -> None:
     mo = module_run(pc.test_paper(power_text), "power")
 
     def check_incomplete(mo: Any, n_papers: int) -> None:
-        assert mo.traffic_light == "red"
+        assert mo.traffic_light == "yellow"
         assert len(mo.table) == 2
         assert mo.table["power_type"].tolist() == ["apriori", "sensitivity"]
         assert mo.table["statistical_test"].tolist() == ["unpaired t-test", "paired t-test"]
@@ -516,7 +516,7 @@ def test_power_fallback_json_expand_details(
     assert mo.table["power_type"].tolist() == ["apriori", "posthoc"]
     assert values(mo.table["text.power"]) == ["x", None]
     assert mo.table["complete"].tolist() == [False, False]
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
     # the unparsable reply is reported as unchecked (#475)
     assert mo.summary_text == (
         "We detected 2 potential power analyses. 1 of 3 paragraphs could not be checked by "
@@ -714,7 +714,7 @@ def test_power_structured_omitted_key(llm_on: None, mock_chat: MockChat) -> None
     assert "alpha_level" in mo.table.columns
     assert na(mo.table["alpha_level"].iloc[0])
     assert mo.table["complete"].tolist() == [False]
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
 
 
 def test_power_structured_only_some_keys(llm_on: None, mock_chat: MockChat) -> None:
@@ -847,7 +847,7 @@ def test_power_with_ollama_structured(llm_on: None, mock_chat: MockChat) -> None
 
     with local_options({"metacheck.llm.model": "ollama/qwen2.5:3b"}):
         mo = module_run(papers, "power")
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
     assert len(mo.table) == 2
     assert mo.table["power_type"].tolist() == ["apriori", "sensitivity"]
     assert mo.table["statistical_test"].tolist() == ["unpaired t-test", "paired t-test"]

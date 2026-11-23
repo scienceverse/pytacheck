@@ -19,6 +19,7 @@ import bisect
 import functools
 import itertools
 import math
+import re
 from collections.abc import Sequence
 from typing import Any
 
@@ -30,6 +31,7 @@ from metacheck._values import is_missing
 from metacheck.module import module
 from metacheck.modules._empty import empty_input_result, paper_is_empty
 from metacheck.modules._statements import with_bibr_statements
+from metacheck.papers.tables import paper_table
 from metacheck.report import scroll_table
 from metacheck.text import text_search
 
@@ -405,12 +407,149 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
 
 
 # ---------------------------------------------------------------------------
+# a section headed as a conflict of interest, and a short statement for the report
+# ---------------------------------------------------------------------------
+
+_COI_HEADING = re.compile(
+    r"conflicts?of(?:competing)?interests?|competinginterests?|"
+    r"declarationsof(?:conflicting)?interests?|declarationof(?:conflicting)?interests?|"
+    r"dualit(?:y|ies)ofinterests?|^disclosures?(?:statement)?$"
+)
+_COI_DISCLOSURE = re.compile(r"^disclosures?(?:statement)?$")
+_COI_ABOUT_INTERESTS = re.compile(
+    r"conflict|competing|interest|financial|funding|funded|honorari|consult|employ|shares|stock",
+    re.IGNORECASE,
+)
+
+
+def _flat_heading(h: Any) -> str | None:
+    """``gsub("[^a-z]", "", tolower(h))``: a heading as its lower-case ASCII letters only."""
+    if is_missing(h):
+        return None
+    return re.sub(r"[^a-z]", "", str(h).lower())
+
+
+def _coi_section_statement(paper: Any) -> pd.DataFrame:
+    """Port of ``.coi_section_statement()``: the statement of each paper with a section whose
+    heading names a conflict of interest ("Conflict of Interest", "Competing interests",
+    "Declaration of conflicting interests", "Duality of interest", "Disclosure"): the heading and
+    the section's first paragraph, per paper (``paper_id``, ``text``); no rows when there is none.
+
+    The heading is compared without its spaces, as the PDF reading often splits its letters
+    ("co n fli c t o f i nte r e s t"). The reading's own section type "conflict" is not used: it
+    also marks "Peer review", "Open practices", "Acknowledgements" and "Author contributions"
+    (#695, point 19).
+    """
+    none = pd.DataFrame(
+        {"paper_id": pd.Series([], dtype="string"), "text": pd.Series([], dtype="string")}
+    )
+    try:
+        sec = paper_table(paper, "section")
+    except Exception:
+        return none
+    if sec is None or len(sec) == 0 or not {"header", "section_id"} <= set(sec.columns):
+        return none
+    flat = [_flat_heading(h) for h in sec["header"].tolist()]
+    named = [
+        f is not None and _COI_HEADING.search(f) is not None and "financialdisclosure" not in f
+        for f in flat
+    ]
+    sec = sec[named]
+    if len(sec) == 0:
+        return none
+    tx = paper_table(paper, "text")
+    tx_pid = tx["paper_id"].tolist()
+    tx_sec = tx["section_id"].tolist()
+    tx_text = tx["text"].tolist()
+    tx_par = tx["paragraph_id"].tolist() if "paragraph_id" in tx.columns else None
+    out: list[tuple[str, str]] = []
+    for pid, sid, header in zip(
+        sec["paper_id"].tolist(), sec["section_id"].tolist(), sec["header"].tolist(), strict=True
+    ):
+        # R `%in%`: a missing section id matches a missing one
+        sid_missing = is_missing(sid)
+        rows = [
+            i
+            for i in range(len(tx))
+            if tx_pid[i] == pid
+            and (
+                is_missing(tx_sec[i])
+                if sid_missing
+                else (not is_missing(tx_sec[i]) and tx_sec[i] == sid)
+            )
+        ]
+        # the section's first paragraph only: the reading often lets the section run on into a
+        # publisher's notice or an appendix's tables (up to 8,592 characters in Ecology and
+        # Evolution)
+        if tx_par is not None and rows:
+            pars = [tx_par[i] for i in rows if not is_missing(tx_par[i])]
+            if pars:
+                first = min(pars)
+                rows = [i for i in rows if not is_missing(tx_par[i]) and tx_par[i] == first]
+        body = [tx_text[i] for i in rows]
+        head = "" if is_missing(header) else str(header).strip()
+        # a heading of only "Disclosure(s)" holds other statements too ("Statement of
+        # Inclusion", "Benefit Sharing" in Ecology and Evolution): it counts only when its
+        # paragraph is about interests
+        if _COI_DISCLOSURE.search(_flat_heading(head) or "") and not _COI_ABOUT_INTERESTS.search(
+            " ".join("NA" if is_missing(b) else str(b) for b in body)
+        ):
+            continue
+        txt = " ".join(([head] if head else []) + [str(b) for b in body if not is_missing(b)])
+        txt = txt.strip()
+        if txt:
+            out.append((str(pid), txt))
+    if not out:
+        return none
+    # stats::aggregate(text ~ paper_id, FUN = paste(collapse = " ")): one row per paper, in the
+    # order of the paper ids
+    agg: dict[str, list[str]] = {}
+    for pid, txt in out:
+        agg.setdefault(pid, []).append(txt)
+    ids = sorted(agg)
+    return pd.DataFrame(
+        {
+            "paper_id": pd.Series(ids, dtype="string"),
+            "text": pd.Series([" ".join(agg[i]) for i in ids], dtype="string"),
+        }
+    )
+
+
+def _coi_short_text(x: Sequence[Any], max_sentences: int = 5, max_chars: int = 1000) -> list[Any]:
+    """Port of ``.coi_short_text()``: a statement as the report shows it, its first
+    *max_sentences* sentences and at most *max_chars* characters, with an ellipsis where text was
+    left out. The table keeps the whole statement. The reading can let a statement run on into an
+    appendix's tables (8,592 characters in Ecology and Evolution, one "sentence" of 5,977), while
+    96% of statements are at most three sentences (#695, point 19).
+    """
+    res: list[Any] = []
+    for s in x:
+        if is_missing(s):
+            res.append(s)
+            continue
+        parts = re.split(r"(?<=[.!?])\s+(?=\S)", str(s).strip())
+        cut = len(parts) > max_sentences
+        out = " ".join(parts[:max_sentences])
+        if len(out) > max_chars:
+            out = out[: max_chars - 1]
+            cut = True
+        if cut:
+            out = out.strip() + "\u2026"
+        res.append(out)
+    return res
+
+
+# ---------------------------------------------------------------------------
 # the module
 # ---------------------------------------------------------------------------
 
 
-def coi_results(table: pd.DataFrame) -> dict[str, Any]:
-    """The shared tail of the COI modules: summary table, traffic light and report."""
+def coi_results(table: pd.DataFrame, short: bool = False) -> dict[str, Any]:
+    """The shared tail of the COI modules: summary table, traffic light and report.
+
+    With *short*, the report shows a statement as :func:`_coi_short_text` cuts it (coi_check;
+    the table keeps the whole statement).
+    """
     ids = table["paper_id"].drop_duplicates()
     summary_table = pd.DataFrame(
         {
@@ -422,7 +561,9 @@ def coi_results(table: pd.DataFrame) -> dict[str, Any]:
     if tl == "green":
         report: Any = [
             "The following conflict of interest statement was detected.",
-            scroll_table(table["text"].tolist()),
+            scroll_table(
+                _coi_short_text(table["text"].tolist()) if short else table["text"].tolist()
+            ),
         ]
         summary_text = "A conflict of interest statement was detected."
     else:
@@ -470,5 +611,16 @@ def coi_check(paper: Any) -> dict[str, Any]:
             "text": pd.Series([c for c, k in zip(coi, keep, strict=True) if k], dtype="string"),
         }
     )
+    # A section whose heading names a conflict of interest is the statement, with its heading
+    # (see _coi_section_statement()): the words "conflict of interest" are often only in the
+    # heading, above "None." or "All three authors worked at Code Ocean", which the sentence
+    # search above cannot see (#695, point 19). A paper without such a section keeps the
+    # sentence search's statement.
+    from_section = _coi_section_statement(paper)
+    if len(from_section):
+        table = pd.concat(
+            [table[~table["paper_id"].isin(from_section["paper_id"])], from_section],
+            ignore_index=True,
+        )
     # D84: a paper the expressions found nothing in gets bibr's statement
-    return coi_results(with_bibr_statements(table, paper, "coi_statement"))
+    return coi_results(with_bibr_statements(table, paper, "coi_statement"), short=True)

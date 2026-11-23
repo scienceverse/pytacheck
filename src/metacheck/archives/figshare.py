@@ -604,8 +604,8 @@ def _figshare_info(
     """Port of R/archive-figshare.R::.figshare_info(): one article.
 
     Returns a one-row table: ``figshare_id`` and either ``error``
-    (``"unfound"``, with a warning, or ``"parse_error"``) or the article's
-    metadata and ``files``.
+    (``"unfound"``, with a warning, ``"parse_error"``, or ``"empty_response"``, with a warning: a
+    200 answer without the record's title, DOI and files) or the article's metadata and ``files``.
     """
     from metacheck.archives import _spinner, _tick
 
@@ -622,6 +622,22 @@ def _figshare_info(
         rec = _resp_json(resp)
         if rec is None:
             obj["error"] = _cell("parse_error")
+            return pd.DataFrame(obj)
+        # A 200 answer without the record's title, DOI and files is a failed lookup, not an empty
+        # record: 4TU answered so for 10.4121/14199176 on 2026-11-20, the empty listing was saved
+        # in the cache, and the paper had no data or code in every later run, while the record has
+        # 6 files (metacheck #711)
+        rec_files = field(rec, "files")
+        if (
+            not _empty_or(field(rec, "title"), "")
+            and not _empty_or(field(rec, "doi"), "")
+            and not (rec_files is not None and len(rec_files) > 0)
+        ):
+            warnings.warn(
+                f"{_paste(figshare_id)}: {host} answered without the record's title, DOI or files",
+                stacklevel=2,
+            )
+            obj["error"] = _cell("empty_response")
             return pd.DataFrame(obj)
 
         authors_field = field(rec, "authors")

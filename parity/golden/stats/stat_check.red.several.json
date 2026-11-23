@@ -59,7 +59,9 @@
           "formatted",
           "paper_id",
           "header",
-          "section_type"
+          "section_type",
+          "one_sided_fit",
+          "bound_or_variance_fit"
         ],
         "v": [
           {
@@ -494,22 +496,12 @@
               false,
               true,
               false,
-              true,
-              true,
-              false,
-              false,
               false,
               true,
               false,
               false,
               false,
-              false,
-              false,
-              false,
               true,
-              true,
-              true,
-              false,
               false,
               false,
               false,
@@ -521,7 +513,17 @@
               false,
               false,
               false,
+              false,
+              false,
+              false,
+              false,
+              false,
               true,
+              false,
+              false,
+              false,
+              false,
+              false,
               false,
               false,
               true,
@@ -541,23 +543,6 @@
               false,
               false,
               false,
-              true,
-              false,
-              false,
-              false,
-              false,
-              true,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
-              false,
               false,
               false,
               false,
@@ -568,7 +553,24 @@
               false,
               false,
               false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
               true,
+              false,
+              false,
+              false,
+              false,
+              false,
               false,
               false,
               true,
@@ -1048,6 +1050,100 @@
               "unknown",
               "unknown"
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
           }
         ]
       },
@@ -1055,7 +1151,7 @@
         "t": "chr",
         "v": [
           "We detected possible errors in test statistics. Note that as the accuracy of statcheck has only been validated for *t*-tests and *F*-tests. As Metacheck only uses validated modules, we only provide statcheck results for *t* tests and *F*-tests.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"t(28) = 2.20, p = .03\", \"t(28) = 2.20, p < .01\", \n\"t(28) = 2.20, p > .05\", \"t(28) < 2.20, p = .03\", \"t(28) = 2.20, n.s.\", \n\"t(28) = 2.20, p = .000\", \"t(28) = 12.20, p = .000\", \"t(28) = 2.20, p = .5e-3\", \n\"F(2, 57) = 3.12, p < .05\", \"F(1, 20) = 4.35, p = .02\", \"F(3, 120) = 2.10, p < .05\", \n\"t(28) = 2.20, p = .03\"), \"Recomputed p\" = c(0.03623, 0.03623, \n0.03623, 0.03623, 0.03623, 0.03623, 0, 0.03623, 0.05178, 0.05003, \n0.10383, 0.03623), Sentence = c(\"The effect was significant, t(28) = 2.20, p = .03.\", \n\"Too small, t(28) = 2.20, p < .01.\", \"Wrongly non-significant, t(28) = 2.20, p > .05.\", \n\"Bounded statistic t(28) < 2.20, p = .03 here.\", \"Called nonsignificant, t(28) = 2.20, n.s.\", \n\"Zero p-value t(28) = 2.20, p = .000.\", \"Zero p-value, large effect t(28) = 12.20, p = .000.\", \n\"Scientific p t(28) = 2.20, p = .5e-3.\", \"A main effect, F(2, 57) = 3.12, p < .05.\", \n\"Wrong F(1, 20) = 4.35, p = .02.\", \"Decision F(3, 120) = 2.10, p < .05.\", \n\"All of them: t(28) = 2.20, p = .03, F(1, 20) = 4.35, p = .05 and r(30) = .45, p = .01.\"\n)), row.names = c(1L, 5L, 7L, 8L, 12L, 19L, 20L, 21L, 30L, 35L, \n38L, 54L), class = c(\"statcheck\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"10em\", NA, NA, NA), 2, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"t(28) = 2.20, p = .03\", \"t(28) = 2.20, p < .01\", \n\"t(28) < 2.20, p = .03\", \"t(28) = 2.20, n.s.\", \"t(28) = 2.20, p = .000\", \n\"F(2, 57) = 3.12, p < .05\", \"F(3, 120) = 2.10, p < .05\", \"t(28) = 2.20, p = .03\"\n), \"Recomputed p\" = c(0.03623, 0.03623, 0.03623, 0.03623, 0.03623, \n0.05178, 0.10383, 0.03623), Sentence = c(\"The effect was significant, t(28) = 2.20, p = .03.\", \n\"Too small, t(28) = 2.20, p < .01.\", \"Bounded statistic t(28) < 2.20, p = .03 here.\", \n\"Called nonsignificant, t(28) = 2.20, n.s.\", \"Zero p-value t(28) = 2.20, p = .000.\", \n\"A main effect, F(2, 57) = 3.12, p < .05.\", \"Decision F(3, 120) = 2.10, p < .05.\", \n\"All of them: t(28) = 2.20, p = .03, F(1, 20) = 4.35, p = .05 and r(30) = .45, p = .01.\"\n)), row.names = c(1L, 5L, 8L, 12L, 19L, 30L, 38L, 54L), class = c(\"statcheck\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"10em\", NA, NA, NA), 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific research on the validity of statcheck, and it's usefulness to prevent statistical reporting errors, see:\n\nNuijten M, van Assen M, Hartgerink C, Epskamp S, Wicherts J (2017). &ldquo;The validity of the tool &quot;statcheck&quot; in discovering statistical reporting inconsistencies.&rdquo; <a href=\"https://doi.org/10.31234/osf.io/tcxaja\">doi:10.31234/osf.io/tcxaja<\/a>, Preprint.\n\nNuijten M, Wicherts J (2023). &ldquo;The effectiveness of implementing statcheck in the peer review process to avoid statistical reporting errors.&rdquo; <a href=\"https://doi.org/10.31234/osf.io/bxau9\">doi:10.31234/osf.io/bxau9<\/a>, Preprint.\n\n:::\n"
         ]
       },
@@ -1068,7 +1164,7 @@
       {
         "t": "chr",
         "v": [
-          "12 possible errors in t-tests or F-tests"
+          "8 possible errors in t-tests or F-tests"
         ]
       },
       {
@@ -1096,13 +1192,13 @@
           {
             "t": "int",
             "v": [
-              12
+              8
             ]
           },
           {
             "t": "int",
             "v": [
-              5
+              3
             ]
           }
         ]
@@ -1115,6 +1211,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

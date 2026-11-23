@@ -209,15 +209,135 @@ def materialize_review() -> dict[str, Any]:
         return x
 
 
+def deposit_packages() -> dict[str, Any]:
+    """Twin of ``rc_deposit_packages()``: the deposit's own packages and their copy (#588)."""
+    from metacheck.repro.docker import _repro_copy_deposit_packages, _repro_deposit_packages
+
+    with tempfile.TemporaryDirectory() as td:
+        root = os.path.join(td, "root")
+        pkg = os.path.join(root, "rel.zip", "owner-mypkg-1a2b")
+        os.makedirs(os.path.join(pkg, "R"))
+        Path(pkg, "DESCRIPTION").write_text("Package: mypkg\nVersion: 1.0.0\n")
+        Path(pkg, "R", "f.R").write_text("f <- function() 1\n")
+        Path(pkg, "big_data.csv").write_text("x\n")
+        os.makedirs(os.path.join(root, "_archive"))
+        for v in ("0.2.0", "0.10.1", "0.9"):
+            Path(root, "_archive", f"lay_{v}.tar.gz").write_text("")
+        os.makedirs(os.path.join(root, "renv", "library", "other"))
+        Path(root, "renv", "library", "other", "DESCRIPTION").write_text(
+            "Package: other\nVersion: 2.0\nBuilt: R 4.3.1; ; 2023-01-01; unix\n"
+        )
+        found = _repro_deposit_packages(root, ["mypkg", "lay", "other", "notthere"])
+        box = os.path.join(td, "box")
+        os.makedirs(box)
+        inside = _repro_copy_deposit_packages(found, box)
+        return {
+            "found": {k: _unroot(v, root) for k, v in found.items()},
+            "inside": inside,
+            "files": _listing(box),
+            "none": len(_repro_deposit_packages(root, ["notthere"])),
+            "no_root": len(_repro_deposit_packages(None, ["mypkg"])),
+        }
+
+
+def failed_folders() -> dict[str, Any]:
+    """Twin of ``rc_failed_folders()``: one folder, several scripts (#590)."""
+    import pandas as pd
+
+    from metacheck.repro.layout import _repro_folders_made_text, _repro_make_failed_write_folders
+
+    with tempfile.TemporaryDirectory() as td:
+        root = os.path.join(td, "root")
+        os.makedirs(os.path.join(root, "code"))
+        res = pd.DataFrame(
+            {
+                "file_name": ["f1.R", "f2.R", "f3.R"],
+                "outcome": "errored",
+                "stderr": "",
+                "error": "Error in `ggsave()`:\n! Cannot find directory 'Figures/'.",
+            }
+        )
+        run_tbl = pd.DataFrame(
+            {"file_name": res["file_name"], "run_dir": os.path.join(root, "code")}
+        )
+        made = _repro_make_failed_write_folders(res, run_tbl, root)
+        os.makedirs(os.path.join(root, "code", "Other"))
+        res["error"] = "Error in `ggsave()`:\n! Cannot find directory 'Other/'."
+        again = _repro_make_failed_write_folders(res, run_tbl, root)
+        return {
+            "made": made,
+            "text": _repro_folders_made_text(made),
+            "again": len(again),
+            "folder": os.path.isdir(os.path.join(root, "code", "Figures")),
+        }
+
+
+def place_by_tail() -> dict[str, Any]:
+    """Twin of ``rc_place_by_tail()``: the file in the folders the path names (#590)."""
+    import pandas as pd
+
+    from metacheck.repro.layout import (
+        _repro_path_tail_match,
+        _repro_place_from_deposit,
+        _repro_sandbox_names,
+    )
+
+    with tempfile.TemporaryDirectory() as td:
+        root = os.path.join(td, "root")
+        for d in ("zip/output/ADMIXTURE/popmap", "zip/output/RAxML", "code"):
+            os.makedirs(os.path.join(root, d))
+        Path(root, "zip/output/ADMIXTURE/popmap/popmap_Cm.txt").write_text("A\n")
+        Path(root, "zip/output/RAxML/popmap_Cm.txt").write_text("B\n")
+        before = _repro_sandbox_names(root)
+        res = pd.DataFrame(
+            {
+                "file_name": ["plot.R"],
+                "outcome": "errored",
+                "stderr": "",
+                "error": "cannot open file 'output/ADMIXTURE/popmap/popmap_Cm.txt': "
+                "No such file or directory",
+            }
+        )
+        run_tbl = pd.DataFrame({"file_name": ["plot.R"], "run_dir": [os.path.join(root, "code")]})
+        placed = _repro_place_from_deposit(res, run_tbl, root, before)
+        copy = Path(root, "code/output/ADMIXTURE/popmap/popmap_Cm.txt").read_text().split("\n")[:-1]
+        res["error"] = "cannot open file 'other/popmap_Cm.txt': No such file or directory"
+        return {
+            "placed": placed,
+            "copy": copy,
+            "none": len(_repro_place_from_deposit(res, run_tbl, root, before)),
+            "tail": _repro_path_tail_match(
+                "output/RAxML/popmap_HC.txt", ["x/output/RAxML/popmap_HC.txt", "y/popmap_HC.txt"]
+            ),
+        }
+
+
 def _namespace() -> types.SimpleNamespace:
     import pandas as pd
 
     import metacheck as pc
-    from metacheck.repro import core, docker, layout, outcomes, recorded, section, tables
+    from metacheck.modules import _reproducibility as repmod
+    from metacheck.repro import (
+        core,
+        docker,
+        layout,
+        outcomes,
+        recorded,
+        runsupport,
+        section,
+        software,
+        tables,
+    )
 
     return types.SimpleNamespace(
         layout=layout,
         outcomes=outcomes,
+        repmod=repmod,
+        runsupport=runsupport,
+        software=software,
+        deposit_packages=deposit_packages,
+        failed_folders=failed_folders,
+        place_by_tail=place_by_tail,
         recorded=recorded,
         section=section,
         core=core,

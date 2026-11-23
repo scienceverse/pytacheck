@@ -19,7 +19,7 @@ def test_ref_consistency(demo: pc.Paper) -> None:
     assert module in pc.module_list()["name"].tolist()
 
     out = pc.module_run(demo, module)
-    assert out.traffic_light == "red"
+    assert out.traffic_light == "yellow"
     assert len(out.table) == 4
     assert out.module == module
     assert list(out.table.columns) == ["paper_id", "bib_id", "reference", "contents", "text"]
@@ -86,7 +86,7 @@ def test_ref_consistency_missing_xrefs() -> None:
     # unknown id (99), which metacheck never lists
     paper = ra_xrefs([None, 99], ["(Nobody 2020)", "(Ghost 2021)"])
     out = pc.module_run(paper, "ref_consistency")
-    assert out.traffic_light == "red"
+    assert out.traffic_light == "yellow"
     assert out.summary_table.loc[0, ["n_missing", "n_extra"]].tolist() == [2, 4]
     (tbl,) = ra_report_tables(out)
     assert tbl["type"].tolist() == ["extra"] * 4 + ["missing"] * 2
@@ -388,7 +388,7 @@ def test_incompatible_join_keys_error_like_dplyr() -> None:
         pc.module_run(p, "ref_consistency")
     # integer and double keys join
     p = ra_setcol(ra_demo(), "xref", "xref_id", [2.0, 0.0, 0.0, None, 1.0], "float64")
-    assert pc.module_run(p, "ref_consistency").traffic_light == "red"
+    assert pc.module_run(p, "ref_consistency").traffic_light == "yellow"
 
 
 def test_key_kind() -> None:

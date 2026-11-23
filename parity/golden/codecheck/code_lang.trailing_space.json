@@ -1,0 +1,23 @@
+{
+  "id": "code_lang.trailing_space",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "R",
+      "Python",
+      "SAS",
+      "R"
+    ],
+    "names": [
+      "trailing_space.R ",
+      "trailing.py  ",
+      "tab.sas\t",
+      "plain.R"
+    ]
+  },
+  "metacheck_version": "0.4.4.35",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

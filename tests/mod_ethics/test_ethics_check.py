@@ -69,7 +69,7 @@ def test_not_approved_but_needs_ethics() -> None:
     mo = run(paper)
     assert mo.summary_table["ethics_approved"].tolist() == [False]
     assert mo.summary_table["needs_ethics"].tolist() == [True]
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
 
     live_statements = mo.summary_table["live_data_statements"].iloc[0]
     assert all(grepl("Participants were recruited", live_statements))
@@ -187,7 +187,7 @@ def test_error_argument_is_of_length_zero(psychsci: pc.PaperList) -> None:
     mo = run(psychsci["0956797614522816"])
     assert mo.summary_table["ethics_approved"].tolist() == [False]
     assert mo.summary_table["needs_ethics"].tolist() == [True]
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
 
 
 # -- R behaviour measured with metacheck ---------------------------------------
@@ -219,7 +219,7 @@ def test_summary_texts() -> None:
         "statement."
     )
     mo = run(plist("Participants were recruited.", ["We were recruited.", "IRB approved."]))
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
     assert mo.summary_text.startswith("1 of 2 papers appeared")
     # a paper list gets no report: module_run() falls back to the summary text
     assert mo.report == mo.summary_text
@@ -271,7 +271,7 @@ def test_references_are_not_searched() -> None:
         section_type=["method", "references"],
     )
     mo = run(paper)
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
 
 
 @pytest.mark.parametrize("paper", [lambda: pc.PaperList([]), lambda: []])
@@ -298,7 +298,7 @@ def test_duplicated_paper_ids_are_two_papers() -> None:
     assert out["summary_table"]["ethics_approved"].tolist() == [True, False]
     assert out["summary_table"]["needs_ethics"].tolist() == [False, True]
     with pytest.warns(PytacheckWarning):
-        assert run(papers).traffic_light == "red"
+        assert run(papers).traffic_light == "yellow"
 
 
 def test_paper_without_info_row_is_summarised() -> None:
@@ -399,7 +399,7 @@ def test_plain_lists_of_papers(container: Any) -> None:
     pd.testing.assert_frame_equal(out["table"], ref["table"])
     pd.testing.assert_frame_equal(out["summary_table"], ref["summary_table"])
     assert out["summary_table"]["paper_id"].tolist() == ["a", "b"]
-    assert (out["traffic_light"], out["report"]) == ("red", None)
+    assert (out["traffic_light"], out["report"]) == ("yellow", None)
     assert out["summary_text"] == (
         "1 of 2 papers appeared to involve live data collection and lacked an ethics "
         "approval statement."
@@ -557,4 +557,4 @@ def test_negation_near_a_participant_phrase_is_not_a_statement() -> None:
         mo = run(pc.test_paper(["Participants were recruited online.", s]))
         assert mo.summary_table["needs_ethics"].tolist() == [True], s
         assert mo.summary_table["states_no_participants"].tolist() == [False], s
-        assert mo.traffic_light == "red", s
+        assert mo.traffic_light == "yellow", s

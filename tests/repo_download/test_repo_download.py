@@ -1578,8 +1578,11 @@ def test_a_long_path_is_shortened_below_the_repositorys_folder(
     from metacheck import utils
     from metacheck.archives.download import _archive_member_paths
 
-    monkeypatch.setattr(utils, "_MAX_PATH_CHARS", 250)
     root = (tmp_path / ("d" * 40)).as_posix()
+    # a limit that leaves 140 characters below the folder, whatever the length of the
+    # temporary folder of the machine
+    limit = len(os.path.abspath(root)) + 140
+    monkeypatch.setattr(utils, "_MAX_PATH_CHARS", limit)
     with local_options({"metacheck.repo_cache.session_dir": root}):
         repo = "https://github.com/someone/a-repository-name-of-more-than-forty-characters"
         sub = _repo_cache_subdir(repo, cache=False).replace("\\", "/")
@@ -1595,7 +1598,7 @@ def test_a_long_path_is_shortened_below_the_repositorys_folder(
             )
         assert arc.replace("\\", "/").startswith(sub + "/")
         assert dest.replace("\\", "/").startswith(sub + "/")
-        assert len(os.path.abspath(dest)) <= 250
+        assert len(os.path.abspath(dest)) <= limit
 
 
 def test_a_repository_over_max_files_per_repo_has_no_files_fetched_from_its_archives_either(

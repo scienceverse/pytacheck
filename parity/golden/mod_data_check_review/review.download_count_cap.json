@@ -14,15 +14,10 @@
       "traffic_light",
       "summary_text",
       "summary_table",
-      "findings",
-      "na_replace",
-      "keys",
-      "doc_sheets",
       "structure",
-      "previews",
       "gated_repos",
-      "manifest_path",
-      "group_no_evidence"
+      "count_refused",
+      "manifest_path"
     ],
     "v": [
       {
@@ -46,17 +41,55 @@
       {
         "t": "df",
         "nrow": 0,
-        "names": [],
-        "v": []
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          }
+        ]
       },
       {
         "t": "chr",
         "v": [
-          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
-          "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
-          "**Repository: https://osf.io/capped**",
-          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── data/\n│   └── study.csv     📊 data      ex1\n├── materials/\n│   └── stimulus.png  📁 materials ex1\n├── analysis.R        💻 code      ex1\n└── README.md         📄 readme\n```\n:::"
+          "\n-  We found no files to analyse.\n-  Repository https://osf.io/capped holds 4 files, exceeding the 1-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
         ]
       },
       {
@@ -68,7 +101,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 4 files: 1 data, 1 code, 1 documentation, 1 materials.\n-  We found 1 tabular data file and extracted 0 columns from 0 of them.\n-  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata).\n-  1 tabular data file could not be read because it was not downloaded. This can happen for private repositories or failed downloads; you can also pass `local_path` to point at a local copy.\n-  Repository https://osf.io/capped holds 4 files, exceeding the 1-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it. We found no readable tabular data files to validate."
+          "\n-  We found no files to analyse.\n-  Repository https://osf.io/capped holds 4 files, exceeding the 1-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
         ]
       },
       {
@@ -77,15 +110,7 @@
         "names": [
           "paper_id",
           "data_file_n",
-          "column_n",
-          "empty_col_n",
-          "key_n",
-          "files_failed",
-          "llm_cols_unanswered",
-          "llm_files_unanswered",
-          "spreadsheet_file_n",
-          "spreadsheet_flagged_file_n",
-          "flagged_n"
+          "column_n"
         ],
         "v": [
           {
@@ -95,61 +120,13 @@
             ]
           },
           {
-            "t": "int",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "int",
+            "t": "dbl",
             "v": [
               0
             ]
           },
           {
-            "t": "int",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
+            "t": "dbl",
             "v": [
               0
             ]
@@ -159,141 +136,6 @@
       {
         "t": "df",
         "nrow": 0,
-        "names": [
-          "source_file",
-          "column",
-          "label",
-          "check",
-          "detail"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          }
-        ]
-      },
-      {
-        "t": "dbl",
-        "v": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "names": [
-          "data_file_n",
-          "column_n",
-          "empty_col_n",
-          "flagged_n",
-          "spreadsheet_file_n",
-          "spreadsheet_flagged_file_n",
-          "key_n"
-        ]
-      },
-      {
-        "t": "df",
-        "nrow": 0,
-        "names": [
-          "paper_id",
-          "repo_url",
-          "file",
-          "line",
-          "key",
-          "rule",
-          "shown",
-          "row"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "int",
-            "v": []
-          },
-          {
-            "t": "int",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "int",
-            "v": []
-          }
-        ]
-      },
-      {
-        "t": "df",
-        "nrow": 0,
-        "names": [
-          "paper_id",
-          "source_file",
-          "file_location",
-          "sheet",
-          "group"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "lgl",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          },
-          {
-            "t": "chr",
-            "v": []
-          }
-        ]
-      },
-      {
-        "t": "df",
-        "nrow": 4,
         "names": [
           "paper_id",
           "repo_name",
@@ -302,191 +144,80 @@
           "file_path",
           "file_url",
           "file_location",
-          "file_size",
-          "data_type",
-          "doc_role",
-          "data_format",
-          "group",
-          "referenced_by",
-          "source_file",
-          "tabular_usable",
-          "non_tabular_reason"
+          "file_size"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
-              "p1",
-              "p1",
-              "p1",
-              "p1"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "basic",
-              "basic",
-              "basic",
-              "basic"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "https://osf.io/capped",
-              "https://osf.io/capped",
-              "https://osf.io/capped",
               "https://osf.io/capped"
             ]
           },
           {
-            "t": "chr",
+            "t": "int",
             "v": [
-              "README.md",
-              "analysis.R",
-              "study.csv",
-              "stimulus.png"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "README.md",
-              "analysis.R",
-              "data/study.csv",
-              "materials/stimulus.png"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "file://<root>/tests/mod_data_check/fixtures/repos/basic/README.md",
-              "file://<root>/tests/mod_data_check/fixtures/repos/basic/analysis.R",
-              "file://<root>/tests/mod_data_check/fixtures/repos/basic/data/study.csv",
-              "file://<root>/tests/mod_data_check/fixtures/repos/basic/materials/stimulus.png"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              48,
-              60,
-              360,
               4
             ]
           },
           {
             "t": "chr",
             "v": [
-              "documentation",
-              "code",
-              "data",
-              "materials"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "readme",
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
-              "tabular",
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              "ex1",
-              "ex1",
-              "ex1"
-            ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": [
-              {
-                "t": "null"
-              },
-              {
-                "t": "null"
-              },
-              {
-                "t": "null"
-              },
-              {
-                "t": "null"
-              }
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "README.md",
-              "analysis.R",
-              "study.csv",
-              "stimulus.png"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true,
-              true,
-              true,
-              true
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
-              null,
-              null
+              "Repository https://osf.io/capped holds 4 files, exceeding the 1-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
             ]
           }
         ]
       },
       {
-        "t": "list",
-        "names": null,
-        "v": []
-      },
-      {
         "t": "null"
-      },
-      {
-        "t": "null"
-      },
-      {
-        "t": "lgl",
-        "v": [
-          true
-        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

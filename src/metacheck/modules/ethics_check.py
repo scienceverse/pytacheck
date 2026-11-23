@@ -408,7 +408,9 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     elif n_missing == 0:
         tl = "green"
     else:
-        tl = "red"
+        # yellow, not red, until a validation shows people agree with most of its red findings
+        # (#695, point 2)
+        tl = "yellow"
     n_papers = len(summary_table)
     if n_missing > 0:
         summary_text = (

@@ -1110,5 +1110,24 @@
         "accession": "GSE99999"
       }
     ]
+  },
+  "not_checked": {
+    "repos": [
+      {
+        "repo_url": "https://osf.io/nochk",
+        "dir": "tests/mod_code/fixtures/not_checked",
+        "files": [
+          "analysis.jl",
+          "bglmm.R",
+          "big.R",
+          "html_named.py",
+          "ok.R",
+          "png_named.R",
+          "pointer.R",
+          "pointer_nosize.R",
+          "rdata_named.R"
+        ]
+      }
+    ]
   }
 }

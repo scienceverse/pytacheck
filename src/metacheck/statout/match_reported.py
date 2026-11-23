@@ -1276,17 +1276,20 @@ def match_reported_output(
     if len(sites) > 0:
         tests = _regroup_by_evidence(tests, sites, _val_in)
     tests = _drop_weak(tests, evidence)
-    if not tests:  # R: bind_rows(list()) is a table without columns
-        none = pd.DataFrame()
-        none.attrs["summary"] = {
+    # every test weak: the empty result, as above. bind_rows() of no rows gave a data frame
+    # without columns, and the summary stopped on `!out$found` ("invalid argument type"): 80
+    # of the 223 BES papers whose code printed statistics (#707)
+    if not tests:
+        empty = _empty_result()
+        empty.attrs["summary"] = {
             "n_tests": 0,
             "n_found": 0,
             "n_full": 0,
             "n_partial": 0,
             "n_missing": 0,
-            "pct_found": None,
+            "pct_found": 0.0,
         }
-        return none
+        return empty
 
     rows: dict[str, list[Any]] = {k: [] for k in _RESULT_COLUMNS}
     for tst in tests:

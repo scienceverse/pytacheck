@@ -468,6 +468,7 @@ def _repo_check(
         file_share,
         n_aside,
         osf_short_urls,
+        repos.symlinks,
     )
 
     # traffic_light ----
@@ -524,6 +525,9 @@ def _repo_check(
         # Files that do not belong in a repository, left out of `table`: repo_url,
         # file_path, kind and severity ("problem" or "suggestion")
         "useless_files": useless_files,
+        # Symbolic links of GitHub repositories, left out of `table` (metacheck #700): repo_url,
+        # path, target (missing when it could not be read) and broken
+        "symlinks": repos.symlinks,
         # Private OSF projects and ResearchBox boxes whose files were read through a
         # view-only or peer-review link in the paper: paper_id, repo_url (the link)
         # and project (its plain address)
@@ -1073,13 +1077,17 @@ def _classify(
     path_for_group = [
         n if (p is None or p == "") else p for p, n in zip(paths_l, names_l, strict=True)
     ]
-    from_path = _data_group_from_path(path_for_group) if path_for_group else []
-    study = grepl("study[-_]?[0-9]|/ex[0-9]|/pilot[0-9]", [rc.r_tolower(p) for p in path_for_group])
     roles = rc.vals(all_files["doc_role"])
-    is_root_readme = [
-        (not rc._na(r)) and r in ("readme", "license") and g is None and not s
-        for r, g, s in zip(roles, from_path, study, strict=True)
-    ]
+    # (the path is read only for the readme and licence rows: for every file it took 14 minutes
+    # in a repository of 369,548 files, metacheck #702)
+    is_root_readme = [(not rc._na(r)) and r in ("readme", "license") for r in roles]
+    doc_at = [i for i, k in enumerate(is_root_readme) if k]
+    if doc_at:
+        doc_paths = [path_for_group[i] for i in doc_at]
+        from_path = _data_group_from_path(doc_paths)
+        study = grepl("study[-_]?[0-9]|/ex[0-9]|/pilot[0-9]", [rc.r_tolower(p) for p in doc_paths])
+        for i, g, st in zip(doc_at, from_path, study, strict=True):
+            is_root_readme[i] = g is None and not st
 
     group: list[Any] = [None] * len(all_files)
     roster_check = None
@@ -1218,6 +1226,7 @@ def _report(
     file_share: pd.DataFrame | None = None,
     n_aside: int = 0,
     osf_short_urls: Sequence[str] = (),
+    symlinks: pd.DataFrame | None = None,
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
     from metacheck.report.blocks import collapse_section, link, scroll_table
@@ -1574,7 +1583,7 @@ def _report(
 
     # file-naming conventions
     paths = rc.vals(all_files["file_path"])
-    naming_issues = _check_naming(names, paths, dtypes)
+    naming_issues = _check_naming(names, paths, dtypes, rc.vals(all_files["repo_url"]))
     sev = rc.vals(naming_issues["severity"])
     n_naming_bad = sum(1 for s in sev if s == "bad")
     n_naming_suggest = len(
@@ -1614,6 +1623,9 @@ def _report(
 
     # files that do not belong in a repository
     useless = _useless_text(useless_files)
+
+    # symbolic links, left out of the files (metacheck #700)
+    summary_symlinks, report_symlinks = _symlinks_text(symlinks)
 
     # classification dropdown
     report_classification: list[Any] = []
@@ -1692,6 +1704,7 @@ def _report(
         report_roster,
         *report_naming,
         *useless["report"],
+        *report_symlinks,
         *report_classification,
     )
     report: list[Any] = [b for b in blocks if b is not None]
@@ -1716,6 +1729,7 @@ def _report(
             summary_roster,
             summary_naming,
             *useless["summary"],
+            summary_symlinks,
         )
         if s is not None
     ]
@@ -1822,6 +1836,44 @@ def _useless_text(useless_files: pd.DataFrame) -> dict[str, Any]:
     return {"summary": summary, "report": report, "n_problem": n_p, "n_suggestion": n_s}
 
 
+def _symlinks_text(symlinks: pd.DataFrame | None) -> tuple[str | None, list[str]]:
+    """The summary line and report of the symbolic links left out of the files (#700).
+
+    A link is stored as a small text file holding the path of the file it points to, so the
+    checks would read that path as the file's content.
+    """
+    n = 0 if symlinks is None else len(symlinks)
+    if symlinks is None or n == 0:
+        return None, []
+    summary = (
+        f"We left out {n} symbolic link{plural(n)}: a link is stored as a small text file "
+        "holding the path of the file it points to, so the checks would read that path as the "
+        "file's content."
+    )
+    lines: list[str] = []
+    for u, path, target, broken in zip(
+        rc.vals(symlinks["repo_url"]),
+        rc.vals(symlinks["path"]),
+        rc.vals(symlinks["target"]),
+        rc.vals(symlinks["broken"]),
+        strict=True,
+    ):
+        if rc._na(target):
+            what = "points to a file we could not read"
+        else:
+            what = f"points to `{target}`" + (
+                ", which is not in the repository" if broken is True else ""
+            )
+        lines.append(f"- `{path}` ({_na_str(u)}) {what}")
+    report = [
+        "#### Symbolic links",
+        summary + " Put the file itself in the repository instead of a link to it.",
+        "",
+        *lines,
+    ]
+    return summary, report
+
+
 def _as_blocks(x: Any) -> list[Any]:
     return list(x) if isinstance(x, list) else [x]
 
@@ -1839,7 +1891,9 @@ def _roster_mismatch(roster_check: Any) -> bool:
     )
 
 
-def _check_naming(names: list[Any], paths: list[Any], dtypes: list[Any]) -> pd.DataFrame:
+def _check_naming(
+    names: list[Any], paths: list[Any], dtypes: list[Any], repos: list[Any] | None = None
+) -> pd.DataFrame:
     """``check_file_naming()`` of the files that have a name.
 
     A listed file without a name (a platform record missing it) has nothing
@@ -1853,6 +1907,8 @@ def _check_naming(names: list[Any], paths: list[Any], dtypes: list[Any]) -> pd.D
         [names[i] for i in keep],
         file_path=[names[i] if rc._na(paths[i]) else paths[i] for i in keep],
         data_type=[dtypes[i] for i in keep],
+        # paths that differ only in capital letters are looked for within each repository
+        repo=None if repos is None else [repos[i] for i in keep],
     )
 
 
@@ -1887,6 +1943,7 @@ def _naming_by_paper(all_files: pd.DataFrame, naming_issues: pd.DataFrame) -> pd
     names = rc.vals(all_files["file_name"])
     paths = rc.vals(all_files["file_path"])
     dtypes = rc.vals(all_files["data_type"])
+    repo_urls = rc.vals(all_files["repo_url"])
     rows_of: dict[Any, list[int]] = {}
     for i, p in enumerate(pids):
         rows_of.setdefault(p, []).append(i)
@@ -1898,7 +1955,10 @@ def _naming_by_paper(all_files: pd.DataFrame, naming_issues: pd.DataFrame) -> pd
     for pid in [*levels, *([None] if None in rows_of else [])]:
         idx = rows_of[pid]
         pf = _check_naming(
-            [names[i] for i in idx], [paths[i] for i in idx], [dtypes[i] for i in idx]
+            [names[i] for i in idx],
+            [paths[i] for i in idx],
+            [dtypes[i] for i in idx],
+            [repo_urls[i] for i in idx],
         )
         if len(pf) > 0:
             pf = pf.copy()

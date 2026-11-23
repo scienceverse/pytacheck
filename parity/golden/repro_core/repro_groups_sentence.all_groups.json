@@ -9,6 +9,6 @@
       "Of the others, 2 did not reproduce, 1 could not run because a package or program was not available, 1 did not finish within the time limit, and 1 could not be checked automatically."
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

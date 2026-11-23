@@ -26,26 +26,69 @@ if TYPE_CHECKING:
 __all__ = ["aspredicted_info", "aspredicted_links"]
 
 
+_ASPREDICTED_BARE_REGEX = r"(?:https?://)?aspredicted\.org/[A-Za-z0-9_./?=&-]*[A-Za-z0-9_/]"
+
+
 def aspredicted_links(paper: Any) -> pd.DataFrame:
     """Port of R/archive-aspredicted.R::aspredicted_links(): AsPredicted links in papers.
 
-    The rows of the paper's (or paper list's) ``url`` table whose ``href``
-    mentions ``aspredicted.org``.
+    The rows of the paper's (or paper list's) ``url`` table whose ``href`` mentions
+    ``aspredicted.org``, and also a link written in the text that GROBID did not mark, or marked
+    cut off at a line-end hyphen (``"https://aspre-"``), as :func:`metacheck.archives.osf_links`
+    reads the text for OSF links (metacheck #695, point 4). A link found only in the text is
+    given ``https://`` when it has no scheme, and counted once per paper and address (without
+    the scheme, ``www.`` and the closing slash, in small letters).
     """
-    from metacheck._r import grepl
+    from metacheck._r import bind_rows, grepl, sub
     from metacheck.archives import _paper_urls
+    from metacheck.text.search import text_search
 
     urls = _paper_urls(paper)
     if "href" not in urls.columns:
         # R: filter(grepl(..., href)) on the 0 x 0 url table of an empty paper
         # list sees `href <- NULL` and keeps the empty table
-        return urls.copy()
-    keep = pd.Series(
-        [bool(v) for v in grepl(r"aspredicted\.org", urls["href"], ignore_case=True)],
-        index=urls.index,
-        dtype=bool,
+        found = urls.copy()
+    else:
+        keep = pd.Series(
+            [bool(v) for v in grepl(r"aspredicted\.org", urls["href"], ignore_case=True)],
+            index=urls.index,
+            dtype=bool,
+        )
+        found = urls[keep].reset_index(drop=True)
+
+    other = text_search(paper, _ASPREDICTED_BARE_REGEX, return_="match", perl=True)
+    cols = [c for c in ("text", "text_id", "paper_id") if c in other.columns]
+    in_text = other.loc[:, cols].rename(columns={"text": "href"}).reset_index(drop=True)
+    if "href" not in in_text.columns:
+        return found
+    in_text["href"] = pd.Series(
+        sub("^(?!https?://)", "https://", in_text["href"], perl=True),
+        index=in_text.index,
+        dtype="string",
     )
-    return urls[keep].reset_index(drop=True)
+
+    def keys(frame: pd.DataFrame) -> list[str]:
+        """``paste(paper_id, key(href))`` (just the key without a ``paper_id`` column)."""
+        hrefs = [
+            re.sub(
+                r"^https?://(www\.)?", "", re.sub(r"/+$", "", "NA" if is_missing(h) else str(h))
+            ).lower()
+            for h in (frame["href"] if "href" in frame.columns else [])
+        ]
+        if "paper_id" not in frame.columns:
+            return hrefs
+        ids = ["NA" if is_missing(i) else str(i) for i in frame["paper_id"]]
+        return [f"{i} {h}" for i, h in zip(ids, hrefs, strict=True)]
+
+    have = set(keys(found))
+    in_keys = keys(in_text)
+    seen: set[str] = set()
+    keep_rows: list[bool] = []
+    for k in in_keys:
+        keep_rows.append(k not in have and k not in seen)
+        seen.add(k)
+    in_text = in_text[pd.Series(keep_rows, index=in_text.index, dtype=bool)].reset_index(drop=True)
+    return bind_rows([found, in_text])
 
 
 def aspredicted_info(

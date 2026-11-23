@@ -258,6 +258,13 @@
       "$expr":
         "r": "local({source('tests/mod_codebook/cbc_helpers.R', local = TRUE); cbc_prev('scales_mixed', paper = read('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json'))})"
         "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('scales_mixed', paper=__import__('metacheck').read('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json'))"
+- "id": "codebook_check.count_refused"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/cbc_helpers.R', local = TRUE); cbc_prev_refused('empty')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev_refused('empty')"
 - "id": "codebook_check.no_previews"
   "module": "codebook_check"
   "args":

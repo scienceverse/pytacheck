@@ -1,0 +1,19 @@
+{
+  "id": ".case_clash_rename.names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "names/case/Data~2.csv",
+      "names/case/data~3.csv",
+      "names/case/DATA.CSV",
+      "a.R",
+      "Dir/x",
+      "dir/x~2"
+    ]
+  },
+  "metacheck_version": "0.4.4.35",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

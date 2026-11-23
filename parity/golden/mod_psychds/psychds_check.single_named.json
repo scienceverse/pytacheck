@@ -125,24 +125,24 @@
         "v": [
           "This module checks the repository against the Psych-DS dataset standard. We examined 2 files across 1 study group.",
           "#### Compliance Checklist",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"present\", \n\"present\", \"present\", \"missing\", \"missing\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"present\", \n\"missing\", \"present\", \"missing\", \"missing\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Target Psych-DS Structure",
           "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
           "<pre style=\"line-height:1.4\">\n├── data/\n│   └── study-p1_data.csv <span style=\"color:#b9770e\">(move from pilot1/p1.csv)<\/span>\n├── documentation/\n│   └── dataset_description.json <span style=\"color:#b9770e\">(move from dataset_description.json)<\/span>\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n└── <span style=\"color:#c0392b\">README  ← missing<\/span>\n<\/pre>",
           "#### Suggestions",
-          "- **Move** `pilot1/p1.csv` → `data/study-p1_data.csv`.\n- **Move** `dataset_description.json` → `documentation/dataset_description.json`.\n- **Add** README — A README at the repository root (recommended).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended)."
+          "- **Add** data/ directory with data files — At least one machine-readable data file under data/ (required).\n- **Move** `pilot1/p1.csv` → `data/study-p1_data.csv`.\n- **Move** `dataset_description.json` → `documentation/dataset_description.json`.\n- **Add** README — A README at the repository root (recommended).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended)."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "green"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "This repository already contains the files required for a Psych-DS dataset."
+          "\n-  2 of 3 required Psych-DS items present; 1 missing.\n-  2 files would need to move to a Psych-DS location.\n-  2 recommended items missing."
         ]
       },
       {
@@ -166,13 +166,13 @@
           {
             "t": "int",
             "v": [
-              3
+              2
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
@@ -214,6 +214,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.29",
+  "metacheck_version": "0.4.4.35",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }
